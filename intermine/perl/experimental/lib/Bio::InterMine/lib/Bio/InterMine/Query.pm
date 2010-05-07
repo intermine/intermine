@@ -28,8 +28,10 @@ This module allows you to Query an InterMine webservice in a modern, object-orie
     my $query   = Bio::InterMine::Query->new();
     $query->url = $service_url; 
     my @views   = $query->add_view("Gene.primaryIdentifier Gene.symbol Gene.organism.name");
-    my $cons    = $query->add_constraint("Gene LOOKUP eve");
+    my ($path, $op, $value, $extra_value) = ('Gene', 'LOOKUP', 'eve', 'D. Melanogaster'); 
+    my $cons    = $query->add_constraint($path, $op, $value, $extra_value);
     my ($err, $results) = $query->get_results;
+    
     my $i = 0;
     
     unless ($err) {
