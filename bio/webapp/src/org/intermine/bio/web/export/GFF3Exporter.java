@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.gff3.GFF3Record;
@@ -61,8 +62,10 @@ public class GFF3Exporter implements Exporter
     private List<String> attributesNames;
     private String sourceName;
     private Set<Integer> organisms;
-    //    private Set<String> cNames; // used to store the lower case class names of  soClassNames, for comparison
-
+    // this one to store the lower case class names of  soClassNames, 
+    // for comparison with path elements.
+    // possibly not necessary. TOCHECK
+    private Set<String> cNames = new HashSet<String>(); 
     /**
      * Constructor.
      * @param out output stream
@@ -82,9 +85,9 @@ public class GFF3Exporter implements Exporter
         this.sourceName = sourceName;
         this.organisms = organisms;
 
-        //        for (String s : soClassNames.keySet()){
-        //            this.cNames.add(s.toLowerCase());                
-        //        }
+        for (String s : soClassNames.keySet()){
+            this.cNames.add(s.toLowerCase());                
+        }
     }
 
 
@@ -167,7 +170,6 @@ public class GFF3Exporter implements Exporter
     private Map<String, Set<Integer>> seenAttributes = new HashMap<String, Set<Integer>>();
 
 
-
     private void exportRow(List<ResultElement> row)
     throws ObjectStoreException,
     IllegalAccessException {
@@ -180,7 +182,7 @@ public class GFF3Exporter implements Exporter
         // loop through all the objects in a row
         for (ResultElement re : elWithObject ){
             LocatedSequenceFeature lsf = (LocatedSequenceFeature) re.getObject();
-            // LOG.info("GFFrePath: " + re.getPath());
+//             LOG.info("GFFrePath: " + re.getPath());
 
             boolean isCollection = re.getPath().containsCollections();
 
@@ -208,42 +210,44 @@ public class GFF3Exporter implements Exporter
                 if (i==0 ){ // this is the beginning of the path
                     parent = (String) el.getField();
                 }
-//                LOG.info("AA1: " + i);
-//                LOG.info("AA1 el.getType(): " + el.getType());
-//                LOG.info("AA1 el.getPath(): " + el.getPath());
-                
+//                LOG.info("AA "+ i +": " + el.getPath() + "|" +el.getField()+ "|" +el.getType());
                 
                 // checks for assigning attributes
                 if (isCollection && !el.getPath().containsCollections()){
-//                                 LOG.info("P1: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
-                    // one is collection, the other is not: do not show
+//                                 LOG.info("P1: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
+
+                                 // one is collection, the other is not: do not show
                     continue;
                 }
                 if (!isCollection && el.getPath().containsCollections() 
                         && soClassNames.containsKey(el.getType())){
                     // show attributes only if they are not linked to features (they will be displayed with the relevant one, see below)
 //                                 LOG.info("P2: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
+                                 LOG.info("P2: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
                     continue;
                 }
-                // both are collections: show only if they concord.
+//                // both are collections: show only if they concord.
                 if (isCollection && el.getPath().containsCollections() 
-                        && !re.getPath().equals(el.getPath())){
-//                                 LOG.info("P3: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
-                    continue;
-                }        
+                        && !re.getPath().getLastClassDescriptor().getUnqualifiedName().equals(el.getType())){
+                    LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
+                        continue;
+                }
 
+                
+                
+                
 //                LOG.info("PP: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
 
                 if (el.getField() != null) {
-//                    if (el != null) {
-//                    LOG.info("AA?: " + attributesNames.get(i) + "||"+ el.getField()+"<-");
+                    LOG.info("AA?: " + attributesNames.get(i) + "||"+ el.getField()+"<-");
                     String attributeName = trimAttribute(attributesNames.get(i));
                     checkAttribute(el, attributeName);
                 }
 
                 // TEMP out (fm release)
                 // add the parent
-//                if (i>=1 && !el.getType().equalsIgnoreCase(el.getPath().getLastClassDescriptor().getUnqualifiedName())){ 
+//                if (i>=1){ 
+////                    if (i>=1 && !el.getType().equalsIgnoreCase(el.getPath().getLastClassDescriptor().getUnqualifiedName())){ 
 //                    List<String> addPar = new ArrayList<String>();
 //                    addPar.add(parent);
 //                    attributes.put("Parent", addPar);
@@ -254,22 +258,14 @@ public class GFF3Exporter implements Exporter
             lastLsf = lsf;
         }
     }
-
-
+    
+    
     private String trimAttribute(String attribute){
         if (!attribute.contains(".")){
             return attribute;
         }
-//        LOG.info("AA: " + attribute + "|->" + attribute.substring(0, attribute.indexOf('.')));
-
+        // check if a feature attribute (display only name) or not 9display all path)
         String check = trimFinalS(attribute.substring(0, attribute.indexOf('.')));
-
-        // to be moved out
-        Set<String> cNames = new HashSet<String>();
-        for (String s : soClassNames.keySet()){
-            cNames.add(s.toLowerCase());                
-        }
-
 
         if (cNames.contains(check.toLowerCase())){
             String plainAttribute = attribute.substring(attribute.lastIndexOf('.')+1);
