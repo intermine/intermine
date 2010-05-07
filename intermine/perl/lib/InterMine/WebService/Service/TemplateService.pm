@@ -63,8 +63,6 @@ use InterMine::WebService::Core::Request;
 use InterMine::Template;
 use InterMine::WebService::Service::ModelService;
 
-my $SERVICE_RELATIVE_URL = 'templates';
-
 =head2 new
 
  Usage   : $sevice = InterMine::WebService::Service::TemplateService($service_root,
@@ -85,7 +83,6 @@ sub new
 
   my $ms = InterMine::WebService::Service::ModelService->new($service_root, $app_name);
   $self->{model_service} = $ms;
-  $self->{_SERVICE_RELATIVE_URL} = $SERVICE_RELATIVE_URL;
   bless $self, $class;
 
   return $self;
@@ -96,9 +93,10 @@ sub new
  Usage   : my $templates = $service->search_for($keyword);
  Function: get templates that match search term.
  Args    : $keyword - any term to search by, with * as wildcards beginning and end
- Returns : an array of InterMine::Template objects.
+ Returns : a list of InterMine::Template objects.
 
 =cut
+
 sub search_for
 {
   my $self      = shift;
@@ -109,11 +107,19 @@ sub search_for
   return grep {$_->get_name =~ /$keyword/i} @templates;
 }
 
+=head2 
+
+ Usage   : my @all_templates = $service->get_templates;
+ Function: get all templates on the server
+ Returns : a list of InterMine::Template objects
+
+=cut
+
 sub get_templates {
     my $self = shift;
-    
+    my $url = $self->get_url().'templates/xml';
     my $request =
-	new InterMine::WebService::Core::Request('GET', $self->get_url().'/xml', 'TEXT');
+	new InterMine::WebService::Core::Request('GET', $url, 'TEXT');
     
     my $resp = $self->execute_request($request);
     if ($resp->is_error) {
@@ -124,6 +130,9 @@ sub get_templates {
 	return $self->_make_templates_from_xml($resp->content, $model);
     }
 }
+
+# A private subroutine that processes an xml string containing potentially multiple
+# template specifications into an list of InterMine::Template objects
 
 sub _make_templates_from_xml {
     my $self = shift;
@@ -137,6 +146,42 @@ sub _make_templates_from_xml {
 	$xml_string = $2;	
     }
     return map {InterMine::Template->new(string => $_, model => $model)} @templates;
+}
+
+
+=head2 get_result
+
+ Usage   : my $results = $service->get_result($template, $size);
+ Function: get the results of a template
+ Args    : $template - an InterMine::Template object
+           $size     - the maximum number of results to return
+ Returns : HTTP::Response containing the results.
+
+=cut
+
+sub get_result {
+    my $self = shift;
+    my $template = shift;
+    die "get_result needs a valid InterMine::Template\n" 
+	unless (ref $template eq 'InterMine::Template');
+    my $size = shift || 10;
+    my $url = $self->get_url().'template/results';
+    my $request = 
+	InterMine::WebService::Core::Request->new('GET', $url, 'TAB');
+    $request->add_parameters(name => $template->get_name);
+    
+    my $i = 1;
+    for my $constraint ($template->get_editable_constraints) {
+	$request->add_parameters('constraint'.$i => $constraint->get_path);
+	$request->add_parameters('op'.$i         => $constraint->op);
+	$request->add_parameters('value'.$i      => $constraint->value) 
+	    if $constraint->value;
+	$request->add_parameters('extraValue'.$i => $constraint->extra_value) 
+	    if $constraint->extra_value;
+	$i++;
+    }
+
+    return $self->execute_request($request);   
 }
 
 1;
