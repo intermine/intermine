@@ -60,7 +60,7 @@ sub new
   my $class = shift;
   my $service_root = shift;
   my $app_name = shift;
-
+  die "No url provided\n" unless (defined $service_root);
   my $self = {};
 
   if ($service_root !~ m:/$:) {
