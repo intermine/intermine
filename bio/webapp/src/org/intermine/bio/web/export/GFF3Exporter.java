@@ -45,14 +45,17 @@ public class GFF3Exporter implements Exporter
 {
     private static final Logger LOG = Logger.getLogger(GFF3Exporter.class);
 
-        public static final Set<String> GFF_FIELDS = Collections
-            .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
-                            "chromosomeLocation.start", "chromosomeLocation.end",
-                            "chromosomeLocation.strand", "primaryIdentifier", "score")));
+//        public static final Set<String> GFF_FIELDS = Collections
+//            .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
+//                            "chromosomeLocation.start", "chromosomeLocation.end",
+//                            "chromosomeLocation.strand", "primaryIdentifier", "score")));
 
-//    public static final Set<String> GFF_FIELDS = Collections
-//    .unmodifiableSet(new HashSet<String>(Arrays.asList("primaryIdentifier",
-//            "start", "end", "strand", "score")));
+        public static final Set<String> GFF_FIELDS = Collections
+        .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
+                        "chromosomeLocation.start", "chromosomeLocation.end",
+                        "chromosomeLocation.strand", "primaryIdentifier", "score", 
+                        "start", "end", "strand")));
+
     PrintWriter out;
     private List<Integer> featureIndexes;
     private Map<String, String> soClassNames;
@@ -223,13 +226,13 @@ public class GFF3Exporter implements Exporter
                         && soClassNames.containsKey(el.getType())){
                     // show attributes only if they are not linked to features (they will be displayed with the relevant one, see below)
 //                                 LOG.info("P2: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
-                                 LOG.info("P2: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
+//                                 LOG.info("P2: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
                     continue;
                 }
 //                // both are collections: show only if they concord.
                 if (isCollection && el.getPath().containsCollections() 
                         && !re.getPath().getLastClassDescriptor().getUnqualifiedName().equals(el.getType())){
-                    LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
+//                    LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
                         continue;
                 }
 
@@ -239,7 +242,7 @@ public class GFF3Exporter implements Exporter
 //                LOG.info("PP: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
 
                 if (el.getField() != null) {
-                    LOG.info("AA?: " + attributesNames.get(i) + "||"+ el.getField()+"<-");
+//                    LOG.info("AA?: " + attributesNames.get(i) + "||"+ el.getField()+"<-");
                     String attributeName = trimAttribute(attributesNames.get(i));
                     checkAttribute(el, attributeName);
                 }
@@ -264,7 +267,7 @@ public class GFF3Exporter implements Exporter
         if (!attribute.contains(".")){
             return attribute;
         }
-        // check if a feature attribute (display only name) or not 9display all path)
+        // check if a feature attribute (display only name) or not (display all path)
         String check = trimFinalS(attribute.substring(0, attribute.indexOf('.')));
 
         if (cNames.contains(check.toLowerCase())){
@@ -273,7 +276,6 @@ public class GFF3Exporter implements Exporter
         }
         return attribute;
     }
-
 
 
 
