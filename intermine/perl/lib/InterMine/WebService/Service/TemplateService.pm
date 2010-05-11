@@ -123,9 +123,9 @@ sub get_template {
   die "You need a name (try using 'get_templates' if you want them all)\n" 
       unless $name;
   my @templates = $self->get_templates;
-  my @templates = grep {$_->get_name eq $name} @templates;
-  if (@templates == 1) {
-      return shift @templates;
+  my @wanted = grep {$_->get_name eq $name} @templates;
+  if (@wanted == 1) {
+      return shift @wanted;
   }
   else { # either no templates or too many (ambiguous)
       return;
