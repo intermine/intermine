@@ -101,12 +101,13 @@
 
 <div style="clear: both;"></div>
 
-      <%-- Render messages --%>
+      <%-- Render messages --%> 
       <tiles:get name="errorMessagesContainers"/>
-<div class="topBar messages">
-<a href="http://www.surveymonkey.com/s/XV666V5">Please take the modENCODE Usability Survey</a>
-</div>
 
+<%-- HERE TOP MESSAGES 
+<div class="topBar messages">
+</div>
+--%>
 
       <%-- Context help bar --%>
       <tiles:insert page="/contextHelp.jsp"/>
