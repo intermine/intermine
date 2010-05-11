@@ -1,4 +1,0 @@
-<project name="rgd-gff-tasks" default="default" basedir=".">
-  <description>build rgd-gff tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>
