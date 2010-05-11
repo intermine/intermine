@@ -308,7 +308,7 @@ public class OboToModel
                     otherParents.remove(oboTerm);
                     otherParents.add(parent);
                 }
-
+                System.out.println("Flattening: " + oboTerm);
                 removeTerm(oboTerm);
                 return;
             }
@@ -326,32 +326,21 @@ public class OboToModel
                     otherChildren .remove(oboTerm);
                     otherChildren.add(kid);
                 }
+                System.out.println("Flattening: " + oboTerm);
                 removeTerm(oboTerm);
+                return;
             }
 
         // root term
         } else if (parents == null) {
-
+            // leave roots
         }
 
         // no children, delete!
         if (kids == null) {
+            System.out.println("Flattening: " + oboTerm);
             removeTerm(oboTerm);
         }
-    }
-
-    // remove the parent, assign the grandparent and child terms to eachother
-    private static void removeParent(String parent, String child) {
-
-        Set<String> grandparents = childNamesToParentNames.get(parent);
-        childNamesToParentNames.put(child, grandparents);
-
-        for (String grandparent : grandparents) {
-            Set<String> otherParents = parentNamesToChildNames.get(grandparent);
-            otherParents.remove(parent);
-            otherParents.add(child);
-        }
-        removeTerm(parent);
     }
 
     // remove term from every map
