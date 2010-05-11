@@ -119,9 +119,9 @@
       <fieldconfig fieldExpr="title"/>
       <fieldconfig fieldExpr="design"/>
       <fieldconfig fieldExpr="DCCid"/>
-      <fieldconfig fieldExpr="description" showInSummary="false" showInInlineCollection="false" />
       <fieldconfig fieldExpr="experimentDate" displayer="model/dateDisplayer.jsp" showInResults="false" showInInlineCollection="false" />
       <fieldconfig fieldExpr="publicReleaseDate" displayer="model/dateDisplayer.jsp" showInResults="false"  showInInlineCollection="false" />
+      <fieldconfig fieldExpr="embargoDate" displayer="model/dateDisplayer.jsp" showInResults="false"  showInInlineCollection="false" />
     </fields>
     <longdisplayers>
       <displayer src="submissionDisplayer.tile"/>
