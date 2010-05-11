@@ -92,13 +92,12 @@ sub new
 
  Usage   : my $templates = $service->search_for($keyword);
  Function: get templates that match search term.
- Args    : $keyword - any term to search by, with * as wildcards beginning and end
+ Args    : $keyword - any term to search by (case insensitive)
  Returns : a list of InterMine::Template objects.
 
 =cut
 
-sub search_for
-{
+sub search_for {
   my $self      = shift;
   my $keyword   = shift;
   die "You need a keyword to search for (try using 'get_templates' if you want them all)\n" 
@@ -106,6 +105,33 @@ sub search_for
   my @templates = $self->get_templates;
   return grep {$_->get_name =~ /$keyword/i} @templates;
 }
+
+=head2 get_template
+
+ Usage   : my $template = $service->search_for($name);
+ Function: Get the template called $name
+ Args    : $name - the exact name of the template you want
+ Returns : an InterMine::Template object if successful, or undef
+           also returns undef if there are multiple matches 
+           try using search_for for multiple identifiers.
+
+=cut
+
+sub get_template {
+  my $self      = shift;
+  my $name   = shift;
+  die "You need a name (try using 'get_templates' if you want them all)\n" 
+      unless $name;
+  my @templates = $self->get_templates;
+  my @templates = grep {$_->get_name eq $name} @templates;
+  if (@templates == 1) {
+      return shift @templates;
+  }
+  else { # either no templates or too many (ambiguous)
+      return;
+  }
+}
+
 
 =head2 
 
@@ -117,18 +143,21 @@ sub search_for
 
 sub get_templates {
     my $self = shift;
-    my $url = $self->get_url().'templates/xml';
-    my $request =
-	new InterMine::WebService::Core::Request('GET', $url, 'TEXT');
-    
-    my $resp = $self->execute_request($request);
-    if ($resp->is_error) {
-	die 'Fetching templates failed with message: ', $resp->status_line(), "\n";
+    unless (exists $self->{'templates'}) { # don't perform multiple fetches
+	my $url = $self->get_url().'templates/xml';
+	my $request =
+	    new InterMine::WebService::Core::Request('GET', $url, 'TEXT');
+	
+	my $resp = $self->execute_request($request);
+	if ($resp->is_error) {
+	    die 'Fetching templates failed with message: ', $resp->status_line(), "\n";
+	}
+	else {
+	    my $model = $self->{model_service}->get_model;
+	    $self->{'templates'} = $self->_make_templates_from_xml($resp->content, $model);
+	}
     }
-    else {
-	my $model = $self->{model_service}->get_model;
-	return $self->_make_templates_from_xml($resp->content, $model);
-    }
+    return $self->{'templates'};
 }
 
 # A private subroutine that processes an xml string containing potentially multiple
@@ -140,11 +169,13 @@ sub _make_templates_from_xml {
     my $model = shift;
     $xml_string =~ s[</?template-queries>][]gs;
     my @templates;
-# Cut up the result sting into individual templates
+    
+    # Cut up the result sting into individual templates
     while ($xml_string =~ m[(<template.*?</template>)(.*)]s) { 
 	push @templates, $1;
 	$xml_string = $2;	
     }
+
     return map {InterMine::Template->new(string => $_, model => $model)} @templates;
 }
 
@@ -164,7 +195,7 @@ sub get_result {
     my $template = shift;
     die "get_result needs a valid InterMine::Template\n" 
 	unless (ref $template eq 'InterMine::Template');
-    my $size = shift || 10;
+    my $size = shift || 25; # default is 25
     my $url = $self->get_url().'template/results';
     my $request = 
 	InterMine::WebService::Core::Request->new('GET', $url, 'TAB');
