@@ -200,8 +200,9 @@ sub get_result {
     my $request = 
 	InterMine::WebService::Core::Request->new('GET', $url, 'TAB');
     $request->add_parameters(name => $template->get_name);
-    
-    my $i = 1;
+
+    # as this is a template, we only need parameters for user editable templates    
+    my $i = 1; # these are numbered, starting at 1
     for my $constraint ($template->get_editable_constraints) {
 	$request->add_parameters('constraint'.$i => $constraint->get_path);
 	$request->add_parameters('op'.$i         => $constraint->op);
