@@ -230,8 +230,10 @@ public class GFF3Exporter implements Exporter
                     continue;
                 }
 //                // both are collections: show only if they concord.
+                Class<?> reType = re.getPath().getEndClassDescriptor().getType();
+                Class<?> elType = el.getPath().getEndClassDescriptor().getType();
                 if (isCollection && el.getPath().containsCollections() 
-                        && !re.getPath().getLastClassDescriptor().getUnqualifiedName().equals(el.getType())){
+                        && !reType.isAssignableFrom(elType)){
 //                    LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
                         continue;
                 }
