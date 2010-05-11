@@ -229,15 +229,16 @@ public class GFF3Exporter implements Exporter
 //                                 LOG.info("P2: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
                     continue;
                 }
-//                // both are collections: show only if they concord.
-                Class<?> reType = re.getPath().getEndClassDescriptor().getType();
-                Class<?> elType = el.getPath().getEndClassDescriptor().getType();
-                if (isCollection && el.getPath().containsCollections() 
-                        && !reType.isAssignableFrom(elType)){
-//                    LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
-                        continue;
-                }
 
+                if (isCollection && el.getPath().containsCollections()){
+                    
+                    Class<?> reType = re.getPath().getLastClassDescriptor().getType();
+                    Class<?> elType = el.getPath().getLastClassDescriptor().getType();
+                    if (!reType.isAssignableFrom(elType)){
+//                        LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
+                            continue;
+                    }
+                }
                 
                 
                 
