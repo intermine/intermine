@@ -35,7 +35,7 @@ import org.intermine.util.TypeUtil;
 public class Model
 {
     private static Map<String, Model> models = new HashMap<String, Model>();
-
+    protected static final String ENDL = System.getProperty("line.separator");
     private final String modelName;
     private final String packageName;
     private final Map<String, ClassDescriptor> cldMap = new LinkedHashMap<String,
@@ -254,10 +254,10 @@ public class Model
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<model name=\"" + modelName + "\" package=\"" + packageName + "\">");
+        sb.append("<model name=\"" + modelName + "\" package=\"" + packageName + "\">" + ENDL);
         for (ClassDescriptor cld : getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
-                sb.append(cld.toString());
+                sb.append(cld.toString() + ENDL);
             }
         }
         sb.append("</model>");
