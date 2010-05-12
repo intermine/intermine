@@ -27,7 +27,7 @@ use Cwd;
 sub print_help {
     my $scriptname = basename($0);
     my $helpstr = qq(
-$scriptname
+$scriptname [-z|--zip] [-t|--tar] [--name NAME]
 
 Build archives for distribution in the current directory, 
 either in zip or tar.gz format.
@@ -111,10 +111,10 @@ sub zip_files {
                     Makefile$|
                     ~$|
                     bak$|
-                    $0
-                    MANIFEST$
-                    yml$
-                    zip$
+                    $0|
+                    MANIFEST$|
+                    yml$|
+                    zip$|
                     tar\.gz$
                  )/x
            ) {
