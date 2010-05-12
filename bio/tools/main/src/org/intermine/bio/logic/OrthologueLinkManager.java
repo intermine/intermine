@@ -98,8 +98,8 @@ public class OrthologueLinkManager
             Properties webProperties) {
         if (orthologueLinkManager == null || DEBUG) {
             orthologueLinkManager = new OrthologueLinkManager(im, webProperties);
+            primeCache();
         }
-        primeCache();
         return orthologueLinkManager;
     }
 
