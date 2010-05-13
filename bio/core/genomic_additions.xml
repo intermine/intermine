@@ -27,7 +27,7 @@
       <collection name="exons" referenced-type="Exon" reverse-reference="gene"/>
     </class>
 
-    <class name="GeneFlankingRegion" is-interface="true" extends="SequenceFeature">
+    <class name="GeneFlankingRegion" extends="SequenceFeature" is-interface="true">
       <attribute name="distance" type="java.lang.String"/>
       <attribute name="direction" type="java.lang.String"/>
       <reference name="gene" referenced-type="Gene" reverse-reference="flankingRegions"/>
@@ -41,7 +41,7 @@
       <collection name="transcripts" referenced-type="Transcript" reverse-reference="introns"/>
     </class>
     
-    <class name="MRNA" extends="Transcript"  is-interface="true">
+    <class name="MRNA" is-interface="true">
       <reference name="fivePrimeUTR" referenced-type="FivePrimeUTR"/>
       <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR"/>
       <collection name="UTRs" referenced-type="UTR" reverse-reference="MRNA"/>
@@ -52,18 +52,21 @@
       <collection name="transcripts" referenced-type="Transcript" reverse-reference="protein"/>
     </class>
 
+  <class name="SequenceFeature" is-interface="true">
+      <reference name="chromosome" referenced-type="Chromosome" reverse-reference="features"/>
+  </class>
+
     <class name="SequenceVariant" is-interface="true">
       <collection name="genes" referenced-type="Gene"/>
     </class>
     
     <class name="Transcript" is-interface="true">
-      <attribute name="exonCount" type="java.lang.Integer"/>
       <reference name="protein" referenced-type="Protein" reverse-reference="transcripts"/>
       <collection name="introns" referenced-type="Intron" reverse-reference="transcripts"/>
       <collection name="exons" referenced-type="Exon" reverse-reference="transcripts"/>
     </class>
     
-    <class name="UTR" is-interface="true">
+    <class name="UTR" extends="BioEntity" is-interface="true">
       <reference name="gene" referenced-type="Gene" reverse-reference="UTRs"/>
       <reference name="MRNA" referenced-type="MRNA" reverse-reference="UTRs"/>
     </class>

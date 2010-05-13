@@ -1,133 +1,48 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="CDS" extends="BioEntity" is-interface="true">
-    <attribute name="symbol" type="java.lang.String"/>
-    <reference name="gene" referenced-type="Gene" reverse-reference="CDSs"/>
-    <reference name="protein" referenced-type="Protein" reverse-reference="CDSs"/>
-  </class>
-  <class name="Gene" extends="BioEntity" is-interface="true">
+  <class name="Gene" is-interface="true">
     <attribute name="GLEANRsymbol" type="java.lang.String"/>
-    <collection name="UTRs" referenced-type="UTR" reverse-reference="gene"/>
-    <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
     <collection name="alleles" referenced-type="Allele" reverse-reference="gene"/>
     <collection name="clones" referenced-type="CDNAClone" reverse-reference="gene"/>
   </class>
-  <class name="Protein" extends="BioEntity" is-interface="true">
+  <class name="Protein" is-interface="true">
     <attribute name="genbankIdentifier" type="java.lang.String"/>
-    <attribute name="md5checksum" type="java.lang.String"/>
-    <collection name="CDSs" referenced-type="CDS" reverse-reference="protein"/>
   </class>
-  <class name="InsertionSite" extends="BioEntity" is-interface="true">
-    <collection name="genes" referenced-type="Gene"/>
-  </class>
-  <class name="MRNA" extends="BioEntity" is-interface="true">
-    <attribute name="symbol" type="java.lang.String"/>
-    <reference name="fivePrimeUTR" referenced-type="FivePrimeUTR"/>
-    <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR"/>
-    <collection name="UTRs" referenced-type="UTR" reverse-reference="MRNA"/>
+  <class name="MRNA" is-interface="true">
     <collection name="cDNAClones" referenced-type="CDNAClone" reverse-reference="MRNA"/>
   </class>
-  <class name="Transcript" extends="BioEntity" is-interface="true">
-    <collection name="introns" referenced-type="Intron" reverse-reference="transcripts"/>
-    <collection name="exons" referenced-type="Exon" reverse-reference="transcripts"/>
-  </class>
-  <class name="NcRNA" extends="BioEntity" is-interface="true">
-    <attribute name="symbol" type="java.lang.String"/>
-  </class>
-  <class name="Exon" extends="BioEntity" is-interface="true">
-    <attribute name="symbol" type="java.lang.String"/>
-    <collection name="transcripts" referenced-type="Transcript" reverse-reference="exons"/>
-  </class>
-  <class name="Intron" extends="BioEntity" is-interface="true">
-    <attribute name="symbol" type="java.lang.String"/>
-    <collection name="transcripts" referenced-type="Transcript" reverse-reference="introns"/>
-  </class>
-  <class name="UTR" extends="BioEntity" is-interface="true">
-    <attribute name="symbol" type="java.lang.String"/>
-    <reference name="gene" referenced-type="Gene" reverse-reference="UTRs"/>
-    <reference name="MRNA" referenced-type="MRNA" reverse-reference="UTRs"/>
-  </class>
-  <class name="ThreePrimeUTR" extends="BioEntity" is-interface="true">
-  </class>
-  <class name="FivePrimeUTR" extends="BioEntity" is-interface="true">
-  </class>
-  <class name="Enhancer" extends="BioEntity" is-interface="true">
-  </class>
-  <class name="TransposableElementInsertionSite" extends="BioEntity" is-interface="true">
-    <attribute name="symbol" type="java.lang.String"/>
+  <class name="TransposableElementInsertionSite"  is-interface="true">
     <attribute name="available" type="java.lang.Boolean"/>
   </class>
-  <class name="TransposableElement" extends="BioEntity" is-interface="true">
-    <attribute name="symbol" type="java.lang.String"/>
+  <class name="TransposableElement" is-interface="true">
     <reference name="insertedElement" referenced-type="NaturalTransposableElement" reverse-reference="transposableElements"/>
   </class>
-  <class name="NaturalTransposableElement" extends="BioEntity" is-interface="true">
-    <attribute name="symbol" type="java.lang.String"/>
+  <class name="NaturalTransposableElement" is-interface="true">
     <collection name="transposableElements" referenced-type="TransposableElement" reverse-reference="insertedElement"/>
   </class>
-
-  <class name="SequenceVariant" extends="BioEntity" is-interface="true">
-    <collection name="genes" referenced-type="Gene"/>
-  </class>
-  <class name="ProteinBindingSite" extends="BindingSite" is-interface="true">
-  </class>
-  <class name="Pseudogene" extends="Gene" is-interface="true">
-  </class>
-  <class name="Vector" extends="BioEntity"
-         is-interface="true"/>
-  <class name="BAC" extends="Vector"
-         is-interface="true">
-  </class>
-  <class name="CDNAClone" extends="BioEntity" is-interface="true">
+  <class name="Vector" extends="BioEntity" is-interface="true"/>
+  <class name="BAC" extends="Vector" is-interface="true" />
+  <class name="CDNAClone" is-interface="true">
     <reference name="gene" referenced-type="Gene" reverse-reference="clones"/>
     <reference name="MRNA" referenced-type="MRNA"/>
     <reference name="EST" referenced-type="EST"/>
   </class>
-  <class name="EST" extends="BioEntity" is-interface="true">
+  <class name="EST" is-interface="true">
     <collection name="cDNAClones" referenced-type="CDNAClone" reverse-reference="EST"/>
   </class>
-  <class name="ChromosomeArm"
-         extends="LocatedSequenceFeature" is-interface="true">
-  </class>
-  <class name="TFmodule"
-         extends="RegulatoryRegion" is-interface="true">
-  </class>
-  <class name="ChromosomalDeletion"
-         extends="ChromosomeStructureVariation"
-         is-interface="true">
-  </class>
-  <class name="ChromosomalDuplication"
-         extends="ChromosomeStructureVariation"
-         is-interface="true">
-  </class>
-  <class name="ChromosomalInversion"
-         extends="ChromosomeStructureVariation"
-         is-interface="true">
-  </class>
-  <class name="ChromosomalTranslocation"
-         extends="ChromosomeStructureVariation"
-         is-interface="true">
-  </class>
-  <class name="Transposition"
-         extends="ChromosomeStructureVariation"
-         is-interface="true">
-  </class>
-  <class name="ChromosomeStructureVariation"
-         extends="Region" is-interface="true">
+  <class name="TFmodule" extends="RegulatoryRegion" is-interface="true" />
+  <class name="Transposition" extends="ChromosomeStructureVariation" is-interface="true" />
+  <class name="ChromosomeStructureVariation" is-interface="true">
     <attribute name="available" type="java.lang.Boolean"/>
     <attribute name="confirmedByPCR" type="java.lang.Boolean"/>
     <attribute name="confirmedByGenetics" type="java.lang.Boolean"/>
-    <reference name="element1"
-               referenced-type="TransposableElementInsertionSite"/>
-    <reference name="element2"
-               referenced-type="TransposableElementInsertionSite"/>
+    <reference name="element1" referenced-type="TransposableElementInsertionSite"/>
+    <reference name="element2" referenced-type="TransposableElementInsertionSite"/>
   </class>
-  <class name="LocatedSequenceFeature"
-         is-interface="true">
+  <class name="SequenceFeature" is-interface="true">
     <attribute name="cytoLocation" type="java.lang.String"/>
   </class>
   <class name="Allele" extends="BioEntity" is-interface="true">
     <reference name="gene" referenced-type="Gene" reverse-reference="alleles"/>
   </class>
-
 </classes>

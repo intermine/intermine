@@ -105,7 +105,6 @@ public class BioGridConverter extends BioFileConverter
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-
     }
 
     private void readConfig() {

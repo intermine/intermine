@@ -75,7 +75,7 @@ public class BDGPInsituConverter extends FileConverter
 
         // the widget depends on this name
         dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "BDGP in situ data set");
+        dataSet.setAttribute("name", "BDGP in situ data set");
         dataSet.setReference("dataSource", dataSource.getIdentifier());
         store(dataSet);
 
