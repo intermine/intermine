@@ -93,9 +93,6 @@ public class ProjectsController extends TilesAction
             Map<String, String> expFeatureDescription = MetadataCache.getFeatTypeDescription(servletContext);
             request.setAttribute("expFeatDescription", expFeatureDescription);
             
-
-            
-            
             Properties props = new Properties(); 
             
             InputStream is = servletContext.getResourceAsStream("/WEB-INF/experimentCategory.properties");
@@ -125,11 +122,11 @@ public class ProjectsController extends TilesAction
             }
             
             request.setAttribute("expCats", expCat);
-
             
         } catch (Exception err) {
             err.printStackTrace();
         }
         return null;
     }
+    
 }
