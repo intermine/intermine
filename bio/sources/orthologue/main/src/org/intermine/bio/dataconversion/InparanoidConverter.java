@@ -56,7 +56,7 @@ public class InparanoidConverter extends FileConverter
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
     //private static final Logger LOG = Logger.getLogger(InparanoidConverter.class);
-    
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -66,7 +66,7 @@ public class InparanoidConverter extends FileConverter
     public InparanoidConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model);
         setupItems();
-        readConfig();        
+        readConfig();
     }
 
     private void readConfig() {
@@ -113,7 +113,7 @@ public class InparanoidConverter extends FileConverter
             createObjects.put(code, object);
         }
     }
-    
+
     /**
      * Set a directory where files mapping gene ids to peptide ids can be found.  The files are
      * expected to be in standard BioMart export style:
@@ -126,7 +126,7 @@ public class InparanoidConverter extends FileConverter
         this.genePeptideDir = genePeptideDir;
     }
 
-    
+
     /**
      * Given a directory for gene/peptide mappings: find files, determine taxon id from file name
      * and read files contents into a map from peptide id to gene id.
@@ -135,10 +135,10 @@ public class InparanoidConverter extends FileConverter
      */
     private void readGenePeptideMappings() throws FileNotFoundException, IOException {
         peptideGeneMaps = new HashMap();  // contruct here whatever so calling method can test null
-        
+
         if (genePeptideDir != null) {
             if (genePeptideDir.isDirectory()) {
-                for (File file : genePeptideDir.listFiles()) {                    
+                for (File file : genePeptideDir.listFiles()) {
                     String fileName = file.getName();
                     if (!fileName.endsWith("gene_peptide.txt")) {
                         continue;
@@ -146,9 +146,9 @@ public class InparanoidConverter extends FileConverter
                     String taxonId = fileName.substring(0, fileName.indexOf('_'));
                     Map<String, String> peptideGeneMap = new HashMap();
                     peptideGeneMaps.put(taxonId, peptideGeneMap);
-                    
+
                     BufferedReader reader = new BufferedReader(new FileReader(file));
-                    Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);    
+                    Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
                     while (lineIter.hasNext()) {
                         String[] line = (String[]) lineIter.next();
                         if (line.length >= 2) {
@@ -156,7 +156,7 @@ public class InparanoidConverter extends FileConverter
                             String peptideId = line[1];
                             peptideGeneMap.put(peptideId, geneId);
                         }
-                    }   
+                    }
                 }
             }
         }
@@ -170,9 +170,9 @@ public class InparanoidConverter extends FileConverter
         // 2. call homolog creation method (orgA, orgB) then (orgB, orgA)
 
         if (peptideGeneMaps == null) {
-            readGenePeptideMappings();  
+            readGenePeptideMappings();
         }
-                
+
         int lineNum = 0;
         String line, lastCode = null, oldIndex = null, index = null;
 
@@ -207,7 +207,7 @@ public class InparanoidConverter extends FileConverter
             }
             String score = array[3];
             String identifier = array[4];
-            
+
             // code tells us which organism data is from
             String code = null;
             if (array[2].indexOf('.') > 0) {
@@ -226,7 +226,7 @@ public class InparanoidConverter extends FileConverter
                     // if we have found a mapping file for this organism then convert protein
                     // to genes and don't create proteins
                     String taxonId = (String) taxonIds.get(code);
-                   
+
                     if (peptideGeneMaps.containsKey(taxonId)) {
                         isGene = true;
                         Map<String, String> peptideGeneMap = peptideGeneMaps.get(taxonId);
@@ -241,7 +241,7 @@ public class InparanoidConverter extends FileConverter
                             // the invalid id is a paralogue could still create orthologues.
                             abortClusters.add(index);
                         }
-                        
+
                     } else {
 
                         // create protein as a last resort
@@ -253,8 +253,8 @@ public class InparanoidConverter extends FileConverter
             } else {
                 throw new RuntimeException("No configuration provided for organism code: " + code);
             }
-            
-            
+
+
             String orgName = code.substring(3);
             BioAndScores bands = null;
             if (!abortClusters.contains(index)) {
@@ -289,7 +289,7 @@ public class InparanoidConverter extends FileConverter
                     orgB.add(bands);
                 }
             }
-            
+
             oldIndex = index;
             lastCode = code;
         }
@@ -477,14 +477,14 @@ public class InparanoidConverter extends FileConverter
         dataSource.setAttribute("name", "InParanoid");
         store(dataSource);
         dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "InParanoid data set");
+        dataSet.setAttribute("name", "InParanoid data set");
         dataSet.setReference("dataSource", dataSource);
         store(dataSet);
-        
+
         Item evidenceCode = createItem("OrthologueEvidenceCode");
         evidenceCode.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
         evidenceCode.setAttribute("name", EVIDENCE_CODE_NAME);
-        store(evidenceCode);        
+        store(evidenceCode);
         evidence = createItem("OrthologueEvidence");
         evidence.setReference("evidenceCode", evidenceCode);
         evidence.addToCollection("publications", pub);

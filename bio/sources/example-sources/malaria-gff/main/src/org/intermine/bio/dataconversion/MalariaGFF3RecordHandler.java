@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
-import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Item;
 
 /**
@@ -27,12 +26,12 @@ import org.intermine.xml.full.Item;
 public class MalariaGFF3RecordHandler extends GFF3RecordHandler
 {
     // parents map controls references/collections that are set from Parent= attributes in gff file
-    private static Map<String, String> parents = new HashMap();
+    private static Map<String, String> parents = new HashMap<String, String>();
     static {
         parents.put("Exon", "transcripts");
         parents.put("MRNA", "gene");
     }
-    
+
     /**
      * Create a new MalariaGFF3RecordHandler object.
      * @param tgtModel the target Model

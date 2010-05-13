@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <classes>
-<class name="MicroarrayOligo" extends="Oligo" is-interface="true">
+<class name="MicroarrayOligo" is-interface="true">
   <attribute name="tm" type="java.lang.Float"/>
-  <attribute name="length" type="java.lang.Integer"/>
   <reference name="transcript" referenced-type="Transcript" reverse-reference="microarrayOligos"/>
 </class>
 <class name="Transcript" is-interface="true">

@@ -22,16 +22,16 @@ public class LongOligoGFF3SeqHandler extends GFF3SeqHandler
     protected IdResolverFactory resolverFactory = null;
     private IdResolver resolver = null;
     protected static final Logger LOG = Logger.getLogger(LongOligoGFF3SeqHandler.class);
-    
-    
+
+
     /**
      * Construct the seq handler.
      */
     public LongOligoGFF3SeqHandler() {
         resolverFactory = new FlyBaseIdResolverFactory("mRNA", "7227");
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
@@ -41,7 +41,7 @@ public class LongOligoGFF3SeqHandler extends GFF3SeqHandler
         if (resolver == null) {
             resolver = resolverFactory.getIdResolver();
         }
-        
+
         String updatedId = null;
         int resCount = resolver.countResolutions("7227", id);
         if (resCount == 1) {
