@@ -108,7 +108,7 @@ public class UniProtFastaLoaderTaskTest extends TestCase
         protein.getOrganism().getTaxonId().equals("7227");
 
         DataSet dataSet = protein.getDataSets().iterator().next();
-        assertEquals(dataSetTitle, dataSet.getTitle());
+        assertEquals(dataSetTitle, dataSet.getName());
 
         /*
         >sp|Q9V8R9-2|41_DROME Isoform 2 of Protein 4.1 homolog OS=Drosophila melanogaster GN=cora

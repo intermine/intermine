@@ -153,7 +153,7 @@ public class FastaLoaderTaskTest extends TestCase {
         Protein protein = (Protein) ((List) r.get(0)).get(0);
 
         DataSet dataSet = protein.getDataSets().iterator().next();
-        assertEquals(dataSetTitle, dataSet.getTitle());
+        assertEquals(dataSetTitle, dataSet.getName());
 
         assertEquals("MNRVNDMSPVEGDLGLQLSSEADKKFDAYMKRHGLFEPGNLSNNDKERNLEDQFNSMKLS"
                      + "PVASSKENYPDNHMHSKHISKLPIASPIPRGLDRSGELSYKDNNHWSDRSSTGSPRWENG"

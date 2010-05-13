@@ -54,6 +54,7 @@
 
   <class name="SequenceFeature" is-interface="true">
       <reference name="chromosome" referenced-type="Chromosome" reverse-reference="features"/>
+      <reference name="chromosomeLocation" referenced-type="Location" />
   </class>
 
     <class name="SequenceVariant" is-interface="true">
