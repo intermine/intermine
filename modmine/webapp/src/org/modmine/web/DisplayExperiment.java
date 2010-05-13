@@ -215,7 +215,7 @@ public class DisplayExperiment
     }
 
     /**
-     * @return a map of entries per db  submitted to a public repository 
+     * @return a map of entries per db submitted to a public repository 
      * for this experiment
      */
     public Map<String, Integer> getReposited() {
@@ -230,8 +230,7 @@ public class DisplayExperiment
     
     
     /**
-     * @return a map of entries per db  submitted to a public repository 
-     * for this experiment
+     * @return a map of unlocated features for this experiment
      */
     public Set<String> getUnlocated() {
         Map<Integer, List<String>> rep = MetadataCache.getUnlocatedFeatureTypes(os);
