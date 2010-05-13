@@ -109,7 +109,7 @@
   </class>
 
 
-  <class className="org.intermine.model.bio.LocatedSequenceFeature">
+  <class className="org.intermine.model.bio.SequenceFeature">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
@@ -250,7 +250,7 @@
         description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
         graphType="BarChart"
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
-        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature"
+        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.SequenceFeature"
        />
 
       <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"

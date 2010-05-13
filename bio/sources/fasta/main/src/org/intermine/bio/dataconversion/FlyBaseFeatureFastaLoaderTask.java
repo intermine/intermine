@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.DataSet;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Region;
@@ -74,12 +74,12 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
      * Return a Location object create by parsing the useful information from a FlyBase fasta
      * header line.
      * @param header the header line
-     * @param lsf the LocatedSequenceFeature that is the subject of this Location
+     * @param lsf the SequenceFeature that is the subject of this Location
      * @param organism the Organism object used when creating Chromosomes
      * @return the Location
      * @throws ObjectStoreException there is a problem while creating the Location
      */
-    protected Location getLocationFromHeader(String header, LocatedSequenceFeature lsf,
+    protected Location getLocationFromHeader(String header, SequenceFeature lsf,
                                              Organism organism)
     throws ObjectStoreException {
         final String regexp = ".*loc=(\\S+):(\\S+).*";

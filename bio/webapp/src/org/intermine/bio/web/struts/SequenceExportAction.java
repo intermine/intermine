@@ -35,7 +35,7 @@ import org.intermine.bio.web.biojava.BioSequenceFactory.SequenceType;
 import org.intermine.bio.web.export.ResidueFieldExporter;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Sequence;
 import org.intermine.objectstore.ObjectStore;
@@ -53,7 +53,7 @@ import org.intermine.web.struts.InterMineAction;
 public class SequenceExportAction extends InterMineAction
 {
     /**
-     * This action is invoked directly to export LocatedSequenceFeatures.
+     * This action is invoked directly to export SequenceFeatures.
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -80,7 +80,7 @@ public class SequenceExportAction extends InterMineAction
         Integer objectId = new Integer(request.getParameter("object"));
         InterMineObject obj = getObject(os, webProps, objectId);
 
-        if (obj instanceof LocatedSequenceFeature || obj instanceof Protein) {
+        if (obj instanceof SequenceFeature || obj instanceof Protein) {
             bioSequence = createBioSequence(obj);
             if (bioSequence != null) {
                 OutputStream out = response.getOutputStream();
@@ -136,7 +136,7 @@ public class SequenceExportAction extends InterMineAction
         } else {
             classList.addAll(Arrays.asList(new Class<?>[] {
                 Protein.class,
-                LocatedSequenceFeature.class
+                SequenceFeature.class
             }));
         }
 

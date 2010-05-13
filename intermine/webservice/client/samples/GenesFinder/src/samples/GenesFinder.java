@@ -21,15 +21,15 @@ import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.services.QueryService;
 
 /**
- * The GenesFinder is an example of command line query client fetching Genes or 
- * LocatedSequenceFeatures located at specific positions with some tolerance. It means that all 
- * genes starting at position higher than start-tolerance and lower than start+tolerance and 
+ * The GenesFinder is an example of command line query client fetching Genes or
+ * SequenceFeatures located at specific positions with some tolerance. It means that all
+ * genes starting at position higher than start-tolerance and lower than start+tolerance and
  * ending at position higher then end-tolerance and lower than end+tolerance will be retrieved.
  *
  * NOTE: The model can change at the server in next versions of FlyMine and sample won't work. For
  * example primaryIdentifier gene attribute can be renamed. In this case please download newer
  * version of samples or modify sample properly.
- * 
+ *
  * @author Jakub Kulaviak
  **/
 public class GenesFinder
@@ -69,7 +69,7 @@ public class GenesFinder
 
     private static void printUsage() {
         System.out.println("Required parameters: --file input_file"
-                           + " --tolerance tolerance_value --type [Gene|LocatedSequenceFeature]");
+                           + " --tolerance tolerance_value --type [Gene|SequenceFeature]");
         System.out.println("Format of a line in the input file"
                            + " (fields must be tab separated): chromozome_id start end");
     }
@@ -163,32 +163,32 @@ public class GenesFinder
     private static List<String> findFeatures(String type, String chromozome,
             int start, int end) {
         String queryXml = "<query name=\"\" model=\"genomic\" "
-                + "view=\"LocatedSequenceFeature.primaryIdentifier\" "
-                + "sortOrder=\"LocatedSequenceFeature.primaryIdentifier asc\" "
+                + "view=\"SequenceFeature.primaryIdentifier\" "
+                + "sortOrder=\"SequenceFeature.primaryIdentifier asc\" "
                 + "constraintLogic=\"A and B and C\">"
-                + "<node path=\"LocatedSequenceFeature\" type=\"LocatedSequenceFeature\">"
+                + "<node path=\"SequenceFeature\" type=\"SequenceFeature\">"
                 + "</node>"
-                + "<node path=\"LocatedSequenceFeature.chromosome\" type=\"Chromosome\">"
+                + "<node path=\"SequenceFeature.chromosome\" type=\"Chromosome\">"
                 + "</node>"
-                + "<node path=\"LocatedSequenceFeature.chromosome.primaryIdentifier\" "
+                + "<node path=\"SequenceFeature.chromosome.primaryIdentifier\" "
                 + "type=\"String\"> <constraint op=\"=\" value=\""
                 + chromozome
                 + "\" description=\"\" identifier=\"\" code=\"A\">"
                 + "</constraint>"
                 + "</node>"
-                + "<node path=\"LocatedSequenceFeature.chromosomeLocation\" type=\"Location\">"
+                + "<node path=\"SequenceFeature.chromosomeLocation\" type=\"Location\">"
                 + "</node>"
-                + "<node path=\"LocatedSequenceFeature.chromosomeLocation.start\" type=\"Integer\">"
+                + "<node path=\"SequenceFeature.chromosomeLocation.start\" type=\"Integer\">"
                 + "<constraint op=\"&gt;\" value=\""
                 + start
                 + "\" description=\"\" identifier=\"\" code=\"B\">"
                 + "</constraint>"
                 + "</node>"
-                + "<node path=\"LocatedSequenceFeature.chromosomeLocation.end\" type=\"Integer\">"
+                + "<node path=\"SequenceFeature.chromosomeLocation.end\" type=\"Integer\">"
                 + "<constraint op=\"&lt;\" value=\"" + end
                 + "\" description=\"\" identifier=\"\" code=\"C\">"
                 + "</constraint>" + "</node>" + "</query>";
-        queryXml = queryXml.replaceAll("LocatedSequenceFeature", type);
+        queryXml = queryXml.replaceAll("SequenceFeature", type);
         QueryService service = new ServiceFactory(serviceRootUrl, "GenesFinder")
                 .getQueryService();
         int maxCount = 10000;
@@ -209,7 +209,7 @@ public class GenesFinder
     }
 
     /**
-     * Example general exception. 
+     * Example general exception.
      *
      */
     static class GenesFinderException extends RuntimeException

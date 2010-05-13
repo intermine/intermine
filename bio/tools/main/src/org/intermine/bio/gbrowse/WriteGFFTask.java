@@ -53,7 +53,7 @@ import org.intermine.model.bio.ComputationalResult;
 import org.intermine.model.bio.Evidence;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.MRNA;
 import org.intermine.model.bio.NcRNA;
@@ -124,8 +124,8 @@ public class WriteGFFTask extends Task
         }
     }
 
-    private static final Class<LocatedSequenceFeature> LOCATED_SEQUENCE_FEATURE_CLASS =
-        LocatedSequenceFeature.class;
+    private static final Class<SequenceFeature> LOCATED_SEQUENCE_FEATURE_CLASS =
+        SequenceFeature.class;
 
     /**
      * Create a GFF and FASTA files for the objects in the given ObjectStore, suitable for reading
@@ -163,7 +163,7 @@ public class WriteGFFTask extends Task
         while (resIter.hasNext()) {
             ResultsRow rr = resIter.next();
             Integer resultChrId = (Integer) rr.get(0);
-            LocatedSequenceFeature feature = (LocatedSequenceFeature) rr.get(1);
+            SequenceFeature feature = (SequenceFeature) rr.get(1);
             Location loc = (Location) rr.get(2);
 
             // TODO XXX FIXME - see #628
@@ -325,7 +325,7 @@ public class WriteGFFTask extends Task
         }
     }
 
-    private String getFeatureName(LocatedSequenceFeature feature) {
+    private String getFeatureName(SequenceFeature feature) {
         Class<?> bioEntityClass = feature.getClass();
         Set<Class> classes = DynamicUtil.decomposeClass(bioEntityClass);
 
@@ -468,7 +468,7 @@ public class WriteGFFTask extends Task
      * @param evidenceList a List of evidence objects for this feature
      */
     private void writeFeature(PrintWriter gffWriter, Chromosome chr,
-                              LocatedSequenceFeature bioEntity, Location chromosomeLocation,
+                              SequenceFeature bioEntity, Location chromosomeLocation,
                               String identifier,
                               String featureType, String idType,
                               Map<String, List<String>> extraAttributes,
@@ -639,10 +639,10 @@ public class WriteGFFTask extends Task
     }
 
     /**
-     * Make a Map from LocatedSequenceFeature ID to List of Synonym values (Strings) for
-     * LocatedSequenceFeature objects located on the chromosome with the given ID.
+     * Make a Map from SequenceFeature ID to List of Synonym values (Strings) for
+     * SequenceFeature objects located on the chromosome with the given ID.
      * @param os the ObjectStore to read from
-     * @param chromosomeId the chromosome ID of the LocatedSequenceFeature objects to examine
+     * @param chromosomeId the chromosome ID of the SequenceFeature objects to examine
      * @return a Map from id to synonym List
      * @throws ObjectStoreException
      */
@@ -651,7 +651,7 @@ public class WriteGFFTask extends Task
     throws ObjectStoreException {
         Query q = new Query();
         q.setDistinct(true);
-        QueryClass qcEnt = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcEnt = new QueryClass(SequenceFeature.class);
         QueryField qfEnt = new QueryField(qcEnt, "id");
         q.addFrom(qcEnt);
         q.addToSelect(qfEnt);
@@ -719,10 +719,10 @@ public class WriteGFFTask extends Task
     }
 
     /**
-     * Make a Map from LocatedSequenceFeature ID to List of Evidence objects for
-     * LocatedSequenceFeature objects located on the chromosome with the given ID.
+     * Make a Map from SequenceFeature ID to List of Evidence objects for
+     * SequenceFeature objects located on the chromosome with the given ID.
      * @param os the ObjectStore to read from
-     * @param chromosomeId the chromosome ID of the LocatedSequenceFeature objects to examine
+     * @param chromosomeId the chromosome ID of the SequenceFeature objects to examine
      * @return a Map from id to Evidence List
      * @throws ObjectStoreException
      */
@@ -730,7 +730,7 @@ public class WriteGFFTask extends Task
         throws ObjectStoreException {
         Query q = new Query();
         q.setDistinct(true);
-        QueryClass qcEnt = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcEnt = new QueryClass(.class);
         QueryField qfEnt = new QueryField(qcEnt, "id");
         q.addFrom(qcEnt);
         q.addToSelect(qfEnt);

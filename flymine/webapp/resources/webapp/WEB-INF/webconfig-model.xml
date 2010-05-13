@@ -301,7 +301,7 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.LocatedSequenceFeature">
+  <class className="org.intermine.model.bio.SequenceFeature">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
@@ -348,7 +348,7 @@
       <fieldconfig fieldExpr="tm"/>
     </fields>
     <longdisplayers>
-      <!-- disable the LocatedSequenceFeature displayer (GBrowse) because
+      <!-- disable the SequenceFeature displayer (GBrowse) because
            MicroarrayOligos aren't located at the moment -->
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
@@ -781,7 +781,7 @@
         description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
         graphType="BarChart"
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
-        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
+        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.SequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
        />
 
       <graphdisplayer id="flyatlas" title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"

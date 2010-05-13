@@ -24,7 +24,7 @@ import org.intermine.bio.web.biojava.BioSequence;
 import org.intermine.bio.web.biojava.BioSequenceFactory;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Sequence;
@@ -98,8 +98,8 @@ public class SequenceExporter implements Exporter
                     continue;
                 }
 
-                if (object instanceof LocatedSequenceFeature) {
-                    bioSequence = createLocatedSequenceFeature(header, object, row);
+                if (object instanceof SequenceFeature) {
+                    bioSequence = createSequenceFeature(header, object, row);
                 } else if (object instanceof Protein) {
                     bioSequence = createProtein(header, object, row);
                 } else {
@@ -150,11 +150,11 @@ public class SequenceExporter implements Exporter
         return bioSequence;
     }
 
-    private BioSequence createLocatedSequenceFeature(StringBuffer header,
+    private BioSequence createSequenceFeature(StringBuffer header,
                                                      Object object, List<ResultElement> row)
         throws IllegalSymbolException {
         BioSequence bioSequence;
-        LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
+        SequenceFeature feature = (SequenceFeature) object;
         bioSequence = BioSequenceFactory.make(feature);
 
         makeHeader(header, row);
@@ -206,7 +206,7 @@ public class SequenceExporter implements Exporter
      */
     public static boolean canExportStatic(List<Class> clazzes) {
         return (
-                ExportHelper.getClassIndex(clazzes, LocatedSequenceFeature.class) >= 0
+                ExportHelper.getClassIndex(clazzes, SequenceFeature.class) >= 0
                 || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0
                 || ExportHelper.getClassIndex(clazzes, Sequence.class) >= 0);
     }

@@ -32,7 +32,7 @@ import javax.servlet.ServletContext;
 import org.apache.log4j.Logger;
 import org.intermine.model.bio.DatabaseRecord;
 import org.intermine.model.bio.Experiment;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.ResultFile;
@@ -73,7 +73,7 @@ public class MetadataCache
         private String organism; // {fly,worm}
         private String track;    // e.g. Snyder_PHA4_GFP_COMB
         private String subTrack; // e.g. PHA4_L2_GFP
-        
+
         public GBrowseTrack(String organism2, String trackName) {
             this.organism  = organism2;
             this.track = trackName;
@@ -119,7 +119,7 @@ public class MetadataCache
     private static Map<Integer, List<String[]>> submissionRepositedCache = null;
     private static Map<String, String> featDescriptionCache = null;
 
-    
+
     private static long lastTrackCacheRefresh = 0;
     private static final long TWO_HOUR = 7200000;
 
@@ -291,7 +291,7 @@ public class MetadataCache
         return experimentCache.get(name);
     }
 
-   
+
     /**
      * Method to obtain the map of unlocated feature types by submission id
      *
@@ -306,7 +306,7 @@ public class MetadataCache
             }
 
             submissionUnlocatedFeatureTypes = new HashMap<Integer, List<String>>();
-            
+
             if (submissionLocatedFeatureTypes == null) {
                 readSubmissionLocatedFeature(os);
             }
@@ -321,8 +321,8 @@ public class MetadataCache
                 Set<String> difference = new HashSet<String>(allFeatures);
                 if (submissionLocatedFeatureTypes.get(subId) != null){
                     difference.removeAll(submissionLocatedFeatureTypes.get(subId));
-                } 
-                
+                }
+
                 if (!difference.isEmpty()){
                     List <String> thisUnlocated = new ArrayList<String>();
 
@@ -338,7 +338,7 @@ public class MetadataCache
         return submissionUnlocatedFeatureTypes;
     }
 
-    
+
     public static Map<String, List<GBrowseTrack>> getExperimentGBrowseTracks(ObjectStore os) {
         Map<String, List<GBrowseTrack>> tracks = new HashMap<String, List<GBrowseTrack>>();
 
@@ -359,7 +359,7 @@ public class MetadataCache
         return tracks;
     }
 
-    
+
     /**
      * adds the elements of a list i to a list l only if they are not yet
      * there
@@ -394,28 +394,28 @@ public class MetadataCache
             // entry produced by 2 different submissions.
             Set<String[]> expRepsCleaned = removeDuplications(expReps);
             reposited.put(exp.getName(), expRepsCleaned);
-        }        
+        }
         return reposited;
     }
 
     private static Set<String[]> removeDuplications(Set<String[]> expReps) {
-        // removing the same repository entry coming from different submissions 
+        // removing the same repository entry coming from different submissions
         // in the given experiment
         Set<String> db = new HashSet<String>();
-        Set<String> acc = new HashSet<String>(); 
-        Set<String[]> dup = new HashSet<String[]>(); 
+        Set<String> acc = new HashSet<String>();
+        Set<String[]> dup = new HashSet<String[]>();
         for (String[] s : expReps){
             if (db.contains(s[0]) && acc.contains(s[1])){
                 // we don't remove place holders
                 if (!s[1].startsWith("To be")){
-                    dup.add(s);                        
+                    dup.add(s);
                 }
             }
                 db.add(s[0]);
                 acc.add(s[1]);
         }
         // do the difference between sets and return it
-        Set<String[]> uniques = new HashSet<String[]>(expReps); 
+        Set<String[]> uniques = new HashSet<String[]>(expReps);
         uniques.removeAll(dup);
         return uniques;
     }
@@ -499,7 +499,7 @@ public class MetadataCache
 
         QueryClass qcExp = new QueryClass(Experiment.class);
         QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
 
         QueryField qfName = new QueryField(qcExp, "name");
         QueryField qfClass = new QueryField(qcLsf, "class");
@@ -566,7 +566,7 @@ public class MetadataCache
         q.setDistinct(false);
 
         QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
 
         QueryField qfClass = new QueryField(qcLsf, "class");
 
@@ -644,22 +644,22 @@ public class MetadataCache
         LOG.info("Primed file names cache, took: " + timeTaken + "ms");
     }
 
-    
-    
-    
+
+
+
     private static void readSubmissionLocatedFeature(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         submissionLocatedFeatureTypes = new LinkedHashMap<Integer, List<String>>();
-        
+
         Query q = new Query();
         q.setDistinct(true);
 
         QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);        
+        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
         QueryClass qcLoc = new QueryClass(Location.class);
 
         QueryField qfClass = new QueryField(qcLsf, "class");
-        
+
         q.addFrom(qcSub);
         q.addFrom(qcLsf);
         q.addFrom(qcLoc);
@@ -680,22 +680,22 @@ public class MetadataCache
         q.setConstraint(cs);
 
         Results results = os.execute(q);
-        
+
         // for each classes set the values for jsp
         for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
             ResultsRow row = iter.next();
             Submission sub = (Submission) row.get(0);
             Class feat = (Class) row.get(1);
- 
+
             addToMap(submissionLocatedFeatureTypes,sub.getdCCid(),
                     TypeUtil.unqualifiedName(feat.getName()));
-            
-        }     
+
+        }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed located features cache, took: " + timeTaken + "ms");
     }
 
-    
+
     /**
      * Fetch reposited (GEO/SRA/AE..) entries per submission.
      * @param os the production objectStore
@@ -707,8 +707,8 @@ public class MetadataCache
         }
         return submissionRepositedCache;
     }
-    
-    
+
+
     private static void readSubmissionRepositoryEntries(ObjectStore os) {
         //
         long startTime = System.currentTimeMillis();
@@ -725,8 +725,8 @@ public class MetadataCache
             QueryField qfUrl = new QueryField(qcRepositoryEntry, "url");
             q.addFrom(qcRepositoryEntry);
             q.addToSelect(qfDatabase);
-            q.addToSelect(qfAccession);            
-            q.addToSelect(qfUrl);            
+            q.addToSelect(qfAccession);
+            q.addToSelect(qfUrl);
 
             // join the tables
             QueryCollectionReference ref1 = new QueryCollectionReference(qcSubmission, "databaseRecords");
@@ -778,10 +778,10 @@ public class MetadataCache
         LOG.info("Primed Repository entries cache, took: " + timeTaken + "ms");
     }
 
-    
-    
-    
-    
+
+
+
+
     /**
      * adds an element to a list which is the value of a map
      * @param m       the map (<String, List<String>>)
@@ -800,7 +800,7 @@ public class MetadataCache
             m.put(key, ids);
         }
     }
- 
+
     /**
      * Method to fill the cached map of submissions (ddcId) to list of
      * GBrowse tracks
@@ -832,7 +832,7 @@ public class MetadataCache
             URL url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_ST_URL_END);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
-            
+
             // examples of lines:
             //
             // [Henikoff_Salt_H3_WIG]
@@ -846,10 +846,10 @@ public class MetadataCache
             // citation = <h1> Chromosome-Nuclear Envelope Interaction proteins...
             //
             // note: subtracks have also names with spaces
-            
+
             StringBuffer trackName = new StringBuffer();
             StringBuffer toAppend = new StringBuffer();
-            
+
             while ((line = reader.readLine()) != null) {
                 LOG.debug("SUBTRACK LINE: " + line);
                 if(line.startsWith("[")){
@@ -865,7 +865,7 @@ public class MetadataCache
                         if (token.indexOf('#') < 0){
                             // we are dealing with a bit of name
                             toAppend.append(token + " ");
-                        } else { 
+                        } else {
                             // this is a token with subId
                             String subTrack = toAppend.toString() + token.substring(0, token.indexOf('#'));
                             Integer dccId = Integer.parseInt(token.substring(token.indexOf('#')+1, token.length()));
@@ -875,15 +875,15 @@ public class MetadataCache
                             addToGBMap(submissionTracksCache, dccId, newTrack);
                         }
                     }
-                }                
+                }
             }
             reader.close();
         } catch (Exception err) {
             err.printStackTrace();
-        }        
+        }
         return submissionTracksCache;
     }
-    
+
 
     /**
      * This method looks for dccId in the tokenised line
@@ -912,7 +912,7 @@ public class MetadataCache
         }
     }
 
-    
+
     /**
      * This method adds a GBrowse track to a map with
      * key = dccId
@@ -932,24 +932,24 @@ public class MetadataCache
             m.put(key, gbs);
         }
     }
-    
-    
+
+
     /**
      * This method get the GBrowse base URL from the properties
      * or default to one
      * @return the base URL
      */
     private static String getGBrowsePrefix() {
-        String GBROWSE_DEFAULT_URL = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";        
+        String GBROWSE_DEFAULT_URL = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
         Properties props = PropertiesUtil.getProperties();
-        String gbURL = props.getProperty("gbrowse.prefix") + "/";    
+        String gbURL = props.getProperty("gbrowse.prefix") + "/";
         if (gbURL == null || gbURL.length() < 5){
             return GBROWSE_DEFAULT_URL;
         }
        return gbURL;
     }
 
-    
+
     /**
      * This method get the GBrowse base URL from the properties
      * or default to one
@@ -959,8 +959,8 @@ public class MetadataCache
 
         featDescriptionCache = new HashMap<String, String>();
 
-        Properties props = new Properties(); 
-            
+        Properties props = new Properties();
+
             InputStream is = servletContext.getResourceAsStream("/WEB-INF/featureTypeDescr.properties");
             if (is == null) {
                 LOG.info("Unable to find /WEB-INF/featureTypeDescr.properties, there will be no feature type descruptions!");
@@ -985,5 +985,5 @@ public class MetadataCache
         return featDescriptionCache;
     }
 
-    
+
 }

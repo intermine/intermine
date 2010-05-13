@@ -231,7 +231,7 @@
         </node>
         <node path="Submission.submissionData" type="SubmissionData">
         </node>
-        <node path="Submission.submissionData.features" type="LocatedSequenceFeature">
+        <node path="Submission.submissionData.features" type="SequenceFeature">
         </node>
         <node path="Submission.submissionData.features.secondaryIdentifier" type="String">
           <constraint op="=" value="tr*" description="" identifier="" editable="true" code="A">

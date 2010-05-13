@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="RNAiScreen" extends="Experiment" is-interface="true">
+  <class name="RNAiScreen" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="cellLine" type="java.lang.String"/>
     <attribute name="analysisDescription" type="java.lang.String"/>
@@ -13,7 +13,7 @@
     <reference name="rnaiScreen" referenced-type="RNAiScreen" reverse-reference="rnaiScreenHits"/>
     <reference name="gene" referenced-type="Gene" reverse-reference="rnaiResults" />
   </class>
-  <class name="Amplicon" extends="LocatedSequenceFeature" is-interface="true">
+  <class name="Amplicon" extends="SequenceFeature" is-interface="true">
     <collection name="rnaiScreenHits" referenced-type="RNAiScreenHit"/>
     <collection name="genes" referenced-type="Gene"/>
   </class>

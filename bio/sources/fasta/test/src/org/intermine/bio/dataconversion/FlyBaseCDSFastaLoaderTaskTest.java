@@ -28,7 +28,7 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 
 import org.intermine.model.bio.CDS;
 import org.intermine.model.bio.DataSet;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Sequence;
 
@@ -147,7 +147,7 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
         ObjectStore os = osw.getObjectStore();
 
         Query q = new Query();
-        QueryClass lsfQueryClass = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass lsfQueryClass = new QueryClass(SequenceFeature.class);
         QueryClass seqQueryClass = new QueryClass(Sequence.class);
         q.addToSelect(lsfQueryClass);
         q.addToSelect(seqQueryClass);

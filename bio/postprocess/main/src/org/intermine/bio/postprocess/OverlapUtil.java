@@ -36,7 +36,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.DynamicUtil;
 
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.OverlapRelation;
 
@@ -53,11 +53,11 @@ public abstract class OverlapUtil
     private static final Logger LOG = Logger.getLogger(OverlapUtil.class);
 
     /**
-     * Creates OverlapRelations for overlapping LocatedSequenceFeature objects that are located
+     * Creates OverlapRelations for overlapping SequenceFeature objects that are located
      * on the given subject (generally a Chromosome).
      *
      * @param os the ObjectStore to query
-     * @param subject the LocatedSequenceFeature (eg. a Chromosome) where the LSFs are located
+     * @param subject the SequenceFeature (eg. a Chromosome) where the LSFs are located
      * @param classNamesToIgnore a List of the names of those classes that should be ignored when
      * searching for overlaps.  Sub classes to these classes are ignored too. In addition, an
      * entry can be of the form class=class, which specifies that the particular combination should
@@ -69,7 +69,7 @@ public abstract class OverlapUtil
      * @throws ObjectStoreException if an error occurs while writing
      * @throws ClassNotFoundException if there is an ObjectStore problem
      */
-    public static void createOverlaps(final ObjectStore os, LocatedSequenceFeature subject,
+    public static void createOverlaps(final ObjectStore os, SequenceFeature subject,
             List classNamesToIgnore, boolean ignoreSelfMatches, ObjectStoreWriter osw, Map summary)
     throws ObjectStoreException, ClassNotFoundException {
         Model model = os.getModel();
@@ -115,7 +115,7 @@ public abstract class OverlapUtil
         q.addToSelect(qcLoc);
 
         q.setDistinct(false);
-        QueryClass qcObj = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcObj = new QueryClass(SequenceFeature.class);
         q.addFrom(qcObj);
         q.addToSelect(qcObj);
 
@@ -135,7 +135,7 @@ public abstract class OverlapUtil
 
             Results results = os.execute(q);
 
-            // A Map from Location to the corresponding LocatedSequenceFeature
+            // A Map from Location to the corresponding SequenceFeature
             Map currentLocations = new HashMap();
 
             int count = 0;
@@ -150,7 +150,7 @@ public abstract class OverlapUtil
                     continue;
                 }
 
-                LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
+                SequenceFeature lsf = (SequenceFeature) rr.get(1);
 
                 if (isAClassToIgnore(classesToIgnore, lsf.getClass())) {
                     continue;
@@ -163,7 +163,7 @@ public abstract class OverlapUtil
                 while (currIter.hasNext()) {
                     Map.Entry currEntry = (Map.Entry) currIter.next();
                     Location currLoc = (Location) currEntry.getKey();
-                    LocatedSequenceFeature currLsf = (LocatedSequenceFeature) currEntry
+                    SequenceFeature currLsf = (SequenceFeature) currEntry
                         .getValue();
                     if (currLoc.getEnd().intValue() < start) {
                         currIter.remove();
@@ -185,10 +185,10 @@ public abstract class OverlapUtil
                                 ++count;
 
                                 osw.store(overlapRelation);
-                                osw.addToCollection(lsf.getId(), LocatedSequenceFeature.class,
+                                osw.addToCollection(lsf.getId(), SequenceFeature.class,
                                         "overlappingFeatures", currLsf.getId());
                                 osw.addToCollection(currLsf.getId(),
-                                        LocatedSequenceFeature.class,
+                                        SequenceFeature.class,
                                         "overlappingFeatures", lsf.getId());
 
                                 // Log it, for the summary.
@@ -225,7 +225,7 @@ public abstract class OverlapUtil
     }
 
     /**
-     * Return true if and only if the given LocatedSequenceFeature should be ignored when looking
+     * Return true if and only if the given SequenceFeature should be ignored when looking
      * for overlaps.
      */
     private static boolean isAClassToIgnore(Map classesToIgnore, Class clazz) {

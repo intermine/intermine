@@ -14,7 +14,7 @@ import org.biojava.bio.seq.DNATools;
 import org.biojava.bio.seq.ProteinTools;
 import org.biojava.bio.symbol.IllegalSymbolException;
 import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Protein;
 
 /**
@@ -28,14 +28,14 @@ public abstract class BioSequenceFactory
     public enum SequenceType { DNA, PROTEIN, RNA }
 
     /**
-     * Create a new BioSequence from a LocatedSequenceFeature
-     * @param feature the LocatedSequenceFeature
-     * @return a new BioSequence object or null if the LocatedSequenceFeature doesn't have a
+     * Create a new BioSequence from a SequenceFeature
+     * @param feature the SequenceFeature
+     * @return a new BioSequence object or null if the SequenceFeature doesn't have a
      * Sequence
-     * @throws IllegalSymbolException if any of the residues of the LocatedSequenceFeature can't be
+     * @throws IllegalSymbolException if any of the residues of the SequenceFeature can't be
      * turned into DNA symbols.
      */
-    public static BioSequence make(LocatedSequenceFeature feature)
+    public static BioSequence make(SequenceFeature feature)
         throws IllegalSymbolException {
         if (feature.getSequence() == null) {
             return null;
@@ -76,8 +76,8 @@ public abstract class BioSequenceFactory
             Protein protein = (Protein) bioEnt;
             String residues = protein.getSequence().getResidues();
             return new BioSequence(ProteinTools.createProtein(residues), protein);
-        } else if (bioEnt instanceof LocatedSequenceFeature) {
-            LocatedSequenceFeature feature = (LocatedSequenceFeature) bioEnt;
+        } else if (bioEnt instanceof SequenceFeature) {
+            SequenceFeature feature = (SequenceFeature) bioEnt;
             String residues = feature.getSequence().getResidues();
             return new BioSequence(DNATools.createDNA(residues), feature);
         } else {

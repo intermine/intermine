@@ -32,7 +32,7 @@ import javax.servlet.http.HttpSession;
 import org.intermine.api.results.Column;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.struts.GFF3ExportForm;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
@@ -62,7 +62,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
 
     /**
      * Method called to export a PagedTable object as GFF3.  The PagedTable can only be exported if
-     * there is exactly one LocatedSequenceFeature column and the other columns (if any), are simple
+     * there is exactly one SequenceFeature column and the other columns (if any), are simple
      * attributes (rather than objects).
      * {@inheritDoc}
      */
@@ -77,7 +77,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         if (form != null && form instanceof GFF3ExportForm) {
             organisms = ((GFF3ExportForm) form).getOrganisms();
         }
-               
+
         if (doGzip) {
             ResponseUtil.setGzippedHeader(response, "table" + StringUtil.uniqueString()
                     + ".gff3.gz");
@@ -86,12 +86,12 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         }
 
         List<Integer> indexes = ExportHelper.getClassIndexes(ExportHelper.getColumnClasses(pt),
-                LocatedSequenceFeature.class);
+                .class);
 
         // get the project title to be written in GFF3 records
         Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String sourceName = props.getProperty("project.title");
-        
+
         Exporter exporter;
         try {
             OutputStream out = response.getOutputStream();
@@ -128,21 +128,21 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
                 }
             } finally {
                 if (iter != null) {
-                    iter.releaseGoFaster();    
+                    iter.releaseGoFaster();
                 }
             }
         } catch (Exception e) {
             throw new ExportException("Export failed", e);
         }
-        
+
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export");
         }
     }
-    
+
     private void removeFirstItemInPaths(List<String> paths) {
         for (int i = 0; i < paths.size(); i++) {
-            String path = paths.get(i); 
+            String path = paths.get(i);
             paths.set(i, path.substring(path.indexOf(".") + 1, path.length()));
         }
     }

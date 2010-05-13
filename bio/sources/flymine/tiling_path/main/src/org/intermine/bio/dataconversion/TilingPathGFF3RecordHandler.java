@@ -11,14 +11,12 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
-
-import org.intermine.metadata.Model;
-import org.intermine.xml.full.Item;
-import org.intermine.util.XmlUtil;
+import java.util.Map;
 
 import org.intermine.bio.io.gff3.GFF3Record;
+import org.intermine.metadata.Model;
+import org.intermine.xml.full.Item;
 
 /**
  * A converter/retriever for the Drosophila tiling path GFF3 files.
@@ -28,7 +26,7 @@ import org.intermine.bio.io.gff3.GFF3Record;
 
 public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
 {
-    private Map references;
+    private Map<String, String> references;
 
     /**
      * Create a new TilingPathGFF3RecordHandler for the given target model.
@@ -40,7 +38,7 @@ public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
         // create a map of classname to reference name for parent references
         // this will add the parents of any SimpleRelations from getParents() to the
         // given collection
-        references = new HashMap();
+        references = new HashMap<String, String>();
         references.put("PCRProduct", "tilingPathSpan");
         references.put("ForwardPrimer", "pcrProduct");
         references.put("ReversePrimer", "pcrProduct");
@@ -53,14 +51,14 @@ public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
         Item feature = getFeature();
         String clsName = feature.getClassName();
 
-        List newIds = record.getAttributes().get("newID");
+        List<String> newIds = record.getAttributes().get("newID");
         if (newIds != null) {
             String newId = (String) newIds.get(0);
             addSynonym(feature, "identifier", newId);
             feature.setAttribute("primaryIdentifier", newId);
         }
 
-        List oldIds = record.getAttributes().get("oldID");
+        List<String> oldIds = record.getAttributes().get("oldID");
         if (oldIds != null) {
             String oldId = (String) oldIds.get(0);
             if (!oldId.equals(record.getId())) {
@@ -69,7 +67,7 @@ public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
         }
 
         if (clsName.equals("PCRProduct")) {
-            List promoters = record.getAttributes().get("promotor");
+            List<String> promoters = record.getAttributes().get("promotor");
 
             if (promoters.get(0).equals("1")) {
                 feature.setAttribute("promoter", "true");

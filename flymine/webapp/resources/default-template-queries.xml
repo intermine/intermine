@@ -1905,7 +1905,7 @@
       <constraint op="LOOKUP" value="big bang" description="" identifier="" editable="true" code="B" extraValue="">
       </constraint>
     </node>
-    <node path="Gene.overlappingFeatures" type="LocatedSequenceFeature">
+    <node path="Gene.overlappingFeatures" type="SequenceFeature">
     </node>
     <node path="Gene.exons" type="Exon">
     </node>
@@ -7898,4 +7898,3 @@
 </tags>
 </userprofile>
 
-  

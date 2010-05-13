@@ -51,7 +51,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private final List<Integer> dataList;
     private final String title;
     private final String scoreProtocolItemId;
-    
+
     private Set<String> commonFeatureInterMineTypes = new HashSet<String>();
 
     private static final String SUBFEATUREID_TEMP_TABLE_NAME = "modmine_subfeatureid_temp";
@@ -418,7 +418,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             map.put(new MultiKey("relationship", "ExperimentalFeature",
                     "evidence_for_feature", "ExonRegion"),
                     Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
-            
+
             // partial_evidence_for_feature
             map.put(new MultiKey("relationship", "OverlappingESTSet",
                     "partial_evidence_for_feature", "MRNA"),
@@ -460,7 +460,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
           map.put(new MultiKey("relationship", "TranscriptRegion",
                   "full_evidence_for_feature", "MRNA"),
                   Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
-            
+
           // additional properties
           map.put(new MultiKey("prop", "ExperimentalFeature", "dcpm"),
                   Arrays.asList(new SetFieldConfigAction("dcpm")));
@@ -468,7 +468,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                   Arrays.asList(new SetFieldConfigAction("dcpmBases")));
           map.put(new MultiKey("prop", "ExperimentalFeature", "read_count"),
                   Arrays.asList(new SetFieldConfigAction("readCount")));
-          map.put(new MultiKey("prop", "LocatedSequenceFeature", "prediction_status"),
+          map.put(new MultiKey("prop", "SequenceFeature", "prediction_status"),
                   Arrays.asList(new SetFieldConfigAction("predictionStatus")));
 
         }
@@ -649,7 +649,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
                 Attribute scoreTypeAttribute = new Attribute("scoreType", program);
                 getChadoDBConverter().store(scoreTypeAttribute, storedFeatureId);
-                
+
                 if (scoreProtocolItemId != null) {
                     Reference scoreProtocolRef =
                         new Reference("scoreProtocol", scoreProtocolItemId);

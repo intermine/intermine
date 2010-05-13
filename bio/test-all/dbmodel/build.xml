@@ -23,7 +23,9 @@
     <merge-additions file="bio/sources/chado-db/chado-db_additions.xml"/>
     <merge-additions file="bio/sources/chado-db/flybase-chado-db_additions.xml"/>
     <merge-additions file="bio/sources/flymine/anoest/anoest_additions.xml"/>
-    <merge-additions file="bio/sources/flymine/homophila/homophila_additions.xml"/>
+<!-- temporarily ignore 
+   <merge-additions file="bio/sources/flymine/homophila/homophila_additions.xml"/>
+-->
     <merge-additions file="bio/sources/interpro/interpro_additions.xml"/>
     <merge-additions file="bio/sources/flymine/bdgp-clone/bdgp-clone_additions.xml"/>
     <merge-additions file="bio/sources/flymine/drosdel-gff/drosdel-gff_additions.xml"/>
