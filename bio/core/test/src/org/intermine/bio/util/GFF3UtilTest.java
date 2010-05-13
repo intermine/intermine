@@ -68,24 +68,17 @@ public class GFF3UtilTest extends TestCase
 
         GFF3Record gff3Exon = GFF3Util.makeGFF3Record(exon, soClassNameMap, "FlyMine",
                                                       new HashMap<String, List<String>>());
-        GFF3Record gff3Chromosome =
-            GFF3Util.makeGFF3Record(chromosome, soClassNameMap, "FlyMine", 
-                    new HashMap<String, List<String>>());
 
         System.err.println (gff3Gene);
         System.err.println (gff3Exon);
-        System.err.println (gff3Chromosome);
 
         System.err.println (gff3Gene.toGFF3());
         System.err.println (gff3Exon.toGFF3());
-        System.err.println (gff3Chromosome.toGFF3());
 
         assertEquals("4\tFlyMine\tgene\t100\t800\t.\t+\t.\tname3=test_string1,test_string2;ID=gene1",
                      gff3Gene.toGFF3());
         assertEquals("4\tFlyMine\texon\t200\t300\t.\t-\t.\tID=exon1",
                      gff3Exon.toGFF3());
-        assertEquals("4\tFlyMine\tchromosome\t1\t1000\t.\t.\t.\tID=4",
-                     gff3Chromosome.toGFF3());
     }
     
     // Exon location has no strand information - should default to '.'
