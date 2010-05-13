@@ -260,11 +260,9 @@ public class CalculateLocations
 
                 newLocation.setStart(new Integer(parentObjectSimpleLoc.getStart()));
                 newLocation.setEnd(new Integer(parentObjectSimpleLoc.getEnd()));
-                newLocation.setStartIsPartial(Boolean.FALSE);
-                newLocation.setEndIsPartial(Boolean.FALSE);
                 newLocation.setStrand(parentObjectSimpleLoc.getStrand());
-                newLocation.setSubject(parentObject);
-                newLocation.setObject(locatedOnObject);
+                newLocation.setFeature(parentObject);
+                newLocation.setLocatedOn(locatedOnObject);
 
                 osw.store(newLocation);
             }
@@ -300,10 +298,10 @@ public class CalculateLocations
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "object");
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "locatedOn");
         ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcLocObject);
         cs.addConstraint(cc1);
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "feature");
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcChild);
         cs.addConstraint(cc2);
 
@@ -498,8 +496,6 @@ public class CalculateLocations
         private int childId;
         private String strand;
         private int end;
-        private boolean startIsPartial;
-        private boolean endIsPartial;
 
         /**
          * Construct with integer values
@@ -510,7 +506,7 @@ public class CalculateLocations
          * @param strand strand value
          */
         public SimpleLoc(int parentId, int childId, int start, int end, String strand) {
-            this(parentId, childId, start, end, strand, false, false);
+            this(parentId, childId, start, end, strand);
         }
 
         /**
@@ -523,15 +519,12 @@ public class CalculateLocations
          * @param startIsPartial start is partial flag
          * @param endIsPartial end is partial flag
          */
-        public SimpleLoc(int parentId, int childId, int start, int end, String strand,
-                         boolean startIsPartial, boolean endIsPartial) {
+        public SimpleLoc(int parentId, int childId, int start, int end, String strand) {
             this.parentId = parentId;
             this.childId = childId;
             this.start = start;
             this.end = end;
             this.strand = strand;
-            this.startIsPartial = startIsPartial;
-            this.endIsPartial = endIsPartial;
         }
 
         /**
@@ -545,16 +538,6 @@ public class CalculateLocations
             this.childId = childId;
             this.start = loc.getStart().intValue();
             this.end = loc.getEnd().intValue();
-            if (loc.getStartIsPartial() == null) {
-                this.startIsPartial = false;
-            } else {
-                this.startIsPartial = loc.getStartIsPartial().booleanValue();
-            }
-            if (loc.getEndIsPartial() == null) {
-                this.endIsPartial = false;
-            } else {
-                this.endIsPartial = loc.getEndIsPartial().booleanValue();
-            }
             if (loc.getStrand() != null) {
                 this.strand = loc.getStrand();
             } else {
@@ -626,45 +609,6 @@ public class CalculateLocations
             this.strand = strand;
         }
 
-        /**
-         * Return true if and only if the start is partial.
-         * @return true if and only if the start is partial.
-         */
-        public boolean startIsPartial() {
-            return startIsPartial;
-        }
-
-        /**
-         * Set the start-is-partial flag
-         * @param startIsPartial new start-is-partial flag
-         */
-        public void setStartIsPartial(boolean startIsPartial) {
-            this.startIsPartial = startIsPartial;
-        }
-
-        /**
-         * Return true if and only if the end is partial.
-         * @return true if and only if the end is partial.
-         */
-        public boolean endIsPartial() {
-            return endIsPartial;
-        }
-
-        /**
-         * Set the end-is-partial flag
-         * @param endIsPartial the new end-is-partial
-         */
-        public void setEndIsPartial(boolean endIsPartial) {
-            this.endIsPartial = endIsPartial;
-        }
-
-        /**
-         * Return true if the start or end of this SimpleLoc are partial.
-         * @return true if the start or end of this SimpleLoc are partial.
-         */
-        public boolean isPartial() {
-            return (startIsPartial() || endIsPartial());
-        }
 
         /**
          * @see Object#toString()
@@ -672,8 +616,7 @@ public class CalculateLocations
          */
         public String toString() {
             return "parent " + parentId + " child " + childId + " start " + start
-                + " end " + end + " strand " + strand + " startIsPartial: " + startIsPartial
-                + " endIsPartial: " + endIsPartial;
+                + " end " + end + " strand " + strand;
         }
     }
 }

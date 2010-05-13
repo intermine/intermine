@@ -84,7 +84,7 @@ public class IntergenicRegionUtil
 
         dataSet = (DataSet) DynamicUtil.createObject(Collections
                 .singleton(DataSet.class));
-        dataSet.setTitle("FlyMine intergenic regions");
+        dataSet.setName("FlyMine intergenic regions");
         dataSet.setDescription("Intergenic regions created by FlyMine");
         dataSet.setVersion("" + new Date()); // current time and date
         dataSet.setUrl("http://www.flymine.org");
@@ -258,11 +258,8 @@ public class IntergenicRegionUtil
                 location.setStart(new Integer(newLocStart));
                 location.setEnd(new Integer(newLocEnd));
                 location.setStrand("1");
-                location.setPhase(new Integer(0));
-                location.setStartIsPartial(Boolean.FALSE);
-                location.setEndIsPartial(Boolean.FALSE);
-                location.setSubject(intergenicRegion);
-                location.setObject(chr);
+                location.setFeature(intergenicRegion);
+                location.setLocatedOn(chr);
                 location.addDataSets(dataSet);
                 intergenicRegion.setChromosomeLocation(location);
                 intergenicRegion.setChromosome(chr);
@@ -294,33 +291,27 @@ public class IntergenicRegionUtil
                                 .getStrand();
                         if (strand != null) {
                             if (strand.equals("1")) {
-                                nextGene
-                                        .setUpstreamIntergenicRegion(intergenicRegion);
+                                nextGene.setUpstreamIntergenicRegion(intergenicRegion);
                             } else {
-                                nextGene
-                                        .setDownstreamIntergenicRegion(intergenicRegion);
+                                nextGene.setDownstreamIntergenicRegion(intergenicRegion);
                             }
                         }
                         adjacentGenes.add(nextGene);
                     }
                 }
 
-                List prevGenes = (List) locToGeneMap.get(new Integer(
-                        newLocStart - 1));
+                List prevGenes = (List) locToGeneMap.get(new Integer(newLocStart - 1));
                 if (prevGenes != null) {
                     Iterator prevGenesIter = prevGenes.iterator();
 
                     while (prevGenesIter.hasNext()) {
                         Gene prevGene = (Gene) prevGenesIter.next();
-                        String strand = prevGene.getChromosomeLocation()
-                                .getStrand();
+                        String strand = prevGene.getChromosomeLocation().getStrand();
                         if (strand != null) {
                             if (strand.equals("1")) {
-                                prevGene
-                                        .setDownstreamIntergenicRegion(intergenicRegion);
+                                prevGene.setDownstreamIntergenicRegion(intergenicRegion);
                             } else {
-                                prevGene
-                                        .setUpstreamIntergenicRegion(intergenicRegion);
+                                prevGene.setUpstreamIntergenicRegion(intergenicRegion);
                             }
                         }
                         adjacentGenes.add(prevGene);

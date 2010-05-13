@@ -293,8 +293,8 @@ public class GFF3Converter
             } else {
                 relation = createItem("SimpleRelation");
             }
-            relation.setReference("object", seq.getIdentifier());
-            relation.setReference("subject", feature.getIdentifier());
+            relation.setReference("locatedOn", seq.getIdentifier());
+            relation.setReference("feature", feature.getIdentifier());
             relation.setCollection("dataSets", Arrays.asList(new String[]
                 {
                     dataSet.getIdentifier()

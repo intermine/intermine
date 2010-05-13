@@ -117,8 +117,8 @@ public abstract class BioDBConverter extends DBConverter
             location.setAttribute("end", String.valueOf(start));
         }
         location.setAttribute("strand", String.valueOf(strand));
-        location.setReference("object", chromosomeId);
-        location.setReference("subject", locatedSequenceFeatureId);
+        location.setReference("locatedOn", chromosomeId);
+        location.setReference("feature", locatedSequenceFeatureId);
         return location;
     }
 

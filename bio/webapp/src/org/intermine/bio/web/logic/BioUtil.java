@@ -248,4 +248,32 @@ public class BioUtil implements WidgetHelper
     public Collection<String> getExtraAttributes(ObjectStore os, InterMineBag bag) {
         return getOrganisms(os, bag, false);
     }
+
+    /**
+     * Make a Location Relation between a LocatedSequenceFeature and a Chromosome.
+     * @param chromosomeId Chromosome Item identifier
+     * @param locatedSequenceFeatureId the Item identifier of the feature
+     * @param start the start position
+     * @param end the end position
+     * @param strand the strand
+     * @param taxonId the taxon id to use when finding the Chromosome for the Location
+     * @return the new Location object
+     */
+    protected Item makeLocation(String chromosomeId, String locatedSequenceFeatureId,
+                                int start, int end, int strand, int taxonId) {
+        Item location = createItem("Location");
+
+        if (start < end) {
+            location.setAttribute("start", String.valueOf(start));
+            location.setAttribute("end", String.valueOf(end));
+        } else {
+            location.setAttribute("start", String.valueOf(end));
+            location.setAttribute("end", String.valueOf(start));
+        }
+        location.setAttribute("strand", String.valueOf(strand));
+        location.setReference("locatedOn", chromosomeId);
+        location.setReference("feature", locatedSequenceFeatureId);
+        return location;
+    }
+
 }

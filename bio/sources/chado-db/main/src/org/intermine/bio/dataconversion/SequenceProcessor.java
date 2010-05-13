@@ -39,7 +39,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
@@ -640,7 +640,7 @@ public class SequenceProcessor extends ChadoProcessor
                         throw new RuntimeException("unable to find class object for setting "
                                                    + "a chromosome reference", e);
                     }
-                    if (LocatedSequenceFeature.class.isAssignableFrom(featureClass)) {
+                    if (SequenceFeature.class.isAssignableFrom(featureClass)) {
                         Integer featureIntermineObjectId = featureData.getIntermineObjectId();
                         if (srcFeatureData.getInterMineType().equals("Chromosome")) {
                             Reference chrReference = new Reference();
@@ -783,23 +783,6 @@ public class SequenceProcessor extends ChadoProcessor
                             + " while processing relation: " + featRelationshipId;
                         throw new RuntimeException(message);
                     }
-                    if (Transcript.class.isAssignableFrom(objectClass)) {
-                        FeatureData subjectFeatureData = featureMap.get(firstFeature1Id);
-
-                        // XXX FIXME TODO Hacky special case: count the exons so we can set
-                        // exonCount later.  Perhaps this should be configurable.
-                        if (subjectFeatureData.getInterMineType().equals("Exon")) {
-                            if (!countMap.containsKey(objectFeatureData.getIntermineObjectId())) {
-                                countMap.put(objectFeatureData.getIntermineObjectId(),
-                                             new Integer(1));
-                            } else {
-                                Integer currentVal =
-                                    countMap.get(objectFeatureData.getIntermineObjectId());
-                                countMap.put(objectFeatureData.getIntermineObjectId(),
-                                             new Integer(currentVal.intValue() + 1));
-                            }
-                        }
-                    }
                 } else {
                     if (featureWarnings <= 20) {
                         if (featureWarnings < 20) {
@@ -833,13 +816,6 @@ public class SequenceProcessor extends ChadoProcessor
         LOG.info("processed " + count + " relations");
         LOG.info("total collection elements created: " + collectionTotal);
         res.close();
-
-        // XXX FIXME TODO Hacky special case: set the exonCount fields
-        for (Map.Entry<Integer, Integer> entry: countMap.entrySet()) {
-            Integer featureId = entry.getKey();
-            Integer collectionCount = entry.getValue();
-            setAttribute(featureId, "exonCount", String.valueOf(collectionCount));
-        }
     }
 
     /**
