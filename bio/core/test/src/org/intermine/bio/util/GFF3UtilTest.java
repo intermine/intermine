@@ -75,7 +75,7 @@ public class GFF3UtilTest extends TestCase
         System.err.println (gff3Gene.toGFF3());
         System.err.println (gff3Exon.toGFF3());
 
-        assertEquals("4\tFlyMine\tgene\t100\t800\t.\t+\t.\tname3=test_string1,test_string2;ID=gene1",
+        assertEquals("4\tFlyMine\tgene\t100\t800\t.\t+\t.\tID=gene1;name3=test_string1,test_string2",
                      gff3Gene.toGFF3());
         assertEquals("4\tFlyMine\texon\t200\t300\t.\t-\t.\tID=exon1",
                      gff3Exon.toGFF3());
