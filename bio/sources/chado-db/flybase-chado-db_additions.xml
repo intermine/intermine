@@ -20,6 +20,7 @@
   </class>
   <class name="InteractionExperiment" is-interface="true">
    <attribute name="name" type="java.lang.String"/>
+   <reference name="publication" referenced-type="Publication"/>
    <collection name="interactions" referenced-type="Interaction" reverse-reference="experiment"/>
   </class>
   <class name="Interaction" is-interface="true">
