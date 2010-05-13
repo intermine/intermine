@@ -11,6 +11,7 @@ package org.intermine.web.logic.widget;
  */
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class Bonferroni implements ErrorCorrection
     public Bonferroni(HashMap<String, BigDecimal> originalMap) {
         this.originalMap = originalMap;
         numberOfTests = new BigDecimal(originalMap.size());
-        alphaPerTest = ALPHA.divide(numberOfTests);
+        alphaPerTest = ALPHA.divide(numberOfTests, MathContext.DECIMAL32);
     }
 
     /**
