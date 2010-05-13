@@ -11,12 +11,10 @@
     <attribute name="secondaryIdentifier" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
     <reference name="organism" referenced-type="Organism"/>
-    <collection name="relations" referenced-type="SymmetricalRelation" reverse-reference="bioEntities"/>
-    <collection name="subjects" referenced-type="Relation" reverse-reference="object"/>
-    <collection name="objects" referenced-type="Relation" reverse-reference="subject"/>
-    <collection name="annotations" referenced-type="Annotation" reverse-reference="subject"/>
+    <collection name="children" referenced-type="BioEntity" />
+    <collection name="parents" referenced-type="BioEntity" />
+    <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject"/>
     <collection name="synonyms" referenced-type="Synonym" reverse-reference="subject"/>
-    <collection name="evidence" referenced-type="Evidence"/>
     <collection name="dataSets" referenced-type="DataSet" reverse-reference="bioEntities"/>
     <collection name="publications" referenced-type="Publication"/>
   </class>
@@ -42,7 +40,7 @@
     <collection name="bioEntities" referenced-type="BioEntity" reverse-reference="dataSets"/>
   </class>
 
-  <class name="Gene" extends="BioEntity" is-interface="true">
+  <class name="Gene" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
     <attribute name="ncbiGeneNumber" type="java.lang.String"/>
     <collection name="proteins" referenced-type="Protein" reverse-reference="genes"/>
@@ -59,7 +57,7 @@
     <attribute name="url" type="java.lang.String"/>
   </class>
   
-  <class name="OntologyTerm" extends="BioProperty" is-interface="true">
+  <class name="OntologyTerm" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
@@ -82,7 +80,7 @@
 
   <class name="OntologyAnnotation" is-interface="true">
     <attribute name="qualifier" type="java.lang.String"/>
-    <reference name="subject" referenced-type="BioEntity" reverse-reference="annotations"/>
+    <reference name="subject" referenced-type="BioEntity" reverse-reference="ontologyAnnotations"/>
     <collection name="dataSets" referenced-type="DataSet" />
     <collection name="publications" referenced-type="Publication" />
     <reference name="ontologyTerm" referenced-type="OntologyTerm" reverse-reference="ontologyAnnotations"/>
@@ -127,6 +125,10 @@
     <attribute name="residues" type="java.lang.String"/>
     <attribute name="length" type="int"/>
     <attribute name="md5checksum" type="java.lang.String"/>
+  </class>
+
+  <class name="SequenceFeature" extends="BioEntity" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
   </class>
 
   <class name="SequenceOntologyTerm" extends="OntologyTerm" is-interface="true"/>

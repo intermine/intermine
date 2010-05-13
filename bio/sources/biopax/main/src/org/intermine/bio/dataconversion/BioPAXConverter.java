@@ -153,7 +153,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
     public void setBiopaxDatasetname(String title)
     throws ObjectStoreException {
         dataset = createItem("DataSet");
-        dataset.setAttribute("title", title);
+        dataset.setAttribute("name", title);
 
     }
 

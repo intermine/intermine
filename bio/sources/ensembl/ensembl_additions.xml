@@ -1,37 +1,17 @@
 <?xml version="1.0"?>
 <classes>
-   <class name="Gene" extends="BioEntity" is-interface="true">
+   <class name="Gene" is-interface="true">
      <attribute name="featureType" type="java.lang.String"/>
-     <attribute name="curated" type="java.lang.String"/>
-     <collection name="transcripts" referenced-type="Transcript" reverse-reference="gene" />
    </class>
-
-  <class name="Protein" extends="BioEntity" is-interface="true">
-    <attribute name="md5checksum" type="java.lang.String"/>
-    <collection name="transcripts" referenced-type="Transcript" reverse-reference="protein" />
-    <collection name="CDSs" referenced-type="CDS" reverse-reference="protein" />
-  </class>
-
    <class name="Transcript" extends="BioEntity" is-interface="true">
      <reference name="gene" referenced-type="Gene" reverse-reference="transcripts" />
-     <reference name="protein" referenced-type="Protein" reverse-reference="transcripts" />
      <reference name="sequence" referenced-type="Sequence" />
-     <collection name="exons" referenced-type="Exon" reverse-reference="transcripts" />
    </class>
-
-   <class name="Exon" extends="BioEntity" is-interface="true">
-     <collection name="transcripts" referenced-type="Transcript" reverse-reference="exons" />
-   </class>
-
-   <class name="CDS" extends="GenePart" is-interface="true">
-     <reference name="protein" referenced-type="Protein" reverse-reference="CDSs" />
+   <class name="CDS"  is-interface="true">
      <reference name="sequence" referenced-type="Sequence" />
      <reference name="MRNA" referenced-type="MRNA" reverse-reference="CDSs" />
    </class>
-  <class name="MRNA" extends="Transcript" is-interface="true">
+  <class name="MRNA" is-interface="true">
     <collection name="CDSs" referenced-type="CDS" reverse-reference="MRNA"/>
-  </class>
-  <class name="Sequence" is-interface="true">
-    <attribute name="md5checksum" type="java.lang.String"/>
   </class>
 </classes>

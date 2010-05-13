@@ -41,7 +41,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
     private OrganismRepository or;
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
-    
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -59,7 +59,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         Item evidenceCode = createItem("OrthologueEvidenceCode");
         evidenceCode.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
         evidenceCode.setAttribute("name", EVIDENCE_CODE_NAME);
-        store(evidenceCode);        
+        store(evidenceCode);
         evidence = createItem("OrthologueEvidence");
         evidence.setReference("evidenceCode", evidenceCode);
         evidence.addToCollection("publications", pub);
@@ -84,7 +84,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
             String geneOrganismRefId = parseSymbol(line[1]);
             String homologue = line[5];
             String homoOrganismRefId = parseSymbol(line[6]);
-            createHomologue(getGene(geneIdentifier, geneOrganismRefId), 
+            createHomologue(getGene(geneIdentifier, geneOrganismRefId),
                             getGene(homologue, homoOrganismRefId));
         }
     }
@@ -132,8 +132,8 @@ public class DrosophilaHomologyConverter extends BioFileConverter
             throw new ObjectStoreException(e);
         }
     }
-    
-    private String getOrganism(String taxonId) 
+
+    private String getOrganism(String taxonId)
     throws ObjectStoreException  {
         String refId = organisms.get(taxonId);
         if (refId != null) {
@@ -146,15 +146,15 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         store(item);
         return refId;
     }
-    
-    private String parseSymbol(String symbol) 
+
+    private String parseSymbol(String symbol)
     throws ObjectStoreException  {
         if (!symbol.contains("\\")) {
-            return getOrganism("7227"); 
+            return getOrganism("7227");
         }
         String[] bits = symbol.split("\\\\");
         OrganismData od = or.getOrganismDataByAbbreviation(bits[0]);
         return getOrganism(String.valueOf(od.getTaxonId()));
     }
-    
+
 }

@@ -192,7 +192,7 @@ public abstract class BioDBConverter extends DBConverter
         Item dataSet = dataSets.get(title);
         if (dataSet == null) {
             dataSet = createItem("DataSet");
-            dataSet.setAttribute("title", title);
+            dataSet.setAttribute("name", title);
             dataSet.setReference("dataSource", dataSourceItem);
             if (url != null) {
                 dataSet.setAttribute("url", url);
@@ -247,11 +247,6 @@ public abstract class BioDBConverter extends DBConverter
         synonym.setAttribute("value", value);
         synonym.setAttribute("isPrimary", String.valueOf(isPrimary));
         synonym.setReference("subject", subjectId);
-//        if (evidence != null) {
-//            for (Item evidenceItem: evidence) {
-//                synonym.addToCollection("evidence", evidenceItem);
-//            }
-//        }
         return synonym;
     }
 }
