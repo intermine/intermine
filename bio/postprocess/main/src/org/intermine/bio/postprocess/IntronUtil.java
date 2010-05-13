@@ -105,7 +105,7 @@ public class IntronUtil
     throws ObjectStoreException {
 
         dataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
-        dataSet.setTitle("FlyMine introns");
+        dataSet.setName("FlyMine introns");
         dataSet.setDescription("Introns calculated by FlyMine");
         dataSet.setVersion("" + new Date()); // current time and date
         dataSet.setUrl("http://www.flymine.org");
@@ -322,11 +322,8 @@ public class IntronUtil
                 location.setStart(new Integer(newLocStart));
                 location.setEnd(new Integer(newLocEnd));
                 location.setStrand(tranLoc.getStrand());
-                location.setPhase(new Integer(0));
-                location.setStartIsPartial(Boolean.FALSE);
-                location.setEndIsPartial(Boolean.FALSE);
-                location.setSubject(intron);
-                location.setObject(transcript);
+                location.setFeature(intron);
+                location.setLocatedOn(transcript);
                 location.addDataSets(dataSet);
 
                 synonym.addDataSets(dataSet);

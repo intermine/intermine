@@ -291,7 +291,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         return refId;
     }
 
-    // TODO use BioDBConverter.makeLocation
+
     private String createLocation(LocationHolder holder, String probeset)
     throws ObjectStoreException {
         Item item = createItem("Location");
@@ -302,8 +302,8 @@ public class Drosophila2ProbeConverter extends FileConverter
         } else {
             LOG.warn("probeset " + probeset + " has no strand");
         }
-        item.setReference("object", holder.chromosomeRefID);
-        item.setReference("subject", probeset);
+        item.setReference("locatedOn", holder.chromosomeRefID);
+        item.setReference("feature", probeset);
         item.addToCollection("dataSets", dataSet);
         store(item);
         return item.getIdentifier();

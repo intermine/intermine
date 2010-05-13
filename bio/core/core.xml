@@ -50,6 +50,8 @@
     <attribute name="end" type="java.lang.Integer"/>
     <attribute name="start" type="java.lang.Integer"/>
     <attribute name="strand" type="java.lang.String"/>
+    <reference name="feature" referenced-type="BioEntity"/>
+    <reference name="locatedOn" referenced-type="BioEntity"/>
   </class>
 
   <class name="Ontology" is-interface="true">

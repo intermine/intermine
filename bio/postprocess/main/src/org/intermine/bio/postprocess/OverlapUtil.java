@@ -119,11 +119,11 @@ public abstract class OverlapUtil
         q.addFrom(qcObj);
         q.addToSelect(qcObj);
 
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "subject");
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "feature");
         ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj);
         cs.addConstraint(cc1);
 
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "object");
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "locatedOn");
         ContainsConstraint subjectIdConstraint = new ContainsConstraint(ref2, ConstraintOp.CONTAINS,
                 subject);
         cs.addConstraint(subjectIdConstraint);
