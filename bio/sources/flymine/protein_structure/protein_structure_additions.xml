@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <classes>
-<class name="ProteinStructure" extends="BioProperty" is-interface="true">
+<class name="ProteinStructure" is-interface="true">
   <attribute name="atm" type="java.lang.String"/>
   <attribute name="identifier" type="java.lang.String"/>
   <attribute name="prosaQScore" type="java.lang.Float"/>
@@ -15,7 +15,5 @@
 <class name="Protein" extends="BioEntity" is-interface="true">
   <attribute name="uniprotAccession" type="java.lang.String"/>
   <collection name="structures" referenced-type="ProteinStructure" reverse-reference="proteins"/>
-</class>
-<class name="ProteinDomain" extends="BioEntity" is-interface="true">
 </class>
 </classes>

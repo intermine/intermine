@@ -74,7 +74,7 @@ public class InterProConverter extends FileConverter
         private Stack stack = new Stack();
         private String attName = null;
         private StringBuffer attValue = null;
-        private ArrayList<Item> delayedItems = new ArrayList();
+        private ArrayList<Item> delayedItems = new ArrayList<Item>();
 
         /**
          * Constructor
@@ -302,7 +302,7 @@ public class InterProConverter extends FileConverter
         String refId = datasets.get(title);
         if (refId == null) {
             Item item = createItem("DataSet");
-            item.setAttribute("title", title + " data set");
+            item.setAttribute("name", title + " data set");
             item.setReference("dataSource", datasourceRefId);
             refId = item.getIdentifier();
             datasets.put(title, refId);

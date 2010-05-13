@@ -1,11 +1,8 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="CRM"
-         extends="RegulatoryRegion" is-interface="true">
-    <attribute name="primaryIdentifier" type="java.lang.String"/>
+  <class name="CRM" is-interface="true">
     <collection name="anatomyOntology" referenced-type="AnatomyTerm"/>
   </class>
-  <class name="Enhancer" extends="CRM" is-interface="true"/>
   <class name="AnatomyTerm" extends="OntologyTerm" is-interface="true"/>
   <class name="RegulatoryRegion" is-interface="true">
     <attribute name="evidenceMethod" type="java.lang.String"/>

@@ -11,7 +11,6 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +27,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
 
 /**
  * DataConverter to create items from DRSC RNAi screen date files.

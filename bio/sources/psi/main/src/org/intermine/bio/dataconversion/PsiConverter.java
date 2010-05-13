@@ -49,23 +49,23 @@ public class PsiConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(PsiConverter.class);
     private static final String PROP_FILE = "psi-intact_config.properties";
-    private Map<String, String> organisms = new HashMap();
-    private Map<String, String> pubs = new HashMap();
-    private Map<String, Object> experimentNames = new HashMap();
-    private Map<String, String> terms = new HashMap();
-    private Map<String, String> regions = new HashMap();
+    private Map<String, String> organisms = new HashMap<String, String>();
+    private Map<String, String> pubs = new HashMap<String, String>();
+    private Map<String, Object> experimentNames = new HashMap<String, Object>();
+    private Map<String, String> terms = new HashMap<String, String>();
+    private Map<String, String> regions = new HashMap<String, String>();
     private String termId = null;
     protected IdResolverFactory resolverFactory;
     private static final String INTERACTION_TYPE = "physical";
-    private Map<String, String[]> config = new HashMap();
+    private Map<String, String[]> config = new HashMap<String, String[]>();
     private Set<String> taxonIds = null;
     private Set<String> regionPrimaryIdentifiers = new HashSet();
-    private Set<String> synonyms = new HashSet();
-    private Map<String, String> genes = new HashMap();
+    private Set<String> synonyms = new HashSet<String>();
+    private Map<String, String> genes = new HashMap<String, String>();
     // list of interaction.shortNames.  IntAct has duplicate interaction information in
     // different files.  if a duplicate interaction is found, just skip it, we already have the
     // info. See #2136
-    private Set<String> interactions = new HashSet();
+    private Set<String> interactions = new HashSet<String>();
 
 
 

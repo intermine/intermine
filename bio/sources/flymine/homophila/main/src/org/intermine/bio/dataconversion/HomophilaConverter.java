@@ -64,7 +64,7 @@ public class HomophilaConverter extends BioFileConverter
 
     protected IdResolverFactory resolverFactory;
     Set<String> problemProteins = new HashSet();
-    
+
     /**
      * Construct a new instance of HomophilaConverter.
      *
@@ -90,7 +90,7 @@ public class HomophilaConverter extends BioFileConverter
         pub2 = createItem("Publication");
         pub2.addAttribute(new Attribute("pubMedId", "11752278"));
         store(pub2);
-        
+
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("protein", "7227");
     }
@@ -223,8 +223,8 @@ public class HomophilaConverter extends BioFileConverter
         Item drosophilaProtein = findTranslation(array);
         if (drosophilaProtein != null) {
             Item item = createItem("BlastMatch");
-            item.setReference("subject", findProtein(array));
-            item.setReference("object", drosophilaProtein);
+            item.setReference("child", findProtein(array));
+            item.setReference("parent", drosophilaProtein);
             item.setAttribute("EValue", array[E_VALUE]);
             store(item);
             matchCount++;
