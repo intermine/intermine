@@ -648,11 +648,10 @@ public class SequenceProcessor extends ChadoProcessor
                             chrReference.setRefId(srcFeatureData.getItemIdentifier());
                             getChadoDBConverter().store(chrReference, featureIntermineObjectId);
                         }
-                        // Don't set chromosomeLocation reference as this slows down dataloading
-                        //Reference locReference = new Reference();
-                        //locReference.setName("chromosomeLocation");
-                        //locReference.setRefId(location.getIdentifier());
-                        //getChadoDBConverter().store(locReference, featureIntermineObjectId);
+                        Reference locReference = new Reference();
+                        locReference.setName("chromosomeLocation");
+                        locReference.setRefId(location.getIdentifier());
+                        getChadoDBConverter().store(locReference, featureIntermineObjectId);
 
                         if (!featureData.getFlag(FeatureData.LENGTH_SET)) {
                             setAttribute(featureData.getIntermineObjectId(), "length",

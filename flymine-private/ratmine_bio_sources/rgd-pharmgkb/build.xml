@@ -1,5 +1,0 @@
-<project name="rgd-pharmgkb" default="default" basedir=".">
-  <description>build, test, package rgd-pharmgkb</description>
-  
-  <import file="../../../imbuild/source.xml"/>
-</project>
