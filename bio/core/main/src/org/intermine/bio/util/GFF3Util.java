@@ -19,7 +19,7 @@ import java.util.TreeMap;
 import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;

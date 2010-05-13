@@ -98,8 +98,8 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
             } else {
                 loc.setStrand("1");
             }
-            loc.setSubject(lsf);
-            loc.setObject(getChromosome(chromosomeId, organism));
+            loc.setFeature(lsf);
+            loc.setLocatedOn(getChromosome(chromosomeId, organism));
             lsf.setChromosomeLocation(loc);
             return loc;
         }

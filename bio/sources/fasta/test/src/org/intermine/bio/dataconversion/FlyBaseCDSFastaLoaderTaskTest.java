@@ -71,14 +71,14 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
             CDS cds = (CDS) ((ResultsRow) rr).get(0);
             assertNotNull(cds.getChromosomeLocation());
             DataSet dataSet = cds.getDataSets().iterator().next();
-            assertEquals(dataSetTitle, dataSet.getTitle());
+            assertEquals(dataSetTitle, dataSet.getName());
             if (cds.getPrimaryIdentifier().equals("CG4027-PB_CDS")) {
                 seenCG4027PB = true;
                 Location loc = cds.getChromosomeLocation();
                 assertEquals(5796731, loc.getStart().intValue());
                 assertEquals(5797861, loc.getEnd().intValue());
                 assertEquals("1", loc.getStrand());
-                assertEquals("X", loc.getObject().getPrimaryIdentifier());
+                assertEquals("X", loc.getLocatedOn().getPrimaryIdentifier());
                 assertEquals("FBtr0070823", cds.getmRNA().getPrimaryIdentifier());
                 assertEquals(36329, cds.getOrganism().getTaxonId().intValue());
             } else {
@@ -88,7 +88,7 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
                     assertEquals(20311671, loc.getStart().intValue());
                     assertEquals(20316734, loc.getEnd().intValue());
                     assertEquals("1", loc.getStrand());
-                    assertEquals("3R", loc.getObject().getPrimaryIdentifier());
+                    assertEquals("3R", loc.getLocatedOn().getPrimaryIdentifier());
                     assertEquals("FBtr0084640", cds.getmRNA().getPrimaryIdentifier());
                     assertEquals(36329, cds.getOrganism().getTaxonId().intValue());
                 }

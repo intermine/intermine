@@ -72,7 +72,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
             FivePrimeUTR utr = (FivePrimeUTR) ((ResultsRow) rr).get(0);
             assertEquals(1, utr.getDataSets().size());
             DataSet dataSet = utr.getDataSets().iterator().next();
-            assertEquals(dataSetTitle, dataSet.getTitle());
+            assertEquals(dataSetTitle, dataSet.getName());
 
             assertNotNull(utr.getChromosomeLocation());
             if (utr.getPrimaryIdentifier().equals("FBtr0112632-5-prime-utr")) {
@@ -81,7 +81,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                 assertEquals(10258903, loc.getStart().intValue());
                 assertEquals(10307410, loc.getEnd().intValue());
                 assertEquals("-1", loc.getStrand());
-                assertEquals("3R", loc.getObject().getPrimaryIdentifier());
+                assertEquals("3R", loc.getLocatedOn().getPrimaryIdentifier());
                 assertEquals("FBtr0112632", utr.getmRNA().getPrimaryIdentifier());
                 assertEquals(36329, utr.getOrganism().getTaxonId().intValue());
             } else {
@@ -91,7 +91,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                     assertEquals(18024494, loc.getStart().intValue());
                     assertEquals(18050424, loc.getEnd().intValue());
                     assertEquals("1", loc.getStrand());
-                    assertEquals("2R", loc.getObject().getPrimaryIdentifier());
+                    assertEquals("2R", loc.getLocatedOn().getPrimaryIdentifier());
                     assertEquals("FBtr0100521", utr.getmRNA().getPrimaryIdentifier());
                     assertEquals(36329, utr.getmRNA().getOrganism().getTaxonId().intValue());
                 }
@@ -120,7 +120,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
             ThreePrimeUTR utr = (ThreePrimeUTR) ((ResultsRow) rr).get(0);
             assertEquals(1, utr.getDataSets().size());
             DataSet dataSet = utr.getDataSets().iterator().next();
-            assertEquals(dataSetTitle, dataSet.getTitle());
+            assertEquals(dataSetTitle, dataSet.getName());
 
             assertNotNull(utr.getChromosomeLocation());
             if (utr.getPrimaryIdentifier().equals("FBtr0071764-3-prime-utr")) {
@@ -128,7 +128,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                 Location loc = utr.getChromosomeLocation();
                 assertEquals(18060033, loc.getStart().intValue());
                 assertEquals(18060346, loc.getEnd().intValue());
-                assertEquals("2R", loc.getObject().getPrimaryIdentifier());
+                assertEquals("2R", loc.getLocatedOn().getPrimaryIdentifier());
                 assertEquals("FBtr0071764", utr.getmRNA().getPrimaryIdentifier());
                 assertEquals(36329, utr.getOrganism().getTaxonId().intValue());
             } else {
@@ -137,7 +137,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                     Location loc = utr.getChromosomeLocation();
                     assertEquals(7594335, loc.getStart().intValue());
                     assertEquals(7595561, loc.getEnd().intValue());
-                    assertEquals("3R", loc.getObject().getPrimaryIdentifier());
+                    assertEquals("3R", loc.getLocatedOn().getPrimaryIdentifier());
                     assertEquals("FBtr0082533", utr.getmRNA().getPrimaryIdentifier());
                     assertEquals(36329, utr.getmRNA().getOrganism().getTaxonId().intValue());
                 }
