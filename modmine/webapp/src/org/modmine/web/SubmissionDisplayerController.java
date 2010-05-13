@@ -25,7 +25,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -62,14 +62,14 @@ public class SubmissionDisplayerController extends TilesAction
         final ServletContext servletContext = servlet.getServletContext();
 
         ObjectStore os = im.getObjectStore();
-        
+
         // submission object
         InterMineObject o = (InterMineObject) request.getAttribute("object");
 
         Query q = new Query();
         q.setDistinct(false);
 
-        QueryClass lsf = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass lsf = new QueryClass(SequenceFeature.class);
         QueryClass sub = new QueryClass(Submission.class);
 
         QueryField qfClass = new QueryField(lsf, "class");
@@ -114,7 +114,7 @@ public class SubmissionDisplayerController extends TilesAction
         }
 
         request.setAttribute("featureCounts", featureCounts);
-        
+
         Map<String, String> expFeatureDescription = MetadataCache.getFeatTypeDescription(servletContext);
         request.setAttribute("expFeatDescription", expFeatureDescription);
 

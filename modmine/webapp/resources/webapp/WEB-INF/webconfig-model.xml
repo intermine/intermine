@@ -29,7 +29,7 @@
       -->
       <displayer src="/model/wikiLink.jsp"/>
     </longdisplayers>
-    
+
   </class>
 
   <class className="org.intermine.model.bio.Experiment">
@@ -61,7 +61,7 @@
       -->
       <displayer src="/model/wikiLink.jsp"/>
     </longdisplayers>
-    
+
   </class>
 
   <class className="org.intermine.model.bio.Antibody">
@@ -174,7 +174,7 @@
     </bagdisplayers>
   </class>
 
-<!-- 
+<!--
   <class className="org.intermine.model.bio.Analysis">
     <fields>
       <fieldconfig fieldExpr="publication.title"/>
@@ -412,7 +412,7 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.LocatedSequenceFeature">
+  <class className="org.intermine.model.bio.SequenceFeature">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
@@ -587,9 +587,9 @@
 
   <class className="org.intermine.model.bio.TFBindingSite">
     <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/> 
-      <fieldconfig fieldExpr="length"/> 
-      <fieldconfig fieldExpr="score"/> 
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="length"/>
+      <fieldconfig fieldExpr="score"/>
 <!--   NB MODMINE      <fieldconfig fieldExpr="gene.primaryIdentifier"/> -->
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
@@ -669,7 +669,7 @@
 
   <tableExportConfig id="sequence"
                      className="org.intermine.bio.web.export.SequenceHttpExporter"/>
-                     
+
   <tableExportConfig id="gff3"
                      className="org.intermine.bio.web.export.GFF3HttpExporter"/>
 
@@ -682,7 +682,7 @@
         description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
         graphType="BarChart"
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
-        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
+        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.SequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
        />
 
       <!--<graphdisplayer id="feature_length" title="Feature Length"
@@ -692,7 +692,7 @@
         description="The distribution of feature lengths in this list compared to lengths of all features of this type."
         graphType="XYLineChart"
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
-        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
+        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.SequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
        />
        -->
 
@@ -754,13 +754,13 @@
                          exportField="primaryIdentifier"
                          typeClass="org.intermine.model.bio.Gene"
                          columnTitle="Orthologues"/>
-                         
-                         
+
+
       <htmldisplayer id="dummy" title="Your Widget Idea Here"
                       description=""
-                      content="Have an idea for a widget?  Contact us at help [at] modencode.org!"    
-                      typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.BindingSite"
-                      />       
+                      content="Have an idea for a widget?  Contact us at help [at] modencode.org!"
+                      typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.SequenceFeature,org.intermine.model.bio.BindingSite"
+                      />
 
     </widgets>
 </webconfig>

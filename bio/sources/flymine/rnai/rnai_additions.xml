@@ -11,7 +11,7 @@
   <attribute name="penetranceFrom" type="java.lang.String"/>
   <attribute name="penetranceTo" type="java.lang.String"/>
 </class>
-<class name="RNAiScreen" extends="Experiment" is-interface="true">
+<class name="RNAiScreen" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <reference name="organism" referenced-type="Organism"/>
 </class>

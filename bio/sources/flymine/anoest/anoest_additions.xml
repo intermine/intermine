@@ -1,12 +1,9 @@
 <?xml version="1.0"?>
 <classes>
   <class name="EST" is-interface="true">
-    <collection name="ESTClusters" referenced-type="ESTCluster"
-                reverse-reference="ESTs"/>
+    <collection name="ESTClusters" referenced-type="ESTCluster" reverse-reference="ESTs"/>
   </class>
-  <class name="ESTCluster"
-         extends="LocatedSequenceFeature" is-interface="true">
-    <collection name="ESTs" referenced-type="EST"
-                reverse-reference="ESTClusters"/>
+  <class name="ESTCluster" extends="SequenceFeature" is-interface="true">
+    <collection name="ESTs" referenced-type="EST" reverse-reference="ESTClusters"/>
   </class>
 </classes>

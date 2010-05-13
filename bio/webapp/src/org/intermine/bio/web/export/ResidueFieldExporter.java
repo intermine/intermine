@@ -24,7 +24,7 @@ import org.biojava.bio.seq.io.SeqIOTools;
 import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.utils.ChangeVetoException;
 import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Sequence;
 import org.intermine.bio.web.biojava.BioSequence;
@@ -77,8 +77,8 @@ public class ResidueFieldExporter implements FieldExporter
         response.setHeader("Content-Disposition ", "inline; filename=" + fieldName + ".fasta");
 
         try {
-            LocatedSequenceFeature lsf =
-                getLocatedSequenceFeatureForSequence(os, (Sequence) object);
+            SequenceFeature lsf =
+                getSequenceFeatureForSequence(os, (Sequence) object);
             BioEntity bioEntity = lsf;
 
             Protein protein = null;
@@ -89,7 +89,7 @@ public class ResidueFieldExporter implements FieldExporter
             }
 
             if (bioEntity == null) {
-                LOG.error("No LocatedSequenceFeature or Protein has a Sequence with id "
+                LOG.error("No SequenceFeature or Protein has a Sequence with id "
                           + sequence.getId());
                 OutputStream outputStream = response.getOutputStream();
                 PrintStream printStream = new PrintStream(outputStream);
@@ -132,16 +132,16 @@ public class ResidueFieldExporter implements FieldExporter
     }
 
     /**
-     * Find the LocatedSequenceFeature that references the given Sequence.
+     * Find the SequenceFeature that references the given Sequence.
      * @param os the ObjectStore
      * @param sequence the Sequence
-     * @return the LocatedSequenceFeature
+     * @return the SequenceFeature
      */
-    public static LocatedSequenceFeature getLocatedSequenceFeatureForSequence(ObjectStore os,
+    public static SequenceFeature getSequenceFeatureForSequence(ObjectStore os,
                                                                               Sequence sequence) {
         Query q = new Query();
 
-        QueryClass lsfQc = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass lsfQc = new QueryClass(SequenceFeature.class);
         q.addFrom(lsfQc);
         q.addToSelect(lsfQc);
 
@@ -159,7 +159,7 @@ public class ResidueFieldExporter implements FieldExporter
         Results results = os.execute(q);
 
         if (results.size() == 1) {
-            return (LocatedSequenceFeature) ((List) results.get(0)).get(0);
+            return (SequenceFeature) ((List) results.get(0)).get(0);
         } else {
             return null;
         }

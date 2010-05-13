@@ -25,7 +25,7 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.struts.SequenceExportForm;
 import org.intermine.bio.web.struts.SequenceExportOptionsController;
 import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
@@ -70,7 +70,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
         boolean doGzip = (form != null) && form.getDoGzip();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ObjectStore os = im.getObjectStore();
-        
+
         setSequenceExportHeader(response, doGzip);
 
         SequenceExportForm sef = (SequenceExportForm) form;
@@ -127,10 +127,10 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
             }
         } finally {
             if (iter != null) {
-                iter.releaseGoFaster();    
+                iter.releaseGoFaster();
             }
         }
-        
+
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }
@@ -140,7 +140,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
      * The intial export path list is just the paths from the columns of the PagedTable with
      * chromosomeLocation added (if appropriate)
      * {@inheritDoc}
-     * @throws PathException 
+     * @throws PathException
      */
     public List<Path> getInitialExportPaths(PagedTable pt) throws PathException {
         List<Path> paths = new ArrayList<Path>(ExportHelper.getColumnPaths(pt));
@@ -149,7 +149,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
 
         for (Path seqPath: sequencePaths) {
             Class<?> seqPathClass = seqPath.getEndClassDescriptor().getType();
-            if (LocatedSequenceFeature.class.isAssignableFrom(seqPathClass)) {
+            if (SequenceFeature.class.isAssignableFrom(seqPathClass)) {
                 // skip chromosome class, so ...chromosome.chromosomeLocation doesn't appear in
                 // paths, because chromosome.chromosomeLocation is empty and it caused empty
                 // export results

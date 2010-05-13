@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * A task the replace the locatedsequencefeatureoverlappingfeatures table with a view that uses the
+ * A task the replace the sequencefeatureoverlappingfeatures table with a view that uses the
  * bioseg type to calculate the overlaps.
  * @author Kim Rutherford
  */
@@ -41,7 +41,7 @@ public class OverlapViewTask
     }
 
     /**
-     * Drop the locatedsequencefeatureoverlappingfeatures table and replace it with a view that
+     * Drop the sequencefeatureoverlappingfeatures table and replace it with a view that
      * uses the bioseg type to calculate the overlaps.
      * @throws SQLException if there is a problem dropping the table or creating the view
      */
@@ -51,11 +51,11 @@ public class OverlapViewTask
 
         con.setAutoCommit(false);
 
-        String dropSql = "DROP TABLE locatedsequencefeatureoverlappingfeatures";
+        String dropSql = "DROP TABLE sequencefeatureoverlappingfeatures";
         String viewSql =
-            "CREATE VIEW locatedsequencefeatureoverlappingfeatures "
+            "CREATE VIEW sequencefeatureoverlappingfeatures "
             + " AS SELECT l1.subjectid AS overlappingfeatures, "
-            + "           l2.subjectid AS locatedsequencefeature "
+            + "           l2.subjectid AS sequencefeature "
             + "      FROM location l1, location l2 "
             + "     WHERE l1.objectid = l2.objectid "
             + "       AND l1.subjectid != l2.subjectid"

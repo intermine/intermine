@@ -41,7 +41,7 @@ public abstract class GFF3Util
      * @param extraAttributes name/value pairs to add to the attribute field of the GFF3Record
      * @return the GFF3Record or null if this lsf has no Chromosome or no Chromosome location
      */
-    public static GFF3Record makeGFF3Record(LocatedSequenceFeature lsf, 
+    public static GFF3Record makeGFF3Record(SequenceFeature lsf,
             Map<String, String> soClassNameMap, String sourceName,
             Map<String, List<String>> extraAttributes) {
         Set<Class> classes = DynamicUtil.decomposeClass(lsf.getClass());
@@ -76,7 +76,7 @@ public abstract class GFF3Util
 //            LOG.info("mGFFseq: " + sequenceID + "|len: " + lsf.getLength());
 
             for (Class c : classes) {
-                if (LocatedSequenceFeature.class.isAssignableFrom(c)) {
+                if (SequenceFeature.class.isAssignableFrom(c)) {
                     String className = TypeUtil.unqualifiedName(c.getName());
 //                     LOG.info("mGFF: " + className + "|" + lsf.getPrimaryIdentifier());
                     if (soClassNameMap.containsKey(className)) {
@@ -97,7 +97,7 @@ public abstract class GFF3Util
 
             start = chrLocation.getStart().intValue();
             end = chrLocation.getEnd().intValue();
-            if (chrLocation.getStrand() != null) { 
+            if (chrLocation.getStrand() != null) {
                 if (chrLocation.getStrand().equals("1")) {
                     strand = "+";
                 } else if (chrLocation.getStrand().equals("-1")) {
@@ -127,7 +127,7 @@ public abstract class GFF3Util
         } catch (IllegalAccessException e) {
             // do nothing, we can't set the score
         }
-        
+
         return new GFF3Record(sequenceID, sourceName, type, start, end, score, strand, null,
                               recordAttribute);
     }

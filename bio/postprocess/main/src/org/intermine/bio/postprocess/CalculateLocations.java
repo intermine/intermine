@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 import org.intermine.model.bio.AssemblyComponent;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.Constants;
@@ -75,7 +75,7 @@ public class CalculateLocations
 
 
     /**
-     * Create OverlapRelation objects for all overlapping LocatedSequenceFeatures by querying
+     * Create OverlapRelation objects for all overlapping SequenceFeatures by querying
      * objects that are located on chromosomes and overlap.
      * @param classNamesToIgnore a List of the names of those classes that should be ignored when
      * searching for overlaps.  Sub classes to these classes are ignored too. In addition, an
@@ -341,14 +341,14 @@ public class CalculateLocations
 
 
     /**
-     * For each LocatedSequenceFeature, if it has a Location on a Chromosome, set the
-     * LocatedSequenceFeature.chromosomeLocation reference to be that Location and set the length
-     * field of the LocatedSequenceFeature to chromosomeLocation.end - chromosomeLocation.start + 1
+     * For each SequenceFeature, if it has a Location on a Chromosome, set the
+     * SequenceFeature.chromosomeLocation reference to be that Location and set the length
+     * field of the SequenceFeature to chromosomeLocation.end - chromosomeLocation.start + 1
      * @throws Exception if anything goes wrong
      */
     public void setChromosomeLocationsAndLengths() throws Exception {
         Results results = BioQueries.findLocationAndObjects(os, Chromosome.class,
-                LocatedSequenceFeature.class, true, false, false, 10000);
+                SequenceFeature.class, true, false, false, 10000);
         Iterator resIter = results.iterator();
 
         osw.beginTransaction();
@@ -357,7 +357,7 @@ public class CalculateLocations
         // references.  If there are duplicates do nothing - this has happened for some affy
         // probes in FlyMine.
         Integer lastChrId = null;
-        LocatedSequenceFeature lastFeature = null;
+        SequenceFeature lastFeature = null;
         boolean storeLastFeature = true;  // will get set to false if duplicate locations seen
         Location lastLoc = null;
 
@@ -365,7 +365,7 @@ public class CalculateLocations
             ResultsRow rr = (ResultsRow) resIter.next();
 
             Integer chrId = (Integer) rr.get(0);
-            LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
+            SequenceFeature lsf = (SequenceFeature) rr.get(1);
             Location locOnChr = (Location) rr.get(2);
 
             if (lastFeature != null && !lsf.getId().equals(lastFeature.getId())) {
@@ -394,13 +394,13 @@ public class CalculateLocations
 
 
     /**
-     * For each LocatedSequenceFeature, if it has a Location on a Chromosome, set the
-     * LocatedSequenceFeature.chromosomeLocation reference *if* the reference is not already set.
+     * For each SequenceFeature, if it has a Location on a Chromosome, set the
+     * SequenceFeature.chromosomeLocation reference *if* the reference is not already set.
      * @throws Exception if anything goes wrong
      */
     public void setMissingChromosomeLocations() throws Exception {
         Results results = BioQueries.findLocationAndObjects(os, Chromosome.class,
-                LocatedSequenceFeature.class, false, false, true, 10000);
+                SequenceFeature.class, false, false, true, 10000);
         Iterator resIter = results.iterator();
 
         osw.beginTransaction();
@@ -409,7 +409,7 @@ public class CalculateLocations
         // references.  If there are duplicates do nothing - this has happened for some affy
         // probes in FlyMine.
         Integer lastChrId = null;
-        LocatedSequenceFeature lastFeature = null;
+        SequenceFeature lastFeature = null;
         boolean storeLastFeature = true;  // will get set to false if duplicate locations seen
         Location lastLoc = null;
         int count = 0;
@@ -418,7 +418,7 @@ public class CalculateLocations
             ResultsRow rr = (ResultsRow) resIter.next();
 
             Integer chrId = (Integer) rr.get(0);
-            LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
+            SequenceFeature lsf = (SequenceFeature) rr.get(1);
             Location locOnChr = (Location) rr.get(2);
 
             if (lastFeature != null && !lsf.getId().equals(lastFeature.getId())) {
@@ -447,10 +447,10 @@ public class CalculateLocations
 
 
 
-    private void setChromosomeReferencesAndStore(LocatedSequenceFeature lsf, Location loc,
+    private void setChromosomeReferencesAndStore(SequenceFeature lsf, Location loc,
                                                  Integer chrId) throws Exception {
-        LocatedSequenceFeature lsfClone =
-            (LocatedSequenceFeature) PostProcessUtil.cloneInterMineObject(lsf);
+        SequenceFeature lsfClone =
+            (SequenceFeature) PostProcessUtil.cloneInterMineObject(lsf);
 
         lsfClone.setChromosomeLocation(loc);
         if (loc.getStart() != null && loc.getEnd() != null) {

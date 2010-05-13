@@ -25,7 +25,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -50,7 +50,7 @@ public class SubmissionsController extends TilesAction
     // this is defined here, so we can query only the first time.
     private Map<Submission, Map<String, Long>> submissions =
         new LinkedHashMap<Submission, Map<String, Long>>();
-    
+
     /**
      * {@inheritDoc}
      */
@@ -64,9 +64,9 @@ public class SubmissionsController extends TilesAction
 
         if (submissions.size() > 0) {
             request.setAttribute("subs", submissions);
-            return null;            
+            return null;
         }
-        
+
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ObjectStore os = im.getObjectStore();
 
@@ -99,7 +99,7 @@ public class SubmissionsController extends TilesAction
         q = new Query();
         q.setDistinct(false);
 
-        QueryClass lsf = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass lsf = new QueryClass(SequenceFeature.class);
 
         QueryField qfClass = new QueryField(lsf, "class");
 
@@ -121,9 +121,6 @@ public class SubmissionsController extends TilesAction
         q.setConstraint(cc);
 
         results = os.execute(q);
-
-//        Map<Submission, Map<String, Long>> submissions =
-//            new LinkedHashMap<Submission, Map<String, Long>>();
 
         // for each class set the values for jsp
         for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {

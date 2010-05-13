@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="NaturalTransposableElement" extends="Region" is-interface="true"/>
-
-  <class name="PhenotypeAnnotation" extends="Annotation" is-interface="true">
+  <class name="PhenotypeAnnotation" is-interface="true">
     <attribute name="description" type="java.lang.String"/>
     <attribute name="annotationType" type="java.lang.String"/>
     <reference name="allele" referenced-type="Allele" reverse-reference="phenotypeAnnotations"/>
@@ -20,7 +18,7 @@
     <collection name="mutagens" referenced-type="Mutagen" reverse-reference="alleles"/>
     <collection name="phenotypeAnnotations" referenced-type="PhenotypeAnnotation" reverse-reference="allele"/>
   </class>
-  <class name="InteractionExperiment" extends="Experiment" is-interface="true">
+  <class name="InteractionExperiment" is-interface="true">
    <attribute name="name" type="java.lang.String"/>
    <collection name="interactions" referenced-type="Interaction" reverse-reference="experiment"/>
   </class>
@@ -44,12 +42,11 @@
   <class name="AnatomyTerm" extends="OntologyTerm" is-interface="true" />
   <class name="DevelopmentTerm" extends="OntologyTerm" is-interface="true" />
   <class name="CVTerm" extends="OntologyTerm" is-interface="true"/>
-  <class name="ChromosomeStructureVariation" extends="LocatedSequenceFeature" is-interface="true">
+  <class name="ChromosomeStructureVariation" extends="SequenceFeature" is-interface="true">
     <collection name="featureTerms" referenced-type="SequenceOntologyTerm"/>
   </class>
-  <class name="CDNAClone" extends="BioEntity" is-interface="true">
-	<attribute name="stage" type="java.lang.String"/>	
-	<attribute name="length" type="java.lang.String"/>
+  <class name="CDNAClone" is-interface="true">
+	<attribute name="stage" type="java.lang.String"/>
 	<reference name="tissueSource" referenced-type="AnatomyTerm" />
-  </class>  
+  </class>
 </classes>

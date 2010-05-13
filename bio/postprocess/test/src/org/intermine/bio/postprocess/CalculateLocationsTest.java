@@ -27,7 +27,7 @@ import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Contig;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.OverlapRelation;
 import org.intermine.model.bio.ReversePrimer;
@@ -44,7 +44,7 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 
-public class CalculateLocationsTest extends TestCase 
+public class CalculateLocationsTest extends TestCase
 {
 
     private ObjectStoreWriter osw;
@@ -227,8 +227,8 @@ public class CalculateLocationsTest extends TestCase
             Set bioEntities = overlap.getBioEntities();
 
             Iterator beIter = bioEntities.iterator();
-            LocatedSequenceFeature lsf1 = (LocatedSequenceFeature) beIter.next();
-            LocatedSequenceFeature lsf2 = (LocatedSequenceFeature) beIter.next();
+            SequenceFeature lsf1 = (SequenceFeature) beIter.next();
+            SequenceFeature lsf2 = (SequenceFeature) beIter.next();
 
             for (int i = 0; i < expectedOverlaps.length; i++) {
                 if (lsf1.getId().intValue() == expectedOverlaps[i][0] &&
@@ -276,8 +276,8 @@ public class CalculateLocationsTest extends TestCase
             Set bioEntities = overlap.getBioEntities();
 
             Iterator beIter = bioEntities.iterator();
-            LocatedSequenceFeature lsf1 = (LocatedSequenceFeature) beIter.next();
-            LocatedSequenceFeature lsf2 = (LocatedSequenceFeature) beIter.next();
+            SequenceFeature lsf1 = (SequenceFeature) beIter.next();
+            SequenceFeature lsf2 = (SequenceFeature) beIter.next();
 
             for (int i = 0; i < expectedOverlaps.length; i++) {
                 if (lsf1.getId().intValue() == expectedOverlaps[i][0] &&
@@ -293,7 +293,7 @@ public class CalculateLocationsTest extends TestCase
         }
     }
 
- 
+
     public void testCreateSpanningLocations() throws Exception {
         Exon exon1 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         exon1.setId(new Integer(107));
@@ -425,7 +425,7 @@ public class CalculateLocationsTest extends TestCase
         Chromosome chr2 = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         chr1.setPrimaryIdentifier("2");
         chr1.setId(new Integer(102));
-        
+
         Exon exon1 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         exon1.setId(new Integer(107));
         exon1.setLength(new Integer(1000));
@@ -433,7 +433,7 @@ public class CalculateLocationsTest extends TestCase
         exon2.setId(new Integer(108));
         Exon exon3 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         exon3.setId(new Integer(109));
-        
+
         // exon 2 has two chromosome locations, shouldn't get chromosome[Location] references
         Location exon1OnChr = createLocation(chr1, exon1, "1", 51, 100, Location.class);
         exon1OnChr.setId(new Integer(1010));
@@ -443,7 +443,7 @@ public class CalculateLocationsTest extends TestCase
         exon2OnChrDup.setId(new Integer(1012));
         Location exon3OnChr = createLocation(chr2, exon3, "1", 601, 650, Location.class);
         exon3OnChr.setId(new Integer(1013));
-        
+
         Set toStore = new HashSet(Arrays.asList(new Object[] {
             chr1, chr2, exon1, exon2, exon3,
             exon1OnChr, exon2OnChr, exon2OnChrDup, exon3OnChr
@@ -456,29 +456,29 @@ public class CalculateLocationsTest extends TestCase
 
         CalculateLocations cl = new CalculateLocations(osw);
         cl.setChromosomeLocationsAndLengths();
-        
+
         ObjectStore os = osw.getObjectStore();
         Exon resExon1 = (Exon) os.getObjectById(new Integer(107));
         Exon resExon2 = (Exon) os.getObjectById(new Integer(108));
         Exon resExon3 = (Exon) os.getObjectById(new Integer(109));
-        
+
         assertEquals(chr1.getId(), resExon1.getChromosome().getId());
         assertEquals(exon1OnChr.getId(), resExon1.getChromosomeLocation().getId());
-        
+
         assertNull(resExon2.getChromosome());
         assertNull(resExon2.getChromosomeLocation());
-        
+
         assertEquals(chr2.getId(), resExon3.getChromosome().getId());
         assertEquals(exon3OnChr.getId(), resExon3.getChromosomeLocation().getId());
-    
+
         // exon1 has length set so should stay as 1000, exon3 should get length 50 set from location
         assertEquals(new Integer(1000), resExon1.getLength());
         assertEquals(new Integer(50), resExon3.getLength());
         // nothing done to exon2
         assertNull(resExon2.getLength());
     }
-    
-    
+
+
     private Location createLocation(BioEntity object, BioEntity subject, String strand,
                                     int start, int end, Class locationClass) {
         Location loc = (Location) DynamicUtil.createObject(Collections.singleton(locationClass));

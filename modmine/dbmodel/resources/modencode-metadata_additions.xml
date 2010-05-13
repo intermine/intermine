@@ -2,23 +2,23 @@
 <classes>
 <!-- FEATURES -->
 
-<!-- Extension of classes defined elsewhere, e.g. 
+<!-- Extension of classes defined elsewhere, e.g.
      bio/core/genomic_additions.xml
-     bio/sources/so/so_additions.xml 
+     bio/sources/so/so_additions.xml
 -->
 
-<class name="LocatedSequenceFeature" is-interface="true">
+<class name="SequenceFeature" is-interface="true">
   <attribute name="featureType" type="java.lang.String" />
   <attribute name="score" type="java.lang.Double" />
   <attribute name="scoreType" type="java.lang.String" />
   <attribute name="predictionStatus" type="java.lang.String" />
   <reference name="scoreProtocol" referenced-type="Protocol" />
   <collection name="submissions" referenced-type="Submission" reverse-reference="features" />
-  <collection name="featureEvidence" referenced-type="LocatedSequenceFeature" reverse-reference="supportedFeatures" />
-  <collection name="supportedFeatures" referenced-type="LocatedSequenceFeature" reverse-reference="featureEvidence" />  
+  <collection name="featureEvidence" referenced-type="SequenceFeature" reverse-reference="supportedFeatures" />
+  <collection name="supportedFeatures" referenced-type="SequenceFeature" reverse-reference="featureEvidence" />
 </class>
 <class name="ThreePrimeUTR" is-interface="true">
-  <collection name="CDSs" referenced-type="CDS" reverse-reference="threePrimeUTRs" />    
+  <collection name="CDSs" referenced-type="CDS" reverse-reference="threePrimeUTRs" />
 </class>
 <class name="CDS" is-interface="true">
   <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="CDSs"/>
@@ -28,7 +28,7 @@
   <collection name="startCodons" referenced-type="StartCodon" reverse-reference="mRNA"/>
   <collection name="stopCodons" referenced-type="StopCodon" reverse-reference="mRNA"/>
   <collection name="stopCodons" referenced-type="StopCodon" reverse-reference="mRNA"/>
-</class> 
+</class>
 <class name="EST" is-interface="true">
   <collection name="overlappingESTSets" referenced-type="OverlappingESTSet" reverse-reference="ESTs" />
 </class>
@@ -48,7 +48,7 @@
 </class>
 <!-- PolyASite is already in so_additions extending 'GenePart', not in miso -->
 <class name="PolyASite" is-interface="true">
-  <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="polyASite"/>        
+  <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="polyASite"/>
 </class>
 
 
@@ -56,30 +56,30 @@
 <class name="CDNA" extends="Region" is-interface="true"/>
 <class name="NaturalTransposableElement" extends="Region" is-interface="true"/>
 <class name="StopCodon" extends="Codon" is-interface="true">
-  <reference name="mRNA" referenced-type="MRNA" reverse-reference="stopCodons"/>        
+  <reference name="mRNA" referenced-type="MRNA" reverse-reference="stopCodons"/>
 </class>
 <class name="StartCodon" extends="Codon" is-interface="true">
-  <reference name="mRNA" referenced-type="MRNA" reverse-reference="startCodons"/>        
+  <reference name="mRNA" referenced-type="MRNA" reverse-reference="startCodons"/>
 </class>
 <class name="HistoneBindingSite" extends="ProteinBindingSite" is-interface="true"/>
 <class name="TranscriptRegion" extends="Region" is-interface="true">
 </class>
 <class name="CopyNumberVariation" extends="SequenceVariant" is-interface="true"/>
 <class name="ThreePrimeRACEClone" extends="Region" is-interface="true">
-  <reference name="polyASite" referenced-type="PolyASite" reverse-reference="threePrimeRACEClone"/>            
-  <reference name="threePrimeRST" referenced-type="ThreePrimeRST" reverse-reference="threePrimeRACEClone"/>        
+  <reference name="polyASite" referenced-type="PolyASite" reverse-reference="threePrimeRACEClone"/>
+  <reference name="threePrimeRST" referenced-type="ThreePrimeRST" reverse-reference="threePrimeRACEClone"/>
 </class>
 <class name="ThreePrimeRST" extends="Region" is-interface="true">
-  <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="threePrimeRST"/>            
-  <reference name="threePrimeUST" referenced-type="ThreePrimeUST" reverse-reference="threePrimeRST"/>            
+  <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="threePrimeRST"/>
+  <reference name="threePrimeUST" referenced-type="ThreePrimeUST" reverse-reference="threePrimeRST"/>
 </class>
 <class name="ThreePrimeUST" extends="Region" is-interface="true">
- <reference name="threePrimeRST" referenced-type="ThreePrimeRST" reverse-reference="threePrimeUST"/>        
+ <reference name="threePrimeRST" referenced-type="ThreePrimeRST" reverse-reference="threePrimeUST"/>
 </class>
 
 <class name="OverlappingESTSet" extends="Region" is-interface="true">
   <collection name="ESTs" referenced-type="EST" reverse-reference="overlappingESTSets" />
-<!-- 
+<!--
   <reference name="gene" referenced-type="Gene" reverse-reference="overlappingESTSet" />
   <reference name="mRNA" referenced-type="MRNA" reverse-reference="overlappingESTSet" />
   <reference name="transcriptRegion" referenced-type="TranscriptRegion" reverse-reference="overlappingESTSet"/>
@@ -103,7 +103,7 @@
   <collection name="transcripts" referenced-type="Transcript" reverse-reference="TSSs"/>
 </class>
 
-<!-- OTHER modENCODE classes -->   
+<!-- OTHER modENCODE classes -->
 
 <class name="Project" is-interface="true">
   <attribute name="name" type="java.lang.String" />
@@ -138,11 +138,11 @@
   <attribute name="qualityControl" type="java.lang.String" />
   <attribute name="replicate" type="java.lang.String" />
   <attribute name="experimentDate" type="java.util.Date" />
-  <attribute name="publicReleaseDate" type="java.util.Date" />     
-  <attribute name="embargoDate" type="java.util.Date" />     
-  <attribute name="DCCid" type="java.lang.Integer" />     
-  <attribute name="experimentType" type="java.lang.String" />     
-  <reference name="organism" referenced-type="Organism" /> 
+  <attribute name="publicReleaseDate" type="java.util.Date" />
+  <attribute name="embargoDate" type="java.util.Date" />
+  <attribute name="DCCid" type="java.lang.Integer" />
+  <attribute name="experimentType" type="java.lang.String" />
+  <reference name="organism" referenced-type="Organism" />
   <reference name="publication" referenced-type="Publication"/>
 <!-- <attribute name="fileFormat" type="java.lang.String"/> -->
     <reference name="experiment"
@@ -174,7 +174,7 @@
     <collection name="strains" referenced-type="Strain"/>
     <collection name="tissues" referenced-type="Tissue"/>
     <collection name="arrays" referenced-type="Array"/>
-    <collection name="features" referenced-type="LocatedSequenceFeature" reverse-reference="submissions"/>
+    <collection name="features" referenced-type="SequenceFeature" reverse-reference="submissions"/>
     <collection name="databaseRecords" referenced-type="DatabaseRecord" reverse-reference="submissions"/>
     <collection name="resultFiles" referenced-type="ResultFile" reverse-reference="submission"/>
     <collection name="relatedSubmissions" referenced-type="Submission"/>
@@ -205,7 +205,7 @@
     <reference name="submission" referenced-type="Submission" reverse-reference="resultFiles"/>
   </class>
 
-  <class name="Protocol"  
+  <class name="Protocol"
     is-interface="true">
     <attribute name="name" type="java.lang.String" />
     <attribute name="description" type="java.lang.String" />
@@ -225,7 +225,7 @@
     is-interface="true">
     <attribute name="step" type="java.lang.Integer" />
     <attribute name="name" type="java.lang.String" />
-    <!-- parameter values 
+    <!-- parameter values
     <attribute name="label" type="java.lang.String" />
 -->
     <reference name="protocol"
@@ -251,7 +251,7 @@
       referenced-type="SubmissionDataAttribute"
       reverse-reference="submissionData" />
     <collection name="features"
-      referenced-type="LocatedSequenceFeature" />
+      referenced-type="SequenceFeature" />
     <collection name="nextAppliedProtocols"
       referenced-type="AppliedProtocol"
       reverse-reference="inputs" />
@@ -300,18 +300,18 @@
     <attribute name="targetName" type="java.lang.String"/>
     <reference name="target" referenced-type="Gene"/>
   </class>
-  
+
   <class name="Tissue" extends="SubmissionProperty" is-interface="true">
     <attribute name="species" type="java.lang.String"/>
     <attribute name="sex" type="java.lang.String"/>
     <attribute name="organismPart" type="java.lang.String"/>
   </class>
-  
+
   <class name="DevelopmentalStage" extends="SubmissionProperty" is-interface="true">
     <attribute name="sex" type="java.lang.String"/>
     <collection name="ontologyTerms" referenced-type="OntologyTerm"/>
   </class>
-  
+
   <class name="Antibody" extends="SubmissionProperty" is-interface="true">
     <attribute name="hostOrganism" type="java.lang.String"/>
     <attribute name="targetName" type="java.lang.String"/>
@@ -327,5 +327,5 @@
 
   <class name="GrowthTemperature" extends="SubmissionProperty" is-interface="true">
   </class>
-  
+
 </classes>
