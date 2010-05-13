@@ -17,7 +17,7 @@ Please see documentation below)
 To install this module, run the following commands 1 - 3:
 
 1) To make:
-    cpan -i XML::Parser::PerlSAX XML::Writer IO::String URI LWP::UserAgent
+    cpan -i XML::Parser::PerlSAX XML::Writer IO::String URI LWP::UserAgent Text::CSV_XS
     perl Makefile.PL
     make
 

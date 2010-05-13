@@ -45,16 +45,16 @@ public class GFF3Exporter implements Exporter
 {
     private static final Logger LOG = Logger.getLogger(GFF3Exporter.class);
 
-//        public static final Set<String> GFF_FIELDS = Collections
-//            .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
-//                            "chromosomeLocation.start", "chromosomeLocation.end",
-//                            "chromosomeLocation.strand", "primaryIdentifier", "score")));
 
-        public static final Set<String> GFF_FIELDS = Collections
-        .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
-                        "chromosomeLocation.start", "chromosomeLocation.end",
-                        "chromosomeLocation.strand", "primaryIdentifier", "score", 
-                        "start", "end", "strand")));
+//    public static final Set<String> GFF_FIELDS = Collections
+//    .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
+//            "chromosomeLocation.start", "chromosomeLocation.end",
+//            "chromosomeLocation.strand", "primaryIdentifier", "score", 
+//            "start", "end", "strand")));
+
+    public static final Set<String> GFF_FIELDS = Collections
+    .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
+             "primaryIdentifier", "score")));
 
     PrintWriter out;
     private List<Integer> featureIndexes;
@@ -66,8 +66,7 @@ public class GFF3Exporter implements Exporter
     private String sourceName;
     private Set<Integer> organisms;
     // this one to store the lower case class names of  soClassNames, 
-    // for comparison with path elements.
-    // possibly not necessary. TOCHECK
+    // for comparison with path elements classes.
     private Set<String> cNames = new HashSet<String>(); 
     /**
      * Constructor.
@@ -92,9 +91,6 @@ public class GFF3Exporter implements Exporter
             this.cNames.add(s.toLowerCase());                
         }
     }
-
-
-
 
 
     /**
@@ -185,8 +181,7 @@ public class GFF3Exporter implements Exporter
         // loop through all the objects in a row
         for (ResultElement re : elWithObject ){
             LocatedSequenceFeature lsf = (LocatedSequenceFeature) re.getObject();
-//             LOG.info("GFFrePath: " + re.getPath());
-
+            //             LOG.info("GFFrePath: " + re.getPath());
             boolean isCollection = re.getPath().containsCollections();
 
             if (exportedIds.contains(lsf.getId()) && !(lsf.getId().equals(lastLsfId))) {
@@ -201,7 +196,6 @@ public class GFF3Exporter implements Exporter
                 attributes = new LinkedHashMap<String, List<String>>();
             }
 
-
             String parent = null;
             for (int i = 0; i < row.size(); i++) {
                 ResultElement el = row.get(i);
@@ -209,91 +203,77 @@ public class GFF3Exporter implements Exporter
                 if (el == null){
                     continue;
                 }
-                
+
                 if (i==0 ){ // this is the beginning of the path
                     parent = (String) el.getField();
                 }
-//                LOG.info("AA "+ i +": " + el.getPath() + "|" +el.getField()+ "|" +el.getType());
-                
-                // checks for assigning attributes
-                if (isCollection && !el.getPath().containsCollections()){
-//                                 LOG.info("P1: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
 
-                                 // one is collection, the other is not: do not show
+                // checks for attributes:
+                if (isCollection && !el.getPath().containsCollections()){
+                    // one is collection, the other is not: do not show
                     continue;
                 }
                 if (!isCollection && el.getPath().containsCollections() 
                         && soClassNames.containsKey(el.getType())){
                     // show attributes only if they are not linked to features (they will be displayed with the relevant one, see below)
-//                                 LOG.info("P2: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
-//                                 LOG.info("P2: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
                     continue;
                 }
-//                // both are collections: show only if they concord.
-                if (isCollection && el.getPath().containsCollections() 
-                        && !re.getPath().getLastClassDescriptor().getUnqualifiedName().equals(el.getType())){
-//                    LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
-                        continue;
-                }
 
+                if (isCollection && el.getPath().containsCollections()){
+                    // show only if of the same class
+                    Class<?> reType = re.getPath().getLastClassDescriptor().getType();
+                    Class<?> elType = el.getPath().getLastClassDescriptor().getType();
+                    if (!reType.isAssignableFrom(elType)){
+                        // LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
+                        continue;
+                    }
+                }
                 
+                if(el.getPath().getLastClassDescriptor().getUnqualifiedName().equalsIgnoreCase("location")){
+                    // don't show locations (they are already displayed parts of the element)
+                    continue;
+                }
                 
-                
-//                LOG.info("PP: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
+//                LOG.info("PIN: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
+//                LOG.info("CCre: " + re.getPath().getLastClassDescriptor().getType());
+//                LOG.info("CCel: " + el.getPath().getLastClassDescriptor().getUnqualifiedName());
 
                 if (el.getField() != null) {
-//                    LOG.info("AA?: " + attributesNames.get(i) + "||"+ el.getField()+"<-");
-                    String attributeName = trimAttribute(attributesNames.get(i));
+                    String  unqualName = el.getPath().getLastClassDescriptor().getUnqualifiedName();                    
+                    String attributeName = trimAttribute(attributesNames.get(i),unqualName);
+//                    LOG.info("IN: " + attributeName+"|"+ unqualName);
                     checkAttribute(el, attributeName);
                 }
 
                 // TEMP out (fm release)
                 // add the parent
-//                if (i>=1){ 
-////                    if (i>=1 && !el.getType().equalsIgnoreCase(el.getPath().getLastClassDescriptor().getUnqualifiedName())){ 
-//                    List<String> addPar = new ArrayList<String>();
-//                    addPar.add(parent);
-//                    attributes.put("Parent", addPar);
-//                }
+                //                if (i>=1){ 
+                ////                    if (i>=1 && !el.getType().equalsIgnoreCase(el.getPath().getLastClassDescriptor().getUnqualifiedName())){ 
+                //                    List<String> addPar = new ArrayList<String>();
+                //                    addPar.add(parent);
+                //                    attributes.put("Parent", addPar);
+                //                }
 
             }
             lastLsfId = lsf.getId();
             lastLsf = lsf;
         }
     }
-    
-    
-    private String trimAttribute(String attribute){
+
+    private String trimAttribute(String attribute, String unqualName){
         if (!attribute.contains(".")){
             return attribute;
         }
         // check if a feature attribute (display only name) or not (display all path)
-        String check = trimFinalS(attribute.substring(0, attribute.indexOf('.')));
-
-        if (cNames.contains(check.toLowerCase())){
+        if (cNames.contains(unqualName.toLowerCase())){
             String plainAttribute = attribute.substring(attribute.lastIndexOf('.')+1);
+//            LOG.info("LCC: " +attribute+"->"+unqualName +"|"+ plainAttribute );
             return plainAttribute;            
         }
+//        LOG.info("LCCno: " + attribute + "|" + unqualName);
         return attribute;
     }
 
-
-
-
-    /**
-     * @param feat
-     * @return
-     */
-    private String trimFinalS(String feat) {
-        String check = null;
-        if (feat.endsWith("s")){
-            check=feat.substring(0, feat.length()-1);
-//            LOG.info("AAA: " + check);            
-        } else {
-            check=feat;
-        }
-        return check;
-    }
 
     /**
      * 
@@ -362,17 +342,6 @@ public class GFF3Exporter implements Exporter
         }
         ret.add(s);
         return ret;
-    }
-
-    private ResultElement getResultElement(List<ResultElement> row) {
-        ResultElement el = null;
-        for (Integer index : featureIndexes) {
-            el = row.get(index);
-            if (el != null) {
-                break;
-            }
-        }
-        return el;
     }
 
 

@@ -1,5 +1,0 @@
-<project name="rgd-qtl" default="default" basedir=".">
-  <description>build, test, package rgd-qtl</description>
-  
-  <import file="../../../imbuild/source.xml"/>
-</project>

@@ -56,7 +56,7 @@ public class WidgetUtilTest extends TestCase
 
         BigDecimal numberOfTests = new BigDecimal(id.length);
         BigDecimal alpha = new BigDecimal(0.05);
-        BigDecimal alphaPerTest = alpha.divide(numberOfTests);
+        BigDecimal alphaPerTest = alpha.divide(numberOfTests, MathContext.DECIMAL32);
 
         for (int i = 3; i >= 0; i--) {
             BigDecimal p = new BigDecimal(Hypergeometric.calculateP(taggedSample[i], bagsize, taggedPopulation[i], total));
