@@ -730,7 +730,7 @@ public class WriteGFFTask extends Task
         throws ObjectStoreException {
         Query q = new Query();
         q.setDistinct(true);
-        QueryClass qcEnt = new QueryClass(.class);
+        QueryClass qcEnt = new QueryClass(SequenceFeature.class);
         QueryField qfEnt = new QueryField(qcEnt, "id");
         q.addFrom(qcEnt);
         q.addToSelect(qfEnt);
