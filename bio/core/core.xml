@@ -131,7 +131,7 @@
 
   <class name="SequenceFeature" extends="BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
-    <attribute name="length" type="int"/>
+    <attribute name="length" type="java.lang.Integer"/>
   </class>
 
   <class name="SequenceOntologyTerm" extends="OntologyTerm" is-interface="true"/>
