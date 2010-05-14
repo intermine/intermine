@@ -27,7 +27,6 @@
 <class name="MRNA" is-interface="true">
   <collection name="startCodons" referenced-type="StartCodon" reverse-reference="mRNA"/>
   <collection name="stopCodons" referenced-type="StopCodon" reverse-reference="mRNA"/>
-  <collection name="stopCodons" referenced-type="StopCodon" reverse-reference="mRNA"/>
 </class>
 <class name="EST" is-interface="true">
   <collection name="overlappingESTSets" referenced-type="OverlappingESTSet" reverse-reference="ESTs" />
@@ -53,8 +52,8 @@
 
 
 <!-- NEW FEATURE classes for modENCODE -->
-<class name="CDNA" extends="Region" is-interface="true"/>
-<class name="NaturalTransposableElement" extends="Region" is-interface="true"/>
+
+<class name="Codon" extends="Region" is-interface="true"/>
 <class name="StopCodon" extends="Codon" is-interface="true">
   <reference name="mRNA" referenced-type="MRNA" reverse-reference="stopCodons"/>
 </class>
@@ -97,9 +96,7 @@
   <attribute name="dcpmBases" type="java.lang.Integer" />
   <reference name="miRNA" referenced-type="MiRNA" reverse-reference="experimentalFeatures"/>
 </class>
-
-<!-- these should be actually the same class -->
-<class name="TSS" extends="TranscriptionStartSite" is-interface="true">
+<class name="TSS" extends="Region" is-interface="true">
   <collection name="transcripts" referenced-type="Transcript" reverse-reference="TSSs"/>
 </class>
 
@@ -325,7 +322,6 @@
     <attribute name="genome" type="java.lang.String"/>
   </class>
 
-  <class name="GrowthTemperature" extends="SubmissionProperty" is-interface="true">
-  </class>
+  <class name="GrowthTemperature" extends="SubmissionProperty" is-interface="true"/>
 
 </classes>
