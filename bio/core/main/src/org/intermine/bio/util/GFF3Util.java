@@ -54,12 +54,6 @@ public abstract class GFF3Util
 
         if (lsf instanceof Chromosome) {
             return null;
-//            sequenceID = lsf.getPrimaryIdentifier();
-//            type = "chromosome";
-//            start = 1;
-//            if (lsf.getLength() != null){
-//            end = lsf.getLength().intValue();
-//            }
         } else {
             Chromosome chr = lsf.getChromosome();
             if (chr == null) {
