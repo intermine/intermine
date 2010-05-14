@@ -314,8 +314,10 @@ public class IntergenicRegionUtil
 
                     while (prevGenesIter.hasNext()) {
                         Gene prevGene = (Gene) prevGenesIter.next();
-                        String strand = prevGene.getChromosomeLocation()
-                                .getStrand();
+                        String strand = null;
+                        if (prevGene.getChromosomeLocation() != null) {
+                            strand = prevGene.getChromosomeLocation().getStrand();
+                        }
                         if (strand != null) {
                             if (strand.equals("1")) {
                                 prevGene
