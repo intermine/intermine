@@ -70,20 +70,20 @@
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
     <source name="rnai" type="rnai">
-      <property name="src.data.dir" location="/shared/data/wormbase_rnai/current"/>
+      <property name="src.data.dir" location="/shared/data/wormbase-rnai/current"/>
     </source>
     <source name="arbeitman-items-xml" type="arbeitman-items-xml">
       <property name="src.data.file" location="/shared/data/mage/arbeitman/arbeitman-tgt-items.xml"/>
     </source>
     <source name="bdgp-clone" type="bdgp-clone">
-      <property name="src.data.dir" location="/shared/data/bdgp_clones"/>
+      <property name="src.data.dir" location="/shared/data/bdgp-clones"/>
       <property name="src.data.dir.includes" value="dgc2flybase.txt"/>
     </source>
     <source name="long_oligo" type="long_oligo">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="MRNA"/>
       <property name="gff3.seqDataSourceName" value="Micklem lab"/>
-      <property name="src.data.dir" location="/shared/data/long_oligo"/>
+      <property name="src.data.dir" location="/shared/data/long-oligo"/>
     </source>
     <source name="ensembl" type="ensembl">
      <property name="src.data.dir" location="/shared/data/ensembl/current"/>
@@ -101,7 +101,7 @@
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/liftover/tiling_reordered/"/>
+      <property name="src.data.dir" location="/shared/data/tiling-path-liftover/tiling-reordered/"/>
    </source>
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/shared/data/kegg/current"/>
@@ -115,7 +115,7 @@
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
     </source>
     <source name="anoph-expr" type="anoph-expr">
-      <property name="src.data.dir" location="/shared/data/anoph_expr"/>
+      <property name="src.data.dir" location="/shared/data/anoph-expr"/>
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
       <property name="geneFile" value="/shared/data/anoph_expr/reporter_gene_mappingFile.txt"/>
     </source>
@@ -169,14 +169,14 @@
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/REDfly/current/tfbs"/>
+      <property name="src.data.dir" location="/shared/data/redfly/current/tfbs"/>
       <property name="src.data.dir.includes" value="tfbs_dump.gff"/>
     </source>
     <source name="redfly" type="redfly">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/REDfly/current/crm"/>
+      <property name="src.data.dir" location="/shared/data/redfly/current/crm"/>
       <property name="src.data.dir.includes" value="crm_dump.gff"/>
     </source>
     <source name="inparanoid-orthologue" type="orthologue">
@@ -185,7 +185,7 @@
     </source>
     <source name="flyrnai-screens" type="flyrnai-screens">
       <property name="taxonId" value="7227"/>
-      <property name="src.data.dir" location="/shared/data/DRSC/current"/>
+      <property name="src.data.dir" location="/shared/data/drsc/current"/>
     </source>
     <source name="fly-fish" type="fly-fish">
       <property name="src.data.dir" location="/shared/data/flyfish"/>
@@ -495,17 +495,17 @@
       <property name="biopax.curated" value="true"/>
     </source>
     <source name="bdgp-insitu" type="bdgp-insitu">
-      <property name="src.data.dir" location="/shared/data/bdgp_insitu/current"/>
+      <property name="src.data.dir" location="/shared/data/bdgp-insitu/current"/>
       <property name="src.data.dir.includes" value="*annot.csv"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
-      <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/current/fly_anatomy.obo"/>
+      <property name="src.data.file" location="/shared/data/ontologies/fly-anatomy/current/fly_anatomy.obo"/>
     </source>
     <source name="fly-development-ontology" type="fly-development-ontology">
-      <property name="src.data.file" location="/shared/data/ontologies/fly_development/current/fly_development.obo"/>
+      <property name="src.data.file" location="/shared/data/ontologies/fly-development/current/fly_development.obo"/>
     </source>
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
-      <property name="src.data.file" location="/shared/data/ontologies/fly_cv/current/flybase_controlled_vocabulary.obo"/>
+      <property name="src.data.file" location="/shared/data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
     </source>
     <source name="drosdel-gff" type="drosdel-gff">
       <property name="gff3.taxonId" value="7227"/>
@@ -518,7 +518,7 @@
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqDataSourceName" value="Sanger Institute"/>
-      <property name="src.data.dir" location="/shared/data/miRNA/miRanda/current"/>
+      <property name="src.data.dir" location="/shared/data/mirna/miranda/current"/>
       <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster.gff"/>
     </source>
 
@@ -528,7 +528,7 @@
     </source>
 
     <source name="biogrid" type="biogrid">
-      <property name="src.data.dir" location="/shared/data/biogrid/current"/>
+      <property name="src.data.dir" location="/shared/data/psi/biogrid/current"/>
       <property name="src.data.dir.includes" value="*psi25.xml"/>
       <property name="biogrid.organisms" value="7227 6239 4932"/>
     </source>
