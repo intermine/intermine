@@ -40,7 +40,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.bio.SequenceFeature;
-import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;

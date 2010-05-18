@@ -258,38 +258,28 @@ public class WriteGFFTask extends Task
                 seenTranscriptParts.put(primaryIdentifier, loc);
             }
 
-            if (currentChr.getOrganism().getAbbreviation() == null
-                || !currentChr.getPrimaryIdentifier().endsWith("_random")
-                && !currentChr.getPrimaryIdentifier().equals("M")
-                && !currentChr.getOrganism().getAbbreviation().equals("MM")
-                && !currentChr.getOrganism().getAbbreviation().equals("CF")
-                && !currentChr.getOrganism().getAbbreviation().equals("MD")
-                && !currentChr.getOrganism().getAbbreviation().equals("RN")) {
+            String identifier = primaryIdentifier;
 
-                String identifier = primaryIdentifier;
+            String featureType = getFeatureName(feature);
 
-                String featureType = getFeatureName(feature);
-
-                if (identifier == null) {
-                    identifier = featureType + "_" + objectCounts.get(feature.getClass());
-                }
-
-                List<String> synonymList = synonymMap.get(feature.getId());
-                List<String> evidenceList = evidenceMap.get(feature.getId());
-
-                Map<String, List<String>> extraAttributes = new HashMap<String, List<String>>();
-
-                if (feature instanceof ChromosomeBand) {
-                    ArrayList<String> indexList = new ArrayList<String>();
-                    indexList.add(objectCounts.get(feature.getClass()).toString());
-                    extraAttributes.put("Index", indexList);
-                }
-
-                writeFeature(gffWriter, currentChr, feature, loc,
-                             identifier,
-                             featureType.toLowerCase(), featureType, extraAttributes,
-                             synonymList, evidenceList, feature.getId());
+            if (identifier == null) {
+            	identifier = featureType + "_" + objectCounts.get(feature.getClass());
             }
+
+            List<String> synonymList = synonymMap.get(feature.getId());
+            List<String> evidenceList = evidenceMap.get(feature.getId());
+
+            Map<String, List<String>> extraAttributes = new HashMap<String, List<String>>();
+
+            if (feature instanceof ChromosomeBand) {
+            	ArrayList<String> indexList = new ArrayList<String>();
+            	indexList.add(objectCounts.get(feature.getClass()).toString());
+            	extraAttributes.put("Index", indexList);
+            }
+
+            writeFeature(gffWriter, currentChr, feature, loc, identifier,
+            		featureType.toLowerCase(), featureType, extraAttributes,
+            		synonymList, evidenceList, feature.getId());
 
             incrementCount(objectCounts, feature);
         }
@@ -298,16 +288,8 @@ public class WriteGFFTask extends Task
             throw new RuntimeException("no chromosomes found");
         }
 
-        // special case for t1dmine/stemcellmine
-        if (!currentChr.getPrimaryIdentifier().endsWith("_random")
-            && !currentChr.getPrimaryIdentifier().equals("M")
-            && currentChr.getOrganism().getAbbreviation() != null
-            && !currentChr.getOrganism().getAbbreviation().equals("MM")
-            && !currentChr.getOrganism().getAbbreviation().equals("MD")
-            && !currentChr.getOrganism().getAbbreviation().equals("RN")) {
-            writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
-                                     seenTranscriptParts, synonymMap, evidenceMap);
-        }
+        writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
+        		seenTranscriptParts, synonymMap, evidenceMap);
 
         if (gffWriter != null) {
             gffWriter.close();
