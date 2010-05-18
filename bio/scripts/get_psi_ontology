@@ -2,6 +2,7 @@
 
 #download psi-mi.obo from http://obo.cvs.sourceforge.net/obo/obo/ontology/genomic-proteomic/protein/psi-mi.obo
 # (or http://psidev.sourceforge.net/mi/psi-mi.obo) - they both seem to have the same file.
+# http://obo.cvs.sourceforge.net/viewvc/*checkout*/obo/obo/ontology/genomic-proteomic/protein/psi-mi.obo
 #to /shared/data/psi/ontology
 
 use strict;
@@ -24,7 +25,7 @@ if(@ARGV!=3){
 }
 
 #data source
-my $server = "http://obo.cvs.sourceforge.net/obo/obo/ontology/genomic-proteomic/protein/psi-mi.obo";
+my $server = "http://obo.cvs.sourceforge.net/viewvc/*checkout*/obo/obo/ontology/genomic-proteomic/protein";
 my $file = "psi-mi.obo";
 my $file_to_get = "$server/$file";
 
