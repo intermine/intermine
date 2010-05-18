@@ -52,6 +52,7 @@
     <attribute name="strand" type="java.lang.String"/>
     <reference name="feature" referenced-type="BioEntity"/>
     <reference name="locatedOn" referenced-type="BioEntity"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
   </class>
 
   <class name="Ontology" is-interface="true">
@@ -132,7 +133,7 @@
   <class name="SequenceFeature" extends="BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
     <attribute name="length" type="java.lang.Integer"/>
-    <reference name="sequence" referenced-type="Sequence"/>
+    <reference name="sequence" referenced-type="Sequence"/>        <collection name="dataSets" referenced-type="DataSet" reverse-reference="bioEntities"/>
   </class>
 
   <class name="SequenceOntologyTerm" extends="OntologyTerm" is-interface="true"/>

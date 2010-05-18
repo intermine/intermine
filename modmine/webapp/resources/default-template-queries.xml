@@ -245,7 +245,7 @@
         </node>
         <node path="Submission.submissionData" type="SubmissionData">
         </node>
-        <node path="Submission.submissionData.features" type="LocatedSequenceFeature">
+        <node path="Submission.submissionData.features" type="SequenceFeature">
         </node>
         <node path="Submission.submissionData.features.secondaryIdentifier" type="String">
           <constraint op="=" value="tr*" description="" identifier="" editable="true" code="A">
@@ -1868,7 +1868,7 @@
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="AAB_Synonyms" type="template">
     </tag>
-    <tag name="aspect:Genomics" objectIdentifier="LocatedSequenceFeature.sequence" type="reference">
+    <tag name="aspect:Genomics" objectIdentifier="SequenceFeature.sequence" type="reference">
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="Exon.transcripts" type="collection">
     </tag>
@@ -1924,7 +1924,7 @@
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="UnalignedESTclusters" type="template">
     </tag>
-    <tag name="aspect:Genomics" objectIdentifier="LocatedSequenceFeature.overlappingFeatures" type="collection">
+    <tag name="aspect:Genomics" objectIdentifier="SequenceFeature.overlappingFeatures" type="collection">
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="org.intermine.model.bio.IntergenicRegion" type="class">
     </tag>
@@ -1964,7 +1964,7 @@
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="org.intermine.model.bio.Exon" type="class">
     </tag>
-    <tag name="aspect:Genomics" objectIdentifier="LocatedSequenceFeature.chromosome" type="reference">
+    <tag name="aspect:Genomics" objectIdentifier="SequenceFeature.chromosome" type="reference">
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="Gene_TranscriptIntronChromosome" type="template">
     </tag>
@@ -2068,7 +2068,7 @@
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="org.intermine.model.bio.CDS" type="class">
     </tag>
-    <tag name="aspect:Genomics" objectIdentifier="LocatedSequenceFeature.chromosomeLocation" type="reference">
+    <tag name="aspect:Genomics" objectIdentifier="SequenceFeature.chromosomeLocation" type="reference">
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="AAAA_Symbol_toCG" type="template">
     </tag>
@@ -3096,7 +3096,7 @@
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="AAB_Synonyms" type="template">
     </tag>
-    <tag name="im:aspect:Genomics" objectIdentifier="LocatedSequenceFeature.sequence" type="reference">
+    <tag name="im:aspect:Genomics" objectIdentifier="SequenceFeature.sequence" type="reference">
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="Exon.transcripts" type="collection">
     </tag>
@@ -3150,7 +3150,7 @@
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="UnalignedESTclusters" type="template">
     </tag>
-    <tag name="im:aspect:Genomics" objectIdentifier="LocatedSequenceFeature.overlappingFeatures" type="collection">
+    <tag name="im:aspect:Genomics" objectIdentifier="SequenceFeature.overlappingFeatures" type="collection">
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.IntergenicRegion" type="class">
     </tag>
@@ -3190,7 +3190,7 @@
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.Exon" type="class">
     </tag>
-    <tag name="im:aspect:Genomics" objectIdentifier="LocatedSequenceFeature.chromosome" type="reference">
+    <tag name="im:aspect:Genomics" objectIdentifier="SequenceFeature.chromosome" type="reference">
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptIntronChromosome" type="template">
     </tag>
@@ -3292,7 +3292,7 @@
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.CDS" type="class">
     </tag>
-    <tag name="im:aspect:Genomics" objectIdentifier="LocatedSequenceFeature.chromosomeLocation" type="reference">
+    <tag name="im:aspect:Genomics" objectIdentifier=".chromosomeLocation" type="reference">
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="AAAA_Symbol_toCG" type="template">
     </tag>
