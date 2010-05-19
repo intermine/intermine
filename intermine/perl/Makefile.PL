@@ -16,6 +16,7 @@ WriteMakefile(
                   'Test::Exception' => 0,
                   'Test::More' => 0,
                   'Test::XML' => 0,
+		  'Test::MockObject' => 0,
                   'Text::CSV_XS' => 0,
                   'URI' => 0,
                   'XML::Parser::PerlSAX' => 0,

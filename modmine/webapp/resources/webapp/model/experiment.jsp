@@ -458,7 +458,7 @@ All GBrowse tracks generated for this experiment:
 <tr>
     <th class="sortable">DCC id</th>
     <th class="sortable">Name</th>
-    <th>Date</th>
+    
 <%--    <th>Related Submissions</th>
 --%>
       <c:forEach items="${exp.factorTypes}" var="factor">
@@ -474,6 +474,7 @@ All GBrowse tracks generated for this experiment:
           </c:choose>
 
       </c:forEach>
+    <th>Date</th>
     <th>Features, GBrowse and Data Files</th>
   </tr>
 
@@ -499,7 +500,7 @@ All GBrowse tracks generated for this experiment:
 
 
       <td class="sorting"><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}"><c:out value="${sub.title}"></c:out></html:link></td>
-      <td class="sorting"><fmt:formatDate value="${sub.publicReleaseDate}" type="date"/></td>
+      
 <%--
       <td class="sorting">
         <c:forEach items="${sub.relatedSubmissions}" var="relSubs">
@@ -588,6 +589,7 @@ All GBrowse tracks generated for this experiment:
       </td>
 	  </c:forEach>
 
+<td class="sorting"><fmt:formatDate value="${sub.publicReleaseDate}" type="date"/></td>
 <%-- FEATURES --%>
       <td class="sorting">
       	<c:if test="${!empty subCounts.value}">

@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="/intermine-web/lib/jfreechart-1.0.6.jar"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/jcommon-1.0.10.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
+	<classpathentry kind="lib" path="/modmine-dbmodel/dist/modmine-dbmodel.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

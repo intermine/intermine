@@ -421,9 +421,9 @@ public class WriteGFFTask extends Task
     private void incrementCount(Map<String, Integer> objectCounts, Object object) {
         if (objectCounts.containsKey(object.getClass())) {
             int oldCount = objectCounts.get(object.getClass()).intValue();
-            objectCounts.put(object.getClass().toString(), oldCount + 1);
+            objectCounts.put(object.getClass().toString(), new Integer(oldCount + 1));
         } else {
-            objectCounts.put(object.getClass().toString(), 1);
+            objectCounts.put(object.getClass().toString(), new Integer(1));
         }
     }
 

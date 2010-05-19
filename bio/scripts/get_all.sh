@@ -23,6 +23,15 @@ echo "Getting Fly Anatomy Ontology"
 echo "==========================================================="
 echo
 echo "==========================================================="
+echo "Getting PSI-MI Ontology"
+./get_psi_ontology $logdir $tempname $shared_data
+    if [ $? -ne 0 ]
+    then
+        "error getting PSI-MI Ontology" 2>&1 >> tempfile
+    fi
+echo "==========================================================="
+echo
+echo "==========================================================="
 echo "Getting FlyAtlas data"
 ./get_flyatlas $logdir $tempname $shared_data
     if [ $? -ne 0 ]

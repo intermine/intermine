@@ -46,15 +46,19 @@ public class GFF3Exporter implements Exporter
     private static final Logger LOG = Logger.getLogger(GFF3Exporter.class);
 
 
-//    public static final Set<String> GFF_FIELDS = Collections
-//    .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
-//            "chromosomeLocation.start", "chromosomeLocation.end",
-//            "chromosomeLocation.strand", "primaryIdentifier", "score", 
-//            "start", "end", "strand")));
+    //    public static final Set<String> GFF_FIELDS = Collections
+    //    .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
+    //            "chromosomeLocation.start", "chromosomeLocation.end",
+    //            "chromosomeLocation.strand", "primaryIdentifier", "score", 
+    //            "start", "end", "strand")));
 
     public static final Set<String> GFF_FIELDS = Collections
     .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
-             "primaryIdentifier", "score")));
+            "primaryIdentifier", "score")));
+    public static final String WORM_LINK = 
+        "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=6239";
+    public static final String FLY_LINK = 
+        "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7227";
 
     PrintWriter out;
     private List<Integer> featureIndexes;
@@ -108,7 +112,7 @@ public class GFF3Exporter implements Exporter
                 if (taxId == 7227){
                     String fV = props.getProperty("genomeVersion.fly");
                     if (fV != null && fV.length() > 0){
-                        header.append("\n##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7227");
+                        header.append("\n##species " + FLY_LINK );
                         header.append("\n##genome-build FlyBase r"+ fV + "(drosophila)");
                     }
                 }
@@ -117,7 +121,7 @@ public class GFF3Exporter implements Exporter
                 if (taxId == 6239){
                     String wV = props.getProperty("genomeVersion.worm");
                     if (wV != null && wV.length() > 0) {
-                        header.append("\n##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=6239");
+                        header.append("\n##species " + WORM_LINK);
                         header.append("\n##genome-build WormBase r"+ wV + "(worm)");
                     }
                 }
@@ -197,6 +201,8 @@ public class GFF3Exporter implements Exporter
             }
 
             String parent = null;
+            String parentClass = null;
+
             for (int i = 0; i < row.size(); i++) {
                 ResultElement el = row.get(i);
 
@@ -206,6 +212,7 @@ public class GFF3Exporter implements Exporter
 
                 if (i==0 ){ // this is the beginning of the path
                     parent = (String) el.getField();
+                    parentClass= el.getPath().getStartClassDescriptor().getUnqualifiedName();
                 }
 
                 // checks for attributes:
@@ -215,7 +222,8 @@ public class GFF3Exporter implements Exporter
                 }
                 if (!isCollection && el.getPath().containsCollections() 
                         && soClassNames.containsKey(el.getType())){
-                    // show attributes only if they are not linked to features (they will be displayed with the relevant one, see below)
+                    // show attributes only if they are not linked to features 
+                    // (they will be displayed with the relevant one, see below)
                     continue;
                 }
 
@@ -224,35 +232,35 @@ public class GFF3Exporter implements Exporter
                     Class<?> reType = re.getPath().getLastClassDescriptor().getType();
                     Class<?> elType = el.getPath().getLastClassDescriptor().getType();
                     if (!reType.isAssignableFrom(elType)){
-                        // LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
+                        // LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+ 
+                        // "|R:"+re.getPath()+"||E:"+el.getPath());
                         continue;
                     }
                 }
-                
-                if(el.getPath().getLastClassDescriptor().getUnqualifiedName().equalsIgnoreCase("location")){
+
+                if(el.getPath().getLastClassDescriptor().getUnqualifiedName().
+                        equalsIgnoreCase("location")){
                     // don't show locations (they are already displayed parts of the element)
                     continue;
                 }
-                
-//                LOG.info("PIN: "+ el.getType() + "|A:"+ attributesNames.get(i)+ "|R:"+re.getPath()+"||E:"+el.getPath());
-//                LOG.info("CCre: " + re.getPath().getLastClassDescriptor().getType());
-//                LOG.info("CCel: " + el.getPath().getLastClassDescriptor().getUnqualifiedName());
 
                 if (el.getField() != null) {
                     String  unqualName = el.getPath().getLastClassDescriptor().getUnqualifiedName();                    
                     String attributeName = trimAttribute(attributesNames.get(i),unqualName);
-//                    LOG.info("IN: " + attributeName+"|"+ unqualName);
+                    //                    LOG.info("IN: " + attributeName+"|"+ unqualName);
                     checkAttribute(el, attributeName);
                 }
 
                 // TEMP out (fm release)
                 // add the parent
-                //                if (i>=1){ 
-                ////                    if (i>=1 && !el.getType().equalsIgnoreCase(el.getPath().getLastClassDescriptor().getUnqualifiedName())){ 
-                //                    List<String> addPar = new ArrayList<String>();
-                //                    addPar.add(parent);
-                //                    attributes.put("Parent", addPar);
-                //                }
+                if (i>=1 && !parentClass.equalsIgnoreCase(
+                        re.getPath().getLastClassDescriptor().getUnqualifiedName())){
+                    LOG.info("PAR: " + parentClass + " -> " + 
+                            re.getPath().getLastClassDescriptor().getUnqualifiedName());
+                    List<String> addPar = new ArrayList<String>();
+                    addPar.add(parent);
+                    attributes.put("Parent", addPar);
+                }
 
             }
             lastLsfId = lsf.getId();
@@ -267,10 +275,10 @@ public class GFF3Exporter implements Exporter
         // check if a feature attribute (display only name) or not (display all path)
         if (cNames.contains(unqualName.toLowerCase())){
             String plainAttribute = attribute.substring(attribute.lastIndexOf('.')+1);
-//            LOG.info("LCC: " +attribute+"->"+unqualName +"|"+ plainAttribute );
+            //            LOG.info("LCC: " +attribute+"->"+unqualName +"|"+ plainAttribute );
             return plainAttribute;            
         }
-//        LOG.info("LCCno: " + attribute + "|" + unqualName);
+        //        LOG.info("LCCno: " + attribute + "|" + unqualName);
         return attribute;
     }
 

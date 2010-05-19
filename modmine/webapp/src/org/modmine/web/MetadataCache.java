@@ -65,7 +65,6 @@ public class MetadataCache
     private static final Logger LOG = Logger.getLogger(MetadataCache.class);
 
     private static final String GBROWSE_BASE_URL = getGBrowsePrefix();
-    private static final String GBROWSE_URL_END = "/?show_tracks=1";
     private static final String GBROWSE_ST_URL_END = "/?action=scan";
 
     public static class GBrowseTrack
@@ -164,14 +163,15 @@ public class MetadataCache
     /**
      * Fetch unlocated feature types per submission.
      * @param os the production objectStore
-     * @param the dccId
+     * @param dccId ID from DCC
      * @return map of unlocated feature types
      */
-    public static synchronized Set<String> getUnlocatedFeatureTypesBySubId(ObjectStore os, Integer dccId) {
+    public static synchronized Set<String> getUnlocatedFeatureTypesBySubId(ObjectStore os,
+    Integer dccId) {
         if (submissionUnlocatedFeatureTypes == null) {
             readUnlocatedFeatureTypes(os);
         }
-        Set<String> uf= new HashSet<String>(submissionUnlocatedFeatureTypes.get(dccId));
+        Set<String> uf = new HashSet<String>(submissionUnlocatedFeatureTypes.get(dccId));
         return uf;
     }
 
@@ -180,8 +180,8 @@ public class MetadataCache
      * @param os the production objectStore
      * @return map
      */
-//    public static synchronized Map<Integer, List<String>> getSubmissionFiles(ObjectStore os) {
-        public static synchronized Map<Integer, Set<ResultFile>> getSubmissionFiles(ObjectStore os) {
+        public static synchronized Map<Integer, Set<ResultFile>> getSubmissionFiles(ObjectStore os)
+        {
         if (submissionFilesCache == null) {
             readSubmissionFiles(os);
         }
@@ -236,11 +236,12 @@ public class MetadataCache
 
     /**
      * Fetch a list of file names for a given submission.
-     * @param dccId the modENCODE submission id
+     * @param servletContext servletContext
      * @return a list of file names
      */
-    public static synchronized Map<String,String> getFeatTypeDescription(ServletContext servletContext) {
-        if ( featDescriptionCache == null) {
+    public static synchronized Map<String, String> getFeatTypeDescription(ServletContext
+    servletContext) {
+        if (featDescriptionCache == null) {
             readFeatTypeDescription(servletContext);
         }
         return featDescriptionCache;
@@ -319,14 +320,14 @@ public class MetadataCache
 
                 Set<String> allFeatures = submissionFeatureCounts.get(subId).keySet();
                 Set<String> difference = new HashSet<String>(allFeatures);
-                if (submissionLocatedFeatureTypes.get(subId) != null){
+                if (submissionLocatedFeatureTypes.get(subId) != null) {
                     difference.removeAll(submissionLocatedFeatureTypes.get(subId));
                 }
 
-                if (!difference.isEmpty()){
+                if (!difference.isEmpty()) {
                     List <String> thisUnlocated = new ArrayList<String>();
 
-                    for (String fType : difference){
+                    for (String fType : difference) {
                         thisUnlocated.add(fType);
                     }
                     submissionUnlocatedFeatureTypes.put(subId, thisUnlocated);
@@ -404,10 +405,10 @@ public class MetadataCache
         Set<String> db = new HashSet<String>();
         Set<String> acc = new HashSet<String>();
         Set<String[]> dup = new HashSet<String[]>();
-        for (String[] s : expReps){
-            if (db.contains(s[0]) && acc.contains(s[1])){
+        for (String[] s : expReps) {
+            if (db.contains(s[0]) && acc.contains(s[1])) {
                 // we don't remove place holders
-                if (!s[1].startsWith("To be")){
+                if (!s[1].startsWith("To be")) {
                     dup.add(s);
                 }
             }
@@ -472,9 +473,9 @@ public class MetadataCache
 
             experimentCache = new HashMap<String, DisplayExperiment>();
 
-            Iterator i = results.iterator();
+            Iterator<ResultsRow<?>> i = results.iterator();
             while (i.hasNext()) {
-                ResultsRow row = (ResultsRow) i.next();
+                ResultsRow<?> row = (ResultsRow<?>) i.next();
 
                 Project project = (Project) row.get(0);
                 Experiment experiment = (Experiment) row.get(1);
@@ -540,7 +541,7 @@ public class MetadataCache
         for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
             ResultsRow row = iter.next();
             String expName = (String) row.get(0);
-            Class feat = (Class) row.get(1);
+            Class<?> feat = (Class<?>) row.get(1);
             Long count = (Long) row.get(2);
 
             Map<String, Long> expFeatureCounts = featureCounts.get(expName);
@@ -630,7 +631,7 @@ public class MetadataCache
             Results results = os.executeSingleton(q);
 
             // for each project, get its labs
-            Iterator i = results.iterator();
+            Iterator<?> i = results.iterator();
             while (i.hasNext()) {
                 Submission sub = (Submission) i.next();
                 Set<ResultFile> files = sub.getResultFiles();
@@ -687,7 +688,7 @@ public class MetadataCache
             Submission sub = (Submission) row.get(0);
             Class feat = (Class) row.get(1);
 
-            addToMap(submissionLocatedFeatureTypes,sub.getdCCid(),
+            addToMap(submissionLocatedFeatureTypes, sub.getdCCid(),
                     TypeUtil.unqualifiedName(feat.getName()));
 
         }
@@ -729,7 +730,8 @@ public class MetadataCache
             q.addToSelect(qfUrl);
 
             // join the tables
-            QueryCollectionReference ref1 = new QueryCollectionReference(qcSubmission, "databaseRecords");
+            QueryCollectionReference ref1 = new QueryCollectionReference(qcSubmission,
+            "databaseRecords");
             ContainsConstraint cc = new ContainsConstraint(ref1, ConstraintOp.CONTAINS,
                     qcRepositoryEntry);
 
@@ -745,7 +747,7 @@ public class MetadataCache
 
             Integer prevSub = new Integer(-1);
             List<String[]> subRep = new ArrayList<String[]>();
-            Iterator i = results.iterator();
+            Iterator<?> i = results.iterator();
             while (i.hasNext()) {
                 ResultsRow row = (ResultsRow) i.next();
 
@@ -754,7 +756,7 @@ public class MetadataCache
                 String db = (String) row.get(1);
                 String acc = (String) row.get(2);
                 String url = (String) row.get(3);
-                String[] thisRecord = { db, acc, url};
+                String[] thisRecord = {db, acc, url};
 
                 if (!dccId.equals(prevSub) || counter.equals(results.size())) {
                     if (prevSub > 0) {
@@ -852,26 +854,29 @@ public class MetadataCache
 
             while ((line = reader.readLine()) != null) {
                 LOG.debug("SUBTRACK LINE: " + line);
-                if(line.startsWith("[")){
+                if (line.startsWith("[")) {
                     // this is a track
                     trackName.setLength(0);
                     trackName.append(line.substring(1, line.indexOf(']')));
                 }
-                if(line.startsWith("select")){
+                if (line.startsWith("select")) {
                     // here subtracks are listed
                     String data = line.replace("select   = ", "");
                     String[] result = data.split("\\s");
-                    for (String token : result){
-                        if (token.indexOf('#') < 0){
+                    for (String token : result) {
+                        if (token.indexOf('#') < 0) {
                             // we are dealing with a bit of name
                             toAppend.append(token + " ");
                         } else {
                             // this is a token with subId
-                            String subTrack = toAppend.toString() + token.substring(0, token.indexOf('#'));
-                            Integer dccId = Integer.parseInt(token.substring(token.indexOf('#')+1, token.length()));
+                            String subTrack = toAppend.toString()
+                            + token.substring(0, token.indexOf('#'));
+                            Integer dccId = Integer.parseInt(token.substring(token.indexOf('#') + 1,
+                            token.length()));
                             LOG.debug("SUBTRACK: " + subTrack);
                             toAppend.setLength(0); // empty buffer
-                            GBrowseTrack newTrack = new GBrowseTrack(organism, trackName.toString(),subTrack);
+                            GBrowseTrack newTrack = new GBrowseTrack(organism, trackName.toString(),
+                            subTrack);
                             addToGBMap(submissionTracksCache, dccId, newTrack);
                         }
                     }
@@ -894,8 +899,10 @@ public class MetadataCache
      * @param tokes the array of tokens
      * @param track the GBrowse track
      * @param isName: needed to include only last token in name parsing (see above)
+     * @deprecated
      */
-    private static void parseTokens(String[] tokens,
+    @SuppressWarnings("unused")
+private static void parseTokens(String[] tokens,
             GBrowseTrack track, Boolean isName) {
         // starting from the end, because when checking track names only
         // the last number is ok if there are 2
@@ -940,11 +947,11 @@ public class MetadataCache
      * @return the base URL
      */
     private static String getGBrowsePrefix() {
-        String GBROWSE_DEFAULT_URL = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
+        String gbrowseDefaultUrl = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
         Properties props = PropertiesUtil.getProperties();
         String gbURL = props.getProperty("gbrowse.prefix") + "/";
-        if (gbURL == null || gbURL.length() < 5){
-            return GBROWSE_DEFAULT_URL;
+        if (gbURL == null || gbURL.length() < 5) {
+            return gbrowseDefaultUrl;
         }
        return gbURL;
     }
@@ -961,23 +968,21 @@ public class MetadataCache
 
         Properties props = new Properties();
 
-            InputStream is = servletContext.getResourceAsStream("/WEB-INF/featureTypeDescr.properties");
+            InputStream is
+            = servletContext.getResourceAsStream("/WEB-INF/featureTypeDescr.properties");
             if (is == null) {
-                LOG.info("Unable to find /WEB-INF/featureTypeDescr.properties, there will be no feature type descruptions!");
+                LOG.info("Unable to find /WEB-INF/featureTypeDescr.properties, "
+                + "there will be no feature type descriptions");
             } else {
-
                 try {
                     props.load(is);
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
-//                    throw new IllegalAccessException("Error getting featureTypeDescr.properties file", e.printStackTrace());
                     e.printStackTrace();
                 }
-
-                Enumeration en = props.keys();
-//                while (props.keys().hasMoreElements()) {
+                Enumeration<?> en = props.keys();
                 while (en.hasMoreElements()) {
-                    String expFeat = (String)en.nextElement();
+                    String expFeat = (String) en.nextElement();
                     String descr = props.getProperty(expFeat);
                     featDescriptionCache.put(expFeat, descr);
                 }
