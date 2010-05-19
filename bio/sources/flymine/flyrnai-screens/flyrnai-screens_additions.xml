@@ -5,6 +5,7 @@
     <attribute name="cellLine" type="java.lang.String"/>
     <attribute name="analysisDescription" type="java.lang.String"/>
     <reference name="organism" referenced-type="Organism"/>
+    <reference name="publication" referenced-type="Publication"/>
     <collection name="rnaiScreenHits" referenced-type="RNAiScreenHit" reverse-reference="rnaiScreen"/>
   </class>
   <class name="RNAiScreenHit" extends="RNAiResult" is-interface="true">

@@ -15,7 +15,7 @@
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="1_1" class="DataSet">
-<attribute name="title" value="IntAct data set"/>
+<attribute name="name" value="IntAct data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="9_1" class="Interaction">
@@ -99,8 +99,8 @@
 <item id="11_1" class="Location">
 <attribute name="end" value="370"/>
 <attribute name="start" value="1"/>
-<reference name="object" ref_id="6_2"/>
-<reference name="subject" ref_id="10_1"/>
+<reference name="locatedOn" ref_id="6_2"/>
+<reference name="feature" ref_id="10_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="5_3" class="Comment">

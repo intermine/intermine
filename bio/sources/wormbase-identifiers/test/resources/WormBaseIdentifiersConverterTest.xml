@@ -47,7 +47,7 @@
     <attribute name="name" value="WormBase"/>
   </item>
   <item id="1_1" class="DataSet">
-    <attribute name="title" value="WormBase genes"/>
+    <attribute name="name" value="WormBase genes"/>
     <reference name="dataSource" ref_id="0_1"/>
   </item>
   <item id="3_1" class="Gene">

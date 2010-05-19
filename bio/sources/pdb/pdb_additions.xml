@@ -15,6 +15,7 @@
   <attribute name="technique" type="java.lang.String"/>
   <reference name="proteinDomain" referenced-type="ProteinDomain"/>
   <collection name="proteins" referenced-type="Protein" reverse-reference="structures"/>
+  <collection name="dataSets" referenced-type="DataSet"/>
 </class>
 <class name="Protein" is-interface="true">
   <collection name="structures" referenced-type="ProteinStructure" reverse-reference="proteins"/>

@@ -194,7 +194,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
             boolean found = false;
             for (String refId : refIds) {
                 Item item = getItem(refId);
-                if (item.getAttribute("title").getValue().equals(title)) {
+                if (item.getAttribute("name").getValue().equals(title)) {
                     found = true;
                     break;
                 }

@@ -65,7 +65,7 @@ public class PubMedGeneConverter extends FileConverter
         datasourceRefId = datasource.getIdentifier();
 
         Item dataset = createItem("DataSet");
-        dataset.setAttribute("title", "PubMed to gene mapping");
+        dataset.setAttribute("name", "PubMed to gene mapping");
         dataset.setReference("dataSource", datasourceRefId);
         store(dataset);
         datasetRefId = dataset.getIdentifier();

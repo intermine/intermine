@@ -105,7 +105,7 @@
 <attribute name="type" value="ImaGO"/>
 </item>
 <item id="1_1" class="DataSet">
-<attribute name="title" value="Tiffin"/>
+<attribute name="name" value="Tiffin"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="5_90" class="MRNAExpressionTerm">

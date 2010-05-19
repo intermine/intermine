@@ -11,4 +11,14 @@
 <class name="MRNA" is-interface="true" >
   <collection name="miRNAinteractions" referenced-type="MiRNATarget" reverse-reference="target"/>
 </class>
+<class name="ComputationalResult" is-interface="true">
+    <attribute name="type" type="java.lang.String"/>
+    <attribute name="score" type="java.lang.Double"/>
+    <attribute name="confidence" type="java.lang.Float"/>
+    <reference name="analysis" referenced-type="ComputationalAnalysis"/>
+</class>
+<class name="ComputationalAnalysis" is-interface="true">
+    <attribute name="algorithm" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.Double"/>
+</class>
 </classes>
