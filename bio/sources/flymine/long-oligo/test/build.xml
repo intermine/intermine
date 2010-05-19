@@ -1,4 +1,4 @@
-<project name="sources-long_oligo-test" default="default" basedir="."
+<project name="sources-long-oligo-test" default="default" basedir="."
          xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1"
          xmlns:imdbproj="http://www.intermine.org/ns/im-task-proj/1">
 
