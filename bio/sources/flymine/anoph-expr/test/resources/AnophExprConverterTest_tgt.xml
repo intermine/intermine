@@ -37,7 +37,7 @@
 <attribute name="name" value="ArrayExpress"/>
 </item>
 <item id="1_1" class="DataSet">
-<attribute name="title" value="Anoph-Expr data set"/>
+<attribute name="name" value="Anoph-Expr data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="5_1" class="MicroArrayAssay">

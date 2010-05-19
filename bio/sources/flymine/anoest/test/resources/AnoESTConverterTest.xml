@@ -79,15 +79,15 @@
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
   <item id="1_1" class="DataSet">
-    <attribute name="title" value="VectorBase AnoEST clusters"/>
+    <attribute name="name" value="VectorBase AnoEST clusters"/>
     <reference name="dataSource" ref_id="0_1"/>
   </item>
   <item id="6_2" class="Location">
     <attribute name="end" value="2211"/>
     <attribute name="start" value="552"/>
     <attribute name="strand" value="1"/>
-    <reference name="object" ref_id="5_1"/>
-    <reference name="subject" ref_id="2_2"/>
+    <reference name="locatedOn" ref_id="5_1"/>
+    <reference name="feature" ref_id="2_2"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
   <item id="7_7" class="EST">
@@ -151,7 +151,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1234567"/>
-
     <reference name="subject" ref_id="7_12"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -187,7 +186,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1234567"/>
-
     <reference name="subject" ref_id="7_9"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -200,7 +198,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="AF043439.1"/>
-
     <reference name="subject" ref_id="7_6"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -208,8 +205,8 @@
     <attribute name="end" value="12833"/>
     <attribute name="start" value="2833"/>
     <attribute name="strand" value="-1"/>
-    <reference name="object" ref_id="5_1"/>
-    <reference name="subject" ref_id="2_1"/>
+    <reference name="locatedOn" ref_id="5_1"/>
+    <reference name="feature" ref_id="2_1"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
   <item id="7_3" class="EST">

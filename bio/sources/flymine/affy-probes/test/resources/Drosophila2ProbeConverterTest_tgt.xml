@@ -8,7 +8,7 @@
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="2_1" class="DataSet">
-<attribute name="title" value="Affymetrix array: DrosGenome1"/>
+<attribute name="name" value="Affymetrix array: DrosGenome1"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="7_1" class="ProbeSet">
@@ -39,16 +39,16 @@
 <attribute name="end" value="4"/>
 <attribute name="start" value="3"/>
 <attribute name="strand" value="-1"/>
-<reference name="object" ref_id="3_1"/>
-<reference name="subject" ref_id="7_1"/>
+<reference name="locatedOn" ref_id="3_1"/>
+<reference name="feature" ref_id="7_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="8_2" class="Location">
 <attribute name="end" value="2"/>
 <attribute name="start" value="1"/>
 <attribute name="strand" value="-1"/>
-<reference name="object" ref_id="3_1"/>
-<reference name="subject" ref_id="7_1"/>
+<reference name="locatedOn" ref_id="3_1"/>
+<reference name="feature" ref_id="7_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="3_1" class="Chromosome">

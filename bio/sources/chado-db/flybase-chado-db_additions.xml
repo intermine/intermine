@@ -40,6 +40,7 @@
     <attribute name="description" type="java.lang.String"/>
     <collection name="alleles" referenced-type="Allele" reverse-reference="mutagens"/>
   </class>
+  <class name="PointMutation" extends="Region" is-interface="true"/>
   <class name="AnatomyTerm" extends="OntologyTerm" is-interface="true" />
   <class name="DevelopmentTerm" extends="OntologyTerm" is-interface="true" />
   <class name="CVTerm" extends="OntologyTerm" is-interface="true"/>
