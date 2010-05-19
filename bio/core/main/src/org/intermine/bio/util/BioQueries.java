@@ -19,6 +19,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
@@ -48,11 +49,13 @@ public abstract class BioQueries
      * @param hasLength if true, only query locations where the objectCls object has a non-zero
      * length
      * @param batchSize the batch size for the results object
+     * @param hasChromosomeLocation if true, only query where the subject has a chromosome location
      * @return a Results object: object.id, location, subject
      * @throws ObjectStoreException if problem reading ObjectStore
      */
-    public static Results findLocationAndObjects(ObjectStore os, Class objectCls, Class subjectCls,
-            boolean orderBySubject, boolean hasLength, boolean hasChromosomeLocation, int batchSize)
+    public static Results findLocationAndObjects(ObjectStore os, Class<?> objectCls,
+        Class<?> subjectCls, boolean orderBySubject, boolean hasLength,
+        boolean hasChromosomeLocation, int batchSize)
     throws ObjectStoreException {
         // TODO check objectCls and subjectCls assignable to BioEntity
 
@@ -88,15 +91,16 @@ public abstract class BioQueries
                 new SimpleConstraint(qfObjLength, ConstraintOp.IS_NOT_NULL);
             cs.addConstraint(lengthNotNull);
         }
-        
+
         if (hasChromosomeLocation) {
-            QueryObjectReference chrLocationRef = new QueryObjectReference(qcSub, "chromosomeLocation");
-            ContainsConstraint chrLocRefNotNull = 
+            QueryObjectReference chrLocationRef
+            = new QueryObjectReference(qcSub, "chromosomeLocation");
+            ContainsConstraint chrLocRefNotNull =
                 new ContainsConstraint(chrLocationRef, ConstraintOp.IS_NULL);
             cs.addConstraint(chrLocRefNotNull);
         }
         q.setConstraint(cs);
-        Set indexesToCreate = new HashSet();
+        Set<QueryNode> indexesToCreate = new HashSet<QueryNode>();
         indexesToCreate.add(qfObj);
         indexesToCreate.add(qcLoc);
         indexesToCreate.add(qcSub);

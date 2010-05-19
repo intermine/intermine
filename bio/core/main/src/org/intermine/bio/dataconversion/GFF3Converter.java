@@ -53,9 +53,9 @@ public class GFF3Converter
     private Item organism, dataSet, dataSource, seqDataSource;
     private Model tgtModel;
     private int itemid = 0;
-    private Map analyses = new HashMap();
-    private Map seqs = new HashMap();
-    private Map identifierMap = new HashMap();
+    private Map<String, Item> analyses = new HashMap<String, Item>();
+    private Map<String, Item> seqs = new HashMap<String, Item>();
+    private Map<String, String> identifierMap = new HashMap<String, String>();
     private GFF3RecordHandler handler;
     private ItemFactory itemFactory;
     private GFF3SeqHandler sequenceHandler;
@@ -96,7 +96,7 @@ public class GFF3Converter
         writer.store(ItemHelper.convert(dataSource));
 
         dataSet = createItem("DataSet");
-        dataSet.addAttribute(new Attribute("title", dataSetTitle));
+        dataSet.addAttribute(new Attribute("name", dataSetTitle));
         dataSet.setReference("dataSource", dataSource);
         writer.store(ItemHelper.convert(dataSet));
 
@@ -134,7 +134,7 @@ public class GFF3Converter
         boolean duplicates = false;
         Set<String> processedIds = new HashSet<String>();
         Set<String> duplicatedIds = new HashSet<String>();
-        for (Iterator i = GFF3Parser.parse(bReader); i.hasNext();) {
+        for (Iterator<?> i = GFF3Parser.parse(bReader); i.hasNext();) {
             record = (GFF3Record) i.next();
 
             if (processedIds.contains(record.getId())) {
@@ -167,7 +167,7 @@ public class GFF3Converter
      */
     public void store() throws ObjectStoreException {
         // TODO should probably not store if an empty file
-        Iterator iter = handler.getFinalItems().iterator();
+        Iterator<?> iter = handler.getFinalItems().iterator();
         while (iter.hasNext()) {
             writer.store(ItemHelper.convert((Item) iter.next()));
         }
@@ -183,8 +183,8 @@ public class GFF3Converter
     public void process(GFF3Record record) throws ObjectStoreException {
         // get rid of previous record Items from handler
         handler.clear();
-        List names = record.getNames();
-        List parents = record.getParents();
+        List<?> names = record.getNames();
+        List<?> parents = record.getParents();
 
         Item seq = getSeq(record.getSequenceID());
 
@@ -200,7 +200,7 @@ public class GFF3Converter
                                                + "record: " + record);
         }
 
-        Set<Item> synonymsToAdd = new HashSet();
+        Set<Item> synonymsToAdd = new HashSet<Item>();
         Item feature;
         // need to look up item id for this feature as may have already been a parent reference
         if (record.getId() != null) {
@@ -215,7 +215,7 @@ public class GFF3Converter
         if (names != null) {
             if (cd.getFieldDescriptorByName("symbol") == null) {
                 feature.addAttribute(new Attribute("name", (String) names.get(0)));
-                for (Iterator i = names.iterator(); i.hasNext(); ) {
+                for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
                     String recordName = (String) i.next();
                     Item synonym = createItem("Synonym");
                     if (!recordName.equals(record.getId())) {
@@ -228,7 +228,7 @@ public class GFF3Converter
                 }
             } else {
                 feature.addAttribute(new Attribute("symbol", (String) names.get(0)));
-                for (Iterator i = names.iterator(); i.hasNext(); ) {
+                for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
                     String recordName = (String) i.next();
                     if (!recordName.equals(record.getId())) {
                         Item synonym = createItem("Synonym");
@@ -243,11 +243,11 @@ public class GFF3Converter
         }
 
         feature.addReference(getOrgRef());
-        feature.setCollection("dataSets",
-                              new ArrayList(Collections.singleton(dataSet.getIdentifier())));
+        feature.setCollection("dataSets", new ArrayList<String>(
+        Collections.singleton(dataSet.getIdentifier())));
         if (record.getParents() != null) {  // if parents -> create a SimpleRelation
-            Set seenParents = new HashSet();
-            for (Iterator i = parents.iterator(); i.hasNext();) {
+            Set<String> seenParents = new HashSet<String>();
+            for (Iterator<?> i = parents.iterator(); i.hasNext();) {
                 String parentName = (String) i.next();
                 // add check for duplicate parent IDs to cope with pseudoobscura GFF
                 if (!seenParents.contains(parentName)) {
@@ -322,10 +322,10 @@ public class GFF3Converter
         String orgAbb = null;
         String tgtSeqIdentifier = null;
         if (record.getAttributes().get("Organism") != null) {
-            orgAbb = (String) ((List) record.getAttributes().get("Organism")).get(0);
+            orgAbb = (String) ((List<?>) record.getAttributes().get("Organism")).get(0);
         }
         if (record.getAttributes().get(seqClsName) != null) {
-            tgtSeqIdentifier = (String) ((List) record.getAttributes().get(seqClsName)).get(0);
+            tgtSeqIdentifier = (String) ((List<?>) record.getAttributes().get(seqClsName)).get(0);
         }
         String tgtLocation = record.getTarget();
         if (orgAbb != null && tgtSeqIdentifier != null && tgtLocation != null) {
@@ -366,7 +366,7 @@ public class GFF3Converter
         }
         handler.clearPublicationReferenceList();
         try {
-            Iterator iter = handler.getItems().iterator();
+            Iterator<?> iter = handler.getItems().iterator();
             while (iter.hasNext()) {
                 Item item = (Item) iter.next();
                 writer.store(ItemHelper.convert(item));
