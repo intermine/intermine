@@ -123,7 +123,7 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
 
 
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
-                                                  new QueryField(ds, "title"));
+                                                  new QueryField(ds, "name"));
         cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS,
                                               new QueryValue(dataset.toLowerCase())));
 

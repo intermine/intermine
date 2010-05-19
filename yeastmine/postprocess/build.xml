@@ -1,7 +1,0 @@
-<project name="yeastmine-postprocess" default="default" basedir=".">
-
-  <description>perform post processing for yeastmine</description>
-
-  <import file="../../imbuild/postprocess.xml"/>
-
-</project>

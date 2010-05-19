@@ -122,7 +122,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, ds));
 
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
-                                                  new QueryField(ds, "title"));
+                                                  new QueryField(ds, "name"));
         cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS,
                                               new QueryValue(dataset.toLowerCase())));
 

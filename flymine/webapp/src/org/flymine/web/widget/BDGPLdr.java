@@ -105,7 +105,7 @@ public class BDGPLdr extends EnrichmentWidgetLdr
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qcDataset));
 
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
-                                                  new QueryField(qcDataset, "title"));
+                                                  new QueryField(qcDataset, "name"));
         cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS,
                                               new QueryValue(dataset.toLowerCase())));
         Query q = new Query();

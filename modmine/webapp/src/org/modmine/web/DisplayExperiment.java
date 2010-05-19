@@ -11,9 +11,9 @@ package org.modmine.web;
  */
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,13 +41,14 @@ public class DisplayExperiment
     private String projectName;
     private String pi;
     private String description = null;
-    private Set<String> factorTypes = new HashSet<String>();
+    private Set<String> factorTypes = new TreeSet<String>(new FactorTypeComparator());
     private Set<String> organisms = new HashSet<String>();
     private Map<String, Long> featureCounts = new HashMap<String, Long>();
     private ObjectStore os;
     private String experimentType;
     private Set<String> labs = new TreeSet<String>();
     private String piSurname;
+    
     
     /**
      * Construct with objects from database and feature counts summary map. 
@@ -84,7 +85,7 @@ public class DisplayExperiment
             labs.add(submission.getLab().getSurname());
             
             for (ExperimentalFactor factor : submission.getExperimentalFactors()) {
-                factorTypes.add(factor.getType());
+        		factorTypes.add(factor.getType());
             }
             
             if (submission.getExperimentType() != null) {
@@ -97,6 +98,47 @@ public class DisplayExperiment
         for (Organism organism : proj.getOrganisms()) {
             organisms.add(organism.getShortName());
         }
+    }
+    
+    private class FactorTypeComparator implements Comparator<String> 
+    {
+    	final String DEVELOPMENTALSTAGE = "developmental stage";
+        final String ANTIBODYTARGET = "antibody target";
+        final String ANTIBODY = "antibody";
+        
+    	public int compare(String ft1, String ft2) {
+    		
+    		if (ft1.equals(ANTIBODYTARGET) &&  ft2.equals(ANTIBODYTARGET)) {
+    			return 0;
+    		} else if (ft1.equals(ANTIBODYTARGET) || ft2.equals(ANTIBODYTARGET)) {
+        		if (ft1.equals(ANTIBODYTARGET)) {
+        			return -1;
+        		} else {
+        			return 1;
+        		}
+        	}
+    		if (ft1.equals(DEVELOPMENTALSTAGE) && ft2.equals(DEVELOPMENTALSTAGE)) {
+    			return 0;
+    		} else if (ft1.equals(DEVELOPMENTALSTAGE) || ft2.equals(DEVELOPMENTALSTAGE)) {
+        		if (ft1.equals(DEVELOPMENTALSTAGE)) {
+        			return -1;
+        		} else {
+        			return 1;
+        		}
+        	}
+        	
+    		if (ft1.equals(ANTIBODY) && ft2.equals(ANTIBODY)) {
+    			return 0;
+    		} else if (ft1.equals(ANTIBODY) || ft2.equals(ANTIBODY)) {
+        		if (ft1.equals(ANTIBODY)) {
+        			return -1;
+        		} else {
+        			return 1;
+        		}
+        	}
+        	
+    		return ft1.compareTo(ft2);
+    	}
     }
 
         
@@ -215,7 +257,7 @@ public class DisplayExperiment
     }
 
     /**
-     * @return a map of entries per db  submitted to a public repository 
+     * @return a map of entries per db submitted to a public repository 
      * for this experiment
      */
     public Map<String, Integer> getReposited() {
@@ -230,14 +272,13 @@ public class DisplayExperiment
     
     
     /**
-     * @return a map of entries per db  submitted to a public repository 
-     * for this experiment
+     * @return a map of unlocated features for this experiment
      */
     public Set<String> getUnlocated() {
         Map<Integer, List<String>> rep = MetadataCache.getUnlocatedFeatureTypes(os);
         
         Set<String> unloc = new HashSet<String>();
-        for (Submission s : submissions){
+        for (Submission s : submissions) {
             if (rep.get(s.getdCCid()) != null) {    
                 unloc.addAll(rep.get(s.getdCCid()));
             }
@@ -257,7 +298,7 @@ public class DisplayExperiment
     private static void addToCounterMap(Map<String, Integer> m, String s) {
 
         Integer counter = 1;
-        if (m.containsKey(s)){
+        if (m.containsKey(s)) {
             counter = m.get(s) + 1;
         }
         m.put(s, counter);            
