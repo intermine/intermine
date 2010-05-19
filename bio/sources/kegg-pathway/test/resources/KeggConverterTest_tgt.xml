@@ -27,7 +27,7 @@
 <collection name="pathways"><reference ref_id="2_1"/></collection>
 </item>
 <item id="1_1" class="DataSet">
-<attribute name="title" value="KEGG pathways data set"/>
+<attribute name="name" value="KEGG pathways data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="3_1" class="Organism">

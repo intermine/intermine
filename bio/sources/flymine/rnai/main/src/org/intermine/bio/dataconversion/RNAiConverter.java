@@ -30,8 +30,10 @@ import org.intermine.xml.full.Item;
  */
 public class RNAiConverter extends BioFileConverter
 {
-    private Map geneMap = new HashMap(), screenMap = new HashMap(),
-        pubMap = new HashMap(), phenotypeMap = new HashMap();
+    private Map<String, Item> geneMap = new HashMap<String, Item>(),
+        screenMap = new HashMap<String, Item>(),
+        pubMap = new HashMap<String, Item>(),
+        phenotypeMap = new HashMap<String, Item>();
     private Item org, ontology;
 
     /**
@@ -49,7 +51,7 @@ public class RNAiConverter extends BioFileConverter
         store(org);
 
         ontology = createItem("Ontology");
-        ontology.setAttribute("title", "WormBase phenotype codes");
+        ontology.setAttribute("name", "WormBase phenotype codes");
         store(ontology);
     }
 
@@ -57,7 +59,7 @@ public class RNAiConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         boolean readingData = false;
         File currentFile = getCurrentFile();
         if (currentFile.getName().contains("-final")) {

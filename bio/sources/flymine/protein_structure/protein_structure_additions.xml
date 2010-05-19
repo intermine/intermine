@@ -11,6 +11,7 @@
   <attribute name="technique" type="java.lang.String"/>
   <reference name="proteinDomain" referenced-type="ProteinDomain"/>
   <collection name="proteins" referenced-type="Protein" reverse-reference="structures"/>
+  <collection name="dataSets" referenced-type="DataSet"/>
 </class>
 <class name="Protein" extends="BioEntity" is-interface="true">
   <attribute name="uniprotAccession" type="java.lang.String"/>

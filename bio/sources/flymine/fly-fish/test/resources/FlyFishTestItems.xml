@@ -34,7 +34,7 @@
 <collection name="stages"><reference ref_id="4_6"/><reference ref_id="4_7"/></collection>
 </item>
 <item id="1_1" class="DataSet">
-<attribute name="title" value="fly-Fish data set"/>
+<attribute name="name" value="fly-Fish data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="4_16" class="Stage">

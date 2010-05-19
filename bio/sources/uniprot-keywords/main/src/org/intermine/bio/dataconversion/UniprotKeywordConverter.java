@@ -74,7 +74,7 @@ public class UniprotKeywordConverter extends BioFileConverter
          */
         public UniprotKeywordHandler() {
             try {
-                ontologyRefId = getItem(ontologies, "Ontology", "title", "UniProtKeyword");
+                ontologyRefId = getItem(ontologies, "Ontology", "name", "UniProtKeyword");
             } catch (SAXException e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);

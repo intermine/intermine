@@ -1,6 +1,6 @@
 <items>
 <item id="1_1" class="DataSet">
-<attribute name="title" value="PDB dmel data set"/>
+<attribute name="name" value="PDB dmel data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
   <item id="3_2" class="Protein">

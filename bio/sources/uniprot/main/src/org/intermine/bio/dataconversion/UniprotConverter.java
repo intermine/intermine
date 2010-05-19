@@ -108,8 +108,8 @@ public class UniprotConverter extends DirectoryConverter
                 processFiles(taxonIdToFiles.get(taxonId));
             }
         } else {
-            // if files aren't in taxonId_sprot|trembl format, assume they are in uniprot_sprot.xml 
-            // format  
+            // if files aren't in taxonId_sprot|trembl format, assume they are in uniprot_sprot.xml
+            // format
             File[] files = dataDir.listFiles();
             File[] sortedFiles = new File[2];
             for (int i = 0; i < files.length; i++) {
@@ -127,7 +127,7 @@ public class UniprotConverter extends DirectoryConverter
     }
 
     // process the sprot file, then the trembl file
-    private void processFiles(File[] files) 
+    private void processFiles(File[] files)
     throws SAXException {
         for (int i = 0; i <= 1; i++) {
             File file = files[i];
@@ -143,7 +143,7 @@ public class UniprotConverter extends DirectoryConverter
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
-        } 
+        }
         // reset all variables here, new organism
         sequences = new HashMap<String, Map<String, String>>();
         genes = new HashMap<String, String>();
@@ -236,9 +236,9 @@ public class UniprotConverter extends DirectoryConverter
         private String attName = null;
         private StringBuffer attValue = null;
         private String taxonId = null;
-        
+
         private int entryCount = 0;
-        
+
         /**
          * @param entries empty map to be populated with uniprot entries
          * @param isoforms empty map to be populated with isoforms
@@ -481,7 +481,7 @@ public class UniprotConverter extends DirectoryConverter
         throws SAXException {
 
             entryCount++;
-            
+
             if (entryCount % 10000 == 0) {
                 LOG.info("Processed " + entryCount + " entries.");
             }
@@ -499,8 +499,8 @@ public class UniprotConverter extends DirectoryConverter
                 }
                 return isoforms;
             }
-            
-            
+
+
             // TODO there are uniparc entries so check for swissprot-trembl datasets
             if (entry.hasDatasetRefId() && entry.hasPrimaryAccession()) {
 
@@ -562,7 +562,7 @@ public class UniprotConverter extends DirectoryConverter
                 // record that we have seen this sequence for this organism
                 addSeenSequence(entry.getTaxonId(), entry.getMd5checksum(),
                         protein.getIdentifier());
-               
+
                 try {
                     /* dbrefs (go terms, refseq) */
                     processDbrefs(protein, entry);
@@ -582,7 +582,7 @@ public class UniprotConverter extends DirectoryConverter
             return isoforms;
         }
 
-        
+
         private void processSequence(Item protein, UniprotEntry entry) {
             Item item = createItem("Sequence");
             item.setAttribute("residues", entry.getSequence());
@@ -639,10 +639,10 @@ public class UniprotConverter extends DirectoryConverter
         }
 
 
-        private void processFeatures(Item protein, UniprotEntry entry) 
+        private void processFeatures(Item protein, UniprotEntry entry)
         throws SAXException {
             for (Item feature : entry.getFeatures()) {
-                feature.setReference("protein", protein);            
+                feature.setReference("protein", protein);
                 try {
                     store(feature);
                 } catch (ObjectStoreException e) {
@@ -705,7 +705,7 @@ public class UniprotConverter extends DirectoryConverter
                     protein.setAttribute("ecNumber", values.get(0));
                 } else if (key.equals("RefSeq")) {
                     for (String synonym : values) {
-                        getSynonym(protein.getIdentifier(), "identifier", synonym, 
+                        getSynonym(protein.getIdentifier(), "identifier", synonym,
                                 "false", entry.getDatasetRefId());
                     }
                 } else if (creatego && key.equals("GO")) {
@@ -713,13 +713,13 @@ public class UniprotConverter extends DirectoryConverter
                         entry.addGOTerm(getGoTerm(identifier));
                     }
                 }
-            }        
+            }
         }
 
 
 
 
-        private void processGoAnnotation(UniprotEntry entry, Item gene) 
+        private void processGoAnnotation(UniprotEntry entry, Item gene)
         throws SAXException {
             for (String goTermRefId : entry.getGOTerms()) {
                 Item goAnnotation = createItem("GOAnnotation");
@@ -829,7 +829,7 @@ public class UniprotConverter extends DirectoryConverter
                 if (creatego) {
                     processGoAnnotation(entry, gene);
                 }
-                
+
                 // store gene
                 try {
                     gene.setReference("organism", getOrganism(taxonId));
@@ -880,10 +880,10 @@ public class UniprotConverter extends DirectoryConverter
             } else if (method.equals("dbref")) {
                 if (value.equals("Ensembl")) {
                     // See #2122
-                    identifierValue = entry.getGeneDesignation("Ensembl");   
+                    identifierValue = entry.getGeneDesignation("Ensembl");
                 } else {
                     Map<String, List<String>> dbrefs = entry.getDbrefs();
-                    String msg = "no " + value + " identifier found for gene attached to protein: " 
+                    String msg = "no " + value + " identifier found for gene attached to protein: "
                                     + entry.getPrimaryAccession();
                     if (dbrefs == null || dbrefs.isEmpty()) {
                         LOG.error(msg);
@@ -955,8 +955,8 @@ public class UniprotConverter extends DirectoryConverter
         }
         return orgSequences.containsKey(md5checksum);
     }
-    
-    
+
+
     private String getDataSource(String title)
     throws SAXException {
         String refId = datasources.get(title);
@@ -1101,7 +1101,7 @@ public class UniprotConverter extends DirectoryConverter
         String refId = datasets.get(title);
         if (refId == null) {
             Item item = createItem("DataSet");
-            item.setAttribute("title", title + " data set");
+            item.setAttribute("name", title + " data set");
             item.setReference("dataSource", datasourceRefId);
             refId = item.getIdentifier();
             datasets.put(title, refId);
@@ -1119,7 +1119,7 @@ public class UniprotConverter extends DirectoryConverter
         String refId = goterms.get(identifier);
         if (refId == null) {
             Item item = createItem("GOTerm");
-            item.setAttribute("identifier", identifier);            
+            item.setAttribute("identifier", identifier);
             refId = item.getIdentifier();
             goterms.put(identifier, refId);
             try {
@@ -1130,13 +1130,13 @@ public class UniprotConverter extends DirectoryConverter
         }
         return refId;
     }
-    
+
     private String setOntology(String title)
     throws SAXException {
         String refId = ontologies.get(title);
         if (refId == null) {
             Item ontology = createItem("Ontology");
-            ontology.setAttribute("title", title);
+            ontology.setAttribute("name", title);
             ontologies.put(title, ontology.getIdentifier());
             try {
                 store(ontology);

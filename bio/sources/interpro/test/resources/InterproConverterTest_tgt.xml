@@ -6,7 +6,7 @@
 <collection name="dataSets"><reference ref_id="1_2"/></collection>
 </item>
 <item id="1_2" class="DataSet">
-<attribute name="title" value="Datasource 1 data set"/>
+<attribute name="name" value="Datasource 1 data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="3_13" class="Synonym">
@@ -64,7 +64,7 @@
 <attribute name="pubMedId" value="2222222"/>
 </item>
 <item id="1_1" class="DataSet">
-<attribute name="title" value="InterPro data set"/>
+<attribute name="name" value="InterPro data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="2_5" class="ProteinDomain">
@@ -111,11 +111,11 @@
 <collection name="publications"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/></collection>
 </item>
 <item id="1_4" class="DataSet">
-<attribute name="title" value="Datasource 3 data set"/>
+<attribute name="name" value="Datasource 3 data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="1_3" class="DataSet">
-<attribute name="title" value="Datasource 2 data set"/>
+<attribute name="name" value="Datasource 2 data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="2_2" class="ProteinDomain">
