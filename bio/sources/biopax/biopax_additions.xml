@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <classes>
   <class name="Gene" is-interface="true">
-	<collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
+     <collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
   </class>
   <class name="Pathway" is-interface="true" >
- 	 <attribute name="identifier" type="java.lang.String"/>
- 	 <attribute name="name" type="java.lang.String"/>
-	 <attribute name="shortName" type="java.lang.String"/>
-	 <attribute name="curated" type="java.lang.Boolean"/>
- 	 <collection name="genes" referenced-type="Gene" reverse-reference="pathways"/>
+     <attribute name="identifier" type="java.lang.String"/>
+     <attribute name="name" type="java.lang.String"/>
+     <attribute name="shortName" type="java.lang.String"/>
+     <attribute name="curated" type="java.lang.Boolean"/>
+     <collection name="genes" referenced-type="Gene" reverse-reference="pathways"/>
+     <collection name="dataSets" referenced-type="DataSet"/>
   </class>
   </classes>

@@ -87,7 +87,7 @@
 <collection name="evidence"><reference ref_id="4_1"/></collection>
 </item>
 <item id="1_1" class="DataSet">
-<attribute name="title" value="Drosophila 12 Genomes Consortium homology"/>
+<attribute name="name" value="Drosophila 12 Genomes Consortium homology"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="2_1" class="Publication">

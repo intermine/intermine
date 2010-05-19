@@ -75,7 +75,7 @@
 <attribute name="pubMedId" value="14605208"/>
 </item>
 <item id="1_1" class="DataSet">
-<attribute name="title" value="BioGRID interaction data set"/>
+<attribute name="name" value="BioGRID interaction data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="0_1" class="DataSource">

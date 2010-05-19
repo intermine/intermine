@@ -13,7 +13,7 @@
     </collection>
   </item>
   <item id="1_1" class="DataSet">
-    <attribute name="title" value="VectorBase Anopheles"/>
+    <attribute name="name" value="VectorBase Anopheles"/>
     <reference name="dataSource" ref_id="0_1"/>
   </item>
   <item id="4_1" class="Synonym">

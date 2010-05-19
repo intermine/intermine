@@ -104,20 +104,20 @@ public class EntrezOrganismRetriever extends Task
 
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
 
-            Map orgMap = getOrganisms(os);
+            Map<Integer, Organism> orgMap = getOrganisms(os);
 
-            Set taxonIds = new HashSet();
-            Set toStore = new HashSet();
+            Set<Integer> taxonIds = new HashSet<Integer>();
+            Set<Item> toStore = new HashSet<Item>();
 
             ItemFactory itemFactory = new ItemFactory(os.getModel(), "-1_");
             writer.write(FullRenderer.getHeader() + "\n");
-            for (Iterator i = orgMap.keySet().iterator(); i.hasNext();) {
+            for (Iterator<Integer> i = orgMap.keySet().iterator(); i.hasNext();) {
                 Integer taxonId = (Integer) i.next();
                 taxonIds.add(taxonId);
                 if (taxonIds.size() == BATCH_SIZE || !i.hasNext()) {
                     SAXParser.parse(new InputSource(getReader(taxonIds)),
                                     new Handler(toStore, itemFactory), false);
-                    for (Iterator j = toStore.iterator(); j.hasNext();) {
+                    for (Iterator<Item> j = toStore.iterator(); j.hasNext();) {
                         Item item = (Item) j.next();
                         writer.write(FullRenderer.render(item));
                     }
@@ -145,16 +145,16 @@ public class EntrezOrganismRetriever extends Task
      * @param os the ObjectStore to read from
      * @return a Map from taxonid to Organism object
      */
-    protected Map getOrganisms(ObjectStore os) {
+    protected Map<Integer, Organism> getOrganisms(ObjectStore os) {
         Query q = new Query();
         QueryClass qc = new QueryClass(Organism.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        List results = os.executeSingleton(q);
+        List<?> results = os.executeSingleton(q);
 
-        Map retMap = new HashMap();
+        Map<Integer, Organism> retMap = new HashMap<Integer, Organism>();
 
-        Iterator resIter = results.iterator();
+        Iterator<?> resIter = results.iterator();
 
         while (resIter.hasNext()) {
             Organism organism = (Organism) resIter.next();
@@ -170,7 +170,7 @@ public class EntrezOrganismRetriever extends Task
      * @return a Reader for the information
      * @throws Exception if an error occurs
      */
-    protected Reader getReader(Set ids) throws Exception {
+    protected Reader getReader(Set<Integer> ids) throws Exception {
         URL url = new URL(ESUMMARY_URL + StringUtil.join(ids, ","));
         return new BufferedReader(new InputStreamReader(url.openStream()));
     }
@@ -205,7 +205,7 @@ Example
      */
     class Handler extends DefaultHandler
     {
-        Set toStore;
+        Set<Item> toStore;
         Item organism;
         String name;
         StringBuffer characters;
@@ -216,7 +216,7 @@ Example
          * @param toStore a set in which the new Organism items are stored
          * @param itemFactory the factory
          */
-        public Handler(Set toStore, ItemFactory itemFactory) {
+        public Handler(Set<Item> toStore, ItemFactory itemFactory) {
             this.toStore = toStore;
             this.itemFactory = itemFactory;
         }

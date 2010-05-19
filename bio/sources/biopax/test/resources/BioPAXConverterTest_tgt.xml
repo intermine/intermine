@@ -39,7 +39,7 @@
 <attribute name="name" value="Reactome"/>
 </item>
 <item id="1_1" class="DataSet">
-<attribute name="title" value="Reactome data set"/>
+<attribute name="name" value="Reactome data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="4_1" class="Gene">
