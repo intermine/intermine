@@ -37,6 +37,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -263,6 +264,11 @@ Example
                     organism.setAttribute("species", text.substring(spaceIndex + 1));
                     organism.setAttribute("shortName", text.charAt(0) + ". "
                                           + text.substring(spaceIndex + 1));
+                }
+            } else if ("CommonName".equals(name)) {
+                String text = characters.toString();
+                if (StringUtils.isNotEmpty(text)) {
+                    organism.setAttribute("commonName", text);
                 }
             }
             name = null;

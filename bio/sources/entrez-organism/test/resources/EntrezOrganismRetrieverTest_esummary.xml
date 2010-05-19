@@ -2,22 +2,6 @@
 <!DOCTYPE eSummaryResult PUBLIC "-//NLM//DTD eSummaryResult, 29 October 2004//EN" "http://www.ncbi.nlm.nih.gov/entrez/query/DTD/eSummary_041029.dtd">
 <eSummaryResult>
   <DocSum>
-    <Id>180454</Id>
-    <Item Name="Rank" Type="String"></Item>
-    <Item Name="Division" Type="String">flies</Item>
-    <Item Name="ScientificName" Type="String">Anopheles gambiae str. PEST</Item>
-    <Item Name="CommonName" Type="String"></Item>
-
-    <Item Name="TaxId" Type="Integer">180454</Item>
-    <Item Name="NucNumber" Type="Integer">94072</Item>
-    <Item Name="ProtNumber" Type="Integer">30679</Item>
-    <Item Name="StructNumber" Type="Integer">0</Item>
-    <Item Name="GenNumber" Type="Integer">5</Item>
-    <Item Name="GeneNumber" Type="Integer">13897</Item>
-
-  </DocSum>
-
-  <DocSum>
     <Id>7227</Id>
     <Item Name="Rank" Type="String">species</Item>
     <Item Name="Division" Type="String">flies</Item>
@@ -32,6 +16,20 @@
     <Item Name="GeneNumber" Type="Integer">21146</Item>
 
   </DocSum>
-
-
+<DocSum>
+<Id>10116</Id>
+<Item Name="Rank" Type="String">species</Item>
+<Item Name="Division" Type="String">rodents</Item>
+<Item Name="ScientificName" Type="String">Rattus norvegicus</Item>
+<Item Name="CommonName" Type="String">Norway rat</Item>
+<Item Name="TaxId" Type="Integer">10116</Item>
+<Item Name="NucNumber" Type="Integer">2981632</Item>
+<Item Name="ProtNumber" Type="Integer">109500</Item>
+<Item Name="StructNumber" Type="Integer">1422</Item>
+<Item Name="GenNumber" Type="Integer">45</Item>
+<Item Name="GeneNumber" Type="Integer">43192</Item>
+<Item Name="Genus" Type="String"/>
+<Item Name="Species" Type="String"/>
+<Item Name="Subsp" Type="String"/>
+</DocSum>
 </eSummaryResult>
