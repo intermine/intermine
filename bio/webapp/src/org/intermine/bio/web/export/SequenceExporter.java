@@ -36,14 +36,14 @@ import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
 
 /**
- * Export data in FASTA format. Select cell in each row
- * that can be exported as a sequence and fetch associated sequence.
+ * Export data in FASTA format. Select cell in each row that can be exported as
+ * a sequence and fetch associated sequence.
+ *
  * @author Kim Rutherford
  * @author Jakub Kulaviak
  **/
 public class SequenceExporter implements Exporter
 {
-
     private ObjectStore os;
     private OutputStream out;
     private int featureIndex;
@@ -51,12 +51,16 @@ public class SequenceExporter implements Exporter
 
     /**
      * Constructor.
-     * @param os object store used for fetching sequence for  exported object
-     * @param outputStream output stream
-     * @param featureIndex index of cell in row that contains object to be exported
+     *
+     * @param os
+     *            object store used for fetching sequence for exported object
+     * @param outputStream
+     *            output stream
+     * @param featureIndex
+     *            index of cell in row that contains object to be exported
      */
     public SequenceExporter(ObjectStore os, OutputStream outputStream,
-                            int featureIndex) {
+            int featureIndex) {
         this.os = os;
         this.out = outputStream;
         this.featureIndex = featureIndex;
@@ -70,12 +74,12 @@ public class SequenceExporter implements Exporter
     }
 
     /**
-     * {@inheritDoc}
-     * Lines are always separated with \n because third party tool writeFasta
-     * is used for writing sequence.
+     * {@inheritDoc} Lines are always separated with \n because third party tool
+     * writeFasta is used for writing sequence.
      */
     public void export(Iterator<? extends List<ResultElement>> resultIt) {
-        // IDs of the features we have successfully output - used to avoid duplicates
+        // IDs of the features we have successfully output - used to avoid
+        // duplicates
         IntPresentSet exportedIDs = new IntPresentSet();
 
         try {
@@ -99,8 +103,8 @@ public class SequenceExporter implements Exporter
                 }
 
                 if (object instanceof LocatedSequenceFeature) {
-                	// TODO disordered header
-                    bioSequence = createLocatedSequenceFeature(header, object, row);
+                    bioSequence = createLocatedSequenceFeature(header, object,
+                            row);
                 } else if (object instanceof Protein) {
                     bioSequence = createProtein(header, object, row);
                 } else {
@@ -117,15 +121,18 @@ public class SequenceExporter implements Exporter
                 String headerString = header.toString();
 
                 if (headerString.length() > 0) {
-                    annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, headerString);
+                    annotation.setProperty(
+                            FastaFormat.PROPERTY_DESCRIPTIONLINE, headerString);
                 } else {
                     if (object instanceof BioEntity) {
-                        annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-                                               ((BioEntity) object).getPrimaryIdentifier());
+                        annotation.setProperty(
+                                FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                                ((BioEntity) object).getPrimaryIdentifier());
                     } else {
                         // last resort
-                        annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-                                               "sequence_" + exportedIDs.size());
+                        annotation.setProperty(
+                                FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                                "sequence_" + exportedIDs.size());
                     }
                 }
 
@@ -136,12 +143,12 @@ public class SequenceExporter implements Exporter
 
             out.flush();
         } catch (Exception e) {
-              throw new ExportException("Export failed.", e);
+            throw new ExportException("Export failed.", e);
         }
     }
 
-    private BioSequence createProtein(StringBuffer header, Object object, List<ResultElement> row)
-            throws IllegalSymbolException {
+    private BioSequence createProtein(StringBuffer header, Object object,
+            List<ResultElement> row) throws IllegalSymbolException {
         BioSequence bioSequence;
         Protein protein = (Protein) object;
         bioSequence = BioSequenceFactory.make(protein);
@@ -153,12 +160,12 @@ public class SequenceExporter implements Exporter
     }
 
     private BioSequence createLocatedSequenceFeature(StringBuffer header,
-                                                     Object object, List<ResultElement> row)
-        throws IllegalSymbolException {
+            Object object, List<ResultElement> row)
+            throws IllegalSymbolException {
         BioSequence bioSequence;
         LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
         bioSequence = BioSequenceFactory.make(feature);
-        
+
         String primaryIdentifier = feature.getPrimaryIdentifier();
         makeHeader(header, primaryIdentifier, object, row);
 
@@ -168,78 +175,65 @@ public class SequenceExporter implements Exporter
     /**
      * Set the header to be the contents of row, separated by spaces.
      */
-    private void makeHeader(StringBuffer header, String primaryIdentifier, Object object, 
-    		List<ResultElement> row) {
+    private void makeHeader(StringBuffer header, String primaryIdentifier,
+            Object object, List<ResultElement> row) {
 
         List<String> headerBits = new ArrayList<String>();
-        
-        // add the Object's (Protein or LocatedSequenceFeature) primaryIdentifier at the first place
+
+        // add the Object's (Protein or LocatedSequenceFeature)
+        // primaryIdentifier at the first place
         // in the header
         headerBits.add(primaryIdentifier);
-    	
+
         // two instances
         if (object instanceof LocatedSequenceFeature) {
-        	
-        	// add the sequence location info at the second place in the header
-        	LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
-        	
-        	String chr = feature.getChromosome().getPrimaryIdentifier();
-        	Integer start = feature.getChromosomeLocation().getStart();
-        	Integer end = feature.getChromosomeLocation().getEnd();
-        	String locString = chr + ':' + start + '-' + end;
-	        headerBits.add(locString);
-          
-			for (ResultElement re : row) {
-				if (re.getObject() instanceof Protein) {
-					continue;
-				} else {
-					Object fieldValue = re.getField();
-					if (fieldValue == null) {
-						headerBits.add("-");
-					} else {
-						// ignore the primaryIdentifier and Location in ResultElement
-						if (fieldValue.toString().equals(primaryIdentifier)
-								|| (fieldValue instanceof Location)) {
-							continue;
-						}
-//						else if (fieldValue instanceof Location) {
-//							Location location = (Location) fieldValue;
-//							String chr = location.getObject()
-//									.getPrimaryIdentifier();
-//							Integer start = location.getStart();
-//							Integer end = location.getEnd();
-//							String locString = chr + ':' + start
-//									+ '-' + end;
-//							headerBits.add(locString);
-//						} 
-						else {
-							headerBits.add(fieldValue.toString());
-						}
-					}
-				}
-			}
+
+            // add the sequence location info at the second place in the header
+            LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
+
+            String chr = feature.getChromosome().getPrimaryIdentifier();
+            Integer start = feature.getChromosomeLocation().getStart();
+            Integer end = feature.getChromosomeLocation().getEnd();
+            String locString = chr + ':' + start + '-' + end;
+            headerBits.add(locString);
+
+            for (ResultElement re : row) {
+                if (re.getObject().equals(object)) {
+                    Object fieldValue = re.getField();
+                    if (fieldValue == null) {
+                        headerBits.add("-");
+                    } else {
+                        // ignore the primaryIdentifier and Location in
+                        // ResultElement
+                        if (fieldValue.toString().equals(primaryIdentifier)
+                                || (fieldValue instanceof Location)) {
+                            continue;
+                        } else {
+                            headerBits.add(fieldValue.toString());
+                        }
+                    }
+                }
+            }
 
         } else if (object instanceof Protein) {
 
-			for (ResultElement re : row) {
-				if (re.getObject() instanceof LocatedSequenceFeature) {
-					continue;
-				} else {
-					Object fieldValue = re.getField();
-					if (fieldValue == null) {
-						headerBits.add("-");
-					} else {
-						if (fieldValue.toString().equals(primaryIdentifier)) {
-							continue;
-						} else {
-							headerBits.add(fieldValue.toString());
-						}
-					}
-				}
-			}
-		}
-        
-		header.append(StringUtil.join(headerBits, " "));
+            for (ResultElement re : row) {
+                if (re.getObject().equals(object)) {
+                    Object fieldValue = re.getField();
+                    if (fieldValue == null) {
+                        headerBits.add("-");
+                    } else {
+                        if (fieldValue.toString().equals(primaryIdentifier)) {
+                            continue;
+                        } else {
+                            headerBits.add(fieldValue.toString());
+                        }
+                    }
+                }
+            }
+        }
+
+        header.append(StringUtil.join(headerBits, " "));
     }
 
     /**
@@ -249,16 +243,20 @@ public class SequenceExporter implements Exporter
         return canExportStatic(clazzes);
     }
 
-    /* Method must have different name than canExport because canExport() method
-     * is  inherited from Exporter interface */
+    /*
+     * Method must have different name than canExport because canExport() method
+     * is inherited from Exporter interface
+     */
     /**
-     * @param clazzes classes of result
-     * @return true if this exporter can export result composed of specified classes
+     * @param clazzes
+     *            classes of result
+     * @return true if this exporter can export result composed of specified
+     *         classes
      */
     public static boolean canExportStatic(List<Class> clazzes) {
-        return (
-                ExportHelper.getClassIndex(clazzes, LocatedSequenceFeature.class) >= 0
-                || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0
-                || ExportHelper.getClassIndex(clazzes, Sequence.class) >= 0);
+        return (ExportHelper.getClassIndex(clazzes,
+                LocatedSequenceFeature.class) >= 0
+                || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0 || ExportHelper
+                .getClassIndex(clazzes, Sequence.class) >= 0);
     }
 }
