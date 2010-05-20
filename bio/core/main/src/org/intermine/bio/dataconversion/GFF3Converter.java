@@ -12,9 +12,7 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,7 +28,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TypeUtil;
-import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
@@ -92,17 +89,17 @@ public class GFF3Converter
         organism = getOrganism();
 
         dataSource = createItem("DataSource");
-        dataSource.addAttribute(new Attribute("name", dataSourceName));
+        dataSource.setAttribute("name", dataSourceName);
         writer.store(ItemHelper.convert(dataSource));
 
         dataSet = createItem("DataSet");
-        dataSet.addAttribute(new Attribute("name", dataSetTitle));
+        dataSet.setAttribute("name", dataSetTitle);
         dataSet.setReference("dataSource", dataSource);
         writer.store(ItemHelper.convert(dataSet));
 
         if (!seqDataSourceName.equals(dataSourceName)) {
             seqDataSource = createItem("DataSource");
-            seqDataSource.addAttribute(new Attribute("name", seqDataSourceName));
+            seqDataSource.setAttribute("name", seqDataSourceName);
             writer.store(ItemHelper.convert(seqDataSource));
         } else {
             seqDataSource = dataSource;
@@ -205,7 +202,7 @@ public class GFF3Converter
         // need to look up item id for this feature as may have already been a parent reference
         if (record.getId() != null) {
             feature = createItem(className, getIdentifier(record.getId()));
-            feature.addAttribute(new Attribute("primaryIdentifier", record.getId()));
+            feature.setAttribute("primaryIdentifier", record.getId());
         } else {
             feature = createItem(className);
         }
@@ -214,7 +211,7 @@ public class GFF3Converter
 
         if (names != null) {
             if (cd.getFieldDescriptorByName("symbol") == null) {
-                feature.addAttribute(new Attribute("name", (String) names.get(0)));
+                feature.setAttribute("name", (String) names.get(0));
                 for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
                     String recordName = (String) i.next();
                     Item synonym = createItem("Synonym");
@@ -227,7 +224,7 @@ public class GFF3Converter
                     }
                 }
             } else {
-                feature.addAttribute(new Attribute("symbol", (String) names.get(0)));
+                feature.setAttribute("symbol", (String) names.get(0));
                 for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
                     String recordName = (String) i.next();
                     if (!recordName.equals(record.getId())) {
@@ -243,8 +240,7 @@ public class GFF3Converter
         }
 
         feature.addReference(getOrgRef());
-        feature.setCollection("dataSets", new ArrayList<String>(
-        Collections.singleton(dataSet.getIdentifier())));
+        feature.addToCollection("dataSets", dataSet);
         if (record.getParents() != null) {  // if parents -> create a SimpleRelation
             Set<String> seenParents = new HashSet<String>();
             for (Iterator<?> i = parents.iterator(); i.hasNext();) {
@@ -269,19 +265,19 @@ public class GFF3Converter
                 int start = record.getStart();
                 int end = record.getEnd();
                 if (record.getStart() < record.getEnd()) {
-                    relation.addAttribute(new Attribute("start", String.valueOf(start)));
-                    relation.addAttribute(new Attribute("end", String.valueOf(end)));
+                    relation.setAttribute("start", String.valueOf(start));
+                    relation.setAttribute("end", String.valueOf(end));
                 } else {
-                    relation.addAttribute(new Attribute("start", String.valueOf(end)));
-                    relation.addAttribute(new Attribute("end", String.valueOf(start)));
+                    relation.setAttribute("start", String.valueOf(end));
+                    relation.setAttribute("end", String.valueOf(start));
                 }
                 if (record.getStrand() != null && record.getStrand().equals("+")) {
-                    relation.addAttribute(new Attribute("strand", "1"));
+                    relation.setAttribute("strand", "1");
                 } else
                     if (record.getStrand() != null && record.getStrand().equals("-")) {
-                        relation.addAttribute(new Attribute("strand", "-1"));
+                        relation.setAttribute("strand", "-1");
                     } else {
-                        relation.addAttribute(new Attribute("strand", "0"));
+                        relation.setAttribute("strand", "0");
                     }
 
                 if (record.getPhase() != null) {
@@ -293,8 +289,8 @@ public class GFF3Converter
             } else {
                 relation = createItem("SimpleRelation");
             }
-            relation.setReference("locatedOn", seq.getIdentifier());
-            relation.setReference("feature", feature.getIdentifier());
+            relation.setReference("object", seq.getIdentifier());
+            relation.setReference("subject", feature.getIdentifier());
             relation.setCollection("dataSets", Arrays.asList(new String[]
                 {
                     dataSet.getIdentifier()
