@@ -19,8 +19,6 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.IntergenicRegion;
-import org.intermine.model.bio.Motif;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.TFBindingSite;
 import org.intermine.objectstore.ObjectStore;
@@ -67,11 +65,19 @@ public class TiffinLdr extends EnrichmentWidgetLdr
      public Query getQuery(String action, List<String> keys) {
 
          QueryClass qcGene = new QueryClass(Gene.class);
-         QueryClass qcIntergenicRegion = new QueryClass(IntergenicRegion.class);
+         QueryClass qcIntergenicRegion = null;
          QueryClass qcTFBindingSite = new QueryClass(TFBindingSite.class);
          QueryClass qcDataSet = new QueryClass(DataSet.class);
-         QueryClass qcMotif = new QueryClass(Motif.class);
+         QueryClass qcMotif = null;
          QueryClass qcOrganism = new QueryClass(Organism.class);
+
+
+         try {
+          qcMotif = new QueryClass(Class.forName("Motif"));
+          qcIntergenicRegion  = new QueryClass(Class.forName("IntergenicRegion"));
+         } catch (ClassNotFoundException e) {
+             return null;
+         }
 
          QueryField qfGeneId = new QueryField(qcGene, "id");
          QueryField qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");

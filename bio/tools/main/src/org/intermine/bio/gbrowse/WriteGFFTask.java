@@ -263,7 +263,7 @@ public class WriteGFFTask extends Task
             String featureType = getFeatureName(feature);
 
             if (identifier == null) {
-            	identifier = featureType + "_" + objectCounts.get(feature.getClass());
+               identifier = featureType + "_" + objectCounts.get(feature.getClass());
             }
 
             List<String> synonymList = synonymMap.get(feature.getId());
@@ -272,14 +272,14 @@ public class WriteGFFTask extends Task
             Map<String, List<String>> extraAttributes = new HashMap<String, List<String>>();
 
             if (feature instanceof ChromosomeBand) {
-            	ArrayList<String> indexList = new ArrayList<String>();
-            	indexList.add(objectCounts.get(feature.getClass()).toString());
-            	extraAttributes.put("Index", indexList);
+            ArrayList<String> indexList = new ArrayList<String>();
+            indexList.add(objectCounts.get(feature.getClass()).toString());
+            extraAttributes.put("Index", indexList);
             }
 
             writeFeature(gffWriter, currentChr, feature, loc, identifier,
-            		featureType.toLowerCase(), featureType, extraAttributes,
-            		synonymList, evidenceList, feature.getId());
+            featureType.toLowerCase(), featureType, extraAttributes,
+            synonymList, evidenceList, feature.getId());
 
             incrementCount(objectCounts, feature);
         }
