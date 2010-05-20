@@ -79,7 +79,7 @@ public class TiffinLdr extends EnrichmentWidgetLdr
          QueryExpression qfOrganismName = new QueryExpression(QueryExpression.LOWER,
                  qfOrganismNameMixedCase);
          QueryField qfId = new QueryField(qcMotif, "primaryIdentifier");
-         QueryField qfDataSet = new QueryField(qcDataSet, "title");
+         QueryField qfDataSet = new QueryField(qcDataSet, "name");
 
          ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
@@ -114,7 +114,7 @@ public class TiffinLdr extends EnrichmentWidgetLdr
          cs.addConstraint(new SimpleConstraint(qfDataSet,
                                                ConstraintOp.EQUALS, new QueryValue("Tiffin")));
          Query q = new Query();
-         
+
          q.setDistinct(true);
 
          q.addFrom(qcGene);
@@ -130,8 +130,8 @@ public class TiffinLdr extends EnrichmentWidgetLdr
 //             subQ.addToSelect(qfGeneId);
 //             return subQ;
 //         }
-         
-         
+
+
          if (action.equals("analysed")) {
              q.addToSelect(qfGeneId);
          } else if (action.equals("export")) {

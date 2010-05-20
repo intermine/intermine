@@ -522,6 +522,7 @@
       <property name="src.data.dir"
                 location="/shared/data/drosdel/2008-03-19/chromosome_structure_variations/"/>
     </source>
+-->
     <source name="miranda" type="miranda">
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
@@ -529,7 +530,6 @@
       <property name="src.data.dir" location="/shared/data/mirna/miranda/current"/>
       <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster.gff"/>
     </source>
--->
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
       <property name="intact.organisms" value="7227 6239 4932"/>
