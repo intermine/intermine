@@ -3,15 +3,26 @@
 use strict;
 use warnings;
 
-use Test::More tests => 9;
+use Test::More tests => 13;
+use Test::Exception;
 
 use XML::Writer;
 use InterMine::Model;
-use InterMine::Item;
-use InterMine::ItemFactory;
+
+my $item = 'InterMine::Item';
+my $fac = 'InterMine::ItemFactory';
+
+use_ok($item);
+use_ok($fac);
 
 my $model = new InterMine::Model(file => '../objectstore/model/testmodel/testmodel_model.xml');
-my $factory = new InterMine::ItemFactory(model => $model);
+my $factory = new_ok($fac => [model => $model], 'Can make a factory');
+
+
+throws_ok(sub {$factory->make_item('beatnik')},
+	  qr/'beatnik' is not in the model/,
+	  'Catches bad item creation');
+
 
 my $emp1 = $factory->make_item("Employee");
 $emp1->set("name", "fred");
@@ -62,9 +73,6 @@ $emp3->_add_to_collection('secretarys', $sec2);
 
 ok(@{$emp3->get('secretarys')} == 2);
 
-eval {
-  $emp3->set('no_such_field', 'some_value');
-  fail("shouldn't allow unknown fields to be set");
-};
-
-ok($@ =~ /CEO.* field called: no_such_field/)
+throws_ok(sub {$emp3->set('no_such_field', 'some_value')},
+	 qr/CEO.* field called: no_such_field/,
+	  'Catches bad calls to set');

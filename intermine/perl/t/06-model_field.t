@@ -3,15 +3,14 @@
 use strict;
 use warnings;
 
-use Test::More tests => 31;
+use Test::More tests => 29;
 
 use InterMine::Model;
 
 my $model = new InterMine::Model(file => '../objectstore/model/testmodel/testmodel_model.xml');
 
-ok($model->model_name() eq 'testmodel');
 my $no_of_classes = scalar($model->get_all_classdescriptors);
-ok(($no_of_classes) == 19);
+ok(($no_of_classes) == 19); # Test 1
 
 my $department_cd = $model->get_classdescriptor_by_name("Department");
 my $name_field = $department_cd->get_field_by_name("name");
@@ -23,13 +22,14 @@ my $company_cd = $model->get_classdescriptor_by_name("Company");
 my $secretarys_field = $company_cd->get_field_by_name("secretarys");
 my $address_field = $company_cd->get_field_by_name("address");
 
-ok($name_field->field_type() eq 'attribute');
-ok($department_company_field->field_type() eq 'reference');
-ok($employees_field->field_type() eq 'collection');
-ok($contractor_companys_field->is_many_to_many());
+ok($name_field->field_type() eq 'attribute'); # Test 2
+ok($department_company_field->field_type() eq 'reference'); # Test 3
+ok($employees_field->field_type() eq 'collection'); # Test 4
 
 my @fields = ($department_company_field, $employees_field,
    $contractor_companys_field, $secretarys_field, $address_field);
+
+my @relationship = ("many to one", "one to many", "many to many", "one of many", "unique");
 
 my @methods = (
                \&InterMine::Model::Reference::is_many_to_one,
@@ -38,14 +38,17 @@ my @methods = (
                \&InterMine::Model::Reference::is_many_to_0,
                \&InterMine::Model::Reference::is_one_to_0,
               );
+
+# Tests 5-29 (5*5 tests = 25)
 for (my $i = 0; $i<5; $i++) {
   my $field = $fields[$i];
+  my $relationship = $relationship[$i];
   for (my $j = 0; $j<5; $j++) {
     my $method = $methods[$j];
     if ($i == $j) {
-      ok(&$method($field));
+      ok(&$method($field), "field is $relationship");
     } else {
-      ok(!&$method($field));
+      ok(!&$method($field), "field isn't $relationship");
     }
   }
 }
