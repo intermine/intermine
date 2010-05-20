@@ -46,7 +46,7 @@ public class BDGPURLQuery implements WidgetURLQuery
             + "Gene.primaryIdentifier";
         String expressionStrings = "Gene.mRNAExpressionResults.stageRange,"
             + "Gene.mRNAExpressionResults.mRNAExpressionTerms.name,"
-            + "Gene.mRNAExpressionResults.dataSet.title";
+            + "Gene.mRNAExpressionResults.dataSet.name";
         q.setView(viewStrings);
         q.addView(expressionStrings);
         q.addConstraint(bag.getType(),  Constraints.in(bag.getName()));

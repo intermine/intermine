@@ -176,7 +176,7 @@ public class SequenceExporter implements Exporter
             } else {
                 if (fieldValue instanceof Location) {
                     Location location = (Location) fieldValue;
-                    String primaryIdentifier = location.getObject().getPrimaryIdentifier();
+                    String primaryIdentifier = location.getLocatedOn().getPrimaryIdentifier();
                     Integer start = location.getStart();
                     Integer end = location.getEnd();
                     String locString = primaryIdentifier + ':' + start + '-' + end;

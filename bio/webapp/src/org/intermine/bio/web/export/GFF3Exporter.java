@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.bio.util.GFF3Util;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.PropertiesUtil;
@@ -49,15 +49,15 @@ public class GFF3Exporter implements Exporter
     //    public static final Set<String> GFF_FIELDS = Collections
     //    .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
     //            "chromosomeLocation.start", "chromosomeLocation.end",
-    //            "chromosomeLocation.strand", "primaryIdentifier", "score", 
+    //            "chromosomeLocation.strand", "primaryIdentifier", "score",
     //            "start", "end", "strand")));
 
     public static final Set<String> GFF_FIELDS = Collections
     .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
             "primaryIdentifier", "score")));
-    public static final String WORM_LINK = 
+    public static final String WORM_LINK =
         "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=6239";
-    public static final String FLY_LINK = 
+    public static final String FLY_LINK =
         "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7227";
 
     PrintWriter out;
@@ -69,9 +69,9 @@ public class GFF3Exporter implements Exporter
     private List<String> attributesNames;
     private String sourceName;
     private Set<Integer> organisms;
-    // this one to store the lower case class names of  soClassNames, 
+    // this one to store the lower case class names of  soClassNames,
     // for comparison with path elements classes.
-    private Set<String> cNames = new HashSet<String>(); 
+    private Set<String> cNames = new HashSet<String>();
     /**
      * Constructor.
      * @param out output stream
@@ -91,8 +91,8 @@ public class GFF3Exporter implements Exporter
         this.sourceName = sourceName;
         this.organisms = organisms;
 
-        for (String s : soClassNames.keySet()){
-            this.cNames.add(s.toLowerCase());                
+        for (String s : soClassNames.keySet()) {
+            this.cNames.add(s.toLowerCase());
         }
     }
 
@@ -102,27 +102,26 @@ public class GFF3Exporter implements Exporter
      * @return header further info about versions
      */
 
-    private String getHeaderParts()
-    {
+    private String getHeaderParts() {
         StringBuffer header = new StringBuffer();
         Properties props = PropertiesUtil.getProperties();
 
         if (organisms != null) {
-            for (Integer taxId : organisms){
-                if (taxId == 7227){
+            for (Integer taxId : organisms) {
+                if (taxId == 7227) {
                     String fV = props.getProperty("genomeVersion.fly");
-                    if (fV != null && fV.length() > 0){
-                        header.append("\n##species " + FLY_LINK );
-                        header.append("\n##genome-build FlyBase r"+ fV + "(drosophila)");
+                    if (fV != null && fV.length() > 0) {
+                        header.append("\n##species " + FLY_LINK);
+                        header.append("\n##genome-build FlyBase r" + fV + "(drosophila)");
                     }
                 }
             }
-            for (Integer taxId : organisms){
-                if (taxId == 6239){
+            for (Integer taxId : organisms) {
+                if (taxId == 6239) {
                     String wV = props.getProperty("genomeVersion.worm");
                     if (wV != null && wV.length() > 0) {
                         header.append("\n##species " + WORM_LINK);
-                        header.append("\n##genome-build WormBase r"+ wV + "(worm)");
+                        header.append("\n##genome-build WormBase r" + wV + "(worm)");
                     }
                 }
             }
@@ -168,7 +167,7 @@ public class GFF3Exporter implements Exporter
     /* State for the exportRow method, to allow several rows to be merged. */
     private Map<String, Integer> attributeVersions = new HashMap<String, Integer>();
     private Integer lastLsfId = null;
-    private LocatedSequenceFeature lastLsf = null;
+    private SequenceFeature lastLsf = null;
     private Map<String, List<String>> attributes = null;
     private Map<String, Set<Integer>> seenAttributes = new HashMap<String, Set<Integer>>();
 
@@ -183,8 +182,8 @@ public class GFF3Exporter implements Exporter
         }
 
         // loop through all the objects in a row
-        for (ResultElement re : elWithObject ){
-            LocatedSequenceFeature lsf = (LocatedSequenceFeature) re.getObject();
+        for (ResultElement re : elWithObject) {
+            SequenceFeature lsf = (SequenceFeature) re.getObject();
             //             LOG.info("GFFrePath: " + re.getPath());
             boolean isCollection = re.getPath().containsCollections();
 
@@ -210,53 +209,53 @@ public class GFF3Exporter implements Exporter
                     continue;
                 }
 
-                if (i==0 ){ // this is the beginning of the path
+                if (i == 0){ // this is the beginning of the path
                     parent = (String) el.getField();
-                    parentClass= el.getPath().getStartClassDescriptor().getUnqualifiedName();
+                    parentClass = el.getPath().getStartClassDescriptor().getUnqualifiedName();
                 }
 
                 // checks for attributes:
-                if (isCollection && !el.getPath().containsCollections()){
+                if (isCollection && !el.getPath().containsCollections()) {
                     // one is collection, the other is not: do not show
                     continue;
                 }
-                if (!isCollection && el.getPath().containsCollections() 
-                        && soClassNames.containsKey(el.getType())){
-                    // show attributes only if they are not linked to features 
+                if (!isCollection && el.getPath().containsCollections()
+                        && soClassNames.containsKey(el.getType())) {
+                    // show attributes only if they are not linked to features
                     // (they will be displayed with the relevant one, see below)
                     continue;
                 }
 
-                if (isCollection && el.getPath().containsCollections()){
+                if (isCollection && el.getPath().containsCollections()) {
                     // show only if of the same class
                     Class<?> reType = re.getPath().getLastClassDescriptor().getType();
                     Class<?> elType = el.getPath().getLastClassDescriptor().getType();
-                    if (!reType.isAssignableFrom(elType)){
-                        // LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+ 
+                    if (!reType.isAssignableFrom(elType)) {
+                        // LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+
                         // "|R:"+re.getPath()+"||E:"+el.getPath());
                         continue;
                     }
                 }
 
-                if(el.getPath().getLastClassDescriptor().getUnqualifiedName().
-                        equalsIgnoreCase("location")){
+                if (el.getPath().getLastClassDescriptor().getUnqualifiedName().
+                        equalsIgnoreCase("location")) {
                     // don't show locations (they are already displayed parts of the element)
                     continue;
                 }
 
                 if (el.getField() != null) {
-                    String  unqualName = el.getPath().getLastClassDescriptor().getUnqualifiedName();                    
-                    String attributeName = trimAttribute(attributesNames.get(i),unqualName);
+                    String  unqualName = el.getPath().getLastClassDescriptor().getUnqualifiedName();
+                    String attributeName = trimAttribute(attributesNames.get(i), unqualName);
                     //                    LOG.info("IN: " + attributeName+"|"+ unqualName);
                     checkAttribute(el, attributeName);
                 }
 
                 // TEMP out (fm release)
                 // add the parent
-                if (i>=1 && !parentClass.equalsIgnoreCase(
-                        re.getPath().getLastClassDescriptor().getUnqualifiedName())){
-                    LOG.info("PAR: " + parentClass + " -> " + 
-                            re.getPath().getLastClassDescriptor().getUnqualifiedName());
+                if (i >= 1 && !parentClass.equalsIgnoreCase (
+                        re.getPath().getLastClassDescriptor().getUnqualifiedName())) {
+                    LOG.info("PAR: " + parentClass + " -> "
+                    + re.getPath().getLastClassDescriptor().getUnqualifiedName());
                     List<String> addPar = new ArrayList<String>();
                     addPar.add(parent);
                     attributes.put("Parent", addPar);
@@ -268,15 +267,15 @@ public class GFF3Exporter implements Exporter
         }
     }
 
-    private String trimAttribute(String attribute, String unqualName){
-        if (!attribute.contains(".")){
+    private String trimAttribute(String attribute, String unqualName) {
+        if (!attribute.contains(".")) {
             return attribute;
         }
         // check if a feature attribute (display only name) or not (display all path)
-        if (cNames.contains(unqualName.toLowerCase())){
-            String plainAttribute = attribute.substring(attribute.lastIndexOf('.')+1);
+        if (cNames.contains(unqualName.toLowerCase())) {
+            String plainAttribute = attribute.substring(attribute.lastIndexOf('.') + 1);
             //            LOG.info("LCC: " +attribute+"->"+unqualName +"|"+ plainAttribute );
-            return plainAttribute;            
+            return plainAttribute;
         }
         //        LOG.info("LCCno: " + attribute + "|" + unqualName);
         return attribute;
@@ -284,7 +283,7 @@ public class GFF3Exporter implements Exporter
 
 
     /**
-     * 
+     *
      */
     private void makeRecord() {
 
@@ -357,7 +356,7 @@ public class GFF3Exporter implements Exporter
         List<ResultElement> els = new ArrayList<ResultElement>();
         for (Integer index : featureIndexes) {
             if (row.get(index) != null) {
-                els.add(row.get(index));                    
+                els.add(row.get(index));
             }
         }
         return els;
@@ -378,7 +377,7 @@ public class GFF3Exporter implements Exporter
      * @return true if this exporter can export result composed of specified classes
      */
     public static boolean canExportStatic(List<Class> clazzes) {
-        return ExportHelper.getClassIndex(clazzes, LocatedSequenceFeature.class) >= 0;
+        return ExportHelper.getClassIndex(clazzes, SequenceFeature.class) >= 0;
     }
 
     /**
