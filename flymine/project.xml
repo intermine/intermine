@@ -80,7 +80,7 @@
       <property name="src.data.dir.includes" value="dgc2flybase.txt"/>
     </source>
 <!--
-    <source name="long-oligo" type="long_oligo">
+    <source name="long-oligo" type="long-oligo">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="MRNA"/>
       <property name="gff3.seqDataSourceName" value="Micklem lab"/>
@@ -100,13 +100,13 @@
       <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
       <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
     </source>
-    <source name="tiling-path" type="tiling_path">
+-->
+    <source name="tiling-path" type="tiling-path">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/tiling-path-liftover/tiling-reordered/"/>
    </source>
--->
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/shared/data/kegg/current"/>
       <property name="kegg.organisms" value="7227 9606"/>
