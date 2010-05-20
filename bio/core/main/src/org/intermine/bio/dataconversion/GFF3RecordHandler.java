@@ -435,7 +435,7 @@ public class GFF3RecordHandler
      * a particular class with the parents of any SimpleRelations.
      * @param references map from classname to name of reference/collection to populate
      */
-    protected void setReferences(Map references) {
+    protected void setReferences(Map<?, ?> references) {
         Item feature = getFeature();
 
         // set additional references from parents according to references map
@@ -469,113 +469,6 @@ public class GFF3RecordHandler
                                       + "class: " + clsName + " - is map configured correctly?");
             }
         }
-    }
-
-    /**
-     * if the feature is CrossGenomeMatch, more specific properties added to
-     * the feature through the handler.
-     * @param feature item feature
-     * @param orgAbb string organism abbreviation
-     * @param seqIdentifier sequence identifier
-     * @param seq item sequence
-     * @param locString location string got from converter
-     */
-    protected void setCrossGenomeMatch(Item feature, String orgAbb, String seqIdentifier,
-                                       Item seq, String locString) {
-        String clsName = feature.getClassName();
-        String seqClsName = seq.getClassName();
-        if (clsName.equals("CrossGenomeMatch")) {
-            if (orgAbb != null) {
-                tgtOrganism = getTargetOrganism(orgAbb);
-
-                Item targetSeq = getTargetSeq(seqIdentifier, seqClsName, orgAbb);
-                targetSeq.addToCollection("dataSets", getDataSet());
-
-                String locStart = locString.split(" ")[1];
-                String locEnd = locString.split(" ")[2];
-                String locStrand = locString.split(" ")[3];
-
-                Item targetLocation = createItem("Location", createIdentifier());
-                if (Integer.parseInt(locStart) < Integer.parseInt(locEnd)) {
-                    targetLocation.setAttribute("start", locStart);
-                    targetLocation.setAttribute("end", locEnd);
-                } else {
-                    targetLocation.setAttribute("start", locEnd);
-                    targetLocation.setAttribute("end", locStart);
-                }
-
-                targetLocation.addToCollection("dataSets", getDataSet());
-
-                if (locStrand != null && locStrand.equals("+")) {
-                    targetLocation.setAttribute("strand", "1");
-                } else if (locStrand != null && locStrand.equals("-")) {
-                    targetLocation.setAttribute("strand", "-1");
-                } else {
-                    targetLocation.setAttribute("strand", "0");
-                }
-
-                targetLocation.setReference("object", targetSeq.getIdentifier());
-                targetLocation.setReference("subject", feature.getIdentifier());
-                setTgtLocation(targetLocation);
-
-                feature.setReference("chromosome", seq.getIdentifier());
-                feature.setReference("chromosomeLocation", getLocation().getIdentifier());
-                feature.setReference("targetOrganism", tgtOrganism.getIdentifier());
-                feature.setReference("targetLocatedSequenceFeature", targetSeq.getIdentifier());
-                feature.setReference("targetLocatedSequenceFeatureLocation",
-                                      targetLocation.getIdentifier());
-            } else {
-                throw new NullPointerException("No target organism for " + feature);
-            }
-        }
-    }
-
-    /**
-     * @param identifier target sequence identifier
-     * @param seqClsName passed by converter param, normally chromosome,
-     * in case of opposumchain, it is scaffold
-     * @param orgAbb organism abbreivation
-     * @return target sequence
-     */
-     private Item getTargetSeq(String identifier, String seqClsName, String orgAbb) {
-        Item tseq = (Item) tgtSeqs.get(identifier);
-        if (tseq == null) {
-            if (identifier.startsWith("scaffold_")) {
-                tseq = createItem("Scaffold", createIdentifier());
-                tseq.setAttribute("primaryIdentifier", identifier.substring("scaffold_".length()));
-            } else {
-                tseq = createItem(seqClsName, createIdentifier());
-                tseq.setAttribute("primaryIdentifier", identifier);
-            }
-            tseq.addReference(getTargetOrgRef(orgAbb));
-            tgtSeqs.put(identifier, tseq);
-            setTgtSequence(tseq);
-        }
-        return tseq;
-    }
-
-    /**
-     * @param orgAbb organism abbreivation
-     * @return tgtOrganism
-     */
-    private Item getTargetOrganism(String orgAbb) {
-        if (tgtOrganism == null) {
-            tgtOrganism = createItem("Organism", createIdentifier());
-            tgtOrganism.addAttribute(new Attribute("abbreviation", orgAbb));
-            setTgtOrganism(tgtOrganism);
-        }
-        return tgtOrganism;
-    }
-
-    /**
-     * @param orgAbb organism abbreivation
-     * @return tgtOrganismReference
-     */
-    private Reference getTargetOrgRef(String orgAbb) {
-        if (tgtOrgRef == null) {
-            tgtOrgRef = new Reference("organism", getTargetOrganism(orgAbb).getIdentifier());
-        }
-        return tgtOrgRef;
     }
 
     /**
