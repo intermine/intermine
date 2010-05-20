@@ -289,7 +289,7 @@ public class WriteGFFTask extends Task
         }
 
         writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
-        		seenTranscriptParts, synonymMap, evidenceMap);
+        seenTranscriptParts, synonymMap, evidenceMap);
 
         if (gffWriter != null) {
             gffWriter.close();
@@ -326,10 +326,12 @@ public class WriteGFFTask extends Task
             // we can't just use MRNA here because the Transcripts of a pseudogene are Transcripts,
             // but aren't MRNAs
             Transcript transcript = transcriptIter.next();
+
             Gene gene = transcript.getGene();
             if (gene == null) {
                 continue;
             }
+
             Location transcriptLocation = seenTranscripts.get(transcript);
 
             String transcriptFeatureType = "mRNA";
