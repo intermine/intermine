@@ -51,7 +51,6 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
 
@@ -71,7 +70,7 @@ public class MetadataCache
     private static final String GBROWSE_ST_URL_END = "/?action=scan";
 
 
-    
+
     public static class GBrowseTrack 
     {
         private String organism; // {fly,worm}
@@ -141,18 +140,29 @@ public class MetadataCache
     }
 
     /**
-     * Fetch GBrowse tracks for display.
-     * @return map
+     * Fetch GBrowse tracks per submission fpr display.  This updates automatically from the GBrowse
+     * server and refreshes periodically (according to threshold).  When refreshing another process
+     * is spawned which will update tracks when finished, if GBrowse can't be accessed the current
+     * list of tracks of tracks are preserved.
+     * @return map from submission id to list of GBrowse tracks
      */
     public static synchronized Map<Integer, List<GBrowseTrack>> getGBrowseTracks() {
+        fetchGBrowseTracks();
+        return submissionTracksCache;
+    }
+
+    private static void fetchGBrowseTracks() {
         long timeSinceLastRefresh = System.currentTimeMillis() - lastTrackCacheRefresh;
         if (timeSinceLastRefresh > TWO_HOUR) {
             readGBrowseTracks();
             lastTrackCacheRefresh = System.currentTimeMillis();
         }
-        return submissionTracksCache;
     }
 
+    public static synchronized void setGBrowseTracks(Map<Integer, List<GBrowseTrack>> tracks) {
+        submissionTracksCache = tracks;
+    }
+    
     /**
      * Fetch unlocated feature types per submission.
      * @param os the production objectStore
@@ -185,7 +195,6 @@ public class MetadataCache
      * @param os the production objectStore
      * @return map
      */
-    //    public static synchronized Map<Integer, List<String>> getSubmissionFiles(ObjectStore os) {
     public static synchronized Map<Integer, Set<ResultFile>> getSubmissionFiles(ObjectStore os) {
         if (submissionFilesCache == null) {
             readSubmissionFiles(os);
@@ -822,18 +831,37 @@ public class MetadataCache
      *
      */
     private static void readGBrowseTracks() {
+        Runnable r = new Runnable() {
+            public void run() {
+                threadedReadGBrowseTracks();
+            }
+        };
+        Thread t = new Thread(r);
+        t.start();
+    }
+    
+    private static void threadedReadGBrowseTracks() {
         long startTime = System.currentTimeMillis();
 
-        submissionTracksCache = new HashMap<Integer, List<GBrowseTrack>>();
+        Map<Integer, List<GBrowseTrack>> tracks = new HashMap<Integer, List<GBrowseTrack>>();
+        Map<Integer, List<GBrowseTrack>> flyTracks = null;
+        Map<Integer, List<GBrowseTrack>> wormTracks = null;
         try {
-            readTracks("fly");
-            readTracks("worm");
-        } catch (Exception err) {
-            err.printStackTrace();
+            
+            flyTracks = readTracks("fly");
+            wormTracks = readTracks("worm");
+        } catch (Exception e) {
+            LOG.error(e);
         }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed GBrowse tracks cache, took: " + timeTaken + "ms  size = "
-                + submissionTracksCache.size());
+                + tracks.size());
+
+        if (flyTracks != null && wormTracks!= null) {
+            tracks.putAll(flyTracks);
+            tracks.putAll(wormTracks);
+            setGBrowseTracks(tracks);
+        }
     }
 
     /**
@@ -843,11 +871,14 @@ public class MetadataCache
      * @return submissionTracksCache
      */
     private static Map<Integer, List<GBrowseTrack>> readTracks(String organism) {
+        Map<Integer, List<GBrowseTrack>> submissionsToTracks = 
+            new HashMap<Integer, List<GBrowseTrack>>();
         try {
             URL url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_ST_URL_END);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
 
+            
             // examples of lines:
             //
             // [Henikoff_Salt_H3_WIG]
@@ -890,7 +921,7 @@ public class MetadataCache
                             toAppend.setLength(0); // empty buffer
                             GBrowseTrack newTrack = 
                                 new GBrowseTrack(organism, trackName.toString(), subTrack);
-                            addToGBMap(submissionTracksCache, dccId, newTrack);
+                            addToGBMap(submissionsToTracks, dccId, newTrack);
                         }
                     }
                 }                
@@ -899,35 +930,7 @@ public class MetadataCache
         } catch (Exception err) {
             err.printStackTrace();
         }        
-        return submissionTracksCache;
-    }
-
-
-    /**
-     * This method looks for dccId in the tokenised line
-     * or the tokenised track name
-     * In the first case it uses an offset: the last token is always part of
-     * the description even if it is a number (e.g. Green Lab ESTs 2008-12-02 set 1)
-     *
-     * @param tokes the array of tokens
-     * @param track the GBrowse track
-     * @param isName: needed to include only last token in name parsing (see above)
-     */
-    private static void parseTokens(String[] tokens,
-            GBrowseTrack track, Boolean isName) {
-        // starting from the end, because when checking track names only
-        // the last number is ok if there are 2
-        for (int x = (tokens.length - 1); x > -1; x--) {
-            if (StringUtil.allDigits(tokens[x])) {
-                // this is a submission Id
-                Integer dccId = Integer.parseInt(tokens[x]);
-                // add to map sub trackname
-                addToGBMap(submissionTracksCache, dccId, track);
-                if (isName) { //track name
-                    break;
-                }
-            }
-        }
+        return submissionsToTracks;
     }
 
 
