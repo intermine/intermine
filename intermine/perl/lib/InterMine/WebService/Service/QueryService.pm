@@ -56,6 +56,7 @@ use Text::CSV_XS;
 use InterMine::WebService::Core::Request;
 
 my $SERVICE_RELATIVE_URL = "query/results";
+my $query_error = "No query passed\n";
 
 =head2 new
 
@@ -94,6 +95,7 @@ sub get_result
 {
   my $self = shift;
   my $query = shift;
+  die $query_error unless $query;
   my $start = shift;
   my $max_count = shift;
   my $count_only = shift; # Support for this feature has been discontinued
@@ -160,8 +162,7 @@ sub get_result_table
 
     return @retval;
   } else {
-    die "request failed with error: ", $response->status_line(), "\n",
-        $response->content(), "\n";
+    die "request failed with error: ", $response->status_line(), "\n", $response->content(), "\n";
   }
 }
 
