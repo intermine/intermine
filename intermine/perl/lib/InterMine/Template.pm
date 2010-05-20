@@ -85,7 +85,8 @@ sub new
   elsif (defined $opts{file} && !-f $opts{file}) {
       die "A valid file must be specified: we got $opts{file}\n";
   }
-  unless (defined $opts{model}) {
+  unless (defined $opts{model}) { 
+  # model needed to make the internal PathQuery with
       die "We need a model to build templates with\n";
   }
 
