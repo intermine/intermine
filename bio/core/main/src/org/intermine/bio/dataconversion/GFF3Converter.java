@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -193,8 +192,8 @@ public class GFF3Converter
 
         if (cd == null) {
             throw new IllegalArgumentException("no class found in model for: " + className
-                                               + " (original GFF record type: " + term + ") for "
-                                               + "record: " + record);
+                    + " (original GFF record type: " + term + ") for "
+                    + "record: " + record);
         }
 
         Set<Item> synonymsToAdd = new HashSet<Item>();
@@ -260,49 +259,42 @@ public class GFF3Converter
             boolean makeLocation =
                 record.getStart() >= 1 && record.getEnd() >= 1 && !dontCreateLocations
                 && handler.createLocations(record);
-            if (makeLocation) {
-                relation = createItem("Location");
-                int start = record.getStart();
-                int end = record.getEnd();
-                if (record.getStart() < record.getEnd()) {
-                    relation.setAttribute("start", String.valueOf(start));
-                    relation.setAttribute("end", String.valueOf(end));
-                } else {
-                    relation.setAttribute("start", String.valueOf(end));
-                    relation.setAttribute("end", String.valueOf(start));
-                }
-                if (record.getStrand() != null && record.getStrand().equals("+")) {
-                    relation.setAttribute("strand", "1");
-                } else
-                    if (record.getStrand() != null && record.getStrand().equals("-")) {
-                        relation.setAttribute("strand", "-1");
-                    } else {
-                        relation.setAttribute("strand", "0");
-                    }
-
-                if (record.getPhase() != null) {
-                    relation.setAttribute("phase", record.getPhase());
-                }
-
-                int length = Math.abs(end - start) + 1;
-                feature.setAttribute("length", String.valueOf(length));
-            } else {
-                relation = createItem("SimpleRelation");
-            }
-            relation.setReference("object", seq.getIdentifier());
-            relation.setReference("subject", feature.getIdentifier());
-            relation.setCollection("dataSets", Arrays.asList(new String[]
-                {
-                    dataSet.getIdentifier()
-                }));
-            handler.setLocation(relation);
-            if (seqClsName.equals("Chromosome")
-                    && (cd.getFieldDescriptorByName("chromosome") != null)) {
-                feature.setReference("chromosome", seq.getIdentifier());
                 if (makeLocation) {
-                    feature.setReference("chromosomeLocation", relation);
+                    relation = createItem("Location");
+                    int start = record.getStart();
+                    int end = record.getEnd();
+                    if (record.getStart() < record.getEnd()) {
+                        relation.setAttribute("start", String.valueOf(start));
+                        relation.setAttribute("end", String.valueOf(end));
+                    } else {
+                        relation.setAttribute("start", String.valueOf(end));
+                        relation.setAttribute("end", String.valueOf(start));
+                    }
+                    if (record.getStrand() != null && record.getStrand().equals("+")) {
+                        relation.setAttribute("strand", "1");
+                    } else
+                        if (record.getStrand() != null && record.getStrand().equals("-")) {
+                            relation.setAttribute("strand", "-1");
+                        } else {
+                            relation.setAttribute("strand", "0");
+                        }
+                    int length = Math.abs(end - start) + 1;
+                    feature.setAttribute("length", String.valueOf(length));
+                } else {
+                    relation = createItem("SimpleRelation");
                 }
-            }
+                relation.setReference("locatedOn", seq.getIdentifier());
+                relation.setReference("feature", feature.getIdentifier());
+                relation.addToCollection("dataSets", dataSet);
+
+                handler.setLocation(relation);
+                if (seqClsName.equals("Chromosome")
+                        && (cd.getFieldDescriptorByName("chromosome") != null)) {
+                    feature.setReference("chromosome", seq.getIdentifier());
+                    if (makeLocation) {
+                        feature.setReference("chromosomeLocation", relation);
+                    }
+                }
         }
         handler.addDataSet(dataSet);
         if (record.getScore() != null && !String.valueOf(record.getScore()).equals("")) {
@@ -314,18 +306,6 @@ public class GFF3Converter
             handler.setAnalysis(computationalAnalysis);
             handler.setResult(computationalResult);
             handler.addEvidence(computationalResult);
-        }
-        String orgAbb = null;
-        String tgtSeqIdentifier = null;
-        if (record.getAttributes().get("Organism") != null) {
-            orgAbb = (String) ((List<?>) record.getAttributes().get("Organism")).get(0);
-        }
-        if (record.getAttributes().get(seqClsName) != null) {
-            tgtSeqIdentifier = (String) ((List<?>) record.getAttributes().get(seqClsName)).get(0);
-        }
-        String tgtLocation = record.getTarget();
-        if (orgAbb != null && tgtSeqIdentifier != null && tgtLocation != null) {
-            handler.setCrossGenomeMatch(feature, orgAbb, tgtSeqIdentifier, seq, tgtLocation);
         }
         if (feature.hasAttribute("secondaryIdentifier")) {
             Item synonym = createItem("Synonym");
