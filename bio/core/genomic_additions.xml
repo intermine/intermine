@@ -4,6 +4,7 @@
     <class name="CDS" is-interface="true">
       <reference name="gene" referenced-type="Gene" reverse-reference="CDSs"/>
       <reference name="protein" referenced-type="Protein" reverse-reference="CDSs"/>
+      <reference name="MRNA" referenced-type="MRNA" reverse-reference="CDSs"/>
     </class>
 
     <class name="Chromosome" is-interface="true">
@@ -25,6 +26,7 @@
       <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
       <collection name="flankingRegions" referenced-type="GeneFlankingRegion" reverse-reference="gene"/>
       <collection name="exons" referenced-type="Exon" reverse-reference="gene"/>
+      <collection name="transcripts" referenced-type="Transcript" reverse-reference="gene"/>
     </class>
 
     <class name="GeneFlankingRegion" extends="SequenceFeature" is-interface="true">
@@ -45,6 +47,7 @@
       <reference name="fivePrimeUTR" referenced-type="FivePrimeUTR"/>
       <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR"/>
       <collection name="UTRs" referenced-type="UTR" reverse-reference="MRNA"/>
+      <collection name="CDSs" referenced-type="CDS" reverse-reference="MRNA"/>
     </class>
 
     <class name="Protein" is-interface="true">
@@ -63,6 +66,7 @@
     
     <class name="Transcript" is-interface="true">
       <reference name="protein" referenced-type="Protein" reverse-reference="transcripts"/>
+      <reference name="gene" referenced-type="Gene" reverse-reference="transcripts"/>
       <collection name="introns" referenced-type="Intron" reverse-reference="transcripts"/>
       <collection name="exons" referenced-type="Exon" reverse-reference="transcripts"/>
     </class>
