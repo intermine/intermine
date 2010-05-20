@@ -4,12 +4,10 @@
      <attribute name="featureType" type="java.lang.String"/>
      <collection name="transcripts" referenced-type="Transcript" reverse-reference="gene"/>
    </class>
-   <class name="Transcript" extends="BioEntity" is-interface="true">
+   <class name="Transcript" is-interface="true">
      <reference name="gene" referenced-type="Gene" reverse-reference="transcripts" />
-     <reference name="sequence" referenced-type="Sequence" />
    </class>
    <class name="CDS"  is-interface="true">
-     <reference name="sequence" referenced-type="Sequence" />
      <reference name="MRNA" referenced-type="MRNA" reverse-reference="CDSs" />
    </class>
   <class name="MRNA" is-interface="true">
