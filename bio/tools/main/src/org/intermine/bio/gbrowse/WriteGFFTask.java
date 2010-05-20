@@ -10,6 +10,12 @@ package org.intermine.bio.gbrowse;
  *
  */
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,6 +26,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.intermine.bio.util.BioQueries;
+import org.intermine.bio.util.Constants;
+import org.intermine.model.bio.CDS;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.ChromosomeBand;
+import org.intermine.model.bio.Exon;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.MRNA;
+import org.intermine.model.bio.NcRNA;
+import org.intermine.model.bio.Sequence;
+import org.intermine.model.bio.SequenceFeature;
+import org.intermine.model.bio.Synonym;
+import org.intermine.model.bio.Transcript;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -33,40 +61,8 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.bio.util.BioQueries;
-import org.intermine.bio.util.Constants;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-
-import org.intermine.model.bio.CDS;
-import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.ChromosomeBand;
-import org.intermine.model.bio.Exon;
-import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.SequenceFeature;
-import org.intermine.model.bio.Location;
-import org.intermine.model.bio.MRNA;
-import org.intermine.model.bio.NcRNA;
-import org.intermine.model.bio.Sequence;
-import org.intermine.model.bio.Synonym;
-import org.intermine.model.bio.Transcript;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-
-import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 
 /**
  * A Task for creating GFF and FASTA files for use by GBrowse.  Only those features that are
