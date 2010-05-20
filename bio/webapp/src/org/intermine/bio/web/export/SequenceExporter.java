@@ -99,6 +99,7 @@ public class SequenceExporter implements Exporter
                 }
 
                 if (object instanceof LocatedSequenceFeature) {
+                	// TODO disordered header
                     bioSequence = createLocatedSequenceFeature(header, object, row);
                 } else if (object instanceof Protein) {
                     bioSequence = createProtein(header, object, row);
@@ -145,7 +146,8 @@ public class SequenceExporter implements Exporter
         Protein protein = (Protein) object;
         bioSequence = BioSequenceFactory.make(protein);
 
-        makeHeader(header, row);
+        String primaryIdentifier = protein.getPrimaryIdentifier();
+        makeHeader(header, primaryIdentifier, object, row);
 
         return bioSequence;
     }
@@ -156,8 +158,9 @@ public class SequenceExporter implements Exporter
         BioSequence bioSequence;
         LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
         bioSequence = BioSequenceFactory.make(feature);
-
-        makeHeader(header, row);
+        
+        String primaryIdentifier = feature.getPrimaryIdentifier();
+        makeHeader(header, primaryIdentifier, object, row);
 
         return bioSequence;
     }
@@ -165,30 +168,78 @@ public class SequenceExporter implements Exporter
     /**
      * Set the header to be the contents of row, separated by spaces.
      */
-    private void makeHeader(StringBuffer header, List<ResultElement> row) {
+    private void makeHeader(StringBuffer header, String primaryIdentifier, Object object, 
+    		List<ResultElement> row) {
 
         List<String> headerBits = new ArrayList<String>();
+        
+        // add the Object's (Protein or LocatedSequenceFeature) primaryIdentifier at the first place
+        // in the header
+        headerBits.add(primaryIdentifier);
+    	
+        // two instances
+        if (object instanceof LocatedSequenceFeature) {
+        	
+        	// add the sequence location info at the second place in the header
+        	LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
+        	
+        	String chr = feature.getChromosome().getPrimaryIdentifier();
+        	Integer start = feature.getChromosomeLocation().getStart();
+        	Integer end = feature.getChromosomeLocation().getEnd();
+        	String locString = chr + ':' + start + '-' + end;
+	        headerBits.add(locString);
+          
+			for (ResultElement re : row) {
+				if (re.getObject() instanceof Protein) {
+					continue;
+				} else {
+					Object fieldValue = re.getField();
+					if (fieldValue == null) {
+						headerBits.add("-");
+					} else {
+						// ignore the primaryIdentifier and Location in ResultElement
+						if (fieldValue.toString().equals(primaryIdentifier)
+								|| (fieldValue instanceof Location)) {
+							continue;
+						}
+//						else if (fieldValue instanceof Location) {
+//							Location location = (Location) fieldValue;
+//							String chr = location.getObject()
+//									.getPrimaryIdentifier();
+//							Integer start = location.getStart();
+//							Integer end = location.getEnd();
+//							String locString = chr + ':' + start
+//									+ '-' + end;
+//							headerBits.add(locString);
+//						} 
+						else {
+							headerBits.add(fieldValue.toString());
+						}
+					}
+				}
+			}
 
-        for (ResultElement re: row) {
-            Object fieldValue = re.getField();
-            if (fieldValue == null) {
-                headerBits.add("-");
-            } else {
-                if (fieldValue instanceof Location) {
-                    Location location = (Location) fieldValue;
-                    String primaryIdentifier = location.getObject().getPrimaryIdentifier();
-                    Integer start = location.getStart();
-                    Integer end = location.getEnd();
-                    String locString = primaryIdentifier + ':' + start + '-' + end;
-                    headerBits.add(locString);
-                } else {
-                    headerBits.add(fieldValue.toString());
-                }
-            }
-        }
+        } else if (object instanceof Protein) {
 
-        header.append(StringUtil.join(headerBits, " "));
-
+			for (ResultElement re : row) {
+				if (re.getObject() instanceof LocatedSequenceFeature) {
+					continue;
+				} else {
+					Object fieldValue = re.getField();
+					if (fieldValue == null) {
+						headerBits.add("-");
+					} else {
+						if (fieldValue.toString().equals(primaryIdentifier)) {
+							continue;
+						} else {
+							headerBits.add(fieldValue.toString());
+						}
+					}
+				}
+			}
+		}
+        
+		header.append(StringUtil.join(headerBits, " "));
     }
 
     /**
