@@ -12,20 +12,6 @@
     </longdisplayers>
   </class>
 
-  <class className="org.intermine.model.bio.Analysis">
-    <fields>
-      <fieldconfig fieldExpr="publication.title"/>
-      <fieldconfig fieldExpr="publication.firstAuthor"/>
-      <fieldconfig fieldExpr="publication.journal"/>
-    </fields>
-  </class>
-
-  <class className="org.intermine.model.bio.AnalysisResult">
-    <fields>
-      <fieldconfig fieldExpr="confidence"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.Author">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -58,8 +44,8 @@
 
   <class className="org.intermine.model.bio.BlastMatch">
     <fields>
-      <fieldconfig fieldExpr="object.primaryIdentifier"/>
-      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
+      <fieldconfig fieldExpr="parent.primaryIdentifier"/>
+      <fieldconfig fieldExpr="child.primaryIdentifier"/>
       <fieldconfig fieldExpr="EValue"/>
     </fields>
   </class>
@@ -127,16 +113,9 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.ComputationalResult">
-    <fields>
-      <fieldconfig fieldExpr="score"/>
-      <fieldconfig fieldExpr="confidence"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.DataSet">
     <fields>
-      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="url" doNotTruncate="true"/>
     </fields>
   </class>
@@ -260,12 +239,6 @@
   <class className="org.intermine.model.bio.Image">
     <fields>
       <fieldconfig fieldExpr="url" displayer="/model/imageDisplayer.jsp" />
-    </fields>
-  </class>
-
-  <class className="org.intermine.model.bio.InfoSource">
-    <fields>
-      <fieldconfig fieldExpr="title"/>
     </fields>
   </class>
 
@@ -566,13 +539,6 @@
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
-  </class>
-
-  <class className="org.intermine.model.bio.Relation">
-    <fields>
-      <fieldconfig fieldExpr="object.primaryIdentifier"/>
-      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
-    </fields>
   </class>
 
   <class className="org.intermine.model.bio.Reporter">

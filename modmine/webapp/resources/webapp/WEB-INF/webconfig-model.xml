@@ -174,23 +174,6 @@
     </bagdisplayers>
   </class>
 
-<!--
-  <class className="org.intermine.model.bio.Analysis">
-    <fields>
-      <fieldconfig fieldExpr="publication.title"/>
-      <fieldconfig fieldExpr="publication.firstAuthor"/>
-      <fieldconfig fieldExpr="publication.journal"/>
-    </fields>
-  </class>
--->
-
-  <class className="org.intermine.model.bio.AnalysisResult">
-    <fields>
-      <fieldconfig fieldExpr="confidence"/>
-    </fields>
-  </class>
-
-
   <class className="org.intermine.model.bio.Author">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -266,7 +249,7 @@
     </longdisplayers>
   </class>
 
-<!-- temporarily removed until it's in the preview
+
   <class className="org.intermine.model.bio.ChromosomeStructureVariation">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -280,7 +263,6 @@
     </fields>
 
   </class>
--->
 
   <class className="org.intermine.model.bio.Clone">
     <fields>
@@ -295,16 +277,9 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.ComputationalResult">
-    <fields>
-      <fieldconfig fieldExpr="score"/>
-      <fieldconfig fieldExpr="confidence"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.DataSet">
     <fields>
-      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="url" doNotTruncate="true"/>
     </fields>
   </class>
@@ -387,13 +362,6 @@
       <fieldconfig fieldExpr="homologue.organism.shortName"/>
     </fields>
   </class>
-
-  <class className="org.intermine.model.bio.InfoSource">
-    <fields>
-      <fieldconfig fieldExpr="title"/>
-    </fields>
-  </class>
-
 
     <class className="org.intermine.model.bio.Interaction">
    <fields>
@@ -548,13 +516,6 @@
     </longdisplayers>
   </class>
 
-  <class className="org.intermine.model.bio.Relation">
-    <fields>
-      <fieldconfig fieldExpr="object.primaryIdentifier"/>
-      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.Sequence">
     <fields>
       <fieldconfig fieldExpr="residues" fieldExporter="org.intermine.bio.web.export.ResidueFieldExporter"
@@ -603,7 +564,6 @@
     </longdisplayers>
   </class>
 
-
   <class className="org.intermine.model.bio.TFmodule">
     <longdisplayers>
       <displayer src="/model/redflyDisplayer.jsp"/>
@@ -614,7 +574,6 @@
   <class className="org.intermine.model.bio.Transcript">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="exonCount"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false"/>
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />

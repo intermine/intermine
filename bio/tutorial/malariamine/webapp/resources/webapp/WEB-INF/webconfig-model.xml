@@ -93,12 +93,6 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.InfoSource">
-    <fields>
-      <fieldconfig fieldExpr="title"/>
-    </fields>
-  </class>
-
  <class className="org.intermine.model.bio.Location">
     <fields>
       <fieldconfig fieldExpr="object.primaryIdentifier"/>
@@ -107,7 +101,6 @@
       <fieldconfig fieldExpr="strand"/>
     </fields>
   </class>
-
 
   <class className="org.intermine.model.bio.SequenceFeature">
     <fields>
@@ -122,8 +115,6 @@
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
-    <bagdisplayers>
-    </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.OntologyTerm">
@@ -169,8 +160,6 @@
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
-    <bagdisplayers>
-    </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Publication">
@@ -186,13 +175,6 @@
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
-  </class>
-
-  <class className="org.intermine.model.bio.Relation">
-    <fields>
-      <fieldconfig fieldExpr="object.primaryIdentifier"/>
-      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
-    </fields>
   </class>
 
   <class className="org.intermine.model.bio.Sequence">
