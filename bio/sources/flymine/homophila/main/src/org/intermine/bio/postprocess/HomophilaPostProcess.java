@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.model.bio.Annotation;
 import org.intermine.model.bio.BlastMatch;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Disease;

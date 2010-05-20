@@ -3,11 +3,13 @@
   <class name="Disease" is-interface="true">
     <attribute name="omimId" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
   </class>
   <class name="BlastMatch" is-interface="true">
     <attribute name="EValue" type="java.lang.Double"/>
-    <reference name="parent" referenced-type="BioEntity" reverse-reference="rnaiResults" />
-    <reference name="child" referenced-type="BioEntity" reverse-reference="rnaiResults" />
+    <reference name="parent" referenced-type="BioEntity"/>
+    <reference name="child" referenced-type="BioEntity"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
   </class>
   <class name="Gene" is-interface="true">
     <collection name="omimDiseases" referenced-type="Disease"/>

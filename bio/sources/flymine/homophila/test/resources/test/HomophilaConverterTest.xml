@@ -58,10 +58,4 @@
     <reference name="subject" ref_id="6_1"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
-  <item id="9_1" class="Annotation">
-    <reference name="property" ref_id="7_1"/>
-    <reference name="subject" ref_id="6_1"/>
-    <collection name="dataSets"><reference ref_id="1_1"/></collection>
-    <collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
-  </item>
 </items>

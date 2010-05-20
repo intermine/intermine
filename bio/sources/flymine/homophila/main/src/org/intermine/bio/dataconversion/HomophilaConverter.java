@@ -63,7 +63,7 @@ public class HomophilaConverter extends BioFileConverter
     protected File proteinGeneFile;
 
     protected IdResolverFactory resolverFactory;
-    Set<String> problemProteins = new HashSet();
+    Set<String> problemProteins = new HashSet<String>();
 
     /**
      * Construct a new instance of HomophilaConverter.
@@ -323,30 +323,8 @@ public class HomophilaConverter extends BioFileConverter
             synonym.setAttribute("value", geneId);
             synonym.setReference("subject", gene.getIdentifier());
             store(synonym);
-
-            newAnnotation(gene, findDisease(array));
         }
         return gene;
-    }
-
-    /**
-     * Create new Annotation item. Adds the Homophila database and the two publications
-     * as evidence. The subject is the gene and the property is the disease.
-     *
-     * @param gene the Gene Item
-     * @param disease the disease Item
-     * @return the Annotation Item
-     * @throws ObjectStoreException if something goes wrong
-     */
-    protected Item newAnnotation(Item gene, Item disease) throws ObjectStoreException {
-        Item annotation = createItem("Annotation");
-        annotation.setReference("subject", gene.getIdentifier());
-        annotation.setReference("property", disease.getIdentifier());
-        annotation.addToCollection("publications", pub1);
-        annotation.addToCollection("publications", pub2);
-        store(annotation);
-        annotationCount++;
-        return annotation;
     }
 
     /**
