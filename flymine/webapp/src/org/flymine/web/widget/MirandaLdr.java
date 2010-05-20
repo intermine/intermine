@@ -63,7 +63,12 @@ public class MirandaLdr extends EnrichmentWidgetLdr
      */
     public Query getQuery(String action, List<String> keys) {
 
-        QueryClass qcMiRNATarget = new QueryClass(MiRNATarget.class);
+        QueryClass qcMiRNATarget = null;
+        try {
+            qcMiRNATarget = new QueryClass(Class.forName("MiRNATarget"));
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcMiR = new QueryClass(Gene.class);
         QueryClass qcTranscript = new QueryClass(MRNA.class);
