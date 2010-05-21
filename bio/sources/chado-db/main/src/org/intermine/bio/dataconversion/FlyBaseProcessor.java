@@ -1381,7 +1381,6 @@ public class FlyBaseProcessor extends SequenceProcessor
         String valueNoUps = valueNoRefs.replaceAll("<up>", "[").replaceAll("</up>", "]");
         phenotypeAnnotation.setAttribute("description", valueNoUps);
         phenotypeAnnotation.setReference("allele", alleleItemIdentifier);
-        phenotypeAnnotation.setReference("subject", alleleItemIdentifier);
         if (publicationsItemIdList != null && publicationsItemIdList.size() > 0) {
             ReferenceList pubReferenceList =
                 new ReferenceList("publications", publicationsItemIdList);
