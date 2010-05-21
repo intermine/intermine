@@ -1391,7 +1391,6 @@ public class FlyBaseProcessor extends SequenceProcessor
             String anatomyIdentifier = dbAnatomyTermIdentifiers.get(0);
             String anatomyTermItemId = makeAnatomyTerm(anatomyIdentifier);
             phenotypeAnnotation.setReference("anatomyTerm", anatomyTermItemId);
-            phenotypeAnnotation.setReference("property", anatomyTermItemId);
         } else {
             if (dbAnatomyTermIdentifiers.size() > 1) {
                 throw new RuntimeException("more than one anatomy term: "
@@ -1403,7 +1402,6 @@ public class FlyBaseProcessor extends SequenceProcessor
             String developmentTermIdentifier = dbDevelopmentTermIdentifiers.get(0);
             String developmentTermItemId = makeDevelopmentTerm(developmentTermIdentifier);
             phenotypeAnnotation.setReference("developmentTerm", developmentTermItemId);
-            phenotypeAnnotation.setReference("property", developmentTermItemId);
         } else {
             if (dbAnatomyTermIdentifiers.size() > 1) {
                 throw new RuntimeException("more than one anatomy term: "
