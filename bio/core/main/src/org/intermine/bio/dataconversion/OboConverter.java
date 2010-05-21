@@ -68,7 +68,7 @@ public class OboConverter extends DataConverter
         this.termClass = termClass;
 
         ontology = createItem("Ontology");
-        ontology.addAttribute(new Attribute("title", dagName));
+        ontology.addAttribute(new Attribute("name", dagName));
         ontology.addAttribute(new Attribute("url", url));
     }
 
