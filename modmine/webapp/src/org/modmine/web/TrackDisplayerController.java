@@ -28,8 +28,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.session.SessionMethods;
 import org.modmine.web.MetadataCache.GBrowseTrack;
 
-import com.sun.servicetag.SystemEnvironment;
-
 /**
  * Set up for the tracksDisplayer.jsp
  * @author Daniela Butano
