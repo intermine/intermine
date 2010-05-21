@@ -49,7 +49,6 @@ public class GFF3Converter
     private Item organism, dataSet, dataSource, seqDataSource;
     private Model tgtModel;
     private int itemid = 0;
-    private Map<String, Item> analyses = new HashMap<String, Item>();
     private Map<String, Item> seqs = new HashMap<String, Item>();
     private Map<String, String> identifierMap = new HashMap<String, String>();
     private GFF3RecordHandler handler;
@@ -290,11 +289,6 @@ public class GFF3Converter
                             feature.setReference("chromosomeLocation", relation);
                         }
                     }
-                } else {
-
-                    System.out.println("child:" + record.getType());
-                    System.out.println("parent:" + seq.getClassName());
-
                 }
         }
         handler.addDataSet(dataSet);
@@ -421,21 +415,6 @@ public class GFF3Converter
             orgRef = new Reference("organism", getOrganism().getIdentifier());
         }
         return orgRef;
-    }
-
-    /**
-     * @return ComputationalAnalysis item created/from map
-     * @throws ObjectStoreException if the Item can't be stored
-     */
-    private Item getComputationalAnalysis(String algorithm) throws ObjectStoreException {
-        Item analysis = (Item) analyses.get(algorithm);
-        if (analysis == null) {
-            analysis = createItem("ComputationalAnalysis");
-            analysis.setAttribute("algorithm", algorithm);
-            writer.store(ItemHelper.convert(analysis));
-            analyses.put(algorithm, analysis);
-        }
-        return analysis;
     }
 
     /**

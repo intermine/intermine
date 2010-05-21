@@ -76,7 +76,7 @@ public class GFF3RecordHandler
      * feature.
      * @param identifierMap map from GFF ID to item identifier for all features
      */
-    public void setIdentifierMap(Map identifierMap) {
+    public void setIdentifierMap(Map<?, ?> identifierMap) {
         // empty
      }
 
@@ -290,7 +290,7 @@ public class GFF3RecordHandler
      * Remove all items held locally in handler.
      */
     public void clear() {
-        items = new LinkedHashMap();
+        items = new LinkedHashMap<String, Item>();
         sequence = null;
         earlyItems.clear();
     }
@@ -300,9 +300,9 @@ public class GFF3RecordHandler
      * ComputationalAnalysis items.
      * @return a set of items
      */
-    public Collection getItems() {
-        Set all = new LinkedHashSet(items.values());
-        Set retval = new LinkedHashSet();
+    public Collection<Item> getItems() {
+        Set<Item> all = new LinkedHashSet<Item>(items.values());
+        Set<Item> retval = new LinkedHashSet<Item>();
         for (Item item : earlyItems) {
             if (all.remove(item)) {
                 retval.add(item);
@@ -336,7 +336,7 @@ public class GFF3RecordHandler
      * have been read.
      * @return extra Items
      */
-    public Collection getFinalItems() {
+    public Collection<?> getFinalItems() {
         return new ArrayList();
     }
 

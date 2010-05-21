@@ -20,6 +20,7 @@ import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 public class LongOligoGFF3RecordHandlerTest extends ItemsTestCase
 {
@@ -27,7 +28,7 @@ public class LongOligoGFF3RecordHandlerTest extends ItemsTestCase
     GFF3Converter converter;
 
     GFF3Parser parser = new GFF3Parser();
-    MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
+    MockItemWriter writer = new MockItemWriter(new LinkedHashMap<String, Item>());
     String seqClsName = "MRNA";
     String taxonId = "7227";
     String dataSetTitle = "INDAC long oligo data set";
@@ -61,7 +62,7 @@ public class LongOligoGFF3RecordHandlerTest extends ItemsTestCase
         // uncomment to write a new items xml file
         // writeItemsFile(writer.getItems(), "/tmp/long-oligo_items.xml");
 
-        Set expected = readItemSet("LongOligoGFF3RecordHandlerTest.xml");
+        Set<?> expected = readItemSet("LongOligoGFF3RecordHandlerTest.xml");
         assertEquals(expected, writer.getItems());
     }
 }
