@@ -67,15 +67,20 @@ public class WormBaseProcessor extends SequenceProcessor
             Thread.currentThread().setContextClassLoader(classLoader);
             try {
                 throw new RuntimeException("getCurrentTaxonId() returned null while processing "
-                                           + item);
+                        + item);
             } finally {
                 Thread.currentThread().setContextClassLoader(currentClassLoader);
             }
         }
         ChadoDBConverter converter = getChadoDBConverter();
-        DataSetStoreHook.setDataSets(getModel(), item,
-                                     converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
-                                     converter.getDataSourceItem().getIdentifier());
+        try {
+            DataSetStoreHook.setDataSets(getModel(), item,
+                    converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
+                    converter.getDataSourceItem().getIdentifier(), getSoTerm(item)
+            );
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("can't store feature", e);
+        }
     }
 
     /**

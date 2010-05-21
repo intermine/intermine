@@ -371,7 +371,12 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 Thread.currentThread().setContextClassLoader(currentClassLoader);
             }
         }
-        DataSetStoreHook.setDataSets(getModel(), item, dataSetIdentifier, dataSourceIdentifier);
+        try {
+            DataSetStoreHook.setDataSets(getModel(), item, dataSetIdentifier, dataSourceIdentifier,
+                    getSoTerm(item));
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("can't store feature", e);
+        }
     }
 
 

@@ -1791,10 +1791,11 @@ public class FlyBaseProcessor extends SequenceProcessor
      * Method to add dataSets and DataSources to items before storing
      */
     private void processItem(Item item, Integer taxonId) {
-        if (item.getClassName().equals("DataSource")
-            || item.getClassName().equals("DataSet")
-            || item.getClassName().equals("Organism")
-            || item.getClassName().equals("Sequence")) {
+        String className = item.getClassName();
+        if (className.equals("DataSource")
+            || className.equals("DataSet")
+            || className.equals("Organism")
+            || className.equals("Sequence")) {
             return;
         }
 
@@ -1810,9 +1811,14 @@ public class FlyBaseProcessor extends SequenceProcessor
             }
         }
         ChadoDBConverter converter = getChadoDBConverter();
-        DataSetStoreHook.setDataSets(getModel(), item,
-                                     converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
-                                     converter.getDataSourceItem().getIdentifier());
+        try {
+            DataSetStoreHook.setDataSets(getModel(), item,
+                             converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
+                             converter.getDataSourceItem().getIdentifier(),
+                             getSoTerm(item));
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("can't store feature", e);
+        }
 
     }
 }
