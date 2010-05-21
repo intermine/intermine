@@ -10,13 +10,19 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.IOException;
 import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
 
 /**
  * A processor for a chado module.  See http://www.gmod.org/wiki/index.php/Chado#Modules for
@@ -26,7 +32,7 @@ import org.intermine.xml.full.Attribute;
 public abstract class ChadoProcessor
 {
     private final ChadoDBConverter chadoDBConverter;
-
+    private static final Map<String, String> SO_TERMS = new HashMap<String, String>();
     /**
      * Create a new ChadoModuleProcessor object.
      * @param chadoDBConverter the converter that created this Processor
@@ -87,5 +93,35 @@ public abstract class ChadoProcessor
         att.setName(attributeName);
         att.setValue(value);
         getChadoDBConverter().store(att, intermineObjectId);
+    }
+
+    /**
+     * get and store a SO term for a SequenceFeatures
+     * @param item the feature
+     * @throws ObjectStoreException if there is a problem while storing
+     * @return item id for SO term
+     */
+    protected String getSoTerm(Item item)
+    throws ObjectStoreException  {
+        String soName = null;
+        try {
+            soName = BioConverterUtil.javaNameToSO(item.getClassName());
+            if (soName == null) {
+                return null;
+            }
+            String soRefId = SO_TERMS.get(soName);
+            if (StringUtils.isEmpty(soRefId)) {
+                Item soterm = getChadoDBConverter().createItem("SOTerm");
+                soterm.setAttribute("name", soName);
+                getChadoDBConverter().store(soterm);
+                soRefId = soterm.getIdentifier();
+                SO_TERMS.put(soName, soRefId);
+            }
+            return soRefId;
+        } catch (IOException e) {
+            return null;
+        } catch (ObjectStoreException e) {
+            return null;
+        }
     }
 }

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <classes>
 <class name="NcRNA" extends="Transcript" is-interface="true"></class>
-<class name="SequenceFeature" is-interface="true"></class>
+<class name="SequenceFeature" is-interface="true">
+    <reference name="sequenceOntologyTerm" referenced-type="SequenceOntologyTerm"/>
+</class>
 <class name="CDNAClone" extends="Clone" is-interface="true"></class>
 <class name="Allele" extends="SequenceCollection" is-interface="true"></class>
 <class name="RegulatoryRegion" extends="Region" is-interface="true"></class>
