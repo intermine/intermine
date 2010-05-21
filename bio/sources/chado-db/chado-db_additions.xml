@@ -45,4 +45,5 @@
   <class name="Allele" extends="BioEntity" is-interface="true">
     <reference name="gene" referenced-type="Gene" reverse-reference="alleles"/>
   </class>
+  <class name="TRNA" extends="Transcript" is-interface="true" />
 </classes>
