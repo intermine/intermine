@@ -39,9 +39,9 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
     public void process(GFF3Record record) {
         Item oligo = getFeature();
 
-        String olen = (String) ((List) record.getAttributes().get("olen")).get(0);
+        String olen = (String) ((List<?>) record.getAttributes().get("olen")).get(0);
         oligo.setAttribute("length", olen);
-        String oaTm = (String) ((List) record.getAttributes().get("oaTm")).get(0);
+        String oaTm = (String) ((List<?>) record.getAttributes().get("oaTm")).get(0);
         oligo.setAttribute("tm", oaTm);
 
 

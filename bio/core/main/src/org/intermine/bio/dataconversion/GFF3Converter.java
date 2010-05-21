@@ -246,21 +246,18 @@ public class GFF3Converter
                 String parentName = (String) i.next();
                 // add check for duplicate parent IDs to cope with pseudoobscura GFF
                 if (!seenParents.contains(parentName)) {
-                    Item simpleRelation = createItem("SimpleRelation");
-                    simpleRelation.setReference("object", getIdentifier(parentName));
-                    simpleRelation.setReference("subject", feature.getIdentifier());
-                    handler.addParentRelation(simpleRelation);
+                    handler.addParent(getIdentifier(parentName));
                     seenParents.add(parentName);
                 }
             }
         }
-        Item relation;
+
         if (!record.getType().equals("chromosome") && seq != null) {
             boolean makeLocation =
                 record.getStart() >= 1 && record.getEnd() >= 1 && !dontCreateLocations
                 && handler.createLocations(record);
                 if (makeLocation) {
-                    relation = createItem("Location");
+                    Item relation = createItem("Location");
                     int start = record.getStart();
                     int end = record.getEnd();
                     if (record.getStart() < record.getEnd()) {
@@ -280,32 +277,31 @@ public class GFF3Converter
                         }
                     int length = Math.abs(end - start) + 1;
                     feature.setAttribute("length", String.valueOf(length));
-                } else {
-                    relation = createItem("SimpleRelation");
-                }
-                relation.setReference("locatedOn", seq.getIdentifier());
-                relation.setReference("feature", feature.getIdentifier());
-                relation.addToCollection("dataSets", dataSet);
 
-                handler.setLocation(relation);
-                if (seqClsName.equals("Chromosome")
-                        && (cd.getFieldDescriptorByName("chromosome") != null)) {
-                    feature.setReference("chromosome", seq.getIdentifier());
-                    if (makeLocation) {
-                        feature.setReference("chromosomeLocation", relation);
+                    relation.setReference("locatedOn", seq.getIdentifier());
+                    relation.setReference("feature", feature.getIdentifier());
+                    relation.addToCollection("dataSets", dataSet);
+
+                    handler.setLocation(relation);
+                    if (seqClsName.equals("Chromosome")
+                            && (cd.getFieldDescriptorByName("chromosome") != null)) {
+                        feature.setReference("chromosome", seq.getIdentifier());
+                        if (makeLocation) {
+                            feature.setReference("chromosomeLocation", relation);
+                        }
                     }
+                } else {
+
+                    System.out.println("child:" + record.getType());
+                    System.out.println("parent:" + seq.getClassName());
+
                 }
         }
         handler.addDataSet(dataSet);
-        if (record.getScore() != null && !String.valueOf(record.getScore()).equals("")) {
-            Item computationalResult = createItem("ComputationalResult");
-            computationalResult.setAttribute("type", "score");
-            computationalResult.setAttribute("score", String.valueOf(record.getScore()));
-            Item computationalAnalysis = getComputationalAnalysis(record.getSource());
-            computationalResult.setReference("analysis", computationalAnalysis.getIdentifier());
-            handler.setAnalysis(computationalAnalysis);
-            handler.setResult(computationalResult);
-            handler.addEvidence(computationalResult);
+        Double score = record.getScore();
+        if (score != null && !String.valueOf(score).equals("")) {
+            feature.setAttribute("score", String.valueOf(score));
+            feature.setAttribute("scoreType", record.getSource());
         }
         if (feature.hasAttribute("secondaryIdentifier")) {
             Item synonym = createItem("Synonym");
@@ -333,10 +329,6 @@ public class GFF3Converter
             feature.addCollection(handler.getDataSetReferenceList());
         }
         handler.clearDataSetReferenceList();
-        if (handler.getEvidenceReferenceList().getRefIds().size() > 0) {
-            feature.addCollection(handler.getEvidenceReferenceList());
-        }
-        handler.clearEvidenceReferenceList();
         if (handler.getPublicationReferenceList().getRefIds().size() > 0) {
             feature.addCollection(handler.getPublicationReferenceList());
         }
