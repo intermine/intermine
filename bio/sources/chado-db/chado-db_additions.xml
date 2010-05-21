@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
 <classes>
+<class name="MiRNA" extends="Transcript" is-interface="true"></class>
+<class name="SnRNA" extends="Transcript" is-interface="true"></class>
+<class name="TRNA" extends="Transcript" is-interface="true"></class>
   <class name="Gene" is-interface="true">
     <attribute name="GLEANRsymbol" type="java.lang.String"/>
     <collection name="alleles" referenced-type="Allele" reverse-reference="gene"/>
