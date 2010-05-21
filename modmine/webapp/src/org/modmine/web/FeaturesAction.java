@@ -224,9 +224,7 @@ public class FeaturesAction extends InterMineAction
             Submission sub = MetadataCache.getSubmissionByDccId(os, new Integer(dccId));
             List<String>  unlocFeatures = 
                 MetadataCache.getUnlocatedFeatureTypes(os).get(new Integer(dccId));
-            List<String>  locFeatTypes = 
-                MetadataCache.getLocatedFeatureTypes(os).get(new Integer(dccId));
-
+           
             Integer organism = sub.getOrganism().getTaxonId();
             taxIds.add(organism);
             
