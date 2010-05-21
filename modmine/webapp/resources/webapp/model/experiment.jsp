@@ -14,90 +14,10 @@
 <html:xhtml />
 <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
 <script type="text/javascript" src="js/tablesort.js"></script>
-<link rel="stylesheet" type="text/css" href="css/sorting_experiments.css"/>     
+<link rel="stylesheet" type="text/css" href="css/sorting_experiments.css"/>    
+<link rel="stylesheet" type="text/css" href="model/css/experiment.css"/>     
             
-<style type="text/css">
-
-.dbsources table.features {
-  clear:left;
-  font-size: small;
-  border: none;
-  background-color: green;
-}
-
-.dbsources table.features td {
-  white-space:nowrap;
-  padding: 3px; 
-  border-left:1px solid;
-  border-right: none;
-  border-bottom: none;
-  border-top:none;
-  background-color: #DFA;
-  padding: 5px;
-}
-
-.dbsources table.features .firstrow {
-  white-space:nowrap;
-  padding: 3px; 
-  border-top:none;
-}
-
-.dbsources table.features .firstcolumn {
-  white-space: nowrap;
-  padding: 3px;
-  border-left: none;
-}
-
-
-div#experimentFeatures {
-  color: black;
-  margin: 20px;
-  border: 1px;
-  border-style: solid;
-  border-color: green;
-  background-color: #DFA;
-  padding: 5px;
-}
-
-.submissionFeatures {
-  color: black;
-  margin-bottom: 20px;
-  border: 1px;
-  border-style: solid;
-  border-color: green;
-  background-color: #DFA;
-  padding: 5px;
- }
- 
-.submissions div {
-  clear: both;
-}
-
-.tinylink {
-  line-height:1em;
-  font-size: 8px;
-}
-
-.tinylink a {
-  color:black;
-}
-
-.filelink a {
-  font-size: 11px;
-}
-
-.submission_table {
-  background-color: white;
-}
-
-
-</style>
-
-
 <tiles:importAttribute />
-
-
-
 
 <div class="body">
 
