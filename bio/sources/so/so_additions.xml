@@ -16,6 +16,10 @@
 <class name="SequenceVariant" is-interface="true"></class>
 <class name="MRNA" extends="Transcript" is-interface="true"></class>
 <class name="MiRNA" extends="Transcript" is-interface="true"></class>
+<class name="SnRNA" extends="Transcript" is-interface="true"></class>
+<class name="SnoRNA" extends="Transcript" is-interface="true"></class>
+<class name="TRNA" extends="Transcript" is-interface="true"></class>
+<class name="RRNA" extends="Transcript" is-interface="true"></class>
 <class name="MicroarrayOligo" extends="Oligo" is-interface="true"></class>
 <class name="Oligo" extends="Region" is-interface="true"></class>
 <class name="CRM" extends="RegulatoryRegion" is-interface="true"></class>
@@ -49,4 +53,6 @@
 <class name="Primer" extends="Oligo" is-interface="true"></class>
 <class name="BindingSite" extends="Region" is-interface="true"></class>
 <class name="Transcript" extends="Region" is-interface="true"></class>
+<class name="OntologyTerm" is-interface="true"></class>
+<class name="SOTerm" extends="OntologyTerm" is-interface="true"></class>
 </classes>
