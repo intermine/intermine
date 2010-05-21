@@ -125,7 +125,8 @@
     </fields>
     <longdisplayers>
       <displayer src="submissionDisplayer.tile"/>
-      <displayer src="attributeLinkDisplayer.tile"/>
+      <!-- displayer src="attributeLinkDisplayer.tile"/>-->
+      <displayer src="tracksDisplayer.tile"/>
       <displayer src="submissionProtocolsDisplayer.tile" showOnLeft="true"/>
     </longdisplayers>
   </class>
