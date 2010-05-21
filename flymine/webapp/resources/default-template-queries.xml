@@ -21,8 +21,6 @@
     </pathDescription>
     <pathDescription pathString="Gene.chromosome" description="Chromosome">
     </pathDescription>
-    <pathDescription pathString="Gene.evidence" description="Dataset">
-    </pathDescription>
     <node path="Gene" type="Gene">
     </node>
     <node path="Gene.organism" type="Organism">
