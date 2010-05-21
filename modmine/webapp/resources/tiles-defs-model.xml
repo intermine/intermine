@@ -11,6 +11,9 @@
 
 <definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp"
           controllerUrl="/initAttributeLinkDisplayer.do"/>
+          
+<definition name="tracksDisplayer.tile" path="/model/tracksDisplayer.jsp"
+          controllerUrl="/initTracksDisplayer.do"/>          
 
 <definition name="projects.tile" path="/model/projects.jsp"
         controllerUrl="/initProjects.do"/>
