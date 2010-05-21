@@ -50,7 +50,7 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
             oligo.setReference("transcript", transcript.getIdentifier());
         }
 
-        String residues = (String) ((List) record.getAttributes().get("sequence")).get(0);
+        String residues = (String) ((List<?>) record.getAttributes().get("sequence")).get(0);
         if (residues != null) {
             Item seqItem = getItemFactory().makeItem(null, "Sequence", "");
             seqItem.setAttribute("residues", residues);
@@ -59,9 +59,9 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
             oligo.setReference("sequence", seqItem.getIdentifier());
         }
 
-        List aliases =  record.getAttributes().get("Alias");
+        List<?> aliases =  record.getAttributes().get("Alias");
 
-        Iterator aliasIter = aliases.iterator();
+        Iterator<?> aliasIter = aliases.iterator();
 
         while (aliasIter.hasNext()) {
             addItem(createSynonym(oligo, "identifier", (String) aliasIter.next()));
