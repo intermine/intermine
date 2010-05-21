@@ -3,11 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="mm"%>
 
-<style type="text/css">
-.filelink a {
-  font-size: 11px;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="model/css/experiment.css"/>    
 
 <%-- GBROWSE --%>
           <table cellpadding="0" cellspacing="0" border="0" class="internal" >
