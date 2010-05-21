@@ -12,8 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -21,14 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.xml.full.Attribute;
+import org.intermine.bio.io.gff3.GFF3Record;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-import org.intermine.bio.io.gff3.GFF3Record;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ClassDescriptor;
 
 /**
  * Permits specific operations to be performed when processing an line of GFF3.
@@ -39,19 +35,17 @@ import org.intermine.metadata.ClassDescriptor;
  */
 public class GFF3RecordHandler
 {
-    protected Map items = new LinkedHashMap();
-    protected List<Item> earlyItems = new ArrayList();
+    protected Map<String, Item> items = new LinkedHashMap<String, Item>();
+    protected List<Item> earlyItems = new ArrayList<Item>();
+    protected List<String> parents = new ArrayList<String>();
     private Item sequence;
     protected Item analysis;
     private Model tgtModel;
     private ItemFactory itemFactory;
     private Item organism;
-    private ReferenceList evidenceReferenceList = new ReferenceList("evidence");
     private ReferenceList dataSetReferenceList = new ReferenceList("dataSets");
     private ReferenceList publicationReferenceList = new ReferenceList("publications");
-    protected Map tgtSeqs = new HashMap();
     private Item tgtOrganism;
-    private Reference tgtOrgRef;
     protected Item tgtSequence;
     private int itemid = 0;
     private Item dataSource;
@@ -173,37 +167,6 @@ public class GFF3RecordHandler
     }
 
     /**
-     * Set the ComputationalAnalysis item created for this record, should not be edited in handler.
-     * @param analysis the ComputationalAnalysis item
-     */
-    public void setAnalysis(final Item analysis) {
-        this.analysis = analysis;
-    }
-
-    /**
-     * Add an Evidence Item to this handler, to be retrieved later with getEvidenceReferenceList().
-     * @param evidence the evidence
-     */
-    public void addEvidence(Item evidence) {
-        evidenceReferenceList.addRefId(evidence.getIdentifier());
-    }
-
-    /**
-     * Return a ReferenceList containing the evidence Items ids set by addEvidence()
-     * @return the ReferenceList
-     */
-    public ReferenceList getEvidenceReferenceList() {
-        return evidenceReferenceList;
-    }
-
-    /**
-     * Reset the list of evidence items.
-     */
-    public void clearEvidenceReferenceList() {
-        evidenceReferenceList = new ReferenceList("evidence");
-    }
-
-    /**
      * Add an DataSet Item to this handler, to be retrieved later with getDataSetReferenceList().
      * @param dataSet the data set
      */
@@ -248,51 +211,6 @@ public class GFF3RecordHandler
      */
     public void clearPublicationReferenceList() {
         publicationReferenceList = new ReferenceList("publications");
-    }
-
-    /**
-     * Set the ComputationalResult item for this record.
-     * @param result the ComputationalResult item
-     */
-    public void setResult(Item result) {
-        items.put("_result", result);
-        earlyItems.add(result);
-    }
-
-    /**
-     * Return the result Item set by setResult()
-     * @return the result Item
-     */
-    protected Item getResult() {
-        return (Item) items.get("_result");
-    }
-
-    /**
-     * Get the SimpleRelation item from feature to parent feature for this record.
-     * @param relation the relation item
-     */
-    public void addParentRelation(Item relation) {
-        items.put("_relation" + relation.getIdentifier(), relation);
-    }
-
-    /**
-     * Return the SimpleRelation Item set by addParentRelation()
-     * @return the location Item
-     */
-    protected Set getParentRelations() {
-        Set entrySet = items.entrySet();
-        if (entrySet != null) {
-            Iterator entryIter = entrySet.iterator();
-            Set relations = new HashSet();
-            while (entryIter.hasNext()) {
-                Map.Entry entry = (Map.Entry) entryIter.next();
-                if (((String) entry.getKey()).startsWith("_relation")) {
-                    relations.add(entry.getValue());
-                }
-            }
-            return relations;
-        }
-        return null;
     }
 
      /**
@@ -374,7 +292,6 @@ public class GFF3RecordHandler
     public void clear() {
         items = new LinkedHashMap();
         sequence = null;
-        analysis = null;
         earlyItems.clear();
     }
 
@@ -431,6 +348,13 @@ public class GFF3RecordHandler
     }
 
     /**
+     * @param parent item ID
+     */
+    public void addParent(String parent) {
+        parents.add(parent);
+    }
+
+    /**
      * Given a map from class name to reference name populate the reference for
      * a particular class with the parents of any SimpleRelations.
      * @param references map from classname to name of reference/collection to populate
@@ -440,34 +364,33 @@ public class GFF3RecordHandler
 
         // set additional references from parents according to references map
         String clsName = feature.getClassName();
-        if (references.containsKey(clsName) && getParentRelations() != null) {
+        if (references.containsKey(clsName) && !parents.isEmpty()) {
             ClassDescriptor cld =
                 tgtModel.getClassDescriptorByName(tgtModel.getPackageName() + "." + clsName);
 
             String refName = (String) references.get(clsName);
-            Iterator parentIter = getParentRelations().iterator();
+            Iterator<String> parentIter = parents.iterator();
 
-            if (cld.getReferenceDescriptorByName(refName, true) != null && parentIter.hasNext()) {
-                Item relation = (Item) parentIter.next();
-                feature.setReference(refName, relation.getReference("object").getRefId());
+            if (cld.getReferenceDescriptorByName(refName, true) != null) {
+                String parentRefId = parentIter.next();
+                feature.setReference(refName, parentRefId);
                 if (parentIter.hasNext()) {
-                    String primaryIdentifier = feature.getAttribute("primaryIdentifier").getValue();
+                    String primaryIdent  = feature.getAttribute("primaryIdentifier").getValue();
                     throw new RuntimeException("Feature has multiple relations for reference: "
-                                               + refName + " for feature: " + feature.getClassName()
-                                               + ", " + feature.getIdentifier() + ", "
-                                               + primaryIdentifier);
+                            + refName + " for feature: " + feature.getClassName()
+                            + ", " + feature.getIdentifier() + ", " + primaryIdent);
                 }
-            } else if (cld.getCollectionDescriptorByName(refName, true) != null
-                       && parentIter.hasNext()) {
-                List refIds = new ArrayList();
+            } else if (cld.getCollectionDescriptorByName(refName, true) != null) {
+                List<String> refIds = new ArrayList<String>();
                 while (parentIter.hasNext()) {
-                    refIds.add(((Item) parentIter.next()).getReference("object").getRefId());
+                    refIds.add(parentIter.next());
                 }
-                feature.addCollection(new ReferenceList(refName, refIds));
+                feature.setCollection(refName, refIds);
             } else if (parentIter.hasNext()) {
                 throw new RuntimeException("No '" + refName + "' reference/collection found in "
-                                      + "class: " + clsName + " - is map configured correctly?");
+                        + "class: " + clsName + " - is map configured correctly?");
             }
+
         }
     }
 

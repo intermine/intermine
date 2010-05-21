@@ -79,14 +79,14 @@
       <property name="src.data.dir" location="/shared/data/bdgp-clones"/>
       <property name="src.data.dir.includes" value="dgc2flybase.txt"/>
     </source>
-<!--
+
     <source name="long-oligo" type="long-oligo">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="MRNA"/>
       <property name="gff3.seqDataSourceName" value="Micklem lab"/>
       <property name="src.data.dir" location="/shared/data/long-oligo"/>
     </source>
--->
+
     <source name="ensembl" type="ensembl">
      <property name="src.data.dir" location="/shared/data/ensembl/current"/>
     </source>
@@ -130,14 +130,14 @@
       <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
       <property name="treefam.organisms" value="7227 6239 7165 4932 9606 10090 10116 7955"/> 
     </source>
-<!--
+
     <source name="tiffin" type="tiffin">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="Sanger Institute"/>
       <property name="src.data.dir" location="/shared/data/tiffin/tiffin1.2"/>
     </source>
--->
+
     <source name="tiffin-expression" type="tiffin-expression">
       <property name="src.data.dir" location="/shared/data/tiffin/"/>
       <property name="src.data.dir.includes" value="tiffin_ImaGo"/>
@@ -170,7 +170,7 @@
       <property name="src.data.dir" location="/shared/data/go-annotation/current"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
-<!--
+
     <source name="flyreg" type="flyreg" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
@@ -185,7 +185,7 @@
       <property name="src.data.dir" location="/shared/data/redfly/current/crm"/>
       <property name="src.data.dir.includes" value="crm_dump.gff"/>
     </source>
--->
+
     <source name="inparanoid-orthologue" type="orthologue">
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
       <property name="gene.peptide.files" value="/shared/data/orthologues/inparanoid/geneid2peptideid/"/>
@@ -514,7 +514,7 @@
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
       <property name="src.data.file" location="/shared/data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
     </source>
-<!--
+
     <source name="drosdel-gff" type="drosdel-gff">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
@@ -522,7 +522,7 @@
       <property name="src.data.dir"
                 location="/shared/data/drosdel/2008-03-19/chromosome_structure_variations/"/>
     </source>
--->
+
     <source name="miranda" type="miranda">
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
@@ -566,8 +566,8 @@
   </sources>
 
   <post-processing>
-<!--
-disable for now
+
+
     <post-process name="create-utr-references"/>
     <post-process name="create-references" />
     <post-process name="make-spanning-locations"/>
@@ -581,7 +581,7 @@ disable for now
     </post-process>
     <post-process name="create-bioseg-location-index"/>
     <post-process name="create-overlap-view" />
--->
+
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
     <post-process name="summarise-objectstore"/>
