@@ -15,6 +15,7 @@
 <class name="TransposableElement" extends="MobileGeneticElement" is-interface="true"></class>
 <class name="SequenceVariant" is-interface="true"></class>
 <class name="MRNA" extends="Transcript" is-interface="true"></class>
+<class name="MiRNA" extends="Transcript" is-interface="true"></class>
 <class name="MicroarrayOligo" extends="Oligo" is-interface="true"></class>
 <class name="Oligo" extends="Region" is-interface="true"></class>
 <class name="CRM" extends="RegulatoryRegion" is-interface="true"></class>

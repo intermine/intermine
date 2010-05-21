@@ -24,6 +24,11 @@
     <attribute name="type" type="java.lang.String"/>
   </class> 
 
+  <class name="CrossReference" is-interface="true">
+    <attribute name="identifier" type="java.lang.String"/>
+    <reference name="source" referenced-type="DataSource"/>
+  </class> 
+
   <class name="DataSource" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="url" type="java.lang.String"/>
