@@ -34,7 +34,7 @@
 
   <class className="org.intermine.model.bio.DataSet">
     <fields>
-      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="url" doNotTruncate="true"/>
     </fields>
   </class>
@@ -90,7 +90,7 @@
   </class>
 
 
-  <class className="org.intermine.model.bio.LocatedSequenceFeature">
+  <class className="org.intermine.model.bio.SequenceFeature">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
@@ -169,13 +169,6 @@
     </longdisplayers>
   </class>
 
-  <class className="org.intermine.model.bio.Relation">
-    <fields>
-      <fieldconfig fieldExpr="object.primaryIdentifier"/>
-      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.Sequence">
     <fields>
       <fieldconfig fieldExpr="residues" fieldExporter="org.intermine.bio.web.export.ResidueFieldExporter"
@@ -196,7 +189,6 @@
   <class className="org.intermine.model.bio.Transcript">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="exonCount"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false"/>
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
