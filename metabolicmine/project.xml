@@ -1,0 +1,43 @@
+<project type="bio">
+  <property name="target.model" value="genomic"/>
+  <property name="source.location" location="../bio/sources/"/>
+  <property name="common.os.prefix" value="common"/>
+  <property name="intermine.properties.file" value="metabolicmine.properties"/>
+  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
+
+
+  <sources>
+    <source name="ensembl-human" type="ensembl">
+     <property name="src.data.dir" location="/shared/data/ensembl/Test"/>
+    </source>
+    <source name="uniprot" type="uniprot">
+      <property name="uniprot.organisms" value="9606"/>
+      <property name="create.interpro" value="true"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
+    </source>
+
+    <source name="update-publications" type="update-publications">
+      <property name="src.data.file" location="build/publications.xml"/>
+    </source>
+
+    <source name="entrez-organism" type="entrez-organism">
+      <property name="src.data.file" location="build/organisms.xml"/>
+    </source>
+  </sources>
+
+  <post-processing>
+    <post-process name="create-references"/>
+    <post-process name="transfer-sequences"/>
+
+    <!-- this runs the postprocessing steps in all sources -->
+    <post-process name="do-sources"/>
+
+    <post-process name="synonym-update"/>
+
+    <post-process name="summarise-objectstore"/>
+    <post-process name="create-autocomplete-index"/>
+    <post-process name="create-attribute-indexes"/>
+  </post-processing>
+
+</project>
+
