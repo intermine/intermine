@@ -4,7 +4,6 @@
     <collection name="ESTClusters" referenced-type="ESTCluster" reverse-reference="ESTs"/>
   </class>
   <class name="ESTCluster" extends="SequenceFeature" is-interface="true">
-    <attribute name="curated" type="java.lang.Boolean"/>
     <collection name="ESTs" referenced-type="EST" reverse-reference="ESTClusters"/>
   </class>
 </classes>
