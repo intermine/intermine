@@ -10,6 +10,5 @@
 	<classpathentry exported="true" kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="lib/bbop.jar" sourcepath="/Users/watkins/Documents/FlyMine/src/bbop/src"/>
 	<classpathentry kind="lib" path="lib/obo.jar" sourcepath="/Users/watkins/Documents/FlyMine/src/obo/src"/>
-	<classpathentry kind="lib" path="/modmine-dbmodel/dist/modmine-dbmodel.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

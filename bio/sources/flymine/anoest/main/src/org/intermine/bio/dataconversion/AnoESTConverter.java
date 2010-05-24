@@ -76,11 +76,7 @@ public class AnoESTConverter extends BioDBConverter
 
             Item cluster = createItem("ESTCluster");
             cluster.setAttribute("primaryIdentifier", identifier);
-            //cluster.setCollection("dataSets",
-            //                  new ArrayList(Collections.singleton(dataSet.getIdentifier())));
-            cluster.setAttribute("curated", "false");
             cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
-
 
             store(cluster);
 
@@ -97,7 +93,6 @@ public class AnoESTConverter extends BioDBConverter
                                              strand, ANOPHELES_TAXON_ID);
                 store(location);
             }
-
             clusters.put(identifier, cluster);
         }
     }
@@ -121,8 +116,6 @@ public class AnoESTConverter extends BioDBConverter
 
     private void makeEstItems(Connection connection) throws SQLException, ObjectStoreException {
         ResultSet res = getEstResultSet(connection);
-
-        Item dataSet = getDataSetItem(ANOPHELES_TAXON_ID);
         while (res.next()) {
             String accession = res.getString(1);
             String clusterId = res.getString(2);
@@ -133,11 +126,7 @@ public class AnoESTConverter extends BioDBConverter
                 est = createItem("EST");
                 ests.put(accession, est);
                 est.setAttribute("primaryIdentifier", accession);
-
-                est.setAttribute("curated", "false");
                 est.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
-                est.addToCollection("dataSets", dataSet);
-
                 cloneIds.put(accession, cloneId);
             }
 
@@ -179,7 +168,7 @@ public class AnoESTConverter extends BioDBConverter
      * {@inheritDoc}
      */
     @Override
-    public String getDataSetTitle(@SuppressWarnings("unused") int taxonId) {
+    public String getDataSetTitle(int taxonId) {
         return DATASET_TITLE;
     }
 
