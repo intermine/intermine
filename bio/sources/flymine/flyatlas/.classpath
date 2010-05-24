@@ -12,6 +12,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-test"/>
 	<classpathentry kind="lib" path="test/resources"/>
-	<classpathentry kind="lib" path="/modmine-dbmodel/dist/modmine-dbmodel.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
