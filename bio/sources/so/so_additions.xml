@@ -39,7 +39,9 @@
 <class name="ChromosomalStructuralElement" extends="Region" is-interface="true"></class>
 <class name="ForwardPrimer" extends="Primer" is-interface="true"></class>
 <class name="EST" extends="Oligo" is-interface="true"></class>
-<class name="SequenceCollection" is-interface="true"></class>
+<class name="SequenceCollection" is-interface="true">
+    <reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>
+</class>
 <class name="Region" extends="SequenceFeature" is-interface="true"></class>
 <class name="TFBindingSite" extends="ProteinBindingSite RegulatoryRegion" is-interface="true"></class>
 <class name="Intron" extends="Region" is-interface="true"></class>
