@@ -11,14 +11,14 @@ package org.intermine.bio.util;
  */
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.tools.ant.BuildException;
 
 /**
  * Helper class for data converters
@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
   */
 public class BioConverterUtil
 {
+    private static final String PROP_FILE = "soClassName.properties";
     private static Map<String, String> javaNamesToSO = new HashMap<String, String>();
     /**
      * Get SO name for Java class, eg. SequenceFeature to sequence_feature
@@ -35,19 +36,19 @@ public class BioConverterUtil
      */
     public static String javaNameToSO(String javaClassName) throws IOException  {
         if (javaNamesToSO.isEmpty()) {
-            String fileName = "/WEB-INF/soClassName.properties";
-            File f = new File(fileName);
-            if (f.exists()) {
-                Reader reader = new FileReader(f);
-                BufferedReader br = new BufferedReader(reader);
-                // don't load header
-                String line = br.readLine();
-                while ((line = br.readLine()) != null) {
-                    String fields[] = StringUtils.split(line, ' ');
-                    String javaName = fields[0];
-                    String soName = fields[1];
-                    javaNamesToSO.put(javaName, soName);
-                }
+            InputStream is = BioConverterUtil.class.getClassLoader().getResourceAsStream(PROP_FILE);
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(new InputStreamReader(is));
+            } catch (Exception e) {
+                throw new BuildException("cannot file SO file: " + PROP_FILE, e);
+            }
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                String fields[] = StringUtils.split(line, ' ');
+                String javaName = fields[0];
+                String soName = fields[1];
+                javaNamesToSO.put(javaName, soName);
             }
         }
         return javaNamesToSO.get(javaClassName);
