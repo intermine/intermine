@@ -88,7 +88,9 @@ public class DataSetStoreHook implements DataConverterStoreHook
         }
         if (item.canHaveReference("sequenceOntologyTerm")
                 && !item.hasReference("sequenceOntologyTerm")) {
+            System.out.println("can have reference");
             if (!StringUtils.isEmpty(soTermId)) {
+                System.out.println("setting reference");
                 item.setReference("sequenceOntologyTerm", soTermId);
             }
         }
@@ -96,7 +98,6 @@ public class DataSetStoreHook implements DataConverterStoreHook
 
     private static String getSoTerm(DataConverter dataConverter, Item item) {
         String soName = null;
-        System.out.println(item.canHaveCollection("sequenceOntologyTerm"));
         try {
             soName = BioConverterUtil.javaNameToSO(item.getClassName());
             if (soName == null) {

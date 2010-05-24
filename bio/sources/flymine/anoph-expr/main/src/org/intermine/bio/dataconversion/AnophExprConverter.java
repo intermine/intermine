@@ -36,10 +36,10 @@ import org.intermine.xml.full.ReferenceList;
 public class AnophExprConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(AnophExprConverter.class);
-    private Map<String, String> reporterToGene = new HashMap();
-    private Map<String, Item> genes = new HashMap();
-    private Map<String, Item> assays = new HashMap();
-    private Map<String, Item> synonyms = new HashMap();
+    private Map<String, String> reporterToGene = new HashMap<String, String>();
+    private Map<String, Item> genes = new HashMap<String, Item>();
+    private Map<String, Item> assays = new HashMap<String, Item>();
+    private Map<String, Item> synonyms = new HashMap<String, Item>();
     private static final String TYPE = "Geometric mean of ratios";
     Item org;
     private Item pub;
@@ -157,7 +157,6 @@ public class AnophExprConverter extends BioFileConverter
             headerArray = StringUtils.split(line, '\t');
             for (int colIndex = 1; colIndex < headerArray.length; colIndex++) {
                 if (!headerArray[lineIndex].equals("")) {
-
                     if (lineIndex == 0) {
                         stageNames[colIndex] = new StageName();
                         String age =  headerArray[colIndex];

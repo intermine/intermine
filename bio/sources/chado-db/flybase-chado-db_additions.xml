@@ -51,5 +51,5 @@
   <attribute name="stage" type="java.lang.String"/>
   <reference name="tissueSource" referenced-type="AnatomyTerm" />
   </class>
-  <class name="GoldenPathFragment" is-interface="true"/>
+  <class name="GoldenPathFragment" extends="Region" is-interface="true"/>
 </classes>
