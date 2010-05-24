@@ -47,6 +47,17 @@ public abstract class BioFileConverter extends FileConverter
     }
 
     /**
+     * Create a new BioFileConverter.
+     * @param writer the Writer used to output the resultant items
+     * @param model the data model
+     */
+    public BioFileConverter (ItemWriter writer, Model model) {
+        super(writer, model);
+        SOStoreHook hook = new SOStoreHook(model);
+        setStoreHook(hook);
+    }
+
+    /**
      * Return a DataSource item for the given title
      * @param name the DataSource name
      * @return the DataSource Item

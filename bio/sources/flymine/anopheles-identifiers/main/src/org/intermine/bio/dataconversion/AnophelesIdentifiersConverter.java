@@ -56,7 +56,7 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         // data is in format:
         // primaryIdentifier | identifier | symbol
@@ -89,7 +89,7 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
             ensIds.remove(0);
 
             Item feature = createItem(clsName);
-            List synonyms = new ArrayList();
+            List<Item> synonyms = new ArrayList<Item>();
 
             if (secondaryIdentifier != null && !secondaryIdentifier.equals("")
                 && !seenEnsIds.contains(secondaryIdentifier)) {
