@@ -74,7 +74,7 @@ public class AnoESTConverter extends BioDBConverter
             int end = res.getInt(4);
             int strand = res.getInt(5);
 
-            Item cluster = createItem("ESTCluster");
+            Item cluster = createItem("OverlappingESTSet");
             cluster.setAttribute("primaryIdentifier", identifier);
             cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
 
@@ -132,7 +132,7 @@ public class AnoESTConverter extends BioDBConverter
 
             Item cluster = clusters.get(clusterId);
             if (cluster != null) {
-                est.addToCollection("ESTClusters", cluster);
+                est.addToCollection("OverlappingESTSets", cluster);
             }
         }
 
