@@ -48,7 +48,8 @@
     <collection name="featureTerms" referenced-type="SequenceOntologyTerm"/>
   </class>
   <class name="CDNAClone" is-interface="true">
-	<attribute name="stage" type="java.lang.String"/>
-	<reference name="tissueSource" referenced-type="AnatomyTerm" />
+  <attribute name="stage" type="java.lang.String"/>
+  <reference name="tissueSource" referenced-type="AnatomyTerm" />
   </class>
+  <class name="GoldenPathFragment" is-interface="true"/>
 </classes>
