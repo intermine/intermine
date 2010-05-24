@@ -24,7 +24,6 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemHelper;
 
 /**
  * An implementation of DataConverterStoreHook that adds DataSet and DataSource references and
@@ -97,6 +96,7 @@ public class DataSetStoreHook implements DataConverterStoreHook
 
     private static String getSoTerm(DataConverter dataConverter, Item item) {
         String soName = null;
+        System.out.println(item.canHaveCollection("sequenceOntologyTerm"));
         try {
             soName = BioConverterUtil.javaNameToSO(item.getClassName());
             if (soName == null) {
