@@ -6,7 +6,6 @@
   <item id="4_4" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="AGAP000035"/>
-
     <reference name="subject" ref_id="3_2"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
@@ -19,7 +18,6 @@
   <item id="4_1" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="ENSANGG00000014848"/>
-
     <reference name="subject" ref_id="3_1"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
@@ -29,6 +27,7 @@
     <attribute name="secondaryIdentifier" value="ENSANGG00000027829"/>
     <attribute name="primaryIdentifier" value="AGAP000035"/>
     <reference name="organism" ref_id="2_1"/>
+    <reference name="sequenceOntologyTerm" ref_id="5_1"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
     </collection>
@@ -40,6 +39,7 @@
     <attribute name="secondaryIdentifier" value="ENSANGG00000014848"/>
     <attribute name="primaryIdentifier" value="AGAP000034"/>
     <reference name="organism" ref_id="2_1"/>
+    <reference name="sequenceOntologyTerm" ref_id="5_1"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
     </collection>
@@ -65,10 +65,13 @@
   <item id="4_3" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="ENSANGG00000027829"/>
-
     <reference name="subject" ref_id="3_2"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
     </collection>
   </item>
+  <item id="5_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 </items>

@@ -55,11 +55,13 @@ public abstract class BioDBConverter extends DBConverter
      * Create a new BioDBConverter object.  The caller should call setStoreHook() before
      * processing starts.
      * @param database the database to read from
-     * @param tgtModel the Model used by the object store we will write to with the ItemWriter
+     * @param model the Model used by the object store we will write to with the ItemWriter
      * @param writer an ItemWriter used to handle the resultant Items
      */
-    public BioDBConverter(Database database, Model tgtModel, ItemWriter writer) {
-        super(database, tgtModel, writer);
+    public BioDBConverter(Database database, Model model, ItemWriter writer) {
+        super(database, model, writer);
+        SOStoreHook hook = new SOStoreHook(model);
+        setStoreHook(hook);
     }
 
     /**

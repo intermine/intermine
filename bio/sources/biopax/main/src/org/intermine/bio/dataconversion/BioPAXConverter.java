@@ -37,7 +37,6 @@ import org.biopax.paxtools.model.Model;
 import org.biopax.paxtools.model.level2.pathway;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
@@ -45,21 +44,21 @@ import org.intermine.xml.full.Item;
  *
  * @author
  */
-public class BioPAXConverter extends FileConverter implements Visitor
+public class BioPAXConverter extends BioFileConverter implements Visitor
 {
     private static final Logger LOG = Logger.getLogger(BioPAXConverter.class);
     private static final String PROP_FILE = "biopax_config.properties";
     private static final String DEFAULT_DB_NAME = "UniProt";
     protected IdResolverFactory resolverFactory;
-    private Map<String, Item> genes = new HashMap();
+    private Map<String, Item> genes = new HashMap<String, Item>();
     private Traverser traverser;
-    private Set<BioPAXElement> visited = new HashSet();
+    private Set<BioPAXElement> visited = new HashSet<BioPAXElement>();
     private int depth = 0;
     private Item organism, dataset;
     private String pathwayRefId = null;
-    private List<MultiKey> synonyms = new ArrayList();
-    private Set<String> taxonIds = new HashSet();
-    private Map<String, String[]> configs = new HashMap();
+    private List<MultiKey> synonyms = new ArrayList<MultiKey>();
+    private Set<String> taxonIds = new HashSet<String>();
+    private Map<String, String[]> configs = new HashMap<String, String[]>();
     private OrganismRepository or;
     private String dbName, identifierField;
     private String dataSourceRefId = null, dataSourceName = null;
@@ -86,7 +85,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
      * {@inheritDoc}
      */
     @Override
-    public void process(@SuppressWarnings("unused") Reader reader) throws Exception {
+    public void process(Reader reader) throws Exception {
         String taxonId = getTaxonId();
         if (taxonId == null) {
             // this file isn't from an organism specified in the project file
@@ -107,7 +106,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
                 pathwayRefId = null;
                 continue;
             }
-            visited = new HashSet();
+            visited = new HashSet<BioPAXElement>();
             traverser.traverse(pathwayObj, model);
         }
     }

@@ -48,6 +48,18 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
     }
 
     /**
+     * Create a new BioDirectoryConverter.
+     * @param writer the Writer used to output the resultant items
+     * @param model the data model
+
+     */
+    public BioDirectoryConverter (ItemWriter writer, Model model) {
+        super(writer, model);
+        SOStoreHook hook = new SOStoreHook(model);
+        setStoreHook(hook);
+    }
+
+    /**
      * Return a DataSource item for the given title
      * @param name the DataSource name
      * @return the DataSource Item

@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -30,17 +29,17 @@ import org.intermine.xml.full.Item;
  *
  * @author Julie Sullivan
  */
-public class Drosophila2ProbeConverter extends FileConverter
+public class Drosophila2ProbeConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(Drosophila2ProbeConverter.class);
 
     protected Item dataSource, dataSet, org;
-    protected Map<String, String> bioentities = new HashMap();
+    protected Map<String, String> bioentities = new HashMap<String, String>();
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";
     private Map<String, Item> synonyms = new HashMap<String, Item>();
     private Map<String, String> chromosomes = new HashMap<String, String>();
-    private Map<String, ProbeSetHolder> holders = new HashMap();
+    private Map<String, ProbeSetHolder> holders = new HashMap<String, ProbeSetHolder>();
     List<Item> delayedItems = new ArrayList<Item>();
 
     /**
@@ -147,10 +146,11 @@ public class Drosophila2ProbeConverter extends FileConverter
     public class ProbeSetHolder
     {
         protected String probesetIdentifier;
-        protected List<String> genes = new ArrayList();
-        protected List<String> transcripts = new ArrayList();
+        protected List<String> genes = new ArrayList<String>();
+        protected List<String> transcripts = new ArrayList<String>();
         private List<String> locations = new ArrayList<String>();
-        protected Map<String, LocationHolder> locationHolders = new HashMap();
+        protected Map<String, LocationHolder> locationHolders
+        = new HashMap<String, LocationHolder>();
         protected List<String> datasets = new ArrayList<String>();
 
         /**
