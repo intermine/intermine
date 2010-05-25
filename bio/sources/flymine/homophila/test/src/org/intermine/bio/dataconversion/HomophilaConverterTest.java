@@ -58,16 +58,16 @@ public class HomophilaConverterTest extends ItemsTestCase
         HomophilaConverter converter = new HomophilaConverter(itemWriter, model);
         converter.setDiseasefile(diseases);
         converter.setProteingenefile(proteinGene);
-        
+
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Protein");
         resolverFactory.addResolverEntry("7227", "FBpp0079133", Collections.singleton("CG7052-PA"));
         converter.resolverFactory = resolverFactory;
-        
+
         converter.process(new StringReader(input));
         converter.close();
 
         // uncomment to create a new target items files
-        //writeItemsFile(itemWriter.getItems(), "/tmp/homophila-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "homophila-tgt-items.xml");
 
         Set expected = readItemSet("test/HomophilaConverterTest.xml");
         assertEquals(expected, itemWriter.getItems());

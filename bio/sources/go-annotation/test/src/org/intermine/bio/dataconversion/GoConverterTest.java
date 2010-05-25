@@ -32,7 +32,7 @@ public class GoConverterTest extends ItemsTestCase
     Model model;
     GoConverter converter;
     MockItemWriter writer;
-    
+
     public GoConverterTest(String arg) {
         super(arg);
     }

@@ -38,25 +38,25 @@ public class FlyAtlasConverterTest extends ItemsTestCase
 
         FlyAtlasConverter converter = new FlyAtlasConverter(itemWriter,
                                                         Model.getInstanceByName("genomic"));
-        
+
         // replace the assays map so we don't store all tissues
         Map<String, Item> mockAssays = new HashMap<String, Item>();
         mockAssays.put("brain", createMockAssay("Brain", converter));
         mockAssays.put("head", createMockAssay("Head", converter));
         mockAssays.put("FlyMean", createMockAssay("Whole Fly", converter));
         converter.assays = mockAssays;
-        
-        
+
+
         converter.process(new StringReader(input));
         converter.close();
 
         // uncomment to write out a new target items file
-//        writeItemsFile(itemWriter.getItems(), "/tmp/flyatlas-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "flyatlas-tgt-items.xml");
 
         assertEquals(readItemSet("FlyAtlasConverterTest.xml"), itemWriter.getItems());
     }
-    
-    
+
+
     private Item createMockAssay(String name, FlyAtlasConverter converter) {
         Item mockAssay = converter.createItem("MicroArrayAssay");
         mockAssay.setAttribute("name", name);

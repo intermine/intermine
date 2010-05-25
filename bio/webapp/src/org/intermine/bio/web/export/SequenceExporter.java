@@ -102,8 +102,8 @@ public class SequenceExporter implements Exporter
                     continue;
                 }
 
-                if (object instanceof LocatedSequenceFeature) {
-                    bioSequence = createLocatedSequenceFeature(header, object,
+                if (object instanceof SequenceFeature) {
+                    bioSequence = createSequenceFeature(header, object,
                             row);
                 } else if (object instanceof Protein) {
                     bioSequence = createProtein(header, object, row);
@@ -186,10 +186,10 @@ public class SequenceExporter implements Exporter
         headerBits.add(primaryIdentifier);
 
         // two instances
-        if (object instanceof LocatedSequenceFeature) {
+        if (object instanceof SequenceFeature) {
 
             // add the sequence location info at the second place in the header
-            LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
+            SequenceFeature feature = (SequenceFeature) object;
 
             String chr = feature.getChromosome().getPrimaryIdentifier();
             Integer start = feature.getChromosomeLocation().getStart();
@@ -255,7 +255,7 @@ public class SequenceExporter implements Exporter
      */
     public static boolean canExportStatic(List<Class> clazzes) {
         return (ExportHelper.getClassIndex(clazzes,
-                LocatedSequenceFeature.class) >= 0
+                SequenceFeature.class) >= 0
                 || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0 || ExportHelper
                 .getClassIndex(clazzes, Sequence.class) >= 0);
     }
