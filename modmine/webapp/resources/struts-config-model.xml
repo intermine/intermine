@@ -16,6 +16,9 @@
 
 <action path="/initAttributeLinkDisplayer"
   type="org.intermine.bio.web.AttributeLinkDisplayerController" />
+  
+<action path="/initTracksDisplayer"
+  type="org.modmine.web.TrackDisplayerController" />
 
 <action path="/initProjectList"
   type="org.modmine.web.ProjectsController" />

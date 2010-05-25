@@ -28,3 +28,6 @@
 
 <action path="/initOrthologueLinkDisplayer"
         type="org.intermine.bio.web.OrthologueLinkController"/>
+
+<action path="/initCytoscapeInteractionsDisplayer"
+        type="org.intermine.bio.web.struts.CytoscapeInteractionsController"/>

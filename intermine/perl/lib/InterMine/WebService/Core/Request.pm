@@ -60,11 +60,14 @@ sub new
   my $request_type = shift;
   my $service_root = shift;
   my $content_type = shift;
+  
+  die "Not enough arguments (we need at least a request type and a root url)\n"
+      unless ($request_type and $service_root);
 
   if (!defined $content_type) {
     $content_type = 'TAB';
   }
-
+  
   my $self = {};
 
   $self->{_request_type} = $request_type;

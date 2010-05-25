@@ -61,6 +61,8 @@ sub new
   my $service_root = shift;
   my $app_name = shift;
   die "No url provided\n" unless (defined $service_root);
+  die "URL must be absolute (no scheme was provided)" 
+      unless (URI->new($service_root)->scheme);
   my $self = {};
 
   if ($service_root !~ m:/$:) {
@@ -84,7 +86,7 @@ sub get_url
 {
   my $self = shift;
 
-  return $self->{_service_root} . $self->get_relative_path();
+  return $self->{_service_root} . ($self->get_relative_path() || '');
 }
 
 =head2 get_relative_path
@@ -117,7 +119,7 @@ sub execute_request
 
   my $ua = LWP::UserAgent->new();
   $ua->env_proxy();
-  $ua->agent($self->{_app_name} . ' InterMine/Perl');
+  $ua->agent(($self->{_app_name}) ? ($self->{_app_name} . ' ' ) : ('') . 'InterMine/Perl');
 
   if ($request->get_request_type() eq 'GET') {
     my $url = URI->new($request->get_url());

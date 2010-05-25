@@ -470,6 +470,8 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
+      <!-- <displayer src="/model/cytoscapeInteractionsDisplayer.jsp"/> -->
     </longdisplayers>
   </class>
 
