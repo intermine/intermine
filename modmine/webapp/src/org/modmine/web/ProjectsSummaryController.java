@@ -55,13 +55,15 @@ public class ProjectsSummaryController extends TilesAction
             final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
             ObjectStore os = im.getObjectStore();
             
-            Map<String, List<DisplayExperiment>> experiments = MetadataCache.getProjectExperiments(os);
+            Map<String, List<DisplayExperiment>> experiments = 
+                MetadataCache.getProjectExperiments(os);
             request.setAttribute("experiments", experiments);
             
             Properties props = new Properties(); 
             final ServletContext servletContext = servlet.getServletContext();
             
-            InputStream is = servletContext.getResourceAsStream("/WEB-INF/experimentCategory.properties");
+            InputStream is = 
+                servletContext.getResourceAsStream("/WEB-INF/experimentCategory.properties");
             if (is == null) {
                 LOG.info("Unable to find /WEB-INF/experimentCategory.properties!");
             } else {
@@ -72,14 +74,15 @@ public class ProjectsSummaryController extends TilesAction
                 }
             }
             
-            Map <String, List<DisplayExperiment>> catExp = new HashMap<String, List<DisplayExperiment>>();
+            Map <String, List<DisplayExperiment>> catExp =
+                new HashMap<String, List<DisplayExperiment>>();
             
             for (List<DisplayExperiment> ll : experiments.values()) {
-                for (DisplayExperiment de : ll){
+                for (DisplayExperiment de : ll) {
                     String cats = props.getProperty(de.getName());
                     // an experiment can be associated to more than 1 category
                     String[] cat = cats.split("#");
-                    for (String c : cat){
+                    for (String c : cat) {
                         List<DisplayExperiment> des = catExp.get(c);
                         if (des == null) {
                             des = new ArrayList<DisplayExperiment>();

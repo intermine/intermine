@@ -10,14 +10,19 @@ package org.modmine.web;
  *
  */
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -81,17 +86,20 @@ public class FeaturesAction extends InterMineAction
         String action = (String) request.getParameter("action");
         String dccId = null;
         String experimentName = null;
-        
+
+        final Map<String, LinkedList<String>> gffFields = new HashMap<String, LinkedList<String>>();
+        populateGFFRelationships(gffFields);
+
         boolean doGzip = false;
         if (request.getParameter("gzip") != null
                 && request.getParameter("gzip").equalsIgnoreCase("true")) {
             doGzip = true;
         }
-        
+
         Set<Integer> taxIds = new HashSet<Integer>();
-        
+
         PathQuery q = new PathQuery(model);
-        
+
         boolean hasPrimer = false;
 
         if (type.equals("experiment")) {
@@ -100,11 +108,9 @@ public class FeaturesAction extends InterMineAction
 
             Set<String> organisms = exp.getOrganisms();
             taxIds = getTaxonIds(organisms);
-            
+
             List<String> expSubsIds = exp.getSubmissionsDccId();            
             Set<String> allUnlocated = new HashSet<String>();
-
-            hasPrimer = false;
 
             String ef = getFactors(exp);            
             if (ef.contains("primer")) {
@@ -116,7 +122,6 @@ public class FeaturesAction extends InterMineAction
             + " (" + exp.getPi() + ")." + ef;
             q.setDescription(description);
 
-            
             for (String subId : expSubsIds) {
                 if (MetadataCache.getUnlocatedFeatureTypes(os).containsKey(new Integer(subId))) {
                     allUnlocated.addAll(
@@ -134,29 +139,17 @@ public class FeaturesAction extends InterMineAction
                     Constraints.eq(experimentName));
 
             if (allUnlocated.contains(featureType)) {
-                
                 q.addView(featureType + ".submissions.DCCid");
-                if (!hasPrimer) {
-                    q.addView(featureType + ".submissions:experimentalFactors.type");
-                    q.addView(featureType + ".submissions:experimentalFactors.name");
-                }
+                addEFactorToQuery(q, featureType, hasPrimer);
             } else {
-                q.addView(featureType + ".chromosome.primaryIdentifier");
-                q.addView(featureType + ".chromosomeLocation.start");
-                q.addView(featureType + ".chromosomeLocation.end");
-                q.addView(featureType + ".chromosomeLocation.strand");
-                q.addView(featureType + ".submissions.DCCid");
-
-                q.addOrderBy(featureType + ".chromosome.primaryIdentifier"); 
-                q.addOrderBy(featureType + ".chromosomeLocation.start"); 
-
-                if (!hasPrimer) {
-                    q.addView(featureType + ".submissions:experimentalFactors.type");
-                    q.addView(featureType + ".submissions:experimentalFactors.name");
-                }
+                addLocationToQuery(q, featureType);
+                addEFactorToQuery(q, featureType, hasPrimer);                
             }
-
-        } else if (type.equals("submission")) {
+        }
+        
+        
+        
+        else if (type.equals("submission")) {
             dccId = (String) request.getParameter("submission");
             Submission sub = MetadataCache.getSubmissionByDccId(os, new Integer(dccId));
             List<String>  unlocFeatures = 
@@ -164,8 +157,6 @@ public class FeaturesAction extends InterMineAction
 
             Integer organism = sub.getOrganism().getTaxonId();
             taxIds.add(organism);
-            
-            hasPrimer = false;
 
             // to build the query description
             String experimentType = "";
@@ -195,100 +186,62 @@ public class FeaturesAction extends InterMineAction
                 q.addView(featureType + ":scoreProtocol.name");
             }
             q.addConstraint(featureType + ".submissions.DCCid", Constraints.eq(new Integer(dccId)));
-        
+
             if (unlocFeatures == null || !unlocFeatures.contains(featureType)) {
-                q.addView(featureType + ".chromosome.primaryIdentifier");
-                q.addView(featureType + ".chromosomeLocation.start");
-                q.addView(featureType + ".chromosomeLocation.end");
-                q.addView(featureType + ".chromosomeLocation.strand");
-                q.addView(featureType + ".submissions.DCCid");
+                addLocationToQuery(q, featureType);
+                addEFactorToQuery(q, featureType, hasPrimer);
 
-                q.addOrderBy(featureType + ".chromosome.primaryIdentifier"); 
-                q.addOrderBy(featureType + ".chromosomeLocation.start"); 
-
-                if (!hasPrimer) {
-                    q.addView(featureType + ".submissions:experimentalFactors.type");
-                    q.addView(featureType + ".submissions:experimentalFactors.name");
-                }
 
             } else {
                 q.addView(featureType + ".submissions.DCCid");
 
-                if (!hasPrimer) {
-                    q.addView(featureType + ".submissions:experimentalFactors.type");
-                    q.addView(featureType + ".submissions:experimentalFactors.name");
-                }
+                addEFactorToQuery(q, featureType, hasPrimer);
             }
-        } else if (type.equals("4gff")) {
+        } 
+        
+        else if (type.equals("4gff")) {
+
+            String project = (String) request.getParameter("project");
+            String rootChoice = getRootFeature(project);
+            List<String> gffFeatures = new LinkedList<String>(gffFields.get(project));
+
             dccId = (String) request.getParameter("submission");
             Submission sub = MetadataCache.getSubmissionByDccId(os, new Integer(dccId));
-            List<String>  unlocFeatures = 
-                MetadataCache.getUnlocatedFeatureTypes(os).get(new Integer(dccId));
-           
+
             Integer organism = sub.getOrganism().getTaxonId();
             taxIds.add(organism);
+
+            for (String f : gffFeatures) {
+                q.addView(f + ".primaryIdentifier");
+                q.addView(f + ".score");
+            }
+
+            q.addConstraint(rootChoice + ".submissions.DCCid", 
+                    Constraints.eq(new Integer(dccId)));
+            LOG.info("QUERY: " + q.toString());
+
+        } else if (type.equals("expGFF")) {
+            experimentName = (String) request.getParameter("experiment");
+            DisplayExperiment exp = MetadataCache.getExperimentByName(os, experimentName);
+
+            Set<String> organisms = exp.getOrganisms();
+            taxIds = getTaxonIds(organisms);
+
+            String project = (String) request.getParameter("project");
+            String rootChoice = getRootFeature(project);
+            List<String> gffFeatures = new LinkedList<String>(gffFields.get(project));
+
+            for (String f : gffFeatures) {
+                q.addView(f + ".primaryIdentifier");
+                q.addView(f + ".score");
+            }
             
-            hasPrimer = false;
+            q.addConstraint(rootChoice + ".submissions.experiment.name", 
+                    Constraints.eq(experimentName));
 
-            // to build the query description
-            String experimentType = "";
-            if (sub.getExperimentType() != null) {
-                experimentType = StringUtil.indefiniteArticle(sub.getExperimentType()) 
-                + " " + sub.getExperimentType() + " experiment in";
-            }
-
-            String efSub = "";
-            if (SubmissionHelper.getExperimentalFactorString(sub).length() > 1) {
-                efSub = " using " + SubmissionHelper.getExperimentalFactorString(sub);
-                if (efSub.contains("primer")) {
-                    hasPrimer = true;
-                    efSub = "";
-                }
-            }
-
-            String description = "All " + featureType + " features generated by submission " + dccId
-            + ", " + experimentType + " "
-            + sub.getOrganism().getShortName() + efSub 
-            + " (" + sub.getProject().getSurnamePI() + ").";
-            
-            
-            q.setDescription(description);
-
-            q.addView(featureType + ".primaryIdentifier");
-            q.addView(featureType + ".score");
-            if (action.equals("results")) {
-                q.addView(featureType + ":scoreProtocol.name");
-            }
-            q.addConstraint(featureType + ".submissions.DCCid", Constraints.eq(new Integer(dccId)));
-        
-            if (unlocFeatures == null || !unlocFeatures.contains(featureType)) {
-                q.addView(featureType + ".chromosome.primaryIdentifier");
-                q.addView(featureType + ".chromosomeLocation.start");
-                q.addView(featureType + ".chromosomeLocation.end");
-                q.addView(featureType + ".chromosomeLocation.strand");
-                q.addView(featureType + ".submissions.DCCid");
-
-                q.addOrderBy(featureType + ".chromosome.primaryIdentifier"); 
-                q.addOrderBy(featureType + ".chromosomeLocation.start"); 
-
-                if (!hasPrimer) {
-                    q.addView(featureType + ".submissions:experimentalFactors.type");
-                    q.addView(featureType + ".submissions:experimentalFactors.name");
-                }
-
-            } else {
-                q.addView(featureType + ".submissions.DCCid");
-
-                if (!hasPrimer) {
-                    q.addView(featureType + ".submissions:experimentalFactors.type");
-                    q.addView(featureType + ".submissions:experimentalFactors.name");
-                }
-            }
         }
 
 
-        
-        
         if (action.equals("results")) {
             String qid = SessionMethods.startQueryWithTimeout(request, false, q);
             Thread.sleep(200);
@@ -349,6 +302,87 @@ public class FeaturesAction extends InterMineAction
         return null;
     }
 
+    /**
+     * @param project
+     * @return
+     */
+    private String getRootFeature(String project) {
+        String rootChoice = null;
+        if (project.equalsIgnoreCase("Waterston")) {
+            rootChoice = "Transcript";
+        } else {
+            rootChoice = "Gene";
+        }
+        return rootChoice;
+    }
+
+    /**
+     * 
+     */
+    private Map<String, LinkedList<String>> 
+    populateGFFRelationships(Map<String, LinkedList<String>> m ) {
+
+        final LinkedList<String> gffPiano = new LinkedList<String>();
+        gffPiano.add("Gene");
+        gffPiano.add("Gene.UTRs");
+        gffPiano.add("Gene.transcripts");
+        gffPiano.add("Gene.mRNA");
+
+        final LinkedList<String> gffCelniker = new LinkedList<String>();
+
+        gffCelniker.add("Gene.transcripts.CDSs");
+        gffCelniker.add("Gene.UTRs.PolyASites");
+        gffCelniker.add("Gene.mRNA.startCodon");
+        gffCelniker.add("Gene.mRNA.stopCodon");
+        gffCelniker.add("Gene.mRNA.CDSs");
+        gffCelniker.add("Gene.mRNA.fivePrimeUTR");
+        gffCelniker.add("Gene.mRNA.threePrimeUTR");
+
+        final LinkedList<String> gffWaterston = new LinkedList<String>();
+        gffWaterston.add("Transcript.TSS");
+        gffWaterston.add("Transcript.SL1AcceptorSite");
+        gffWaterston.add("Transcript.SL2AcceptorSite");
+        gffWaterston.add("Transcript.transcriptionEndSite");
+        gffWaterston.add("Transcript.polyASite");
+        gffWaterston.add("Transcript.introns");
+        gffWaterston.add("Transcript.exons");
+
+        m.put("Piano", gffPiano);
+        m.put("Celniker", gffCelniker);
+        m.put("Waterston", gffWaterston);
+
+        return m;
+    }
+
+    /**
+     * @param q
+     * @param featureType
+     * @param hasPrimer
+     */
+    private void addEFactorToQuery(PathQuery q, String featureType,
+            boolean hasPrimer) {
+        if (!hasPrimer) {
+            q.addView(featureType + ".submissions:experimentalFactors.type");
+            q.addView(featureType + ".submissions:experimentalFactors.name");
+        }
+    }
+
+
+    /**
+     * @param q
+     * @param featureType the feature type
+     */
+    private void addLocationToQuery(PathQuery q, String featureType) {
+        q.addView(featureType + ".chromosome.primaryIdentifier");
+        q.addView(featureType + ".chromosomeLocation.start");
+        q.addView(featureType + ".chromosomeLocation.end");
+        q.addView(featureType + ".chromosomeLocation.strand");
+        q.addView(featureType + ".submissions.DCCid");
+
+        q.addOrderBy(featureType + ".chromosome.primaryIdentifier"); 
+        q.addOrderBy(featureType + ".chromosomeLocation.start"); 
+    }
+
     private String getFactors(DisplayExperiment exp) {
         String ef = "";
         if (exp.getFactorTypes().size() == 1) {
@@ -361,7 +395,6 @@ public class FeaturesAction extends InterMineAction
         }
         return ef;
     }
-
 
     private Set<Integer> getTaxonIds(Set<String> organisms) {
         Set<Integer> taxIds = new HashSet<Integer>();
