@@ -19,9 +19,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
+import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -42,7 +44,8 @@ import org.intermine.xml.full.Reference;
 public class GFF3Converter
 {
     private static final Logger LOG = Logger.getLogger(GFF3Converter.class);
-
+    private static final Map<String, String> SO_TERMS = new HashMap<String, String>();
+    private static String ontologyRefId = null;
     private Reference orgRef;
     private ItemWriter writer;
     private String seqClsName, orgTaxonId;
@@ -85,6 +88,8 @@ public class GFF3Converter
         this.itemFactory = new ItemFactory(tgtModel, "1_");
 
         organism = getOrganism();
+
+        setOntology();
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", dataSourceName);
@@ -164,11 +169,61 @@ public class GFF3Converter
         // TODO should probably not store if an empty file
         Iterator<?> iter = handler.getFinalItems().iterator();
         while (iter.hasNext()) {
-            writer.store(ItemHelper.convert((Item) iter.next()));
+            Item item = (Item) iter.next();
+            writer.store(ItemHelper.convert(item));
+            setSOTerm(item);
         }
-
         handler.clearFinalItems();
     }
+
+    private void setSOTerm(Item item) {
+        if (item.canHaveReference("sequenceOntologyTerm")
+                && !item.hasReference("sequenceOntologyTerm")) {
+            String soTermId = getSoTerm(item);
+            if (!StringUtils.isEmpty(soTermId)) {
+                item.setReference("sequenceOntologyTerm", soTermId);
+            }
+        }
+    }
+
+    private void setOntology() {
+        if (ontologyRefId == null) {
+            Item item = createItem("Ontology");
+            item.setAttribute("name", "Sequence Ontology");
+            item.setAttribute("url", "http://www.sequenceontology.org");
+            try {
+                writer.store(ItemHelper.convert(item));
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("Can't store ontology", e);
+            }
+            ontologyRefId = item.getIdentifier();
+        }
+    }
+
+    private String getSoTerm(Item item) {
+        String soName = null;
+        try {
+            soName = BioConverterUtil.javaNameToSO(item.getClassName());
+            if (soName == null) {
+                return null;
+            }
+            String soRefId = SO_TERMS.get(soName);
+            if (StringUtils.isEmpty(soRefId)) {
+                Item soterm = createItem("SOTerm");
+                soterm.setAttribute("name", soName);
+                soterm.setReference("ontology", ontologyRefId);
+                writer.store(ItemHelper.convert(soterm));
+                soRefId = soterm.getIdentifier();
+                SO_TERMS.put(soName, soRefId);
+            }
+            return soRefId;
+        } catch (IOException e) {
+            return null;
+        } catch (ObjectStoreException e) {
+            return null;
+        }
+    }
+
 
     /**
      * process GFF3 record and give a xml presentation

@@ -32,6 +32,7 @@ public class SOStoreHook implements DataConverterStoreHook
 {
     private final Model model;
     private static final Map<String, String> SO_TERMS = new HashMap<String, String>();
+    private static String ontologyRefId = null;
 
     /**
      * Create a new DataSetStoreHook object.
@@ -46,8 +47,23 @@ public class SOStoreHook implements DataConverterStoreHook
      * {@inheritDoc}
      */
     public void processItem(DataConverter dataConverter, Item item) {
+        setOntology(dataConverter);
         String soTermId = getSoTerm(dataConverter, item);
         setSOTerm(model, item, soTermId);
+    }
+
+    private void setOntology(DataConverter dataConverter) {
+        if (ontologyRefId == null) {
+            Item item = dataConverter.createItem("Ontology");
+            item.setAttribute("name", "Sequence Ontology");
+            item.setAttribute("url", "http://www.sequenceontology.org");
+            try {
+                dataConverter.store(item);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("Can't store ontology", e);
+            }
+            ontologyRefId = item.getIdentifier();
+        }
     }
 
     /**
@@ -77,6 +93,7 @@ public class SOStoreHook implements DataConverterStoreHook
             if (StringUtils.isEmpty(soRefId)) {
                 Item soterm = dataConverter.createItem("SOTerm");
                 soterm.setAttribute("name", soName);
+                soterm.setReference("ontology", ontologyRefId);
                 dataConverter.store(soterm);
                 soRefId = soterm.getIdentifier();
                 SO_TERMS.put(soName, soRefId);

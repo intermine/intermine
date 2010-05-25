@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -43,7 +42,7 @@ import org.intermine.xml.full.ReferenceList;
  * @author Julie Sullivan - changed evidence to be collection
  * @author Xavier Watkins - refactored model
  */
-public class GoConverter extends FileConverter
+public class GoConverter extends BioFileConverter
 {
     protected static final String PROP_FILE = "go-annotation_config.properties";
 
@@ -107,7 +106,7 @@ public class GoConverter extends FileConverter
         } catch (IOException e) {
             throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
         }
-        Enumeration propNames = props.propertyNames();
+        Enumeration<?> propNames = props.propertyNames();
         while (propNames.hasMoreElements()) {
             String taxonId = (String) propNames.nextElement();
             taxonId = taxonId.substring(0, taxonId.indexOf("."));
