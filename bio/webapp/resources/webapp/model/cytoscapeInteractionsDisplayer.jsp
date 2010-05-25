@@ -18,7 +18,7 @@
             // TODO : Performance
             <c:set var="data" value="${networkdata}"/>
             var data = "${data}";
-            // alert(data);
+            alert(data);
 
             // initialization options
             var options = {
