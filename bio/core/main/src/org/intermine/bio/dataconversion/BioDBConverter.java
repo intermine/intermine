@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.DBConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -45,22 +46,13 @@ public abstract class BioDBConverter extends DBConverter
     public BioDBConverter(Database database, Model tgtModel, ItemWriter writer,
                           String dataSourceName, String dataSetTitle) {
         super(database, tgtModel, writer);
-        Item dataSource = getDataSourceItem(dataSourceName);
-        Item dataSet = getDataSetItem(dataSetTitle, dataSource);
-        DataSetStoreHook hook = new DataSetStoreHook(tgtModel, dataSet, dataSource);
-        setStoreHook(hook);
-    }
-
-    /**
-     * Create a new BioDBConverter object.  The caller should call setStoreHook() before
-     * processing starts.
-     * @param database the database to read from
-     * @param model the Model used by the object store we will write to with the ItemWriter
-     * @param writer an ItemWriter used to handle the resultant Items
-     */
-    public BioDBConverter(Database database, Model model, ItemWriter writer) {
-        super(database, model, writer);
-        SOStoreHook hook = new SOStoreHook(model);
+        Item dataSource = null;
+        Item dataSet = null;
+        if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
+            dataSource = getDataSourceItem(dataSourceName);
+            dataSet = getDataSetItem(dataSetTitle, dataSource);
+        }
+        BioStoreHook hook = new BioStoreHook(tgtModel, dataSet, dataSource);
         setStoreHook(hook);
     }
 

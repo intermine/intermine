@@ -48,11 +48,11 @@ public class KeggOrthologuesConverter extends BioFileConverter
     private static final Pattern HOMOLOGUE_PATTERN = Pattern.compile(REGULAR_EXPRESSION);
     protected IdResolverFactory resolverFactory;
     private IdResolver flyResolver;
-    private Map<String, String[]> config = new HashMap();
-    private Set<String> taxonIds = new HashSet();
-    private Map<String, String> identifiersToGenes = new HashMap();
-    private Set<String> synonyms = new HashSet();
-    private Map<String, String> organisms = new HashMap();
+    private Map<String, String[]> config = new HashMap<String, String[]>();
+    private Set<String> taxonIds = new HashSet<String>();
+    private Map<String, String> identifiersToGenes = new HashMap<String, String>();
+    private Set<String> synonyms = new HashSet<String>();
+    private Map<String, String> organisms = new HashMap<String, String>();
 
     /**
      * Constructor

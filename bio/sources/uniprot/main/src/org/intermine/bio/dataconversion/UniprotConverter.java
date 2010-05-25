@@ -45,7 +45,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * UniProtConverter creates protein objects, that are really uniprot entries.
  * @author Julie Sullivan
  */
-public class UniprotConverter extends DirectoryConverter
+public class UniprotConverter extends BioDirectoryConverter
 {
     private static final UniprotConfig CONFIG = new UniprotConfig();
     private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
@@ -80,7 +80,7 @@ public class UniprotConverter extends DirectoryConverter
      * @param model the Model
      */
     public UniprotConverter(ItemWriter writer, Model model) {
-        super(writer, model);
+        super(writer, model, null, null);
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");
     }

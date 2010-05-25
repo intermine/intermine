@@ -13,6 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.DirectoryConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -41,21 +42,14 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
     public BioDirectoryConverter (ItemWriter writer, Model model,
                              String dataSourceName, String dataSetTitle) {
         super(writer, model);
-        Item dataSource = getDataSourceItem(dataSourceName);
-        Item dataSet = getDataSetItem(dataSetTitle, dataSource);
-        DataSetStoreHook hook = new DataSetStoreHook(model, dataSet, dataSource);
-        setStoreHook(hook);
-    }
 
-    /**
-     * Create a new BioDirectoryConverter.
-     * @param writer the Writer used to output the resultant items
-     * @param model the data model
-
-     */
-    public BioDirectoryConverter (ItemWriter writer, Model model) {
-        super(writer, model);
-        SOStoreHook hook = new SOStoreHook(model);
+        Item dataSource = null;
+        Item dataSet = null;
+        if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
+            dataSource = getDataSourceItem(dataSourceName);
+            dataSet = getDataSetItem(dataSetTitle, dataSource);
+        }
+        BioStoreHook hook = new BioStoreHook(model, dataSet, dataSource);
         setStoreHook(hook);
     }
 
