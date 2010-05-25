@@ -10,7 +10,7 @@
 <attribute name="primaryIdentifier" value="BX610490.1"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_3"/>
-<collection name="OverlappingESTSets"><reference ref_id="2_4"/></collection>
+<collection name="overlappingESTSets"><reference ref_id="2_4"/></collection>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="3_1" class="Organism">
@@ -48,7 +48,7 @@
 <attribute name="primaryIdentifier" value="AF043436.1"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_3"/>
-<collection name="OverlappingESTSets"><reference ref_id="2_3"/></collection>
+<collection name="overlappingESTSets"><reference ref_id="2_3"/></collection>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="2_3" class="OverlappingESTSet">
@@ -111,7 +111,7 @@
 <attribute name="primaryIdentifier" value="BX040896.1"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_3"/>
-<collection name="OverlappingESTSets"><reference ref_id="2_4"/></collection>
+<collection name="overlappingESTSets"><reference ref_id="2_4"/></collection>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="5_26" class="Synonym">
@@ -139,7 +139,7 @@
 <attribute name="primaryIdentifier" value="BM654701.1"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_3"/>
-<collection name="OverlappingESTSets"><reference ref_id="2_1"/><reference ref_id="2_2"/></collection>
+<collection name="overlappingESTSets"><reference ref_id="2_1"/><reference ref_id="2_2"/></collection>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="2_2" class="OverlappingESTSet">
@@ -214,7 +214,7 @@
 <attribute name="primaryIdentifier" value="AF043443.1"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_3"/>
-<collection name="OverlappingESTSets"><reference ref_id="2_3"/></collection>
+<collection name="overlappingESTSets"><reference ref_id="2_3"/></collection>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="5_9" class="Synonym">
@@ -252,14 +252,14 @@
 <attribute name="primaryIdentifier" value="AF043434.1"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_3"/>
-<collection name="OverlappingESTSets"><reference ref_id="2_3"/></collection>
+<collection name="overlappingESTSets"><reference ref_id="2_3"/></collection>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="8_8" class="EST">
 <attribute name="primaryIdentifier" value="AA413316.1"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_3"/>
-<collection name="OverlappingESTSets"><reference ref_id="2_4"/></collection>
+<collection name="overlappingESTSets"><reference ref_id="2_4"/></collection>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="5_19" class="Synonym">
@@ -301,7 +301,7 @@
 <attribute name="primaryIdentifier" value="BX610489.1"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_3"/>
-<collection name="OverlappingESTSets"><reference ref_id="2_4"/></collection>
+<collection name="overlappingESTSets"><reference ref_id="2_4"/></collection>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="5_17" class="Synonym">
@@ -315,7 +315,7 @@
 <attribute name="primaryIdentifier" value="AF043437.1"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_3"/>
-<collection name="OverlappingESTSets"><reference ref_id="2_3"/></collection>
+<collection name="overlappingESTSets"><reference ref_id="2_3"/></collection>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="5_6" class="Synonym">
@@ -329,14 +329,14 @@
 <attribute name="primaryIdentifier" value="AF043439.1"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_3"/>
-<collection name="OverlappingESTSets"><reference ref_id="2_3"/></collection>
+<collection name="overlappingESTSets"><reference ref_id="2_3"/></collection>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="8_10" class="EST">
 <attribute name="primaryIdentifier" value="BX040897.1"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_3"/>
-<collection name="OverlappingESTSets"><reference ref_id="2_4"/></collection>
+<collection name="overlappingESTSets"><reference ref_id="2_4"/></collection>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="5_20" class="Synonym">

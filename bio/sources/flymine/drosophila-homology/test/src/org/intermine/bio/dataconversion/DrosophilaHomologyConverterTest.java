@@ -11,7 +11,6 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.HashMap;
 
 import org.intermine.dataconversion.ItemsTestCase;
