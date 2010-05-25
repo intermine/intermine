@@ -10,10 +10,10 @@
     <source name="hgnc" type="hgnc">
      <property name="src.data.dir" location="/shared/data/hgnc/test"/>
     </source>
-    <source name="ensembl-human" type="ensembl">
+    <source name="ensembl-human" type="ensembl" dump="true">
      <property name="src.data.dir" location="/shared/data/ensembl/Test"/>
     </source>
-    <source name="uniprot" type="uniprot">
+    <source name="uniprot-human" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="9606"/>
       <property name="create.interpro" value="true"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
