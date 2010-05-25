@@ -19,7 +19,7 @@ else
     run_performance_test() {
 # release webapp                                                                                                                                                                                               
     echo "changing to webapp directory"
-    cd ~/svn/dev/flymine/webapp
+    cd ~/svn/dev/$mine/webapp
     echo "removing temporary directories"
     ant clean-all > ant_output.log
     echo "building webapp"
@@ -29,11 +29,11 @@ else
     echo "changing back to the script directory"
     cd ~/svn/dev/bio/scripts
     echo "running the performance test"
-    ./performance_test flymine > $release1
+    ./performance_test $mine > $release1
 
 # release webapp                                                                                                                                                                                               
     echo "changing to webapp directory"
-    cd ~/svn/dev/flymine/webapp
+    cd ~/svn/dev/$mine/webapp
     echo "removing temporary directories"
     ant clean-all >> ant_output.log
     echo "building webapp"
@@ -43,7 +43,7 @@ else
     echo "changing back to the script directory"
     cd ~/svn/dev/bio/scripts
     echo "running the performance test"
-    ./performance_test flymine > $release2
+    ./performance_test $mine > $release2
 
 # compare the output                                                                                                                                                                                           
     ./compare_releases  $release1 $release2 > compare_releases.tmp
@@ -54,7 +54,7 @@ else
 
 run_acceptance_tests() {
     echo "running acceptance tests"
-    cd ~/svn/dev/flymine/integrate
+    cd ~/svn/dev/$mine/integrate
     ant acceptance-tests 
 
     attfile='~/svn/dev/' . $mine . '/integrate/build/acceptance_test.html'     
