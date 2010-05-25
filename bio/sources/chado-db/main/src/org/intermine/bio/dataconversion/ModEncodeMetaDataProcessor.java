@@ -297,7 +297,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
 
             List<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
-            LOG.info("DATA IDS " + chadoExperimentId + ": " + thisSubmissionDataIds.size());
+            LOG.debug("DATA IDS " + chadoExperimentId + ": " + thisSubmissionDataIds.size());
 
             ModEncodeFeatureProcessor processor =
                 new ModEncodeFeatureProcessor(getChadoDBConverter(), submissionItemIdentifier,
@@ -2036,15 +2036,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             currentSubId = dataSubmissionMap.get(dataId);
 
-            LOG.info("XXX0 " + currentSubId + ":" + dataId + "|" + attValue
-                    + "|" + attDbxref);
-            if (dataId.intValue() != lastDataId.intValue()
-                || attDbxref.intValue() != lastAttDbXref.intValue()
-                || currentSubId != previousSubId) {
+            if (dataId.intValue() != lastDataId.intValue() 
+                    || attDbxref.intValue() != lastAttDbXref.intValue() 
+                    || currentSubId != previousSubId) {
                 // store the last build property if created, type is set only if we found an
                 // attHeading of Characteristics
                 // note: dbxref can remain the same in different subs -> or
-//                LOG.info("XXX1if changes in dbxref or subid");
                 if (buildSubProperty != null && buildSubProperty.type != null) {
                     LOG.info("XXX11if ADD PREVIOUS" + lastAttDbXref + "|" + buildSubProperty);
                     createdProps.put(lastAttDbXref, buildSubProperty);

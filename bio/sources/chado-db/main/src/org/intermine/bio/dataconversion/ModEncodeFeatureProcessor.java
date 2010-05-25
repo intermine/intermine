@@ -92,6 +92,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      *                             i.e. the labItemIdentifier
      * @param dataList             the list of data ids to be used in the subquery
      * @param title                the title
+     * @param scoreProtocolItemId  score protocol item id
      */
 
     public ModEncodeFeatureProcessor(ChadoDBConverter chadoDBConverter,

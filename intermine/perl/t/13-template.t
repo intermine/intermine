@@ -3,22 +3,10 @@
 use strict;
 use warnings;
 
-use Test::More tests => 19;
+use Test::More tests => 20;
 use Test::Exception;
 
-BEGIN {
-      use_ok('InterMine::Template');
-}
-
-my $module = 'InterMine::Template';
-my $model = '../objectstore/model/testmodel/testmodel_model.xml';
-my @methods = qw(new get_views get_constraints get_description
-                 get_name);
-can_ok($module, @methods);
-
-dies_ok {my $t = $module->new()} "Building Template without args";
-dies_ok {my $t = $module->new(file => 'fake_file')} "Building Template without model";
-dies_ok {my $t = $module->new(file => 'fake_file', model => $model)} "Building Template with an invalid file";
+### Setting up
 
 my $bad_file     = 't/data/bad_xml.txt';
 my $bad_string   = <<END
@@ -29,8 +17,14 @@ my $bad_string   = <<END
 </template>
 END
     ;
-dies_ok {my $t = $module->new(file => $bad_file, model => $model)} "Building Template with a bad file";
-dies_ok {my $t = $module->new(string => $bad_string, model => $model)} "Building Template with a bad string";
+my $bad_string2   = <<END
+<template name="Probe_Gene">
+  <query name="Unfinished query">
+</template>
+END
+    ;
+
+
 
 my $multi_file   = 't/data/multixml.txt';
 my $multi_string = <<END
@@ -94,8 +88,6 @@ my $multi_string = <<END
 </template>
 END
     ;
-dies_ok {my $t = $module->new(file => $multi_file, model => $model)} "Building Template with a multi template file";
-dies_ok {my $t = $module->new(string => $multi_string, model => $model)} "Building Template with a multi template string";
 
 my $good_file   =  't/data/good_xml.txt';
 my $good_string =  <<END
@@ -127,25 +119,73 @@ my $good_string =  <<END
 </template>
 END
     ;
+
+my $module = 'InterMine::Template';
+my $model = '../objectstore/model/testmodel/testmodel_model.xml';
+my @methods = qw(new 
+                 get_views 
+                 get_constraints 
+                 get_editable_constraints
+                 get_description
+                 get_name
+                 get_sort_order
+                 get_logic
+                 as_path_query
+                 to_xml_string);
+
+### Tests
+
+use_ok($module); # Test 1
+can_ok($module, @methods); # Test 2
+
+throws_ok(sub {my $t = $module->new()}, qr/needs a file or string argument/, # Test 3
+    "Building Template without args");
+throws_ok(sub {my $t = $module->new(file => $good_file)}, # Test 4
+	       qr/We need a model to build templates with/,
+	       "Building Template without model");
+throws_ok(sub {my $t = $module->new(file => 'fake_file', model => $model)}, # Test 5
+	  qr/A valid file must be specified: we got/,
+	  "Building Template with a fake file");
+
+throws_ok(sub {my $t = $module->new(file => $bad_file, model => $model)}, #Test 6
+	  qr/unexpected element/,
+	  "Building Template with a bad file");
+
+throws_ok(sub {my $t = $module->new(string => $bad_string, model => $model)}, #Test 7
+	  qr/unexpected element/,
+	  "Building Template with a bad string - unknown element");
+
+throws_ok(sub {my $t = $module->new(string => $bad_string2, model => $model)}, #Test 8
+	  qr/mismatched tag/,
+	  "Building Template with a bad string - bad xml");
+
+throws_ok(sub {my $t = $module->new(file => $multi_file, model => $model)}, # Test 9
+	  qr/junk after document element/,
+	  "Building Template with a multi template file");
+
+throws_ok(sub {my $t = $module->new(string => $multi_string, model => $model)}, # Test 10
+	  qr/junk after document element/,
+	  "Building Template with a multi template string");
+
+
 my @f_args = (file => $good_file, model => $model);
 my @s_args = (string => $good_string, model => $model);
-my $t_from_file   = new_ok($module => \@f_args, 'Template');
-can_ok($t_from_file, @methods);
-my $t_from_string = new_ok($module => \@s_args, 'Template');
-can_ok($t_from_string, @methods);
+my $t_from_file   = new_ok($module => \@f_args, 'Template'); # Test 11
+can_ok($t_from_file, @methods); # Test 12
+my $t_from_string = new_ok($module => \@s_args, 'Template'); # Test 13
+can_ok($t_from_string, @methods); # Test 14
 
 my $exp_name = 'Probe_Gene';
 my $exp_desc = 'For specified Affymetrix probeset(s) show the corresponding gene.';
 my @views    = qw(Gene.probeSets.primaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.chromosomeLocation.object.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end);
 my $exp_con  = 'Gene.probeSets.primaryIdentifier = "1634044_at"';
 
-my $t = $module->new(file => $good_file, model => $model);
+my $t = $t_from_file;
 
-is($t->get_name, $exp_name, "Template name");
-is($t->get_description, $exp_desc, 'Template description');
-my @got_views = $t->get_views;
-is_deeply(\@got_views, \@views, 'Template views');
-ok($t->get_constraints == 2, 'All constraints');
-ok(grep({$_->is_editable} $t->get_constraints) == 1, 'Only editable constraints');
-is(($t->get_constraints)[1]->as_string, $exp_con, 'Constraint as string');
-
+is($t->get_name, $exp_name, "Template name"); # Test 15
+is($t->get_description, $exp_desc, 'Template description'); # Test 16
+is_deeply([$t->get_views], \@views, 'Template views'); # Test 17
+ok($t->get_constraints == 2, 'Fetches all constraints'); # Test 18
+ok($t->get_editable_constraints == 1, 'Returns only editable constraints'); # Test 19
+is(($t->get_editable_constraints)[0]->as_string, $exp_con, # Test 20
+   'Parses the constraints correctly'); 

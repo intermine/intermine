@@ -88,51 +88,6 @@ sub new
   return $self;
 }
 
-=head2 search_for
-
- Usage   : my $templates = $service->search_for($keyword);
- Function: get templates that match search term.
- Args    : $keyword - any term to search by (case insensitive)
- Returns : a list of InterMine::Template objects.
-
-=cut
-
-sub search_for {
-  my $self      = shift;
-  my $keyword   = shift;
-  die "You need a keyword to search for (try using 'get_templates' if you want them all)\n" 
-      unless $keyword;
-  my @templates = $self->get_templates;
-  return grep {$_->get_name =~ /$keyword/i} @templates;
-}
-
-=head2 get_template
-
- Usage   : my $template = $service->search_for($name);
- Function: Get the template called $name
- Args    : $name - the exact name of the template you want
- Returns : an InterMine::Template object if successful, or undef
-           also returns undef if there are multiple matches 
-           try using search_for for multiple identifiers.
-
-=cut
-
-sub get_template {
-  my $self      = shift;
-  my $name   = shift;
-  die "You need a name (try using 'get_templates' if you want them all)\n" 
-      unless $name;
-  my @templates = $self->get_templates;
-  my @wanted = grep {$_->get_name eq $name} @templates;
-  if (@wanted == 1) {
-      return shift @wanted;
-  }
-  else { # either no templates or too many (ambiguous)
-      return;
-  }
-}
-
-
 =head2 
 
  Usage   : my @all_templates = $service->get_templates;
@@ -157,15 +112,63 @@ sub get_templates {
 	    $self->{'templates'} = $self->_make_templates_from_xml($resp->content, $model);
 	}
     }
-    return $self->{'templates'};
+    return @{$self->{'templates'}};
 }
+
+=head2 get_template
+
+ Usage   : my $template = $service->search_for($name);
+ Function: Get the template called $name
+ Args    : $name - the exact name of the template you want
+ Returns : an InterMine::Template object if successful, or undef
+           also returns undef if there are multiple matches 
+           try using search_for for multiple identifiers.
+
+=cut
+
+sub get_template {
+  my $self   = shift;
+  my $name   = shift;
+  die "You need a name (try using 'get_templates' if you want them all)\n" 
+      unless $name;
+  my @templates = $self->get_templates;
+  my @wanted = grep {$_->get_name eq $name} @templates;
+  if (@wanted == 1) {
+      return shift @wanted;
+  }
+  else { # either no templates or too many (ambiguous)
+      return;
+  }
+}
+
+
+=head2 search_for
+
+ Usage   : my $templates = $service->search_for($keyword);
+ Function: get templates that match search term.
+ Args    : $keyword - any term to search by (case insensitive)
+ Returns : a list of InterMine::Template objects.
+
+=cut
+
+sub search_for {
+  my $self      = shift;
+  my $keyword   = shift;
+  die "You need a keyword to search for (try using 'get_templates' if you want them all)\n" 
+      unless $keyword;
+  my @templates = $self->get_templates;
+  return grep {$_->get_name =~ /$keyword/i} @templates;
+}
+
 
 # A private subroutine that processes an xml string containing potentially multiple
 # template specifications into an list of InterMine::Template objects
 
 sub _make_templates_from_xml {
+    my $xml_validator = qr[(</?template-queries>)];
     my $self = shift;
     my $xml_string = shift;
+    die 'Invalid or empty xml' unless ($xml_string && $xml_string =~ /$xml_validator/);
     my $model = shift;
     $xml_string =~ s[</?template-queries>][]gs;
     my @templates;
@@ -175,8 +178,8 @@ sub _make_templates_from_xml {
 	push @templates, $1;
 	$xml_string = $2;	
     }
-
-    return map {InterMine::Template->new(string => $_, model => $model)} @templates;
+    my @returners = map {InterMine::Template->new(string => $_, model => $model)} @templates;
+    return \@returners;
 }
 
 
@@ -201,7 +204,7 @@ sub get_result {
 	InterMine::WebService::Core::Request->new('GET', $url, 'TAB');
     $request->add_parameters(name => $template->get_name);
 
-    # as this is a template, we only need parameters for user editable templates    
+    # as this is a template, we only need parameters for user editable constraints
     my $i = 1; # these are numbered, starting at 1
     for my $constraint ($template->get_editable_constraints) {
 	$request->add_parameters('constraint'.$i => $constraint->get_path);

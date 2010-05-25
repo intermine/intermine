@@ -1,0 +1,17 @@
+<!-- this comment is here to prevent ant from setting model.struts.config to null -->
+
+<!-- used by the fasta... buttons on object details pages -->
+<action path="/sequenceExporter"
+  type="org.intermine.bio.web.struts.SequenceExportAction" />
+
+<action path="/initAttributeLinkDisplayer"
+        type="org.intermine.bio.web.AttributeLinkDisplayerController"/>
+
+<action path="/initSequenceExportOptions"
+        type="org.intermine.bio.web.struts.SequenceExportOptionsController"/>
+
+<action path="/sequenceExportAction" name="sequenceExportForm"
+        type="org.intermine.web.struts.TableExportAction" parameter="method"/>
+
+<action path="/gff3ExportAction" name="gff3ExportForm"
+        type="org.intermine.web.struts.TableExportAction" parameter="method"/>

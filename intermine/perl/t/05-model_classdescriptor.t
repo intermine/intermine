@@ -3,15 +3,17 @@
 use strict;
 use warnings;
 
-use Test::More tests => 8;
+use Test::More tests => 10;
 use Test::Exception;
 
 use InterMine::Model;
 
 my $model = new InterMine::Model(file => '../objectstore/model/testmodel/testmodel_model.xml');
 
-my $emp_cd = $model->get_classdescriptor_by_name("Employee");
-
+ok(my $emp_cd = $model->get_classdescriptor_by_name("Employee"), "Can get class descr by name");
+throws_ok(sub {$model->get_classdescriptor_by_name}, 
+	  qr/no classname passed to get_classdescriptor_by_name/,
+	  'Catches lack of classname');
 # from parent class
 ok($emp_cd->valid_field('name'));
 
