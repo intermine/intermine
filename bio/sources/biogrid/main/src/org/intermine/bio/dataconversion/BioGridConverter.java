@@ -63,13 +63,13 @@ public class BioGridConverter extends BioFileConverter
     private static final Logger LOG = Logger.getLogger(BioGridConverter.class);
     private static final String PROP_FILE = "biogrid_config.properties";
     protected IdResolverFactory resolverFactory;
-    private Map<String, String> terms = new HashMap();
-    private Map<String, String> pubs = new HashMap();
-    private Map<String, String> organisms = new HashMap();
-    private static final Map<String, String> PSI_TERMS = new HashMap();
-    private Map<String, String> genes = new HashMap();
-    private Set<String> synonyms = new HashSet();
-    private Map<String, Map<String, String>> config = new HashMap();
+    private Map<String, String> terms = new HashMap<String, String>();
+    private Map<String, String> pubs = new HashMap<String, String>();
+    private Map<String, String> organisms = new HashMap<String, String>();
+    private static final Map<String, String> PSI_TERMS = new HashMap<String, String>();
+    private Map<String, String> genes = new HashMap<String, String>();
+    private Set<String> synonyms = new HashSet<String>();
+    private Map<String, Map<String, String>> config = new HashMap<String, Map<String, String>>();
     private Set<String> taxonIds = null;
 
     /**
@@ -130,7 +130,7 @@ public class BioGridConverter extends BioFileConverter
 
             String taxonId = attributes[0];
             if (config.get(taxonId) == null) {
-                Map<String, String> configs = new HashMap();
+                Map<String, String> configs = new HashMap<String, String>();
                 config.put(taxonId, configs);
             }
             if (attributes[1].equals("xref")) {
@@ -158,17 +158,17 @@ public class BioGridConverter extends BioFileConverter
      */
     class BioGridHandler extends DefaultHandler
     {
-        private Map<String, InteractorHolder> interactors = new HashMap();
+        private Map<String, InteractorHolder> interactors = new HashMap<String, InteractorHolder>();
         // id to temporary holding object
-        private Map<String, ExperimentHolder> experiments = new HashMap();
+        private Map<String, ExperimentHolder> experiments = new HashMap<String, ExperimentHolder>();
         // id to intermine object representing experiment
-        private Map<MultiKey, Item> idsToExperiments = new HashMap();
+        private Map<MultiKey, Item> idsToExperiments = new HashMap<MultiKey, Item>();
         private InteractionHolder holder;
         private ExperimentHolder experimentHolder;
         private InteractorHolder interactorHolder;
         private String participantId = null;
 
-        private Stack<String> stack = new Stack();
+        private Stack<String> stack = new Stack<String>();
         private String attName = null;
         private StringBuffer attValue = null;
 
@@ -609,7 +609,7 @@ public class BioGridConverter extends BioFileConverter
 
         private ArrayList<String> getInteractingObjects(InteractionHolder interactionHolder,
                                                         String refId) {
-            ArrayList<String> interactorIds = new ArrayList(interactionHolder.refIds);
+            ArrayList<String> interactorIds = new ArrayList<String>(interactionHolder.refIds);
             // remove the gene from the list of interactors, unless this gene is interacting
             // with itself - which is common
             if (interactorIds.size() > 1) {
@@ -660,7 +660,7 @@ public class BioGridConverter extends BioFileConverter
             protected String biogridId;
             protected String identifier;
             protected String refId;
-            protected Map<String, String> xrefs = new HashMap();
+            protected Map<String, String> xrefs = new HashMap<String, String>();
             protected String shortLabel;
             protected boolean valid = true;
             protected String organismRefId;
