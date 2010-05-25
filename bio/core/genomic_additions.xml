@@ -64,6 +64,11 @@
       <collection name="genes" referenced-type="Gene"/>
     </class>
     
+   <class name="TFBindingSite" is-interface="true">
+    <reference name="factor" referenced-type="Gene"/>
+    <reference name="gene" referenced-type="Gene"/>
+  </class>
+    
     <class name="Transcript" is-interface="true">
       <reference name="protein" referenced-type="Protein" reverse-reference="transcripts"/>
       <reference name="gene" referenced-type="Gene" reverse-reference="transcripts"/>

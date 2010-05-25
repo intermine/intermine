@@ -1,8 +1,5 @@
-
-<project name="BDGP cDNA clone" default="default" basedir=".">
+<project name="bdgp-clone" default="default" basedir=".">
   <description>build, test, package BDGP cDNA clone</description>
-  
   <import file="../../../../imbuild/source.xml"/>
-  
 </project>
 

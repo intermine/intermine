@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <classes>
   <class name="EST" is-interface="true">
-    <collection name="OverlappingESTSets" referenced-type="OverlappingESTSet" reverse-reference="ESTs"/>
+    <collection name="overlappingESTSets" referenced-type="OverlappingESTSet" reverse-reference="ESTs"/>
   </class>
   <class name="OverlappingESTSet" extends="SequenceFeature" is-interface="true">
-    <collection name="ESTs" referenced-type="EST" reverse-reference="OverlappingESTSets"/>
+    <collection name="ESTs" referenced-type="EST" reverse-reference="overlappingESTSets"/>
   </class>
 </classes>

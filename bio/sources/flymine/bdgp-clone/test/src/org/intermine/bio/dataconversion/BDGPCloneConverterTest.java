@@ -51,7 +51,7 @@ public class BDGPCloneConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "bdgp-clone-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "bdgp-clone-tgt-items.xml");
 
         Set expected = readItemSet("BDGPCloneConverterTest.xml");
         assertEquals(expected, itemWriter.getItems());
