@@ -29,6 +29,9 @@
 <c:set var="isPrimer" value="primer"/>
 <c:set var="wormTracksCounter" value="0"/>
 <c:set var="flyTracksCounter" value="0"/>
+<c:set var="project" value="${exp.piSurname}"/>
+<c:set var="expGFF" value="PianoWaterstonCelniker"/>
+
 
   <im:boxarea title="${exp.name}" stylename="gradientbox">
 
@@ -523,14 +526,13 @@ All GBrowse tracks generated for this experiment:
 <img src="model/images/def_s.png" title="${fdes.value }" height="18" width="18" />
             </c:if>
 </c:forEach>
+ 	${fc.key}:
+ 	<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value} </html:link>
 
-        			${fc.key}:<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value} </html:link>
-
-
-
-			         &nbsp;&nbsp;export:
-               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=tab">TAB</html:link>
-               &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=csv">CSV</html:link>
+  &nbsp;&nbsp;export:
+  <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=tab">TAB</html:link>
+  &nbsp;
+  <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=csv">CSV</html:link>
           <c:set var="isUnloc" value="false"></c:set>
           <c:forEach items="${unlocatedFeat}" var="uft" varStatus="uft_status">
             <c:if test="${uft.key == sub.dCCid}">
@@ -547,21 +549,28 @@ All GBrowse tracks generated for this experiment:
 <i>&nbsp;GFF3&nbsp;SEQ</i>
 </c:when>
 <c:otherwise>
-               &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3">GFF3</html:link>
-               &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=sequence">SEQ</html:link>            
-
+   &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3">GFF3</html:link>
+   &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=sequence">SEQ</html:link>            
 </c:otherwise>
 </c:choose>
 
-
-
-               &nbsp;&nbsp;
-				<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=list&submission=${sub.dCCid}&feature=${fc.key}">create&nbsp;LIST</html:link>
+<%--
+<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=4gff&action=export&submission=${sub.dCCid}&feature=${fc.key}&project=${exp.pi}&format=gff3">[full gff3]</html:link>
+--%>
+   
+   &nbsp;&nbsp;
+   <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=list&submission=${sub.dCCid}&feature=${fc.key}">create&nbsp;LIST</html:link>
+   
+   
           			</td>
       			</tr>
     		</c:forEach>
             <tr><td>
-            <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}"><c:out value="[find nearby features]"></c:out></html:link>
+            
+            <c:if test="${fn:containsIgnoreCase(expGFF,project)}">
+   <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=4gff&action=export&submission=${sub.dCCid}&project=${project}&feature=all&format=gff3">[full gff3]</html:link>
+            </c:if>
+   &nbsp;&nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}"><c:out value="[find nearby features]"></c:out></html:link>
             </td></tr>
     		</table>
     		</div>

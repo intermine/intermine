@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.gff3.GFF3Record;
@@ -52,11 +51,20 @@ public class GFF3Exporter implements Exporter
     //            "chromosomeLocation.strand", "primaryIdentifier", "score", 
     //            "start", "end", "strand")));
 
+    /**
+     * the fields we don't want to display as attributes
+     */
     public static final Set<String> GFF_FIELDS = Collections
     .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
             "primaryIdentifier", "score")));
+    /**
+     * for the gff header, link to taxomony
+     */
     public static final String WORM_LINK = 
         "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=6239";
+    /**
+     * for the gff header, link to taxomony
+     */
     public static final String FLY_LINK = 
         "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7227";
 
@@ -81,6 +89,7 @@ public class GFF3Exporter implements Exporter
      *  they are names of columns in results table, they are in the same order
      *  as corresponding columns in results table
      * @param sourceName name of Mine to put in GFF source column
+     * @param organisms taxon id of the organisms
      */
     public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map<String, String> soClassNames,
             List<String> attributesNames, String sourceName, Set<Integer> organisms) {
@@ -91,7 +100,7 @@ public class GFF3Exporter implements Exporter
         this.sourceName = sourceName;
         this.organisms = organisms;
 
-        for (String s : soClassNames.keySet()){
+        for (String s : soClassNames.keySet()) {
             this.cNames.add(s.toLowerCase());                
         }
     }
@@ -102,27 +111,26 @@ public class GFF3Exporter implements Exporter
      * @return header further info about versions
      */
 
-    private String getHeaderParts()
-    {
+    private String getHeaderParts() {
         StringBuffer header = new StringBuffer();
         Properties props = PropertiesUtil.getProperties();
 
         if (organisms != null) {
-            for (Integer taxId : organisms){
-                if (taxId == 7227){
+            for (Integer taxId : organisms) {
+                if (taxId == 7227) {
                     String fV = props.getProperty("genomeVersion.fly");
-                    if (fV != null && fV.length() > 0){
-                        header.append("\n##species " + FLY_LINK );
-                        header.append("\n##genome-build FlyBase r"+ fV + "(drosophila)");
+                    if (fV != null && fV.length() > 0) {
+                        header.append("\n##species " + FLY_LINK);
+                        header.append("\n##genome-build FlyBase r" + fV + "(drosophila)");
                     }
                 }
             }
-            for (Integer taxId : organisms){
-                if (taxId == 6239){
+            for (Integer taxId : organisms) {
+                if (taxId == 6239) {
                     String wV = props.getProperty("genomeVersion.worm");
                     if (wV != null && wV.length() > 0) {
                         header.append("\n##species " + WORM_LINK);
-                        header.append("\n##genome-build WormBase r"+ wV + "(worm)");
+                        header.append("\n##genome-build WormBase r" + wV + "(worm)");
                     }
                 }
             }
@@ -154,6 +162,9 @@ public class GFF3Exporter implements Exporter
             throw new ExportException("No columns with sequence");
         }
         try {
+            
+            LOG.info("SOO:" + cNames.toString());
+            
             while (resultIt.hasNext()) {
                 List<ResultElement> row = resultIt.next();
                 exportRow(row);
@@ -183,7 +194,7 @@ public class GFF3Exporter implements Exporter
         }
 
         // loop through all the objects in a row
-        for (ResultElement re : elWithObject ){
+        for (ResultElement re : elWithObject) {
             LocatedSequenceFeature lsf = (LocatedSequenceFeature) re.getObject();
             //             LOG.info("GFFrePath: " + re.getPath());
             boolean isCollection = re.getPath().containsCollections();
@@ -206,75 +217,87 @@ public class GFF3Exporter implements Exporter
             for (int i = 0; i < row.size(); i++) {
                 ResultElement el = row.get(i);
 
-                if (el == null){
+                if (el == null) {
                     continue;
                 }
 
-                if (i==0 ){ // this is the beginning of the path
-                    parent = (String) el.getField();
-                    parentClass= el.getPath().getStartClassDescriptor().getUnqualifiedName();
+                if (i == 0) { // this is the beginning of the path
+                    parentClass = el.getPath().getStartClassDescriptor().getUnqualifiedName();
+//                    LOG.info("PAR: " + parentClass);
+                    if (cNames.contains(parentClass.toLowerCase())) {
+                        parent = (String) el.getField();                        
+//                        LOG.info("PARent: " + parent);
+                    }
                 }
 
                 // checks for attributes:
-                if (isCollection && !el.getPath().containsCollections()){
+                if (isCollection && !el.getPath().containsCollections()) {
                     // one is collection, the other is not: do not show
                     continue;
                 }
                 if (!isCollection && el.getPath().containsCollections() 
-                        && soClassNames.containsKey(el.getType())){
+                        && soClassNames.containsKey(el.getType())) {
                     // show attributes only if they are not linked to features 
                     // (they will be displayed with the relevant one, see below)
                     continue;
                 }
 
-                if (isCollection && el.getPath().containsCollections()){
+                if (isCollection && el.getPath().containsCollections()) {
                     // show only if of the same class
                     Class<?> reType = re.getPath().getLastClassDescriptor().getType();
                     Class<?> elType = el.getPath().getLastClassDescriptor().getType();
-                    if (!reType.isAssignableFrom(elType)){
+                    if (!reType.isAssignableFrom(elType)) {
                         // LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+ 
                         // "|R:"+re.getPath()+"||E:"+el.getPath());
                         continue;
                     }
+                    // LOG.info("CC: " + reType + "|" + elType);
                 }
 
-                if(el.getPath().getLastClassDescriptor().getUnqualifiedName().
-                        equalsIgnoreCase("location")){
+                if (el.getPath().getLastClassDescriptor().getUnqualifiedName().
+                        equalsIgnoreCase("location")) {
                     // don't show locations (they are already displayed parts of the element)
                     continue;
                 }
 
                 if (el.getField() != null) {
-                    String  unqualName = el.getPath().getLastClassDescriptor().getUnqualifiedName();                    
-                    String attributeName = trimAttribute(attributesNames.get(i),unqualName);
+                    String  unqualName = el.getPath().getLastClassDescriptor().getUnqualifiedName();
+                    String attributeName = trimAttribute(attributesNames.get(i), unqualName);
                     //                    LOG.info("IN: " + attributeName+"|"+ unqualName);
                     checkAttribute(el, attributeName);
                 }
 
                 // TEMP out (fm release)
                 // add the parent
-                if (i>=1 && !parentClass.equalsIgnoreCase(
-                        re.getPath().getLastClassDescriptor().getUnqualifiedName())){
-                    LOG.info("PAR: " + parentClass + " -> " + 
-                            re.getPath().getLastClassDescriptor().getUnqualifiedName());
-                    List<String> addPar = new ArrayList<String>();
-                    addPar.add(parent);
-                    attributes.put("Parent", addPar);
+                if (i >= 1 && parent != null) {
+                    if (!parentClass.equalsIgnoreCase(
+                            re.getPath().getLastClassDescriptor().getUnqualifiedName())) {
+//                        LOG.info("PAR: " + parentClass + " -> " 
+//                                + re.getPath().getLastClassDescriptor().getUnqualifiedName()
+                                //                            + re.getPath().getLastClassDescriptor().getType()
+                                //                            + re.getPath().getLastClassDescriptor().getName()
+                                //                            + "|." + re.getPath().getLastClassDescriptor().getSubDescriptors()
+                                //                            + "|.." + re.getPath().getLastClassDescriptor().getAllCollectionDescriptors()
+                                //                            + "|..." + re.getPath().getLastClassDescriptor().getAllReferenceDescriptors()
+//                        );
+                        List<String> addPar = new ArrayList<String>();
+                        addPar.add(parent);
+                        attributes.put("Parent", addPar);
+                    }
                 }
-
             }
             lastLsfId = lsf.getId();
             lastLsf = lsf;
         }
     }
 
-    private String trimAttribute(String attribute, String unqualName){
-        if (!attribute.contains(".")){
+    private String trimAttribute(String attribute, String unqualName) {
+        if (!attribute.contains(".")) {
             return attribute;
         }
         // check if a feature attribute (display only name) or not (display all path)
-        if (cNames.contains(unqualName.toLowerCase())){
-            String plainAttribute = attribute.substring(attribute.lastIndexOf('.')+1);
+        if (cNames.contains(unqualName.toLowerCase())) {
+            String plainAttribute = attribute.substring(attribute.lastIndexOf('.') + 1);
             //            LOG.info("LCC: " +attribute+"->"+unqualName +"|"+ plainAttribute );
             return plainAttribute;            
         }
