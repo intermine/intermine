@@ -30,12 +30,13 @@ import org.intermine.xml.full.Item;
  * collections to Items as they are stored.
  * @author Kim Rutherford
  */
-public class DataSetStoreHook implements DataConverterStoreHook
+public class BioStoreHook implements DataConverterStoreHook
 {
     private final Item dataSet;
     private final Item dataSource;
     private final Model model;
     private static final Map<String, String> SO_TERMS = new HashMap<String, String>();
+    private static String ontologyRefId = null;
 
     /**
      * Create a new DataSetStoreHook object.
@@ -43,19 +44,32 @@ public class DataSetStoreHook implements DataConverterStoreHook
      * @param dataSet the DataSet to add to items
      * @param dataSource the DataSource to add to the items
      */
-    public DataSetStoreHook(Model model, Item dataSet, Item dataSource) {
+    public BioStoreHook(Model model, Item dataSet, Item dataSource) {
         this.model = model;
         this.dataSet = dataSet;
         this.dataSource = dataSource;
     }
 
     /**
-     * @see DataSetStoreHook#setDataSets(Item, Item, Item)
+     * Create a new DataSetStoreHook object.
+     * @param model the data model
+     */
+    public BioStoreHook(Model model) {
+        this.model = model;
+        this.dataSet = null;
+        this.dataSource = null;
+    }
+
+    /**
+     * @see BioStoreHook#setDataSets(Item, Item, Item)
      * {@inheritDoc}
      */
     public void processItem(DataConverter dataConverter, Item item) {
         String soTermId = getSoTerm(dataConverter, item);
-        setDataSets(model, item, dataSet.getIdentifier(), dataSource.getIdentifier(), soTermId);
+        setSOTerm(item, soTermId);
+        if (dataSet != null) {
+            setDataSets(model, item, dataSet.getIdentifier(), dataSource.getIdentifier());
+        }
     }
 
     /**
@@ -65,10 +79,8 @@ public class DataSetStoreHook implements DataConverterStoreHook
      * @param item the Item to process
      * @param dataSetId the item id of the DataSet to add
      * @param dataSourceId the item id of the DataSource to add
-     * @param soTermId item id of the SO Term to add
      */
-    public static void setDataSets(Model model, Item item, String dataSetId, String dataSourceId,
-            String soTermId) {
+    public static void setDataSets(Model model, Item item, String dataSetId, String dataSourceId) {
         String className = item.getClassName();
         ClassDescriptor cd = model.getClassDescriptorByName(className);
         ReferenceDescriptor rd = cd.getReferenceDescriptorByName("source");
@@ -86,6 +98,9 @@ public class DataSetStoreHook implements DataConverterStoreHook
         if (item.canHaveCollection("dataSets")) {
             item.addToCollection("dataSets", dataSetId);
         }
+    }
+
+    private void setSOTerm(Item item, String soTermId) {
         if (item.canHaveReference("sequenceOntologyTerm")
                 && !item.hasReference("sequenceOntologyTerm")) {
             if (!StringUtils.isEmpty(soTermId)) {
@@ -94,7 +109,14 @@ public class DataSetStoreHook implements DataConverterStoreHook
         }
     }
 
-    private static String getSoTerm(DataConverter dataConverter, Item item) {
+    /**
+     * get and store a SO term based on intermine item's class.  Only will store a SO term if
+     * the item is a SequenceFeature
+     * @param dataConverter data converter
+     * @param item item
+     * @return id representing the SO term object
+     */
+    protected static String getSoTerm(DataConverter dataConverter, Item item) {
         String soName = null;
         try {
             soName = BioConverterUtil.javaNameToSO(item.getClassName());
@@ -105,6 +127,10 @@ public class DataSetStoreHook implements DataConverterStoreHook
             if (StringUtils.isEmpty(soRefId)) {
                 Item soterm = dataConverter.createItem("SOTerm");
                 soterm.setAttribute("name", soName);
+                if (ontologyRefId == null) {
+                    setOntology(dataConverter);
+                }
+                soterm.setReference("ontology", ontologyRefId);
                 dataConverter.store(soterm);
                 soRefId = soterm.getIdentifier();
                 SO_TERMS.put(soName, soRefId);
@@ -115,5 +141,21 @@ public class DataSetStoreHook implements DataConverterStoreHook
         } catch (ObjectStoreException e) {
             return null;
         }
+    }
+
+    /**
+     * create and store ontology object
+     * @param dataConverter data converter
+     */
+    private static void setOntology(DataConverter dataConverter) {
+        Item item = dataConverter.createItem("Ontology");
+        item.setAttribute("name", "Sequence Ontology");
+        item.setAttribute("url", "http://www.sequenceontology.org");
+        try {
+            dataConverter.store(item);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Can't store ontology", e);
+        }
+        ontologyRefId = item.getIdentifier();
     }
 }

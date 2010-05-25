@@ -50,7 +50,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
      */
     public Drosophila2ProbeConverter(ItemWriter writer, Model model)
         throws ObjectStoreException {
-        super(writer, model);
+        super(writer, model, null, null);
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "Ensembl");

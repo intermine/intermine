@@ -74,7 +74,7 @@ public class WormBaseProcessor extends SequenceProcessor
         }
         ChadoDBConverter converter = getChadoDBConverter();
         try {
-            DataSetStoreHook.setDataSets(getModel(), item,
+            BioStoreHook.setDataSets(getModel(), item,
                     converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
                     converter.getDataSourceItem().getIdentifier(), getSoTerm(item)
             );
