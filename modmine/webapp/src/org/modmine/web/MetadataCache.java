@@ -168,6 +168,18 @@ public class MetadataCache
      * @param os the production objectStore
      * @return map of unlocated feature types
      */
+    public static synchronized Map<Integer, List<String>> getLocatedFeatureTypes(ObjectStore os) {
+        if (submissionLocatedFeatureTypes == null) {
+            readSubmissionLocatedFeature(os);
+        }
+        return submissionLocatedFeatureTypes;
+    }
+
+    /**
+     * Fetch unlocated feature types per submission.
+     * @param os the production objectStore
+     * @return map of unlocated feature types
+     */
     public static synchronized Map<Integer, List<String>> getUnlocatedFeatureTypes(ObjectStore os) {
         if (submissionUnlocatedFeatureTypes == null) {
             readUnlocatedFeatureTypes(os);
@@ -857,7 +869,7 @@ public class MetadataCache
         LOG.info("Primed GBrowse tracks cache, took: " + timeTaken + "ms  size = "
                 + tracks.size());
 
-        if (flyTracks != null && wormTracks!= null) {
+        if (flyTracks != null && wormTracks != null) {
             tracks.putAll(flyTracks);
             tracks.putAll(wormTracks);
             setGBrowseTracks(tracks);
