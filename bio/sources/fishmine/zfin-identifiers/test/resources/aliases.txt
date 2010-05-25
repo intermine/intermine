@@ -1,2 +1,0 @@
-ZDB-GENE-01-1	name	symbol	oldname
-ZDB-GENE-01-1	name	symbol	oldname
