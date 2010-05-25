@@ -7,6 +7,9 @@
 
 
   <sources>
+    <source name="hgnc" type="hgnc">
+     <property name="src.data.dir" location="/shared/data/hgnc/test"/>
+    </source>
     <source name="ensembl-human" type="ensembl">
      <property name="src.data.dir" location="/shared/data/ensembl/Test"/>
     </source>
