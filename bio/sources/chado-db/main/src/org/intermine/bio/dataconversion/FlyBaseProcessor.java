@@ -116,17 +116,17 @@ public class FlyBaseProcessor extends SequenceProcessor
     private static final Logger LOG = Logger.getLogger(FlyBaseProcessor.class);
 
     // the configuration for this processor, set when getConfig() is called the first time
-    private final Map<Integer, MultiKeyMap> config = new HashMap();
+    private final Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
 
     // a set of feature_ids for those genes that have a location in the featureloc table, set by
     // the constructor
     private final IntPresentSet locatedGeneIds;
 
     // a map from the uniquename of each allele to its item identifier
-    private Map<String, String> alleleIdMap = new HashMap();
+    private Map<String, String> alleleIdMap = new HashMap<String, String>();
 
     // a map from the uniquename of each cdna clone to its item identifier
-    private Map<String, FeatureData> cdnaCloneMap = new HashMap();
+    private Map<String, FeatureData> cdnaCloneMap = new HashMap<String, FeatureData>();
 
     // an object representing the FlyBase miscellaneous CV
     private ChadoCV flyBaseMiscCv = null;
@@ -135,14 +135,14 @@ public class FlyBaseProcessor extends SequenceProcessor
     private ChadoCV sequenceOntologyCV = null;
 
     // a map from mutagen description to Mutagen Item identifier
-    private Map<String, String> mutagensMap = new HashMap();
+    private Map<String, String> mutagensMap = new HashMap<String, String>();
 
     // a map from featureId to seqlen
 //    private Map<Integer, Integer> cdnaLengths = null;
 
     private final Map<Integer, Integer> chromosomeStructureVariationTypes;
 
-    private Map<String, String> interactionExperiments = new HashMap();
+    private Map<String, String> interactionExperiments = new HashMap<String, String>();
 
     private static final String LOCATED_GENES_TEMP_TABLE_NAME = "intermine_located_genes_temp";
     private static final String ALLELE_TEMP_TABLE_NAME = "intermine_flybase_allele_temp";
@@ -157,8 +157,10 @@ public class FlyBaseProcessor extends SequenceProcessor
     // pattern to match GLEANR gene symbols from FlyBase chado
     private static final Pattern GLEANR_PATTERN = Pattern.compile(".*GLEANR.*");
 
-    private static final Map<String, String> CHROMOSOME_STRUCTURE_VARIATION_SO_MAP = new HashMap();
-    private final Map<String, FeatureData> proteinFeatureDataMap = new HashMap();
+    private static final Map<String, String> CHROMOSOME_STRUCTURE_VARIATION_SO_MAP
+    = new HashMap<String, String>();
+    private final Map<String, FeatureData> proteinFeatureDataMap
+    = new HashMap<String, FeatureData>();
 
     static {
         CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.put("chromosomal_deletion",
@@ -1715,8 +1717,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      * {@inheritDoc}
      */
     @Override
-    protected String fixIdentifier(@SuppressWarnings("unused") FeatureData fdat, String identifier)
-    {
+    protected String fixIdentifier(FeatureData fdat, String identifier) {
         if (StringUtils.isBlank(identifier)) {
             return identifier;
         }
@@ -1811,14 +1812,8 @@ public class FlyBaseProcessor extends SequenceProcessor
             }
         }
         ChadoDBConverter converter = getChadoDBConverter();
-        try {
-            BioStoreHook.setDataSets(getModel(), item,
-                             converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
-                             converter.getDataSourceItem().getIdentifier(),
-                             getSoTerm(item));
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("can't store feature", e);
-        }
-
+        BioStoreHook.setDataSets(getModel(), item,
+                converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
+                converter.getDataSourceItem().getIdentifier());
     }
 }

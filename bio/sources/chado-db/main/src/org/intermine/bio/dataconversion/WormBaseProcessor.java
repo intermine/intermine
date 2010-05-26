@@ -73,14 +73,9 @@ public class WormBaseProcessor extends SequenceProcessor
             }
         }
         ChadoDBConverter converter = getChadoDBConverter();
-        try {
-            BioStoreHook.setDataSets(getModel(), item,
-                    converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
-                    converter.getDataSourceItem().getIdentifier(), getSoTerm(item)
-            );
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("can't store feature", e);
-        }
+        BioStoreHook.setDataSets(getModel(), item,  converter.getDataSetItem(
+                taxonId.intValue()).getIdentifier(), converter.getDataSourceItem().getIdentifier());
+
     }
 
     /**
@@ -88,7 +83,7 @@ public class WormBaseProcessor extends SequenceProcessor
      */
     @SuppressWarnings("unchecked")
     @Override
-    protected Map<MultiKey, List<ConfigAction>> getConfig(@SuppressWarnings("unused") int taxonId) {
+    protected Map<MultiKey, List<ConfigAction>> getConfig(int taxonId) {
        if (config == null) {
            config = new MultiKeyMap();
            config.put(new MultiKey("feature", "Gene", "WormBase", "uniquename"),
