@@ -666,9 +666,8 @@ public class FlyBaseProcessor extends SequenceProcessor
                               "ChromosomalTranslocation", "Transposition");
             for (String className: chromosomeStructureVariationClassNames) {
                 map.put(new MultiKey("cvterm", className, "SO"),
-                        Arrays.asList(new CreateCollectionAction("SequenceOntologyTerm",
-                                                                 "featureTerms",
-                                                                 "name", true)));
+                        Arrays.asList(new CreateCollectionAction("SOTerm", "featureTerms", "name",
+                                true)));
             }
 
             // feature configuration example: for features of class "Exon", from "FlyBase",
@@ -741,7 +740,6 @@ public class FlyBaseProcessor extends SequenceProcessor
                     Arrays.asList(new SetFieldConfigAction("name"),
                             CREATE_SYNONYM_ACTION));
         }
-
         return map;
     }
 
