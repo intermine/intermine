@@ -7,15 +7,6 @@
       <reference name="MRNA" referenced-type="MRNA" reverse-reference="CDSs"/>
     </class>
 
-    <class name="Chromosome" is-interface="true">
-      <collection name="features" referenced-type="SequenceFeature" reverse-reference="chromosome"/>
-	   <collection name="transcripts" referenced-type="Transcript"/>
-	   <collection name="exons" referenced-type="Exon"/>
-  		<collection name="genes" referenced-type="Gene"/>
-	   <collection name="chromosomeBands" referenced-type="ChromosomeBand"/>
-	   <collection name="chromosomalStructuralElements" referenced-type="ChromosomalStructuralElement"/>
-    </class>
-    
     <class name="Exon" is-interface="true">
       <reference name="gene" referenced-type="Gene" reverse-reference="exons"/>
       <collection name="transcripts" referenced-type="Transcript" reverse-reference="exons"/>
@@ -55,20 +46,10 @@
       <collection name="transcripts" referenced-type="Transcript" reverse-reference="protein"/>
     </class>
 
-  <class name="SequenceFeature" is-interface="true">
-      <reference name="chromosome" referenced-type="Chromosome" reverse-reference="features"/>
-      <reference name="chromosomeLocation" referenced-type="Location" />
-  </class>
-
     <class name="SequenceVariant" is-interface="true">
       <collection name="genes" referenced-type="Gene"/>
     </class>
-    
-   <class name="TFBindingSite" is-interface="true">
-    <reference name="factor" referenced-type="Gene"/>
-    <reference name="gene" referenced-type="Gene"/>
-  </class>
-    
+        
     <class name="Transcript" is-interface="true">
       <reference name="protein" referenced-type="Protein" reverse-reference="transcripts"/>
       <reference name="gene" referenced-type="Gene" reverse-reference="transcripts"/>
@@ -76,7 +57,7 @@
       <collection name="exons" referenced-type="Exon" reverse-reference="transcripts"/>
     </class>
     
-    <class name="UTR" extends="BioEntity" is-interface="true">
+    <class name="UTR" is-interface="true">
       <reference name="gene" referenced-type="Gene" reverse-reference="UTRs"/>
       <reference name="MRNA" referenced-type="MRNA" reverse-reference="UTRs"/>
     </class>

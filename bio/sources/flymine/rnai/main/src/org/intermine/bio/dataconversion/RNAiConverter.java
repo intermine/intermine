@@ -91,14 +91,12 @@ public class RNAiConverter extends BioFileConverter
                         }
                     Item phenotype = createPhenotype(line[2], line[4], line[3], comment, isObserved,
                         line[7], line[8]);
-                    phenotype.setReference("subject", gene.getIdentifier());
                     phenotype.setReference("gene", gene.getIdentifier());
 
                     Item pub = createPub(line[11]);
                     phenotype.addToCollection("publications", pub.getIdentifier());
                     Item screen = createScreen(pub);
                     phenotype.setReference("analysis", screen.getIdentifier());
-
                     store(phenotype);
                 }
             }
