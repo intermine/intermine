@@ -132,7 +132,7 @@ public class AnoESTConverter extends BioDBConverter
 
             Item cluster = clusters.get(clusterId);
             if (cluster != null) {
-                est.addToCollection("OverlappingESTSets", cluster);
+                est.addToCollection("overlappingESTSets", cluster);
             }
         }
 
