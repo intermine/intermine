@@ -210,6 +210,7 @@
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
       <displayer src="geneMicroArrayDisplayer.tile"/>
       <displayer src="/model/proteinInteractionGraph.jsp"/>
+      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
       <displayer src="orthologueLinkDisplayer.tile"/>
