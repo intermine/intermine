@@ -28,7 +28,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Reference;
 
 /**
  * DataConverter to parse homophila data file into Items.
@@ -312,11 +311,10 @@ public class HomophilaConverter extends BioFileConverter
         if (gene == null) {
             gene = createItem("Gene");
             genes.put(geneId, gene);
-            gene.addAttribute(new Attribute("symbol", geneId));
-            gene.addReference(new Reference("organism", orgHuman.getIdentifier()));
+            gene.setAttribute("symbol", geneId);
+            gene.setReference("organism", orgHuman);
             gene.addToCollection("omimDiseases", findDisease(array));
             store(gene);
-
 
             Item synonym = createItem("Synonym");
             synonym.setAttribute("type", "symbol");

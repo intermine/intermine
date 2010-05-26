@@ -56,10 +56,6 @@
 <item id="3_1" class="Publication">
 <attribute name="pubMedId" value="17563388"/>
 </item>
-<item id="10_1" class="SOTerm">
-<attribute name="name" value="gene"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
 <item id="5_6" class="MicroArrayAssay">
 <attribute name="name" value="stage: 192_h_larva_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
@@ -113,6 +109,11 @@
 <reference name="material" ref_id="8_1"/>
 <collection name="assays"><reference ref_id="5_3"/></collection>
 </item>
+<item id="10_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="11_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 <item id="0_1" class="DataSource">
 <attribute name="name" value="ArrayExpress"/>
 </item>
@@ -123,6 +124,10 @@
 <attribute name="value" value="0.62879944"/>
 <reference name="material" ref_id="8_1"/>
 <collection name="assays"><reference ref_id="5_9"/></collection>
+</item>
+<item id="11_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
 <item id="5_4" class="MicroArrayAssay">
 <attribute name="name" value="stage: 96_h_larva_mixed sex"/>

@@ -33,6 +33,10 @@
 <reference name="gene" ref_id="8_2"/>
 <reference name="rnaiScreen" ref_id="4_1"/>
 </item>
+<item id="10_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
 <item id="6_1" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="DRSC00001"/>
@@ -81,6 +85,11 @@
 <item id="2_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
 </item>
+<item id="9_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="10_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 <item id="4_1" class="RNAiScreen">
 <attribute name="analysisDescription" value="ATP viability assay"/>
 <attribute name="cellLine" value="S2R+ cells and Kc167 cells"/>
@@ -103,9 +112,5 @@
 <item id="1_1" class="DataSet">
 <attribute name="name" value="DRSC data set"/>
 <reference name="dataSource" ref_id="0_1"/>
-</item>
-<item id="9_1" class="SOTerm">
-<attribute name="name" value="gene"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 </items>

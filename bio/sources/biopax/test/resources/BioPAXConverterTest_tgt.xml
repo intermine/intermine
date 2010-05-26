@@ -18,6 +18,36 @@
 <attribute name="name" value="Synthesis of bile acids and bile salts"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
+<item id="6_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="7_1"/>
+</item>
+<item id="1_1" class="DataSet">
+<attribute name="name" value="Reactome data set"/>
+<reference name="dataSource" ref_id="0_1"/>
+</item>
+<item id="3_1" class="Pathway">
+<attribute name="curated" value="false"/>
+<attribute name="identifier" value="541065"/>
+<attribute name="name" value="Synthesis of bile acids and bile salts via 7alpha-hydroxycholesterol"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="3_2" class="Pathway">
+<attribute name="curated" value="false"/>
+<attribute name="identifier" value="541181"/>
+<attribute name="name" value="Synthesis of bile acids and bile salts via 27-hydroxycholesterol"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="5_1" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="FBgn0000002"/>
+<reference name="subject" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="7_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
 <item id="2_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
 </item>
@@ -28,38 +58,13 @@
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_2"/><reference ref_id="3_3"/><reference ref_id="3_4"/></collection>
 </item>
-<item id="1_1" class="DataSet">
-<attribute name="name" value="Reactome data set"/>
-<reference name="dataSource" ref_id="0_1"/>
-</item>
 <item id="0_1" class="DataSource">
 <attribute name="name" value="Reactome"/>
-</item>
-<item id="3_2" class="Pathway">
-<attribute name="curated" value="false"/>
-<attribute name="identifier" value="541181"/>
-<attribute name="name" value="Synthesis of bile acids and bile salts via 27-hydroxycholesterol"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="3_1" class="Pathway">
-<attribute name="curated" value="false"/>
-<attribute name="identifier" value="541065"/>
-<attribute name="name" value="Synthesis of bile acids and bile salts via 7alpha-hydroxycholesterol"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="5_2" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="FBgn0000001"/>
 <reference name="subject" ref_id="4_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="5_1" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBgn0000002"/>
-<reference name="subject" ref_id="4_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_1" class="SOTerm">
-<attribute name="name" value="gene"/>
 </item>
 </items>
