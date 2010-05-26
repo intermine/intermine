@@ -1,59 +1,55 @@
 <items>
-  <item id="1_1" class="CRM">
-    <attribute name="curated" value="true"/>
-    <attribute name="evidenceMethod" value="reporter construct (in vivo)"/>
-    <attribute name="primaryIdentifier" value="prd_A8_repressor"/>
-    <attribute name="secondaryIdentifier" value="391"/>
-    <reference name="gene" ref_id="1_5"/>
-    <collection name="anatomyOntology">
-      <reference ref_id="1_2"/><reference ref_id="1_3"/><reference ref_id="1_4"/>
-    </collection>
-  </item>
-  <item id="1_2" class="AnatomyTerm">
-    <attribute name="identifier" value="FBbt:00005304"/>
-  </item>
-  <item id="1_3" class="AnatomyTerm">
-    <attribute name="identifier" value="FBbt:00005427"/>
-  </item>
-  <item id="1_4" class="AnatomyTerm">
-    <attribute name="identifier" value="FBbt:00005414"/>
-  </item>
-  <item id="1_5" class="Gene">
-    <attribute name="primaryIdentifier" value="FBgn0001"/>
-    <reference name="organism" ref_id="0_0"/>
-  </item>
-  <item id="1_6" class="Publication">
-    <attribute name="pubMedId" value="7873402"/>
-  </item>
-  <item id="1_7" class="CRM">
-    <attribute name="curated" value="true"/>
-    <attribute name="evidenceMethod" value="reporter construct (in vivo)"/>
-    <attribute name="primaryIdentifier" value="prd_P1_enhancer"/>
-    <attribute name="secondaryIdentifier" value="392"/>
-    <reference name="gene" ref_id="1_5"/>
-    <collection name="anatomyOntology">
-      <reference ref_id="1_2"/><reference ref_id="1_8"/>
-    </collection>
-  </item>
-  <item id="1_8" class="AnatomyTerm">
-    <attribute name="identifier" value="FBbt:00000111"/>
-  </item>
-  <item id="1_9" class="CRM">
-    <attribute name="curated" value="true"/>
-    <attribute name="evidenceMethod" value="reporter construct (in vivo)"/>
-    <attribute name="primaryIdentifier" value="Scr_BSR"/>
-    <attribute name="secondaryIdentifier" value="576"/>
-    <reference name="gene" ref_id="1_11"/>
-    <collection name="anatomyOntology"><reference ref_id="1_10"/></collection>
-  </item>
-  <item id="1_10" class="AnatomyTerm">
-    <attribute name="identifier" value="FBbt:00000090"/>
-  </item>
-  <item id="1_11" class="Gene">
-    <attribute name="primaryIdentifier" value="FBgn0002"/>
-    <reference name="organism" ref_id="0_0"/>
-  </item>
-  <item id="1_12" class="Publication">
-    <attribute name="pubMedId" value="7713432"/>
-  </item>
+<item id="1_8" class="AnatomyTerm">
+<attribute name="identifier" value="FBbt:00000111"/>
+</item>
+<item id="1_3" class="AnatomyTerm">
+<attribute name="identifier" value="FBbt:00005427"/>
+</item>
+<item id="1_2" class="AnatomyTerm">
+<attribute name="identifier" value="FBbt:00005304"/>
+</item>
+<item id="1_1" class="CRM">
+<attribute name="curated" value="true"/>
+<attribute name="evidenceMethod" value="reporter construct (in vivo)"/>
+<attribute name="primaryIdentifier" value="prd_A8_repressor"/>
+<attribute name="secondaryIdentifier" value="391"/>
+<reference name="gene" ref_id="1_5"/>
+<collection name="anatomyOntology"><reference ref_id="1_2"/><reference ref_id="1_3"/><reference ref_id="1_4"/></collection>
+</item>
+<item id="1_12" class="Publication">
+<attribute name="pubMedId" value="7713432"/>
+</item>
+<item id="1_9" class="CRM">
+<attribute name="curated" value="true"/>
+<attribute name="evidenceMethod" value="reporter construct (in vivo)"/>
+<attribute name="primaryIdentifier" value="Scr_BSR"/>
+<attribute name="secondaryIdentifier" value="576"/>
+<reference name="gene" ref_id="1_11"/>
+<collection name="anatomyOntology"><reference ref_id="1_10"/></collection>
+</item>
+<item id="1_4" class="AnatomyTerm">
+<attribute name="identifier" value="FBbt:00005414"/>
+</item>
+<item id="1_11" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0002"/>
+<reference name="organism" ref_id="0_0"/>
+</item>
+<item id="1_7" class="CRM">
+<attribute name="curated" value="true"/>
+<attribute name="evidenceMethod" value="reporter construct (in vivo)"/>
+<attribute name="primaryIdentifier" value="prd_P1_enhancer"/>
+<attribute name="secondaryIdentifier" value="392"/>
+<reference name="gene" ref_id="1_5"/>
+<collection name="anatomyOntology"><reference ref_id="1_2"/><reference ref_id="1_8"/></collection>
+</item>
+<item id="1_6" class="Publication">
+<attribute name="pubMedId" value="7873402"/>
+</item>
+<item id="1_10" class="AnatomyTerm">
+<attribute name="identifier" value="FBbt:00000090"/>
+</item>
+<item id="1_5" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0001"/>
+<reference name="organism" ref_id="0_0"/>
+</item>
 </items>
