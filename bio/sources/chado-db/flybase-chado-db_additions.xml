@@ -45,7 +45,7 @@
   <class name="DevelopmentTerm" extends="OntologyTerm" is-interface="true" />
   <class name="CVTerm" extends="OntologyTerm" is-interface="true"/>
   <class name="ChromosomeStructureVariation" extends="SequenceFeature" is-interface="true">
-    <collection name="featureTerms" referenced-type="SequenceOntologyTerm"/>
+    <collection name="featureTerms" referenced-type="SOTerm"/>
   </class>
   <class name="CDNAClone" is-interface="true">
   <attribute name="stage" type="java.lang.String"/>

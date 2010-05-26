@@ -63,7 +63,7 @@ public class ChadoDBConverter extends BioDBConverter
      */
     public ChadoDBConverter(Database database, Model tgtModel, ItemWriter writer)
         throws SQLException {
-        super(database, tgtModel, writer);
+        super(database, tgtModel, writer, null, null);
         organismRepository = OrganismRepository.getOrganismRepository();
         if (getDatabase() == null) {
             // no Database when testing and no connection needed

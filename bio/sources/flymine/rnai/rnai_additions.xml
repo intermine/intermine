@@ -11,6 +11,7 @@
   <attribute name="penetranceFrom" type="java.lang.String"/>
   <attribute name="penetranceTo" type="java.lang.String"/>
   <reference name="property" referenced-type="Phenotype"/>
+  <collection name="publications" referenced-type="Publication"/>
 </class>
 <class name="RNAiScreen" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
