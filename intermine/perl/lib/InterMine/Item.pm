@@ -458,7 +458,7 @@ sub as_xml
     if ($key ne 'id' && $key ne 'class') {
       my $val = $self->{$key};
 
-      die unless $val;
+      die unless defined $val; #causes script to die if $val == undef
 
       if (ref $val) {
         if (ref $val eq 'ARRAY') {
