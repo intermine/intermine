@@ -10,7 +10,8 @@
   <attribute name="observed" type="java.lang.String"/>
   <attribute name="penetranceFrom" type="java.lang.String"/>
   <attribute name="penetranceTo" type="java.lang.String"/>
-  <reference name="property" referenced-type="Phenotype"/>
+  <reference name="phenotype" referenced-type="Phenotype"/>
+  <reference name="screen" referenced-type="RNAiScreen"/>
   <collection name="publications" referenced-type="Publication"/>
 </class>
 <class name="RNAiScreen" is-interface="true">

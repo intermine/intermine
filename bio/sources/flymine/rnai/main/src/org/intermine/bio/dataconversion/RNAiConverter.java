@@ -96,7 +96,7 @@ public class RNAiConverter extends BioFileConverter
                     Item pub = createPub(line[11]);
                     phenotype.addToCollection("publications", pub.getIdentifier());
                     Item screen = createScreen(pub);
-                    phenotype.setReference("analysis", screen.getIdentifier());
+                    phenotype.setReference("screen", screen.getIdentifier());
                     store(phenotype);
                 }
             }
@@ -154,7 +154,7 @@ public class RNAiConverter extends BioFileConverter
 
             store(phenotype);
         }
-        rnaiPhenotype.setReference("property", phenotype.getIdentifier());
+        rnaiPhenotype.setReference("phenotype", phenotype.getIdentifier());
         return rnaiPhenotype;
     }
 
