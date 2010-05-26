@@ -6,4 +6,7 @@
 <class name="RegulatoryRegion" is-interface="true">
   <attribute name="evidenceMethod" type="java.lang.String"/>
 </class>
+<class name="TFBindingSite" is-interface="true">
+    <reference name="gene" referenced-type="Gene"/>
+</class>
 </classes>

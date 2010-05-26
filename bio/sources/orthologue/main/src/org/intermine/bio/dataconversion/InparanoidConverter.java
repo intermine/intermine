@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -40,17 +39,18 @@ import org.intermine.xml.full.Item;
  * @author Mark Woodbridge
  * @author Richard Smith
  */
-public class InparanoidConverter extends FileConverter
+public class InparanoidConverter extends BioFileConverter
 {
     protected static final String PROP_FILE = "inparanoid_config.properties";
-    protected Map bioEntities = new HashMap();
+    protected Map<String, Item> bioEntities = new HashMap<String, Item>();
     protected Item dataSource, dataSet, pub, evidence;
-    protected Map organisms = new LinkedHashMap();
+    protected Map<String, Item> organisms = new LinkedHashMap<String, Item>();
     protected Map<String, Item> sources = new LinkedHashMap<String, Item>();
-    protected Map orgSources = new HashMap();
-    protected Map taxonIds = new HashMap();
-    protected Map attributes = new HashMap();
-    protected Map createObjects = new HashMap(); // which objects to create from which source
+    protected Map<String, String> orgSources = new HashMap<String, String>();
+    protected Map<String, String> taxonIds = new HashMap<String, String>();
+    protected Map<String, String> attributes = new HashMap<String, String>();
+    // which objects to create from which source
+    protected Map<String, String> createObjects = new HashMap<String, String>();
     private File genePeptideDir = null;
     private Map<String, Map<String, String>> peptideGeneMaps = null;
     private static final String EVIDENCE_CODE_ABBR = "AA";
@@ -76,7 +76,7 @@ public class InparanoidConverter extends FileConverter
         } catch (IOException e) {
             throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
         }
-        Enumeration propNames = props.propertyNames();
+        Enumeration<?> propNames = props.propertyNames();
 
         while (propNames.hasMoreElements()) {
             String code = (String) propNames.nextElement();
@@ -134,7 +134,8 @@ public class InparanoidConverter extends FileConverter
      * @throws IOException
      */
     private void readGenePeptideMappings() throws FileNotFoundException, IOException {
-        peptideGeneMaps = new HashMap();  // contruct here whatever so calling method can test null
+         // contruct here whatever so calling method can test null
+        peptideGeneMaps = new HashMap<String, Map<String, String>>();
 
         if (genePeptideDir != null) {
             if (genePeptideDir.isDirectory()) {
@@ -144,11 +145,11 @@ public class InparanoidConverter extends FileConverter
                         continue;
                     }
                     String taxonId = fileName.substring(0, fileName.indexOf('_'));
-                    Map<String, String> peptideGeneMap = new HashMap();
+                    Map<String, String> peptideGeneMap = new HashMap<String, String>();
                     peptideGeneMaps.put(taxonId, peptideGeneMap);
 
                     BufferedReader reader = new BufferedReader(new FileReader(file));
-                    Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+                    Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
                     while (lineIter.hasNext()) {
                         String[] line = (String[]) lineIter.next();
                         if (line.length >= 2) {
@@ -178,8 +179,9 @@ public class InparanoidConverter extends FileConverter
 
         Item bio = null;
         boolean isGene, onFirstOrganism = true;
-        Set<String> abortClusters = new HashSet();
-        List<BioAndScores> orgA = new ArrayList(), orgB = new ArrayList();
+        Set<String> abortClusters = new HashSet<String>();
+        List<BioAndScores> orgA = new ArrayList<BioAndScores>(),
+        orgB = new ArrayList<BioAndScores>();
 
         BufferedReader br = new BufferedReader(reader);
         while ((line = br.readLine()) != null) {
@@ -272,8 +274,8 @@ public class InparanoidConverter extends FileConverter
 
                 // reset for next group
                 onFirstOrganism = true;
-                orgA = new ArrayList();
-                orgB = new ArrayList();
+                orgA = new ArrayList<BioAndScores>();
+                orgB = new ArrayList<BioAndScores>();
             } else if (!code.equals(lastCode)) {
                 // we are on the first line of the second organism in group
                 onFirstOrganism = false;
