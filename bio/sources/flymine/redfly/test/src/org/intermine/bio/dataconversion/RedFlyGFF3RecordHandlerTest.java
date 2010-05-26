@@ -99,7 +99,7 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
         }
 
         // uncomment to write a new tgt items file
-        //writeItemsFile(allItems, "redfly-tgt-items.xml");
+        writeItemsFile(allItems, "redfly-tgt-items.xml");
 
         Set expected = new HashSet(readItemSet("RedFlyGFF3RecordHandlerTest.xml"));
         System.out.println(ItemsTestCase.compareItemSets(expected, allItems));

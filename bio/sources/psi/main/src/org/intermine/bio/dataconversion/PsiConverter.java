@@ -59,7 +59,7 @@ public class PsiConverter extends BioFileConverter
     private static final String INTERACTION_TYPE = "physical";
     private Map<String, String[]> config = new HashMap<String, String[]>();
     private Set<String> taxonIds = null;
-    private Set<String> regionPrimaryIdentifiers = new HashSet();
+    private Set<String> regionPrimaryIdentifiers = new HashSet<String>();
     private Set<String> synonyms = new HashSet<String>();
     private Map<String, String> genes = new HashMap<String, String>();
     // list of interaction.shortNames.  IntAct has duplicate interaction information in
@@ -152,21 +152,23 @@ public class PsiConverter extends BioFileConverter
      */
     class PsiHandler extends DefaultHandler
     {
-        private Map<String, ExperimentHolder> experimentIds = new HashMap();
+        private Map<String, ExperimentHolder> experimentIds
+        = new HashMap<String, ExperimentHolder>();
         private InteractionHolder holder = null;
         private ExperimentHolder experimentHolder = null;
         private InteractorHolder interactorHolder = null;
         private Item comment = null;
         private String experimentId = null, interactorId = null;
-        private Map<String, String> identifiers = new HashMap();
+        private Map<String, String> identifiers = new HashMap<String, String>();
         private String regionName = null;
-        private Stack<String> stack = new Stack();
+        private Stack<String> stack = new Stack<String>();
         private String attName = null;
         private StringBuffer attValue = null;
         // intact internal id to gene identifier
-        private Map<String, String> intactIdToIdentifier = new HashMap();
+        private Map<String, String> intactIdToIdentifier = new HashMap<String, String>();
         // identifier to temporary holding object
-        private Map identifierToHolder = new HashMap();
+        private Map<String, InteractorHolder> identifierToHolder
+        = new HashMap<String, InteractorHolder>();
 
         /**
          * {@inheritDoc}
@@ -244,7 +246,7 @@ public class PsiConverter extends BioFileConverter
                     }
                 }
                 // reset list of identifiers, this list is only per gene
-                identifiers = new HashMap();
+                identifiers = new HashMap<String, String>();
             // <interactorList><interactor id="4"><names>
             // <alias type="locus name" typeAc="MI:0301">HSC82</alias>
             } else if (qName.equals("alias") && stack.peek().equals("names")
@@ -466,7 +468,7 @@ public class PsiConverter extends BioFileConverter
             }
 
             Set<InteractorHolder> interactors = interactionHolder.interactors;
-            for (Iterator iter = interactors.iterator(); iter.hasNext();) {
+            for (Iterator<InteractorHolder> iter = interactors.iterator(); iter.hasNext();) {
                 InteractorHolder ih =  (InteractorHolder) iter.next();
 
                 // build & store interactions - one for each gene
@@ -493,7 +495,7 @@ public class PsiConverter extends BioFileConverter
                                          interactionHolder.eh.experiment.getIdentifier());
 
                 // interactingGenes
-                List<String> geneIds = new ArrayList(interactionHolder.geneIds);
+                List<String> geneIds = new ArrayList<String>(interactionHolder.geneIds);
                 // remove current gene being processed from list, unless this gene is currently
                 // only interacting with itself.  then leave it.
                 if (geneIds.size() > 1) {
@@ -574,7 +576,7 @@ public class PsiConverter extends BioFileConverter
 
         private String buildName(List<String> primaryIdentifiers, String identifier) {
             String name = "IntAct:" + identifier;
-            Iterator it = primaryIdentifiers.iterator();
+            Iterator<String> it = primaryIdentifiers.iterator();
             while (it.hasNext()) {
                 String primaryIdentifier = (String) it.next();
                 if (!primaryIdentifier.equals(identifier)) {
@@ -803,11 +805,11 @@ public class PsiConverter extends BioFileConverter
             private Double confidence;
             private String confidenceText;
             private String confidenceUnit;
-            private Set<InteractorHolder> interactors = new LinkedHashSet();
+            private Set<InteractorHolder> interactors = new LinkedHashSet<InteractorHolder>();
             private boolean isValid = true;
-            private Set<String> geneIds = new HashSet();
-            private List<String> primaryIdentifiers = new ArrayList();
-            private Set<String> regionIds = new HashSet();
+            private Set<String> geneIds = new HashSet<String>();
+            private List<String> primaryIdentifiers = new ArrayList<String>();
+            private Set<String> regionIds = new HashSet<String>();
             private String termRefId;
 
             /**
@@ -1033,7 +1035,7 @@ public class PsiConverter extends BioFileConverter
             @SuppressWarnings("unused")
             private String name, description;
             private Item experiment;
-            private List<String> comments = new ArrayList();
+            private List<String> comments = new ArrayList<String>();
             private boolean isStored = false;
 
             /**
