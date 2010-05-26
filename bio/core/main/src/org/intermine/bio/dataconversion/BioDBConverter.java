@@ -52,8 +52,19 @@ public abstract class BioDBConverter extends DBConverter
             dataSource = getDataSourceItem(dataSourceName);
             dataSet = getDataSetItem(dataSetTitle, dataSource);
         }
-        BioStoreHook hook = new BioStoreHook(tgtModel, dataSet, dataSource);
-        setStoreHook(hook);
+        setStoreHook(new BioStoreHook(tgtModel, dataSet, dataSource));
+    }
+
+    /**
+     * Create a new BioDBConverter object.  The constructor will automatically create a
+     * DataConverterStoreHook for this converter that sets DataSet references and collections.
+     * @param database the database to read from
+     * @param tgtModel the Model used by the object store we will write to with the ItemWriter
+     * @param writer an ItemWriter used to handle the resultant Items
+     */
+    public BioDBConverter(Database database, Model tgtModel, ItemWriter writer) {
+        super(database, tgtModel, writer);
+        setStoreHook(new BioStoreHook(tgtModel, null, null));
     }
 
     /**

@@ -47,8 +47,18 @@ public abstract class BioFileConverter extends FileConverter
             dataSource = getDataSourceItem(dataSourceName);
             dataSet = getDataSetItem(dataSetTitle, dataSource);
         }
-        BioStoreHook hook = new BioStoreHook(model, dataSet, dataSource);
-        setStoreHook(hook);
+        setStoreHook(new BioStoreHook(model, dataSet, dataSource));
+    }
+
+
+    /**
+     * Create a new BioFileConverter.
+     * @param writer the Writer used to output the resultant items
+     * @param model the data model
+     */
+    public BioFileConverter (ItemWriter writer, Model model) {
+        super(writer, model);
+        setStoreHook(new BioStoreHook(model, null, null));
     }
 
 
