@@ -42,7 +42,7 @@ public class RNAiConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "RNAiConverterTest.xml");
+        //writeItemsFile(itemWriter.getItems(), "RNAiConverterTest.xml");
 
         Set expected = readItemSet("RNAiConverterTest.xml");
 
