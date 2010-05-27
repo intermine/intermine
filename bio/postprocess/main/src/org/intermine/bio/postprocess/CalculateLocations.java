@@ -58,7 +58,7 @@ public class CalculateLocations
      */
     public void createOverlapRelations(List classNamesToIgnore, boolean ignoreSelfMatches)
     throws Exception {
-    	// nthing
+        // nothing
     }
 
 

@@ -54,11 +54,11 @@ public class OverlapViewTask
         String dropSql = "DROP TABLE sequencefeatureoverlappingfeatures";
         String viewSql =
             "CREATE VIEW sequencefeatureoverlappingfeatures "
-            + " AS SELECT l1.subjectid AS overlappingfeatures, "
-            + "           l2.subjectid AS sequencefeature "
+            + " AS SELECT l1.featureid AS overlappingfeatures, "
+            + "           l2.featureid AS sequencefeature "
             + "      FROM location l1, location l2 "
-            + "     WHERE l1.objectid = l2.objectid "
-            + "       AND l1.subjectid != l2.subjectid"
+            + "     WHERE l1.locatedonid = l2.locatedonid "
+            + "       AND l1.featureid != l2.featureid"
             + "       AND bioseg_create(l1.intermine_start, l1.intermine_end) "
             + "              && bioseg_create(l2.intermine_start, l2.intermine_end)";
 

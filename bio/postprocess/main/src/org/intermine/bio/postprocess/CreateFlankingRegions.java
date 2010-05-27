@@ -63,14 +63,12 @@ public class CreateFlankingRegions
      * Create a new CreateFlankingRegions object that will operate on the given
      * ObjectStoreWriter.
      *
-     * @param osw
-     *            the ObjectStoreWriter to use when creating/changing objects
+     * @param osw the ObjectStoreWriter to use when creating/changing objects
      */
     public CreateFlankingRegions(ObjectStoreWriter osw) {
         this.osw = osw;
         this.os = osw.getObjectStore();
-        dataSource = (DataSource) DynamicUtil.createObject(Collections
-                .singleton(DataSource.class));
+        dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
         dataSource.setName("modMine");
         try {
             dataSource = (DataSource) os.getObjectByExample(dataSource,
@@ -188,8 +186,8 @@ public class CreateFlankingRegions
                 location.setEnd(Math.min(end, chr.getLength()));
 
                 location.setStrand(strand);
-                location.setObject(chr);
-                location.setSubject(region);
+                location.setLocatedOn(chr);
+                location.setFeature(region);
 
                 region.setLength(new Integer((location.getEnd() - location.getStart()) + 1));
 

@@ -175,8 +175,7 @@ public class IntronUtil
 
         // Precompute this query first, this will create a precomputed table holding
         // all the results.  The will make all batches after the first faster to fetch
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
-                                                   .PRECOMPUTE_CATEGORY);
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
 
         // Set up the results, the query isn't actually executed until we begin
         // iterating through the results
