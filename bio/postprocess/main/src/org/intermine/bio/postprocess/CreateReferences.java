@@ -88,16 +88,14 @@ public class CreateReferences
         LOG.info("insertReferences stage 2");
         // Exon.gene / Gene.exons
         insertReferenceField(Gene.class, "transcripts", Transcript.class, "exons",
-                             Exon.class, "gene");
+                Exon.class, "gene");
         LOG.info("insertReferences stage 3");
         // UTR.gene / Gene.UTRs
-        insertReferenceField(Gene.class, "transcripts", MRNA.class, "UTRs",
-                             UTR.class, "gene");
+        insertReferenceField(Gene.class, "transcripts", MRNA.class, "UTRs", UTR.class, "gene");
 
         LOG.info("insertReferences stage 4");
         // CDS.gene / Gene.CDSs
-        insertReferenceField(Gene.class, "transcripts", MRNA.class, "CDSs",
-                             CDS.class, "gene");
+        insertReferenceField(Gene.class, "transcripts", MRNA.class, "CDSs", CDS.class, "gene");
 
         LOG.info("insertReferences stage 5");
 //        insertGeneAnnotationReferences();
@@ -240,7 +238,7 @@ public class CreateReferences
         if (col.relationType() == CollectionDescriptor.M_N_RELATION) {
             manyToMany = true;
         }
-        
+
         Iterator resIter =
             PostProcessUtil.findConnectingClasses(osw.getObjectStore(),
                                           firstClass, firstClassFieldName,
@@ -262,8 +260,8 @@ public class CreateReferences
             } else {
                 thisDestObject = (InterMineObject) rr.get(1);
                 thisSourceObject = (InterMineObject) rr.get(0);
-            }            
-            
+            }
+
             if (!manyToMany && (lastDestObject == null
                 || !thisDestObject.getId().equals(lastDestObject.getId()))) {
 
@@ -291,7 +289,7 @@ public class CreateReferences
             } else {
                 newCollection.add(thisSourceObject);
             }
-            
+
             lastDestObject = thisDestObject;
         }
 
