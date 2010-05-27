@@ -13,6 +13,8 @@
     </class>
 
     <class name="Gene" is-interface="true">
+      <reference name="upstreamIntergenicRegion" referenced-type="IntergenicRegion"/>
+      <reference name="downstreamIntergenicRegion" referenced-type="IntergenicRegion"/>  
       <collection name="UTRs" referenced-type="UTR" reverse-reference="gene"/>
       <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
       <collection name="flankingRegions" referenced-type="GeneFlankingRegion" reverse-reference="gene"/>
