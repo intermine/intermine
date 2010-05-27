@@ -10,26 +10,28 @@ then
     echo "eg. flymine release-22.0 preview-23.0 julie@flymine.org"
 exit 1
 else
-
     mine=$1
     release1=$2
     release2=$3
     mailto=$4
+fi
+
+MINEDIR="$HOME/svn/dev/$mine"
 
     run_performance_test() {
 # release webapp                                                                                                                                                                                               
-    echo "changing to webapp directory"
+    echo "CHANGING TO WEBAPP DIRECTORY"
     cd ~/svn/dev/$mine/webapp
-    echo "removing temporary directories"
+    echo "REMOVING TEMPORARY DIRECTORIES"
     ant clean-all > ant_output.log
-    echo "building webapp"
-    ant default -Drelease=$release1 >> ant_output.log
-    
+    echo "BUILDING WEBAPP"
+    ant default -Drelease=$release1 > $MINEDIR/template_comparison_ant_output.log
+
 # run the performance_test script                                                                                                                                                                              
-    echo "changing back to the script directory"
+    echo "CHANGING BACK TO THE SCRIPT DIRECTORY"
     cd ~/svn/dev/bio/scripts
-    echo "running the performance test"
-    ./performance_test $mine > $release1
+    echo "RUNNING THE PERFORMANCE TEST"
+    ./performance_test $mine > $MINEDIR/template_comparison_$release1.log
 
 # release webapp                                                                                                                                                                                               
     echo "changing to webapp directory"
@@ -37,19 +39,19 @@ else
     echo "removing temporary directories"
     ant clean-all >> ant_output.log
     echo "building webapp"
-    ant default -Drelease=$release2 >> ant_output.log
+    ant default -Drelease=$release2 >> $MINEDIR/template_comparison_ant_output.log
    
 # run the performance_test script                                                                                                                                                                              
     echo "changing back to the script directory"
     cd ~/svn/dev/bio/scripts
     echo "running the performance test"
-    ./performance_test $mine > $release2
+    ./performance_test $mine > $MINEDIR/template_comparison_$release2.log
 
 # compare the output                                                                                                                                                                                           
-    ./compare_releases  $release1 $release2 > compare_releases.tmp
+    ./compare_releases  $release1 $release2 > $MINEDIR/compare_releases.tmp
 
 # let everyone know                                                                                                                                                                                            
-    mail -s "Outcome of template comparison comparing $release1 and $release2" $mailto < compare_releases.tmp    
+    mail -s "[$mine] Outcome of template comparison for $release1 and $release2" $mailto < $MINEDIR/compare_releases.tmp
 }
 
 run_acceptance_tests() {
@@ -64,7 +66,7 @@ run_acceptance_tests() {
 }
 run_performance_test
 run_acceptance_tests
-fi
+
 echo "done"
 
 
