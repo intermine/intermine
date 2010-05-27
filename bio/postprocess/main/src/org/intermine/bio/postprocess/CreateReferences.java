@@ -76,14 +76,6 @@ public class CreateReferences
 
         LOG.info("insertReferences stage 1");
         // fill in collections on Chromosome
-        insertCollectionField(Gene.class, "objects", Location.class, "object",
-                              Chromosome.class, "genes", false);
-        insertCollectionField(Transcript.class, "objects", Location.class, "object",
-                              Chromosome.class, "transcripts", false);
-        insertCollectionField(Exon.class, "objects", Location.class, "object",
-                              Chromosome.class, "exons", false);
-        insertCollectionField(ChromosomeBand.class, "objects", Location.class, "object",
-                              Chromosome.class, "chromosomeBands", false);
 
         LOG.info("insertReferences stage 2");
         // Exon.gene / Gene.exons

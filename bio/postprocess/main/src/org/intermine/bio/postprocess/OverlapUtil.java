@@ -38,7 +38,6 @@ import org.intermine.util.DynamicUtil;
 
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
-import org.intermine.model.bio.OverlapRelation;
 
 import org.apache.log4j.Logger;
 
@@ -175,20 +174,10 @@ public abstract class OverlapUtil
                                             currLsf.getClass())
                                     || ignoreCombination(classesToIgnore, currLsf.getClass(),
                                         lsf.getClass()))) {
-                                OverlapRelation overlapRelation = (OverlapRelation)
-                                    DynamicUtil.createObject(Collections.singleton(
-                                                OverlapRelation.class));
-                                Set bioEntityCollection = overlapRelation.getBioEntities();
-                                bioEntityCollection.add(lsf);
-                                bioEntityCollection.add(currLsf);
-
                                 ++count;
-
-                                osw.store(overlapRelation);
                                 osw.addToCollection(lsf.getId(), SequenceFeature.class,
                                         "overlappingFeatures", currLsf.getId());
-                                osw.addToCollection(currLsf.getId(),
-                                        SequenceFeature.class,
+                                osw.addToCollection(currLsf.getId(), SequenceFeature.class,
                                         "overlappingFeatures", lsf.getId());
 
                                 // Log it, for the summary.

@@ -93,7 +93,7 @@ public class TransferSequences
      * constructor
      * @throws Exception if there are problems with the transfer
      */
-    public void transferToSequenceFeatures()
+    public void transferToLocatedSequenceFeatures()
         throws Exception {
         long startTime = System.currentTimeMillis();
 
@@ -189,9 +189,6 @@ public class TransferSequences
             Location locationOnChr = (Location) rr.get(1);
 
             try {
-                if (feature instanceof Assembly) {
-                    continue;
-                }
 
                 if (feature instanceof ChromosomeBand) {
                     continue;
@@ -264,7 +261,7 @@ public class TransferSequences
 
         if (charsToCopy > chromosomeSequenceString.length()) {
             LOG.warn("SequenceFeature too long, ignoring - Location: "
-                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getObject());
+                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getFeature());
             return null;
         }
 
@@ -273,7 +270,7 @@ public class TransferSequences
 
         if (startPos < 0 || endPos < 0) {
             LOG.warn("SequenceFeature has negative coordinate, ignoring Location: "
-                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getObject());
+                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getFeature());
             return null;
 
             // Do we really want an exception?  Not much we can do about it.  (rns 22/10/06)
@@ -295,7 +292,7 @@ public class TransferSequences
         if (endPos > chromosomeSequenceString.length()) {
             LOG.warn(" has end coordinate greater than chromsome length."
                       + "ignoring Location: "
-                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getObject());
+                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getFeature());
             return null;
         }
 

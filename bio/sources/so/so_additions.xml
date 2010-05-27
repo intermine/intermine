@@ -59,4 +59,7 @@
 <class name="Transcript" extends="Region" is-interface="true"></class>
 <class name="OntologyTerm" is-interface="true"></class>
 <class name="SOTerm" extends="OntologyTerm" is-interface="true"></class>
+  <class name="IntergenicRegion" extends="Region" is-interface="true">
+    <collection name="adjacentGenes" referenced-type="Gene"/>
+  </class>
 </classes>

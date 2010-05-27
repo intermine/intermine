@@ -147,6 +147,7 @@
     <reference name="sequence" referenced-type="Sequence"/>
     <reference name="chromosome" referenced-type="Chromosome"/>
     <reference name="chromosomeLocation" referenced-type="Location" />   
+    <collection name="overlappingFeatures" referenced-type="SequenceFeature" />
   </class>
 
   <class name="Synonym" is-interface="true">
