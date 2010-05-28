@@ -50,7 +50,7 @@ public class GoConverterTest extends ItemsTestCase
         resolverFactory.addResolverEntry("7227", "FBgn0015567", Collections.singleton("FBgn0015567"));
         resolverFactory.addResolverEntry("7227", "FBgn0026430", Collections.singleton("FBgn0026430"));
         resolverFactory.addResolverEntry("7227", "FBgn0001612", Collections.singleton("FBgn0001612"));
-        converter.resolverFactory = resolverFactory;
+        converter.flybaseResolverFactory = resolverFactory;
     }
 
     private void writeTempFile(File outFile, Reader srcFileReader) throws Exception {
