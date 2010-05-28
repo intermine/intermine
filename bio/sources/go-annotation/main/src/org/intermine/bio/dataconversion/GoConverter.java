@@ -36,8 +36,6 @@ import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 
-import com.sun.corba.se.impl.orb.ParserTable;
-
 /**
  * DataConverter to parse a go annotation file into Items
  *
@@ -77,8 +75,10 @@ public class GoConverter extends FileConverter
     protected String termCollectionName = "goAnnotation";
     protected String annotationClassName = "GOAnnotation";
 
-    protected IdResolverFactory resolverFactory;
-
+    protected IdResolverFactory flybaseResolverFactory;
+    protected IdResolverFactory hgncResolverFactory;
+    private Set<String> resolverFails = new HashSet<String>();
+    
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
 
     /**
@@ -98,8 +98,9 @@ public class GoConverter extends FileConverter
         synonymTypes.put("Gene", "identifier");
 
         // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
-
+        flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
+        hgncResolverFactory = new HgncIdResolverFactory();
+        
         readConfig();
     }
 
@@ -133,7 +134,7 @@ public class GoConverter extends FileConverter
 
             String readColumn = taxonProps.getProperty("readColumn");
             if (readColumn != null) {
-                readColumn= readColumn.trim();
+                readColumn = readColumn.trim();
                 if (!(readColumn.equals("symbol") || readColumn.equals("identifier"))) {
                     throw new IllegalArgumentException("Invalid readColumn value for taxon: "
                             + taxonId + " was: " + readColumn);
@@ -406,7 +407,7 @@ public class GoConverter extends FileConverter
 
             // if a Dmel gene we need to use FlyBaseIdResolver to find a current id
             if (taxonId.equals("7227")) {
-                IdResolver resolver = resolverFactory.getIdResolver(false);
+                IdResolver resolver = flybaseResolverFactory.getIdResolver(false);
                 if (resolver != null) {
                     int resCount = resolver.countResolutions(taxonId, accession);
 
@@ -417,6 +418,27 @@ public class GoConverter extends FileConverter
                         return null;
                     }
                     accession = resolver.resolveId(taxonId, accession).iterator().next();
+                }
+            } else if (taxonId.equals("9606")) {
+                IdResolver resolver = hgncResolverFactory.getIdResolver(true);
+                if (resolver != null) {
+                    int resCount = resolver.countResolutions(taxonId, accession);
+
+                    if (resCount != 1) {
+                        if (!resolverFails.contains(accession)) {
+                            LOG.info("RESOLVER: HGNC failed to resolve gene to one identifier, "
+                                    + "ignoring gene: " + accession + " count: " + resCount 
+                                    + " symbol: " + resolver.resolveId(taxonId, accession));
+                            resolverFails.add(accession);
+                        }
+                        return null;
+                    }
+                    String previous = accession;
+                    accession = resolver.resolveId(taxonId, accession).iterator().next();
+                    if (!accession.equals(previous)) {
+                        LOG.info("RESOLVER: HGNC successfully resolved: " + previous + " to: "
+                                + accession);
+                    }
                 }
             }
         } else if ("protein".equalsIgnoreCase(type)) {

@@ -25,7 +25,7 @@ import org.intermine.sql.DatabaseFactory;
 /**
  * Create an IdResolver for Drosophila genes by querying tables in a FlyBase
  * chado database.
- * @author rns
+ * @author Richard Smith
  *
  */
 public class FlyBaseIdResolverFactory extends IdResolverFactory
