@@ -28,11 +28,15 @@ import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.bio.BioEntity;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
+
+import com.sun.corba.se.impl.orb.ParserTable;
 
 /**
  * DataConverter to parse a go annotation file into Items
@@ -49,6 +53,7 @@ public class GoConverter extends FileConverter
 
     // configuration maps
     private Map<String, String> geneAttributes = new HashMap<String, String>();
+    private Map<String, String> readColumns = new HashMap<String, String>();
     private Map<String, WithType> withTypes = new LinkedHashMap<String, WithType>();
     private Map<String, String> synonymTypes = new HashMap<String, String>();
 
@@ -119,12 +124,22 @@ public class GoConverter extends FileConverter
                                                    + "taxon: " + taxonId + " in file: "
                                                    + PROP_FILE);
             }
-            if (!(geneAttribute.equals("identifier")
+            if (!(geneAttribute.equals("symbol")
                             || geneAttribute.equals("primaryIdentifier"))) {
                 throw new IllegalArgumentException("Invalid geneAttribute value for taxon: "
                                                    + taxonId + " was: " + geneAttribute);
             }
             geneAttributes.put(taxonId, geneAttribute);
+
+            String readColumn = taxonProps.getProperty("readColumn");
+            if (readColumn != null) {
+                readColumn= readColumn.trim();
+                if (!(readColumn.equals("symbol") || readColumn.equals("identifier"))) {
+                    throw new IllegalArgumentException("Invalid readColumn value for taxon: "
+                            + taxonId + " was: " + readColumn);
+                }
+                readColumns.put(taxonId, readColumn);
+            }
         }
     }
 
@@ -158,7 +173,15 @@ public class GoConverter extends FileConverter
                 continue;
             }
 
-            String productId = array[1];
+
+            String taxonId = parseTaxonId(array[12]);
+            int readColumn = 1;
+            if (readColumns.containsKey(taxonId)) {
+                if (readColumns.get(taxonId).equals("symbol")) {
+                    readColumn = 2;
+                }
+            }
+            String productId = array[readColumn];
 
             // Wormbase has some proteins with UniProt accessions and some with WB:WP ids,
             // hack here to get just the UniProt ones.
@@ -180,7 +203,7 @@ public class GoConverter extends FileConverter
             GoTermToGene key = new GoTermToGene(productId, goId, qualifier);
 
             String dataSourceCode = array[14];
-            Item organism = newOrganism(array[12]);
+            Item organism = newOrganism(taxonId);
             String productIdentifier = newProduct(productId, type, organism,
                     dataSourceCode, true, null);
 
@@ -368,7 +391,7 @@ public class GoConverter extends FileConverter
                                      String field) throws ObjectStoreException {
         String idField = field;
         String accession = identifier;
-        String clsName;
+        String clsName = null;
         // find gene attribute first to see if organism should be part of key
         if ("gene".equalsIgnoreCase(type)) {
             clsName = "Gene";
@@ -400,7 +423,17 @@ public class GoConverter extends FileConverter
             clsName = "Protein";
             idField = "primaryAccession";
         } else {
-            throw new IllegalArgumentException("Unrecognised geneProduct type '" + type + "'");
+            String typeCls = TypeUtil.javaiseClassName(type);
+
+            if (getModel().getClassDescriptorByName(typeCls) != null) {
+                Class cls = getModel().getClassDescriptorByName(typeCls).getType();
+                if (BioEntity.class.isAssignableFrom(cls)) {
+                    clsName = typeCls;
+                }
+            }
+             if (clsName == null) {   
+                throw new IllegalArgumentException("Unrecognised geneProduct type '" + type + "'");
+            }
         }
 
         boolean includeOrganism;
@@ -564,23 +597,27 @@ public class GoConverter extends FileConverter
     }
 
     private Item newOrganism(String taxonId) throws ObjectStoreException {
-        if (taxonId.equals("taxon:")) {
-            throw new IllegalArgumentException("No taxon id supplied when creatin organism");
-        }
-        String taxonIdNew = taxonId.split(":")[1];
-        if (taxonIdNew.contains("|")) {
-            taxonIdNew = taxonIdNew.split("\\|")[0];
-        }
-        Item item = organisms.get(taxonIdNew);
+        Item item = organisms.get(taxonId);
         if (item == null) {
             item = createItem("Organism");
-            item.setAttribute("taxonId", taxonIdNew);
-            organisms.put(taxonIdNew, item);
+            item.setAttribute("taxonId", taxonId);
+            organisms.put(taxonId, item);
             store(item);
         }
         return item;
     }
 
+    private String parseTaxonId(String input) {
+        if (input.equals("taxon:")) {
+            throw new IllegalArgumentException("Invalid taxon id read: " + input);
+        }
+        String taxonId = input.split(":")[1];
+        if (taxonId.contains("|")) {
+            taxonId = taxonId.split("\\|")[0];
+        }
+        return taxonId;
+    }
+    
     private Item newSynonym(String subjectId, String type, String value, String datasetId) {
         Item synonym = createItem("Synonym");
         synonym.setReference("subject", subjectId);
