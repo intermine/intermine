@@ -257,7 +257,7 @@ public class MetadataCache
         if (submissionTracksCache == null) {
             readGBrowseTracks();
         }
-        if(submissionTracksCache != null)
+        if(submissionTracksCache.get(dccId) != null)
         	return new ArrayList<GBrowseTrack>(submissionTracksCache.get(dccId));
         else
         	return new ArrayList<GBrowseTrack>();
