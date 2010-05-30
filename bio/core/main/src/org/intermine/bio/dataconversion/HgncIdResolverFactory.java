@@ -44,8 +44,7 @@ public class HgncIdResolverFactory extends IdResolverFactory
      */
     protected IdResolver createIdResolver() {
         Properties props = PropertiesUtil.getProperties();
-        props = PropertiesUtil.stripStart(propName, props);
-        String fileName = props.getProperty("file");
+        String fileName = props.getProperty(propName);
 
         if (StringUtils.isBlank(fileName)) {
             String message = "HGNC resolver has no file name specified, set " + propName
