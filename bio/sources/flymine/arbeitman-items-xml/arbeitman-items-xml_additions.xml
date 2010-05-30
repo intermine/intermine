@@ -73,6 +73,7 @@
   <collection name="reporters" referenced-type="Reporter" reverse-reference="results"/>
   <collection name="genes" referenced-type="Gene" reverse-reference="microArrayResults"/>
   <collection name="samples" referenced-type="Sample"/>
+  <collection name="dataSets" referenced-type="DataSet"/>
 </class>
 <class name="Gene" is-interface="true">
   <collection name="microArrayResults" referenced-type="MicroArrayResult" reverse-reference="genes"/>
