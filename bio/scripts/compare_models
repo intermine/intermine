@@ -5,7 +5,7 @@
 use InterMine::Model;
 
 if (@ARGV != 2) {
-  die "$0: needs arguments - the names of the two XML files to compare\n";
+  die "$0: needs arguments - the names of the two XML files to compare\n eg, /home/guest/svn/dev/flymine/dbmodel/build/model/genomic_model.xml /home/guest/svn/dev/flymine/dbmodel/build/model/so_model.xml";
 }
 
 my $f1 = $ARGV[0];

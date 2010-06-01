@@ -27,9 +27,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.bio.BioEntity;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 
@@ -48,6 +50,7 @@ public class GoConverter extends BioFileConverter
 
     // configuration maps
     private Map<String, String> geneAttributes = new HashMap<String, String>();
+    private Map<String, String> readColumns = new HashMap<String, String>();
     private Map<String, WithType> withTypes = new LinkedHashMap<String, WithType>();
     private Map<String, String> synonymTypes = new HashMap<String, String>();
 
@@ -71,8 +74,10 @@ public class GoConverter extends BioFileConverter
     protected String termCollectionName = "goAnnotation";
     protected String annotationClassName = "GOAnnotation";
 
-    protected IdResolverFactory resolverFactory;
-
+    protected IdResolverFactory flybaseResolverFactory;
+    protected IdResolverFactory hgncResolverFactory;
+    private Set<String> resolverFails = new HashSet<String>();
+    
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
 
     /**
@@ -92,8 +97,9 @@ public class GoConverter extends BioFileConverter
         synonymTypes.put("Gene", "identifier");
 
         // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
-
+        flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
+        hgncResolverFactory = new HgncIdResolverFactory();
+        
         readConfig();
     }
 
@@ -118,12 +124,22 @@ public class GoConverter extends BioFileConverter
                                                    + "taxon: " + taxonId + " in file: "
                                                    + PROP_FILE);
             }
-            if (!(geneAttribute.equals("identifier")
+            if (!(geneAttribute.equals("symbol")
                             || geneAttribute.equals("primaryIdentifier"))) {
                 throw new IllegalArgumentException("Invalid geneAttribute value for taxon: "
                                                    + taxonId + " was: " + geneAttribute);
             }
             geneAttributes.put(taxonId, geneAttribute);
+
+            String readColumn = taxonProps.getProperty("readColumn");
+            if (readColumn != null) {
+                readColumn = readColumn.trim();
+                if (!(readColumn.equals("symbol") || readColumn.equals("identifier"))) {
+                    throw new IllegalArgumentException("Invalid readColumn value for taxon: "
+                            + taxonId + " was: " + readColumn);
+                }
+                readColumns.put(taxonId, readColumn);
+            }
         }
     }
 
@@ -157,7 +173,15 @@ public class GoConverter extends BioFileConverter
                 continue;
             }
 
-            String productId = array[1];
+
+            String taxonId = parseTaxonId(array[12]);
+            int readColumn = 1;
+            if (readColumns.containsKey(taxonId)) {
+                if (readColumns.get(taxonId).equals("symbol")) {
+                    readColumn = 2;
+                }
+            }
+            String productId = array[readColumn];
 
             // Wormbase has some proteins with UniProt accessions and some with WB:WP ids,
             // hack here to get just the UniProt ones.
@@ -179,7 +203,7 @@ public class GoConverter extends BioFileConverter
             GoTermToGene key = new GoTermToGene(productId, goId, qualifier);
 
             String dataSourceCode = array[14];
-            Item organism = newOrganism(array[12]);
+            Item organism = newOrganism(taxonId);
             String productIdentifier = newProduct(productId, type, organism,
                     dataSourceCode, true, null);
 
@@ -367,7 +391,7 @@ public class GoConverter extends BioFileConverter
                                      String field) throws ObjectStoreException {
         String idField = field;
         String accession = identifier;
-        String clsName;
+        String clsName = null;
         // find gene attribute first to see if organism should be part of key
         if ("gene".equalsIgnoreCase(type)) {
             clsName = "Gene";
@@ -382,7 +406,7 @@ public class GoConverter extends BioFileConverter
 
             // if a Dmel gene we need to use FlyBaseIdResolver to find a current id
             if (taxonId.equals("7227")) {
-                IdResolver resolver = resolverFactory.getIdResolver(false);
+                IdResolver resolver = flybaseResolverFactory.getIdResolver(false);
                 if (resolver != null) {
                     int resCount = resolver.countResolutions(taxonId, accession);
 
@@ -394,12 +418,43 @@ public class GoConverter extends BioFileConverter
                     }
                     accession = resolver.resolveId(taxonId, accession).iterator().next();
                 }
+            } else if (taxonId.equals("9606")) {
+                IdResolver resolver = hgncResolverFactory.getIdResolver(true);
+                if (resolver != null) {
+                    int resCount = resolver.countResolutions(taxonId, accession);
+
+                    if (resCount != 1) {
+                        if (!resolverFails.contains(accession)) {
+                            LOG.info("RESOLVER: HGNC failed to resolve gene to one identifier, "
+                                    + "ignoring gene: " + accession + " count: " + resCount 
+                                    + " symbol: " + resolver.resolveId(taxonId, accession));
+                            resolverFails.add(accession);
+                        }
+                        return null;
+                    }
+                    String previous = accession;
+                    accession = resolver.resolveId(taxonId, accession).iterator().next();
+                    if (!accession.equals(previous)) {
+                        LOG.info("RESOLVER: HGNC successfully resolved: " + previous + " to: "
+                                + accession);
+                    }
+                }
             }
         } else if ("protein".equalsIgnoreCase(type)) {
             clsName = "Protein";
             idField = "primaryAccession";
         } else {
-            throw new IllegalArgumentException("Unrecognised geneProduct type '" + type + "'");
+            String typeCls = TypeUtil.javaiseClassName(type);
+
+            if (getModel().getClassDescriptorByName(typeCls) != null) {
+                Class cls = getModel().getClassDescriptorByName(typeCls).getType();
+                if (BioEntity.class.isAssignableFrom(cls)) {
+                    clsName = typeCls;
+                }
+            }
+             if (clsName == null) {   
+                throw new IllegalArgumentException("Unrecognised geneProduct type '" + type + "'");
+            }
         }
 
         boolean includeOrganism;
@@ -563,23 +618,27 @@ public class GoConverter extends BioFileConverter
     }
 
     private Item newOrganism(String taxonId) throws ObjectStoreException {
-        if (taxonId.equals("taxon:")) {
-            throw new IllegalArgumentException("No taxon id supplied when creatin organism");
-        }
-        String taxonIdNew = taxonId.split(":")[1];
-        if (taxonIdNew.contains("|")) {
-            taxonIdNew = taxonIdNew.split("\\|")[0];
-        }
-        Item item = organisms.get(taxonIdNew);
+        Item item = organisms.get(taxonId);
         if (item == null) {
             item = createItem("Organism");
-            item.setAttribute("taxonId", taxonIdNew);
-            organisms.put(taxonIdNew, item);
+            item.setAttribute("taxonId", taxonId);
+            organisms.put(taxonId, item);
             store(item);
         }
         return item;
     }
 
+    private String parseTaxonId(String input) {
+        if (input.equals("taxon:")) {
+            throw new IllegalArgumentException("Invalid taxon id read: " + input);
+        }
+        String taxonId = input.split(":")[1];
+        if (taxonId.contains("|")) {
+            taxonId = taxonId.split("\\|")[0];
+        }
+        return taxonId;
+    }
+    
     private Item newSynonym(String subjectId, String type, String value, String datasetId) {
         Item synonym = createItem("Synonym");
         synonym.setReference("subject", subjectId);

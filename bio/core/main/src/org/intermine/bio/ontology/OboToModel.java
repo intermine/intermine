@@ -46,9 +46,9 @@ public class OboToModel
     protected static Set<String> termListFromFile;
     protected static Map<String, Set<String>> namesToPartOfs;
     // identifier TO fully qualified intermine name, eg. `org.intermine.bio.Gene`
-    protected static Map<String, String> identifierToFullName = new HashMap();
+    protected static Map<String, String> identifierToFullName = new HashMap<String, String>();
     // fully qualified name to identifier
-    protected static Map<String, String> fullNameToIdentifier = new HashMap();
+    protected static Map<String, String> fullNameToIdentifier = new HashMap<String, String>();
     protected Model model;
 
     /**
@@ -57,7 +57,7 @@ public class OboToModel
      * @param namespace the namespace to use in generating URI-based identifiers
      */
     public OboToModel(String namespace) {
-        this.packageName = namespace;
+        OboToModel.packageName = namespace;
     }
 
     /**
@@ -110,23 +110,22 @@ public class OboToModel
             parser.processOntology(new FileReader(oboFile));
             parser.processRelations(oboFilename);
 
-            OboToModel owler = new OboToModel(newPackageName);
-            owler.processOboTerms(parser.getOboTerms());
-            owler.processRelations(parser.getOboRelations(), termsFileName);
+            OboToModel.processOboTerms(parser.getOboTerms());
+            OboToModel.processRelations(parser.getOboRelations(), termsFileName);
 
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(modelFile)));
-            Set<ClassDescriptor> clds = new HashSet();
+            Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>();
 
             // process each oboterm
-            for (String childName : owler.identifierToFullName.values()) {
+            for (String childName : OboToModel.identifierToFullName.values()) {
 
                 // set parents
                 StringBuffer parents = new StringBuffer();
                 boolean needComma = false;
-                Set<String> parentNames = owler.childNamesToParentNames.get(childName);
+                Set<String> parentNames = OboToModel.childNamesToParentNames.get(childName);
                 if (parentNames != null) {
                     for (String parentName : parentNames) {
-                        if (owler.identifierToFullName.containsValue(parentName)) {
+                        if (OboToModel.identifierToFullName.containsValue(parentName)) {
                             if (needComma) {
                                 parents.append(" ");
                             }
@@ -143,14 +142,14 @@ public class OboToModel
                 Set<AttributeDescriptor> fakeAttributes = Collections.emptySet();
                 Set<ReferenceDescriptor> fakeReferences = Collections.emptySet();
                 Set<CollectionDescriptor> collections = Collections.emptySet();
-                Set<String> collectionIdentifiers = owler.namesToPartOfs.get(childName);
+                Set<String> collectionIdentifiers = OboToModel.namesToPartOfs.get(childName);
 
                 // add collections
                 if (collectionIdentifiers != null) {
-                    collections = new HashSet();
-                    for (String partof : owler.namesToPartOfs.get(childName)) {
+                    collections = new HashSet<CollectionDescriptor>();
+                    for (String partof : OboToModel.namesToPartOfs.get(childName)) {
                         // only add collections in our model
-                        if (owler.identifierToFullName.containsValue(partof)) {
+                        if (OboToModel.identifierToFullName.containsValue(partof)) {
                             String[] bits = partof.split("\\.");
                             CollectionDescriptor cd = new CollectionDescriptor(
                                     TypeUtil.javaiseClassName(bits[bits.length - 1])
@@ -174,8 +173,8 @@ public class OboToModel
     }
 
     private static void processRelations(List<OboRelation> oboRelations, String termsFileName) {
-        childNamesToParentNames = new HashMap();
-        namesToPartOfs = new HashMap();
+        childNamesToParentNames = new HashMap<String, Set<String>>();
+        namesToPartOfs = new HashMap<String, Set<String>>();
         for (OboRelation r : oboRelations) {
             String childName = identifierToFullName.get(r.childTermId);
             String parentName = identifierToFullName.get(r.parentTermId);
@@ -188,14 +187,14 @@ public class OboToModel
             if (relationshipType.equals("part_of") && r.direct) {
                 Set<String> partofs = namesToPartOfs.get(childName);
                 if (partofs == null) {
-                    partofs = new HashSet();
+                    partofs = new HashSet<String>();
                     namesToPartOfs.put(childName, partofs);
                 }
                 partofs.add(parentName);
             } else if (relationshipType.equals("is_a") && r.direct) {
                 Set<String> parents = childNamesToParentNames.get(childName);
                 if (parents == null) {
-                    parents = new HashSet();
+                    parents = new HashSet<String>();
                     childNamesToParentNames.put(childName, parents);
                 }
                 parents.add(parentName);
@@ -210,13 +209,13 @@ public class OboToModel
     private static void trimModel(String termsFileName) {
 
         // build parent --> children map
-        parentNamesToChildNames = new HashMap();
+        parentNamesToChildNames = new HashMap<String, Set<String>>();
         for (String child : childNamesToParentNames.keySet()) {
             Set<String> parents = childNamesToParentNames.get(child);
             for (String parent : parents) {
                 Set<String> kids = parentNamesToChildNames.get(parent);
                 if (kids == null) {
-                    kids = new HashSet();
+                    kids = new HashSet<String>();
                     parentNamesToChildNames.put(parent, kids);
                 }
                 kids.add(child);
@@ -224,7 +223,7 @@ public class OboToModel
         }
 
         termListFromFile = processTermFile(termsFileName);
-        Map<String, String> oboTermsCopy = new HashMap(identifierToFullName);
+        Map<String, String> oboTermsCopy = new HashMap<String, String>(identifierToFullName);
 
         System.out.println("Total terms: " + identifierToFullName.size());
 
@@ -236,7 +235,7 @@ public class OboToModel
 
         System.out.println("Total terms, post-pruning: " + identifierToFullName.size());
 
-        oboTermsCopy = new HashMap(identifierToFullName);
+        oboTermsCopy = new HashMap<String, String>(identifierToFullName);
 
         for (String oboTerm : oboTermsCopy.values()) {
             if (!termListFromFile.contains(oboTerm)) {
@@ -255,7 +254,7 @@ public class OboToModel
     private static void prune(String oboTermName) {
         // process each child term
         if (parentNamesToChildNames.get(oboTermName) != null) {
-            Set<String> children = new HashSet(parentNamesToChildNames.get(oboTermName));
+            Set<String> children = new HashSet<String>(parentNamesToChildNames.get(oboTermName));
             for (String childName : children) {
                 prune(childName);
             }
@@ -295,16 +294,18 @@ public class OboToModel
                 return;
             }
 
-            // term only has one parent.  remove and assign parents and kids to each other.
+            // term only has one parent.  remove term and assign this terms parents and children
+            // to each other
             if (parents.size() == 1) {
                 String parent = parents.toArray()[0].toString();
 
-                // add kids to new parent
+                // add children to new parent
                 parentNamesToChildNames.get(parent).addAll(kids);
 
-                // reassign kids to new parent
+                // add parent to new children
                 for (String kid : kids) {
                     Set<String> otherParents = childNamesToParentNames.get(kid);
+                    transferPartOfs(oboTerm, kid);
                     otherParents.remove(oboTerm);
                     otherParents.add(parent);
                 }
@@ -313,17 +314,20 @@ public class OboToModel
                 return;
             }
 
-            // term has only one child.  remove and assign child to new parents.
+            // term has only one child.  remove term and assign child to new parents.
             if (kids.size() == 1) {
                 String kid = kids.toArray()[0].toString();
 
                 // add parents to new kid
                 childNamesToParentNames .get(kid).addAll(parents);
 
+                // pass down any relationships before parent term is removed from tree
+                transferPartOfs(oboTerm, kid);
+
                 // reassign parents to new kid
                 for (String parent : parents) {
                     Set<String> otherChildren = parentNamesToChildNames.get(parent);
-                    otherChildren .remove(oboTerm);
+                    otherChildren.remove(oboTerm);
                     otherChildren.add(kid);
                 }
                 System.out.println("Flattening: " + oboTerm);
@@ -343,6 +347,14 @@ public class OboToModel
         }
     }
 
+    // pass down any relationships before parent term is removed from tree
+    // parent will be removed from partOf map in removeTerm() - only after all children have
+    // been processed
+    private static void transferPartOfs(String parentOboTerm, String childOboTerm) {
+       Set<String> partOfs = new HashSet<String>(namesToPartOfs.get(parentOboTerm));
+       namesToPartOfs.put(childOboTerm, partOfs);
+    }
+
     // remove term from every map
     private static void removeTerm(String oboTerm) {
         if (!termListFromFile.contains(oboTerm)) {  // TODO removed, redundant
@@ -353,7 +365,8 @@ public class OboToModel
             removeCollections(oboTerm);
 
             // remove mention in maps
-            Map<String, Set<String>> mapCopy = new HashMap(parentNamesToChildNames);
+            Map<String, Set<String>> mapCopy
+            = new HashMap<String, Set<String>>(parentNamesToChildNames);
             for (Map.Entry<String, Set<String>> entry : mapCopy.entrySet()) {
                 String parent = entry.getKey();
                 Set<String> children = entry.getValue();
@@ -367,7 +380,7 @@ public class OboToModel
                 }
             }
 
-            mapCopy = new HashMap(childNamesToParentNames);
+            mapCopy = new HashMap<String, Set<String>>(childNamesToParentNames);
             for (Map.Entry<String, Set<String>> entry : mapCopy.entrySet()) {
                 String child = entry.getKey();
                 Set<String> parents = entry.getValue();
@@ -385,7 +398,7 @@ public class OboToModel
     }
 
     private static void removeCollections(String oboTerm) {
-        Map<String, Set<String>> mapCopy = new HashMap(namesToPartOfs);
+        Map<String, Set<String>> mapCopy = new HashMap<String, Set<String>>(namesToPartOfs);
         for (Map.Entry<String, Set<String>> entry : mapCopy.entrySet()) {
             Set<String> partOfs = entry.getValue();
             if (partOfs.contains(oboTerm)) {
@@ -409,7 +422,7 @@ public class OboToModel
 
     // only these terms (and dependents) will be processed
     private static Set<String> processTermFile(String filename) {
-        Set<String> terms = new HashSet();
+        Set<String> terms = new HashSet<String>();
         try {
             BufferedReader br =  new BufferedReader(new FileReader(filename));
             try {

@@ -7,19 +7,73 @@
 
 
   <sources>
-    <source name="ensembl-human" type="ensembl">
-     <property name="src.data.dir" location="/shared/data/ensembl/Test"/>
+    <source name="hgnc" type="hgnc">
+     <property name="src.data.dir" location="/shared/data/hgnc/test"/>
     </source>
-    <source name="uniprot" type="uniprot">
+    <source name="ensembl-human" type="ensembl" dump="true">
+     <property name="src.data.dir" location="/shared/data/ensembl/metabolic"/>
+    </source>
+    <source name="uniprot-human" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="9606"/>
       <property name="create.interpro" value="true"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
     </source>
+    <source name="uniprot-fasta" type="fasta" dump="true">
+      <property name="fasta.taxonId" value="9606"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
+      <property name="fasta.classAttribute" value="primaryAccession"/>
+      <property name="fasta.dataSetTitle" value="UniProt data set"/>
+      <property name="fasta.dataSourceName" value="UniProt"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/current"/>
+      <property name="fasta.includes" value="uniprot_sprot_varsplic.fasta"/>
+      <property name="fasta.sequenceType" value="protein" />
+      <property name="fasta.loaderClassName"
+                value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
+    </source>
+    <source name="uniprot-keywords" type="uniprot-keywords">
+      <property name="src.data.dir" location="/shared/data/uniprot/current"/>
+      <property name="src.data.dir.includes" value="keywlist.xml"/>
+    </source>
+    <source name="interpro" type="interpro">
+      <property name="src.data.dir" location="/shared/data/interpro/current"/>
+    </source>
+    <source name="psi-mi-ontology" type="psi-mi-ontology">
+      <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
+    </source>
+
+    <source name="go" type="go" dump="true">
+      <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
+    </source>
+    <source name="go-annotation" type="go-annotation">
+      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/human/2010-07-05"/>
+    </source>
+    <source name="kegg-pathway" type="kegg-pathway">
+      <property name="src.data.dir" location="/shared/data/metabolic/kegg"/>
+      <property name="kegg.organisms" value="9606"/>
+    </source>
+    <source name="psi-intact" type="psi" dump="true">
+      <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
+      <property name="intact.organisms" value="9606"/>
+    </source>
+    <source name="biogrid" type="biogrid">
+      <property name="src.data.dir" location="/shared/data/metabolic/biogrid"/>
+      <property name="src.data.dir.includes" value="*psi25.xml"/>
+      <property name="biogrid.organisms" value="9606"/>
+    </source>
+
+<!--
+    <source name="pubmed-gene" type="pubmed-gene" dump="true">
+      <property name="src.data.dir" location="/shared/data/pubmed/current"/>
+      <property name="pubmed.organisms" value="9606"/>
+      <property name="src.data.dir.includes" value="gene2pubmed"/>
+      <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/>
+    </source>
+-->
 
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>
     </source>
-
     <source name="entrez-organism" type="entrez-organism">
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>
@@ -30,9 +84,12 @@
     <post-process name="transfer-sequences"/>
 
     <!-- this runs the postprocessing steps in all sources -->
-    <post-process name="do-sources"/>
+    <post-process name="do-sources" dump="true"/>
 
     <post-process name="synonym-update"/>
+
+    <post-process name="create-bioseg-location-index"/>
+    <post-process name="create-overlap-view" />
 
     <post-process name="summarise-objectstore"/>
     <post-process name="create-autocomplete-index"/>

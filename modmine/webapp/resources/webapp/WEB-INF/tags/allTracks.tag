@@ -27,7 +27,9 @@
      </c:choose>
 </c:forEach>
 
+<c:if test="${!empty tracks}">
 <html:link
   href="${WEB_PROPERTIES['gbrowse.prefix']}/${organism}/?label=${urlabels}" target="_blank" title="Titolo">
   <html:img src="model/images/${organism}_gb.png" title="View all tracks for submission ${dccId} in GBrowse"/>
 </html:link>
+</c:if>
