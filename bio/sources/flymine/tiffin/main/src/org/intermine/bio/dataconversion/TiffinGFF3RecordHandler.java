@@ -41,8 +41,6 @@ public class TiffinGFF3RecordHandler extends GFF3RecordHandler
     @Override
     public void process(GFF3Record record) {
         Item bindingSite = getFeature();
-        bindingSite.setAttribute("curated", "false");
-
         String name = record.getNames().get(0);
         Item motif = getMotif(name);
         bindingSite.setReference("motif", motif);
