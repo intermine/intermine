@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [ $# -ne 4 ]
+if [ $# -lt 3 ]
 then
-    echo "expecting: $0 mine model namespace filename"
-    echo "eg. flymine sofa org.intermine.bio so_terms ";
+    echo "expecting: $0 mine ontology namespace filename"
+    echo "eg. flymine so org.intermine.bio so_terms ";
     exit
 fi
 

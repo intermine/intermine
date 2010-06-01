@@ -8,6 +8,7 @@
 <%-- GBROWSE --%>
           <table cellpadding="0" cellspacing="0" border="0" class="internal" >
 			<tr>
+			<c:if test="${!empty subTracks}">
 			<td valign="top">GBrowse tracks: </td>
 			<td valign="top">
 		        <c:forEach var="track" items="${subTracks}" varStatus="track_status">
@@ -18,14 +19,17 @@
             <td valign="top">
                 <mm:allTracks tracks="${subTracks}" dccId="${sub.dCCid}"/>
             </td>
+            </c:if>
+            
+            <%-- FILES --%> 
+            <c:if test="${!empty files}">
             <td valign="top" align="right">Data files: </td>
             <td valign="top">
-            
-              <%-- FILES --%>          
 	          <span class="filelink">
 	            <mm:dataFiles files="${files}" dccId="${sub.dCCid}"/>
 	          </span>
             </td>
+            </c:if>
             </tr>
             
           </table>

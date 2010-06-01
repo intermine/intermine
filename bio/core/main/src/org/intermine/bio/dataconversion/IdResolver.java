@@ -34,11 +34,16 @@ import java.util.Set;
 public class IdResolver
 {
     private String clsName;
-    protected Map<String, Map<String, Set<String>>> orgIdMaps = new HashMap();
-    protected Map<String, Map<String, Set<String>>> orgSynMaps = new HashMap();
-    protected Map<String, Map<String, Set<String>>> orgMainMaps = new HashMap();
-    private Map<String, Map<String, Set<String>>> orgIdMainMaps = new HashMap();
-    private Map<String, Map<String, Set<String>>> orgIdSynMaps = new HashMap();
+    protected Map<String, Map<String, Set<String>>> orgIdMaps = 
+        new HashMap<String, Map<String, Set<String>>>();
+    protected Map<String, Map<String, Set<String>>> orgSynMaps = 
+        new HashMap<String, Map<String, Set<String>>>();
+    protected Map<String, Map<String, Set<String>>> orgMainMaps = 
+        new HashMap<String, Map<String, Set<String>>>();
+    private Map<String, Map<String, Set<String>>> orgIdMainMaps = 
+        new HashMap<String, Map<String, Set<String>>>();
+    private Map<String, Map<String, Set<String>>> orgIdSynMaps = 
+        new HashMap<String, Map<String, Set<String>>>();
     
     /**
      * Construct and empty IdResolver
@@ -134,7 +139,7 @@ public class IdResolver
      * @param primaryIdentifier the main identifier
      * @param ids a set of alternative main identifiers
      */
-    public void addMainIds(String taxonId, String primaryIdentifier, Set<String> ids) {
+    protected void addMainIds(String taxonId, String primaryIdentifier, Set<String> ids) {
         addEntry(taxonId, primaryIdentifier, ids, true);
     }
 
@@ -144,7 +149,7 @@ public class IdResolver
      * @param primaryIdentifier the main identifier
      * @param ids a set synonyms
      */
-    public void addSynonyms(String taxonId, String primaryIdentifier, Set<String> ids) {
+    protected void addSynonyms(String taxonId, String primaryIdentifier, Set<String> ids) {
         addEntry(taxonId, primaryIdentifier, ids, false);
     }
 
@@ -159,7 +164,7 @@ public class IdResolver
                            Boolean mainId) {
         Map<String, Set<String>> idMap = orgIdMaps.get(taxonId);
         if (idMap == null) {
-            idMap = new HashMap();
+            idMap = new HashMap<String, Set<String>>();
             orgIdMaps.put(taxonId, idMap);
         }
 
@@ -170,26 +175,26 @@ public class IdResolver
         if (mainId) {
             lookupMap = orgMainMaps.get(taxonId);
             if (lookupMap == null) {
-                lookupMap = new HashMap();
+                lookupMap = new HashMap<String, Set<String>>();
                 orgMainMaps.put(taxonId, lookupMap);
             }
             
             reverseMap = orgIdMainMaps.get(taxonId);
             if (reverseMap == null) {
-                reverseMap = new HashMap();
+                reverseMap = new HashMap<String, Set<String>>();
                 orgIdMainMaps.put(taxonId, reverseMap);
             }
         } else {
             // these ids are synonyms
             lookupMap = orgSynMaps.get(taxonId);
             if (lookupMap == null) {
-                lookupMap = new HashMap();
+                lookupMap = new HashMap<String, Set<String>>();
                 orgSynMaps.put(taxonId, lookupMap);
             }
             
             reverseMap = orgIdSynMaps.get(taxonId);
             if (reverseMap == null) {
-                reverseMap = new HashMap();
+                reverseMap = new HashMap<String, Set<String>>();
                 orgIdSynMaps.put(taxonId, reverseMap);
             }
         }

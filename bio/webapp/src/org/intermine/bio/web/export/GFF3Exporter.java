@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.gff3.GFF3Record;
@@ -52,11 +51,20 @@ public class GFF3Exporter implements Exporter
     //            "chromosomeLocation.strand", "primaryIdentifier", "score",
     //            "start", "end", "strand")));
 
+    /**
+     * the fields we don't want to display as attributes
+     */
     public static final Set<String> GFF_FIELDS = Collections
     .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
             "primaryIdentifier", "score")));
+    /**
+     * for the gff header, link to taxomony
+     */
     public static final String WORM_LINK =
         "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=6239";
+    /**
+     * for the gff header, link to taxomony
+     */
     public static final String FLY_LINK =
         "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7227";
 
@@ -81,6 +89,7 @@ public class GFF3Exporter implements Exporter
      *  they are names of columns in results table, they are in the same order
      *  as corresponding columns in results table
      * @param sourceName name of Mine to put in GFF source column
+     * @param organisms taxon id of the organisms
      */
     public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map<String, String> soClassNames,
             List<String> attributesNames, String sourceName, Set<Integer> organisms) {
@@ -153,6 +162,9 @@ public class GFF3Exporter implements Exporter
             throw new ExportException("No columns with sequence");
         }
         try {
+
+            LOG.info("SOO:" + cNames.toString());
+
             while (resultIt.hasNext()) {
                 List<ResultElement> row = resultIt.next();
                 exportRow(row);
@@ -205,13 +217,17 @@ public class GFF3Exporter implements Exporter
             for (int i = 0; i < row.size(); i++) {
                 ResultElement el = row.get(i);
 
-                if (el == null){
+                if (el == null) {
                     continue;
                 }
 
-                if (i == 0){ // this is the beginning of the path
-                    parent = (String) el.getField();
+                if (i == 0) { // this is the beginning of the path
                     parentClass = el.getPath().getStartClassDescriptor().getUnqualifiedName();
+//                    LOG.info("PAR: " + parentClass);
+                    if (cNames.contains(parentClass.toLowerCase())) {
+                        parent = (String) el.getField();
+//                        LOG.info("PARent: " + parent);
+                    }
                 }
 
                 // checks for attributes:
@@ -235,6 +251,7 @@ public class GFF3Exporter implements Exporter
                         // "|R:"+re.getPath()+"||E:"+el.getPath());
                         continue;
                     }
+                    // LOG.info("CC: " + reType + "|" + elType);
                 }
 
                 if (el.getPath().getLastClassDescriptor().getUnqualifiedName().
@@ -252,15 +269,14 @@ public class GFF3Exporter implements Exporter
 
                 // TEMP out (fm release)
                 // add the parent
-                if (i >= 1 && !parentClass.equalsIgnoreCase (
-                        re.getPath().getLastClassDescriptor().getUnqualifiedName())) {
-                    LOG.info("PAR: " + parentClass + " -> "
-                    + re.getPath().getLastClassDescriptor().getUnqualifiedName());
-                    List<String> addPar = new ArrayList<String>();
-                    addPar.add(parent);
-                    attributes.put("Parent", addPar);
+                if (i >= 1 && parent != null) {
+                    if (!parentClass.equalsIgnoreCase(
+                            re.getPath().getLastClassDescriptor().getUnqualifiedName())) {
+                        List<String> addPar = new ArrayList<String>();
+                        addPar.add(parent);
+                        attributes.put("Parent", addPar);
+                    }
                 }
-
             }
             lastLsfId = lsf.getId();
             lastLsf = lsf;

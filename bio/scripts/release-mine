@@ -275,7 +275,7 @@ system ("ant -Drelease=r$current_version stop-webapp >> $LOG_FILENAME 2>&1") == 
 #################
 warn "write-userprofile-xml for current version\n";
 
-system ("ant -Drelease=r$current_version write-userprofile-xml >> $LOG_FILENAME 2>&1") == 0
+system ("ant -Drelease=r$current_version -v write-userprofile-xml >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "can't write userprofile XML: $?";
 
 copy($USERPROFILE_XML_FILENAME, "$USERPROFILE_XML_BACKUP_FILENAME.r$current_version")
