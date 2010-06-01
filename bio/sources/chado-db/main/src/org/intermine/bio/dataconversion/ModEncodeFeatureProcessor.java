@@ -69,7 +69,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
          , "cDNA"
          , "three_prime_RACE_clone", "three_prime_RST", "three_prime_UST"
          , "polyA_site", "overlapping_EST_set", "exon_region"
-         , "experimental_feature", "SL1_acceptor_site", "SL2_acceptor_site"
+         , "SL1_acceptor_site", "SL2_acceptor_site"
          , "transcription_end_site", "TSS"
     );
 
