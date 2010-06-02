@@ -78,10 +78,10 @@ public abstract class BioQueries
         q.addFrom(qcLoc);
         q.addToSelect(qcLoc);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "object");
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "locatedOn");
         ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj);
         cs.addConstraint(cc1);
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "feature");
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
         cs.addConstraint(cc2);
 
