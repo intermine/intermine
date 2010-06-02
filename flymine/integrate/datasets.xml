@@ -12,13 +12,13 @@
         <attribute name="url" value="http://www.uniprot.org"/>
     </item>
     <item id="11" class="" implements="DataSet">
-        <attribute name="title" value="Swiss-Prot data set"/>
+        <attribute name="name" value="Swiss-Prot data set"/>
         <attribute name="description" value="The Swiss-Prot protein knowledge base"/>
         <attribute name="url" value="http://ca.expasy.org/sprot"/>
         <reference name="dataSource" ref_id="10"/>
     </item>
     <item id="12" class="" implements="DataSet">
-        <attribute name="title" value="TrEMBL data set"/>
+        <attribute name="name" value="TrEMBL data set"/>
         <attribute name="description" value="Translated CDSs from the EMBL database"/>
         <attribute name="url" value="http://www.ebi.ac.uk/trembl/"/>
         <reference name="dataSource" ref_id="10"/>
@@ -37,7 +37,7 @@
     </item>
 
     <item id="31" class="" implements="DataSet">
-        <attribute name="title" value="InParanoid data set"/>
+        <attribute name="name" value="InParanoid data set"/>
         <attribute name="description" value="InParanoid eukaryotic orthologue groups"/>
         <attribute name="url" value="http://inparanoid.sbc.su.se/download/current/sqltables"/>
         <reference name="dataSource" ref_id="30"/>
@@ -49,7 +49,7 @@
         <attribute name="url" value="http://www.wormbase.org"/>
     </item>
     <item id="41" class="" implements="DataSet">
-        <attribute name="title" value="WormBase RNAi Phenotypes"/>
+        <attribute name="name" value="WormBase RNAi Phenotypes"/>
         <attribute name="url" value="http://www.wormbase.org"/>
         <reference name="dataSource" ref_id="40"/>
     </item>
@@ -78,7 +78,7 @@
         <attribute name="url" value="http://www.ebi.ac.uk/intact"/>
     </item>
     <item id="81" class="" implements="DataSet">
-        <attribute name="title" value="IntAct data set"/>
+        <attribute name="name" value="IntAct data set"/>
         <attribute name="url" value="http://www.ebi.ac.uk/intact"/>
         <reference name="dataSource" ref_id="80"/>
     </item>
@@ -90,7 +90,7 @@
         <attribute name="url" value="http://www.vectorbase.org"/>
     </item>
     <item id="91" class="" implements="DataSet">
-        <attribute name="title" value="VectorBase Anopheles"/>
+        <attribute name="name" value="VectorBase Anopheles"/>
         <attribute name="description" value="The VectorBase Anopheles gambiae genome annotation"/>
         <attribute name="version" value="AgamP3"/>
         <attribute name="url" value="http://agambiae.vectorbase.org/index.php"/>
@@ -104,7 +104,7 @@
         <attribute name="url" value="http://www.indac.net/"/>
     </item>
     <item id="101" class="" implements="DataSet">
-        <attribute name="title" value="INDAC long oligo data set"/>
+        <attribute name="name" value="INDAC long oligo data set"/>
         <attribute name="description"
             value="International Drosophila Array Consortium long oligo data set"/>
         <attribute name="version" value="1.0"/>
@@ -118,7 +118,7 @@
         <attribute name="url" value="http://www.gen.cam.ac.uk/"/>
     </item>
     <item id="111" class="" implements="DataSet">
-        <attribute name="title" value="Department of Genetics tiling path"/>
+        <attribute name="name" value="Department of Genetics tiling path"/>
         <attribute name="description" value="Primers and amplimers tiling the Drosophila melanogaster genome"/>
         <attribute name="version" value="5.1"/>
         <attribute name="url" value="http://www.gen.cam.ac.uk/"/>
@@ -131,7 +131,7 @@
         <attribute name="url" value="http://superfly.ucsd.edu/homophila/"/>
     </item>
     <item id="121" class="" implements="DataSet">
-        <attribute name="title" value="Homophila data set"/>
+        <attribute name="name" value="Homophila data set"/>
         <attribute name="description" value="Homophila human disease to Drosophila gene data set"/>
         <attribute name="version" value="2.1"/>
         <attribute name="url" value="http://superfly.ucsd.edu/homophila/"/>
@@ -143,7 +143,7 @@
         <attribute name="url" value="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm"/>
     </item>
     <item id="151" class="" implements="DataSet">
-        <attribute name="title" value="Mizuguchi protein structure predictions"/>
+        <attribute name="name" value="Mizuguchi protein structure predictions"/>
         <attribute name="description" value="Prediction of structure and function for the Drosophila genome sequences"/>
         <attribute name="url" value="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/research.htm"/>
         <reference name="dataSource" ref_id="150"/>
@@ -155,13 +155,13 @@
         <attribute name="url" value="http://www.ebi.ac.uk/arrayexpress"/>
     </item>
     <item id="161" class="" implements="DataSet">
-        <attribute name="title" value="Anoph-Expr data set"/>
+        <attribute name="name" value="Anoph-Expr data set"/>
         <attribute name="description" value="Anopheles gambiae life cycle exression data"/>
         <attribute name="url" value="http://www.ebi.ac.uk/microarray-as/aer/#ae-browse/q=E-TABM-186"/>
         <reference name="dataSource" ref_id="160"/>
     </item>
     <item id="162" class="" implements="DataSet">
-        <attribute name="title" value="E-FLYC-6"/>
+        <attribute name="name" value="E-FLYC-6"/>
         <attribute name="description" value="Transcription profiling of Drosophila developmental time course"/>
         <attribute name="url" value="http://www.ebi.ac.uk/microarray-as/ae/browse.html?keywords=E-FLYC-6"/>
         <reference name="dataSource" ref_id="160"/>
@@ -191,7 +191,7 @@
         <attribute name="url" value="http://www.ensembl.org"/>
     </item>
     <item id="211" class="" implements="DataSet">
-        <attribute name="title" value="Ensembl Anopheles gambiae [AgamP3.4]"/>
+        <attribute name="name" value="Ensembl Anopheles gambiae [AgamP3.4]"/>
         <attribute name="description" value="The Ensembl Anopheles gambiae genome annotation"/>
         <attribute name="version" value="AgamP3"/>
         <attribute name="url" value="http://metazoa.ensembl.org/Anopheles_gambiae/Info/Index"/>
@@ -200,13 +200,13 @@
 
 
     <item id="621" class="" implements="DataSet">
-        <attribute name="title" value="Affymetrix array: DrosGenome1"/>
+        <attribute name="name" value="Affymetrix array: DrosGenome1"/>
         <attribute name="description" value="The GeneChip® Drosophila Genome Array is a microarray tool for studying expression of Drosophila melanogaster transcripts."/>
         <attribute name="url" value="http://www.affymetrix.com/products/arrays/specific/fly.affx"/>
         <reference name="dataSource" ref_id="210"/>
     </item>
     <item id="622" class="" implements="DataSet">
-        <attribute name="title" value="Affymetrix array: Drosophila_2"/>
+        <attribute name="name" value="Affymetrix array: Drosophila_2"/>
         <attribute name="description" value="The GeneChip® Drosophila Genome Array is a microarray tool for studying expression of Drosophila melanogaster transcripts."/>
         <attribute name="url" value="http://www.affymetrix.com/products/arrays/specific/fly_2.affx"/>
         <reference name="dataSource" ref_id="210"/>
@@ -255,7 +255,7 @@
         <attribute name="url" value="http://www.sanger.ac.uk"/>
     </item>
     <item id="341" class="" implements="DataSet">
-        <attribute name="title" value="Tiffin"/>
+        <attribute name="name" value="Tiffin"/>
         <attribute name="description" value="Tiffin predicted Drosophila transcription factor binding sites"/>
         <attribute name="version" value="1.2"/>
         <attribute name="url" value="http://servlet.sanger.ac.uk/tiffin/"/>
@@ -263,7 +263,7 @@
     </item>
 
     <item id="351" class="" implements="DataSet">
-        <attribute name="title" value="VectorBase AnoEST clusters"/>
+        <attribute name="name" value="VectorBase AnoEST clusters"/>
         <attribute name="description" value="Annotated EST clusters for Anopheles gambiae"/>
         <attribute name="version" value="8"/>
         <attribute name="url" value="http://agambiae.vectorbase.org/SequenceData/EST"/>
@@ -275,7 +275,7 @@
         <attribute name="url" value="http://redfly.ccr.buffalo.edu/"/>
     </item>
     <item id="451" class="" implements="DataSet">
-        <attribute name="title" value="REDfly Drosophila transcriptional cis-regulatory modules"/>
+        <attribute name="name" value="REDfly Drosophila transcriptional cis-regulatory modules"/>
         <attribute name="description" value="Regulatory element database for Drosophila"/>
         <attribute name="version" value="2.0"/>
         <attribute name="url" value="http://redfly.ccr.buffalo.edu/?content=/search.php"/>
@@ -283,7 +283,7 @@
     </item>
 
     <item id="452" class="" implements="DataSet">
-        <attribute name="title" value="REDfly Drosophila transcription factor binding sites"/>
+        <attribute name="name" value="REDfly Drosophila transcription factor binding sites"/>
         <attribute name="description" value="Regulatory element database for Drosophila"/>
         <attribute name="version" value="2.0"/>
         <attribute name="url" value="http://redfly.ccr.buffalo.edu/?content=/search.php"/>
@@ -291,7 +291,7 @@
     </item>
 
     <item id="471" class="" implements="DataSet">
-        <attribute name="title" value="miRBase Targets"/>
+        <attribute name="name" value="miRBase Targets"/>
         <attribute name="description" value="Identification of potential microRNA targets by using the miRanda software (Computational Biology Center of Memorial Sloan-Kettering Cancer Center)"/>
         <attribute name="version" value="5.0"/>
         <attribute name="url" value="http://microrna.sanger.ac.uk/targets/v5/"/>
@@ -304,7 +304,7 @@
         <attribute name="url" value="http://fly-fish.ccbr.utoronto.ca"/>
     </item>
     <item id="481" class="" implements="DataSet">
-        <attribute name="title" value="fly-Fish data set"/>
+        <attribute name="name" value="fly-Fish data set"/>
         <attribute name="description" value="fly-Fish data set of Drosophila embryo mRNA localization patterns"/>
         <attribute name="url" value="http://fly-fish.ccbr.utoronto.ca"/>
         <reference name="dataSource" ref_id="480"/>
@@ -316,7 +316,7 @@
         <attribute name="url" value="http://www.genome.jp/en/"/>
     </item>
     <item id="491" class="" implements="DataSet">
-        <attribute name="title" value="KEGG pathways data set"/>
+        <attribute name="name" value="KEGG pathways data set"/>
         <attribute name="description" value="Manually drawn pathway maps representing our knowledge on the molecular interaction and reaction networks for Drosophila"/>
         <attribute name="url" value="http://www.genome.jp/kegg/pathway.html"/>
         <reference name="dataSource" ref_id="490"/>
@@ -328,7 +328,7 @@
         <attribute name="url" value="http://www.pnas.org"/>
     </item>
     <item id="501" class="" implements="DataSet">
-        <attribute name="title" value="Rossi et al, 2005 MAGE data set"/>
+        <attribute name="name" value="Rossi et al, 2005 MAGE data set"/>
         <attribute name="description" value="Rossi et al, 2005: Compare blood stem cells from young vs old mice"/>
         <attribute name="url" value="http://www.pnas.org/content/vol0/issue2005/images/data/0503280102/DC1/03280Table4.xls"/>
         <reference name="dataSource" ref_id="500"/>
@@ -339,7 +339,7 @@
         <attribute name="url" value="http://www.imm.ox.ac.uk/"/>
     </item>
     <item id="511" class="" implements="DataSet">
-        <attribute name="title" value="FDCP"/>
+        <attribute name="name" value="FDCP"/>
         <attribute name="description" value="Molecular Signatures of Self-Renewal, Differentiation,  and Lineage Choice in Multipotential Hemopoietic Progenitor Cells In Vitro"/>
         <attribute name="url" value="http://www.imm.ox.ac.uk/pages/research/molecular_haematology/tariq.htm"/>
         <reference name="dataSource" ref_id="510"/>
@@ -351,7 +351,7 @@
         <attribute name="url" value="http://www.rcsb.org/pdb/"/>
     </item>
     <item id="521" class="" implements="DataSet">
-        <attribute name="title" value="PDB dmel data set"/>
+        <attribute name="name" value="PDB dmel data set"/>
         <attribute name="description" value="PDB data for Drosophila melanogaster"/>
         <attribute name="url" value="http://www.rcsb.org/pdb/"/>
         <reference name="dataSource" ref_id="520"/>
@@ -368,18 +368,18 @@
         <attribute name="url" value="http://www.reactome.org"/>
     </item>
     <item id="551" class="" implements="DataSet">
-        <attribute name="title" value="Reactome data set"/>
+        <attribute name="name" value="Reactome data set"/>
         <attribute name="description" value="Reactome data"/>
         <attribute name="url" value="http://www.reactome.org/download/index.html"/>
         <reference name="dataSource" ref_id="550"/>
     </item>
     <item id="552" class="" implements="DataSet">
-        <attribute name="title" value="FlyReactome data set"/>
+        <attribute name="name" value="FlyReactome data set"/>
         <attribute name="description" value="Curated Reactome data"/>
         <attribute name="url" value="http://fly.reactome.org"/>
         <reference name="dataSource" ref_id="550"/>
     </item>
-    
+
     <item id="560" class="" implements="DataSource">
         <attribute name="name" value="HGNC"/>
         <attribute name="description" value="HUGO Gene Nomenclature Committee"/>
@@ -409,7 +409,7 @@
         <attribute name="url" value="http://www.gla.ac.uk/"/>
     </item>
     <item id="601" class="" implements="DataSet">
-        <attribute name="title" value="FlyAtlas"/>
+        <attribute name="name" value="FlyAtlas"/>
         <attribute name="description" value="Drosophila adult gene expression atlas"/>
         <attribute name="url" value="http://www.flyatlas.org/"/>
         <reference name="dataSource" ref_id="600"/>
@@ -421,13 +421,13 @@
         <attribute name="url" value="http://www.fruitfly.org/"/>
     </item>
     <item id="611" class="" implements="DataSet">
-        <attribute name="title" value="BDGP in situ data set"/>
+        <attribute name="name" value="BDGP in situ data set"/>
         <attribute name="description" value="Patterns of gene expression in Drosophila embryogenesis by RNA in situ"/>
         <attribute name="url" value="http://www.fruitfly.org/cgi-bin/ex/insitu.pl"/>
         <reference name="dataSource" ref_id="610"/>
     </item>
     <item id="612" class="" implements="DataSet">
-        <attribute name="title" value="BDGP cDNA clone data set"/>
+        <attribute name="name" value="BDGP cDNA clone data set"/>
         <attribute name="url" value="http://www.fruitfly.org/DGC/index.html"/>
         <reference name="dataSource" ref_id="610"/>
     </item>
@@ -441,7 +441,7 @@
         <attribute name="url" value="http://www.thebiogrid.org/"/>
     </item>
     <item id="631" class="" implements="DataSet">
-        <attribute name="title" value="BioGRID interaction data set"/>
+        <attribute name="name" value="BioGRID interaction data set"/>
         <attribute name="url" value="http://www.thebiogrid.org/downloads.php"/>
         <reference name="dataSource" ref_id="630"/>
     </item>
@@ -453,7 +453,7 @@
         <attribute name="url" value="http://www.ncbi.nlm.nih.gov/"/>
     </item>
     <item id="641" class="" implements="DataSet">
-        <attribute name="title" value="PubMed to gene mapping"/>
+        <attribute name="name" value="PubMed to gene mapping"/>
         <attribute name="url" value="ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/"/>
         <reference name="dataSource" ref_id="640"/>
     </item>
@@ -464,7 +464,7 @@
         <attribute name="url" value="http://flyrnai.org/"/>
     </item>
     <item id="651" class="" implements="DataSet">
-        <attribute name="title" value="DRSC data set"/>
+        <attribute name="name" value="DRSC data set"/>
         <attribute name="description" value="RNAi screen results from the DRSC"/>
         <attribute name="url" value="http://flyrnai.org/"/>
         <reference name="dataSource" ref_id="650"/>
@@ -476,7 +476,7 @@
         <attribute name="url" value="http://www.flyreg.org"/>
     </item>
     <item id="661" class="" implements="DataSet">
-        <attribute name="title" value="FlyReg data set"/>
+        <attribute name="name" value="FlyReg data set"/>
         <attribute name="url" value="http://www.flyreg.org"/>
         <reference name="dataSource" ref_id="660"/>
     </item>
@@ -486,7 +486,7 @@
         <attribute name="url" value="http://www.treefam.org"/>
     </item>
     <item id="671" class="" implements="DataSet">
-        <attribute name="title" value="TreeFam data set"/>
+        <attribute name="name" value="TreeFam data set"/>
         <attribute name="url" value="http://www.treefam.org/cgi-bin/misc_page.pl?download"/>
         <reference name="dataSource" ref_id="670"/>
     </item>
@@ -496,7 +496,7 @@
         <attribute name="url" value="http://func.med.harvard.edu/yeast/"/>
     </item>
     <item id="681" class="" implements="DataSet">
-        <attribute name="title" value="GO Annotation for YeastFunc"/>
+        <attribute name="name" value="GO Annotation for YeastFunc"/>
         <reference name="dataSource" ref_id="680"/>
     </item>
 </items>
