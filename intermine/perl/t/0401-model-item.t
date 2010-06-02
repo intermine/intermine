@@ -79,13 +79,13 @@ throws_ok(sub {$emp3->set('no_such_field', 'some_value')},
 	  'Catches bad calls to set');
 
 my $dept_exp = $factory->make_item("Department");
-$dept_exp->set("name", "big department");
 $dept_exp->set("employees", [$emp1, $emp2]);
 
-my $dept_got = $dept_exp;
+my $dept_got = $factory->make_item("Department");
+$dept_got->{id} = $dept_exp->{id}; # otherwise compare will fail
 
 warning_like(sub {$dept_got->set("employees", [$emp1, undef, $emp2])}, 
 	  qr/Undefined items passed as value/,
 	  'Catches warnings for undefined items in a collection');
 
-is_deeply($dept_got, $dept_exp, 'Ignores undefined items correctly');
+is_deeply($dept_got->get('employees'), $dept_exp->get('employees'), 'Ignores undefined items correctly');
