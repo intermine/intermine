@@ -52,7 +52,7 @@ public class BiosegIndexTask
         con.setAutoCommit(false);
 
         String indexSql = "CREATE INDEX location_object_bioseg ON location "
-            + "USING gist (objectid, bioseg_create(intermine_start, intermine_end))";
+            + "USING gist (locatedonid, bioseg_create(intermine_start, intermine_end))";
 
         Statement statement = con.createStatement();
         statement.executeUpdate(indexSql);
