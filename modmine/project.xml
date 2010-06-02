@@ -42,7 +42,7 @@
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
     <source name="interpro" type="interpro" dump="true">
-      <property name="src.data.dir" location="/shared/data/modmine/sources/interpro/current"/>
+      <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
     <source name="inparanoid-orthologue" type="orthologue">
       <property name="src.data.dir" location="/shared/data/modmine/sources/orthologues/inparanoid/current/"/>
