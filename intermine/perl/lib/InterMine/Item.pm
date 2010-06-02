@@ -175,10 +175,14 @@ sub set
         die "tried to set field '$name' in class '", $self->to_string(),
             "' to something other than type: ", $field->field_type(), "\n";
       }
+      
+      my @items = grep {defined} @$value;
+      unless (@items == @$value) {
+	  warn "Undefined items passed as value";
+      }
 
-      $self->{$name} = $value;
+      push @{$self->{$name}}, $_ for @items;
 
-      my @items = @$value;
 
       my $collection_hash_name = _get_collection_hash_name($name);
       my %collection_hash = map {$_ => $_} @items;
@@ -189,7 +193,7 @@ sub set
       # references if necessary
 
       for my $other_item (@items) {
-        if ($other_item->instance_of($field->referenced_classdescriptor())) {
+	if ($other_item->instance_of($field->referenced_classdescriptor())) {
           if ($field->is_one_to_many()) {
             my $current_rev_ref = $other_item->get($field->reverse_reference_name());
             if (!defined $current_rev_ref || $current_rev_ref != $self) {
