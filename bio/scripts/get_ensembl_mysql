@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 use File::Path qw(make_path);
-use IO::All;
+#use IO::All;
 use Net::FTP;
 
 BEGIN {
@@ -82,32 +82,34 @@ for my $organism_name (@organism_names) {
     $ftp->cwd($species_dir)
         or die "Cannot change working directory ", $ftp->message;
     
-    if (!(-d $download_dir)) {
-        
+    if (-d $download_dir) {
+        warn "$download_dir already exists, skipping\n";
+    }
+    else {
         # make download directory locally
         print "creating $download_dir\n";
         make_path "$download_dir" or die "failed to create $download_dir";
-   
-        # get list of all files
-        my @file_list = $ftp->ls();
-   
-        # download all files
-        for my $file (@file_list) {
-            print("downloading ... $file\n");
-            $ftp->get($file, "$download_dir/$file")
-                or die "failed to get file: $file";
-        }
-        
-        # unzip files
-        print "gzip -dr $download_dir\n";
-        
-        if ((system "gzip -dr $download_dir") != 0) {
-            die qq|system "gzip -dr $download_dir" failed: $?\n|;
-        }
-        else {
+    
+	# get list of all files
+	my @file_list = $ftp->ls();
+	
+	# download all files
+	for my $file (@file_list) {
+	    print("downloading ... $file\n");
+	    $ftp->get($file, "$download_dir/$file")
+		or die "failed to get file: $file";
+	}
+    
+	# unzip files, report success/failure
+	print "gzip -dr $download_dir\n";
+	
+	if ((system "gzip -dr $download_dir") != 0) {
+	    die qq|system "gzip -dr $download_dir" failed: $?\n|;
+	}
+	else {
 	    print "$organism_name \nCurrent version $version ok\n\n";
 	}
-
+    }
     # move back up to main directory, just in case we are still looping
     $ftp->cwd("../")
         or die "Cannot change working directory ", $ftp->message;
