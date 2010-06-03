@@ -11,7 +11,8 @@ use strict;
 use Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(parse_properties_file get_property_value get_latest_properties_version $INTERMINE_CONF_DIR
+our @EXPORT_OK = qw(parse_properties_file get_property_value 
+                    get_latest_properties_version $INTERMINE_CONF_DIR 
                     get_java_type_name);
 
 # location of the InterMine properties files
