@@ -5,24 +5,14 @@ use warnings;
 use File::Path qw(make_path);
 use Net::FTP;
 
-BEGIN {
-  # find the lib directory by looking at the path to this script
-  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
-}
-use InterMine::DataDownloader;
-
-
 #Define ARGVs
-my ($data_dir,$organisms,$database_name);
+
 if (@ARGV != 3) {
     die 
 "Wrong number of arguments: DATA_DIRECTORY ORGANISM_NAME WHICH_DATABASE \nPlease supply the organism name, the download desination directory, and which data you want to download (core or variation)\n eg /data/ensembl mus_musculus core\nThe organism name must match the ensembl filenames, as this is the search string the script uses.\nThe data will be saved to the directory for this organism, eg /data/ensembl/mus_musculus core ";
 } 
-else {
-    $data_dir = $ARGV[0];
-    $organisms = $ARGV[1];
-    $database_name = $ARGV[2];
-}
+
+my ($data_dir, $organisms, $database_name) = @ARGV;
 
 # ensembl ftp site
 my $server = "ftp.ensembl.org";
@@ -43,8 +33,8 @@ $ftp->cwd($releases_dir)
 $ftp->cwd($current_dir)
   or die "Cannot change working directory ", $ftp->message;
 
-my($filetype) = "binary"; 
-$ftp->$filetype;
+$ftp->binary;
+
 # get list of all directories
 my @dir_list = $ftp->ls();
 
@@ -81,33 +71,59 @@ for my $organism_name (@organism_names) {
     $ftp->cwd($species_dir)
         or die "Cannot change working directory ", $ftp->message;
     
-    if (-d $download_dir) {
-        warn "$download_dir already exists, skipping\n";
-    }
-    else {
+    unless (-d $download_dir)  {
         # make download directory locally
         print "creating $download_dir\n";
         make_path "$download_dir" or die "failed to create $download_dir";
+    }
+    # get list of all files
+    my @file_list = $ftp->ls();
     
-	# get list of all files
-	my @file_list = $ftp->ls();
+    # download all files
+    my @downloaded_files;
+    for my $file (@file_list) {
+	my $new_file = "$download_dir/$file";
 	
-	# download all files
-	for my $file (@file_list) {
-	    print("downloading ... $file\n");
-	    $ftp->get($file, "$download_dir/$file")
-		or die "failed to get file: $file";
+	if (-f substr($new_file, 0, -3)) { # minus the .gz that is
+	    warn "File already exists - skipping download of $file\n";
 	}
-    
-	# unzip files, report success/failure
-	print "gzip -dr $download_dir\n";
+	elsif (-f $new_file) {
+	    my $where = (-s $new_file);
+	    my $total = $ftp->size($file);
+	    if ($where == $total) {
+		warn "Archive already exists - skipping download of $file\n";
+		next;
+	    }
+	    else {
+		warn "Archive already exists - resuming download of $file\n";
+		$ftp->get($file, $new_file, $where)
+		    or die "failed to get file: $file - ", $ftp->message;
+		push @downloaded_files, $new_file;
+	    }
+	}
+	else {
+	    print("downloading ... $file\n");
+	    $ftp->get($file, $new_file)
+		or die "failed to get file: $file";
+	    push @downloaded_files, $new_file;
+	}
+    }
+    if (@downloaded_files) {
 	
-	if ((system "gzip -dr $download_dir") != 0) {
-	    die qq|system "gzip -dr $download_dir" failed: $?\n|;
+	# unzip files, report success/failure
+	my $decompress_command = "gzip -dr ". join(' ', @downloaded_files). "\n";
+	print 'Extracting downloaded files (', scalar(@downloaded_files),
+	" files downloaded)\n";
+	
+	if ((system $decompress_command) != 0) {
+	    die "$decompress_command failed: $?\n";
 	}
 	else {
 	    print "$organism_name \nCurrent version $version ok\n\n";
 	}
+    }
+    else {
+	warn "No files downloaded - nothing to extract\n";
     }
     # move back up to main directory, just in case we are still looping
     $ftp->cwd("../")
