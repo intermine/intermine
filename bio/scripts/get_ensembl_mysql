@@ -15,10 +15,11 @@ use InterMine::DataDownloader;
 
 #Define ARGVs
 my ($data_dir,$organisms,$database_name);
-if(@ARGV!=3){
-    die "Wrong number of arguments: DATA_DIRECTORY ORGANISM_NAME WHICH_DATABASE \nPlease supply the organism name, the download desination directory, and which data you want to download (core or variation)\n eg /data/ensembl mus_musculus core\nThe organism name must match the ensembl filenames, as this is the search string the script uses.\nThe data will be saved to the directory for this organism, eg /data/ensembl/mus_musculus core ";
-}else{
-
+if (@ARGV != 3) {
+    die 
+"Wrong number of arguments: DATA_DIRECTORY ORGANISM_NAME WHICH_DATABASE \nPlease supply the organism name, the download desination directory, and which data you want to download (core or variation)\n eg /data/ensembl mus_musculus core\nThe organism name must match the ensembl filenames, as this is the search string the script uses.\nThe data will be saved to the directory for this organism, eg /data/ensembl/mus_musculus core ";
+} 
+else {
     $data_dir = $ARGV[0];
     $organisms = $ARGV[1];
     $database_name = $ARGV[2];
@@ -98,15 +99,14 @@ for my $organism_name (@organism_names) {
         }
         
         # unzip files
-        print"gzip -dr $download_dir\n";
+        print "gzip -dr $download_dir\n";
         
         if ((system "gzip -dr $download_dir") != 0) {
             die qq|system "gzip -dr $download_dir" failed: $?\n|;
         }
-        
-    } else {
- 	print "$organism_name \nCurrent version $version ok\n\n";
-   }
+        else {
+	    print "$organism_name \nCurrent version $version ok\n\n";
+	}
 
     # move back up to main directory, just in case we are still looping
     $ftp->cwd("../")
