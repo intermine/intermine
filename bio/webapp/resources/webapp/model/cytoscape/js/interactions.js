@@ -1,4 +1,4 @@
-
+// Functions for network display
 
 function showInteractions(data, webapp_baseurl, webapp_path) {
 
@@ -16,7 +16,7 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
     };
 
     // init
-    vis = new org.cytoscapeweb.Visualization(div_id, options);
+    vis = new org.cytoscapeweb.Visualization(div_id, options); //global, once this function is called
 
     // after init
     vis.ready(function() {
@@ -86,7 +86,7 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
     })
 
     .addListener("mouseover", "nodes", function(evt) {
-        _mouseOverNode = evt.target;
+        _mouseOverNode = evt.target; //global, once this function is called
         highlighFirstNeighbors(evt.target);
     })
 
@@ -171,8 +171,6 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
        // Change the caption
        $("#caption").html("[Right click a node for more options]");
     });
-
-
 }
 
     function highlighFirstNeighbors(target) {
@@ -207,9 +205,9 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
 
     function clearFirstNeighborsHighligh() {
         setTimeout(function() {
-             if (_mouseOverNode == null) {
-                  vis.visualStyleBypass({});
-             }
+            if (_mouseOverNode == null) {
+                vis.visualStyleBypass({});
+            }
          }, 400);
     }
 
