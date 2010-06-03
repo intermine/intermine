@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use File::Path qw(make_path);
 use IO::All;
 use Net::FTP;
 
@@ -72,7 +73,7 @@ for my $organism_name (@organism_names) {
     my $organism_dir = "$data_dir/$organism_name";
     if (!(-d $organism_dir)) {
         print "creating $organism_dir\n";
-        mkdir "$organism_dir" or die "failed to create $organism_dir";
+        make_path "$organism_dir" or die "failed to create $organism_dir $!";
     }
     
     my $download_dir = "$data_dir/$organism_name/$species_prefix$version";
@@ -84,7 +85,7 @@ for my $organism_name (@organism_names) {
         
         # make download directory locally
         print "creating $download_dir\n";
-        mkdir "$download_dir" or die "failed to create $download_dir";
+        make_path "$download_dir" or die "failed to create $download_dir";
    
         # get list of all files
         my @file_list = $ftp->ls();
