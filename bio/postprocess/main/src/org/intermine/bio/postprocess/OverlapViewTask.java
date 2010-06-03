@@ -51,9 +51,9 @@ public class OverlapViewTask
 
         con.setAutoCommit(false);
 
-        String dropSql = "DROP TABLE sequencefeatureoverlappingfeatures";
+        String dropSql = "DROP TABLE overlappingfeaturessequencefeature";
         String viewSql =
-            "CREATE VIEW sequencefeatureoverlappingfeatures "
+            "CREATE VIEW overlappingfeaturessequencefeature "
             + " AS SELECT l1.featureid AS overlappingfeatures, "
             + "           l2.featureid AS sequencefeature "
             + "      FROM location l1, location l2 "
