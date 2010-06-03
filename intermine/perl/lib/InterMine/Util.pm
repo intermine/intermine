@@ -11,7 +11,7 @@ use strict;
 use Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(get_property_value get_latest_properties_version $INTERMINE_CONF_DIR
+our @EXPORT_OK = qw(parse_properties_file get_property_value get_latest_properties_version $INTERMINE_CONF_DIR
                     get_java_type_name);
 
 # location of the InterMine properties files
@@ -49,6 +49,28 @@ sub get_property_value
   close F;
 
   return $ret_val;
+}
+
+sub parse_properties_file;
+{
+  my $file = shift;
+
+  open F, '<', "$file" or die "cannot open $file: $!\n";
+
+  my %hash_of_properties;
+
+  while (my $line = <F>) {
+    if ($line =~ /^\s*#/) {
+      next;
+    }
+    if ($line =~ /([^=])*=(.*)/) {
+      $hash_of_properties{$1} = $2;
+    }
+  }
+
+  close F;
+
+  return \%hash_of_properties;
 }
 
 =head2 get_latest_properties_version
