@@ -15,10 +15,10 @@ if (@ARGV != 3) {
 my ($data_dir, $organisms, $database_name) = @ARGV;
 
 # ensembl ftp site
+
 my $server = "ftp.ensembl.org";
 my $releases_dir = "pub";
 my $current_dir = "current_mysql";
-
 
 # -------- access ftp server ------------- #
 my $ftp = Net::FTP->new($server, Passive => 1)
@@ -79,7 +79,7 @@ for my $organism_name (@organism_names) {
     # get list of all files
     my @file_list = $ftp->ls();
     
-    # download all files
+    # download all filesy
     my @downloaded_files;
     for my $file (@file_list) {
 	my $new_file = "$download_dir/$file";
