@@ -157,7 +157,7 @@ echo "==========================================================="
 echo
 echo "==========================================================="
 echo "Getting Redfly GFF files"
-./get_redfly "$shared_data/REDfly" $tempfile
+./get_redfly "$shared_data/redfly" $tempfile
     if [ $? -ne 0 ]
     then
         "error getting Redfly GFF files" 2>&1 >> tempfile
