@@ -6,9 +6,36 @@
 <attribute name="name" value="chromosome"/>
 <reference name="ontology" ref_id="0_1"/>
 </item>
+<item id="0_17" class="SOTerm">
+<attribute name="name" value="forward_primer"/>
+<reference name="ontology" ref_id="0_1"/>
+</item>
+<item id="0_16" class="Synonym">
+<attribute name="type" value="symbol"/>
+<attribute name="value" value="ACTAAGAGTGAGCTCCGTGAGG"/>
+<reference name="subject" ref_id="0_15"/>
+<collection name="dataSets"><reference ref_id="0_3"/></collection>
+</item>
+<item id="0_15" class="ForwardPrimer">
+<attribute name="length" value="22"/>
+<attribute name="primaryIdentifier" value="span2L:0000013_amplimer_1_forward_primer"/>
+<attribute name="symbol" value="ACTAAGAGTGAGCTCCGTGAGG"/>
+<reference name="chromosome" ref_id="0_5"/>
+<reference name="chromosomeLocation" ref_id="0_18"/>
+<reference name="organism" ref_id="0_0"/>
+<reference name="pcrProduct" ref_id="span2L:102383-106718_amplimer_1"/>
+<reference name="sequenceOntologyTerm" ref_id="0_17"/>
+<collection name="dataSets"><reference ref_id="0_3"/></collection>
+</item>
 <item id="0_3" class="DataSet">
 <attribute name="name" value="Department of Genetics tiling path data set"/>
 <reference name="dataSource" ref_id="0_2"/>
+</item>
+<item id="0_19" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="span2L:102383-106718_amplimer_1_forward_primer"/>
+<reference name="subject" ref_id="0_15"/>
+<collection name="dataSets"><reference ref_id="0_3"/></collection>
 </item>
 <item id="0_8" class="TilingPathSpan">
 <attribute name="length" value="7529"/>
@@ -16,17 +43,6 @@
 <reference name="chromosome" ref_id="0_5"/>
 <reference name="chromosomeLocation" ref_id="0_9"/>
 <reference name="organism" ref_id="0_0"/>
-<collection name="dataSets"><reference ref_id="0_3"/></collection>
-</item>
-<item id="0_11" class="PCRProduct">
-<attribute name="length" value="1129"/>
-<attribute name="primaryIdentifier" value="span2L:0000013_amplimer_1"/>
-<attribute name="promoter" value="false"/>
-<reference name="chromosome" ref_id="0_5"/>
-<reference name="chromosomeLocation" ref_id="0_13"/>
-<reference name="organism" ref_id="0_0"/>
-<reference name="sequenceOntologyTerm" ref_id="0_12"/>
-<reference name="tilingPathSpan" ref_id="0_8"/>
 <collection name="dataSets"><reference ref_id="0_3"/></collection>
 </item>
 <item id="0_7" class="Synonym">
@@ -58,6 +74,14 @@
 <reference name="subject" ref_id="0_11"/>
 <collection name="dataSets"><reference ref_id="0_3"/></collection>
 </item>
+<item id="0_18" class="Location">
+<attribute name="end" value="102318"/>
+<attribute name="start" value="102297"/>
+<attribute name="strand" value="0"/>
+<reference name="feature" ref_id="0_15"/>
+<reference name="locatedOn" ref_id="0_5"/>
+<collection name="dataSets"><reference ref_id="0_3"/></collection>
+</item>
 <item id="0_13" class="Location">
 <attribute name="end" value="103425"/>
 <attribute name="start" value="102297"/>
@@ -74,6 +98,23 @@
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="span2L:1-7529"/>
 <reference name="subject" ref_id="0_8"/>
+<collection name="dataSets"><reference ref_id="0_3"/></collection>
+</item>
+<item id="1_3" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="span2L:0000013_amplimer_1_forward_primer"/>
+<reference name="subject" ref_id="0_15"/>
+<collection name="dataSets"><reference ref_id="0_3"/></collection>
+</item>
+<item id="0_11" class="PCRProduct">
+<attribute name="length" value="1129"/>
+<attribute name="primaryIdentifier" value="span2L:0000013_amplimer_1"/>
+<attribute name="promoter" value="false"/>
+<reference name="chromosome" ref_id="0_5"/>
+<reference name="chromosomeLocation" ref_id="0_13"/>
+<reference name="organism" ref_id="0_0"/>
+<reference name="sequenceOntologyTerm" ref_id="0_12"/>
+<reference name="tilingPathSpan" ref_id="span2L:1-7529"/>
 <collection name="dataSets"><reference ref_id="0_3"/></collection>
 </item>
 <item id="0_12" class="SOTerm">

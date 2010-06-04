@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.bio.io.gff3.GFF3Record;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
@@ -38,6 +36,7 @@ public class GFF3RecordHandler
     protected Map<String, Item> items = new LinkedHashMap<String, Item>();
     protected List<Item> earlyItems = new ArrayList<Item>();
     protected List<String> parents = new ArrayList<String>();
+    protected Map<String, String> refsAndCollections;
     private Item sequence;
     private Model tgtModel;
     private ItemFactory itemFactory;
@@ -354,44 +353,10 @@ public class GFF3RecordHandler
     }
 
     /**
-     * parents are automatically set in the GFF3Converter using the class name.  Eg.
-     * transcript would set a gene reference.  this method allows the reference to be set
-     * using something other than the class name.
-     * @param references map from classname to name of reference/collection to populate
+     * @return map listing references and collections to set for this record
      */
-    protected void setReferences(Map<?, ?> references) {
-        Item feature = getFeature();
-
-        // set additional references from parents according to references map
-        String clsName = feature.getClassName();
-        if (references.containsKey(clsName) && !parents.isEmpty()) {
-            ClassDescriptor cld =
-                tgtModel.getClassDescriptorByName(tgtModel.getPackageName() + "." + clsName);
-
-            String refName = (String) references.get(clsName);
-            Iterator<String> parentIter = parents.iterator();
-
-            if (cld.getReferenceDescriptorByName(refName, true) != null) {
-                String parentRefId = parentIter.next();
-                feature.setReference(refName, parentRefId);
-                if (parentIter.hasNext()) {
-                    String primaryIdent  = feature.getAttribute("primaryIdentifier").getValue();
-                    throw new RuntimeException("Feature has multiple relations for reference: "
-                            + refName + " for feature: " + feature.getClassName()
-                            + ", " + feature.getIdentifier() + ", " + primaryIdent);
-                }
-            } else if (cld.getCollectionDescriptorByName(refName, true) != null) {
-                List<String> refIds = new ArrayList<String>();
-                while (parentIter.hasNext()) {
-                    refIds.add(parentIter.next());
-                }
-                feature.setCollection(refName, refIds);
-            } else if (parentIter.hasNext()) {
-                throw new RuntimeException("No '" + refName + "' reference/collection found in "
-                        + "class: " + clsName + " - is map configured correctly?");
-            }
-
-        }
+    public Map<String, String> getRefsAndCollections() {
+        return refsAndCollections;
     }
 
     /**

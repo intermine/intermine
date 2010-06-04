@@ -12,6 +12,7 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -54,7 +55,6 @@ public class GFF3Converter
     private int itemid = 0;
     private Map<String, Item> seqs = new HashMap<String, Item>();
     private Map<String, String> identifierMap = new HashMap<String, String>();
-    private Map<String, String> identifiersToFeatureTypes = new HashMap<String, String>();
     private GFF3RecordHandler handler;
     private ItemFactory itemFactory;
     private GFF3SeqHandler sequenceHandler;
@@ -258,10 +258,6 @@ public class GFF3Converter
         } else {
             feature = createItem(className);
         }
-
-        // used to add references/collections to this features children
-        identifiersToFeatureTypes.put(identifier, className);
-
         handler.setFeature(feature);
 
         if (names != null) {
@@ -294,14 +290,14 @@ public class GFF3Converter
             }
         }
 
+        List<String> parents = record.getParents();
+        if (parents != null && !parents.isEmpty()) {
+            setRefsAndCollections(parents, feature);
+        }
+
         feature.addReference(getOrgRef());
         feature.addToCollection("dataSets", dataSet);
         setSOTerm(feature);
-        List<String> parents = record.getParents();
-        if (parents != null && !parents.isEmpty()) {
-            setParents(feature, className, parents);
-        }
-
         if (!record.getType().equals("chromosome") && seq != null) {
             boolean makeLocation = record.getStart() >= 1 && record.getEnd() >= 1
                 && !dontCreateLocations
@@ -378,6 +374,7 @@ public class GFF3Converter
             feature.addCollection(handler.getPublicationReferenceList());
         }
         handler.clearPublicationReferenceList();
+
         try {
             Iterator<?> iter = handler.getItems().iterator();
             while (iter.hasNext()) {
@@ -390,41 +387,38 @@ public class GFF3Converter
         }
     }
 
-    private void setParents(Item feature, String className, List<String> parents) {
-        Iterator<String> parentIter = parents.iterator();
+    private void setRefsAndCollections(List<String> parents, Item feature) {
+        String clsName = feature.getClassName();
+        Map<String, String> refsAndCollections = handler.getRefsAndCollections();
 
-        // class for this feature
-        ClassDescriptor cld = tgtModel.getClassDescriptorByName(tgtModel.getPackageName() + "."
-                + className);
-
-        while (parentIter.hasNext()) {
-
-            String parentIdentifier = parentIter.next();
-            String parentClassName = identifiersToFeatureTypes.get(parentIdentifier);
-            String parentRefId = identifierMap.get(parentIdentifier);
-            if (parentClassName == null || parentRefId == null) {
-                continue;
+        if (refsAndCollections.containsKey(clsName) && !parents.isEmpty()) {
+            ClassDescriptor cld =
+                tgtModel.getClassDescriptorByName(tgtModel.getPackageName() + "." + clsName);
+            String refName = (String) refsAndCollections.get(clsName);
+            Iterator<String> parentIter = parents.iterator();
+            if (cld.getReferenceDescriptorByName(refName, true) != null) {
+                String parentRefId = parentIter.next();
+                feature.setReference(refName, parentRefId);
+                if (parentIter.hasNext()) {
+                    String primaryIdent  = feature.getAttribute("primaryIdentifier").getValue();
+                    throw new RuntimeException("Feature has multiple relations for reference: "
+                            + refName + " for feature: " + feature.getClassName()
+                            + ", " + feature.getIdentifier() + ", " + primaryIdent);
+                }
+            } else if (cld.getCollectionDescriptorByName(refName, true) != null) {
+                List<String> refIds = new ArrayList<String>();
+                while (parentIter.hasNext()) {
+                    refIds.add(parentIter.next());
+                }
+                feature.setCollection(refName, refIds);
+            } else if (parentIter.hasNext()) {
+                throw new RuntimeException("No '" + refName + "' reference/collection found in "
+                        + "class: " + clsName + " - is map configured correctly?");
             }
-            String ref = classNameToReference(parentClassName);
-            String coll = ref + "s";
 
-            // set reference
-            if (cld.getReferenceDescriptorByName(ref, true) != null) {
-                feature.setReference(ref, parentRefId);
-            // set collection
-            } else if (cld.getCollectionDescriptorByName(coll, true) != null) {
-                feature.addToCollection(coll, parentRefId);
-            } else {
-                LOG.warn("not setting parent relationship:" + parentClassName);
-            }
         }
     }
 
-    private String classNameToReference(String className) {
-        String s = className;
-        s = StringUtils.lowerCase(s.substring(0, 1)) + s.substring(1);
-        return s;
-    }
 
     private String getIdentifier(String id) {
         String identifier = (String) identifierMap.get(id);
