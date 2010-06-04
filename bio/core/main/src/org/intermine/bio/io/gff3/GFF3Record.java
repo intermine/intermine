@@ -57,15 +57,11 @@ public class GFF3Record
         }
 
         sequenceID = XmlUtil.fixEntityNames(URLDecoder.decode(st.nextToken(), "UTF-8")).trim();
-
         source = st.nextToken().trim();
-
         if (source.equals("") || source.equals(".")) {
             source = null;
         }
-
         type = st.nextToken().trim();
-
         String startString = st.nextToken().trim();
         try {
             if (startString.equals(".")) {

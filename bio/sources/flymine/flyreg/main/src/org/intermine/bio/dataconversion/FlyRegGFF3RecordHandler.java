@@ -162,7 +162,8 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             gene.setAttribute("primaryIdentifier", primaryIdentifier);
             gene.setReference("organism", getOrganism().getIdentifier());
             gene.setCollection("dataSets",
-                               new ArrayList(Collections.singleton(getDataSet().getIdentifier())));
+                               new ArrayList<String>(Collections.singleton(
+                                       getDataSet().getIdentifier())));
             addItem(gene);
         }
         return gene;
