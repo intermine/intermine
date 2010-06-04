@@ -159,14 +159,17 @@
                                                 </experimentalRoleList>
                                         </participant>
                                 </participantList>
-                                <interactionType>
-                                        <names>
-                                                <shortLabel>Phenotypic Suppression</shortLabel>
-                                        </names>
-                                        <xref>
-                                                <primaryRef db="grid" id="3" dbAc="MI:0463" />
-                                        </xref>
-                                </interactionType>
+                                        <interactionType>
+          <names>
+            <shortLabel>direct interaction</shortLabel>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" id="MI:0407" dbAc="MI:0488" refType="identity" refTypeAc="MI:0356" />
+          </xref>
+        </interactionType>
+        <attributeList>
+          <attribute name="BioGRID Evidence Code">Two-hybrid</attribute>
+        </attributeList>
                         </interaction>
 
                        <interaction id="38939">
@@ -209,14 +212,18 @@
                                                 </experimentalRoleList>
                                         </participant>
                                 </participantList>
-                                <interactionType>
-                                        <names>
-                                                <shortLabel>Two-hybrid</shortLabel>
-                                        </names>
-                                        <xref>
-                                                <primaryRef db="grid" id="3" dbAc="MI:0463" />
-                                        </xref>
-                                </interactionType>
+                                        <interactionType>
+                                                <interactionType>
+          <names>
+            <shortLabel>suppressive genetic interaction defined by inequality</shortLabel>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" id="MI:0796" dbAc="MI:0488" refType="identity" refTypeAc="MI:0356" />
+          </xref>
+        </interactionType>
+        <attributeList>
+          <attribute name="BioGRID Evidence Code">Dosage Rescue</attribute>
+        </attributeList></interactionType>
                         </interaction>
                  </interactionList>
 </entry>

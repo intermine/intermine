@@ -85,13 +85,13 @@ public class BioGridConverter extends BioFileConverter
     }
 
     static {
-        PSI_TERMS.put("Biochemical Activity", "biochemical");
-        PSI_TERMS.put("Co-localization", "colocalization");
-        PSI_TERMS.put("Co-purification", "copurification");
-        PSI_TERMS.put("Far Western", "far western blotting");
-        PSI_TERMS.put("PCA", "protein complementation assay");
-        PSI_TERMS.put("Synthetic Lethality", "synthetic lethal");
-        PSI_TERMS.put("Two-hybrid", "two hybrid");
+        PSI_TERMS.put("MI:0915", "physical");
+        PSI_TERMS.put("MI:0407", "physical");
+        PSI_TERMS.put("MI:0403", "physical");
+        PSI_TERMS.put("MI:0914", "physical");
+        PSI_TERMS.put("MI:0794", "genetic");
+        PSI_TERMS.put("MI:0796", "genetic");
+        PSI_TERMS.put("MI:0799", "genetic");
     }
 
     /**
@@ -152,7 +152,6 @@ public class BioGridConverter extends BioFileConverter
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
     }
 
-
     /**
      * Handles xml file
      */
@@ -205,10 +204,11 @@ public class BioGridConverter extends BioFileConverter
                 if (StringUtil.allDigits(pubMedId)) {
                     experimentHolder.setPublication(getPub(pubMedId));
                 }
-            //<experimentList><experimentDescription><interactionDetectionMethod><names><shortLabel>
-            } else if (qName.equals("shortLabel") && stack.peek().equals("names")
+            //<experimentList><experimentDescription><interactionDetectionMethod><xref><primaryRef>
+            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                             && stack.search("interactionDetectionMethod") == 2) {
-                attName = "interactionDetectionMethod";
+                    String term = attrs.getValue("id");
+                    experimentHolder.setMethod(getTerm(term));
 
             /*********************************** GENES ***********************************/
 
@@ -281,10 +281,16 @@ public class BioGridConverter extends BioFileConverter
                     holder.identifiers.add(ih.identifier);
                     holder.addInteractor(participantId, ih);
                 }
-            //<interactionList><interaction><interactionType><names><shortLabel
-            } else if (qName.equals("shortLabel") && stack.peek().equals("names")
+            //<interactionList><interaction><interactionType><xref><primaryRef>
+            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                             && stack.search("interactionType") == 2) {
-                attName = "interactionType";
+                String termIdentifier = attrs.getValue("id");
+                holder.methodRefId = getTerm(termIdentifier);
+                String interactionType = PSI_TERMS.get(termIdentifier);
+                if (interactionType == null) {
+                    throw new RuntimeException("Bad interaction type:" + termIdentifier);
+                }
+                holder.interactionType = interactionType;
             // <participant id="62692"><interactorRef>62692</interactorRef>
             // <experimentalRoleList><experimentalRole><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.search("experimentalRole") == 2) {
@@ -336,15 +342,6 @@ public class BioGridConverter extends BioFileConverter
                 if (descr != null) {
                     experimentHolder.setDescription(descr);
                 }
-            //<experimentList><experimentDescription>
-            //<interactionDetectionMethod><names><shortLabel>
-            } else if (attName != null && attName.equals("interactionDetectionMethod")
-                            && qName.equals("shortLabel")) {
-                String term = attValue.toString();
-                if (term != null) {
-                    experimentHolder.setMethod(getTerm(term));
-                }
-
             } else if (qName.equals("experimentDescription")) {
                 setExperiment(experimentHolder);
             } else if (qName.equals("entrySet")) {
@@ -377,15 +374,7 @@ public class BioGridConverter extends BioFileConverter
                             && qName.equals("experimentRef")
                             && stack.peek().equals("experimentList")) {
                 holder.setExperimentHolder(experiments.get(attValue.toString()));
-            //<interactionType><names><shortLabel>
-            } else if (attName != null && attName.equals("interactionType")
-                            && qName.equals("shortLabel")) {
-                String term = attValue.toString();
-                holder.methodRefId = getTerm(term);
-                if (term.equalsIgnoreCase("phenotypic enhancement")
-                                || term.equalsIgnoreCase("phenotypic suppression")) {
-                    holder.interactionType = "genetic";
-                }
+
                 //</interaction>
             } else if (qName.equals("interaction") && holder != null && holder.validActors) {
                 storeInteraction(holder);
@@ -541,22 +530,15 @@ public class BioGridConverter extends BioFileConverter
             return item.getIdentifier();
         }
 
-        private String getTerm(String name)
+        private String getTerm(String identifier)
         throws SAXException {
-            String term = name;
-            if (PSI_TERMS.get(term) != null) {
-                term = PSI_TERMS.get(term);
-            } else {
-                term = term.toLowerCase();
-            }
-            String refId = terms.get(term);
+            String refId = terms.get(identifier);
             if (refId != null) {
                 return refId;
             }
-
             Item item = createItem("InteractionTerm");
-            item.setAttribute("name", term);
-            terms.put(term, item.getIdentifier());
+            item.setAttribute("identifier", identifier);
+            terms.put(identifier, item.getIdentifier());
             try {
                 store(item);
             } catch (ObjectStoreException e) {
