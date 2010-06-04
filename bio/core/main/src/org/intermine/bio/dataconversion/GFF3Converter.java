@@ -45,7 +45,7 @@ public class GFF3Converter
 {
     private static final Logger LOG = Logger.getLogger(GFF3Converter.class);
     private static final Map<String, String> SO_TERMS = new HashMap<String, String>();
-        private static String ontologyRefId = null;
+    private static String ontologyRefId = null;
     private Reference orgRef;
     private ItemWriter writer;
     private String seqClsName, orgTaxonId;
