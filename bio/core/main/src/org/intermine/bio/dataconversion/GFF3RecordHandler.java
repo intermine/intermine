@@ -39,7 +39,6 @@ public class GFF3RecordHandler
     protected List<Item> earlyItems = new ArrayList<Item>();
     protected List<String> parents = new ArrayList<String>();
     private Item sequence;
-    protected Item analysis;
     private Model tgtModel;
     private ItemFactory itemFactory;
     private Item organism;
@@ -355,8 +354,9 @@ public class GFF3RecordHandler
     }
 
     /**
-     * Given a map from class name to reference name populate the reference for
-     * a particular class with the parents of any SimpleRelations.
+     * parents are automatically set in the GFF3Converter using the class name.  Eg.
+     * transcript would set a gene reference.  this method allows the reference to be set
+     * using something other than the class name.
      * @param references map from classname to name of reference/collection to populate
      */
     protected void setReferences(Map<?, ?> references) {

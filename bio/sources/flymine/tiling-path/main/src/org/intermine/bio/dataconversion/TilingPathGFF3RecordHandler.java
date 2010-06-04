@@ -57,7 +57,6 @@ public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
             addSynonym(feature, "identifier", newId);
             feature.setAttribute("primaryIdentifier", newId);
         }
-
         List<String> oldIds = record.getAttributes().get("oldID");
         if (oldIds != null) {
             String oldId = (String) oldIds.get(0);
@@ -65,17 +64,14 @@ public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
                 addSynonym(feature, "identifier", oldId);
             }
         }
-
         if (clsName.equals("PCRProduct")) {
             List<String> promoters = record.getAttributes().get("promotor");
-
             if (promoters.get(0).equals("1")) {
                 feature.setAttribute("promoter", "true");
             } else {
                 feature.setAttribute("promoter", "false");
             }
         }
-
-        setReferences(references);
+/*        setReferences(references);*/
     }
 }

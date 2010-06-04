@@ -4,7 +4,7 @@
   <attribute name="score" type="java.lang.String"/>
   <attribute name="scoreType" type="java.lang.String"/>
 </class>
-<class name="PCRProduct" is-interface="true">
+<class name="PCRProduct" extends="Region" is-interface="true">
   <attribute name="promoter" type="java.lang.Boolean"/>
   <reference name="tilingPathSpan" referenced-type="TilingPathSpan" reverse-reference="pcrProducts"/>
   <collection name="primers" referenced-type="Primer" reverse-reference="pcrProduct"/>

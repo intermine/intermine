@@ -1,16 +1,40 @@
 <items>
+<item id="0_15" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="BBB"/>
+<reference name="subject" ref_id="0_12"/>
+<collection name="dataSets"><reference ref_id="0_3"/></collection>
+</item>
 <item id="0_0" class="Organism">
 <attribute name="taxonId" value="7227"/>
 </item>
-<item id="0_9" class="Location">
+<item id="0_5" class="Chromosome">
+<attribute name="primaryIdentifier" value="3R"/>
+<reference name="organism" ref_id="0_0"/>
+<reference name="sequenceOntologyTerm" ref_id="0_6"/>
+<collection name="dataSets"><reference ref_id="0_3"/></collection>
+</item>
+<item id="0_14" class="Location">
 <attribute name="end" value="9424"/>
 <attribute name="start" value="9403"/>
 <attribute name="strand" value="1"/>
-<reference name="feature" ref_id="0_7"/>
+<reference name="feature" ref_id="0_12"/>
 <reference name="locatedOn" ref_id="0_5"/>
 <collection name="dataSets"><reference ref_id="0_3"/></collection>
 </item>
-<item id="0_11" class="MiRNATarget">
+<item id="0_6" class="SOTerm">
+<attribute name="name" value="chromosome"/>
+<reference name="ontology" ref_id="0_1"/>
+</item>
+<item id="0_10" class="Location">
+<attribute name="end" value="9424"/>
+<attribute name="start" value="9403"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="0_8"/>
+<reference name="locatedOn" ref_id="0_5"/>
+<collection name="dataSets"><reference ref_id="0_3"/></collection>
+</item>
+<item id="0_12" class="MiRNATarget">
 <attribute name="length" value="22"/>
 <attribute name="primaryIdentifier" value="BBB"/>
 <attribute name="pvalue" value="1.179130e-02"/>
@@ -18,54 +42,13 @@
 <attribute name="scoreType" value="miRanda"/>
 <attribute name="symbol" value="dme-miR-92b"/>
 <reference name="chromosome" ref_id="0_5"/>
-<reference name="chromosomeLocation" ref_id="0_13"/>
+<reference name="chromosomeLocation" ref_id="0_14"/>
 <reference name="mirnagene" ref_id="1_2"/>
 <reference name="organism" ref_id="0_0"/>
 <reference name="target" ref_id="1_1"/>
 <collection name="dataSets"><reference ref_id="0_3"/></collection>
 </item>
-<item id="0_6" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="3R"/>
-<reference name="subject" ref_id="0_5"/>
-<collection name="dataSets"><reference ref_id="0_3"/></collection>
-</item>
-<item id="0_8" class="Synonym">
-<attribute name="type" value="symbol"/>
-<attribute name="value" value="dme-miR-312"/>
-<reference name="subject" ref_id="0_7"/>
-<collection name="dataSets"><reference ref_id="0_3"/></collection>
-</item>
-<item id="0_14" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="BBB"/>
-<reference name="subject" ref_id="0_11"/>
-<collection name="dataSets"><reference ref_id="0_3"/></collection>
-</item>
-<item id="0_2" class="DataSource">
-<attribute name="name" value="Sanger Institute"/>
-</item>
-<item id="0_12" class="Synonym">
-<attribute name="type" value="symbol"/>
-<attribute name="value" value="dme-miR-92b"/>
-<reference name="subject" ref_id="0_11"/>
-<collection name="dataSets"><reference ref_id="0_3"/></collection>
-</item>
-<item id="1_1" class="MRNA">
-<attribute name="primaryIdentifier" value="FBtr0089256"/>
-<reference name="organism" ref_id="0_0"/>
-<collection name="dataSets"><reference ref_id="0_3"/></collection>
-</item>
-<item id="0_10" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="AAA"/>
-<reference name="subject" ref_id="0_7"/>
-<collection name="dataSets"><reference ref_id="0_3"/></collection>
-</item>
-<item id="0_4" class="DataSource">
-<attribute name="name" value="FlyBase"/>
-</item>
-<item id="0_7" class="MiRNATarget">
+<item id="0_8" class="MiRNATarget">
 <attribute name="length" value="22"/>
 <attribute name="primaryIdentifier" value="AAA"/>
 <attribute name="pvalue" value="3.057390e-02"/>
@@ -73,11 +56,34 @@
 <attribute name="scoreType" value="miRanda"/>
 <attribute name="symbol" value="dme-miR-312"/>
 <reference name="chromosome" ref_id="0_5"/>
-<reference name="chromosomeLocation" ref_id="0_9"/>
+<reference name="chromosomeLocation" ref_id="0_10"/>
 <reference name="mirnagene" ref_id="1_0"/>
 <reference name="organism" ref_id="0_0"/>
 <reference name="target" ref_id="1_1"/>
 <collection name="dataSets"><reference ref_id="0_3"/></collection>
+</item>
+<item id="0_2" class="DataSource">
+<attribute name="name" value="Sanger Institute"/>
+</item>
+<item id="0_7" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="3R"/>
+<reference name="subject" ref_id="0_5"/>
+<collection name="dataSets"><reference ref_id="0_3"/></collection>
+</item>
+<item id="1_1" class="MRNA">
+<attribute name="primaryIdentifier" value="FBtr0089256"/>
+<reference name="organism" ref_id="0_0"/>
+<collection name="dataSets"><reference ref_id="0_3"/></collection>
+</item>
+<item id="0_9" class="Synonym">
+<attribute name="type" value="symbol"/>
+<attribute name="value" value="dme-miR-312"/>
+<reference name="subject" ref_id="0_8"/>
+<collection name="dataSets"><reference ref_id="0_3"/></collection>
+</item>
+<item id="0_4" class="DataSource">
+<attribute name="name" value="FlyBase"/>
 </item>
 <item id="1_2" class="Gene">
 <attribute name="primaryIdentifier" value="FBgn001"/>
@@ -87,21 +93,20 @@
 <attribute name="name" value="Sequence Ontology"/>
 <attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
-<item id="0_5" class="Chromosome">
-<attribute name="primaryIdentifier" value="3R"/>
-<reference name="organism" ref_id="0_0"/>
-<collection name="dataSets"><reference ref_id="0_3"/></collection>
-</item>
 <item id="0_3" class="DataSet">
 <attribute name="name" value="miRanda"/>
 <reference name="dataSource" ref_id="0_2"/>
 </item>
-<item id="0_13" class="Location">
-<attribute name="end" value="9424"/>
-<attribute name="start" value="9403"/>
-<attribute name="strand" value="1"/>
-<reference name="feature" ref_id="0_11"/>
-<reference name="locatedOn" ref_id="0_5"/>
+<item id="0_13" class="Synonym">
+<attribute name="type" value="symbol"/>
+<attribute name="value" value="dme-miR-92b"/>
+<reference name="subject" ref_id="0_12"/>
+<collection name="dataSets"><reference ref_id="0_3"/></collection>
+</item>
+<item id="0_11" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="AAA"/>
+<reference name="subject" ref_id="0_8"/>
 <collection name="dataSets"><reference ref_id="0_3"/></collection>
 </item>
 <item id="1_0" class="Gene">

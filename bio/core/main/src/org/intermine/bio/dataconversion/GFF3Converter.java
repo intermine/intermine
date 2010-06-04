@@ -45,7 +45,7 @@ public class GFF3Converter
 {
     private static final Logger LOG = Logger.getLogger(GFF3Converter.class);
     private static final Map<String, String> SO_TERMS = new HashMap<String, String>();
-    private static String ontologyRefId = null;
+        private static String ontologyRefId = null;
     private Reference orgRef;
     private ItemWriter writer;
     private String seqClsName, orgTaxonId;
@@ -54,6 +54,7 @@ public class GFF3Converter
     private int itemid = 0;
     private Map<String, Item> seqs = new HashMap<String, Item>();
     private Map<String, String> identifierMap = new HashMap<String, String>();
+    private Map<String, String> identifiersToFeatureTypes = new HashMap<String, String>();
     private GFF3RecordHandler handler;
     private ItemFactory itemFactory;
     private GFF3SeqHandler sequenceHandler;
@@ -171,7 +172,6 @@ public class GFF3Converter
         while (iter.hasNext()) {
             Item item = (Item) iter.next();
             writer.store(ItemHelper.convert(item));
-            setSOTerm(item);
         }
         handler.clearFinalItems();
     }
@@ -234,7 +234,6 @@ public class GFF3Converter
         // get rid of previous record Items from handler
         handler.clear();
         List<?> names = record.getNames();
-        List<?> parents = record.getParents();
 
         Item seq = getSeq(record.getSequenceID());
 
@@ -249,16 +248,19 @@ public class GFF3Converter
                     + " (original GFF record type: " + term + ") for "
                     + "record: " + record);
         }
-
+        String identifier = record.getId();
         Set<Item> synonymsToAdd = new HashSet<Item>();
         Item feature;
         // need to look up item id for this feature as may have already been a parent reference
-        if (record.getId() != null) {
-            feature = createItem(className, getIdentifier(record.getId()));
-            feature.setAttribute("primaryIdentifier", record.getId());
+        if (identifier != null) {
+            feature = createItem(className, getIdentifier(identifier));
+            feature.setAttribute("primaryIdentifier", identifier);
         } else {
             feature = createItem(className);
         }
+
+        // used to add references/collections to this features children
+        identifiersToFeatureTypes.put(identifier, className);
 
         handler.setFeature(feature);
 
@@ -294,21 +296,15 @@ public class GFF3Converter
 
         feature.addReference(getOrgRef());
         feature.addToCollection("dataSets", dataSet);
-        if (record.getParents() != null) {  // if parents -> create a SimpleRelation
-            Set<String> seenParents = new HashSet<String>();
-            for (Iterator<?> i = parents.iterator(); i.hasNext();) {
-                String parentName = (String) i.next();
-                // add check for duplicate parent IDs to cope with pseudoobscura GFF
-                if (!seenParents.contains(parentName)) {
-                    handler.addParent(getIdentifier(parentName));
-                    seenParents.add(parentName);
-                }
-            }
+        setSOTerm(feature);
+        List<String> parents = record.getParents();
+        if (parents != null && !parents.isEmpty()) {
+            setParents(feature, className, parents);
         }
 
         if (!record.getType().equals("chromosome") && seq != null) {
-            boolean makeLocation =
-                record.getStart() >= 1 && record.getEnd() >= 1 && !dontCreateLocations
+            boolean makeLocation = record.getStart() >= 1 && record.getEnd() >= 1
+                && !dontCreateLocations
                 && handler.createLocations(record);
                 if (makeLocation) {
                     Item relation = createItem("Location");
@@ -392,6 +388,42 @@ public class GFF3Converter
             LOG.error("Problem writing item to the itemwriter");
             throw e;
         }
+    }
+
+    private void setParents(Item feature, String className, List<String> parents) {
+        Iterator<String> parentIter = parents.iterator();
+
+        // class for this feature
+        ClassDescriptor cld = tgtModel.getClassDescriptorByName(tgtModel.getPackageName() + "."
+                + className);
+
+        while (parentIter.hasNext()) {
+
+            String parentIdentifier = parentIter.next();
+            String parentClassName = identifiersToFeatureTypes.get(parentIdentifier);
+            String parentRefId = identifierMap.get(parentIdentifier);
+            if (parentClassName == null || parentRefId == null) {
+                continue;
+            }
+            String ref = classNameToReference(parentClassName);
+            String coll = ref + "s";
+
+            // set reference
+            if (cld.getReferenceDescriptorByName(ref, true) != null) {
+                feature.setReference(ref, parentRefId);
+            // set collection
+            } else if (cld.getCollectionDescriptorByName(coll, true) != null) {
+                feature.addToCollection(coll, parentRefId);
+            } else {
+                LOG.warn("not setting parent relationship:" + parentClassName);
+            }
+        }
+    }
+
+    private String classNameToReference(String className) {
+        String s = className;
+        s = StringUtils.lowerCase(s.substring(0, 1)) + s.substring(1);
+        return s;
     }
 
     private String getIdentifier(String id) {
@@ -496,6 +528,7 @@ public class GFF3Converter
             if (seq != null) {
                 seq.addReference(getOrgRef());
                 seq.addToCollection("dataSets", getDataSet());
+                setSOTerm(seq);
                 writer.store(ItemHelper.convert(seq));
 
                 Item synonym = createItem("Synonym");
@@ -542,6 +575,5 @@ public class GFF3Converter
     public void setDontCreateLocations(boolean dontCreateLocations) {
         this.dontCreateLocations = dontCreateLocations;
     }
-
 }
 

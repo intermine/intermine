@@ -25,6 +25,7 @@
 <class name="MicroarrayOligo" extends="Oligo" is-interface="true"></class>
 <class name="Oligo" extends="Region" is-interface="true"></class>
 <class name="CRM" extends="RegulatoryRegion" is-interface="true"></class>
+<class name="Promoter" extends="RegulatoryRegion" is-interface="true"></class>
 <class name="Clone" extends="Region" is-interface="true"></class>
 <class name="MobileGeneticElement" extends="Region" is-interface="true"></class>
 <class name="ChromosomalDuplication" extends="ChromosomeStructureVariation" is-interface="true"></class>
