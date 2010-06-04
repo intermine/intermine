@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
@@ -26,7 +25,7 @@ import org.intermine.xml.full.Item;
 
 public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
 {
-    private Map<String, String> references;
+
 
     /**
      * Create a new TilingPathGFF3RecordHandler for the given target model.
@@ -36,12 +35,10 @@ public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
         super(tgtModel);
 
         // create a map of classname to reference name for parent references
-        // this will add the parents of any SimpleRelations from getParents() to the
-        // given collection
-        references = new HashMap<String, String>();
-        references.put("PCRProduct", "tilingPathSpan");
-        references.put("ForwardPrimer", "pcrProduct");
-        references.put("ReversePrimer", "pcrProduct");
+        refsAndCollections = new HashMap<String, String>();
+        refsAndCollections.put("PCRProduct", "tilingPathSpan");
+        refsAndCollections.put("ForwardPrimer", "pcrProduct");
+        refsAndCollections.put("ReversePrimer", "pcrProduct");
     }
 
     /**
@@ -72,6 +69,5 @@ public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
                 feature.setAttribute("promoter", "false");
             }
         }
-/*        setReferences(references);*/
     }
 }

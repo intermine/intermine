@@ -59,7 +59,8 @@ public class TilingPathGFF3RecordHandlerTest extends ItemsTestCase
     public void testTilingPathHandler() throws Exception {
         String gff =
         "chr2L\ttile_spans\ttiling_path_span\t1\t7529\t.\t.\t.\tID=span2L:1-7529;oldID=span2L:1-7529;newID=span2L:0000001\n"
-       + "chr2L\ttile_spans\tPCR_product\t102297\t103425\t.\t.\t.\tID=span2L:102383-106718_amplimer_1;promotor=0 ;Parent=span2L:1-7529;oldID=span2L:102383-106718_amplimer_1;newID=span2L:0000013_amplimer_1;newParent=span2L:0000013";
+      + "chr2L\ttile_spans\tPCR_product\t102297\t103425\t.\t.\t.\tID=span2L:102383-106718_amplimer_1;promotor=0 ;Parent=span2L:1-7529;oldID=span2L:102383-106718_amplimer_1;newID=span2L:0000013_amplimer_1;newParent=span2L:0000013\n"
+      + "chr2L\ttile_spans\tforward_primer\t102297\t102318\t.\t.\t.\tName=ACTAAGAGTGAGCTCCGTGAGG ;Parent=span2L:102383-106718_amplimer_1;ID=span2L:102383-106718_amplimer_1_forward_primer;oldID=span2L:102383-106718_amplimer_1_forward_primer;newID=span2L:0000013_amplimer_1_forward_primer;newParent=span2L:0000013\n";
 
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
         converter.parse(srcReader);
