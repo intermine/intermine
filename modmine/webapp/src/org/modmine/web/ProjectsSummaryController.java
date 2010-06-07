@@ -13,13 +13,11 @@ package org.modmine.web;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +57,8 @@ public class ProjectsSummaryController extends TilesAction
                 MetadataCache.getProjectExperiments(os);
             request.setAttribute("experiments", experiments);
             
-            Properties props = new Properties(); 
+            Properties propCat = new Properties(); 
+            Properties propOrd = new Properties(); 
             final ServletContext servletContext = servlet.getServletContext();
             
             InputStream is = 
@@ -68,31 +67,62 @@ public class ProjectsSummaryController extends TilesAction
                 LOG.info("Unable to find /WEB-INF/experimentCategory.properties!");
             } else {
                 try {
-                    props.load(is);
+                    propCat.load(is);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             
-            Map <String, List<DisplayExperiment>> catExp =
+
+            
+            InputStream is2 = 
+                servletContext.getResourceAsStream("/WEB-INF/categoryOrder.properties");
+            if (is == null) {
+                LOG.info("Unable to find /WEB-INF/category.properties!");
+            } else {
+                try {
+                    propOrd.load(is2);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            
+            
+            
+            Map <String, List<DisplayExperiment>> catExpUnordered =
                 new HashMap<String, List<DisplayExperiment>>();
             
             for (List<DisplayExperiment> ll : experiments.values()) {
                 for (DisplayExperiment de : ll) {
-                    String cats = props.getProperty(de.getName());
+                    String cats = propCat.getProperty(de.getName());
                     // an experiment can be associated to more than 1 category
                     String[] cat = cats.split("#");
                     for (String c : cat) {
-                        List<DisplayExperiment> des = catExp.get(c);
+                        List<DisplayExperiment> des = catExpUnordered.get(c);
                         if (des == null) {
                             des = new ArrayList<DisplayExperiment>();
-                            catExp.put(c, des);
+                            catExpUnordered.put(c, des);
                         }
                         des.add(de);
-                        // LOG.info("DEXP: " + c + "|"+ de.getName());
+                         LOG.info("DEXP: " + c + "|"+ de.getName());
                     }
                 }
             }
+            
+            Map <String, List<DisplayExperiment>> catExp =
+                new LinkedHashMap<String, List<DisplayExperiment>>();
+            
+            for (Integer i = 1; i <= propOrd.size(); i++) {
+//            while propOrd. (Integer i = 1; i <= catExpUnordered.keySet().size(); i++) {
+
+                    String ordCat = propOrd.getProperty(i.toString());
+                catExp.put(ordCat, catExpUnordered.get(ordCat));
+                LOG.info("OC: " + ordCat + "|"+ catExpUnordered.get(ordCat));
+            }
+            
+            
+            
             request.setAttribute("catExp", catExp);
 
             
