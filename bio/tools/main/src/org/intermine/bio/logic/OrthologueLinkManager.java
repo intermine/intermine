@@ -302,7 +302,7 @@ public class OrthologueLinkManager
             }
 
             QueryField qfGeneOrganismName = new QueryField(qcOrganism, "shortName");
-            QueryField qfDataset = new QueryField(qcDataset, "title");
+            QueryField qfDataset = new QueryField(qcDataset, "name");
             QueryField qfHomologueOrganismName = new QueryField(qcHomologueOrganism, "shortName");
             QueryField qfType = new QueryField(qcHomologue, "type");
 
