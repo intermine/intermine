@@ -3,7 +3,7 @@
 # translates data from ensembl database to intermine items XML file
 
 BEGIN {
-    push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib');    
+    unshift (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../../intermine/perl/lib');    
 }
 
 use strict;
@@ -15,13 +15,16 @@ use InterMine::Item;
 use InterMine::ItemFactory;
 use InterMine::Model;
 use Bio::EnsEMBL::DBSQL::DBAdaptor;
-use InterMine::Util qw(get_property_value);
+use InterMine::Util qw(parse_properties_file);
 use IO qw(Handle File);
 use Cwd;
 use Digest::MD5 qw(md5);
 
+my $script_dir = ($0 =~ m:(.*)/.*:)[0];
+
 if (@ARGV != 3) {
-  die "usage: mine_name taxon_id data_destination \n eg. flymine 9606 /shared/data/ensembl/current\n";  
+  die "usage: mine_name taxon_id data_destination \n"
+     ."eg. flymine 9606 /shared/data/ensembl/current\n";  
 }
 
 # vars from the command line
@@ -31,14 +34,13 @@ my ($mine_name, $taxon_ids, $data_destination) = @ARGV;
 my $start_time = time();
 
 # intermine
-my $model_file = "../../$mine_name/dbmodel/build/main/genomic_model.xml";
-my $properties_file = "$ENV{HOME}/.intermine/$mine_name.properties";
-
+my $model_file = $script_dir . "/../../../$mine_name/dbmodel/build/main/genomic_model.xml";
+my $properties = parse_properties_file("$ENV{HOME}/.intermine/$mine_name.properties");
 my $model = new InterMine::Model(file => $model_file);
 my $item_factory = new InterMine::ItemFactory(model => $model);
 
 # init vars
-my @items = (); 
+my @items = (); # used to store all the items we make
 my %locations = ();
 my %organisms = parse_orgs($taxon_ids);
 
@@ -46,25 +48,21 @@ my $datasource = 'Ensembl';
 my $datasource_item = make_item("DataSource");
 $datasource_item->set('name', $datasource);
 
-my $dataset_item;
-my $org_item;
+my ($org_item, $dataset_item);
 
 # config file
-my $config_file = '../sources/ensembl/resources/ensembl_config.properties';
-parse_config(read_file($config_file));
+my $config_file = $script_dir.'/../../sources/ensembl/resources/ensembl_config.properties';
+%organisms = parse_config($config_file, %organisms);
 
-foreach my $taxon_id(keys %organisms) {
+foreach my $taxon_id (keys %organisms) {
     
-    my %proteins = ();
-    my %exons = ();
-    my %sequences = ();
-    %locations = ();
+    my (%proteins, %exons, %sequences, %locations);
 
-    $org_item = make_item("Organism");
+    $org_item = make_item("Organism"); 
     $org_item->set("taxonId", $taxon_id);
 
     $dataset_item = make_item("DataSet");
-    $dataset_item->set('title', "$datasource data set for taxon id: $taxon_id");
+    $dataset_item->set('name', "$datasource data set for taxon id: $taxon_id");
 
     my %chromosomes = ();
     my $chromosomes_string = $organisms{$taxon_id};
@@ -73,57 +71,59 @@ foreach my $taxon_id(keys %organisms) {
         %chromosomes = parse_chromosomes($chromosomes_string);
     }
 
-    my $host = get_property_value("db.ensembl.$taxon_id.core.datasource.serverName", $properties_file);
-    my $dbname = get_property_value("db.ensembl.$taxon_id.core.datasource.databaseName", $properties_file);
-    my $user = get_property_value("db.ensembl.$taxon_id.core.datasource.user", $properties_file);
-    my $pass = get_property_value("db.ensembl.$taxon_id.core.datasource.password", $properties_file);
-    my $species = get_property_value("db.ensembl.$taxon_id.core.datasource.species", $properties_file);
+    my $host    = $properties->{"db.ensembl.${taxon_id}.core.datasource.serverName"};
+    my $dbname  = $properties->{"db.ensembl.${taxon_id}.core.datasource.databaseName"};
+    my $user    = $properties->{"db.ensembl.${taxon_id}.core.datasource.user"};
+    my $pass    = $properties->{"db.ensembl.${taxon_id}.core.datasource.password"};
+    my $species = $properties->{"db.ensembl.${taxon_id}.core.datasource.species"};
 
+    # This is all deprecated and needs adapting to Bio::EnsEMBL::Registry
     my $dbCore = Bio::EnsEMBL::DBSQL::DBAdaptor->new
         (-host => $host,
          -dbname => $dbname,
          -species => $species,
-         -group => 'core',
+         -group => 'core', # This obviously needs to be changed if variations will be available
          -user => $user,
          -pass => $pass);
     
     my $slice_adaptor = $dbCore->get_sliceAdaptor();
     my @slices = @{$slice_adaptor->fetch_all('toplevel', undef, 0, 0)};
 
-    my %processed_chromosomes = ();
+    my %processed_chromosomes = (); 
 
-    while (my $slice = shift @slices) {
+    for my $slice (@slices) {
         my $chromosome_name = $slice->seq_region_name();
 		
-        #if (($chromosomes_string && !exists $chromosomes{$chromosome_name}) || exists $processed_chromosomes{$chromosome_name}) {
+#        if (($chromosomes_string && !exists $chromosomes{$chromosome_name}) || exists $processed_chromosomes{$chromosome_name}) { # why was this changed?
         if (($chromosomes_string && !exists $chromosomes{$chromosome_name})) {
             # skip this gene. it's not on a chromosome of interest
             next;
         }
 	# add chromosome to list of chromosomes we've seen
-	$processed_chromosomes{$chromosome_name} = undef;
-        my $chromosome_item = make_chromosome(\%chromosomes, $chromosome_name);
+	$processed_chromosomes{$chromosome_name}++; # This value isn't used any more
 
+        my $chromosome_item = make_chromosome(\%chromosomes, $chromosome_name);
+	
         my @genes =  @{$slice->get_all_Genes(undef,undef,1)};
 
-        while (my $gene = shift @genes) {
+        for my $gene (@genes) {
 
             my $gene_item = make_item("Gene");
             my $gene_type = $gene->biotype();
             
             $gene_item->set('featureType', $gene_type);
             
-            my $curated = 'false';
-            if ($gene->status eq 'KNOWN') {
-                $curated = 'true';
-            }
-            $gene_item->set('curated', $curated);
+#            my $curated = 'false';
+#            if ($gene->status eq 'KNOWN') {
+#                $curated = 'true';
+#            }
+#            $gene_item->set('curated', $curated);
             
-            parse_feature($gene, $gene_item, $chromosome_item);
+            parse_feature($gene, $gene_item, $chromosome_item); # fills in the info for gene_item
             make_synonym($gene_item, "identifier", $gene->stable_id());
 
             my @transcripts = @{ $gene->get_all_Transcripts() };
-            while ( my $transcript = shift @transcripts ) {
+            for my $transcript (@transcripts) {
                 
                 my $transcript_item;
                 if ($gene_type eq "protein_coding") {
@@ -173,9 +173,10 @@ foreach my $taxon_id(keys %organisms) {
     }
     my $end_time = time();
     my $action_time = $end_time - $start_time;
-    print "processing the files for $taxon_id took $action_time seconds.  now creating the XML file... \n";
+    print "processing the files for $taxon_id took $action_time seconds to make "
+         . scalar(@items) ." items; now creating the XML file... \n";
     
-#write xml file
+#write xml file # surely this is going to involve duplication if multiple taxon ids are passed
     $start_time = time();
     my $output = new IO::File(">$data_destination/$taxon_id.xml");
     my $writer = new XML::Writer(DATA_MODE => 1, DATA_INDENT => 3, OUTPUT => $output);
@@ -222,8 +223,8 @@ sub parse_feature {
     return;
 }
 
-# read in the config file
-sub read_file {
+# read in the config file 
+sub read_file { # Why is this not in the InterMine::Util module?
     my($filename) = shift;
     my @lines = ();
     open(FILE, "< $filename") or die "Can't open $filename : $!";
@@ -238,18 +239,18 @@ sub read_file {
 }
 
 # parse the config file
-sub parse_config {
-    my (@lines) = @_;
+sub parse_config { # ARGGH! This was doing black magic, and fiddling with local variables!
+    my ($file, %organisms) = @_;
+    my @lines = read_file($file);
     foreach (@lines) {
         my $line = $_;
-        my ($taxon_id, $config) = split("\\.", $line);
-        my ($label, $value) = split("\\=", $config);
-        
+        my ($taxon_id, $config) = split('\.', $line);
+        my ($label, $value) = split('=', $config);
         if ($label eq 'chromosomes' && defined $organisms{$taxon_id}) {
             $organisms{$taxon_id} = $value;
         }
     }
-    return;
+    return %organisms;
 }
 
 sub make_location {
@@ -270,8 +271,8 @@ sub make_location {
         $location->set('start', $start);
         $location->set('end', $end);
         $location->set('strand', $feature->strand());
-        $location->set('subject', $item);
-        $location->set('object', $chromosome);
+        $location->set('feature', $item);
+        $location->set('locatedOn', $chromosome);
         $locations{$key} = $location;
     }
     return $location;
@@ -283,7 +284,7 @@ sub parse_chromosomes {
     my ($chromosome_string) = shift;
   
     my @bits = split(",", $chromosome_string);
-    my %chromosomes = ();
+    my %chromosomes;
  
     foreach (@bits) {
         my $bit = $_;
@@ -396,10 +397,11 @@ sub encodeSeq {
 }
 
 
-sub parse_orgs {
-    my ($taxon_ids) = @_;
-    my %orgs = ();    
-    for (split("\\,", $taxon_ids)) {
+sub parse_orgs { # returns a hash with the keys set to the comma-delimited set of taxon ids
+                 # and values all set to ''
+    my $taxon_ids = shift;
+    my %orgs;    
+    for (split(',', $taxon_ids)) {
         $orgs{$_} = "";
     }
     return %orgs;
