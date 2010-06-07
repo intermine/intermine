@@ -7,9 +7,7 @@
 
 
 <c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
-                || cld.unqualifiedName == 'Chromosome')
-            && object.organism.abbreviation != 'MM' && object.organism.abbreviation != 'MD'
-            && object.organism.abbreviation != 'RN' && cld.unqualifiedName != 'ChromosomeBand'}">
+                || cld.unqualifiedName == 'Chromosome') && cld.unqualifiedName != 'ChromosomeBand'}">
 
   <c:set var="type" value="${cld.unqualifiedName}s"/>
 
