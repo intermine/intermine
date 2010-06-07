@@ -412,8 +412,6 @@ All GBrowse tracks generated for this experiment:
     <th class="sortable">DCC id</th>
     <th class="sortable">Name</th>
     
-<%--    <th>Related Submissions</th>
---%>
       <c:forEach items="${exp.factorTypes}" var="factor">
 
 <%-- TEMP FIX for long list of primers --%>
@@ -437,6 +435,7 @@ All GBrowse tracks generated for this experiment:
       <td class="sorting">
       <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}">
       <c:out value="${sub.dCCid}"></c:out></html:link>
+<%-- RELATED SUBMISSIONS : TMP out for releasing new webapp on old build 17
       <p>
         <c:forEach items="${sub.relatedSubmissions}" var="relSubs" varStatus="rstatus">
         <br>
@@ -446,7 +445,7 @@ All GBrowse tracks generated for this experiment:
         <c:if test="${rstatus.last}"></c:if>
         </c:forEach>
       
-      
+    --%>  
       
       </td>
 
@@ -684,6 +683,7 @@ All GBrowse tracks generated for this experiment:
 
 
 <%-- FILES --%>
+<%--TMP OUT for 17.1
           <span class="filelink">
           <c:forEach items="${files}" var="subFiles" varStatus="sub_status">
             <c:if test="${subFiles.key == sub.dCCid}">
@@ -691,6 +691,53 @@ All GBrowse tracks generated for this experiment:
             </c:if>
           </c:forEach>
           </span>
+          
+          --%>
+          <%-- TO BE RM for 18 --%>
+                    <span class="filelink">
+          <c:forEach items="${files}" var="subFiles" varStatus="sub_status">
+            <c:if test="${subFiles.key == sub.dCCid}">
+            <c:forEach items="${filesPerSub}" var="filesNr" varStatus="nr_status">
+              <c:if test="${filesNr.key == sub.dCCid}">
+              <c:set var="nr" value="${filesNr.value}" /> 
+              <c:choose>
+              <c:when test="${nr > 20}">
+              <br></br>
+                <a href="${WEB_PROPERTIES['ftp.prefix']}/${sub.dCCid}/extracted"
+                  title="Access the submission ${nr} files" class="value extlink"> 
+                <c:out value="${nr} files" /> </a>            
+              </c:when>
+              <c:otherwise>
+              <c:forEach items="${subFiles.value}" var="fileName" varStatus="file_status">
+                <br>
+                <c:choose>
+                <c:when test="${fn:startsWith(fileName,ncbiftp)}">
+                <a href="${fileName}"
+                  title="Download ${fileName}" class="value extlink"> <c:out
+                  value="${fileName}" /> </a>               
+                </c:when>
+                <c:otherwise>
+                <a href="${WEB_PROPERTIES['ftp.prefix']}/${sub.dCCid}/extracted/${fileName}"
+                  title="Download ${fileName}" class="value extlink"> <c:out
+                  value="${fileName}" /> </a>
+                </c:otherwise>
+                </c:choose>
+              </c:forEach>
+</c:otherwise>
+</c:choose>
+</c:if>
+          </c:forEach>
+            </c:if>
+          </c:forEach>
+          </span>
+          
+          <%-- END --%>
+          
+          
+          
+          
+          
+          
           
           
           
