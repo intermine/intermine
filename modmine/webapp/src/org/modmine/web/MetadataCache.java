@@ -359,6 +359,7 @@ public class MetadataCache
      * @return submissionUnlocatedFeatureTypes
      */
     private static Map<Integer, List<String>> readUnlocatedFeatureTypes(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
         try {
 
             if (submissionUnlocatedFeatureTypes != null) {
@@ -375,6 +376,7 @@ public class MetadataCache
                 readSubmissionFeatureCounts(os);
             }
 
+            
             for (Integer subId : submissionFeatureCounts.keySet()) {
 
                 Set<String> allFeatures = submissionFeatureCounts.get(subId).keySet();
@@ -395,6 +397,9 @@ public class MetadataCache
         } catch (Exception err) {
             err.printStackTrace();
         }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed unlocated feature cache, took: " + timeTaken + "ms size = "
+                + submissionUnlocatedFeatureTypes.size());
         return submissionUnlocatedFeatureTypes;
     }
 
@@ -556,7 +561,8 @@ public class MetadataCache
             err.printStackTrace();
         }
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed experiment cache, took: " + timeTaken + "ms");
+        LOG.info("Primed experiment cache, took: " + timeTaken + "ms size = "
+                + experimentCache.size());
     }
 
 
@@ -678,7 +684,8 @@ public class MetadataCache
             featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
         }
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed submission cache, took: " + timeTaken + "ms");
+        LOG.info("Primed submissionFeatureCounts cache, took: " + timeTaken + "ms size = "
+                + submissionFeatureCounts.size());
     }
 
     
@@ -749,7 +756,8 @@ public class MetadataCache
             err.printStackTrace();
         }
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed file names cache, took: " + timeTaken + "ms");
+        LOG.info("Primed file names cache, took: " + timeTaken + "ms size = "
+                + submissionFilesCache.size());
     }
 
     
@@ -782,7 +790,8 @@ public class MetadataCache
 //            err.printStackTrace();
 //        }
 //        long timeTaken = System.currentTimeMillis() - startTime;
-//        LOG.info("Primed file names cache, took: " + timeTaken + "ms");
+//        LOG.info("Primed file names cache, took: " + timeTaken + "ms size = "
+//    + submissionFilesCache.size());
 //    }
 
 
@@ -833,7 +842,8 @@ public class MetadataCache
 
         }     
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed located features cache, took: " + timeTaken + "ms");
+        LOG.info("Primed located features cache, took: " + timeTaken + "ms size = "
+                + submissionLocatedFeatureTypes.size());
     }
 
 
@@ -917,7 +927,8 @@ public class MetadataCache
             err.printStackTrace();
         }
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed Repository entries cache, took: " + timeTaken + "ms");
+        LOG.info("Primed Repository entries cache, took: " + timeTaken + "ms size = "
+                + submissionRepositedCache.size());
     }
 
 
@@ -1095,6 +1106,7 @@ public class MetadataCache
      * @return the base URL
      */
     private static Map<String, String> readFeatTypeDescription(ServletContext servletContext) {
+        long startTime = System.currentTimeMillis();
 
         featDescriptionCache = new HashMap<String, String>();
 
@@ -1122,6 +1134,9 @@ public class MetadataCache
                 featDescriptionCache.put(expFeat, descr);
             }
         }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed feature description cache, took: " + timeTaken + "ms size = "
+                + featDescriptionCache.size());
         return featDescriptionCache;
     }
 
