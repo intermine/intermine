@@ -1114,7 +1114,7 @@ public class QueryTest extends TestCase
             + "LOWER(a9_.name) = 'drosophila melanogaster') AND a1_.id = a2_.subjectId AND "
             + "(a1_.id = indirect0.Proteins AND indirect0.Genes = a3_.id) AND a3_.id = "
             + "a4_.proteinId AND a4_.id = a5_.regionId AND a5_.regionId = a6_.id AND a6_.id = "
-            + "a7_.subjectId AND a6_.proteinDomainId = a8_.id AND a1_.organismId = a9_.id) "
+            + "a7_.featureId AND a6_.proteinDomainId = a8_.id AND a1_.organismId = a9_.id) "
             + "ORDER BY a1_.identifier, a1_.primaryIdentifier, a1_.symbol, "
             + "a3_.primaryAccession, a8_.interproId, a8_.identifier, a8_.name, a8_.shortName";
 
@@ -1152,7 +1152,7 @@ public class QueryTest extends TestCase
                 "indirect0 WHERE LOWER(a2_.intermine_value) = 'cg1046' AND LOWER(a9_.name)" +
                 " = 'drosophila melanogaster' AND a1_.id = a2_.subjectId AND a1_.id = " +
                 "indirect0.Proteins AND indirect0.Genes = a3_.id AND a3_.id = a4_.proteinId " +
-                "AND a4_.id = a5_.regionId AND a5_.regionId = a6_.id AND a6_.id = a7_.subjectId " +
+                "AND a4_.id = a5_.regionId AND a5_.regionId = a6_.id AND a6_.id = a7_.featureId " +
                 "AND a6_.proteinFeatureId = a8_.id AND a1_.organismId = a9_.id ORDER BY " +
                 "a1_.identifier, a1_.primaryIdentifier, a1_.symbol, " +
                 "a3_.primaryAccession, a8_.interproId, a8_.identifier, a8_.name, a8_.shortName";

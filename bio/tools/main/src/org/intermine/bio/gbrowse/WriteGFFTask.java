@@ -623,11 +623,11 @@ public class WriteGFFTask extends Task
         SimpleConstraint sc = new SimpleConstraint(qfChr, ConstraintOp.EQUALS, chrIdQueryValue);
         cs.addConstraint(sc);
 
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "subject");
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "feature");
         ContainsConstraint cc2 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcEnt);
         cs.addConstraint(cc2);
 
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "object");
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "locatedOn");
         ContainsConstraint cc3 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcChr);
         cs.addConstraint(cc3);
 
@@ -700,11 +700,11 @@ public class WriteGFFTask extends Task
         SimpleConstraint sc = new SimpleConstraint(qfChr, ConstraintOp.EQUALS, chrIdQueryValue);
         cs.addConstraint(sc);
 
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "subject");
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "feature");
         ContainsConstraint cc2 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcEnt);
         cs.addConstraint(cc2);
 
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "object");
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "locatedOn");
         ContainsConstraint cc3 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcChr);
         cs.addConstraint(cc3);
 

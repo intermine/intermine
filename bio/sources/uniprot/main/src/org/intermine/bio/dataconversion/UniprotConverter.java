@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.DirectoryConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -53,7 +53,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> organisms = new HashMap<String, String>();
     private Map<String, String> comments = new HashMap<String, String>();
     private Map<String, String> datasets = new HashMap<String, String>();
-    private Map<String, String> synonyms = new HashMap<String, String>();
+    private Map<MultiKey, String> synonyms = new HashMap<MultiKey, String>();
     private Map<String, String> domains = new HashMap<String, String>();
     // taxonId -> [md5Checksum -> stored protein identifier]
     private Map<String, Map<String, String>> sequences = new HashMap<String, Map<String, String>>();
@@ -577,7 +577,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
                 }
-                synonyms = new HashMap<String, String>();
+                synonyms = new HashMap<MultiKey, String>();
             }
             return isoforms;
         }
@@ -1052,7 +1052,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private String getSynonym(String subjectId, String type, String value, String isPrimary,
                               String datasetRefId)
     throws SAXException {
-        String key = type + subjectId + value;
+        MultiKey key = new MultiKey(type, subjectId, value);
         if (StringUtils.isEmpty(value)) {
             return null;
         }
