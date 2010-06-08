@@ -47,7 +47,6 @@
         <!-- Cytoscape Web JS API (needed to reference org.cytoscapeweb.Visualization) -->
         <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/cytoscapeweb.min.js'/>"></script>
 
-        <script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
         <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/interactions.js'/>"></script>
 
         <script type="text/javascript">
@@ -57,7 +56,7 @@
         var data = "${data}";
 
         if (data == "") {
-            $(document).ready(function() {
+            jQuery(document).ready(function() {
               $("#cytoscapeweb").html("no interactions found")
                                 .css('font-style','italic')
                                 .height(50)
@@ -68,7 +67,7 @@
             var webapp_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
             var webapp_path = "${WEB_PROPERTIES['webapp.path']}";
 
-            $(document).ready(function() {
+            jQuery(document).ready(function() {
                 showInteractions(data, webapp_baseurl, webapp_path);
             });
         }
