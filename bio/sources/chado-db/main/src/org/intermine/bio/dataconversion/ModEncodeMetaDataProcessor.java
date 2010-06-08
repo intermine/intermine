@@ -2998,7 +2998,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Item resultFile = getChadoDBConverter().createItem("ResultFile");
         resultFile.setAttribute("name", fileName);
         String url = null;
-        if (fileName.startsWith("http")) {
+        if (fileName.startsWith("http") || fileName.startsWith("ftp")) {
             url = fileName;
         } else {
             String dccId = dccIdMap.get(submissionId);
