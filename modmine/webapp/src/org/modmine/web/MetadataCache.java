@@ -124,8 +124,7 @@ public class MetadataCache
     private static Map<Integer, List<GBrowseTrack>> submissionTracksCache = null;
 
     
-    private static Map<Integer, List<String>> submissionFilesCache = null;
-    //private static Map<Integer, Set<ResultFile>> submissionFilesCache = null;
+    private static Map<Integer, Set<ResultFile>> submissionFilesCache = null;
     private static Map<Integer, Integer> filesPerSubmissionCache = null;
     private static Map<Integer, List<String>> submissionLocatedFeatureTypes = null;
     private static Map<Integer, List<String>> submissionUnlocatedFeatureTypes = null;
@@ -217,8 +216,7 @@ public class MetadataCache
      * @param os the production objectStore
      * @return map
      */
-    public static synchronized Map<Integer, List<String>> getSubmissionFiles(ObjectStore os) {
-//   public static synchronized Map<Integer, Set<ResultFile>> getSubmissionFiles(ObjectStore os) {
+   public static synchronized Map<Integer, Set<ResultFile>> getSubmissionFiles(ObjectStore os) {
         if (submissionFilesCache == null) {
             readSubmissionFiles(os);
         }
@@ -246,37 +244,19 @@ public class MetadataCache
     }
 
 
-//TO BE RM for 18    
     /**
      * Fetch a list of file names for a given submission.
      * @param os the objectStore
      * @param dccId the modENCODE submission id
      * @return a list of file names
      */
-    public static synchronized List<String> getFilesByDccId(ObjectStore os,
+    public static synchronized List<ResultFile> getFilesByDccId(ObjectStore os,
             Integer dccId) {
         if (submissionFilesCache == null) {
             readSubmissionFiles(os);
         }
-        return new ArrayList<String>(submissionFilesCache.get(dccId));
+        return new ArrayList<ResultFile>(submissionFilesCache.get(dccId));
     }
-
-    
-    
-// TMP for 17.1    
-    /**
-     * Fetch a list of file names for a given submission.
-     * @param os the objectStore
-     * @param dccId the modENCODE submission id
-     * @return a list of file names
-     */
-//    public static synchronized List<ResultFile> getFilesByDccId(ObjectStore os,
-//            Integer dccId) {
-//        if (submissionFilesCache == null) {
-//            readSubmissionFiles(os);
-//        }
-//        return new ArrayList<ResultFile>(submissionFilesCache.get(dccId));
-//    }
 
     /**
      * Fetch a list of file names for a given submission.
@@ -690,7 +670,6 @@ public class MetadataCache
     }
 
     
-    
     private static void readSubmissionFiles(ObjectStore os) {
         //
         long startTime = System.currentTimeMillis();
@@ -699,103 +678,28 @@ public class MetadataCache
             QueryClass qcSubmission = new QueryClass(Submission.class);
             QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
             q.addFrom(qcSubmission);
-            q.addToSelect(qfDCCid);
+            q.addToSelect(qcSubmission);
 
-            QueryClass qcSubmissionData = new QueryClass(SubmissionData.class);
-            QueryField qfFileName = new QueryField(qcSubmissionData, "value");
-            QueryField qfDataType = new QueryField(qcSubmissionData, "type");
-            q.addFrom(qcSubmissionData);
-            q.addToSelect(qfFileName);
-            QueryValue fileType = new QueryValue(FILETYPE);
-
-            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-            SimpleConstraint sc = new SimpleConstraint(new QueryExpression(QueryExpression.LOWER,
-                    qfDataType), ConstraintOp.MATCHES, fileType);
-            cs.addConstraint(sc);
-
-            // join the tables
-            QueryObjectReference ref1 = new QueryObjectReference(qcSubmissionData, "submission");
-            ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS,
-                    qcSubmission);
-            cs.addConstraint(cc1);
-
-            q.setConstraint(cs);
             q.addToOrderBy(qfDCCid);
 
-            Results results = os.execute(q);
+            submissionFilesCache = new HashMap<Integer, Set<ResultFile>>();
+            Results results = os.executeSingleton(q);
 
-            submissionFilesCache = new HashMap<Integer, List<String>>();
-
-            Integer counter = 0;
-
-            Integer prevSub = new Integer(-1);
-            List<String> subFiles = new ArrayList<String>();
+            // for each project, get its labs
             Iterator i = results.iterator();
             while (i.hasNext()) {
-                ResultsRow row = (ResultsRow) i.next();
-
-                counter++;
-                Integer dccId = (Integer) row.get(0);
-                String fileName = (String) row.get(1);
-
-                if (!dccId.equals(prevSub) || counter.equals(results.size())) {
-                    if (prevSub > 0) {
-                        if (counter.equals(results.size())) {
-                            prevSub = dccId;
-                            subFiles.add(fileName);
-                        }
-                        List<String> subFilesIn = new ArrayList<String>();
-                        subFilesIn.addAll(subFiles);
-                        submissionFilesCache.put(prevSub, subFilesIn);
-                        subFiles.clear();
-                    }
-                    prevSub = dccId;
-                }
-                subFiles.add(fileName);
+                Submission sub = (Submission) i.next();
+                Set<ResultFile> files = sub.getResultFiles();
+                submissionFilesCache.put(sub.getdCCid(), files);
             }
+
         } catch (Exception err) {
             err.printStackTrace();
         }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed file names cache, took: " + timeTaken + "ms size = "
-                + submissionFilesCache.size());
+    + submissionFilesCache.size());
     }
-
-    
-    
-// TEMP out for 17.1
-//    private static void readSubmissionFiles(ObjectStore os) {
-//        //
-//        long startTime = System.currentTimeMillis();
-//        try {
-//            Query q = new Query();
-//            QueryClass qcSubmission = new QueryClass(Submission.class);
-//            QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
-//            q.addFrom(qcSubmission);
-//            q.addToSelect(qcSubmission);
-//
-//            q.addToOrderBy(qfDCCid);
-//
-//            submissionFilesCache = new HashMap<Integer, Set<ResultFile>>();
-//            Results results = os.executeSingleton(q);
-//
-//            // for each project, get its labs
-//            Iterator i = results.iterator();
-//            while (i.hasNext()) {
-//                Submission sub = (Submission) i.next();
-//                Set<ResultFile> files = sub.getResultFiles();
-//                submissionFilesCache.put(sub.getdCCid(), files);
-//            }
-//
-//        } catch (Exception err) {
-//            err.printStackTrace();
-//        }
-//        long timeTaken = System.currentTimeMillis() - startTime;
-//        LOG.info("Primed file names cache, took: " + timeTaken + "ms size = "
-//    + submissionFilesCache.size());
-//    }
-
-
 
 
     private static void readSubmissionLocatedFeature(ObjectStore os) {

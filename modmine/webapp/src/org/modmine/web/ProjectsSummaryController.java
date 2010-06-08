@@ -73,8 +73,6 @@ public class ProjectsSummaryController extends TilesAction
                 }
             }
             
-
-            
             InputStream is2 = 
                 servletContext.getResourceAsStream("/WEB-INF/categoryOrder.properties");
             if (is == null) {
@@ -87,8 +85,6 @@ public class ProjectsSummaryController extends TilesAction
                 }
             }
 
-            
-            
             
             Map <String, List<DisplayExperiment>> catExpUnordered =
                 new HashMap<String, List<DisplayExperiment>>();
@@ -105,7 +101,7 @@ public class ProjectsSummaryController extends TilesAction
                             catExpUnordered.put(c, des);
                         }
                         des.add(de);
-                         LOG.info("DEXP: " + c + "|"+ de.getName());
+                        //LOG.info("DEXP: " + c + "|" + de.getName());
                     }
                 }
             }
@@ -114,17 +110,12 @@ public class ProjectsSummaryController extends TilesAction
                 new LinkedHashMap<String, List<DisplayExperiment>>();
             
             for (Integer i = 1; i <= propOrd.size(); i++) {
-//            while propOrd. (Integer i = 1; i <= catExpUnordered.keySet().size(); i++) {
-
-                    String ordCat = propOrd.getProperty(i.toString());
+                String ordCat = propOrd.getProperty(i.toString());
                 catExp.put(ordCat, catExpUnordered.get(ordCat));
-                LOG.info("OC: " + ordCat + "|"+ catExpUnordered.get(ordCat));
+                //LOG.info("OC: " + ordCat + "|" + catExpUnordered.get(ordCat));
             }
             
-            
-            
             request.setAttribute("catExp", catExp);
-
             
             Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
             request.setAttribute("tracks", tracks);

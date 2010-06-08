@@ -147,10 +147,10 @@ public class FeaturesAction extends InterMineAction
 
                 q.addView(featureType + ".primaryIdentifier");
                 q.addView(featureType + ".score");
-//                if (action.equals("results")) {
-//                    // we don't want this field on exports
-//                    q.addView(featureType + ":scoreProtocol.name");
-//                }
+                if (action.equals("results")) {
+                    // we don't want this field on exports
+                    q.addView(featureType + ":scoreProtocol.name");
+                }
                 q.addConstraint(featureType + ".submissions.experiment.name", 
                         Constraints.eq(experimentName));
 
@@ -212,9 +212,9 @@ public class FeaturesAction extends InterMineAction
 
                 q.addView(featureType + ".primaryIdentifier");
                 q.addView(featureType + ".score");
-//                if (action.equals("results")) {
-//                    q.addView(featureType + ":scoreProtocol.name");
-//                }
+                if (action.equals("results")) {
+                    q.addView(featureType + ":scoreProtocol.name");
+                }
                 q.addConstraint(featureType + ".submissions.DCCid", 
                         Constraints.eq(new Integer(dccId)));
 
