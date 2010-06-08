@@ -2,7 +2,7 @@
 
 function showInteractions(data, webapp_baseurl, webapp_path) {
 
-    $("#menu").html("&nbsp;");
+    jQuery('#menu').html("&nbsp;");
 
     // id of Cytoscape Web container div
     var div_id = "cytoscapeweb";
@@ -22,13 +22,13 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
     vis.ready(function() {
 
     var caption = "[Click the network to zoom]";
-    $("#caption").html(caption);
+    jQuery('#caption').html(caption);
 
     var menu = '<span id="phsical" class="fakelink">Show Physical Interactions</span>&nbsp;|&nbsp;<span id="genetic" class="fakelink">Show Genetic Interactions</span>&nbsp;|&nbsp;<span id="all" class="fakelink">Show All Interactions</span>';
-    $("#menu").html(menu);
+    jQuery('#menu').html(menu);
 
     var legends = '<span>Interaction Type:</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="physical">legends</span>&nbsp;&nbsp;<span>Physical</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="genetic">legends</span>&nbsp;&nbsp;<span>Genetic</span>';
-    $("#legends").html(legends);
+    jQuery('#legends').html(legends);
 
     // Show or Hide edge labels
     //$("#edgelabels").click(function(){
@@ -42,21 +42,21 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
      //});
 
      // Filter to show phsical interactions
-     $("#phsical").click(function(){
+    jQuery('#phsical').click(function(){
          vis.filter("edges", function(edge) {
              return edge.color >= "#FF0000";
          });
      });
 
     // Filter to show genetic interactions
-    $("#genetic").click(function(){
+    jQuery('#genetic').click(function(){
         vis.filter("edges", function(edge) {
             return edge.color <= "#FF0000";
         });
     });
 
     // Show all interactions
-    $("#all").click(function(){
+    jQuery('#all').click(function(){
         vis.filter("edges", function(edge) {
             return edge.color;
         });
@@ -81,7 +81,7 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
       vis.exportNetwork('sif', 'cytoscapeNetworkExport.do?type=sif');
     })
 
-    vis.addContextMenuItem("Export as XGMML...", "none", function(evt) {
+    .addContextMenuItem("Export as XGMML...", "none", function(evt) {
       vis.exportNetwork('xgmml', 'cytoscapeNetworkExport.do?type=xgmml');
     })
 
@@ -97,8 +97,26 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
 
     .addListener("dblclick", "nodes", function(evt) {
          selectFirstNeighbors(evt.target);
-     });
+     })
+
+    .addListener("click", "none", function(evt) {
+        jQuery('#cytoscapeweb').height(600)
+                               .width(1000);
+        // Resize effect from jQuery UI, but not working properly on flash
+        // $(this).effect("size", { to: {width: 1000,height: 600} }, 1000);
+        // Add zoom control panel
+        vis.panZoomControlVisible(true);
+        // Change the scale of the network until it fits the screen.
+        vis.zoom(1);
+        vis.nodeTooltipsEnabled(false);
+        vis.edgeTooltipsEnabled(false);
+        // Change the caption
+        jQuery('#caption').html("[Right click a node for more options]");
+
+        // mimic of jQuery.one('click', func)
+        vis.removeListener("click", "none");
     });
+  });
 
     // draw options
     var draw_options = {
@@ -156,21 +174,6 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
 
     // draw
     vis.draw(draw_options);
-
-    $("#cytoscapeweb").one('click', function () {
-       $(this).height(600)
-              .width(1000);
-       // Resize effect from jQuery UI, but not working properly on flash
-       // $(this).effect("size", { to: {width: 1000,height: 600} }, 1000);
-       // Add zoom control panel
-       vis.panZoomControlVisible(true);
-       // Change the scale of the network until it fits the screen.
-       vis.zoom(1);
-       vis.nodeTooltipsEnabled(false);
-       vis.edgeTooltipsEnabled(false);
-       // Change the caption
-       $("#caption").html("[Right click a node for more options]");
-    });
 }
 
     function highlighFirstNeighbors(target) {
@@ -180,21 +183,21 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
                 var bypass = { nodes: {}, edges: {} };
 
                 var allNodes = vis.nodes();
-                $.each(allNodes, function(i, n) {
+                jQuery.each(allNodes, function(i, n) {
                       bypass.nodes[n.data.id] = { opacity: 0.2 };
                 });
                 var neighbors = fn.neighbors;
                 neighbors = neighbors.concat(fn.rootNodes);
-                $.each(neighbors, function(i, n) {
+                jQuery.each(neighbors, function(i, n) {
                       bypass.nodes[n.data.id] = { opacity: 1 };
                 });
 
                 var allEdges = vis.edges();
-                $.each(allEdges, function(i, e) {
+                jQuery.each(allEdges, function(i, e) {
                       bypass.edges[e.data.id] = { opacity: 0.1 };
                 });
                 var edges = fn.edges;
-                $.each(edges, function(i, e) {
+                jQuery.each(edges, function(i, e) {
                       bypass.edges[e.data.id] = { opacity: 1 };
                 });
 
