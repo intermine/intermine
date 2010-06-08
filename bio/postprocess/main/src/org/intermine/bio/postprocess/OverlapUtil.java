@@ -10,7 +10,6 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,6 +17,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.SequenceFeature;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -27,19 +35,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.DynamicUtil;
-
-import org.intermine.model.bio.SequenceFeature;
-import org.intermine.model.bio.Location;
-
-import org.apache.log4j.Logger;
 
 /**
  * Utility methods for finding overlaps.
@@ -69,13 +65,14 @@ public abstract class OverlapUtil
      * @throws ClassNotFoundException if there is an ObjectStore problem
      */
     public static void createOverlaps(final ObjectStore os, SequenceFeature subject,
-            List classNamesToIgnore, boolean ignoreSelfMatches, ObjectStoreWriter osw, Map summary)
+            List<?> classNamesToIgnore, boolean ignoreSelfMatches, ObjectStoreWriter osw,
+            Map<String, Integer> summary)
     throws ObjectStoreException, ClassNotFoundException {
         Model model = os.getModel();
 
-        Map classesToIgnore = new HashMap();
+        Map<Class<?>, Set> classesToIgnore = new HashMap<Class<?>, Set>();
 
-        Iterator classNamesToIgnoreIter = classNamesToIgnore.iterator();
+        Iterator<?> classNamesToIgnoreIter = classNamesToIgnore.iterator();
 
         while (classNamesToIgnoreIter.hasNext()) {
             String className = (String) classNamesToIgnoreIter.next();
@@ -91,12 +88,12 @@ public abstract class OverlapUtil
                     + targetClassName : targetClassName);
 
             try {
-                Class thisClass = Class.forName(className);
-                Class targetClass = Class.forName(targetClassName);
+                Class<?> thisClass = Class.forName(className);
+                Class<?> targetClass = Class.forName(targetClassName);
 
-                Set targetClasses = (Set) classesToIgnore.get(thisClass);
+                Set<Class<?>> targetClasses = (Set) classesToIgnore.get(thisClass);
                 if (targetClasses == null) {
-                    targetClasses = new HashSet();
+                    targetClasses = new HashSet<Class<?>>();
                     classesToIgnore.put(thisClass, targetClasses);
                 }
                 targetClasses.add(targetClass);
@@ -131,12 +128,8 @@ public abstract class OverlapUtil
 
         try {
             ((ObjectStoreInterMineImpl) os).goFaster(q);
-
             Results results = os.execute(q);
-
-            // A Map from Location to the corresponding SequenceFeature
-            Map currentLocations = new HashMap();
-
+            Map<Location, SequenceFeature> currentLocations = new HashMap();
             int count = 0;
             Iterator resIter = results.iterator();
 

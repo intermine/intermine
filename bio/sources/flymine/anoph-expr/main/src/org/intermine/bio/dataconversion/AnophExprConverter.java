@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -39,7 +41,7 @@ public class AnophExprConverter extends BioFileConverter
     private Map<String, String> reporterToGene = new HashMap<String, String>();
     private Map<String, Item> genes = new HashMap<String, Item>();
     private Map<String, Item> assays = new HashMap<String, Item>();
-    private Map<String, Item> synonyms = new HashMap<String, Item>();
+    private Map<MultiKey, Item> synonyms = new HashMap<MultiKey, Item>();
     private static final String TYPE = "Geometric mean of ratios";
     Item org;
     private Item pub;
@@ -260,7 +262,7 @@ public class AnophExprConverter extends BioFileConverter
     }
 
     private Item createSynonym(String subjectId, String type, String value) {
-        String key = subjectId + type + value;
+        MultiKey key = new MultiKey(subjectId, type, value);
         if (StringUtils.isEmpty(value)) {
             return null;
         }

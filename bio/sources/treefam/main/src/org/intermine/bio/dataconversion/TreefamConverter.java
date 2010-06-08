@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
@@ -43,13 +44,13 @@ public class TreefamConverter extends BioFileConverter
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
     private static final Logger LOG = Logger.getLogger(TreefamConverter.class);
-    private Set<String> taxonIds = new HashSet();
+    private Set<String> taxonIds = new HashSet<String>();
     protected File geneFile;
-    private Map<String, GeneHolder> idsToGenes = new HashMap();
-    private Map<String, String> identifiersToGenes = new HashMap();
-    private Set<String> synonyms = new HashSet();
-    private Map<String, String> organisms = new HashMap();
-    private Map<String, String[]> config = new HashMap();
+    private Map<String, GeneHolder> idsToGenes = new HashMap<String, GeneHolder>();
+    private Map<String, String> identifiersToGenes = new HashMap<String, String>();
+    private Set<MultiKey> synonyms = new HashSet<MultiKey>();
+    private Map<String, String> organisms = new HashMap<String, String>();
+    private Map<String, String[]> config = new HashMap<String, String[]>();
     protected IdResolverFactory resolverFactory;
     private IdResolver flyResolver;
     private static String evidenceRefId = null;
@@ -261,7 +262,7 @@ public class TreefamConverter extends BioFileConverter
 
     private void getSynonym(String subjectId, String type, String value)
     throws ObjectStoreException {
-        String key = subjectId + type + value;
+        MultiKey key = new MultiKey(subjectId, type, value);
         if (StringUtils.isEmpty(value)) {
             return;
         }

@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
@@ -37,7 +38,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
     protected Map<String, String> bioentities = new HashMap<String, String>();
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";
-    private Map<String, Item> synonyms = new HashMap<String, Item>();
+    private Map<MultiKey, Item> synonyms = new HashMap<MultiKey, Item>();
     private Map<String, String> chromosomes = new HashMap<String, String>();
     private Map<String, ProbeSetHolder> holders = new HashMap<String, ProbeSetHolder>();
     List<Item> delayedItems = new ArrayList<Item>();
@@ -252,7 +253,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
     }
 
     private Item createSynonym(String subjectId, String type, String value) {
-        String key = subjectId + type + value;
+        MultiKey key = new MultiKey(subjectId, type, value);
         if (StringUtils.isEmpty(value)) {
             return null;
         }
