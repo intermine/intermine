@@ -57,7 +57,7 @@
 
         if (data == "") {
             jQuery(document).ready(function() {
-              $("#cytoscapeweb").html("no interactions found")
+              jQuery('#cytoscapeweb').html("no interactions found")
                                 .css('font-style','italic')
                                 .height(50)
                                 .width(150);
