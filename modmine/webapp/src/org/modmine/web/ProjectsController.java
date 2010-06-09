@@ -34,6 +34,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.bio.Lab;
 import org.intermine.model.bio.Project;
+import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
@@ -84,8 +85,7 @@ public class ProjectsController extends TilesAction
             Map<Integer, List<GBrowseTrack>> subTracks = MetadataCache.getGBrowseTracks();
             request.setAttribute("subTracks", subTracks);
 
-            // TEMP for 17.1
-            Map<Integer, List<String>> files = MetadataCache.getSubmissionFiles(os); 
+            Map<Integer, Set<ResultFile>> files = MetadataCache.getSubmissionFiles(os); 
             request.setAttribute("files", files); 
             Map<Integer, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os); 
             request.setAttribute("filesPerSub", filesPerSub);
