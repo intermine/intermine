@@ -85,10 +85,10 @@ public class ProjectsController extends TilesAction
             Map<Integer, List<GBrowseTrack>> subTracks = MetadataCache.getGBrowseTracks();
             request.setAttribute("subTracks", subTracks);
 
-            Map<Integer, Set<ResultFile>> files = MetadataCache.getSubmissionFiles(os); 
-            request.setAttribute("files", files); 
-            Map<Integer, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os); 
-            request.setAttribute("filesPerSub", filesPerSub);
+//            Map<Integer, Set<ResultFile>> files = MetadataCache.getSubmissionFiles(os); 
+//            request.setAttribute("files", files); 
+//            Map<Integer, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os); 
+//            request.setAttribute("filesPerSub", filesPerSub);
             //--
             
             
@@ -99,10 +99,6 @@ public class ProjectsController extends TilesAction
             Map<Integer, List<String>> unlocatedFeatureTypes = 
                 MetadataCache.getUnlocatedFeatureTypes(os);
             request.setAttribute("unlocatedFeat", unlocatedFeatureTypes);
-            
-            
-            
-            
             
             Map<String, String> expFeatureDescription = 
                 MetadataCache.getFeatTypeDescription(servletContext);
