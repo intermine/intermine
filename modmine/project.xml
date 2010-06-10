@@ -165,7 +165,7 @@
         <property name="src.data.file" location="resources/projects.xml"/>
     </source>
 
-        <!-- cDNA-clone -->
+        <!-- cDNA-clone - currently excluded as it's creating too many chromosome objects
         <source name="cdna-clone" type="modmine/cdna-clone" dump="true">
             <property name="gff3.seqClsName" value="Chromosome"/>
             <property name="gff3.taxonId" value="7227"/>
@@ -174,6 +174,7 @@
             <property name="gff3.dataSetTitle" value="Celniker lab cDNA clones"/>
             <property name="src.data.dir" location="/shared/data/modmine/sources/cDNA-clones"/>
         </source>
+       -->
 
         <!-- UNSPLITTED
         <source name="modencode-metadata" type="chado-db" dump="true">
