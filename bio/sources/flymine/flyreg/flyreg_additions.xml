@@ -7,6 +7,9 @@
   <attribute name="evidenceMethod" type="java.lang.String"/>
 </class>
 <class name="TFBindingSite" is-interface="true">
-    <reference name="gene" referenced-type="Gene"/>
+    <reference name="gene" referenced-type="Gene" reverse-reference="regulatoryRegions" />
+</class>
+<class name="Gene" is-interface="true">
+    <collection name="regulatoryRegions" referenced-type="RegulatoryRegion" reverse-reference="gene"/>
 </class>
 </classes>

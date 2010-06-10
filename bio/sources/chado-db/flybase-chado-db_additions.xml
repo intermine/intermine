@@ -52,4 +52,10 @@
   <reference name="tissueSource" referenced-type="AnatomyTerm" />
   </class>
   <class name="GoldenPathFragment" extends="Region" is-interface="true"/>
+  <class name="RegulatoryRegion" is-interface="true">
+    <reference name="gene" referenced-type="Gene" reverse-reference="regulatoryRegions" />
+  </class>
+  <class name="Gene" is-interface="true">
+    <collection name="regulatoryRegions" referenced-type="RegulatoryRegion" reverse-reference="gene"/>
+  </class>
 </classes>

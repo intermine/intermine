@@ -8,5 +8,9 @@
   <class name="AnatomyTerm" extends="OntologyTerm" is-interface="true"/>
   <class name="RegulatoryRegion" is-interface="true">
     <attribute name="evidenceMethod" type="java.lang.String"/>
+    <reference name="gene" referenced-type="Gene" reverse-reference="regulatoryRegions" />
+  </class>
+  <class name="Gene" is-interface="true">
+    <collection name="regulatoryRegions" referenced-type="RegulatoryRegion" reverse-reference="gene"/>
   </class>
 </classes>
