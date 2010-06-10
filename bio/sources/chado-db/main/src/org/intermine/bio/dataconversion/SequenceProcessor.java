@@ -60,18 +60,19 @@ public class SequenceProcessor extends ChadoProcessor
 
     private static final Logger LOG = Logger.getLogger(SequenceProcessor.class);
 
-    // a map from chado feature id to FeatureData objects, prpulated by processFeatureTable()
+    // a map from chado feature id to FeatureData objects, populated by processFeatureTable()
     // and used to get object types, Item IDs etc. (see FeatureData)
-    protected Map<Integer, FeatureData> featureMap = new HashMap();
+    protected Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
 
     // we don't configure anything by default, so the process methods do their default actions
     private static final MultiKeyMap DEFAULT_CONFIG = new MultiKeyMap();
 
     // A map from chromosome uniqueName to chado feature_ids, populated by processFeatureTable()
-    private Map<Integer, Map<String, Integer>> chromosomeMaps = new HashMap();
+    private Map<Integer, Map<String, Integer>> chromosomeMaps = 
+        new HashMap<Integer, Map<String, Integer>>();
 
     // a map from chado pubmed id to item identifier for the publication
-    private Map<Integer, String> publications = new HashMap();
+    private Map<Integer, String> publications = new HashMap<Integer, String>();
 
     // the name of the temporary table we create from the feature table to speed up processing
     private String tempFeatureTableName = null;

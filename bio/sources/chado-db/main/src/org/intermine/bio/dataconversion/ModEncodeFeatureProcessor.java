@@ -788,10 +788,13 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 if (featureMap.containsKey(featureId)) {
                     FeatureData fData = featureMap.get(featureId);
 //                    Integer storedFeatureId = fData.getIntermineObjectId();
-                    String imType = fData.getInterMineType();
-                    String referenceName = getRefName(imType);
+                    //String imType = fData.getInterMineType();
+//                    String imType = "LocatedSequenceFeature";
+//                    String referenceName = getRefName(imType);
+                    String referenceName = "feature";
                     String featureItemId = fData.getItemIdentifier();
                     level.setReference(referenceName, featureItemId);
+                    level.setReference("submission", dataSetIdentifier);
                 }
             }
             
@@ -805,13 +808,13 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         //    if (property.contains("_")) {
         //        String tmp = StringUtils.property.indexOf('_');
         //    }
-        if ( property.equalsIgnoreCase("read_count")){
+        if (property.equalsIgnoreCase("read_count")) {
             return "readCount";
         }
-        if ( property.equalsIgnoreCase("dcpm_bases")){
+        if (property.equalsIgnoreCase("dcpm_bases")) {
             return "dcpmBases";
         }
-        if ( property.equalsIgnoreCase("prediction_status")){
+        if (property.equalsIgnoreCase("prediction_status")) {
             return "predictionStatus";
         }
         return property;
@@ -849,38 +852,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     }
 
     private ResultSet getExpressionLevels(Connection connection) throws SQLException {
-        String query1 = "SELECT subject_id as expression_id, f1.uniquename "
-            + " ,af.rawscore as score, object_id as feature_id, c2.name "
-            + " FROM feature_relationship, cvterm c1, feature f1, analysisfeature af "
-            + " ,cvterm c2, feature f2 "
-            + " WHERE c1.cvterm_id = f1.type_id "
-            + " AND f1.feature_id = subject_id "
-            + " and af.feature_id = f1.feature_id "
-            + " and c2.cvterm_id = f2.type_id "
-            + " and f2.feature_id = object_id "
-            + " and c1.name= 'experimental_feature' "
-            + " AND subject_id IN (" + SUBFEATUREID_TEMP_TABLE_NAME + ")"
-            //        + " AND object_id IN (" + SUBFEATUREID_TEMP_TABLE_NAME + ")"
-            //        + " ORDER BY feature1_id";
-            ;
-
-        
-        String query2 = "SELECT subject_id as level_id, f1.uniquename, af.rawscore as value "
-            + " , object_id as feature_id, c2.name, cp.name, fp.value "
-            + " FROM feature_relationship, cvterm c1, feature f1, analysisfeature af " 
-            + " , cvterm c2, feature f2, featureprop fp, cvterm cp "
-            + " WHERE c1.cvterm_id = f1.type_id "
-            + " AND f1.feature_id = subject_id "
-            + " and af.feature_id = f1.feature_id "
-            + " and c2.cvterm_id = f2.type_id "
-            + " and f2.feature_id = object_id "
-            + " and f1.feature_id = fp.feature_id "
-            + " and cp.cvterm_id = fp.type_id "
-            + " and c1.name= 'experimental_feature' "
-            + " AND subject_id IN (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
-//            + " AND subject_id IN (" + SUBFEATUREID_TEMP_TABLE_NAME + ")"
-//            ;
-
+ 
         String query = "SELECT subject_id as expression_id, f1.uniquename, af.rawscore as value "
             + " , object_id as feature_id, cp.name as property, fp.value as propvalue "
             + " FROM feature_relationship, cvterm c1, feature f1, analysisfeature af " 

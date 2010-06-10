@@ -16,6 +16,7 @@
   <collection name="submissions" referenced-type="Submission" reverse-reference="features" />
   <collection name="featureEvidence" referenced-type="LocatedSequenceFeature" reverse-reference="supportedFeatures" />
   <collection name="supportedFeatures" referenced-type="LocatedSequenceFeature" reverse-reference="featureEvidence" />  
+  <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="feature"/>
 </class>
 <class name="ThreePrimeUTR" is-interface="true">
   <collection name="CDSs" referenced-type="CDS" reverse-reference="threePrimeUTRs" />    
@@ -24,9 +25,6 @@
 <class name="CDS" is-interface="true">
   <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="CDSs"/>
 </class>
-<class name="ExonRegion" extends="Region" is-interface="true">
-  <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="exonRegion"/>
-</class>
 <class name="MRNA" is-interface="true">
   <collection name="startCodons" referenced-type="StartCodon" reverse-reference="mRNA"/>
   <collection name="stopCodons" referenced-type="StopCodon" reverse-reference="mRNA"/>
@@ -34,6 +32,12 @@
 </class> 
 <class name="EST" is-interface="true">
   <collection name="overlappingESTSets" referenced-type="OverlappingESTSet" reverse-reference="ESTs" />
+</class>
+
+<class name="ExonRegion" extends="Region" is-interface="true"/>
+<!-- 
+<class name="ExonRegion" extends="Region" is-interface="true">
+  <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="exonRegion"/>
 </class>
 <class name="MiRNA" is-interface="true">
   <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="miRNA"/>
@@ -44,7 +48,7 @@
 <class name="Intron" is-interface="true">
   <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="intron"/>
 </class>
-
+-->
 
 <!-- these references should be checked: maybe collections? -->
 <class name="Transcript" is-interface="true">
@@ -121,13 +125,17 @@
   <attribute name="dcpmBases" type="java.lang.Integer" />
   <attribute name="transcribed" type="java.lang.String" />
   <attribute name="predictionStatus" type="java.lang.String" />
+  <reference name="feature" referenced-type="LocatedSequenceFeature" reverse-reference="expressionLevels"/>
+  <reference name="submission" referenced-type="Submission"/>
   
-  <reference name="miRNA" referenced-type="MiRNA" reverse-reference="expressionLevels"/>
 <!--   <reference name="transcript" referenced-type="Transcript" reverse-reference="expressionLevels"/>
--->
+  <reference name="submission" referenced-type="Submission" reverse-reference="expressionLevels"/>
+
+  <reference name="miRNA" referenced-type="MiRNA" reverse-reference="expressionLevels"/>
   <reference name="exon" referenced-type="Exon" reverse-reference="expressionLevels"/>
   <reference name="exonRegion" referenced-type="ExonRegion" reverse-reference="expressionLevels"/>
   <reference name="intron" referenced-type="Intron" reverse-reference="expressionLevels"/> 
+  -->
 </class>
 
 
@@ -205,6 +213,7 @@
     <collection name="databaseRecords" referenced-type="DatabaseRecord" reverse-reference="submissions"/>
     <collection name="resultFiles" referenced-type="ResultFile" reverse-reference="submission"/>
     <collection name="relatedSubmissions" referenced-type="Submission"/>
+    <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="submission"/>
   </class>
 
   <class name="ExperimentalFactor"
