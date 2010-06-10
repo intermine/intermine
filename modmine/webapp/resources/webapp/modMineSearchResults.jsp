@@ -52,8 +52,41 @@ Search Term: <c:out value="${searchTerm}"/>
       <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.id}"><c:out value="${sub.title}"></c:out></html:link></td>
       <td><fmt:formatDate value="${sub.publicReleaseDate}" type="date"/></td>
       <td>
-        <c:forEach items="${sub.properties}" var="prop">
-          <c:out value="${prop.type}: "/><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prop.id}"><c:out value="${prop.name}"/></html:link><br/>
+        <c:set var="isPrimer" value="0"/>          
+        <c:forEach items="${sub.properties}" var="prop" varStatus="status">
+         <c:choose>
+          <c:when test="${fn:contains(prop,'primer')}">
+          <c:set var="isPrimer" value="${isPrimer + 1}"/>
+          </c:when>
+          </c:choose>
+        <c:choose>
+        <c:when test="${isPrimer <= 5 || !fn:contains(prop,'primer')}">
+          <c:out value="${prop.type}: "/>
+          <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prop.id}">
+          <c:out value="${prop.name}"/></html:link><br/>
+        </c:when>
+        <c:when test="${isPrimer > 5 && status.last}">
+        ...<br></br>
+        <im:querylink text="all ${isPrimer} ${prop.type}s" showArrow="true" skipBuilder="true" 
+                  title="View all ${isPrimer} ${prop.type}s factors of submission ${sub.dCCid}">
+
+<query name="" model="genomic" view="SubmissionProperty.name SubmissionProperty.type" sortOrder="SubmissionProperty.type asc" constraintLogic="A and B">
+  <node path="SubmissionProperty" type="SubmissionProperty">
+  </node>
+  <node path="SubmissionProperty.submissions" type="Submission">
+    <constraint op="LOOKUP" value="${sub.dCCid}" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+  <node path="SubmissionProperty.type" type="String">
+    <constraint op="=" value="${prop.type}" description="" identifier="" code="B" extraValue="">
+    </constraint>
+  </node>
+</query>
+
+                  </im:querylink>
+        
+        </c:when>
+        </c:choose>
         </c:forEach>
       </td>
       
@@ -61,6 +94,8 @@ Search Term: <c:out value="${searchTerm}"/>
 </tr>
 </c:forEach>
 </table>
+
+
 
 </div>
 
