@@ -68,7 +68,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
          "natural_transposable_element", "start_codon", "stop_codon"
          , "cDNA"
          , "three_prime_RACE_clone", "three_prime_RST", "three_prime_UST"
-         , "polyA_site", "overlapping_EST_set", "exon_region"
+         , "polyA_site", "polyA_signal_sequence", "overlapping_EST_set", "exon_region"
          , "SL1_acceptor_site", "SL2_acceptor_site"
          , "transcription_end_site", "TSS"
     );
@@ -205,6 +205,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
         // adding scores
         processFeatureScores(connection);
+        
+        // do experimental features (expression levels)
+        processExpressionLevels(connection);
     }
 
 
@@ -463,12 +466,86 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                   Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
 
           // additional properties
-          map.put(new MultiKey("prop", "ExperimentalFeature", "dcpm"),
-                  Arrays.asList(new SetFieldConfigAction("dcpm")));
-          map.put(new MultiKey("prop", "ExperimentalFeature", "dcpm_bases"),
-                  Arrays.asList(new SetFieldConfigAction("dcpmBases")));
-          map.put(new MultiKey("prop", "ExperimentalFeature", "read_count"),
-                  Arrays.asList(new SetFieldConfigAction("readCount")));
+//          map.put(new MultiKey("prop", "CDS", "note"),
+//                  Arrays.asList(new SetFieldConfigAction("note")));
+//          map.put(new MultiKey("prop", "CDS", "status"),
+//                  Arrays.asList(new SetFieldConfigAction("status")));
+//          map.put(new MultiKey("prop", "CDS", "wormpep"),
+//                  Arrays.asList(new SetFieldConfigAction("wormpep")));
+//          
+//          map.put(new MultiKey("prop", "MRNA", "note"),
+//                  Arrays.asList(new SetFieldConfigAction("note")));
+//          map.put(new MultiKey("prop", "MRNA", "cds"),
+//                  Arrays.asList(new SetFieldConfigAction("CDS")));
+//          map.put(new MultiKey("prop", "MRNA", "wormpep"),
+//                  Arrays.asList(new SetFieldConfigAction("wormpep")));
+//
+//          map.put(new MultiKey("prop", "PolyASite", "Note"),
+//                  Arrays.asList(new SetFieldConfigAction("note")));
+//          map.put(new MultiKey("prop", "PolyASite", "external_evidence"),
+//                  Arrays.asList(new SetFieldConfigAction("externalEvidence")));
+//
+//          map.put(new MultiKey("prop", "ThreePrimeRACEClone", "Note"),
+//                  Arrays.asList(new SetFieldConfigAction("note")));
+//
+//          map.put(new MultiKey("prop", "ThreePrimeRST", "genebank_acc"),
+//                  Arrays.asList(new SetFieldConfigAction("genebankAcc")));
+//          map.put(new MultiKey("prop", "ThreePrimeRST", "ncbi_dbest"),
+//                  Arrays.asList(new SetFieldConfigAction("ncbiDBest")));
+//          
+//          map.put(new MultiKey("prop", "ThreePrimeUTR", "Note"),
+//                  Arrays.asList(new SetFieldConfigAction("note")));
+//          map.put(new MultiKey("prop", "ThreePrimeUTR", "external_evidence"),
+//                  Arrays.asList(new SetFieldConfigAction("externalEvidence")));
+//
+//          map.put(new MultiKey("prop", "BindingSite", "qValue"),
+//                  Arrays.asList(new SetFieldConfigAction("qValue")));
+//
+//          map.put(new MultiKey("prop", "SL1AcceptorSite", "prediction_status"),
+//                  Arrays.asList(new SetFieldConfigAction("predictionStatus")));
+//
+//          map.put(new MultiKey("prop", "Exon", "acceptor"),
+//                  Arrays.asList(new SetFieldConfigAction("acceptor")));
+//          map.put(new MultiKey("prop", "Exon", "connected_to_wormbase_transcript"),
+//                  Arrays.asList(new SetFieldConfigAction("connectedToWormbaseTranscript")));
+//          map.put(new MultiKey("prop", "Exon", "donor"),
+//                  Arrays.asList(new SetFieldConfigAction("donor")));
+//          map.put(new MultiKey("prop", "Exon", "overlapping_wormbase_transcript"),
+//                  Arrays.asList(new SetFieldConfigAction("overlappingWormbaseTranscript")));
+//          map.put(new MultiKey("prop", "Exon", "polyA"),
+//                  Arrays.asList(new SetFieldConfigAction("polyA")));
+//          map.put(new MultiKey("prop", "Exon", "tes"),
+//                  Arrays.asList(new SetFieldConfigAction("tes")));
+//          map.put(new MultiKey("prop", "Exon", "tsl"),
+//                  Arrays.asList(new SetFieldConfigAction("tsl")));
+//          map.put(new MultiKey("prop", "Exon", "tss"),
+//                  Arrays.asList(new SetFieldConfigAction("tss")));
+//
+//          map.put(new MultiKey("prop", "OverlappingESTSet", "fdr"),
+//                  Arrays.asList(new SetFieldConfigAction("fdr")));
+//          map.put(new MultiKey("prop", "OverlappingESTSet", "fp"),
+//                  Arrays.asList(new SetFieldConfigAction("fp")));
+//          map.put(new MultiKey("prop", "OverlappingESTSet", "overlap"),
+//                  Arrays.asList(new SetFieldConfigAction("overlap")));
+//          map.put(new MultiKey("prop", "OverlappingESTSet", "reads"),
+//                  Arrays.asList(new SetFieldConfigAction("reads")));
+//          map.put(new MultiKey("prop", "OverlappingESTSet", "strands_confirmed"),
+//                  Arrays.asList(new SetFieldConfigAction("strandsConfirmed")));
+//          map.put(new MultiKey("prop", "OverlappingESTSet", "trimT"),
+//                  Arrays.asList(new SetFieldConfigAction("trimT")));
+//          
+//          map.put(new MultiKey("prop", "Transcript", "transcribed"),
+//                  Arrays.asList(new SetFieldConfigAction("transcribed")));
+//
+//          map.put(new MultiKey("prop", "TranscriptRegion", "marginal_fpr"),
+//                  Arrays.asList(new SetFieldConfigAction("marginalFpr")));
+//          map.put(new MultiKey("prop", "TranscriptRegion", "marginal_sensitivity"),
+//                  Arrays.asList(new SetFieldConfigAction("marginalSensitivity")));
+//          map.put(new MultiKey("prop", "TranscriptRegion", "mean_intensity"),
+//                  Arrays.asList(new SetFieldConfigAction("meanIntensity")));
+//          map.put(new MultiKey("prop", "TranscriptRegion", "rank_score"),
+//                  Arrays.asList(new SetFieldConfigAction("rankScore")));
+
           map.put(new MultiKey("prop", "LocatedSequenceFeature", "prediction_status"),
                   Arrays.asList(new SetFieldConfigAction("predictionStatus")));
 
@@ -679,4 +756,152 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         LOG.info("QUERY TIME feature scores: " + (System.currentTimeMillis() - bT));
         return res;
     }
+
+    private void processExpressionLevels(Connection connection) throws SQLException,
+    ObjectStoreException {
+        ResultSet res = getExpressionLevels(connection);
+        Integer previousId = -1;
+//        Integer previousObjectId = -1;
+        Integer objectId = -1;
+        Item level = null;
+        while (res.next()) {
+            Integer id = res.getInt("expression_id");
+            Integer featureId = res.getInt("feature_id");
+//            Double value = res.getDouble("value");
+            String name = res.getString("uniquename");
+            String value = res.getString("value");
+            String property = res.getString("property");
+            String propValue = res.getString("propvalue");
+            
+            if (id != previousId) {
+        
+                // if not first store prev level
+                if (previousId > 0) {
+                  objectId = getChadoDBConverter().store(level);
+                  LOG.info("EV: " + objectId);
+                }
+                
+                // create new
+                level = getChadoDBConverter().createItem("ExpressionLevel");
+                level.setAttribute("name", name);                    
+                level.setAttribute("value", value);                    
+                if (featureMap.containsKey(featureId)) {
+                    FeatureData fData = featureMap.get(featureId);
+//                    Integer storedFeatureId = fData.getIntermineObjectId();
+                    String imType = fData.getInterMineType();
+                    String referenceName = getRefName(imType);
+                    String featureItemId = fData.getItemIdentifier();
+                    level.setReference(referenceName, featureItemId);
+                }
+            }
+            
+                level.setAttribute(getPropName(property), propValue);                    
+                previousId = id;
+            }
+        res.close();
+    }
+
+    private String getPropName(String property) {
+        //    if (property.contains("_")) {
+        //        String tmp = StringUtils.property.indexOf('_');
+        //    }
+        if ( property.equalsIgnoreCase("read_count")){
+            return "readCount";
+        }
+        if ( property.equalsIgnoreCase("dcpm_bases")){
+            return "dcpmBases";
+        }
+        if ( property.equalsIgnoreCase("prediction_status")){
+            return "predictionStatus";
+        }
+        return property;
+    }
+
+//  if (featureMap.containsKey(featureId)) {
+//  FeatureData fData = featureMap.get(featureId);
+//  Integer storedFeatureId = fData.getIntermineObjectId();
+//
+////  Integer intermineObjectId = getChadoDBConverter().store(lab);
+////  storeInLabMaps(lab, prov, intermineObjectId);
+//
+//  Attribute scoreAttribute = new Attribute("score", score.toString());
+//  getChadoDBConverter().store(scoreAttribute, storedFeatureId);
+//
+//  Attribute scoreTypeAttribute = new Attribute("scoreType", program);
+//  getChadoDBConverter().store(scoreTypeAttribute, storedFeatureId);
+//
+//  if (scoreProtocolItemId != null) {
+//      Reference scoreProtocolRef =
+//          new Reference("scoreProtocol", scoreProtocolItemId);
+//      getChadoDBConverter().store(scoreProtocolRef, storedFeatureId);
+//  }
+//}
+
+    
+    
+    
+    
+    private String getRefName(String imType) {
+        // 
+        String ref = StringUtils.uncapitalize(imType);
+        LOG.info("EV types: " + imType + "|" + ref);
+        return ref;
+    }
+
+    private ResultSet getExpressionLevels(Connection connection) throws SQLException {
+        String query1 = "SELECT subject_id as expression_id, f1.uniquename "
+            + " ,af.rawscore as score, object_id as feature_id, c2.name "
+            + " FROM feature_relationship, cvterm c1, feature f1, analysisfeature af "
+            + " ,cvterm c2, feature f2 "
+            + " WHERE c1.cvterm_id = f1.type_id "
+            + " AND f1.feature_id = subject_id "
+            + " and af.feature_id = f1.feature_id "
+            + " and c2.cvterm_id = f2.type_id "
+            + " and f2.feature_id = object_id "
+            + " and c1.name= 'experimental_feature' "
+            + " AND subject_id IN (" + SUBFEATUREID_TEMP_TABLE_NAME + ")"
+            //        + " AND object_id IN (" + SUBFEATUREID_TEMP_TABLE_NAME + ")"
+            //        + " ORDER BY feature1_id";
+            ;
+
+        
+        String query2 = "SELECT subject_id as level_id, f1.uniquename, af.rawscore as value "
+            + " , object_id as feature_id, c2.name, cp.name, fp.value "
+            + " FROM feature_relationship, cvterm c1, feature f1, analysisfeature af " 
+            + " , cvterm c2, feature f2, featureprop fp, cvterm cp "
+            + " WHERE c1.cvterm_id = f1.type_id "
+            + " AND f1.feature_id = subject_id "
+            + " and af.feature_id = f1.feature_id "
+            + " and c2.cvterm_id = f2.type_id "
+            + " and f2.feature_id = object_id "
+            + " and f1.feature_id = fp.feature_id "
+            + " and cp.cvterm_id = fp.type_id "
+            + " and c1.name= 'experimental_feature' "
+            + " AND subject_id IN (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
+//            + " AND subject_id IN (" + SUBFEATUREID_TEMP_TABLE_NAME + ")"
+//            ;
+
+        String query = "SELECT subject_id as expression_id, f1.uniquename, af.rawscore as value "
+            + " , object_id as feature_id, cp.name as property, fp.value as propvalue "
+            + " FROM feature_relationship, cvterm c1, feature f1, analysisfeature af " 
+            + " , feature f2, featureprop fp, cvterm cp "
+            + " WHERE c1.cvterm_id = f1.type_id "
+            + " AND f1.feature_id = subject_id "
+            + " and af.feature_id = f1.feature_id "
+            + " and f2.feature_id = object_id "
+            + " and f1.feature_id = fp.feature_id "
+            + " and cp.cvterm_id = fp.type_id "
+            + " and c1.name= 'experimental_feature' "
+            + " AND subject_id IN (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
+//            + " AND subject_id IN (" + SUBFEATUREID_TEMP_TABLE_NAME + ")"
+//            ;
+
+        LOG.info("executing: " + query);
+        long bT = System.currentTimeMillis();
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        LOG.info("QUERY TIME expression values: " + (System.currentTimeMillis() - bT));
+        return res;
+    }
+
 }

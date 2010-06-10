@@ -19,11 +19,14 @@
 </class>
 <class name="ThreePrimeUTR" is-interface="true">
   <collection name="CDSs" referenced-type="CDS" reverse-reference="threePrimeUTRs" />    
+  <collection name="polyASignalSequences" referenced-type="PolyASignalSequence" reverse-reference="threePrimeUTRs" />    
 </class>
 <class name="CDS" is-interface="true">
   <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="CDSs"/>
 </class>
-<class name="ExonRegion" extends="Region" is-interface="true"/>
+<class name="ExonRegion" extends="Region" is-interface="true">
+  <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="exonRegion"/>
+</class>
 <class name="MRNA" is-interface="true">
   <collection name="startCodons" referenced-type="StartCodon" reverse-reference="mRNA"/>
   <collection name="stopCodons" referenced-type="StopCodon" reverse-reference="mRNA"/>
@@ -33,7 +36,13 @@
   <collection name="overlappingESTSets" referenced-type="OverlappingESTSet" reverse-reference="ESTs" />
 </class>
 <class name="MiRNA" is-interface="true">
-  <collection name="experimentalFeatures" referenced-type="ExperimentalFeature" reverse-reference="miRNA"/>
+  <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="miRNA"/>
+</class>
+<class name="Exon" is-interface="true">
+  <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="exon"/>
+</class>
+<class name="Intron" is-interface="true">
+  <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="intron"/>
 </class>
 
 
@@ -42,6 +51,8 @@
   <collection name="SL1AcceptorSites" referenced-type="SL1AcceptorSite" reverse-reference="transcripts" />
   <collection name="SL2AcceptorSites" referenced-type="SL2AcceptorSite" reverse-reference="transcripts" />
   <collection name="TSSs" referenced-type="TSS" reverse-reference="transcripts" />
+<!--   <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="transcript"/>
+-->
 </class>
 <class name="Gene" is-interface="true">
   <attribute name="source" type="java.lang.String" />
@@ -85,17 +96,14 @@
   <reference name="transcriptRegion" referenced-type="TranscriptRegion" reverse-reference="overlappingESTSet"/>
 -->
 </class>
+<class name="PolyASignalSequence" extends="Region" is-interface="true">
+  <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="polyASignalSequences"/>
+</class>
 <class name="SL1AcceptorSite" extends="Region" is-interface="true">
   <collection name="transcripts" referenced-type="Transcript" reverse-reference="SL1AcceptorSites"/>
 </class>
 <class name="SL2AcceptorSite" extends="Region" is-interface="true">
   <collection name="transcripts" referenced-type="Transcript" reverse-reference="SL2AcceptorSites"/>
-</class>
-<class name="ExperimentalFeature" extends="Region" is-interface="true">
-  <attribute name="readCount" type="java.lang.Integer" />
-  <attribute name="dcpm" type="java.lang.Double" />
-  <attribute name="dcpmBases" type="java.lang.Integer" />
-  <reference name="miRNA" referenced-type="MiRNA" reverse-reference="experimentalFeatures"/>
 </class>
 
 <!-- these should be actually the same class -->
@@ -104,6 +112,25 @@
 </class>
 
 <!-- OTHER modENCODE classes -->   
+
+<class name="ExpressionLevel" is-interface="true">
+  <attribute name="name" type="java.lang.String" />
+  <attribute name="value" type="java.lang.Double" />
+  <attribute name="readCount" type="java.lang.Integer" />
+  <attribute name="dcpm" type="java.lang.Double" />
+  <attribute name="dcpmBases" type="java.lang.Integer" />
+  <attribute name="transcribed" type="java.lang.String" />
+  <attribute name="predictionStatus" type="java.lang.String" />
+  
+  <reference name="miRNA" referenced-type="MiRNA" reverse-reference="expressionLevels"/>
+<!--   <reference name="transcript" referenced-type="Transcript" reverse-reference="expressionLevels"/>
+-->
+  <reference name="exon" referenced-type="Exon" reverse-reference="expressionLevels"/>
+  <reference name="exonRegion" referenced-type="ExonRegion" reverse-reference="expressionLevels"/>
+  <reference name="intron" referenced-type="Intron" reverse-reference="expressionLevels"/> 
+</class>
+
+
 
 <class name="Project" is-interface="true">
   <attribute name="name" type="java.lang.String" />
