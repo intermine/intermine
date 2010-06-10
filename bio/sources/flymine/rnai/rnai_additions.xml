@@ -2,6 +2,7 @@
 <classes>
 <class name="RNAiResult" is-interface="true">
   <reference name="gene" referenced-type="Gene" reverse-reference="rnaiResults"/>
+  <collection name="dataSets" referenced-type="DataSet"/>
 </class>
 <class name="RNAiPhenotype" extends="RNAiResult" is-interface="true">
   <attribute name="code" type="java.lang.String"/>

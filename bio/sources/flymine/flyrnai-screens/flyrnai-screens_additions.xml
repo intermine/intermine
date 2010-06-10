@@ -8,17 +8,20 @@
     <reference name="publication" referenced-type="Publication"/>
     <collection name="rnaiScreenHits" referenced-type="RNAiScreenHit" reverse-reference="rnaiScreen"/>
   </class>
+  <class name="RNAiResult" is-interface="true">
+    <reference name="gene" referenced-type="Gene" reverse-reference="rnaiResults"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
+  </class>
   <class name="RNAiScreenHit" extends="RNAiResult" is-interface="true">
     <attribute name="result" type="java.lang.String"/>
     <reference name="amplicon" referenced-type="Amplicon" reverse-reference="rnaiScreenHits"/>
     <reference name="rnaiScreen" referenced-type="RNAiScreen" reverse-reference="rnaiScreenHits"/>
-    <reference name="gene" referenced-type="Gene" reverse-reference="rnaiResults" />
   </class>
   <class name="Amplicon" extends="SequenceFeature" is-interface="true">
     <collection name="rnaiScreenHits" referenced-type="RNAiScreenHit"/>
     <collection name="genes" referenced-type="Gene"/>
   </class>
   <class name="Gene" is-interface="true">
-  	<collection name="rnaiResults" referenced-type="RNAiResult" reverse-reference="gene"/>
+    <collection name="rnaiResults" referenced-type="RNAiResult" reverse-reference="gene"/>
   </class>
 </classes>
