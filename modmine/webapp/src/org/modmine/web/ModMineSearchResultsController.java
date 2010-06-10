@@ -64,15 +64,12 @@ public class ModMineSearchResultsController extends TilesAction
 
             Set<Integer> objectIds = searchResults.keySet();
 
-        
             LOG.info("SEARCH HITS: " + searchResults.size());
 
-            
             Map<Integer, Integer> subMap = ModMineSearch.getSubMap();
             for (Map.Entry<Integer, Float> entry : searchResults.entrySet()) {
                 scores.put(entry.getValue(), subMap.get(entry.getKey()));
             }
-            
 
             Map<Integer, Submission> objMap = new HashMap<Integer, Submission>();
             for (InterMineObject obj : im.getObjectStore().getObjectsByIds(objectIds)) {
@@ -80,17 +77,15 @@ public class ModMineSearchResultsController extends TilesAction
             }
             LOG.info("SEARCH - OBJS: " + objMap.size());
 
-
             for (Map.Entry<Integer, Float> entry : searchResults.entrySet()) {
-                submissions.put(objMap.get(entry.getKey()), new Integer(Math.round(entry.getValue() * 10)));
+                submissions.put(objMap.get(entry.getKey()), 
+                        new Integer(Math.round(entry.getValue() * 10)));
             }
         }
         LOG.info("SEARCH SUBS: " + submissions.size());
         request.setAttribute("scores", scores);
         request.setAttribute("submissions", submissions);
         
-        
-
         request.setAttribute("searchTerm", "THE SEARCH TERM");
         if (searchTerm != null) {
             context.putAttribute("searchTerm", searchTerm);
