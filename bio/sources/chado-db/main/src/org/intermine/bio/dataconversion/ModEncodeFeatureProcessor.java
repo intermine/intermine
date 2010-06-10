@@ -468,86 +468,86 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
           // additional properties
 //          map.put(new MultiKey("prop", "CDS", "note"),
 //                  Arrays.asList(new SetFieldConfigAction("note")));
-//          map.put(new MultiKey("prop", "CDS", "status"),
-//                  Arrays.asList(new SetFieldConfigAction("status")));
-//          map.put(new MultiKey("prop", "CDS", "wormpep"),
-//                  Arrays.asList(new SetFieldConfigAction("wormpep")));
-//          
+          map.put(new MultiKey("prop", "CDS", "status"),
+                  Arrays.asList(new SetFieldConfigAction("status")));
+          map.put(new MultiKey("prop", "CDS", "wormpep"),
+                  Arrays.asList(new SetFieldConfigAction("wormpep")));
+          
 //          map.put(new MultiKey("prop", "MRNA", "note"),
 //                  Arrays.asList(new SetFieldConfigAction("note")));
-//          map.put(new MultiKey("prop", "MRNA", "cds"),
-//                  Arrays.asList(new SetFieldConfigAction("CDS")));
-//          map.put(new MultiKey("prop", "MRNA", "wormpep"),
-//                  Arrays.asList(new SetFieldConfigAction("wormpep")));
-//
+          map.put(new MultiKey("prop", "MRNA", "cds"),
+                  Arrays.asList(new SetFieldConfigAction("CDS")));
+          map.put(new MultiKey("prop", "MRNA", "wormpep"),
+                  Arrays.asList(new SetFieldConfigAction("wormpep")));
+
 //          map.put(new MultiKey("prop", "PolyASite", "Note"),
 //                  Arrays.asList(new SetFieldConfigAction("note")));
-//          map.put(new MultiKey("prop", "PolyASite", "external_evidence"),
-//                  Arrays.asList(new SetFieldConfigAction("externalEvidence")));
-//
+          map.put(new MultiKey("prop", "PolyASite", "external_evidence"),
+                  Arrays.asList(new SetFieldConfigAction("externalEvidence")));
+
 //          map.put(new MultiKey("prop", "ThreePrimeRACEClone", "Note"),
 //                  Arrays.asList(new SetFieldConfigAction("note")));
-//
-//          map.put(new MultiKey("prop", "ThreePrimeRST", "genebank_acc"),
-//                  Arrays.asList(new SetFieldConfigAction("genebankAcc")));
-//          map.put(new MultiKey("prop", "ThreePrimeRST", "ncbi_dbest"),
-//                  Arrays.asList(new SetFieldConfigAction("ncbiDBest")));
-//          
+
+          map.put(new MultiKey("prop", "ThreePrimeRST", "genbank_acc"),
+                  Arrays.asList(new SetFieldConfigAction("GenBankAcc")));
+          map.put(new MultiKey("prop", "ThreePrimeRST", "ncbi_dbest"),
+                  Arrays.asList(new SetFieldConfigAction("NCBIdbEST")));
+          
 //          map.put(new MultiKey("prop", "ThreePrimeUTR", "Note"),
 //                  Arrays.asList(new SetFieldConfigAction("note")));
-//          map.put(new MultiKey("prop", "ThreePrimeUTR", "external_evidence"),
-//                  Arrays.asList(new SetFieldConfigAction("externalEvidence")));
-//
-//          map.put(new MultiKey("prop", "BindingSite", "qValue"),
-//                  Arrays.asList(new SetFieldConfigAction("qValue")));
-//
-//          map.put(new MultiKey("prop", "SL1AcceptorSite", "prediction_status"),
-//                  Arrays.asList(new SetFieldConfigAction("predictionStatus")));
-//
-//          map.put(new MultiKey("prop", "Exon", "acceptor"),
-//                  Arrays.asList(new SetFieldConfigAction("acceptor")));
-//          map.put(new MultiKey("prop", "Exon", "connected_to_wormbase_transcript"),
-//                  Arrays.asList(new SetFieldConfigAction("connectedToWormbaseTranscript")));
-//          map.put(new MultiKey("prop", "Exon", "donor"),
-//                  Arrays.asList(new SetFieldConfigAction("donor")));
-//          map.put(new MultiKey("prop", "Exon", "overlapping_wormbase_transcript"),
-//                  Arrays.asList(new SetFieldConfigAction("overlappingWormbaseTranscript")));
-//          map.put(new MultiKey("prop", "Exon", "polyA"),
-//                  Arrays.asList(new SetFieldConfigAction("polyA")));
-//          map.put(new MultiKey("prop", "Exon", "tes"),
-//                  Arrays.asList(new SetFieldConfigAction("tes")));
-//          map.put(new MultiKey("prop", "Exon", "tsl"),
-//                  Arrays.asList(new SetFieldConfigAction("tsl")));
-//          map.put(new MultiKey("prop", "Exon", "tss"),
-//                  Arrays.asList(new SetFieldConfigAction("tss")));
-//
-//          map.put(new MultiKey("prop", "OverlappingESTSet", "fdr"),
-//                  Arrays.asList(new SetFieldConfigAction("fdr")));
-//          map.put(new MultiKey("prop", "OverlappingESTSet", "fp"),
-//                  Arrays.asList(new SetFieldConfigAction("fp")));
-//          map.put(new MultiKey("prop", "OverlappingESTSet", "overlap"),
-//                  Arrays.asList(new SetFieldConfigAction("overlap")));
-//          map.put(new MultiKey("prop", "OverlappingESTSet", "reads"),
-//                  Arrays.asList(new SetFieldConfigAction("reads")));
-//          map.put(new MultiKey("prop", "OverlappingESTSet", "strands_confirmed"),
-//                  Arrays.asList(new SetFieldConfigAction("strandsConfirmed")));
-//          map.put(new MultiKey("prop", "OverlappingESTSet", "trimT"),
-//                  Arrays.asList(new SetFieldConfigAction("trimT")));
-//          
-//          map.put(new MultiKey("prop", "Transcript", "transcribed"),
-//                  Arrays.asList(new SetFieldConfigAction("transcribed")));
-//
-//          map.put(new MultiKey("prop", "TranscriptRegion", "marginal_fpr"),
-//                  Arrays.asList(new SetFieldConfigAction("marginalFpr")));
-//          map.put(new MultiKey("prop", "TranscriptRegion", "marginal_sensitivity"),
-//                  Arrays.asList(new SetFieldConfigAction("marginalSensitivity")));
-//          map.put(new MultiKey("prop", "TranscriptRegion", "mean_intensity"),
-//                  Arrays.asList(new SetFieldConfigAction("meanIntensity")));
-//          map.put(new MultiKey("prop", "TranscriptRegion", "rank_score"),
-//                  Arrays.asList(new SetFieldConfigAction("rankScore")));
+          map.put(new MultiKey("prop", "ThreePrimeUTR", "external_evidence"),
+                  Arrays.asList(new SetFieldConfigAction("externalEvidence")));
+
+          map.put(new MultiKey("prop", "BindingSite", "qValue"),
+                  Arrays.asList(new SetFieldConfigAction("qValue")));
+
+          map.put(new MultiKey("prop", "Exon", "acceptor"),
+                  Arrays.asList(new SetFieldConfigAction("acceptor")));
+          map.put(new MultiKey("prop", "Exon", "connected_to_wormbase_transcript"),
+                  Arrays.asList(new SetFieldConfigAction("connectedToWormbaseTranscript")));
+          map.put(new MultiKey("prop", "Exon", "donor"),
+                  Arrays.asList(new SetFieldConfigAction("donor")));
+          map.put(new MultiKey("prop", "Exon", "overlapping_wormbase_transcript"),
+                  Arrays.asList(new SetFieldConfigAction("overlappingWormbaseTranscript")));
+          map.put(new MultiKey("prop", "Exon", "polyA"),
+                  Arrays.asList(new SetFieldConfigAction("polyA")));
+          map.put(new MultiKey("prop", "Exon", "tes"),
+                  Arrays.asList(new SetFieldConfigAction("tes")));
+          map.put(new MultiKey("prop", "Exon", "tsl"),
+                  Arrays.asList(new SetFieldConfigAction("tsl")));
+          map.put(new MultiKey("prop", "Exon", "tss"),
+                  Arrays.asList(new SetFieldConfigAction("tss")));
+
+          map.put(new MultiKey("prop", "OverlappingESTSet", "fdr"),
+                  Arrays.asList(new SetFieldConfigAction("fdr")));
+          map.put(new MultiKey("prop", "OverlappingESTSet", "fp"),
+                  Arrays.asList(new SetFieldConfigAction("fp")));
+          map.put(new MultiKey("prop", "OverlappingESTSet", "overlap"),
+                  Arrays.asList(new SetFieldConfigAction("overlap")));
+          map.put(new MultiKey("prop", "OverlappingESTSet", "reads"),
+                  Arrays.asList(new SetFieldConfigAction("reads")));
+          map.put(new MultiKey("prop", "OverlappingESTSet", "strands_confirmed"),
+                  Arrays.asList(new SetFieldConfigAction("strandsConfirmed")));
+          map.put(new MultiKey("prop", "OverlappingESTSet", "trimT"),
+                  Arrays.asList(new SetFieldConfigAction("trimT")));
+          
+          map.put(new MultiKey("prop", "Transcript", "transcribed"),
+                  Arrays.asList(new SetFieldConfigAction("transcribed")));
+
+          map.put(new MultiKey("prop", "TranscriptRegion", "marginal_fpr"),
+                  Arrays.asList(new SetFieldConfigAction("marginalFpr")));
+          map.put(new MultiKey("prop", "TranscriptRegion", "marginal_sensitivity"),
+                  Arrays.asList(new SetFieldConfigAction("marginalSensitivity")));
+          map.put(new MultiKey("prop", "TranscriptRegion", "mean_intensity"),
+                  Arrays.asList(new SetFieldConfigAction("meanIntensity")));
+          map.put(new MultiKey("prop", "TranscriptRegion", "rank_score"),
+                  Arrays.asList(new SetFieldConfigAction("rankScore")));
 
           map.put(new MultiKey("prop", "LocatedSequenceFeature", "prediction_status"),
                   Arrays.asList(new SetFieldConfigAction("predictionStatus")));
+
+          map.put(new MultiKey("prop", "LocatedSequenceFeature", "note"),
+                  Arrays.asList(new SetFieldConfigAction("note")));
 
         }
         return map;
