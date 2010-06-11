@@ -28,7 +28,8 @@
 <class name="CDS" is-interface="true">
   <attribute name="status" type="java.lang.String" />
   <attribute name="wormpep" type="java.lang.String" />
-  <collection name="transcripts" referenced-type="Transcript" reverse-reference="CDSs"/>
+<!-- <collection name="transcripts" referenced-type="Transcript" reverse-reference="CDSs"/>
+-->
   <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="CDS"/>
 </class>
 <class name="BindingSite" is-interface="true">
@@ -61,20 +62,6 @@
 <class name="ExonRegion" extends="Region" is-interface="true">
   <reference name="transcriptRegion" referenced-type="TranscriptRegion" reverse-reference="exonRegions" />      
 </class>
-<!-- 
-<class name="ExonRegion" extends="Region" is-interface="true">
-  <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="exonRegion"/>
-</class>
-<class name="MiRNA" is-interface="true">
-  <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="miRNA"/>
-</class>
-<class name="Exon" is-interface="true">
-  <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="exon"/>
-</class>
-<class name="Intron" is-interface="true">
-  <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="intron"/>
-</class>
--->
 <class name="Intron" is-interface="true">
   <collection name="transcriptRegions" referenced-type="TranscriptRegion" reverse-reference="introns"/>
 </class>
@@ -82,12 +69,11 @@
 <!-- these references should be checked: maybe collections? -->
 <class name="Transcript" is-interface="true">
   <attribute name="transcribed" type="java.lang.String" />
-  <collection name="CDSs" referenced-type="CDS" reverse-reference="transcripts" />
+<!--   <collection name="CDSs" referenced-type="CDS" reverse-reference="transcripts" />
+-->
   <collection name="SL1AcceptorSites" referenced-type="SL1AcceptorSite" reverse-reference="transcripts" />
   <collection name="SL2AcceptorSites" referenced-type="SL2AcceptorSite" reverse-reference="transcripts" />
   <collection name="TSSs" referenced-type="TSS" reverse-reference="transcripts" />
-<!--   <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="transcript"/>
--->
 </class>
 <class name="Gene" is-interface="true">
   <attribute name="source" type="java.lang.String" />
