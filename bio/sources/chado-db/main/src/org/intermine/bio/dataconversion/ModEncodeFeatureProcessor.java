@@ -410,19 +410,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                     "evidence_for_feature", "TranscriptRegion"),
                     Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
 
-            map.put(new MultiKey("relationship", "ExperimentalFeature",
-                    "evidence_for_feature", "Transcript"),
-                    Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
-            map.put(new MultiKey("relationship", "ExperimentalFeature",
-                    "evidence_for_feature", "Exon"),
-                    Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
-            map.put(new MultiKey("relationship", "ExperimentalFeature",
-                    "evidence_for_feature", "Intron"),
-                    Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
-            map.put(new MultiKey("relationship", "ExperimentalFeature",
-                    "evidence_for_feature", "ExonRegion"),
-                    Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
-
             // partial_evidence_for_feature
             map.put(new MultiKey("relationship", "OverlappingESTSet",
                     "partial_evidence_for_feature", "MRNA"),
@@ -466,35 +453,24 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                   Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
 
           // additional properties
-//          map.put(new MultiKey("prop", "CDS", "note"),
-//                  Arrays.asList(new SetFieldConfigAction("note")));
           map.put(new MultiKey("prop", "CDS", "status"),
                   Arrays.asList(new SetFieldConfigAction("status")));
           map.put(new MultiKey("prop", "CDS", "wormpep"),
                   Arrays.asList(new SetFieldConfigAction("wormpep")));
           
-//          map.put(new MultiKey("prop", "MRNA", "note"),
-//                  Arrays.asList(new SetFieldConfigAction("note")));
           map.put(new MultiKey("prop", "MRNA", "cds"),
                   Arrays.asList(new SetFieldConfigAction("CDS")));
           map.put(new MultiKey("prop", "MRNA", "wormpep"),
                   Arrays.asList(new SetFieldConfigAction("wormpep")));
 
-//          map.put(new MultiKey("prop", "PolyASite", "Note"),
-//                  Arrays.asList(new SetFieldConfigAction("note")));
           map.put(new MultiKey("prop", "PolyASite", "external_evidence"),
                   Arrays.asList(new SetFieldConfigAction("externalEvidence")));
-
-//          map.put(new MultiKey("prop", "ThreePrimeRACEClone", "Note"),
-//                  Arrays.asList(new SetFieldConfigAction("note")));
 
           map.put(new MultiKey("prop", "ThreePrimeRST", "genbank_acc"),
                   Arrays.asList(new SetFieldConfigAction("GenBankAcc")));
           map.put(new MultiKey("prop", "ThreePrimeRST", "ncbi_dbest"),
                   Arrays.asList(new SetFieldConfigAction("NCBIdbEST")));
           
-//          map.put(new MultiKey("prop", "ThreePrimeUTR", "Note"),
-//                  Arrays.asList(new SetFieldConfigAction("note")));
           map.put(new MultiKey("prop", "ThreePrimeUTR", "external_evidence"),
                   Arrays.asList(new SetFieldConfigAction("externalEvidence")));
 
@@ -545,7 +521,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
           map.put(new MultiKey("prop", "LocatedSequenceFeature", "prediction_status"),
                   Arrays.asList(new SetFieldConfigAction("predictionStatus")));
-
           map.put(new MultiKey("prop", "LocatedSequenceFeature", "note"),
                   Arrays.asList(new SetFieldConfigAction("note")));
 
