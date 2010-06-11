@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.biojava.bio.structure.Structure;
@@ -46,9 +45,10 @@ public class PdbConverter extends BioDirectoryConverter
 
     private static final Logger LOG = Logger.getLogger(PdbConverter.class);
     protected static final String ENDL = System.getProperty("line.separator");
-    private Map<MultiKey, String> synonyms = new HashMap<MultiKey, String>();
+    private Map<String, String> synonyms = new HashMap();
     private Set<String> taxonIds = null;
-    private Map<String, String> proteins = new HashMap<String, String>();
+    private Map<String, String> organisms = new HashMap();
+    private Map<String, String> proteins = new HashMap();
     /**
      * Create a new PdbConverter object.
      * @param writer the ItemWriter to store the objects in
@@ -70,7 +70,7 @@ public class PdbConverter extends BioDirectoryConverter
          */
 
         File[] directories = dataDir.listFiles();
-        List<File> directoriesToProcess = new ArrayList<File>();
+        List<File> directoriesToProcess = new ArrayList();
 
         if (directories == null || directories.length == 0) {
             throw new RuntimeException("no valid PDB directories found");
@@ -99,7 +99,7 @@ public class PdbConverter extends BioDirectoryConverter
         for (File dir : directoriesToProcess) {
             String taxonId = dir.getName();
             File[] filesToProcess = dir.listFiles();
-            proteins = new HashMap<String, String>();
+            proteins = new HashMap();
             for (File f : filesToProcess) {
               if (f.getName().endsWith(".pdb")) {
                   processPDBFile(f, taxonId);
@@ -166,7 +166,7 @@ public class PdbConverter extends BioDirectoryConverter
     }
 
     private Item createSynonym(String subjectId, String type, String value) throws Exception {
-        MultiKey key = new MultiKey(subjectId, type, value);
+        String key = subjectId + type + value;
         if (StringUtils.isEmpty(value)) {
             return null;
         }
@@ -256,7 +256,7 @@ public class PdbConverter extends BioDirectoryConverter
          * Return the db refs read from the Reader.
          * @return the List of db refs
          */
-        public List<String> getDbrefs() {
+        public List getDbrefs() {
             return dbrefs;
         }
     }

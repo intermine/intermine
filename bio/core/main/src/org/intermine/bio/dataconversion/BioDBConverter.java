@@ -11,7 +11,6 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -242,11 +241,9 @@ public abstract class BioDBConverter extends DBConverter
      * @param type the Synonym type
      * @param value the Synonym value
      * @param isPrimary true if this is a primary identifier
-     * @param evidence the Synonym evidence
      * @return the new Synonym
      */
-    public Item createSynonym(String subjectId, String type, String value, boolean isPrimary,
-                              List<Item> evidence) {
+    public Item createSynonym(String subjectId, String type, String value, boolean isPrimary) {
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
