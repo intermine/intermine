@@ -22,7 +22,7 @@
 <class name="ThreePrimeUTR" is-interface="true">
   <reference name="CDS" referenced-type="CDS" reverse-reference="threePrimeUTRs" />    
   <reference name="polyASite" referenced-type="PolyASite" reverse-reference="threePrimeUTR" />    
-  <reference name="polyASignalSequence" referenced-type="PolyASignalSequence" reverse-reference="threePrimeUTR" />    
+  <collection name="polyASignalSequences" referenced-type="PolyASignalSequence" reverse-reference="threePrimeUTR" />    
   <collection name="exons" referenced-type="Exon" reverse-reference="threePrimeUTR" />    
 </class>
 <class name="CDS" is-interface="true">
@@ -153,7 +153,7 @@
 -->
 </class>
 <class name="PolyASignalSequence" extends="Region" is-interface="true">
-  <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="polyASignalSequences"/>
+  <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="polyASignalSequences"/>
 </class>
 <class name="SL1AcceptorSite" extends="Region" is-interface="true">
   <collection name="transcripts" referenced-type="Transcript" reverse-reference="SL1AcceptorSites"/>
