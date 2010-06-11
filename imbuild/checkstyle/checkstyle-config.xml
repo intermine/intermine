@@ -27,6 +27,7 @@
 
   <module name="TreeWalker">
     <property name="tabWidth" value="4"/>
+    <property name="severity" value="warning"/>
 
     <module name="JavadocType">
       <property name="scope" value="package" />
