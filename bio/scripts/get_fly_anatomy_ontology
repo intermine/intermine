@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #download fly_anatomy.obo from http://obo.cvs.sourceforge.net/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fly/
-#to /shared/data/ontologies/fly_anatomy/
+#to /shared/data/ontologies/fly-anatomy/
 
 use strict;
 use warnings;
@@ -38,7 +38,7 @@ my $temp_file = "$download_dir/temp.txt";
 &checkdir_exists($download_dir);
 &http_download($file_to_get,$temp_file);
 
-my $current_link = "$home/ontologies/fly_anatomy/current";
+my $current_link = "$home/ontologies/fly-anatomy/current";
 my $old_file = "$current_link/fly_anatomy.obo";
 my ($version_buffer,$log_buffer);
 
