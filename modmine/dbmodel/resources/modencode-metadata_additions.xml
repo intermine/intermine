@@ -28,7 +28,6 @@
 <class name="CDS" is-interface="true">
   <attribute name="status" type="java.lang.String" />
   <attribute name="wormpep" type="java.lang.String" />
-  <reference name="mRNA" referenced-type="MRNA" reverse-reference="CDSs"/>
   <reference name="transcript" referenced-type="Transcript" reverse-reference="CDS"/>
   <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="CDS"/>
 </class>
@@ -41,7 +40,6 @@
   <collection name="transcriptRegions" referenced-type="TranscriptRegion" reverse-reference="mRNA"/>
   <collection name="startCodons" referenced-type="StartCodon" reverse-reference="mRNA"/>
   <collection name="stopCodons" referenced-type="StopCodon" reverse-reference="mRNA"/>
-  <collection name="CDSs" referenced-type="CDS" reverse-reference="mRNA"/>
 </class> 
 <class name="EST" is-interface="true">
   <collection name="overlappingESTSets" referenced-type="OverlappingESTSet" reverse-reference="ESTs" />
