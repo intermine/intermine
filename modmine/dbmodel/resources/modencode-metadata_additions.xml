@@ -28,7 +28,7 @@
 <class name="CDS" is-interface="true">
   <attribute name="status" type="java.lang.String" />
   <attribute name="wormpep" type="java.lang.String" />
-  <reference name="transcript" referenced-type="Transcript" reverse-reference="CDS"/>
+  <reference name="transcript" referenced-type="Transcript" reverse-reference="CDSs"/>
   <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="CDS"/>
 </class>
 <class name="BindingSite" is-interface="true">
@@ -82,7 +82,7 @@
 <!-- these references should be checked: maybe collections? -->
 <class name="Transcript" is-interface="true">
   <attribute name="transcribed" type="java.lang.String" />
-  <reference name="CDS" referenced-type="CDS" reverse-reference="transcript" />
+  <collection name="CDSs" referenced-type="CDS" reverse-reference="transcript" />
   <collection name="SL1AcceptorSites" referenced-type="SL1AcceptorSite" reverse-reference="transcripts" />
   <collection name="SL2AcceptorSites" referenced-type="SL2AcceptorSite" reverse-reference="transcripts" />
   <collection name="TSSs" referenced-type="TSS" reverse-reference="transcripts" />
