@@ -20,6 +20,7 @@
   <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="feature"/>
 </class>
 <class name="ThreePrimeUTR" is-interface="true">
+  <attribute name="externalEvidence" type="java.lang.String" />
   <collection name="CDSs" referenced-type="CDS" reverse-reference="threePrimeUTRs" />    
   <collection name="polyASignalSequences" referenced-type="PolyASignalSequence" reverse-reference="threePrimeUTRs" />    
 </class>
