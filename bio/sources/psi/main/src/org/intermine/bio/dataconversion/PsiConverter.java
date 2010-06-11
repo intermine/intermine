@@ -23,7 +23,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
@@ -61,7 +60,7 @@ public class PsiConverter extends BioFileConverter
     private Map<String, String[]> config = new HashMap<String, String[]>();
     private Set<String> taxonIds = null;
     private Set<String> regionPrimaryIdentifiers = new HashSet<String>();
-    private Set<MultiKey> synonyms = new HashSet<MultiKey>();
+    private Set<String> synonyms = new HashSet<String>();
     private Map<String, String> genes = new HashMap<String, String>();
     // list of interaction.shortNames.  IntAct has duplicate interaction information in
     // different files.  if a duplicate interaction is found, just skip it, we already have the
@@ -1162,7 +1161,7 @@ public class PsiConverter extends BioFileConverter
 
     private void getSynonym(String subjectId, String type, String value)
     throws ObjectStoreException {
-        MultiKey key = new MultiKey(subjectId, type, value);
+        String key = subjectId + type + value;
         if (!synonyms.contains(key)) {
             Item syn = createItem("Synonym");
             syn.setReference("subject", subjectId);

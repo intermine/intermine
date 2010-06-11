@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
@@ -52,7 +51,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
     private Map<String, String[]> config = new HashMap<String, String[]>();
     private Set<String> taxonIds = new HashSet<String>();
     private Map<String, String> identifiersToGenes = new HashMap<String, String>();
-    private Set<MultiKey> synonyms = new HashSet<MultiKey>();
+    private Set<String> synonyms = new HashSet<String>();
     private Map<String, String> organisms = new HashMap<String, String>();
 
     /**
@@ -238,7 +237,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
 
     private void getSynonym(String subjectId, String type, String value)
     throws ObjectStoreException {
-        MultiKey key = new MultiKey(subjectId, type, value);
+        String key = subjectId + type + value;
         if (StringUtils.isEmpty(value)) {
             return;
         }

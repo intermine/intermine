@@ -11,7 +11,9 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.FileConverter;
@@ -19,6 +21,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 /**
  * A FileConverter that automatically sets the dataSets collection of objects as they are stored.
@@ -30,7 +33,7 @@ public abstract class BioFileConverter extends FileConverter
 {
     private final Map<String, Item> dataSets = new HashMap<String, Item>();
     private final Map<String, Item> dataSources = new HashMap<String, Item>();
-
+    private Set<String> synonyms = new HashSet<String>();
     /**
      * Create a new BioFileConverter.
      * @param writer the Writer used to output the resultant items
@@ -124,5 +127,30 @@ public abstract class BioFileConverter extends FileConverter
             dataSets.put(title, dataSet);
         }
         return dataSet;
+    }
+
+
+    /**
+     * Create a new Synonym.  Keeps a map of already processed synonyms, ignores duplicates
+     * @param subjectId id representing the object (eg. Gene) this synonym describes.
+     * @param type the Synonym type, eg. identifier, name
+     * @param value the Synonym value
+     * @param isPrimary true if this is a primary identifier, false if not, null if don't know
+     * @throws ObjectStoreException
+     */
+    public void createSynonym(String subjectId, String type, String value, String isPrimary)
+    throws SAXException, ObjectStoreException {
+        String key = subjectId + type + value;
+        if (!synonyms.contains(key)) {
+            Item synonym = createItem("Synonym");
+            synonym.setAttribute("type", type);
+            synonym.setAttribute("value", value);
+            synonym.setReference("subject", subjectId);
+            if (!StringUtils.isEmpty(isPrimary)) {
+                synonym.setAttribute("isPrimary", isPrimary);
+            }
+            synonyms.add(key);
+            store(synonym);
+        }
     }
 }

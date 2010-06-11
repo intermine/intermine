@@ -68,7 +68,7 @@ public class BioGridConverter extends BioFileConverter
     private Map<String, String> organisms = new HashMap<String, String>();
     private static final Map<String, String> PSI_TERMS = new HashMap<String, String>();
     private Map<String, String> genes = new HashMap<String, String>();
-    private Set<MultiKey> synonyms = new HashSet<MultiKey>();
+    private Set<String> synonyms = new HashSet<String>();
     private Map<String, Map<String, String>> config = new HashMap<String, Map<String, String>>();
     private Set<String> taxonIds = null;
 
@@ -477,7 +477,7 @@ public class BioGridConverter extends BioFileConverter
 
         private void setSynonym(String subjectRefId, String type, String value)
         throws SAXException {
-            MultiKey key = new MultiKey(subjectRefId, type, value);
+            String key = subjectRefId + type + value;
             if (!synonyms.contains(key)) {
                 Item synonym = createItem("Synonym");
                 synonym.setAttribute("type", type);
