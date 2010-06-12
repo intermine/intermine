@@ -396,7 +396,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             //        Arrays.asList(new SetFieldConfigAction("intron")));
 
             map.put(new MultiKey("relationship", "ThreePrimeUTR", "adjacent_to", "CDS"),
-                    Arrays.asList(new SetFieldConfigAction("CDSs")));
+                    Arrays.asList(new SetFieldConfigAction("CDS")));
 
             map.put(new MultiKey("relationship", "PolyASite",
                     "derives_from", "ThreePrimeRACEClone"),
