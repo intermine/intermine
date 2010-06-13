@@ -737,7 +737,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         ResultSet res = getExpressionLevels(connection);
         Integer previousId = -1;
 //        Integer previousObjectId = -1;
-        Integer objectId = -1;
         Item level = null;
         while (res.next()) {
             Integer id = res.getInt("expression_id");
@@ -752,14 +751,17 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         
                 // if not first store prev level
                 if (previousId > 0) {
-                  objectId = getChadoDBConverter().store(level);
-                  LOG.info("EV: " + objectId);
+                  getChadoDBConverter().store(level);
                 }
                 
                 // create new
                 level = getChadoDBConverter().createItem("ExpressionLevel");
-                level.setAttribute("name", name);                    
-                level.setAttribute("value", value);                    
+                level.setAttribute("name", name);
+                if (!StringUtils.isBlank(value)) {
+                	level.setAttribute("value", value);
+                } else {
+                	LOG.warn("ExpressionLevel found with no value for uniquename: " + name);
+                }
                 if (featureMap.containsKey(featureId)) {
                     FeatureData fData = featureMap.get(featureId);
 //                    Integer storedFeatureId = fData.getIntermineObjectId();
