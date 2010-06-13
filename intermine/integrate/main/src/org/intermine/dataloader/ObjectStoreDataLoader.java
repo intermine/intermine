@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 public class ObjectStoreDataLoader extends DataLoader
 {
     private static final Logger LOG = Logger.getLogger(ObjectStoreDataLoader.class);
-    private static final int ITEM_READ_BATCH_SIZE = 10000;
+    private static final int ITEM_READ_BATCH_SIZE = 5000;
     
     /**
      * Construct an ObjectStoreDataLoader
