@@ -337,14 +337,14 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     @Override
     protected Item createSynonym(FeatureData fdat, String type, String identifier,
-                                 boolean isPrimary, List<Item> otherEvidence)
+            boolean isPrimary)
         throws ObjectStoreException {
         // Don't create synonyms for main identifiers of modENCODE features.  There are too many and
         // not useful to quick search.
         if (isPrimary) {
             return null;
         }
-        Item synonym = super.createSynonym(fdat, type, identifier, isPrimary, otherEvidence);
+        Item synonym = super.createSynonym(fdat, type, identifier, isPrimary);
         OrganismData od = fdat.getOrganismData();
         processItem(synonym, od.getTaxonId());
         return synonym;
