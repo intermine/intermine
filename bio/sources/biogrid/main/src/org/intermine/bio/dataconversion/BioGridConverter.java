@@ -68,7 +68,6 @@ public class BioGridConverter extends BioFileConverter
     private Map<String, String> organisms = new HashMap<String, String>();
     private static final Map<String, String> PSI_TERMS = new HashMap<String, String>();
     private Map<String, String> genes = new HashMap<String, String>();
-    private Set<String> synonyms = new HashSet<String>();
     private Map<String, Map<String, String>> config = new HashMap<String, Map<String, String>>();
     private Set<String> taxonIds = null;
 
@@ -406,7 +405,6 @@ public class BioGridConverter extends BioFileConverter
                 interaction.setAttribute("name", interactionName);
                 interaction.setAttribute("shortName", interactionName);
                 interaction.setReference("experiment", h.eh.experimentRefId);
-
                 try {
                     store(interaction);
                 } catch (ObjectStoreException e) {
@@ -466,30 +464,12 @@ public class BioGridConverter extends BioFileConverter
                 store(item);
                 refId = item.getIdentifier();
                 genes.put(identifier, refId);
-                setSynonym(refId, "identifier", identifier);
+                createSynonym(refId, "identifier", identifier, null, true);
             }
-
             ih.identifier = identifier;
             ih.refId = refId;
             ih.valid = true;
             return true;
-        }
-
-        private void setSynonym(String subjectRefId, String type, String value)
-        throws SAXException {
-            String key = subjectRefId + type + value;
-            if (!synonyms.contains(key)) {
-                Item synonym = createItem("Synonym");
-                synonym.setAttribute("type", type);
-                synonym.setAttribute("value", value);
-                synonym.setReference("subject", subjectRefId);
-                synonyms.add(key);
-                try {
-                    store(synonym);
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
-                }
-            }
         }
 
         /**

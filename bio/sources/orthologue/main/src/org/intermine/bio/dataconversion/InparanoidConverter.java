@@ -433,23 +433,6 @@ public class InparanoidConverter extends BioFileConverter
         return item;
     }
 
-    // get source for synonyms, depends on organism
-//    private Item getSourceForOrganism(String taxonId) throws ObjectStoreException {
-//        String sourceName = (String) orgSources.get(taxonId);
-//        if (sourceName == null) {
-//                throw new IllegalArgumentException("unable to find source name for organism: "
-//                                                   + taxonId);
-//        }
-//        Item source = sources.get(sourceName);
-//        if (source == null) {
-//            source = createItem("DataSource");
-//            source.setAttribute("name", sourceName);
-//            store(source);
-//            sources.put(sourceName, source);
-//        }
-//        return source;
-//    }
-
     private Item getOrganism(String code) throws ObjectStoreException {
         String taxonId = (String) taxonIds.get(code);
         if (taxonId == null) {

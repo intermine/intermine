@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -30,6 +29,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 /**
  * @author Julie Sullivan
@@ -43,13 +43,12 @@ public class TreefamConverter extends BioFileConverter
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
     private static final Logger LOG = Logger.getLogger(TreefamConverter.class);
-    private Set<String> taxonIds = new HashSet();
+    private Set<String> taxonIds = new HashSet<String>();
     protected File geneFile;
-    private Map<String, GeneHolder> idsToGenes = new HashMap();
-    private Map<String, String> identifiersToGenes = new HashMap();
-    private Set<String> synonyms = new HashSet();
-    private Map<String, String> organisms = new HashMap();
-    private Map<String, String[]> config = new HashMap();
+    private Map<String, GeneHolder> idsToGenes = new HashMap<String, GeneHolder>();
+    private Map<String, String> identifiersToGenes = new HashMap<String, String>();
+    private Map<String, String> organisms = new HashMap<String, String>();
+    private Map<String, String[]> config = new HashMap<String, String[]>();
     protected IdResolverFactory resolverFactory;
     private IdResolver flyResolver;
     private static String evidenceRefId = null;
@@ -79,7 +78,7 @@ public class TreefamConverter extends BioFileConverter
     }
 
     /**
-     * Read genes file
+     * Read genes file.
      *
      * Col0 = internal id (eg, 12345)
      * Col4 = identifier (eg, Fbgn)
@@ -87,8 +86,10 @@ public class TreefamConverter extends BioFileConverter
      * @param reader reader
      * @throws IOException if the file cannot be found/read
      * @throws ObjectStoreException if the objects cannot be stored to the database
+     * @throws SAXException if something goes horribly wrong
      */
-    public void readGenes(Reader reader) throws IOException, ObjectStoreException {
+    public void readGenes(Reader reader)
+    throws IOException, ObjectStoreException, SAXException {
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String bits[] = lineIter.next();
@@ -233,7 +234,7 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private String getGene(String identifierType, String id, String taxonId)
-    throws ObjectStoreException {
+    throws ObjectStoreException, SAXException {
         String identifier = id;
         if (taxonId.equals("7227")) {
             identifier = resolveGene(identifier);
@@ -248,35 +249,14 @@ public class TreefamConverter extends BioFileConverter
             gene.setAttribute(identifierType, identifier);
             gene.setReference("organism", getOrganism(taxonId));
             identifiersToGenes.put(identifier, refId);
-            getSynonym(refId, "identifier", identifier);
             try {
                 store(gene);
             } catch (ObjectStoreException e) {
                 throw new ObjectStoreException(e);
             }
-
+            createSynonym(refId, "identifier", identifier, null, true);
         }
         return refId;
-    }
-
-    private void getSynonym(String subjectId, String type, String value)
-    throws ObjectStoreException {
-        String key = subjectId + type + value;
-        if (StringUtils.isEmpty(value)) {
-            return;
-        }
-        if (!synonyms.contains(key)) {
-            Item syn = createItem("Synonym");
-            syn.setReference("subject", subjectId);
-            syn.setAttribute("type", type);
-            syn.setAttribute("value", value);
-            synonyms.add(key);
-            try {
-                store(syn);
-            } catch (ObjectStoreException e) {
-                throw new ObjectStoreException(e);
-            }
-        }
     }
 
     private String getOrganism(String taxonId)
@@ -300,7 +280,6 @@ public class TreefamConverter extends BioFileConverter
     throws ObjectStoreException {
 
         if (evidenceRefId == null) {
-
             Item item = createItem("OrthologueEvidenceCode");
             item.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
             item.setAttribute("name", EVIDENCE_CODE_NAME);

@@ -30,9 +30,9 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class UniprotKeywordConverter extends BioFileConverter
 {
-    private Map<String, String> ontologies = new HashMap();
-    private Map<String, String> keywords = new HashMap();
-    private Map<String, String> synonyms = new HashMap();
+    private Map<String, String> ontologies = new HashMap<String, String>();
+    private Map<String, String> keywords = new HashMap<String, String>();
+    private Map<String, String> synonyms = new HashMap<String, String>();
 
     /**
      * Constructor

@@ -11,7 +11,9 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.DirectoryConverter;
@@ -19,6 +21,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 /**
  * A DirectoryConverter that automatically sets the dataSets collection of
@@ -31,6 +34,7 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
 {
     private final Map<String, Item> dataSets = new HashMap<String, Item>();
     private final Map<String, Item> dataSources = new HashMap<String, Item>();
+    private Set<String> synonyms = new HashSet<String>();
 
     /**
      * Create a new BioDirectoryConverter.
@@ -115,5 +119,39 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
             dataSets.put(title, dataSet);
         }
         return dataSet;
+    }
+
+    /**
+     * Create a new Synonym.  Keeps a map of already processed synonyms, ignores duplicates.
+     * The "store" param should be true only if the subject has already been stored.  Storing a
+     * synonym first can signficantly slow down the build process.
+     * @param subjectId id representing the object (eg. Gene) this synonym describes.
+     * @param type the Synonym type, eg. identifier, name
+     * @param value the Synonym value
+     * @param isPrimary true if this is a primary identifier, false if not, null if don't know
+     * @param store if true, will store item
+     * @throws ObjectStoreException if the synonym can't be stored
+     * @throws SAXException if the synonym can't be stored
+     * @return the synonym item or null if this is a duplicate
+     */
+    public Item createSynonym(String subjectId, String type, String value, String isPrimary,
+            boolean store)
+    throws SAXException, ObjectStoreException {
+        String key = subjectId + type + value;
+        if (!synonyms.contains(key)) {
+            Item synonym = createItem("Synonym");
+            synonym.setAttribute("type", type);
+            synonym.setAttribute("value", value);
+            synonym.setReference("subject", subjectId);
+            if (!StringUtils.isEmpty(isPrimary)) {
+                synonym.setAttribute("isPrimary", isPrimary);
+            }
+            synonyms.add(key);
+            if (store) {
+                store(synonym);
+            }
+            return synonym;
+        }
+        return null;
     }
 }

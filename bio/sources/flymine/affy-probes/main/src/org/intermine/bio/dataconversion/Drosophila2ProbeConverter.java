@@ -17,13 +17,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -124,7 +124,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
     }
 
     private void storeProbeSet(ProbeSetHolder holder)
-    throws ObjectStoreException  {
+    throws ObjectStoreException, SAXException  {
         Item probeSet = createItem("ProbeSet");
         probeSet.setAttribute("primaryIdentifier", holder.probesetIdentifier);
         probeSet.setAttribute("name", holder.probesetIdentifier);
@@ -133,9 +133,9 @@ public class Drosophila2ProbeConverter extends BioFileConverter
         probeSet.setCollection("transcripts", holder.transcripts);
         probeSet.setCollection("locations", holder.createLocations(probeSet.getIdentifier()));
         probeSet.setCollection("genes", holder.genes);
-        super.createSynonym(probeSet.getIdentifier(), "identifier", holder.probesetIdentifier,
-                null);
         store(probeSet);
+        createSynonym(probeSet.getIdentifier(), "identifier", holder.probesetIdentifier, null,
+                true);
     }
 
     /**
@@ -218,7 +218,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
     }
 
     private String createGene(String id)
-    throws ObjectStoreException {
+    throws ObjectStoreException, SAXException {
         String identifier = id;
         IdResolver resolver = resolverFactory.getIdResolver();
         int resCount = resolver.countResolutions(TAXON_ID, identifier);
@@ -233,7 +233,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
     }
 
     private String createBioentity(String type, String identifier, String geneRefId)
-    throws ObjectStoreException {
+    throws ObjectStoreException, SAXException {
         String refId = bioentities.get(identifier);
         if (refId == null) {
             Item bioentity = createItem(type);
@@ -246,7 +246,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
             refId = bioentity.getIdentifier();
             store(bioentity);
             bioentities.put(identifier, refId);
-            createSynonym(refId, "identifier", identifier);
+            createSynonym(refId, "identifier", identifier, null, true);
         }
         return refId;
     }
@@ -272,7 +272,6 @@ public class Drosophila2ProbeConverter extends BioFileConverter
         }
         return refId;
     }
-
 
     private String createLocation(LocationHolder holder, String probeset)
     throws ObjectStoreException {

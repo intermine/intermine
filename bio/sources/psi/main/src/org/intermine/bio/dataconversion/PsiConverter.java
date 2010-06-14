@@ -60,14 +60,11 @@ public class PsiConverter extends BioFileConverter
     private Map<String, String[]> config = new HashMap<String, String[]>();
     private Set<String> taxonIds = null;
     private Set<String> regionPrimaryIdentifiers = new HashSet<String>();
-    private Set<String> synonyms = new HashSet<String>();
     private Map<String, String> genes = new HashMap<String, String>();
     // list of interaction.shortNames.  IntAct has duplicate interaction information in
     // different files.  if a duplicate interaction is found, just skip it, we already have the
     // info. See #2136
     private Set<String> interactions = new HashSet<String>();
-
-
 
     /**
      * Constructor
@@ -676,8 +673,7 @@ public class PsiConverter extends BioFileConverter
                 }
                 itemId = item.getIdentifier();
                 genes.put(identifier, itemId);
-                getSynonym(itemId, "identifier", identifier);
-
+                createSynonym(itemId, "identifier", identifier, null, true);
             }
             return itemId;
         }
@@ -1158,22 +1154,4 @@ public class PsiConverter extends BioFileConverter
         }
         return identifier;
     }
-
-    private void getSynonym(String subjectId, String type, String value)
-    throws ObjectStoreException {
-        String key = subjectId + type + value;
-        if (!synonyms.contains(key)) {
-            Item syn = createItem("Synonym");
-            syn.setReference("subject", subjectId);
-            syn.setAttribute("type", type);
-            syn.setAttribute("value", value);
-            synonyms.add(key);
-            try {
-                store(syn);
-            } catch (ObjectStoreException e) {
-                throw new ObjectStoreException(e);
-            }
-        }
-    }
-
 }
