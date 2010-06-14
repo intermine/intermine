@@ -390,14 +390,14 @@ public class GFF3Converter
     private void setRefsAndCollections(List<String> parents, Item feature) {
         String clsName = feature.getClassName();
         Map<String, String> refsAndCollections = handler.getRefsAndCollections();
-
+        System.out.println("classname " + clsName);
         if (refsAndCollections.containsKey(clsName) && !parents.isEmpty()) {
             ClassDescriptor cld =
                 tgtModel.getClassDescriptorByName(tgtModel.getPackageName() + "." + clsName);
             String refName = (String) refsAndCollections.get(clsName);
             Iterator<String> parentIter = parents.iterator();
             if (cld.getReferenceDescriptorByName(refName, true) != null) {
-                String parentRefId = parentIter.next();
+                String parentRefId = getIdentifier(parentIter.next());
                 feature.setReference(refName, parentRefId);
                 if (parentIter.hasNext()) {
                     String primaryIdent  = feature.getAttribute("primaryIdentifier").getValue();
@@ -408,7 +408,7 @@ public class GFF3Converter
             } else if (cld.getCollectionDescriptorByName(refName, true) != null) {
                 List<String> refIds = new ArrayList<String>();
                 while (parentIter.hasNext()) {
-                    refIds.add(parentIter.next());
+                    refIds.add(getIdentifier(parentIter.next()));
                 }
                 feature.setCollection(refName, refIds);
             } else if (parentIter.hasNext()) {
