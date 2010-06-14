@@ -2109,14 +2109,8 @@ public class SequenceProcessor extends ChadoProcessor
 //          throw new IllegalArgumentException(msg);
             return null;
         }
-        Item returnItem = null;
-        try {
-            returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(), type,
-                                                             identifier, String.valueOf(isPrimary));
-        } catch (SAXException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        Item returnItem = returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(),
+                type, identifier, isPrimary);
         fdat.addExistingSynonym(identifier);
         return returnItem;
     }
