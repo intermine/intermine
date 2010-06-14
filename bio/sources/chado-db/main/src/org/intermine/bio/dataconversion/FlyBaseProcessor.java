@@ -497,9 +497,9 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     @Override
     protected Item createSynonym(FeatureData fdat, String type, String identifier,
-                                 boolean isPrimary, List<Item> otherEvidence)
+            boolean isPrimary)
         throws ObjectStoreException {
-        Item synonym = super.createSynonym(fdat, type, identifier, isPrimary, otherEvidence);
+        Item synonym = super.createSynonym(fdat, type, identifier, isPrimary);
         /* synonym can be null if it's been created earlier.  this would happen only if
          * the synonym was created when another protein was created in favour of this one.  */
         if (synonym != null) {
@@ -1739,13 +1739,12 @@ public class FlyBaseProcessor extends SequenceProcessor
             if (protein != null) {
                 if (StringUtils.isNotEmpty(uniqueName)
                         && !protein.getExistingSynonyms().contains(uniqueName)) {
-                    Item synonym = createSynonym(protein, "identifier", uniqueName, true,
-                            null);
+                    Item synonym = createSynonym(protein, "identifier", uniqueName, true);
                     store(synonym);
                 }
                 if (StringUtils.isNotEmpty(name)
                         && !protein.getExistingSynonyms().contains(name)) {
-                    Item synonym = createSynonym(protein, "name", name, false, null);
+                    Item synonym = createSynonym(protein, "name", name, false);
                     store(synonym);
                 }
                 return protein;
@@ -1763,7 +1762,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             FeatureData cdnaClone = cdnaCloneMap.get(name);
             if (cdnaClone != null) {
                 if (StringUtils.isNotEmpty(name)) {
-                    Item synonym = createSynonym(cdnaClone, "symbol", name, false, null);
+                    Item synonym = createSynonym(cdnaClone, "symbol", name, false);
                     if (synonym != null) {
                         store(synonym);
                     }
