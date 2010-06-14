@@ -101,11 +101,11 @@ public class CytoscapeInteractionsController extends TilesAction
     }
 
     /**
-     *
+     * Create SIF format data for Cytoscape Web
      * @param gene
      * @param im
      * @param interactionSet
-     * @return
+     * @return the network as a string in SIF format
      */
     private String createNetwork(Gene gene, InterMineAPI im,
             Set<String> interactionSet) {
@@ -129,22 +129,24 @@ public class CytoscapeInteractionsController extends TilesAction
         for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
             ResultsRow<?> row = (ResultsRow<?>) iter.next();
 
-            String genePID = (String) row.get(0);
-            String interactionType = (String) row.get(1);
-            String interactingGenePID = (String) row.get(2);
+            // String genePID = (String) row.get(0);
+            String geneSymbol = (String) row.get(1);
+            String interactionType = (String) row.get(2);
+            // String interactingGenePID = (String) row.get(3);
+            String interactingGeneSymbol = (String) row.get(4);
 
-            interactionSet = addToInteractionSet(genePID, interactionType,
-                    interactingGenePID, interactionSet);
+            interactionSet = addToInteractionSet(geneSymbol, interactionType,
+                    interactingGeneSymbol, interactionSet);
         }
 
-        return makeString(interactionSet);
+        return makeSIFString(interactionSet);
     }
 
     /**
-     *
+     * Query database by IQL
      * @param keys
      * @param im
-     * @return
+     * @return query results
      */
     private Results dbQuery(List<String> keys, InterMineAPI im) {
 
@@ -157,16 +159,21 @@ public class CytoscapeInteractionsController extends TilesAction
 
         // result columns
         QueryField qfGenePID = new QueryField(qcGene, "primaryIdentifier");
+        QueryField qfGeneSymbol = new QueryField(qcGene, "symbol");
         QueryField qfInteractionType = new QueryField(qcInteraction,
                 "interactionType");
         QueryField qfInteractingGenePID = new QueryField(qcInteractingGene,
                 "primaryIdentifier");
+        QueryField qfInteractingGeneSymbol = new QueryField(qcInteractingGene,
+        "symbol");
 
         q.setDistinct(true);
 
         q.addToSelect(qfGenePID);
+        q.addToSelect(qfGeneSymbol);
         q.addToSelect(qfInteractionType);
         q.addToSelect(qfInteractingGenePID);
+        q.addToSelect(qfInteractingGeneSymbol);
 
         q.addFrom(qcGene);
         q.addFrom(qcInteraction);
@@ -198,18 +205,19 @@ public class CytoscapeInteractionsController extends TilesAction
     }
 
     /**
-     *
+     * Add a new interaction to a set of interactions, remove duplication
      * @param genePID
      * @param interactionType
      * @param interactingGenePID
      * @param interactionSet
-     * @return
+     * @return A set of SIF records
      */
-    private Set<String> addToInteractionSet(String genePID, String interactionType,
-            String interactingGenePID, Set<String> interactionSet) {
+    private Set<String> addToInteractionSet(String geneSymbol, String interactionType,
+            String interactingGeneSymbol, Set<String> interactionSet) {
 
         if (interactionSet.isEmpty()) {
-            interactionSet.add(genePID + "\\t" + interactionType + "\\t" + interactingGenePID);
+            interactionSet.add(geneSymbol + "\\t" + interactionType + "\\t"
+                    + interactingGeneSymbol);
         }
         else {
             // You can't add to the HashSet while iterating. You have to either
@@ -218,25 +226,25 @@ public class CytoscapeInteractionsController extends TilesAction
             // copying from the old one and filling in the holes as they occur.
             // Thrown - java.util.ConcurrentModificationException
 
-            String interactingString = genePID + "\\t" + interactionType
-            + "\\t" + interactingGenePID;
-            String interactingStringDup = interactingGenePID + "\\t" + interactionType
-            + "\\t" + genePID;
+            String interactingString = geneSymbol + "\\t" + interactionType
+            + "\\t" + interactingGeneSymbol;
+            String interactingStringDup = interactingGeneSymbol + "\\t" + interactionType
+            + "\\t" + geneSymbol;
 
             if (!(interactionSet.contains(interactingString) || interactionSet
                     .contains(interactingStringDup))) {
-     interactionSet.add(interactingString);
+                    interactionSet.add(interactingString);
             }
         }
         return interactionSet;
     }
 
     /**
-     *
+     * Convert Set to String in SIF format
      * @param interactionSet
-     * @return
+     * @return the network in SIF format as a string or text
      */
-    private String makeString(Set<String> interactionSet) {
+    private String makeSIFString(Set<String> interactionSet) {
 
         StringBuffer theNetwork = new StringBuffer();
 
@@ -247,6 +255,17 @@ public class CytoscapeInteractionsController extends TilesAction
             theNetwork.append("\\n");
         }
         return theNetwork.toString();
+
+    }
+
+    /**
+     * Convert Set to String in XGMML format
+     * @param interactionSet
+     * @return
+     */
+    @SuppressWarnings("unused")
+    private String makeXGMMLString(Set<String> interactionSet) {
+        return null;
 
     }
 }

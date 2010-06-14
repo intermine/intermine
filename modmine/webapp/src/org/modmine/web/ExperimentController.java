@@ -75,13 +75,16 @@ public class ExperimentController extends TilesAction
         Map<Integer, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os);
         request.setAttribute("filesPerSub", filesPerSub);
 
-        Map<Integer, List<String[]>> submissionRepositoryEntries = MetadataCache.getRepositoryEntries(os);
+        Map<Integer, List<String[]>> submissionRepositoryEntries = 
+            MetadataCache.getRepositoryEntries(os);
         request.setAttribute("subRep", submissionRepositoryEntries);
 
-        Map<Integer, List<String>> unlocatedFeatureTypes = MetadataCache.getUnlocatedFeatureTypes(os);
+        Map<Integer, List<String>> unlocatedFeatureTypes = 
+            MetadataCache.getUnlocatedFeatureTypes(os);
         request.setAttribute("unlocatedFeat", unlocatedFeatureTypes);
         
-        Map<String, String> expFeatureDescription = MetadataCache.getFeatTypeDescription(servletContext);
+        Map<String, String> expFeatureDescription = 
+            MetadataCache.getFeatTypeDescription(servletContext);
         request.setAttribute("expFeatDescription", expFeatureDescription);
         
 

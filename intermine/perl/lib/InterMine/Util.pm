@@ -29,27 +29,61 @@ our $INTERMINE_CONF_DIR = "$ENV{HOME}/.intermine";
 
 =cut
 
-sub get_property_value
-{
-  my $key = shift;
+sub get_property_value {
+  
+    my $key = shift;
+    my $file = shift;
+    
+    open F, "$file" or die "cannot open $file: $!\n";
+    
+    my $ret_val;
+    
+    while (my $line = <F>) {
+	if ($line =~ /^\s*#/) {
+	    next;
+	}
+	if ($line =~ /$key=(.*)/) {
+	    $ret_val = $1;
+	}
+  }
+    
+    close F;
+    
+    return $ret_val;
+}
+
+=head2 parse_properties_file
+
+ Title   : parse_properties_file
+ Usage   : $properties = 
+              InterMine::Util::parse_properties_file(/home/user/.intermine/flymine.properties');
+ Function: Reads properties into a key/value hash
+ Args    : $property_file_name
+
+=cut
+
+sub parse_properties_file {
+
   my $file = shift;
 
-  open F, "$file" or die "cannot open $file: $!\n";
+  open F, '<', "$file" or die "cannot open $file: $!\n";
 
-  my $ret_val;
+  my %hash_of_properties;
 
   while (my $line = <F>) {
     if ($line =~ /^\s*#/) {
       next;
     }
-    if ($line =~ /$key=(.*)/) {
-      $ret_val = $1;
+    if ($line =~ /=/) {
+	my ($k, $v) = split('=', $line);
+	chomp ($k, $v);
+	$hash_of_properties{$k} = $v;
     }
   }
 
   close F;
 
-  return $ret_val;
+  return \%hash_of_properties;
 }
 
 =head2 parse_properties_file

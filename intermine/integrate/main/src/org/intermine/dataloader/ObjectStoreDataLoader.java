@@ -36,7 +36,8 @@ import org.apache.log4j.Logger;
 public class ObjectStoreDataLoader extends DataLoader
 {
     private static final Logger LOG = Logger.getLogger(ObjectStoreDataLoader.class);
-
+    private static final int ITEM_READ_BATCH_SIZE = 5000;
+    
     /**
      * Construct an ObjectStoreDataLoader
      *
@@ -127,7 +128,7 @@ public class ObjectStoreDataLoader extends DataLoader
             long timeSpentCommit = 0;
             long timeSpentLoop = 0;
             getIntegrationWriter().beginTransaction();
-            SingletonResults res = os.executeSingleton(q, 1000, false, false, true);
+            SingletonResults res = os.executeSingleton(q, ITEM_READ_BATCH_SIZE, false, false, true);
             Iterator iter = res.iterator();
             long time4 = System.currentTimeMillis();
             long time1, time2, time3;

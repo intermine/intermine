@@ -12,32 +12,66 @@
   <attribute name="score" type="java.lang.Double" />
   <attribute name="scoreType" type="java.lang.String" />
   <attribute name="predictionStatus" type="java.lang.String" />
+  <attribute name="note" type="java.lang.String" />
   <reference name="scoreProtocol" referenced-type="Protocol" />
   <collection name="submissions" referenced-type="Submission" reverse-reference="features" />
   <collection name="featureEvidence" referenced-type="SequenceFeature" reverse-reference="supportedFeatures" />
   <collection name="supportedFeatures" referenced-type="SequenceFeature" reverse-reference="featureEvidence" />
+  <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="feature"/>
 </class>
 <class name="ThreePrimeUTR" is-interface="true">
-  <collection name="CDSs" referenced-type="CDS" reverse-reference="threePrimeUTRs" />
+  <attribute name="externalEvidence" type="java.lang.String" />
+  <reference name="CDS" referenced-type="CDS" reverse-reference="threePrimeUTRs" />    
+  <reference name="polyASite" referenced-type="PolyASite" reverse-reference="threePrimeUTR" />    
+  <collection name="polyASignalSequences" referenced-type="PolyASignalSequence" reverse-reference="threePrimeUTR" />    
+  <collection name="exons" referenced-type="Exon" reverse-reference="threePrimeUTR" />    
 </class>
 <class name="CDS" is-interface="true">
-  <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="CDSs"/>
+  <attribute name="status" type="java.lang.String" />
+  <attribute name="wormpep" type="java.lang.String" />
+<!-- <collection name="transcripts" referenced-type="Transcript" reverse-reference="CDSs"/>
+-->
+  <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="CDS"/>
 </class>
-<class name="ExonRegion" extends="Region" is-interface="true"/>
+<class name="BindingSite" is-interface="true">
+  <attribute name="qvalue" type="java.lang.Double" />
+</class>  
 <class name="MRNA" is-interface="true">
+  <attribute name="CDS" type="java.lang.String" />
+  <attribute name="wormpep" type="java.lang.String" />
+  <collection name="transcriptRegions" referenced-type="TranscriptRegion" reverse-reference="mRNA"/>
   <collection name="startCodons" referenced-type="StartCodon" reverse-reference="mRNA"/>
   <collection name="stopCodons" referenced-type="StopCodon" reverse-reference="mRNA"/>
-</class>
+</class> 
 <class name="EST" is-interface="true">
   <collection name="overlappingESTSets" referenced-type="OverlappingESTSet" reverse-reference="ESTs" />
 </class>
-<class name="MiRNA" is-interface="true">
-  <collection name="experimentalFeatures" referenced-type="ExperimentalFeature" reverse-reference="miRNA"/>
+
+<class name="Exon" is-interface="true">
+  <attribute name="acceptor" type="java.lang.String" />
+  <attribute name="connectedToWormbaseTranscript" type="java.lang.String" />
+  <attribute name="donor" type="java.lang.String" />
+  <attribute name="overlappingWormbaseTranscript" type="java.lang.String" />
+  <attribute name="polyA" type="java.lang.String" />
+  <attribute name="tes" type="java.lang.String" />
+  <attribute name="tsl" type="java.lang.String" />
+  <attribute name="tss" type="java.lang.String" />
+  <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="exons" /> 
+  <collection name="transcriptRegions" referenced-type="TranscriptRegion" reverse-reference="exons" />      
 </class>
 
+<class name="ExonRegion" extends="Region" is-interface="true">
+  <reference name="transcriptRegion" referenced-type="TranscriptRegion" reverse-reference="exonRegions" />      
+</class>
+<class name="Intron" is-interface="true">
+  <collection name="transcriptRegions" referenced-type="TranscriptRegion" reverse-reference="introns"/>
+</class>
 
 <!-- these references should be checked: maybe collections? -->
 <class name="Transcript" is-interface="true">
+  <attribute name="transcribed" type="java.lang.String" />
+<!--   <collection name="CDSs" referenced-type="CDS" reverse-reference="transcripts" />
+-->
   <collection name="SL1AcceptorSites" referenced-type="SL1AcceptorSite" reverse-reference="transcripts" />
   <collection name="SL2AcceptorSites" referenced-type="SL2AcceptorSite" reverse-reference="transcripts" />
   <collection name="TSSs" referenced-type="TSS" reverse-reference="transcripts" />
@@ -47,7 +81,9 @@
 </class>
 <!-- PolyASite is already in so_additions extending 'GenePart', not in miso -->
 <class name="PolyASite" is-interface="true">
-  <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="polyASite"/>
+  <attribute name="externalEvidence" type="java.lang.String" />
+  <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="polyASite"/>        
+  <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="polyASite"/>
 </class>
 
 
@@ -61,22 +97,41 @@
   <reference name="mRNA" referenced-type="MRNA" reverse-reference="startCodons"/>
 </class>
 <class name="HistoneBindingSite" extends="ProteinBindingSite" is-interface="true"/>
+
 <class name="TranscriptRegion" extends="Region" is-interface="true">
+  <attribute name="marginalFpr" type="java.lang.Double" />
+  <attribute name="marginalSensitivity" type="java.lang.Double" />
+  <attribute name="meanIntensity" type="java.lang.Double" />
+  <attribute name="rankScore" type="java.lang.Double" />
+  <reference name="mRNA" referenced-type="MRNA" reverse-reference="transcriptRegions" />
+  <collection name="exons" referenced-type="Exon" reverse-reference="transcriptRegions" />
+  <collection name="introns" referenced-type="Intron" reverse-reference="transcriptRegions" />    
+  <collection name="exonRegions" referenced-type="ExonRegion" reverse-reference="transcriptRegion" />    
 </class>
+
 <class name="CopyNumberVariation" extends="SequenceVariant" is-interface="true"/>
 <class name="ThreePrimeRACEClone" extends="Region" is-interface="true">
   <reference name="polyASite" referenced-type="PolyASite" reverse-reference="threePrimeRACEClone"/>
   <reference name="threePrimeRST" referenced-type="ThreePrimeRST" reverse-reference="threePrimeRACEClone"/>
 </class>
 <class name="ThreePrimeRST" extends="Region" is-interface="true">
-  <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="threePrimeRST"/>
-  <reference name="threePrimeUST" referenced-type="ThreePrimeUST" reverse-reference="threePrimeRST"/>
+  <attribute name="GenBankAcc" type="java.lang.String" />
+  <attribute name="NCBIdbEST" type="java.lang.String" />
+  <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="threePrimeRST"/>            
+  <reference name="threePrimeUST" referenced-type="ThreePrimeUST" reverse-reference="threePrimeRST"/>            
 </class>
 <class name="ThreePrimeUST" extends="Region" is-interface="true">
- <reference name="threePrimeRST" referenced-type="ThreePrimeRST" reverse-reference="threePrimeUST"/>
+  <attribute name="externalEvidence" type="java.lang.String" />
+  <reference name="threePrimeRST" referenced-type="ThreePrimeRST" reverse-reference="threePrimeUST"/>        
 </class>
 
 <class name="OverlappingESTSet" extends="Region" is-interface="true">
+  <attribute name="fdr" type="java.lang.String" />
+  <attribute name="fp" type="java.lang.String" />
+  <attribute name="overlap" type="java.lang.String" />
+  <attribute name="reads" type="java.lang.Integer" />
+  <attribute name="strandsConfirmed" type="java.lang.String" />
+  <attribute name="trimT" type="java.lang.String" />
   <collection name="ESTs" referenced-type="EST" reverse-reference="overlappingESTSets" />
 <!--
   <reference name="gene" referenced-type="Gene" reverse-reference="overlappingESTSet" />
@@ -84,23 +139,43 @@
   <reference name="transcriptRegion" referenced-type="TranscriptRegion" reverse-reference="overlappingESTSet"/>
 -->
 </class>
+<class name="PolyASignalSequence" extends="Region" is-interface="true">
+  <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="polyASignalSequences"/>
+</class>
 <class name="SL1AcceptorSite" extends="Region" is-interface="true">
   <collection name="transcripts" referenced-type="Transcript" reverse-reference="SL1AcceptorSites"/>
 </class>
 <class name="SL2AcceptorSite" extends="Region" is-interface="true">
   <collection name="transcripts" referenced-type="Transcript" reverse-reference="SL2AcceptorSites"/>
 </class>
-<class name="ExperimentalFeature" extends="Region" is-interface="true">
-  <attribute name="readCount" type="java.lang.Integer" />
-  <attribute name="dcpm" type="java.lang.Double" />
-  <attribute name="dcpmBases" type="java.lang.Integer" />
-  <reference name="miRNA" referenced-type="MiRNA" reverse-reference="experimentalFeatures"/>
-</class>
 <class name="TSS" extends="Region" is-interface="true">
   <collection name="transcripts" referenced-type="Transcript" reverse-reference="TSSs"/>
 </class>
 
 <!-- OTHER modENCODE classes -->
+
+<class name="ExpressionLevel" is-interface="true">
+  <attribute name="name" type="java.lang.String" />
+  <attribute name="value" type="java.lang.Double" />
+  <attribute name="readCount" type="java.lang.Integer" />
+  <attribute name="dcpm" type="java.lang.Double" />
+  <attribute name="dcpmBases" type="java.lang.Integer" />
+  <attribute name="transcribed" type="java.lang.String" />
+  <attribute name="predictionStatus" type="java.lang.String" />
+  <reference name="feature" referenced-type="LocatedSequenceFeature" reverse-reference="expressionLevels"/>
+  <reference name="submission" referenced-type="Submission"/>
+  
+<!--   <reference name="transcript" referenced-type="Transcript" reverse-reference="expressionLevels"/>
+  <reference name="submission" referenced-type="Submission" reverse-reference="expressionLevels"/>
+
+  <reference name="miRNA" referenced-type="MiRNA" reverse-reference="expressionLevels"/>
+  <reference name="exon" referenced-type="Exon" reverse-reference="expressionLevels"/>
+  <reference name="exonRegion" referenced-type="ExonRegion" reverse-reference="expressionLevels"/>
+  <reference name="intron" referenced-type="Intron" reverse-reference="expressionLevels"/> 
+  -->
+</class>
+
+
 
 <class name="Project" is-interface="true">
   <attribute name="name" type="java.lang.String" />
@@ -175,6 +250,7 @@
     <collection name="databaseRecords" referenced-type="DatabaseRecord" reverse-reference="submissions"/>
     <collection name="resultFiles" referenced-type="ResultFile" reverse-reference="submission"/>
     <collection name="relatedSubmissions" referenced-type="Submission"/>
+    <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="submission"/>
   </class>
 
   <class name="ExperimentalFactor"

@@ -155,10 +155,34 @@ sub _parse_logic {
     }
 }
 
+=head2 get_views
+
+ Title   : get_views()
+ Usage   : @views = @{ $template->get_views };
+ Function: Get a list of the views in the associated PathQuery
+ Args    : no args
+ Returns : an array reference to an array of strings 
+
+=cut
+
 sub get_views {
   my $self = shift;
   return $self->{pq}->view;
 }
+
+
+=head2 get_constraints
+
+ Title   : get_constraints()
+ Usage   : @constraints = $template->get_constraints;
+ Function: get a list of all the constraints in the associated PathQuery.
+ Args    : no args
+ Returns : an array of InterMine::PathQuery::Constraint objects
+
+ Most of the time the user will be more interested in get_editable_constraints()
+ (see below).
+
+=cut
 
 sub get_constraints {
     my $self = shift;
@@ -170,11 +194,34 @@ sub get_constraints {
     return @constraints;
 }
 
+
+=head2 get_editable_constraints
+
+ Title   : get_editable_constraints()
+ Usage   : @editable_constraints = $template->get_editable_constraints;
+ Function: get a list of all the constraints in the associated PathQuery 
+           which the user can edit.
+ Args    : no args
+ Returns : an array of InterMine::PathQuery::Constraint objects
+
+=cut
+
 sub get_editable_constraints {
     my $self = shift;
     my @ed_constraints = grep {$_->is_editable} $self->get_constraints;
     return @ed_constraints;
 }
+
+=head2 get_description
+
+ Title   : get_description()
+ Usage   : $description = $template->get_description();
+ Function: Get a human readable informative description of what this
+           template does
+ Args    : no args
+ Returns : a string
+
+=cut
 
 sub get_description {
     my $self = shift;
@@ -182,11 +229,38 @@ sub get_description {
     return $desc;
 }
 
+
+
+=head2 get_name
+
+ Title   : get_name()
+ Usage   : $name = $template->get_name();
+ Function: Get the unique name for the template.
+ Args    : no args
+ Returns : a string
+
+ This name is the index for the template in the web-application.
+
+=cut
+
 sub get_name {
     my $self = shift;
     my $name = $self->{pq}->{name};
     return $name;
 }
+
+
+=head2 get_sort_order
+
+ Title   : get_sort_order()
+ Usage   : $sort_order = $template->get_sort_order();
+ Function: Get the path by which the results for the
+           query will be sorted
+ Args    : no args
+ Returns : a string
+
+=cut
+
 
 sub get_sort_order {
     my $self = shift;
@@ -194,16 +268,54 @@ sub get_sort_order {
     return $sort_order;
 }
 
+
+=head2 get_logic
+
+ Title   : get_logic()
+ Usage   : $logic = $template->get_logic();
+ Function: Get the a string representation of the logic 
+           behind the query.
+ Args    : no args
+ Returns : a string
+
+=cut
+
+
 sub get_logic {
     my $self = shift;
     my $logic = $self->{pq}{constraintLogic};
     return $logic;
 }
 
+
+=head2 get_path_query
+
+ Title   : get_path_query()
+ Usage   : $path_query = $template->get_path_query();
+ Function: Get the underlying PathQuery object
+ Args    : no args
+ Returns : an InterMine::PathQuery object
+
+=cut
+
+
 sub as_path_query {
     my $self = shift;
     return $self->{pq};
 }
+
+
+=head2 to_xml_string
+
+ Title   : to_xml_string()
+ Usage   : $xml_string = $template->to_xml_string();
+ Function: Get an xml representation of the underlying PathQuery object.
+ Args    : no args
+ Returns : a string
+
+
+=cut
+
 
 sub to_xml_string {
     my $self = shift;
