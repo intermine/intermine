@@ -48,17 +48,17 @@ public class TrackDisplayerController extends TilesAction
        
         List<GBrowseTrack> subTracks = MetadataCache.getTracksByDccId(dccId);
         request.setAttribute("subTracks", subTracks);
-        
+
         List<ResultFile> files = MetadataCache.getFilesByDccId(os, dccId);
-        for (ResultFile file : files) {	
-        	String fileName = file.getName();
-        	int index = fileName.lastIndexOf(System.getProperty("file.separator"));
-        	file.setName(fileName.substring(index + 1));
+        for (ResultFile file : files) {
+            String fileName = file.getName();
+            int index = fileName.lastIndexOf(System.getProperty("file.separator"));
+            file.setName(fileName.substring(index + 1));
         }
+
         request.setAttribute("files", files);
         request.setAttribute("filesNR", files.size());
 
         return null;
     }
-
 }

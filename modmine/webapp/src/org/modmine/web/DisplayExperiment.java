@@ -276,17 +276,17 @@ public class DisplayExperiment
      */
     public Set<String> getUnlocated() {
         Map<Integer, List<String>> rep = MetadataCache.getUnlocatedFeatureTypes(os);
-        
+
         Set<String> unloc = new HashSet<String>();
         for (Submission s : submissions) {
             if (rep.get(s.getdCCid()) != null) {    
                 unloc.addAll(rep.get(s.getdCCid()));
             }
-            }
+        }
         return unloc;
     }
 
-    
+
     
     
     /**

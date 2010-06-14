@@ -31,3 +31,6 @@
 
 <action path="/initCytoscapeInteractionsDisplayer"
         type="org.intermine.bio.web.struts.CytoscapeInteractionsController"/>
+
+<action path="/cytoscapeNetworkExport"
+        type="org.intermine.bio.web.struts.CytoscapeNetworkExportAction"/>

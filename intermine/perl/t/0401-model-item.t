@@ -3,8 +3,9 @@
 use strict;
 use warnings;
 
-use Test::More tests => 13;
+use Test::More tests => 15;
 use Test::Exception;
+use Test::Warn;
 
 use XML::Writer;
 use InterMine::Model;
@@ -76,3 +77,15 @@ ok(@{$emp3->get('secretarys')} == 2);
 throws_ok(sub {$emp3->set('no_such_field', 'some_value')},
 	 qr/CEO.* field called: no_such_field/,
 	  'Catches bad calls to set');
+
+my $dept_exp = $factory->make_item("Department");
+$dept_exp->set("employees", [$emp1, $emp2]);
+
+my $dept_got = $factory->make_item("Department");
+$dept_got->{id} = $dept_exp->{id}; # otherwise compare will fail
+
+warning_like(sub {$dept_got->set("employees", [$emp1, undef, $emp2])}, 
+	  qr/Undefined items passed as value/,
+	  'Catches warnings for undefined items in a collection');
+
+is_deeply($dept_got->get('employees'), $dept_exp->get('employees'), 'Ignores undefined items correctly');

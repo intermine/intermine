@@ -15,6 +15,7 @@ WriteMakefile(
                   'Net::FTP' => 0,
                   'Test::Exception' => 0,
                   'Test::More' => 0,
+		  'Test::Warn' => 0,
                   'Test::XML' => 0,
 		  'Test::MockObject' => 0,
                   'Text::CSV_XS' => 0,

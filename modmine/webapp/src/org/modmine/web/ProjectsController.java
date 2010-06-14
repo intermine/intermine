@@ -34,6 +34,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.bio.Lab;
 import org.intermine.model.bio.Project;
+import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
@@ -84,14 +85,28 @@ public class ProjectsController extends TilesAction
             Map<Integer, List<GBrowseTrack>> subTracks = MetadataCache.getGBrowseTracks();
             request.setAttribute("subTracks", subTracks);
 
-            Map<Integer, List<String[]>> submissionRepositoryEntries = MetadataCache.getRepositoryEntries(os);
+//            Map<Integer, Set<ResultFile>> files = MetadataCache.getSubmissionFiles(os); 
+//            request.setAttribute("files", files); 
+//            Map<Integer, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os); 
+//            request.setAttribute("filesPerSub", filesPerSub);
+            //--
+            
+            
+            Map<Integer, List<String[]>> submissionRepositoryEntries = 
+                MetadataCache.getRepositoryEntries(os);
             request.setAttribute("subRep", submissionRepositoryEntries);
 
-            Map<Integer, List<String>> unlocatedFeatureTypes = MetadataCache.getUnlocatedFeatureTypes(os);
+            Map<Integer, List<String>> unlocatedFeatureTypes = 
+                MetadataCache.getUnlocatedFeatureTypes(os);
             request.setAttribute("unlocatedFeat", unlocatedFeatureTypes);
             
-            Map<String, String> expFeatureDescription = MetadataCache.getFeatTypeDescription(servletContext);
+            Map<String, String> expFeatureDescription = 
+                MetadataCache.getFeatTypeDescription(servletContext);
             request.setAttribute("expFeatDescription", expFeatureDescription);
+            
+            
+            
+            
             
             Properties props = new Properties(); 
             

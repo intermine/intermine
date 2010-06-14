@@ -37,6 +37,7 @@ import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
+import org.intermine.model.bio.SubmissionData;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -45,11 +46,14 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 
@@ -66,6 +70,9 @@ public class MetadataCache
     private static final String GBROWSE_BASE_URL = getGBrowsePrefix();
     private static final String GBROWSE_ST_URL_END = "/?action=scan";
 
+    // TO BE REMOVED
+    // SubmissionData name for files
+    private static final String FILETYPE = "%file";
 
 
     public static class GBrowseTrack 
@@ -112,6 +119,8 @@ public class MetadataCache
     private static Map<Integer, Map<String, Long>> submissionFeatureCounts = null;
     private static Map<Integer, Integer> submissionIdCache = null;
     private static Map<Integer, List<GBrowseTrack>> submissionTracksCache = null;
+
+    
     private static Map<Integer, Set<ResultFile>> submissionFilesCache = null;
     private static Map<Integer, Integer> filesPerSubmissionCache = null;
     private static Map<Integer, List<String>> submissionLocatedFeatureTypes = null;
@@ -204,7 +213,7 @@ public class MetadataCache
      * @param os the production objectStore
      * @return map
      */
-    public static synchronized Map<Integer, Set<ResultFile>> getSubmissionFiles(ObjectStore os) {
+   public static synchronized Map<Integer, Set<ResultFile>> getSubmissionFiles(ObjectStore os) {
         if (submissionFilesCache == null) {
             readSubmissionFiles(os);
         }
@@ -231,6 +240,7 @@ public class MetadataCache
         return filesPerSubmissionCache;
     }
 
+
     /**
      * Fetch a list of file names for a given submission.
      * @param os the objectStore
@@ -254,10 +264,11 @@ public class MetadataCache
         if (submissionTracksCache == null) {
             readGBrowseTracks();
         }
-        if(submissionTracksCache.get(dccId) != null)
-        	return new ArrayList<GBrowseTrack>(submissionTracksCache.get(dccId));
-        else
-        	return new ArrayList<GBrowseTrack>();
+        if (submissionTracksCache.get(dccId) != null) {
+            return new ArrayList<GBrowseTrack>(submissionTracksCache.get(dccId));
+        } else {
+            return new ArrayList<GBrowseTrack>();
+        }
     }
 
     /**
@@ -326,6 +337,7 @@ public class MetadataCache
      * @return submissionUnlocatedFeatureTypes
      */
     private static Map<Integer, List<String>> readUnlocatedFeatureTypes(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
         try {
 
             if (submissionUnlocatedFeatureTypes != null) {
@@ -342,6 +354,7 @@ public class MetadataCache
                 readSubmissionFeatureCounts(os);
             }
 
+            
             for (Integer subId : submissionFeatureCounts.keySet()) {
 
                 Set<String> allFeatures = submissionFeatureCounts.get(subId).keySet();
@@ -362,6 +375,9 @@ public class MetadataCache
         } catch (Exception err) {
             err.printStackTrace();
         }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed unlocated feature cache, took: " + timeTaken + "ms size = "
+                + submissionUnlocatedFeatureTypes.size());
         return submissionUnlocatedFeatureTypes;
     }
 
@@ -515,7 +531,8 @@ public class MetadataCache
             err.printStackTrace();
         }
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed experiment cache, took: " + timeTaken + "ms");
+        LOG.info("Primed experiment cache, took: " + timeTaken + "ms size = "
+                + experimentCache.size());
     }
 
 
@@ -637,10 +654,11 @@ public class MetadataCache
             featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
         }
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed submission cache, took: " + timeTaken + "ms");
+        LOG.info("Primed submissionFeatureCounts cache, took: " + timeTaken + "ms size = "
+                + submissionFeatureCounts.size());
     }
 
-
+    
     private static void readSubmissionFiles(ObjectStore os) {
         //
         long startTime = System.currentTimeMillis();
@@ -668,10 +686,9 @@ public class MetadataCache
             err.printStackTrace();
         }
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed file names cache, took: " + timeTaken + "ms");
+        LOG.info("Primed file names cache, took: " + timeTaken + "ms size = "
+    + submissionFilesCache.size());
     }
-
-
 
 
     private static void readSubmissionLocatedFeature(ObjectStore os) {
@@ -719,7 +736,8 @@ public class MetadataCache
 
         }
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed located features cache, took: " + timeTaken + "ms");
+        LOG.info("Primed located features cache, took: " + timeTaken + "ms size = "
+                + submissionLocatedFeatureTypes.size());
     }
 
 
@@ -803,7 +821,8 @@ public class MetadataCache
             err.printStackTrace();
         }
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed Repository entries cache, took: " + timeTaken + "ms");
+        LOG.info("Primed Repository entries cache, took: " + timeTaken + "ms size = "
+                + submissionRepositedCache.size());
     }
 
 
@@ -981,6 +1000,7 @@ public class MetadataCache
      * @return the base URL
      */
     private static Map<String, String> readFeatTypeDescription(ServletContext servletContext) {
+        long startTime = System.currentTimeMillis();
 
         featDescriptionCache = new HashMap<String, String>();
 
@@ -1005,6 +1025,9 @@ public class MetadataCache
                     featDescriptionCache.put(expFeat, descr);
                 }
             }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed feature description cache, took: " + timeTaken + "ms size = "
+                + featDescriptionCache.size());
         return featDescriptionCache;
     }
 

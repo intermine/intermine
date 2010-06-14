@@ -282,6 +282,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     throws Exception {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
+        // keep map of feature to submissions it has been referenced by, some features appear in
+        // more than one submission
+        Map<Integer, List<String>> subCollections = new HashMap<Integer, List<String>>();
+
         // hold features that should only be processed once across all submissions, initialise
         // processor with this map each time
         Map <Integer, FeatureData> commonFeaturesMap = new HashMap<Integer, FeatureData>();
@@ -321,15 +325,29 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             LOG.info("FEATMAP: submission " + chadoExperimentId + "|"
                     + "featureMap: " + subFeatureMap.keySet().size());
 
-            //
+            // Populate map of submissions to features, some features are in multiple submissions
             String queryList = StringUtil.join(thisSubmissionDataIds, ",");
-            processDataFeatureTable(connection, subFeatureMap, chadoExperimentId, queryList);
+            processDataFeatureTable(connection, subCollections, subFeatureMap, 
+                    chadoExperimentId, queryList);
 
             // read any genes that have been created so we can re-use the same item identifiers
             // when creating antibody/strain target genes later
             extractGenesFromSubFeatureMap(processor, subFeatureMap);
         }
+
+        storeSubmissionsCollections(subCollections);
+
         LOG.info("PROCESS TIME features: " + (System.currentTimeMillis() - bT));
+    }
+
+
+    private void storeSubmissionsCollections(Map<Integer, List<String>> subCollections)
+    throws ObjectStoreException {
+        for (Map.Entry<Integer, List<String>> entry : subCollections.entrySet()) {
+                Integer featureObjectId = entry.getKey();
+                ReferenceList collection = new ReferenceList("submissions", entry.getValue());
+            getChadoDBConverter().store(collection, featureObjectId);
+        }
     }
 
     private void extractGenesFromSubFeatureMap(ModEncodeFeatureProcessor processor,
@@ -342,19 +360,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
-    /**
-     * @param connection
-     * @param featureMap
-     * @throws SQLException
-     * @throws ObjectStoreException
-     */
-    private void processDataFeatureTable(Connection connection, Map<Integer,
-            FeatureData> featureMap, Integer chadoExperimentId, String queryList)
+
+    private void processDataFeatureTable(Connection connection, Map<Integer, List<String>> subCols,
+                Map<Integer, FeatureData> featureMap, Integer chadoExperimentId, String queryList)
     throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
         ResultSet res = getDataFeature(connection, queryList);
 
-        ReferenceList collection = null;
         String submissionItemId = submissionMap.get(chadoExperimentId).itemIdentifier;
 
         while (res.next()) {
@@ -368,15 +380,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
 
-            // add submission collection
-            // using the old setting when the reference was added to the data_ids.
-            // TODO: it needs correction: here stores only the last submission reference.
             Integer featureObjectId = featureData.getIntermineObjectId();
-
-            collection = new ReferenceList();
-            collection.setName("submissions");
-            collection.addRefId(submissionItemId);
-            getChadoDBConverter().store(collection, featureObjectId);
+            List<String> subs = subCols.get(featureObjectId);
+            if (subs == null) {
+                subs = new ArrayList<String>();
+                subCols.put(featureObjectId, subs);
+            }
+            subs.add(submissionItemId);
         }
         LOG.info("PROCESS TIME data_feature table: " + (System.currentTimeMillis() - bT));
     }
@@ -1447,8 +1457,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
 
             // if there is one, use it instead of the value
-            name = getCvterm(connection, typeId);
-            String datumType = name;
+            String datumType = name = getCvterm(connection, typeId);
             if (!StringUtils.isEmpty(officialName)
                     && doReplaceWithOfficialName(heading, datumType)) {
                 value = officialName;
@@ -2036,8 +2045,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             currentSubId = dataSubmissionMap.get(dataId);
 
-            if (dataId.intValue() != lastDataId.intValue() 
-                    || attDbxref.intValue() != lastAttDbXref.intValue() 
+            if (dataId.intValue() != lastDataId.intValue()
+                    || attDbxref.intValue() != lastAttDbXref.intValue()
                     || currentSubId != previousSubId) {
                 // store the last build property if created, type is set only if we found an
                 // attHeading of Characteristics
@@ -2990,7 +2999,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Item resultFile = getChadoDBConverter().createItem("ResultFile");
         resultFile.setAttribute("name", fileName);
         String url = null;
-        if (fileName.startsWith("http")) {
+        if (fileName.startsWith("http") || fileName.startsWith("ftp")) {
             url = fileName;
         } else {
             String dccId = dccIdMap.get(submissionId);
