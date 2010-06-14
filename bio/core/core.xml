@@ -17,7 +17,7 @@
     <collection name="synonyms" referenced-type="Synonym" reverse-reference="subject"/>
     <collection name="dataSets" referenced-type="DataSet" reverse-reference="bioEntities"/>
     <collection name="publications" referenced-type="Publication"/>
-    <collection name="crossReferences" referenced-type="CrossReference" reverse-reference="feature"/>
+    <collection name="crossReferences" referenced-type="CrossReference" reverse-reference="subject"/>
   </class>
 
   <class name="Chromosome" is-interface="true"/>
@@ -30,7 +30,7 @@
   <class name="CrossReference" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
     <reference name="source" referenced-type="DataSource"/>
-    <reference name="subject" referenced-type="BioEntity"  />
+    <reference name="subject" referenced-type="BioEntity" reverse-reference="crossReferences" />
     <collection name="dataSets" referenced-type="DataSet"/>
   </class> 
 
