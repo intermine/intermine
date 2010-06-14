@@ -46,6 +46,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
+import org.xml.sax.SAXException;
 
 /**
  * A processor for the chado sequence module.
@@ -356,8 +357,7 @@ public class SequenceProcessor extends ChadoProcessor
         if (fieldValuesSet.contains(fixedUniqueName)) {
             uniqueNameSet = true;
         }
-        Item uniqueNameSynonym = createSynonym(fdat, "identifier", fixedUniqueName,
-                                               uniqueNameSet, null);
+        Item uniqueNameSynonym = createSynonym(fdat, "identifier", fixedUniqueName, uniqueNameSet);
         if (uniqueNameSynonym != null) {
             getChadoDBConverter().store(uniqueNameSynonym);
         }
@@ -377,7 +377,7 @@ public class SequenceProcessor extends ChadoProcessor
                         if (!fdat.getExistingSynonyms().contains(processedName)) {
                             boolean nameSet = fieldValuesSet.contains(processedName);
                             Item nameSynonym =
-                                createSynonym(fdat, "name", processedName, nameSet, null);
+                                createSynonym(fdat, "name", processedName, nameSet);
                             if (nameSynonym != null) {
                                 getChadoDBConverter().store(nameSynonym);
                             }
@@ -1090,9 +1090,7 @@ public class SequenceProcessor extends ChadoProcessor
                         if (fieldsSet.contains(newFieldValue)) {
                             isPrimary = true;
                         }
-                        Item synonym = createSynonym(fdat, "identifier", newFieldValue,
-                                                     isPrimary, null);
-
+                        Item synonym = createSynonym(fdat, "identifier", newFieldValue, isPrimary);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
                             count++;
@@ -1170,8 +1168,7 @@ public class SequenceProcessor extends ChadoProcessor
                         if (fieldsSet.contains(newFieldValue)) {
                             isPrimary = true;
                         }
-                        Item synonym = createSynonym(fdat, synonymType, newFieldValue,
-                                                     isPrimary, null);
+                        Item synonym = createSynonym(fdat, synonymType, newFieldValue, isPrimary);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
                             count++;
@@ -1364,8 +1361,7 @@ public class SequenceProcessor extends ChadoProcessor
                         if (fieldsSet.contains(newFieldValue)) {
                             isPrimary = true;
                         }
-                        Item synonym = createSynonym(fdat, synonymType, newFieldValue,
-                                                     isPrimary, null);
+                        Item synonym = createSynonym(fdat, synonymType, newFieldValue, isPrimary);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
                             count++;
@@ -1543,8 +1539,7 @@ public class SequenceProcessor extends ChadoProcessor
                             continue;
                         }
                         Item synonym =
-                            createSynonym(fdat, synonymTypeName, newFieldValue, setField,
-                                          null);
+                            createSynonym(fdat, synonymTypeName, newFieldValue, setField);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
                             count++;
@@ -2104,7 +2099,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException if there is a problem while storing
      */
     protected Item createSynonym(FeatureData fdat, String type, String identifier,
-                                 boolean isPrimary, List<Item> otherEvidence)
+                                 boolean isPrimary)
         throws ObjectStoreException {
         if (fdat.getExistingSynonyms().contains(identifier)) {
             String msg = "feature identifier " + identifier + " is already a synonym for: "
@@ -2114,13 +2109,14 @@ public class SequenceProcessor extends ChadoProcessor
 //          throw new IllegalArgumentException(msg);
             return null;
         }
-        List<Item> allEvidence = new ArrayList();
-        if (otherEvidence != null) {
-            allEvidence.addAll(otherEvidence);
+        Item returnItem = null;
+        try {
+            returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(), type,
+                                                             identifier, String.valueOf(isPrimary));
+        } catch (SAXException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-        Item returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(), type,
-                                                              identifier, isPrimary,
-                                                              allEvidence);
         fdat.addExistingSynonym(identifier);
         return returnItem;
     }
