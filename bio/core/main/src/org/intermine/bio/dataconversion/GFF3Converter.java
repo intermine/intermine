@@ -390,7 +390,6 @@ public class GFF3Converter
     private void setRefsAndCollections(List<String> parents, Item feature) {
         String clsName = feature.getClassName();
         Map<String, String> refsAndCollections = handler.getRefsAndCollections();
-        System.out.println("classname " + clsName);
         if (refsAndCollections.containsKey(clsName) && !parents.isEmpty()) {
             ClassDescriptor cld =
                 tgtModel.getClassDescriptorByName(tgtModel.getPackageName() + "." + clsName);
