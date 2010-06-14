@@ -172,9 +172,9 @@ public class CalculateLocations
         Query parentIdQuery =
             new IqlQuery("SELECT DISTINCT a1_.id as id FROM "
                          + parentClass.getName() + " AS a1_, org.intermine.model.bio.Location "
-                         + "AS a2_, org.intermine.model.bio.BioEntity as a3_"
-                         + " WHERE (a1_.locatedFeatures CONTAINS a2_"
-                         + " and a3_.locations CONTAINS a2_)", null).toQuery();
+                         + "AS a2_, org.intermine.model.bio.BioEntity as a3_ "
+                         + "WHERE (a1_.locations CONTAINS a2_ "
+                         + "and a3_.locatedFeatures CONTAINS a2_)", null).toQuery();
 
         Results parentIdResults = os.execute(parentIdQuery);
         Set locatedParents = new HashSet();
