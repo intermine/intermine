@@ -474,8 +474,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
           map.put(new MultiKey("prop", "ThreePrimeUTR", "external_evidence"),
                   Arrays.asList(new SetFieldConfigAction("externalEvidence")));
 
-          map.put(new MultiKey("prop", "BindingSite", "qValue"),
-                  Arrays.asList(new SetFieldConfigAction("qValue")));
+          map.put(new MultiKey("prop", "BindingSite", "qvalue"),
+                  Arrays.asList(new SetFieldConfigAction("qvalue")));
 
           map.put(new MultiKey("prop", "Exon", "acceptor"),
                   Arrays.asList(new SetFieldConfigAction("acceptor")));
