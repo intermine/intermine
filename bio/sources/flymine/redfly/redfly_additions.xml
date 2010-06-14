@@ -2,7 +2,6 @@
 <classes>
   <class name="CRM" is-interface="true">
     <attribute name="curated" type="java.lang.Boolean"/>
-    <reference name="gene" referenced-type="Gene"/>
     <collection name="anatomyOntology" referenced-type="AnatomyTerm"/>
   </class>
   <class name="AnatomyTerm" extends="OntologyTerm" is-interface="true"/>
