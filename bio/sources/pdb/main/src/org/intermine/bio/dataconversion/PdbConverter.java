@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.biojava.bio.structure.Structure;
 import org.biojava.bio.structure.io.PDBFileParser;
@@ -45,10 +44,9 @@ public class PdbConverter extends BioDirectoryConverter
 
     private static final Logger LOG = Logger.getLogger(PdbConverter.class);
     protected static final String ENDL = System.getProperty("line.separator");
-    private Map<String, String> synonyms = new HashMap();
     private Set<String> taxonIds = null;
-    private Map<String, String> organisms = new HashMap();
-    private Map<String, String> proteins = new HashMap();
+    private Map<String, String> proteins = new HashMap<String, String>();
+
     /**
      * Create a new PdbConverter object.
      * @param writer the ItemWriter to store the objects in
@@ -70,7 +68,7 @@ public class PdbConverter extends BioDirectoryConverter
          */
 
         File[] directories = dataDir.listFiles();
-        List<File> directoriesToProcess = new ArrayList();
+        List<File> directoriesToProcess = new ArrayList<File>();
 
         if (directories == null || directories.length == 0) {
             throw new RuntimeException("no valid PDB directories found");
@@ -99,7 +97,7 @@ public class PdbConverter extends BioDirectoryConverter
         for (File dir : directoriesToProcess) {
             String taxonId = dir.getName();
             File[] filesToProcess = dir.listFiles();
-            proteins = new HashMap();
+            proteins = new HashMap<String, String>();
             for (File f : filesToProcess) {
               if (f.getName().endsWith(".pdb")) {
                   processPDBFile(f, taxonId);
@@ -131,11 +129,10 @@ public class PdbConverter extends BioDirectoryConverter
         String idCode = (String) structure.getHeader().get("idCode");
         proteinStructure.setAttribute("identifier", idCode);
 
-
         List<String> dbrefs = pdbBuffReader.getDbrefs();
         for (String accnum: dbrefs) {
             String proteinRefId = getProtein(accnum, taxonId);
-            createSynonym(proteinRefId, "accession", accnum);
+            createSynonym(proteinRefId, "accession", accnum, "true", true);
             proteinStructure.addToCollection("proteins", proteinRefId);
         }
 
@@ -164,40 +161,6 @@ public class PdbConverter extends BioDirectoryConverter
         proteinStructure.setAttribute("atm", atm);
         store(proteinStructure);
     }
-
-    private Item createSynonym(String subjectId, String type, String value) throws Exception {
-        String key = subjectId + type + value;
-        if (StringUtils.isEmpty(value)) {
-            return null;
-        }
-        if (!synonyms.containsKey(key)) {
-            Item syn = createItem("Synonym");
-            syn.setReference("subject", subjectId);
-            syn.setAttribute("type", type);
-            syn.setAttribute("value", value);
-            store(syn);
-            synonyms.put(key, syn.getIdentifier());
-            return syn;
-        }
-        return null;
-    }
-
-//    private String getOrganism(String taxonId)
-//    throws SAXException {
-//        String refId = organisms.get(taxonId);
-//        if (refId == null) {
-//            Item item = createItem("Organism");
-//            item.setAttribute("taxonId", taxonId);
-//            refId = item.getIdentifier();
-//            organisms.put(taxonId, refId);
-//            try {
-//                store(item);
-//            } catch (ObjectStoreException e) {
-//                throw new SAXException(e);
-//            }
-//        }
-//        return refId;
-//    }
 
     private String getProtein(String accession, String taxonId)
     throws SAXException {
@@ -256,7 +219,7 @@ public class PdbConverter extends BioDirectoryConverter
          * Return the db refs read from the Reader.
          * @return the List of db refs
          */
-        public List getDbrefs() {
+        public List<String> getDbrefs() {
             return dbrefs;
         }
     }

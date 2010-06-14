@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.dataconversion.ItemWriter;
@@ -46,7 +45,6 @@ public class ProteinStructureDataConverter extends BioFileConverter
     private final Map<String, Item> featureMap = new HashMap<String, Item>();
     private final Map<String, String> proteinMap = new HashMap<String, String>();
     private String parentDir;
-    private Map<String, Item> synonyms = new HashMap<String, Item>();
 
     /**
      * Constructor
@@ -140,7 +138,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
         private String attName = null;
         private StringBuffer attValue = null;
         private boolean alignmentFile = false;
-        private Stack stack = new Stack();
+        private Stack<String> stack = new Stack<String>();
         private String protId, strId, pfamId;
 
         /**
@@ -183,7 +181,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
                     //Reference my be to proteinItemIdentifier accession
                     protId = attValue.toString();
                     proteinItemIdentifier = getProtein(protId);
-                    proteinStructure.setCollection("proteins", new ArrayList(
+                    proteinStructure.setCollection("proteins", new ArrayList<String>(
                                                     Collections.singleton(proteinItemIdentifier)));
                 } else if (qName.equals("pfam_id")) {
                     pfamId = attValue.toString();
@@ -242,7 +240,8 @@ public class ProteinStructureDataConverter extends BioFileConverter
             }
         }
 
-        private String getProtein(String identifier) throws ObjectStoreException {
+        private String getProtein(String identifier)
+        throws ObjectStoreException, SAXException {
             String proteinIdentifier = proteinMap.get(identifier);
             if (proteinIdentifier == null) {
                 Item protein = createItem("Protein");
@@ -250,7 +249,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
                 protein.setAttribute("uniprotAccession", identifier);
                 proteinMap.put(identifier, protein.getIdentifier());
                 store(protein);
-                createSynonym(protein.getIdentifier(), "accession", identifier);
+                createSynonym(protein.getIdentifier(), "accession", identifier, "true", true);
                 return protein.getIdentifier();
             }
             return proteinIdentifier;
@@ -303,23 +302,5 @@ public class ProteinStructureDataConverter extends BioFileConverter
                 }
             }
         }
-    }
-
-    private Item createSynonym(String subjectId, String type, String value)
-    throws ObjectStoreException {
-        String key = subjectId + type + value;
-        if (StringUtils.isEmpty(value)) {
-            return null;
-        }
-        if (!synonyms.containsKey(key)) {
-            Item syn = createItem("Synonym");
-            syn.setReference("subject", subjectId);
-            syn.setAttribute("type", type);
-            syn.setAttribute("value", value);
-            store(syn);
-            synonyms.put(key, syn);
-            return syn;
-        }
-        return null;
     }
 }

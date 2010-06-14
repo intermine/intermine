@@ -14,16 +14,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.biopax.paxtools.controller.PropertyEditor;
@@ -40,6 +37,7 @@ import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 /**
  *
  * @author
@@ -56,7 +54,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
     private int depth = 0;
     private Item organism, dataset;
     private String pathwayRefId = null;
-    private List<MultiKey> synonyms = new ArrayList<MultiKey>();
+    private Set<Item> synonyms = new HashSet<Item>();
     private Set<String> taxonIds = new HashSet<String>();
     private Map<String, String[]> configs = new HashMap<String, String[]>();
     private OrganismRepository or;
@@ -153,7 +151,6 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
     throws ObjectStoreException {
         dataset = createItem("DataSet");
         dataset.setAttribute("name", title);
-
     }
 
     private void readConfig() {
@@ -215,7 +212,15 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
                 = (org.biopax.paxtools.model.level2.entity) bpe;
                 String className = entity.getModelInterface().getSimpleName();
                 if (className.equalsIgnoreCase("protein") && StringUtils.isNotEmpty(pathwayRefId)) {
-                    processProteinEntry(entity);
+                    try {
+                        processProteinEntry(entity);
+                    } catch (SAXException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (ObjectStoreException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
             }
             if (!visited.contains(bpe)) {
@@ -227,7 +232,8 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         }
     }
 
-    private void processProteinEntry(org.biopax.paxtools.model.level2.entity entity) {
+    private void processProteinEntry(org.biopax.paxtools.model.level2.entity entity)
+    throws SAXException, ObjectStoreException {
         String identifier = entity.getRDFId();
 
         // there is only one gene
@@ -246,7 +252,8 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         }
     }
 
-    private void processGene(String xref, String pathway) {
+    private void processGene(String xref, String pathway)
+    throws SAXException, ObjectStoreException {
 
         // db source for this identifier, eg. UniProt, FlyBase
         String identifierSource = (xref.contains(dbName) ? dbName : DEFAULT_DB_NAME);
@@ -287,7 +294,6 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         return;
     }
 
-
     private String getPathway(org.biopax.paxtools.model.level2.pathway pathway)
     throws ObjectStoreException {
         Item item = createItem("Pathway");
@@ -311,39 +317,19 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         return null;
     }
 
-    private Item getGene(String fieldName, String identifier) {
+    private Item getGene(String fieldName, String identifier)
+    throws SAXException, ObjectStoreException {
        Item item = genes.get(identifier);
         if (item == null) {
             item = createItem("Gene");
             item.setAttribute(fieldName, identifier);
             item.setReference("organism", organism);
             item.addToCollection("dataSets", dataset);
-            try {
-                setSynonym(item.getIdentifier(), identifier);
-            } catch (ObjectStoreException e) {
-                // nothing
-            }
+            Item synonym = createSynonym(item.getIdentifier(), identifier, fieldName, null, false);
+            synonyms.add(synonym);
             genes.put(identifier, item);
         }
         return item;
-    }
-
-    private void setSynonym(String subjectId, String value)
-    throws ObjectStoreException {
-        MultiKey key = new MultiKey(subjectId, value);
-        if (!synonyms.contains(key)) {
-            Item syn = createItem("Synonym");
-            syn.setReference("subject", subjectId);
-            syn.setAttribute("value", value);
-            syn.setAttribute("type", "identifier");
-            syn.addToCollection("dataSets", dataset);
-            synonyms.add(key);
-            try {
-                store(syn);
-            } catch (ObjectStoreException e) {
-                throw new ObjectStoreException(e);
-            }
-        }
     }
 
     private void setOrganism(String taxonId)
@@ -406,7 +392,6 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         if (!taxonIds.isEmpty() && !taxonIds.contains(taxonIdString)) {
             return null;
         }
-
         return taxonIdString;
     }
 
@@ -436,11 +421,10 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
     public void close()
     throws ObjectStoreException {
         for (Item item : genes.values()) {
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new ObjectStoreException(e);
-            }
+            store(item);
+        }
+        for (Item item : synonyms) {
+            store(item);
         }
     }
 }

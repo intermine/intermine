@@ -17,7 +17,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -27,6 +29,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
+import org.xml.sax.SAXException;
 
 /**
  * DataConverter to parse Anopheles Expression data file into Items.
@@ -39,8 +42,8 @@ public class AnophExprConverter extends BioFileConverter
     private Map<String, String> reporterToGene = new HashMap<String, String>();
     private Map<String, Item> genes = new HashMap<String, Item>();
     private Map<String, Item> assays = new HashMap<String, Item>();
-    private Map<String, Item> synonyms = new HashMap<String, Item>();
     private static final String TYPE = "Geometric mean of ratios";
+    private Set<Item> synonyms = new HashSet<Item>();
     Item org;
     private Item pub;
     private Item experiment;
@@ -71,7 +74,6 @@ public class AnophExprConverter extends BioFileConverter
         experiment.setAttribute("name", experimentName);
         experiment.setReference("publication", pub.getIdentifier());
         store(experiment);
-
     }
 
     /**
@@ -242,12 +244,12 @@ public class AnophExprConverter extends BioFileConverter
         for (Item item : genes.values()) {
             store(item);
         }
-        for (Item item : synonyms.values()) {
+        for (Item item : synonyms) {
             store(item);
         }
     }
 
-    private Item getGene(String geneCG) {
+    private Item getGene(String geneCG) throws SAXException, ObjectStoreException {
         if (genes.containsKey(geneCG)) {
             return genes.get(geneCG);
         }
@@ -255,24 +257,9 @@ public class AnophExprConverter extends BioFileConverter
         gene.setAttribute("primaryIdentifier", geneCG);
         gene.setReference("organism", org.getIdentifier());
         genes.put(geneCG, gene);
-        createSynonym(gene.getIdentifier(), "identifier", geneCG);
+        Item synonym = createSynonym(gene.getIdentifier(), "identifier", geneCG, null, false);
+        synonyms.add(synonym);
         return gene;
-    }
-
-    private Item createSynonym(String subjectId, String type, String value) {
-        String key = subjectId + type + value;
-        if (StringUtils.isEmpty(value)) {
-            return null;
-        }
-        if (!synonyms.containsKey(key)) {
-            Item syn = createItem("Synonym");
-            syn.setReference("subject", subjectId);
-            syn.setAttribute("type", type);
-            syn.setAttribute("value", value);
-            synonyms.put(key, syn);
-            return syn;
-        }
-        return null;
     }
 }
 

@@ -29,6 +29,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -51,7 +52,6 @@ public class KeggOrthologuesConverter extends BioFileConverter
     private Map<String, String[]> config = new HashMap<String, String[]>();
     private Set<String> taxonIds = new HashSet<String>();
     private Map<String, String> identifiersToGenes = new HashMap<String, String>();
-    private Set<String> synonyms = new HashSet<String>();
     private Map<String, String> organisms = new HashMap<String, String>();
 
     /**
@@ -117,7 +117,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        Set<String> homologues = new HashSet();
+        Set<String> homologues = new HashSet<String>();
         BufferedReader br = new BufferedReader(reader);
         String line = null;
         while ((line = br.readLine()) != null) {
@@ -136,12 +136,13 @@ public class KeggOrthologuesConverter extends BioFileConverter
                     processHomologues(identifier, homologues);
                 }
                 // reset list
-                homologues = new HashSet();
+                homologues = new HashSet<String>();
             }
         }
     }
 
-    private void processLine(String line, Set<String> homologues) throws ObjectStoreException {
+    private void processLine(String line, Set<String> homologues)
+    throws ObjectStoreException, SAXException {
         // split taxon abbreviation and identifier, eg. HSA: 7358(UGDH)
         String[] bits = line.split(" ");
         if (bits.length < 2) {
@@ -209,7 +210,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
     }
 
     private String getGene(String identifierType, String id, String taxonId)
-    throws ObjectStoreException {
+    throws ObjectStoreException, SAXException {
         String identifier = id;
         if (taxonId.equals("7227")) {
             identifier = resolveGene(identifier);
@@ -224,35 +225,14 @@ public class KeggOrthologuesConverter extends BioFileConverter
             gene.setAttribute(identifierType, identifier);
             gene.setReference("organism", getOrganism(taxonId));
             identifiersToGenes.put(identifier, refId);
-            getSynonym(refId, "identifier", identifier);
             try {
                 store(gene);
             } catch (ObjectStoreException e) {
                 throw new ObjectStoreException(e);
             }
-
+            createSynonym(refId, "identifier", identifier, null, true);
         }
         return refId;
-    }
-
-    private void getSynonym(String subjectId, String type, String value)
-    throws ObjectStoreException {
-        String key = subjectId + type + value;
-        if (StringUtils.isEmpty(value)) {
-            return;
-        }
-        if (!synonyms.contains(key)) {
-            Item syn = createItem("Synonym");
-            syn.setReference("subject", subjectId);
-            syn.setAttribute("type", type);
-            syn.setAttribute("value", value);
-            synonyms.add(key);
-            try {
-                store(syn);
-            } catch (ObjectStoreException e) {
-                throw new ObjectStoreException(e);
-            }
-        }
     }
 
     private String getOrganism(String taxonId)

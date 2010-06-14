@@ -83,41 +83,28 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
                                            + Arrays.asList(line));
             }
             String primaryIdentifier = line[0];
-
             List<String> ensIds = new ArrayList<String>(Arrays.asList(line[1].split(" ")));
             String secondaryIdentifier = ensIds.get(0);
             ensIds.remove(0);
 
             Item feature = createItem(clsName);
-            List<Item> synonyms = new ArrayList<Item>();
-
             if (secondaryIdentifier != null && !secondaryIdentifier.equals("")
                 && !seenEnsIds.contains(secondaryIdentifier)) {
                 feature.setAttribute("secondaryIdentifier", secondaryIdentifier);
-                synonyms.add(createSynonym(feature, "identifier", secondaryIdentifier));
                 seenEnsIds.add(secondaryIdentifier);
             }
             if (primaryIdentifier != null && !primaryIdentifier.equals("")) {
                 feature.setAttribute("primaryIdentifier", primaryIdentifier);
-                synonyms.add(createSynonym(feature, "identifier", primaryIdentifier));
             }
-
-            // create addidtional synonyms for other ensembl ids
-            for (String ensId : ensIds) {
-                synonyms.add(createSynonym(feature, "identifier", ensId));
-            }
-
             feature.setReference("organism", organism.getIdentifier());
             store(feature);
-            store(synonyms);
+            String refId = feature.getIdentifier();
+            createSynonym(refId, "identifier", secondaryIdentifier, "false", true);
+            createSynonym(refId, "identifier", primaryIdentifier, "true", true);
+            // create addidtional synonyms for other ensembl ids
+            for (String ensId : ensIds) {
+                createSynonym(refId, "identifier", ensId, "false", true);
+            }
         }
-    }
-
-    private Item createSynonym(Item subject, String type, String value) {
-        Item synonym = createItem("Synonym");
-        synonym.setAttribute("type", type);
-        synonym.setAttribute("value", value);
-        synonym.setReference("subject", subject.getIdentifier());
-        return synonym;
     }
 }

@@ -30,7 +30,7 @@
   <class name="CrossReference" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
     <reference name="source" referenced-type="DataSource"/>
-    <reference name="feature" referenced-type="BioEntity"  />
+    <reference name="subject" referenced-type="BioEntity"  />
     <collection name="dataSets" referenced-type="DataSet"/>
   </class> 
 

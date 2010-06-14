@@ -25,7 +25,6 @@ import java.util.Stack;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.DirectoryConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -53,7 +52,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> organisms = new HashMap<String, String>();
     private Map<String, String> comments = new HashMap<String, String>();
     private Map<String, String> datasets = new HashMap<String, String>();
-    private Map<String, String> synonyms = new HashMap<String, String>();
+    private Set<Item> synonyms = new HashSet<Item>();
     private Map<String, String> domains = new HashMap<String, String>();
     // taxonId -> [md5Checksum -> stored protein identifier]
     private Map<String, Map<String, String>> sequences = new HashMap<String, Map<String, String>>();
@@ -226,8 +225,6 @@ public class UniprotConverter extends BioDirectoryConverter
         LOG.info("Setting list of organisms to " + this.taxonIds);
     }
 
-
-
     /* converts the XML into UniProt entry objects.  run once per file */
     private class UniprotHandler extends DefaultHandler
     {
@@ -329,8 +326,12 @@ public class UniprotConverter extends BioDirectoryConverter
                     && getAttrValue(attrs, "type").equals("entry name")) {
                 String domain = entry.getAttribute();
                 if (domain.startsWith("IPR")) {
-                    entry.addDomainRefId(getInterpro(domain, getAttrValue(attrs, "value"),
-                            entry.getDatasetRefId()));
+                    try {
+                        entry.addDomainRefId(getInterpro(domain, getAttrValue(attrs, "value"),
+                                entry.getDatasetRefId()));
+                    } catch (ObjectStoreException e) {
+                        throw new SAXException(e);
+                    }
                 }
             } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
                 taxonId = getAttrValue(attrs, "id");
@@ -431,9 +432,13 @@ public class UniprotConverter extends BioDirectoryConverter
                     entry.addIsoformSynonym(accession);
                 }
             } else if (qName.equals("entry")) {
-                Set<UniprotEntry> isoforms = processEntry(entry);
-                for (UniprotEntry isoform : isoforms) {
-                    processEntry(isoform);
+                try {
+                    Set<UniprotEntry> isoforms = processEntry(entry);
+                    for (UniprotEntry isoform : isoforms) {
+                        processEntry(isoform);
+                    }
+                } catch (ObjectStoreException e) {
+                    throw new SAXException(e);
                 }
             }
         }
@@ -478,28 +483,24 @@ public class UniprotConverter extends BioDirectoryConverter
 
 
         private Set<UniprotEntry> processEntry(UniprotEntry entry)
-        throws SAXException {
-
+        throws SAXException, ObjectStoreException {
             entryCount++;
-
             if (entryCount % 10000 == 0) {
                 LOG.info("Processed " + entryCount + " entries.");
             }
-
             Set<UniprotEntry> isoforms = new HashSet<UniprotEntry>();
-
             // have we already seen a protein for this organism with the same sequence?
             if (!entry.isIsoform() && seenSequence(entry.getTaxonId(), entry.getMd5checksum())) {
                 // if we have seen this sequence before for this organism just add the
                 // primaryAccession of this protein as a synonym for the one already stored.
                 Map<String, String> orgSequences = sequences.get(taxonId);
                 if (orgSequences != null && orgSequences.containsKey(entry.getMd5checksum())) {
-                    getSynonym(orgSequences.get(entry.getMd5checksum()), "accession",
-                            entry.getPrimaryAccession(), "false", entry.getDatasetRefId());
+                    Item synonym = createSynonym(orgSequences.get(entry.getMd5checksum()),
+                            "accession", entry.getPrimaryAccession(), "false", false);
+                    synonyms.add(synonym);
                 }
                 return isoforms;
             }
-
 
             // TODO there are uniparc entries so check for swissprot-trembl datasets
             if (entry.hasDatasetRefId() && entry.hasPrimaryAccession()) {
@@ -577,7 +578,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
                 }
-                synonyms = new HashMap<String, String>();
+                synonyms = new HashSet<Item>();
             }
             return isoforms;
         }
@@ -638,7 +639,6 @@ public class UniprotConverter extends BioDirectoryConverter
             }
         }
 
-
         private void processFeatures(Item protein, UniprotEntry entry)
         throws SAXException {
             for (Item feature : entry.getFeatures()) {
@@ -652,48 +652,42 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private void processSynonyms(String proteinRefId, UniprotEntry entry)
-        throws SAXException {
-
-            String datasetRefId = entry.getDatasetRefId();
-
+        throws SAXException, ObjectStoreException {
             // primary accession
-            getSynonym(proteinRefId, "accession", entry.getPrimaryAccession(),
-                    "true", datasetRefId);
+            createSynonym(proteinRefId, "accession", entry.getPrimaryAccession(), "true", true);
 
             // accessions
             for (String accession : entry.getAccessions()) {
-                getSynonym(proteinRefId, "accession", accession, "false", datasetRefId);
+                createSynonym(proteinRefId, "accession", accession, "false", true);
             }
 
             // primaryIdentifier
             String primaryIdentifier = entry.getPrimaryIdentifier();
-            getSynonym(proteinRefId, "identifier", primaryIdentifier, "false",
-                    datasetRefId);
+            createSynonym(proteinRefId, "identifier", primaryIdentifier, "false", true);
 
             // primaryIdentifier if isoform
             if (entry.isIsoform()) {
                 String isoformIdentifier =
                     getIsoformIdentifier(entry.getPrimaryAccession(), entry.getPrimaryIdentifier());
-                getSynonym(proteinRefId, "identifier", isoformIdentifier, "false",
-                        datasetRefId);
+                createSynonym(proteinRefId, "identifier", isoformIdentifier, "false", true);
             }
 
             // name <recommendedName> or <alternateName>
             for (String name : entry.getProteinNames()) {
-                getSynonym(proteinRefId, "name", name, "false", datasetRefId);
+                createSynonym(proteinRefId, "name", name, "false", true);
             }
 
             // isoforms with extra identifiers
             List<String> isoformSynonyms = entry.getIsoformSynonyms();
             if (!isoformSynonyms.isEmpty()) {
                 for (String synonym : isoformSynonyms) {
-                    getSynonym(proteinRefId, "accession", synonym, "false", datasetRefId);
+                    createSynonym(proteinRefId, "accession", synonym, "false", true);
                 }
             }
         }
 
         private void processDbrefs(Item protein, UniprotEntry entry)
-        throws SAXException {
+        throws SAXException, ObjectStoreException {
             Map<String, List<String>> dbrefs = entry.getDbrefs();
 
             for (Map.Entry<String, List<String>> dbref : dbrefs.entrySet()) {
@@ -705,8 +699,9 @@ public class UniprotConverter extends BioDirectoryConverter
                     protein.setAttribute("ecNumber", values.get(0));
                 } else if (key.equals("RefSeq")) {
                     for (String synonym : values) {
-                        getSynonym(protein.getIdentifier(), "identifier", synonym,
-                                "false", entry.getDatasetRefId());
+                        Item item = createSynonym(protein.getIdentifier(), "identifier",
+                                synonym, "false", false);
+                        synonyms.add(item);
                     }
                 } else if (creatego && key.equals("GO")) {
                     for (String identifier : values) {
@@ -715,9 +710,6 @@ public class UniprotConverter extends BioDirectoryConverter
                 }
             }
         }
-
-
-
 
         private void processGoAnnotation(UniprotEntry entry, Item gene)
         throws SAXException {
@@ -737,7 +729,7 @@ public class UniprotConverter extends BioDirectoryConverter
         // gets the unique identifier and list of identifiers to set
         // loops through each gene entry, assigns refId to protein
         private void processGene(Item protein, UniprotEntry entry)
-        throws SAXException {
+        throws SAXException, ObjectStoreException {
             String taxonId = entry.getTaxonId();
 
             // which gene.identifier field has to be unique
@@ -780,7 +772,7 @@ public class UniprotConverter extends BioDirectoryConverter
         // creates synonym
         private String createGene(UniprotEntry entry, String taxonId, Set<String> geneFields,
                 String uniqueIdentifierFieldType)
-        throws SAXException {
+        throws SAXException, ObjectStoreException {
 
             List<String> geneSynonyms = new ArrayList<String>();
 
@@ -841,10 +833,9 @@ public class UniprotConverter extends BioDirectoryConverter
                 // synonyms
                 geneRefId = gene.getIdentifier();
                 for (String identifier : geneSynonyms) {
-                    getSynonym(geneRefId, "identifier", identifier, null, entry.getDatasetRefId());
+                    createSynonym(geneRefId, "identifier", identifier, null, true);
                 }
-                getSynonym(geneRefId, "identifier", uniqueIdentifierValue, null,
-                           entry.getDatasetRefId());
+                createSynonym(geneRefId, "identifier", uniqueIdentifierValue, null, true);
             }
             return geneRefId;
         }
@@ -1012,7 +1003,7 @@ public class UniprotConverter extends BioDirectoryConverter
     }
 
     private String getInterpro(String identifier, String shortName, String datasetRefId)
-    throws SAXException {
+    throws SAXException, ObjectStoreException {
         String refId = domains.get(identifier);
         if (refId == null) {
             Item item = createItem("ProteinDomain");
@@ -1026,8 +1017,8 @@ public class UniprotConverter extends BioDirectoryConverter
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
-            getSynonym(refId, "identifier", identifier, "true", datasetRefId);
-            getSynonym(refId, "name", shortName, "false", datasetRefId);
+            createSynonym(refId, "identifier", identifier, "true", true);
+            createSynonym(refId, "name", shortName, "false", true);
         }
         return refId;
     }
@@ -1045,34 +1036,6 @@ public class UniprotConverter extends BioDirectoryConverter
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
-        }
-        return refId;
-    }
-
-    private String getSynonym(String subjectId, String type, String value, String isPrimary,
-                              String datasetRefId)
-    throws SAXException {
-        String key = type + subjectId + value;
-        if (StringUtils.isEmpty(value)) {
-            return null;
-        }
-        String refId = synonyms.get(key);
-        if (refId == null) {
-            Item item = createItem("Synonym");
-            item.setReference("subject", subjectId);
-            item.setAttribute("type", type);
-            item.setAttribute("value", value);
-            item.addToCollection("dataSets", datasetRefId);
-            if (isPrimary != null) {
-                item.setAttribute("isPrimary", isPrimary);
-            }
-            refId = item.getIdentifier();
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-            synonyms.put(key, refId);
         }
         return refId;
     }

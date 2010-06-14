@@ -24,6 +24,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -34,8 +35,8 @@ import org.intermine.xml.full.Item;
 public class DrosophilaHomologyConverter extends BioFileConverter
 {
     private Item pub, evidence;
-    private Map<String, String> genes = new HashMap();
-    private Map<String, String> organisms = new HashMap();
+    private Map<String, String> genes = new HashMap<String, String>();
+    private Map<String, String> organisms = new HashMap<String, String>();
     protected IdResolverFactory resolverFactory;
     protected static final Logger LOG = Logger.getLogger(DrosophilaHomologyConverter.class);
     private OrganismRepository or;
@@ -105,7 +106,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
     }
 
     private String getGene(String identifier, String organismRefId)
-    throws ObjectStoreException {
+    throws ObjectStoreException, SAXException {
         String geneRefId = genes.get(identifier);
         if (geneRefId != null) {
             return geneRefId;
@@ -115,22 +116,9 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         item.setReference("organism", organismRefId);
         geneRefId = item.getIdentifier();
         genes.put(identifier, geneRefId);
-        getSynonym(geneRefId, "identifier", identifier);
         store(item);
+        createSynonym(geneRefId, "identifier", identifier, null, true);
         return geneRefId;
-    }
-
-    private void getSynonym(String subjectId, String type, String value)
-    throws ObjectStoreException {
-        Item syn = createItem("Synonym");
-        syn.setReference("subject", subjectId);
-        syn.setAttribute("type", type);
-        syn.setAttribute("value", value);
-        try {
-            store(syn);
-        } catch (ObjectStoreException e) {
-            throw new ObjectStoreException(e);
-        }
     }
 
     private String getOrganism(String taxonId)

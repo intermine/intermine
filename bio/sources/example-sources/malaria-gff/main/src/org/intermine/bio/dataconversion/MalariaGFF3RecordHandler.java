@@ -62,8 +62,5 @@ public class MalariaGFF3RecordHandler extends GFF3RecordHandler
                 feature.removeAttribute("symbol");
             }
         }
-
-        // set references/collections for any Parent attributes
-        setReferences(parents);
     }
 }

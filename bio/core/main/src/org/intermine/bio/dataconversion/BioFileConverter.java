@@ -34,6 +34,9 @@ public abstract class BioFileConverter extends FileConverter
     private final Map<String, Item> dataSets = new HashMap<String, Item>();
     private final Map<String, Item> dataSources = new HashMap<String, Item>();
     private Set<String> synonyms = new HashSet<String>();
+    private Set<String> crossReferences = new HashSet<String>();
+
+
     /**
      * Create a new BioFileConverter.
      * @param writer the Writer used to output the resultant items
@@ -74,7 +77,6 @@ public abstract class BioFileConverter extends FileConverter
         if (name == null) {
             return null;
         }
-
         Item dataSource = dataSources.get(name);
         if (dataSource == null) {
             dataSource = createItem("DataSource");
@@ -87,6 +89,16 @@ public abstract class BioFileConverter extends FileConverter
             dataSources.put(name, dataSource);
         }
         return dataSource;
+    }
+
+    /**
+     * Return a DataSet item for the given name.  Create and store dataSource item with the
+     * same name..
+     * @param title the DataSet title
+     * @return the DataSet Item
+     */
+    public Item getDataSetItem(String title) {
+        return getDataSetItem(title, null, null, getDataSourceItem(title));
     }
 
     /**
@@ -129,16 +141,40 @@ public abstract class BioFileConverter extends FileConverter
         return dataSet;
     }
 
+    /**
+     * Create a new Synonym.  Keeps a map of already processed synonyms, ignores duplicates.
+     * The "store" param should be true only if the subject has already been stored.  Storing a
+     * synonym first can signficantly slow down the build process.
+     * @param item object
+     * @param type the Synonym type, eg. identifier, name
+     * @param value the Synonym value
+     * @param isPrimary true if this is a primary identifier, false if not, null if don't know
+     * @param store if true, will store item
+     * @throws ObjectStoreException if the synonym can't be stored
+     * @throws SAXException if the synonym can't be stored
+     * @return the synonym item or null if this is a duplicate
+     */
+    public Item createSynonym(Item item, String type, String value, String isPrimary,
+            boolean store)
+    throws SAXException, ObjectStoreException {
+        return createSynonym(item.getIdentifier(), type, value, isPrimary, store);
+    }
 
     /**
-     * Create a new Synonym.  Keeps a map of already processed synonyms, ignores duplicates
+     * Create a new Synonym.  Keeps a map of already processed synonyms, ignores duplicates.
+     * The "store" param should be true only if the subject has already been stored.  Storing a
+     * synonym first can signficantly slow down the build process.
      * @param subjectId id representing the object (eg. Gene) this synonym describes.
      * @param type the Synonym type, eg. identifier, name
      * @param value the Synonym value
      * @param isPrimary true if this is a primary identifier, false if not, null if don't know
-     * @throws ObjectStoreException
+     * @param store if true, will store item
+     * @throws ObjectStoreException if the synonym can't be stored
+     * @throws SAXException if the synonym can't be stored
+     * @return the synonym item or null if this is a duplicate
      */
-    public void createSynonym(String subjectId, String type, String value, String isPrimary)
+    public Item createSynonym(String subjectId, String type, String value, String isPrimary,
+            boolean store)
     throws SAXException, ObjectStoreException {
         String key = subjectId + type + value;
         if (!synonyms.contains(key)) {
@@ -150,7 +186,41 @@ public abstract class BioFileConverter extends FileConverter
                 synonym.setAttribute("isPrimary", isPrimary);
             }
             synonyms.add(key);
-            store(synonym);
+            if (store) {
+                store(synonym);
+            }
+            return synonym;
         }
+        return null;
+    }
+
+    /**
+     * Create a new Synonym.  Keeps a map of already processed synonyms, ignores duplicates.
+     * The "store" param should be true only if the subject has already been stored.  Storing a
+     * synonym first can signficantly slow down the build process.
+     * @param subjectId id representing the object (eg. Gene) this synonym describes.
+     * @param value identifier
+     * @param dataSource external database
+     * @param store if true, will store item
+     * @throws ObjectStoreException if the synonym can't be stored
+     * @throws SAXException if the synonym can't be stored
+     * @return the synonym item or null if this is a duplicate
+     */
+    public Item createCrossReference(String subjectId, String value, String dataSource,
+            boolean store)
+    throws SAXException, ObjectStoreException {
+        String key = subjectId + value;
+        if (!crossReferences.contains(key)) {
+            Item item = createItem("CrossReference");
+            item.setAttribute("identifier", value);
+            item.setReference("subject", subjectId);
+            item.setReference("source", getDataSourceItem(dataSource));
+            crossReferences.add(key);
+            if (store) {
+                store(item);
+            }
+            return item;
+        }
+        return null;
     }
 }

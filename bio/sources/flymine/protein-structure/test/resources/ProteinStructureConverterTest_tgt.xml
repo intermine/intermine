@@ -29,6 +29,7 @@
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="4_1" class="Synonym">
+<attribute name="isPrimary" value="true"/>
 <attribute name="type" value="accession"/>
 <attribute name="value" value="Q8IQ89"/>
 <reference name="subject" ref_id="3_1"/>
