@@ -137,6 +137,9 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
     public Item createSynonym(String subjectId, String type, String value, String isPrimary,
             boolean store)
     throws SAXException, ObjectStoreException {
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
         String key = subjectId + type + value;
         if (!synonyms.contains(key)) {
             Item synonym = createItem("Synonym");
