@@ -20,14 +20,13 @@ import java.util.Set;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Location;
-import org.intermine.model.bio.RankedRelation;
 import org.intermine.model.bio.Sequence;
 import org.intermine.model.bio.Transcript;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
@@ -159,7 +158,7 @@ public class TransferSequencesTest extends TestCase
         "tacaccccgtcatcccccctcacacgctcaccaccgcacaaaacaccccgcagacacaca"+
         "acgcctcaacgggcagactaagtgccgtcacgacgcgctgagacgctgaaaaaatacaat"+
         "cagcaccaccgtcagcgcgcagtgctttccccgcctcgcc";
-    
+
     //private static final Logger LOG = Logger.getLogger(TransferSequencesTest.class);
 
     private static final String EXPECTED_TRANSCRIPT_0_RESIDUES =
@@ -211,7 +210,7 @@ public class TransferSequencesTest extends TestCase
 
         Exon resExon0 = (Exon) os.getObjectById(storedExons[0].getId());
         Assert.assertEquals(expectedExonSequence0, resExon0.getSequence().getResidues());
-        
+
         Exon resExon4 = (Exon) os.getObjectById(storedExons[4].getId());
         Assert.assertEquals(expectedExonSequence4, resExon4.getSequence().getResidues());
 
@@ -255,21 +254,21 @@ public class TransferSequencesTest extends TestCase
         osw.flushObjectById();
 
         Set<InterMineObject> toStore = new HashSet<InterMineObject>();
-        
+
         storedChromosome =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         storedChromosome.setLength(new Integer(4000));
         storedChromosome.setId(new Integer(101));
         storedChromosome.setPrimaryIdentifier("store_chromosome");
-        
-        
+
+
         Sequence chrSequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
         chrSequence.setResidues(storedChrSequence);
         storedChromosome.setSequence(chrSequence);
         toStore.add(chrSequence);
         toStore.add(storedChromosome);
-        
+
         storedTranscripts = new Transcript[2];
         for (int i = 0 ; i < storedTranscripts.length ; i++) {
             storedTranscripts[i] =
@@ -303,24 +302,24 @@ public class TransferSequencesTest extends TestCase
         List<Exon> transcript1Exons = Arrays.asList(new Exon[] {storedExons[7], storedExons[6]});
         storedTranscripts[1].setExons(new HashSet<Exon>(transcript1Exons));
 
-        for (int i = 0; i < transcript0Exons.size() ; i++) {
-            RankedRelation rankedRelation =
-                (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
-            rankedRelation.setRank(new Integer(i + 1));
-            rankedRelation.setSubject((BioEntity) transcript0Exons.get(i));
-            rankedRelation.setObject(storedTranscripts[0]);
-            toStore.add(rankedRelation);
-        }
+//        for (int i = 0; i < transcript0Exons.size() ; i++) {
+//            RankedRelation rankedRelation =
+//                (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
+//            rankedRelation.setRank(new Integer(i + 1));
+//            rankedRelation.setSubject((BioEntity) transcript0Exons.get(i));
+//            rankedRelation.setObject(storedTranscripts[0]);
+//            toStore.add(rankedRelation);
+//        }
+//
+//        for (int i = 0; i < transcript1Exons.size() ; i++) {
+//            RankedRelation rankedRelation =
+//                (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
+//            rankedRelation.setRank(new Integer(i + 1));
+//            rankedRelation.setSubject((BioEntity) transcript1Exons.get(i));
+//            rankedRelation.setObject(storedTranscripts[1]);
+//            toStore.add(rankedRelation);
+//        }
 
-        for (int i = 0; i < transcript1Exons.size() ; i++) {
-            RankedRelation rankedRelation =
-                (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
-            rankedRelation.setRank(new Integer(i + 1));
-            rankedRelation.setSubject((BioEntity) transcript1Exons.get(i));
-            rankedRelation.setObject(storedTranscripts[1]);
-            toStore.add(rankedRelation);
-        }
-        
         Location loc0 = createLocation(storedChromosome, storedExons[0], "1",   1673,  1759);
         toStore.add(loc0);
         storedExons[0].setChromosomeLocation(loc0);
@@ -356,20 +355,18 @@ public class TransferSequencesTest extends TestCase
         for (int i = 0; i<storedExons.length; i++) {
             osw.store(storedExons[i]);
         }
-     
+
         osw.commitTransaction();
     }
 
     private Location createLocation(BioEntity object, BioEntity subject,
                                     String strand, int start, int end) {
         Location loc = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        loc.setObject(object);
-        loc.setSubject(subject);
+        loc.setLocatedOn(object);
+        loc.setFeature(subject);
         loc.setStrand(strand);
         loc.setStart(new Integer(start));
         loc.setEnd(new Integer(end));
-        loc.setStartIsPartial(Boolean.FALSE);
-        loc.setEndIsPartial(Boolean.FALSE);
         return loc;
     }
 }

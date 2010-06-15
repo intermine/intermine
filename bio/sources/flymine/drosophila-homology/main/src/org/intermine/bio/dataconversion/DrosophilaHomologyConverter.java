@@ -36,7 +36,6 @@ public class DrosophilaHomologyConverter extends BioFileConverter
 {
     private Item pub, evidence;
     private Map<String, String> genes = new HashMap<String, String>();
-    private Map<String, String> organisms = new HashMap<String, String>();
     protected IdResolverFactory resolverFactory;
     protected static final Logger LOG = Logger.getLogger(DrosophilaHomologyConverter.class);
     private OrganismRepository or;
@@ -119,20 +118,6 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         store(item);
         createSynonym(geneRefId, "identifier", identifier, null, true);
         return geneRefId;
-    }
-
-    private String getOrganism(String taxonId)
-    throws ObjectStoreException  {
-        String refId = organisms.get(taxonId);
-        if (refId != null) {
-            return refId;
-        }
-        Item item = createItem("Organism");
-        item.setAttribute("taxonId", taxonId);
-        refId = item.getIdentifier();
-        organisms.put(taxonId, refId);
-        store(item);
-        return refId;
     }
 
     private String parseSymbol(String symbol)

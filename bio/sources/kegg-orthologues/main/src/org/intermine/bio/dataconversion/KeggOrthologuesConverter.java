@@ -52,7 +52,6 @@ public class KeggOrthologuesConverter extends BioFileConverter
     private Map<String, String[]> config = new HashMap<String, String[]>();
     private Set<String> taxonIds = new HashSet<String>();
     private Map<String, String> identifiersToGenes = new HashMap<String, String>();
-    private Map<String, String> organisms = new HashMap<String, String>();
 
     /**
      * Constructor
@@ -231,23 +230,6 @@ public class KeggOrthologuesConverter extends BioFileConverter
                 throw new ObjectStoreException(e);
             }
             createSynonym(refId, "identifier", identifier, null, true);
-        }
-        return refId;
-    }
-
-    private String getOrganism(String taxonId)
-    throws ObjectStoreException {
-        String refId = organisms.get(taxonId);
-        if (refId == null) {
-            Item item = createItem("Organism");
-            item.setAttribute("taxonId", taxonId);
-            refId = item.getIdentifier();
-            organisms.put(taxonId, refId);
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new ObjectStoreException(e);
-            }
         }
         return refId;
     }

@@ -52,7 +52,7 @@ public class GFF3RecordHandlerTest extends TestCase
         Map refs = new HashMap();
         refs.put("ThreePrimeUTR", "gene");
 
-        handler.setReferences(refs);
+//        handler.setReferences(refs);
         assertEquals(expected, handler.getFeature());
     }
 
@@ -82,7 +82,7 @@ public class GFF3RecordHandlerTest extends TestCase
         Map refs = new HashMap();
         refs.put("Exon", "transcripts");
 
-        handler.setReferences(refs);
+//        handler.setReferences(refs);
         assertEquals(expected, handler.getFeature());
     }
 
