@@ -49,7 +49,6 @@ public class PsiConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(PsiConverter.class);
     private static final String PROP_FILE = "psi-intact_config.properties";
-    private Map<String, String> organisms = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, Object> experimentNames = new HashMap<String, Object>();
     private Map<String, String> terms = new HashMap<String, String>();
@@ -1109,40 +1108,6 @@ public class PsiConverter extends BioFileConverter
         }
         return itemId;
     }
-
-    private String getOrganism(String taxId) throws SAXException {
-
-        String refId = organisms.get(taxId);
-        if (refId != null) {
-            return refId;
-        }
-        Item organism = createItem("Organism");
-        organism.setAttribute("taxonId", taxId);
-        try {
-            store(organism);
-        } catch (ObjectStoreException e) {
-            throw new SAXException(e);
-        }
-        refId = organism.getIdentifier();
-        organisms.put(taxId, refId);
-        return refId;
-    }
-
-//    private String fetchIdentifier(Item interactor) {
-//        String ident = null;
-//        if (interactor.getAttribute("primaryIdentifier") != null) {
-//            ident = interactor.getAttribute("primaryIdentifier").getValue();
-//        }
-//        if ((ident == null || ident.equals(""))
-//                        && interactor.getAttribute("secondaryIdentifier") != null) {
-//            ident = interactor.getAttribute("secondaryIdentifier").getValue();
-//        }
-//        if ((ident == null || ident.equals(""))
-//                        && interactor.getAttribute("symbol") != null) {
-//            ident = interactor.getAttribute("symbol").getValue();
-//        }
-//        return ident;
-//    }
 
     private String formatString(String ident) {
         String identifier = ident;

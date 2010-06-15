@@ -79,9 +79,8 @@ public class AnoESTConverter extends BioDBConverter
             Item cluster = createItem("OverlappingESTSet");
             cluster.setAttribute("primaryIdentifier", identifier);
             cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
-
             store(cluster);
-            super.createSynonym(cluster.getIdentifier(), "identifier", identifier, null);
+            createSynonym(cluster.getIdentifier(), "identifier", identifier, null, true);
 
             // some clusters have no location
             if (chromosomeIdentifier != null && !chromosomeIdentifier.equals("mitochondrial")
@@ -140,8 +139,8 @@ public class AnoESTConverter extends BioDBConverter
             String accession = entry.getKey();
             Item est = entry.getValue();
             store(est);
-            createSynonym(est.getIdentifier(), "identifier", accession, "true");
-            createSynonym(est.getIdentifier(), "identifier", cloneIds.get(accession), "false");
+            createSynonym(est.getIdentifier(), "identifier", accession, null, true);
+            createSynonym(est.getIdentifier(), "identifier", cloneIds.get(accession), null, true);
         }
     }
 

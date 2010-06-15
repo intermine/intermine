@@ -158,9 +158,6 @@ public class IntergenicRegionsTest extends TestCase
                 assertNotNull(loc.getStart());
                 assertNotNull(loc.getEnd());
                 assertNotNull(loc.getStrand());
-                assertNotNull(loc.getPhase());
-                assertNotNull(loc.getStartIsPartial());
-                assertNotNull(loc.getEndIsPartial());
                 assertEquals(1, loc.getDataSets().size());
 
                 int locStart = loc.getStart().intValue();
@@ -366,13 +363,11 @@ public class IntergenicRegionsTest extends TestCase
     private Location createLocation(BioEntity object, BioEntity subject, String strand,
                                     int start, int end, Class locationClass) {
         Location loc = (Location) DynamicUtil.createObject(Collections.singleton(locationClass));
-        loc.setObject(object);
-        loc.setSubject(subject);
+        loc.setLocatedOn(object);
+        loc.setFeature(subject);
         loc.setStrand(strand);
         loc.setStart(new Integer(start));
         loc.setEnd(new Integer(end));
-        loc.setStartIsPartial(Boolean.FALSE);
-        loc.setEndIsPartial(Boolean.FALSE);
         return loc;
     }
 }

@@ -143,9 +143,6 @@ public class IntronTest extends TestCase{
             assertNotNull(loc.getStart());
             assertNotNull(loc.getEnd());
             assertNotNull(loc.getStrand());
-            assertNotNull(loc.getPhase());
-            assertNotNull(loc.getStartIsPartial());
-            assertNotNull(loc.getEndIsPartial());
             assertEquals(1, loc.getDataSets().size());
 
 
@@ -186,7 +183,6 @@ public class IntronTest extends TestCase{
         t1.setId(new Integer(10));
         t1.setPrimaryIdentifier("ENST00000306601");
         t1.setOrganism(organism);
-        t1.setExonCount(new Integer(3));
         t1.setChromosome(chr);
         Location location = createLocation(chr, t1, "1", 1, 1000);
         t1.setChromosomeLocation(location);
@@ -247,7 +243,6 @@ public class IntronTest extends TestCase{
         t2.setId(new Integer(11));
         t2.setPrimaryIdentifier("ENST00000306610");
         t2.setOrganism(organism);
-        t2.setExonCount(new Integer(3));
         t2.setChromosome(chr);
         Location location = createLocation(chr, t2, "1", 1, 1150);
         t2.setChromosomeLocation(location);
@@ -309,7 +304,6 @@ public class IntronTest extends TestCase{
         t3.setId(new Integer(10));
         t3.setPrimaryIdentifier("ENST00000306001");
         t3.setOrganism(organism);
-        t3.setExonCount(new Integer(1));
         t3.setChromosome(chr);
         Location location = createLocation(chr, t3, "1", 1, 1000);
         t3.setChromosomeLocation(location);
@@ -344,13 +338,11 @@ public class IntronTest extends TestCase{
     private Location createLocation(BioEntity object, BioEntity subject, String strand,
                                     int start, int end) {
         Location loc = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        loc.setObject(object);
-        loc.setSubject(subject);
+        loc.setLocatedOn(object);
+        loc.setFeature(subject);
         loc.setStrand(strand);
         loc.setStart(new Integer(start));
         loc.setEnd(new Integer(end));
-        loc.setStartIsPartial(Boolean.FALSE);
-        loc.setEndIsPartial(Boolean.FALSE);
         return loc;
     }
 }
