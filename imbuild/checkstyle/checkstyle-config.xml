@@ -45,10 +45,6 @@
       <property name="scope" value="public" />
     </module>
 
-    <module name="RegexpHeader">
-      <property name="headerFile" value="${checkstyle.header.file}"/>
-    </module>
-    
     <!--                         code conventions -->
 
     <!-- naming conventions -->
@@ -92,22 +88,14 @@
 
     <!-- imports -->
 
-    <!--
     <module name="AvoidStarImport"/>
-    -->
 
-    <module name="IllegalImport">
-      <property name="illegalPkgs" value="sun"/>
-    </module>
+    <module name="IllegalImport"/>
 
     <module name="RedundantImport"/>
     <module name="UnusedImports"/>
 
     <!-- size violations -->
-
-    <module name="FileLength">
-      <property name="max" value="2200"/>
-    </module>
 
     <module name="LineLength">
       <property name="max" value="100"/>
@@ -148,8 +136,6 @@
     </module>
 
 
-    <module name="TabCharacter"/>
-
     <module name="WhitespaceAfter">
       <property name="tokens" value="COLON, COMMA, SEMI, TYPECAST"/>
     </module>
@@ -162,10 +148,6 @@
 
     <module name="ModifierOrder"/>
 
-    <!--
-    <module name="RedundantModifier"/>
-    -->
-
     <module name="VisibilityModifier">
       <property name="packageAllowed" value="true"/>
       <property name="protectedAllowed" value="true"/>
@@ -175,9 +157,7 @@
     <!-- block checks -->
 
     <module name="EmptyBlock">
-      <!-- this does not parse for some reason
       <property name="option" value="stmt"/>
-      -->
       <property name="tokens" value="LITERAL_DO, LITERAL_FINALLY, LITERAL_FOR, LITERAL_TRY, LITERAL_WHILE, STATIC_INIT"/>
     </module>
 
@@ -211,27 +191,16 @@
     <module name="EqualsHashCode"/>
 
     <!-- Do not allow System.out.println -->
-    <module name="GenericIllegalRegexp">
+    <module name="RegexpSinglelineJava">
       <property name="format" value="System\.out\.println"/>
     </module>
     <!-- Do not allow System.err.println -->
-    <module name="GenericIllegalRegexp">
+    <module name="RegexpSinglelineJava">
       <property name="format" value="System\.err\.println"/>
     </module>
-    <!-- Do not allow LogMe -->
-    <module name="GenericIllegalRegexp">
-      <property name="format" value="LogMe"/>
-    </module>
     <!-- Do not allow System.exit() -->
-    <module name="GenericIllegalRegexp">
+    <module name="RegexpSinglelineJava">
       <property name="format" value="System\.exit"/>
-    </module>
-    <!-- Do not allow (non-Javadoc) -->
-    <module name="GenericIllegalRegexp">
-      <property name="format" value="(non-Javadoc)"/>
-    </module>
-    <module name="GenericIllegalRegexp">
-      <property name="format" value=" $"/>
     </module>
 
     <module name="IllegalInstantiation">
@@ -248,16 +217,53 @@
     <module name="Indentation"/>
     <module name="CovariantEquals"/>
     <module name="DoubleCheckedLocking"/>
-    <!--<module name="EqualsAvoidNull"/>-->
     <module name="RedundantThrows"/>
     <module name="StringLiteralEquality"/>
     <module name="SuperFinalize"/>
     <module name="PackageDeclaration"/>
     <module name="DefaultComesLast"/>
+    <!--<module name="AnnotationUseStyle"/>
+    <module name="MissingDeprecated"/>
+    <module name="MissingOverride"/>
+    <module name="FinalClass"/>
+    <module name="InterfaceIsType"/>
+    <module name="HideUtilityClassConstructor"/>
+    <module name="MutableException"/>
+    <module name="EmptyStatement"/>
+    <module name="HiddenField"/>
+    <module name="MissingSwitchDefault"/>
+    <module name="ModifiedControlVariable"/>
+    <module name="SuperClone"/>
+    <module name="ArrayTypeStyle"/>
+    <module name="RedundantModifier"/>
+    <module name="EqualsAvoidNull"/>
+    <module name="GenericWhitespace"/>-->
   </module>
 
   <!-- enforce package documentation -->
   <!--
   <module name="PackageHtml"/>
   -->
+  <module name="RegexpHeader">
+    <property name="headerFile" value="${checkstyle.header.file}"/>
+  </module>
+
+  <module name="FileLength">
+    <property name="max" value="2200"/>
+  </module>
+
+  <module name="FileTabCharacter"/>
+
+  <!-- Do not allow LogMe -->
+  <module name="RegexpSingleline">
+    <property name="format" value="LogMe"/>
+  </module>
+  <!-- Do not allow (non-Javadoc) -->
+  <module name="RegexpSingleline">
+    <property name="format" value="(non-Javadoc)"/>
+  </module>
+  <module name="RegexpSingleline">
+    <property name="format" value=" $"/>
+  </module>
+  <!--<module name="NewlineAtEndOfFile"/>-->
 </module>
