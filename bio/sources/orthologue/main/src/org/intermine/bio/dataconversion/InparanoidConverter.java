@@ -33,6 +33,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 /**
  * DataConverter to parse an INPARANOID Orthologue/Paralogue "sqltable" data file into Items
@@ -43,8 +44,7 @@ public class InparanoidConverter extends BioFileConverter
 {
     protected static final String PROP_FILE = "inparanoid_config.properties";
     protected Map<String, Item> bioEntities = new HashMap<String, Item>();
-    protected Item dataSource, dataSet, pub, evidence;
-    protected Map<String, Item> organisms = new LinkedHashMap<String, Item>();
+    protected Item pub, evidence;
     protected Map<String, Item> sources = new LinkedHashMap<String, Item>();
     protected Map<String, String> orgSources = new HashMap<String, String>();
     protected Map<String, String> taxonIds = new HashMap<String, String>();
@@ -64,7 +64,7 @@ public class InparanoidConverter extends BioFileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     public InparanoidConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model);
+        super(writer, model, "InParanoid", "InParanoid data set");
         setupItems();
         readConfig();
     }
@@ -243,9 +243,7 @@ public class InparanoidConverter extends BioFileConverter
                             // the invalid id is a paralogue could still create orthologues.
                             abortClusters.add(index);
                         }
-
                     } else {
-
                         // create protein as a last resort
                         bio = newBioEntity(identifier, (String) attributes.get(code),
                                 getOrganism(code), "Protein");
@@ -255,7 +253,6 @@ public class InparanoidConverter extends BioFileConverter
             } else {
                 throw new RuntimeException("No configuration provided for organism code: " + code);
             }
-
 
             String orgName = code.substring(3);
             BioAndScores bands = null;
@@ -322,7 +319,7 @@ public class InparanoidConverter extends BioFileConverter
         // generate a name for the cluster based on organisms (in order) and index
         String cluster = orgA.get(0).getOrganism() + "-" + orgB.get(0).getOrganism() + ":" + index;
 
-        Set alreadyDone = new HashSet();
+        Set<String> alreadyDone = new HashSet<String>();
         for (BioAndScores thisBio : orgA) {
             // create paralogues with other orgA bios
             for (BioAndScores otherBio : orgA) {
@@ -389,7 +386,6 @@ public class InparanoidConverter extends BioFileConverter
 
         homologue.setAttribute("type", type);
         homologue.setAttribute("clusterName", cluster);
-        homologue.addToCollection("dataSets", dataSet);
         homologue.addToCollection("evidence", evidence);
         return homologue;
     }
@@ -397,57 +393,29 @@ public class InparanoidConverter extends BioFileConverter
     /**
      * Convenience method to create and cache Genes/Proteins by identifier
      * @param identifier identifier for the new Gene/Protein
-     * @param organism the Organism for this Gene/Protein
+     * @param organismRefId id representing the organism object
      * @param type create either a Gene or Protein
      * @param attribute the attribute of the BioEntity set, e.g. identifier or primaryIdentifier
      * @return a new Gene/Protein Item
      * @throws ObjectStoreException if an error occurs in storing
+     * @throws SAXException
      */
-    protected Item newBioEntity(String identifier, String attribute, Item organism, String type)
-        throws ObjectStoreException {
+    protected Item newBioEntity(String identifier, String attribute, String organismRefId,
+            String type)
+        throws ObjectStoreException, SAXException {
 
         // lookup by identifier and type, sometimes same id for protein and gene
         String key = type + identifier;
         if (bioEntities.containsKey(key)) {
             return (Item) bioEntities.get(key);
         }
-
         Item item = createItem(type);
         item.setAttribute(attribute, identifier);
-        item.setReference("organism", organism.getIdentifier());
-        item.addToCollection("dataSets", dataSet);
-        store(item);                                                 // Stores BioEntity
+        item.setReference("organism", organismRefId);
+        store(item);
         bioEntities.put(key, item);
-
-        // create a synonm - lookup source according to organism
-        Item synonym = createItem("Synonym");
-        synonym.setAttribute("type", "identifier");
-        synonym.setAttribute("value", identifier);
-        synonym.setReference("subject", item.getIdentifier());
-        // TODO should we change dataset instead?
-        //Item source = getSourceForOrganism(organism.getAttribute("taxonId").getValue());
-        //synonym.setReference("source", source.getIdentifier());
-        synonym.addToCollection("dataSets", dataSet);
-        store(synonym);                                              // Stores Synonym -> BioEntity
-
+        createSynonym(item.getIdentifier(), "identifier", identifier, null, true);
         return item;
-    }
-
-    private Item getOrganism(String code) throws ObjectStoreException {
-        String taxonId = (String) taxonIds.get(code);
-        if (taxonId == null) {
-            throw new IllegalArgumentException("Unable to find taxonId for code: "
-                                               + code + ", check properties: " + PROP_FILE);
-        }
-
-        Item organism = (Item) organisms.get(taxonId);
-        if (organism == null) {
-            organism = createItem("Organism");
-            organism.setAttribute("taxonId", taxonId);
-            store(organism);
-            organisms.put(taxonId, organism);
-        }
-        return organism;
     }
 
     /**
@@ -458,14 +426,6 @@ public class InparanoidConverter extends BioFileConverter
         pub = createItem("Publication");
         pub.setAttribute("pubMedId", "11743721");
         store(pub);
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "InParanoid");
-        store(dataSource);
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("name", "InParanoid data set");
-        dataSet.setReference("dataSource", dataSource);
-        store(dataSet);
-
         Item evidenceCode = createItem("OrthologueEvidenceCode");
         evidenceCode.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
         evidenceCode.setAttribute("name", EVIDENCE_CODE_NAME);

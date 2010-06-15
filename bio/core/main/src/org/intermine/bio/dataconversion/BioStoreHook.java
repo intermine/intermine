@@ -65,8 +65,7 @@ public class BioStoreHook implements DataConverterStoreHook
      * {@inheritDoc}
      */
     public void processItem(DataConverter dataConverter, Item item) {
-        String soTermId = getSoTerm(dataConverter, item);
-        setSOTerm(item, soTermId);
+        setSOTerm(dataConverter, item);
         if (dataSet != null) {
             setDataSets(model, item, dataSet.getIdentifier(), dataSource.getIdentifier());
         }
@@ -100,9 +99,10 @@ public class BioStoreHook implements DataConverterStoreHook
         }
     }
 
-    private void setSOTerm(Item item, String soTermId) {
+    private void setSOTerm(DataConverter dataConverter, Item item) {
         if (item.canHaveReference("sequenceOntologyTerm")
                 && !item.hasReference("sequenceOntologyTerm")) {
+            String soTermId = getSoTerm(dataConverter, item);
             if (!StringUtils.isEmpty(soTermId)) {
                 item.setReference("sequenceOntologyTerm", soTermId);
             }
