@@ -775,9 +775,16 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 }
             }
             
-                level.setAttribute(getPropName(property), propValue);                    
+            if (property.equalsIgnoreCase("dcpm") && !propValue.contains(".")){
+                // in some cases (~ 60000, waterston) the value for dcpm is
+                // 'nan' or 'na' instead of a decimal number
                 previousId = id;
+                continue;
             }
+
+            level.setAttribute(getPropName(property), propValue);                    
+            previousId = id;
+        }
         res.close();
     }
 
@@ -796,37 +803,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         }
         return property;
     }
-
-//  if (featureMap.containsKey(featureId)) {
-//  FeatureData fData = featureMap.get(featureId);
-//  Integer storedFeatureId = fData.getIntermineObjectId();
-//
-////  Integer intermineObjectId = getChadoDBConverter().store(lab);
-////  storeInLabMaps(lab, prov, intermineObjectId);
-//
-//  Attribute scoreAttribute = new Attribute("score", score.toString());
-//  getChadoDBConverter().store(scoreAttribute, storedFeatureId);
-//
-//  Attribute scoreTypeAttribute = new Attribute("scoreType", program);
-//  getChadoDBConverter().store(scoreTypeAttribute, storedFeatureId);
-//
-//  if (scoreProtocolItemId != null) {
-//      Reference scoreProtocolRef =
-//          new Reference("scoreProtocol", scoreProtocolItemId);
-//      getChadoDBConverter().store(scoreProtocolRef, storedFeatureId);
-//  }
-//}
-
     
-    
-    
-    
-    private String getRefName(String imType) {
-        // 
-        String ref = StringUtils.uncapitalize(imType);
-        LOG.info("EV types: " + imType + "|" + ref);
-        return ref;
-    }
 
     private ResultSet getExpressionLevels(Connection connection) throws SQLException {
  
@@ -842,8 +819,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             + " and cp.cvterm_id = fp.type_id "
             + " and c1.name= 'experimental_feature' "
             + " AND subject_id IN (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
-//            + " AND subject_id IN (" + SUBFEATUREID_TEMP_TABLE_NAME + ")"
-//            ;
 
         LOG.info("executing: " + query);
         long bT = System.currentTimeMillis();
