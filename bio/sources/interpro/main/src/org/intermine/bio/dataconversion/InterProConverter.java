@@ -101,10 +101,14 @@ public class InterProConverter extends BioFileConverter
                 try {
                     Item synonym = createSynonym(proteinDomain.getIdentifier(), "name",
                             name, null, false);
-                    delayedItems.add(synonym);
+                    if (synonym != null) {
+                        delayedItems.add(synonym);
+                    }
                     synonym = createSynonym(proteinDomain.getIdentifier(), "identifier",
-                            identifier, null, true);
-                    delayedItems.add(synonym);
+                            identifier, null, false);
+                    if (synonym != null) {
+                        delayedItems.add(synonym);
+                    }
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
                 }
@@ -123,8 +127,10 @@ public class InterProConverter extends BioFileConverter
             } else if (qName.equals("sec_ac")) {
                 try {
                     Item synonym = createSynonym(proteinDomain.getIdentifier(), "identifier",
-                            attrs.getValue("acc"), null, true);
-                    delayedItems.add(synonym);
+                            attrs.getValue("acc"), null, false);
+                    if (synonym != null) {
+                        delayedItems.add(synonym);
+                    }
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
                 }
@@ -135,10 +141,14 @@ public class InterProConverter extends BioFileConverter
                 String db = attrs.getValue("db");
                 try {
                     Item item = createCrossReference(proteinDomain.getIdentifier(), dbkey,
-                            db, true);
-                    delayedItems.add(item);
-                    item = createSynonym(proteinDomain.getIdentifier(), "name", name, null, true);
-                    delayedItems.add(item);
+                            db, false);
+                    if (item != null) {
+                        delayedItems.add(item);
+                    }
+                    item = createSynonym(proteinDomain.getIdentifier(), "name", name, null, false);
+                    if (item != null) {
+                        delayedItems.add(item);
+                    }
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
                 }
@@ -202,7 +212,9 @@ public class InterProConverter extends BioFileConverter
                 try {
                     synonym = createSynonym(proteinDomain.getIdentifier(), "name", name, null,
                             false);
-                    delayedItems.add(synonym);
+                    if (synonym != null) {
+                        delayedItems.add(synonym);
+                    }
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
                 }

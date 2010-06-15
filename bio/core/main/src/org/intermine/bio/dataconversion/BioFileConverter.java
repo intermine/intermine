@@ -35,7 +35,7 @@ public abstract class BioFileConverter extends FileConverter
     private final Map<String, Item> dataSources = new HashMap<String, Item>();
     private Set<String> synonyms = new HashSet<String>();
     private Set<String> crossReferences = new HashSet<String>();
-
+    private Map<String, String> organisms = new HashMap<String, String>();
 
     /**
      * Create a new BioFileConverter.
@@ -198,10 +198,10 @@ public abstract class BioFileConverter extends FileConverter
     }
 
     /**
-     * Create a new Synonym.  Keeps a map of already processed synonyms, ignores duplicates.
+     * Create a new CrossReference.  Keeps a map of already processed items, ignores duplicates.
      * The "store" param should be true only if the subject has already been stored.  Storing a
-     * synonym first can signficantly slow down the build process.
-     * @param subjectId id representing the object (eg. Gene) this synonym describes.
+     * CrossReference first can signficantly slow down the build process.
+     * @param subjectId id representing the object (eg. Gene) this CrossReference describes.
      * @param value identifier
      * @param dataSource external database
      * @param store if true, will store item
@@ -228,5 +228,26 @@ public abstract class BioFileConverter extends FileConverter
             return item;
         }
         return null;
+    }
+
+    /**
+     * The Organism item created from the taxon id passed to the constructor.
+     * @param taxonId NCBI taxonomy id of organism to create
+     * @return the refId representing the Organism Item
+     */
+    public String getOrganism(String taxonId) {
+        String refId = organisms.get(taxonId);
+        if (refId == null) {
+            Item organism = createItem("Organism");
+            organism.setAttribute("taxonId", taxonId);
+            try {
+                store(organism);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("failed to store organism with taxonId: " + taxonId, e);
+            }
+            refId = organism.getIdentifier();
+            organisms.put(taxonId, refId);
+        }
+        return refId;
     }
 }
