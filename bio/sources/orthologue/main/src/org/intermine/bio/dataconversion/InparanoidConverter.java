@@ -474,5 +474,14 @@ public class InparanoidConverter extends BioFileConverter
             return bioIdentifier + " " + organism + " " + score;
         }
     }
-}
 
+    public String getOrganism(String code) {
+        String taxonId = (String) taxonIds.get(code);
+        if (taxonId == null) {
+            throw new IllegalArgumentException("Unable to find taxonId for code: "
+                    + code + ", check properties: " + PROP_FILE);
+        }
+        String refId = super.getOrganism(taxonId);
+        return refId;
+    }
+}
