@@ -176,6 +176,9 @@ public abstract class BioFileConverter extends FileConverter
     public Item createSynonym(String subjectId, String type, String value, String isPrimary,
             boolean store)
     throws SAXException, ObjectStoreException {
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
         String key = subjectId + type + value;
         if (!synonyms.contains(key)) {
             Item synonym = createItem("Synonym");
@@ -209,6 +212,9 @@ public abstract class BioFileConverter extends FileConverter
     public Item createCrossReference(String subjectId, String value, String dataSource,
             boolean store)
     throws SAXException, ObjectStoreException {
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
         String key = subjectId + value;
         if (!crossReferences.contains(key)) {
             Item item = createItem("CrossReference");
