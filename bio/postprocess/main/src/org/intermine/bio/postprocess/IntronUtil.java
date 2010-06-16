@@ -66,7 +66,7 @@ public class IntronUtil
 
     /**
      * Create a new IntronUtil object that will operate on the given ObjectStoreWriter.
-     * NOTE - needs to be run after LocatedSequenceFeature.chromosomeLocation has been set.
+     * NOTE - needs to be run after SequenceFeature.chromosomeLocation has been set.
      * @param osw the ObjectStoreWriter to use when creating/changing objects
      */
     public IntronUtil(ObjectStoreWriter osw) {
@@ -102,7 +102,7 @@ public class IntronUtil
      * @throws ObjectStoreException if there is an ObjectStore problem
      */
     public void createIntronFeatures()
-    throws ObjectStoreException {
+        throws ObjectStoreException {
 
         dataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
         dataSet.setName("FlyMine introns");

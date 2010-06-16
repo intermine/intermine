@@ -327,7 +327,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             // Populate map of submissions to features, some features are in multiple submissions
             String queryList = StringUtil.join(thisSubmissionDataIds, ",");
-            processDataFeatureTable(connection, subCollections, subFeatureMap, 
+            processDataFeatureTable(connection, subCollections, subFeatureMap,
                     chadoExperimentId, queryList);
 
             // read any genes that have been created so we can re-use the same item identifiers
