@@ -24,10 +24,10 @@
 -->
 
 <module name="Checker">
+  <property name="severity" value="warning"/>
 
   <module name="TreeWalker">
     <property name="tabWidth" value="4"/>
-    <property name="severity" value="warning"/>
 
     <module name="JavadocType">
       <property name="scope" value="package" />
@@ -264,6 +264,7 @@
   </module>
   <module name="RegexpSingleline">
     <property name="format" value=" $"/>
+    <property name="message" value="Spaces at the end of the line"/>
   </module>
   <!--<module name="NewlineAtEndOfFile"/>-->
 </module>
