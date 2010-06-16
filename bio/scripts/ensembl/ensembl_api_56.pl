@@ -83,7 +83,8 @@ foreach my $taxon_id (keys %organisms) {
 
     ############################################
     # Set up the xml writing apparatus
-    my $output = new IO::File(">$data_destination/$taxon_id.xml") or die $!;
+    my $output = new IO::File(">$data_destination/$taxon_id.xml") or die 
+	"Could not open $data_destination/$taxon_id.xml for writing $!";
     my $writer = new XML::Writer(DATA_MODE => 1, DATA_INDENT => 3, OUTPUT => $output);
     $writer->startTag('items');
     ############################################
