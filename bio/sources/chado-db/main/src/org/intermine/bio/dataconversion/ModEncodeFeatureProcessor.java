@@ -679,4 +679,101 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         LOG.info("QUERY TIME feature scores: " + (System.currentTimeMillis() - bT));
         return res;
     }
+
+    private void processExpressionLevels(Connection connection) throws SQLException,
+    ObjectStoreException {
+        ResultSet res = getExpressionLevels(connection);
+        Integer previousId = -1;
+//        Integer previousObjectId = -1;
+        Item level = null;
+        while (res.next()) {
+            Integer id = res.getInt("expression_id");
+            Integer featureId = res.getInt("feature_id");
+//            Double value = res.getDouble("value");
+            String name = res.getString("uniquename");
+            String value = res.getString("value");
+            String property = res.getString("property");
+            String propValue = res.getString("propvalue");
+            
+            if (id != previousId) {
+        
+                // if not first store prev level
+                if (previousId > 0) {
+                  getChadoDBConverter().store(level);
+                }
+                
+                // create new
+                level = getChadoDBConverter().createItem("ExpressionLevel");
+                level.setAttribute("name", name);
+                if (!StringUtils.isBlank(value)) {
+                	level.setAttribute("value", value);
+                } else {
+                	LOG.warn("ExpressionLevel found with no value for uniquename: " + name);
+                }
+                if (featureMap.containsKey(featureId)) {
+                    FeatureData fData = featureMap.get(featureId);
+//                    Integer storedFeatureId = fData.getIntermineObjectId();
+                    //String imType = fData.getInterMineType();
+//                    String imType = "LocatedSequenceFeature";
+//                    String referenceName = getRefName(imType);
+                    String referenceName = "feature";
+                    String featureItemId = fData.getItemIdentifier();
+                    level.setReference(referenceName, featureItemId);
+                    level.setReference("submission", dataSetIdentifier);
+                }
+            }
+            
+            if (property.equalsIgnoreCase("dcpm") && !propValue.contains(".")){
+                // in some cases (~ 60000, waterston) the value for dcpm is
+                // 'nan' or 'na' instead of a decimal number
+                previousId = id;
+                continue;
+            }
+
+            level.setAttribute(getPropName(property), propValue);                    
+            previousId = id;
+        }
+        res.close();
+    }
+
+    private String getPropName(String property) {
+        //    if (property.contains("_")) {
+        //        String tmp = StringUtils.property.indexOf('_');
+        //    }
+        if (property.equalsIgnoreCase("read_count")) {
+            return "readCount";
+        }
+        if (property.equalsIgnoreCase("dcpm_bases")) {
+            return "dcpmBases";
+        }
+        if (property.equalsIgnoreCase("prediction_status")) {
+            return "predictionStatus";
+        }
+        return property;
+    }
+    
+
+    private ResultSet getExpressionLevels(Connection connection) throws SQLException {
+ 
+        String query = "SELECT subject_id as expression_id, f1.uniquename, af.rawscore as value "
+            + " , object_id as feature_id, cp.name as property, fp.value as propvalue "
+            + " FROM feature_relationship, cvterm c1, feature f1, analysisfeature af " 
+            + " , feature f2, featureprop fp, cvterm cp "
+            + " WHERE c1.cvterm_id = f1.type_id "
+            + " AND f1.feature_id = subject_id "
+            + " and af.feature_id = f1.feature_id "
+            + " and f2.feature_id = object_id "
+            + " and f1.feature_id = fp.feature_id "
+            + " and cp.cvterm_id = fp.type_id "
+            + " and c1.name= 'experimental_feature' "
+            + " AND subject_id IN (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
+
+        LOG.info("executing: " + query);
+        long bT = System.currentTimeMillis();
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        LOG.info("QUERY TIME expression values: " + (System.currentTimeMillis() - bT));
+        return res;
+    }
+
 }

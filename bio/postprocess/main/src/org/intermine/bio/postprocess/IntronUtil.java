@@ -62,7 +62,7 @@ public class IntronUtil
     private DataSource dataSource;
     private Set<Integer> taxonIds = new HashSet<Integer>();
 
-    protected Map intronMap = new HashMap();
+    protected Map<String, Intron> intronMap = new HashMap<String, Intron>();
 
     /**
      * Create a new IntronUtil object that will operate on the given ObjectStoreWriter.
@@ -182,9 +182,9 @@ public class IntronUtil
         Results results = os.execute(q, 500, true, true, true);
 
         // When we start interating the query will be executed
-        Iterator resultsIter = results.iterator();
+        Iterator<?> resultsIter = results.iterator();
 
-        Set locationSet = new HashSet();
+        Set<Object> locationSet = new HashSet<Object>();
         Transcript lastTran = null;
         Location lastTranLoc = null;
         int tranCount = 0, exonCount = 0, intronCount = 0;
@@ -195,7 +195,7 @@ public class IntronUtil
             // Results is a list of ResultsRows, each ResultsRow contains the objects/fields
             // that were added to the select list of the query.  The order of columns is
             // as they were added to the select list.
-            ResultsRow rr = (ResultsRow) resultsIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resultsIter.next();
             Transcript thisTran = (Transcript) rr.get(0);
 
             if (lastTran == null) {
@@ -211,7 +211,7 @@ public class IntronUtil
                     LOG.info("Created " + intronCount + " Introns for " + tranCount
                              + " Transcripts with " + exonCount + " Exons.");
                 }
-                locationSet = new HashSet();
+                locationSet = new HashSet<Object>();
                 lastTran = thisTran;
                 lastTranLoc = (Location) rr.get(1);
             }
@@ -228,7 +228,7 @@ public class IntronUtil
 
         //osw.beginTransaction();
         int stored = 0;
-        for (Iterator i = intronMap.keySet().iterator(); i.hasNext();) {
+        for (Iterator<String> i = intronMap.keySet().iterator(); i.hasNext();) {
             String identifier = (String) i.next();
             Intron intron = (Intron) intronMap.get(identifier);
             osw.store(intron);
@@ -257,17 +257,21 @@ public class IntronUtil
      * @return a set of Intron objects
      * @throws ObjectStoreException if there is an ObjectStore problem
      */
-    protected int createIntronFeatures(Set locationSet, Transcript transcript, Location tranLoc)
+    protected int createIntronFeatures(Set<Object> locationSet, Transcript transcript,
+            Location tranLoc)
         throws ObjectStoreException {
+        if (locationSet.size() == 1 || tranLoc == null || transcript == null
+                || transcript.getLength() == null) {
+            return 0;
+        }
+
         //final BitSet bs = new BitSet(transcript.getLength().intValue() + 1);
         final BitSet bs = new BitSet(transcript.getLength().intValue());
 
-        if (locationSet.size() == 1) {
-            return 0;
-        }
+
         Chromosome chr = transcript.getChromosome();
 
-        Iterator locationIter = locationSet.iterator();
+        Iterator<Object> locationIter = locationSet.iterator();
         int tranStart = tranLoc.getStart().intValue();
 
         while (locationIter.hasNext()) {
