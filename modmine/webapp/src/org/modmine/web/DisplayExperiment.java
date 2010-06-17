@@ -48,10 +48,9 @@ public class DisplayExperiment
     private String experimentType;
     private Set<String> labs = new TreeSet<String>();
     private String piSurname;
-    
-    
+
     /**
-     * Construct with objects from database and feature counts summary map. 
+     * Construct with objects from database and feature counts summary map.
      * @param exp the experiment
      * @param project the experiment's project
      * @param featureCounts a map of feature type to count
@@ -63,53 +62,51 @@ public class DisplayExperiment
         this.featureCounts = featureCounts;
         this.os = os;
     }
-    
-    
+
     private void initialise(Experiment exp, Project proj) {
         this.name = exp.getName();
         if (name.indexOf('&') > 0) {
             name = name.substring(0, name.indexOf('&'));
         }
-        
+
         this.pi = proj.getNamePI() + " " + proj.getSurnamePI();
         this.piSurname = proj.getSurnamePI();
         this.projectName = proj.getName();
 
         Set<String> expTypes = new HashSet<String>();
-        
+
         for (Submission submission : exp.getSubmissions()) {
             if (this.description == null) {
                 this.description = submission.getDescription();
             }
             submissions.add(submission);
             labs.add(submission.getLab().getSurname());
-            
             for (ExperimentalFactor factor : submission.getExperimentalFactors()) {
-        		factorTypes.add(factor.getType());
+                factorTypes.add(factor.getType());
             }
-            
+
             if (submission.getExperimentType() != null) {
                 expTypes.add(submission.getExperimentType());
             }
         }
-        
+
         this.experimentType = StringUtil.prettyList(expTypes);
-        
+
         for (Organism organism : proj.getOrganisms()) {
             organisms.add(organism.getShortName());
         }
     }
-    
-    private class FactorTypeComparator implements Comparator<String> 
+
+    private class FactorTypeComparator implements Comparator<String>
     {
-    	final String DEVELOPMENTALSTAGE = "developmental stage";
+        final String DEVELOPMENTALSTAGE = "developmental stage";
         final String ANTIBODYTARGET = "antibody target";
         final String ANTIBODY = "antibody";
-        
-    	public int compare(String ft1, String ft2) {
-    		
-    		if (ft1.equals(ANTIBODYTARGET) &&  ft2.equals(ANTIBODYTARGET)) {
-    			return 0;
+
+        public int compare(String ft1, String ft2) {
+
+            if (ft1.equals(ANTIBODYTARGET) &&  ft2.equals(ANTIBODYTARGET)) {
+                return 0;
     		} else if (ft1.equals(ANTIBODYTARGET) || ft2.equals(ANTIBODYTARGET)) {
         		if (ft1.equals(ANTIBODYTARGET)) {
         			return -1;
@@ -141,7 +138,6 @@ public class DisplayExperiment
     	}
     }
 
-        
     /**
      * @return the name
      */
@@ -208,7 +204,7 @@ public class DisplayExperiment
         }
         return subMap;
     }
-    
+
     /**
      * @return the factorTypes
      */
@@ -223,7 +219,7 @@ public class DisplayExperiment
     public Set<String> getOrganisms() {
         return organisms;
     }
-    
+
     /**
      * @return the count of submissions
      */
@@ -231,7 +227,6 @@ public class DisplayExperiment
         return submissions.size();
     }
 
-    
     /**
      * @return the featureCounts
      */
@@ -239,7 +234,6 @@ public class DisplayExperiment
         return featureCounts;
     }
 
-    
     /**
      * @return the number of experimental factors
      */
@@ -248,7 +242,7 @@ public class DisplayExperiment
     }
 
     /**
-     * @return the number of entries submitted to a public repository 
+     * @return the number of entries submitted to a public repository
      * for this experiment
      */
     public int getRepositedCount() {
@@ -257,21 +251,29 @@ public class DisplayExperiment
     }
 
     /**
-     * @return a map of entries per db submitted to a public repository 
+     * @return the number of expression levels for a submission
+     * for this experiment
+     */
+    public int getExpressionLevelCount() {
+        Integer count = MetadataCache.getExperimentExpressionLevels(os).get(name);
+        return count;
+    }
+
+    /**
+     * @return a map of entries per db submitted to a public repository
      * for this experiment
      */
     public Map<String, Integer> getReposited() {
         Set<String[]> rep = MetadataCache.getExperimentRepositoryEntries(os).get(name);
         Map<String, Integer> dbMap = new HashMap<String, Integer>();
-        
+
         for (String[] s : rep) {
             addToCounterMap(dbMap, s[0]);
         }
         return dbMap;
     }
-    
-    
-    /**
+
+     /**
      * @return a map of unlocated features for this experiment
      */
     public Set<String> getUnlocated() {
@@ -279,7 +281,7 @@ public class DisplayExperiment
 
         Set<String> unloc = new HashSet<String>();
         for (Submission s : submissions) {
-            if (rep.get(s.getdCCid()) != null) {    
+            if (rep.get(s.getdCCid()) != null) {
                 unloc.addAll(rep.get(s.getdCCid()));
             }
         }
@@ -287,8 +289,6 @@ public class DisplayExperiment
     }
 
 
-    
-    
     /**
      * adds the elements of a list i to a list l only if they are not yet
      * there
@@ -301,9 +301,8 @@ public class DisplayExperiment
         if (m.containsKey(s)) {
             counter = m.get(s) + 1;
         }
-        m.put(s, counter);            
+        m.put(s, counter);
     }
-    
 
     /**
      * @return the experimentType
@@ -319,5 +318,4 @@ public class DisplayExperiment
         return labs;
     }
 
-    
 }
