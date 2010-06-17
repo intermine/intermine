@@ -35,11 +35,10 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.modmine.web.MetadataCache.GBrowseTrack;
 
 
-public class ProjectsSummaryController extends TilesAction 
+public class ProjectsSummaryController extends TilesAction
 {
     private static final Logger LOG = Logger.getLogger(MetadataCache.class);
 
-    
     /**
      * {@inheritDoc}
      */
@@ -52,16 +51,16 @@ public class ProjectsSummaryController extends TilesAction
         try {
             final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
             ObjectStore os = im.getObjectStore();
-            
-            Map<String, List<DisplayExperiment>> experiments = 
+
+            Map<String, List<DisplayExperiment>> experiments =
                 MetadataCache.getProjectExperiments(os);
             request.setAttribute("experiments", experiments);
-            
-            Properties propCat = new Properties(); 
-            Properties propOrd = new Properties(); 
+
+            Properties propCat = new Properties();
+            Properties propOrd = new Properties();
             final ServletContext servletContext = servlet.getServletContext();
-            
-            InputStream is = 
+
+            InputStream is =
                 servletContext.getResourceAsStream("/WEB-INF/experimentCategory.properties");
             if (is == null) {
                 LOG.info("Unable to find /WEB-INF/experimentCategory.properties!");
@@ -72,8 +71,8 @@ public class ProjectsSummaryController extends TilesAction
                     e.printStackTrace();
                 }
             }
-            
-            InputStream is2 = 
+
+            InputStream is2 =
                 servletContext.getResourceAsStream("/WEB-INF/categoryOrder.properties");
             if (is == null) {
                 LOG.info("Unable to find /WEB-INF/category.properties!");
@@ -85,10 +84,9 @@ public class ProjectsSummaryController extends TilesAction
                 }
             }
 
-            
             Map <String, List<DisplayExperiment>> catExpUnordered =
                 new HashMap<String, List<DisplayExperiment>>();
-            
+
             for (List<DisplayExperiment> ll : experiments.values()) {
                 for (DisplayExperiment de : ll) {
                     String cats = propCat.getProperty(de.getName());
@@ -105,18 +103,18 @@ public class ProjectsSummaryController extends TilesAction
                     }
                 }
             }
-            
+
             Map <String, List<DisplayExperiment>> catExp =
                 new LinkedHashMap<String, List<DisplayExperiment>>();
-            
+
             for (Integer i = 1; i <= propOrd.size(); i++) {
                 String ordCat = propOrd.getProperty(i.toString());
                 catExp.put(ordCat, catExpUnordered.get(ordCat));
                 //LOG.info("OC: " + ordCat + "|" + catExpUnordered.get(ordCat));
             }
-            
+
             request.setAttribute("catExp", catExp);
-            
+
             Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
             request.setAttribute("tracks", tracks);
 
@@ -125,5 +123,4 @@ public class ProjectsSummaryController extends TilesAction
         }
         return null;
     }
-    
 }
