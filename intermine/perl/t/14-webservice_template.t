@@ -3,9 +3,11 @@
 use strict;
 use warnings;
 
-use Test::More tests => 26;
+use Test::More tests => 21;
 use Test::Exception;
 use Test::MockObject::Extends;
+
+use InterMine::Model;
 
 ### Setting up
 
@@ -16,7 +18,6 @@ my @methods = qw/new
                  get_template
                  search_for 
                  get_result
-                 _make_templates_from_xml
                  /;
 
 my $fake_content = 
@@ -103,24 +104,11 @@ can_ok($module, @methods); # Test 2
 my $service = new_ok($module => [$url], 'Service'); # Test 3
 isa_ok($service, 'InterMine::WebService::Core::Service', 'Inherits ok'); # Test 4
 
-### Test _make_templates_from_xml
+# ### Test _make_templates_from_xml
 my $model = '../objectstore/model/testmodel/testmodel_model.xml';
 my $ms = $service->{model_service};
 $ms = Test::MockObject::Extends->new($ms);
-$ms->mock(get_model => sub {return $model});
-
-my $templates_ref = $service->_make_templates_from_xml($fake_content, $model);
-ok(@{$templates_ref} == 2, 'Makes the right number of templates'); # Test 5
-isa_ok($templates_ref->[0], 'InterMine::Template', # Test 6
-       'Can turn xml into templates objects ok');
-throws_ok(sub {$service->_make_templates_from_xml}, qr/Invalid or empty xml/, # Test 7
-	  'Catches empty xml');
-throws_ok(sub {$service->_make_templates_from_xml('<kwijibob def = "big hairless ape">')}, # Test 8
-	  qr/Invalid or empty xml/, 
-	  'Catches invalid xml');
-throws_ok(sub {$service->_make_templates_from_xml($fake_content)}, # Test 9
-	  qr/We need a model/, 
-	  'Catches lack of model');
+$ms->mock(get_model => sub {return InterMine::Model->new(file => $model)});
 
 ### Test get_templates
 
@@ -133,13 +121,13 @@ $service->mock(execute_request => sub {return $fake_response});
 my $test_array = [qw/one two three/];
 $service->{'templates'} = $test_array;
 
-is_deeply([$service->get_templates], $test_array, # Test 10
+is_deeply([$service->get_templates], $test_array, # Test 5
 	  'Retrieves cached lists of templates'); 
 delete $service->{'templates'};
 
 # Catch communication errors
 
-throws_ok(sub {$service->get_templates}, # Test 11
+throws_ok(sub {$service->get_templates}, # Test 6
 	 qr/Fetching templates failed.*mock http error/,
 	 'Catches http error ok');
 
@@ -147,32 +135,32 @@ throws_ok(sub {$service->get_templates}, # Test 11
 
 $fake_response->set_false('is_error'); 
 my ($template) = $service->get_templates;
-isa_ok($template, 'InterMine::Template', 'Returned template'); # Test 12
+isa_ok($template, 'InterMine::Template', 'Returned template'); # Test 7
 
-is_deeply($template, $service->{templates}->[0], 'Stores templates ok'); # Test 13
+is_deeply($template, $service->{templates}->[0], 'Stores templates ok'); # Test 8
 
 
 ### Test search_for
 
-throws_ok( sub {$service->search_for}, qr/You need a keyword/, # Test 14
+throws_ok( sub {$service->search_for}, qr/You need a keyword/, # Test 9
 	   'Catches search for without a keyword');
 
 my @kwijibobs = $service->search_for('kwijibob');
-is_deeply(\@kwijibobs, \@empty_array, 'Return empty array for failed search'); # Test 15
+is_deeply(\@kwijibobs, \@empty_array, 'Return empty array for failed search'); # Test 10
 
 my ($found) = $service->search_for('probe');
-is_deeply($found, $template, "Returns one result from search ok"); # Test 16
+is_deeply($found, $template, "Returns one result from search ok"); # Test 11
 
 my @founds = $service->search_for('gene');
 my @all    = @{$service->{templates}};
-is_deeply(\@founds, \@all, 'Can return multiple results from search ok'); # Test 17
+is_deeply(\@founds, \@all, 'Can return multiple results from search ok'); # Test 12
 
 ### Test get_template
 
-throws_ok( sub {$service->get_template}, qr/You need a name/, # Test 18
+throws_ok( sub {$service->get_template}, qr/You need a name/, # Test 13
 	   'Catches get_template without a name');
-is($service->get_template('kwijibob'), undef, 'Return undef for unfound template'); # Test 19
-is_deeply($service->get_template('Probe_Gene'), $template, # Test 20
+is($service->get_template('kwijibob'), undef, 'Return undef for unfound template'); # Test 14
+is_deeply($service->get_template('Probe_Gene'), $template, # Test 15
 	  'Can get a template by name');
 
 $service->mock(get_templates => sub { # mock template to return ambiguous results
@@ -182,19 +170,19 @@ $service->mock(get_templates => sub { # mock template to return ambiguous result
    }
 );
 
-is($service->get_template('fake_search'), undef, 'Return undef for multiple results'); # Test 21
+is($service->get_template('fake_search'), undef, 'Return undef for multiple results'); # Test 16
 $service->unmock('get_templates');
 
 ### Test get_result
 
-throws_ok( sub {$service->get_result}, # Test 22
+throws_ok( sub {$service->get_result}, # Test 17
 	   qr/get_result needs a valid InterMine::Template/,
 	   'Catches lack of template');
 
 $service->mock(execute_request => sub {my ($self, $req) = @_; return $req});
 
-lives_ok(sub {$service->get_result($template)}, 'Happily processes a valid template'); # Test 23
+lives_ok(sub {$service->get_result($template)}, 'Happily processes a valid template'); # Test 18
 my $ret = $service->get_result($template);
-isa_ok($ret, 'InterMine::WebService::Core::Request', 'Results request'); # Test 24
-is($ret->get_url, $url.'/template/results', 'Constructs url ok'); #Test 25
-is_deeply({$ret->get_parameters}, $exp_req_params, 'Sets parameters ok'); # Test 26
+isa_ok($ret, 'InterMine::WebService::Core::Request', 'Results request'); # Test 19
+is($ret->get_url, $url.'/template/results', 'Constructs url ok'); #Test 20
+is_deeply({$ret->get_parameters}, $exp_req_params, 'Sets parameters ok'); # Test 21
