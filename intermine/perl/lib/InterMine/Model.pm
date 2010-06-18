@@ -62,6 +62,7 @@ under the same terms as Perl itself.
 =cut
 
 use strict;
+use Carp qw/confess/;
 
 =head2 new
 
@@ -80,10 +81,10 @@ sub new
   my $self = {%opts};
 
   if (!defined $opts{file} && !defined $opts{string}) {
-    die "$class\::new() needs a file or string argument\n";
+    confess "$class\::new() needs a file or string argument\n";
   }
   elsif (defined $opts{file} && !-f $opts{file}) {
-    die "A valid file must be specified: we got $opts{file}\n";
+    confess "A valid file must be specified: we got $opts{file}\n";
   }
 
   $self->{class_hash} = {};
@@ -107,6 +108,7 @@ use InterMine::Model::ClassDescriptor;
 
 package InterMine::Model::Handler;
 
+use Carp qw/confess/;
 use vars qw{ $AUTOLOAD };
 
 sub new
@@ -168,14 +170,14 @@ sub start_element
                                                          $reverse_reference,
                                                        model => $model);
           } else {
-            die "unexpected element: ", $args->{Name}, "\n";
+            confess "unexpected element: ", $args->{Name}, "\n";
           }
         }
       }
 
       $field->field_class($self->{current_class});
 
-      $self->{current_class}->add_field($field);
+      $self->{current_class}->add_field($field, 'own');
     }
   }
 }
@@ -275,7 +277,7 @@ sub get_classdescriptor_by_name
   my $classname = shift;
 
   if (!defined $classname) {
-    die "no classname passed to get_classdescriptor_by_name()\n";
+    confess "no classname passed to get_classdescriptor_by_name()\n";
   }
 
   if (exists $self->{class_hash}{$classname}) {
@@ -299,6 +301,32 @@ sub get_all_classdescriptors
 {
   my $self = shift;
   return values %{$self->{class_hash}};
+}
+
+sub get_referenced_classdescriptor {
+    my $self = shift;
+    my $reference = shift;
+    for my $cd ($self->get_all_classdescriptors) {
+	for my $ref ($cd->references) {
+	    if ($ref->has_reverse_reference) {
+		if ($ref->reverse_reference->field_name eq $reference) {
+		    return $cd;
+		}
+	    }
+	}
+    }
+}
+
+sub find_classes_declaring_field {
+    my $self       = shift;
+    my $field_name = shift;
+    my @returners;
+    for my $cd ($self->get_all_classdescriptors) {
+	for my $field ($cd->get_own_fields) {
+	    push @returners, $cd if ($field->field_name eq $field_name); 
+	}
+    }
+    return @returners;
 }
 
 =head2 package_name
