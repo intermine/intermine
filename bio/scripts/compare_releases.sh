@@ -16,47 +16,49 @@ else
     mailto=$4
 fi
 
-MINEDIR="$HOME/svn/dev/$mine"
+INTERMINE_DIR="$HOME/svn/model_update"
+MINE_DIR="$INTERMINE_DIR/$mine"
+
 
     run_performance_test() {
 # release webapp                                                                                                                                                                                               
     echo "CHANGING TO WEBAPP DIRECTORY"
-    cd ~/svn/dev/$mine/webapp
+    cd $MINE_DIR/webapp
     echo "REMOVING TEMPORARY DIRECTORIES"
     ant clean-all > ant_output.log
     echo "BUILDING WEBAPP"
-    ant default -Drelease=$release1 > $MINEDIR/template_comparison_ant_output.log
+    ant default -v -Drelease=$release1 > $MINE_DIR/template_comparison_ant_output.log
 
 # run the performance_test script                                                                                                                                                                              
     echo "CHANGING BACK TO THE SCRIPT DIRECTORY"
-    cd ~/svn/dev/bio/scripts
+    cd $INTERMINE_DIR/bio/scripts
     echo "RUNNING THE PERFORMANCE TEST"
-    ./performance_test $mine > $MINEDIR/template_comparison_$release1.log
+    ./performance_test $mine > $release1
 
 # release webapp                                                                                                                                                                                               
     echo "changing to webapp directory"
-    cd ~/svn/dev/$mine/webapp
+    cd $MINE_DIR/webapp
     echo "removing temporary directories"
     ant clean-all >> ant_output.log
     echo "building webapp"
-    ant default -Drelease=$release2 >> $MINEDIR/template_comparison_ant_output.log
+    ant default -v -Drelease=$release2 >> $MINE_DIR/template_comparison_ant_output.log
    
 # run the performance_test script                                                                                                                                                                              
     echo "changing back to the script directory"
-    cd ~/svn/dev/bio/scripts
+    cd $INTERMINE_DIR/bio/scripts
     echo "running the performance test"
-    ./performance_test $mine > $MINEDIR/template_comparison_$release2.log
+    ./performance_test $mine > $release2
 
 # compare the output                                                                                                                                                                                           
-    ./compare_releases  $release1 $release2 > $MINEDIR/compare_releases.tmp
+    ./compare_releases  $release1 $release2 > $MINE_DIR/compare_releases.tmp
 
 # let everyone know                                                                                                                                                                                            
-    mail -s "[$mine] Outcome of template comparison for $release1 and $release2" $mailto < $MINEDIR/compare_releases.tmp
+    mail -s "[$mine] Outcome of template comparison for $release1 and $release2" $mailto < $MINE_DIR/compare_releases.tmp
 }
 
 run_acceptance_tests() {
     echo "running acceptance tests"
-    cd ~/svn/dev/$mine/integrate
+    cd $INTERMINE_DIR/integrate
     ant acceptance-tests 
 
     attfile='~/svn/dev/' . $mine . '/integrate/build/acceptance_test.html'     
@@ -65,7 +67,7 @@ run_acceptance_tests() {
     mutt -s "$subject" -a $attfile $mailto < /dev/null
 }
 run_performance_test
-run_acceptance_tests
+#run_acceptance_tests
 
 echo "done"
 

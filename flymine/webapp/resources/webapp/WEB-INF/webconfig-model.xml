@@ -455,13 +455,6 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.Polypeptide">
-    <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="organism.name"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.Protein">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>

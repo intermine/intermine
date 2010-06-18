@@ -52,18 +52,18 @@ import org.intermine.util.PropertiesUtil;
  *     a. which genes for which organisms are available to query
  *     b. which organisms and datasets for orthologues are available
  *  3. Cache the results of these two queries and update every day/hour
- *  4. uses webservice to retrieve releasve version
+ *  4. uses webservice to retrieve release version
  * @author Julie Sullivan
  */
 public class OrthologueLinkManager
 {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static boolean cached = false;
     private static OrthologueLinkManager orthologueLinkManager = null;
     private static long lastCacheRefresh = 0;
     private static final long ONE_HOUR = 3600000;
     private static final Logger LOG = Logger.getLogger(OrthologueLinkManager.class);
-    static Map<String, Mine> mines = null;
+    private static Map<String, Mine> mines = null;
     private static Mine localMine = null;
     private static final String WEBSERVICE_URL = "/service";
     private static final String RELEASE_VERSION_URL = "/version/release";
@@ -73,20 +73,17 @@ public class OrthologueLinkManager
         + "name=im_available_homologues&size=1000&format=tab";
     private static final String WEB_SERVICE_CONSTRAINT =
         "constraint1=Gene.primaryIdentifier&op1=eq&value1=*";
-    private static InterMineAPI im = null;
 
 /**
  * @param im intermine api
  * @param webProperties the web properties
  */
     public OrthologueLinkManager(InterMineAPI im, Properties webProperties) {
-        this.im = im;
         String localMineName = webProperties.getProperty("project.title");
-
         localMine = new Mine(localMineName);
 
         // get list of friendly mines
-        mines = readConfig(webProperties, localMineName);
+        mines = readConfig(im, webProperties, localMineName);
     }
 
     /**
@@ -108,7 +105,7 @@ public class OrthologueLinkManager
      */
     public static synchronized void primeCache() {
         long timeSinceLastRefresh = System.currentTimeMillis() - lastCacheRefresh;
-        if (timeSinceLastRefresh > ONE_HOUR && !cached) {
+        if ((timeSinceLastRefresh > ONE_HOUR && !cached) || DEBUG) {
             lastCacheRefresh = System.currentTimeMillis();
             cached = true;
             updateMaps();
@@ -197,9 +194,10 @@ public class OrthologueLinkManager
     }
 
     // loop through properties and get mines' names, URLs and logos
-    private static Map<String, Mine> readConfig(Properties webProperties, String localMineName) {
+    private static Map<String, Mine> readConfig(InterMineAPI im, Properties webProperties,
+            String localMineName) {
 
-        mines = new HashMap();
+        mines = new HashMap<String, Mine>();
 
         Properties props = PropertiesUtil.getPropertiesStartingWith("intermines", webProperties);
         Iterator<Object> propIter = props.keySet().iterator();
@@ -236,7 +234,7 @@ public class OrthologueLinkManager
                 if (localMine.getUrl() == null) {
                     localMine.setUrl(url);
                     localMine.setLogo(logo);
-                    setLocalOrthologues();
+                    setLocalOrthologues(im);
                 }
                 // skip, this is the local intermine.
                 continue;
@@ -256,7 +254,7 @@ public class OrthologueLinkManager
     }
 
     private static boolean setOrganisms(Mine mine) {
-        Set<String> names = new HashSet();
+        Set<String> names = new HashSet<String>();
         String webserviceURL = null;
         URL url;
         try {
@@ -280,120 +278,138 @@ public class OrthologueLinkManager
         return !names.isEmpty();
     }
 
-    private static void setLocalOrthologues() {
+    private static void setLocalOrthologues(InterMineAPI im) {
 
-            Map<String, Map<String, Set[]>> orthologues = new HashMap();
+        Query q = new Query();
 
-            Query q = new Query();
+        QueryClass qcGene = new QueryClass(Gene.class);
+        QueryClass qcOrganism = new QueryClass(Organism.class);
+        QueryClass qcHomologue = null;
+        QueryClass qcHomologueOrganism = new QueryClass(Organism.class);
+        QueryClass qcDataset = new QueryClass(DataSet.class);
+        QueryClass qcGeneHomologue = new QueryClass(Gene.class);
 
-            QueryClass qcGene = new QueryClass(Gene.class);
-            QueryClass qcOrganism = new QueryClass(Organism.class);
-            QueryClass qcHomologue = null;
-            QueryClass qcHomologueOrganism = new QueryClass(Organism.class);
-            QueryClass qcDataset = new QueryClass(DataSet.class);
-            QueryClass qcGeneHomologue = new QueryClass(Gene.class);
+        try {
+            qcHomologue = new QueryClass(Class.forName(im.getModel().getPackageName()
+                    + ".Homologue"));
+        } catch (ClassNotFoundException e) {
+            LOG.info("No orthologues found.", e);
+            return;
+        }
 
-            try {
-                qcHomologue = new QueryClass(Class.forName(im.getModel().getPackageName()
-                        + ".Homologue"));
-            } catch (ClassNotFoundException e) {
-                LOG.info("No orthologues found.", e);
-                return;
-            }
+        QueryField qfGeneOrganismName = new QueryField(qcOrganism, "shortName");
+        QueryField qfDataset = new QueryField(qcDataset, "name");
+        QueryField qfHomologueOrganismName = new QueryField(qcHomologueOrganism, "shortName");
+        QueryField qfType = new QueryField(qcHomologue, "type");
 
-            QueryField qfGeneOrganismName = new QueryField(qcOrganism, "shortName");
-            QueryField qfDataset = new QueryField(qcDataset, "name");
-            QueryField qfHomologueOrganismName = new QueryField(qcHomologueOrganism, "shortName");
-            QueryField qfType = new QueryField(qcHomologue, "type");
+        q.setDistinct(true);
 
-            q.setDistinct(true);
+        q.addToSelect(qfGeneOrganismName);
+        q.addToSelect(qfDataset);
+        q.addToSelect(qfHomologueOrganismName);
 
-            q.addToSelect(qfGeneOrganismName);
-            q.addToSelect(qfDataset);
-            q.addToSelect(qfHomologueOrganismName);
+        q.addFrom(qcGene);
+        q.addFrom(qcHomologue);
+        q.addFrom(qcOrganism);
+        q.addFrom(qcHomologueOrganism);
+        q.addFrom(qcDataset);
+        q.addFrom(qcGeneHomologue);
 
-            q.addFrom(qcGene);
-            q.addFrom(qcHomologue);
-            q.addFrom(qcOrganism);
-            q.addFrom(qcHomologueOrganism);
-            q.addFrom(qcDataset);
-            q.addFrom(qcGeneHomologue);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        // gene.organism.name
+        QueryObjectReference c1 = new QueryObjectReference(qcGene, "organism");
+        cs.addConstraint(new ContainsConstraint(c1, ConstraintOp.CONTAINS, qcOrganism));
 
-            // gene.organism.name
-            QueryObjectReference c1 = new QueryObjectReference(qcGene, "organism");
-            cs.addConstraint(new ContainsConstraint(c1, ConstraintOp.CONTAINS, qcOrganism));
+        // gene.homologues.homologue
+        QueryCollectionReference c2 = new QueryCollectionReference(qcGene, "homologues");
+        cs.addConstraint(new ContainsConstraint(c2, ConstraintOp.CONTAINS, qcHomologue));
 
-            // gene.homologues.homologue
-            QueryCollectionReference c2 = new QueryCollectionReference(qcGene, "homologues");
-            cs.addConstraint(new ContainsConstraint(c2, ConstraintOp.CONTAINS, qcHomologue));
+        // gene.homologues.homologue.datasets.title
+        QueryCollectionReference c3 = new QueryCollectionReference(qcHomologue, "dataSets");
+        cs.addConstraint(new ContainsConstraint(c3, ConstraintOp.CONTAINS, qcDataset));
 
-            // gene.homologues.homologue.datasets.title
-            QueryCollectionReference c3 = new QueryCollectionReference(qcHomologue, "dataSets");
-            cs.addConstraint(new ContainsConstraint(c3, ConstraintOp.CONTAINS, qcDataset));
+        // gene.homologues.homologue
+        QueryObjectReference c4 = new QueryObjectReference(qcHomologue, "homologue");
+        cs.addConstraint(new ContainsConstraint(c4, ConstraintOp.CONTAINS, qcGeneHomologue));
 
-            // gene.homologues.homologue
-            QueryObjectReference c4 = new QueryObjectReference(qcHomologue, "homologue");
-            cs.addConstraint(new ContainsConstraint(c4, ConstraintOp.CONTAINS, qcGeneHomologue));
+        // gene.homologues.homologue.organism.shortName
+        QueryObjectReference c5 = new QueryObjectReference(qcGeneHomologue, "organism");
+        cs.addConstraint(new ContainsConstraint(c5, ConstraintOp.CONTAINS,
+                qcHomologueOrganism));
+        q.setConstraint(cs);
 
-            // gene.homologues.homologue.organism.shortName
-            QueryObjectReference c5 = new QueryObjectReference(qcGeneHomologue, "organism");
-            cs.addConstraint(new ContainsConstraint(c5, ConstraintOp.CONTAINS,
-                    qcHomologueOrganism));
-            q.setConstraint(cs);
+        // gene.homologues.type = 'orthologue'
+        QueryExpression c6 = new QueryExpression(QueryExpression.LOWER, qfType);
+        cs.addConstraint(new SimpleConstraint(c6, ConstraintOp.EQUALS,
+                new QueryValue("orthologue")));
 
-            // gene.homologues.type = 'orthologue'
-            QueryExpression c6 = new QueryExpression(QueryExpression.LOWER, qfType);
-            cs.addConstraint(new SimpleConstraint(c6, ConstraintOp.EQUALS,
-                    new QueryValue("orthologue")));
+        q.addToOrderBy(qfGeneOrganismName);
 
-            q.addToOrderBy(qfGeneOrganismName);
+        Results results = im.getObjectStore().execute(q);
+        Iterator<?> it = results.iterator();
 
-            Results results = im.getObjectStore().execute(q);
-            Iterator it = results.iterator();
-            while (it.hasNext()) {
+        // gene --> [homologue|datasets]
+        Map<String, Map<String, HomologueMapping>> orthologues
+            = new HashMap<String, Map<String, HomologueMapping>>();
 
-                ResultsRow row = (ResultsRow) it.next();
+        while (it.hasNext()) {
 
-                String geneOrganismName = (String) row.get(0);
-                String dataset = (String) row.get(1);
-                String homologueOrganismName = (String) row.get(2);
+            ResultsRow<?> row = (ResultsRow<?>) it.next();
 
-                /**
-                 * gene --> homologue --> datasets
-                 *
-                 * D. rerio | H. sapiens        |   treefam
-                 *          |                   |   inparanoid
-                 *          | C. elegans        |   treefam
-                 */
+            String geneOrganismName = (String) row.get(0);
+            String dataSet = (String) row.get(1);
+            String homologueOrganismName = (String) row.get(2);
 
-                // gene --> homologue|dataset
-                Map<String, Set[]> homologueMapping = orthologues.get(geneOrganismName);
-                if (homologueMapping == null) {
-                    homologueMapping = new HashMap();
-                    orthologues.put(geneOrganismName, homologueMapping);
-                }
+            // return a mapping from homologue to datasets
+            HomologueMapping homologueMapping = getMapping(orthologues, geneOrganismName,
+                    homologueOrganismName);
 
-                // homologue --> datasets
-                Set[] datasets = homologueMapping.get(homologueOrganismName);
-                if (datasets == null) {
-                    datasets = new HashSet[2];
-                    datasets[1] = new HashSet();
-                    homologueMapping.put(homologueOrganismName, datasets);
-                }
-                datasets[1].add(dataset);
-            }
-            localMine.setOrthologues(orthologues);
+            // add dataset for this gene.organism + gene.homologue.organism pair
+            homologueMapping.addLocalDataSet(dataSet);
+        }
+        localMine.setOrthologues(orthologues);
+    }
+
+    /*
+    * gene   --> homologue      -- > datasets
+    *
+    * D. rerio | H. sapiens        |   treefam
+    *          |                   |   inparanoid
+    *          | C. elegans        |   treefam
+    */
+    private static HomologueMapping getMapping(
+            Map<String, Map<String, HomologueMapping>> orthologues, String geneOrganismName,
+            String homologueOrganismName) {
+        // gene.organism --> gene.homologue.organism
+        Map<String, HomologueMapping> homologuesToDataSets = orthologues.get(geneOrganismName);
+
+        // if we haven't seen this gene.organism before
+        if (homologuesToDataSets == null) {
+            homologuesToDataSets = new HashMap<String, HomologueMapping>();
+            orthologues.put(geneOrganismName, homologuesToDataSets);
+        }
+
+        // homologue --> datasets
+        HomologueMapping homologueMapping = homologuesToDataSets.get(homologueOrganismName);
+
+        // if we haven't seen this gene.homologue.organism;
+        if (homologueMapping == null) {
+            homologueMapping = new HomologueMapping(homologueOrganismName);
+            homologuesToDataSets.put(homologueOrganismName, homologueMapping);
+        }
+        return homologueMapping;
     }
 
     private static void setOrthologues(Mine mine) {
-        Map<String, Map<String, Set[]>> orthologues = new HashMap();
         URL url;
         String webserviceURL = null;
+        // gene --> [homologue|datasets]
+        Map<String, Map<String, HomologueMapping>> geneOrganismToOrthologues
+            = new HashMap<String, Map<String, HomologueMapping>>();
         try {
             webserviceURL = mine.getUrl() + WEBSERVICE_URL + AVAILABLE_HOMOLOGUES_URL + "&"
-            + WEB_SERVICE_CONSTRAINT;
+                + WEB_SERVICE_CONSTRAINT;
             url = new URL(webserviceURL);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line = null;
@@ -401,39 +417,23 @@ public class OrthologueLinkManager
                 String[] bits = line.split("\\t");
                 if (bits.length != 3) {
                     String msg = "Couldn't process orthologue links for " + mine.getName()
-                    + ".  Expected three columns, found " + bits.length + " columns instead."
-                    + webserviceURL;
+                        + ".  Expected three columns, found " + bits.length + " columns instead."
+                        + webserviceURL;
                     LOG.info(msg);
                     return;
                 }
                 String geneOrganismName = bits[0];
-                String dataset = bits[1];
+                String dataSet = bits[1];
                 String homologueOrganismName = bits[2];
 
-                /**
-                 * gene --> homologue --> datasets
-                 *
-                 * D. rerio | H. sapiens        |   treefam
-                 *          |                   |   inparanoid
-                 *          | C. elegans        |   treefam
-                 */
+                HomologueMapping homologueMapping = getMapping(geneOrganismToOrthologues,
+                        geneOrganismName, homologueOrganismName);
 
-                // gene --> homologue|dataset
-                Map<String, Set[]> homologueMapping = orthologues.get(geneOrganismName);
-                if (homologueMapping == null) {
-                    homologueMapping = new HashMap();
-                    orthologues.put(geneOrganismName, homologueMapping);
-                }
-
-                // homologue --> datasets
-                Set[] datasets = homologueMapping.get(homologueOrganismName);
-                if (datasets == null) {
-                    datasets = new HashSet[2];
-                    datasets[1] = new HashSet();
-                    homologueMapping.put(homologueOrganismName, datasets);
-                }
-                datasets[1].add(dataset);
+                // add dataset for this gene.organism + gene.homologue.organism pair
+                homologueMapping.addRemoteDataSet(dataSet);
             }
+            localMine.setOrthologues(geneOrganismToOrthologues);
+
         } catch (MalformedURLException e) {
             LOG.info("Unable to access " + mine.getName() + " at " + webserviceURL);
             return;
@@ -441,7 +441,7 @@ public class OrthologueLinkManager
             LOG.info("Unable to access " + mine.getName() + " at " + webserviceURL);
             return;
         }
-        mine.setOrthologues(orthologues);
+        mine.setOrthologues(geneOrganismToOrthologues);
     }
 
     /**
@@ -457,141 +457,109 @@ public class OrthologueLinkManager
      * @param organismNames list of organisms from our bag
      * @return the list of valid mines for the given list
      */
-    public static Map<Mine, Map<String, Set[]>> getMines(Collection<String> organismNames) {
+    public Map<Mine, Map<String, HomologueMapping>> getMines(
+            Collection<String> organismNames) {
 
         // list of mines and orthologues for genes in our list
         // mines without relevant orthologues are discarded
-        Map<Mine, Map<String, Set[]>> filteredMines = new HashMap();
+        Map<Mine, Map<String, HomologueMapping>> filteredMines
+            = new HashMap<Mine, Map<String, HomologueMapping>>();
 
         // remote mines
         for (Mine mine : mines.values()) {
-            /* unique list of organisms available for conversion
-             * orthologue --> mine (local/remote) --> datasets
-             */
-            Map<String, Set[]> uniqueOrthologuesToDatasets = new HashMap<String, Set[]>();
 
-            // gene --> orthologue --> datasets
-            Map<String, Map<String, Set[]>> geneToOrthologues = mine.getOrthologues();
+            // gene --> orthologue [--> datasets]
+            Map<String, Map<String, HomologueMapping>> geneToOrthologues = mine.getOrthologues();
+
+            // [gene -->] orthologue --> datasets
+            Map<String, HomologueMapping> homologuesForList
+                = new HashMap<String, HomologueMapping>();
 
             if (geneToOrthologues.isEmpty()) {
                 LOG.info(mine.getName() + " has no orthologues");
                 continue;
             }
 
-            for (Map.Entry<String, Map<String, Set[]>> entry : geneToOrthologues.entrySet()) {
+            // get all gene --> homologue entries
+            for (Map.Entry<String, Map<String, HomologueMapping>> entry
+                    : geneToOrthologues.entrySet()) {
 
+                // gene
                 String geneOrganismName = entry.getKey();
-                Map<String, Set[]> orthologuesToDatasets = entry.getValue();
+                // homologue --> datasets
+                Map<String, HomologueMapping> orthologuesToDatasets = entry.getValue();
 
-                // organism is in user's bag
+                // gene.organism is in user's bag
                 if (organismNames.contains(geneOrganismName)) {
 
-                    // gene is in bag, so add all orthologues to our list to be displayed on
-                    // list analysis page
-                    for (Map.Entry<String, Set[]> orthologueEntry
+                    // for every gene.homologue, add to list and add datasets
+                    for (Map.Entry<String, HomologueMapping> orthologueEntry
                             : orthologuesToDatasets.entrySet()) {
 
+                        // gene.orthologue.organism.name
                         String orthologueOrganismName = orthologueEntry.getKey();
-                        Set[] datasets = orthologueEntry.getValue();
+                        // gene.orthologue.organism --> dataSets
+                        HomologueMapping homologueMapping = orthologueEntry.getValue();
 
-                        if (uniqueOrthologuesToDatasets.get(orthologueOrganismName) == null) {
-                            uniqueOrthologuesToDatasets.put(orthologueOrganismName, datasets);
-                        } else {
-                            // this list has more than one organism
-                            // these orthologues have been added previously, just merge datasets
-                            Set[] previousDatasets
-                            = uniqueOrthologuesToDatasets.get(orthologueOrganismName);
-                            for (int i = 0; i <= 1; i++) {
-                                if (datasets[i] != null && !datasets[i].isEmpty()) {
-                                    if (previousDatasets[i] == null) {
-                                        previousDatasets[i] = new HashSet();
-                                    }
-                                    previousDatasets[i].addAll(datasets[i]);
-                                }
-                            }
-                        }
+                        // create list for display on JSP
+                        addHomologues(homologuesForList, orthologueOrganismName, homologueMapping);
                     }
                 }
             }
-            // only add to list if this mine has orthologues
-            if (!uniqueOrthologuesToDatasets.isEmpty()) {
-                filteredMines.put(mine, uniqueOrthologuesToDatasets);
+
+            // only add to list if this mine has orthologues for genes in this list
+            if (!homologuesForList.isEmpty()) {
+                filteredMines.put(mine, homologuesForList);
             }
         }
         return filteredMines;
     }
 
+    /* add homologues to map used on JSP to display to user.
+     *
+     * One organism may be a homologue to different organisms in this list, so combine datasets
+     */
+    private static void addHomologues(
+            Map<String, HomologueMapping> homologuesForList,
+            String orthologueOrganismName, HomologueMapping homologueMapping) {
+
+        // this mapping is used by the JSP to print out the homologues to the user
+        HomologueMapping mappingForThisList = homologuesForList.get(orthologueOrganismName);
+
+        if (mappingForThisList == null) {
+            mappingForThisList = new HomologueMapping(orthologueOrganismName);
+            homologuesForList.put(orthologueOrganismName, mappingForThisList);
+        }
+
+        // add datasets for display
+        mappingForThisList.addRemoteDataSets(homologueMapping.getRemoteDataSets());
+        mappingForThisList.addLocalDataSets(homologueMapping.getLocalDataSets());
+    }
+
     /* for all the genes available in the remote mine, see if the local mine has orthologues
-    /* if so, we'll convert the genes then post the converted orthologues to the remote mine
      * NB this assumes the remote mine has its orthologues populated already
      */
     private static void getLocalOrthologues(Mine mine) {
 
-        // list of organisms for which this mine has genes.
-        // does the local mine have orthologues?
-        // gene.orthologue.organismName [local mine] = gene.organismName [remote mine]
-        Set<String> organismNames = mine.getOrganisms();
+        // list of organisms for which local mine has genes.
+        Set<String> remoteGeneOrganisms = mine.getOrganisms();
 
-        // gene --> gene.orthologue --> datasets for current intermine
-        Map<String, Map<String, Set[]>> localOrthologues = localMine.getOrthologues();
+        // gene --> gene.orthologue --> datasets
+        Map<String, Map<String, HomologueMapping>> localOrthologues = localMine.getOrthologues();
 
-        // no local orthologues
         if (localOrthologues.isEmpty()) {
+            // no local orthologues
             return;
         }
 
-        // gene --> orthologue --> datasets
-        // check each orthologue in the local mine against the list of organisms in the remote mine
-        for (Map.Entry<String, Map<String, Set[]>> entry : localOrthologues.entrySet()) {
-
-            String geneOrganismName = entry.getKey();
-
-            // orthologue --> datasets
-            Map<String, Set[]> orthologueToDatasets = entry.getValue();
-
-            // for every orthologue.organism in the local mine
-            // is there a matching gene.organism in the remote mine?
-            for (Map.Entry<String, Set[]> orthologueToDataset : orthologueToDatasets.entrySet()) {
-
-                String orthologueOrganismName = orthologueToDataset.getKey();
-                Set datasets = orthologueToDataset.getValue()[1];
-
-                // do we have a corresponding gene in the remote mine?
-                if (organismNames.contains(orthologueOrganismName)) {
-                    addLocalOrthologues(mine, geneOrganismName, orthologueOrganismName, datasets);
-                }
+        // does the local mine have orthologues for gene.organism in remote mine?
+        for (Map.Entry<String, Map<String, HomologueMapping>> entry : localOrthologues.entrySet()) {
+            String localGeneOrganism = entry.getKey();
+            if (remoteGeneOrganisms.contains(localGeneOrganism)) {
+                Map<String, HomologueMapping> orthologueToDatasets = entry.getValue();
+                mine.addLocalOrthologues(localGeneOrganism, orthologueToDatasets);
             }
         }
         return;
-    }
-
-    private static void addLocalOrthologues(Mine mine, String geneOrganismName,
-            String orthologueOrganismName, Set localDatasets) {
-
-        // gene --> gene.orthologue --> datasets
-        Map<String, Map<String, Set[]>> orthologues = mine.getOrthologues();
-        Map<String, Set[]> datasetsToOrthos = orthologues.get(geneOrganismName);
-
-        Set[] remoteAndLocalDatasets = null;
-
-        // NO ORTHOLOGUES
-        if (datasetsToOrthos == null) {
-            remoteAndLocalDatasets = new HashSet[2];
-            remoteAndLocalDatasets[0] = localDatasets;
-            datasetsToOrthos = new HashMap();
-            datasetsToOrthos.put(orthologueOrganismName, remoteAndLocalDatasets);
-            orthologues.put(geneOrganismName, datasetsToOrthos);
-        } else {
-            // ORTHOLOGUES, BUT NOT FOR THIS ORGANISM
-            if (datasetsToOrthos.get(orthologueOrganismName) == null) {
-                remoteAndLocalDatasets = new HashSet[2];
-                remoteAndLocalDatasets[0] = localDatasets;
-                datasetsToOrthos.put(orthologueOrganismName, remoteAndLocalDatasets);
-            // ORTHOLOGUES FOR THIS ORGANISM
-            // add local orthologues, remote orthologues were added previously
-            } else {
-                datasetsToOrthos.get(orthologueOrganismName)[0] = localDatasets;
-            }
-        }
     }
 }
