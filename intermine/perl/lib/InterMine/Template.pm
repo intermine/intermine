@@ -61,6 +61,11 @@ use XML::Parser::PerlSAX;
 use InterMine::Template::Handler;
 use InterMine::PathQuery qw(AND OR);
 
+use IO::String;
+use XML::Writer;
+
+
+
 =head2 new
 
  Title   : new
@@ -77,7 +82,7 @@ sub new
 {
   my $class = shift;
   my %opts = @_;
-  my $self = {%opts};
+  my $self = {};
 
   if (!defined $opts{file} && !defined $opts{string}) {
       die "$class\::new() needs a file or string argument\n";
@@ -91,18 +96,34 @@ sub new
   }
 
   bless $self, $class;
-  
+ 
+  $self->{model} = $opts{model};
+ 
   if (defined $opts{file}) {
     $self->_process($opts{file}, 0);
   } else {
     $self->_process($opts{string}, 1);
+    $self->{source_string} = $opts{string};
   }
 
-  $self->{model} = $opts{model};
-  
   return $self;
 }
 
+=head2 get_source_string()
+
+ Usage    : my $xmlstring = $template->get_source_string();
+ Function : Get the original xml string used to build the template
+ Returns  : an string
+
+ This can be useful if changes are made to the values of the template 
+ and you wish to revert them, or simply see/store the original version
+
+=cut
+
+sub get_source_string {
+    my $self = shift;
+    return $self->{source_string};
+}
 
 sub _process
 {
@@ -161,7 +182,7 @@ sub _parse_logic {
  Usage   : @views = @{ $template->get_views };
  Function: Get a list of the views in the associated PathQuery
  Args    : no args
- Returns : an array reference to an array of strings 
+ Returns : an array of strings 
 
 =cut
 
@@ -249,6 +270,13 @@ sub get_name {
     return $name;
 }
 
+sub get_title {
+    my $self = shift;
+    my $title = $self->{pq}->{title};
+    return $title;
+}
+
+
 
 =head2 get_sort_order
 
@@ -313,7 +341,6 @@ sub as_path_query {
  Args    : no args
  Returns : a string
 
-
 =cut
 
 
@@ -321,4 +348,47 @@ sub to_xml_string {
     my $self = shift;
     return $self->{pq}->to_xml_string;
 }
+
+
+=head2 to_string
+
+ Title   : to_template_string()
+ Usage   : $xml_string = $template->to_template_string();
+ Function: Get an xml representation of the whole template object.
+ Args    : no args
+ Returns : a string
+
+=cut
+
+sub to_string {
+    my $self = shift;
+
+    # add extra indentation to the query section 
+    my @query_lines = split("\n", $self->to_xml_string);
+    for (0 .. @query_lines - 1) {
+	$query_lines[$_] = (' ' x 3) . $query_lines[$_];
+    }
+    my $query  = join("\n",'', @query_lines, '');
+
+    my $output = new IO::String();
+    my $writer = new XML::Writer(UNSAFE => 1, DATA_MODE => 1, DATA_INDENT => 3, OUTPUT => $output);
+    
+    $writer->startTag('template',
+		      name            => $self->get_name(),
+		      title           => $self->get_title(),
+		      longDescription => $self->get_description(),
+		      comment         => $self->get_comment(),
+	);
+    $writer->raw($query);
+
+    $writer->endTag;
+    
+    return ${$output->string_ref};
+}
+
+sub get_comment {
+    my $self = shift;
+    return $self->{pq}{comment};
+}
+	
 1;
