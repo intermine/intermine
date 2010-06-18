@@ -42,6 +42,7 @@ under the same terms as Perl itself.
 =cut
 
 use strict;
+use Carp;
 
 use InterMine::Path;
 use IO::String;
@@ -67,10 +68,12 @@ sub new
   my $class = shift;
 
   if (@_ != 1) {
-    die "PathQuery::new() needs 1 argument - the model\n";
+    croak "PathQuery::new() needs 1 argument - the model\n";
   }
 
   my $model = shift;
+
+  croak "Invalid model" if (ref $model ne 'InterMine::Model');
 
   my $self = {model => $model, view => [], next_code => 'A'};
 
@@ -93,7 +96,7 @@ sub add_view
   my $self = shift;
 
   if (@_ == 0) {
-    die "no arguments passed to add_view()\n";
+    croak "no arguments passed to add_view()\n";
   }
 
   my @paths = map { split /[,\s]+/ } @_;
@@ -141,7 +144,7 @@ sub sort_order
         $self->{sort_order} = $view[0];
         return $view[0];
       } else {
-        die "can't get the sort order because the view is not set\n";
+        croak "can't get the sort order because the view is not set\n";
       }
     }
   } else {
@@ -151,7 +154,7 @@ sub sort_order
 	$self->{sort_order} = $sort_order;
     }
     else {
-	die qq(Sort order "$sort_order" is not a valid path for this model\n);
+	croak qq(Sort order "$sort_order" is not a valid path for this model\n);
     }
   }
 }
@@ -170,7 +173,7 @@ sub add_constraint
   my $arg = shift;
 
   if (!defined $arg) {
-    die "no constraint string specified for PathQuery->add_constraint()\n";
+    croak "no constraint string specified for PathQuery->add_constraint()\n";
   }
 
   my ($c, $path);
@@ -183,12 +186,12 @@ sub add_constraint
   else {
       my @bits = split /\s+/, $arg, 2;
       if (@bits < 2) {
-	  die "can't parse constraint: $arg\n";
+	  croak "can't parse constraint: $arg\n";
       }
 
       $path = $bits[0];
       
-      die qq("$path" is not a valid Path for this model.\n) 
+      croak qq("$path" is not a valid Path for this model.\n) 
 	  unless (InterMine::Path->validate($self->{model}, $path));
 
       my $constraint_string = $bits[1];
@@ -213,7 +216,7 @@ sub _check_logic_arg
     if (ref $arg) {
       $message .= ", not class: " . ref $arg;
     }
-    die "$message\n";
+    croak "$message\n";
   }
 }
 
@@ -222,7 +225,7 @@ sub _operator_implementation
   my $op = shift;
 
   if (@_ < 2) {
-    die "not enough arguments to $op operator\n";
+    croak "not enough arguments to $op operator\n";
   }
 
   map {_check_logic_arg($_)} @_;
@@ -255,7 +258,7 @@ sub logic
   my $self = shift;
 
   if (@_ != 1) {
-    die "logic() needs one argument\n";
+    croak "logic() needs one argument\n";
   }
 
   my $logic = shift;
@@ -299,28 +302,45 @@ sub _logic_string
 sub to_xml_string
 {
   my $self = shift;
-  $self->_is_valid(1);
+  $self->_is_valid('die_on_error');
 
   my $output = new IO::String();
   my $writer = new XML::Writer(DATA_MODE => 1, DATA_INDENT => 3, OUTPUT => $output);
 
-  $writer->startTag('query', 
-		    name => '', 
-		    model => $self->{model}->model_name(),
-                    view => (join ' ', $self->view()),
-                    sortOrder => $self->sort_order(),
-                    ($self->{logic}) ? 
-		        (constraintLogic => _logic_string($self->{logic}))
-                        : '', # prevent an empty tag being set
-                    );
+  my %start_tag_args = (
+      name  => ($self->{name} || '' ), 
+      model => $self->{model}->model_name,
+      view => (join ' ', $self->view),
+      sortOrder => $self->sort_order,
+      );
+  $start_tag_args{longDescription} = $self->{longDescription} if $self->{longDescription};
+
+  if ($self->{logic}) {
+      $start_tag_args{constraintLogic} = _logic_string($self->{logic});
+  }
+  elsif ($self->{constraintLogic}) {
+      $start_tag_args{constraintLogic} = $self->{constraintLogic};
+  }
+      
+  $writer->startTag('query', %start_tag_args);
 
   my $current_code = 'A';
+
+  my @path_strings = sort keys %{$self->{pathDescriptions}};
+
+  for my $path_string (@path_strings) {
+      $writer->startTag( 'pathDescription', 
+			 pathString  => $path_string,
+			 description => $self->{pathDescriptions}{$path_string},
+	  );
+      $writer->endTag();
+  }
 
   my @constraint_paths = sort keys %{$self->{constraints}};
 
   for my $path_string (@constraint_paths) {
     
-    my $path = new InterMine::Path($self->{model}, $path_string);
+    my $path = new InterMine::Path($self->{model}, $path_string, $self->{type_of});
     my $type = $path->end_type;
     
     # Write the tag
@@ -332,7 +352,7 @@ sub to_xml_string
 
     for my $constraint (@{$self->{constraints}->{$path_string}}) {
 	my %tags;
-	for (qw/op value extraValue code/) {
+	for (qw/op value extraValue code description identifier editable/) {
 	    $tags{$_} = $constraint->{$_} if (defined $constraint->{$_});
 	}
 	
@@ -356,7 +376,7 @@ sub _is_valid
     return 1;
   } else {
     if ($die_on_error) {
-      die "PathQuery is not valid because there no view set\n";
+      croak "PathQuery is not valid because there no view set\n";
     } else {
       return 0;
     }
