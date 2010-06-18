@@ -4,3 +4,4 @@
 <form-bean name="gff3ExportForm" type="org.intermine.bio.web.struts.GFF3ExportForm"/>
 <form-bean name="submissionOverlapsForm" type="org.modmine.web.SubmissionOverlapsForm"/>
 <form-bean name="modMineSearchForm" type="org.modmine.web.ModMineSearchForm"/>
+<form-bean name="spanUploadForm" type="org.modmine.web.SpanUploadForm"/>

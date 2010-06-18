@@ -16,7 +16,7 @@
 
 <action path="/initAttributeLinkDisplayer"
   type="org.intermine.bio.web.AttributeLinkDisplayerController" />
-  
+
 <action path="/initTracksDisplayer"
   type="org.modmine.web.TrackDisplayerController" />
 
@@ -31,7 +31,7 @@
 
 <action path="/initModMineSearchResults"
   type="org.modmine.web.ModMineSearchResultsController" />
-  
+
 <action path="/initExperiment"
   type="org.modmine.web.ExperimentController" />
 
@@ -53,7 +53,7 @@
 
 <action path="/initSubmissionProtocolsDisplayer"
   type="org.modmine.web.SubmissionProtocolsController" />
-  
+
 <action path="/submissionOverlapsAction" name="submissionOverlapsForm" type="org.modmine.web.SubmissionOverlapsAction" input="objectDetails">
       <forward name="objectDetails" redirect="true" path="/objectDetails.do"/>
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
@@ -68,11 +68,37 @@
 <action path="/modMineSearchAction" name="modMineSearchForm" type="org.modmine.web.ModMineSearchAction" input="begin">
       <forward name="searchResults" redirect="true" path="/modMineSearchResults.do"/>
  </action>
- 
+
 <action path="/modMineSearchResults" forward="searchresults.page">
 </action>
 
-<!-- 
+<!-- Begining of Cytoscape Web configuration -->
+<action path="/initCytoscapeInteractionsDisplayer"
+        type="org.intermine.bio.web.struts.CytoscapeInteractionsController"/>
+
+<action path="/cytoscapeNetworkExport"
+        type="org.intermine.bio.web.struts.CytoscapeNetworkExportAction"/>
+<!-- End of Cytoscape Web configuration -->
+
+<!-- Begining of Span Upload configuration -->
+<action path="/spanUploadOptions" forward="spanUploadOptions.page">
+</action>
+
+<action path="/spanUploadResults" forward="spanUploadResults.page">
+</action>
+
+<action path="/initSpanUploadOptions"
+  type="org.modmine.web.SpanUploadOptionsController" />
+
+<action path="/initSpanUploadResults"
+  type="org.modmine.web.SpanUploadResultsController" />
+
+<action path="/spanUploadAction" name="spanUploadForm" type="org.modmine.web.SpanUploadAction" input="/spanUploadOptions.jsp">
+    <forward name="spanUploadResults" path="/spanUploadResults.do" redirect="true"/>
+</action>
+<!-- End of Span Upload configuration -->
+
+<!--
 <action path="/initLatestSubs"
   type="org.modmine.web.LatestSubsController" />
 
@@ -81,4 +107,4 @@
 
 <action path="/labs" forward="labs.page"/>
 -->
-  
+
