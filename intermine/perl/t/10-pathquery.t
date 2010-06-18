@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 12;
+use Test::More tests => 11;
 use Test::Exception;
 
 use InterMine::Model;
@@ -39,6 +39,4 @@ ok(@view == 2, 'view length == 2');
 ok($view[0] eq 'Department.name', 'add field');
 ok($view[1] eq 'Department.company.name', 'add field');
 
-my $expected_xml = q[<query name="" model="testmodel" view="Department.name Department.company.name" sortOrder="Department.name"></query>];
 
-is ($expected_xml, $path_query->to_xml_string(), 'xml output');

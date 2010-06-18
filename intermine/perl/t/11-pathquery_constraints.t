@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::XML tests => 3;
+use Test::XML tests => 4;
 use Test::Exception;
 
 use InterMine::Model;
@@ -18,11 +18,15 @@ my $path_query = new InterMine::PathQuery($model);
 $path_query->add_view('Department.name');
 $path_query->add_view('Department.company.name');
 
+my $expected_xml = q[<query name="" model="testmodel" view="Department.name Department.company.name" sortOrder="Department.name"></query>];
+
+is_xml ($path_query->to_xml_string(), $expected_xml, 'xml output');
+
 my $depname_c = $path_query->add_constraint('Department.name != "Music department"');
 my $not_null_c = $path_query->add_constraint('Department.name IS NOT NULL');
 my $comp_name_c = $path_query->add_constraint('Department.company.name = Woolworths');
 
-my $expected_xml = q[<query name="" model="testmodel" view="Department.name Department.company.name" sortOrder="Department.name">
+$expected_xml = q[<query name="" model="testmodel" view="Department.name Department.company.name" sortOrder="Department.name">
    <node path="Department.company.name" type="String">
       <constraint op="=" value="Woolworths" code="C"></constraint>
    </node>
@@ -32,7 +36,7 @@ my $expected_xml = q[<query name="" model="testmodel" view="Department.name Depa
    </node>
 </query>];
 
-is_xml ($path_query->to_xml_string(), $expected_xml, 'xml output');
+is_xml ($path_query->to_xml_string(), $expected_xml, 'xml output with constraints');
 
 $comp_name_c->extra_value('NZ');
 
@@ -61,4 +65,4 @@ $expected_xml = q[<query name="" model="testmodel" view="Department.name Departm
    </node>
 </query>];
 
-is_xml ($path_query->to_xml_string(), $expected_xml, 'xml output');
+is_xml ($path_query->to_xml_string(), $expected_xml, 'xml output with logic');
