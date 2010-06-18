@@ -155,6 +155,18 @@
     </fields>
   </class>
 
+ <class className="org.intermine.model.bio.ExpressionLevel">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="value"/>
+      <fieldconfig fieldExpr="readCount"/>
+      <fieldconfig fieldExpr="dcpm"/>
+      <fieldconfig fieldExpr="dcpmBases"/>
+      <fieldconfig fieldExpr="transcribed"/>
+      <fieldconfig fieldExpr="predictionStatus"/>      
+    </fields>
+  </class>
+
 
 <!-- =================================================================== -->
 <!-- THIS SHOULD BE THE SAME AS FLYMINE MINUS STUFF MODMINE DOESN'T NEED -->
