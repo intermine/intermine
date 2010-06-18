@@ -341,7 +341,7 @@ sub to_xml_string
   for my $path_string (@constraint_paths) {
     
     my $path = new InterMine::Path($self->{model}, $path_string, $self->{type_of});
-    my $type = $path->end_type;
+    my $type = $self->{type_of}{$path_string} || $path->end_type;
     
     # Write the tag
     $writer->startTag(
