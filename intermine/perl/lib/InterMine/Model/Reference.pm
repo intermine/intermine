@@ -89,6 +89,19 @@ sub referenced_classdescriptor
   return $self->{model}->get_classdescriptor_by_name($type_name);
 }
 
+=head2 referenced_classdescriptor
+
+ Usage   : $cd = $ref->rev_referenced_classdescriptor();
+ Function: Returns the ClassDescriptor of the other end of this reference
+ Args    : none
+
+=cut
+sub rev_referenced_classdescriptor {
+    my $self       = shift;
+    my $field_name = $self->field_name();
+    return $self->{model}->get_referenced_classdescriptor($field_name);
+}
+
 =head2 reverse_reference_name
 
  Usage   : $name = $ref->reverse_reference_name();
