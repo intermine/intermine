@@ -37,19 +37,16 @@ public class ObjectDetailsInListController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws Exception {
         String id = (String) context.getAttribute("objectid");
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = im.getBagManager();
-
         Collection<InterMineBag> bagsWithId =
             bagManager.getUserOrGlobalBagsContainingId(profile, Integer.parseInt(id));
-
         request.setAttribute("bagsWithId", bagsWithId);
         return null;
     }

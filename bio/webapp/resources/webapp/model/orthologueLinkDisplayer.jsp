@@ -40,8 +40,8 @@
             <c:forEach var="entry" items="${orthologuesToDatasets}" varStatus="entryStatus">
                 <c:set var="orthologue" value="${entry.key}"/>
                 <c:set var="datasets" value="${entry.value}"/>
-                <c:set var="localMapping" value="${datasets[0]}"/>
-                <c:set var="remoteMapping" value="${datasets[1]}"/>
+                <c:set var="localMapping" value="${datasets.localDataSetsString}"/>
+                <c:set var="remoteMapping" value="${datasets.remoteDataSetsString}"/>
                 <option value="${localMapping}|${remoteMapping}" <c:if test="${mine.defaultOrganismName == orthologue}">selected</c:if>>${orthologue}</option>
             </c:forEach>
             </select>
