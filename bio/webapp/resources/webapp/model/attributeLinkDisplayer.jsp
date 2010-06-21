@@ -36,7 +36,7 @@
                 <td align="right">
                   <c:if test="${!empty imageName}">
                     <a href="javascript:document.getElementById('${linkId}Form').submit();" class="ext_link" >
-                             <html:img src="model/images/${imageName}" title="${text}" height="36" width="36" />
+                             <html:img src="model/images/${imageName}" title="${text}" />
                     </a>
                   </c:if>
               </td>

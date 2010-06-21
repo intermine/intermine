@@ -29,7 +29,7 @@
     <%-- orthologue link popup --%>
     <div id="orthologue_link_${status.count}" style="display:none">
         <form action="${mine.url}/portal.do" method="post" name="orthologueLinkForm${status.count}" target="_blank">
-        You are being forwarded to ${mineName}
+        You are exporting your list to ${mineName}
         <br/><br/>
         <table>
         <tr>
