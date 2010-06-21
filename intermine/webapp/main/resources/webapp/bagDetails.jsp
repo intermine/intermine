@@ -212,6 +212,11 @@
 </tiles:insert>
 
 </p>
+
+<tiles:insert page="/bagDisplayers.jsp">
+   <tiles:put name="bag" beanName="bag"/>
+</tiles:insert>
+
 </div>
 </html:form>
 
@@ -226,11 +231,9 @@
 </div>
 
 
-<tiles:insert page="/bagDisplayers.jsp">
-   <tiles:put name="bag" beanName="bag"/>
-</tiles:insert>
 
-</TD></TR>
+
+</TR>
 </TABLE>
 
 <div class="heading" style="clear:both;margin-top:15px">
