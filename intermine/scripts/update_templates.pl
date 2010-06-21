@@ -1,5 +1,50 @@
 #!/usr/bin/perl
 
+
+=head1 NAME
+
+update_templates.pl
+
+=head1 SYNOPSIS
+
+update_templates.pl [--logfile file] [--outputfile file] [--inputfile file] [--modelfile]
+
+Takes a file of templates and transforms them to match the new model.
+
+=head1 AUTHOR
+
+FlyMine C<< <support@flymine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<support@flymine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc update_templates.pl
+
+You can also look for information at:
+
+=over 4
+
+=item * FlyMine
+
+L<http://www.flymine.org>
+
+=back
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2010 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut
+
+
 use strict;
 use warnings;
 use Carp;
