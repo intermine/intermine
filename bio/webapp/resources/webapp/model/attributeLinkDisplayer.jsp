@@ -36,7 +36,7 @@
                 <td align="right">
                   <c:if test="${!empty imageName}">
                     <a href="javascript:document.getElementById('${linkId}Form').submit();" class="ext_link" >
-                             <html:img src="model/images/${imageName}" title="${text}"/>
+                             <html:img src="model/images/${imageName}" title="${text}" height="36" width="36" />
                     </a>
                   </c:if>
               </td>
@@ -47,7 +47,7 @@
                     </a>
                   </c:if>
                 </td>
-                
+
                 <form action="${href}" method="post" id="${linkId}Form" target="_blank" enctype="${enctype}">
                      <c:forEach var="par" items="${parameters}">
                          <input type="hidden" value="${par.value}" name="${par.key}" />
