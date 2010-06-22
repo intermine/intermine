@@ -191,29 +191,14 @@
       </div>
       </c:when>
 </c:choose>
-
+<small>Date Created:  <im:dateDisplay date="${bag.dateCreated}" /></small>
 </div>
 
 </TD>
 
 <TD align="left" valign="top" width="40%">
 
-<div id="listinfo" class="listtoolbox" align="left">
-<h3><img src="images/icons/info.png" title="Information about this list"/>&nbsp;List Info</h3>
-<p>
-<table cellpadding="0" cellspacing="0" border="0" class="listinfotable">
-<tr>
-  <td class="infotitle">Name:</td><td>${bag.name}</td>
-</tr><tr>
-  <td class="infotitle">Date Created:</td><td><im:dateDisplay date="${bag.dateCreated}" /></td>
-</tr><tr>
-  <td class="infotitle">Type:</td><td>${bag.type}</td>
-</tr><tr>
-  <td class="infotitle">Size:</td><td>${bag.size} records</td>
-</tr>
-</table>
-</p>
-</div>
+
 
 <div id="convertList" class="listtoolbox" align="left">
 <h3><img src="images/icons/convert.png" title="Convert objects in this bag to different type"/>&nbsp;Convert</h3>
@@ -227,6 +212,11 @@
 </tiles:insert>
 
 </p>
+
+<tiles:insert page="/bagDisplayers.jsp">
+   <tiles:put name="bag" beanName="bag"/>
+</tiles:insert>
+
 </div>
 </html:form>
 
@@ -240,12 +230,8 @@
   </p>
 </div>
 
-
-<tiles:insert page="/bagDisplayers.jsp">
-   <tiles:put name="bag" beanName="bag"/>
-</tiles:insert>
-
-</TD></TR>
+</TD>
+</TR>
 </TABLE>
 
 <div class="heading" style="clear:both;margin-top:15px">
