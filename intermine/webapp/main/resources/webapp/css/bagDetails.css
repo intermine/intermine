@@ -16,8 +16,8 @@
   text-align:left;}
 
 #textarea {
-	padding:5px; margin:0;
-	width:100%;height:100px;}
+  padding:5px; margin:0;
+  width:100%;height:50px;}
 
 #emptyDesc{
   text-align:center;font-style: italic;}
@@ -35,13 +35,13 @@ li {
 
 #linkOuts{
   padding:0 10px 10px 10px;}
-  
-.listtoolbox { 
+
+.listtoolbox {
   padding: 0 10px 10px 10px; margin: 0 15px 15px 15px;
   background-repeat: repeat-x;
-  background-position: bottom;
+  background-position: top;
   vertical-align: middle; text-align: left;}
-  
+
 .listtoolbox h3, #bagDescriptionDiv h3 {
   color:#333; font-size:1.2em;}
 
