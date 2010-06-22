@@ -170,6 +170,12 @@ public class MetadataCache
      */
     public static synchronized Map<Integer, List<GBrowseTrack>> getGBrowseTracks() {
         fetchGBrowseTracks();
+        while (submissionTracksCache == null) {
+            try {
+                MetadataCache.class.wait();
+            } catch (InterruptedException e) {
+            }
+        }
         return submissionTracksCache;
     }
 
@@ -280,11 +286,9 @@ public class MetadataCache
      * @return a list of file names
      */
     public static synchronized List<GBrowseTrack> getTracksByDccId(Integer dccId) {
-        if (submissionTracksCache == null) {
-            readGBrowseTracks();
-        }
-        if (submissionTracksCache.get(dccId) != null) {
-            return new ArrayList<GBrowseTrack>(submissionTracksCache.get(dccId));
+        Map<Integer, List<GBrowseTrack>> tracks = getGBrowseTracks();
+        if (tracks.get(dccId) != null) {
+            return new ArrayList<GBrowseTrack>(tracks.get(dccId));
         } else {
             return new ArrayList<GBrowseTrack>();
         }
@@ -379,6 +383,7 @@ public class MetadataCache
      * @param tracks map of dccId:GBrowse tracks
      */
     public static synchronized void setGBrowseTracks(Map<Integer, List<GBrowseTrack>> tracks) {
+        MetadataCache.class.notifyAll();
         submissionTracksCache = tracks;
     }
 
@@ -1156,6 +1161,4 @@ public class MetadataCache
                 + featDescriptionCache.size());
         return featDescriptionCache;
     }
-
-
 }
