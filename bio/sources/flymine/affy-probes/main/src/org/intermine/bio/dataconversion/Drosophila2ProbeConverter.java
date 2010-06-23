@@ -71,7 +71,7 @@ public class Drosophila2ProbeConverter extends FileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader)
-    throws Exception {
+        throws Exception {
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         boolean hasDataset = false;
@@ -94,7 +94,7 @@ public class Drosophila2ProbeConverter extends FileConverter
             String chromosomeRefId = createChromosome(chromosomeIdentifier);
             String geneRefId = createGene(fbgn);
             if (geneRefId != null) {
-                String transcriptRefId = createBioentity("Transcript", transcriptIdentifier, 
+                String transcriptRefId = createBioentity("Transcript", transcriptIdentifier,
                                                          geneRefId);
                 ProbeSetHolder holder = getHolder(probesetIdentifier);
                 holder.transcripts.add(transcriptRefId);
@@ -126,7 +126,7 @@ public class Drosophila2ProbeConverter extends FileConverter
     }
 
     private void storeProbeSet(ProbeSetHolder holder)
-    throws ObjectStoreException  {
+        throws ObjectStoreException  {
         Item probeSet = createItem("ProbeSet");
         probeSet.setAttribute("primaryIdentifier", holder.probesetIdentifier);
         probeSet.setAttribute("name", holder.probesetIdentifier);
@@ -169,7 +169,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         protected void addLocation(String chromosomeRefId, Integer start, Integer end,
                                    String strand) {
             String key = chromosomeRefId + "|" + start.toString() + "|"
-            + end.toString() + "|" + strand;
+                + end.toString() + "|" + strand;
             if (locationHolders.get(key) == null) {
                 LocationHolder location = new LocationHolder(chromosomeRefId, start, end, strand);
                 locationHolders.put(key, location);
@@ -184,7 +184,7 @@ public class Drosophila2ProbeConverter extends FileConverter
          * @throws ObjectStoreException if something goes wrong storing locations
          */
         protected List<String> createLocations(String probeSetRefId)
-        throws ObjectStoreException {
+            throws ObjectStoreException {
             for (LocationHolder holder : locationHolders.values()) {
                 String location = createLocation(holder, probeSetRefId);
                 locations.add(location);
@@ -218,7 +218,7 @@ public class Drosophila2ProbeConverter extends FileConverter
     }
 
     private String createGene(String id)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         String identifier = id;
         IdResolver resolver = resolverFactory.getIdResolver();
         int resCount = resolver.countResolutions(TAXON_ID, identifier);
@@ -233,7 +233,7 @@ public class Drosophila2ProbeConverter extends FileConverter
     }
 
     private String createBioentity(String type, String identifier, String geneRefId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         String refId = bioentities.get(identifier);
         if (refId == null) {
             Item bioentity = createItem(type);
@@ -270,7 +270,7 @@ public class Drosophila2ProbeConverter extends FileConverter
     }
 
     private void createDataset(String array)
-    throws ObjectStoreException  {
+        throws ObjectStoreException  {
         dataSet = createItem("DataSet");
         dataSet.setReference("dataSource", dataSource.getIdentifier());
         dataSet.setAttribute("title", "Affymetrix array: " + array);
@@ -278,7 +278,7 @@ public class Drosophila2ProbeConverter extends FileConverter
     }
 
     private String createChromosome(String identifier)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         String refId = chromosomes.get(identifier);
         if (refId == null) {
             Item item = createItem("Chromosome");
@@ -292,7 +292,7 @@ public class Drosophila2ProbeConverter extends FileConverter
     }
 
     private String createLocation(LocationHolder holder, String probeset)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         Item item = createItem("Location");
         item.setAttribute("start", holder.start.toString());
         item.setAttribute("end", holder.end.toString());
