@@ -24,10 +24,10 @@ import org.intermine.bio.web.biojava.BioSequence;
 import org.intermine.bio.web.biojava.BioSequenceFactory;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Sequence;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.StringUtil;
@@ -121,21 +121,17 @@ public class SequenceExporter implements Exporter
                 String headerString = header.toString();
 
                 if (headerString.length() > 0) {
-                    annotation.setProperty(
-                            FastaFormat.PROPERTY_DESCRIPTIONLINE, headerString);
+                    annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, headerString);
                 } else {
                     if (object instanceof BioEntity) {
-                        annotation.setProperty(
-                                FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                        annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
                                 ((BioEntity) object).getPrimaryIdentifier());
                     } else {
                         // last resort
-                        annotation.setProperty(
-                                FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                        annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
                                 "sequence_" + exportedIDs.size());
                     }
                 }
-
                 SeqIOTools.writeFasta(out, bioSequence);
                 writtenResultsCount++;
                 exportedIDs.add(objectId);
@@ -161,7 +157,7 @@ public class SequenceExporter implements Exporter
 
     private BioSequence createSequenceFeature(StringBuffer header,
             Object object, List<ResultElement> row)
-            throws IllegalSymbolException {
+        throws IllegalSymbolException {
         BioSequence bioSequence;
         SequenceFeature feature = (SequenceFeature) object;
         bioSequence = BioSequenceFactory.make(feature);
