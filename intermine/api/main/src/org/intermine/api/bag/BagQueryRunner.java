@@ -78,15 +78,12 @@ public class BagQueryRunner
      * Given an input list of string identifiers search for corresponding objects. First run a
      * default query then any queries configured for the specified type.
      *
-     * @param type
-     *            an unqualified class name to search for objects
-     * @param input
-     *            a list of strings to query
-     * @param extraFieldValue
-     *            the value used when adding an extra constraint to the bag query, configured in
-     *            BagQueryConfig (e.g. if connectField is "organism", the extraClassName is
-     *            "Organism" and the constrainField is "name", the extraFieldValue might be
-     *            "Drosophila melanogaster")
+     * @param type an unqualified class name to search for objects
+     * @param input a list of strings to query
+     * @param extraFieldValue the value used when adding an extra constraint to the bag query,
+     * configured in BagQueryConfig (e.g. if connectField is "organism", the extraClassName is
+     * "Organism" and the constrainField is "name", the extraFieldValue might be "Drosophila
+     * melanogaster")
      * @param doWildcards true if the strings should be evaluated as wildcards
      * @return the matches, issues and unresolved input
      * @throws ClassNotFoundException if the type isn't in the model

@@ -1,19 +1,19 @@
 <bag-queries>
-  <extra-bag-query-class connect-field="organism" class-name="org.intermine.model.bio.Organism" 
+  <extra-bag-query-class connect-field="organism" class-name="org.intermine.model.bio.Organism"
                          constrain-field="shortName"/>
-	<bag-type type="BioEntity">
-		<query message="searching key fields for all types" matchesAreIssues="true" runBeforeDefault="false">
-		SELECT DISTINCT a1_.id as a3_, a2_.value as a4_ FROM org.intermine.model.bio.BioEntity AS a1_, 
+  <bag-type type="BioEntity">
+    <query message="searching key fields for all types" matchesAreIssues="true" runBeforeDefault="false">
+    SELECT DISTINCT a1_.id as a3_, a2_.value as a4_ FROM org.intermine.model.bio.BioEntity AS a1_,
 org.intermine.model.bio.Synonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ AND a2_.isPrimary = true and lower(a2_.value) in ?)
-		</query>
-		<query message="searching synonyms for all types" matchesAreIssues="true" runBeforeDefault="false">
-                SELECT DISTINCT a1_.id as a3_, a2_.value as a4_ FROM org.intermine.model.bio.BioEntity AS a1_, 
+    </query>
+    <query message="searching synonyms for all types" matchesAreIssues="true" runBeforeDefault="false">
+                SELECT DISTINCT a1_.id as a3_, a2_.value as a4_ FROM org.intermine.model.bio.BioEntity AS a1_,
 org.intermine.model.bio.Synonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ AND a2_.isPrimary = false and lower(a2_.value) in ?)
-		</query>
-	</bag-type>
-    <additional-converter 
-        class-name="org.intermine.bio.web.logic.OrthologueConverter" 
-        urlfield="orthologue,ortholog,dataset" 
-        classConstraint="org.intermine.model.bio.Organism" 
+    </query>
+  </bag-type>
+    <additional-converter
+        class-name="org.intermine.bio.web.logic.OrthologueConverter"
+        urlfield="orthologue,ortholog,dataset"
+        classConstraint="org.intermine.model.bio.Organism"
         target-type="org.intermine.model.bio.Gene"/>
 </bag-queries>
