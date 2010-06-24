@@ -21,9 +21,12 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.CDS;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.ChromosomeBand;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.FivePrimeUTR;
 import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Location;
 import org.intermine.model.bio.MRNA;
 import org.intermine.model.bio.ThreePrimeUTR;
 import org.intermine.model.bio.Transcript;
@@ -74,6 +77,15 @@ public class CreateReferences
         LOG.info("insertReferences stage 1");
         // fill in collections on Chromosome
 
+        insertCollectionField(Gene.class, "locations", Location.class, "locatedOn",
+                              Chromosome.class, "genes", false);
+        insertCollectionField(Transcript.class, "locations", Location.class, "locatedOn",
+                              Chromosome.class, "transcripts", false);
+        insertCollectionField(Exon.class, "locations", Location.class, "locatedOn",
+                              Chromosome.class, "exons", false);
+        insertCollectionField(ChromosomeBand.class, "locations", Location.class, "locatedOn",
+                              Chromosome.class, "chromosomeBands", false);
+
         LOG.info("insertReferences stage 2");
         // Exon.gene / Gene.exons
         insertReferenceField(Gene.class, "transcripts", Transcript.class, "exons",
@@ -89,7 +101,6 @@ public class CreateReferences
         LOG.info("insertReferences stage 5");
 //        insertGeneAnnotationReferences();
     }
-
 
     /**
      * Add a reference to and object of type X in objects of type Y by using a connecting class.
@@ -263,7 +274,7 @@ public class CreateReferences
                         tempObject.setFieldValue(createFieldName, newCollection);
                         count += newCollection.size();
                         osw.store(tempObject);
-                   } catch (IllegalAccessException e) {
+                    } catch (IllegalAccessException e) {
                         LOG.error("Object with ID " + thisDestObject.getId()
                                   + " has no " + createFieldName + " field", e);
                     }
