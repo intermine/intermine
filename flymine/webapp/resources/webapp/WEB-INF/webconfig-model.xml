@@ -219,10 +219,9 @@
 
   <class className="org.intermine.model.bio.GOAnnotation">
     <fields>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
       <fieldconfig fieldExpr="ontologyTerm.identifier" />
       <fieldconfig fieldExpr="ontologyTerm.name" />
-      <fieldconfig fieldExpr="ontologyTerm.namespace" showInSummary="false" />
-      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
