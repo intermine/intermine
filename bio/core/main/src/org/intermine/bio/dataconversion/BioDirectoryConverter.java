@@ -32,9 +32,11 @@ import org.xml.sax.SAXException;
 
 public abstract class BioDirectoryConverter extends DirectoryConverter
 {
-    private final Map<String, Item> dataSets = new HashMap<String, Item>();
-    private final Map<String, Item> dataSources = new HashMap<String, Item>();
+    private final Map<String, String> dataSets = new HashMap<String, String>();
+    private final Map<String, String> dataSources = new HashMap<String, String>();
     private Set<String> synonyms = new HashSet<String>();
+    private Set<String> crossReferences = new HashSet<String>();
+    private Map<String, String> organisms = new HashMap<String, String>();
 
     /**
      * Create a new BioDirectoryConverter.
@@ -46,14 +48,13 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
     public BioDirectoryConverter (ItemWriter writer, Model model,
                              String dataSourceName, String dataSetTitle) {
         super(writer, model);
-
-        Item dataSource = null;
-        Item dataSet = null;
+        String dataSourceRefId = null;
+        String dataSetRefId = null;
         if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
-            dataSource = getDataSourceItem(dataSourceName);
-            dataSet = getDataSetItem(dataSetTitle, dataSource);
+            dataSourceRefId = getDataSource(dataSourceName);
+            dataSetRefId = getDataSet(dataSetTitle, dataSourceRefId);
         }
-        BioStoreHook hook = new BioStoreHook(model, dataSet, dataSource);
+        BioStoreHook hook = new BioStoreHook(model, dataSetRefId, dataSourceRefId);
         setStoreHook(hook);
     }
 
@@ -62,63 +63,100 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
      * @param name the DataSource name
      * @return the DataSource Item
      */
-    public Item getDataSourceItem(String name) {
+    public String getDataSource(String name) {
         if (name == null) {
             return null;
         }
-
-        Item dataSource = dataSources.get(name);
-        if (dataSource == null) {
-            dataSource = createItem("DataSource");
-            dataSource.setAttribute("name", name);
+        String refId = dataSources.get(name);
+        if (refId == null) {
+            Item item = createItem("DataSource");
+            item.setAttribute("name", name);
             try {
-                store(dataSource);
+                store(item);
             } catch (ObjectStoreException e) {
                 throw new RuntimeException("failed to store DataSource with name: " + name, e);
             }
-            dataSources.put(name, dataSource);
+            refId = item.getIdentifier();
+            dataSources.put(name, refId);
         }
-        return dataSource;
-    }
-
-    /**
-     * Return a DataSet item for the given name
-     * @param title the DataSet title
-     * @param dataSourceItem the DataSource referenced by the the DataSet
-     * @return the DataSet Item
-     */
-    public Item getDataSetItem(String title, Item dataSourceItem) {
-        return getDataSetItem(title, null, null, dataSourceItem);
+        return refId;
     }
 
     /**
      * Return a DataSet item with the given details.
      * @param title the DataSet title
-     * @param url the new url field, or null if the url shouldn't be set
-     * @param description the new description field, or null if the field shouldn't be set
-     * @param dataSourceItem the DataSource referenced by the the DataSet
+     * @param dataSourceRefId the DataSource referenced by the the DataSet
      * @return the DataSet Item
      */
-    public Item getDataSetItem(String title, String url, String description, Item dataSourceItem) {
-        Item dataSet = dataSets.get(title);
-        if (dataSet == null) {
-            dataSet = createItem("DataSet");
+    public String getDataSet(String title, String dataSourceRefId) {
+        String refId = dataSets.get(title);
+        if (refId == null) {
+            Item dataSet = createItem("DataSet");
             dataSet.setAttribute("name", title);
-            dataSet.setReference("dataSource", dataSourceItem);
-            if (url != null) {
-                dataSet.setAttribute("url", url);
-            }
-            if (description != null) {
-                dataSet.setAttribute("description", description);
-            }
+            dataSet.setReference("dataSource", dataSourceRefId);
             try {
                 store(dataSet);
             } catch (ObjectStoreException e) {
                 throw new RuntimeException("failed to store DataSet with title: " + title, e);
             }
-            dataSets.put(title, dataSet);
+            refId = dataSet.getIdentifier();
+            dataSets.put(title, refId);
         }
-        return dataSet;
+        return refId;
+    }
+
+    /**
+     * The Organism item created from the taxon id passed to the constructor.
+     * @param taxonId NCBI taxonomy id of organism to create
+     * @return the refId representing the Organism Item
+     */
+    public String getOrganism(String taxonId) {
+        String refId = organisms.get(taxonId);
+        if (refId == null) {
+            Item organism = createItem("Organism");
+            organism.setAttribute("taxonId", taxonId);
+            try {
+                store(organism);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("failed to store organism with taxonId: " + taxonId, e);
+            }
+            refId = organism.getIdentifier();
+            organisms.put(taxonId, refId);
+        }
+        return refId;
+    }
+
+    /**
+     * Create a new CrossReference.  Keeps a map of already processed items, ignores duplicates.
+     * The "store" param should be true only if the subject has already been stored.  Storing a
+     * CrossReference first can signficantly slow down the build process.
+     * @param subjectId id representing the object (eg. Gene) this CrossReference describes.
+     * @param value identifier
+     * @param dataSource external database
+     * @param store if true, will store item
+     * @throws ObjectStoreException if the synonym can't be stored
+     * @throws SAXException if the synonym can't be stored
+     * @return the synonym item or null if this is a duplicate
+     */
+    public Item createCrossReference(String subjectId, String value, String dataSource,
+            boolean store)
+        throws SAXException, ObjectStoreException {
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+        String key = subjectId + value;
+        if (!crossReferences.contains(key)) {
+            Item item = createItem("CrossReference");
+            item.setAttribute("identifier", value);
+            item.setReference("subject", subjectId);
+            item.setReference("source", getDataSource(dataSource));
+            crossReferences.add(key);
+            if (store) {
+                store(item);
+            }
+            return item;
+        }
+        return null;
     }
 
     /**
@@ -136,7 +174,7 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
      */
     public Item createSynonym(String subjectId, String type, String value, String isPrimary,
             boolean store)
-    throws SAXException, ObjectStoreException {
+        throws SAXException, ObjectStoreException {
         if (StringUtils.isEmpty(value)) {
             return null;
         }

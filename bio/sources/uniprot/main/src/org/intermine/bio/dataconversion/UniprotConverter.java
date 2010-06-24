@@ -49,14 +49,11 @@ public class UniprotConverter extends BioDirectoryConverter
     private static final UniprotConfig CONFIG = new UniprotConfig();
     private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
     private Map<String, String> pubs = new HashMap<String, String>();
-    private Map<String, String> organisms = new HashMap<String, String>();
     private Map<String, String> comments = new HashMap<String, String>();
-    private Map<String, String> datasets = new HashMap<String, String>();
     private Set<Item> synonyms = new HashSet<Item>();
     private Map<String, String> domains = new HashMap<String, String>();
     // taxonId -> [md5Checksum -> stored protein identifier]
     private Map<String, Map<String, String>> sequences = new HashMap<String, Map<String, String>>();
-    private Map<String, String> datasources = new HashMap<String, String>();
     private Map<String, String> ontologies = new HashMap<String, String>();
     private Map<String, String> keywords = new HashMap<String, String>();
     private Map<String, String> genes = new HashMap<String, String>();
@@ -127,7 +124,7 @@ public class UniprotConverter extends BioDirectoryConverter
 
     // process the sprot file, then the trembl file
     private void processFiles(File[] files)
-    throws SAXException {
+        throws SAXException {
         for (int i = 0; i <= 1; i++) {
             File file = files[i];
             if (file == null) {
@@ -185,7 +182,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 sourceFiles[i] = file;
                 files.put(taxonId, sourceFiles);
             } else {
-                files.get(taxonId)[i] = file;
+                File[] fileArray = files.get(taxonId);
+                fileArray[i] = file;
             }
         }
         return files;
@@ -248,11 +246,12 @@ public class UniprotConverter extends BioDirectoryConverter
          */
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs)
-        throws SAXException {
+            throws SAXException {
             attName = null;
             if (qName.equals("entry")) {
                 entry = new UniprotEntry();
-                entry.setDatasetRefId(getDataset(getAttrValue(attrs, "dataset")));
+                String dataSetTitle = getAttrValue(attrs, "dataset") + " data set";
+                entry.setDatasetRefId(getDataSet(dataSetTitle, datasourceRefId));
 //            } else if (qName.equals("protein")) {
 //                String isFragment = "false";
 //                if (getAttrValue(attrs, "type") != null
@@ -308,7 +307,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 entry.setFragment(isFragment);
             } else if (qName.equals("feature") && getAttrValue(attrs, "type") != null) {
                 Item feature = getFeature(getAttrValue(attrs, "type"), getAttrValue(attrs,
-                "description"), getAttrValue(attrs, "status"));
+                    "description"), getAttrValue(attrs, "status"));
                 entry.addFeature(feature);
             } else if ((qName.equals("begin") || qName.equals("end"))
                     && entry.processingFeature()
@@ -378,7 +377,7 @@ public class UniprotConverter extends BioDirectoryConverter
          */
         @Override
         public void endElement(String uri, String localName, String qName)
-        throws SAXException {
+            throws SAXException {
             super.endElement(uri, localName, qName);
             stack.pop();
             if (attName == null || attValue.toString() == null) {
@@ -457,14 +456,14 @@ public class UniprotConverter extends BioDirectoryConverter
                 while (l > 0) {
                     boolean whitespace = false;
                     switch(ch[st]) {
-                    case ' ':
-                    case '\r':
-                    case '\n':
-                    case '\t':
-                        whitespace = true;
-                        break;
-                    default:
-                        break;
+                        case ' ':
+                        case '\r':
+                        case '\n':
+                        case '\t':
+                            whitespace = true;
+                            break;
+                        default:
+                            break;
                     }
                     if (!whitespace) {
                         break;
@@ -483,7 +482,7 @@ public class UniprotConverter extends BioDirectoryConverter
 
 
         private Set<UniprotEntry> processEntry(UniprotEntry entry)
-        throws SAXException, ObjectStoreException {
+            throws SAXException, ObjectStoreException {
             entryCount++;
             if (entryCount % 10000 == 0) {
                 LOG.info("Processed " + entryCount + " entries.");
@@ -530,12 +529,7 @@ public class UniprotConverter extends BioDirectoryConverter
                     protein.setCollection("proteinDomains", entry.getDomains());
                 }
 
-                /* organism */
-                try {
-                    protein.setReference("organism", getOrganism(entry.getTaxonId()));
-                } catch (SAXException e) {
-                    throw new RuntimeException("store failed for " + entry.getPrimaryAccession());
-                }
+                protein.setReference("organism", getOrganism(entry.getTaxonId()));
 
                 /* publications */
                 if (!entry.getPubs().isEmpty()) {
@@ -626,7 +620,7 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private void processComponents(Item protein, UniprotEntry entry)
-        throws SAXException {
+            throws SAXException {
             for (String componentName : entry.getComponents()) {
                 Item component = createItem("Component");
                 component.setAttribute("name", componentName);
@@ -640,7 +634,7 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private void processFeatures(Item protein, UniprotEntry entry)
-        throws SAXException {
+            throws SAXException {
             for (Item feature : entry.getFeatures()) {
                 feature.setReference("protein", protein);
                 try {
@@ -652,7 +646,7 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private void processSynonyms(String proteinRefId, UniprotEntry entry)
-        throws SAXException, ObjectStoreException {
+            throws SAXException, ObjectStoreException {
             // primary accession
             createSynonym(proteinRefId, "accession", entry.getPrimaryAccession(), "true", true);
 
@@ -687,7 +681,7 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private void processDbrefs(Item protein, UniprotEntry entry)
-        throws SAXException, ObjectStoreException {
+            throws SAXException, ObjectStoreException {
             Map<String, List<String>> dbrefs = entry.getDbrefs();
 
             for (Map.Entry<String, List<String>> dbref : dbrefs.entrySet()) {
@@ -712,7 +706,7 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private void processGoAnnotation(UniprotEntry entry, Item gene)
-        throws SAXException {
+            throws SAXException {
             for (String goTermRefId : entry.getGOTerms()) {
                 Item goAnnotation = createItem("GOAnnotation");
                 goAnnotation.setReference("subject", gene);
@@ -729,7 +723,7 @@ public class UniprotConverter extends BioDirectoryConverter
         // gets the unique identifier and list of identifiers to set
         // loops through each gene entry, assigns refId to protein
         private void processGene(Item protein, UniprotEntry entry)
-        throws SAXException, ObjectStoreException {
+            throws SAXException, ObjectStoreException {
             String taxonId = entry.getTaxonId();
 
             // which gene.identifier field has to be unique
@@ -772,7 +766,7 @@ public class UniprotConverter extends BioDirectoryConverter
         // creates synonym
         private String createGene(UniprotEntry entry, String taxonId, Set<String> geneFields,
                 String uniqueIdentifierFieldType)
-        throws SAXException, ObjectStoreException {
+            throws SAXException, ObjectStoreException {
 
             List<String> geneSynonyms = new ArrayList<String>();
 
@@ -926,7 +920,7 @@ public class UniprotConverter extends BioDirectoryConverter
     }
 
     private void addSeenSequence(String taxonId, String md5checksum, String proteinIdentifier)
-    throws SAXException {
+        throws SAXException {
         Map<String, String> orgSequences = sequences.get(taxonId);
         if (orgSequences == null) {
             orgSequences = new HashMap<String, String>();
@@ -938,7 +932,7 @@ public class UniprotConverter extends BioDirectoryConverter
     }
 
     private boolean seenSequence(String taxonId, String md5checksum)
-    throws SAXException {
+        throws SAXException {
         Map<String, String> orgSequences = sequences.get(taxonId);
         if (orgSequences == null) {
             orgSequences = new HashMap<String, String>();
@@ -947,26 +941,8 @@ public class UniprotConverter extends BioDirectoryConverter
         return orgSequences.containsKey(md5checksum);
     }
 
-
-    private String getDataSource(String title)
-    throws SAXException {
-        String refId = datasources.get(title);
-        if (refId == null) {
-            Item item = createItem("DataSource");
-            item.setAttribute("name", title);
-            refId = item.getIdentifier();
-            datasources.put(title, refId);
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-        }
-        return refId;
-    }
-
     private String getKeyword(String title)
-    throws SAXException {
+        throws SAXException {
         String refId = keywords.get(title);
         if (refId == null) {
             Item item = createItem("OntologyTerm");
@@ -984,7 +960,7 @@ public class UniprotConverter extends BioDirectoryConverter
     }
 
     private String getComment(String commentType, String text)
-    throws SAXException {
+        throws SAXException {
         String key = commentType + text;
         String refId = comments.get(key);
         if (refId == null) {
@@ -1003,7 +979,7 @@ public class UniprotConverter extends BioDirectoryConverter
     }
 
     private String getInterpro(String identifier, String shortName, String datasetRefId)
-    throws SAXException, ObjectStoreException {
+        throws SAXException, ObjectStoreException {
         String refId = domains.get(identifier);
         if (refId == null) {
             Item item = createItem("ProteinDomain");
@@ -1023,25 +999,8 @@ public class UniprotConverter extends BioDirectoryConverter
         return refId;
     }
 
-    private String getOrganism(String taxonId)
-    throws SAXException {
-        String refId = organisms.get(taxonId);
-        if (refId == null) {
-            Item item = createItem("Organism");
-            item.setAttribute("taxonId", taxonId);
-            refId = item.getIdentifier();
-            organisms.put(taxonId, refId);
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-        }
-        return refId;
-    }
-
     private String getPub(String pubMedId)
-    throws SAXException {
+        throws SAXException {
         String refId = pubs.get(pubMedId);
 
         if (refId == null) {
@@ -1059,26 +1018,8 @@ public class UniprotConverter extends BioDirectoryConverter
         return refId;
     }
 
-    private String getDataset(String title)
-    throws SAXException {
-        String refId = datasets.get(title);
-        if (refId == null) {
-            Item item = createItem("DataSet");
-            item.setAttribute("name", title + " data set");
-            item.setReference("dataSource", datasourceRefId);
-            refId = item.getIdentifier();
-            datasets.put(title, refId);
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-        }
-        return refId;
-    }
-
     private String getGoTerm(String identifier)
-    throws SAXException {
+        throws SAXException {
         String refId = goterms.get(identifier);
         if (refId == null) {
             Item item = createItem("GOTerm");
@@ -1095,7 +1036,7 @@ public class UniprotConverter extends BioDirectoryConverter
     }
 
     private String setOntology(String title)
-    throws SAXException {
+        throws SAXException {
         String refId = ontologies.get(title);
         if (refId == null) {
             Item ontology = createItem("Ontology");
@@ -1111,7 +1052,7 @@ public class UniprotConverter extends BioDirectoryConverter
     }
 
     private Item getFeature(String type, String description, String status)
-    throws SAXException {
+        throws SAXException {
         List<String> featureTypes = CONFIG.getFeatureTypes();
         if (featureTypes.isEmpty() || featureTypes.contains(type)) {
             Item feature = createItem("UniProtFeature");

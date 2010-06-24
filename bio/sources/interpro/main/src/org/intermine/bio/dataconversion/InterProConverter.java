@@ -43,7 +43,7 @@ public class InterProConverter extends BioFileConverter
      * @throws SAXException if something goes wrong
      */
     public InterProConverter(ItemWriter writer, Model model)
-    throws SAXException {
+        throws SAXException {
         super(writer, model);
     }
 
@@ -82,7 +82,7 @@ public class InterProConverter extends BioFileConverter
          * {@inheritDoc}
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
-        throws SAXException {
+            throws SAXException {
 
             // descriptions span multiple lines
             // so don't reset temp var when processing descriptions
@@ -97,7 +97,7 @@ public class InterProConverter extends BioFileConverter
                 String name = attrs.getValue("short_name");
                 proteinDomain.setAttribute("shortName", name);
                 proteinDomain.setAttribute("type", attrs.getValue("type"));
-                proteinDomain.addToCollection("dataSets", getDataSetItem("InterPro"));
+                proteinDomain.addToCollection("dataSets", getDataSet("InterPro"));
                 try {
                     Item synonym = createSynonym(proteinDomain.getIdentifier(), "name",
                             name, null, false);
@@ -183,7 +183,7 @@ public class InterProConverter extends BioFileConverter
          * {@inheritDoc}
          */
         public void endElement(String uri, String localName, String qName)
-        throws SAXException {
+            throws SAXException {
             super.endElement(uri, localName, qName);
 
             stack.pop();
@@ -236,7 +236,7 @@ public class InterProConverter extends BioFileConverter
         }
 
         private String getPub(String pubMedId)
-        throws SAXException {
+            throws SAXException {
             String refId = pubs.get(pubMedId);
             if (refId == null) {
                 Item item = createItem("Publication");
@@ -265,14 +265,14 @@ public class InterProConverter extends BioFileConverter
                 while (l > 0) {
                     boolean whitespace = false;
                     switch(ch[st]) {
-                    case ' ':
-                    case '\r':
-                    case '\n':
-                    case '\t':
-                        whitespace = true;
-                        break;
-                    default:
-                        break;
+                        case ' ':
+                        case '\r':
+                        case '\n':
+                        case '\t':
+                            whitespace = true;
+                            break;
+                        default:
+                            break;
                     }
                     if (!whitespace) {
                         break;

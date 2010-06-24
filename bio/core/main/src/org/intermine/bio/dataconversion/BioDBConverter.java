@@ -67,7 +67,7 @@ public abstract class BioDBConverter extends DBConverter
      */
     public BioDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
-        setStoreHook(new BioStoreHook(tgtModel, null, null));
+        setStoreHook(new BioStoreHook(tgtModel, "", ""));
     }
 
     /**
@@ -227,7 +227,7 @@ public abstract class BioDBConverter extends DBConverter
      * @return the Chromsome Item
      */
     protected Item getChromosome(String identifier, int taxonId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         Item chromosome = chromosomes.get(identifier);
         if (chromosome == null) {
             chromosome = createItem("Chromosome");

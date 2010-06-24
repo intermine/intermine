@@ -31,8 +31,8 @@ import org.xml.sax.SAXException;
 
 public abstract class BioFileConverter extends FileConverter
 {
-    private final Map<String, Item> dataSets = new HashMap<String, Item>();
-    private final Map<String, Item> dataSources = new HashMap<String, Item>();
+    private final Map<String, String> dataSets = new HashMap<String, String>();
+    private final Map<String, String> dataSources = new HashMap<String, String>();
     private Set<String> synonyms = new HashSet<String>();
     private Set<String> crossReferences = new HashSet<String>();
     private Map<String, String> organisms = new HashMap<String, String>();
@@ -47,11 +47,11 @@ public abstract class BioFileConverter extends FileConverter
     public BioFileConverter (ItemWriter writer, Model model,
                              String dataSourceName, String dataSetTitle) {
         super(writer, model);
-        Item dataSource = null;
-        Item dataSet = null;
+        String dataSource = null;
+        String dataSet = null;
         if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
-            dataSource = getDataSourceItem(dataSourceName);
-            dataSet = getDataSetItem(dataSetTitle, dataSource);
+            dataSource = getDataSource(dataSourceName);
+            dataSet = getDataSet(dataSetTitle, dataSource);
         }
         setStoreHook(new BioStoreHook(model, dataSet, dataSource));
     }
@@ -64,7 +64,7 @@ public abstract class BioFileConverter extends FileConverter
      */
     public BioFileConverter (ItemWriter writer, Model model) {
         super(writer, model);
-        setStoreHook(new BioStoreHook(model, null, null));
+        setStoreHook(new BioStoreHook(model, "", ""));
     }
 
 
@@ -73,72 +73,48 @@ public abstract class BioFileConverter extends FileConverter
      * @param name the DataSource name
      * @return the DataSource Item
      */
-    public Item getDataSourceItem(String name) {
+    public String getDataSource(String name) {
         if (name == null) {
             return null;
         }
-        Item dataSource = dataSources.get(name);
-        if (dataSource == null) {
-            dataSource = createItem("DataSource");
+        String refId = dataSources.get(name);
+        if (refId == null) {
+            Item dataSource = createItem("DataSource");
             dataSource.setAttribute("name", name);
             try {
                 store(dataSource);
             } catch (ObjectStoreException e) {
                 throw new RuntimeException("failed to store DataSource with name: " + name, e);
             }
-            dataSources.put(name, dataSource);
+            refId = dataSource.getIdentifier();
+            dataSources.put(name, refId);
         }
-        return dataSource;
+        return refId;
     }
 
-    /**
-     * Return a DataSet item for the given name.  Create and store dataSource item with the
-     * same name..
-     * @param title the DataSet title
-     * @return the DataSet Item
-     */
-    public Item getDataSetItem(String title) {
-        return getDataSetItem(title, null, null, getDataSourceItem(title));
-    }
 
     /**
-     * Return a DataSet item for the given name
+     * Return a DataSet ref with the given details.
+     *
      * @param title the DataSet title
-     * @param dataSourceItem the DataSource referenced by the the DataSet
+     * @param dataSourceRefId the DataSource referenced by the the DataSet
      * @return the DataSet Item
      */
-    public Item getDataSetItem(String title, Item dataSourceItem) {
-        return getDataSetItem(title, null, null, dataSourceItem);
-    }
-
-    /**
-     * Return a DataSet item with the given details.
-     * @param title the DataSet title
-     * @param url the new url field, or null if the url shouldn't be set
-     * @param description the new description field, or null if the field shouldn't be set
-     * @param dataSourceItem the DataSource referenced by the the DataSet
-     * @return the DataSet Item
-     */
-    public Item getDataSetItem(String title, String url, String description, Item dataSourceItem) {
-        Item dataSet = dataSets.get(title);
-        if (dataSet == null) {
-            dataSet = createItem("DataSet");
+    public String getDataSet(String title, String dataSourceRefId) {
+        String refId = dataSets.get(title);
+        if (refId == null) {
+            Item dataSet = createItem("DataSet");
             dataSet.setAttribute("name", title);
-            dataSet.setReference("dataSource", dataSourceItem);
-            if (url != null) {
-                dataSet.setAttribute("url", url);
-            }
-            if (description != null) {
-                dataSet.setAttribute("description", description);
-            }
+            dataSet.setReference("dataSource", dataSourceRefId);
             try {
                 store(dataSet);
             } catch (ObjectStoreException e) {
                 throw new RuntimeException("failed to store DataSet with title: " + title, e);
             }
-            dataSets.put(title, dataSet);
+            refId = dataSet.getIdentifier();
+            dataSets.put(title, refId);
         }
-        return dataSet;
+        return refId;
     }
 
     /**
@@ -156,7 +132,7 @@ public abstract class BioFileConverter extends FileConverter
      */
     public Item createSynonym(Item item, String type, String value, String isPrimary,
             boolean store)
-    throws SAXException, ObjectStoreException {
+        throws SAXException, ObjectStoreException {
         return createSynonym(item.getIdentifier(), type, value, isPrimary, store);
     }
 
@@ -175,7 +151,7 @@ public abstract class BioFileConverter extends FileConverter
      */
     public Item createSynonym(String subjectId, String type, String value, String isPrimary,
             boolean store)
-    throws SAXException, ObjectStoreException {
+        throws SAXException, ObjectStoreException {
         if (StringUtils.isEmpty(value)) {
             return null;
         }
@@ -211,7 +187,7 @@ public abstract class BioFileConverter extends FileConverter
      */
     public Item createCrossReference(String subjectId, String value, String dataSource,
             boolean store)
-    throws SAXException, ObjectStoreException {
+        throws SAXException, ObjectStoreException {
         if (StringUtils.isEmpty(value)) {
             return null;
         }
@@ -220,7 +196,7 @@ public abstract class BioFileConverter extends FileConverter
             Item item = createItem("CrossReference");
             item.setAttribute("identifier", value);
             item.setReference("subject", subjectId);
-            item.setReference("source", getDataSourceItem(dataSource));
+            item.setReference("source", getDataSource(dataSource));
             crossReferences.add(key);
             if (store) {
                 store(item);
@@ -249,5 +225,38 @@ public abstract class BioFileConverter extends FileConverter
             organisms.put(taxonId, refId);
         }
         return refId;
+    }
+
+    /**
+     * Make a Location between a Feature and a Chromosome.
+     * @param chromosomeId Chromosome Item identifier
+     * @param sequenceFeatureId the Item identifier of the feature
+     * @param start the start position
+     * @param end the end position
+     * @param strand the strand
+     * @return the new Location object
+     */
+    protected Item makeLocation(String chromosomeId, String sequenceFeatureId, int start, int end,
+            int strand) {
+        Item location = createItem("Location");
+
+        if (start < end) {
+            location.setAttribute("start", String.valueOf(start));
+            location.setAttribute("end", String.valueOf(end));
+        } else {
+            location.setAttribute("start", String.valueOf(end));
+            location.setAttribute("end", String.valueOf(start));
+        }
+        location.setAttribute("strand", String.valueOf(strand));
+        location.setReference("locatedOn", chromosomeId);
+        location.setReference("feature", sequenceFeatureId);
+
+        try {
+            store(location);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("failed to store location", e);
+        }
+
+        return location;
     }
 }

@@ -32,8 +32,8 @@ import org.intermine.xml.full.Item;
  */
 public class BioStoreHook implements DataConverterStoreHook
 {
-    private final Item dataSet;
-    private final Item dataSource;
+    private final String dataSetRefId;
+    private final String dataSourceRefId;
     private final Model model;
     private static final Map<String, String> SO_TERMS = new HashMap<String, String>();
     private static String ontologyRefId = null;
@@ -43,11 +43,24 @@ public class BioStoreHook implements DataConverterStoreHook
      * @param model the data model
      * @param dataSet the DataSet to add to items
      * @param dataSource the DataSource to add to the items
+     * @deprecated Use the other constructor instead
      */
     public BioStoreHook(Model model, Item dataSet, Item dataSource) {
         this.model = model;
-        this.dataSet = dataSet;
-        this.dataSource = dataSource;
+        this.dataSetRefId = dataSet.getIdentifier();
+        this.dataSourceRefId = dataSource.getIdentifier();
+    }
+
+    /**
+     * Create a new DataSetStoreHook object.
+     * @param model the data model
+     * @param dataSet the DataSet to add to items
+     * @param dataSource the DataSource to add to the items
+     */
+    public BioStoreHook(Model model, String dataSet, String dataSource) {
+        this.model = model;
+        this.dataSetRefId = dataSet;
+        this.dataSourceRefId = dataSource;
     }
 
     /**
@@ -56,8 +69,8 @@ public class BioStoreHook implements DataConverterStoreHook
      */
     public BioStoreHook(Model model) {
         this.model = model;
-        this.dataSet = null;
-        this.dataSource = null;
+        this.dataSetRefId = null;
+        this.dataSourceRefId = null;
     }
 
     /**
@@ -66,8 +79,8 @@ public class BioStoreHook implements DataConverterStoreHook
      */
     public void processItem(DataConverter dataConverter, Item item) {
         setSOTerm(dataConverter, item);
-        if (dataSet != null) {
-            setDataSets(model, item, dataSet.getIdentifier(), dataSource.getIdentifier());
+        if (dataSetRefId != null) {
+            setDataSets(model, item, dataSetRefId, dataSourceRefId);
         }
     }
 

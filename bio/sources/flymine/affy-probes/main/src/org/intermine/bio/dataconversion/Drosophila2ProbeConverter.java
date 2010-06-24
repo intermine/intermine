@@ -33,10 +33,12 @@ public class Drosophila2ProbeConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(Drosophila2ProbeConverter.class);
 
-    protected Item dataSource, dataSet, org;
+    protected String dataSource, dataSet;
+    private String orgRefId;
     protected Map<String, String> bioentities = new HashMap<String, String>();
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";
+    private static final String DATASET_PREFIX = "Affymetrix array: ";
     private Map<String, String> chromosomes = new HashMap<String, String>();
     private Map<String, ProbeSetHolder> holders = new HashMap<String, ProbeSetHolder>();
     List<Item> delayedItems = new ArrayList<Item>();
@@ -51,13 +53,8 @@ public class Drosophila2ProbeConverter extends BioFileConverter
         throws ObjectStoreException {
         super(writer, model, null, null);
 
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "Ensembl");
-        store(dataSource);
-
-        org = createItem("Organism");
-        org.setAttribute("taxonId", TAXON_ID);
-        store(org);
+        dataSource = getDataSource("Ensembl");
+        orgRefId = getOrganism(TAXON_ID);
 
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");
@@ -69,17 +66,13 @@ public class Drosophila2ProbeConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader)
-    throws Exception {
+        throws Exception {
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
-        boolean hasDataset = false;
 
         while (lineIter.hasNext()) {
             String[] line = lineIter.next();
-            if (!hasDataset) {
-                createDataset(line[0]);
-                hasDataset = true;
-            }
+            dataSet = getDataSet(DATASET_PREFIX + line[0], dataSource);
 
             String probesetIdentifier = line[1];
             String transcriptIdentifier = line[2];
@@ -97,7 +90,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
                 ProbeSetHolder holder = getHolder(probesetIdentifier);
                 holder.transcripts.add(transcriptRefId);
                 holder.genes.add(geneRefId);
-                holder.datasets.add(dataSet.getIdentifier());
+                holder.datasets.add(dataSet);
                 try {
                     Integer start = new Integer(startString);
                     Integer end = new Integer(endString);
@@ -124,11 +117,11 @@ public class Drosophila2ProbeConverter extends BioFileConverter
     }
 
     private void storeProbeSet(ProbeSetHolder holder)
-    throws ObjectStoreException, SAXException  {
+        throws ObjectStoreException, SAXException  {
         Item probeSet = createItem("ProbeSet");
         probeSet.setAttribute("primaryIdentifier", holder.probesetIdentifier);
         probeSet.setAttribute("name", holder.probesetIdentifier);
-        probeSet.setReference("organism", org.getIdentifier());
+        probeSet.setReference("organism", orgRefId);
         probeSet.setCollection("dataSets", holder.datasets);
         probeSet.setCollection("transcripts", holder.transcripts);
         probeSet.setCollection("locations", holder.createLocations(probeSet.getIdentifier()));
@@ -150,7 +143,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
         protected List<String> transcripts = new ArrayList<String>();
         private List<String> locations = new ArrayList<String>();
         protected Map<String, LocationHolder> locationHolders
-        = new HashMap<String, LocationHolder>();
+            = new HashMap<String, LocationHolder>();
         protected List<String> datasets = new ArrayList<String>();
 
         /**
@@ -169,7 +162,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
         protected void addLocation(String chromosomeRefId, Integer start, Integer end,
                                    String strand) {
             String key = chromosomeRefId + "|" + start.toString() + "|"
-            + end.toString() + "|" + strand;
+                + end.toString() + "|" + strand;
             if (locationHolders.get(key) == null) {
                 LocationHolder location = new LocationHolder(chromosomeRefId, start, end, strand);
                 locationHolders.put(key, location);
@@ -184,7 +177,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
          * @throws ObjectStoreException if something goes wrong storing locations
          */
         protected List<String> createLocations(String probeSetRefId)
-        throws ObjectStoreException {
+            throws ObjectStoreException {
             for (LocationHolder holder : locationHolders.values()) {
                 String location = createLocation(holder, probeSetRefId);
                 locations.add(location);
@@ -218,7 +211,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
     }
 
     private String createGene(String id)
-    throws ObjectStoreException, SAXException {
+        throws ObjectStoreException, SAXException {
         String identifier = id;
         IdResolver resolver = resolverFactory.getIdResolver();
         int resCount = resolver.countResolutions(TAXON_ID, identifier);
@@ -233,12 +226,12 @@ public class Drosophila2ProbeConverter extends BioFileConverter
     }
 
     private String createBioentity(String type, String identifier, String geneRefId)
-    throws ObjectStoreException, SAXException {
+        throws ObjectStoreException, SAXException {
         String refId = bioentities.get(identifier);
         if (refId == null) {
             Item bioentity = createItem(type);
             bioentity.setAttribute("primaryIdentifier", identifier);
-            bioentity.setReference("organism", org.getIdentifier());
+            bioentity.setReference("organism", orgRefId);
             if (type.equals("Transcript")) {
                 bioentity.setReference("gene", geneRefId);
             }
@@ -251,21 +244,13 @@ public class Drosophila2ProbeConverter extends BioFileConverter
         return refId;
     }
 
-    private void createDataset(String array)
-    throws ObjectStoreException  {
-        dataSet = createItem("DataSet");
-        dataSet.setReference("dataSource", dataSource.getIdentifier());
-        dataSet.setAttribute("name", "Affymetrix array: " + array);
-        store(dataSet);
-    }
-
     private String createChromosome(String identifier)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         String refId = chromosomes.get(identifier);
         if (refId == null) {
             Item item = createItem("Chromosome");
             item.setAttribute("primaryIdentifier", identifier);
-            item.setReference("organism", org.getIdentifier());
+            item.setReference("organism", orgRefId);
             chromosomes.put(identifier, item.getIdentifier());
             store(item);
             refId = item.getIdentifier();
@@ -274,7 +259,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
     }
 
     private String createLocation(LocationHolder holder, String probeset)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         Item item = createItem("Location");
         item.setAttribute("start", holder.start.toString());
         item.setAttribute("end", holder.end.toString());
