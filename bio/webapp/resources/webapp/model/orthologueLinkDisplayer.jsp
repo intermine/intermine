@@ -27,8 +27,9 @@
         </a>
 
     <%-- orthologue link popup --%>
+    <form action="${mine.url}/portal.do" method="post" name="orthologueLinkForm${status.count}" target="_blank">
     <div id="orthologue_link_${status.count}" style="display:none">
-        <form action="${mine.url}/portal.do" method="post" name="orthologueLinkForm${status.count}" target="_blank">
+
         You are exporting your list to ${mineName}
         <br/><br/>
         <table>
@@ -66,8 +67,9 @@
         <input type="hidden" name="externalids" value="${identifierList}"/>
         <input type="hidden" name="class" value="${bag.type}"/>
         <input type="button" name="submitButton" value="GO" onClick="javascript:submitOrthologueLinkForm('${bag.type}', '${bag.name}', '${status.count}');" />
-        </form>
+
     </div>
+        </form>
 
     </td>
     </tr>
