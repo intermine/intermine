@@ -50,11 +50,11 @@ public class ConvertBagController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -67,9 +67,9 @@ public class ConvertBagController extends TilesAction
         Map<Class, TemplateQuery> conversionTypesMap = TypeConverter.getConversionTemplates(
             templateManager.getConversionTemplates(),
             TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()));
-        ArrayList<String> conversionTypes = new ArrayList();
-        Map fastaMap = new HashMap();
-        for (Class clazz : conversionTypesMap.keySet()) {
+        ArrayList<String> conversionTypes = new ArrayList<String>();
+        Map<Type, Boolean> fastaMap = new HashMap<Type, Boolean>();
+        for (Class<?> clazz : conversionTypesMap.keySet()) {
             conversionTypes.add(TypeUtil.unqualifiedName(clazz.getName()));
             Type type = webConfig.getTypes().get(clazz.getName());
             FieldConfig fieldConfig = type.getFieldConfigMap().get("length");

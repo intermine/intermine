@@ -45,8 +45,8 @@ import org.intermine.web.logic.session.SessionMethods;
 
 public class BuildBagAction extends InterMineAction
 {
-
     private static final int READ_AHEAD_CHARS = 10000;
+    private static final String BAG_UPLOAD_DELIMITER = "\n\t, ";
 
     /**
      * Action for creating a bag of InterMineObjects or Strings from identifiers in text field.
@@ -60,7 +60,7 @@ public class BuildBagAction extends InterMineAction
      *  an exception
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         BuildBagForm buildBagForm = (BuildBagForm) form;
@@ -95,7 +95,6 @@ public class BuildBagAction extends InterMineAction
          */
         if (formFile != null && formFile.getFileName() != null
                 && formFile.getFileName().length() > 0) {
-
             String mimetype = formFile.getContentType();
             if (!mimetype.equals("application/octet-stream") && !mimetype.startsWith("text")) {
                 recordError(new ActionMessage("bagBuild.notText", mimetype), request);
@@ -137,7 +136,7 @@ public class BuildBagAction extends InterMineAction
         List<String> list = new ArrayList<String>();
         int elementCount = 0;
         while ((thisLine = reader.readLine()) != null) {
-            StrMatcher matcher = StrMatcher.charSetMatcher("\n\t, ");
+            StrMatcher matcher = StrMatcher.charSetMatcher(BAG_UPLOAD_DELIMITER);
             StrTokenizer st = new StrTokenizer(thisLine, matcher, StrMatcher.doubleQuoteMatcher());
             while (st.hasNext()) {
                 String token = st.nextToken();
@@ -152,17 +151,14 @@ public class BuildBagAction extends InterMineAction
                         actionMessage = new ActionMessage("bag.tooBig", new Integer(maxBagSize));
                     }
                     recordError(actionMessage, request);
-
                     return mapping.findForward("bags");
                 }
             }
         }
-
         BagQueryResult bagQueryResult =
             bagRunner.searchForBag(type, list, buildBagForm.getExtraFieldValue(), false);
         session.setAttribute("bagQueryResult", bagQueryResult);
         request.setAttribute("bagType", type);
-
         return mapping.findForward("bagUploadConfirm");
     }
 }

@@ -98,12 +98,12 @@ public class HomophilaPostProcess extends PostProcessor
         }
 
         Results results = findHomophilaGenesDiseases(osw.getObjectStore());
-        Iterator iter = results.iterator();
+        Iterator<?> iter = results.iterator();
         int count = 0;
 
         osw.beginTransaction();
         while (iter.hasNext()) {
-            ResultsRow rr = (ResultsRow) iter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) iter.next();
             Gene gene = (Gene) rr.get(0);
             Disease disease = (Disease) rr.get(1);
             LOG.debug("gene = " + gene.getSecondaryIdentifier() + "  disease = "
