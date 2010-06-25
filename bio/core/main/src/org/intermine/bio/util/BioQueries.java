@@ -56,7 +56,7 @@ public abstract class BioQueries
     public static Results findLocationAndObjects(ObjectStore os, Class<?> objectCls,
         Class<?> subjectCls, boolean orderBySubject, boolean hasLength,
         boolean hasChromosomeLocation, int batchSize)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         // TODO check objectCls and subjectCls assignable to BioEntity
 
         Query q = new Query();
@@ -94,7 +94,7 @@ public abstract class BioQueries
 
         if (hasChromosomeLocation) {
             QueryObjectReference chrLocationRef
-            = new QueryObjectReference(qcSub, "chromosomeLocation");
+                = new QueryObjectReference(qcSub, "chromosomeLocation");
             ContainsConstraint chrLocRefNotNull =
                 new ContainsConstraint(chrLocationRef, ConstraintOp.IS_NULL);
             cs.addConstraint(chrLocRefNotNull);

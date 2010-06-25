@@ -43,20 +43,20 @@ import org.intermine.objectstore.query.SingletonResults;
  */
 public class CreateFlyBaseLinkIns
 {
-    
-//    <dbname>_dbinfo.txt 
+
+//    <dbname>_dbinfo.txt
 //    DBNAME  FlyMine
 //    BASEURL http://www.flymine.org/query/portal.do
 //    HOMEURL http://www.flymine.org
 //    DESC    A genetic sequence database.
 //    EMAIL   richard@flymine.org
-    
-//    <dbname>_linkout.txt //    
+
+//    <dbname>_linkout.txt //
 //    #Flybase ID DBNAME  DBID        DBURL
 //    FBgn0259750 GENBANK AAA86639    AAA86639
 //    FBgn0005561 GENBANK AAB70249    AAB70249
 
-    
+
     private static final String DBNAME = "FlyMine";
     private static final String BASEURL
         = "http://www.flymine.org/query/portal.do?origin=flybase&externalid=";
@@ -72,7 +72,8 @@ public class CreateFlyBaseLinkIns
 //    private static final String DBNAME = "modMine";
 //    private static final String HOMEURL = "http://intermine.modencode.org";
 //    private static final String BASEURL = HOMEURL + "/query/portal.do?origin=flybase&externalid=";
-//    private static final String DESC = "Integrated database of genomic, expression and protein data for Drosophila, and C. elegans.";
+//    private static final String DESC = "Integrated database of genomic, expression and protein
+    //data for Drosophila, and C. elegans.";
 //    private static final String EMAIL = "help@modencode.org";
 //    private static final String ENDL = System.getProperty("line.separator");
 //    private static final String GENUS = "Drosophila";
@@ -80,7 +81,7 @@ public class CreateFlyBaseLinkIns
 //    private static final String LINKOUT_FILENAME = DBNAME + "_linkout.txt";
 //    private static final String DATASOURCE = "FlyBase";
 
-        
+
     /**
      * Create link-in file.
      * @param os ObjectStore to find Genes in
@@ -88,7 +89,7 @@ public class CreateFlyBaseLinkIns
      */
     public static void createLinkInFile(ObjectStore os) throws Exception {
         createDbInfoFile();
-        
+
         FileWriter writer = new FileWriter(new File(LINKOUT_FILENAME));
         writeFile(os, writer, "gene");
         writeFile(os, writer, "protein");
@@ -96,8 +97,8 @@ public class CreateFlyBaseLinkIns
         writer.close();
     }
 
-    private static void createDbInfoFile() 
-    throws IOException {        
+    private static void createDbInfoFile()
+        throws IOException {
         StringBuffer sb = new StringBuffer("DBNAME\t" + DBNAME + ENDL);
         sb.append("BASEURL\t" + BASEURL + ENDL);
         sb.append("HOMEURL\t" + HOMEURL + ENDL);
@@ -109,26 +110,26 @@ public class CreateFlyBaseLinkIns
         writer.close();
     }
 
-    private static void writeFile(ObjectStore os, Writer writer, String objectType) 
-    throws IOException {
-        
+    private static void writeFile(ObjectStore os, Writer writer, String objectType)
+        throws IOException {
+
         writer.write("#Flybase ID" + "\t" + "DBNAME" + "\t" + "DBID" + "\t"
                       + "DBURL" + ENDL);
 
-        Iterator iter = getFlyBaseIds(os, objectType);
+        Iterator<?> iter = getFlyBaseIds(os, objectType);
         while (iter.hasNext()) {
             String fbgn = (String) iter.next();
             if (fbgn.startsWith("FB") && (fbgn.indexOf("flymine") == -1)) {
-                String line = fbgn + "\t" 
-                + DBNAME + "\t" 
-                + fbgn + "\t" 
-                + fbgn + "&class=" + objectType;
+                String line = fbgn + "\t"
+                    + DBNAME + "\t"
+                    + fbgn + "\t"
+                    + fbgn + "&class=" + objectType;
                 writer.write(line + ENDL);
             }
         }
     }
 
-    private static Iterator getFlyBaseIds(ObjectStore os, String objectType) {
+    private static Iterator<?> getFlyBaseIds(ObjectStore os, String objectType) {
         Query q = new Query();
         q.setDistinct(true);
 
@@ -136,17 +137,17 @@ public class CreateFlyBaseLinkIns
 
         QueryClass qcObject = null;
         QueryField qf = null;
-        
+
         if (objectType.equals("protein")) {
-            qcObject = new QueryClass(Protein.class);        
+            qcObject = new QueryClass(Protein.class);
             qf = new QueryField(qcObject, "secondaryIdentifier");
         } else {
-            qcObject = new QueryClass(Gene.class);        
+            qcObject = new QueryClass(Gene.class);
             qf = new QueryField(qcObject, "primaryIdentifier");
         }
         q.addFrom(qcObject);
         q.addToSelect(qf);
-        
+
         // gene.primaryIdentifier != NULL
         cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.IS_NOT_NULL));
 
@@ -155,7 +156,7 @@ public class CreateFlyBaseLinkIns
 
         // gene.organism.genus = 'Drosophila'
         QueryField qfOrgTaxon = new QueryField(qcOrg, "genus");
-        cs.addConstraint(new SimpleConstraint(qfOrgTaxon, ConstraintOp.EQUALS, 
+        cs.addConstraint(new SimpleConstraint(qfOrgTaxon, ConstraintOp.EQUALS,
                                               new QueryValue(GENUS)));
 
         // gene.organism
@@ -164,23 +165,23 @@ public class CreateFlyBaseLinkIns
 
         QueryClass qcDatasource = new QueryClass(DataSource.class);
         q.addFrom(qcDatasource);
-        
+
         QueryClass qcDataset = new QueryClass(DataSet.class);
         q.addFrom(qcDataset);
-        
+
         // gene.datasets.datasource.name = flybase
         QueryField datasourceName = new QueryField(qcDatasource, "name");
-        cs.addConstraint(new SimpleConstraint(datasourceName, ConstraintOp.EQUALS, 
+        cs.addConstraint(new SimpleConstraint(datasourceName, ConstraintOp.EQUALS,
                                               new QueryValue(DATASOURCE)));
 
-        // gene.datasets   
+        // gene.datasets
         QueryCollectionReference ref2 = new QueryCollectionReference(qcObject, "dataSets");
         cs.addConstraint(new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcDataset));
-        
+
         // gene.datasets.datasource
         QueryObjectReference ref3 = new QueryObjectReference(qcDataset, "dataSource");
         cs.addConstraint(new ContainsConstraint(ref3, ConstraintOp.CONTAINS, qcDatasource));
-        
+
         q.setConstraint(cs);
         q.addToOrderBy(qf);
         SingletonResults res = os.executeSingleton(q, 10000, true, true, true);
