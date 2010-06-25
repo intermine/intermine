@@ -12,9 +12,11 @@ package org.intermine.bio.dataconversion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.util.Util;
@@ -30,7 +32,7 @@ public class UniprotEntry
     private static final Logger LOG = Logger.getLogger(UniprotEntry.class);
     private String datasetRefId = null;
     private String length, molecularWeight;
-    private List<Item> features = new ArrayList<Item>();
+    private Set<Item> features = new HashSet<Item>();
     private List<String> domains = new ArrayList<String>();
     private List<String> pubs = new ArrayList<String>();
     private List<String> comments = new ArrayList<String>();
@@ -46,6 +48,7 @@ public class UniprotEntry
     private String primaryAccession, uniprotAccession, primaryIdentifier;
     private String sequence, md5checksum;
     private String commentType;
+
 
     private List<UniprotGene> geneEntries = new ArrayList<UniprotGene>();
     private Map<String, List<String>> dbrefs = new HashMap<String, List<String>>();
@@ -203,9 +206,9 @@ public class UniprotEntry
     }
 
     /**
-     * @return list of ids representing feature objects for this entry
+     * @return list of items representing feature objects for this entry
      */
-    public List<Item> getFeatures() {
+    public Set<Item> getFeatures() {
         return features;
     }
 

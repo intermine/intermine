@@ -50,7 +50,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, String> comments = new HashMap<String, String>();
-    private Set<Item> synonyms = new HashSet<Item>();
+    private Set<Item> synonymsAndXrefs = new HashSet<Item>();
     private Map<String, String> domains = new HashMap<String, String>();
     // taxonId -> [md5Checksum -> stored protein identifier]
     private Map<String, Map<String, String>> sequences = new HashMap<String, Map<String, String>>();
@@ -247,6 +247,7 @@ public class UniprotConverter extends BioDirectoryConverter
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
+
             attName = null;
             if (qName.equals("entry")) {
                 entry = new UniprotEntry();
@@ -332,9 +333,6 @@ public class UniprotConverter extends BioDirectoryConverter
                         throw new SAXException(e);
                     }
                 }
-            } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
-                taxonId = getAttrValue(attrs, "id");
-                entry.setTaxonId(taxonId);
             } else if (qName.equals("dbReference") && stack.peek().equals("citation")
                     && getAttrValue(attrs, "type").equals("PubMed")) {
                 entry.addPub(getPub(getAttrValue(attrs, "id")));
@@ -496,7 +494,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 if (orgSequences != null && orgSequences.containsKey(entry.getMd5checksum())) {
                     Item synonym = createSynonym(orgSequences.get(entry.getMd5checksum()),
                             "accession", entry.getPrimaryAccession(), "false", false);
-                    synonyms.add(synonym);
+                    synonymsAndXrefs.add(synonym);
                 }
                 return isoforms;
             }
@@ -567,12 +565,13 @@ public class UniprotConverter extends BioDirectoryConverter
 
                     store(protein);
 
+                    // create synonyms for accessions and store xrefs and synonyms we've collected
                     processSynonyms(protein.getIdentifier(), entry);
 
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
                 }
-                synonyms = new HashSet<Item>();
+                synonymsAndXrefs = new HashSet<Item>();
             }
             return isoforms;
         }
@@ -678,6 +677,11 @@ public class UniprotConverter extends BioDirectoryConverter
                     createSynonym(proteinRefId, "accession", synonym, "false", true);
                 }
             }
+
+            // store xrefs and other synonyms we've created elsewhere
+            for (Item item : synonymsAndXrefs) {
+                store(item);
+            }
         }
 
         private void processDbrefs(Item protein, UniprotEntry entry)
@@ -689,16 +693,19 @@ public class UniprotConverter extends BioDirectoryConverter
                 String key = dbref.getKey();
                 List<String> values = dbref.getValue();
 
-                if (key.equals("EC")) {
-                    protein.setAttribute("ecNumber", values.get(0));
-                } else if (key.equals("RefSeq")) {
-                    for (String synonym : values) {
-                        Item item = createSynonym(protein.getIdentifier(), "identifier",
-                                synonym, "false", false);
-                        synonyms.add(item);
+                for (String identifier : values) {
+                    if (key.equals("EC")) {
+                        protein.setAttribute("ecNumber", identifier);
+                        return;
                     }
-                } else if (creatego && key.equals("GO")) {
-                    for (String identifier : values) {
+                    Item item = createCrossReference(protein.getIdentifier(), identifier, key,
+                            false);
+                    synonymsAndXrefs.add(item);
+                    if (key.equals("RefSeq")) {
+                        item = createSynonym(protein.getIdentifier(), "identifier",
+                                identifier, "false", false);
+                        synonymsAndXrefs.add(item);
+                    } else if (creatego && key.equals("GO")) {
                         entry.addGOTerm(getGoTerm(identifier));
                     }
                 }
