@@ -39,7 +39,7 @@
 <class name="ChromosomalTranslocation" extends="ChromosomeStructureVariation" is-interface="true"></class>
 <class name="ChromosomalStructuralElement" extends="Region" is-interface="true"></class>
 <class name="ForwardPrimer" extends="Primer" is-interface="true"></class>
-<class name="EST" extends="Oligo MRNA" is-interface="true"></class>
+<class name="EST" extends="Oligo" is-interface="true"></class>
 <class name="SequenceCollection" is-interface="true">
     <reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>
 </class>
