@@ -44,7 +44,7 @@ public class InterProConverter extends BioFileConverter
      */
     public InterProConverter(ItemWriter writer, Model model)
         throws SAXException {
-        super(writer, model);
+        super(writer, model, "InterPro", "InterPro data set");
     }
 
     /**
@@ -97,7 +97,7 @@ public class InterProConverter extends BioFileConverter
                 String name = attrs.getValue("short_name");
                 proteinDomain.setAttribute("shortName", name);
                 proteinDomain.setAttribute("type", attrs.getValue("type"));
-                proteinDomain.addToCollection("dataSets", getDataSet("InterPro"));
+
                 try {
                     Item synonym = createSynonym(proteinDomain.getIdentifier(), "name",
                             name, null, false);

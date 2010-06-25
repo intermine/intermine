@@ -126,7 +126,7 @@ public class UniprotEntry
         dbref = null;
     }
 
-    private void addRefId(List list, String refId) {
+    private void addRefId(List<String> list, String refId) {
         list.add(refId);
         reset();
     }
@@ -366,20 +366,20 @@ public class UniprotEntry
     }
 
     /**
-     * @param seqRefId the seqRefId to set
+     * @param sequence the sequence to set
      */
     public void setSequence(String sequence) {
         this.sequence = sequence;
         this.md5checksum = Util.getMd5checksum(sequence);
     }
 
-    /** 
+    /**
      * @return the protein sequence
      */
     public String getSequence() {
         return sequence;
     }
-    
+
     /**
      * @return the name
      */
