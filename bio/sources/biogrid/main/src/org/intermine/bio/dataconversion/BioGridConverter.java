@@ -174,7 +174,7 @@ public class BioGridConverter extends BioFileConverter
          * {@inheritDoc}
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
-        throws SAXException {
+            throws SAXException {
             attName = null;
 
             /********************************* EXPERIMENT **********************************/
@@ -205,9 +205,9 @@ public class BioGridConverter extends BioFileConverter
                 }
             //<experimentList><experimentDescription><interactionDetectionMethod><xref><primaryRef>
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
-                            && stack.search("interactionDetectionMethod") == 2) {
-                    String term = attrs.getValue("id");
-                    experimentHolder.setMethod(getTerm(term));
+                    && stack.search("interactionDetectionMethod") == 2) {
+                String term = attrs.getValue("id");
+                experimentHolder.setMethod(getTerm(term));
 
             /*********************************** GENES ***********************************/
 
@@ -321,7 +321,7 @@ public class BioGridConverter extends BioFileConverter
          * {@inheritDoc}
          */
         public void endElement(String uri, String localName, String qName)
-        throws SAXException {
+            throws SAXException {
             super.endElement(uri, localName, qName);
             stack.pop();
 
@@ -414,7 +414,7 @@ public class BioGridConverter extends BioFileConverter
         }
 
         private String getPub(String pubMedId)
-        throws SAXException {
+            throws SAXException {
             String itemId = pubs.get(pubMedId);
             if (itemId == null) {
                 try {
@@ -432,7 +432,7 @@ public class BioGridConverter extends BioFileConverter
 
         private boolean setGene(String taxonId, InteractorHolder ih, String identifierField,
                                 String db)
-        throws ObjectStoreException, SAXException {
+            throws ObjectStoreException, SAXException {
 
             IdResolver resolver = resolverFactory.getIdResolver(false);
 
@@ -494,7 +494,7 @@ public class BioGridConverter extends BioFileConverter
         }
 
         private String getOrganism(String taxonId)
-        throws ObjectStoreException {
+            throws ObjectStoreException {
             String refId = organisms.get(taxonId);
             if (refId != null) {
                 return refId;
@@ -511,7 +511,7 @@ public class BioGridConverter extends BioFileConverter
         }
 
         private String getTerm(String identifier)
-        throws SAXException {
+            throws SAXException {
             String refId = terms.get(identifier);
             if (refId != null) {
                 return refId;

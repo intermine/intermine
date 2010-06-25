@@ -24,13 +24,8 @@
 <item id="0_1" class="DataSource">
 <attribute name="name" value="BDGP"/>
 </item>
-<item id="7_2" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="RE21586"/>
-<reference name="subject" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
 <item id="7_1" class="Synonym">
+<attribute name="isPrimary" value="true"/>
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="RE02181"/>
 <reference name="subject" ref_id="6_1"/>
@@ -42,6 +37,13 @@
 <item id="4_2" class="SOTerm">
 <attribute name="name" value="cDNA_clone"/>
 <reference name="ontology" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="7_2" class="Synonym">
+<attribute name="isPrimary" value="true"/>
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="RE21586"/>
+<reference name="subject" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="5_1" class="Ontology">

@@ -74,7 +74,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             if (line.length < 6) {
@@ -91,7 +91,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
 
     // create and store a Homologue with identifiers of Gene items
     private void createHomologue(String gene, String homGene)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         // if no genes created then ids could not be resolved, don't create a homologue
         if (gene == null || homGene == null) {
             return;
@@ -105,7 +105,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
     }
 
     private String getGene(String identifier, String organismRefId)
-    throws ObjectStoreException, SAXException {
+        throws ObjectStoreException, SAXException {
         String geneRefId = genes.get(identifier);
         if (geneRefId != null) {
             return geneRefId;
@@ -121,7 +121,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
     }
 
     private String parseSymbol(String symbol)
-    throws ObjectStoreException  {
+        throws ObjectStoreException  {
         if (!symbol.contains("\\")) {
             return getOrganism("7227");
         }
@@ -129,5 +129,4 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         OrganismData od = or.getOrganismDataByAbbreviation(bits[0]);
         return getOrganism(String.valueOf(od.getTaxonId()));
     }
-
 }

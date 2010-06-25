@@ -27,6 +27,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 /**
  * DataConverter to create items from DRSC RNAi screen date files.
@@ -60,7 +61,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
-    private static final Map<String, String> RESULTS_KEY = new HashMap();
+    private static final Map<String, String> RESULTS_KEY = new HashMap<String, String>();
 
     static {
         RESULTS_KEY.put("N", "Not a Hit");
@@ -130,13 +131,14 @@ public class FlyRNAiScreenConverter extends BioFileConverter
         super.close();
     }
 
-    private void processHits(Reader reader) throws ObjectStoreException {
+    private void processHits(Reader reader)
+        throws ObjectStoreException, SAXException {
 
         boolean readingData = false;
         int headerLength = 0;
         Item[] screens = null;
 
-        Iterator tsvIter;
+        Iterator<?> tsvIter;
         try {
             tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
         } catch (Exception e) {
@@ -161,9 +163,9 @@ public class FlyRNAiScreenConverter extends BioFileConverter
             } else {
                 if (line.length != headerLength) {
                     String msg = "Incorrect number of entries in line number " + lineNumber
-                    + ": " + line.toString()
-                    + ".  Should be " + headerLength + " but is " + line.length + " instead."
-                    + "  content:" + line[0];
+                        + ": " + line.toString()
+                        + ".  Should be " + headerLength + " but is " + line.length + " instead."
+                        + "  content:" + line[0];
                     throw new RuntimeException(msg);
                 }
 
@@ -173,7 +175,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                 Item amplicon = createItem("Amplicon");
                 amplicon.setAttribute("primaryIdentifier", ampliconIdentifier);
                 amplicon.setReference("organism", organism);
-                newSynonym(ampliconIdentifier, amplicon);
 
                 // the amplicon may target zero or more genes, a gene can be targeted
                 // by more than one amplicon.
@@ -225,6 +226,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                     }
                 }
                 store(amplicon);
+                createSynonym(amplicon, "identifier", ampliconIdentifier, "true", true);
             }
         }
 
@@ -234,7 +236,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
     }
 
     private void processScreenDetails(Reader reader) throws ObjectStoreException {
-        Iterator tsvIter;
+        Iterator<?> tsvIter;
         try {
             tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
         } catch (Exception e) {
@@ -323,26 +325,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
             item.setReference("organism", organism);
             genes.put(primaryIdentifier, item);
         }
-        return item;
-    }
-
-    /**
-     * Convenience method to create and store a new synonym Item
-     * @param synonymName the actual synonym
-     * @param subject the synonym's subject item
-     * @return a new synonym Item
-     * @throws ObjectStoreException if the is an ObjectStore problem
-     */
-    protected Item newSynonym(String synonymName, Item subject)
-        throws ObjectStoreException {
-        if (synonymName == null) {
-            throw new RuntimeException("synonymName can't be null");
-        }
-        Item item = createItem("Synonym");
-        item.setAttribute("value", synonymName);
-        item.setAttribute("type", "identifier");
-        item.setReference("subject", subject.getIdentifier());
-        store(item);
         return item;
     }
 }
