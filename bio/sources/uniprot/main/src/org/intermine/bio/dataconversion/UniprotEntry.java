@@ -913,6 +913,7 @@ public class UniprotEntry
         UniprotEntry entry = new UniprotEntry(accession);
         entry.setIsoform(true);
         entry.setDatasetRefId(datasetRefId);
+        System.out.println(datasetRefId);
         entry.setPrimaryIdentifier(primaryIdentifier);
         entry.setTaxonId(taxonId);
         entry.setName(name);

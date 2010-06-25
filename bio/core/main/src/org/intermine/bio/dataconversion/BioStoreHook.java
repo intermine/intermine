@@ -32,8 +32,8 @@ import org.intermine.xml.full.Item;
  */
 public class BioStoreHook implements DataConverterStoreHook
 {
-    private final String dataSetRefId;
-    private final String dataSourceRefId;
+    private String dataSetRefId = null;
+    private String dataSourceRefId = null;
     private final Model model;
     private static final Map<String, String> SO_TERMS = new HashMap<String, String>();
     private static String ontologyRefId = null;
@@ -47,8 +47,10 @@ public class BioStoreHook implements DataConverterStoreHook
      */
     public BioStoreHook(Model model, Item dataSet, Item dataSource) {
         this.model = model;
-        this.dataSetRefId = dataSet.getIdentifier();
-        this.dataSourceRefId = dataSource.getIdentifier();
+        if (dataSet != null && dataSource != null) {
+            this.dataSetRefId = dataSet.getIdentifier();
+            this.dataSourceRefId = dataSource.getIdentifier();
+        }
     }
 
     /**

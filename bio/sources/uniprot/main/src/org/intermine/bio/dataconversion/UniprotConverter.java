@@ -95,7 +95,6 @@ public class UniprotConverter extends BioDirectoryConverter
         }
         Map<String, File[]> taxonIdToFiles = parseFileNames(dataDir.listFiles());
 
-
         if (taxonIds != null) {
             for (String taxonId : taxonIds) {
                 if (taxonIdToFiles.get(taxonId) == null) {
@@ -430,7 +429,9 @@ public class UniprotConverter extends BioDirectoryConverter
                 }
             } else if (qName.equals("entry")) {
                 try {
+                    System.out.println("zz " + entry.getDatasetRefId());
                     Set<UniprotEntry> isoforms = processEntry(entry);
+
                     for (UniprotEntry isoform : isoforms) {
                         processEntry(isoform);
                     }
@@ -646,40 +647,55 @@ public class UniprotConverter extends BioDirectoryConverter
 
         private void processSynonyms(String proteinRefId, UniprotEntry entry)
             throws SAXException, ObjectStoreException {
+
+            String dataSetRefId = entry.getDatasetRefId();
+
             // primary accession
-            createSynonym(proteinRefId, "accession", entry.getPrimaryAccession(), "true", true);
+            Item synonym = createSynonym(proteinRefId, "accession", entry.getPrimaryAccession(),
+                    "true", false);
+            synonymsAndXrefs.add(synonym);
 
             // accessions
             for (String accession : entry.getAccessions()) {
-                createSynonym(proteinRefId, "accession", accession, "false", true);
+                synonym = createSynonym(proteinRefId, "accession", accession, "false", false);
+                synonymsAndXrefs.add(synonym);
             }
 
             // primaryIdentifier
             String primaryIdentifier = entry.getPrimaryIdentifier();
-            createSynonym(proteinRefId, "identifier", primaryIdentifier, "false", true);
+            synonym = createSynonym(proteinRefId, "identifier", primaryIdentifier, "false", false);
+            synonymsAndXrefs.add(synonym);
 
             // primaryIdentifier if isoform
             if (entry.isIsoform()) {
                 String isoformIdentifier =
                     getIsoformIdentifier(entry.getPrimaryAccession(), entry.getPrimaryIdentifier());
-                createSynonym(proteinRefId, "identifier", isoformIdentifier, "false", true);
+                synonym = createSynonym(proteinRefId, "identifier", isoformIdentifier, "false",
+                        false);
+                synonymsAndXrefs.add(synonym);
             }
 
             // name <recommendedName> or <alternateName>
             for (String name : entry.getProteinNames()) {
-                createSynonym(proteinRefId, "name", name, "false", true);
+                synonym = createSynonym(proteinRefId, "name", name, "false", false);
+                synonymsAndXrefs.add(synonym);
             }
 
             // isoforms with extra identifiers
             List<String> isoformSynonyms = entry.getIsoformSynonyms();
             if (!isoformSynonyms.isEmpty()) {
-                for (String synonym : isoformSynonyms) {
-                    createSynonym(proteinRefId, "accession", synonym, "false", true);
+                for (String identifier : isoformSynonyms) {
+                    synonym = createSynonym(proteinRefId, "accession", identifier, "false", false);
+                    synonymsAndXrefs.add(synonym);
                 }
             }
 
             // store xrefs and other synonyms we've created elsewhere
             for (Item item : synonymsAndXrefs) {
+                if (item == null) {
+                    continue;
+                }
+                item.addToCollection("dataSets", dataSetRefId);
                 store(item);
             }
         }
