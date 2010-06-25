@@ -57,7 +57,6 @@ public class GoConverter extends BioFileConverter
     // maps retained across all files
     protected Map<String, String> goTerms = new LinkedHashMap<String, String>();
     private Map<String, String> goEvidence = new LinkedHashMap<String, String>();
-    private Map<String, String> dataSources = new LinkedHashMap<String, String>();
     private Map<String, String> dataSets = new LinkedHashMap<String, String>();
     private Map<String, String> publications = new LinkedHashMap<String, String>();
     private Map<String, Item> organisms = new LinkedHashMap<String, Item>();
@@ -77,7 +76,7 @@ public class GoConverter extends BioFileConverter
     protected IdResolverFactory flybaseResolverFactory;
     protected IdResolverFactory hgncResolverFactory;
     private Set<String> resolverFails = new HashSet<String>();
-    
+
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
 
     /**
@@ -99,7 +98,7 @@ public class GoConverter extends BioFileConverter
         // only construct factory here so can be replaced by mock factory in tests
         flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
         hgncResolverFactory = new HgncIdResolverFactory();
-        
+
         readConfig();
     }
 
@@ -279,7 +278,7 @@ public class GoConverter extends BioFileConverter
     private Integer createGoAnnotation(String productIdentifier, String productType,
             String termIdentifier, Item organism, String qualifier, String withText,
             String dataSourceCode)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         Item goAnnotation = createItem(annotationClassName);
         goAnnotation.setReference("subject", productIdentifier);
         goAnnotation.setReference("ontologyTerm", termIdentifier);
@@ -335,7 +334,7 @@ public class GoConverter extends BioFileConverter
      * @return a list of Items
      */
     protected List<String> createWithObjects(String withText, Item organism, String dataSourceCode)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
 
         List<String> withProductList = new ArrayList<String>();
         try {
@@ -426,7 +425,7 @@ public class GoConverter extends BioFileConverter
                     if (resCount != 1) {
                         if (!resolverFails.contains(accession)) {
                             LOG.info("RESOLVER: HGNC failed to resolve gene to one identifier, "
-                                    + "ignoring gene: " + accession + " count: " + resCount 
+                                    + "ignoring gene: " + accession + " count: " + resCount
                                     + " symbol: " + resolver.resolveId(taxonId, accession));
                             resolverFails.add(accession);
                         }
@@ -447,12 +446,12 @@ public class GoConverter extends BioFileConverter
             String typeCls = TypeUtil.javaiseClassName(type);
 
             if (getModel().getClassDescriptorByName(typeCls) != null) {
-                Class cls = getModel().getClassDescriptorByName(typeCls).getType();
+                Class<?> cls = getModel().getClassDescriptorByName(typeCls).getType();
                 if (BioEntity.class.isAssignableFrom(cls)) {
                     clsName = typeCls;
                 }
             }
-             if (clsName == null) {   
+            if (clsName == null) {
                 throw new IllegalArgumentException("Unrecognised geneProduct type '" + type + "'");
             }
         }
@@ -536,22 +535,6 @@ public class GoConverter extends BioFileConverter
         return refId;
     }
 
-    private String getDataSource(String code) throws ObjectStoreException {
-        String dataSourceIdentifier = dataSources.get(code);
-        if (dataSourceIdentifier == null) {
-            String name = getDataSourceName(code);
-            Item item = createItem("DataSource");
-            item.setAttribute("name", name);
-            store(item);
-
-            dataSourceIdentifier = item.getIdentifier();
-            dataSources.put(code, dataSourceIdentifier);
-        }
-        return dataSourceIdentifier;
-    }
-
-
-
     private String getDataSourceName(String sourceCode) {
         String title = sourceCode;
 
@@ -571,7 +554,7 @@ public class GoConverter extends BioFileConverter
         } else if ("GOA".equals(sourceCode)) {
             title = "Gene Ontology";
         } else if ("PINC".equals(sourceCode)) {
-          title = "Proteome Inc.";
+            title = "Proteome Inc.";
         } else if ("Pfam".equals(sourceCode)) {
             title = "PFAM"; // to merge with interpro
         }
@@ -579,8 +562,7 @@ public class GoConverter extends BioFileConverter
     }
 
     private String getDataset(String code)
-    throws ObjectStoreException {
-
+        throws ObjectStoreException {
         String dataSetIdentifier = dataSets.get(code);
         if (dataSetIdentifier == null) {
             String title = "GO Annotation from " + getDataSourceName(code);
@@ -638,7 +620,7 @@ public class GoConverter extends BioFileConverter
         }
         return taxonId;
     }
-    
+
     private Item newSynonym(String subjectId, String type, String value, String datasetId) {
         Item synonym = createItem("Synonym");
         synonym.setReference("subject", subjectId);
