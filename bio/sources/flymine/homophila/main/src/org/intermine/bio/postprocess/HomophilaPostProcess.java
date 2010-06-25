@@ -170,12 +170,12 @@ public class HomophilaPostProcess extends PostProcessor
         cs.addConstraint(tgc);
 
         // Match object translation
-        QueryObjectReference bmo = new QueryObjectReference(bmc, "parent");
+        QueryObjectReference bmo = new QueryObjectReference(bmc, "query");
         ContainsConstraint bmoc = new ContainsConstraint(bmo, ConstraintOp.CONTAINS, tc);
         cs.addConstraint(bmoc);
 
         // Match subject protein
-        QueryObjectReference po = new QueryObjectReference(bmc, "child");
+        QueryObjectReference po = new QueryObjectReference(bmc, "hit");
         ContainsConstraint poc = new ContainsConstraint(po, ConstraintOp.CONTAINS, pc);
         cs.addConstraint(poc);
 
