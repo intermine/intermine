@@ -2,19 +2,18 @@
 <item id="3_1" class="Organism">
 <attribute name="taxonId" value="7165"/>
 </item>
+<item id="6_23" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="BX040897.1"/>
+<reference name="subject" ref_id="9_10"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 <item id="9_12" class="EST">
 <attribute name="primaryIdentifier" value="BX610490.1"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_3"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="overlappingESTSets"><reference ref_id="2_4"/></collection>
-</item>
-<item id="6_10" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="1234567"/>
-<reference name="subject" ref_id="9_3"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="2_1" class="OverlappingESTSet">
 <attribute name="primaryIdentifier" value="NCLAG150001"/>
@@ -39,24 +38,34 @@
 <attribute name="name" value="VectorBase AnoEST clusters"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
+<item id="6_27" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="BX610490.1"/>
+<reference name="subject" ref_id="9_12"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 <item id="9_2" class="EST">
 <attribute name="primaryIdentifier" value="BX615094.1"/>
 <reference name="organism" ref_id="3_1"/>
 <reference name="sequenceOntologyTerm" ref_id="4_3"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="6_11" class="Synonym">
-<attribute name="isPrimary" value="true"/>
+<item id="6_12" class="Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="AF043436.1"/>
+<attribute name="value" value="1234567"/>
 <reference name="subject" ref_id="9_4"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="6_25" class="Synonym">
-<attribute name="isPrimary" value="true"/>
+<item id="6_6" class="Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="BX610489.1"/>
-<reference name="subject" ref_id="9_11"/>
+<attribute name="value" value="1234567"/>
+<reference name="subject" ref_id="9_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="6_19" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="AA413316.1"/>
+<reference name="subject" ref_id="9_8"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="4_3" class="SOTerm">
@@ -71,25 +80,16 @@
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="overlappingESTSets"><reference ref_id="2_4"/></collection>
 </item>
-<item id="6_24" class="Synonym">
-<attribute name="isPrimary" value="false"/>
+<item id="6_2" class="Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="1234567"/>
-<reference name="subject" ref_id="9_10"/>
+<attribute name="value" value="NCLAG150002"/>
+<reference name="subject" ref_id="2_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="6_14" class="Synonym">
-<attribute name="isPrimary" value="false"/>
+<item id="6_7" class="Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="1234567"/>
-<reference name="subject" ref_id="9_5"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_3" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="NCLAG169971"/>
-<reference name="subject" ref_id="2_3"/>
+<attribute name="value" value="BX615094.1"/>
+<reference name="subject" ref_id="9_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="9_11" class="EST">
@@ -105,25 +105,22 @@
 <reference name="sequenceOntologyTerm" ref_id="4_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="6_2" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="NCLAG150002"/>
-<reference name="subject" ref_id="2_2"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_6" class="Synonym">
-<attribute name="isPrimary" value="false"/>
+<item id="6_14" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="1234567"/>
-<reference name="subject" ref_id="9_1"/>
+<reference name="subject" ref_id="9_5"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="6_21" class="Synonym">
-<attribute name="isPrimary" value="true"/>
+<item id="6_22" class="Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="BX040896.1"/>
+<attribute name="value" value="1234567"/>
 <reference name="subject" ref_id="9_9"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="6_25" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="BX610489.1"/>
+<reference name="subject" ref_id="9_11"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="9_1" class="EST">
@@ -136,34 +133,19 @@
 <item id="0_1" class="DataSource">
 <attribute name="name" value="VectorBase"/>
 </item>
-<item id="6_18" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="1234567"/>
-<reference name="subject" ref_id="9_7"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_28" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="1234567"/>
-<reference name="subject" ref_id="9_12"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
 <item id="5_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
 <attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
-<item id="6_22" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="1234567"/>
-<reference name="subject" ref_id="9_9"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
 <item id="4_2" class="SOTerm">
 <attribute name="name" value="chromosome"/>
 <reference name="ontology" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="6_11" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="AF043436.1"/>
+<reference name="subject" ref_id="9_4"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="7_1" class="Chromosome">
@@ -186,11 +168,28 @@
 <reference name="sequenceOntologyTerm" ref_id="4_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="6_4" class="Synonym">
-<attribute name="isPrimary" value="true"/>
+<item id="6_10" class="Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="UCLAG189057"/>
-<reference name="subject" ref_id="2_4"/>
+<attribute name="value" value="1234567"/>
+<reference name="subject" ref_id="9_3"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="6_24" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="1234567"/>
+<reference name="subject" ref_id="9_10"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="6_15" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="AF043439.1"/>
+<reference name="subject" ref_id="9_6"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="6_8" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="1234567"/>
+<reference name="subject" ref_id="9_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="9_5" class="EST">
@@ -199,6 +198,12 @@
 <reference name="sequenceOntologyTerm" ref_id="4_3"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="overlappingESTSets"><reference ref_id="2_3"/></collection>
+</item>
+<item id="6_26" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="1234567"/>
+<reference name="subject" ref_id="9_11"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="9_10" class="EST">
 <attribute name="primaryIdentifier" value="BX040897.1"/>
@@ -214,6 +219,30 @@
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="overlappingESTSets"><reference ref_id="2_3"/></collection>
 </item>
+<item id="6_18" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="1234567"/>
+<reference name="subject" ref_id="9_7"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="6_21" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="BX040896.1"/>
+<reference name="subject" ref_id="9_9"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="6_5" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="BM654701.1"/>
+<reference name="subject" ref_id="9_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="6_28" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="1234567"/>
+<reference name="subject" ref_id="9_12"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 <item id="8_2" class="Location">
 <attribute name="end" value="2211"/>
 <attribute name="start" value="552"/>
@@ -222,74 +251,46 @@
 <reference name="locatedOn" ref_id="7_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="6_16" class="Synonym">
-<attribute name="isPrimary" value="false"/>
+<item id="6_3" class="Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="1234567"/>
-<reference name="subject" ref_id="9_6"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_19" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="AA413316.1"/>
-<reference name="subject" ref_id="9_8"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_17" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="AF043443.1"/>
-<reference name="subject" ref_id="9_7"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_9" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="AF043434.1"/>
-<reference name="subject" ref_id="9_3"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_27" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="BX610490.1"/>
-<reference name="subject" ref_id="9_12"/>
+<attribute name="value" value="NCLAG169971"/>
+<reference name="subject" ref_id="2_3"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="6_1" class="Synonym">
-<attribute name="isPrimary" value="true"/>
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="NCLAG150001"/>
 <reference name="subject" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="6_12" class="Synonym">
-<attribute name="isPrimary" value="false"/>
+<item id="6_16" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="1234567"/>
-<reference name="subject" ref_id="9_4"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_8" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="1234567"/>
-<reference name="subject" ref_id="9_2"/>
+<reference name="subject" ref_id="9_6"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="6_20" class="Synonym">
-<attribute name="isPrimary" value="false"/>
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="1234567"/>
 <reference name="subject" ref_id="9_8"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="6_23" class="Synonym">
-<attribute name="isPrimary" value="true"/>
+<item id="6_4" class="Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="BX040897.1"/>
-<reference name="subject" ref_id="9_10"/>
+<attribute name="value" value="UCLAG189057"/>
+<reference name="subject" ref_id="2_4"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="6_13" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="AF043437.1"/>
+<reference name="subject" ref_id="9_5"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="6_9" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="AF043434.1"/>
+<reference name="subject" ref_id="9_3"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="9_3" class="EST">
@@ -299,30 +300,9 @@
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="overlappingESTSets"><reference ref_id="2_3"/></collection>
 </item>
-<item id="6_26" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="1234567"/>
-<reference name="subject" ref_id="9_11"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_7" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="BX615094.1"/>
-<reference name="subject" ref_id="9_2"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
 <item id="4_1" class="SOTerm">
 <attribute name="name" value="overlapping_EST_set"/>
 <reference name="ontology" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_5" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="BM654701.1"/>
-<reference name="subject" ref_id="9_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="9_6" class="EST">
@@ -339,18 +319,10 @@
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="overlappingESTSets"><reference ref_id="2_3"/></collection>
 </item>
-<item id="6_13" class="Synonym">
-<attribute name="isPrimary" value="true"/>
+<item id="6_17" class="Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="AF043437.1"/>
-<reference name="subject" ref_id="9_5"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="6_15" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="AF043439.1"/>
-<reference name="subject" ref_id="9_6"/>
+<attribute name="value" value="AF043443.1"/>
+<reference name="subject" ref_id="9_7"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 </items>

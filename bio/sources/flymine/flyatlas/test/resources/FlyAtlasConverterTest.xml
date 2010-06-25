@@ -1,6 +1,21 @@
 <items>
+<item id="6_3" class="FlyAtlasResult">
+<attribute name="mRNASignal" value="1458"/>
+<attribute name="mRNASignalSEM" value="127.78"/>
+<attribute name="presentCall" value="4"/>
+<reference name="experiment" ref_id="3_1"/>
+<reference name="material" ref_id="5_1"/>
+<collection name="assays"><reference ref_id="4_30"/></collection>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 <item id="0_1" class="DataSource">
 <attribute name="name" value="University of Glasgow"/>
+</item>
+<item id="4_28" class="MicroArrayAssay">
+<attribute name="name" value="Brain"/>
+</item>
+<item id="4_29" class="MicroArrayAssay">
+<attribute name="name" value="Head"/>
 </item>
 <item id="6_2" class="FlyAtlasResult">
 <attribute name="affyCall" value="Up"/>
@@ -11,12 +26,7 @@
 <reference name="experiment" ref_id="3_1"/>
 <reference name="material" ref_id="5_1"/>
 <collection name="assays"><reference ref_id="4_29"/></collection>
-</item>
-<item id="4_28" class="MicroArrayAssay">
-<attribute name="name" value="Brain"/>
-</item>
-<item id="4_29" class="MicroArrayAssay">
-<attribute name="name" value="Head"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="6_1" class="FlyAtlasResult">
 <attribute name="affyCall" value="Down"/>
@@ -27,6 +37,7 @@
 <reference name="experiment" ref_id="3_1"/>
 <reference name="material" ref_id="5_1"/>
 <collection name="assays"><reference ref_id="4_28"/></collection>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="5_1" class="ProbeSet">
 <attribute name="primaryIdentifier" value="1616608_a_at"/>
@@ -42,14 +53,6 @@
 </item>
 <item id="4_30" class="MicroArrayAssay">
 <attribute name="name" value="Whole Fly"/>
-</item>
-<item id="6_3" class="FlyAtlasResult">
-<attribute name="mRNASignal" value="1458"/>
-<attribute name="mRNASignalSEM" value="127.78"/>
-<attribute name="presentCall" value="4"/>
-<reference name="experiment" ref_id="3_1"/>
-<reference name="material" ref_id="5_1"/>
-<collection name="assays"><reference ref_id="4_30"/></collection>
 </item>
 <item id="1_1" class="DataSet">
 <attribute name="name" value="FlyAtlas"/>

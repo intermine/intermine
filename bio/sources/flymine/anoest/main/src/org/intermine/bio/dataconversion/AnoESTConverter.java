@@ -66,7 +66,7 @@ public class AnoESTConverter extends BioDBConverter
     }
 
     private void makeClusterItems(Connection connection)
-    throws SQLException, ObjectStoreException, SAXException {
+        throws SQLException, ObjectStoreException, SAXException {
         ResultSet res = getClusterResultSet(connection);
 
         while (res.next()) {
@@ -113,7 +113,7 @@ public class AnoESTConverter extends BioDBConverter
     }
 
     private void makeEstItems(Connection connection)
-    throws SQLException, ObjectStoreException, SAXException {
+        throws SQLException, ObjectStoreException, SAXException {
         ResultSet res = getEstResultSet(connection);
         while (res.next()) {
             String accession = res.getString(1);

@@ -34,8 +34,8 @@ public class ImageCloneConverter extends CDNACloneConverter
     protected static final Logger LOG = Logger.getLogger(ImageCloneConverter.class);
 
     protected Item organism;
-    protected Map geneMap = new HashMap();
-    protected Map cloneMap = new HashMap();
+    protected Map<String, Item> geneMap = new HashMap<String, Item>();
+    protected Map<String, Item> cloneMap = new HashMap<String, Item>();
 
     /**
      * Constructor
@@ -117,8 +117,8 @@ public class ImageCloneConverter extends CDNACloneConverter
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
      */
-     private void createClone(String clsName, String id, String orgId, String geneId,
-                              ItemWriter writer)
+    private void createClone(String clsName, String id, String orgId, String geneId,
+            ItemWriter writer)
         throws Exception {
         Item clone = (Item) cloneMap.get(id);
         if (clone == null) {
@@ -136,7 +136,4 @@ public class ImageCloneConverter extends CDNACloneConverter
             store(synonym);
         }
     }
-
 }
-
-

@@ -198,7 +198,7 @@ public class AnophExprConverter extends BioFileConverter
                 Item gene = getGene(geneIdentifier);
 
                 ReferenceList microArrayResults
-                                = new ReferenceList("microArrayResults", new ArrayList<String>());
+                    = new ReferenceList("microArrayResults", new ArrayList<String>());
 
                 Item material = createItem("ProbeSet");
                 material.setAttribute("name", probe);

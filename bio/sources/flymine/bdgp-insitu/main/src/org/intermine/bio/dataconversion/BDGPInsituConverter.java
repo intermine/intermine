@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,14 +38,13 @@ public class BDGPInsituConverter extends BioFileConverter
     protected static final Logger LOG = Logger.getLogger(BDGPInsituConverter.class);
 
     private static final String URL
-    = "http://www.fruitfly.org/insituimages/insitu_images/thumbnails/";
+        = "http://www.fruitfly.org/insituimages/insitu_images/thumbnails/";
     private Map<String, Item> genes = new HashMap<String, Item>();
     private Map<String, Item> terms = new HashMap<String, Item>();
     private Map<String, Item> results = new HashMap<String, Item>();
     private Map<String, Item> imgs = new HashMap<String, Item>();
 
-    Item orgDrosophila;
-    private Item dataSet;
+    protected Item orgDrosophila;
     private Item pub;
     private String[] stages;
     private String[] stageDescriptions;
@@ -62,21 +60,11 @@ public class BDGPInsituConverter extends BioFileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     public BDGPInsituConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model);
+        super(writer, model, "BDGP", "BDGP in situ data set");
 
         orgDrosophila = createItem("Organism");
         orgDrosophila.setAttribute("taxonId", TAXON_ID);
         store(orgDrosophila);
-
-        Item dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "BDGP");
-        store(dataSource);
-
-        // the widget depends on this name
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("name", "BDGP in situ data set");
-        dataSet.setReference("dataSource", dataSource.getIdentifier());
-        store(dataSet);
 
         pub = createItem("Publication");
         pub.setAttribute("pubMedId", "17645804");
@@ -119,8 +107,7 @@ public class BDGPInsituConverter extends BioFileConverter
             String stage = lineBits[1];
 
             String resultKey = geneCG + stage;
-            Item result = getResult(resultKey, gene.getIdentifier(), pub.getIdentifier(),
-                                    dataSet.getIdentifier(), stage);
+            Item result = getResult(resultKey, gene.getIdentifier(), pub.getIdentifier(), stage);
 
             if (lineBits.length > 2) {
                 String image = lineBits[2];
@@ -140,11 +127,11 @@ public class BDGPInsituConverter extends BioFileConverter
             }
         }
 
-       for (Item result: results.values()) {
-           if (result.getCollection("mRNAExpressionTerms").getRefIds().isEmpty()) {
-               result.setAttribute("expressed", "false");
-           }
-       }
+        for (Item result: results.values()) {
+            if (result.getCollection("mRNAExpressionTerms").getRefIds().isEmpty()) {
+                result.setAttribute("expressed", "false");
+            }
+        }
 
         storeAll(imgs);
         storeAll(results);
@@ -157,25 +144,19 @@ public class BDGPInsituConverter extends BioFileConverter
         }
     }
 
-    private Item getResult(String key, String geneId, String pubId, String dataSetId, String stage)
+    private Item getResult(String key, String geneId, String pubId, String stage)
     {
         if (results.containsKey(key)) {
             return results.get(key);
         }
         Item result = createItem("MRNAExpressionResult");
-
         result.setAttribute("expressed", "true");
-
         result.setReference("gene", geneId);
         result.setReference("publication", pubId);
-        result.setReference("dataSet", dataSetId);
-
         setTheStage(result, stage);
-
         result.setCollection("images", new ArrayList<String>());
         result.setCollection("mRNAExpressionTerms", new ArrayList<String>());
         results.put(key, result);
-
         return result;
     }
 
@@ -192,36 +173,36 @@ public class BDGPInsituConverter extends BioFileConverter
         }
 
         result.setAttribute("stageRange", stageDescriptions[stageNumber.intValue()]
-                                                                  + " (BDGP in situ)");
+                                                            + " (BDGP in situ)");
         switch (stageNumber.intValue()) {
-        case 1:
-            stagesColl.addRefId(stages[1]);
-            stagesColl.addRefId(stages[2]);
-            stagesColl.addRefId(stages[3]);
-            break;
-        case 2:
-            stagesColl.addRefId(stages[4]);
-            stagesColl.addRefId(stages[5]);
-            stagesColl.addRefId(stages[6]);
-            break;
-        case 3:
-            stagesColl.addRefId(stages[7]);
-            stagesColl.addRefId(stages[8]);
-            break;
-        case 4:
-            stagesColl.addRefId(stages[9]);
-            stagesColl.addRefId(stages[10]);
-            break;
-        case 5:
-            stagesColl.addRefId(stages[11]);
-            stagesColl.addRefId(stages[12]);
-            break;
-        case 6:
-            stagesColl.addRefId(stages[13]);
-            stagesColl.addRefId(stages[14]);
-            stagesColl.addRefId(stages[15]);
-            stagesColl.addRefId(stages[16]);
-            break;
+            case 1:
+                stagesColl.addRefId(stages[1]);
+                stagesColl.addRefId(stages[2]);
+                stagesColl.addRefId(stages[3]);
+                break;
+            case 2:
+                stagesColl.addRefId(stages[4]);
+                stagesColl.addRefId(stages[5]);
+                stagesColl.addRefId(stages[6]);
+                break;
+            case 3:
+                stagesColl.addRefId(stages[7]);
+                stagesColl.addRefId(stages[8]);
+                break;
+            case 4:
+                stagesColl.addRefId(stages[9]);
+                stagesColl.addRefId(stages[10]);
+                break;
+            case 5:
+                stagesColl.addRefId(stages[11]);
+                stagesColl.addRefId(stages[12]);
+                break;
+            case 6:
+                stagesColl.addRefId(stages[13]);
+                stagesColl.addRefId(stages[14]);
+                stagesColl.addRefId(stages[15]);
+                stagesColl.addRefId(stages[16]);
+                break;
         }
 
         result.addCollection(stagesColl);
@@ -259,8 +240,6 @@ public class BDGPInsituConverter extends BioFileConverter
         Item gene = createItem("Gene");
         gene.setAttribute("primaryIdentifier", primaryIdentifier);
         gene.setReference("organism", orgDrosophila);
-        gene.setCollection("dataSets",
-                           new ArrayList(Collections.singleton(dataSet.getIdentifier())));
         genes.put(primaryIdentifier, gene);
         store(gene);
         return gene;
