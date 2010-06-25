@@ -37,6 +37,7 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
     private Set<String> synonyms = new HashSet<String>();
     private Set<String> crossReferences = new HashSet<String>();
     private Map<String, String> organisms = new HashMap<String, String>();
+    private BioStoreHook hook = null;
 
     /**
      * Create a new BioDirectoryConverter.
@@ -50,12 +51,24 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
         super(writer, model);
         String dataSourceRefId = null;
         String dataSetRefId = null;
-        if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
+        if (StringUtils.isNotEmpty(dataSourceName)) {
             dataSourceRefId = getDataSource(dataSourceName);
+        }
+        if (StringUtils.isNotEmpty(dataSetTitle)) {
             dataSetRefId = getDataSet(dataSetTitle, dataSourceRefId);
         }
-        BioStoreHook hook = new BioStoreHook(model, dataSetRefId, dataSourceRefId);
+        hook = new BioStoreHook(model, dataSetRefId, dataSourceRefId);
         setStoreHook(hook);
+    }
+
+    /**
+     * Update the dataset reference Id.  Overwrites the one set in the constructor.  Needed for
+     * Uniprot which has a few different datasets.
+     *
+     * @param refId ID representing dataset object
+     */
+    public void setDataSet(String refId) {
+        hook.setDataSet(refId);
     }
 
     /**
