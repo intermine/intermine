@@ -113,11 +113,11 @@ public class CreateSiteMaps
             // force creation of new sitemaps.
             File newFile = new File(outputFile + className + EXT);
             if (!newFile.exists()) {
-                Iterator it = getResults(os, makeQuery(targetModel, className, identifierName));
+                Iterator<?> it = getResults(os, makeQuery(targetModel, className, identifierName));
                 if (it.hasNext()) {  // don't create empty files
                     writer = startFile(newFile);
                     while (it.hasNext()) {
-                        ResultsRow r =  (ResultsRow) it.next();
+                        ResultsRow<?> r =  (ResultsRow<?>) it.next();
                         String identifier = (String) r.get(0);
                         String priority = getPriority();
                         i++;
@@ -150,8 +150,8 @@ public class CreateSiteMaps
     // TODO add organisms to this query
     private static String makeQuery(String targetModel, String className, String identifierName) {
         String q = "SELECT DISTINCT a1_." + identifierName + " AS a2_ "
-        + " FROM " + targetModel + "." + className + " AS a1_ "
-        + " WHERE a1_." + identifierName + " != \'\'";
+            + " FROM " + targetModel + "." + className + " AS a1_ "
+            + " WHERE a1_." + identifierName + " != \'\'";
         //LOG.debug(q);
         return q;
     }
@@ -168,20 +168,20 @@ public class CreateSiteMaps
         writer.close();
     }
 
-    private static Iterator getResults(ObjectStore os, String query) {
+    private static Iterator<?> getResults(ObjectStore os, String query) {
         IqlQuery q = new IqlQuery(query, os.getModel().getPackageName());
         Results r = os.execute(q.toQuery(), 100000, true, true, true);
-        Iterator i = r.iterator();
+        Iterator<?> i = r.iterator();
         return i;
     }
 
     private static String getHeader() {
-       return HEAD + ENDL + SETOPEN + ENDL;
+        return HEAD + ENDL + SETOPEN + ENDL;
     }
 
     private static String getFooter() {
         return SETCLOSE + ENDL;
-     }
+    }
 
     private static String getURL(String identifier, String weight) {
         StringBuffer s = new StringBuffer("<url>" + ENDL);

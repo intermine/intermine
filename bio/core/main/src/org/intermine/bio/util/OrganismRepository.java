@@ -29,9 +29,9 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 public class OrganismRepository
 {
     private static OrganismRepository or = null;
-    private Map<Integer, OrganismData> taxonMap = new HashMap();
-    private Map<String, OrganismData> abbreviationMap = new HashMap();
-    private Map<MultiKey, OrganismData> genusSpeciesMap = new HashMap();
+    private Map<Integer, OrganismData> taxonMap = new HashMap<Integer, OrganismData>();
+    private Map<String, OrganismData> abbreviationMap = new HashMap<String, OrganismData>();
+    private Map<MultiKey, OrganismData> genusSpeciesMap = new HashMap<MultiKey, OrganismData>();
 
     private static final String PROP_FILE = "organism_config.properties";
     private static final String PREFIX = "taxon";
@@ -165,7 +165,7 @@ public class OrganismRepository
         MultiKey key = new MultiKey(genus, species);
         return genusSpeciesMap.get(key);
     }
-    
+
     /**
      * Look up OrganismData objects by a full name that is genus <space> species.  Returns null if
      * there is no OrganismData in this OrganismRepository that matches.

@@ -327,6 +327,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
             item.setReference("organism", organism);
             item.addToCollection("dataSets", dataset);
             Item synonym = createSynonym(item.getIdentifier(), identifier, fieldName, null, false);
+            synonym.addToCollection("dataSets", dataset);
             synonyms.add(synonym);
             genes.put(identifier, item);
         }

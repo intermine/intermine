@@ -24,9 +24,9 @@ public class LinkInTask extends Task
 {
     /**
      * @param os objectStore
-     * @throws BuildException if something goes wrong 
+     * @throws BuildException if something goes wrong
      */
-    public static void execute(ObjectStoreWriter os) throws BuildException {
+    public static void execute(ObjectStoreWriter os) {
         try {
             CreateFlyBaseLinkIns.createLinkInFile(os);
         } catch (Exception e) {
