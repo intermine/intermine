@@ -70,7 +70,7 @@ public class GoConverterTest extends ItemsTestCase
         Reader reader = new InputStreamReader(
                 getClass().getClassLoader().getResourceAsStream("GoConverterOboTest_src.txt"));
         converter.process(reader);
-        System.out.println("productWrapperMap: " + converter.productMap.keySet());
+        //System.out.println("productWrapperMap: " + converter.productMap.keySet());
         converter.close();
 
         // uncomment to write a new target items file

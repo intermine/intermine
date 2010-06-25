@@ -108,7 +108,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
                             redflyID = dbxref.substring(colonIndex + 1);
                         } else {
                             throw new RuntimeException("unknown external reference type: "
-                                                       + dbxref);
+                                    + dbxref);
                         }
                     }
                 }

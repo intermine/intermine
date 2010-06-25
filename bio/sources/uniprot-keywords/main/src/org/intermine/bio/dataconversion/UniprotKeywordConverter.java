@@ -85,7 +85,7 @@ public class UniprotKeywordConverter extends BioFileConverter
          * {@inheritDoc}
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
-        throws SAXException {
+            throws SAXException {
             if (qName.equals("name")) {
                 attName = "name";
             } else if (qName.equals("description")) {
@@ -99,7 +99,7 @@ public class UniprotKeywordConverter extends BioFileConverter
          * {@inheritDoc}
          */
         public void endElement(String uri, String localName, String qName)
-        throws SAXException {
+            throws SAXException {
             super.endElement(uri, localName, qName);
             if (qName.equals("name")  && attValue != null && !attValue.toString().equals("")) {
                 String synonym = attValue.toString();
@@ -133,7 +133,7 @@ public class UniprotKeywordConverter extends BioFileConverter
 
         private String getItem(Map<String, String> map, String itemType, String titleType,
                                String title)
-        throws SAXException {
+            throws SAXException {
             String refId = map.get(title);
             if (refId == null) {
                 Item item = createItem(itemType);
@@ -173,14 +173,14 @@ public class UniprotKeywordConverter extends BioFileConverter
                 while (l > 0) {
                     boolean whitespace = false;
                     switch(ch[st]) {
-                    case ' ':
-                    case '\r':
-                    case '\n':
-                    case '\t':
-                        whitespace = true;
-                        break;
-                    default:
-                        break;
+                        case ' ':
+                        case '\r':
+                        case '\n':
+                        case '\t':
+                            whitespace = true;
+                            break;
+                        default:
+                            break;
                     }
                     if (!whitespace) {
                         break;
