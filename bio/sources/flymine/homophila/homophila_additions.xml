@@ -7,11 +7,14 @@
   </class>
   <class name="BlastMatch" is-interface="true">
     <attribute name="EValue" type="java.lang.Double"/>
-    <reference name="parent" referenced-type="BioEntity"/>
-    <reference name="child" referenced-type="BioEntity"/>
+    <reference name="query" referenced-type="Protein" reverse-reference="blastMatches"/>
+    <reference name="hit" referenced-type="Protein"/>
     <collection name="dataSets" referenced-type="DataSet"/>
   </class>
+  <class name="Protein" is-interface="true">
+    <collection name="blastMatches" referenced-type="BlastMatch" reverse-reference="query" />
+  </class>
   <class name="Gene" is-interface="true">
-    <collection name="omimDiseases" referenced-type="Disease"/>
+    <collection name="omimDiseases" referenced-type="Disease" />
   </class>
 </classes>
