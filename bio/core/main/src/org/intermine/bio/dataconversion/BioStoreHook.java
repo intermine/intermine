@@ -76,6 +76,16 @@ public class BioStoreHook implements DataConverterStoreHook
     }
 
     /**
+     * Update the dataset reference Id.  Overwrites the one set in the constructor.  Needed for
+     * Uniprot which has a few different datasets.
+     *
+     * @param dataSet ID representing dataset object
+     */
+    public void setDataSet(String dataSet) {
+        this.dataSetRefId = dataSet;
+    }
+
+    /**
      * @see BioStoreHook#setDataSets(Item, Item, Item)
      * {@inheritDoc}
      */

@@ -76,7 +76,7 @@ public class UniprotConverter extends BioDirectoryConverter
      * @param model the Model
      */
     public UniprotConverter(ItemWriter writer, Model model) {
-        super(writer, model, null, null);
+        super(writer, model, "UniProt", "Swiss-Prot data set");
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
@@ -234,13 +234,6 @@ public class UniprotConverter extends BioDirectoryConverter
         private int entryCount = 0;
 
         /**
-         * @param entries empty map to be populated with uniprot entries
-         * @param isoforms empty map to be populated with isoforms
-         */
-        public UniprotHandler() {
-        }
-
-        /**
          * {@inheritDoc}
          */
         @Override
@@ -326,8 +319,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 String domain = entry.getAttribute();
                 if (domain.startsWith("IPR")) {
                     try {
-                        entry.addDomainRefId(getInterpro(domain, getAttrValue(attrs, "value"),
-                                entry.getDatasetRefId()));
+                        entry.addDomainRefId(getInterpro(domain, getAttrValue(attrs, "value")));
                     } catch (ObjectStoreException e) {
                         throw new SAXException(e);
                     }
@@ -429,7 +421,6 @@ public class UniprotConverter extends BioDirectoryConverter
                 }
             } else if (qName.equals("entry")) {
                 try {
-                    System.out.println("zz " + entry.getDatasetRefId());
                     Set<UniprotEntry> isoforms = processEntry(entry);
 
                     for (UniprotEntry isoform : isoforms) {
@@ -503,6 +494,8 @@ public class UniprotConverter extends BioDirectoryConverter
             // TODO there are uniparc entries so check for swissprot-trembl datasets
             if (entry.hasDatasetRefId() && entry.hasPrimaryAccession()) {
 
+                setDataSet(entry.getDatasetRefId());
+
                 for (String isoformAccession: entry.getIsoforms()) {
                     isoforms.add(entry.createIsoformEntry(isoformAccession));
                 }
@@ -515,8 +508,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 String isCanonical = (entry.isIsoform() ? "false" : "true");
                 protein.setAttribute("isUniprotCanonical", isCanonical);
 
-                /* dataset */
-                protein.addToCollection("dataSets", entry.getDatasetRefId());
+//                /* dataset */
+//                protein.addToCollection("dataSets", entry.getDatasetRefId());
 
                 /* sequence */
                 if (!entry.isIsoform()) {
@@ -648,45 +641,35 @@ public class UniprotConverter extends BioDirectoryConverter
         private void processSynonyms(String proteinRefId, UniprotEntry entry)
             throws SAXException, ObjectStoreException {
 
-            String dataSetRefId = entry.getDatasetRefId();
-
             // primary accession
-            Item synonym = createSynonym(proteinRefId, "accession", entry.getPrimaryAccession(),
-                    "true", false);
-            synonymsAndXrefs.add(synonym);
+            createSynonym(proteinRefId, "accession", entry.getPrimaryAccession(), "true", true);
 
             // accessions
             for (String accession : entry.getAccessions()) {
-                synonym = createSynonym(proteinRefId, "accession", accession, "false", false);
-                synonymsAndXrefs.add(synonym);
+                createSynonym(proteinRefId, "accession", accession, "false", true);
             }
 
             // primaryIdentifier
             String primaryIdentifier = entry.getPrimaryIdentifier();
-            synonym = createSynonym(proteinRefId, "identifier", primaryIdentifier, "false", false);
-            synonymsAndXrefs.add(synonym);
+            createSynonym(proteinRefId, "identifier", primaryIdentifier, "false", true);
 
             // primaryIdentifier if isoform
             if (entry.isIsoform()) {
                 String isoformIdentifier =
                     getIsoformIdentifier(entry.getPrimaryAccession(), entry.getPrimaryIdentifier());
-                synonym = createSynonym(proteinRefId, "identifier", isoformIdentifier, "false",
-                        false);
-                synonymsAndXrefs.add(synonym);
+                createSynonym(proteinRefId, "identifier", isoformIdentifier, "false", true);
             }
 
             // name <recommendedName> or <alternateName>
             for (String name : entry.getProteinNames()) {
-                synonym = createSynonym(proteinRefId, "name", name, "false", false);
-                synonymsAndXrefs.add(synonym);
+                createSynonym(proteinRefId, "name", name, "false", true);
             }
 
             // isoforms with extra identifiers
             List<String> isoformSynonyms = entry.getIsoformSynonyms();
             if (!isoformSynonyms.isEmpty()) {
                 for (String identifier : isoformSynonyms) {
-                    synonym = createSynonym(proteinRefId, "accession", identifier, "false", false);
-                    synonymsAndXrefs.add(synonym);
+                    createSynonym(proteinRefId, "accession", identifier, "false", true);
                 }
             }
 
@@ -695,7 +678,6 @@ public class UniprotConverter extends BioDirectoryConverter
                 if (item == null) {
                     continue;
                 }
-                item.addToCollection("dataSets", dataSetRefId);
                 store(item);
             }
         }
@@ -802,7 +784,6 @@ public class UniprotConverter extends BioDirectoryConverter
             if (geneRefId == null) {
                 Item gene = createItem("Gene");
                 genes.put(uniqueIdentifierValue, gene.getIdentifier());
-                gene.addToCollection("dataSets", entry.getDatasetRefId());
                 gene.setAttribute(uniqueIdentifierFieldType, uniqueIdentifierValue);
 
                 // set each identifier
@@ -1001,14 +982,13 @@ public class UniprotConverter extends BioDirectoryConverter
         return refId;
     }
 
-    private String getInterpro(String identifier, String shortName, String datasetRefId)
+    private String getInterpro(String identifier, String shortName)
         throws SAXException, ObjectStoreException {
         String refId = domains.get(identifier);
         if (refId == null) {
             Item item = createItem("ProteinDomain");
             item.setAttribute("primaryIdentifier", identifier);
             item.setAttribute("shortName", shortName);
-            item.addToCollection("dataSets", datasetRefId);
             refId = item.getIdentifier();
             domains.put(identifier, refId);
             try {
