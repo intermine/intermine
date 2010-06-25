@@ -32,8 +32,9 @@ import org.intermine.xml.full.Item;
 import org.xml.sax.SAXException;
 
 /**
+ * Create orthologues based on KEGG pathways.
  *
- * @author
+ * @author Julie Sullivan
  */
 public class KeggOrthologuesConverter extends BioFileConverter
 {
@@ -141,7 +142,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
     }
 
     private void processLine(String line, Set<String> homologues)
-    throws ObjectStoreException, SAXException {
+        throws ObjectStoreException, SAXException {
         // split taxon abbreviation and identifier, eg. HSA: 7358(UGDH)
         String[] bits = line.split(" ");
         if (bits.length < 2) {
@@ -174,7 +175,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
 
     // for this gene, loop through other genes and make homologue pair
     private void processHomologues(String identifier, Set<String> homologues)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         for (String homologue : homologues) {
             if (!homologue.equals(identifier)) {
                 processHomologue(identifier, homologue);
@@ -195,7 +196,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
 
     // save homologue pair
     private void processHomologue(String gene1, String gene2)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         Item homologue = createItem("Homologue");
         homologue.setReference("gene", gene1);
         homologue.setReference("homologue", gene2);
@@ -209,7 +210,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
     }
 
     private String getGene(String identifierType, String id, String taxonId)
-    throws ObjectStoreException, SAXException {
+        throws ObjectStoreException, SAXException {
         String identifier = id;
         if (taxonId.equals("7227")) {
             identifier = resolveGene(identifier);
@@ -235,7 +236,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
     }
 
     private String getEvidence()
-    throws ObjectStoreException {
+        throws ObjectStoreException {
 
         if (evidenceRefId == null) {
 

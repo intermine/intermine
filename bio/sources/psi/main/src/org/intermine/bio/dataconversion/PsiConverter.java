@@ -149,7 +149,7 @@ public class PsiConverter extends BioFileConverter
     class PsiHandler extends DefaultHandler
     {
         private Map<String, ExperimentHolder> experimentIds
-        = new HashMap<String, ExperimentHolder>();
+            = new HashMap<String, ExperimentHolder>();
         private InteractionHolder holder = null;
         private ExperimentHolder experimentHolder = null;
         private InteractorHolder interactorHolder = null;
@@ -164,13 +164,13 @@ public class PsiConverter extends BioFileConverter
         private Map<String, String> intactIdToIdentifier = new HashMap<String, String>();
         // identifier to temporary holding object
         private Map<String, InteractorHolder> identifierToHolder
-        = new HashMap<String, InteractorHolder>();
+            = new HashMap<String, InteractorHolder>();
 
         /**
          * {@inheritDoc}
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
-        throws SAXException {
+            throws SAXException {
             attName = null;
 
             // ------------- experiments ------------------------- //
@@ -319,7 +319,7 @@ public class PsiConverter extends BioFileConverter
          * {@inheritDoc}
          */
         public void endElement(String uri, String localName, String qName)
-        throws SAXException {
+            throws SAXException {
             super.endElement(uri, localName, qName);
             stack.pop();
 
@@ -501,8 +501,8 @@ public class PsiConverter extends BioFileConverter
 
                 // interactingRegions
                 if (ih.isRegionFeature()) {
-                   String refId = getRegion(ih, interaction.getIdentifier(), shortName);
-                   interaction.addToCollection("interactingRegions", refId);
+                    String refId = getRegion(ih, interaction.getIdentifier(), shortName);
+                    interaction.addToCollection("interactingRegions", refId);
                 }
 
                 /* store all interaction-related items */
@@ -600,7 +600,7 @@ public class PsiConverter extends BioFileConverter
         }
 
         private String storeGene(String taxonId, String intactId)
-        throws ObjectStoreException, SAXException {
+            throws ObjectStoreException, SAXException {
 
             if (config.get(taxonId) == null) {
                 LOG.error("gene not processed.  configuration not found for taxonId: " + taxonId);
@@ -618,15 +618,15 @@ public class PsiConverter extends BioFileConverter
                     if (identifier == null) {
                         return null;
                     }
-                 }
+                }
             }
 
             // everyone not using the resolver should have an identifier
             if (identifier == null) {
                 if (!taxonId.equals("7227")) {
-                   String msg = "no identifier found for organism:" + taxonId
+                    String msg = "no identifier found for organism:" + taxonId
                                                + " interactor " + interactorId;
-                   LOG.error(msg);
+                    LOG.error(msg);
                 }
                 return null;
             }
@@ -659,7 +659,7 @@ public class PsiConverter extends BioFileConverter
         }
 
         private String getGene(String field, String identifier, String taxonId)
-        throws SAXException, ObjectStoreException {
+            throws SAXException, ObjectStoreException {
             String itemId = genes.get(identifier);
             if (itemId == null) {
                 Item item = createItem("Gene");
@@ -678,7 +678,7 @@ public class PsiConverter extends BioFileConverter
         }
 
         private String getPub(String pubMedId)
-        throws SAXException {
+            throws SAXException {
             String itemId = pubs.get(pubMedId);
             if (itemId == null) {
                 Item pub = createItem("Publication");
@@ -705,7 +705,7 @@ public class PsiConverter extends BioFileConverter
 
         private String getRegion(InteractorHolder ih, String interactionRefId,
                                  String interactionName)
-        throws ObjectStoreException {
+            throws ObjectStoreException {
             String refId = regions.get(ih.regionName1);
             if (refId == null) {
                 Item region = createItem("InteractionRegion");
@@ -764,14 +764,14 @@ public class PsiConverter extends BioFileConverter
                 while (l > 0) {
                     boolean whitespace = false;
                     switch(ch[st]) {
-                    case ' ':
-                    case '\r':
-                    case '\n':
-                    case '\t':
-                        whitespace = true;
-                        break;
-                    default:
-                        break;
+                        case ' ':
+                        case '\r':
+                        case '\n':
+                        case '\t':
+                            whitespace = true;
+                            break;
+                        default:
+                            break;
                     }
                     if (!whitespace) {
                         break;
@@ -1051,22 +1051,22 @@ public class PsiConverter extends BioFileConverter
             }
 
             /**
-            * @param description description of experiment
-            */
-           protected void setDescription(String description) {
-               experiment.setAttribute("description", description);
-           }
+             * @param description description of experiment
+             */
+            protected void setDescription(String description) {
+                experiment.setAttribute("description", description);
+            }
 
             /**
              * @param pubMedId of this experiment
              * @throws SAXException if publication can't be stored
              */
-           protected void setPublication(String pubMedId)
-           throws SAXException {
-               if (StringUtil.allDigits(pubMedId)) {
-                   String pubRefId = getPub(pubMedId);
-                   experiment.setReference("publication", pubRefId);
-               }
+            protected void setPublication(String pubMedId)
+                throws SAXException {
+                if (StringUtil.allDigits(pubMedId)) {
+                    String pubRefId = getPub(pubMedId);
+                    experiment.setReference("publication", pubRefId);
+                }
             }
 
             /**

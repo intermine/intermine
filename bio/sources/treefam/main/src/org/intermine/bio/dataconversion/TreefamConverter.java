@@ -59,7 +59,7 @@ public class TreefamConverter extends BioFileConverter
      * @throws ObjectStoreException can't store dataset
      */
     public TreefamConverter(ItemWriter writer, Model model)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
         // only construct factory here so can be replaced by mock factory in tests
@@ -67,7 +67,7 @@ public class TreefamConverter extends BioFileConverter
     }
 
     /**
-     * Sets the list of taxonIds that should be processed
+     * Sets the list of taxonIds that should be processed.
      *
      * @param taxonIds a space-separated list of taxonIds
      */
@@ -88,7 +88,7 @@ public class TreefamConverter extends BioFileConverter
      * @throws SAXException if something goes horribly wrong
      */
     public void readGenes(Reader reader)
-    throws IOException, ObjectStoreException, SAXException {
+        throws IOException, ObjectStoreException, SAXException {
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String bits[] = lineIter.next();
@@ -209,7 +209,7 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
 
         String gene1 = holder1.getGeneRefId();
         String gene2 = holder2.getGeneRefId();
@@ -233,7 +233,7 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private String getGene(String identifierType, String id, String taxonId)
-    throws ObjectStoreException, SAXException {
+        throws ObjectStoreException, SAXException {
         String identifier = id;
         if (taxonId.equals("7227")) {
             identifier = resolveGene(identifier);
@@ -259,7 +259,7 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private String getEvidence()
-    throws ObjectStoreException {
+        throws ObjectStoreException {
 
         if (evidenceRefId == null) {
             Item item = createItem("OrthologueEvidenceCode");

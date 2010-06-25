@@ -565,17 +565,17 @@ public class GoConverter extends BioFileConverter
         throws ObjectStoreException {
         String dataSetIdentifier = dataSets.get(code);
         if (dataSetIdentifier == null) {
-            String title = "GO Annotation from " + getDataSourceName(code);
+            String dataSourceName = getDataSourceName(code);
+            String title = "GO Annotation from " + dataSourceName;
             Item item = createItem("DataSet");
             item.setAttribute("name", title);
-            item.setReference("dataSource", getDataSource(code));
+            item.setReference("dataSource", getDataSource(dataSourceName));
             dataSetIdentifier = item.getIdentifier();
             dataSets.put(code, dataSetIdentifier);
             store(item);
         }
         return dataSetIdentifier;
     }
-
 
     private String newPublication(String codes) throws ObjectStoreException {
         String pubRefId = null;

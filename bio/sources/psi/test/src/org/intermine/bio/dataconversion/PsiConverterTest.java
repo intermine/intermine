@@ -16,11 +16,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.dataconversion.MockItemsTestCase;
 import org.intermine.metadata.Model;
 
-public class PsiConverterTest extends MockItemsTestCase
+public class PsiConverterTest extends ItemsTestCase
 {
 
     PsiConverter converter;

@@ -68,7 +68,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
      */
     @Override
     public void process(Reader reader)
-    throws Exception {
+        throws Exception {
         File currentFile = getCurrentFile();
         parentDir = currentFile.getParent();
         if (currentFile.getName().endsWith(".xml")) {
@@ -161,7 +161,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
             } else if (qName.equals("alignment_file")
                             && attrs.getValue("format").equals("joy_html")
                             && stack.peek().equals("model")) {
-                            alignmentFile = true;
+                alignmentFile = true;
             }
 
             attName = qName;
@@ -241,7 +241,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
         }
 
         private String getProtein(String identifier)
-        throws ObjectStoreException, SAXException {
+            throws ObjectStoreException, SAXException {
             String proteinIdentifier = proteinMap.get(identifier);
             if (proteinIdentifier == null) {
                 Item protein = createItem("Protein");
@@ -279,14 +279,14 @@ public class ProteinStructureDataConverter extends BioFileConverter
                 while (l > 0) {
                     boolean whitespace = false;
                     switch(ch[st]) {
-                    case ' ':
-                    case '\r':
-                    case '\n':
-                    case '\t':
-                        whitespace = true;
-                        break;
-                    default:
-                        break;
+                        case ' ':
+                        case '\r':
+                        case '\n':
+                        case '\t':
+                            whitespace = true;
+                            break;
+                        default:
+                            break;
                     }
                     if (!whitespace) {
                         break;

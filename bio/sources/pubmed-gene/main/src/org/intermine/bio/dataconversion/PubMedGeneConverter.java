@@ -46,7 +46,7 @@ public class PubMedGeneConverter extends FileConverter
 {
     private String referencesFileName;
     private File infoFile;
-    private Set<String> taxonIds = new HashSet();
+    private Set<String> taxonIds = new HashSet<String>();
     private Map<Integer, String> publications = new HashMap<Integer, String>();
     private String datasetRefId;
     private String datasourceRefId;
@@ -87,7 +87,7 @@ public class PubMedGeneConverter extends FileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader)
-    throws Exception {
+        throws Exception {
         if (getInfoFile() == null) {
             throw new RuntimeException("PubMedGeneConverter: Property infoFile is not set.");
         }

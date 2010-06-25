@@ -21,6 +21,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -31,9 +32,9 @@ import org.intermine.xml.full.Item;
 public class RNAiConverter extends BioFileConverter
 {
     private Map<String, Item> geneMap = new HashMap<String, Item>(),
-        screenMap = new HashMap<String, Item>(),
-        pubMap = new HashMap<String, Item>(),
-        phenotypeMap = new HashMap<String, Item>();
+    screenMap = new HashMap<String, Item>(),
+    pubMap = new HashMap<String, Item>(),
+    phenotypeMap = new HashMap<String, Item>();
     private Item org, ontology;
 
     /**
@@ -43,7 +44,7 @@ public class RNAiConverter extends BioFileConverter
      * @throws ObjectStoreException of problem reading/writing data
      */
     public RNAiConverter(ItemWriter writer, Model model)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         super(writer, model, "WormBase", "WormBase RNAi Phenotypes");
 
         org = createItem("Organism");
@@ -103,21 +104,16 @@ public class RNAiConverter extends BioFileConverter
         }
     }
 
-    private Item createGene(String primaryIdentifier) throws ObjectStoreException {
+    private Item createGene(String primaryIdentifier)
+        throws ObjectStoreException, SAXException {
         Item gene = (Item) geneMap.get(primaryIdentifier);
         if (gene == null) {
             gene = createItem("Gene");
             gene.setReference("organism", org.getIdentifier());
             gene.setAttribute("primaryIdentifier", primaryIdentifier);
             geneMap.put(primaryIdentifier, gene);
-
-            Item synonym = createItem("Synonym");
-            synonym.setAttribute("value", primaryIdentifier);
-            synonym.setAttribute("type", "identifier");
-            synonym.setReference("subject", gene.getIdentifier());
-
             store(gene);
-            store(synonym);
+            createSynonym(gene, "identifier", primaryIdentifier, "true", true);
         }
         return gene;
     }

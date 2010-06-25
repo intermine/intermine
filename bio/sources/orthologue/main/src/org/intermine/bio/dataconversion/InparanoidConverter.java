@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -130,10 +129,10 @@ public class InparanoidConverter extends BioFileConverter
     /**
      * Given a directory for gene/peptide mappings: find files, determine taxon id from file name
      * and read files contents into a map from peptide id to gene id.
-     * @throws FileNotFoundException
-     * @throws IOException
+     * @throws IOException if we can't read the file
      */
-    private void readGenePeptideMappings() throws FileNotFoundException, IOException {
+    private void readGenePeptideMappings()
+        throws IOException {
          // contruct here whatever so calling method can test null
         peptideGeneMaps = new HashMap<String, Map<String, String>>();
 
@@ -297,7 +296,7 @@ public class InparanoidConverter extends BioFileConverter
             // make sure final group gets stored
             createHomologues(orgA, orgB, oldIndex);
             createHomologues(orgB, orgA, oldIndex);
-         }
+        }
     }
 
 
@@ -315,7 +314,7 @@ public class InparanoidConverter extends BioFileConverter
     //       do nothing (these are two separate inParalogues of main orthologue)
 
     private void createHomologues(List<BioAndScores> orgA, List<BioAndScores> orgB, String index)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         // generate a name for the cluster based on organisms (in order) and index
         String cluster = orgA.get(0).getOrganism() + "-" + orgB.get(0).getOrganism() + ":" + index;
 
@@ -333,7 +332,7 @@ public class InparanoidConverter extends BioFileConverter
                     String nameToUse;
                     if (alreadyDone.contains("" + otherBio.bioIdentifier + thisBio.bioIdentifier)) {
                         nameToUse = orgB.get(0).getOrganism() + "-" + orgA.get(0).getOrganism()
-                        + ":" + index;
+                            + ":" + index;
                     } else {
                         nameToUse = cluster;
                     }
@@ -398,7 +397,7 @@ public class InparanoidConverter extends BioFileConverter
      * @param attribute the attribute of the BioEntity set, e.g. identifier or primaryIdentifier
      * @return a new Gene/Protein Item
      * @throws ObjectStoreException if an error occurs in storing
-     * @throws SAXException
+     * @throws SAXException if something goes horribly wrong
      */
     protected Item newBioEntity(String identifier, String attribute, String organismRefId,
             String type)
@@ -475,6 +474,10 @@ public class InparanoidConverter extends BioFileConverter
         }
     }
 
+    /**
+     * @param code inparanoid's code for an organism
+     * @return ID representing the stored organism object
+     */
     public String getOrganism(String code) {
         String taxonId = (String) taxonIds.get(code);
         if (taxonId == null) {

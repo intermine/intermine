@@ -99,9 +99,9 @@ public class PdbConverter extends BioDirectoryConverter
             File[] filesToProcess = dir.listFiles();
             proteins = new HashMap<String, String>();
             for (File f : filesToProcess) {
-              if (f.getName().endsWith(".pdb")) {
-                  processPDBFile(f, taxonId);
-              }
+                if (f.getName().endsWith(".pdb")) {
+                    processPDBFile(f, taxonId);
+                }
             }
         }
     }
@@ -117,7 +117,7 @@ public class PdbConverter extends BioDirectoryConverter
     }
 
     private void processPDBFile(File file, String taxonId)
-    throws FileNotFoundException, IOException, Exception {
+        throws Exception {
         Item proteinStructure = createItem("ProteinStructure");
 
         PDBFileParser pdbfileparser = new PDBFileParser();
@@ -163,7 +163,7 @@ public class PdbConverter extends BioDirectoryConverter
     }
 
     private String getProtein(String accession, String taxonId)
-    throws SAXException {
+        throws SAXException {
         String refId = proteins.get(accession);
         if (refId == null) {
             Item item = createItem("Protein");

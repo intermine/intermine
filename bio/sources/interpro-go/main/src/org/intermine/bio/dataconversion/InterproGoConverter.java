@@ -36,8 +36,8 @@ public class InterproGoConverter extends BioFileConverter
     private static final String DATASET_TITLE = "InterPro GO Annotation data set";
     private static final String DATA_SOURCE_NAME = "InterPro";
     private static final String INTERPRO_PREFIX = "InterPro:";
-    private Map<String, Item> proteinDomains = new HashMap();
-    private Map<String, String> goTerms = new HashMap();
+    private Map<String, Item> proteinDomains = new HashMap<String, Item>();
+    private Map<String, String> goTerms = new HashMap<String, String>();
 
 
     /**
@@ -116,7 +116,7 @@ public class InterproGoConverter extends BioFileConverter
     }
 
     private String getGoTerm(String identifier)
-    throws SAXException {
+        throws SAXException {
         String refId = goTerms.get(identifier);
         if (refId == null) {
             Item item = createItem("GOTerm");

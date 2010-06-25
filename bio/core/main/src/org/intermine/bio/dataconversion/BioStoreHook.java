@@ -91,7 +91,7 @@ public class BioStoreHook implements DataConverterStoreHook
      */
     public void processItem(DataConverter dataConverter, Item item) {
         setSOTerm(dataConverter, item);
-        if (dataSetRefId != null) {
+        if (StringUtils.isNotEmpty(dataSetRefId)) {
             setDataSets(model, item, dataSetRefId, dataSourceRefId);
         }
     }

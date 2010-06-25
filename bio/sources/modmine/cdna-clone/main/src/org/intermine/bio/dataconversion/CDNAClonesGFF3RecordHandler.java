@@ -39,22 +39,15 @@ public class CDNAClonesGFF3RecordHandler extends GFF3RecordHandler
         // are from the last column of the file are available in a map with the attribute name as
         // the key.
         //
-             Item feature = getFeature();
-             
-             if (record.getType().equals("cDNA_match")) {
-
-                 feature.setClassName("CDNA");
-                 
-                 String[] target = record.getTarget().split("\\s");
-                 feature.setAttribute("primaryIdentifier", target[0]);
-                 
-                 String id = record.getId();
-                 feature.setAttribute("secondaryIdentifier", id);                 
-
-             } else {
-                 clear();                 
-             }
-                 
+        Item feature = getFeature();
+        if (record.getType().equals("cDNA_match")) {
+            feature.setClassName("CDNA");
+            String[] target = record.getTarget().split("\\s");
+            feature.setAttribute("primaryIdentifier", target[0]);
+            String id = record.getId();
+            feature.setAttribute("secondaryIdentifier", id);
+        } else {
+            clear();
+        }
     }
-
 }
