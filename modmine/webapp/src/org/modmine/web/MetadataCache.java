@@ -29,15 +29,16 @@ import java.util.TreeMap;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.model.bio.DatabaseRecord;
 import org.intermine.model.bio.Experiment;
+import org.intermine.model.bio.ExpressionLevel;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
-import org.intermine.model.bio.ExpressionLevel;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -454,11 +455,17 @@ public class MetadataCache
             List<GBrowseTrack> expTracks = new ArrayList<GBrowseTrack>();
             tracks.put(exp.getName(), expTracks);
             for (Submission sub : exp.getSubmissions()) {
-                List<GBrowseTrack> subTracks = subTracksMap.get(sub.getdCCid());
-                if (subTracks != null) {
-                    // check so it is unique
-                    // expTracks.addAll(subTracks);
-                    addToList(expTracks, subTracks);
+
+                if (subTracksMap.get(sub.getdCCid()) != null){
+
+                    List<GBrowseTrack> subTracks = subTracksMap.get(sub.getdCCid());
+                    if (subTracks != null) {
+                        // check so it is unique
+                        // expTracks.addAll(subTracks);
+                        addToList(expTracks, subTracks);
+                    } else {
+                        continue;
+                    }
                 }
             }
         }
@@ -1013,7 +1020,7 @@ public class MetadataCache
             tracks.putAll(flyTracks);
             tracks.putAll(wormTracks);
             setGBrowseTracks(tracks);
-        }
+       }
     }
 
     /**
@@ -1030,17 +1037,18 @@ public class MetadataCache
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
 
+            final String SEPARATOR = ";";
 
             // examples of lines:
             //
             // [Henikoff_Salt_H3_WIG]
             // key      = H3.3 Chromatin fractions extracted with NaCl
-            // select   = 80mM fraction#2534 350mM fraction#2535 600mM fraction#2536
+            // select   = 80mM fraction;2534 350mM fraction;2535 600mM fraction;2536
             // citation = <h1> H3.3 NaCl Salt Extracted Chromatin ....
             //
             // [LIEB_WIG_CHROMNUC_ENV]
             // key      = Chromosome-Nuclear Envelope Interaction
-            // select   = SDQ3891_LEM2_N2_MXEMB_1#2729 SDQ3897_NPP13_N2_MXEMB_1#2738
+            // select   = SDQ3891_LEM2_N2_MXEMB_1;2729 SDQ3897_NPP13_N2_MXEMB_1;2738
             // citation = <h1> Chromosome-Nuclear Envelope Interaction proteins...
             //
             // note: subtracks have also names with spaces
@@ -1060,16 +1068,22 @@ public class MetadataCache
                     String data = line.replace("select   = ", "");
                     String[] result = data.split("\\s");
                     for (String token : result) {
-                        if (token.indexOf('#') < 0) {
+                        if (token.indexOf(SEPARATOR) < 0) {
                             // we are dealing with a bit of name
                             toAppend.append(token + " ");
                         } else {
                             // this is a token with subId
                             String subTrack = toAppend.toString()
-                                + token.substring(0, token.indexOf('#'));
-                            Integer dccId = Integer.parseInt(
-                                    token.substring(token.indexOf('#') + 1, token.length()));
-                            LOG.debug("SUBTRACK: " + subTrack);
+                                + token.substring(0, token.indexOf(SEPARATOR));
+                            String dcc = token.substring(
+                                    token.indexOf(SEPARATOR) + 1, token.length());
+                            if (!StringUtils.isNumeric(dcc)) {
+                                LOG.error("[SUBTRACKS] " + subTrack + " has a non numeric dccId: " 
+                                        + dcc);                                
+                                continue;
+                            }
+                            Integer dccId = Integer.parseInt(dcc);
+                            LOG.debug("SUBTRACK: " + subTrack + "|" + dccId);
                             toAppend.setLength(0); // empty buffer
                             GBrowseTrack newTrack =
                                 new GBrowseTrack(organism, trackName.toString(), subTrack);
