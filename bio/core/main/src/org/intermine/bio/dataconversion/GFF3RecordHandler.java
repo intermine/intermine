@@ -76,7 +76,7 @@ public class GFF3RecordHandler
      */
     public void setIdentifierMap(Map<?, ?> identifierMap) {
         // empty
-     }
+    }
 
     /**
      * Return the Model that was passed to the constructor.

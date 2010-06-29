@@ -302,41 +302,41 @@ public class GFF3Converter
             boolean makeLocation = record.getStart() >= 1 && record.getEnd() >= 1
                 && !dontCreateLocations
                 && handler.createLocations(record);
-                if (makeLocation) {
-                    Item relation = createItem("Location");
-                    int start = record.getStart();
-                    int end = record.getEnd();
-                    if (record.getStart() < record.getEnd()) {
-                        relation.setAttribute("start", String.valueOf(start));
-                        relation.setAttribute("end", String.valueOf(end));
+            if (makeLocation) {
+                Item relation = createItem("Location");
+                int start = record.getStart();
+                int end = record.getEnd();
+                if (record.getStart() < record.getEnd()) {
+                    relation.setAttribute("start", String.valueOf(start));
+                    relation.setAttribute("end", String.valueOf(end));
+                } else {
+                    relation.setAttribute("start", String.valueOf(end));
+                    relation.setAttribute("end", String.valueOf(start));
+                }
+                if (record.getStrand() != null && record.getStrand().equals("+")) {
+                    relation.setAttribute("strand", "1");
+                } else
+                    if (record.getStrand() != null && record.getStrand().equals("-")) {
+                        relation.setAttribute("strand", "-1");
                     } else {
-                        relation.setAttribute("start", String.valueOf(end));
-                        relation.setAttribute("end", String.valueOf(start));
+                        relation.setAttribute("strand", "0");
                     }
-                    if (record.getStrand() != null && record.getStrand().equals("+")) {
-                        relation.setAttribute("strand", "1");
-                    } else
-                        if (record.getStrand() != null && record.getStrand().equals("-")) {
-                            relation.setAttribute("strand", "-1");
-                        } else {
-                            relation.setAttribute("strand", "0");
-                        }
-                    int length = Math.abs(end - start) + 1;
-                    feature.setAttribute("length", String.valueOf(length));
+                int length = Math.abs(end - start) + 1;
+                feature.setAttribute("length", String.valueOf(length));
 
-                    relation.setReference("locatedOn", seq.getIdentifier());
-                    relation.setReference("feature", feature.getIdentifier());
-                    relation.addToCollection("dataSets", dataSet);
+                relation.setReference("locatedOn", seq.getIdentifier());
+                relation.setReference("feature", feature.getIdentifier());
+                relation.addToCollection("dataSets", dataSet);
 
-                    handler.setLocation(relation);
-                    if (seqClsName.equals("Chromosome")
-                            && (cd.getFieldDescriptorByName("chromosome") != null)) {
-                        feature.setReference("chromosome", seq.getIdentifier());
-                        if (makeLocation) {
-                            feature.setReference("chromosomeLocation", relation);
-                        }
+                handler.setLocation(relation);
+                if (seqClsName.equals("Chromosome")
+                        && (cd.getFieldDescriptorByName("chromosome") != null)) {
+                    feature.setReference("chromosome", seq.getIdentifier());
+                    if (makeLocation) {
+                        feature.setReference("chromosomeLocation", relation);
                     }
                 }
+            }
         }
         handler.addDataSet(dataSet);
         Double score = record.getScore();
@@ -502,7 +502,7 @@ public class GFF3Converter
      * @throws ObjectStoreException if the Item can't be stored
      */
     private Item getSeq(String id)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         // the seqHandler may have changed the id used, e.g. if using an IdResolver
         String identifier = sequenceHandler.getSeqIdentifier(id);
 
