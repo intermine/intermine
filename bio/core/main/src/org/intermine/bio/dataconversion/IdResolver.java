@@ -34,17 +34,17 @@ import java.util.Set;
 public class IdResolver
 {
     private String clsName;
-    protected Map<String, Map<String, Set<String>>> orgIdMaps = 
+    protected Map<String, Map<String, Set<String>>> orgIdMaps =
         new HashMap<String, Map<String, Set<String>>>();
-    protected Map<String, Map<String, Set<String>>> orgSynMaps = 
+    protected Map<String, Map<String, Set<String>>> orgSynMaps =
         new HashMap<String, Map<String, Set<String>>>();
-    protected Map<String, Map<String, Set<String>>> orgMainMaps = 
+    protected Map<String, Map<String, Set<String>>> orgMainMaps =
         new HashMap<String, Map<String, Set<String>>>();
-    private Map<String, Map<String, Set<String>>> orgIdMainMaps = 
+    private Map<String, Map<String, Set<String>>> orgIdMainMaps =
         new HashMap<String, Map<String, Set<String>>>();
-    private Map<String, Map<String, Set<String>>> orgIdSynMaps = 
+    private Map<String, Map<String, Set<String>>> orgIdSynMaps =
         new HashMap<String, Map<String, Set<String>>>();
-    
+
     /**
      * Construct and empty IdResolver
      * @param clsName the class to resolve identifiers for
@@ -84,7 +84,7 @@ public class IdResolver
         if (orgSynMaps.containsKey(taxonId)) {
             return orgSynMaps.get(taxonId).get(id);
         }
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     /**
@@ -160,7 +160,7 @@ public class IdResolver
      * @param synonyms a set of synonyms
      * @param mainId if true these are main ids, otherwise synonms
     */
-     private void addEntry(String taxonId, String primaryIdentifier, Collection<String> ids,
+    private void addEntry(String taxonId, String primaryIdentifier, Collection<String> ids,
                            Boolean mainId) {
         Map<String, Set<String>> idMap = orgIdMaps.get(taxonId);
         if (idMap == null) {
@@ -169,7 +169,7 @@ public class IdResolver
         }
 
         addToMapList(idMap, primaryIdentifier, ids);
-        
+
         Map<String, Set<String>> lookupMap = null;
         Map<String, Set<String>> reverseMap = null;
         if (mainId) {
@@ -178,7 +178,7 @@ public class IdResolver
                 lookupMap = new HashMap<String, Set<String>>();
                 orgMainMaps.put(taxonId, lookupMap);
             }
-            
+
             reverseMap = orgIdMainMaps.get(taxonId);
             if (reverseMap == null) {
                 reverseMap = new HashMap<String, Set<String>>();
@@ -191,7 +191,7 @@ public class IdResolver
                 lookupMap = new HashMap<String, Set<String>>();
                 orgSynMaps.put(taxonId, lookupMap);
             }
-            
+
             reverseMap = orgIdSynMaps.get(taxonId);
             if (reverseMap == null) {
                 reverseMap = new HashMap<String, Set<String>>();
@@ -203,7 +203,7 @@ public class IdResolver
         addToMapList(reverseMap, primaryIdentifier, ids);
 
         for (String id : ids) {
-                addToMapList(lookupMap, id, Collections.singleton(primaryIdentifier));
+            addToMapList(lookupMap, id, Collections.singleton(primaryIdentifier));
         }
     }
 
@@ -215,18 +215,18 @@ public class IdResolver
     public void writeToFile(File f) throws IOException {
         StringBuffer sb = new StringBuffer();
         for (String taxonId : orgIdMaps.keySet()) {
-            
+
             // get maps for this organism
             Map<String, Set<String>> idMap = orgIdMaps.get(taxonId);
             Map<String, Set<String>> mainIdsMap = orgIdMainMaps.get(taxonId);
             Map<String, Set<String>> synonymMap = orgIdSynMaps.get(taxonId);
-            
+
             for (Map.Entry<String, Set<String>> idMapEntry : idMap.entrySet()) {
                 String primaryId = idMapEntry.getKey();
-                
+
                 sb.append(taxonId + "\t");  // write taxon id
                 sb.append(primaryId + "\t");  // write primary id
-                
+
                 if (mainIdsMap != null && mainIdsMap.containsKey(primaryId)) {
                     boolean first = true;
                     for (String mainId : mainIdsMap.get(primaryId)) {
@@ -238,7 +238,7 @@ public class IdResolver
                         sb.append(mainId);
                     }
                 }
-                
+
                 if (synonymMap != null && synonymMap.containsKey(primaryId)) {
                     boolean first = true;
                     sb.append("\t");
@@ -260,21 +260,21 @@ public class IdResolver
         fw.close();
     }
 
-    
+
     /**
      * Read contents of an IdResolver from file, allows for caching during a build.
      * @param f the file to read from
-     * @throws FileNotFoundException if file not found
      * @throws IOException if problem reading from file
      */
-    public void populateFromFile(File f) throws FileNotFoundException, IOException {
+    public void populateFromFile(File f)
+        throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(f));
         String line = null;
         while ((line = reader.readLine()) != null) {
             String[] cols = line.split("\t");
             String taxonId = cols[0];
             String primaryId = cols[1];
-            
+
             String mainIdsStr = cols[2];
             if (mainIdsStr != null && !mainIdsStr.equals("")) {
                 String[] mainIds = mainIdsStr.split(",");
@@ -291,10 +291,10 @@ public class IdResolver
             }
         }
     }
-    
-    
+
+
     // check that the given taxon id has some data for it
-    private void checkTaxonId(String taxonId) throws IllegalArgumentException {
+    private void checkTaxonId(String taxonId) {
         if (!orgIdMaps.containsKey(taxonId)) {
             throw new IllegalArgumentException(clsName + " IdResolver has "
                                                + "no data for taxonId: "
