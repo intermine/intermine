@@ -43,11 +43,11 @@ public class ProjectsSummaryController extends TilesAction
      * {@inheritDoc}
      */
     public ActionForward execute(@SuppressWarnings("unused")  ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-        throws Exception {
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form,
+            HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response)
+    throws Exception {
         try {
             final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
             ObjectStore os = im.getObjectStore();
@@ -56,6 +56,9 @@ public class ProjectsSummaryController extends TilesAction
                 MetadataCache.getProjectExperiments(os);
             request.setAttribute("experiments", experiments);
 
+            Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
+            request.setAttribute("tracks", tracks);
+
             Properties propCat = new Properties();
             Properties propOrd = new Properties();
             final ServletContext servletContext = servlet.getServletContext();
@@ -63,7 +66,7 @@ public class ProjectsSummaryController extends TilesAction
             InputStream is =
                 servletContext.getResourceAsStream("/WEB-INF/experimentCategory.properties");
             if (is == null) {
-                LOG.info("Unable to find /WEB-INF/experimentCategory.properties!");
+                LOG.error("Unable to find /WEB-INF/experimentCategory.properties!");
             } else {
                 try {
                     propCat.load(is);
@@ -75,7 +78,7 @@ public class ProjectsSummaryController extends TilesAction
             InputStream is2 =
                 servletContext.getResourceAsStream("/WEB-INF/categoryOrder.properties");
             if (is == null) {
-                LOG.info("Unable to find /WEB-INF/category.properties!");
+                LOG.error("Unable to find /WEB-INF/category.properties!");
             } else {
                 try {
                     propOrd.load(is2);
@@ -90,16 +93,21 @@ public class ProjectsSummaryController extends TilesAction
             for (List<DisplayExperiment> ll : experiments.values()) {
                 for (DisplayExperiment de : ll) {
                     String cats = propCat.getProperty(de.getName());
-                    // an experiment can be associated to more than 1 category
-                    String[] cat = cats.split("#");
-                    for (String c : cat) {
-                        List<DisplayExperiment> des = catExpUnordered.get(c);
-                        if (des == null) {
-                            des = new ArrayList<DisplayExperiment>();
-                            catExpUnordered.put(c, des);
+                    if (cats == null){
+                        LOG.error("Experiment **" + de.getName() + "** is missing category: "
+                                + "please edit "
+                                + "webapp/resources/webapp/WEB-INF/experimentCategory.properties");
+                    } else {
+                        // an experiment can be associated to more than 1 category
+                        String[] cat = cats.split("#");
+                        for (String c : cat) {
+                            List<DisplayExperiment> des = catExpUnordered.get(c);
+                            if (des == null) {
+                                des = new ArrayList<DisplayExperiment>();
+                                catExpUnordered.put(c, des);
+                            }
+                            des.add(de);
                         }
-                        des.add(de);
-                        //LOG.info("DEXP: " + c + "|" + de.getName());
                     }
                 }
             }
@@ -115,8 +123,6 @@ public class ProjectsSummaryController extends TilesAction
 
             request.setAttribute("catExp", catExp);
 
-            Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
-            request.setAttribute("tracks", tracks);
 
         } catch (Exception err) {
             err.printStackTrace();
