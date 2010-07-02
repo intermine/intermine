@@ -58,19 +58,19 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
     // feature type to query from the feature table
     private static final List<String> FEATURES = Arrays.asList(
-         "gene", "mRNA", "transcript",
-         "CDS", "intron", "exon", "EST",
-         "five_prime_untranslated_region",
-         "five_prime_UTR", "three_prime_untranslated_region",
-         "three_prime_UTR", "origin_of_replication",
-         "binding_site", "protein_binding_site", "TF_binding_site",
-         "transcript_region", "histone_binding_site", "copy_number_variation",
-         "natural_transposable_element", "start_codon", "stop_codon"
-         , "cDNA"
-         , "three_prime_RACE_clone", "three_prime_RST", "three_prime_UST"
-         , "polyA_site", "polyA_signal_sequence", "overlapping_EST_set", "exon_region"
-         , "SL1_acceptor_site", "SL2_acceptor_site"
-         , "transcription_end_site", "TSS"
+            "gene", "mRNA", "transcript",
+            "CDS", "intron", "exon", "EST",
+            "five_prime_untranslated_region",
+            "five_prime_UTR", "three_prime_untranslated_region",
+            "three_prime_UTR", "origin_of_replication",
+            "binding_site", "protein_binding_site", "TF_binding_site",
+            "transcript_region", "histone_binding_site", "copy_number_variation",
+            "natural_transposable_element", "start_codon", "stop_codon"
+            , "cDNA"
+            , "three_prime_RACE_clone", "three_prime_RST", "three_prime_UST"
+            , "polyA_site", "polyA_signal_sequence", "overlapping_EST_set", "exon_region"
+            , "SL1_acceptor_site", "SL2_acceptor_site"
+            , "transcription_end_site", "TSS"
     );
 
     // the FB name for the mitochondrial genome
@@ -160,20 +160,20 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
          */
 
         return "(cvterm.name = 'chromosome' OR cvterm.name = 'chromosome_arm') AND "
-        + " feature_id IN ( SELECT featureloc.srcfeature_id "
-        + " FROM featureloc, " + SUBFEATUREID_TEMP_TABLE_NAME
-        + " WHERE featureloc.feature_id = " + SUBFEATUREID_TEMP_TABLE_NAME + ".feature_id) "
-        + " OR feature_id IN ( SELECT feature_id "
-        + " FROM " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
+            + " feature_id IN ( SELECT featureloc.srcfeature_id "
+            + " FROM featureloc, " + SUBFEATUREID_TEMP_TABLE_NAME
+            + " WHERE featureloc.feature_id = " + SUBFEATUREID_TEMP_TABLE_NAME + ".feature_id) "
+            + " OR feature_id IN ( SELECT feature_id "
+            + " FROM " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
 
-/*        return "(cvterm.name = 'chromosome' OR cvterm.name = 'chromosome_arm') AND "
+        /*        return "(cvterm.name = 'chromosome' OR cvterm.name = 'chromosome_arm') AND "
         + " feature_id IN ( SELECT featureloc.srcfeature_id "
         + " FROM featureloc "
         + " WHERE featureloc.feature_id IN ( SELECT feature_id "
         + " FROM " + SUBFEATUREID_TEMP_TABLE_NAME + " )) "
         + " OR feature_id IN ( SELECT feature_id "
         + " FROM " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
-*/
+         */
 
     }
 
@@ -183,7 +183,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     @Override
     protected void extraProcessing(Connection connection, Map<Integer, FeatureData> featureDataMap)
-    throws ObjectStoreException, SQLException {
+        throws ObjectStoreException, SQLException {
         // TODO: check if there is already a method to get all the match types
         // (and merge the methods)
         // also: add match to query and do everything here
@@ -205,7 +205,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
         // adding scores
         processFeatureScores(connection);
-        
+
         // do experimental features (expression levels)
         processExpressionLevels(connection);
     }
@@ -221,7 +221,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     @Override
     protected void setGeneSource(Integer imObjectId, String dataSourceName)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         String source = dataSourceName + "-" + title;
         setAttribute(imObjectId, "source", source);
     }
@@ -262,8 +262,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getMatchTypesResultSet(Connection connection) throws SQLException {
-      String query =
-        "SELECT name from cvterm where name like '%_match' ";
+        String query =
+            "SELECT name from cvterm where name like '%_match' ";
         LOG.info("executing: " + query);
         long bT = System.currentTimeMillis();
         Statement stmt = connection.createStatement();
@@ -285,26 +285,26 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getMatchLocResultSet(Connection connection, String featType)
-    throws SQLException {
+        throws SQLException {
         String query =
-        "SELECT -1 AS featureloc_id, feat.feature_id, chrloc.fmin, "
-        + " chrloc.srcfeature_id AS srcfeature_id, chrloc.fmax, FALSE AS is_fmin_partial, "
-        + " featloc.strand "
-        + " FROM feature feat, featureloc featloc, cvterm featcv, feature mf, "
-        + " cvterm mfcv, featureloc chrloc, feature chr, cvterm chrcv "
-        + " WHERE feat.type_id = featcv.cvterm_id "
-        + " AND featcv.name = '" + featType + "' "
-        + " AND feat.feature_id = featloc.srcfeature_id "
-        + " AND featloc.feature_id = mf.feature_id "
-        + " AND mf.feature_id = chrloc.feature_id "
-        + " AND chrloc.srcfeature_id = chr.feature_id "
-        + " AND chr.type_id = chrcv.cvterm_id "
-        + " AND chrcv.name = 'chromosome' "
-        + " AND mf.type_id = mfcv.cvterm_id "
-        + " AND mfcv.name = '" + featType + "_match' "
-        + " AND feat.feature_id IN "
-        + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
-      LOG.info("executing: " + query);
+            "SELECT -1 AS featureloc_id, feat.feature_id, chrloc.fmin, "
+            + " chrloc.srcfeature_id AS srcfeature_id, chrloc.fmax, FALSE AS is_fmin_partial, "
+            + " featloc.strand "
+            + " FROM feature feat, featureloc featloc, cvterm featcv, feature mf, "
+            + " cvterm mfcv, featureloc chrloc, feature chr, cvterm chrcv "
+            + " WHERE feat.type_id = featcv.cvterm_id "
+            + " AND featcv.name = '" + featType + "' "
+            + " AND feat.feature_id = featloc.srcfeature_id "
+            + " AND featloc.feature_id = mf.feature_id "
+            + " AND mf.feature_id = chrloc.feature_id "
+            + " AND chrloc.srcfeature_id = chr.feature_id "
+            + " AND chr.type_id = chrcv.cvterm_id "
+            + " AND chrcv.name = 'chromosome' "
+            + " AND mf.type_id = mfcv.cvterm_id "
+            + " AND mfcv.name = '" + featType + "_match' "
+            + " AND feat.feature_id IN "
+            + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
+        LOG.info("executing: " + query);
         long bT = System.currentTimeMillis();
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -328,7 +328,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     @Override
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-                              FeatureData featureData, int taxonId) throws ObjectStoreException {
+            FeatureData featureData, int taxonId) throws ObjectStoreException {
         Item location =
             super.makeLocation(start, end, strand, srcFeatureData, featureData, taxonId);
         processItem(location, taxonId);
@@ -340,7 +340,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     @Override
     protected Item createSynonym(FeatureData fdat, String type, String identifier,
-                                 boolean isPrimary, List<Item> otherEvidence)
+            boolean isPrimary, List<Item> otherEvidence)
         throws ObjectStoreException {
         // Don't create synonyms for main identifiers of modENCODE features.  There are too many and
         // not useful to quick search.
@@ -358,9 +358,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     private void processItem(Item item, Integer taxonId) {
         if (item.getClassName().equals("DataSource")
-            || item.getClassName().equals("DataSet")
-            || item.getClassName().equals("Organism")
-            || item.getClassName().equals("Sequence")) {
+                || item.getClassName().equals("DataSet")
+                || item.getClassName().equals("Organism")
+                || item.getClassName().equals("Sequence")) {
             return;
         }
 
@@ -370,7 +370,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             Thread.currentThread().setContextClassLoader(classLoader);
             try {
                 throw new RuntimeException("getCurrentTaxonId() returned null while processing "
-                                           + item);
+                        + item);
             } finally {
                 Thread.currentThread().setContextClassLoader(currentClassLoader);
             }
@@ -442,87 +442,87 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                     Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
 
             // full_evidence_for_feature
-//          map.put(new MultiKey("relationship", "OverlappingESTSet",
-//                  "full_evidence_for_feature", "Gene"),
-//                  Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
-          map.put(new MultiKey("relationship", "OverlappingESTSet",
-                  "full_evidence_for_feature", "MRNA"),
-                  Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
-          map.put(new MultiKey("relationship", "TranscriptRegion",
-                  "full_evidence_for_feature", "MRNA"),
-                  Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
+            //          map.put(new MultiKey("relationship", "OverlappingESTSet",
+            //                  "full_evidence_for_feature", "Gene"),
+            //                  Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
+            map.put(new MultiKey("relationship", "OverlappingESTSet",
+                    "full_evidence_for_feature", "MRNA"),
+                    Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
+            map.put(new MultiKey("relationship", "TranscriptRegion",
+                    "full_evidence_for_feature", "MRNA"),
+                    Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
 
-          // additional properties
-          map.put(new MultiKey("prop", "CDS", "status"),
-                  Arrays.asList(new SetFieldConfigAction("status")));
-          map.put(new MultiKey("prop", "CDS", "wormpep"),
-                  Arrays.asList(new SetFieldConfigAction("wormpep")));
-          
-          map.put(new MultiKey("prop", "MRNA", "cds"),
-                  Arrays.asList(new SetFieldConfigAction("CDS")));
-          map.put(new MultiKey("prop", "MRNA", "wormpep"),
-                  Arrays.asList(new SetFieldConfigAction("wormpep")));
+            // additional properties
+            map.put(new MultiKey("prop", "CDS", "status"),
+                    Arrays.asList(new SetFieldConfigAction("status")));
+            map.put(new MultiKey("prop", "CDS", "wormpep"),
+                    Arrays.asList(new SetFieldConfigAction("wormpep")));
 
-          map.put(new MultiKey("prop", "PolyASite", "external_evidence"),
-                  Arrays.asList(new SetFieldConfigAction("externalEvidence")));
+            map.put(new MultiKey("prop", "MRNA", "cds"),
+                    Arrays.asList(new SetFieldConfigAction("CDS")));
+            map.put(new MultiKey("prop", "MRNA", "wormpep"),
+                    Arrays.asList(new SetFieldConfigAction("wormpep")));
 
-          map.put(new MultiKey("prop", "ThreePrimeRST", "genbank_acc"),
-                  Arrays.asList(new SetFieldConfigAction("GenBankAcc")));
-          map.put(new MultiKey("prop", "ThreePrimeRST", "ncbi_dbest"),
-                  Arrays.asList(new SetFieldConfigAction("NCBIdbEST")));
-          
-          map.put(new MultiKey("prop", "ThreePrimeUTR", "external_evidence"),
-                  Arrays.asList(new SetFieldConfigAction("externalEvidence")));
+            map.put(new MultiKey("prop", "PolyASite", "external_evidence"),
+                    Arrays.asList(new SetFieldConfigAction("externalEvidence")));
 
-          map.put(new MultiKey("prop", "BindingSite", "qvalue"),
-                  Arrays.asList(new SetFieldConfigAction("qvalue")));
+            map.put(new MultiKey("prop", "ThreePrimeRST", "genbank_acc"),
+                    Arrays.asList(new SetFieldConfigAction("GenBankAcc")));
+            map.put(new MultiKey("prop", "ThreePrimeRST", "ncbi_dbest"),
+                    Arrays.asList(new SetFieldConfigAction("NCBIdbEST")));
 
-          map.put(new MultiKey("prop", "Exon", "acceptor"),
-                  Arrays.asList(new SetFieldConfigAction("acceptor")));
-          map.put(new MultiKey("prop", "Exon", "connected_to_wormbase_transcript"),
-                  Arrays.asList(new SetFieldConfigAction("connectedToWormbaseTranscript")));
-          map.put(new MultiKey("prop", "Exon", "donor"),
-                  Arrays.asList(new SetFieldConfigAction("donor")));
-          map.put(new MultiKey("prop", "Exon", "overlapping_wormbase_transcript"),
-                  Arrays.asList(new SetFieldConfigAction("overlappingWormbaseTranscript")));
-          map.put(new MultiKey("prop", "Exon", "polyA"),
-                  Arrays.asList(new SetFieldConfigAction("polyA")));
-          map.put(new MultiKey("prop", "Exon", "tes"),
-                  Arrays.asList(new SetFieldConfigAction("tes")));
-          map.put(new MultiKey("prop", "Exon", "tsl"),
-                  Arrays.asList(new SetFieldConfigAction("tsl")));
-          map.put(new MultiKey("prop", "Exon", "tss"),
-                  Arrays.asList(new SetFieldConfigAction("tss")));
+            map.put(new MultiKey("prop", "ThreePrimeUTR", "external_evidence"),
+                    Arrays.asList(new SetFieldConfigAction("externalEvidence")));
 
-          map.put(new MultiKey("prop", "OverlappingESTSet", "fdr"),
-                  Arrays.asList(new SetFieldConfigAction("fdr")));
-          map.put(new MultiKey("prop", "OverlappingESTSet", "fp"),
-                  Arrays.asList(new SetFieldConfigAction("fp")));
-          map.put(new MultiKey("prop", "OverlappingESTSet", "overlap"),
-                  Arrays.asList(new SetFieldConfigAction("overlap")));
-          map.put(new MultiKey("prop", "OverlappingESTSet", "reads"),
-                  Arrays.asList(new SetFieldConfigAction("reads")));
-          map.put(new MultiKey("prop", "OverlappingESTSet", "strands_confirmed"),
-                  Arrays.asList(new SetFieldConfigAction("strandsConfirmed")));
-          map.put(new MultiKey("prop", "OverlappingESTSet", "trimT"),
-                  Arrays.asList(new SetFieldConfigAction("trimT")));
-          
-          map.put(new MultiKey("prop", "Transcript", "transcribed"),
-                  Arrays.asList(new SetFieldConfigAction("transcribed")));
+            map.put(new MultiKey("prop", "BindingSite", "qvalue"),
+                    Arrays.asList(new SetFieldConfigAction("qvalue")));
 
-          map.put(new MultiKey("prop", "TranscriptRegion", "marginal_fpr"),
-                  Arrays.asList(new SetFieldConfigAction("marginalFpr")));
-          map.put(new MultiKey("prop", "TranscriptRegion", "marginal_sensitivity"),
-                  Arrays.asList(new SetFieldConfigAction("marginalSensitivity")));
-          map.put(new MultiKey("prop", "TranscriptRegion", "mean_intensity"),
-                  Arrays.asList(new SetFieldConfigAction("meanIntensity")));
-          map.put(new MultiKey("prop", "TranscriptRegion", "rank_score"),
-                  Arrays.asList(new SetFieldConfigAction("rankScore")));
+            map.put(new MultiKey("prop", "Exon", "acceptor"),
+                    Arrays.asList(new SetFieldConfigAction("acceptor")));
+            map.put(new MultiKey("prop", "Exon", "connected_to_wormbase_transcript"),
+                    Arrays.asList(new SetFieldConfigAction("connectedToWormbaseTranscript")));
+            map.put(new MultiKey("prop", "Exon", "donor"),
+                    Arrays.asList(new SetFieldConfigAction("donor")));
+            map.put(new MultiKey("prop", "Exon", "overlapping_wormbase_transcript"),
+                    Arrays.asList(new SetFieldConfigAction("overlappingWormbaseTranscript")));
+            map.put(new MultiKey("prop", "Exon", "polyA"),
+                    Arrays.asList(new SetFieldConfigAction("polyA")));
+            map.put(new MultiKey("prop", "Exon", "tes"),
+                    Arrays.asList(new SetFieldConfigAction("tes")));
+            map.put(new MultiKey("prop", "Exon", "tsl"),
+                    Arrays.asList(new SetFieldConfigAction("tsl")));
+            map.put(new MultiKey("prop", "Exon", "tss"),
+                    Arrays.asList(new SetFieldConfigAction("tss")));
 
-          map.put(new MultiKey("prop", "LocatedSequenceFeature", "prediction_status"),
-                  Arrays.asList(new SetFieldConfigAction("predictionStatus")));
-          map.put(new MultiKey("prop", "LocatedSequenceFeature", "note"),
-                  Arrays.asList(new SetFieldConfigAction("note")));
+            map.put(new MultiKey("prop", "OverlappingESTSet", "fdr"),
+                    Arrays.asList(new SetFieldConfigAction("fdr")));
+            map.put(new MultiKey("prop", "OverlappingESTSet", "fp"),
+                    Arrays.asList(new SetFieldConfigAction("fp")));
+            map.put(new MultiKey("prop", "OverlappingESTSet", "overlap"),
+                    Arrays.asList(new SetFieldConfigAction("overlap")));
+            map.put(new MultiKey("prop", "OverlappingESTSet", "reads"),
+                    Arrays.asList(new SetFieldConfigAction("reads")));
+            map.put(new MultiKey("prop", "OverlappingESTSet", "strands_confirmed"),
+                    Arrays.asList(new SetFieldConfigAction("strandsConfirmed")));
+            map.put(new MultiKey("prop", "OverlappingESTSet", "trimT"),
+                    Arrays.asList(new SetFieldConfigAction("trimT")));
+
+            map.put(new MultiKey("prop", "Transcript", "transcribed"),
+                    Arrays.asList(new SetFieldConfigAction("transcribed")));
+
+            map.put(new MultiKey("prop", "TranscriptRegion", "marginal_fpr"),
+                    Arrays.asList(new SetFieldConfigAction("marginalFpr")));
+            map.put(new MultiKey("prop", "TranscriptRegion", "marginal_sensitivity"),
+                    Arrays.asList(new SetFieldConfigAction("marginalSensitivity")));
+            map.put(new MultiKey("prop", "TranscriptRegion", "mean_intensity"),
+                    Arrays.asList(new SetFieldConfigAction("meanIntensity")));
+            map.put(new MultiKey("prop", "TranscriptRegion", "rank_score"),
+                    Arrays.asList(new SetFieldConfigAction("rankScore")));
+
+            map.put(new MultiKey("prop", "LocatedSequenceFeature", "prediction_status"),
+                    Arrays.asList(new SetFieldConfigAction("predictionStatus")));
+            map.put(new MultiKey("prop", "LocatedSequenceFeature", "note"),
+                    Arrays.asList(new SetFieldConfigAction("note")));
 
         }
         return map;
@@ -534,22 +534,22 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     @Override
     protected Item makeFeature(Integer featureId, String chadoFeatureType, String interMineType,
-                               String name, String uniqueName,
-                               int seqlen, int taxonId) {
+            String name, String uniqueName,
+            int seqlen, int taxonId) {
         String realInterMineType = interMineType;
 
         if (chadoFeatureType.equals("chromosome_arm")
                 || chadoFeatureType.equals("ultra_scaffold")) {
-                realInterMineType = "Chromosome";
+            realInterMineType = "Chromosome";
 
-                if (uniqueName.startsWith("chr")) {
-                    // this is to fix some data problem with sub 146 in modmine
-                    // where there are duplicated chromosome_arm features, with
-                    // and without a 'chr' prefix (e.g. 3R and chr3R)
-                    // The chr ones are not the location for any other feature.
-                    // So we skip them.
-                    return null;
-                }
+            if (uniqueName.startsWith("chr")) {
+                // this is to fix some data problem with sub 146 in modmine
+                // where there are duplicated chromosome_arm features, with
+                // and without a 'chr' prefix (e.g. 3R and chr3R)
+                // The chr ones are not the location for any other feature.
+                // So we skip them.
+                return null;
+            }
         }
         Item feature = getChadoDBConverter().createItem(realInterMineType);
         // See #2287
@@ -570,10 +570,10 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         Iterator<Integer> i = dataList.iterator();
         Integer index = 0;
         while (i.hasNext()) {
-          index++;
-          if (index > 1) {
-              ql = ql.append(", ");
-          }
+            index++;
+            if (index > 1) {
+                ql = ql.append(", ");
+            }
             ql = ql.append(i.next());
         }
         return ql.toString();
@@ -616,7 +616,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      * {@inheritDoc}
      */
     @Override
-   protected void earlyExtraProcessing(Connection connection) throws  SQLException {
+    protected void earlyExtraProcessing(Connection connection) throws  SQLException {
         // to limit the process to the current submission
         createSubFeatureIdTempTable(connection);
     }
@@ -736,54 +736,52 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     ObjectStoreException {
         ResultSet res = getExpressionLevels(connection);
         Integer previousId = -1;
-//        Integer previousObjectId = -1;
+        //        Integer previousObjectId = -1;
         Item level = null;
         while (res.next()) {
             Integer id = res.getInt("expression_id");
             Integer featureId = res.getInt("feature_id");
-//            Double value = res.getDouble("value");
             String name = res.getString("uniquename");
             String value = res.getString("value");
             String property = res.getString("property");
             String propValue = res.getString("propvalue");
-            
+
             if (id != previousId) {
-        
+
                 // if not first store prev level
                 if (previousId > 0) {
-                  getChadoDBConverter().store(level);
+                    getChadoDBConverter().store(level);
                 }
-                
+
                 // create new
                 level = getChadoDBConverter().createItem("ExpressionLevel");
                 level.setAttribute("name", name);
                 if (!StringUtils.isBlank(value)) {
-                	level.setAttribute("value", value);
+                    level.setAttribute("value", value);
                 } else {
-                	LOG.warn("ExpressionLevel found with no value for uniquename: " + name);
+                    LOG.warn("ExpressionLevel found with no value for uniquename: " + name);
                 }
                 if (featureMap.containsKey(featureId)) {
                     FeatureData fData = featureMap.get(featureId);
-//                    Integer storedFeatureId = fData.getIntermineObjectId();
-                    //String imType = fData.getInterMineType();
-//                    String imType = "LocatedSequenceFeature";
-//                    String referenceName = getRefName(imType);
                     String referenceName = "feature";
                     String featureItemId = fData.getItemIdentifier();
                     level.setReference(referenceName, featureItemId);
                     level.setReference("submission", dataSetIdentifier);
                 }
             }
-            
-            if (property.equalsIgnoreCase("dcpm") && !propValue.contains(".")){
+
+            if (property.equalsIgnoreCase("dcpm") && !propValue.contains(".")) {
                 // in some cases (~ 60000, waterston) the value for dcpm is
                 // 'nan' or 'na' instead of a decimal number
                 previousId = id;
                 continue;
             }
 
-            level.setAttribute(getPropName(property), propValue);                    
+            level.setAttribute(getPropName(property), propValue);
             previousId = id;
+        }
+        if (res.isAfterLast()) {
+            getChadoDBConverter().store(level);
         }
         res.close();
     }
@@ -803,13 +801,12 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         }
         return property;
     }
-    
 
     private ResultSet getExpressionLevels(Connection connection) throws SQLException {
- 
+
         String query = "SELECT subject_id as expression_id, f1.uniquename, af.rawscore as value "
             + " , object_id as feature_id, cp.name as property, fp.value as propvalue "
-            + " FROM feature_relationship, cvterm c1, feature f1, analysisfeature af " 
+            + " FROM feature_relationship, cvterm c1, feature f1, analysisfeature af "
             + " , feature f2, featureprop fp, cvterm cp "
             + " WHERE c1.cvterm_id = f1.type_id "
             + " AND f1.feature_id = subject_id "
@@ -818,7 +815,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             + " and f1.feature_id = fp.feature_id "
             + " and cp.cvterm_id = fp.type_id "
             + " and c1.name= 'experimental_feature' "
-            + " AND subject_id IN (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
+            + " AND subject_id IN (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) "
+            + " ORDER BY subject_id";
 
         LOG.info("executing: " + query);
         long bT = System.currentTimeMillis();
