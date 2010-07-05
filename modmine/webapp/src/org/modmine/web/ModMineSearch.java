@@ -31,9 +31,10 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.util.Version;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -54,7 +55,7 @@ import org.intermine.util.TypeUtil;
  */
 public class ModMineSearch
 {
-//    public static final String SEARCH_KEY = "modminesearch";
+    // public static final String SEARCH_KEY = "modminesearch";
 
     /**
      * maximum number of hits returned
@@ -76,7 +77,8 @@ public class ModMineSearch
     public static void initModMineSearch(InterMineAPI im) {
         if (ram == null) {
 
-            // Map<Integer, Set<String>> subProps = readSubmissionProperties(im);
+            // Map<Integer, Set<String>> subProps =
+            // readSubmissionProperties(im);
             Set<Document> docs = readSubmissionsFromCache(im.getObjectStore());
             indexMetadata(docs);
 
@@ -101,7 +103,8 @@ public class ModMineSearch
         try {
             IndexSearcher searcher = new IndexSearcher(ram);
 
-            Analyzer analyzer = new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS);
+            Analyzer analyzer = new SnowballAnalyzer(Version.LUCENE_30, "English",
+                    StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
             org.apache.lucene.search.Query query;
 
@@ -109,30 +112,31 @@ public class ModMineSearch
             // => search through all fields
             String[] fieldNamesArray = new String[fieldNames.size()];
             fieldNames.toArray(fieldNamesArray);
-            QueryParser queryParser = new MultiFieldQueryParser(fieldNamesArray, analyzer,
-                    fieldBoosts);
+            QueryParser queryParser = new MultiFieldQueryParser(Version.LUCENE_30, fieldNamesArray,
+                    analyzer, fieldBoosts);
             query = queryParser.parse(queryString);
 
             // required to expand search terms
             query = query.rewrite(IndexReader.open(ram));
             LOG.debug("Actual query: " + query);
 
-            Hits hits = searcher.search(query);
+            TopDocs topDocs = searcher.search(query, 500);
 
             time = System.currentTimeMillis() - time;
-            LOG.info("Found " + hits.length() + " document(s) that matched query '" + queryString
-                    + "' in " + time + " milliseconds:");
+            LOG.info("Found " + topDocs.totalHits + " document(s) that matched query '"
+                    + queryString + "' in " + time + " milliseconds:");
 
-            for (int i = 0; (i < MAX_HITS && i < hits.length()); i++) {
-                Document doc = hits.doc(i);
+            for (int i = 0; (i < MAX_HITS && i < topDocs.totalHits); i++) {
+                Document doc = searcher.doc(topDocs.scoreDocs[i].doc);
                 String name = doc.get("name");
 
                 // show how score was calculated
                 if (i < 2) {
-                    LOG.debug("Score for " + name + ": " + searcher.explain(query, hits.id(i)));
+                    LOG.debug("Score for " + name + ": "
+                            + searcher.explain(query, topDocs.scoreDocs[i].doc));
                 }
 
-                matches.put(Integer.parseInt(name), new Float(hits.score(i)));
+                matches.put(Integer.parseInt(name), new Float(topDocs.scoreDocs[i].score));
             }
         } catch (ParseException e) {
             // just return an empty list
@@ -179,7 +183,8 @@ public class ModMineSearch
             }
         }
 
-        // finally replace all words by (word word*) -- separate from main loop to avoid
+        // finally replace all words by (word word*) -- separate from main loop
+        // to avoid
         // issues with duplicates
         for (String word : words) {
             queryStringNew = queryStringNew.replaceAll("\\b(" + Pattern.quote(word) + ")\\b",
@@ -202,33 +207,31 @@ public class ModMineSearch
                 Integer dccId = sub.getdCCid();
 
                 Document doc = new Document();
-                doc
-                        .add(new Field("name", subId.toString(), Field.Store.YES,
-                                Field.Index.TOKENIZED));
+                doc.add(new Field("name", subId.toString(), Field.Store.YES, Field.Index.ANALYZED));
 
                 // submission details
-                addToDocument(doc, subId, "dCCid", sub.getdCCid().toString(), 2.0F);
+                addToDocument(doc, subId, "dCCid", sub.getdCCid().toString());
                 addToDocument(doc, subId, "title", sub.getTitle());
                 addToDocument(doc, subId, "description", sub.getDescription());
 
                 if (sub.getExperimentType() != null) {
                     Field f = new Field("experiment_type", sub.getExperimentType(), Field.Store.NO,
-                            Field.Index.UN_TOKENIZED);
+                            Field.Index.NOT_ANALYZED);
                     fieldNames.add("experiment_type");
                     doc.add(f);
                 }
-                addToDocument(doc, subId, "organism", sub.getOrganism().getName(), 1.5F);
+                addToDocument(doc, subId, "organism", sub.getOrganism().getName());
                 String genus = sub.getOrganism().getGenus();
                 if (genus != null && genus.equals("Drosophila")) {
-                    addToDocument(doc, subId, "genus", "fly", 2.0F);
+                    addToDocument(doc, subId, "genus", "fly");
                 } else if (genus != null && genus.equals("Caenorhabditis")) {
-                    addToDocument(doc, subId, "genus", "worm", 2.0F);
+                    addToDocument(doc, subId, "genus", "worm");
                 }
 
                 // experiment details
                 addToDocument(doc, subId, "pi", exp.getPi());
                 addToDocument(doc, subId, "experiment_name", exp.getName());
-                addToDocument(doc, subId, "description", exp.getDescription(), 0.2F);
+                addToDocument(doc, subId, "description", exp.getDescription());
                 addToDocument(doc, subId, "project_name", exp.getProjectName());
                 for (String lab : exp.getLabs()) {
                     addToDocument(doc, subId, "lab", lab);
@@ -254,8 +257,8 @@ public class ModMineSearch
                     }
 
                     if (gene != null) {
-                        LOG.debug("Found gene => " + gene.getPrimaryIdentifier()
-                                + " for " + prop.getClass().getName());
+                        LOG.debug("Found gene => " + gene.getPrimaryIdentifier() + " for "
+                                + prop.getClass().getName());
 
                         addToDocument(doc, subId, geneType + "_gene_primary_identifier", gene
                                 .getPrimaryIdentifier());
@@ -283,11 +286,10 @@ public class ModMineSearch
             }
         }
 
-
         time = System.currentTimeMillis() - time;
         LOG.info("Created " + docs.size() + " documents (" + fieldNames.size()
-                + " unique fields and " + fieldBoosts.size() + " boosts) in "
-                + time + " milliseconds");
+                + " unique fields and " + fieldBoosts.size() + " boosts) in " + time
+                + " milliseconds");
 
         return docs;
     }
@@ -299,7 +301,7 @@ public class ModMineSearch
             for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
                 try {
                     Object value = TypeUtil.getFieldValue(obj, att.getName());
-                    //ignore null values and wikiLinks
+                    // ignore null values and wikiLinks
                     if (value != null
                             && !(value instanceof String
                                     && ((String) value).startsWith("http://"))) {
@@ -320,18 +322,10 @@ public class ModMineSearch
         if (!StringUtils.isBlank(fieldName) && !StringUtils.isBlank(value)) {
             LOG.debug("ADDED FIELD TO #" + objectId + ": " + fieldName + " = " + value);
 
-            Field f = new Field(fieldName, value, Field.Store.NO, Field.Index.TOKENIZED);
+            Field f = new Field(fieldName, value, Field.Store.NO, Field.Index.ANALYZED);
             doc.add(f);
             fieldNames.add(fieldName);
         }
-    }
-
-    private static void addToDocument(Document doc, Integer objectId, String fieldName,
-            String value, float weight) {
-        addToDocument(doc, objectId, fieldName, value);
-
-        LOG.debug("Field boosting disabled for now!");
-        // fieldBoosts.put(fieldName, weight);
     }
 
     private static void indexMetadata(Set<Document> docs) {
@@ -341,9 +335,10 @@ public class ModMineSearch
         ram = new RAMDirectory();
         IndexWriter writer;
         try {
-            SnowballAnalyzer snowballAnalyzer = new SnowballAnalyzer("English",
-                    StopAnalyzer.ENGLISH_STOP_WORDS);
-            writer = new IndexWriter(ram, snowballAnalyzer, true);
+            SnowballAnalyzer snowballAnalyzer = new SnowballAnalyzer(Version.LUCENE_30, "English",
+                    StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+            writer = new IndexWriter(ram, snowballAnalyzer, true,
+                    IndexWriter.MaxFieldLength.UNLIMITED);
         } catch (IOException err) {
             throw new RuntimeException("Failed to create lucene IndexWriter", err);
         }

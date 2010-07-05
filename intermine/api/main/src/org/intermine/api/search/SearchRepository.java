@@ -30,17 +30,19 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MultiSearcher;
 import org.apache.lucene.search.Searchable;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.highlight.Formatter;
 import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.NullFragmenter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.TokenGroup;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.util.Version;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
@@ -61,8 +63,9 @@ public class SearchRepository
 {
     private static final Logger LOG = Logger.getLogger(SearchRepository.class);
     // this is not being refreshed
-    private Map<String, Map<String, ? extends WebSearchable>> webSearchablesMap = new HashMap();
-    private Map<String, Directory> directoryMap = new HashMap();
+    private Map<String, Map<String, ? extends WebSearchable>> webSearchablesMap =
+        new HashMap<String, Map<String, ? extends WebSearchable>>();
+    private Map<String, Directory> directoryMap = new HashMap<String, Directory>();
     private final String scope;
     private Profile profile;
 
@@ -274,8 +277,8 @@ public class SearchRepository
         IndexWriter writer;
         try {
             SnowballAnalyzer snowballAnalyzer =
-                new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS);
-            writer = new IndexWriter(ram, snowballAnalyzer, true);
+                new SnowballAnalyzer(Version.LUCENE_30, "English", StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+            writer = new IndexWriter(ram, snowballAnalyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
         } catch (IOException err) {
             throw new RuntimeException("Failed to create lucene IndexWriter", err);
         }
@@ -288,7 +291,7 @@ public class SearchRepository
         for (WebSearchable webSearchable : webSearchableMap.values()) {
             Document doc = new Document();
             doc.add(new Field("name", webSearchable.getName(), Field.Store.YES,
-                              Field.Index.TOKENIZED));
+                              Field.Index.ANALYZED));
             StringBuffer contentBuffer = new StringBuffer(webSearchable.getTitle() + " : "
                                                + webSearchable.getDescription());
             List<Tag> tags = tagManager.getTags(null, webSearchable.getName(), type,
@@ -303,7 +306,7 @@ public class SearchRepository
             // normalise the text
             String content = contentBuffer.toString().replaceAll("[^a-zA-Z0-9]", " ");
             doc.add(new Field("content", content, Field.Store.NO,
-                              Field.Index.TOKENIZED));
+                              Field.Index.ANALYZED));
             //doc.add(new Field("scope", scope, Field.Store.YES, Field.Index.NO));
 
             try {
@@ -435,26 +438,27 @@ public class SearchRepository
         }
         MultiSearcher searcher = new MultiSearcher(searchables);
 
-        Analyzer analyzer = new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS);
+        Analyzer analyzer = new SnowballAnalyzer(Version.LUCENE_30, "English",
+                StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
         org.apache.lucene.search.Query query;
-        QueryParser queryParser = new QueryParser("content", analyzer);
+        QueryParser queryParser = new QueryParser(Version.LUCENE_30, "content", analyzer);
         query = queryParser.parse(queryString);
 
         // required to expand search terms
         query = query.rewrite(IndexReader.open(globalDirectory));
-        Hits hits = searcher.search(query);
+        TopDocs topDocs = searcher.search(query, 1000); //FIXME: hardcoded limit
 
         time = System.currentTimeMillis() - time;
-        SearchRepository.LOG.info("Found " + hits.length() + " document(s) that matched query '"
+        SearchRepository.LOG.info("Found " + topDocs.totalHits + " document(s) that matched query '"
                 + queryString + "' in " + time + " milliseconds:");
 
         QueryScorer scorer = new QueryScorer(query);
         Highlighter highlighter = new Highlighter(SearchRepository.formatter, scorer);
 
-        for (int i = 0; i < hits.length(); i++) {
+        for (int i = 0; i < topDocs.totalHits; i++) {
             WebSearchable webSearchable = null;
-            Document doc = hits.doc(i);
+            Document doc = searcher.doc(topDocs.scoreDocs[i].doc);
             //String docScope = doc.get("scope");
             String name = doc.get("name");
 
@@ -466,30 +470,35 @@ public class SearchRepository
                 throw new RuntimeException("unknown WebSearchable: " + name);
             }
 
-            hitMap.put(webSearchable, new Float(hits.score(i)));
+            hitMap.put(webSearchable, new Float(topDocs.scoreDocs[i].score));
             //scopeMap.put(webSearchable, docScope);
 
-            if (highlightedTitleMap != null) {
-                String highlightString = webSearchable.getTitle();
-                TokenStream tokenStream =
-                    analyzer.tokenStream("", new StringReader(highlightString));
-                highlighter.setTextFragmenter(new NullFragmenter());
-                highlightedTitleMap.put(webSearchable,
-                                   highlighter.getBestFragment(tokenStream, highlightString));
-            }
-
-            if (highlightedDescMap != null) {
-                String highlightString = webSearchable.getDescription();
-                if (highlightString == null) {
-                    highlightString = "";
-                }
-                TokenStream tokenStream =
-                    analyzer.tokenStream("", new StringReader(highlightString));
-                highlighter.setTextFragmenter(new NullFragmenter());
-                highlightedDescMap.put(webSearchable,
+            try {
+                if (highlightedTitleMap != null) {
+                    String highlightString = webSearchable.getTitle();
+                    TokenStream tokenStream =
+                        analyzer.tokenStream("", new StringReader(highlightString));
+                    highlighter.setTextFragmenter(new NullFragmenter());
+                    highlightedTitleMap.put(webSearchable,
                                        highlighter.getBestFragment(tokenStream, highlightString));
+                }
+    
+                if (highlightedDescMap != null) {
+                    String highlightString = webSearchable.getDescription();
+                    if (highlightString == null) {
+                        highlightString = "";
+                    }
+                    TokenStream tokenStream =
+                        analyzer.tokenStream("", new StringReader(highlightString));
+                    highlighter.setTextFragmenter(new NullFragmenter());
+                    highlightedDescMap.put(webSearchable,
+                                           highlighter.getBestFragment(tokenStream, highlightString));
+                }
+            } catch(InvalidTokenOffsetsException e) {
+                LOG.warn("Highlighter exception", e);
             }
         }
+        
         return time;
     }
 }
