@@ -50,9 +50,9 @@ public class ModMineSearchAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         ModMineSearch.initModMineSearch(im);
-        
+
         ModMineSearchForm msf = (ModMineSearchForm) form;
-        
+
         String searchTerm = msf.getSearchTerm();
 
         ForwardParameters forwardParameters =

@@ -21,18 +21,16 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.logic.session.SessionMethods;
 
-
-public class ModMineSearchController extends TilesAction 
+public class ModMineSearchController extends TilesAction
 {
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused")  ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {
+    @Override
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
 
