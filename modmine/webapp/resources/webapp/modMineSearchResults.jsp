@@ -21,7 +21,8 @@ Search Term: <c:out value="${searchTerm}"/>
 
 <div>
 
-<c:out value="Matching submissions: ${fn:length(submissions)}"/>
+<c:if test="${empty displayMax}"><c:out value="Matching submissions: ${fn:length(submissions)}"/></c:if>
+<c:if test="${!empty displayMax}">Matching submissions: more than <c:out value="${displayMax}" /> (only the top <c:out value="${displayMax}" /> matches are displayed)</c:if>
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
 <tr>
     <th>DCC id</th>
@@ -90,7 +91,7 @@ Search Term: <c:out value="${searchTerm}"/>
         </c:forEach>
       </td>
       
-      <td><img height="10" width="${subResult.value * 5}" src="images/heat${subResult.value}.gif"/></td>
+      <td><img height="10" width="${subResult.value * 5}" src="images/heat${subResult.value}.gif" alt="${subResult.value}" title="${subResult.value}"/></td>
 </tr>
 </c:forEach>
 </table>

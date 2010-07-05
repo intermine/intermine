@@ -1,13 +1,23 @@
 package org.modmine.web;
 
+/*
+ * Copyright (C) 2002-2010 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -18,6 +28,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Hits;
@@ -27,36 +38,63 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.bio.Antibody;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Strain;
 import org.intermine.model.bio.Submission;
 import org.intermine.model.bio.SubmissionProperty;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
+/**
+ * allows for full-text searches over all metadata using the apache lucene
+ * engine
+ * @author nils
+ */
 public class ModMineSearch
 {
+//    public static final String SEARCH_KEY = "modminesearch";
 
-    public static String SEARCH_KEY = "modminesearch";
-    public static int MAX_HITS = 500;
-    
+    /**
+     * maximum number of hits returned
+     */
+    public static final int MAX_HITS = 500;
+
     private static final Logger LOG = Logger.getLogger(ModMineSearch.class);
+    private static final String[] BOOLEAN_WORDS = {"AND", "OR", "NOT"};
+
     private static RAMDirectory ram = null;
-    private static Map<Integer, Integer> submissionMap = new HashMap<Integer, Integer>();
-    
+    private static HashSet<String> fieldNames = new HashSet<String>();
+    private static HashMap<String, Float> fieldBoosts = new HashMap<String, Float>();
+
+    /**
+     * index document metadata in preparation for first search
+     * @param im
+     *            API for accessing object store
+     */
     public static void initModMineSearch(InterMineAPI im) {
         if (ram == null) {
-            //Map<Integer, Set<String>> subProps = readSubmissionProperties(im);
+
+            // Map<Integer, Set<String>> subProps = readSubmissionProperties(im);
             Set<Document> docs = readSubmissionsFromCache(im.getObjectStore());
             indexMetadata(docs);
+
+            LOG.debug("Field names: " + fieldNames.toString());
+            LOG.debug("Boosts: " + fieldBoosts.toString());
         }
     }
-    
+
+    /**
+     * perform a keyword search over all document metadata fields with lucene
+     * @param searchString
+     *            string to search for
+     * @return map of document IDs with their respective scores
+     */
     public static Map<Integer, Float> runLuceneSearch(String searchString) {
         LinkedHashMap<Integer, Float> matches = new LinkedHashMap<Integer, Float>();
-        
-        String queryString = searchString.replaceAll("(\\w+log\\b)", "$1ue $1");
-        queryString = queryString.replaceAll("[^a-zA-Z0-9]", " ").trim();
-        queryString = queryString.replaceAll("(\\w+)$", "$1 $1*");
+
+        String queryString = parseQueryString(searchString);
 
         long time = System.currentTimeMillis();
 
@@ -66,39 +104,97 @@ public class ModMineSearch
             Analyzer analyzer = new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS);
 
             org.apache.lucene.search.Query query;
-            QueryParser queryParser = new QueryParser("content", analyzer);
+
+            // pass entire list of field names to the multi-field parser
+            // => search through all fields
+            String[] fieldNamesArray = new String[fieldNames.size()];
+            fieldNames.toArray(fieldNamesArray);
+            QueryParser queryParser = new MultiFieldQueryParser(fieldNamesArray, analyzer,
+                    fieldBoosts);
             query = queryParser.parse(queryString);
 
             // required to expand search terms
             query = query.rewrite(IndexReader.open(ram));
-            Hits hits = searcher.search(query);
-            
-            time = System.currentTimeMillis() - time;
-            LOG.info("Found " + hits.length() + " document(s) that matched query '"
-                    + queryString + "' in " + time + " milliseconds:");
+            LOG.debug("Actual query: " + query);
 
-            //QueryScorer scorer = new QueryScorer(query);
+            Hits hits = searcher.search(query);
+
+            time = System.currentTimeMillis() - time;
+            LOG.info("Found " + hits.length() + " document(s) that matched query '" + queryString
+                    + "' in " + time + " milliseconds:");
 
             for (int i = 0; (i < MAX_HITS && i < hits.length()); i++) {
                 Document doc = hits.doc(i);
                 String name = doc.get("name");
 
+                // show how score was calculated
+                if (i < 2) {
+                    LOG.debug("Score for " + name + ": " + searcher.explain(query, hits.id(i)));
+                }
+
                 matches.put(Integer.parseInt(name), new Float(hits.score(i)));
             }
-            // TODO proper error handling
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            // just return an empty list
+            LOG.info("Exception caught, returning no results", e);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            // just return an empty list
+            LOG.info("Exception caught, returning no results", e);
         }
         return matches;
     }
 
+    private static String parseQueryString(String queryString) {
+        queryString = queryString.replaceAll("\\b(\\s+)\\+(\\s+)\\b", "$1AND$2");
+
+        // to support partial matches we have to add a asterisk to the end of
+        // every word, taking care of keywords, quoted phrases and hyphenated
+        // terms
+        String queryStringNew = queryString;
+
+        // find all words without special characters around them
+        Pattern pattern = Pattern.compile("(?<!(\\w-|[:.]))\\b(\\w+)\\b(?![.:*-])");
+        // remove all quoted terms
+        Matcher matcher = pattern.matcher(queryString.replaceAll("\"[^\"]+\"", ""));
+        HashSet<String> words = new HashSet<String>();
+        while (matcher.find()) {
+            String word = matcher.group(2);
+
+            // ignore words that are boolean keywords
+            boolean isKeyword = false;
+            for (int i = 0; i < BOOLEAN_WORDS.length; i++) {
+                if (BOOLEAN_WORDS[i].equals(word)) {
+                    isKeyword = true;
+                    break;
+                }
+            }
+
+            if (isKeyword) {
+                continue;
+            }
+
+            // only allow partial matches for words >= 3 characters
+            if (word.length() > 2) {
+                words.add(word);
+            }
+        }
+
+        // finally replace all words by (word word*) -- separate from main loop to avoid
+        // issues with duplicates
+        for (String word : words) {
+            queryStringNew = queryStringNew.replaceAll("\\b(" + Pattern.quote(word) + ")\\b",
+                    "($1 $1*)");
+        }
+
+        queryString = queryStringNew; // apply changes
+        return queryString;
+    }
 
     private static Set<Document> readSubmissionsFromCache(ObjectStore os) {
-        
+        long time = System.currentTimeMillis();
+        LOG.info("Creating documents from metadata...");
         Set<Document> docs = new HashSet<Document>();
-        
+
         for (DisplayExperiment exp : MetadataCache.getExperiments(os)) {
             for (Submission sub : exp.getSubmissions()) {
 
@@ -106,126 +202,160 @@ public class ModMineSearch
                 Integer dccId = sub.getdCCid();
 
                 Document doc = new Document();
-                doc.add(new Field("name", subId.toString(), Field.Store.YES,
-                        Field.Index.TOKENIZED));
-                
+                doc
+                        .add(new Field("name", subId.toString(), Field.Store.YES,
+                                Field.Index.TOKENIZED));
+
                 // submission details
-                addToDocument(doc, subId, sub.getdCCid().toString());
-                addToDocument(doc, subId, sub.getTitle(), 0.8F);
-                addToDocument(doc, subId, sub.getDescription(), 0.2F);
-                //addToDocument(doc, subId, sub.getExperimentType(), 0.5F);
-                
+                addToDocument(doc, subId, "dCCid", sub.getdCCid().toString(), 2.0F);
+                addToDocument(doc, subId, "title", sub.getTitle());
+                addToDocument(doc, subId, "description", sub.getDescription());
+
                 if (sub.getExperimentType() != null) {
-                    Field f = new Field("content", sub.getExperimentType(), Field.Store.NO,
+                    Field f = new Field("experiment_type", sub.getExperimentType(), Field.Store.NO,
                             Field.Index.UN_TOKENIZED);
-                    //f.setBoost(5.0F);
+                    fieldNames.add("experiment_type");
                     doc.add(f);
                 }
-                addToDocument(doc, subId, sub.getOrganism().getName());
+                addToDocument(doc, subId, "organism", sub.getOrganism().getName(), 1.5F);
                 String genus = sub.getOrganism().getGenus();
                 if (genus != null && genus.equals("Drosophila")) {
-                    addToDocument(doc, subId, "fly", 2.0F);
+                    addToDocument(doc, subId, "genus", "fly", 2.0F);
                 } else if (genus != null && genus.equals("Caenorhabditis")) {
-                    addToDocument(doc, subId, "worm", 2.0F);
+                    addToDocument(doc, subId, "genus", "worm", 2.0F);
                 }
-                
+
                 // experiment details
-                addToDocument(doc, subId, exp.getPi());
-                addToDocument(doc, subId, exp.getName());
-                addToDocument(doc, subId, exp.getDescription(), 0.2F);
-                addToDocument(doc, subId, exp.getProjectName());
+                addToDocument(doc, subId, "pi", exp.getPi());
+                addToDocument(doc, subId, "experiment_name", exp.getName());
+                addToDocument(doc, subId, "description", exp.getDescription(), 0.2F);
+                addToDocument(doc, subId, "project_name", exp.getProjectName());
                 for (String lab : exp.getLabs()) {
-                    addToDocument(doc, subId, lab);
+                    addToDocument(doc, subId, "lab", lab);
                 }
-                
+
                 // add submission properties
                 for (SubmissionProperty prop : sub.getProperties()) {
-                    // give higher weight to attributes of submission properties
-                    for (String attValue : getAttributeValuesForObject(os.getModel(), prop)) {
-                        addToDocument(doc, subId, attValue, 1.5F);
+                    Map<String, String> attributes = getAttributeMapForObject(os.getModel(), prop);
+
+                    for (String att : attributes.keySet()) {
+                        addToDocument(doc, subId, att, attributes.get(att));
                     }
-                    
+
+                    // for antibody or strain, also add the target gene
+                    Gene gene = null;
+                    String geneType = null;
+                    if (prop instanceof Antibody) {
+                        gene = ((Antibody) prop).getTarget();
+                        geneType = "antibody";
+                    } else if (prop instanceof Strain) {
+                        gene = ((Strain) prop).getTarget();
+                        geneType = "strain";
+                    }
+
+                    if (gene != null) {
+                        LOG.debug("Found gene => " + gene.getPrimaryIdentifier()
+                                + " for " + prop.getClass().getName());
+
+                        addToDocument(doc, subId, geneType + "_gene_primary_identifier", gene
+                                .getPrimaryIdentifier());
+                        addToDocument(doc, subId, geneType + "_gene_secondary_identifier", gene
+                                .getSecondaryIdentifier());
+                        addToDocument(doc, subId, geneType + "_gene_symbol", gene.getSymbol());
+                        addToDocument(doc, subId, geneType + "_gene_name", gene.getName());
+                    }
                 }
+
                 // add feature types
                 Map<String, Long> features = MetadataCache.getSubmissionFeatureCounts(os, dccId);
                 if (features != null) {
-                    for (String type: features.keySet()) {
-                        addToDocument(doc, subId, type);
+                    for (String type : features.keySet()) {
+                        addToDocument(doc, subId, "features", type);
                     }
                 }
-                
+
                 // add database repository types
                 for (String db : exp.getReposited().keySet()) {
-                    addToDocument(doc, subId, db);
+                    addToDocument(doc, subId, "databases", db);
                 }
+
                 docs.add(doc);
             }
         }
+
+
+        time = System.currentTimeMillis() - time;
+        LOG.info("Created " + docs.size() + " documents (" + fieldNames.size()
+                + " unique fields and " + fieldBoosts.size() + " boosts) in "
+                + time + " milliseconds");
+
         return docs;
     }
-    
-    
-    public static Map<Integer, Integer> getSubMap() {
-        return submissionMap;
-    }
 
-
-    private static List<String> getAttributeValuesForObject(Model model, Object obj) {
-        List<String> values = new ArrayList<String>();
+    private static HashMap<String, String> getAttributeMapForObject(Model model, Object obj) {
+        HashMap<String, String> values = new HashMap<String, String>();
         for (Class<?> cls : DynamicUtil.decomposeClass(obj.getClass())) {
             ClassDescriptor cld = model.getClassDescriptorByName(cls.getName());
             for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
                 try {
                     Object value = TypeUtil.getFieldValue(obj, att.getName());
-                    LOG.info("INDEXING " + cld.getUnqualifiedName() + "." + att.getName() + " = " + value);
-                    if (value != null) {
-                        values.add(value.toString());
+                    //ignore null values and wikiLinks
+                    if (value != null
+                            && !(value instanceof String
+                                    && ((String) value).startsWith("http://"))) {
+                        values.put((cld.getUnqualifiedName() + "_" + att.getName()).toLowerCase(),
+                                String.valueOf(value));
                     }
                 } catch (IllegalAccessException e) {
                     LOG.warn("Error introspecting a SubmissionProperty: " + obj, e);
                 }
             }
         }
+
         return values;
     }
-    
-    
-    private static void addToDocument(Document doc, Integer objectId, String property) {
-        addToDocument(doc, objectId, property, 1.0F);
-    }
-    
-    private static void addToDocument(Document doc, Integer objectId, String property, float boost) {
-        if (!StringUtils.isBlank(property)) {
-            Field f = new Field("content", property, Field.Store.NO,
-                    Field.Index.TOKENIZED);
-            //f.setBoost(boost);
+
+    private static void addToDocument(Document doc, Integer objectId,
+            String fieldName, String value) {
+        if (!StringUtils.isBlank(fieldName) && !StringUtils.isBlank(value)) {
+            LOG.debug("ADDED FIELD TO #" + objectId + ": " + fieldName + " = " + value);
+
+            Field f = new Field(fieldName, value, Field.Store.NO, Field.Index.TOKENIZED);
             doc.add(f);
+            fieldNames.add(fieldName);
         }
     }
-    
+
+    private static void addToDocument(Document doc, Integer objectId, String fieldName,
+            String value, float weight) {
+        addToDocument(doc, objectId, fieldName, value);
+
+        LOG.debug("Field boosting disabled for now!");
+        // fieldBoosts.put(fieldName, weight);
+    }
+
     private static void indexMetadata(Set<Document> docs) {
         long time = System.currentTimeMillis();
-        LOG.info("Indexing metadata.");
+        LOG.info("Indexing metadata...");
 
         ram = new RAMDirectory();
         IndexWriter writer;
         try {
-            SnowballAnalyzer snowballAnalyzer =
-                new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS);
+            SnowballAnalyzer snowballAnalyzer = new SnowballAnalyzer("English",
+                    StopAnalyzer.ENGLISH_STOP_WORDS);
             writer = new IndexWriter(ram, snowballAnalyzer, true);
         } catch (IOException err) {
             throw new RuntimeException("Failed to create lucene IndexWriter", err);
         }
 
         int indexed = 0;
-        
+
         for (Document doc : docs) {
             try {
                 writer.addDocument(doc);
                 indexed++;
             } catch (IOException e) {
-                LOG.error("Failed to submission " + doc.getFieldable("name")
-                        + " to the index", e);
+                LOG.error("Failed to submission " + doc.getFieldable("name") + " to the index", e);
             }
         }
 
@@ -236,10 +366,8 @@ public class ModMineSearch
         }
 
         time = System.currentTimeMillis() - time;
-        LOG.info("Indexed " + indexed + " out of " + docs.size() + " submissions in "
-                + time + " milliseconds");
+        LOG.info("Indexed " + indexed + " out of " + docs.size() + " submissions in " + time
+                + " milliseconds");
     }
-    
-    
-    
+
 }
