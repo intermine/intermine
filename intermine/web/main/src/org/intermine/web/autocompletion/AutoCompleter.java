@@ -24,8 +24,9 @@ import java.util.Properties;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.search.Hit;
-import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStore;
@@ -83,22 +84,22 @@ public class AutoCompleter
      * Autocompleter rebuild constructor.
      * @param blobInput InputStream from database
      */
+    @SuppressWarnings("unchecked")
     public AutoCompleter(InputStream blobInput) {
         try {
-
             ObjectInputStream objectInput = new ObjectInputStream(blobInput);
 
-
-            blobMap = (HashMap<String, RAMDirectory>) objectInput.readObject();
+            Object object = objectInput.readObject();
 
             blobInput.close();
 
-            if (blobMap instanceof HashMap) {
+            if (object instanceof HashMap<?, ?>) {
+                blobMap = (HashMap<String, RAMDirectory>) object;
 
-                for (Iterator iter = blobMap.entrySet().iterator(); iter.hasNext();)
-                {
+                for (Iterator<Map.Entry<String, RAMDirectory>> iter = blobMap.entrySet().iterator();
+                        iter.hasNext();) {
                     Map.Entry<String, RAMDirectory> entry =
-                        (Map.Entry<String, RAMDirectory>) iter.next();
+                        iter.next();
                     String key = entry.getKey();
                     RAMDirectory value = null;
                     value = entry.getValue();
@@ -126,8 +127,8 @@ public class AutoCompleter
             search = ramIndexMap.get(classDes);
         } else {
             try {
-                String indexFIle = TEMP_DIR.toString() + File.separatorChar + classDes;
-                RAMDirectory ram = new RAMDirectory(indexFIle);
+                String indexFile = TEMP_DIR.toString() + File.separatorChar + classDes;
+                RAMDirectory ram = new RAMDirectory(FSDirectory.open(new File(indexFile)));
                 search = new LuceneSearchEngine(ram);
                 ramIndexMap.put(classDes, search);
                 blobMap.put(classDes, ram);
@@ -150,31 +151,30 @@ public class AutoCompleter
         String status = "true";
         int counter = 1;
 
-        Hits hits = null;
+        TopDocs topDocs = null;
         try {
-            hits = search.performSearch(query, field);
+            topDocs = search.performSearch(query, field);
         } catch (IOException e) {
 
         } catch (ParseException e) {
             status = "Please type in more characters to get results.";
         }
 
-        stringList = new String[hits.length() + 1];
+        if (topDocs != null) {
+            stringList = new String[topDocs.totalHits + 1];
 
-        if (hits != null) {
-
-            Iterator<Hit> iter = hits.iterator();
-
-            while (iter.hasNext()) {
-                Hit hit = iter.next();
-                Document doc = null;
+            for (int i = 0; i < topDocs.totalHits; i++) {
+                ScoreDoc scoreDoc = topDocs.scoreDocs[i];
+                Document doc;
                 try {
-                    doc = hit.getDocument();
+                    doc = search.getIndexSearch().doc(scoreDoc.doc);
+
+                    stringList[counter] = doc.get(field);
+                    counter++;
                 } catch (IOException e) {
+                    //TODO: shouldn't this go outside the for loop?
                     status = "No results! Please try again.";
                 }
-                stringList[counter] = doc.get(field);
-                counter++;
             }
         }
         stringList[0] = status;
@@ -200,6 +200,7 @@ public class AutoCompleter
      * @throws ObjectStoreException ObjectStoreException
      * @throws ClassNotFoundException ClassNotFoundException
      */
+    @SuppressWarnings("unchecked")
     public void buildIndex(ObjectStore os)
         throws IOException, ObjectStoreException, ClassNotFoundException {
 
