@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 21;
+use Test::More tests => 22;
 use Test::Exception;
 use Test::MockObject::Extends;
 
@@ -20,65 +20,12 @@ my @methods = qw/new
                  get_result
                  /;
 
-my $fake_content = 
-q{<template-queries><template name="Probe_Gene" title="Affymetrix probeset --&gt; Gene." longDescription="For specified Affymetrix probeset(s) show the corresponding gene." comment="">
-  <query name="Probe_Gene" model="genomic" view="Gene.probeSets.primaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.chromosomeLocation.object.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" longDescription="For specified Affymetrix probeset(s) show the corresponding gene." sortOrder="Gene.probeSets.primaryIdentifier asc" constraintLogic="A and B">
-    <pathDescription pathString="Gene.probeSets.chromosome" description="Probe &gt; chromosome">
-    </pathDescription>
-    <pathDescription pathString="Gene.probeSets.evidence" description="Dataset">
-    </pathDescription>
-    <pathDescription pathString="Gene.probeSets.chromosomeLocation" description="Probe &gt; chromosome location">
-    </pathDescription>
-    <pathDescription pathString="Gene.probeSets" description="Probe">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.probeSets" type="ProbeSet">
-    </node>
-    <node path="Gene.probeSets.primaryIdentifier" type="String">
-      <constraint op="=" value="1634044_at" description="" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="GeneOrganism1_OrthologueOrganism2" title="All genes organism1 --&gt; Orthologues organism2." longDescription="Show all the orthologues between two specified organisms. (Data Source: Inparanoid, Drosophila Consortium)." comment="">
-  <query name="GeneOrganism1_OrthologueOrganism2" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.symbol Homologue.inParanoidScore Homologue.dataSets.title" longDescription="Show all the orthologues between two specified organisms. (Data Source: Inparanoid, Drosophila Consortium)." sortOrder="Homologue.gene.primaryIdentifier asc" constraintLogic="A and B and C">
-    <pathDescription pathString="Homologue.dataSets" description="Dataset">
-    </pathDescription>
-    <pathDescription pathString="Homologue.gene" description="Organism1 &gt; gene">
-    </pathDescription>
-    <pathDescription pathString="Homologue.homologue" description="Organism2 &gt; gene">
-    </pathDescription>
-    <node path="Homologue" type="Homologue">
-    </node>
-    <node path="Homologue.gene" type="Gene">
-    </node>
-    <node path="Homologue.gene.organism" type="Organism">
-    </node>
-    <node path="Homologue.gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Homologue.homologue" type="Gene">
-    </node>
-    <node path="Homologue.homologue.organism" type="Organism">
-    </node>
-    <node path="Homologue.homologue.organism.name" type="String">
-      <constraint op="=" value="Caenorhabditis elegans" description="and:" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="Homologue.type" type="String">
-      <constraint op="=" value="orthologue" description="" identifier="" code="C">
-      </constraint>
-    </node>
-  </query>
-</template></template-queries>};
+my $test_templates = '../api/test/resources/default-template-queries.xml';
+
+my $fake_content;
+open my $GFH, '<', $test_templates or die "Cannot open $test_templates, $!";
+$fake_content .= $_ for <$GFH>;
+close $GFH or die "Cannot close $test_templates, $!";
 
 my $fake_response = Test::MockObject::Extends->new;
 $fake_response->set_true('is_error')
@@ -86,15 +33,26 @@ $fake_response->set_true('is_error')
     ->mock(status_line => sub {return 'mock http error'})
 ;
 
+
 my @empty_array = ();
 
 my $exp_req_params = {
-          'constraint1' => 'Gene.probeSets.primaryIdentifier',
-          'value1' => '1634044_at',
+          'constraint1' => 'Employee.name',
           'format' => 'tab',
           'name' => 'fake_search',
           'op1' => '='
         };
+my $exp_multi_req_params =  {
+          'constraint2' => 'Employee.age',
+          'name' => 'fake_search',
+          'value2' => '55',
+          'constraint1' => 'Employee.age',
+          'value1' => '35',
+          'format' => 'tab',
+          'op2' => '!=',
+          'op1' => '>'
+        };
+
 
 ### Tests
 
@@ -104,7 +62,7 @@ can_ok($module, @methods); # Test 2
 my $service = new_ok($module => [$url], 'Service'); # Test 3
 isa_ok($service, 'InterMine::WebService::Core::Service', 'Inherits ok'); # Test 4
 
-# ### Test _make_templates_from_xml
+##### Test _make_templates_from_xml
 my $model = '../objectstore/model/testmodel/testmodel_model.xml';
 my $ms = $service->{model_service};
 $ms = Test::MockObject::Extends->new($ms);
@@ -148,24 +106,26 @@ throws_ok( sub {$service->search_for}, qr/You need a keyword/, # Test 9
 my @kwijibobs = $service->search_for('kwijibob');
 is_deeply(\@kwijibobs, \@empty_array, 'Return empty array for failed search'); # Test 10
 
-my ($found) = $service->search_for('probe');
+my ($found) = $service->search_for('ByName');
 is_deeply($found, $template, "Returns one result from search ok"); # Test 11
 
-my @founds = $service->search_for('gene');
-my @all    = @{$service->{templates}};
-is_deeply(\@founds, \@all, 'Can return multiple results from search ok'); # Test 12
+my @founds = grep {$_->isa('InterMine::Template')} $service->search_for('employee');
+ok(@founds > 1, 'Can return multiple results from search ok'); # Test 12
 
 ### Test get_template
 
-throws_ok( sub {$service->get_template}, qr/You need a name/, # Test 13
-	   'Catches get_template without a name');
-is($service->get_template('kwijibob'), undef, 'Return undef for unfound template'); # Test 14
-is_deeply($service->get_template('Probe_Gene'), $template, # Test 15
+throws_ok(sub {$service->get_template}, qr/You need a name/, # Test 13
+	  'Catches get_template without a name');
+is($service->get_template('kwijibob'), undef,                # Test 14
+          'Return undef for unfound template'); 
+is_deeply($service->get_template('employeeByName'), $template,             # Test 15
 	  'Can get a template by name');
+
+my $multi_cons = $service->get_template('employeesOfACertainAge');
 
 $service->mock(get_templates => sub { # mock template to return ambiguous results
     my @t = @{shift->{templates}};
-	$_->{pq}->{name} = 'fake_search' for (@t);
+    $_->set_name('fake_search') for (@t);
     return @t;
    }
 );
@@ -175,14 +135,19 @@ $service->unmock('get_templates');
 
 ### Test get_result
 
+
 throws_ok( sub {$service->get_result}, # Test 17
 	   qr/get_result needs a valid InterMine::Template/,
 	   'Catches lack of template');
 
 $service->mock(execute_request => sub {my ($self, $req) = @_; return $req});
 
-lives_ok(sub {$service->get_result($template)}, 'Happily processes a valid template'); # Test 18
+lives_ok(sub {$service->get_result($template)}, # Test 18
+	 'Happily processes a valid template'); 
 my $ret = $service->get_result($template);
-isa_ok($ret, 'InterMine::WebService::Core::Request', 'Results request'); # Test 19
-is($ret->get_url, $url.'/template/results', 'Constructs url ok'); #Test 20
+isa_ok($ret, 'InterMine::WebService::Core::Request', 'Results request');  # Test 19
+is($ret->get_url, $url.'/template/results', 'Constructs url ok');         # Test 20
 is_deeply({$ret->get_parameters}, $exp_req_params, 'Sets parameters ok'); # Test 21
+$ret = $service->get_result($multi_cons);
+is_deeply({$ret->get_parameters}, $exp_multi_req_params,                  # Test 22
+	  'Sets parameters ok for templates with more than one constraint');
