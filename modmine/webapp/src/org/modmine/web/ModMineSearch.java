@@ -332,6 +332,8 @@ public class ModMineSearch
         long time = System.currentTimeMillis();
         LOG.info("Indexing metadata...");
 
+        int indexed = 0;
+
         ram = new RAMDirectory();
         IndexWriter writer;
         try {
@@ -339,25 +341,24 @@ public class ModMineSearch
                     StopAnalyzer.ENGLISH_STOP_WORDS_SET);
             writer = new IndexWriter(ram, snowballAnalyzer, true,
                     IndexWriter.MaxFieldLength.UNLIMITED);
+
+            for (Document doc : docs) {
+                try {
+                    writer.addDocument(doc);
+                    indexed++;
+                } catch (IOException e) {
+                    LOG.error("Failed to submit doc #" + doc.getFieldable("name") + " to the index",
+                            e);
+                }
+            }
+
+            try {
+                writer.close();
+            } catch (IOException e) {
+                LOG.error("IOException while closing IndexWriter", e);
+            }
         } catch (IOException err) {
             throw new RuntimeException("Failed to create lucene IndexWriter", err);
-        }
-
-        int indexed = 0;
-
-        for (Document doc : docs) {
-            try {
-                writer.addDocument(doc);
-                indexed++;
-            } catch (IOException e) {
-                LOG.error("Failed to submission " + doc.getFieldable("name") + " to the index", e);
-            }
-        }
-
-        try {
-            writer.close();
-        } catch (IOException e) {
-            LOG.error("IOException while closing IndexWriter", e);
         }
 
         time = System.currentTimeMillis() - time;

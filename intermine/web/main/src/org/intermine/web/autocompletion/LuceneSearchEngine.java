@@ -27,18 +27,18 @@ import org.apache.lucene.util.Version;
 
 /**
  * LuceneSearchEngine for the autocompleter
- *
  * @author Dominik Grimm
  * @author Michael Menden
  */
 public class LuceneSearchEngine
 {
 
-    private  IndexSearcher indexSearch;
-    private  Analyzer analyzer;
+    private IndexSearcher indexSearch;
+    private Analyzer analyzer;
 
     /**
-     * returns the indexSearcher so we can use IndexSearcher.doc(int) to get a doc
+     * returns the indexSearcher so we can use IndexSearcher.doc(int) to get a
+     * doc
      * @return IndexSearcher
      */
     public IndexSearcher getIndexSearch() {
@@ -46,9 +46,10 @@ public class LuceneSearchEngine
     }
 
     /**
-     * LuceneSearchEngine constructor put the indexes to memory and creates
-     * an keyword analyser
-     * @param fileName of the Lucene Index files
+     * LuceneSearchEngine constructor put the indexes to memory and creates an
+     * keyword analyser
+     * @param fileName
+     *            of the Lucene Index files
      */
     public LuceneSearchEngine(String fileName) {
         try {
@@ -63,9 +64,10 @@ public class LuceneSearchEngine
     }
 
     /**
-     * LuceneSearchEngine constructor put the indexes to memory and creates
-     * an keyword analyser
-     * @param ram RAMDirectory
+     * LuceneSearchEngine constructor put the indexes to memory and creates an
+     * keyword analyser
+     * @param ram
+     *            RAMDirectory
      */
     public LuceneSearchEngine(RAMDirectory ram) {
         try {
@@ -79,15 +81,18 @@ public class LuceneSearchEngine
 
     /**
      * Perform the lucene search.
-     * @param queryString the string for what you search in the indexes
-     * @param toSearch  the field in which you search
+     * @param queryString
+     *            the string for what you search in the indexes
+     * @param toSearch
+     *            the field in which you search
      * @return Hits list of documents (search results)
-     * @throws IOException IOException
-     * @throws ParseException IOException
+     * @throws IOException
+     *             IOException
+     * @throws ParseException
+     *             IOException
      */
-    public TopDocs performSearch(String queryString, String toSearch)
-        throws IOException, ParseException {
-
+    public TopDocs performSearch(String queryString, String toSearch) throws IOException,
+            ParseException {
         QueryParser parser = new QueryParser(Version.LUCENE_30, toSearch, analyzer);
         BooleanQuery.setMaxClauseCount(4096);
 
@@ -113,7 +118,8 @@ public class LuceneSearchEngine
             }
             query = parser.parse(queryString + "*");
 
-            return indexSearch.search(query, 500); //FIXME: hardcoded maximum number of results
+            return indexSearch.search(query, 500); // FIXME: hardcoded maximum
+                                                   // number of results
         }
 
         return null;
@@ -121,9 +127,12 @@ public class LuceneSearchEngine
 
     /**
      * Perform the search but only return n results.
-     * @param queryS the string for what you search in the indexes
-     * @param toSearch the field in which you search
-     * @param n first n results
+     * @param queryS
+     *            the string for what you search in the indexes
+     * @param toSearch
+     *            the field in which you search
+     * @param n
+     *            first n results
      * @return array of ScoreDoc[] with n elements
      */
     public String[] fastSearch(String queryS, String toSearch, int n) {
@@ -132,7 +141,6 @@ public class LuceneSearchEngine
         BooleanQuery.setMaxClauseCount(4096);
         String status = "true";
         String[] results = null;
-
 
         if (!queryS.equals("") && !queryS.trim().startsWith("*")) {
             Query query = null;
@@ -187,6 +195,5 @@ public class LuceneSearchEngine
 
         return null;
     }
-
 
 }
