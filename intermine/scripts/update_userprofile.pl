@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Carp qw(carp confess);
+use Carp;
 
 use Log::Handler;
 
@@ -17,23 +17,28 @@ use XML::Writer;
 
 use JSON;
 
-use lib $ENV{HOME}.'/svn/dev/intermine/perl/lib';
-use InterMine::Template;
-use InterMine::SavedQuery;
-use InterMine::Model;
-use IMUtils::Functions qw(zip);
-
 use Getopt::Long;
 
-my($logfile, $outfile, $inputfile, $help, $new_model_file, $changes_file);
-    my $result = GetOptions("logfile=s"      => \$logfile,
+my($logfile, $outfile, $inputfile, $help, 
+   $new_model_file, $changes_file);
+my $lib = $ENV{HOME}.'/svn/dev/intermine/perl/lib';
+my $result = GetOptions("logfile=s"      => \$logfile,
 			"outputfile=s"   => \$outfile,
 			"inputfile=s"    => \$inputfile,
 			"modelfile=s"    => \$new_model_file,
 			"changesfile=s"  => \$changes_file,
 			"help"           => \$help,
 			"usage"          => \$help,
+			"perlmodules=s"  => \$lib,
     );
+eval qq{
+use lib "$lib";
+use InterMine::Template;
+use InterMine::SavedQuery;
+use InterMine::Model;
+};
+croak "$@" if ($@);
+
 my $model = InterMine::Model->new(file => $new_model_file);
 my $log = Log::Handler->new();
 if ($logfile) {
@@ -68,7 +73,18 @@ my $changes_href = $json->decode($content);
 
 my %processed;
 
+sub zip {
+    my @dbl_array = @_;
 
+    # otherwise you get @dbl_array[0,0], ie. doubling.
+    return @dbl_array if (@dbl_array == 1); 
+
+    # find the length of the first array (ie. half the total)
+    my $midpoint = @dbl_array / 2;     
+
+    # pair up the elements
+    return @dbl_array[ map { $_, $_ + $midpoint } 0 .. $midpoint - 1 ]; 
+}
 
 sub changed {
     my $key = shift;
