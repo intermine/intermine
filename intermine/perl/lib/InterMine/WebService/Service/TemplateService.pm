@@ -107,7 +107,8 @@ sub get_templates {
 	
 	my $resp = $self->execute_request($request);
 	if ($resp->is_error) {
-	    croak 'Fetching templates failed with message: ', $resp->status_line(), "\n";
+	    croak 'Fetching templates failed with message: ', 
+	          $resp->status_line();
 	}
 	else {
 	    my $model = $self->{model_service}->get_model;
@@ -133,7 +134,8 @@ sub get_result {
     my $self = shift;
     my $template = shift;
     die "get_result needs a valid InterMine::Template\n" 
-	unless (ref $template eq 'InterMine::Template');
+	unless (UNIVERSAL::can($template, 'isa') 
+		and $template->isa('InterMine::Template'));
     my $size = shift || 25; # default is 25
     my $url = $self->get_url().'template/results';
     my $request = 
