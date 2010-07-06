@@ -34,3 +34,17 @@
 
 <action path="/cytoscapeNetworkExport"
         type="org.intermine.bio.web.struts.CytoscapeNetworkExportAction"/>
+        
+<action path="/initKeywordSearch"
+  type="org.flymine.web.KeywordSearchController" />
+
+<action path="/initKeywordSearchResults"
+  type="org.flymine.web.KeywordSearchResultsController" />
+  
+<action path="/keywordSearchAction" name="keywordSearchForm" type="org.flymine.web.KeywordSearchAction">
+      <forward name="keywordSearchResults" redirect="true" path="/keywordSearchResults.do"/>
+ </action>
+
+<action path="/keywordSearchResults" forward="keywordsearchresults.page">
+</action>
+

@@ -2,3 +2,4 @@
 
 <form-bean name="sequenceExportForm" type="org.intermine.bio.web.struts.SequenceExportForm"/>
 <form-bean name="gff3ExportForm" type="org.intermine.bio.web.struts.GFF3ExportForm"/>
+<form-bean name="keywordSearchForm" type="org.flymine.web.KeywordSearchForm"/>
