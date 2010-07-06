@@ -7,9 +7,7 @@ template queries using the web service
 
 =head1 SYNOPSIS
 
-  my $factory = InterMine::TemplateFactory->new($xml_string);
-                 or:
-                InterMine::TemplateFactory->new(file => $xml_file);
+  my $factory = InterMine::TemplateFactory->new($xml, $model);
 
   my @templates = $factory->get_templates;
   my $template  = $factory->get_template($name);
@@ -59,7 +57,7 @@ use InterMine::Template;
 sub new {
     my $class = shift;
     my $self  = {};
-    if (@_ != 2) {
+    if (@_ < 2 || @_ > 3) {
 	croak "Bad number of arguments to InterMine::TemplateFactory::new\n";
     }
     
@@ -71,8 +69,8 @@ sub new {
 }
 
 sub _construct_tf {
-    my ($self, $xml, $model) = @_;
-    $self->{templates} = _make_templates($xml, $model);
+    my ($self, $xml, $model, $invalid) = @_;
+    $self->{templates} = _make_templates($xml, $model, $invalid);
     return $self;
 }
 
@@ -98,13 +96,13 @@ sub _read_in {
 
 
 sub _make_templates {
+    my ($xml, $model, $invalid) = @_;
     my $xml_validator = qr[(</?template-queries>)];
 
-    my $xml_string = _read_in(shift);
+    my $xml_string = _read_in($xml);
     croak 'Invalid or empty xml' unless ($xml_string && $xml_string =~ /$xml_validator/);
 
-    my $model = shift;
-    croak 'Invalid model' unless (ref $model eq 'InterMine::Model');
+    croak 'Invalid model' unless ($model->isa('InterMine::Model'));
 
     $xml_string =~ s[</?template-queries>][]gs;
     my @templates;
@@ -114,7 +112,11 @@ sub _make_templates {
 	push @templates, $1;
 	$xml_string = $2;	
     }
-    my @returners = map {InterMine::Template->new(string => $_, model => $model)} @templates;
+    my @returners = map {InterMine::Template->new(
+			     string   => $_, 
+			     model    => $model,
+			     no_validation => $invalid,
+			     )} @templates;
     return \@returners;
 }
 
