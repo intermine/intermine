@@ -2,28 +2,31 @@
 
 use strict;
 use warnings;
+use Carp qw(carp confess);
 
-use Log::Handler updater => "LOG";
+use Log::Handler;
 
+BEGIN {
+    eval "use Number::Format qw(format_number)";
+    if ($@) {
+	sub format_number {return @_};
+    }
+}
 use XML::Rules;
-use Data::Dumper;
+use XML::Writer;
 
 use JSON;
 
-use XML::Writer;
-
 use lib $ENV{HOME}.'/svn/dev/intermine/perl/lib';
 use InterMine::Template;
+use InterMine::SavedQuery;
 use InterMine::Model;
-use IMUtils::QueryUpdater;
+use IMUtils::Functions qw(zip);
 
-
-
-use Number::Format qw(:subs);
 use Getopt::Long;
 
 my($logfile, $outfile, $inputfile, $help, $new_model_file, $changes_file);
-my $result = GetOptions("logfile=s"      => \$logfile,
+    my $result = GetOptions("logfile=s"      => \$logfile,
 			"outputfile=s"   => \$outfile,
 			"inputfile=s"    => \$inputfile,
 			"modelfile=s"    => \$new_model_file,
@@ -31,21 +34,19 @@ my $result = GetOptions("logfile=s"      => \$logfile,
 			"help"           => \$help,
 			"usage"          => \$help,
     );
-
 my $model = InterMine::Model->new(file => $new_model_file);
-
-#my $log = Log::Handler->new();
+my $log = Log::Handler->new();
 if ($logfile) {
-    LOG->add(
+    $log->add(
 	file => {
 	    filename => $logfile,
 	    maxlevel => 'debug',
 	    minlevel => 'emergency',
 	}
-    );
+	);
 }
 else {
-    LOG->add(
+    $log->add(
 	screen => {
 	    log_to => 'STDOUT',
 	    maxlevel => 'debug',
@@ -65,12 +66,296 @@ close $changesFH or die "could not close $changes_file, $!";
 my $json  = new JSON;
 my $changes_href = $json->decode($content);
 
-my $updater = IMUtils::QueryUpdater->new($changes_href, $model);
+my %processed;
 
-sub process {
+
+
+sub changed {
+    my $key = shift;
+    return $changes_href->{translation_for}{$key};
+}
+
+sub dead {
+    my $key = shift;
+    $changes_href->{ok_to_delete}{$key};
+}
+
+
+sub update_path {
+    my $path = shift;
+    my $query = shift;
+    
+    my $query_name = (ref $query) ? $query->get_name : $query;
+
+    if (exists $processed{$path}) {
+	return $processed{$path};
+    }
+
+    my @new_bits;
+
+    my @bits       = split /[\.:]/, $path;
+    my @separators = split /\w+/,   $path;
+
+    my $class_name = shift @bits;
+    
+    my $class = $model->get_classdescriptor_by_name($class_name);
+
+    if (defined $class) {
+	push @new_bits, $class_name;
+    }
+    else {
+	if ($class = 
+	    eval {$model->get_classdescriptor_by_name(changed($class_name))}
+	    ) {
+	    push @new_bits, changed($class_name);
+	}
+	else {
+	    $log->warning($query_name, qq{Unexpected deletion of class "$class_name"}) unless dead($class_name);
+	    return;
+	}
+    }
+    
+    my $current_class = $class;
+    my $current_field = undef;
+    
+    my @path_so_far = ($class_name,);
+  FIELD: for my $bit (@bits) {
+
+      if ($bit eq 'id' and $bit eq $bits[-1]) { # id is an internal attribute for all tables
+	  push @new_bits, $bit;
+	  $current_class = undef; # id must be the final attribute 
+	  # - this will catch it if it isn't
+      }
+      else {
+	  my $old_path = join '', zip(@separators[0 .. $#path_so_far], @path_so_far);
+
+	  my $type;
+	  if (ref $query and $type = $query->type_of($old_path)) {
+	      if ($type eq 'Relation') {
+		  $current_class =  $current_field->rev_referenced_classdescriptor();
+	      }
+	      elsif (my $typeclass = eval {$model->get_classdescriptor_by_name($type)}) {
+		  $current_class = $typeclass;
+	      }
+	  }
+	  if (not UNIVERSAL::can($current_class, 'isa') 
+	      or not $current_class->isa('InterMine::Model::ClassDescriptor')) {
+	      croak "Could not find class of $new_bits[-1] when searching for $bit in $path";
+	  }
+	  else {
+	      $current_field = $current_class->get_field_by_name($bit);
+	  }
+	  if (!defined $current_field) {
+	      
+	      # Maybe this field is declared in a parent class?
+	      my @parents = map {$_->name} $current_class->get_parents;
+
+	      foreach my $parent (@parents) {
+		  my $key = "$parent.$bit";
+		  if (my $translation = changed($key)) {
+		      push @new_bits, $translation;
+		      push @path_so_far, $bit;
+
+		      $current_field = $current_class->get_field_by_name($translation);
+		      $current_class = next_class($current_field);
+		      next FIELD;
+		  }
+		  
+	      }
+	      if (!defined $current_field) { # still!
+		  unless (dead($bit)) {
+		      $log->warn("$query_name: Unexpected deletion of $bit from $path");
+		  }
+		  $processed{$path} = undef;
+		  return;
+	      }
+	  }
+	  push @new_bits, $bit;
+	  push @path_so_far, $bit;
+	  $current_class = next_class($current_field);
+      }
+  }
+    $processed{$path} = join('', zip(@separators, @new_bits));
+    return $processed{$path};
+    
+}
+
+sub next_class {
+    my $field = shift;
+    if ($field->field_type() eq 'attribute') {
+	# if this is not the last bit, it will caught next time around the loop
+	return undef;
+    } else {
+	if (   ($field->can('is_many_to_0') ) # for this kind of reference
+	       &&                             # we prefer reverse refs to refs
+	       ($field->is_many_to_0)                      ) {
+	    return $field->rev_referenced_classdescriptor() ||
+		$field->referenced_classdescriptor();
+	}
+	else {
+	    return $field->referenced_classdescriptor();
+	}
+    }
+    
+}
+
+sub update_query {
+    my $query = shift;
+    
+    my ($is_broken, $is_changed);
+
+    my $deletion = q!$is_changed++;"[DELETION][" . $query->get_name . qq{][$place] "$path"}!;
+    my $change   = q!$is_changed++;"[CHANGE][" . $query->get_name . qq{][$place] "$path" => "$translation"}!;
+    confess "$query is not a reference" unless (ref $query);
+    $log->info('Processing', $query->{type}, '"'.$query->get_name. '"');
+    
+    if ($query->type_hash) {
+	while (my ($key, $path) = each %{$query->type_hash}) {
+	    my $place = 'types';
+	    my $translation = changed($path);
+	    unless (defined $translation) {
+		if (dead($path)) {
+		   # maybe we can do better by looking at the path itself
+		    if (my $new_key = update_path($key, $query)) {
+			my @args = ($model, $new_key);
+			$translation = eval {InterMine::Path->new(@args)->end_type};
+		    }
+		}
+		else {
+		    $translation = $path;
+		}
+	    }
+	    # to prevent undefined in string errors
+	    $translation = '' unless $translation; 
+
+	    $log->info(eval $change) unless ($path eq $translation);
+	    $query->type_of($key => $translation);
+	}
+   }
+
+    my @views = $query->get_views;
+    my @new_views;
+    for my $path (@views) {
+	my $place = 'view';
+	if (my $translation = update_path($path, $query)) {
+	    $log->info(eval $change) unless ($path eq $translation);;
+	    push @new_views, $translation;
+	}
+	else {
+	    $log->info(eval $deletion);
+	}
+    }
+    $query->{view} = \@new_views;
+    
+    if ($query->sort_order) {
+	my ($sort_order, $direction) = split(/\s/, $query->sort_order);
+	if ($sort_order) {
+	    for my $path ($sort_order) {
+		my $place = 'sort order';
+		if (my $translation = update_path($path, $query)) {
+		    $log->info(eval $change) unless ($path eq $translation);
+		    $sort_order = $translation;
+		}
+		else {
+		    $log->warning(eval $deletion);
+		    $is_broken++;
+		}
+	    }
+	    $query->{sort_order} = $sort_order . 
+		(($direction) ? ' ' . $direction : '');
+	}
+    }
+
+    my @path_strings = $query->get_described_paths();
+    my %new_pathDescriptions;
+    for my $path (@path_strings) {
+	my $place = 'pathDescription';
+	if (my $translation = update_path($path, $query)) {
+	    $log->info(eval $change) unless ($path eq $translation);
+	    $new_pathDescriptions{$translation} = $query->{pathDescriptions}{$path};
+	}
+	else {
+	    $log->info(eval $deletion);
+	}
+    }
+    $query->{pathDescriptions} = \%new_pathDescriptions;
+
+    my @nodes = $query->get_node_paths();
+    my %new_constraints;
+    for my $path (@nodes) {
+	my $place = 'nodes';
+	if (my $translation = update_path($path, $query)) {
+	    $log->info(eval $change) unless ($path eq $translation);
+	    $new_constraints{$translation} = $query->{constraints}{$path};
+	    for my $con (@{$new_constraints{$translation}}) {
+		$con->_set_path($translation);
+	    }
+	}
+	else {
+	    $log->info(eval $deletion, ' (with its '. 
+		       scalar(@{$query->{constraints}{$path}}).
+		       ' constraints)');
+	    $is_broken++ if (@{$query->{constraints}{$path}});
+	}
+    }
+    $query->{constraints} = \%new_constraints;
+
+    if ($query->type_hash) {
+	my %new_typehash;
+	for my $path (keys %{$query->type_hash}) {
+	    my $place = 'types';
+	    if (my $translation = update_path($path, $query)) {
+		$log->info(eval $change) unless ($path eq $translation);
+		$new_typehash{$translation} = $query->type_of($path);
+	    }
+	    else {
+		$log->info(eval $deletion);
+	    }
+	}
+	$query->type_hash(\%new_typehash);
+    }
+    
+    if ($is_broken) {	
+	$log->warning($query->{type}, '"'.$query->get_name.'"', '"is broken');
+    }
+    elsif ($is_changed) {
+	$log->info($query->{type}, '"'.$query->get_name.'"', 'has been updated');
+	$is_broken = 0;
+    }
+    else {
+	$log->info($query->{type}, '"'.$query->get_name.'"', 'is unchanged');
+	$is_broken = undef;
+    }
+    return $query, $is_broken;
+}
+
+sub update {
+    my ($buffer, $type) = @_;
+    if ($type eq 'item') {
+	return translate_item($type, $buffer);
+    }
+    else {
+	return translate_query($type, $buffer);
+    }
+}
+
+my $parser = XML::Rules->new(rules => [_default => 'no content array']);
+
+sub undress { # takes xml and extracts the content
+    my $xml = shift;
+    return $parser->parse($xml);
+}
+
+sub dress { # takes content and straps on the xml
     my ($name, $hash_ref, $writer) = @_;
-     my %attr;
+    my %attr;
     my @subtags;
+    my $processed_element;
+    $writer = XML::Writer->new(
+	OUTPUT     => \$processed_element,
+	DATA_MODE  => 1,
+	DATA_INDENT => 3,
+	) unless $writer;
     while (my ($k, $v) = each %$hash_ref) {
 	if(ref $v) {
 	    push @subtags, map {{$k => $_}} @$v;
@@ -81,41 +366,155 @@ sub process {
     }
     $writer->startTag($name => %attr);
     foreach my $subtag (@subtags) {
-	process(each %$subtag, $writer);
+	dress(each %$subtag, $writer);
     }
     $writer->endTag($name);
+    return $processed_element;
 }
 
-my @rules = (
-    _default => 'no content array',
-    'template' => sub {	
-	my ($name, $hash_ref) = @_;
-	my $xml;
+sub translate_query { # takes in xml, returns xml
+    my ($name, $xml) = @_;
 
-	my $writer = XML::Writer->new(OUTPUT => \$xml, DATA_MODE => 1, DATA_INDENT => 2);
-	process($name, $hash_ref, $writer);
-	my $t = InterMine::Template->new(string => $xml, model => $model, no_validation => 1);
-	my ($new_t, $is_broken) = $updater->update_query($t);
-	my @sub_rules = (_default => 'no content array');
-	my $sub_parser = XML::Rules->new(rules => \@sub_rules);
-	my $processed;
-	if ($is_broken) {
-	    $processed = $sub_parser->parse($new_t->get_source_string);
+    my $q;
+
+    my %args = (string => $xml, model => $model, no_validation => 1);
+
+    if ($name eq 'template') {
+	$q = InterMine::Template->new(%args);
+    }
+    elsif ($name eq 'saved-query') {
+	$q = InterMine::SavedQuery->new(%args);
+    }
+    my ($new_q, $is_broken) = update_query($q);
+    if ($is_broken) {
+	return $new_q->get_source_string, $is_broken;
+    }
+    else {
+	return $new_q->to_xml_string, $is_broken;
+    }
+}
+
+sub translate_item { # takes in xml, returns xml
+    my ($type, $xml) = @_;
+    my $naked    = undress($xml);
+    my $hash_ref = $naked->{$type}[0];
+    my $nothing  = '';
+    my $broken   = 1;
+    delete($hash_ref->{_content});
+    my ($class, $changed); 
+    unless ($class = eval {
+	$model->get_classdescriptor_by_name($hash_ref->{implements})
+	    }) {
+	my $translation = update_path($hash_ref->{implements}, 
+						$hash_ref->{name});
+
+	if ($class = eval {$model->get_classdescriptor_by_name($translation)}) {
+	    $log->info('[CHANGE] Item', $hash_ref->{id}, ':', $hash_ref->{implements}, " => $translation");
+	    $hash_ref->{implements} = $translation;
+	    $changed++;
 	}
 	else {
-	    $processed = $sub_parser->parse($new_t->to_template_xml);
+	    $log->warning('[DELETION] Item', $hash_ref->{id}, ': could not find', $hash_ref->{implements});
+	    return $nothing, $broken;
 	}
-	return ('@'.$name => @{$processed->{$name}});
-    },
- );
+    }
+    
+    foreach my $field (@{$hash_ref->{attribute}}, @{$hash_ref->{reference}}) {
+	if (not $class->get_field_by_name($field->{name})) {
+	    my $path = join '.', $hash_ref->{implements}, $field->{name};
+	    my $translation = update_path($path, $hash_ref->{id});
+	    if (defined $translation) {
+		$translation =~ s/^.*\.//;
+		$field->{name} = $translation;
+		$log->info('[CHANGE] Item', 
+			  $hash_ref->{id}, ':', 
+			  "$path => $translation");
+		$changed++;
+	    }
+	    else {
+		$log->warning('[DELETION] Item',  
+			     $hash_ref->{id}, 
+			     ": Could not find $path");
+		return $nothing, $broken;
+	    }
+	}
+    }
+    return dress($type,$hash_ref), ($changed)? 0 : undef;
+}	
 
-my $parser = XML::Rules->new(rules => \@rules);
+sub main {
+    open (my $INFH, '<', $inputfile) or die "cannot open $inputfile, $!";
+    open (my $OUTFH, '>', $outfile)  or die "cannot open $outfile, $!";
+    my ($buffer, $is_buffering);
+    
+    my %counter;
+    my @elems_to_process = qw(item template saved-query);
 
-my $output = $parser->parsefile($inputfile);
+    while (my $line = <$INFH>) {
+	$line =~ s/></>><</g;
+	my @elems;
+	@elems = split('><', $line);
+	while (my $elem = shift @elems) {
+	    my ($end, $type) = $elem =~ m!^\s*<(/?)([a-z-]+)[\s>]!i;
+	    if ($type) {
+		$counter{$type}++ unless $end;  
+		$counter{total}++;
+		printf "\rProcessing element %8d", $counter{total} 
+		    if $logfile;
 
-open (my $xmlfh, '>', $outfile) or die "$!";
-my $writer = XML::Writer->new(OUTPUT => $xmlfh, DATA_MODE => 1, DATA_INDENT => 2);
+		if (grep {/$type/} @elems_to_process) {
+		    $is_buffering = 1;
+		}
+	    }
 
-process('updated_profiles' => $output, $writer);
+	    if ($is_buffering) {
+		$buffer .= $elem;
+	    }
+	    else {
+		$elem =~ s/([^\n]$)/$1\n/;
+		print $OUTFH $elem;
+	    }
 
+	    if ($type and grep {$_ eq $type} @elems_to_process and $end) {
+		undef $is_buffering;
+		my ($updated_buffer, $changes) = update($buffer, $type);
+		print $OUTFH $updated_buffer, "\n";
+		undef $buffer;
+		if (defined $changes) {
+		    if ($changes) {
+			$counter{broken}{$type}++;
+		    }
+		    else {
+			$counter{changed}{$type}++;
+		    }
+		} 
+		else {
+		    $counter{unchanged}{$type}++;
+		}
+	    }
+	}
+    }
+
+    $log->info("finished processing");
+    $log->info("Processed $counter{total} elements");
+    for (@elems_to_process) {
+	my $tag = $_;
+	$tag =~ s/y/ie/;
+	my $msg = sprintf(
+	    "Processed %8s %-12s: %d unchanged, %d broken, %d changed",
+	    format_number($counter{$_}),
+	    $tag.'s',
+	    format_number($counter{unchanged}{$_}),
+	    format_number($counter{broken}{$_}),
+	    format_number($counter{changed}{$_}),
+	    );
+	$log->info($msg);
+    }
+    close $INFH or die "cannot close $inputfile, $!";
+    close $OUTFH or die "cannot close $outfile, $!";
+    
+    exit;
+}
+
+main() if (__PACKAGE__ eq 'main');
 
