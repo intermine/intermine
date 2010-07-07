@@ -32,6 +32,7 @@
 <!-- <collection name="transcripts" referenced-type="Transcript" reverse-reference="CDSs"/>
 -->
   <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="CDS"/>
+  <collection name="transcripts" referenced-type="Transcript" reverse-reference="CDSs"/>
 </class>
 <class name="BindingSite" is-interface="true">
   <attribute name="qvalue" type="java.lang.Double" />
@@ -75,6 +76,9 @@
   <collection name="SL1AcceptorSites" referenced-type="SL1AcceptorSite" reverse-reference="transcripts" />
   <collection name="SL2AcceptorSites" referenced-type="SL2AcceptorSite" reverse-reference="transcripts" />
   <collection name="TSSs" referenced-type="TSS" reverse-reference="transcripts" />
+  <collection name="transcriptionEndSites" referenced-type="TranscriptionEndSite" reverse-reference="transcripts" />
+  <collection name="CDSs" referenced-type="CDS" reverse-reference="transcripts" />
+  <collection name="polyASites" referenced-type="PolyASite" reverse-reference="transcripts" />
 </class>
 <class name="Gene" is-interface="true">
   <attribute name="source" type="java.lang.String" />
@@ -84,6 +88,11 @@
   <attribute name="externalEvidence" type="java.lang.String" />
   <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="polyASite"/>        
   <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="polyASite"/>
+  <collection name="transcripts" referenced-type="Transcript" reverse-reference="polyASites"/>
+</class>
+
+<class name="TranscriptionEndSite" is-interface="true">
+  <collection name="transcripts" referenced-type="Transcript" reverse-reference="transcriptionEndSites"/>
 </class>
 
 
