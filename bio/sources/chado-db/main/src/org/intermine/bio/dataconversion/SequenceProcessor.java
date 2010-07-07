@@ -928,7 +928,8 @@ public class SequenceProcessor extends ChadoProcessor
 
                 if (fds.size() == 0) {
                     if (!loggedMissingCols.contains(subjectInterMineType + relationType)) {
-                        LOG.error("can't find collection for type " + relationType
+                        LOG.error("can't find collection for type " + objectClass 
+                                + " with relationship " + relationType
                                 + " in " + subjectInterMineType + " (was processing feature "
                                 + chadoSubjectId + ")");
                         loggedMissingCols.add(subjectInterMineType + relationType);
