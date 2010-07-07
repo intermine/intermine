@@ -1,38 +1,101 @@
 #!/usr/bin/perl
 
+## Core Modules
 use strict;
 use warnings;
 use Carp;
+use Getopt::Long;
 
+## Modules to be installed
 use Log::Handler;
+use XML::Rules;
+use XML::Writer;
+use JSON;
 
+## Optional Module: Number:Format
 BEGIN {
+    # If Number::Format is not installed, don't format numbers
     eval "use Number::Format qw(format_number)";
     if ($@) {
 	sub format_number {return @_};
     }
 }
-use XML::Rules;
-use XML::Writer;
-
-use JSON;
-
-use Getopt::Long;
-
 my($logfile, $outfile, $inputfile, $help, 
    $new_model_file, $changes_file);
-my $lib = $ENV{HOME}.'/svn/dev/intermine/perl/lib';
-my $result = GetOptions("logfile=s"      => \$logfile,
-			"outputfile=s"   => \$outfile,
-			"inputfile=s"    => \$inputfile,
-			"modelfile=s"    => \$new_model_file,
-			"changesfile=s"  => \$changes_file,
-			"help"           => \$help,
-			"usage"          => \$help,
-			"perlmodules=s"  => \$lib,
+my $lib = $ENV{HOME}.'/svn/dev';
+my $result = GetOptions("logfile=s"       => \$logfile,
+			"outputfile=s"    => \$outfile,
+			"inputfile=s"     => \$inputfile,
+			"modelfile=s"     => \$new_model_file,
+			"changesfile=s"   => \$changes_file,
+			"help"            => \$help,
+			"usage"           => \$help,
+			"svndirectory=s"  => \$lib,
     );
+
+sub usage {
+    my $str = qq{
+$0: Update InterMine userprofile.xml files to reflect changes in the data model
+
+  Synopsis:
+$0 -i [file] -o [file] -m [file] -c [file.json] (-s [dir]) (-l [file])
+
+This updater will read through an input file, checking the validity of 
+any InterMine paths (in queries or items), writing out the new updated
+version to a specified file. It requires an example of the new data 
+model, as well as a list of the changes between the old model and the 
+current one.
+
+The updater will attempt to transform paths wherever possible. If this is
+not possible, then classes or fields will be deleted. All changes and 
+deletions will be logged. If a deletion makes an query or an item invalid,
+then in the case of a query it will be declared "broken" and the original
+version will be inserted into the new file: please see grep your log
+for "broken" to find out which queries are broken so you can edit them by
+hand, if you wish. Items will be logged as deleted, and removed from the 
+output stream. These are very rare (about 3 per million) but again they can
+be grepped for from the log output.
+
+At the end of the run (which takes roughly 1min for every 1 million xml 
+elements in the input stream) basic statistics will be logged, listing
+the total number of items, templates and saved-queries processed, changed
+and broken.
+
+  Options:
+
+--help|usage   | -h|u : This help text
+
+--inputfile    | -i   : The userprofile to be processed
+
+--outputfile   | -o   : The file to write the new userprofile to
+
+--modelfile    | -m   : The new model to validate paths against
+
+--changesfile  | -c   : The file specifying model changes (deletions
+                        and name changes)
+--svndirectory | -s   : The location of the InterMine svn directory,
+                        by default this is assumed to be "~/svn/dev"
+
+--logfile      | -l   : File to save the log to. If there is no file, 
+                        all logging output will go to STDOUT
+
+  Example:
+
+perl svn/dev/intermine/scripts/update_userprofile.pl -i Projects/userprofile.xml -o Projects/userprofile.xml.new -c Projects/model_changes.json -m svn/model_update/flymine/dbmodel/build/model/genomic_model.xml -l log/userprofiles.log -s svn/dev
+
+};
+    print $str;
+}
+
+if (not ($inputfile and $outfile and $new_model_file and $changes_file) 
+    or  ($help)) {
+    usage();
+    exit;
+}
+
+# use the InterMine libraries from the use defined (or default) directory
 eval qq{
-use lib "$lib";
+use lib "$lib/intermine/perl/lib";
 use InterMine::Template;
 use InterMine::SavedQuery;
 use InterMine::Model;
@@ -40,6 +103,8 @@ use InterMine::Model;
 croak "$@" if ($@);
 
 my $model = InterMine::Model->new(file => $new_model_file);
+
+# Set up logging, to screen if there is no file specified
 my $log = Log::Handler->new();
 if ($logfile) {
     $log->add(
@@ -510,7 +575,7 @@ sub main {
 	    }
 	}
     }
-
+    print "\n";
     $log->info("finished processing");
     $log->info("Processed $counter{total} elements");
     for (@elems_to_process) {
@@ -518,11 +583,11 @@ sub main {
 	$tag =~ s/y/ie/;
 	my $msg = sprintf(
 	    "Processed %8s %-12s: %d unchanged, %d broken, %d changed",
-	    format_number($counter{$_}),
+	    format_number($counter{$_} || 0),
 	    $tag.'s',
-	    format_number($counter{unchanged}{$_}),
-	    format_number($counter{broken}{$_}),
-	    format_number($counter{changed}{$_}),
+	    format_number($counter{unchanged}{$_} || 0),
+	    format_number($counter{broken}{$_}    || 0),
+	    format_number($counter{changed}{$_}   || 0),
 	    );
 	$log->info($msg);
     }
