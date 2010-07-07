@@ -63,10 +63,11 @@ sub new {
     return $class->SUPER::new(@args, type => 'saved-query');
 }
 
-sub _validate_has_views {
+sub _validate_has_view {
     # Saved queries are valid, even if they have no view, 
     # as they are meant to be loaded and edited
     return 1;
 }
+
 
 1;
