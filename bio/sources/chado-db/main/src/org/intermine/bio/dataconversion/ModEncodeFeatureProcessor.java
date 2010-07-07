@@ -735,9 +735,10 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private void processExpressionLevels(Connection connection) throws SQLException,
     ObjectStoreException {
         ResultSet res = getExpressionLevels(connection);
+        
         Integer previousId = -1;
-        //        Integer previousObjectId = -1;
         Item level = null;
+
         while (res.next()) {
             Integer id = res.getInt("expression_id");
             Integer featureId = res.getInt("feature_id");
@@ -746,20 +747,24 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             String property = res.getString("property");
             String propValue = res.getString("propvalue");
 
-            if (id != previousId) {
+            LOG.debug("EL: " + id + "|" + previousId + "->" + 
+                    featureId + ":" + property + "|" + propValue);
 
+            
+            if (!id.equals(previousId)) {
                 // if not first store prev level
                 if (previousId > 0) {
                     getChadoDBConverter().store(level);
                 }
-
                 // create new
                 level = getChadoDBConverter().createItem("ExpressionLevel");
                 level.setAttribute("name", name);
                 if (!StringUtils.isBlank(value)) {
                     level.setAttribute("value", value);
                 } else {
-                    LOG.warn("ExpressionLevel found with no value for uniquename: " + name);
+                    LOG.warn("ExpressionLevel found with blank value for uniquename: " + name); 
+//                    LOG.warn("ExpressionLevel found with blank value for uniquename: " + name + 
+//                            " " + value);
                 }
                 if (featureMap.containsKey(featureId)) {
                     FeatureData fData = featureMap.get(featureId);
@@ -776,7 +781,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 previousId = id;
                 continue;
             }
-
             level.setAttribute(getPropName(property), propValue);
             previousId = id;
         }
@@ -822,7 +826,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         long bT = System.currentTimeMillis();
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
-        LOG.info("QUERY TIME expression values: " + (System.currentTimeMillis() - bT));
+        LOG.info("QUERY TIME expression levels: " + (System.currentTimeMillis() - bT));
         return res;
     }
 
