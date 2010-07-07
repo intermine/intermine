@@ -66,7 +66,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             "binding_site", "protein_binding_site", "TF_binding_site",
             "transcript_region", "histone_binding_site", "copy_number_variation",
             "natural_transposable_element", "start_codon", "stop_codon"
-            , "cDNA"
+            , "cDNA", "miRNA"
             , "three_prime_RACE_clone", "three_prime_RST", "three_prime_UST"
             , "polyA_site", "polyA_signal_sequence", "overlapping_EST_set", "exon_region"
             , "SL1_acceptor_site", "SL2_acceptor_site"
@@ -735,7 +735,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private void processExpressionLevels(Connection connection) throws SQLException,
     ObjectStoreException {
         ResultSet res = getExpressionLevels(connection);
-        
+
         Integer previousId = -1;
         Item level = null;
 
@@ -747,10 +747,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             String property = res.getString("property");
             String propValue = res.getString("propvalue");
 
-            LOG.debug("EL: " + id + "|" + previousId + "->" + 
+            LOG.debug("EL: " + id + "|" + previousId + "->" +
                     featureId + ":" + property + "|" + propValue);
 
-            
             if (!id.equals(previousId)) {
                 // if not first store prev level
                 if (previousId > 0) {
@@ -762,8 +761,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 if (!StringUtils.isBlank(value)) {
                     level.setAttribute("value", value);
                 } else {
-                    LOG.warn("ExpressionLevel found with blank value for uniquename: " + name); 
-//                    LOG.warn("ExpressionLevel found with blank value for uniquename: " + name + 
+                    LOG.warn("ExpressionLevel found with blank value for uniquename: " + name);
+//                    LOG.warn("ExpressionLevel found with blank value for uniquename: " + name +
 //                            " " + value);
                 }
                 if (featureMap.containsKey(featureId)) {
