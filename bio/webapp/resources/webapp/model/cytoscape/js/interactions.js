@@ -1,6 +1,6 @@
 // Functions for network display
 
-function showInteractions(data, webapp_baseurl, webapp_path) {
+function showInteractions(data, webapp_baseurl, webapp_path, project_title) {
 
     jQuery('#menu').html("&nbsp;");
 
@@ -21,10 +21,32 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
     // after init
     vis.ready(function() {
 
+    // add new fields to edges
+    //var field_shortname = { name: "name", type: "string", defValue: "" };
+    var field_datasource = { name: "data_source", type: "string", defValue: "" };
+    //var field_publicationtitle = { name: "publication_title", type: "string", defValue: "" };
+    //vis.addDataField("edges", field_shortname);
+    vis.addDataField("edges", field_datasource);
+    //vis.addDataField("edges", field_publicationtitle);
+
+    // Customize edge tooltips
+    // 1. First, create a function and add it to the Visualization object.
+    vis["customTooltip"] = function (data) {
+        return 'Data Source:\n<font color="#660099" face="Verdana" size="12"><b>' + data["data_source"] + '</b></font>';
+    };
+
+    // 2. Now create a new visual style (or get the current one) and register
+    //    the custom mapper to one or more visual properties:
+    var style = vis.visualStyle();
+    style.edges.tooltipText = { customMapper: { functionName: "customTooltip" } },
+
+    // 3. Finally set the visual style again:
+    vis.visualStyle(style);
+
     var caption = "[Click the network to zoom]";
     jQuery('#caption').html(caption);
 
-    var menu = '<span id="phsical" class="fakelink">Show Physical Interactions</span>&nbsp;|&nbsp;<span id="genetic" class="fakelink">Show Genetic Interactions</span>&nbsp;|&nbsp;<span id="all" class="fakelink">Show All Interactions</span>';
+    var menu = '<span id="physical" class="fakelink">Show Physical Interactions</span>&nbsp;|&nbsp;<span id="genetic" class="fakelink">Show Genetic Interactions</span>&nbsp;|&nbsp;<span id="all" class="fakelink">Show All Interactions</span>';
     jQuery('#menu').html(menu);
 
     var legends = '<span>Interaction Type:</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="physical">legends</span>&nbsp;&nbsp;<span>Physical</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="genetic">legends</span>&nbsp;&nbsp;<span>Genetic</span>';
@@ -41,8 +63,8 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
               //$("#edgelabels").text('Hide Labels');}
      //});
 
-     // Filter to show phsical interactions
-    jQuery('#phsical').click(function(){
+     // Filter to show physical interactions
+    jQuery('#physical').click(function(){
          vis.filter("edges", function(edge) {
              return edge.color >= "#FF0000";
          });
@@ -62,7 +84,7 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
         });
     });
 
-    vis.addContextMenuItem("View FlyMine report...", "nodes", function(evt) {
+    vis.addContextMenuItem("View "+project_title+" report...", "nodes", function(evt) {
         var data = evt.target.data;
         var url = data.url;
         //if (url == null) { url = "${WEB_PROPERTIES['webapp.baseurl']}"+"/"+"${WEB_PROPERTIES['webapp.path']}"+"/portal.do?externalid="+data.id+"&class=Gene"; }
@@ -77,12 +99,50 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
         // vis.draw(...) // redraw
     // })
 
-    vis.addContextMenuItem("Export as SIF...", "none", function(evt) {
+    vis.addContextMenuItem("Export network as SIF...", "none", function(evt) {
       vis.exportNetwork('sif', 'cytoscapeNetworkExport.do?type=sif');
     })
 
-    .addContextMenuItem("Export as XGMML...", "none", function(evt) {
+    .addContextMenuItem("Export network as XGMML...", "none", function(evt) {
       vis.exportNetwork('xgmml', 'cytoscapeNetworkExport.do?type=xgmml');
+    })
+
+    .addContextMenuItem("View interaction report...", "edges", function(evt) {
+
+        shortname_array = shortnames.split(/\r\n|\r|\n/);
+        a_shortname = shortname_array[0];
+
+        var data = evt.target.data;
+        var url = data.url;
+        if (url == null) { url = webapp_baseurl+"/"+webapp_path+"/portal.do?externalid="+a_shortname+"&class=Interaction";}
+        window.open(url);
+    })
+
+    .addListener("mouseover", "edges", function(evt) {
+
+        var a_edge = evt.target;
+        var edge_id = [a_edge.data.id];
+
+        // update visual style of egdes
+        var bypass = { edges: {} };
+        bypass.edges[edge_id] = { width: 3 };
+        vis.visualStyleBypass(bypass);
+
+        // get interaction info via ajax
+        var interactionRecords = queryInteractionDatasource(a_edge);
+        shortnames = queryInteractionShortname(a_edge);
+
+        splitRecords = interactionRecords.split(/\r\n|\r|\n/);
+        splitRecords.pop();
+
+        var data_to_update = { data_source: splitRecords };
+        vis.updateData("edges", edge_id, data_to_update);
+    })
+
+    .addListener("mouseout", "edges", function(evt) {
+        setTimeout(function() {
+            vis.visualStyleBypass({});
+          }, 400);
     })
 
     .addListener("mouseover", "nodes", function(evt) {
@@ -109,9 +169,9 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
         // Change the scale of the network until it fits the screen.
         vis.zoom(1);
         vis.nodeTooltipsEnabled(false);
-        vis.edgeTooltipsEnabled(false);
+        vis.edgeTooltipsEnabled(true);
         // Change the caption
-        jQuery('#caption').html("[Right click a node for more options]");
+        jQuery('#caption').html("[Right click a node or edge for more options]");
 
         // mimic of jQuery.one('click', func)
         vis.removeListener("click", "none");
@@ -132,7 +192,8 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
 
         visualStyle: {
             global: {
-               backgroundColor: "#FFFFFF"
+               backgroundColor: "#FFFFFF",
+               tooltipDelay: 1
             },
 
             nodes: {
@@ -219,4 +280,35 @@ function showInteractions(data, webapp_baseurl, webapp_path) {
         var nodes = fn.neighbors.concat(fn.rootNodes);
         vis.deselect();
         vis.select(nodes);
+    }
+
+    function queryInteractionDatasource(edge) {
+
+        //var ajax_url =  webapp_baseurl+"/"+webapp_path+"/service/query/results?query=%3Cquery+name%3D%22%22+model%3D%22genomic%22+view%3D%22Gene.interactions.shortName+Gene.interactions.dataSets.dataSource.name+Gene.interactions.experiment%3Apublication.title+Gene.interactions.experiment%3Apublication.pubMedId+Gene.interactions.interactionType%22+constraintLogic%3D%22A+and+B+and+C%22%3E%3Cnode+path%3D%22Gene%22+type%3D%22Gene%22%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.interactions%22+type%3D%22Interaction%22%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.interactions.interactingGenes%22+type%3D%22Gene%22%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.interactions.interactingGenes.symbol%22+type%3D%22String%22%3E%3Cconstraint+op%3D%22%3D%22+value%3D%22"+edge.data.target+"%22+description%3D%22%22+identifier%3D%22%22+code%3D%22B%22%3E%3C%2Fconstraint%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.interactions.interactionType%22+type%3D%22String%22%3E%3Cconstraint+op%3D%22%3D%22+value%3D%22"+edge.data.interaction+"%22+description%3D%22%22+identifier%3D%22%22+code%3D%22C%22%3E%3C%2Fconstraint%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.interactions.experiment%22+type%3D%22InteractionExperiment%22%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.interactions.experiment%3Apublication%22+type%3D%22Publication%22%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.symbol%22+type%3D%22String%22%3E%3Cconstraint+op%3D%22%3D%22+value%3D%22"+edge.data.source+"%22+description%3D%22%22+identifier%3D%22%22+code%3D%22A%22%3E%3C%2Fconstraint%3E%3C%2Fnode%3E%3C%2Fquery%3E&format=tab";
+        var ajax_url = webapp_baseurl+"/"+webapp_path+"/service/query/results?query=%3Cquery+name%3D%22%22+model%3D%22genomic%22+view%3D%22Gene.interactions.dataSets.dataSource.name%22+sortOrder%3D%22Gene.interactions.dataSets.dataSource.name+asc%22+constraintLogic%3D%22A+and+B+and+C%22%3E%3Cnode+path%3D%22Gene%22+type%3D%22Gene%22%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.symbol%22+type%3D%22String%22%3E%3Cconstraint+op%3D%22%3D%22+value%3D%22"+edge.data.target+"%22+description%3D%22%22+identifier%3D%22%22+code%3D%22A%22%3E%3C%2Fconstraint%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.interactions%22+type%3D%22Interaction%22%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.interactions.interactingGenes%22+type%3D%22Gene%22%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.interactions.interactingGenes.symbol%22+type%3D%22String%22%3E%3Cconstraint+op%3D%22%3D%22+value%3D%22"+edge.data.source+"%22+description%3D%22%22+identifier%3D%22%22+code%3D%22B%22%3E%3C%2Fconstraint%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.interactions.interactionType%22+type%3D%22String%22%3E%3Cconstraint+op%3D%22%3D%22+value%3D%22"+edge.data.interaction+"%22+description%3D%22%22+identifier%3D%22%22+code%3D%22C%22%3E%3C%2Fconstraint%3E%3C%2Fnode%3E%3C%2Fquery%3E&format=tab";
+
+        return jQuery.ajax({
+            url: ajax_url,
+            type: "GET",
+            async:false,
+            success: function(intact_info){
+               // alert(edge.data.target+"\n"+edge.data.interaction+"\n"+edge.data.source+"\n"+intact_info);
+            }
+         }
+      ).responseText;
+    }
+
+    function queryInteractionShortname(edge) {
+
+        var ajax_url = webapp_baseurl+"/"+webapp_path+"/service/query/results?query=%3Cquery+name%3D%22%22+model%3D%22genomic%22+view%3D%22Gene.interactions.shortName%22+sortOrder%3D%22Gene.interactions.shortName+asc%22+constraintLogic%3D%22A+and+C+and+B%22%3E%3Cnode+path%3D%22Gene%22+type%3D%22Gene%22%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.symbol%22+type%3D%22String%22%3E%3Cconstraint+op%3D%22%3D%22+value%3D%22"+edge.data.target+"%22+description%3D%22%22+identifier%3D%22%22+code%3D%22A%22%3E%3C%2Fconstraint%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.interactions%22+type%3D%22Interaction%22%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.interactions.interactionType%22+type%3D%22String%22%3E%3Cconstraint+op%3D%22%3D%22+value%3D%22"+edge.data.interaction+"%22+description%3D%22%22+identifier%3D%22%22+code%3D%22C%22%3E%3C%2Fconstraint%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.interactions.interactingGenes%22+type%3D%22Gene%22%3E%3C%2Fnode%3E%3Cnode+path%3D%22Gene.interactions.interactingGenes.symbol%22+type%3D%22String%22%3E%3Cconstraint+op%3D%22%3D%22+value%3D%22"+edge.data.source+"%22+description%3D%22%22+identifier%3D%22%22+code%3D%22B%22%3E%3C%2Fconstraint%3E%3C%2Fnode%3E%3C%2Fquery%3E&format=tab";
+
+        return jQuery.ajax({
+            url: ajax_url,
+            type: "GET",
+            async:false,
+            success: function(intact_info){
+               // alert(edge.data.target+"\n"+edge.data.interaction+"\n"+edge.data.source+"\n"+intact_info);
+            }
+         }
+      ).responseText;
     }
