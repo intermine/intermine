@@ -638,11 +638,9 @@ public class MetadataCache
                 + experimentCache.size());
     }
 
-
     private static Map<String, Map<String, Long>> getExperimentFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         Query q = new Query();
-        q.setDistinct(false);
 
         QueryClass qcExp = new QueryClass(Experiment.class);
         QueryClass qcSub = new QueryClass(Submission.class);
@@ -655,15 +653,10 @@ public class MetadataCache
         q.addFrom(qcLsf);
         q.addFrom(qcExp);
 
+        q.addToSelect(qcExp);
+        q.addToSelect(qcLsf);
         q.addToSelect(qfName);
         q.addToSelect(qfClass);
-        q.addToSelect(new QueryFunction());
-
-        q.addToGroupBy(qfName);
-        q.addToGroupBy(qfClass);
-
-        q.addToOrderBy(qfName);
-        q.addToOrderBy(qfClass);
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
@@ -678,7 +671,24 @@ public class MetadataCache
 
         q.setConstraint(cs);
 
-        Results results = os.execute(q);
+        q.setDistinct(true);
+        
+        Query superQ = new Query();
+        superQ.addFrom(q);
+        QueryField superQfName = new QueryField(q, qfName);
+        QueryField superQfClass = new QueryField(q, qfClass);
+        
+        superQ.addToSelect(superQfName);
+        superQ.addToSelect(superQfClass);
+        superQ.addToOrderBy(superQfName);
+        superQ.addToOrderBy(superQfClass);
+        superQ.addToGroupBy(superQfName);
+        superQ.addToGroupBy(superQfClass);
+
+        superQ.addToSelect(new QueryFunction());
+        superQ.setDistinct(false);
+
+        Results results = os.execute(superQ);
 
         Map<String, Map<String, Long>> featureCounts =
             new LinkedHashMap<String, Map<String, Long>>();
@@ -703,6 +713,7 @@ public class MetadataCache
         return featureCounts;
     }
 
+    
     private static void readSubmissionFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
 
@@ -1006,7 +1017,6 @@ public class MetadataCache
         Map<Integer, List<GBrowseTrack>> flyTracks = null;
         Map<Integer, List<GBrowseTrack>> wormTracks = null;
         try {
-
             flyTracks = readTracks("fly");
             wormTracks = readTracks("worm");
         } catch (Exception e) {
