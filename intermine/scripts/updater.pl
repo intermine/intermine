@@ -483,7 +483,7 @@ sub translate_query { # takes in xml, returns xml
 	$ret  = eval {$new_q->to_xml_string};
     }
     if ($@) {
-	$log->warning("$@");
+	$log->warning('broken query:', "$@");
 	$is_broken++;
     }
     $ret = $new_q->get_source_string unless $ret;
