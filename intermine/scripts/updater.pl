@@ -695,7 +695,7 @@ sub main {
 	close $INFH or die "cannot close $in_file, $!";
 	close $OUTFH or die "cannot close $out_file, $!";
     }
-    $log->info("Processed $counter{total} elements");
+    $log->info('Processed', format_number($counter{total}), 'elements');
     for (@elems_to_process) {
 	my $tag = $_;
 	$tag =~ s/y$/ie/;
