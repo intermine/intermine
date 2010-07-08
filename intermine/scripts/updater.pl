@@ -480,7 +480,7 @@ sub translate_query { # takes in xml, returns xml
     my ($new_q, $is_broken) = update_query($q);
     my $ret;
     unless ($is_broken) {
-	$ret  = eval {$new_q->to_xml_string};
+	$ret  = eval {$new_q->to_xml_string}; # it still might break
     }
     if ($@) {
 	$log->warning('broken query:', "$@");
@@ -701,7 +701,7 @@ sub main {
 	$tag =~ s/y$/ie/;
 	$tag =~ s/s$/se/;
 	my $msg = sprintf(
-	    "Processed %8s %-12s: %d unchanged, %d broken, %d changed",
+	    "Processed %8s %-12s: %s unchanged, %s broken, %s changed",
 	    format_number($counter{$_} || 0),
 	    $tag.'s',
 	    format_number($counter{unchanged}{$_} || 0),
