@@ -56,7 +56,7 @@ public class ProjectsSummaryController extends TilesAction
             final ServletContext servletContext = servlet.getServletContext();
 
             Map<String, List<DisplayExperiment>> categories =
-                MetadataCache.getCategoryExperiments(servletContext, os);
+                CategoryExperiments.getCategoryExperiments(servletContext, os);
 //            request.setAttribute("categories", categories);
             request.setAttribute("catExp", categories);
 
