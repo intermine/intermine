@@ -48,7 +48,7 @@ public class GFF3Exporter implements Exporter
     //    public static final Set<String> GFF_FIELDS = Collections
     //    .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
     //            "chromosomeLocation.start", "chromosomeLocation.end",
-    //            "chromosomeLocation.strand", "primaryIdentifier", "score", 
+    //            "chromosomeLocation.strand", "primaryIdentifier", "score",
     //            "start", "end", "strand")));
 
     /**
@@ -60,12 +60,12 @@ public class GFF3Exporter implements Exporter
     /**
      * for the gff header, link to taxomony
      */
-    public static final String WORM_LINK = 
+    public static final String WORM_LINK =
         "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=6239";
     /**
      * for the gff header, link to taxomony
      */
-    public static final String FLY_LINK = 
+    public static final String FLY_LINK =
         "http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7227";
 
     PrintWriter out;
@@ -77,9 +77,9 @@ public class GFF3Exporter implements Exporter
     private List<String> attributesNames;
     private String sourceName;
     private Set<Integer> organisms;
-    // this one to store the lower case class names of  soClassNames, 
+    // this one to store the lower case class names of  soClassNames,
     // for comparison with path elements classes.
-    private Set<String> cNames = new HashSet<String>(); 
+    private Set<String> cNames = new HashSet<String>();
     /**
      * Constructor.
      * @param out output stream
@@ -101,7 +101,7 @@ public class GFF3Exporter implements Exporter
         this.organisms = organisms;
 
         for (String s : soClassNames.keySet()) {
-            this.cNames.add(s.toLowerCase());                
+            this.cNames.add(s.toLowerCase());
         }
     }
 
@@ -162,9 +162,7 @@ public class GFF3Exporter implements Exporter
             throw new ExportException("No columns with sequence");
         }
         try {
-            
-            LOG.info("SOO:" + cNames.toString());
-            
+            // LOG.info("SOO:" + cNames.toString());
             while (resultIt.hasNext()) {
                 List<ResultElement> row = resultIt.next();
                 exportRow(row);
@@ -185,7 +183,7 @@ public class GFF3Exporter implements Exporter
 
 
     private void exportRow(List<ResultElement> row)
-    throws ObjectStoreException,
+        throws ObjectStoreException,
     IllegalAccessException {
 
         List<ResultElement> elWithObject = getResultElements(row);
@@ -225,7 +223,7 @@ public class GFF3Exporter implements Exporter
                     parentClass = el.getPath().getStartClassDescriptor().getUnqualifiedName();
 //                    LOG.info("PAR: " + parentClass);
                     if (cNames.contains(parentClass.toLowerCase())) {
-                        parent = (String) el.getField();                        
+                        parent = (String) el.getField();
 //                        LOG.info("PARent: " + parent);
                     }
                 }
@@ -235,9 +233,9 @@ public class GFF3Exporter implements Exporter
                     // one is collection, the other is not: do not show
                     continue;
                 }
-                if (!isCollection && el.getPath().containsCollections() 
+                if (!isCollection && el.getPath().containsCollections()
                         && soClassNames.containsKey(el.getType())) {
-                    // show attributes only if they are not linked to features 
+                    // show attributes only if they are not linked to features
                     // (they will be displayed with the relevant one, see below)
                     continue;
                 }
@@ -247,11 +245,8 @@ public class GFF3Exporter implements Exporter
                     Class<?> reType = re.getPath().getLastClassDescriptor().getType();
                     Class<?> elType = el.getPath().getLastClassDescriptor().getType();
                     if (!reType.isAssignableFrom(elType)) {
-                        // LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+ 
-                        // "|R:"+re.getPath()+"||E:"+el.getPath());
                         continue;
                     }
-                    // LOG.info("CC: " + reType + "|" + elType);
                 }
 
                 if (el.getPath().getLastClassDescriptor().getUnqualifiedName().
@@ -272,14 +267,14 @@ public class GFF3Exporter implements Exporter
                 if (i >= 1 && parent != null) {
                     if (!parentClass.equalsIgnoreCase(
                             re.getPath().getLastClassDescriptor().getUnqualifiedName())) {
-//                        LOG.info("PAR: " + parentClass + " -> " 
-//                                + re.getPath().getLastClassDescriptor().getUnqualifiedName()
-                                //                            + re.getPath().getLastClassDescriptor().getType()
-                                //                            + re.getPath().getLastClassDescriptor().getName()
-                                //                            + "|." + re.getPath().getLastClassDescriptor().getSubDescriptors()
-                                //                            + "|.." + re.getPath().getLastClassDescriptor().getAllCollectionDescriptors()
-                                //                            + "|..." + re.getPath().getLastClassDescriptor().getAllReferenceDescriptors()
-//                        );
+//                    LOG.info("PAR: " + parentClass + " -> "
+//                    + re.getPath().getLastClassDescriptor().getUnqualifiedName()
+//                    + re.getPath().getLastClassDescriptor().getType()
+//                    + re.getPath().getLastClassDescriptor().getName()
+//                    + "|." + re.getPath().getLastClassDescriptor().getSubDescriptors()
+//                    + "|.." + re.getPath().getLastClassDescriptor().getAllCollectionDescriptors()
+//                    + "|..." + re.getPath().getLastClassDescriptor().getAllReferenceDescriptors()
+//                    );
                         List<String> addPar = new ArrayList<String>();
                         addPar.add(parent);
                         attributes.put("Parent", addPar);
@@ -299,7 +294,7 @@ public class GFF3Exporter implements Exporter
         if (cNames.contains(unqualName.toLowerCase())) {
             String plainAttribute = attribute.substring(attribute.lastIndexOf('.') + 1);
             //            LOG.info("LCC: " +attribute+"->"+unqualName +"|"+ plainAttribute );
-            return plainAttribute;            
+            return plainAttribute;
         }
         //        LOG.info("LCCno: " + attribute + "|" + unqualName);
         return attribute;
@@ -307,7 +302,7 @@ public class GFF3Exporter implements Exporter
 
 
     /**
-     * 
+     *
      */
     private void makeRecord() {
 
@@ -380,7 +375,7 @@ public class GFF3Exporter implements Exporter
         List<ResultElement> els = new ArrayList<ResultElement>();
         for (Integer index : featureIndexes) {
             if (row.get(index) != null) {
-                els.add(row.get(index));                    
+                els.add(row.get(index));
             }
         }
         return els;
