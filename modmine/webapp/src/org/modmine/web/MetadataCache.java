@@ -146,6 +146,7 @@ public class MetadataCache
     private static Map<Integer, List<String>> submissionUnlocatedFeatureTypes = null;
     private static Map<Integer, List<String[]>> submissionRepositedCache = null;
     private static Map<String, String> featDescriptionCache = null;
+    private static Map<String, List<DisplayExperiment>> catExperimentCache = null;
 
     private static long lastTrackCacheRefresh = 0;
     private static final long TWO_HOUR = 7200000;
@@ -239,7 +240,7 @@ public class MetadataCache
      * @return map
      */
     public static synchronized Map<Integer, Integer>
-        getSubmissionExpressionLevelCounts(ObjectStore os) {
+    getSubmissionExpressionLevelCounts(ObjectStore os) {
         if (submissionExpressionLevelCounts == null) {
             readSubmissionCollections(os);
         }
@@ -368,9 +369,24 @@ public class MetadataCache
     }
 
 
+    /**
+     * Get an ordered map [category:experiments]
+     * @param servletContext from the controller
+     * @param os the objectStore
+     * @return the ordered map category/experiments
+     * @throws ObjectStoreException if error reading database
+     */
+    public static synchronized Map<String, List<DisplayExperiment>>
+    getCategoryExperiments(ServletContext servletContext, ObjectStore os)
+        throws ObjectStoreException {
+        if (catExperimentCache == null) {
+            readCategoryExperiments(servletContext, os);
+        }
+        return catExperimentCache;
+    }
+
     //======================
-    
-    
+
     private static void fetchGBrowseTracks() {
         long timeSinceLastRefresh = System.currentTimeMillis() - lastTrackCacheRefresh;
         if (timeSinceLastRefresh > TWO_HOUR) {
@@ -388,8 +404,6 @@ public class MetadataCache
         submissionTracksCache = tracks;
     }
 
-    
-    
     /**
      * Method to obtain the map of unlocated feature types by submission id
      *
@@ -543,29 +557,26 @@ public class MetadataCache
     * @param os objectStore
     * @return map exp-repository entries
     */
-   public static Map<String, Integer> getExperimentExpressionLevels(ObjectStore os) {
-       Map<String, Integer> experimentELevel = new HashMap<String, Integer>();
+    public static Map<String, Integer> getExperimentExpressionLevels(ObjectStore os) {
+        Map<String, Integer> experimentELevel = new HashMap<String, Integer>();
 
-       Map<Integer, Integer> subELevelMap = getSubmissionExpressionLevelCounts(os);
+        Map<Integer, Integer> subELevelMap = getSubmissionExpressionLevelCounts(os);
 
-       for (DisplayExperiment exp : getExperiments(os)) {
-           Integer expCount = 0;
-           for (Submission sub : exp.getSubmissions()) {
-               Integer subCount = subELevelMap.get(sub.getdCCid());
-               if (subCount != null) {
-                   expCount = expCount + subCount;
-               }
-           }
-//           if (expCount > 0) {
-               experimentELevel.put(exp.getName(), expCount);
-//           }
-       }
-       return experimentELevel;
-   }
+        for (DisplayExperiment exp : getExperiments(os)) {
+            Integer expCount = 0;
+            for (Submission sub : exp.getSubmissions()) {
+                Integer subCount = subELevelMap.get(sub.getdCCid());
+                if (subCount != null) {
+                    expCount = expCount + subCount;
+                }
+            }
+            //           if (expCount > 0) {
+            experimentELevel.put(exp.getName(), expCount);
+            //           }
+        }
+        return experimentELevel;
+    }
 
-    
-    
-    
     /**
      * Fetch a map from project name to experiment.
      * @param os the production ObjectStore
@@ -588,6 +599,82 @@ public class MetadataCache
         LOG.info("Made project map: " + projectExperiments.size()
                 + " took: " + totalTime + " ms.");
         return projectExperiments;
+    }
+
+    /**
+     * Build an ordered map from category to experiments.
+     * @param os the production ObjectStore
+     * @param servletContext from the controller
+     * @return an ordered map from category to experiments
+     */
+    public static Map<String, List<DisplayExperiment>>
+    readCategoryExperiments(ServletContext servletContext, ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+        catExperimentCache
+            = new LinkedHashMap<String, List<DisplayExperiment>>();
+
+        Properties propCat = new Properties();
+        Properties propOrd = new Properties();
+
+        InputStream is =
+            servletContext.getResourceAsStream("/WEB-INF/experimentCategory.properties");
+        if (is == null) {
+            LOG.error("Unable to find /WEB-INF/experimentCategory.properties!");
+        } else {
+            try {
+                propCat.load(is);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        InputStream is2 =
+            servletContext.getResourceAsStream("/WEB-INF/categoryOrder.properties");
+        if (is == null) {
+            LOG.error("Unable to find /WEB-INF/category.properties!");
+        } else {
+            try {
+                propOrd.load(is2);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Map <String, List<DisplayExperiment>> catExpUnordered =
+            new HashMap<String, List<DisplayExperiment>>();
+
+
+        for (DisplayExperiment de : getExperiments(os)) {
+            //            for (DisplayExperiment de : exp) {
+            String cats = propCat.getProperty(de.getName());
+            if (cats == null) {
+                LOG.error("Experiment **" + de.getName() + "** is missing category: "
+                        + "please edit "
+                        + "webapp/resources/webapp/WEB-INF/experimentCategory.properties");
+            } else {
+                // an experiment can be associated to more than 1 category
+                String[] cat = cats.split("#");
+                for (String c : cat) {
+                    List<DisplayExperiment> des = catExpUnordered.get(c);
+                    if (des == null) {
+                        des = new ArrayList<DisplayExperiment>();
+                        catExpUnordered.put(c, des);
+                    }
+                    des.add(de);
+                }
+            }
+        }
+
+        for (Integer i = 1; i <= propOrd.size(); i++) {
+            String ordCat = propOrd.getProperty(i.toString());
+//            LOG.info("OC: " + ordCat + "|" + catExpUnordered.get(ordCat));
+            catExperimentCache.put(ordCat, catExpUnordered.get(ordCat));
+        }
+
+        long totalTime = System.currentTimeMillis() - startTime;
+        LOG.info("Made categories map of size " + catExperimentCache.size()
+                + " in " + totalTime + " ms.");
+        return catExperimentCache;
     }
 
     private static void readExperiments(ObjectStore os) {
@@ -640,6 +727,10 @@ public class MetadataCache
 
     private static Map<String, Map<String, Long>> getExperimentFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
+
+        // NB: example of query (with group by) enwrapping a subquery that gets rids of 
+        // duplications  
+        
         Query q = new Query();
 
         QueryClass qcExp = new QueryClass(Experiment.class);
@@ -672,12 +763,12 @@ public class MetadataCache
         q.setConstraint(cs);
 
         q.setDistinct(true);
-        
+
         Query superQ = new Query();
         superQ.addFrom(q);
         QueryField superQfName = new QueryField(q, qfName);
         QueryField superQfClass = new QueryField(q, qfClass);
-        
+
         superQ.addToSelect(superQfName);
         superQ.addToSelect(superQfClass);
         superQ.addToOrderBy(superQfName);
@@ -713,7 +804,6 @@ public class MetadataCache
         return featureCounts;
     }
 
-    
     private static void readSubmissionFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
 
@@ -1030,7 +1120,7 @@ public class MetadataCache
             tracks.putAll(flyTracks);
             tracks.putAll(wormTracks);
             setGBrowseTracks(tracks);
-       }
+        }
     }
 
     /**
@@ -1088,8 +1178,8 @@ public class MetadataCache
                             String dcc = token.substring(
                                     token.indexOf(SEPARATOR) + 1, token.length());
                             if (!StringUtils.isNumeric(dcc)) {
-                                LOG.error("[SUBTRACKS] " + subTrack + " has a non numeric dccId: " 
-                                        + dcc);                                
+                                LOG.error("[SUBTRACKS] " + subTrack + " has a non numeric dccId: "
+                                        + dcc);
                                 continue;
                             }
                             Integer dccId = Integer.parseInt(dcc);
