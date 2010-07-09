@@ -34,7 +34,7 @@ public class KeywordSearchController extends TilesAction
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
 
-        KeywordSearch.initModMineSearch(im);
+        KeywordSearch.initKeywordSearch(im);
 
         return null;
     }
