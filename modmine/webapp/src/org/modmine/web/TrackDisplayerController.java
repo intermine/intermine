@@ -26,7 +26,7 @@ import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.session.SessionMethods;
-import org.modmine.web.MetadataCache.GBrowseTrack;
+import org.modmine.web.GBrowseParser.GBrowseTrack;
 
 /**
  * Set up for the tracksDisplayer.jsp

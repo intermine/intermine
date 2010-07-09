@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -32,17 +30,9 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.model.bio.Lab;
-import org.intermine.model.bio.Project;
-import org.intermine.model.bio.ResultFile;
-import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.session.SessionMethods;
-import org.modmine.web.MetadataCache.GBrowseTrack;
+import org.modmine.web.GBrowseParser.GBrowseTrack;
 
 /**
  * 
