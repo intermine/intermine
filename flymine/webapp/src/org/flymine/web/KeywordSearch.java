@@ -15,8 +15,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,18 +46,94 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.Exon;
+import org.intermine.model.bio.GOTerm;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.Pathway;
+import org.intermine.model.bio.Protein;
+import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
+
+class ClassAttributes {
+    String className;
+    Set<AttributeDescriptor> attributes;
+    
+    public ClassAttributes(String className, Set<AttributeDescriptor> attributes) {
+        super();
+        this.className = className;
+        this.attributes = attributes;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+    
+    public Set<AttributeDescriptor> getAttributes() {
+        return attributes;
+    }    
+}
+
+class indexFetcher implements Runnable {
+    private static final Logger LOG = Logger.getLogger(indexFetcher.class);
+    
+    ObjectStore os;
+    LinkedList<InterMineObject> indexingQueue;
+    Class<? extends InterMineObject> cls;
+    
+    public indexFetcher(ObjectStore os, LinkedList<InterMineObject> indexingQueue, Class<? extends InterMineObject> cls) {
+        this.os = os;
+        this.indexingQueue = indexingQueue;
+        this.cls = cls;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void run() {
+        long time = System.currentTimeMillis();
+        LOG.info("Fetching class '" + cls.getSimpleName() + "'...");
+        
+        Query q = new Query();
+        QueryClass qcGene = new QueryClass(cls);
+        q.addFrom(qcGene);
+        q.addToSelect(qcGene);
+
+        Results results = os.execute(q);
+
+        Iterator<ResultsRow<InterMineObject>> it = results.iterator();
+        int i = 0;
+        int size = results.size();
+        LOG.info("Query returned " + size + " results");
+        
+        while (it.hasNext()) {
+            ResultsRow<InterMineObject> row = it.next();
+            
+            if(i % 10000 == 1) {
+                LOG.info("'" + cls.getSimpleName() + "': fetched "+i+" of "+size);
+            }
+            
+            for(InterMineObject object : row) {
+                synchronized(os) { //TODO maybe sync on something else?
+                    indexingQueue.add(object);
+                }
+            }
+                     
+            i++;
+        }
+
+        time = System.currentTimeMillis() - time;
+        int seconds = (int) Math.floor(time/1000);
+        LOG.info("Fetched " + i + " objects of class '" + cls.getSimpleName() + "' in "
+                + String.format("%02d:%02d.%03d", (int) Math.floor(seconds/60), seconds % 60, time % 1000)
+                + " minutes");
+    }
+}
 
 /**
  * allows for full-text searches over all metadata using the apache lucene
@@ -69,7 +151,9 @@ public class KeywordSearch
 
     private static final Logger LOG = Logger.getLogger(KeywordSearch.class);
     private static final String[] BOOLEAN_WORDS = {"AND", "OR", "NOT"};
-
+    
+    private static LinkedList<InterMineObject> indexingQueue = new LinkedList<InterMineObject>();
+    
     private static RAMDirectory ram = null;
     private static HashSet<String> fieldNames = new HashSet<String>();
     private static HashMap<String, Float> fieldBoosts = new HashMap<String, Float>();
@@ -79,16 +163,12 @@ public class KeywordSearch
      * @param im
      *            API for accessing object store
      */
-    public static void initModMineSearch(InterMineAPI im) {
+    public static void initKeywordSearch(InterMineAPI im) {
         if (ram == null) {
 
-            // Map<Integer, Set<String>> subProps =
-            // readSubmissionProperties(im);
-            Set<Document> docs = initialiseFromDatabase(im.getObjectStore());
-            indexMetadata(docs);
+            indexFromDatabase(im.getObjectStore());
 
-            LOG.debug("Field names: " + fieldNames.toString());
-            LOG.debug("Boosts: " + fieldBoosts.toString());
+            LOG.info("Field names: " + fieldNames.toString());
         }
     }
 
@@ -133,15 +213,15 @@ public class KeywordSearch
 
             for (int i = 0; (i < MAX_HITS && i < topDocs.totalHits); i++) {
                 Document doc = searcher.doc(topDocs.scoreDocs[i].doc);
-                String name = doc.get("name");
+                Integer id = Integer.valueOf(doc.get("id"));
 
-                // show how score was calculated
-                if (i < 2) {
-                    LOG.debug("Score for " + name + ": "
-                            + searcher.explain(query, topDocs.scoreDocs[i].doc));
-                }
+//                // show how score was calculated
+//                if (i < 2) {
+//                    LOG.info("Score for #" + id + ": "
+//                            + searcher.explain(query, topDocs.scoreDocs[i].doc));
+//                }
 
-                matches.put(Integer.parseInt(name), new Float(topDocs.scoreDocs[i].score));
+                matches.put(id, new Float(topDocs.scoreDocs[i].score));
             }
         } catch (ParseException e) {
             // just return an empty list
@@ -199,182 +279,21 @@ public class KeywordSearch
         queryString = queryStringNew; // apply changes
         return queryString;
     }
-
-    private static Set<Document> initialiseFromDatabase(ObjectStore os) {
-        long time = System.currentTimeMillis();
-        LOG.info("Creating documents from metadata...");
-        Set<Document> docs = new HashSet<Document>();
-    	
-    	try {
-            Query q = new Query();
-            QueryClass qcGene = new QueryClass(Gene.class);
-            q.addFrom(qcGene);
-            q.addToSelect(qcGene);
-
-            QueryClass qcOrganism = new QueryClass(Organism.class);
-            q.addFrom(qcOrganism);
-            q.addToSelect(qcOrganism);
-
-            QueryObjectReference orgRef = new QueryObjectReference(qcGene,
-                "organism");
-            ContainsConstraint cc = new ContainsConstraint(orgRef, ConstraintOp.CONTAINS,
-                    qcOrganism);
-
-            q.setConstraint(cc);
-            q.addToOrderBy(qcOrganism);
-
-            Results results = os.execute(q);
-
-            Iterator i = results.iterator();
-            while (i.hasNext()) {
-                ResultsRow row = (ResultsRow) i.next();
-
-                Gene gene = (Gene) row.get(0);
-                Organism organism = (Organism) row.get(1);
-
-            }
-        } catch (Exception err) {
-            err.printStackTrace();
-        }
-        return docs;
-    }
     
-    private static Set<Document> readSubmissionsFromCache(ObjectStore os) {
-        long time = System.currentTimeMillis();
-        LOG.info("Creating documents from metadata...");
-        Set<Document> docs = new HashSet<Document>();
-
-//        for (DisplayExperiment exp : MetadataCache.getExperiments(os)) {
-//            for (Submission sub : exp.getSubmissions()) {
-//
-//                Integer subId = sub.getId();
-//                Integer dccId = sub.getdCCid();
-//
-//                Document doc = new Document();
-//                doc.add(new Field("name", subId.toString(), Field.Store.YES, Field.Index.ANALYZED));
-//
-//                // submission details
-//                addToDocument(doc, subId, "dCCid", sub.getdCCid().toString());
-//                addToDocument(doc, subId, "title", sub.getTitle());
-//                addToDocument(doc, subId, "description", sub.getDescription());
-//
-//                if (sub.getExperimentType() != null) {
-//                    Field f = new Field("experiment_type", sub.getExperimentType(), Field.Store.NO,
-//                            Field.Index.NOT_ANALYZED);
-//                    fieldNames.add("experiment_type");
-//                    doc.add(f);
-//                }
-//                addToDocument(doc, subId, "organism", sub.getOrganism().getName());
-//                String genus = sub.getOrganism().getGenus();
-//                if (genus != null && genus.equals("Drosophila")) {
-//                    addToDocument(doc, subId, "genus", "fly");
-//                } else if (genus != null && genus.equals("Caenorhabditis")) {
-//                    addToDocument(doc, subId, "genus", "worm");
-//                }
-//
-//                // experiment details
-//                addToDocument(doc, subId, "pi", exp.getPi());
-//                addToDocument(doc, subId, "experiment_name", exp.getName());
-//                addToDocument(doc, subId, "description", exp.getDescription());
-//                addToDocument(doc, subId, "project_name", exp.getProjectName());
-//                for (String lab : exp.getLabs()) {
-//                    addToDocument(doc, subId, "lab", lab);
-//                }
-//
-//                // add submission properties
-//                for (SubmissionProperty prop : sub.getProperties()) {
-//                    Map<String, String> attributes = getAttributeMapForObject(os.getModel(), prop);
-//
-//                    for (String att : attributes.keySet()) {
-//                        addToDocument(doc, subId, att, attributes.get(att));
-//                    }
-//
-//                    // for antibody or strain, also add the target gene
-//                    Gene gene = null;
-//                    String geneType = null;
-//                    if (prop instanceof Antibody) {
-//                        gene = ((Antibody) prop).getTarget();
-//                        geneType = "antibody";
-//                    } else if (prop instanceof Strain) {
-//                        gene = ((Strain) prop).getTarget();
-//                        geneType = "strain";
-//                    }
-//
-//                    if (gene != null) {
-//                        LOG.debug("Found gene => " + gene.getPrimaryIdentifier() + " for "
-//                                + prop.getClass().getName());
-//
-//                        addToDocument(doc, subId, geneType + "_gene_primary_identifier", gene
-//                                .getPrimaryIdentifier());
-//                        addToDocument(doc, subId, geneType + "_gene_secondary_identifier", gene
-//                                .getSecondaryIdentifier());
-//                        addToDocument(doc, subId, geneType + "_gene_symbol", gene.getSymbol());
-//                        addToDocument(doc, subId, geneType + "_gene_name", gene.getName());
-//                    }
-//                }
-//
-//                // add feature types
-//                Map<String, Long> features = MetadataCache.getSubmissionFeatureCounts(os, dccId);
-//                if (features != null) {
-//                    for (String type : features.keySet()) {
-//                        addToDocument(doc, subId, "features", type);
-//                    }
-//                }
-//
-//                // add database repository types
-//                for (String db : exp.getReposited().keySet()) {
-//                    addToDocument(doc, subId, "databases", db);
-//                }
-//
-//                docs.add(doc);
-//            }
-//        }
-
-        time = System.currentTimeMillis() - time;
-        LOG.info("Created " + docs.size() + " documents (" + fieldNames.size()
-                + " unique fields and " + fieldBoosts.size() + " boosts) in " + time
-                + " milliseconds");
-
-        return docs;
-    }
-
-    private static HashMap<String, String> getAttributeMapForObject(Model model, Object obj) {
-        HashMap<String, String> values = new HashMap<String, String>();
-        for (Class<?> cls : DynamicUtil.decomposeClass(obj.getClass())) {
-            ClassDescriptor cld = model.getClassDescriptorByName(cls.getName());
-            for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
-                try {
-                    Object value = TypeUtil.getFieldValue(obj, att.getName());
-                    // ignore null values and wikiLinks
-                    if (value != null
-                            && !(value instanceof String
-                                    && ((String) value).startsWith("http://"))) {
-                        values.put((cld.getUnqualifiedName() + "_" + att.getName()).toLowerCase(),
-                                String.valueOf(value));
-                    }
-                } catch (IllegalAccessException e) {
-                    LOG.warn("Error introspecting a SubmissionProperty: " + obj, e);
-                }
-            }
-        }
-
-        return values;
-    }
-
-    private static void addToDocument(Document doc, Integer objectId,
-            String fieldName, String value) {
-        if (!StringUtils.isBlank(fieldName) && !StringUtils.isBlank(value)) {
-            LOG.debug("ADDED FIELD TO #" + objectId + ": " + fieldName + " = " + value);
-
-            Field f = new Field(fieldName, value, Field.Store.NO, Field.Index.ANALYZED);
-            doc.add(f);
-            fieldNames.add(fieldName);
-        }
-    }
-
-    private static void indexMetadata(Set<Document> docs) {
+    private static void indexFromDatabase(ObjectStore os) {
         long time = System.currentTimeMillis();
         LOG.info("Indexing metadata...");
+
+        ExecutorService fetchThreadPool = Executors.newFixedThreadPool(3);
+        
+        Vector<Future<?>> fetchThreads = new Vector<Future<?>>();
+        fetchThreads.add(fetchThreadPool.submit(new indexFetcher(os, indexingQueue, Gene.class)));
+        fetchThreads.add(fetchThreadPool.submit(new indexFetcher(os, indexingQueue, Exon.class)));
+        fetchThreads.add(fetchThreadPool.submit(new indexFetcher(os, indexingQueue, Transcript.class)));
+        fetchThreads.add(fetchThreadPool.submit(new indexFetcher(os, indexingQueue, Pathway.class)));
+        fetchThreads.add(fetchThreadPool.submit(new indexFetcher(os, indexingQueue, GOTerm.class)));
+        fetchThreads.add(fetchThreadPool.submit(new indexFetcher(os, indexingQueue, Protein.class)));
+        fetchThreads.add(fetchThreadPool.submit(new indexFetcher(os, indexingQueue, Organism.class)));
 
         ram = new RAMDirectory();
         IndexWriter writer;
@@ -386,15 +305,53 @@ public class KeywordSearch
         } catch (IOException err) {
             throw new RuntimeException("Failed to create lucene IndexWriter", err);
         }
-
+        
         int indexed = 0;
 
-        for (Document doc : docs) {
-            try {
-                writer.addDocument(doc);
-                indexed++;
-            } catch (IOException e) {
-                LOG.error("Failed to submission " + doc.getFieldable("name") + " to the index", e);
+        //loop and index while we still have fetchers running
+        while(fetchThreads.size() > 0) {
+            InterMineObject object = null;
+            synchronized(os) {
+                object = indexingQueue.poll();
+            }
+            
+            //nothing in the queue?
+            if(object == null) {
+                //purge thread list
+                for (Iterator<Future<?>> iterator = fetchThreads.iterator(); iterator.hasNext();) {
+                    Future<?> future = (Future<?>) iterator.next();
+                    if(future.isDone()) {
+                        iterator.remove();
+                    }
+                }
+                
+                //sleep a bit
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {}
+            } else {
+                Document doc = new Document();
+                doc.add(new Field("id", object.getId().toString(), Field.Store.YES, Field.Index.NO));
+                
+                HashMap<String, String> attributes = getAttributeMapForObject(os.getModel(), object);
+                for (Entry<String, String> attribute : attributes.entrySet()) {
+                    addToDocument(doc, attribute.getKey(), attribute.getValue());
+                }
+                
+                try {
+                    writer.addDocument(doc);
+                    indexed++;
+                } catch (IOException e) {
+                    LOG.error("Failed to submit #" + doc.getFieldable("id") + " to the index", e);
+                }
+                
+                if(indexed % 10000 == 1) {
+                    LOG.info("docs indexed="+indexed
+                            + "; queue size="+indexingQueue.size()
+                            + "; docs/ms=" + indexed*1.0F/(System.currentTimeMillis() - time)
+                            + "; memory=" + Runtime.getRuntime().freeMemory()/1024
+                            + "k/" + Runtime.getRuntime().maxMemory()/1024 + "k");
+                }
             }
         }
 
@@ -405,8 +362,124 @@ public class KeywordSearch
         }
 
         time = System.currentTimeMillis() - time;
-        LOG.info("Indexed " + indexed + " out of " + docs.size() + " submissions in " + time
-                + " milliseconds");
+        int seconds = (int) Math.floor(time/1000);
+        LOG.info("Indexing finished (" + indexed
+                + " docs with " + fieldNames.size()
+                + " unique fields and "+ fieldBoosts.size()
+                + " boosts) in "
+                + String.format("%02d:%02d.%03d", (int) Math.floor(seconds/60), seconds % 60, time % 1000)
+                + " minutes");
+    }
+
+//    @SuppressWarnings("unchecked")
+//	private static void indexClassFromDatabase(ObjectStore os, IndexWriter writer, Class<?> classToIndex) {
+//        long time = System.currentTimeMillis();
+//        int indexed = 0;
+//
+//        LOG.info("Indexing class '" + classToIndex.getSimpleName() + "'...");
+//        
+//        Query q = new Query();
+//        QueryClass qcGene = new QueryClass(classToIndex);
+//        q.addFrom(qcGene);
+//        q.addToSelect(qcGene);
+//
+//        Results results = os.execute(q);
+//
+//        Iterator<ResultsRow<InterMineObject>> it = results.iterator();
+//        int i = 0;
+//        LOG.info("Query returned " + results.size() + " results");
+//        
+//        while (it.hasNext()) {
+//            ResultsRow<InterMineObject> row = it.next();
+//            
+//            if(i % 10000 == 1) {
+//            	LOG.info("docs indexed="+indexed
+//            			+ "; speed=" + (System.currentTimeMillis() - time)*1.0F/indexed + " ms/doc"
+//            			+ "; free memory=" + Runtime.getRuntime().freeMemory()/1024 + "k/"
+//            			+ Runtime.getRuntime().maxMemory()/1024 + "k");
+//            }
+//            
+//            for(InterMineObject object : row) {
+//                Document doc = new Document();
+//                doc.add(new Field("id", object.getId().toString(), Field.Store.YES, Field.Index.NO));
+//                
+//                HashMap<String, String> attributes = getAttributeMapForObject(os.getModel(), object);
+//                for (Entry<String, String> attribute : attributes.entrySet()) {
+//					addToDocument(doc, attribute.getKey(), attribute.getValue());
+//                }
+//                
+//                try {
+//                    writer.addDocument(doc);
+//                    indexed++;
+//                } catch (IOException e) {
+//                    LOG.error("Failed to submit #" + doc.getFieldable("id") + " to the index", e);
+//                }
+//            }
+//            
+//            i++;
+//        }
+//
+//        time = System.currentTimeMillis() - time;
+//        int seconds = (int) Math.floor(time/1000);
+//        LOG.info("Indexed " + indexed + " documents for class '" + classToIndex.getSimpleName() + "' in "
+//                + String.format("%02d:%02d.%03d", (int) Math.floor(seconds/60), seconds % 60, time % 1000)
+//                + " minutes");
+//    }
+    
+    //simple caching of attributes
+    static HashMap<Class<?>, Vector<ClassAttributes>> decomposedClassesCache = new HashMap<Class<?>, Vector<ClassAttributes>>();
+    private static Vector<ClassAttributes> getClassAttributes(Model model, Class<?> baseClass) {
+        Vector<ClassAttributes> attributes = decomposedClassesCache.get(baseClass);
+        
+        if (attributes == null) {
+            LOG.info("decomposedClassesCache: No entry for " + baseClass + ", adding...");
+            attributes = new Vector<ClassAttributes>();
+            
+            for (Class<?> cls : DynamicUtil.decomposeClass(baseClass)) {
+                ClassDescriptor cld = model.getClassDescriptorByName(cls.getName());
+                attributes.add(new ClassAttributes(cld.getUnqualifiedName(), cld.getAllAttributeDescriptors()));
+            }
+            
+            decomposedClassesCache.put(baseClass, attributes);
+        }
+        
+        return attributes;
+    }
+
+    private static HashMap<String, String> getAttributeMapForObject(Model model, Object obj) {
+        HashMap<String, String> values = new HashMap<String, String>();
+        Vector<ClassAttributes> decomposedClassAttributes = getClassAttributes(model, obj.getClass());
+
+        for (ClassAttributes classAttributes : decomposedClassAttributes) {
+            for(AttributeDescriptor att : classAttributes.getAttributes()) {
+                try {
+                    if("java.lang.String".equals(att.getType())) {                  
+                        Object value = TypeUtil.getFieldValue(obj, att.getName());
+                        
+                        // ignore null values
+                        if (value != null) {
+                            values.put((classAttributes.getClassName() + "_" + att.getName()).toLowerCase(),
+                                    String.valueOf(value));
+                        }
+                    }
+                } catch (IllegalAccessException e) {
+                    LOG.warn("Error introspecting a SubmissionProperty: " + obj, e);
+                }
+            }
+        }
+
+        return values;
+    }
+
+    private static void addToDocument(Document doc,
+            String fieldName, String value) {
+        if (!StringUtils.isBlank(fieldName) && !StringUtils.isBlank(value)) {
+//            LOG.debug("ADDED FIELD: " + fieldName + " = " + value);
+
+            Field f = new Field(fieldName, value, Field.Store.NO, Field.Index.ANALYZED);
+            doc.add(f);
+            fieldNames.add(fieldName);
+        }
     }
 
 }

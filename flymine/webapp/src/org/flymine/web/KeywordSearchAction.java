@@ -49,14 +49,14 @@ public class KeywordSearchAction extends InterMineAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
-        KeywordSearch.initModMineSearch(im);
+        KeywordSearch.initKeywordSearch(im);
 
         KeywordSearchForm msf = (KeywordSearchForm) form;
 
         String searchTerm = msf.getSearchTerm();
 
         ForwardParameters forwardParameters =
-            new ForwardParameters(mapping.findForward("searchResults"));
+            new ForwardParameters(mapping.findForward("keywordSearchResults"));
         forwardParameters.addParameter("searchTerm", searchTerm);
         return forwardParameters.forward();
     }
