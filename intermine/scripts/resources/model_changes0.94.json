@@ -4,6 +4,7 @@
       "ComputationalAnalysis":1,
       "ExperimentalResult":1,
       "relations":1,
+      "DistanceRelation":1,
       "SimpleRelation":1,
       "RankedRelation":1,
       "InfoSource":1,
@@ -34,6 +35,7 @@
       "PartialLocation":1
    },
    "translation_for":{
+      "Organism.abbreviation":"commonName",
       "GOEvidence":"GOEvidenceCode",
       "GoAnnotation.property":"ontologyTerm",
       "FlyAtlasResult.MRNASignal":"mRNASignal",
@@ -53,6 +55,7 @@
       "BioEntity.annotations":"ontologyAnnotations",
       "Location.subject":"feature",
       "EST.ESTClusters":"overlappingESTSets",
-      "DataSet.title":"name"
+      "DataSet.title":"name",
+      "Ontology.title":"name"
    }
 }
