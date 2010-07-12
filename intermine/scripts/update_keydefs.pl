@@ -84,7 +84,7 @@ else {
 
 LINE: while(my $line = <$INFH>) {
     my $changed;
-    if ($line =~ /^\s*#/) { #skip commented lines
+    if ($line =~ /^\s*[#\s]/) { #skip commented lines and lines beginning with a space
 	print $OUFH $line;
 	next LINE;
     }
@@ -109,6 +109,8 @@ LINE: while(my $line = <$INFH>) {
     }
     my @new_values;
     foreach my $field_name (@values) {
+	$field_name =~ s/^\s*//;
+	chomp $field_name;
 	if (not $class->get_field_by_name($field_name)) {
 	    if (my $new_path = update_path($class_name . '.' . $field_name, $line)) {
 		($field_name) = $new_path =~ /([^\.]*$)/;
