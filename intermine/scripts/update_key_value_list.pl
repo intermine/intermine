@@ -9,7 +9,7 @@ use Getopt::Long;
 use Log::Handler;
 
 my $DEL    = '[DELETION]';
-my $CHANGE = '[CHANGE]';
+my $CHANGE = '[CHANGE  ]';
 
 my($log_file, @out_files, @in_files, $help, 
    $new_model_file, $changes_file);
@@ -123,7 +123,7 @@ for my $in_file (@in_files) {
 	    for my $old_path (%type_of) {
 		my $new_path = update_path($old_path, $line);
 		unless ($new_path) {
-		    $log->warning($DEL, $in_file, 'll.', $., qq{"$line":}, "could not find $old_path");
+		    $log->info($DEL, $in_file, 'll.', $., qq{"$line":}, "could not find $old_path");
 		    next LINE;
 		}
 	        push @new_pathbits, $new_path;
@@ -160,7 +160,7 @@ for my $in_file (@in_files) {
 	    for my $old_path (@old_paths) {
 		my $new_path = update_path($old_path, "Precomputed query $num");
 		unless ($new_path) {
-		    $log->warning($DEL, $in_file,  'll.', $., qq{"$line":}, "could not find $old_path");
+		    $log->info($DEL, $in_file,  'll.', $., qq{"$line":}, "could not find $old_path");
 		    next LINE;
 		}
 	        $updated_version_of{$old_path} = $new_path;
@@ -206,7 +206,7 @@ for my $in_file (@in_files) {
 		    $class_name = $new_class_name;
 		}
 		else {
-		    $log->warning($DEL, $in_file, 'll.', $., qq{"$line":},"Cannot find class $class_name");
+		    $log->info($DEL, $in_file, 'll.', $., qq{"$line":},"Cannot find class $class_name");
 		    next LINE;
 		}
 	    }
@@ -220,7 +220,7 @@ for my $in_file (@in_files) {
 			push @new_values, $field_name;
 		    }
 		    else {
-			$log->warning($DEL, $in_file,'ll.',$.,$field_name, 'from',  qq{"$line":});
+			$log->info($DEL, $in_file,'ll.',$.,$field_name, 'from',  qq{"$line":});
 		    }
 		    $changed++;
 		}
