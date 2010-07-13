@@ -251,7 +251,7 @@ It requires an example of the new data model, as well as a list of the changes
 between the old model and the current one.
 
 The updater will attempt to transform paths wherever possible. If this is
-not possible, then classes or fields will be deleted. All changes and 
+not possible, then the line will be deleted. All changes and 
 deletions will be logged.
 
   Options:
@@ -276,4 +276,4 @@ deletions will be logged.
 
   Example:
 
-perl svn/dev/intermine/scripts/update_key_value_list.pl -m svn/model_update/flymine/dbmodel/build/model/genomic_model.xml -c svn/dev/intermine/scripts/resources/model_changes0.94.json -i svn/dev/flymine/dbmodel/resources/genomic_keyDefs.properties,svn/dev/flymine/dbmodel/resources/objectstoresummary.config.properties -i svn/dev/flymine/dbmodel/resources/class_keys.properties -l /tmp/out.file -o -
+perl svn/dev/intermine/scripts/update_key_value_list.pl -m svn/model_update/flymine/dbmodel/build/model/genomic_model.xml -c svn/dev/intermine/scripts/resources/model_changes0.94.json -i svn/dev/flymine/dbmodel/resources/genomic_keyDefs.properties,svn/dev/flymine/dbmodel/resources/objectstoresummary.config.properties,svn/dev/flymine/dbmodel/resources/class_keys.properties,svn/dev/flymine/dbmodel/resources/genomic_precompute.properties -l /tmp/out.file -o -
