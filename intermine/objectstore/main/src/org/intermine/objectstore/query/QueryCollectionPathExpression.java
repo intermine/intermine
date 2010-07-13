@@ -316,6 +316,8 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
                     cs.addConstraint(new BagConstraint(defaultClass, ConstraintOp.IN, bag));
                     q.setConstraint(cs);
                 }
+            } else if (constraint != null) {
+                q.setConstraint(constraint);
             }
             q.setDistinct(false);
             return q;
