@@ -97,57 +97,141 @@ for my $in_file (@in_files) {
     }
     print $OUT '-' x 70, "\n", $in_file, ":\n\n",  if $output_to_stdout;
     LINE: while(my $line = <$INFH>) {
-	my $changed;
+	my ($changed, %type_of, $new_line,$path);
 	if ($line =~ /^\s*[#\s]/ or $line =~ /max\.field\.values/) { #skip commented lines and lines beginning with a space
 	    print $OUT $line;
 	    next LINE;
 	}
 	chomp $line;
-	my ($key, $value)   = split(/\s?=\s?/, $line);
-	my @values          = split(/,?\s/, $value);
-	chomp @values;
-	my $class_name = my $guff = '';
-	if ($key =~ /\./) {
-	    ($class_name, $guff) = $key =~ /(^.*)(\.\S*)/; # split into 'class.name' and '.fields'
+	my ($key, $value)   = split(/\s?=\s?/, $line, 2);
+
+	if ($key =~ /precompute\.constructquery\.\d+/) {
+	    my ($num)  = $key =~ /(\d+)/;
+	    my @bits = split(/\s/, $value);
+	    croak "Got an even number of bits - that ain't good" if (@bits % 2 == 0);
+	    unshift(@bits, $bits[0]); # double up the first element, as the first bit is always its own class
+	    my @old_bits = @bits;
+	    map {s/\+//} @bits;
+	    # produce a dotted path from the even indexed elements, and a type hash from the odd indexed ones
+	    while (@bits) {
+		$path          .= shift  @bits;
+		$type_of{$path} = shift  @bits;
+		$path          .= '.' if @bits; 
+	    }
+
+	    my @new_pathbits;
+	    for my $old_path (%type_of) {
+		my $new_path = update_path($old_path, $line);
+		unless ($new_path) {
+		    $log->warning($DEL, $in_file, 'll.', $., qq{"$line":}, "could not find $old_path");
+		    next LINE;
+		}
+	        push @new_pathbits, $new_path;
+		unless ($new_path eq $old_path) {
+		    $log->info($CHANGE, $in_file, 'll.', $., "Precompute construct query $num:", $old_path, '=>', $new_path);
+		    $changed++;
+		}
+	    }
+	    my %new_hash = @new_pathbits;
+	    my (@new_bits, $c);
+	    for (map {s/.*\.//; $_} 
+		     map {($_, $new_hash{$_})} 
+		         sort {length($a) <=> length($b)} 
+		              keys %new_hash) {
+		$_ = '+' . $_ if ($old_bits[$c++] =~ /\+/);
+		push @new_bits, $_;
+	    }
+	    shift @new_bits;
+	    $new_line = join(' = ', $key, join(' ', @new_bits));
+	}
+	elsif ($key =~ /precompute\.query/) {
+	    my ($num) = $key =~ /(\d+)/;
+	    my $old_value = $value;
+	    my $prefix = 'org.intermine.model.bio';
+	    my @definitions = $value =~ /($prefix[^_\s]+ AS \w+)/g;
+	    for my $def (@definitions) {
+		my ($full, $abbr) = split(/ AS /, $def);
+		$value =~ s/$abbr/$full/g; # expand the abbreviations so we can assess fields such as a1_.type
+	    }
+
+	    my @old_paths = $value =~ /($prefix[A-Za-z\.]+)/g;
+	    
+	    my %updated_version_of;
+	    for my $old_path (@old_paths) {
+		my $new_path = update_path($old_path, "Precomputed query $num");
+		unless ($new_path) {
+		    $log->warning($DEL, $in_file,  'll.', $., qq{"$line":}, "could not find $old_path");
+		    next LINE;
+		}
+	        $updated_version_of{$old_path} = $new_path;
+		unless ($new_path eq $old_path) {
+		    $log->info($CHANGE, $in_file,  'll.', $., "Precomputed query $num:", $old_path, '=>', $new_path);
+		    $changed++;
+		}
+	    }
+	    
+	    if ($changed) {
+		for my $old_path (sort {length($b) <=> length($a)} @old_paths) {
+		    $value =~ s/$old_path/$updated_version_of{$old_path}/;
+		}
+		for my $def (@definitions) {
+		    my ($full, $abbr) = split(/ AS /, $def);
+		    my $new_full = $updated_version_of{$full};
+		    $value =~ s/$new_full(?! AS)/$abbr/g;
+		}
+	    }
+	    else {
+		$value = $old_value;
+	    }
+	    
+	    $new_line = join(' = ', $key, $value);
 	}
 	else {
-	    $class_name = $key;
-      }
-	my $class = check_class_name($class_name);
-	unless ($class) {
-	    my $new_class_name = update_path($class_name, $line);
-	    if ($new_class_name 
-	      and $new_class_name ne $class_name
-		and $class = check_class_name($new_class_name) ) {
-		$changed++;
-		$class_name = $new_class_name;
-	  }
+	    my @values     = split(/,?\s/, $value);
+	    chomp @values;
+	    my $class_name = my $guff = '';
+	    if ($key =~ /\./) {
+		($class_name, $guff) = $key =~ /(^.*)(\.\S*)/; # split into 'class.name' and '.fields'
+	    }
 	    else {
-		$log->warning($DEL, $line,"Cannot find class $class_name");
-		next LINE;
-	  }
-	}
-	my @new_values;
-	foreach my $field_name (@values) {
-	    $field_name =~ s/^\s*//;
-	    chomp $field_name;
-	  if (not $class->get_field_by_name($field_name)) {
-	      if (my $new_path = update_path($class_name . '.' . $field_name, $line)) {
-		  ($field_name) = $new_path =~ /([^\.]*$)/;
-		  push @new_values, $field_name;
-	      }
-	      else {
-		  $log->warning($DEL, $field_name, 'from', $line);
-	      }
-	      $changed++;
-	  }
-	  else {
-	      push @new_values, $field_name;
-	  }
-	}
-	my $new_line = $class_name . $guff .  ' = ' . join( (($value =~ /,/)?', ':' '), @new_values);
-	if ($changed) {
-	    $log->info($CHANGE, $line, '=>', $new_line);
+		$class_name = $key;
+	    }
+	    my $class = check_class_name($class_name);
+	    unless ($class) {
+		my $new_class_name = update_path($class_name, $line);
+		if ($new_class_name 
+		    and $new_class_name ne $class_name
+		    and $class = check_class_name($new_class_name) ) {
+		    $changed++;
+		    $class_name = $new_class_name;
+		}
+		else {
+		    $log->warning($DEL, $in_file, 'll.', $., qq{"$line":},"Cannot find class $class_name");
+		    next LINE;
+		}
+	    }
+	    my @new_values;
+	    foreach my $field_name (@values) {
+		$field_name =~ s/^\s*//;
+		chomp $field_name;
+		if (not $class->get_field_by_name($field_name)) {
+		    if (my $new_path = update_path($class_name . '.' . $field_name, $line)) {
+			($field_name) = $new_path =~ /([^\.]*$)/;
+			push @new_values, $field_name;
+		    }
+		    else {
+			$log->warning($DEL, $in_file,'ll.',$.,$field_name, 'from',  qq{"$line":});
+		    }
+		    $changed++;
+		}
+		else {
+		    push @new_values, $field_name;
+		}
+	    }
+	    $new_line = $class_name . $guff .  ' = ' . join( (($value =~ /,/)?', ':' '), @new_values);
+	    if ($changed) {
+		$log->info($CHANGE, $in_file, 'll.', $., qq{"$line"}, '=>', qq{"$new_line"});
+	    }
 	}
 	print $OUT $new_line, "\n";
     }
@@ -192,4 +276,4 @@ deletions will be logged.
 
   Example:
 
-perl svn/dev/intermine/scripts/update_keydefs.pl -m svn/model_update/flymine/dbmodel/build/model/genomic_model.xml -c svn/dev/intermine/scripts/resources/model_changes0.94.json -i svn/dev/flymine/dbmodel/build/model/genomic_keyDefs.properties -l log/keydefs.log
+perl svn/dev/intermine/scripts/update_key_value_list.pl -m svn/model_update/flymine/dbmodel/build/model/genomic_model.xml -c svn/dev/intermine/scripts/resources/model_changes0.94.json -i svn/dev/flymine/dbmodel/resources/genomic_keyDefs.properties,svn/dev/flymine/dbmodel/resources/objectstoresummary.config.properties -i svn/dev/flymine/dbmodel/resources/class_keys.properties -l /tmp/out.file -o -
