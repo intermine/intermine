@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.upload.FormFile;
 
 /**
  * This ActionForm represents the form elements on the spanUploadOptions.jsp
@@ -27,7 +28,11 @@ public class SpanUploadForm extends ActionForm
     private static final long serialVersionUID = 1L;
 
     private String orgName;
+    private String[] experiments;
     private String[] featureTypes;
+    private String text;
+    private FormFile formFile;
+    private String whichInput;
     private Integer[] submissions; // DCCid
 
     /**
@@ -79,6 +84,70 @@ public class SpanUploadForm extends ActionForm
     }
 
     /**
+     * @return experiments
+     */
+    public String[] getExperiments() {
+        return experiments;
+    }
+
+    /**
+    *
+    * @param experiments exp names
+    */
+    public void setExperiments(String[] experiments) {
+        this.experiments = experiments;
+    }
+
+    /**
+     * Set the query string
+     * @param text the query string
+     */
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    /**
+     * Get the text string
+     * @return the text string
+     */
+    public String getText() {
+        return text;
+    }
+
+    /**
+     * Set the FormFile.
+     * @param formFile the FormFile
+     */
+    public void setFormFile(FormFile formFile) {
+        this.formFile = formFile;
+    }
+
+    /**
+     * Get the FormFile.
+     * @return the FormFile.
+     */
+    public FormFile getFormFile() {
+        return formFile;
+    }
+
+    /**
+     * Set the method the user used to upload her span.
+     * @param whichInput Which method the user used: paste or file
+     */
+    public void setWhichInput(String whichInput) {
+        this.whichInput = whichInput;
+    }
+
+    /**
+     * Get the method the user used to upload the span.  Will be either 'paste' or 'file'.  Paste if
+     * they typed in the entries via the form.  File if they uploaded a file from their computer.
+     * @return which method the user used to upload her span: paste or file
+     */
+    public String getWhichInput() {
+        return whichInput;
+    }
+
+    /**
      *
      */
     public SpanUploadForm() {
@@ -98,13 +167,18 @@ public class SpanUploadForm extends ActionForm
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     public void reset() {
 
         orgName = "";
         featureTypes = null;
+        experiments = null;
+        text = "";
+        formFile = null;
+        whichInput = "";
         submissions = null;
+
     }
 
 }
