@@ -970,7 +970,7 @@ public class MetadataCache
 
     /**
      * This method get the feature descriptions from a property file.
-     * 
+     *
      * @return the map feature/description
      */
     private static Map<String, String> readFeatTypeDescription(ServletContext servletContext) {
