@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-//import org.apache.log4j.Logger;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Experiment;
 import org.intermine.model.bio.LocatedSequenceFeature;
@@ -45,9 +45,9 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 
 /**
- * SpanOverlapQuery is a query logic class. It has two methods. runSpanValidationQuery queries the
- * information of all the organisms and their chromosomes' names and length for span validation use.
- * runSpanOverlapQuery queries LocatedSequenceFeatures that overlap users' spans.
+ * SpanOverlapQuery is a class with query logic. It has two methods: runSpanValidationQuery queries
+ * the information of all the organisms and their chromosomes' names and length for span validation
+ * use; runSpanOverlapQuery queries LocatedSequenceFeatures that overlap users' spans.
  *
  * @author Fengyuan Hu
  *
@@ -78,7 +78,7 @@ public class SpanOverlapQueryRunner
             QueryClass qcChr = new QueryClass(Chromosome.class);
 
             // Result columns
-            QueryField qfOrgName = new QueryField(qcOrg, "name");
+            QueryField qfOrgName = new QueryField(qcOrg, "shortName");
             QueryField qfChrPID = new QueryField(qcChr, "primaryIdentifier");
             QueryField qfChrLength = new QueryField(qcChr, "length");
 
@@ -151,16 +151,28 @@ public class SpanOverlapQueryRunner
     }
 
     /**
+     * Query the relevant overlap region and additional information according to user's uploaded
+     * spans.
+     *
      * @param form A SpanUploadForm object
      * @param spanList Spans in an ArrayList
      * @param im A InterMineAPI object
      * @return spanOverlapResultMap A HashMap contains all the spans and their query results
+     * @throws ClassNotFoundException Model.getQualifiedTypeName() throws
      */
     public static Map<Span, Results> runSpanOverlapQuery(SpanUploadForm form,
-            List<Span> spanList, InterMineAPI im) {
+            List<Span> spanList, InterMineAPI im) throws ClassNotFoundException {
 
         String orgName = form.getOrgName();
         String[] featureTypes = form.getFeatureTypes();
+
+        // featureTypes in this case are (the last bit of )class instead of featuretype in the db
+        // table; gain the full name by Model.getQualifiedTypeName(className)
+        List<String> ftKeys = new ArrayList<String>();
+        Model theModel = im.getObjectStore().getModel();
+        for (String aFeatureTypeClass : featureTypes) {
+            ftKeys.add(theModel.getQualifiedTypeName(aFeatureTypeClass));
+        }
 
         //>>>>> TEST CODE <<<<<
 //        String[] featureTypes = new String[4];
@@ -175,7 +187,6 @@ public class SpanOverlapQueryRunner
 //        submissions[2] = "Orc2 BG3 ChIP-Seq";
         //>>>>> TEST CODE <<<<<
 
-        List<String> ftKeys = Arrays.asList(featureTypes);
         List<Integer> subKeys = getSubmissionsByExperimentNames(form.getExperiments(), im);
 
         //>>>>> TEST CODE <<<<<
@@ -208,10 +219,11 @@ public class SpanOverlapQueryRunner
                 QueryClass qcLoc = new QueryClass(Location.class);
                 QueryClass qcSubmission = new QueryClass(Submission.class);
 
-                QueryField qfOrgName = new QueryField(qcOrg, "name");
+                QueryField qfOrgName = new QueryField(qcOrg, "shortName");
                 QueryField qfChrPID = new QueryField(qcChr, "primaryIdentifier");
                 QueryField qfFeaturePID = new QueryField(qcFeature, "primaryIdentifier");
                 QueryField qfFeatureType = new QueryField(qcFeature, "featureType");
+                QueryField qfFeatureClass = new QueryField(qcFeature, "class");
 //                QueryField qfSubmissionTitle = new QueryField(qcSubmission, "title");
                 QueryField qfSubmissionDCCid = new QueryField(qcSubmission, "DCCid");
                 QueryField qfChr = new QueryField(qcChr, "primaryIdentifier");
@@ -275,8 +287,8 @@ public class SpanOverlapQueryRunner
                         ConstraintOp.CONTAINS, qcSubmission);
                 constraints.addConstraint(ccSubmission);
 
-                // LocatedSequenceFeature.featureType in a list
-                constraints.addConstraint(new BagConstraint(qfFeatureType,
+                // LocatedSequenceFeature.class in a list
+                constraints.addConstraint(new BagConstraint(qfFeatureClass,
                         ConstraintOp.IN, ftKeys));
                 // Submission.CCDid in a list
                 constraints.addConstraint(new BagConstraint(qfSubmissionDCCid,
@@ -291,6 +303,7 @@ public class SpanOverlapQueryRunner
                         ConstraintOp.OVERLAPS, overlapFeature);
                 constraints.addConstraint(oc);
 
+                LOG.info("Before Query: " + q.toString());
                 Results results = im.getObjectStore().execute(q);
 
                 //>>>>> TEST CODE <<<<<
@@ -304,13 +317,12 @@ public class SpanOverlapQueryRunner
             e.printStackTrace();
         }
 
-
         return spanOverlapResultMap;
     }
 
     /**
      * A method that compensates for previous design defect. From the webpage, the experiments are
-     * passed to the db query logic, but the query wroks on submissions instead of experiments. Find
+     * passed to the db query logic, but the query works on submissions instead of experiments. Find
      * all the submissions under the experiments.
      *
      * @param exps experiments that user select
@@ -354,7 +366,8 @@ public class SpanOverlapQueryRunner
             // for submission, get DCCid
             Iterator<?> i = results.iterator();
             while (i.hasNext()) {
-                Integer subDCCid = (Integer) i.next();
+                ResultsRow<?> row = (ResultsRow<?>) i.next();
+                Integer subDCCid = (Integer) row.get(0);
                 subSet.add(subDCCid);
             }
 
