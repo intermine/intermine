@@ -530,6 +530,15 @@ public class Results extends AbstractList implements LazyCollection
     }
 
     /**
+     * Returns true if the results are known to fit entirely within the first batch.
+     *
+     * @return a boolean
+     */
+    public boolean isSingleBatch() {
+        return maxSize < batchSize;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public Iterator iterator() {

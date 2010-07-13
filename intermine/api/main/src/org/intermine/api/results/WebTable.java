@@ -28,6 +28,14 @@ import org.intermine.pathquery.PathQuery;
 public interface WebTable extends List<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>
 {
     /**
+     * Returns true if the results are known to be contained in a single batch. If true, then it
+     * would not be sensible to perform precomputing.
+     *
+     * @return a boolean
+     */
+    public boolean isSingleBatch();
+
+    /**
      * Return a List containing a ResultElement object for each element given in the given row.
      * @param index the row of the results to fetch
      * @return the results row

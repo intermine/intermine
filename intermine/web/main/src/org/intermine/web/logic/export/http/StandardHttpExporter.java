@@ -83,9 +83,13 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
         }
         Exporter exporter = getExporter(out, separator, headers);
         ExportResultsIterator iter = null;
+        boolean doGoFaster = false;
         try {
             iter = getResultRows(pt, request);
-            iter.goFaster();
+            if (!pt.getWebTable().isSingleBatch()) {
+                doGoFaster = true;
+                iter.goFaster();
+            }
             exporter.export(iter);
             if (out instanceof GZIPOutputStream) {
                 try {
@@ -96,7 +100,9 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
             }
         } finally {
             if (iter != null) {
-                iter.releaseGoFaster();
+                if (doGoFaster) {
+                    iter.releaseGoFaster();
+                }
             }
         }
         if (exporter.getWrittenResultsCount() == 0) {
