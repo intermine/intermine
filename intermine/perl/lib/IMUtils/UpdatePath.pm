@@ -102,7 +102,8 @@ package IMUtils::UpdatePath; {
 		push @new_bits, changed($class_name);
 	    }
 	    else {
-		$log->warning($query_name, qq{Unexpected deletion of class "$class_name"}) unless dead($class_name);
+		$log->warning($query_name, qq{Unexpected deletion of class "$class_name"}) 
+		    unless dead($class_name);
 		return;
 	    }
 	}
@@ -145,12 +146,14 @@ package IMUtils::UpdatePath; {
 		  foreach my $parent (@parents) {
 		      my $key = "$parent.$bit";
 		      if (my $translation = changed($key)) {
-			  push @new_bits, $translation;
-			  push @path_so_far, $bit;
+			  if ($current_field = $current_class->get_field_by_name($translation)){
 
-			  $current_field = $current_class->get_field_by_name($translation);
-			  $current_class = next_class($current_field);
-			  next FIELD;
+			      push @new_bits, $translation;
+			      push @path_so_far, $bit;
+			      
+			      $current_class = next_class($current_field);
+			      next FIELD;
+			  }
 		      }
 		      
 		  }
@@ -196,12 +199,13 @@ package IMUtils::UpdatePath; {
     }
     
     sub update_query {
-	my $query = shift;
+	my $query  = shift;
+	my $origin = shift;
 	
 	my ($is_broken, $is_changed);
 
-	my $deletion = q!$is_changed++;"[DELETION][" . $query->get_name . qq{][$place] "$path"}!;
-	my $change   = q!$is_changed++;"[CHANGE][" . $query->get_name . qq{][$place] "$path" => "$translation"}!;
+	my $deletion = q!$is_changed++;"[DELETION][". $origin . $query->get_name . qq{][$place] "$path"}!;
+	my $change   = q!$is_changed++;"[CHANGE][" . $origin . $query->get_name . qq{][$place] "$path" => "$translation"}!;
 	confess "$query is not a reference" unless (ref $query);
 	$log->info('Processing', $query->{type}, '"'.$query->get_name. '"');
 	
@@ -312,14 +316,14 @@ package IMUtils::UpdatePath; {
 	}
 	
 	if ($is_broken) {	
-	    $log->warning($query->{type}, '"'.$query->get_name.'"', '"is broken');
+	    $log->warning($origin, $query->{type}, '"'.$query->get_name.'"', '"is broken');
 	}
 	elsif ($is_changed) {
-	    $log->info($query->{type}, '"'.$query->get_name.'"', 'has been updated');
+	    $log->info($origin, $query->{type}, '"'.$query->get_name.'"', 'has been updated');
 	    $is_broken = 0;
 	}
 	else {
-	    $log->info($query->{type}, '"'.$query->get_name.'"', 'is unchanged');
+	    $log->info($origin, $query->{type}, '"'.$query->get_name.'"', 'is unchanged');
 	    $is_broken = undef;
 	}
 	return $query, $is_broken;
