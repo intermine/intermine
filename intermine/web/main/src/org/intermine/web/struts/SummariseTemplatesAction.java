@@ -23,6 +23,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.objectstore.ObjectStoreException;
@@ -33,12 +34,13 @@ import org.intermine.web.logic.session.SessionMethods;
  *
  * @author Matthew Wakeling
  */
-public class SummariseAllTemplatesAction extends InterMineAction
+public class SummariseTemplatesAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(CreateTemplateAction.class);
 
     /**
-     * Summarises every template, and then forwards to the mymine template page.
+     * Summarises every public template, and then forwards to the mymine template page.
+     * This comes from a link on the my mine page for the super user only.
      *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -48,10 +50,8 @@ public class SummariseAllTemplatesAction extends InterMineAction
      *
      * @exception Exception if the application business logic throws an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -59,7 +59,10 @@ public class SummariseAllTemplatesAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
         final TemplateSummariser summariser = im.getTemplateSummariser();
 
-        Map<String, TemplateQuery> templates = profile.getSavedTemplates();
+        TemplateManager templateManager = new TemplateManager(profile,
+                im.getObjectStore().getModel());
+        Map<String, TemplateQuery> templates = templateManager.getGlobalTemplates();
+
         for (Map.Entry<String, TemplateQuery> entry : templates.entrySet()) {
             //String templateName = entry.getKey();
             TemplateQuery template = entry.getValue();
