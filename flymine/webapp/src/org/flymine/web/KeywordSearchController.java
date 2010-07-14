@@ -19,6 +19,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.bio.search.KeywordSearch;
 import org.intermine.web.logic.session.SessionMethods;
 
 public class KeywordSearchController extends TilesAction

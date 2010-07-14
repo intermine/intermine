@@ -1,0 +1,57 @@
+.keywordSearch {
+   margin-left:auto;
+   margin-right:auto;
+   text-align:center;
+}
+
+.keywordSearch p {
+   font-size:0.9em;
+}
+
+.keywordSearchBox {
+   border:2px solid #192F39;
+   font-size:1.2em;
+   width:400px;
+}
+
+.keywordSearch form {
+        margin: 1em auto;
+}
+
+.keywordSearch .examples {
+   margin-top: 1em;
+   margin-right:auto;
+   margin-bottom: 1em;
+   margin-left:auto;
+   text-align:left;
+   width: 425px;
+}
+        
+.keywordSearch .examples li {
+  font-size: 0.9em;
+  text-align: left;
+  margin-left: 0px;
+}
+
+.keywordSearchResults {
+	text-align: center;
+}
+
+.keywordSearchResults table {
+	margin: 1em auto;
+	text-align: left;
+}
+
+.keywordSearchResult .objectKeys {
+	font-weight: bold;
+	margin-bottom: 0.5em;
+    white-space: nowrap;
+}
+
+.keywordSearchResult .objectKeys span.objectKey {
+    margin-right: 1em;
+}
+
+.keywordSearchResult .objectFieldName {
+    font-style: italic;
+}

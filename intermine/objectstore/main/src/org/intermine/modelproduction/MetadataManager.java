@@ -68,6 +68,11 @@ public class MetadataManager
      * The name of the key to use to store the autocomplete RAMIndexes.
      */
     public static final String AUTOCOMPLETE_INDEX = "autocomplete";
+
+    /**
+     * The name of the key to use to store the search RAMIndex.
+     */
+    public static final String SEARCH_INDEX = "search";
     /**
      * Name of the key under which to store the serialized version of the class descriptions
      */
@@ -164,6 +169,51 @@ public class MetadataManager
             connection.close();
         }
     }
+
+//    /**
+//     * Store a binary (key, value) pair in the metadata table of the database
+//     * @param database the database
+//     * @param key the key
+//     * @param value the byte array of the value
+//     * @throws SQLException if an error occurs
+//     */
+//    public static void storeBinary(Database database, String key,
+//            InputStream stream, int length) throws SQLException {
+//        Connection connection = database.getConnection();
+//        boolean autoCommit = connection.getAutoCommit();
+//
+//        try {
+//            connection.setAutoCommit(false);
+//
+//            ResultSet rs = connection.createStatement().
+//                    executeQuery("SELECT * FROM " + METADATA_TABLE);
+//            ResultSetMetaData meta = rs.getMetaData();
+//
+//            if (meta.getColumnCount() != 3) {
+//                connection.createStatement().execute("ALTER TABLE "
+//                        + METADATA_TABLE + " ADD blob_value BYTEA");
+//            }
+//
+//            connection.createStatement().execute("DELETE FROM " + METADATA_TABLE + " where key = '"
+//                    + key + "'");
+//
+//            PreparedStatement pstmt = connection.prepareStatement("INSERT INTO "
+//                    + METADATA_TABLE + " (key, blob_value) "
+//                    + "VALUES('" + key + "', ?)");
+//
+//            pstmt.setBinaryStream(1, stream, length);            
+//
+//            pstmt.executeUpdate();
+//
+//            connection.commit();
+//
+//            pstmt.close();
+//
+//        } finally {
+//            connection.setAutoCommit(autoCommit);
+//            connection.close();
+//        }
+//    }
 
     /**
      * Retrieve the value for a given key from the metadata table of the database
