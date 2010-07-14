@@ -27,7 +27,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.bio.search.KeywordSearch;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -51,17 +51,17 @@ public class KeywordSearchResultsController extends TilesAction
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        
+
         KeywordSearch.initKeywordSearch(im);
         Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
 
         WebConfig webconfig = SessionMethods.getWebConfig(request);
         Model model = im.getModel();
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
-        
+
         String searchTerm = request.getParameter("searchTerm");
         LOG.info("SEARCH TERM: '" + searchTerm + "'");
-        
+
         if (!StringUtils.isBlank(searchTerm) && !searchTerm.trim().equals('*')) {
             Map<Integer, Float> searchResults = KeywordSearch.runLuceneSearch(searchTerm);
 
@@ -69,29 +69,30 @@ public class KeywordSearchResultsController extends TilesAction
 
             LOG.info("SEARCH HITS: " + searchResults.size());
 
-            //fetch objects for the IDs returned by lucene search
+            // fetch objects for the IDs returned by lucene search
             Map<Integer, InterMineObject> objMap = new HashMap<Integer, InterMineObject>();
             for (InterMineObject obj : im.getObjectStore().getObjectsByIds(objectIds)) {
                 objMap.put(obj.getId(), obj);
             }
-            
+
             LOG.info("SEARCH OBJMAP: " + objMap.size());
-            
+
             for (Map.Entry<Integer, Float> entry : searchResults.entrySet()) {
-            	Class<?> objectClass = DynamicUtil.decomposeClass(objMap.get(entry.getKey()).getClass()).iterator().next();
-            	ClassDescriptor classDescriptor = model.getClassDescriptorByName(objectClass.getName());
-            	searchResultsParsed.add(
-            			new KeywordSearchResult(webconfig, objMap.get(entry.getKey()), classKeys,
-            					classDescriptor, entry.getValue())
-            			);
+                Class<?> objectClass = DynamicUtil.decomposeClass(
+                        objMap.get(entry.getKey()).getClass()).iterator().next();
+                ClassDescriptor classDescriptor = model.getClassDescriptorByName(objectClass
+                        .getName());
+
+                searchResultsParsed.add(new KeywordSearchResult(webconfig, objMap.get(entry
+                        .getKey()), classKeys, classDescriptor, entry.getValue()));
             }
         }
-        
+
         LOG.info("SEARCH RESULTS: " + searchResultsParsed.size());
-        
+
         request.setAttribute("searchResults", searchResultsParsed);
         request.setAttribute("searchTerm", searchTerm);
-        
+
         if (!StringUtils.isBlank(searchTerm)) {
             context.putAttribute("searchTerm", searchTerm);
             context.putAttribute("searchResults", request.getAttribute("searchResults"));
@@ -100,7 +101,7 @@ public class KeywordSearchResultsController extends TilesAction
                 context.putAttribute("displayMax", KeywordSearch.MAX_HITS);
             }
         }
-        
+
         return null;
     }
 }

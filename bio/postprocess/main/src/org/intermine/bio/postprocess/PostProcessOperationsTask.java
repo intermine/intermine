@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
+import org.intermine.bio.search.KeywordSearch;
 import org.intermine.bio.util.LinkInTask;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
@@ -241,6 +242,28 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                     MetadataManager.storeBinary(db, MetadataManager.AUTOCOMPLETE_INDEX,
                                         ac.getBinaryIndexMap());
                 }
+            } else if ("create-search-index".equals(operation)) {
+                System.out.println("creating lucene index for keyword search...");
+                LOGGER.info("creating lucene index for keyword search...");
+
+                ObjectStore os = getObjectStoreWriter().getObjectStore();
+                if (!(os instanceof ObjectStoreInterMineImpl)) {
+                    throw new RuntimeException("cannot summarise ObjectStore - must be an "
+                            + "instance of ObjectStoreInterMineImpl");
+                }
+
+                String configFileName = "objectstoresummary.config.properties";
+                ClassLoader classLoader = PostProcessOperationsTask.class.getClassLoader();
+                InputStream configStream = classLoader.getResourceAsStream(configFileName);
+                if (configStream == null) {
+                    throw new RuntimeException("can't find resource: " + configFileName);
+                }
+
+                Properties properties = new Properties();
+                properties.load(configStream);
+
+                KeywordSearch.saveIndexToDatabase(os);
+                System.out.println("Index saved!");
             } else if ("create-overlap-view".equals(operation)) {
                 OverlapViewTask ovt = new OverlapViewTask(getObjectStoreWriter());
                 ovt.createView();
