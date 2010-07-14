@@ -535,7 +535,10 @@ public class MetadataCache
 //                        } else {
                         for (String feat : expFeat.keySet()) {
                             Long subCount = subFeat.get(feat);
-                            Long expCount = expFeat.get(feat) + subCount;
+                            Long expCount = subCount;
+                            if (expFeat.get(feat) != null) {
+                                expCount = expCount + expFeat.get(feat);
+                            } 
                             expFeat.put(feat, expCount);
                         }
                         expELevels.put(exp.getName(),expFeat);
