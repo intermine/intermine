@@ -29,19 +29,15 @@ my $broken  = 1;
 # Set up configured options
 my $config = AppConfig->new({GLOBAL => {EXPAND   => EXPAND_ALL,
                                         ARGCOUNT => ARGCOUNT_ONE}});
-$config->define('model', 'changesfile', 'logfile', 'mine');
+$config->define('model', 'changesfile', 'logfile');
 $config->define('svndirectory' => {DEFAULT => $ENV{HOME}.'/svn/dev'});
 $config->define('help|usage!');
 $config->define('inputfile|infile=s@');
 $config->define('outputfile|outfile=s@');
 
-my $configfile = $ARGV[0] || 'resources/updater.config'; 
-if (-f $configfile) {
-    $config->file($configfile);
-} 
-else {
-    $config->getopt();
-}
+my $configfile = (-f $ARGV[0]) ? $ARGV[0] : 'resources/updater.config'; 
+$config->file($configfile) if (-f $configfile);
+$config->getopt();
 
 my $log_file       = $config->logfile();
 my @out_files      = @{$config->outputfile()};
@@ -70,7 +66,7 @@ sub usage {
     print for (<DATA>); 
 }
 
-if (not (@in_files and $new_model_file and $changes_file) 
+if (not ($new_model_file and $changes_file) 
     or  ($help)) {
     usage();
     exit;
@@ -480,7 +476,7 @@ sub process_xml_line {
 	    push @open_tags, $type;
 	    $counter{$type}++ unless $end;  
 	    $counter{total}++;
-	    printf "\rProcessing element %8d", $counter{total} 
+	    printf "\rProcessing element %10s", format_number($counter{total})
 	        unless $writing_to_stdout;
 	    $is_buffering = 1 if ($needs_processing{$type});
 	}
@@ -516,9 +512,12 @@ sub process_xml_line {
     return $new_line;
 }
 
+die "No input files specified! Please supply some using --inputfile or -i\n"
+    unless @in_files;
 for my $in_file (@in_files) {
     my $out_file = (shift @out_files) || $in_file . '.new';
-    open(my $INFH, '<', $in_file) or die "Cannot open $in_file, $!";
+    open(my $INFH, '<', $in_file) 
+	or (warn "\rCannot open $in_file, $! - skipping\n" and next);
     my $OUT;
     if ($out_file eq '-') {
 	$OUT = *STDOUT;
@@ -557,6 +556,7 @@ if (%counter) {
 	    );
 	$log->info($msg);
     }
+    print "\n" unless $writing_to_stdout;
 }
 
 __DATA__
@@ -564,11 +564,17 @@ __DATA__
 update_key_value_list.pl: Update InterMine configuration files to reflect changes in the data model
 
   Synopsis:
-update_key_value_list.pl -i [file],[file] (-o [file],[file]) -m [file] -c [file.json] (-s [dir]) (-l [file])
+
+  intermine_updater.pl ([config_file])
+
+OR
+
+  intermine_updater.pl -i [file],[file] (-o [file],[file]) -m [file] -c [file.json] (-s [dir]) (-l [file])
 
 This updater will read through an input file, checking the validity of 
 any InterMine paths (classes or fields specified in the properties file), 
-writing out the new updated version to a specified file, or STDOUT. 
+writing out the new updated version to a specified file, or a new file
+composed of the old filename plus a prefix (the default is ".new") or STDOUT. 
 It requires an example of the new data model, as well as a list of the changes 
 between the old model and the current one.
 
@@ -580,9 +586,9 @@ deletions will be logged.
 
 --help|usage   | -h|u : This help text
 
---inputfile    | -i   : The file to be processed
+--inputfile    | -i   : The file(s) to be processed
 
---outputfile   | -o   : The file to write the new output to
+--outputfile   | -o   : The file(s) to write the new output to
    (optional)           if not supplied, the inputfile name 
                         will be used, suffixed with '.new'
 
@@ -596,6 +602,57 @@ deletions will be logged.
 --logfile      | -l   : File to save the log to. If there is no file, 
     (optional)          all logging output will go to STDOUT
 
+for options that accept multiple values (-i/-o) the values can either be 
+supplied by multiple recurrances of the switch, or as comma separated lists,
+or as a combination of the two. For example, the following are all equivalent:
+
+  --inputfile file1,file2,file3,file4
+
+  -i file1 -i file2 -i file3 -i file4
+
+  -i file1,file2 --inputfile file3,file4
+
+Make sure, if you specify output files, that you have the same number of files
+in both the input and output lists, and that they are in the same sequence. The
+updater will throw an error if the lists are of different lengths, but getting
+the order wrong will just give you headaches down the line. Checking the output
+visually is always recommended.
+
+Writing to standard output is supported (simply supply "-" as the output file for that file, or just a single "-" if you want all output to standard output) but modification in place is not. 
+
+Trying to write output and the log to standard output at the same time will 
+throw an error.
+
+  Configuration:
+
+The updater can either be run using commandline switches or a configuration file, or a combination of the two.
+
+The configuration file options are the same as the long forms of the command-
+line flags. For example:
+
+  model = path/to/modelfile
+  changes = path/to/changesfile
+  inputfile = list,of,input,files
+  inputfile = another input file
+
+An example of a configuration file is provided in: 
+  
+  intermine/resources/updater.config
+
   Example:
 
-perl svn/dev/intermine/scripts/update_key_value_list.pl -m svn/model_update/flymine/dbmodel/build/model/genomic_model.xml -c svn/dev/intermine/scripts/resources/model_changes0.94.json -i svn/dev/flymine/dbmodel/resources/genomic_keyDefs.properties,svn/dev/flymine/dbmodel/resources/objectstoresummary.config.properties,svn/dev/flymine/dbmodel/resources/class_keys.properties,svn/dev/flymine/dbmodel/resources/genomic_precompute.properties -l /tmp/out.file -o -
+if you are running the updater from the intermine/scripts directory, then you can just call it as:
+
+  ./intermine_updater.pl
+
+and, assuming you have configured resources/updater.config, it should just work.
+
+Alternatively, you can call it using command line options, or a combination of the two.
+
+Both abbreviated and full commandline flags are allowed, and they are case-insensitive
+
+perl path/to/intermine_updater.pl -m path/to/model/genomic_model.xml -c path/to/model_changes0.94.json -i path/to/class_keys.properties,path/to/genomic_precompute.properties -l /tmp/out.file -o -
+
+OR 
+
+path/to/intermine_updater.pl --model path/to/model/genomic_model.xml --changes path/to/model_changes0.94.json --inputfile path/to/class_keys.properties --inputfile path/to/genomic_precompute.properties --logfile /tmp/out.file --outputfile -
