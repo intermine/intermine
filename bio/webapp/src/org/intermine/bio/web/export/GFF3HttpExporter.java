@@ -77,7 +77,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         if (form != null && form instanceof GFF3ExportForm) {
             organisms = ((GFF3ExportForm) form).getOrganisms();
         }
-               
+
         if (doGzip) {
             ResponseUtil.setGzippedHeader(response, "table" + StringUtil.uniqueString()
                     + ".gff3.gz");
@@ -91,7 +91,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         // get the project title to be written in GFF3 records
         Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String sourceName = props.getProperty("project.title");
-        
+
         Exporter exporter;
         try {
             OutputStream out = response.getOutputStream();
@@ -115,9 +115,13 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
             exporter = new GFF3Exporter(writer,
                     indexes, getSoClassNames(servletContext), paths, sourceName, organisms);
             ExportResultsIterator iter = null;
+            boolean doGoFaster = false;
             try {
                 iter = getResultRows(pt, request);
-                iter.goFaster();
+                if (!pt.getWebTable().isSingleBatch()) {
+                    doGoFaster = true;
+                    iter.goFaster();
+                }
                 exporter.export(iter);
                 if (out instanceof GZIPOutputStream) {
                     try {
@@ -128,21 +132,23 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
                 }
             } finally {
                 if (iter != null) {
-                    iter.releaseGoFaster();    
+                    if (doGoFaster) {
+                        iter.releaseGoFaster();
+                    }
                 }
             }
         } catch (Exception e) {
             throw new ExportException("Export failed", e);
         }
-        
+
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export");
         }
     }
-    
+
     private void removeFirstItemInPaths(List<String> paths) {
         for (int i = 0; i < paths.size(); i++) {
-            String path = paths.get(i); 
+            String path = paths.get(i);
             paths.set(i, path.substring(path.indexOf(".") + 1, path.length()));
         }
     }

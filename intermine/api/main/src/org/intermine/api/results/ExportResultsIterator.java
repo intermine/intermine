@@ -58,11 +58,30 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
      * @param pq a PathQuery to run
      * @param savedBags a Map of the bags that the query may have used
      * @param bagQueryRunner a BagQueryRunner for any LOOKUP constraints
+     * @param batchSize the batch size for the results
+     * @param matching true to switch off prefetch, used to match an existing Results object in the
+     * cache
+     * @throws ObjectStoreException if something goes wrong executing the query
+     */
+    public ExportResultsIterator(ObjectStore os, PathQuery pq, Map savedBags,
+            BagQueryRunner bagQueryRunner, int batchSize, boolean matching)
+        throws ObjectStoreException {
+        init(os, pq, savedBags, bagQueryRunner, batchSize, matching);
+    }
+
+     /**
+     * Constructor for ExportResultsIterator. This creates a new instance from the given
+     * ObjectStore, PathQuery, and other necessary objects.
+     *
+     * @param os an ObjectStore that the query will be run on
+     * @param pq a PathQuery to run
+     * @param savedBags a Map of the bags that the query may have used
+     * @param bagQueryRunner a BagQueryRunner for any LOOKUP constraints
      * @throws ObjectStoreException if something goes wrong executing the query
      */
     public ExportResultsIterator(ObjectStore os, PathQuery pq, Map savedBags,
             BagQueryRunner bagQueryRunner) throws ObjectStoreException {
-        init(os, pq, savedBags, bagQueryRunner, 0);
+        init(os, pq, savedBags, bagQueryRunner, 0, false);
     }
 
     /**
@@ -78,16 +97,17 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
      */
     public ExportResultsIterator(ObjectStore os, PathQuery pq, Map savedBags,
             BagQueryRunner bagQueryRunner, int batchSize) throws ObjectStoreException {
-        init(os, pq, savedBags, bagQueryRunner, batchSize);
+        init(os, pq, savedBags, bagQueryRunner, batchSize, false);
     }
 
     private void init(ObjectStore os, PathQuery pq, Map savedBags,
-            BagQueryRunner bagQueryRunner, int batchSize) throws ObjectStoreException {
+            BagQueryRunner bagQueryRunner, int batchSize, boolean matching)
+        throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Map returnBagQueryResults = new HashMap();
         Query q = MainHelper.makeQuery(pq, savedBags, pathToQueryNode, bagQueryRunner,
                 returnBagQueryResults, false);
-        results = os.execute(q, batchSize, true, true, true);
+        results = os.execute(q, batchSize, true, true, !matching);
         osIter = results.iterator();
         List<List<ResultElement>> empty = Collections.emptyList();
         subIter = empty.iterator();
