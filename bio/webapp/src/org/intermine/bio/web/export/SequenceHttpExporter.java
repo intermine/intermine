@@ -70,7 +70,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
         boolean doGzip = (form != null) && form.getDoGzip();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ObjectStore os = im.getObjectStore();
-        
+
         setSequenceExportHeader(response, doGzip);
 
         SequenceExportForm sef = (SequenceExportForm) form;
@@ -114,9 +114,13 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
 
         SequenceExporter exporter = new SequenceExporter(os, outputStream, realFeatureIndex);
         ExportResultsIterator iter = null;
+        boolean doGoFaster = false;
         try {
             iter = getResultRows(pt, request);
-            iter.goFaster();
+            if (!pt.getWebTable().isSingleBatch()) {
+                doGoFaster = true;
+                iter.goFaster();
+            }
             exporter.export(iter);
             if (outputStream instanceof GZIPOutputStream) {
                 try {
@@ -127,10 +131,12 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
             }
         } finally {
             if (iter != null) {
-                iter.releaseGoFaster();    
+                if (doGoFaster) {
+                    iter.releaseGoFaster();
+                }
             }
         }
-        
+
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }
@@ -140,7 +146,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
      * The intial export path list is just the paths from the columns of the PagedTable with
      * chromosomeLocation added (if appropriate)
      * {@inheritDoc}
-     * @throws PathException 
+     * @throws PathException
      */
     public List<Path> getInitialExportPaths(PagedTable pt) throws PathException {
         List<Path> paths = new ArrayList<Path>(ExportHelper.getColumnPaths(pt));
