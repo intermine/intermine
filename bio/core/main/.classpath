@@ -10,7 +10,5 @@
 	<classpathentry kind="lib" path="lib/bbop.jar" sourcepath="/Users/watkins/Documents/FlyMine/src/bbop/src"/>
 	<classpathentry kind="lib" path="lib/obo.jar" sourcepath="/Users/watkins/Documents/FlyMine/src/obo/src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
-	<classpathentry kind="lib" path="/home/julie/svn/model_update/modmine/dbmodel/dist/modmine-dbmodel.jar"/>
-	<classpathentry kind="lib" path="/home/julie/svn/model_update/flymine/dbmodel/dist/flymine-dbmodel.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

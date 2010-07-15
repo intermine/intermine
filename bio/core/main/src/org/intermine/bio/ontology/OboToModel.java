@@ -28,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.util.TypeUtil;
@@ -43,7 +44,6 @@ public class OboToModel
     protected static String packageName;
     protected static Map<String, Set<String>> childNamesToParentNames;
     protected static Map<String, Set<String>> parentNamesToChildNames;
-    protected static Set<String> termListFromFile;
     protected static Map<String, Set<String>> namesToPartOfs;
     // identifier TO fully qualified intermine name, eg. `org.intermine.bio.Gene`
     protected static Map<String, String> identifierToFullName = new HashMap<String, String>();
@@ -110,8 +110,17 @@ public class OboToModel
         parser.processOntology(new FileReader(oboFile));
         parser.processRelations(oboFilename);
 
+        Set<String> termsToKeep = processTermFile(termsFileName);
+
+        OboToModel.createAndWriteModel(parser, termsToKeep, modelFile, newModelName,
+                newPackageName);
+    }
+
+    public static void createAndWriteModel(OboParser parser, Set<String> termsToKeep,
+            File modelFile, String newModelName, String newPackageName)
+    throws IOException, MetaDataException {
         OboToModel.processOboTerms(parser.getOboTerms());
-        OboToModel.processRelations(parser.getOboRelations(), termsFileName);
+        OboToModel.processRelations(parser.getOboRelations(), termsToKeep);
 
         PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(modelFile)));
         Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>();
@@ -169,7 +178,7 @@ public class OboToModel
         System.out .println("Wrote " + modelFile.getCanonicalPath());
     }
 
-    private static void processRelations(List<OboRelation> oboRelations, String termsFileName) {
+    private static void processRelations(List<OboRelation> oboRelations, Set<String> termsToKeep) {
         childNamesToParentNames = new HashMap<String, Set<String>>();
         namesToPartOfs = new HashMap<String, Set<String>>();
         for (OboRelation r : oboRelations) {
@@ -202,15 +211,15 @@ public class OboToModel
 
         buildParentsMap();
 
-        assignPartOfsToGrandchildren(oboRelations, termsFileName, namesToPartOfs);
+        assignPartOfsToGrandchildren(oboRelations, namesToPartOfs);
 
-        if (StringUtils.isNotEmpty(termsFileName)) {
-            trimModel(termsFileName);
+        if (!termsToKeep.isEmpty()) {
+            trimModel(termsToKeep);
         }
     }
 
     private static void assignPartOfsToGrandchildren(List<OboRelation> oboRelations,
-            String termsFileName, Map<String, Set<String>> namesToPartOfs) {
+    		Map<String, Set<String>> namesToPartOfs) {
         childNamesToParentNames = new HashMap<String, Set<String>>();
         namesToPartOfs = new HashMap<String, Set<String>>();
         for (OboRelation r : oboRelations) {
@@ -256,15 +265,14 @@ public class OboToModel
         }
     }
 
-    private static void trimModel(String termsFileName) {
-
-        termListFromFile = processTermFile(termsFileName);
+    private static void trimModel(Set<String> termsToKeep) {
+    	
         Map<String, String> oboTermsCopy = new HashMap<String, String>(identifierToFullName);
 
         System.out .println("Total terms: " + identifierToFullName.size());
 
         for (String oboTerm : oboTermsCopy.values()) {
-            if (!termListFromFile.contains(oboTerm)) {
+            if (!termsToKeep.contains(oboTerm)) {
                 prune(oboTerm);
             }
         }
@@ -274,7 +282,7 @@ public class OboToModel
         oboTermsCopy = new HashMap<String, String>(identifierToFullName);
 
         for (String oboTerm : oboTermsCopy.values()) {
-            if (!termListFromFile.contains(oboTerm)) {
+            if (!termsToKeep.contains(oboTerm)) {
                 flatten(oboTerm);
             }
         }
@@ -393,44 +401,42 @@ public class OboToModel
 
     // remove term from every map
     private static void removeTerm(String oboTerm) {
-        if (!termListFromFile.contains(oboTerm)) {  // TODO removed, redundant
-            identifierToFullName.remove(fullNameToIdentifier.get(oboTerm));
-            childNamesToParentNames.remove(oboTerm);
-            parentNamesToChildNames.remove(oboTerm);
-            namesToPartOfs.remove(oboTerm);
-            removeCollections(oboTerm);
 
-            // remove mention in maps
-            Map<String, Set<String>> mapCopy
-                = new HashMap<String, Set<String>>(parentNamesToChildNames);
-            for (Map.Entry<String, Set<String>> entry : mapCopy.entrySet()) {
-                String parent = entry.getKey();
-                Set<String> children = entry.getValue();
+    	identifierToFullName.remove(fullNameToIdentifier.get(oboTerm));
+    	childNamesToParentNames.remove(oboTerm);
+    	parentNamesToChildNames.remove(oboTerm);
+    	namesToPartOfs.remove(oboTerm);
+    	removeCollections(oboTerm);
 
-                // remove current term
-                children.remove(oboTerm);
+    	// remove mention in maps
+    	Map<String, Set<String>> mapCopy
+    	= new HashMap<String, Set<String>>(parentNamesToChildNames);
+    	for (Map.Entry<String, Set<String>> entry : mapCopy.entrySet()) {
+    		String parent = entry.getKey();
+    		Set<String> children = entry.getValue();
 
-                // if parent is childless, remove
-                if (children.size() == 0) {
-                    parentNamesToChildNames.remove(parent);
-                }
-            }
+    		// remove current term
+    		children.remove(oboTerm);
 
-            mapCopy = new HashMap<String, Set<String>>(childNamesToParentNames);
-            for (Map.Entry<String, Set<String>> entry : mapCopy.entrySet()) {
-                String child = entry.getKey();
-                Set<String> parents = entry.getValue();
+    		// if parent is childless, remove
+    		if (children.size() == 0) {
+    			parentNamesToChildNames.remove(parent);
+    		}
+    	}
 
-                // remove current term
-                parents.remove(oboTerm);
+    	mapCopy = new HashMap<String, Set<String>>(childNamesToParentNames);
+    	for (Map.Entry<String, Set<String>> entry : mapCopy.entrySet()) {
+    		String child = entry.getKey();
+    		Set<String> parents = entry.getValue();
 
-                // if child has no parents remove from p
-                if (parents.size() == 0) {
-                    childNamesToParentNames.remove(child);
-                }
-            }
+    		// remove current term
+    		parents.remove(oboTerm);
 
-        }
+    		// if child has no parents remove from p
+    		if (parents.size() == 0) {
+    			childNamesToParentNames.remove(child);
+    		}
+    	}
     }
 
     private static void removeCollections(String oboTerm) {
