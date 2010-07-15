@@ -46,7 +46,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 /**
- * 
+ *
  * @author Julie Sullivan
   */
 public class OverlapsDataSetLdr implements DataSetLdr
@@ -69,13 +69,10 @@ public class OverlapsDataSetLdr implements DataSetLdr
      * @throws Exception if getting the list of organisms fails
      *
      */
-    @SuppressWarnings({
-            "unchecked"
-        })
     public OverlapsDataSetLdr(InterMineBag bag, ObjectStore os, String organismName)
-    throws Exception {
+        throws Exception {
         super();
-        
+
         model = os.getModel();
         bagType = bag.getType();
 
@@ -83,7 +80,7 @@ public class OverlapsDataSetLdr implements DataSetLdr
             LOG.warn("can't render graph widgets without organism name");
             return;
         }
-        
+
         XYSeries upstream = getSeries(bag, os, organismName, "upstream");
         XYSeries downstream = getSeries(bag, os, organismName, "downstream");
         if (upstream == null && downstream == null) {
@@ -120,18 +117,18 @@ public class OverlapsDataSetLdr implements DataSetLdr
     }
 
     @SuppressWarnings("boxing")
-    private XYSeries getSeries(InterMineBag bag, ObjectStore os,  String organismName, 
-                               String seriesName) 
-    throws ClassNotFoundException {
+    private XYSeries getSeries(InterMineBag bag, ObjectStore os,  String organismName,
+                               String seriesName)
+        throws ClassNotFoundException {
 
-        Map<String, Integer> distanceToNearestGene = new HashMap();
-        
+        Map<String, Integer> distanceToNearestGene = new HashMap<String, Integer>();
+
         Query q = getQuery(organismName, bag, seriesName);
         results = os.execute(q, 50000, true, true, true);
-        
-        Iterator iter = results.iterator();
+
+        Iterator<?> iter = results.iterator();
         while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
+            ResultsRow<?> resRow = (ResultsRow<?>) iter.next();
             String featureIdentifier = (java.lang.String) resRow.get(0);
             Integer featureStart = (java.lang.Integer) resRow.get(1);
             Integer featureEnd = (java.lang.Integer) resRow.get(2);
@@ -143,11 +140,11 @@ public class OverlapsDataSetLdr implements DataSetLdr
                 distance = featureStart - geneEnd;
             } else if (seriesName.equals("upstream")) {
                 distance = geneStart - featureEnd;
-            }            
+            }
             if (distance.compareTo(new Integer(0)) < 0) {
                 distance = 0;
             }
-            
+
             Integer currentDistance = distanceToNearestGene.get(featureIdentifier);
             if (currentDistance == null) {
                 distanceToNearestGene.put(featureIdentifier, distance);
@@ -157,45 +154,45 @@ public class OverlapsDataSetLdr implements DataSetLdr
                     distanceToNearestGene.put(featureIdentifier, distance);
                 }
             }
-        }        
+        }
         DescriptiveStatistics stats = new DescriptiveStatistics();
         for (Map.Entry<String, Integer> entry : distanceToNearestGene.entrySet()) {
             stats.addValue(entry.getValue());
-        }        
+        }
         Double std = stats.getStandardDeviation();
         if (std.compareTo(0.0) <= 0) {
-            widgetTotal = 0; 
+            widgetTotal = 0;
             return null;
         }
         Function2D actual = new NormalDistributionFunction2D(stats.getMean(), std);
         int total = (int) stats.getN();
-        widgetTotal = total;        
-        return DatasetUtilities.sampleFunction2DToSeries(actual, 0.0, stats.getMax(), total, 
+        widgetTotal = total;
+        return DatasetUtilities.sampleFunction2DToSeries(actual, 0.0, stats.getMax(), total,
                                                          seriesName);
     }
-    
+
     private Query getQuery(String organism, InterMineBag bag, String seriesName)
-    throws ClassNotFoundException {
+        throws ClassNotFoundException {
 
         QueryClass organismQC = new QueryClass(Organism.class);
         Class<?> bagCls = Class.forName(model.getPackageName() + "." + bagType);
-                
+
         QueryClass featureQC = new QueryClass(bagCls);
         QueryClass geneFlankingRegionQC = null;
         QueryClass geneQC = new QueryClass(Gene.class);
         QueryClass geneLocationQC = new QueryClass(Location.class);
         QueryClass featureLocationQC = new QueryClass(Location.class);
-        
+
         try {
             geneFlankingRegionQC = new QueryClass(Class.forName(model.getPackageName()
-                                                          + ".GeneFlankingRegion"));        
+                                                          + ".GeneFlankingRegion"));
         } catch (ClassNotFoundException e) {
             LOG.error("Error rendering overlaps widget", e);
-            // don't throw an exception, return NULL instead.  The widget will display 'no 
-            // results'. the javascript that renders widgets assumes a valid widget and thus 
-            // can't handle an exception thrown here.  
+            // don't throw an exception, return NULL instead.  The widget will display 'no
+            // results'. the javascript that renders widgets assumes a valid widget and thus
+            // can't handle an exception thrown here.
             return null;
-        }        
+        }
 
         QueryField geneStart = new QueryField(geneLocationQC, "start");
         QueryField geneEnd = new QueryField(geneLocationQC, "end");
@@ -207,7 +204,7 @@ public class OverlapsDataSetLdr implements DataSetLdr
 
         QueryField distance = new QueryField(geneFlankingRegionQC, "distance");
         QueryField direction = new QueryField(geneFlankingRegionQC, "direction");
-        
+
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         QueryObjectReference r1 = new QueryObjectReference(featureQC, "organism");
@@ -217,38 +214,38 @@ public class OverlapsDataSetLdr implements DataSetLdr
         SimpleConstraint sc1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS,
                                                    new QueryValue(organism.toLowerCase()));
         cs.addConstraint(sc1);
-        
+
         QueryField qf2 = new QueryField(featureQC, "id");
         cs.addConstraint(new BagConstraint(qf2, ConstraintOp.IN, bag.getOsb()));
-        
+
         // binding site to gene flanking region
-        QueryCollectionReference c1 
-        = new QueryCollectionReference(featureQC, "overlappingFeatures");
+        QueryCollectionReference c1
+            = new QueryCollectionReference(featureQC, "overlappingFeatures");
         cs.addConstraint(new ContainsConstraint(c1, ConstraintOp.CONTAINS, geneFlankingRegionQC));
-        
+
         // binding site.location
         QueryObjectReference r2 = new QueryObjectReference(featureQC, "chromosomeLocation");
         cs.addConstraint(new ContainsConstraint(r2, ConstraintOp.CONTAINS, featureLocationQC));
-        
+
         // overlappingfeatures.gene
         QueryObjectReference r3 = new QueryObjectReference(geneFlankingRegionQC, "gene");
         cs.addConstraint(new ContainsConstraint(r3, ConstraintOp.CONTAINS, geneQC));
-        
+
         // gene.location
         QueryObjectReference r4 = new QueryObjectReference(geneQC, "chromosomeLocation");
         cs.addConstraint(new ContainsConstraint(r4, ConstraintOp.CONTAINS, geneLocationQC));
-        
+
         // overlappingfeatures.distance = '10.0kb'
         QueryExpression qf3 = new QueryExpression(QueryExpression.LOWER, distance);
         SimpleConstraint sc2 = new SimpleConstraint(qf3, ConstraintOp.EQUALS,
                                                    new QueryValue(DISTANCE_10_KB));
         cs.addConstraint(sc2);
-        
+
         // direction = upstream | downstream
         QueryExpression qf4 = new QueryExpression(QueryExpression.LOWER, direction);
         SimpleConstraint sc3 = new SimpleConstraint(qf4, ConstraintOp.EQUALS,
                                                    new QueryValue(seriesName));
-        
+
         cs.addConstraint(sc3);
 
         Query q = new Query();
@@ -258,10 +255,10 @@ public class OverlapsDataSetLdr implements DataSetLdr
         q.addFrom(geneQC);
         q.addFrom(geneLocationQC);
         q.addFrom(featureLocationQC);
-                
+
         q.setConstraint(cs);
         q.setDistinct(false);
-        
+
         q.addToSelect(featureIdentifier);
         q.addToSelect(featureStart);
         q.addToSelect(featureEnd);

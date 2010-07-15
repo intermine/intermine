@@ -60,14 +60,13 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
     /**
      * Creates a ChromosomeDistributionDataSetLdr used to retrieve, organise
-     * and structure the data to create a graph
+     * and structure the data to create a graph.
+     *
      * @param bag the bag
      * @param os the ObjectStore
      * @param organismName the organism name
      * @throws Exception if getting the list of organisms fails
-     *
      */
-    @SuppressWarnings("unchecked")
     public ChromosomeDistributionDataSetLdr(InterMineBag bag, ObjectStore os, String organismName)
         throws Exception {
         super();

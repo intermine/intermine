@@ -53,7 +53,7 @@ public class PublicationURLQuery implements WidgetURLQuery
             q.addConstraint("Gene.publications", Constraints.lookup(key));
             q.setConstraintLogic("A and B");
             q.syncLogicExpression("and");
-        }        
+        }
         return q;
     }
 }

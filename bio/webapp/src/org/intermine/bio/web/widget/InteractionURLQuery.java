@@ -39,8 +39,6 @@ public class InteractionURLQuery implements WidgetURLQuery
         this.os = os;
     }
 
-    
-    
     /**
      * {@inheritDoc}
      */
