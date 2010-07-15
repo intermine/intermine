@@ -45,9 +45,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
      *      org.jfree.data.category.CategoryDataset,
      *      int, int)
      */
-    public String generateURL(CategoryDataset dataset,
-                              @SuppressWarnings("unused") int series,
-                              int category) {
+    public String generateURL(CategoryDataset dataset, int series, int category) {
         StringBuffer sb = new StringBuffer("queryForGraphAction.do?bagName=" + bagName);
         sb.append("&category=" + dataset.getColumnKey(category));
         sb.append("&series=");
@@ -61,7 +59,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
      * {@inheritDoc}
      */
     public PathQuery generatePathQuery(ObjectStore os, InterMineBag imBag, String category,
-                                       @SuppressWarnings("unused") String series) {
+                                       String series) {
         PathQuery q = new PathQuery(os.getModel());
         String bagType = imBag.getType();
 

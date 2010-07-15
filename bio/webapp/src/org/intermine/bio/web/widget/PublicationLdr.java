@@ -80,7 +80,7 @@ public class PublicationLdr extends EnrichmentWidgetLdr
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         cs.addConstraint(new SimpleConstraint(qfId, ConstraintOp.IS_NOT_NULL));
-        
+
         // constrain genes to be in subset of list the user selected
         if (keys != null) {
             cs.addConstraint(new BagConstraint(qfId, ConstraintOp.IN, keys));
@@ -103,7 +103,7 @@ public class PublicationLdr extends EnrichmentWidgetLdr
         QueryCollectionReference qcr = new QueryCollectionReference(qcGene, "publications");
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qcPub));
 
-        
+
 
         Query q = new Query();
         q.setDistinct(true);

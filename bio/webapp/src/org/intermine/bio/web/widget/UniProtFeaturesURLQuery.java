@@ -53,7 +53,7 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
             q.addConstraint("Protein.features.feature", Constraints.lookup(key));
             q.setConstraintLogic("A and B");
             q.syncLogicExpression("and");
-        }        
+        }
         return q;
     }
 }
