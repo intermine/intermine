@@ -10,17 +10,18 @@ package org.intermine.metadata;
  *
  */
 
+import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
-import java.math.BigDecimal;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.MetadataManager;
@@ -101,17 +102,6 @@ public class Model
 
         this.modelName = name;
         this.packageName = packageName;
-
-        // classes by name
-        clds
-
-        Comparator<FieldDescriptor> comparator = new Comparator<FieldDescriptor>() {
-            public int compare(FieldDescriptor o1, FieldDescriptor o2) {
-                String fieldName1 = o1.getName().toLowerCase();
-                String fieldName2 = o2.getName().toLowerCase();
-                return fieldName1.compareTo(fieldName2);
-            }
-        };
 
         LinkedHashSet<ClassDescriptor> orderedClds = new LinkedHashSet<ClassDescriptor>(clds);
 
