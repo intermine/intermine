@@ -54,13 +54,13 @@ under the same terms as Perl itself.
 
 use strict;
 use warnings;
+use Carp;
 
-use base (qw/InterMine::WebService::Core::Service/);
+use base (qw/InterMine::WebService::Core::Service InterMine::TemplateFactory/);
 
 use IO::String;
 
 use InterMine::WebService::Core::Request;
-use InterMine::Template;
 use InterMine::WebService::Service::ModelService;
 
 =head2 new
@@ -96,90 +96,27 @@ sub new
 
 =cut
 
+# this method is extended to fetch the xml if needs be
+
 sub get_templates {
     my $self = shift;
-    unless (exists $self->{'templates'}) { # don't perform multiple fetches
+    unless ($self->has_templates) { # don't perform multiple fetches
 	my $url = $self->get_url().'templates/xml';
 	my $request =
 	    new InterMine::WebService::Core::Request('GET', $url, 'TEXT');
 	
 	my $resp = $self->execute_request($request);
 	if ($resp->is_error) {
-	    die 'Fetching templates failed with message: ', $resp->status_line(), "\n";
+	    croak 'Fetching templates failed with message: ', 
+	          $resp->status_line();
 	}
 	else {
 	    my $model = $self->{model_service}->get_model;
-	    $self->{'templates'} = $self->_make_templates_from_xml($resp->content, $model);
+	    $self->_construct_tf($resp->content, $model);
 	}
     }
-    return @{$self->{'templates'}};
-}
-
-=head2 get_template
-
- Usage   : my $template = $service->search_for($name);
- Function: Get the template called $name
- Args    : $name - the exact name of the template you want
- Returns : an InterMine::Template object if successful, or undef
-           also returns undef if there are multiple matches 
-           try using search_for for multiple identifiers.
-
-=cut
-
-sub get_template {
-  my $self   = shift;
-  my $name   = shift;
-  die "You need a name (try using 'get_templates' if you want them all)\n" 
-      unless $name;
-  my @templates = $self->get_templates;
-  my @wanted = grep {$_->get_name eq $name} @templates;
-  if (@wanted == 1) {
-      return shift @wanted;
-  }
-  else { # either no templates or too many (ambiguous)
-      return;
-  }
-}
-
-
-=head2 search_for
-
- Usage   : my $templates = $service->search_for($keyword);
- Function: get templates that match search term.
- Args    : $keyword - any term to search by (case insensitive)
- Returns : a list of InterMine::Template objects.
-
-=cut
-
-sub search_for {
-  my $self      = shift;
-  my $keyword   = shift;
-  die "You need a keyword to search for (try using 'get_templates' if you want them all)\n" 
-      unless $keyword;
-  my @templates = $self->get_templates;
-  return grep {$_->get_name =~ /$keyword/i} @templates;
-}
-
-
-# A private subroutine that processes an xml string containing potentially multiple
-# template specifications into an list of InterMine::Template objects
-
-sub _make_templates_from_xml {
-    my $xml_validator = qr[(</?template-queries>)];
-    my $self = shift;
-    my $xml_string = shift;
-    die 'Invalid or empty xml' unless ($xml_string && $xml_string =~ /$xml_validator/);
-    my $model = shift;
-    $xml_string =~ s[</?template-queries>][]gs;
-    my @templates;
-    
-    # Cut up the result sting into individual templates
-    while ($xml_string =~ m[(<template.*?</template>)(.*)]s) { 
-	push @templates, $1;
-	$xml_string = $2;	
-    }
-    my @returners = map {InterMine::Template->new(string => $_, model => $model)} @templates;
-    return \@returners;
+    $self->SUPER::get_templates();
+#    return @{$self->{'templates'}};
 }
 
 
@@ -197,7 +134,8 @@ sub get_result {
     my $self = shift;
     my $template = shift;
     die "get_result needs a valid InterMine::Template\n" 
-	unless (ref $template eq 'InterMine::Template');
+	unless (UNIVERSAL::can($template, 'isa') 
+		and $template->isa('InterMine::Template'));
     my $size = shift || 25; # default is 25
     my $url = $self->get_url().'template/results';
     my $request = 

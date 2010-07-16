@@ -66,9 +66,10 @@
         else {
             var webapp_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
             var webapp_path = "${WEB_PROPERTIES['webapp.path']}";
+            var project_title = "${WEB_PROPERTIES['project.title']}";
 
             jQuery(document).ready(function() {
-                showInteractions(data, webapp_baseurl, webapp_path);
+                showInteractions(data, webapp_baseurl, webapp_path, project_title);
             });
         }
         </script>

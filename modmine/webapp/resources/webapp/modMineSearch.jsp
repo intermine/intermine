@@ -22,15 +22,18 @@
   <p><i>Search for modENCODE submissions by metadata</i></p>
     <html:form action="/modMineSearchAction" focus="searchTerm">
       <!-- <input style="" id="modMineSearchInput" name="value" type="text" focus = "value" class="modMineSearchBox">-->
-      <html:text property="searchTerm"/>     
+      <html:text property="searchTerm" style="width: 350px;" />     
       <html:submit>Search</html:submit>
     </html:form>
     <div class="examples">
     <ul>
-    <li>Antibody names: PolII, H3K4me1, CP190</li>
-    <li>Lab names: Reinke, Snyder</li>
-    <li>Combine terms with AND: fly AND embryo</li>
-    <li>Data types: worm AND UTR, fly AND bindingsite</li>
+    <li>
+    	All fields will be searched, for example:
+    	antibody names (e.g. <i>'PolII</i>', <i>'H3K4me1</i>', <i>'CP190</i>'),
+    	lab names (e.g. <i>'Reinke</i>', <i>'Snyder'</i>),
+    	data types (e.g. <i>'UTR'</i>, <i>'bindingsite'</i>)
+    </li>
+    <li>Boolean search is supported: e.g. <i>'fly AND embryo'</i> to combine terms, <i>'fly AND NOT embryo'</i> to exclude one</li>
     </ul>
     </div>
 </div>

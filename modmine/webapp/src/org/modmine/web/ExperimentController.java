@@ -28,7 +28,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.model.bio.ResultFile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.session.SessionMethods;
-import org.modmine.web.MetadataCache.GBrowseTrack;
+import org.modmine.web.GBrowseParser.GBrowseTrack;
 
 /**
  * Set up modENCODE experiments for display.
@@ -37,7 +37,7 @@ import org.modmine.web.MetadataCache.GBrowseTrack;
  */
 
 public class ExperimentController extends TilesAction 
-{    
+{
     /**
      * {@inheritDoc}
      */
@@ -47,13 +47,11 @@ public class ExperimentController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-        
         final ServletContext servletContext = servlet.getServletContext();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ObjectStore os = im.getObjectStore();
-        
+
         List<DisplayExperiment> experiments;
-        
         String experimentName = request.getParameter("experiment");
         if (experimentName != null) {
             experiments = new ArrayList<DisplayExperiment>();
@@ -62,31 +60,38 @@ public class ExperimentController extends TilesAction
             experiments = MetadataCache.getExperiments(os);
         }
         request.setAttribute("experiments", experiments);
-        
+
         Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
         request.setAttribute("tracks", tracks);
-        
+
         Map<Integer, List<GBrowseTrack>> subTracks = MetadataCache.getGBrowseTracks();
         request.setAttribute("subTracks", subTracks);
-        
+
         Map<Integer, Set<ResultFile>> files = MetadataCache.getSubmissionFiles(os);
         request.setAttribute("files", files);
 
         Map<Integer, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os);
         request.setAttribute("filesPerSub", filesPerSub);
 
-        Map<Integer, List<String[]>> submissionRepositoryEntries = 
+        Map<Integer, List<String[]>> submissionRepositoryEntries =
             MetadataCache.getRepositoryEntries(os);
         request.setAttribute("subRep", submissionRepositoryEntries);
 
-        Map<Integer, List<String>> unlocatedFeatureTypes = 
+        Map<Integer, List<String>> unlocatedFeatureTypes =
             MetadataCache.getUnlocatedFeatureTypes(os);
         request.setAttribute("unlocatedFeat", unlocatedFeatureTypes);
-        
-        Map<String, String> expFeatureDescription = 
+
+        Map<String, String> expFeatureDescription =
             MetadataCache.getFeatTypeDescription(servletContext);
         request.setAttribute("expFeatDescription", expFeatureDescription);
-        
+
+        Map<Integer, Map<String, Long>> subFeatEL =
+            MetadataCache.getSubmissionFeatureExpressionLevelCounts(os);
+        request.setAttribute("subFeatEL", subFeatEL);
+
+        Map<String, Map<String, Long>> expFeatEL =
+            MetadataCache.getExperimentFeatureExpressionLevelCounts(os);
+        request.setAttribute("expFeatEL", expFeatEL);
 
         return null;
     }

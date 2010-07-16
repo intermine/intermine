@@ -10,6 +10,7 @@ package org.intermine.web.autocompletion;
  *
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
@@ -18,6 +19,8 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
 
 /**
  * Creates the indexes for LuceneObjectClasses
@@ -47,8 +50,9 @@ public class LuceneIndex
      */
     public IndexWriter getIndexWriter(boolean create, String fn) throws IOException {
         if (indexWriter == null) {
-            indexWriter = new IndexWriter(fn,
-                                          new StandardAnalyzer(), create);
+            indexWriter = new IndexWriter(FSDirectory.open(new File(fn)),
+                    new StandardAnalyzer(Version.LUCENE_30), create,
+                    IndexWriter.MaxFieldLength.UNLIMITED);
         }
         return indexWriter;
     }
@@ -74,7 +78,7 @@ public class LuceneIndex
                 for (int j = 0; j < objClass.getSizeFields(); j++) {
                     doc.add(new Field(objClass.getFieldName(j),
                             objClass.getValuesForField(objClass.getFieldName(j), i),
-                            Field.Store.YES, Field.Index.TOKENIZED));
+                            Field.Store.YES, Field.Index.ANALYZED));
                 }
                 writer.addDocument(doc);
             }

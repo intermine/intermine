@@ -75,6 +75,8 @@ Labs:
        It has produced <b>${exp.repositedCount} entries in public repositories</b>.
     </c:if>
 
+
+
 <%-- EXPERIMENTAL FACTORS --%>
      <c:if test="${fn:length(exp.factorTypes) > 0 }"> 
        <c:choose>
@@ -96,6 +98,11 @@ Labs:
       ${fc.key}:&nbsp;${fc.value}
      <c:if test="${fc_status.last }"><br> </c:if> 
       </c:forEach>
+      
+    <c:if test="${exp.expressionLevelCount > 0}">
+       with ${exp.expressionLevelCount} expression levels.
+    </c:if>
+      
 <p/>
 <%-- TRACKS --%>
      <c:if test="${!empty tracks[exp.name]}">

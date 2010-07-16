@@ -3,189 +3,185 @@
 use strict;
 use warnings;
 
-use Test::More tests => 20;
-use Test::Exception;
+use List::MoreUtils qw/mesh/;
+use InterMine::Model;
+
+use XML::Rules;
+
+
+my @rules = (
+    _default => 'no content',
+     # as hashes so we don't have to worry about array order
+    node => 'no content by path',      
+    constraint => 'no content by code',
+    query => sub { 
+	my ($name, $attr) = @_;
+	 # It will be in the template, if at all
+	delete $attr->{longDescription};
+	delete $attr->{_content};
+	$name => $attr;
+    },
+    template => sub {
+	my $attr = $_[1];
+	$attr->{title} = delete $attr->{description}
+  	    unless (defined $attr->{title});
+	for (keys %$attr) {
+	    delete $attr->{$_} unless $attr->{$_} =~ /\S/;
+	}
+	return %$attr;
+    },
+    );
+
+my $parser = XML::Rules->new(rules => \@rules);
 
 ### Setting up
 
-my $bad_file     = 't/data/bad_xml.txt';
-my $bad_string   = <<END
-<template name="Probe_Gene">
-  <query name="Probe_Gene">
-    <unknown_tag>This should make it die</unknown_tag>
-  </query>
-</template>
-END
-    ;
-my $bad_string2   = <<END
-<template name="Probe_Gene">
-  <query name="Unfinished query">
-</template>
-END
-    ;
+############################################################
+############ Get the xml for the bad templates
+my $bad_templates  = 't/data/bad_templates.xml';
 
+my $bad_content;
+open my $BFH, '<', $bad_templates or die "Cannot open $bad_templates, $!";
+for (<$BFH>) {
+    $bad_content .= $_ unless /template-queries/;
+}
+close $BFH or die "Cannot close $bad_templates, $!";
 
+#$bad_content =~ s/^.*<template-queries>(.*)<\/template-queries>.*$/$1/s;
+my @baddies  = split "\n\n", $bad_content;
+my @baddies_names = (qw/unknown_tag 
+                        bad_class 
+                        bad_attr 
+                        malformed_xml 
+                        unfinished 
+                        empty_view 
+                        no_constraints 
+                        sort_order_not_in_query 
+                        descr_and_title 
+                        no_name 
+                        names_differ
+                        bad_logic/);
+my %baddies = mesh(@baddies_names, @baddies);
+my @baddies_errors = (
+                       'unexpected element: unknown_tag',
+                       'illegal path',
+                       'illegal path',
+                       'not well-formed',
+                       'mismatched tag',
+                       'No view set',
+                       'Invalid template: no editable constraints',
+                       'is not in the query',
+                       'both description and title',
+                       'No name attribute',
+                       'Names for query and template differ',
+                       'No constraint with code',
+    );
+my %exp_err_for = mesh(@baddies_names, @baddies_errors);
+############################################################
 
-my $multi_file   = 't/data/multixml.txt';
-my $multi_string = <<END
-<template name="Probe_Gene" title="Affymetrix probeset --&gt; Gene." longDescription="For specified Affymetrix probeset(s) show the corresponding gene." comment="">
-  <query name="Probe_Gene" model="genomic" view="Gene.probeSets.primaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.chromosomeLocation.object.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" longDescription="For specified Affymetrix probeset(s) show the corresponding gene." sortOrder="Gene.probeSets.primaryIdentifier asc" constraintLogic="A and B">
-    <pathDescription pathString="Gene.probeSets.chromosome" description="Probe &gt; chromosome">
-    </pathDescription>
-    <pathDescription pathString="Gene.probeSets.evidence" description="Dataset">
-    </pathDescription>
-    <pathDescription pathString="Gene.probeSets.chromosomeLocation" description="Probe &gt; chromosome location">
-    </pathDescription>
-    <pathDescription pathString="Gene.probeSets" description="Probe">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.probeSets" type="ProbeSet">
-    </node>
-    <node path="Gene.probeSets.primaryIdentifier" type="String">
-      <constraint op="=" value="1634044_at" description="" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="GeneOrganism1_OrthologueOrganism2" title="All genes organism1 --&gt; Orthologues organism2." longDescription="Show all the orthologues between two specified organisms. (Data Source: Inparanoid, Drosophila Consortium)." comment="">
-  <query name="GeneOrganism1_OrthologueOrganism2" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.symbol Homologue.inParanoidScore Homologue.dataSets.title" longDescription="Show all the orthologues between two specified organisms. (Data Source: Inparanoid, Drosophila Consortium)." sortOrder="Homologue.gene.primaryIdentifier asc" constraintLogic="A and B and C">
-    <pathDescription pathString="Homologue.dataSets" description="Dataset">
-    </pathDescription>
-    <pathDescription pathString="Homologue.gene" description="Organism1 &gt; gene">
-    </pathDescription>
-    <pathDescription pathString="Homologue.homologue" description="Organism2 &gt; gene">
-    </pathDescription>
-    <node path="Homologue" type="Homologue">
-    </node>
-    <node path="Homologue.gene" type="Gene">
-    </node>
-    <node path="Homologue.gene.organism" type="Organism">
-    </node>
-    <node path="Homologue.gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Homologue.homologue" type="Gene">
-    </node>
-    <node path="Homologue.homologue.organism" type="Organism">
-    </node>
-    <node path="Homologue.homologue.organism.name" type="String">
-      <constraint op="=" value="Caenorhabditis elegans" description="and:" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="Homologue.type" type="String">
-      <constraint op="=" value="orthologue" description="" identifier="" code="C">
-      </constraint>
-    </node>
-  </query>
-</template>
-END
-    ;
+############################################################
+############ Get the xml for the good templates
+my $good_templates = '../api/test/resources/default-template-queries.xml';
 
-my $good_file   =  't/data/good_xml.txt';
-my $good_string =  <<END
-<template name="Probe_Gene" title="Affymetrix probeset --&gt; Gene." longDescription="For specified Affymetrix probeset(s) show the corresponding gene." comment="">
-  <query name="Probe_Gene" model="genomic" view="Gene.probeSets.primaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.chromosomeLocation.object.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" longDescription="For specified Affymetrix probeset(s) show the corresponding gene." sortOrder="Gene.probeSets.primaryIdentifier asc" constraintLogic="A and B">
-    <pathDescription pathString="Gene.probeSets.chromosome" description="Probe &gt; chromosome">
-    </pathDescription>
-    <pathDescription pathString="Gene.probeSets.evidence" description="Dataset">
-    </pathDescription>
-    <pathDescription pathString="Gene.probeSets.chromosomeLocation" description="Probe &gt; chromosome location">
-    </pathDescription>
-    <pathDescription pathString="Gene.probeSets" description="Probe">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.probeSets" type="ProbeSet">
-    </node>
-    <node path="Gene.probeSets.primaryIdentifier" type="String">
-      <constraint op="=" value="1634044_at" description="" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-  </query>
-</template>
-END
-    ;
+my $good_content;
+open my $GFH, '<', $good_templates or die "Cannot open $good_templates, $!";
+$good_content .= $_ for <$GFH>;
+close $GFH or die "Cannot close $good_templates, $!";
+
+$good_content =~ s/^.*<template-queries>(.*)<\/template-queries>.*$/$1/s;
+
+my @goodies = split /template>\s*<template/, $good_content;
+map {s[(</)\s*$][$1template>]s; s[^(\s+name)][<template$1]s} @goodies;
+############################################################
+
+my $multi_file = 't/data/multixml.txt';
 
 my $module = 'InterMine::Template';
-my $model = '../objectstore/model/testmodel/testmodel_model.xml';
+my $modelf = '../objectstore/model/testmodel/testmodel_model.xml';
+my $model  = InterMine::Model->new(file => $modelf);
 my @methods = qw(new 
-                 get_views 
-                 get_constraints 
                  get_editable_constraints
                  get_description
-                 get_name
-                 get_sort_order
-                 get_logic
-                 as_path_query
+                 get_title
+                 get_comment
+                 get_source_string
                  to_xml_string);
+
+my @inherited_methods = qw/add_view
+                           view
+                           get_views
+                           sort_order
+                           get_sort_order
+                           add_constraint
+                           get_all_constraints
+                           AND
+                           OR
+                           get_logic
+                           logic
+                           to_query_xml
+                           get_node_paths
+                           get_constraints_on
+                           get_described_paths
+                           get_description_for
+                           get_name
+                           get_description
+                           type_hash
+                           type_of
+                           model/;
+
+use Test::More;
+plan tests => (12 + @goodies + @baddies);
+use Test::Exception;
+
 
 ### Tests
 
 use_ok($module); # Test 1
 can_ok($module, @methods); # Test 2
+can_ok($module, @inherited_methods); # Test 3
 
-throws_ok(sub {my $t = $module->new()}, qr/needs a file or string argument/, # Test 3
+throws_ok(sub {my $t = $module->new()}, qr/needs a file or string argument/, # Test 4
     "Building Template without args");
-throws_ok(sub {my $t = $module->new(file => $good_file)}, # Test 4
+throws_ok(sub {my $t = $module->new(string => $goodies[0])}, # Test 5
 	       qr/We need a model to build templates with/,
 	       "Building Template without model");
-throws_ok(sub {my $t = $module->new(file => 'fake_file', model => $model)}, # Test 5
+throws_ok(sub {my $t = $module->new(string => $goodies[0], model => 'Not a model')}, # Test 6
+	       qr/Invalid model/,
+	       "Building Template with a bad model");
+throws_ok(sub {my $t = $module->new(file => 'fake_file', model => $model)}, # Test 7
 	  qr/A valid file must be specified: we got/,
 	  "Building Template with a fake file");
 
-throws_ok(sub {my $t = $module->new(file => $bad_file, model => $model)}, #Test 6
-	  qr/unexpected element/,
-	  "Building Template with a bad file");
-
-throws_ok(sub {my $t = $module->new(string => $bad_string, model => $model)}, #Test 7
-	  qr/unexpected element/,
-	  "Building Template with a bad string - unknown element");
-
-throws_ok(sub {my $t = $module->new(string => $bad_string2, model => $model)}, #Test 8
-	  qr/mismatched tag/,
-	  "Building Template with a bad string - bad xml");
-
-throws_ok(sub {my $t = $module->new(file => $multi_file, model => $model)}, # Test 9
+throws_ok(sub {my $t = $module->new(file => $multi_file, model => $model)}, # Test 8
 	  qr/junk after document element/,
 	  "Building Template with a multi template file");
 
-throws_ok(sub {my $t = $module->new(string => $multi_string, model => $model)}, # Test 10
-	  qr/junk after document element/,
-	  "Building Template with a multi template string");
 
+my @args = (string => $goodies[0], model => $model);
+my $t    = new_ok($module => \@args, 'Makes new Template which'); # Test 9
+isa_ok($t, 'InterMine::PathQuery', 'Inherits OK'); #Test 10
+isa_ok($t, 'InterMine::ModelOwner', 'Inherits OK');#Test 11
+can_ok($t, @methods, @inherited_methods); # Test 12
 
-my @f_args = (file => $good_file, model => $model);
-my @s_args = (string => $good_string, model => $model);
-my $t_from_file   = new_ok($module => \@f_args, 'Template'); # Test 11
-can_ok($t_from_file, @methods); # Test 12
-my $t_from_string = new_ok($module => \@s_args, 'Template'); # Test 13
-can_ok($t_from_string, @methods); # Test 14
+############################################################
+# Test ability to parse good templates
+############################################################
 
-my $exp_name = 'Probe_Gene';
-my $exp_desc = 'For specified Affymetrix probeset(s) show the corresponding gene.';
-my @views    = qw(Gene.probeSets.primaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.chromosomeLocation.object.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end);
-my $exp_con  = 'Gene.probeSets.primaryIdentifier = "1634044_at"';
+my $c;
 
-my $t = $t_from_file;
+for my $xmlstring (@goodies) {
+    my $t = $module->new(string => $xmlstring, model => $model);
+    is_deeply($parser->parse($t->to_xml_string),
+	      $parser->parse($xmlstring),
+	      "Successfully parses good template: ".++$c.' of '.@goodies);
+}
 
-is($t->get_name, $exp_name, "Template name"); # Test 15
-is($t->get_description, $exp_desc, 'Template description'); # Test 16
-is_deeply([$t->get_views], \@views, 'Template views'); # Test 17
-ok($t->get_constraints == 2, 'Fetches all constraints'); # Test 18
-ok($t->get_editable_constraints == 1, 'Returns only editable constraints'); # Test 19
-is(($t->get_editable_constraints)[0]->as_string, $exp_con, # Test 20
-   'Parses the constraints correctly'); 
+############################################################
+# Test ability to throw errors at bad templates
+############################################################
+
+while (my ($name, $xmlstring) = each(%baddies)) {
+    throws_ok( sub {my $t = $module->new(string => $xmlstring, model => $model)},
+	       qr/$exp_err_for{$name}/,
+	       "Raises error parsing bad template: $name");
+}

@@ -40,7 +40,7 @@ public class ModMineSearchForm extends ActionForm
     }
 
     /**
-     * @param value the value to set
+     * @param searchTerm the value to set
      */
     public void setSearchTerm(String searchTerm) {
         this.searchTerm = searchTerm;

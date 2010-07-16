@@ -48,7 +48,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class SubmissionProtocolsController extends TilesAction
 {
     protected static final Logger LOG = Logger.getLogger(SubmissionDisplayerController.class);
-    
+
     /**
      * {@inheritDoc}
      */
@@ -57,7 +57,7 @@ public class SubmissionProtocolsController extends TilesAction
             @SuppressWarnings("unused") ActionForm form,
             HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {
+        throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ObjectStore os = im.getObjectStore();
@@ -68,7 +68,7 @@ public class SubmissionProtocolsController extends TilesAction
 
         // create the query
         PathQuery q = new PathQuery(os.getModel());
-        
+
         q.addView("Submission.appliedProtocols.step");
         q.addView("Submission.appliedProtocols:inputs.type");
         q.addView("Submission.appliedProtocols:inputs.name");
@@ -80,32 +80,31 @@ public class SubmissionProtocolsController extends TilesAction
 
         q.addConstraint("Submission.id", Constraints.eq(o.getId()));
         q.addOrderBy("Submission.appliedProtocols.step");
-        
+
         Profile profile = SessionMethods.getProfile(session);
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         WebResults results = executor.execute(q);
-        
+
         if (results.size() > 2000) {
 //             LOG.info("DAG SUBMISSION id: " + o.getId());
             request.setAttribute("subId", o.getId());
             return null;
         }
-        
+
         PagedTable pagedTable = new PagedTable(results);
         // NB: you need to set a maximum, default is 10!
         pagedTable.setPageSize(2000);
         request.setAttribute("pagedResults", pagedTable);
 
-        
         // let's get also the dccid (needed for external link)
         // maybe it can be gained in a simpler way
-        Query q1 = new Query();  
+        Query q1 = new Query();
         QueryClass qc = new QueryClass(Submission.class);
         QueryField qcId = new QueryField(qc, "id");
 
         q1.addFrom(qc);
-        q1.addToSelect(qc);        
-        SimpleConstraint sc = new SimpleConstraint(qcId, ConstraintOp.EQUALS, 
+        q1.addToSelect(qc);
+        SimpleConstraint sc = new SimpleConstraint(qcId, ConstraintOp.EQUALS,
                 new QueryValue(o.getId()));
         q1.setConstraint(sc);
         Results result = os.executeSingleton(q1);
@@ -117,8 +116,6 @@ public class SubmissionProtocolsController extends TilesAction
             DCCid = sub.getdCCid();
         }
         request.setAttribute("DCCid", DCCid);
-        
         return null;
     }
-    
 }

@@ -162,9 +162,7 @@ public class GFF3Exporter implements Exporter
             throw new ExportException("No columns with sequence");
         }
         try {
-
-            LOG.info("SOO:" + cNames.toString());
-
+            // LOG.info("SOO:" + cNames.toString());
             while (resultIt.hasNext()) {
                 List<ResultElement> row = resultIt.next();
                 exportRow(row);
@@ -185,7 +183,7 @@ public class GFF3Exporter implements Exporter
 
 
     private void exportRow(List<ResultElement> row)
-    throws ObjectStoreException,
+        throws ObjectStoreException,
     IllegalAccessException {
 
         List<ResultElement> elWithObject = getResultElements(row);
@@ -247,11 +245,8 @@ public class GFF3Exporter implements Exporter
                     Class<?> reType = re.getPath().getLastClassDescriptor().getType();
                     Class<?> elType = el.getPath().getLastClassDescriptor().getType();
                     if (!reType.isAssignableFrom(elType)) {
-                        // LOG.info("P3: "+ el.getType() + "|A:"+ attributesNames.get(i)+
-                        // "|R:"+re.getPath()+"||E:"+el.getPath());
                         continue;
                     }
-                    // LOG.info("CC: " + reType + "|" + elType);
                 }
 
                 if (el.getPath().getLastClassDescriptor().getUnqualifiedName().
@@ -272,6 +267,14 @@ public class GFF3Exporter implements Exporter
                 if (i >= 1 && parent != null) {
                     if (!parentClass.equalsIgnoreCase(
                             re.getPath().getLastClassDescriptor().getUnqualifiedName())) {
+//                    LOG.info("PAR: " + parentClass + " -> "
+//                    + re.getPath().getLastClassDescriptor().getUnqualifiedName()
+//                    + re.getPath().getLastClassDescriptor().getType()
+//                    + re.getPath().getLastClassDescriptor().getName()
+//                    + "|." + re.getPath().getLastClassDescriptor().getSubDescriptors()
+//                    + "|.." + re.getPath().getLastClassDescriptor().getAllCollectionDescriptors()
+//                    + "|..." + re.getPath().getLastClassDescriptor().getAllReferenceDescriptors()
+//                    );
                         List<String> addPar = new ArrayList<String>();
                         addPar.add(parent);
                         attributes.put("Parent", addPar);

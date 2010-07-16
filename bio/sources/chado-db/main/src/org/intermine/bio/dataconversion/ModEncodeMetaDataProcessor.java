@@ -2052,29 +2052,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 // attHeading of Characteristics
                 // note: dbxref can remain the same in different subs -> or
                 if (buildSubProperty != null && buildSubProperty.type != null) {
-                    LOG.info("XXX11if ADD PREVIOUS" + lastAttDbXref + "|" + buildSubProperty);
                     createdProps.put(lastAttDbXref, buildSubProperty);
-//                    createdProps.put(lastDataId, buildSubProperty);
                     addToSubToTypes(subToTypes, previousSubId, buildSubProperty);
                 }
                 // set up for next attDbxref
                 if (createdProps.containsKey(attDbxref) && isValidCharacteristic) {
-//                if (createdProps.containsKey(dataId) && isValidCharacteristic) {
-//                    LOG.info("XXX12if ADD CURRENT" + attDbxref+"|"+ createdProps.get(attDbxref));
                     // seen this property before so just add for this submission, don't build again
                     buildSubProperty = null;
                     isValidCharacteristic = false;
                     addToSubToTypes(subToTypes, currentSubId, createdProps.get(attDbxref));
-//                    addToSubToTypes(subToTypes, currentSubId, createdProps.get(dataId));
                 } else {
-//                    LOG.info("XXX12else NEW SP");
                     buildSubProperty = new SubmissionProperty();
                     isValidCharacteristic = false;
                 }
             }
 
             if (attHeading.startsWith("Characteristic")) {
-//                LOG.info("XXX2if Characteristic");
                 isValidCharacteristic = true;
             }
 
@@ -2086,7 +2079,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     // but have all information on single row
                     buildSubProperty.addDetail(attName, attValue, attRank);
                 } else {
-//                    LOG.info("XXX3else ADD for OTHER"+ attValue + "|"+ attHeading);
                     buildSubProperty.addDetail(attHeading, attValue, attRank);
                 }
             }
@@ -2096,10 +2088,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
 
         if (buildSubProperty != null && buildSubProperty.type != null) {
-//            LOG.info("XXX3end "+ lastAttDbXref + "|"+ buildSubProperty);
-//            LOG.info("XXX32end " +currentSubId+ "|"+ subToTypes);
             createdProps.put(lastAttDbXref, buildSubProperty);
-//            createdProps.put(lastDataId, buildSubProperty);
             addToSubToTypes(subToTypes, currentSubId, buildSubProperty);
         }
     }

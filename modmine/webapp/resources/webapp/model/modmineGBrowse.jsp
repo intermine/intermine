@@ -44,7 +44,7 @@
 </c:choose>
       </c:forEach>
 
-  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/?start=${start};end=${end};ref=${ref};ds=${ds};width=750">
+  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/?start=${start};end=${end};ref=${ref};label=Genes;ds=${ds};width=750">
     <div>
       modENCODE genome browser view (GBrowse):
     </div>

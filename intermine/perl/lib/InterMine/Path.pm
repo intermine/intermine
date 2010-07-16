@@ -1,3 +1,23 @@
+
+
+package InterMine::Path::HelperObject;
+
+sub new {
+    
+    my $class = shift;
+    my $name  = shift;
+    my $self  = {name => $name};
+    return bless $self, $class;
+}
+
+sub name {
+    return $self->{name};
+}
+
+1;
+    
+
+
 package InterMine::Path;
 
 =head1 NAME
@@ -42,6 +62,7 @@ under the same terms as Perl itself.
 =cut
 
 use strict;
+use Carp qw/croak confess/;
 
 =head2 new
 
@@ -54,19 +75,20 @@ sub new
 {
   my $class = shift;
 
-  if (@_ != 2) {
-    die "Path::new needs two arguments\n";
+  if ((@_ < 2) || (@_ > 3)) {
+    croak "wrong aguments to Path::new: InterMine::Model, \$path_string, \\%type_hash\n";
   }
 
-  my $model = shift;
+  my $model       = shift;
   my $path_string = shift;
+  my $type_hash   = shift;
 
   my $self = {};
 
   $self->{model} = $model;
   $self->{string} = $path_string;
 
-  $self->{parts} = [_get_parts($model, $path_string)];
+  $self->{parts} = [_get_parts($model, $path_string, $type_hash)];
 
   return bless $self, $class;
 }
@@ -84,8 +106,9 @@ sub validate
   my $class = shift;
   my $model = shift;
   my $path_string = shift;
+  my $type_hash = shift;
 
-  return _get_parts($model, $path_string);
+  return _get_parts($model, $path_string, $type_hash);
 }
 
 =head2 parts
@@ -164,47 +187,89 @@ sub end_type
 
 sub _get_parts
 {
-  my $model = shift;
-  my $path_string = shift;
+    my $model = shift;
+    my $path_string = shift;
+    my $type_hashref = shift;
 
-  my @parts = ();
+    my @parts = ();
 
-  my @bits = split /[\.:]/, $path_string;
+    my @bits       = map {s/\s.*$//; $_} split /[\.:]/, $path_string; #split on joins, and remove trailing asc/desc
+    my @separators = split /\w+/,   $path_string;
 
 # This cuts off the first part (eg Gene of Gene.name) and treats it
 # as the class. 
-  my $top_class_name = shift @bits;
+    my $top_class_name = shift @bits;
 
-  my $top_class = $model->get_classdescriptor_by_name($top_class_name);
+    my $top_class = $model->get_classdescriptor_by_name($top_class_name);
 
-  if (defined $top_class) {
-    push @parts, $top_class;
-  } else {
-    die qq[illegal path ($path_string), "$top_class_name" is not in the model]
-  }
-
-  my $current_class = $top_class;
-  my $current_field = undef;
-
-  for my $bit (@bits) {
-    $current_field = $current_class->get_field_by_name($bit);
-
-    if (!defined $current_field) {
-      my $current_class_name = $current_class->name();
-      die qq[can't find field "$bit" in class $current_class_name\n];
-    }
-    push @parts, $current_field;
-
-    if ($current_field->field_type() eq 'attribute') {
-      # if this is not the last bit, it will caught next time around the loop
-      $current_class = undef;
+    if (defined $top_class) {
+	push @parts, $top_class;
     } else {
-      $current_class = $current_field->referenced_classdescriptor();
+	croak qq[illegal path ($path_string), "$top_class_name" is not in the model];
     }
-    
-  }
 
-  return @parts;
+    my $current_class = $top_class;
+    my $current_field = undef;
+
+    for my $bit (@bits) {
+	if ($bit eq 'id' and $bit eq $bits[-1]) { # id is an internal attribute valid for all tables
+	    my $id = InterMine::Path::HelperObject->new($bit);
+	    push @parts, $id;
+	}
+	else {
+	    $current_field = $current_class->get_field_by_name($bit);
+	    
+	    if (!defined $current_field) {
+		my $current_class_name = $current_class->name();
+		confess qq[illegal path ($path_string) can't find field "$bit" in class $current_class_name\n];
+	    }
+	    push @parts, $current_field;
+
+	   # if ($current_field->field_type() eq 'attribute') {
+		# if this is not the last bit, it will caught next time around the loop
+		$current_class = undef;
+	   # } 
+	    unless ($current_field->field_type eq 'attribute') {
+		my $key = join('', zip(@separators[0 .. $#parts], map {$_->name} @parts));
+	
+		if (my $type = $type_hashref->{$key}) {  # if the type was given, respect it
+		    if ($type eq 'Relation') {
+			$current_class = $current_field->rev_referenced_classdescriptor();
+		    }
+		    else {
+			$current_class = $model->get_classdescriptor_by_name($type);
+		    }
+		} 
+		unless (defined $current_class) {
+		    if ( ($current_field->can('is_many_to_0')) && ($current_field->is_many_to_0) ){
+			$current_class = $current_field->rev_referenced_classdescriptor()
+			    ||
+			    $current_field->referenced_classdescriptor();
+		    }
+		    else { 
+			$current_class = $current_field->referenced_classdescriptor();
+		    }
+		}
+		use Data::Dumper;
+		confess "$path_string: current class not set at end of loop for ", 
+		      $current_field->name, Dumper($type_hashref)
+		    unless (UNIVERSAL::can($current_class, 'isa') 
+			    and $current_class->isa('InterMine::Model::ClassDescriptor'));
+	    }
+	}
+    }
+    return @parts;
+}
+
+
+# utility for zipping two arrays together
+# only works if both arrays are the same size!
+sub zip {
+    return @_ if (@_ == 1); # otherwise you get @_[0,0], ie. doubling.
+    my $p = @_ / 2;         # find the length of the first array (ie. half the total)
+    return @_[ map { $_, $_ + $p } 0 .. $p - 1 ]; # pair up the elements
 }
 
 1;
+
+    

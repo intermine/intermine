@@ -115,7 +115,8 @@ public class SubmissionDisplayerController extends TilesAction
 
         request.setAttribute("featureCounts", featureCounts);
 
-        Map<String, String> expFeatureDescription = MetadataCache.getFeatTypeDescription(servletContext);
+        Map<String, String> expFeatureDescription =
+            MetadataCache.getFeatTypeDescription(servletContext);
         request.setAttribute("expFeatDescription", expFeatureDescription);
 
 
