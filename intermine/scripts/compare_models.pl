@@ -54,7 +54,7 @@ while (<DATA>) {
 }
 
 my %classes;
-my $row = {' ' => 'Total Number of Classes'};
+my $toprow = {Class => 'Total Number of Classes'};
 while (my ($service, $model) = each %model_from) {
     my ($service_name) = $service =~ /([a-z]+mine)/;
     my $count;
@@ -62,11 +62,8 @@ while (my ($service, $model) = each %model_from) {
 	$classes{$class->name}++;
 	$count++;
     }
-    $row->{$service_name} = $count;
+    $toprow->{$service_name} = $count;
 }
-#@rows = sort({$a->{Mine} cmp $b->{Mine}} @rows);
-my $total_table = make_table_from_rows($row);
-
 my @rows = map { {Class => $_} } sort($order keys %classes);
 while (my ($service, $model) = each %model_from) {
     my ($service_name) = $service =~ /([a-z]+mine)/;
@@ -84,7 +81,7 @@ for my $row (@rows) {
 	$row->{Class} = sprintf(qq!<a href="#%s">%s</a>!, $row->{Class}, $row->{Class});
     }
 }
-
+unshift @rows, $toprow;
 my $model_class_table = make_table_from_rows(@rows);
 
 my @class_tables;
@@ -119,7 +116,6 @@ print $HTMLFH '<h1>Model Comparison Tables</h1>';
 print $HTMLFH q{<p>This page has several tables to compare different elements found within the genomic models used by different InterMine implementations. These models were fetched from the respective webservices, and then analysed to create these tables.</p> 
 <p>The main table lists which classes appear in which Mine's model. Where the class is absent, the word "NO" appears in a red box. If the class is present, then the number of fields in that class appear in the cell. If the models with this class all have a class the same number of fields, then their cells are green. If there is a difference in the number of fields, then the cell is coloured orange.</>
 <p>To further investigate classes with differences you can click on the class name, which is a link that will take you to a sub-table, showing which fields are present or absent in a particular model. Only classes that are present in more than one model have a sub-table, and thus a link.</p>};
-print $HTMLFH $total_table->getTable, '</br>';
 print $HTMLFH '<h2>Classes by Model</h2></br>';
 print $HTMLFH $model_class_table->getTable, '</br>';
 for my $table (@class_tables) {
