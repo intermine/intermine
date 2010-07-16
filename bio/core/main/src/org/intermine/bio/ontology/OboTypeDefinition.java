@@ -13,7 +13,7 @@ package org.intermine.bio.ontology;
 import java.util.List;
 
 /**
- * Class representing and OBO type.
+ * Class representing an OBO type.
  *
  * @author Xavier Watkins
  *

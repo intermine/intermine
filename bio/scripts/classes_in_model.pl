@@ -5,7 +5,7 @@
 use InterMine::Model;
 
 if (@ARGV != 1) {
-  die "$0: need name of a mine, eg. flymine \n eg, /home/guest/svn/dev/flymine/dbmodel/build/model/genomic_model.xml /home/guest/svn/dev/flymine/dbmodel/build/model/so_model.xml";
+  die "$0: need name of a mine, eg. flymine";
 }
 
 my $mine = $ARGV[0];
