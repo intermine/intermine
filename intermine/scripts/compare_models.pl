@@ -14,7 +14,7 @@ use InterMine::WebService::Service::ModelService;
 use LWP::Simple;
 
 my $order = sub {lc($a) cmp lc($b)};
-my $file = $ARGV[0] || '/tmp/out.html';
+my $file = $ARGV[0] || '/tmp/model_comparison.html';
 
 sub make_table_from_rows {
     my @rows = @_;
