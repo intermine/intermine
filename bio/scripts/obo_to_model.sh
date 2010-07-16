@@ -39,12 +39,13 @@ fi
 
 oboFileName=$BIO/sources/so/$oboName.obo
 buildDir=$MINE/dbmodel/build/model
+resourcesDir=$MINE/dbmodel/resources
 modelFileName=$BIO/sources/so/${oboName}_additions.xml
 
 # generate so_terms file
 #./classes_in_model.pl $whichmine
 # pass full path of so_terms file
-filteredTermsFile=$buildDir/so_terms.txt
+filteredTermsFile=$resourcesDir/so_terms.txt
 
 echo "Wrote $filteredTermsFile"
 
