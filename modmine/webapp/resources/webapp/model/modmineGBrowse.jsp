@@ -36,7 +36,7 @@
 <c:set var="istart" value="${start-offset}"/>
 <c:set var="iend" value="${end+offset}"/>
 
-<c:set var="label" value="-"/>
+<c:set var="label" value=""/>
 
 <%-- in case there are >1 submissions associated TODO: check if the + is ok (or - like in labels?)--%>
 <c:forEach items="${object.submissions}" var="sub" varStatus="status">
@@ -49,18 +49,18 @@
 
 <c:choose>
 <c:when test="${track_status.first}">
-     <c:set var="label" value="${track}" /> 
+     <c:set var="label" value=";label=${track}" /> 
 </c:when>
 <c:otherwise>
-     <c:set var="label" value="${label}-${track}" /> 
+     <c:set var="label" value="${label};label=${track}" /> 
 </c:otherwise>
 </c:choose>
 
-        ${subTracks.value}
         </c:forEach>             
       </c:if>
    </c:forEach>
 
+<%-- ds, not used any longer 
 <c:choose>
 <c:when test="${status.first}">
      <c:set var="ds" value="${sub.dCCid}" /> 
@@ -69,33 +69,38 @@
      <c:set var="ds" value="${ds}-${sub.dCCid}" /> 
 </c:otherwise>
 </c:choose>
+--%>
+
 </c:forEach>
 
 
 <%-- display starts  --%>
 
+<c:set var="linko" value="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/?start=${start};end=${end};ref=${ref};label=Genes${label};width=750"></c:set>
+<c:set var="link" value="?start=${start};end=${end};ref=${ref};label=Genes${label}"></c:set>
+
+    <div>
+<html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/${link};width=750">
+      modENCODE genome browser view (GBrowse):
+
+<c:if test="${cld.unqualifiedName != 'Chromosome'}">
+  <html:img style="border: 1px solid black" src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${gbrowseSource}/${link};width=400;b=1" title="GBrowse"/>
+</c:if>
+
+</html:link>
+    </div>
+<br>
+
+</c:if>
+
+<%-- WITH TEST IF track 
 <c:choose>
 <c:when test="${fn:length(label) > 2 }">
-<c:set var="link" value="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/?start=${start};end=${end};ref=${ref};label=Genes;${label};width=750"></c:set>
 </c:when>
 <c:otherwise>
 <c:set var="link" value="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/?start=${start};end=${end};ref=${ref};ds=${ds};width=75"></c:set>
 </c:otherwise>
 </c:choose>
-
-<%--
-  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/?start=${start};end=${end};ref=${ref};ds=${ds};width=750">
-    <div>
-      modENCODE genome browser view (GBrowse):
-    </div>
-    <c:if test="${cld.unqualifiedName != 'Chromosome'}">
-        <html:img style="border: 1px solid black" 
-        src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${gbrowseSource}/?start=${istart};end=${iend};ref=${ref};ds=${ds};width=400;b=1" title="GBrowse"/>
-</c:if>
-<br>
-
-<hr></hr>
---%>
 
     <div>
 <html:link href="${link}">
@@ -117,14 +122,9 @@
 </html:link>
     </div>
 
-<%--
-  </html:link>
+
 --%>
 
-<br>
 
-
-
-</c:if>
 
 <!-- /modmineGBrowse.jsp -->
