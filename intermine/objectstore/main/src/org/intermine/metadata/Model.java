@@ -102,6 +102,17 @@ public class Model
         this.modelName = name;
         this.packageName = packageName;
 
+        // classes by name
+        clds
+
+        Comparator<FieldDescriptor> comparator = new Comparator<FieldDescriptor>() {
+            public int compare(FieldDescriptor o1, FieldDescriptor o2) {
+                String fieldName1 = o1.getName().toLowerCase();
+                String fieldName2 = o2.getName().toLowerCase();
+                return fieldName1.compareTo(fieldName2);
+            }
+        };
+
         LinkedHashSet<ClassDescriptor> orderedClds = new LinkedHashSet<ClassDescriptor>(clds);
 
         Set<ReferenceDescriptor> emptyRefs = Collections.emptySet();
@@ -197,14 +208,17 @@ public class Model
 
     /**
      * Get all ClassDescriptors in this model.
+     *
      * @return a set of all ClassDescriptors in the model
      */
     public Set<ClassDescriptor> getClassDescriptors() {
+
         return new LinkedHashSet<ClassDescriptor>(cldMap.values());
     }
 
     /**
      * Return true if named ClassDescriptor is found in the model.
+     *
      * @param name named of ClassDescriptor search for
      * @return true if named descriptor found
      */
@@ -215,6 +229,7 @@ public class Model
     /**
      * Get a Set of fully qualified class names in this model (i.e. including
      * package name).
+     *
      * @return Set of fully qualified class names
      */
     public Set<String> getClassNames() {
@@ -257,7 +272,7 @@ public class Model
         sb.append("<model name=\"" + modelName + "\" package=\"" + packageName + "\">" + ENDL);
         for (ClassDescriptor cld : getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
-                sb.append("\t" + cld.toString() + ENDL);
+                sb.append(cld.toString());
             }
         }
         sb.append("</model>");
