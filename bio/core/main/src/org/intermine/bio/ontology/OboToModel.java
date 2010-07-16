@@ -65,7 +65,7 @@ public class OboToModel
 
         if (args.length >= 4) {
             File termsFile = new File(args[4]);
-            termsToKeep = processTermFile(packageName, termsFile);
+            termsToKeep = processTermFile(termsFile);
             System.out .println("Filtering by " + termsToKeep.size() + " OBO terms in " + args[4]);
         }
 
@@ -171,7 +171,7 @@ public class OboToModel
 
     // move terms from (user provided) file to list
     // only these terms (and dependents) will be processed
-    private static Set<String> processTermFile(String packageName, File filename) {
+    private static Set<String> processTermFile(File filename) {
         Set<String> terms = new HashSet<String>();
         try {
             BufferedReader br =  new BufferedReader(new FileReader(filename));
