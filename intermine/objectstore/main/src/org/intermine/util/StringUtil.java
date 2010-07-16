@@ -63,7 +63,7 @@ public class StringUtil
      * @param delimiter the character to join on
      * @return the string representation
      */
-    public static String join(Collection c, String delimiter) {
+    public static String join(Collection<?> c, String delimiter) {
         StringBuffer sb = new StringBuffer();
         boolean needComma = false;
         for (Object o : c) {
@@ -512,7 +512,7 @@ public class StringUtil
         }
         return s;
     }
-    
+
     /**
      * Wraps the given String into several lines and ultimately truncates it with an ellipsis.
      *

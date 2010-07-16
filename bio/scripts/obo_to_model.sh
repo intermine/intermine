@@ -1,15 +1,15 @@
 #!/bin/bash
 
-if [ $# -lt 3 ]
+if [ $# -gt 2 ]
 then
-    echo "expecting: $0 mine ontology namespace"
-    echo "eg. flymine so org.intermine.bio so_terms ";
+    echo "expecting: $0 mine_name "
+    echo "eg. flymine ";
     exit
 fi
 
 whichmine=$1
-export newModelName=$2
-namespace=$3
+export newModelName="so"
+namespace="org.intermine.bio"
 
 svnpath="model_update"
 
@@ -39,10 +39,14 @@ fi
 
 oboFileName=$BIO/sources/so/$newModelName.obo
 buildDir=$MINE/dbmodel/build/model
-modelFileName=$buildDir/${newModelName}_model.xml
+modelFileName=$BIO/sources/so/${newModelName}_additions.xml
 
-./classes_in_model $whichmine
-fileName=$buildDir/so_terms.txt
+# generate so_terms file
+./classes_in_model.pl $whichmine
+# pass full path of so_terms file
+filteredTermsFile=$buildDir/so_terms.txt
 
-java -cp $CP -Xmx1000M org.intermine.bio.ontology.OboToModel $newModelName $oboFileName $modelFileName $namespace $filename
+echo "Wrote $filteredTermsFile"
+
+java -cp $CP -Xmx1000M org.intermine.bio.ontology.OboToModel $newModelName $oboFileName $modelFileName $namespace $filteredTermsFile
 
