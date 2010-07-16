@@ -68,7 +68,11 @@ public class OboToModel
         if (args.length > 3) {
             termsFile = new File(args[3]);
         }
-        OboToModel.createAndWriteModel(oboName, oboFilename,  packageName, termsFile);
+        String additions = oboName + "_additions.xml";
+        File additionsFile = new File(additions);
+
+        OboToModel.createAndWriteModel(oboName, oboFilename,  packageName, termsFile,
+                additionsFile);
     }
 
     /**
@@ -78,19 +82,18 @@ public class OboToModel
      * @param oboFilename path to file, eg. /home/guest/so.obo
      * @param packageName name of package, eg. org.intermine.bio
      * @param termsFile file containing list of SO terms to be included in model (optional)
+     * @param outputFile file to write to
      */
     public static void createAndWriteModel(String oboName, String oboFilename, String packageName,
-            File termsFile) {
+            File termsFile, File outputFile) {
 
         Set<String> termsToKeep = processTermFile(termsFile);
 
-        //String additionsFile = "bio/sources/so/so_additions.xml";
-        String additionsFile =  oboName + "_additions.xml";
         OboToModelMapping oboToModelMapping = new OboToModelMapping(termsToKeep, packageName);
 
         // parse oboterms, delete terms not in list
         System.out .println("Starting OboToModel conversion from " + oboFilename + " to "
-                + additionsFile);
+                + outputFile.getPath());
         parseOboTerms(oboToModelMapping, oboFilename, termsFile);
 
         // classes to go into the final model
@@ -117,11 +120,10 @@ public class OboToModel
 
         // write out final model
         Model model = null;
-        File modelFile = new File(additionsFile);
         PrintWriter out = null;
         try {
             model = new Model(oboName, oboToModelMapping.getNamespace(), sortedClds);
-            out = new PrintWriter(new BufferedWriter(new FileWriter(modelFile)));
+            out = new PrintWriter(new BufferedWriter(new FileWriter(outputFile)));
         } catch (MetaDataException e) {
             throw new RuntimeException("Bad model", e);
         } catch (IOException e) {
@@ -130,7 +132,7 @@ public class OboToModel
         out.println(model);
         out.flush();
         out.close();
-        System.out .println("Wrote " + additionsFile);
+        System.out .println("Wrote " + outputFile.getPath());
     }
 
     private static String processParents(OboToModelMapping oboToModelMapping,
