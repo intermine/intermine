@@ -163,7 +163,7 @@
       <fieldconfig fieldExpr="dcpm"/>
       <fieldconfig fieldExpr="dcpmBases"/>
       <fieldconfig fieldExpr="transcribed"/>
-      <fieldconfig fieldExpr="predictionStatus"/>      
+      <fieldconfig fieldExpr="predictionStatus"/>
     </fields>
   </class>
 
@@ -186,23 +186,6 @@
       <displayer src="attributeLinkDisplayer.tile"/>
     </bagdisplayers>
   </class>
-
-<!--
-  <class className="org.intermine.model.bio.Analysis">
-    <fields>
-      <fieldconfig fieldExpr="publication.title"/>
-      <fieldconfig fieldExpr="publication.firstAuthor"/>
-      <fieldconfig fieldExpr="publication.journal"/>
-    </fields>
-  </class>
--->
-
-  <class className="org.intermine.model.bio.AnalysisResult">
-    <fields>
-      <fieldconfig fieldExpr="confidence"/>
-    </fields>
-  </class>
-
 
   <class className="org.intermine.model.bio.Author">
     <fields>
@@ -750,7 +733,7 @@
       <htmldisplayer id="dummy" title="Your Widget Idea Here"
                       description=""
                       content="Have an idea for a widget?  Contact us at help [at] modencode.org!"
-                      typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.BindingSite"
+                      typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.SequenceFeature,org.intermine.model.bio.BindingSite"
                       />
 
     </widgets>
