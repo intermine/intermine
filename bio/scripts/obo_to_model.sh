@@ -2,13 +2,13 @@
 
 if [ $# -gt 2 ]
 then
-    echo "expecting: $0 mine_name "
-    echo "eg. flymine ";
+    echo "expecting: $0 mine_name obo_name"
+    echo "eg. flymine so";
     exit
 fi
 
 whichmine=$1
-export newModelName="so"
+oboName=$2
 namespace="org.intermine.bio"
 
 svnpath="model_update"
@@ -37,9 +37,9 @@ fi
 #echo "Using classpath: $CP"
 #echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 
-oboFileName=$BIO/sources/so/$newModelName.obo
+oboFileName=$BIO/sources/so/$oboName.obo
 buildDir=$MINE/dbmodel/build/model
-modelFileName=$BIO/sources/so/${newModelName}_additions.xml
+modelFileName=$BIO/sources/so/${oboName}_additions.xml
 
 # generate so_terms file
 ./classes_in_model.pl $whichmine
@@ -48,5 +48,5 @@ filteredTermsFile=$buildDir/so_terms.txt
 
 echo "Wrote $filteredTermsFile"
 
-java -cp $CP -Xmx1000M org.intermine.bio.ontology.OboToModel $newModelName $oboFileName $modelFileName $namespace $filteredTermsFile
+java -cp $CP -Xmx1000M org.intermine.bio.ontology.OboToModel $oboName $oboFileName $namespace $filteredTermsFile
 

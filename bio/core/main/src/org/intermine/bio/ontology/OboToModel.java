@@ -52,23 +52,39 @@ public class OboToModel
      * @param args oboName oboFileName additionsFile packageName filename
      */
     public static void main(String[] args) {
-        if (args.length < 4) {
-            throw new IllegalArgumentException("Usage: oboName oboFileName additionsFile"
-                    + " packageName filename");
+        if (args.length < 3) {
+            String msg = "Usage: oboName oboFileName packageName filename\n "
+                   + "eg. so /home/guest/so.obo org.intermine.bio /home/guest/so_terms.txt";
+            throw new IllegalArgumentException(msg);
         }
 
         String oboName = args[0];
         String oboFilename = args[1];
-        String additionsFile = args[2];
-        String packageName = args[3];
-        Set<String> termsToKeep = null;
-
-        if (args.length >= 4) {
-            File termsFile = new File(args[4]);
-            termsToKeep = processTermFile(termsFile);
-            System.out .println("Filtering by " + termsToKeep.size() + " OBO terms in " + args[4]);
+        String packageName = args[2];
+        File termsFile = null;
+        if (args.length > 3) {
+            termsFile = new File(args[3]);
         }
 
+        OboToModel.createAndWriteModel(oboName, oboFilename,  packageName,
+                termsFile);
+    }
+
+    /**
+     * Parses OBO file and writes an OBO_additions.xml file including those terms.
+     *
+     * @param oboName name of ontology, eg. SO
+     * @param oboFilename path to file, eg. /home/guest/so.obo
+     * @param packageName name of package, eg. org.intermine.bio
+     * @param termsFile file containing list of SO terms to be included in model (optional)
+     */
+    public static void createAndWriteModel(String oboName, String oboFilename, String packageName,
+            File termsFile) {
+
+        Set<String> termsToKeep = processTermFile(termsFile);
+
+        //String additionsFile = "bio/sources/so/so_additions.xml";
+        String additionsFile =  oboName + "_additions.xml";
         OboToModelMapping oboToModelMapping = new OboToModelMapping(termsToKeep, packageName);
 
         // parse oboterms, delete terms not in list
