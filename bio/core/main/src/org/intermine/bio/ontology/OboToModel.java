@@ -94,7 +94,9 @@ public class OboToModel
         // parse oboterms, delete terms not in list
         System.out .println("Starting OboToModel conversion from " + oboFilename + " to "
                 + outputFile.getPath());
-        parseOboTerms(oboToModelMapping, oboFilename, termsFile);
+        System.out .println("Filtering on " + termsToKeep.size() + " obo terms from "
+                + termsFile.getPath());
+        parseOboTerms(oboToModelMapping, oboFilename, termsFile.getName());
 
         // classes to go into the final model
         LinkedHashSet<ClassDescriptor> clds = new LinkedHashSet<ClassDescriptor>();
@@ -182,7 +184,7 @@ public class OboToModel
     }
 
     private static void parseOboTerms(OboToModelMapping oboToModelMapping, String oboFilename,
-            File termsFile) {
+            String termsFileName) {
         File oboFile = new File(oboFilename);
 
         // parse file using OBOEdit
@@ -198,7 +200,7 @@ public class OboToModel
 
         // process results of parsing by OBOEdit.  flatten and trim unwanted terms
         oboToModelMapping.processOboTerms(parser.getOboTerms());
-        oboToModelMapping.validateTermsToKeep(oboFilename, termsFile);
+        oboToModelMapping.validateTermsToKeep(oboFilename, termsFileName);
         oboToModelMapping.processRelations(parser.getOboRelations());
     }
 

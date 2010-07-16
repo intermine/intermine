@@ -10,7 +10,6 @@ package org.intermine.bio.ontology;
  *
  */
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -168,34 +167,35 @@ public class OboToModelMapping
 
         buildParentsMap();
 
-        assignPartOfsToGrandchildren(oboRelations, partOfs);
+        for (OboRelation r : oboRelations) {
+            String child = r.childTermId;
+            String parent = r.parentTermId;
+            assignPartOfsToChild(r.getRelationship().getName(), r.direct, parent, child);
+
+            // keep going up the tree
+            Set<String> grandparents = childToParents.get(parent);
+            if (grandparents == null || grandparents.isEmpty()) {
+                return;
+            }
+            for (String grandparent : grandparents) {
+                assignPartOfsToChild(r.relationship.getName(), r.direct, grandparent, child);
+            }
+        }
 
         if (!termsToKeep.isEmpty()) {
             trimModel();
         }
     }
 
-    private void assignPartOfsToGrandchildren(List<OboRelation> oboRelations,
-            Map<String, Set<String>> namesToPartOfs) {
-        for (OboRelation r : oboRelations) {
-            String child = r.childTermId;
-            String parent = r.parentTermId;
-
-            String relationshipType = r.getRelationship().getName();
-            if (relationshipType.equals("part_of") && r.direct) {
-                Set<String> grandchildren = parentToChildren.get(child);
-                if (grandchildren == null || grandchildren.isEmpty()) {
-                    continue;
-                }
-                for (String grandchild : grandchildren) {
-                    Set<String> grandchildPartOfs = partOfs.get(grandchild);
-                    if (grandchildPartOfs == null) {
-                        grandchildPartOfs = new HashSet<String>();
-                        partOfs.put(grandchild, grandchildPartOfs);
-                    }
-                    grandchildPartOfs.add(parent);
-                }
+    private void assignPartOfsToChild(String relationshipType, Boolean directRelationship,
+            String parent, String child) {
+        if (relationshipType.equals("part_of") && directRelationship) {
+            Set<String> parentPartOfs = partOfs.get(parent);
+            if (parentPartOfs == null) {
+                parentPartOfs = new HashSet<String>();
+                partOfs.put(child, parentPartOfs);
             }
+            parentPartOfs.add(parent);
         }
     }
 
@@ -430,9 +430,9 @@ public class OboToModelMapping
      * Check that each OBO term in file provided by user is in OBO file.
      *
      * @param oboFilename name of obo file - used for error message only
-     * @param termsToKeepFile file containing obo terms - used for error message only
+     * @param termsToKeepFileName file containing obo terms - used for error message only
      */
-    public void validateTermsToKeep(String oboFilename, File termsToKeepFile) {
+    public void validateTermsToKeep(String oboFilename, String termsToKeepFileName) {
         List<String> invalidTermsConfigured = new ArrayList<String>();
         for (String soTermInModel : termsToKeep) {
             if (oboNameToIdentifier.get(soTermInModel) == null) {
@@ -441,7 +441,7 @@ public class OboToModelMapping
         }
         if (!invalidTermsConfigured.isEmpty()) {
             throw new BuildException("The following terms specified in "
-                    + termsToKeepFile.getPath() + " are not valid Sequence Ontology terms"
+                    + termsToKeepFileName + " are not valid Sequence Ontology terms"
                     + " according to: " + oboFilename + ": "
                     + StringUtil.prettyList(invalidTermsConfigured));
         }
