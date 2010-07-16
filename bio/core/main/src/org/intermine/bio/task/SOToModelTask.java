@@ -24,8 +24,7 @@ import org.intermine.bio.ontology.OboToModel;
 
 public class SOToModelTask extends Task
 {
-    private File soFile;
-    private File soTermsInModelFile;
+    private File soFile, soTermsInModelFile, outputFile;
 
     /**
      * Sets the File containing the SO OBO data.
@@ -44,6 +43,13 @@ public class SOToModelTask extends Task
     }
 
     /**
+     * @param outputFile the additions file - where data is going to be written to
+     */
+    public void setOutputFile(File outputFile) {
+        this.outputFile = outputFile;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public void execute() {
@@ -58,7 +64,7 @@ public class SOToModelTask extends Task
 
         try {
             OboToModel.createAndWriteModel("so", soFile.getCanonicalPath(),
-                    "org.intermine.model.bio", soTermsInModelFile);
+                    "org.intermine.model.bio", soTermsInModelFile, outputFile);
         } catch (Exception e) {
             throw new BuildException(e);
         }
