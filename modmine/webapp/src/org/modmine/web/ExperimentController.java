@@ -90,7 +90,7 @@ public class ExperimentController extends TilesAction
         request.setAttribute("subFeatEL", subFeatEL);
 
         Map<String, Map<String, Long>> expFeatEL =
-            MetadataCache.getExperimentFeatureExpressionLevels(os);
+            MetadataCache.getExperimentFeatureExpressionLevelCounts(os);
         request.setAttribute("expFeatEL", expFeatEL);
 
         return null;
