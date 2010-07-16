@@ -54,14 +54,20 @@ while (<DATA>) {
 }
 
 my %classes;
-for my $model (values %model_from) {
+my $row = {' ' => 'Total Number of Classes'};
+while (my ($service, $model) = each %model_from) {
+    my ($service_name) = $service =~ /([a-z]+mine)/;
+    my $count;
     for my $class ($model->get_all_classdescriptors) {
 	$classes{$class->name}++;
+	$count++;
     }
+    $row->{$service_name} = $count;
 }
+#@rows = sort({$a->{Mine} cmp $b->{Mine}} @rows);
+my $total_table = make_table_from_rows($row);
 
-my @rows = map { {Class => $_} } 
-               sort($order keys %classes);
+my @rows = map { {Class => $_} } sort($order keys %classes);
 while (my ($service, $model) = each %model_from) {
     my ($service_name) = $service =~ /([a-z]+mine)/;
     for my $class_name (keys %classes) {
@@ -71,6 +77,7 @@ while (my ($service, $model) = each %model_from) {
 			       : 'NO');
     }
 }
+# Set internal anchors to help navigation
 for my $row (@rows) {
     my @values = values(%$row);
     if ( grep({$_ eq 'NO'} @values) < (@values - 2) ) {
@@ -84,6 +91,7 @@ my @class_tables;
 
 for my $class_name (sort($order grep {$classes{$_} > 1} keys %classes)) {
     my (%fields, %fields_for);
+    # Get an inclusive list of the fields
     while (my ($service, $model) = each %model_from) {
 	my ($service_name) = $service =~ /([a-z]+mine)/;
 	for (eval{$model->get_classdescriptor_by_name($class_name)->fields}) {
@@ -92,6 +100,7 @@ for my $class_name (sort($order grep {$classes{$_} > 1} keys %classes)) {
 	}
     }
     my @rows = map { {Field => $_} } sort($order keys %fields);
+    next unless @rows;
     for my $row (@rows) {
 	for my $service (keys %fields_for) {
 	    $row->{$service} = (grep {$row->{Field} eq $_} @{$fields_for{$service}})
@@ -99,22 +108,27 @@ for my $class_name (sort($order grep {$classes{$_} > 1} keys %classes)) {
                               : 'NO';
 	}
     }
+
     my $class_table = make_table_from_rows(@rows);
     push @class_tables, {name => $class_name, tbl => $class_table};
 }
 
 open(my $HTMLFH, '>', $file) or die "Blah blah blah error schmeror: $!";
 print $HTMLFH '<html><head></head><body>';
-print $HTMLFH '<strong><em>Classes by Model</em></strong></br>';
+print $HTMLFH '<h1>Model Comparison Tables</h1>';
+print $HTMLFH q{<p>This page has several tables to compare different elements found within the genomic models used by different InterMine implementations. These models were fetched from the respective webservices, and then analysed to create these tables.</p> 
+<p>The main table lists which classes appear in which Mine's model. Where the class is absent, the word "NO" appears in a red box. If the class is present, then the number of fields in that class appear in the cell. If the models with this class all have a class the same number of fields, then their cells are green. If there is a difference in the number of fields, then the cell is coloured orange.</>
+<p>To further investigate classes with differences you can click on the class name, which is a link that will take you to a sub-table, showing which fields are present or absent in a particular model. Only classes that are present in more than one model have a sub-table, and thus a link.</p>};
+print $HTMLFH $total_table->getTable, '</br>';
+print $HTMLFH '<h2>Classes by Model</h2></br>';
 print $HTMLFH $model_class_table->getTable, '</br>';
 for my $table (@class_tables) {
-    print $HTMLFH '<strong><a name="',$table->{name},'">',$table->{name},'</a></strong></br>';
+    print $HTMLFH '<h2><a name="',$table->{name},'">',$table->{name},'</a></h2></br>';
     print $HTMLFH $table->{tbl}->getTable, '</br>';
 }
 print $HTMLFH '</body></html>';
 
 close $HTMLFH;
-
 
 __DATA__
 
