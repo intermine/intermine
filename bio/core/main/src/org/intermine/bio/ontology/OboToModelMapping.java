@@ -49,15 +49,30 @@ public class OboToModelMapping
     public OboToModelMapping(Set<String> termsToKeep, String namespace) {
         this.namespace = namespace;
         this.termsToKeep = termsToKeep;
-        stripTerms();
+        validateTerms();
     }
 
     // make a copy of the terms without underscores, just in case the terms are Java classes
-    private void stripTerms() {
+    private void validateTerms() {
         for (String term : termsToKeep) {
             term = term.toLowerCase();
             termsToKeepNoUnderscores.add(StringUtils.replace(term, "_", ""));
         }
+
+// TODO: validate - need to toggle?  or maybe don't worry about Java names?
+//            List<String> invalidTermsConfigured = new ArrayList<String>();
+//            for (String soTermInModel : soTermsInModel) {
+//                if (!soTermNames.contains(soTermInModel)) {
+//                    invalidTermsConfigured.add(soTermInModel);
+//                }
+//            }
+//            if (!invalidTermsConfigured.isEmpty()) {
+//                throw new BuildException("The following terms specified in "
+//                        + soTermsInModelFile.getPath() + " are not valid Sequence Ontology terms"
+//                        + " according to: " + soFile.getPath() + ": "
+//                        + StringUtil.prettyList(invalidTermsConfigured));
+//            }
+
     }
 
     /**
@@ -416,6 +431,8 @@ public class OboToModelMapping
             }
         }
     }
+
+
 
     /**
      * For each term in our list, add to our map if the term is not obsolete.  List has a multi

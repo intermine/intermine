@@ -257,7 +257,7 @@ public class Model
         sb.append("<model name=\"" + modelName + "\" package=\"" + packageName + "\">" + ENDL);
         for (ClassDescriptor cld : getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
-                sb.append(cld.toString() + ENDL);
+                sb.append("\t" + cld.toString() + ENDL);
             }
         }
         sb.append("</model>");

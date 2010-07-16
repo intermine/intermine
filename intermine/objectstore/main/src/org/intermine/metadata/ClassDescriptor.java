@@ -31,7 +31,7 @@ import org.intermine.util.Util;
 public class ClassDescriptor implements Comparable<ClassDescriptor>
 {
     private static final String INTERMINEOBJECT_NAME = "org.intermine.model.InterMineObject";
-
+    protected static final String ENDL = System.getProperty("line.separator");
     private final String className;        // name of this class
 
     // the supers string passed to the constructor
@@ -139,7 +139,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      * Returns the Class described by this ClassDescriptor.
      * @return a Class
      */
-    public Class getType() {
+    public Class<?> getType() {
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {
@@ -437,8 +437,6 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         return null;
     }
 
-
-
     /**
      * Get the name of the super class of this class (may be null)
      * @return the super class name
@@ -730,13 +728,13 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
             }
             sb.append("\"");
         }
-        sb.append(" is-interface=\"" + isInterface + "\">");
+        sb.append(" is-interface=\"" + isInterface + "\">" + ENDL);
         Set<FieldDescriptor> l = new LinkedHashSet<FieldDescriptor>();
         l.addAll(getAttributeDescriptors());
         l.addAll(getReferenceDescriptors());
         l.addAll(getCollectionDescriptors());
         for (FieldDescriptor fd : l) {
-            sb.append(fd.toString());
+            sb.append("\t" + fd.toString() + ENDL);
         }
         sb.append("</class>");
         return sb.toString();
