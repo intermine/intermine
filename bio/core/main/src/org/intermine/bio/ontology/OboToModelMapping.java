@@ -10,6 +10,7 @@ package org.intermine.bio.ontology;
  *
  */
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,21 +50,6 @@ public class OboToModelMapping
     public OboToModelMapping(Set<String> termsToKeep, String namespace) {
         this.namespace = namespace;
         this.termsToKeep = termsToKeep;
-    }
-
-    public void validateTermsToKeep() {
-//        List<String> invalidTermsConfigured = new ArrayList<String>();
-//        for (String soTermInModel : soTermsInModel) {
-//            if (!soTermNames.contains(soTermInModel)) {
-//                invalidTermsConfigured.add(soTermInModel);
-//            }
-//        }
-//        if (!invalidTermsConfigured.isEmpty()) {
-//            throw new BuildException("The following terms specified in "
-//                    + soTermsInModelFile.getPath() + " are not valid Sequence Ontology terms"
-//                    + " according to: " + soFile.getPath() + ": "
-//                    + StringUtil.prettyList(invalidTermsConfigured));
-//        }
     }
 
     /**
@@ -437,6 +423,27 @@ public class OboToModelMapping
                     oboNameToIdentifier.put(name, identifier);
                 }
             }
+        }
+    }
+
+    /**
+     * Check that each OBO term in file provided by user is in OBO file.
+     *
+     * @param oboFilename name of obo file - used for error message only
+     * @param termsToKeepFile file containing obo terms - used for error message only
+     */
+    public void validateTermsToKeep(String oboFilename, File termsToKeepFile) {
+        List<String> invalidTermsConfigured = new ArrayList<String>();
+        for (String soTermInModel : termsToKeep) {
+            if (oboNameToIdentifier.get(soTermInModel) == null) {
+                invalidTermsConfigured.add(soTermInModel);
+            }
+        }
+        if (!invalidTermsConfigured.isEmpty()) {
+            throw new BuildException("The following terms specified in "
+                    + termsToKeepFile.getPath() + " are not valid Sequence Ontology terms"
+                    + " according to: " + oboFilename + ": "
+                    + StringUtil.prettyList(invalidTermsConfigured));
         }
     }
 
