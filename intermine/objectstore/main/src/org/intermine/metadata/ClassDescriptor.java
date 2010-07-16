@@ -728,15 +728,20 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
             }
             sb.append("\"");
         }
-        sb.append(" is-interface=\"" + isInterface + "\">" + ENDL);
+        sb.append(" is-interface=\"" + isInterface + "\">");
         Set<FieldDescriptor> l = new LinkedHashSet<FieldDescriptor>();
         l.addAll(getAttributeDescriptors());
         l.addAll(getReferenceDescriptors());
         l.addAll(getCollectionDescriptors());
+        boolean firstClass = true;
         for (FieldDescriptor fd : l) {
+            if (firstClass) {
+                sb.append(ENDL);
+                firstClass = false;
+            }
             sb.append("\t" + fd.toString() + ENDL);
         }
-        sb.append("</class>");
+        sb.append("</class>" + ENDL);
         return sb.toString();
     }
 
