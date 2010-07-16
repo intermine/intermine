@@ -789,7 +789,7 @@ public class MetadataCache
         q.setDistinct(false);
 
         QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
         QueryClass qcEL = new QueryClass(ExpressionLevel.class);
 
         QueryField qfClass = new QueryField(qcLsf, "class");
@@ -858,7 +858,7 @@ public class MetadataCache
 
         QueryClass qcExp = new QueryClass(Experiment.class);
         QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
         QueryClass qcEL = new QueryClass(ExpressionLevel.class);
 
         QueryField qfClass = new QueryField(qcLsf, "class");
@@ -996,7 +996,7 @@ public class MetadataCache
         q.setDistinct(true);
 
         QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
         QueryClass qcLoc = new QueryClass(Location.class);
 
         QueryField qfClass = new QueryField(qcLsf, "class");
