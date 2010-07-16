@@ -11,7 +11,7 @@ package org.intermine.bio.ontology;
  */
 
 /**
- * Object representing an OBO relation
+ * Object representing an OBO relation.
  *
  * @author Xavier Watkins
  */
@@ -23,10 +23,10 @@ public class OboRelation
     String childTermId;
     boolean direct;
     boolean redundant;
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param childTermId the id of the second term
      * @param parentTermId the id of the first term
      * @param relationship the relationship
@@ -106,7 +106,4 @@ public class OboRelation
     public void setRedundant(boolean redundant) {
         this.redundant = redundant;
     }
-    
-    
-
 }
