@@ -68,9 +68,7 @@ public class OboToModel
         if (args.length > 3) {
             termsFile = new File(args[3]);
         }
-
-        OboToModel.createAndWriteModel(oboName, oboFilename,  packageName,
-                termsFile);
+        OboToModel.createAndWriteModel(oboName, oboFilename,  packageName, termsFile);
     }
 
     /**
@@ -93,7 +91,7 @@ public class OboToModel
         // parse oboterms, delete terms not in list
         System.out .println("Starting OboToModel conversion from " + oboFilename + " to "
                 + additionsFile);
-        parseOboTerms(oboToModelMapping, oboFilename);
+        parseOboTerms(oboToModelMapping, oboFilename, termsFile);
 
         // classes to go into the final model
         LinkedHashSet<ClassDescriptor> clds = new LinkedHashSet<ClassDescriptor>();
@@ -181,7 +179,8 @@ public class OboToModel
                 collections);
     }
 
-    private static void parseOboTerms(OboToModelMapping oboToModelMapping, String oboFilename) {
+    private static void parseOboTerms(OboToModelMapping oboToModelMapping, String oboFilename,
+            File termsFile) {
         File oboFile = new File(oboFilename);
 
         // parse file using OBOEdit
@@ -195,10 +194,9 @@ public class OboToModel
             throw new RuntimeException("Parsing obo file failed", e);
         }
 
-        oboToModelMapping.validateTermsToKeep();
-
         // process results of parsing by OBOEdit.  flatten and trim unwanted terms
         oboToModelMapping.processOboTerms(parser.getOboTerms());
+        oboToModelMapping.validateTermsToKeep(oboFilename, termsFile);
         oboToModelMapping.processRelations(parser.getOboRelations());
     }
 
@@ -223,6 +221,4 @@ public class OboToModel
         }
         return terms;
     }
-
-
 }
