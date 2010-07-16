@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Experiment;
 import org.intermine.model.bio.LocatedSequenceFeature;
@@ -43,6 +42,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.util.TypeUtil;
 
 /**
  * SpanOverlapQuery is a class with query logic. It has two methods: runSpanValidationQuery queries
@@ -69,7 +69,8 @@ public class SpanOverlapQueryRunner
 
         // a Map contains orgName and its chrInfo accordingly
         // e.g. <D.Melanogaster, (D.Melanogaster, X, 5000)...>
-        Map<String, List<ChromosomeInfo>> chrInfoMap = new HashMap<String, List<ChromosomeInfo>>();
+        Map<String, List<ChromosomeInfo>> chrInfoMap =
+            new HashMap<String, List<ChromosomeInfo>>();
 
         try {
             Query q = new Query();
@@ -160,46 +161,62 @@ public class SpanOverlapQueryRunner
      * @return spanOverlapResultMap A HashMap contains all the spans and their query results
      * @throws ClassNotFoundException Model.getQualifiedTypeName() throws
      */
-    public static Map<Span, Results> runSpanOverlapQuery(SpanUploadForm form,
+    public static Map<String, Results> runSpanOverlapQuery(SpanUploadForm form,
             List<Span> spanList, InterMineAPI im) throws ClassNotFoundException {
 
         String orgName = form.getOrgName();
-        String[] featureTypes = form.getFeatureTypes();
 
-        // featureTypes in this case are (the last bit of )class instead of featuretype in the db
+        // featureTypes in this case are (the last bit of ) class instead of featuretype in the db
         // table; gain the full name by Model.getQualifiedTypeName(className)
-        List<String> ftKeys = new ArrayList<String>();
-        Model theModel = im.getObjectStore().getModel();
-        for (String aFeatureTypeClass : featureTypes) {
-            ftKeys.add(theModel.getQualifiedTypeName(aFeatureTypeClass));
-        }
-
-        //>>>>> TEST CODE <<<<<
-//        String[] featureTypes = new String[4];
-//        featureTypes[3] = "gene";
-//        featureTypes[2] = "transcript_region";
-//        featureTypes[1] = "protein_binding_site";
-//        featureTypes[0] = "binding_site";
-//
-//        String[] submissions = new String[3];
-//        submissions[0] = "Orc2 S2 ChIP-Seq";
-//        submissions[1] = "pre-RC complexes MCM_cycE Kc";
-//        submissions[2] = "Orc2 BG3 ChIP-Seq";
-        //>>>>> TEST CODE <<<<<
+        List<String> ftKeys = getFeatureTypesFromClasses(form.getFeatureTypes(), im);
 
         List<Integer> subKeys = getSubmissionsByExperimentNames(form.getExperiments(), im);
 
         //>>>>> TEST CODE <<<<<
-//        LOG.info("featureTypes: " + ftKeys.toString());
-//        LOG.info("submissions: " + subKeys.toString());
+
+//        String orgName = "C. elegans";
+//        Span span = new Span();
+//        span.setChr("I");
+//        span.setStart(3000);
+//        span.setEnd(4500);
+//        List<Span> list = new ArrayList<Span>();
+//        list.add(span);
+//
+//        String[] featureTypes = new String[2];
+////        featureTypes[3] = "gene";
+////        featureTypes[2] = "transcript_region";
+////        featureTypes[1] = "protein_binding_site";
+//        featureTypes[0] = "binding_site";
+//        featureTypes[1] = "miRNA";
+//
+//        String[] submissions = new String[3];
+//        submissions[0] = "Orc2 S2 ChIP-Seq"; //2753
+//        submissions[1] = "pre-RC complexes MCM_cycE Kc"; //675
+//        submissions[2] = "Orc2 BG3 ChIP-Seq"; //2754
+//
+//        Integer[] sub = new Integer[2];
+//        sub[0] = 2788;
+//        sub[1] = 587;
+//
+//        String[] featureClass = new String[2];
+//
+//        featureClass[0] = "BindingSite";
+//        featureClass[1] = "MiRNA";
+//
+////        List<String> ftKeys = Arrays.asList(featureTypes);
+//        List<String> ftKeys = Arrays.asList(featureClass);
+////        List<String> subKeys = Arrays.asList(submissions);
+//        List<Integer> subKeys = Arrays.asList(sub);
+
         //>>>>> TEST CODE <<<<<
 
-        Map<Span, Results> spanOverlapResultMap = new HashMap<Span, Results>();
+//        Map<Span, Results> spanOverlapResultMap = new HashMap<Span, Results>();
+        Map<String, Results> spanOverlapResultDisplayMap = new HashMap<String, Results>();
 
         try {
-            Query q = new Query();
-
             for (Span aSpan: spanList) {
+                Query q = new Query();
+                q.setDistinct(true);
 
                 String chrPID = aSpan.getChr();
                 Integer start = aSpan.getStart();
@@ -223,17 +240,16 @@ public class SpanOverlapQueryRunner
                 QueryField qfChrPID = new QueryField(qcChr, "primaryIdentifier");
                 QueryField qfFeaturePID = new QueryField(qcFeature, "primaryIdentifier");
                 QueryField qfFeatureType = new QueryField(qcFeature, "featureType");
-                QueryField qfFeatureClass = new QueryField(qcFeature, "class");
+//                QueryField qfFeatureClass = new QueryField(qcFeature, "class");
 //                QueryField qfSubmissionTitle = new QueryField(qcSubmission, "title");
                 QueryField qfSubmissionDCCid = new QueryField(qcSubmission, "DCCid");
                 QueryField qfChr = new QueryField(qcChr, "primaryIdentifier");
                 QueryField qfLocStart = new QueryField(qcLoc, "start");
                 QueryField qfLocEnd = new QueryField(qcLoc, "end");
 
-                q.setDistinct(true);
-
                 q.addToSelect(qfFeaturePID);
                 q.addToSelect(qfFeatureType);
+//                q.addToSelect(qfFeatureClass);
                 q.addToSelect(qfChr);
                 q.addToSelect(qfLocStart);
                 q.addToSelect(qfLocEnd);
@@ -288,7 +304,7 @@ public class SpanOverlapQueryRunner
                 constraints.addConstraint(ccSubmission);
 
                 // LocatedSequenceFeature.class in a list
-                constraints.addConstraint(new BagConstraint(qfFeatureClass,
+                constraints.addConstraint(new BagConstraint(qfFeatureType,
                         ConstraintOp.IN, ftKeys));
                 // Submission.CCDid in a list
                 constraints.addConstraint(new BagConstraint(qfSubmissionDCCid,
@@ -303,21 +319,23 @@ public class SpanOverlapQueryRunner
                         ConstraintOp.OVERLAPS, overlapFeature);
                 constraints.addConstraint(oc);
 
-                LOG.info("Before Query: " + q.toString());
                 Results results = im.getObjectStore().execute(q);
 
                 //>>>>> TEST CODE <<<<<
-                LOG.info("Result Size: " + results.size());
-                LOG.info("Result: " + results);
+//                LOG.info("Result Size: " + results.size());
+//                LOG.info("Result: " + results);
                 //>>>>> TEST CODE <<<<<
 
-                spanOverlapResultMap.put(aSpan, results);
+//                spanOverlapResultMap.put(aSpan, results);
+                spanOverlapResultDisplayMap.put(formatSpan(aSpan), results);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return spanOverlapResultMap;
+//        return spanOverlapResultMap;
+        return spanOverlapResultDisplayMap;
     }
 
     /**
@@ -378,5 +396,63 @@ public class SpanOverlapQueryRunner
         List<Integer> subKeys = new ArrayList<Integer>(subSet);
 
         return subKeys;
+    }
+
+    /**
+     *
+     * @param featureClasses
+     * @param im
+     * @return
+     * @throws ClassNotFoundException
+     */
+    private static List<String> getFeatureTypesFromClasses(
+            String[] featureClasses, InterMineAPI im) throws ClassNotFoundException {
+
+        Map<String, String> ftMap = new HashMap<String, String>();
+        try {
+            Query q = new Query();
+            q.setDistinct(true);
+
+            QueryClass qcFeature = new QueryClass(LocatedSequenceFeature.class);
+            q.addFrom(qcFeature);
+
+            QueryField qfFeatureType = new QueryField(qcFeature, "featureType");
+            QueryField qfFeatureClass = new QueryField(qcFeature, "class");
+            q.addToSelect(qfFeatureClass);
+            q.addToSelect(qfFeatureType);
+
+            // LocatedSequenceFeature.class in a list
+            // not working...why???
+//            q.setConstraint(new BagConstraint(qfFeatureClass, ConstraintOp.IN, ftFullClasses));
+
+            Results results = im.getObjectStore().execute(q);
+
+            for (Iterator<ResultsRow<?>> iter = results.iterator(); iter.hasNext(); ) {
+                ResultsRow<?> row = (ResultsRow<?>) iter.next();
+                Class<?> featureClass = (Class<?>) row.get(0);
+                String featureType = (String) row.get(1);
+
+                ftMap.put(TypeUtil.unqualifiedName(featureClass.getName()), featureType);
+            }
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+
+        List<String> ftKeys = new ArrayList<String>();
+        for (String aClass : featureClasses) {
+            ftKeys.add(ftMap.get(aClass));
+        }
+
+        return ftKeys;
+    }
+
+    /**
+     * format a Span object to a string like "chr:start..end"
+     *
+     * @param aSpan a span object
+     * @return a string in form of "chr:start..end"
+     */
+    private static String formatSpan(Span aSpan) {
+        return aSpan.getChr() + ":" + aSpan.getStart() + ".." + aSpan.getEnd();
     }
 }
