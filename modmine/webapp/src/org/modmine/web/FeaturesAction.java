@@ -33,12 +33,8 @@ import org.intermine.api.results.WebResults;
 import org.intermine.api.util.NameUtil;
 import org.intermine.bio.web.struts.GFF3ExportForm;
 import org.intermine.metadata.Model;
-import org.intermine.model.bio.ExpressionLevel;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
@@ -236,11 +232,10 @@ public class FeaturesAction extends InterMineAction
         // For the expression levels
         else if (type.equals("subEL")) {
             dccId = (String) request.getParameter("submission");
-            
             PathNode node = q.addNode("Submission.features");
-            node.setType(featureType);  
+            node.setType(featureType);
             String path = "Submission.features.expressionLevels";
-            
+
             q.addView(path + ".name");
             q.addView(path + ".value");
             q.addView(path + ".readCount");
@@ -254,11 +249,11 @@ public class FeaturesAction extends InterMineAction
         }
         else if (type.equals("expEL")) {
             String eName = (String) request.getParameter("experiment");
-            
+
             PathNode node = q.addNode("Experiment.submissions.features");
-            node.setType(featureType);  
+            node.setType(featureType);
             String path = "Experiment.submissions.features.expressionLevels";
-            
+
             q.addView(path + ".name");
             q.addView(path + ".value");
             q.addView(path + ".readCount");
