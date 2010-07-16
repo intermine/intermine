@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.modmine.web;
 
@@ -29,8 +29,7 @@ public class GBrowseParser {
     private static final String GBROWSE_ST_URL_END = "/?action=scan";
     private static final String GBROWSE_DEFAULT_URL =
         "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
- 
-   
+
     /**
      * A GBrowse track, identified by
      * the organism, the track name, and eventually the subtrack name.
@@ -91,9 +90,6 @@ public class GBrowseParser {
         }
     }
 
-    
-    
-    
     /**
      * Method to read the list of GBrowse tracks for a given organism
      *
