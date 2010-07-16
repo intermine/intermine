@@ -67,6 +67,7 @@ public class MetadataCache
     private static Map<String, DisplayExperiment> experimentCache = null;
     private static Map<Integer, Map<String, Long>> submissionFeatureCounts = null;
     private static Map<Integer, Map<String, Long>> submissionFeatureExpressionLevelCounts = null;
+    private static Map<String, Map<String, Long>> experimentFeatureExpressionLevelCounts = null;
     private static Map<Integer, Integer> submissionExpressionLevelCounts = null;
     private static Map<Integer, Integer> submissionIdCache = null;
     private static Map<Integer, List<GBrowseTrack>> submissionTracksCache = null;
@@ -181,7 +182,7 @@ public class MetadataCache
      * @param os the production objectStore
      * @return map
      */
-    public static synchronized Map<Integer, Map<String,Long>>
+    public static synchronized Map<Integer, Map<String, Long>>
     getSubmissionFeatureExpressionLevelCounts(ObjectStore os) {
 
         if (submissionFeatureExpressionLevelCounts == null) {
@@ -190,7 +191,20 @@ public class MetadataCache
         return submissionFeatureExpressionLevelCounts;
     }
 
-    
+    /**
+     * Fetch the collection of Expression Level Counts per submission.
+     * @param os the production objectStore
+     * @return map
+     */
+    public static synchronized Map<String, Map<String, Long>>
+    getExperimentFeatureExpressionLevelCounts(ObjectStore os) {
+
+        if (experimentFeatureExpressionLevelCounts == null) {
+            readExperimentFeatureExpressionLevelCounts(os);
+        }
+        return experimentFeatureExpressionLevelCounts;
+    }
+
     /**
      * Fetch number of input/output file per submission.
      * @param os the production objectStore
@@ -268,19 +282,32 @@ public class MetadataCache
         return submissionFeatureCounts.get(dccId);
     }
 
-    /**
-     * Fetch the number of expression levels for a given submission.
-     * @param os the objectStore
-     * @param dccId the modENCODE submission id
-     * @return a map from submission to count
-     */
-    public static synchronized Integer getSubmissionExpressionLevelCount(ObjectStore os,
-            Integer dccId) {
-        if (submissionExpressionLevelCounts == null) {
-            getSubmissionExpressionLevelCounts(os);
-        }
-        return submissionExpressionLevelCounts.get(dccId);
-    }
+//    /**
+//     * Fetch the number of expression levels for a given submission.
+//     * @param os the objectStore
+//     * @param dccId the modENCODE submission id
+//     * @return a map from submission to count
+//     */
+//    public static synchronized Integer getSubmissionExpressionLevelCount(ObjectStore os,
+//            Integer dccId) {
+//        if (submissionExpressionLevelCounts == null) {
+//            getSubmissionExpressionLevelCounts(os);
+//        }
+//        return submissionExpressionLevelCounts.get(dccId);
+//    }
+
+//    /**
+//     * Fetch the number of expression levels for a given submission.
+//     * @param os the objectStore
+//     * @return a map from submission to count
+//     */
+//    public static synchronized Map<String, Map<String, Long>>
+//    getExperimentFeatureExpressionLevels(ObjectStore os) {
+//        if (experimentFeatureExpressionLevelCounts == null) {
+//           readExperimentFeatureExpressionLevelCounts(os);
+//        }
+//        return experimentFeatureExpressionLevelCounts;
+//    }
 
     /**
      * Fetch a submission by the modENCODE submission ids
@@ -510,38 +537,32 @@ public class MetadataCache
     * @param os objectStore
     * @return map exp-repository entries
     */
-    public static Map<String, Map<String, Long>> 
-    getExperimentFeatureExpressionLevels(ObjectStore os) {
-        Map<String, Map<String, Long>> expELevels = new HashMap<String,Map<String, Long>>();
-
+    public static Map<String, Map<String, Long>>
+    readExperimentFeatureExpressionLevels(ObjectStore os) {
+        Map<String, Map<String, Long>> expELevels = new HashMap<String, Map<String, Long>>();
+//TODO
         Map<Integer, Map<String, Long>> subELevels = getSubmissionFeatureExpressionLevelCounts(os);
 
         for (DisplayExperiment exp : getExperiments(os)) {
-//            Integer expCount = 0;
             for (Submission sub : exp.getSubmissions()) {
-                Map <String, Long> subFeat= subELevels.get(sub.getdCCid());
-//                Integer subCount = subELevelMap.get(sub.getdCCid());
+                Map <String, Long> subFeat = subELevels.get(sub.getdCCid());
                 if (subFeat != null) {
+                    // get the experiment feature map
                     Map<String, Long> expFeat =
-//                        new HashMap<String, Long>();
-//                    expFeat = 
                         expELevels.get(exp.getName());
                     if (expFeat == null) {
-//                        if (expFeat.isEmpty()) {
                         expELevels.put(exp.getName(), subFeat);
                     } else {
-//                        if (expELevels.get(exp.getName()).isEmpty()) {
-//                            expELevels.put(exp.getName(), subFeat);
-//                        } else {
-                        for (String feat : expFeat.keySet()) {
+                        for (String feat : subFeat.keySet()) {
                             Long subCount = subFeat.get(feat);
                             Long expCount = subCount;
                             if (expFeat.get(feat) != null) {
                                 expCount = expCount + expFeat.get(feat);
-                            } 
+                            }
                             expFeat.put(feat, expCount);
+                            expCount = Long.valueOf(0);
                         }
-                        expELevels.put(exp.getName(),expFeat);
+                        expELevels.put(exp.getName(), expFeat);
                     }
                 }
             }
@@ -549,7 +570,6 @@ public class MetadataCache
         return expELevels;
     }
 
-    
     /**
      * Fetch a map from project name to experiment.
      * @param os the production ObjectStore
@@ -796,7 +816,7 @@ public class MetadataCache
         ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
         cs.addConstraint(ccFeats);
         QueryCollectionReference el = new QueryCollectionReference(qcLsf, "expressionLevels");
-        ContainsConstraint ccEl= new ContainsConstraint(el, ConstraintOp.CONTAINS, qcEL);
+        ContainsConstraint ccEl = new ContainsConstraint(el, ConstraintOp.CONTAINS, qcEL);
         cs.addConstraint(ccEl);
 
         q.setConstraint(cs);
@@ -812,7 +832,8 @@ public class MetadataCache
 
             //submissionIdCache.put(sub.getdCCid(), sub.getId());
 
-            Map<String, Long> featureCounts = submissionFeatureExpressionLevelCounts.get(sub.getdCCid());
+            Map<String, Long> featureCounts =
+                submissionFeatureExpressionLevelCounts.get(sub.getdCCid());
             if (featureCounts == null) {
                 featureCounts = new HashMap<String, Long>();
                 submissionFeatureExpressionLevelCounts.put(sub.getdCCid(), featureCounts);
@@ -821,10 +842,83 @@ public class MetadataCache
         }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed submissionFeatureExpressionLevelCounts cache, took: " + timeTaken
-                + "ms size = " + submissionFeatureExpressionLevelCounts.size());
-//                + "<->" + submissionFeatureCounts.size());
+                + "ms size = " + submissionFeatureExpressionLevelCounts.size()
+                + "<->" + submissionFeatureCounts.size());
 
         LOG.info("submissionFeatureELCounts " + submissionFeatureExpressionLevelCounts);
+
+    }
+
+    private static void readExperimentFeatureExpressionLevelCounts(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+
+        experimentFeatureExpressionLevelCounts = new LinkedHashMap<String, Map<String, Long>>();
+        //submissionIdCache = new HashMap<Integer, Integer>();
+
+        Query q = new Query();
+        q.setDistinct(false);
+
+        QueryClass qcExp = new QueryClass(Experiment.class);
+        QueryClass qcSub = new QueryClass(Submission.class);
+        QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcEL = new QueryClass(ExpressionLevel.class);
+
+        QueryField qfClass = new QueryField(qcLsf, "class");
+
+        q.addFrom(qcExp);
+        q.addFrom(qcSub);
+        q.addFrom(qcLsf);
+        q.addFrom(qcEL);
+
+        q.addToSelect(qcExp);
+        q.addToSelect(qfClass);
+        q.addToSelect(new QueryFunction());
+
+        q.addToGroupBy(qcExp);
+        q.addToGroupBy(qfClass);
+
+        q.addToOrderBy(qcExp);
+        q.addToOrderBy(qfClass);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryCollectionReference submissions = new QueryCollectionReference(qcExp, "submissions");
+        ContainsConstraint ccSubs =
+            new ContainsConstraint(submissions, ConstraintOp.CONTAINS, qcSub);
+        cs.addConstraint(ccSubs);
+        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
+        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
+        cs.addConstraint(ccFeats);
+        QueryCollectionReference el = new QueryCollectionReference(qcLsf, "expressionLevels");
+        ContainsConstraint ccEl = new ContainsConstraint(el, ConstraintOp.CONTAINS, qcEL);
+        cs.addConstraint(ccEl);
+
+        q.setConstraint(cs);
+
+        Results results = os.execute(q);
+
+        // for each classes set the values for jsp
+        for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
+            ResultsRow row = iter.next();
+            Experiment exp = (Experiment) row.get(0);
+            Class feat = (Class) row.get(1);
+            Long count = (Long) row.get(2);
+
+            //submissionIdCache.put(sub.getdCCid(), sub.getId());
+
+            Map<String, Long> featureCounts =
+                experimentFeatureExpressionLevelCounts.get(exp.getName());
+            if (featureCounts == null) {
+                featureCounts = new HashMap<String, Long>();
+                experimentFeatureExpressionLevelCounts.put(exp.getName(), featureCounts);
+            }
+            featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed experimentFeatureExpressionLevelCounts cache, took: " + timeTaken
+                + "ms size = " + experimentFeatureExpressionLevelCounts.size());
+
+        LOG.info("experimentFeatureELCounts " + experimentFeatureExpressionLevelCounts);
 
     }
 
