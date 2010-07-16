@@ -14,9 +14,15 @@
    width:400px;
 }
 
+.modMineSearch form {
+	margin: 1em auto;
+}
+
 .examples {
-   margin-left:auto;
+   margin-top: 1em;
    margin-right:auto;
+   margin-bottom: 1em;
+   margin-left:auto;
    text-align:left;
    width: 425px;
 }

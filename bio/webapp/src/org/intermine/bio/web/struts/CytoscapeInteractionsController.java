@@ -53,8 +53,7 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class CytoscapeInteractionsController extends TilesAction
 {
-    protected static final Logger LOG = Logger
-            .getLogger(AttributeLinkDisplayerController.class);
+    private static final Logger LOG = Logger.getLogger(CytoscapeInteractionsController.class);
 
     /**
      * {@inheritDoc}
@@ -102,9 +101,9 @@ public class CytoscapeInteractionsController extends TilesAction
 
     /**
      * Create SIF format data for Cytoscape Web
-     * @param gene
-     * @param im
-     * @param interactionSet
+     * @param gene PrimaryIdentifier
+     * @param im InterMineAPI
+     * @param interactionSet A set of interactions
      * @return the network as a string in SIF format
      */
     private String createNetwork(Gene gene, InterMineAPI im,
@@ -120,7 +119,8 @@ public class CytoscapeInteractionsController extends TilesAction
             Set<Gene> interactingGenes = aInteraction.getInteractingGenes();
 
             for (Gene aInteractingGene : interactingGenes) {
-            keys.add(aInteractingGene.getPrimaryIdentifier()); }
+                keys.add(aInteractingGene.getPrimaryIdentifier());
+            }
         }
 
         // Query database
@@ -134,6 +134,9 @@ public class CytoscapeInteractionsController extends TilesAction
             String interactionType = (String) row.get(2);
             // String interactingGenePID = (String) row.get(3);
             String interactingGeneSymbol = (String) row.get(4);
+
+            LOG.info("Interaction Results: " + geneSymbol + "-"
+                    + interactionType + "-" + interactingGeneSymbol);
 
             interactionSet = addToInteractionSet(geneSymbol, interactionType,
                     interactingGeneSymbol, interactionSet);
@@ -165,7 +168,7 @@ public class CytoscapeInteractionsController extends TilesAction
         QueryField qfInteractingGenePID = new QueryField(qcInteractingGene,
                 "primaryIdentifier");
         QueryField qfInteractingGeneSymbol = new QueryField(qcInteractingGene,
-        "symbol");
+            "symbol");
 
         q.setDistinct(true);
 
@@ -206,10 +209,10 @@ public class CytoscapeInteractionsController extends TilesAction
 
     /**
      * Add a new interaction to a set of interactions, remove duplication
-     * @param genePID
-     * @param interactionType
-     * @param interactingGenePID
-     * @param interactionSet
+     * @param genePID Gene PrimaryIdentifier
+     * @param interactionType Physical/Genetic
+     * @param interactingGenePID Gene PrimaryIdentifier
+     * @param interactionSet A set of interactions
      * @return A set of SIF records
      */
     private Set<String> addToInteractionSet(String geneSymbol, String interactionType,
@@ -227,13 +230,13 @@ public class CytoscapeInteractionsController extends TilesAction
             // Thrown - java.util.ConcurrentModificationException
 
             String interactingString = geneSymbol + "\\t" + interactionType
-            + "\\t" + interactingGeneSymbol;
+                + "\\t" + interactingGeneSymbol;
             String interactingStringDup = interactingGeneSymbol + "\\t" + interactionType
-            + "\\t" + geneSymbol;
+                + "\\t" + geneSymbol;
 
             if (!(interactionSet.contains(interactingString) || interactionSet
-                    .contains(interactingStringDup))) {
-                    interactionSet.add(interactingString);
+                .contains(interactingStringDup))) {
+                interactionSet.add(interactingString);
             }
         }
         return interactionSet;

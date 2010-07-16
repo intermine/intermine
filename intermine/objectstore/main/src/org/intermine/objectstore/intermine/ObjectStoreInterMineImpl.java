@@ -1974,7 +1974,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     for (QuerySelectable qs : q.getSelect()) {
                         if (qs instanceof QueryCollectionPathExpression) {
                             Query subQ = ((QueryCollectionPathExpression) qs).getQuery(null);
-                            if ((subQ.getFrom().size() > 1) || (subQ.getConstraint() != null)) {
+                            if ((subQ.getFrom().size() > 1) && (subQ.getConstraint() == null)) {
+                                LOG.error("Software bug - we are being asked to precompute a cross "
+                                        + "join for query " + q + ". Cross join: " + subQ);
+                            } else if (subQ.getConstraint() != null) {
                                 sql = SqlGenerator.generate(subQ, schema, db, null,
                                         SqlGenerator.QUERY_FOR_GOFASTER, bagConstraintTables);
                                 PrecomputedTable subPt = ptm.lookupSql(sql);
@@ -1991,7 +1994,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         } else if (qs instanceof QueryObjectPathExpression) {
                             Query subQ = ((QueryObjectPathExpression) qs).getQuery(null,
                                     getSchema().isMissingNotXml());
-                            if ((subQ.getFrom().size() > 1) || (subQ.getConstraint() != null)) {
+                            if ((subQ.getFrom().size() > 1) && (subQ.getConstraint() == null)) {
+                                LOG.error("Software bug - we are being asked to precompute a cross "
+                                        + "join for query " + q + ". Cross join: " + subQ);
+                            } else if (subQ.getConstraint() != null) {
                                 sql = SqlGenerator.generate(subQ, schema, db, null,
                                         SqlGenerator.QUERY_FOR_GOFASTER, bagConstraintTables);
                                 PrecomputedTable subPt = ptm.lookupSql(sql);

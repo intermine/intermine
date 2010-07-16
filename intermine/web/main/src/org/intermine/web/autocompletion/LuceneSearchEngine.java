@@ -1,5 +1,5 @@
 package org.intermine.web.autocompletion;
-import java.io.IOException;
+
 /*
  * Copyright (C) 2002-2010 FlyMine
  *
@@ -9,38 +9,51 @@ import java.io.IOException;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import java.io.File;
+import java.io.IOException;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.util.Version;
 
 /**
  * LuceneSearchEngine for the autocompleter
- *
  * @author Dominik Grimm
  * @author Michael Menden
  */
 public class LuceneSearchEngine
 {
 
-    private  IndexSearcher indexSearch;
-    private  Analyzer analyzer;
+    private IndexSearcher indexSearch;
+    private Analyzer analyzer;
 
     /**
-     * LuceneSearchEngine constructor put the indexes to memory and creates
-     * an keyword analyser
-     * @param fileName of the Lucene Index files
+     * returns the indexSearcher so we can use IndexSearcher.doc(int) to get a
+     * doc
+     * @return IndexSearcher
+     */
+    public IndexSearcher getIndexSearch() {
+        return indexSearch;
+    }
+
+    /**
+     * LuceneSearchEngine constructor put the indexes to memory and creates an
+     * keyword analyser
+     * @param fileName
+     *            of the Lucene Index files
      */
     public LuceneSearchEngine(String fileName) {
         try {
-            RAMDirectory ram = new RAMDirectory(fileName);
+            RAMDirectory ram = new RAMDirectory(FSDirectory.open(new File(fileName)));
 
             indexSearch = new IndexSearcher(ram);
 
@@ -51,9 +64,10 @@ public class LuceneSearchEngine
     }
 
     /**
-     * LuceneSearchEngine constructor put the indexes to memory and creates
-     * an keyword analyser
-     * @param ram RAMDirectory
+     * LuceneSearchEngine constructor put the indexes to memory and creates an
+     * keyword analyser
+     * @param ram
+     *            RAMDirectory
      */
     public LuceneSearchEngine(RAMDirectory ram) {
         try {
@@ -67,16 +81,19 @@ public class LuceneSearchEngine
 
     /**
      * Perform the lucene search.
-     * @param queryString the string for what you search in the indexes
-     * @param toSearch  the field in which you search
+     * @param queryString
+     *            the string for what you search in the indexes
+     * @param toSearch
+     *            the field in which you search
      * @return Hits list of documents (search results)
-     * @throws IOException IOException
-     * @throws ParseException IOException
+     * @throws IOException
+     *             IOException
+     * @throws ParseException
+     *             IOException
      */
-    public Hits performSearch(String queryString, String toSearch)
-        throws IOException, ParseException {
-
-        QueryParser parser = new QueryParser(toSearch, analyzer);
+    public TopDocs performSearch(String queryString, String toSearch) throws IOException,
+            ParseException {
+        QueryParser parser = new QueryParser(Version.LUCENE_30, toSearch, analyzer);
         BooleanQuery.setMaxClauseCount(4096);
 
         if (!queryString.equals("") && !queryString.trim().startsWith("*")) {
@@ -101,27 +118,29 @@ public class LuceneSearchEngine
             }
             query = parser.parse(queryString + "*");
 
-            Hits hits = indexSearch.search(query);
-
-            return hits;
+            return indexSearch.search(query, 500); // FIXME: hardcoded maximum
+                                                   // number of results
         }
+
         return null;
     }
 
     /**
      * Perform the search but only return n results.
-     * @param queryS the string for what you search in the indexes
-     * @param toSearch the field in which you search
-     * @param n first n results
+     * @param queryS
+     *            the string for what you search in the indexes
+     * @param toSearch
+     *            the field in which you search
+     * @param n
+     *            first n results
      * @return array of ScoreDoc[] with n elements
      */
     public String[] fastSearch(String queryS, String toSearch, int n) {
 
-        QueryParser parser = new QueryParser(toSearch, analyzer);
+        QueryParser parser = new QueryParser(Version.LUCENE_30, toSearch, analyzer);
         BooleanQuery.setMaxClauseCount(4096);
         String status = "true";
         String[] results = null;
-
 
         if (!queryS.equals("") && !queryS.trim().startsWith("*")) {
             Query query = null;
@@ -176,6 +195,5 @@ public class LuceneSearchEngine
 
         return null;
     }
-
 
 }

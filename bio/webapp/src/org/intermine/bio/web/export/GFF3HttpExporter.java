@@ -115,9 +115,13 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
             exporter = new GFF3Exporter(writer,
                     indexes, getSoClassNames(servletContext), paths, sourceName, organisms);
             ExportResultsIterator iter = null;
+            boolean doGoFaster = false;
             try {
                 iter = getResultRows(pt, request);
-                iter.goFaster();
+                if (!pt.getWebTable().isSingleBatch()) {
+                    doGoFaster = true;
+                    iter.goFaster();
+                }
                 exporter.export(iter);
                 if (out instanceof GZIPOutputStream) {
                     try {
@@ -128,7 +132,9 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
                 }
             } finally {
                 if (iter != null) {
-                    iter.releaseGoFaster();
+                    if (doGoFaster) {
+                        iter.releaseGoFaster();
+                    }
                 }
             }
         } catch (Exception e) {

@@ -27,9 +27,9 @@
         <h3>Search modMine</h3><br/>
           Search for modENCODE submissions by metadata
             <ul>
-                <li>Antibody names: CP190, H3K4me1</li>
-                <li>Data types: bindingsite, UTR</li>
-                <li>Use AND to combine: fly AND embryo</li>
+                <!-- <li>For example antibody names (CP190, H3K4me1) or data types (bindingsite, UTR)</li> -->
+                <li>Use AND to combine: <a href="/${WEB_PROPERTIES['webapp.path']}/modMineSearchResults.do?searchTerm=fly+AND+embryo">fly AND embryo</a></li>
+                <li>Use AND NOT to exclude: <a href="/${WEB_PROPERTIES['webapp.path']}/modMineSearchResults.do?searchTerm=fly+AND+NOT+embryo">fly AND NOT embryo</a></li>
             </ul>
          <html:form action="/modMineSearchAction" focus="searchTerm">
             <input name="searchTerm" type="text" class="qs_input">

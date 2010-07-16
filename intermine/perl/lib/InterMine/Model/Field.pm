@@ -90,6 +90,10 @@ sub field_name
   return $self->{name};
 }
 
+sub name {
+    return shift->{name};
+}
+
 =head2 field_type
 
  Usage   : $name = $field->field_type();

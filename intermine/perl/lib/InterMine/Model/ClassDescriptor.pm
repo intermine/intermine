@@ -55,6 +55,7 @@ under the same terms as Perl itself.
 =cut
 
 use strict;
+use Carp qw/confess/;
 
 =head2 new
 
@@ -79,16 +80,17 @@ sub new
   $self->{extends} = $opts{extends};
 
   if (!exists $opts{name}) {
-    die "no name given to class constructor\n";
+    confess "no name given to class constructor\n";
   }
   if (!exists $opts{model}) {
-    die "no model given to class constructor\n";
+    confess "no model given to class constructor\n";
   }
 
-  $self->{attributes} = [];
-  $self->{fields} = [];
-  $self->{references} = [];
+  $self->{attributes}  = [];
+  $self->{fields}      = [];
+  $self->{references}  = [];
   $self->{collections} = [];
+  $self->{own_fields}  = [];
 
   bless $self, $class;
   return $self;
@@ -105,31 +107,48 @@ sub add_field
 {
   # see also: Model->_fix_class_descriptors()
 
-  my $self = shift;
+  my $self  = shift;
   my $field = shift;
+  my $own   = shift;
 
   return if defined $self->get_field_by_name($field->field_name());
-
-  push @{$self->{fields}}, $field;
+  
+  push @{$self->{fields}},     $field;
+  push @{$self->{own_fields}}, $field if $own;
 
   if (!exists $self->{field_hash}{$field->field_name}) {
     $self->{field_hash}{$field->field_name()} = $field;
   }
 
-  if (ref $field eq 'InterMine::Model::Attribute') {
+  if ($field->isa('InterMine::Model::Attribute')) {
     push @{$self->{attributes}}, $field;
-  } else {
-    if (ref $field eq 'InterMine::Model::Reference') {
+  } 
+  elsif ($field->isa('InterMine::Model::Collection')) {
+      push @{$self->{collections}}, $field;
+  } 
+  elsif ($field->isa('InterMine::Model::Reference')) {
       push @{$self->{references}}, $field;
-    } else {
-      if (ref $field eq 'InterMine::Model::Collection') {
-        push @{$self->{collections}}, $field;
-      } else {
-        die "unknown reference: ", $field, "\n";
-      }
-    }
+  } 
+  else {
+      confess "unknown reference: ", $field, "\n";
   }
 }
+
+sub get_own_fields {
+    my $self = shift;
+    return @{$self->{own_fields}};
+}
+
+sub get_parents {
+    my $self = shift;
+    my @inheritance_path = ($self,);
+    my @classes = $self->extends_class_descriptors();
+    for my $class (@classes) {
+	push @inheritance_path, get_parents($class);
+    }
+    return @inheritance_path;
+}
+
 
 =head2 name
  
@@ -178,7 +197,7 @@ sub extends_class_descriptors
       if (defined $extendee_cd) {
         push @{$self->{extends_class_descriptors}}, $extendee_cd;
       } else {
-        die "can't find $extendee in the model\n"
+        confess "can't find $extendee in the model\n"
       }
     }
   }

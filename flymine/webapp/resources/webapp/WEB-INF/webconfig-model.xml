@@ -198,10 +198,9 @@
 
   <class className="org.intermine.model.bio.GOAnnotation">
     <fields>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
       <fieldconfig fieldExpr="ontologyTerm.identifier" />
       <fieldconfig fieldExpr="ontologyTerm.name" />
-      <fieldconfig fieldExpr="ontologyTerm.namespace" showInSummary="false" />
-      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
@@ -744,6 +743,15 @@
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
         typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.SequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
        />
+      <graphdisplayer id="feature_length" title="Feature Length" 
+                              domainLabel="Length" 
+                              rangeLabel=" " 
+                              dataSetLoader="org.intermine.bio.web.widget.FeatureLengthDataSetLdr" 
+                              description="The distribution of feature lengths in this list compared to lengths of all features of this type." 
+                              graphType="XYLineChart" 
+                              extraAttributeClass="org.intermine.bio.web.logic.BioUtil" 
+                              typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein,org.intermine.model.bio.Exon,org.intermine.model.bio.Transcript" 
+/> 
 
       <graphdisplayer id="flyatlas" title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
                       link="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
@@ -846,7 +854,6 @@
                          exportField="primaryIdentifier"
                          typeClass="org.intermine.model.bio.Gene"
                          columnTitle="Interactions"/>
-
 
     </widgets>
 </webconfig>

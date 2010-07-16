@@ -4,7 +4,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <%
-org.modmine.web.MetadataCache.GBrowseTrack track = ((org.modmine.web.MetadataCache.GBrowseTrack) jspContext.getAttribute("track")); 
+org.modmine.web.GBrowseParser.GBrowseTrack track = ((org.modmine.web.GBrowseParser.GBrowseTrack) jspContext.getAttribute("track")); 
 %>
 
 <c:set var="track" value="<%=track%>"/>

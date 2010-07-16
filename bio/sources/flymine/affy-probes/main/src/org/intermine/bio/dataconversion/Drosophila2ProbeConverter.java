@@ -117,7 +117,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
     }
 
     private void storeProbeSet(ProbeSetHolder holder)
-        throws ObjectStoreException, SAXException  {
+        throws ObjectStoreException  {
         Item probeSet = createItem("ProbeSet");
         probeSet.setAttribute("primaryIdentifier", holder.probesetIdentifier);
         probeSet.setAttribute("name", holder.probesetIdentifier);
@@ -211,7 +211,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
     }
 
     private String createGene(String id)
-        throws ObjectStoreException, SAXException {
+        throws ObjectStoreException {
         String identifier = id;
         IdResolver resolver = resolverFactory.getIdResolver();
         int resCount = resolver.countResolutions(TAXON_ID, identifier);
@@ -226,7 +226,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
     }
 
     private String createBioentity(String type, String identifier, String geneRefId)
-        throws ObjectStoreException, SAXException {
+        throws ObjectStoreException {
         String refId = bioentities.get(identifier);
         if (refId == null) {
             Item bioentity = createItem(type);
@@ -242,6 +242,32 @@ public class Drosophila2ProbeConverter extends BioFileConverter
             createSynonym(refId, "identifier", identifier, null, true);
         }
         return refId;
+    }
+
+    private Item createSynonym(String subjectId, String type, String value) {
+        String key = subjectId + type + value;
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+        if (!synonyms.containsKey(key)) {
+            Item syn = createItem("Synonym");
+            syn.setReference("subject", subjectId);
+            syn.setAttribute("type", type);
+            syn.setAttribute("value", value);
+            syn.addToCollection("dataSets", dataSet);
+            synonyms.put(key, syn);
+            delayedItems.add(syn);
+            return syn;
+        }
+        return null;
+    }
+
+    private void createDataset(String array)
+        throws ObjectStoreException  {
+        dataSet = createItem("DataSet");
+        dataSet.setReference("dataSource", dataSource.getIdentifier());
+        dataSet.setAttribute("title", "Affymetrix array: " + array);
+        store(dataSet);
     }
 
     private String createChromosome(String identifier)
