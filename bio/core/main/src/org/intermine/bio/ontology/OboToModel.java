@@ -92,10 +92,10 @@ public class OboToModel
         OboToModelMapping oboToModelMapping = new OboToModelMapping(termsToKeep, packageName);
 
         // parse oboterms, delete terms not in list
-        System.out .println("Starting OboToModel conversion from " + oboFilename + " to "
-                + outputFile.getPath());
-        System.out .println("Filtering on " + termsToKeep.size() + " obo terms from "
-                + termsFile.getPath());
+        String msg = "Starting OboToModel conversion from " + oboFilename + " to "
+            + outputFile.getPath() + ".  Filtering on " + termsToKeep.size() + " obo terms from "
+            + termsFile.getPath();
+        System.out .println(msg);
         parseOboTerms(oboToModelMapping, oboFilename, termsFile.getName());
 
         // classes to go into the final model
