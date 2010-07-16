@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.tools.ant.BuildException;
 import org.intermine.util.StringUtil;
 
 /**
@@ -175,7 +174,7 @@ public class OboToModelMapping
             // keep going up the tree
             Set<String> grandparents = childToParents.get(parent);
             if (grandparents == null || grandparents.isEmpty()) {
-                return;
+                continue;
             }
             for (String grandparent : grandparents) {
                 assignPartOfsToChild(r.relationship.getName(), r.direct, grandparent, child);
@@ -191,11 +190,15 @@ public class OboToModelMapping
             String parent, String child) {
         if (relationshipType.equals("part_of") && directRelationship) {
             Set<String> parentPartOfs = partOfs.get(parent);
-            if (parentPartOfs == null) {
-                parentPartOfs = new HashSet<String>();
-                partOfs.put(child, parentPartOfs);
+            if (parentPartOfs == null || parentPartOfs.isEmpty()) {
+                return;
             }
-            parentPartOfs.add(parent);
+            Set<String> childPartOfs = partOfs.get(child);
+            if (childPartOfs == null) {
+                childPartOfs = new HashSet<String>();
+                partOfs.put(child, childPartOfs);
+            }
+            childPartOfs.addAll(parentPartOfs);
         }
     }
 
@@ -440,7 +443,7 @@ public class OboToModelMapping
             }
         }
         if (!invalidTermsConfigured.isEmpty()) {
-            throw new BuildException("The following terms specified in "
+            throw new RuntimeException("The following terms specified in "
                     + termsToKeepFileName + " are not valid Sequence Ontology terms"
                     + " according to: " + oboFilename + ": "
                     + StringUtil.prettyList(invalidTermsConfigured));
