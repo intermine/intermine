@@ -24,7 +24,7 @@
 <class name="Pseudogene" extends="Region" is-interface="true"></class>
 <class name="TransposableElementInsertionSite" extends="InsertionSite" is-interface="true"></class>
 <class name="Intron" extends="Region" is-interface="true"><collection name="Transcripts" referenced-type="Transcript"/></class>
-<class name="MicroarrayOligo" extends="Oligo" is-interface="true"></class>
+<class name="MicroArrayOligo" extends="Oligo" is-interface="true"></class>
 <class name="ProteinBindingSite" extends="BindingSite" is-interface="true"></class>
 <class name="NaturalTransposableElement" extends="TransposableElement" is-interface="true"></class>
 <class name="CDS" extends="Region" is-interface="true"><collection name="Transcripts" referenced-type="Transcript"/></class>
