@@ -97,17 +97,14 @@ public class OboToModelMapping
     private boolean validTerm(String identifier) {
         OboOntology o = validOboTerms.get(identifier);
         if (o == null) {
-            System.out.println("not in valid list:" + identifier);
             return false;
         }
         String oboName = o.getOboTermName();
         String javaName = StringUtils.replace(oboName, "_", "");
         if (termsToKeep.isEmpty() || termsToKeep.contains(oboName)
                 || termsToKeepNoUnderscores.contains(javaName)) {
-            System.out.println("in termstokeep: " + oboName);
             return true;
         }
-        System.out.println("NOT in termstokeep (" + termsToKeep.size() + "): " + oboName + " " + javaName);
         return false;
     }
 
@@ -439,7 +436,6 @@ public class OboToModelMapping
                 }
             }
         }
-        System.out.println("count of terms: " + terms.size() + " count of non-obsolete terms: " + validOboTerms.size());
     }
 
     /**
