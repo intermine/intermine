@@ -10,6 +10,7 @@ package org.intermine.bio.ontology;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +18,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.tools.ant.BuildException;
+import org.intermine.util.StringUtil;
 
 /**
  * This class handles the ontologies for OboToModel.
@@ -29,16 +32,13 @@ public class OboToModelMapping
     private Map<String, Set<String>> childToParents, parentToChildren, partOfs;
     // SO terms to filter on, eg. sequence_feature
     private Set<String> termsToKeep = new HashSet<String>();
-    // copy of termsToKeep without underscores, this allows the terms to be either SO terms or
-    // java classes
-    private Set<String> termsToKeepNoUnderscores = new HashSet<String>();
 
     // list of classes to load into the model.  OboOntology is an object that contains the SO term
     // value eg. sequence_feature and the Java name, eg. org.intermine.bio.SequenceFeature
     private Map<String, OboOntology> validOboTerms = new HashMap<String, OboOntology>();
 
     // contains ALL non-obsolete terms.  key = sequence_feature, value = SO:001
-    private Map<String, String> soNameToIdentifier = new HashMap<String, String>();
+    private Map<String, String> oboNameToIdentifier = new HashMap<String, String>();
 
     /**
      * Constructor.
@@ -49,30 +49,21 @@ public class OboToModelMapping
     public OboToModelMapping(Set<String> termsToKeep, String namespace) {
         this.namespace = namespace;
         this.termsToKeep = termsToKeep;
-        validateTerms();
     }
 
-    // make a copy of the terms without underscores, just in case the terms are Java classes
-    private void validateTerms() {
-        for (String term : termsToKeep) {
-            term = term.toLowerCase();
-            termsToKeepNoUnderscores.add(StringUtils.replace(term, "_", ""));
-        }
-
-// TODO: validate - need to toggle?  or maybe don't worry about Java names?
-//            List<String> invalidTermsConfigured = new ArrayList<String>();
-//            for (String soTermInModel : soTermsInModel) {
-//                if (!soTermNames.contains(soTermInModel)) {
-//                    invalidTermsConfigured.add(soTermInModel);
-//                }
+    public void validateTermsToKeep() {
+//        List<String> invalidTermsConfigured = new ArrayList<String>();
+//        for (String soTermInModel : soTermsInModel) {
+//            if (!soTermNames.contains(soTermInModel)) {
+//                invalidTermsConfigured.add(soTermInModel);
 //            }
-//            if (!invalidTermsConfigured.isEmpty()) {
-//                throw new BuildException("The following terms specified in "
-//                        + soTermsInModelFile.getPath() + " are not valid Sequence Ontology terms"
-//                        + " according to: " + soFile.getPath() + ": "
-//                        + StringUtil.prettyList(invalidTermsConfigured));
-//            }
-
+//        }
+//        if (!invalidTermsConfigured.isEmpty()) {
+//            throw new BuildException("The following terms specified in "
+//                    + soTermsInModelFile.getPath() + " are not valid Sequence Ontology terms"
+//                    + " according to: " + soFile.getPath() + ": "
+//                    + StringUtil.prettyList(invalidTermsConfigured));
+//        }
     }
 
     /**
@@ -115,9 +106,7 @@ public class OboToModelMapping
             return false;
         }
         String oboName = o.getOboTermName();
-        String javaName = StringUtils.replace(oboName, "_", "");
-        if (termsToKeep.isEmpty() || termsToKeep.contains(oboName)
-                || termsToKeepNoUnderscores.contains(javaName)) {
+        if (termsToKeep.isEmpty() || termsToKeep.contains(oboName)) {
             return true;
         }
         return false;
@@ -362,12 +351,12 @@ public class OboToModelMapping
         // no children, delete!
         if (kids == null) {
             removeTerm(oboTerm);
-            debugOutput(oboTerm, "Flattening [no children] ");
+            debugOutput(oboTerm, "Flattening [no children]");
         }
     }
 
     private void debugOutput(String oboTerm, String err) {
-        err += oboTerm + "-count: " + validOboTerms.size();
+        err += " " + oboTerm + " Valid terms count: " + validOboTerms.size();
         System.out .println(err);
     }
 
@@ -432,12 +421,8 @@ public class OboToModelMapping
         }
     }
 
-
-
     /**
-     * For each term in our list, add to our map if the term is not obsolete.  List has a multi
-     * key, so term can later be retrieved by identifier (SO:001) or fully qualified name
-     * (eg. org.intermine.org.bio.SequenceFeature).
+     * For each term in our list, add to our map if the term is not obsolete.
      *
      * @param terms set of obo terms to process
      */
@@ -449,7 +434,7 @@ public class OboToModelMapping
                 if (!StringUtils.isEmpty(identifier) && !StringUtils.isEmpty(name)) {
                     OboOntology c = new OboOntology(identifier, name);
                     validOboTerms.put(identifier, c);
-                    soNameToIdentifier.put(name, identifier);
+                    oboNameToIdentifier.put(name, identifier);
                 }
             }
         }
@@ -459,7 +444,6 @@ public class OboToModelMapping
      * Represents a class/oboterm in the Model.
      *
      * @author julie sullivan
-     *
      */
     public class OboOntology
     {

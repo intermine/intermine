@@ -19,8 +19,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.AttributeDescriptor;
@@ -93,7 +96,7 @@ public class OboToModel
         parseOboTerms(oboToModelMapping, oboFilename);
 
         // classes to go into the final model
-        Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>();
+        LinkedHashSet<ClassDescriptor> clds = new LinkedHashSet<ClassDescriptor>();
 
         // process each oboterm - add parent and collections
         for (String childIdentifier : oboToModelMapping.getOboTermIdentifiers()) {
@@ -102,12 +105,24 @@ public class OboToModel
             clds.add(cd);
         }
 
+        // sort classes by name
+        Comparator<ClassDescriptor> comparator = new Comparator<ClassDescriptor>() {
+            public int compare(ClassDescriptor o1, ClassDescriptor o2) {
+                String fieldName1 = o1.getName().toLowerCase();
+                String fieldName2 = o2.getName().toLowerCase();
+                return fieldName1.compareTo(fieldName2);
+            }
+        };
+
+        TreeSet<ClassDescriptor> sortedClds = new TreeSet<ClassDescriptor>(comparator);
+        sortedClds.addAll(clds);
+
         // write out final model
         Model model = null;
         File modelFile = new File(additionsFile);
         PrintWriter out = null;
         try {
-            model = new Model(oboName, oboToModelMapping.getNamespace(), clds);
+            model = new Model(oboName, oboToModelMapping.getNamespace(), sortedClds);
             out = new PrintWriter(new BufferedWriter(new FileWriter(modelFile)));
         } catch (MetaDataException e) {
             throw new RuntimeException("Bad model", e);
@@ -180,6 +195,8 @@ public class OboToModel
             throw new RuntimeException("Parsing obo file failed", e);
         }
 
+        oboToModelMapping.validateTermsToKeep();
+
         // process results of parsing by OBOEdit.  flatten and trim unwanted terms
         oboToModelMapping.processOboTerms(parser.getOboTerms());
         oboToModelMapping.processRelations(parser.getOboRelations());
@@ -206,4 +223,6 @@ public class OboToModel
         }
         return terms;
     }
+
+
 }
