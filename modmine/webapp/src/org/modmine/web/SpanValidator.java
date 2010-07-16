@@ -21,18 +21,25 @@ import java.util.Map;
  * @author Fengyuan Hu
  *
  */
-public class SpanValidator {
-
+public class SpanValidator
+{
     public static String PASS = "pass";
     public static String  ERROR = "error";
 
+    /**
+     *
+     * @param orgName organism name
+     * @param spanList A list of spans
+     * @param chrInfoMap a java bean
+     * @return resultMap A HashMap
+     */
     public static Map<String, List<Span>> runSpanValidation(String orgName, List<Span> spanList,
             Map<String, List<ChromosomeInfo>> chrInfoMap) {
 
         // the Map has two key-value mappings
         // PASS-ArrayList<passedSpan>
         // ERROR-ArrayList<errorSpan>
-        Map<String, List<Span>> resultMap= new HashMap<String, List<Span>>();
+        Map<String, List<Span>> resultMap = new HashMap<String, List<Span>>();
         List<Span> passedSpanList = new ArrayList<Span>();
         List<Span> errorSpanList = new ArrayList<Span>();
 
@@ -53,8 +60,9 @@ public class SpanValidator {
                             newSpan.setStart(aSpan.getEnd());
                             newSpan.setEnd(aSpan.getStart());
                             passedSpanList.add(newSpan);
-                        } else
-                        passedSpanList.add(aSpan);
+                        } else {
+                            passedSpanList.add(aSpan);
+                        }
                     }
                 }
             }
