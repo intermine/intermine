@@ -124,11 +124,16 @@ public class Drosophila2ProbeConverter extends BioFileConverter
         probeSet.setReference("organism", orgRefId);
         probeSet.setCollection("dataSets", holder.datasets);
         probeSet.setCollection("transcripts", holder.transcripts);
-        probeSet.setCollection("locations", holder.createLocations(probeSet.getIdentifier()));
         probeSet.setCollection("genes", holder.genes);
+        probeSet.setCollection("locations", holder.createLocations(probeSet.getIdentifier(),
+                holder.datasets));
         store(probeSet);
-        createSynonym(probeSet.getIdentifier(), "identifier", holder.probesetIdentifier, null,
-                true);
+        try {
+            createSynonym(probeSet.getIdentifier(), "identifier", holder.probesetIdentifier, null,
+                    true);
+        } catch (SAXException e) {
+            throw new ObjectStoreException("Failed to store synonym", e);
+        }
     }
 
     /**
@@ -140,8 +145,8 @@ public class Drosophila2ProbeConverter extends BioFileConverter
     {
         protected String probesetIdentifier;
         protected List<String> genes = new ArrayList<String>();
-        protected List<String> transcripts = new ArrayList<String>();
         private List<String> locations = new ArrayList<String>();
+        protected List<String> transcripts = new ArrayList<String>();
         protected Map<String, LocationHolder> locationHolders
             = new HashMap<String, LocationHolder>();
         protected List<String> datasets = new ArrayList<String>();
@@ -173,14 +178,14 @@ public class Drosophila2ProbeConverter extends BioFileConverter
          * when all of the probes for this probeset have been processed, create and store all
          * related locations
          * @param probeSetRefId id representing probeset object
+         * @param dataSets list of IDs reresenting dataset objects
          * @return reference list of location objects
          * @throws ObjectStoreException if something goes wrong storing locations
          */
-        protected List<String> createLocations(String probeSetRefId)
+        protected List<String> createLocations(String probeSetRefId, List<String> dataSets)
             throws ObjectStoreException {
             for (LocationHolder holder : locationHolders.values()) {
-                String location = createLocation(holder, probeSetRefId);
-                locations.add(location);
+                locations.add(createLocation(holder, probeSetRefId, dataSets));
             }
             return locations;
         }
@@ -239,35 +244,13 @@ public class Drosophila2ProbeConverter extends BioFileConverter
             refId = bioentity.getIdentifier();
             store(bioentity);
             bioentities.put(identifier, refId);
-            createSynonym(refId, "identifier", identifier, null, true);
+            try {
+                createSynonym(refId, "identifier", identifier, null, true);
+            } catch (SAXException e) {
+                throw new ObjectStoreException("Failed to store synonym", e);
+            }
         }
         return refId;
-    }
-
-    private Item createSynonym(String subjectId, String type, String value) {
-        String key = subjectId + type + value;
-        if (StringUtils.isEmpty(value)) {
-            return null;
-        }
-        if (!synonyms.containsKey(key)) {
-            Item syn = createItem("Synonym");
-            syn.setReference("subject", subjectId);
-            syn.setAttribute("type", type);
-            syn.setAttribute("value", value);
-            syn.addToCollection("dataSets", dataSet);
-            synonyms.put(key, syn);
-            delayedItems.add(syn);
-            return syn;
-        }
-        return null;
-    }
-
-    private void createDataset(String array)
-        throws ObjectStoreException  {
-        dataSet = createItem("DataSet");
-        dataSet.setReference("dataSource", dataSource.getIdentifier());
-        dataSet.setAttribute("title", "Affymetrix array: " + array);
-        store(dataSet);
     }
 
     private String createChromosome(String identifier)
@@ -284,21 +267,19 @@ public class Drosophila2ProbeConverter extends BioFileConverter
         return refId;
     }
 
-    private String createLocation(LocationHolder holder, String probeset)
+    private String createLocation(LocationHolder holder, String probeset, List<String> dataSets)
         throws ObjectStoreException {
-        Item item = createItem("Location");
-        item.setAttribute("start", holder.start.toString());
-        item.setAttribute("end", holder.end.toString());
+        String strand = null;
         if (holder.strand != null) {
-            item.setAttribute("strand", holder.strand);
+            strand = holder.strand;
         } else {
             LOG.warn("probeset " + probeset + " has no strand");
         }
-        item.setReference("locatedOn", holder.chromosomeRefID);
-        item.setReference("feature", probeset);
-        item.addToCollection("dataSets", dataSet);
-        store(item);
-        return item.getIdentifier();
+        Item location = makeLocation(holder.chromosomeRefID, probeset, holder.start.toString(),
+                holder.end.toString(), strand, false);
+        location.setCollection("dataSets", dataSets);
+        delayedItems.add(location);
+        return location.getIdentifier();
     }
 
     private ProbeSetHolder getHolder(String identifier) {
