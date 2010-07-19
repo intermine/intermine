@@ -14,10 +14,10 @@
   </class>
   <class name="RNAiScreenHit" extends="RNAiResult" is-interface="true">
     <attribute name="result" type="java.lang.String"/>
-    <reference name="amplicon" referenced-type="Amplicon" reverse-reference="rnaiScreenHits"/>
+    <reference name="pcrProduct" referenced-type="PCRProduct" reverse-reference="rnaiScreenHits"/>
     <reference name="rnaiScreen" referenced-type="RNAiScreen" reverse-reference="rnaiScreenHits"/>
   </class>
-  <class name="Amplicon" extends="SequenceFeature" is-interface="true">
+  <class name="PCRProduct" is-interface="true">
     <collection name="rnaiScreenHits" referenced-type="RNAiScreenHit"/>
     <collection name="genes" referenced-type="Gene"/>
   </class>

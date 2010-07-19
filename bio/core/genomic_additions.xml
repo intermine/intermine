@@ -32,6 +32,8 @@
       <collection name="genes" referenced-type="Gene"/>
     </class>
 
+    <class name="IntergenicRegion" is-interface="true"/>
+
     <class name="Intron" is-interface="true">
       <collection name="transcripts" referenced-type="Transcript" reverse-reference="introns"/>
     </class>
