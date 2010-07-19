@@ -340,7 +340,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     @Override
     protected Item createSynonym(FeatureData fdat, String type, String identifier,
-            boolean isPrimary, List<Item> otherEvidence)
+            boolean isPrimary)
         throws ObjectStoreException {
         // Don't create synonyms for main identifiers of modENCODE features.  There are too many and
         // not useful to quick search.
@@ -760,8 +760,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             String property = res.getString("property");
             String propValue = res.getString("propvalue");
 
-            LOG.debug("EL: " + id + "|" + previousId + "->" +
-                    featureId + ":" + property + "|" + propValue);
+            LOG.debug("EL: " + id + "|" + previousId + "->"
+                    + featureId + ":" + property + "|" + propValue);
 
             if (!id.equals(previousId)) {
                 // if not first store prev level
