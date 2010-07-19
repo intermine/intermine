@@ -50,8 +50,6 @@
 <class name="CDNAClone" is-interface="true">
   <collection name="results" referenced-type="MicroArrayResult"/>
 </class>
-<class name="NuclearDNA" extends="BioEntity" is-interface="true"/>
-<class name="Vector" extends="BioEntity" is-interface="true"/>
 <class name="Sample" extends="BioEntity" is-interface="true">
   <attribute name="materialType" type="java.lang.String"/>
   <attribute name="name" type="java.lang.String"/>
