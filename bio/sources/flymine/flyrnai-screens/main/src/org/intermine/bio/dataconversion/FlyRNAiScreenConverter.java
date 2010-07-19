@@ -172,7 +172,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                 Set<Item> ampliconGenes = new LinkedHashSet<Item>();
 
                 String ampliconIdentifier = line[0].trim();
-                Item amplicon = createItem("Amplicon");
+                Item amplicon = createItem("PCRProduct");
                 amplicon.setAttribute("primaryIdentifier", ampliconIdentifier);
                 amplicon.setReference("organism", organism);
 

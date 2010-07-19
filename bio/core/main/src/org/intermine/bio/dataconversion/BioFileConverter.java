@@ -36,6 +36,7 @@ public abstract class BioFileConverter extends FileConverter
     private Set<String> synonyms = new HashSet<String>();
     private Set<String> crossReferences = new HashSet<String>();
     private Map<String, String> organisms = new HashMap<String, String>();
+    private Map<String, String> soTerms = new HashMap<String, String>();
 
     /**
      * Create a new BioFileConverter.
@@ -228,35 +229,61 @@ public abstract class BioFileConverter extends FileConverter
     }
 
     /**
+     * The Organism item created from the taxon id passed to the constructor.
+     * @param taxonId NCBI taxonomy id of organism to create
+     * @return the refId representing the Organism Item
+     */
+    public String getSOTerm(String taxonId) {
+        String refId = organisms.get(taxonId);
+        if (refId == null) {
+            Item organism = createItem("Organism");
+            organism.setAttribute("taxonId", taxonId);
+            try {
+                store(organism);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("failed to store organism with taxonId: " + taxonId, e);
+            }
+            refId = organism.getIdentifier();
+            organisms.put(taxonId, refId);
+        }
+        return refId;
+    }
+
+    /**
      * Make a Location between a Feature and a Chromosome.
      * @param chromosomeId Chromosome Item identifier
      * @param sequenceFeatureId the Item identifier of the feature
-     * @param start the start position
-     * @param end the end position
+     * @param startString the start position
+     * @param endString the end position
      * @param strand the strand
+     * @param store if true the location item will be saved in the database
      * @return the new Location object
      */
-    protected Item makeLocation(String chromosomeId, String sequenceFeatureId, int start, int end,
-            int strand) {
+    protected Item makeLocation(String chromosomeId, String sequenceFeatureId, String startString,
+            String endString, String strand, boolean store) {
         Item location = createItem("Location");
-
-        if (start < end) {
-            location.setAttribute("start", String.valueOf(start));
-            location.setAttribute("end", String.valueOf(end));
+        Integer start = Integer.parseInt(startString);
+        Integer end = Integer.parseInt(endString);
+        if (start.compareTo(end) <= 0) {
+            location.setAttribute("start", startString);
+            location.setAttribute("end", endString);
         } else {
-            location.setAttribute("start", String.valueOf(end));
-            location.setAttribute("end", String.valueOf(start));
+            location.setAttribute("start", endString);
+            location.setAttribute("end", startString);
         }
-        location.setAttribute("strand", String.valueOf(strand));
+        if (StringUtils.isNotEmpty(strand)) {
+            location.setAttribute("strand", strand);
+        }
         location.setReference("locatedOn", chromosomeId);
         location.setReference("feature", sequenceFeatureId);
 
-        try {
-            store(location);
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("failed to store location", e);
+        if (store) {
+            try {
+                store(location);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("failed to store location", e);
+            }
         }
-
         return location;
     }
 }

@@ -21,8 +21,6 @@
   <class name="NaturalTransposableElement" is-interface="true">
     <collection name="transposableElements" referenced-type="TransposableElement" reverse-reference="insertedElement"/>
   </class>
-  <class name="Vector" extends="BioEntity" is-interface="true"/>
-  <class name="BAC" extends="Vector" is-interface="true" />
   <class name="CDNAClone" is-interface="true">
     <reference name="gene" referenced-type="Gene" reverse-reference="clones"/>
     <reference name="MRNA" referenced-type="MRNA"/>

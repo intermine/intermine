@@ -135,6 +135,8 @@
     <collection name="authors" referenced-type="Author" reverse-reference="publications" />
   </class>
 
+  <class name="SOTerm" extends="OntologyTerm" is-interface="true"/>
+
   <class name="Sequence" is-interface="true">
     <attribute name="residues" type="java.lang.String"/>
     <attribute name="length" type="int"/>

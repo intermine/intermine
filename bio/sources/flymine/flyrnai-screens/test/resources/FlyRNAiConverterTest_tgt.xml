@@ -19,7 +19,7 @@
 <reference name="rnaiScreen" ref_id="4_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="5_2" class="Amplicon">
+<item id="5_2" class="PCRProduct">
 <attribute name="primaryIdentifier" value="DRSC00003"/>
 <reference name="organism" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
