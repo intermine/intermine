@@ -39,8 +39,8 @@ public class OboToModelMapping
     // contains ALL non-obsolete terms.  key = sequence_feature, value = SO:001
     private Map<String, String> oboNameToIdentifier = new HashMap<String, String>();
 
-    // special case, we ALWAYS need sequence feature.  never delete!
-    private static final String SEQUENCE_FEATURE = "SO:0000110";
+    // special case for sequence_feature, we always need this term in the model
+    private static final String SEQUENCE_FEATURE = "SO:0000110 ";
 
     private static final boolean DEBUG = false;
 
@@ -96,7 +96,7 @@ public class OboToModelMapping
         }
         String oboName = o.getOboTermName();
         if (termsToKeep.isEmpty() || termsToKeep.contains(oboName)
-                || SEQUENCE_FEATURE.equals(identifier)) {
+                || SEQUENCE_FEATURE.equals(oboName)) {
             return true;
         }
         return false;
@@ -155,7 +155,12 @@ public class OboToModelMapping
             String relationshipType = r.getRelationship().getName();
             if ((relationshipType.equals("part_of") || relationshipType.equals("member_of"))
                     && r.direct) {
-                assignPartOfs(parent, child);
+                Set<String> colls = partOfs.get(child);
+                if (colls == null) {
+                    colls = new HashSet<String>();
+                    partOfs.put(child, colls);
+                }
+                colls.add(parent);
             } else if (relationshipType.equals("is_a") && r.direct) {
                 Set<String> parents = childToParents.get(child);
                 if (parents == null) {
@@ -172,8 +177,7 @@ public class OboToModelMapping
             String child = r.childTermId;
             String parent = r.parentTermId;
             String relationshipType = r.getRelationship().getName();
-            if ((relationshipType.equals("part_of") || relationshipType.equals("member_of"))
-                    && r.direct) {
+            if (relationshipType.equals("is_a") && r.direct) {
                 assignPartOfsToChild(parent, child);
             }
         }
@@ -183,8 +187,7 @@ public class OboToModelMapping
         }
     }
 
-    // loop through all terms above this one and assign their collections to this term
-    private void assignPartOfsToChild(String parent, String child) {
+    private void assignPartOfsToChild (String parent, String child) {
         assignPartOfs(parent, child);
         // keep going up the tree
         Set<String> grandparents = childToParents.get(parent);
@@ -195,7 +198,6 @@ public class OboToModelMapping
         }
     }
 
-    // assign parents' collections to child term
     private void assignPartOfs(String parent, String child) {
         Set<String> parentPartOfs = partOfs.get(parent);
         if (parentPartOfs != null && !parentPartOfs.isEmpty()) {
@@ -276,6 +278,15 @@ public class OboToModelMapping
      */
     private void flatten(String oboTerm) {
 
+        // process children of this term first
+        // can't do this, `Exception in thread "main" java.lang.StackOverflowError`
+        //        if (parentNamesToChildNames.get(oboTerm) != null) {
+        //            Set<String> children = new HashSet(parentNamesToChildNames.get(oboTerm));
+        //            for (String child : children) {
+        //                flatten(child);
+        //            }
+        //        }
+
         Set<String> parents = childToParents.get(oboTerm);
         Set<String> kids = parentToChildren.get(oboTerm);
 
@@ -342,9 +353,7 @@ public class OboToModelMapping
     }
 
     private void debugOutput(String oboTerm, String err) {
-        if (!DEBUG) {
-            return;
-        } else {
+        if (DEBUG) {
             err += " " + oboTerm + " Valid terms count: " + validOboTerms.size();
             System.out .println(err);
         }
