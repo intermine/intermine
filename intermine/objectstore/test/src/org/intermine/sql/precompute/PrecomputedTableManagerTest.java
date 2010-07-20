@@ -51,6 +51,7 @@ public class PrecomputedTableManagerTest extends TestCase
         q1.addOrderBy(f1);
 
         Connection con = database.getConnection();
+        con.setAutoCommit(false);
         pt1 = new PrecomputedTable(q1, q1.getSQLString(), "precomp1", "test", con);
         con.close();
     }
@@ -58,6 +59,7 @@ public class PrecomputedTableManagerTest extends TestCase
     protected void createTable() throws Exception {
         // Set up some tables in the database
         Connection con = database.getConnection();
+        con.setAutoCommit(false);
         Statement stmt = con.createStatement();
         stmt.addBatch("CREATE TABLE tabletest(col1 int, col2 int)");
         for (int i = 1; i<100; i++) {
@@ -71,6 +73,7 @@ public class PrecomputedTableManagerTest extends TestCase
 
     protected void deleteTable() throws Exception {
         Connection con = database.getConnection();
+        con.setAutoCommit(false);
         Statement stmt = con.createStatement();
         stmt.addBatch("DROP TABLE tabletest");
         stmt.addBatch("DROP TABLE precompute_index");
@@ -140,6 +143,7 @@ public class PrecomputedTableManagerTest extends TestCase
     public void testAddDelete() throws Exception {
         synchronized (pt1) {
             Connection con = database.getConnection();
+            con.setAutoCommit(false);
             PrecomputedTableManager ptm = new PrecomputedTableManager(database);
             try {
                 createTable();
@@ -163,6 +167,7 @@ public class PrecomputedTableManagerTest extends TestCase
     public void testAddDeleteWithConnection() throws Exception {
         synchronized (pt1) {
             Connection con = database.getConnection();
+            con.setAutoCommit(false);
             PrecomputedTableManager ptm = new PrecomputedTableManager(con);
             try {
                 createTable();
@@ -185,6 +190,7 @@ public class PrecomputedTableManagerTest extends TestCase
 
     public void testAddInvalid() throws Exception {
         Connection c = database.getConnection();
+        c.setAutoCommit(false);
         PrecomputedTableManager ptm = new PrecomputedTableManager(database);
         try {
             ptm.add(new PrecomputedTable(new Query("select table.blah from table"), "select table.blah from table", "precomp1", null, c));
@@ -197,6 +203,7 @@ public class PrecomputedTableManagerTest extends TestCase
 
     public void testDeleteInvalid() throws Exception {
         Connection c = database.getConnection();
+        c.setAutoCommit(false);
         PrecomputedTableManager ptm = new PrecomputedTableManager(database);
         try {
             ptm.delete(new PrecomputedTable(new Query(), "", "tablenotthere", null, c));
@@ -250,6 +257,7 @@ public class PrecomputedTableManagerTest extends TestCase
     public void testAddMultiple() throws Exception {
         synchronized (pt1) {
             Connection con = database.getConnection();
+            con.setAutoCommit(false);
             PrecomputedTableManager ptm = new PrecomputedTableManager(database);
             try {
                 createTable();
@@ -279,6 +287,7 @@ public class PrecomputedTableManagerTest extends TestCase
     public void testOrderDescending() throws Exception {
         Query q = new Query("SELECT employee.age FROM employee ORDER BY employee.age DESC");
         Connection con = database.getConnection();
+        con.setAutoCommit(false);
         PrecomputedTableManager ptm = new PrecomputedTableManager(database);
         try {
             PrecomputedTable pt2 = new PrecomputedTable(q, q.getSQLString(), "precomp3", "test", con);

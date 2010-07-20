@@ -78,6 +78,7 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
 
     protected void setUpData() throws Exception {
         Connection con = getDatabase().getConnection();
+        con.setAutoCommit(false);
         Statement stmt = con.createStatement();
         try {
             stmt.execute("DROP TABLE table1");
@@ -163,6 +164,7 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
     // Add some precomputed tables into the database
     public void setUpPrecomputedTables() throws Exception {
         Connection con = getDatabase().getConnection();
+        con.setAutoCommit(false);
         precomps.put("precomp_countTable2", "SELECT table2.col2 AS table2_col2, count(*) AS c FROM table2 GROUP BY table2.col2 ORDER BY table2.col2");
         precomps.put("precomp_avgTable2Table3", "SELECT table2.col1 AS table2_col1, avg(table2.col2 + table3.col2) AS a FROM table2, table3 WHERE table2.col1 = table3.col1 GROUP BY table2.col1 ORDER BY table2.col1");
         precomps.put("precomp_table2Table3onCol2", "SELECT table2.col1 AS table2_col1, table2.col2 AS table2_col2, table3.col1 AS table3_col1, table3.col2 AS table3_col2 FROM table2, table3 WHERE table2.col2 = table3.col2 ORDER BY table2.col1, table2.col2, table3.col1, table3.col2");
@@ -192,6 +194,7 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
 
     public void tearDownData() throws Exception {
         Connection con = getDatabase().getConnection();
+        con.setAutoCommit(false);
         Statement stmt = con.createStatement();
         stmt.addBatch("DROP TABLE table1");
         stmt.addBatch("DROP TABLE table2");
@@ -258,12 +261,14 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         try {
             // The original query
             con1 = getDatabase().getConnection();
+            con1.setAutoCommit(false);
             Statement stmt1 = con1.createStatement();
             sql = q1.getSQLString();
             ResultSet rs1 = stmt1.executeQuery(q1.getSQLString());
 
             // The optimised query
             con2 = getDatabase().getConnection();
+            con2.setAutoCommit(false);
             Statement stmt2 = con2.createStatement();
             sql = q2.getSQLString();
             ResultSet rs2 = stmt2.executeQuery(q2.getSQLString());

@@ -124,8 +124,7 @@ public class DataTracker
         s = conn.createStatement();
         s.execute("create table tracker (objectid int, fieldname text, sourcename text,"
                 + " version int)");
-        s.execute("create index tracker_objectid on tracker (objectid);");
-        conn.commit();
+        s.execute("create index tracker_objectid on tracker (objectid)");
     }
 
     /**
@@ -543,7 +542,7 @@ public class DataTracker
             if (s == null) {
                 dos.writeShort(-1); // No more tuples
                 dos.flush();
-                copyManager.copyInQuery("COPY tracker FROM STDIN BINARY",
+                copyManager.copyIn("COPY tracker FROM STDIN BINARY",
                         new ByteArrayInputStream(baos.toByteArray()));
             } else {
                 s.executeBatch();
