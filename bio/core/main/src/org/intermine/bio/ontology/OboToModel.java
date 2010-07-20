@@ -171,8 +171,10 @@ public class OboToModel
                     String partOfName = oboToModelMapping.getName(partof);
                     String fullyQualifiedClassName = TypeUtil.generateClassName(
                             oboToModelMapping.getNamespace(), partOfName);
-                    CollectionDescriptor cd = new CollectionDescriptor(
-                        TypeUtil.javaiseClassName(partOfName) + "s", fullyQualifiedClassName, null);
+                    String collectionName = TypeUtil.javaiseClassName(partOfName) + "s";
+                    collectionName = StringUtil.decapitalise(collectionName);
+                    CollectionDescriptor cd = new CollectionDescriptor(collectionName,
+                            fullyQualifiedClassName, null);
                     collections.add(cd);
                 }
             }
