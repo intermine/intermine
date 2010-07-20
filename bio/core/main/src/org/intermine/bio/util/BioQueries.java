@@ -13,6 +13,9 @@ package org.intermine.bio.util;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -23,12 +26,6 @@ import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-
-import org.intermine.model.bio.Location;
 
 /**
  * Bio utility methods for queries.
@@ -74,7 +71,13 @@ public abstract class BioQueries
         if (orderBySubject) {
             q.addToOrderBy(qcSub);
         }
-        QueryClass qcLoc = new QueryClass(Location.class);
+        Class<?> locationCls;
+        try {
+            locationCls = Class.forName("org.intermine.model.bio.Location");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        QueryClass qcLoc = new QueryClass(locationCls);
         q.addFrom(qcLoc);
         q.addToSelect(qcLoc);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);

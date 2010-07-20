@@ -1,4 +1,4 @@
-package org.intermine.bio.util;
+package org.intermine.bio.postprocess;
 
 /*
  * Copyright (C) 2002-2010 FlyMine
