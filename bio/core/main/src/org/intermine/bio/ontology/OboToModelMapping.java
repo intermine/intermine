@@ -147,7 +147,8 @@ public class OboToModelMapping
                 continue;
             }
             String relationshipType = r.getRelationship().getName();
-            if (relationshipType.equals("part_of") && r.direct) {
+            if ((relationshipType.equals("part_of") || relationshipType.equals("member_of"))
+                    && r.direct) {
                 Set<String> colls = partOfs.get(child);
                 if (colls == null) {
                     colls = new HashSet<String>();
@@ -169,15 +170,10 @@ public class OboToModelMapping
         for (OboRelation r : oboRelations) {
             String child = r.childTermId;
             String parent = r.parentTermId;
-            assignPartOfsToChild(r.getRelationship().getName(), r.direct, parent, child);
-
-            // keep going up the tree
-            Set<String> grandparents = childToParents.get(parent);
-            if (grandparents == null || grandparents.isEmpty()) {
-                continue;
-            }
-            for (String grandparent : grandparents) {
-                assignPartOfsToChild(r.relationship.getName(), r.direct, grandparent, child);
+            String relationshipType = r.getRelationship().getName();
+            if ((relationshipType.equals("part_of") || relationshipType.equals("member_of"))
+                    && r.direct) {
+                assignPartOfsToChild(parent, child);
             }
         }
 
@@ -186,19 +182,22 @@ public class OboToModelMapping
         }
     }
 
-    private void assignPartOfsToChild(String relationshipType, Boolean directRelationship,
-            String parent, String child) {
-        if (relationshipType.equals("part_of") && directRelationship) {
-            Set<String> parentPartOfs = partOfs.get(parent);
-            if (parentPartOfs == null || parentPartOfs.isEmpty()) {
-                return;
-            }
+    private void assignPartOfsToChild (String parent, String child) {
+        Set<String> parentPartOfs = partOfs.get(parent);
+        if (parentPartOfs != null && !parentPartOfs.isEmpty()) {
             Set<String> childPartOfs = partOfs.get(child);
             if (childPartOfs == null) {
                 childPartOfs = new HashSet<String>();
                 partOfs.put(child, childPartOfs);
             }
             childPartOfs.addAll(parentPartOfs);
+        }
+        // keep going up the tree
+        Set<String> grandparents = childToParents.get(parent);
+        if (grandparents != null && !grandparents.isEmpty()) {
+            for (String grandparent : grandparents) {
+                assignPartOfsToChild(grandparent, child);
+            }
         }
     }
 
