@@ -139,10 +139,10 @@ public class Database implements Shutdownable
         }
         LOG.info("Database " + getURL() + "(" + toString() + ") has " + totalConnections
                 + " connections, of which " + activeConnections + " are active");*/
-        if (datasource instanceof org.postgresql.jdbc3.Jdbc3PoolingDataSource) {
+        if (datasource instanceof org.postgresql.ds.PGPoolingDataSource) {
             LOG.info("Shutdown - Closing datasource for Database " + getURL() + "(" + toString()
                     + ") with ClassLoader " + getClass().getClassLoader());
-            ((org.postgresql.jdbc3.Jdbc3PoolingDataSource) datasource).close();
+            ((org.postgresql.ds.PGPoolingDataSource) datasource).close();
         } else if (datasource instanceof org.postgresql.jdbc2.optional.PoolingDataSource) {
             LOG.info("Shutdown - Closing datasource for Database " + getURL() + "(" + toString()
                     + ") with ClassLoader " + getClass().getClassLoader());
@@ -159,10 +159,10 @@ public class Database implements Shutdownable
      */
     public void finalize() throws Throwable {
         super.finalize();
-        if (datasource instanceof org.postgresql.jdbc3.Jdbc3PoolingDataSource) {
+        if (datasource instanceof org.postgresql.ds.PGPoolingDataSource) {
             LOG.info("Finalise - Closing datasource for Database " + getURL() + "(" + toString()
                     + ") with ClassLoader " + getClass().getClassLoader());
-            ((org.postgresql.jdbc3.Jdbc3PoolingDataSource) datasource).close();
+            ((org.postgresql.ds.PGPoolingDataSource) datasource).close();
         } else if (datasource instanceof org.postgresql.jdbc2.optional.PoolingDataSource) {
             LOG.info("Finalise - Closing datasource for Database " + getURL() + "(" + toString()
                     + ") with ClassLoader " + getClass().getClassLoader());

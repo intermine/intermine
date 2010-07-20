@@ -176,6 +176,10 @@ public class ResultsConverter
                             } else {
                                 currentColumn = DynamicUtil.composeClass(classes);
                             }
+                        } else if (Short.class.equals(node.getType())
+                                && (currentColumn instanceof Integer)) {
+                            int i = ((Integer) currentColumn).intValue();
+                            currentColumn = new Short((short) i);
                         }
                         row.add(currentColumn);
                     }
@@ -290,8 +294,12 @@ public class ResultsConverter
                 //long time3 = System.currentTimeMillis();
                 Object value = sqlResults.getObject(alias + DatabaseUtil.getColumnName(fd));
                 //timeSpentSql += System.currentTimeMillis() - time3;
-                if ((value instanceof Long) && Date.class.equals(retval.getFieldType(fieldName))) {
+                Class<?> expectedType = retval.getFieldType(fieldName);
+                if ((value instanceof Long) && Date.class.equals(expectedType)) {
                     value = new Date(((Long) value).longValue());
+                } else if ((value instanceof Integer) && (Short.class.equals(expectedType)
+                        || Short.TYPE.equals(expectedType))) {
+                    value = new Short((short) ((Integer) value).intValue());
                 }
                 try {
                     retval.setFieldValue(fieldName, value);
