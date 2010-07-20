@@ -1,9 +1,5 @@
 <?xml version="1.0"?>
 <classes>
-<class name="SequenceFeature" is-interface="true">
-  <attribute name="score" type="java.lang.String"/>
-  <attribute name="scoreType" type="java.lang.String"/>
-</class>
 <class name="PCRProduct" extends="Region" is-interface="true">
   <attribute name="promoter" type="java.lang.Boolean"/>
   <reference name="tilingPathSpan" referenced-type="TilingPathSpan" reverse-reference="pcrProducts"/>
