@@ -270,6 +270,22 @@ public class Model
     }
 
     /**
+     * Used to generate the SO additions file
+     * @return the model as an additions file
+     */
+    public String toAdditionsXML() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<?xml version=\"1.0\"?>"  + ENDL + "<classes>" + ENDL);
+        for (ClassDescriptor cld : getClassDescriptors()) {
+            if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
+                sb.append(cld.toString());
+            }
+        }
+        sb.append("</classes>");
+        return sb.toString();
+    }
+
+    /**
      * Takes a Class, and generates a Set of all ClassDescriptors that are the Class
      * or any of its parents. The Class may be a dynamic class - ie not in the model, although
      * at least one of its parents are in the model.
