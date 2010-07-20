@@ -155,12 +155,7 @@ public class OboToModelMapping
             String relationshipType = r.getRelationship().getName();
             if ((relationshipType.equals("part_of") || relationshipType.equals("member_of"))
                     && r.direct) {
-                Set<String> colls = partOfs.get(child);
-                if (colls == null) {
-                    colls = new HashSet<String>();
-                    partOfs.put(child, colls);
-                }
-                colls.add(parent);
+                assignPartOfs(parent, child);
             } else if (relationshipType.equals("is_a") && r.direct) {
                 Set<String> parents = childToParents.get(child);
                 if (parents == null) {
@@ -188,7 +183,20 @@ public class OboToModelMapping
         }
     }
 
-    private void assignPartOfsToChild (String parent, String child) {
+    // loop through all terms above this one and assign their collections to this term
+    private void assignPartOfsToChild(String parent, String child) {
+        assignPartOfs(parent, child);
+        // keep going up the tree
+        Set<String> grandparents = childToParents.get(parent);
+        if (grandparents != null && !grandparents.isEmpty()) {
+            for (String grandparent : grandparents) {
+                assignPartOfsToChild(grandparent, child);
+            }
+        }
+    }
+
+    // assign parents' collections to child term
+    private void assignPartOfs(String parent, String child) {
         Set<String> parentPartOfs = partOfs.get(parent);
         if (parentPartOfs != null && !parentPartOfs.isEmpty()) {
             Set<String> childPartOfs = partOfs.get(child);
@@ -197,13 +205,6 @@ public class OboToModelMapping
                 partOfs.put(child, childPartOfs);
             }
             childPartOfs.addAll(parentPartOfs);
-        }
-        // keep going up the tree
-        Set<String> grandparents = childToParents.get(parent);
-        if (grandparents != null && !grandparents.isEmpty()) {
-            for (String grandparent : grandparents) {
-                assignPartOfsToChild(grandparent, child);
-            }
         }
     }
 
@@ -275,15 +276,6 @@ public class OboToModelMapping
      */
     private void flatten(String oboTerm) {
 
-        // process children of this term first
-        // can't do this, `Exception in thread "main" java.lang.StackOverflowError`
-        //        if (parentNamesToChildNames.get(oboTerm) != null) {
-        //            Set<String> children = new HashSet(parentNamesToChildNames.get(oboTerm));
-        //            for (String child : children) {
-        //                flatten(child);
-        //            }
-        //        }
-
         Set<String> parents = childToParents.get(oboTerm);
         Set<String> kids = parentToChildren.get(oboTerm);
 
@@ -306,6 +298,7 @@ public class OboToModelMapping
                 // add parent to new children
                 for (String kid : kids) {
                     Set<String> otherParents = childToParents.get(kid);
+                    assignPartOfs(oboTerm, kid);
                     otherParents.remove(oboTerm);
                     otherParents.add(parent);
                 }
@@ -320,6 +313,9 @@ public class OboToModelMapping
 
                 // add parents to new kid
                 childToParents .get(kid).addAll(parents);
+
+                // pass down any relationships before parent term is removed from tree
+                assignPartOfs(oboTerm, kid);
 
                 // reassign parents to new kid
                 for (String parent : parents) {
