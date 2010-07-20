@@ -39,6 +39,11 @@ public class OboToModelMapping
     // contains ALL non-obsolete terms.  key = sequence_feature, value = SO:001
     private Map<String, String> oboNameToIdentifier = new HashMap<String, String>();
 
+    // special case, we ALWAYS need sequence feature.  never delete!
+    private static final String SEQUENCE_FEATURE = "SO:0000110";
+
+    private static final boolean DEBUG = false;
+
     /**
      * Constructor.
      *
@@ -90,7 +95,8 @@ public class OboToModelMapping
             return false;
         }
         String oboName = o.getOboTermName();
-        if (termsToKeep.isEmpty() || termsToKeep.contains(oboName)) {
+        if (termsToKeep.isEmpty() || termsToKeep.contains(oboName)
+                || SEQUENCE_FEATURE.equals(identifier)) {
             return true;
         }
         return false;
@@ -300,7 +306,6 @@ public class OboToModelMapping
                 // add parent to new children
                 for (String kid : kids) {
                     Set<String> otherParents = childToParents.get(kid);
-                    transferPartOfs(oboTerm, kid);
                     otherParents.remove(oboTerm);
                     otherParents.add(parent);
                 }
@@ -315,9 +320,6 @@ public class OboToModelMapping
 
                 // add parents to new kid
                 childToParents .get(kid).addAll(parents);
-
-                // pass down any relationships before parent term is removed from tree
-                transferPartOfs(oboTerm, kid);
 
                 // reassign parents to new kid
                 for (String parent : parents) {
@@ -344,19 +346,12 @@ public class OboToModelMapping
     }
 
     private void debugOutput(String oboTerm, String err) {
-        err += " " + oboTerm + " Valid terms count: " + validOboTerms.size();
-        System.out .println(err);
-    }
-
-    // pass down any relationships before parent term is removed from tree
-    // parent will be removed from partOf map in removeTerm() - only after all children have
-    // been processed
-    private void transferPartOfs(String parentOboTerm, String childOboTerm) {
-        Set<String> parentPartOfs = partOfs.get(parentOboTerm);
-        if (parentPartOfs == null || parentPartOfs.isEmpty()) {
+        if (!DEBUG) {
             return;
+        } else {
+            err += " " + oboTerm + " Valid terms count: " + validOboTerms.size();
+            System.out .println(err);
         }
-        partOfs.put(childOboTerm, new HashSet<String>(parentPartOfs));
     }
 
     // remove term from every map
