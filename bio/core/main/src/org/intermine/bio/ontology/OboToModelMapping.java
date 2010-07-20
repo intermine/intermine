@@ -156,6 +156,7 @@ public class OboToModelMapping
             if ((relationshipType.equals("part_of") || relationshipType.equals("member_of"))
                     && r.direct) {
                 assignPartOf(parent, child);
+                assignPartOf(child, parent);
             } else if (relationshipType.equals("is_a") && r.direct) {
                 Set<String> parents = childToParents.get(child);
                 if (parents == null) {
@@ -180,6 +181,11 @@ public class OboToModelMapping
         if (!termsToKeep.isEmpty()) {
             trimModel();
         }
+
+        // remove tRNA.genes if Transcript.genes exists
+        removeRedundantCollections();
+
+        setReverseReferences();
     }
 
     private void assignPartOf(String parent, String child) {
@@ -191,7 +197,7 @@ public class OboToModelMapping
         colls.add(parent);
     }
 
-    private void assignPartOfsToChild (String parent, String child) {
+    private void assignPartOfsToChild(String parent, String child) {
         transferPartOfs(parent, child);
         // keep going up the tree
         Set<String> grandparents = childToParents.get(parent);
@@ -341,6 +347,47 @@ public class OboToModelMapping
             debugOutput(oboTerm, "Flattening [no children]");
         }
     }
+
+    // make sure collection is at the highest level term
+    // eg. Gene.transcripts should mean that Gene.mRNAs never happens
+    private void removeRedundantCollections() {
+        for (String parent : validOboTerms.keySet()) {
+            Set<String> collections = partOfs.get(parent);
+            if (collections != null) {
+                for (String collectionName : collections) {
+                    removeCollection(parent, collectionName);
+                }
+            }
+        }
+    }
+
+    // make sure collection is at the highest level term
+    // eg. Gene.transcripts should mean that Gene.mRNAs never happens
+    private void removeCollection(String parent, String collectionName) {
+        Set<String> children = parentToChildren.get(parent);
+        if (children == null) {
+            return;
+        }
+        for (String child : children) {
+            Set<String> childCollections = partOfs.get(child);
+            if (childCollections != null) {
+                childCollections.remove(collectionName);
+            }
+            removeCollection(child, collectionName);
+        }
+    }
+
+    private void setReverseReferences() {
+        for (Map.Entry<String, Set<String>> entry : partOfs.entrySet()) {
+            String oboTerm = entry.getKey();
+            Set<String> colls = new HashSet<String>(entry.getValue());
+            for (String collectionName : colls) {
+                // for every collection
+                assignPartOf(oboTerm, collectionName);
+            }
+        }
+    }
+
 
     private void debugOutput(String oboTerm, String err) {
         if (DEBUG) {
