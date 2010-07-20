@@ -1,67 +1,63 @@
 <?xml version="1.0"?>
 <classes>
-<class name="Allele" is-interface="true"></class>
+<class name="Allele" extends="SequenceCollection" is-interface="true"></class>
 <class name="Assembly" extends="Region" is-interface="true"></class>
-<class name="BAC" extends="Region" is-interface="true">
-    <collection name="Clones" referenced-type="Clone"/>
-</class>
 <class name="BindingSite" extends="Region" is-interface="true"></class>
-<class name="CDNAClone" extends="Clone" is-interface="true"></class>
-<class name="CDS" extends="Region" is-interface="true">
-    <collection name="Transcripts" referenced-type="Transcript"/>
-</class>
+<class name="CDNAClone" extends="Clone" is-interface="true"/>
+<class name="CDS" extends="Region" is-interface="true"><collection name="Transcripts" referenced-type="Transcript"/></class>
+<class name="CRM" extends="RegulatoryRegion" is-interface="true"></class>
 <class name="ChromosomalDeletion" extends="ChromosomeStructureVariation" is-interface="true"></class>
 <class name="ChromosomalDuplication" extends="ChromosomeStructureVariation" is-interface="true"></class>
 <class name="ChromosomalInversion" extends="ChromosomeStructureVariation" is-interface="true"></class>
-<class name="ChromosomalStructuralElement" extends="Region" is-interface="true">
-    <collection name="Chromosomes" referenced-type="Chromosome"/>
-</class>
+<class name="ChromosomalStructuralElement" extends="Region" is-interface="true"><collection name="Chromosomes" referenced-type="Chromosome"/></class>
 <class name="ChromosomalTranslocation" extends="ChromosomeStructureVariation" is-interface="true"></class>
+<class name="ChromosomalTransposition" extends="ChromosomeStructureVariation" is-interface="true"/>
 <class name="Chromosome" extends="Region" is-interface="true"></class>
-<class name="ChromosomeArm" extends="Region" is-interface="true">
-    <collection name="Chromosomes" referenced-type="Chromosome"/>
-</class>
-<class name="ChromosomeBand" extends="Region" is-interface="true">
-    <collection name="Chromosomes" referenced-type="Chromosome"/>
-</class>
-<class name="ChromosomeStructureVariation" is-interface="true"></class>
+<class name="ChromosomeArm" extends="Region" is-interface="true"><collection name="Chromosomes" referenced-type="Chromosome"/></class>
+<class name="ChromosomeBand" extends="Region" is-interface="true"><collection name="Chromosomes" referenced-type="Chromosome"/></class>
+<class name="ChromosomeStructureVariation" extends="SequenceCollection" is-interface="true"></class>
 <class name="Clone" extends="Region" is-interface="true"></class>
-<class name="CRM" extends="RegulatoryRegion" is-interface="true"></class>
-<class name="CrossGenomeMatch" extends="Region" is-interface="true"></class>
-<class name="Enhancer" extends="CRM" is-interface="true"></class>
 <class name="EST" extends="Oligo" is-interface="true"></class>
-<class name="Exon" extends="Region" is-interface="true">
-    <collection name="Transcripts" referenced-type="Transcript"/>
-</class>
-<class name="FivePrimeUTR" extends="UTR" is-interface="true"></class>
+<class name="Enhancer" extends="CRM" is-interface="true"></class>
+<class name="Exon" extends="Region" is-interface="true"><collection name="Transcripts" referenced-type="Transcript"/></class>
+<class name="FivePrimeUTR" extends="UTR" is-interface="true"/>
 <class name="ForwardPrimer" extends="Primer" is-interface="true"></class>
 <class name="Gene" extends="Region" is-interface="true"></class>
 <class name="GoldenPathFragment" extends="Region" is-interface="true"></class>
-<class name="InsertionSite" is-interface="true"></class>
-<class name="Intron" extends="Region" is-interface="true">
-    <collection name="Transcripts" referenced-type="Transcript"/>
-</class>
-<class name="MicroarrayOligo" extends="Oligo" is-interface="true"></class>
+<class name="InsertionSite" extends="SequenceFeature" is-interface="true"></class>
+<class name="IntergenicRegion" extends="Region" is-interface="true"></class>
+<class name="Intron" extends="Region" is-interface="true"><collection name="Transcripts" referenced-type="Transcript"/></class>
+<class name="MRNA" extends="Transcript" is-interface="true"/>
+<class name="MiRNA" extends="Transcript" is-interface="true"/>
+<class name="MicroArrayOligo" extends="Oligo" is-interface="true"/>
 <class name="MobileGeneticElement" extends="Region" is-interface="true"></class>
-<class name="MRNA" extends="Transcript" is-interface="true"></class>
 <class name="NaturalTransposableElement" extends="TransposableElement" is-interface="true"></class>
 <class name="NcRNA" extends="Transcript" is-interface="true"></class>
 <class name="Oligo" extends="Region" is-interface="true"></class>
-<class name="PCRProduct" extends="Region" is-interface="true"></class>
+<class name="OverlappingESTSet" extends="Region" is-interface="true"></class>
+<class name="PCRProduct" extends="Region" is-interface="true"/>
+<class name="PointMutation" extends="Region" is-interface="true"></class>
 <class name="Primer" extends="Oligo" is-interface="true"></class>
+<class name="Promoter" extends="RegulatoryRegion" is-interface="true"></class>
 <class name="ProteinBindingSite" extends="BindingSite" is-interface="true"></class>
 <class name="Pseudogene" extends="Region" is-interface="true"></class>
-<class name="Region" is-interface="true"></class>
+<class name="RrNA" extends="NcRNA" is-interface="true"/>
+<class name="Region" extends="SequenceFeature" is-interface="true"></class>
 <class name="RegulatoryRegion" extends="Region" is-interface="true"></class>
 <class name="ReversePrimer" extends="Primer" is-interface="true"></class>
+<class name="SnoRNA" extends="NcRNA" is-interface="true"/>
+<class name="SnRNA" extends="NcRNA" is-interface="true"/>
+<class name="SequenceCollection" is-interface="true"></class>
+<class name="SequenceFeature" is-interface="true"></class>
 <class name="SequenceVariant" is-interface="true"></class>
+<class name="Substitution" extends="Region" is-interface="true"></class>
 <class name="SyntenicRegion" extends="Region" is-interface="true"></class>
-<class name="TFBindingSite" extends="ProteinBindingSite RegulatoryRegion" is-interface="true"></class>
-<class name="ThreePrimeUTR" extends="UTR" is-interface="true"></class>
+<class name="SnRNA" extends="NcRNA" is-interface="true"/>
+<class name="TrRNA" extends="NcRNA" is-interface="true"/>
+<class name="TFBindingSite" extends="ProteinBindingSite" is-interface="true"/>
+<class name="ThreePrimeUTR" extends="UTR" is-interface="true"/>
 <class name="Transcript" extends="Region" is-interface="true"></class>
 <class name="TransposableElement" extends="MobileGeneticElement" is-interface="true"></class>
 <class name="TransposableElementInsertionSite" extends="InsertionSite" is-interface="true"></class>
-<class name="UTR" extends="Region" is-interface="true">
-    <collection name="Transcripts" referenced-type="Transcript"/>
-</class>
+<class name="UTR" extends="Region" is-interface="true"><collection name="Transcripts" referenced-type="Transcript"/></class>
 </classes>

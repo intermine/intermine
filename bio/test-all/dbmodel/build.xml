@@ -1,6 +1,6 @@
 
 <project name="genomic-test-dbmodel" default="default" basedir=".">
-  
+
   <description>represents the production objectstore and the model therein</description>
   <import file="../../../imbuild/objectstore.xml"/>
 
@@ -41,10 +41,10 @@
     <merge-additions file="bio/sources/biogrid/biogrid_additions.xml"/>
 <!-- temporarily ignore
     <merge-additions file="bio/sources/flymine/experimental/biogrid-human/biogrid-human_additions.xml"/>
-    <merge-additions file="bio/sources/flymine/experimental/pride/pride_additions.xml"/> 
+    <merge-additions file="bio/sources/flymine/experimental/pride/pride_additions.xml"/>
+    <merge-additions file="bio/sources/omim/omim_additions.xml"/>
 -->
     <merge-additions file="bio/sources/miranda/miranda_additions.xml"/>
-    <merge-additions file="bio/sources/omim/omim_additions.xml"/>
     <merge-additions file="bio/sources/biopax/biopax_additions.xml"/>
     <merge-additions file="bio/sources/treefam/treefam_additions.xml"/>
     <merge-additions file="bio/sources/interpro-go/interpro-go_additions.xml"/>
