@@ -11,8 +11,8 @@
     <attribute name="secondaryIdentifier" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
     <reference name="organism" referenced-type="Organism"/>
-    <collection name="locatedFeatures" referenced-type="BioEntity" />
-    <collection name="locations" referenced-type="BioEntity" />
+    <collection name="locatedFeatures" referenced-type="Location" reverse-reference="locatedOn"/>
+    <collection name="locations" referenced-type="Location" reverse-reference="feature" />
     <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject"/>
     <collection name="synonyms" referenced-type="Synonym" reverse-reference="subject"/>
     <collection name="dataSets" referenced-type="DataSet" reverse-reference="bioEntities"/>
@@ -153,6 +153,7 @@
     <reference name="chromosome" referenced-type="Chromosome"/>
     <reference name="chromosomeLocation" referenced-type="Location" />   
     <collection name="overlappingFeatures" referenced-type="SequenceFeature" />
+    <collection name="sequenceOntologyTerm" referenced-type="SOTerm"/>    
   </class>
 
   <class name="Synonym" is-interface="true">
