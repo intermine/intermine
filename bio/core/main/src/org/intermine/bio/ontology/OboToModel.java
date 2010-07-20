@@ -131,7 +131,7 @@ public class OboToModel
         } catch (IOException e) {
             throw new RuntimeException("Couldn't create new model file", e);
         }
-        out.println(model);
+        out.println(model.toAdditionsXML());
         out.flush();
         out.close();
         System.out .println("Wrote " + outputFile.getPath());
