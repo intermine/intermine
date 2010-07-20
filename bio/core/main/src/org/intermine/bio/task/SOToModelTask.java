@@ -24,26 +24,28 @@ import org.intermine.bio.ontology.OboToModel;
 
 public class SOToModelTask extends Task
 {
-    private File soFile, soTermsInModelFile, outputFile;
+    private File soFile, soTermListFile, outputFile;
 
     /**
      * Sets the File containing the SO OBO data.
      *
-     * @param soFile an SO OBO file
+     * @param soFile the SO OBO file
      */
     public void setSoFile(File soFile) {
         this.soFile = soFile;
     }
 
     /**
-     * @param soTermsInModelFile file containing list of SO terms needed for this model
+     * Set the file containing a list of SO terms to be added to the data model.
+     * @param soTermListFile file containing list of SO terms
      */
-    public void setSoTermsInModelFile(File soTermsInModelFile) {
-        this.soTermsInModelFile = soTermsInModelFile;
+    public void setSoTermListFile(File soTermListFile) {
+        this.soTermListFile = soTermListFile;
     }
 
     /**
-     * @param outputFile the additions file - where data is going to be written to
+     * Set the output file to write generated additions XML to.
+     * @param outputFile the additions file that will be generated
      */
     public void setOutputFile(File outputFile) {
         this.outputFile = outputFile;
@@ -53,18 +55,18 @@ public class SOToModelTask extends Task
      * {@inheritDoc}
      */
     public void execute() {
-        if (soTermsInModelFile == null) {
-            throw new BuildException("No filename specified for SO terms to add to the model,"
-                    + " check the project.properties file.");
+        if (soTermListFile == null || !soTermListFile.exists()) {
+            throw new BuildException("Could not find file containing SO terms to add to the model,"
+                    + " check the project.properties file. Property was: " + soTermListFile);
         }
-        if (soFile == null) {
-            throw new BuildException("No Sequence Ontlogy .obo filename specified, check the"
-                    + " project.properties file");
+        if (soFile == null || !soFile.exists()) {
+            throw new BuildException("Could not find Sequence Ontology .obo file, check the"
+                    + " project.properties file. Property was: " + soFile);
         }
 
         try {
             OboToModel.createAndWriteModel("so", soFile.getCanonicalPath(),
-                    "org.intermine.model.bio", soTermsInModelFile, outputFile);
+                    "org.intermine.model.bio", soTermListFile, outputFile);
         } catch (Exception e) {
             throw new BuildException(e);
         }

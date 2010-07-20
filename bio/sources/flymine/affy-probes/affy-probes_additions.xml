@@ -4,7 +4,6 @@
   <attribute name="description" type="java.lang.String"/>
   <collection name="genes" referenced-type="Gene" reverse-reference="probeSets"/>
   <collection name="transcripts" referenced-type="Transcript" reverse-reference="probeSets"/>
-  <collection name="locations" referenced-type="Location"  />
 </class>
 <class name="Gene" is-interface="true">
   <collection name="probeSets" referenced-type="ProbeSet" reverse-reference="genes"/>

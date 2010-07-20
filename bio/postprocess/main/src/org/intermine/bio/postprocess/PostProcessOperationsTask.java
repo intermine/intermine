@@ -20,7 +20,6 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.intermine.bio.util.LinkInTask;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Transcript;
@@ -100,7 +99,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
      * {@inheritDoc}
      */
     @Override
-    public void execute() throws BuildException {
+    public void execute() {
         if (operation == null) {
             throw new BuildException("operation attribute is not set");
         }
@@ -248,7 +247,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 BiosegIndexTask bit = new BiosegIndexTask(getObjectStoreWriter());
                 bit.createIndex();
             } else if ("link-ins".equals(operation)) {
-                LinkInTask.execute(getObjectStoreWriter());
+                CreateFlyBaseLinkIns.createLinkInFile(getObjectStoreWriter().getObjectStore());
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }

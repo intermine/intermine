@@ -1,4 +1,4 @@
-package org.intermine.bio.util;
+package org.intermine.bio.web.export;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,11 +10,11 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.intermine.bio.io.gff3.GFF3Record;
-import org.intermine.util.DynamicUtil;
 import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Exon;
+import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Location;
+import org.intermine.util.DynamicUtil;
 
 
 /**

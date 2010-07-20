@@ -55,6 +55,7 @@
 
   <target name="build-db" depends="-init-build-db,
                                    -define-macrodef-merge-additions,
+                                   -pre-init-merge,
                                    -init-merge,
                                    -merge-models,
                                    compile,
@@ -126,6 +127,9 @@
     <copy file="${objectstore.xml.basedir}/../${core.model.path}/core.xml"
           tofile="${build.model.dir}/${model.name}_model.xml"/>
   </target>
+
+  <!-- Target to override in calling build files if model preparation needed. -->
+  <target name="-pre-init-merge"/>
 
   <target name="-init-extra-models-start" unless="extra.model.paths.start">
     <property name="extra.model.paths.start" value=""/>
