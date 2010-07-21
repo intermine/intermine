@@ -361,8 +361,7 @@ public class OboToModelMapping
         }
     }
 
-    // make sure collection is at the highest level term
-    // eg. Gene.transcripts should mean that Gene.mRNAs never happens
+    // remove collection from children of the specified term
     private void removeCollection(String parent, String collectionName) {
         Set<String> children = parentToChildren.get(parent);
         if (children == null) {
@@ -382,7 +381,6 @@ public class OboToModelMapping
             String oboTerm = entry.getKey();
             Set<String> colls = new HashSet<String>(entry.getValue());
             for (String collectionName : colls) {
-                // for every collection
                 assignPartOf(oboTerm, collectionName);
             }
         }
