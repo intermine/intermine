@@ -159,8 +159,8 @@ ${exp.piSurname}<br>
      <c:set var="urlabels" value=""/>
      <c:set var="flylabels" value=""/>
      <c:set var="wormlabels" value=""/>
-<c:set var="wormTracksCounter" value="" />
-<c:set var="flyTracksCounter" value="" />
+<c:set var="wormTracksCounter" value="0" />
+<c:set var="flyTracksCounter" value="0" />
 
 
      <c:forEach items="${tracks[exp.name]}" var="etrack"  varStatus="status">
