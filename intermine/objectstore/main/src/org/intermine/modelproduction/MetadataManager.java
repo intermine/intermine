@@ -308,7 +308,9 @@ public final class MetadataManager
             try {
                 obj.write(b, off, len);
             } catch (SQLException e) {
-                throw new IOException("Error writing to large object", e);
+                IOException e2 = new IOException("Error writing to large object");
+                e2.initCause(e);
+                throw e2;
             }
         }
 
@@ -320,7 +322,9 @@ public final class MetadataManager
                 con.setAutoCommit(true);
                 con.close();
             } catch (SQLException e) {
-                throw new IOException("Error closing large object", e);
+                IOException e2 = new IOException("Error closing large object");
+                e2.initCause(e);
+                throw e2;
             }
         }
     }
@@ -416,7 +420,9 @@ public final class MetadataManager
             try {
                 return obj.read(b, off, len);
             } catch (SQLException e) {
-                throw new IOException(e);
+                IOException e2 = new IOException("Error reading from database");
+                e2.initCause(e);
+                throw e2;
             }
         }
 
@@ -428,7 +434,9 @@ public final class MetadataManager
                 con.setAutoCommit(true);
                 con.close();
             } catch (SQLException e) {
-                throw new IOException("Error closing large object", e);
+                IOException e2 = new IOException("Error closing large object");
+                e2.initCause(e);
+                throw e2;
             }
         }
     }
