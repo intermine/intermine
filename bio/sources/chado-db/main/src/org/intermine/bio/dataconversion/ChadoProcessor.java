@@ -102,7 +102,7 @@ public abstract class ChadoProcessor
      * @return item id for SO term
      */
     protected String getSoTerm(Item item)
-    throws ObjectStoreException  {
+        throws ObjectStoreException  {
         String soName = null;
         try {
             soName = BioConverterUtil.javaNameToSO(item.getClassName());
