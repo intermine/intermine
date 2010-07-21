@@ -46,7 +46,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-import org.xml.sax.SAXException;
+
 
 /**
  * A processor for the chado sequence module.
@@ -62,7 +62,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     // a map from chado feature id to FeatureData objects, prpulated by processFeatureTable()
     // and used to get object types, Item IDs etc. (see FeatureData)
-    protected Map<Integer, FeatureData> featureMap = new HashMap();
+    protected Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
 
     // we don't configure anything by default, so the process methods do their default actions
     private static final MultiKeyMap DEFAULT_CONFIG = new MultiKeyMap();
@@ -72,7 +72,7 @@ public class SequenceProcessor extends ChadoProcessor
         new HashMap<Integer, Map<String, Integer>>();
 
     // a map from chado pubmed id to item identifier for the publication
-    private Map<Integer, String> publications = new HashMap();
+    private Map<Integer, String> publications = new HashMap<Integer, String>();
 
     // the name of the temporary table we create from the feature table to speed up processing
     private String tempFeatureTableName = null;
@@ -263,7 +263,7 @@ public class SequenceProcessor extends ChadoProcessor
                                            String name, int seqlen, String residues,
                                            String md5checksum, String chadoType,
                                            Integer organismId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
 
         if (featureMap.containsKey(featureId)) {
             return false;
@@ -406,7 +406,7 @@ public class SequenceProcessor extends ChadoProcessor
      */
 
     protected void setGeneSource(Integer imObjectId, String dataSourceName)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         // for gene in modENCODE
         ClassDescriptor cd = getModel().getClassDescriptorByName("Gene");
         if (cd.getFieldDescriptorByName("source") != null) {
@@ -714,9 +714,6 @@ public class SequenceProcessor extends ChadoProcessor
         ResultSet res = getFeatureRelationshipResultSet(connection, subjectFirst);
         Integer lastSubjectId = null;
 
-        // a Map from transcript object id to count of exons
-        Map<Integer, Integer> countMap = new HashMap<Integer, Integer>();
-
         // Map from relation type to Map from object type to FeatureData - used to collect up all
         // the collection/reference information for one subject feature
         Map<String, Map<String, List<FeatureData>>> relTypeMap =
@@ -771,18 +768,6 @@ public class SequenceProcessor extends ChadoProcessor
                                                       featureDataList);
                     }
                     featureDataList.add(objectFeatureData);
-
-                    // special case: collect data for setting Transcript.exonCount
-                    Class<?> objectClass;
-                    try {
-                        objectClass = Class.forName(getModel().getPackageName() + "."
-                                                    + objectFeatureType);
-                    } catch (ClassNotFoundException e) {
-                        final String message =
-                            "can't find class for " + objectFeatureType
-                            + " while processing relation: " + featRelationshipId;
-                        throw new RuntimeException(message);
-                    }
                 } else {
                     if (featureWarnings <= 20) {
                         if (featureWarnings < 20) {
@@ -903,7 +888,7 @@ public class SequenceProcessor extends ChadoProcessor
 
                 if (fds.size() == 0) {
                     if (!loggedMissingCols.contains(subjectInterMineType + relationType)) {
-                        LOG.error("can't find collection for type " + objectClass 
+                        LOG.error("can't find collection for type " + objectClass
                                 + " with relationship " + relationType
                                 + " in " + subjectInterMineType + " (was processing feature "
                                 + chadoSubjectId + ")");
@@ -1020,7 +1005,7 @@ public class SequenceProcessor extends ChadoProcessor
         throws SQLException, ObjectStoreException {
 
         ResultSet res = getDbxrefResultSet(connection);
-        Set<String> existingAttributes = new HashSet();
+        Set<String> existingAttributes = new HashSet<String>();
         Integer currentFeatureId = null;
         int count = 0;
 
@@ -1189,7 +1174,7 @@ public class SequenceProcessor extends ChadoProcessor
      */
     @SuppressWarnings("unused")
     private void processLibraryFeatureTable(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getLibraryFeatureResultSet(connection);
         while (res.next()) {
 
@@ -1211,7 +1196,7 @@ public class SequenceProcessor extends ChadoProcessor
                     // no actions configured for this prop
                     continue;
                 }
-                Set<String> fieldsSet = new HashSet();
+                Set<String> fieldsSet = new HashSet<String>();
 
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
@@ -1238,7 +1223,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException if somethign goes wrong
      */
     protected String makeAnatomyTerm(String identifier)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         // override in subclasses as necessary
         return null;
     }
@@ -1249,7 +1234,7 @@ public class SequenceProcessor extends ChadoProcessor
      */
     @SuppressWarnings("unused")
     private void processLibraryCVTermTable(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getLibraryCVTermResultSet(connection);
 
         while (res.next()) {
@@ -2096,7 +2081,6 @@ public class SequenceProcessor extends ChadoProcessor
      * @param type the synonym type
      * @param identifier the identifier to store in the Synonym
      * @param isPrimary true if the synonym is a primary identifier
-     * @param otherEvidence the evidence collection to store in the Synonym
      * @return the new Synonym
      * @throws ObjectStoreException if there is a problem while storing
      */
@@ -2105,13 +2089,13 @@ public class SequenceProcessor extends ChadoProcessor
         throws ObjectStoreException {
         if (fdat.getExistingSynonyms().contains(identifier)) {
             String msg = "feature identifier " + identifier + " is already a synonym for: "
-            + fdat.getExistingSynonyms();
+                + fdat.getExistingSynonyms();
             LOG.info(msg);
 //          TODO:  why would a duplicate synonym require an exception to be thrown?
 //          throw new IllegalArgumentException(msg);
             return null;
         }
-        Item returnItem = returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(),
+        Item returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(),
                 type, identifier, isPrimary);
         fdat.addExistingSynonym(identifier);
         return returnItem;

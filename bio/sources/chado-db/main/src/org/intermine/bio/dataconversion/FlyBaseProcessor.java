@@ -158,9 +158,9 @@ public class FlyBaseProcessor extends SequenceProcessor
     private static final Pattern GLEANR_PATTERN = Pattern.compile(".*GLEANR.*");
 
     private static final Map<String, String> CHROMOSOME_STRUCTURE_VARIATION_SO_MAP
-    = new HashMap<String, String>();
+        = new HashMap<String, String>();
     private final Map<String, FeatureData> proteinFeatureDataMap
-    = new HashMap<String, FeatureData>();
+        = new HashMap<String, FeatureData>();
 
     static {
         CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.put("chromosomal_deletion",
@@ -1027,7 +1027,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      * @throws ObjectStoreException
      */
     private void createDeletionLocations(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getDeletionLocationResultSet(connection);
         while (res.next()) {
             Integer delId = new Integer(res.getInt("deletion_feature_id"));
@@ -1079,7 +1079,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     private void makeAndStoreLocation(Integer chrFeatureId, FeatureData subjectFeatureData,
             int start, int end, int strand, int taxonId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
         Item location =
             getChadoDBConverter().makeLocation(chrFeatureData.getItemIdentifier(),
@@ -1161,7 +1161,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      * @param connection
      */
     private void copyInsertionLocations(Connection connection)
-    throws ObjectStoreException, SQLException {
+        throws ObjectStoreException, SQLException {
         ResultSet res = getInsertionLocationsResultSet(connection);
         while (res.next()) {
             int subId = res.getInt("sub_id");
@@ -1242,7 +1242,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         Map<Integer, List<String>> retMap = new HashMap<Integer, List<String>>();
 
         ResultSet res = getAlleleCVTermsResultSet(connection);
-      RESULTS:
+    RESULTS:
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             Integer cvtermId = new Integer(res.getInt("cvterm_id"));
