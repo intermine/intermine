@@ -90,7 +90,7 @@ under the same terms as Perl itself.
 
 use strict;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use InterMine::Item;
 
@@ -138,12 +138,12 @@ sub make_item
 
   $self->{id_counter}++;
 
-  my $classname = "";
+  my $classname = '';
   if (defined $args{classname}) {
     $classname = $args{classname};
   }
 
-  my $implements = "";
+  my $implements = '';
   if (defined $args{implements}) {
     $implements = $args{implements};
   }

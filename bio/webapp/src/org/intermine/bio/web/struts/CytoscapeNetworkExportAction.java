@@ -42,23 +42,23 @@ public class CytoscapeNetworkExportAction extends Action
         if (type.equals("sif")) {
             response.setContentType("text/plain");
             response.setHeader("Content-Disposition", "attachment; filename=\"network.sif\"");
-           }
+        }
         else if (type.equals("pdf")) {
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment; filename=\"network.pdf\"");
-           }
+        }
         else if (type.equals("xgmml")) {
             response.setContentType("text/xml");
             response.setHeader("Content-Disposition", "attachment; filename=\"network.xgmml\"");
-           }
+        }
         else if (type.equals("png")) {
             response.setContentType("image/png");
             response.setHeader("Content-Disposition", "attachment; filename=\"network.png\"");
-           }
+        }
         else if (type.equals("graphml")) {
             response.setContentType("text/xml");
             response.setHeader("Content-Disposition", "attachment; filename=\"network.graphml\"");
-           }
+        }
 
         ServletInputStream is = request.getInputStream();
         ServletOutputStream out = response.getOutputStream();
@@ -67,7 +67,7 @@ public class CytoscapeNetworkExportAction extends Action
 
         int i = 0;
         while ((i = is.read(b)) != -1) {
-          out.write(b, 0, i);
+            out.write(b, 0, i);
         }
 
         out.flush();

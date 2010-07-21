@@ -68,7 +68,7 @@ public class SequenceProcessor extends ChadoProcessor
     private static final MultiKeyMap DEFAULT_CONFIG = new MultiKeyMap();
 
     // A map from chromosome uniqueName to chado feature_ids, populated by processFeatureTable()
-    private Map<Integer, Map<String, Integer>> chromosomeMaps = 
+    private Map<Integer, Map<String, Integer>> chromosomeMaps =
         new HashMap<Integer, Map<String, Integer>>();
 
     // a map from chado pubmed id to item identifier for the publication
@@ -82,9 +82,9 @@ public class SequenceProcessor extends ChadoProcessor
 
     // default feature types to query from the feature table
     private static final List<String> DEFAULT_FEATURES = Arrays.asList(
-       "gene", "mRNA", "transcript", "CDS", "intron", "exon", "EST",
-       "five_prime_untranslated_region", "five_prime_UTR", "three_prime_untranslated_region",
-       "three_prime_UTR", "origin_of_replication"
+            "gene", "mRNA", "transcript", "CDS", "intron", "exon", "EST",
+            "five_prime_untranslated_region", "five_prime_UTR", "three_prime_untranslated_region",
+            "three_prime_UTR", "origin_of_replication"
     );
 
     // default chromosome-like feature types - ie those types of features that occur in the
@@ -928,7 +928,8 @@ public class SequenceProcessor extends ChadoProcessor
 
                 if (fds.size() == 0) {
                     if (!loggedMissingCols.contains(subjectInterMineType + relationType)) {
-                        LOG.error("can't find collection for type " + relationType
+                        LOG.error("can't find collection for type " + objectClass 
+                                + " with relationship " + relationType
                                 + " in " + subjectInterMineType + " (was processing feature "
                                 + chadoSubjectId + ")");
                         loggedMissingCols.add(subjectInterMineType + relationType);

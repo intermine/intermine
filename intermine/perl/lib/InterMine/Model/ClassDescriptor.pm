@@ -120,18 +120,17 @@ sub add_field
     $self->{field_hash}{$field->field_name()} = $field;
   }
 
-  if (ref $field eq 'InterMine::Model::Attribute') {
+  if ($field->isa('InterMine::Model::Attribute')) {
     push @{$self->{attributes}}, $field;
-  } else {
-    if (ref $field eq 'InterMine::Model::Reference') {
+  } 
+  elsif ($field->isa('InterMine::Model::Collection')) {
+      push @{$self->{collections}}, $field;
+  } 
+  elsif ($field->isa('InterMine::Model::Reference')) {
       push @{$self->{references}}, $field;
-    } else {
-      if (ref $field eq 'InterMine::Model::Collection') {
-        push @{$self->{collections}}, $field;
-      } else {
-        confess "unknown reference: ", $field, "\n";
-      }
-    }
+  } 
+  else {
+      confess "unknown reference: ", $field, "\n";
   }
 }
 
@@ -139,7 +138,6 @@ sub get_own_fields {
     my $self = shift;
     return @{$self->{own_fields}};
 }
-
 
 sub get_parents {
     my $self = shift;

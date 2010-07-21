@@ -104,6 +104,13 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public boolean isSingleBatch() {
+        return osResults.isSingleBatch();
+    }
+
+    /**
      * Create a map from string paths to index of QueryNodes in the ObjectStore query
      *
      * @return a map from string paths to the index of QueryNodes

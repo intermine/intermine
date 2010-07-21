@@ -30,6 +30,7 @@ public class DatabaseWriterTest extends TestCase
 
     protected void setUp() throws Exception {
         con = DatabaseFactory.getDatabase("db.unittest").getConnection();
+        con.setAutoCommit(false);
         writer = new DatabaseWriter(con, "table1");
     }
 

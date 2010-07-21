@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -32,28 +30,19 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.model.bio.Lab;
-import org.intermine.model.bio.Project;
-import org.intermine.model.bio.ResultFile;
-import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.session.SessionMethods;
-import org.modmine.web.MetadataCache.GBrowseTrack;
+import org.modmine.web.GBrowseParser.GBrowseTrack;
 
 /**
- * 
+ *
  * @author contrino
  *
  */
 
-public class ProjectsController extends TilesAction 
+public class ProjectsController extends TilesAction
 {
     private static final Logger LOG = Logger.getLogger(MetadataCache.class);
-    
     /**
      * {@inheritDoc}
      */
@@ -65,11 +54,9 @@ public class ProjectsController extends TilesAction
         throws Exception {
         try {
             final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-            ObjectStore os = im.getObjectStore();            
+            ObjectStore os = im.getObjectStore();
             final ServletContext servletContext = servlet.getServletContext();
-            
             List<DisplayExperiment> experiments;
-            
             String experimentName = request.getParameter("experiment");
             if (experimentName != null) {
                 experiments = new ArrayList<DisplayExperiment>();
@@ -78,39 +65,27 @@ public class ProjectsController extends TilesAction
                 experiments = MetadataCache.getExperiments(os);
             }
             request.setAttribute("experiments", experiments);
-            
             Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
             request.setAttribute("tracks", tracks);
-            
             Map<Integer, List<GBrowseTrack>> subTracks = MetadataCache.getGBrowseTracks();
             request.setAttribute("subTracks", subTracks);
 
-//            Map<Integer, Set<ResultFile>> files = MetadataCache.getSubmissionFiles(os); 
-//            request.setAttribute("files", files); 
-//            Map<Integer, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os); 
-//            request.setAttribute("filesPerSub", filesPerSub);
-            //--
-            
-            
-            Map<Integer, List<String[]>> submissionRepositoryEntries = 
+
+            Map<Integer, List<String[]>> submissionRepositoryEntries =
                 MetadataCache.getRepositoryEntries(os);
             request.setAttribute("subRep", submissionRepositoryEntries);
 
-            Map<Integer, List<String>> unlocatedFeatureTypes = 
+            Map<Integer, List<String>> unlocatedFeatureTypes =
                 MetadataCache.getUnlocatedFeatureTypes(os);
             request.setAttribute("unlocatedFeat", unlocatedFeatureTypes);
-            
-            Map<String, String> expFeatureDescription = 
+
+            Map<String, String> expFeatureDescription =
                 MetadataCache.getFeatTypeDescription(servletContext);
             request.setAttribute("expFeatDescription", expFeatureDescription);
-            
-            
-            
-            
-            
-            Properties props = new Properties(); 
-            
-            InputStream is = servletContext.getResourceAsStream("/WEB-INF/experimentCategory.properties");
+
+            Properties props = new Properties();
+            InputStream is =
+                servletContext.getResourceAsStream("/WEB-INF/experimentCategory.properties");
             if (is == null) {
                 LOG.info("Unable to find /WEB-INF/experimentCategory.properties!");
             } else {
@@ -120,11 +95,9 @@ public class ProjectsController extends TilesAction
                     e.printStackTrace();
                 }
             }
-            
             Map <String, List<String>> expCat = new HashMap<String, List<String>>();
 
             Set ugo = props.keySet();
-            
             for (Object exp : ugo){
                 String cats = props.getProperty(exp.toString());
                 // an experiment can be associated to more than 1 category
@@ -135,13 +108,10 @@ public class ProjectsController extends TilesAction
                 }
                 expCat.put(exp.toString(), catList);
             }
-            
             request.setAttribute("expCats", expCat);
-            
         } catch (Exception err) {
             err.printStackTrace();
         }
         return null;
     }
-    
 }

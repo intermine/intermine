@@ -99,8 +99,8 @@ sub get_model_xml
 =head2 get_model
 
  Usage   : $model = $service->get_model();
- Function: get the model XML for this webapp
- Returns : HTTP::Response containing the model
+ Function: get the model for this webapp
+ Returns : An InterMine::Model object
  
 =cut
 sub get_model

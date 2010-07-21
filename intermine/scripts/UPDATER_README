@@ -1,0 +1,72 @@
+Update InterMine userprofile.xml files to reflect changes in the data model
+
+  Installation:
+
+There are four prerequisite modules:
+
+  Log::Handler
+  XML::Rules
+  XML::Writer
+  JSON
+
+These can be installed with the "cpan 'module'" command.
+
+
+  Synopsis:
+updater.pl -i [file],[file] (-o [file],[file]) -m [file] -c [file.json] (-s [dir]) (-l [file])
+
+This updater will read through an input file, checking the validity of 
+any InterMine paths (in queries, classes or items), writing out the new updated
+version to a specified file. It requires an example of the new data 
+model, as well as a list of the changes between the old model and the 
+current one.
+
+The updater will attempt to transform paths wherever possible. If this is
+not possible, then classes or fields will be deleted. All changes and 
+deletions will be logged. If a deletion makes an query or an item invalid,
+then in the case of a query it will be declared "broken" and the original
+version will be inserted into the new file: please see grep your log
+for "broken" to find out which queries are broken so you can edit them by
+hand, if you wish. Items will be logged as deleted, and removed from the 
+output stream. These are very rare (about 3 per million) but again they can
+be grepped for from the log output.
+
+At the end of the run (which takes roughly 1min for every 1 million xml 
+elements in the input stream) basic statistics will be logged, listing
+the total number of items, templates and saved-queries processed, changed
+and broken.
+
+  Options:
+
+--help|usage   | -h|u : This help text
+
+--inputfile    | -i   : The file to be processed
+
+--outputfile   | -o   : The file to write the new output to
+   (optional)           if not supplied, the inputfile name 
+                        will be used, suffixed with '.new'
+
+--modelfile    | -m   : The new model to validate paths against
+
+--changesfile  | -c   : The file specifying model changes (deletions
+                        and name changes)
+--svndirectory | -s   : The location of the InterMine svn directory,
+    (optional)          by default this is assumed to be "~/svn/dev"
+
+--logfile      | -l   : File to save the log to. If there is no file, 
+    (optional)          all logging output will go to STDOUT
+
+options that take multiple values (-i, -o) can either be called as:
+
+  updater -i [file] -i [file]
+
+or
+
+  updater -i [file],[file]
+
+if you do supply outputfiles, make sure you have the same number of them
+as inputfiles, otherwise an exception will be thrown.
+
+  Example:
+
+perl svn/dev/intermine/scripts/updater.pl -i Projects/userprofile.xml,Projects/webconfig-model.xml -o Projects/userprofile.xml.new -o Projects/webconfig-model.xml -c Projects/model_changes.json -m svn/model_update/flymine/dbmodel/build/model/genomic_model.xml -l log/userprofiles.log -s svn/dev

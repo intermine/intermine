@@ -63,8 +63,9 @@ public class ModMineSearchResultsController extends TilesAction
             LOG.info("SEARCH - OBJS: " + objMap.size());
 
             for (Map.Entry<Integer, Float> entry : searchResults.entrySet()) {
-                submissions.put(objMap.get(entry.getKey()), new Integer(Math
-                        .round(entry.getValue() * 10)));
+                //make sure scores are in the range [1, 10]
+                submissions.put(objMap.get(entry.getKey()), new Integer(
+                        Math.round(Math.max(0.1F, Math.min(1, entry.getValue())) * 10)));
             }
         }
         LOG.info("SEARCH SUBS: " + submissions.size());

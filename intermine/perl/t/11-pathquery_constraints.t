@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::XML tests => 4;
+use Test::XML tests => 12;
 use Test::Exception;
 
 use InterMine::Model;
@@ -18,9 +18,15 @@ my $path_query = new InterMine::PathQuery($model);
 $path_query->add_view('Department.name');
 $path_query->add_view('Department.company.name');
 
-my $expected_xml = q[<query name="" model="testmodel" view="Department.name Department.company.name" sortOrder="Department.name"></query>];
+my $expected_xml = q[<query name="" model="testmodel" view="Department.name Department.company.name"></query>];
 
 is_xml ($path_query->to_xml_string(), $expected_xml, 'xml output');
+
+$path_query->sort_order('Department.name');
+
+$expected_xml = q[<query name="" model="testmodel" view="Department.name Department.company.name" sortOrder="Department.name"></query>];
+
+is_xml ($path_query->to_xml_string(), $expected_xml, 'xml output with sort order');
 
 my $depname_c = $path_query->add_constraint('Department.name != "Music department"');
 my $not_null_c = $path_query->add_constraint('Department.name IS NOT NULL');
@@ -65,4 +71,30 @@ $expected_xml = q[<query name="" model="testmodel" view="Department.name Departm
    </node>
 </query>];
 
-is_xml ($path_query->to_xml_string(), $expected_xml, 'xml output with logic');
+is_xml ($path_query->to_xml_string(), $expected_xml, 'xml output with oldstyle logic');
+
+$path_query->logic($depname_c & ($not_null_c | $comp_name_c));
+
+is_xml ($path_query->to_xml_string(), $expected_xml, 'xml output with newstyle logic - operators');
+
+$path_query->logic("A and (B or C)");
+
+is_xml ($path_query->to_xml_string(), $expected_xml, 'xml output with newstyle logic - logicstring');
+
+throws_ok(sub {$path_query->logic("A and (B or C) and D")},
+	       qr/No constraint with code D/,
+	       "Bad logic string: Codes");
+throws_ok(sub {$path_query->logic("A & (B | C)")},
+	       qr/unexpected element in logic string/,
+	       "Bad logic string: operators");
+throws_ok(sub {$path_query->logic($depname_c && ($not_null_c || $comp_name_c))},
+	       qr/unexpected element in logic string/,
+	       "Bad logic: operators");
+throws_ok(sub {$path_query->logic($depname_c & ($not_null_c | $comp_name_c) & $expected_xml)},
+	       qr/Can't call method "isa" without a package or object reference/,
+	       "Bad logic: operators");
+throws_ok(sub {$path_query->logic('A' & ('B' | 'C'))},
+	       qr/Invalid logic: not a ConstraintSet/,
+	       "Bad logic - mixing styles");
+
+

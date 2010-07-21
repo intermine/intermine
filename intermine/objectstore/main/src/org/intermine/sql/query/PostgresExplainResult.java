@@ -123,10 +123,6 @@ public class PostgresExplainResult extends ExplainResult
             throw (new SQLException("Failed to get a valid explain string from database"));
         }
 
-        if (stmt.getMoreResults()) {
-            throw new SQLException("Database returned more than ResultSet while EXPLAINing");
-        }
-
         String text = results.getString(1);
         try {
             parseWarningString(text);
@@ -139,6 +135,9 @@ public class PostgresExplainResult extends ExplainResult
             explainTextBuffer.append(results.getString(1)).append("\n");
         }
         explainText = explainTextBuffer.toString();
+        if (stmt.getMoreResults()) {
+            throw new SQLException("Database returned more than ResultSet while EXPLAINing");
+        }
     }
 
     /**

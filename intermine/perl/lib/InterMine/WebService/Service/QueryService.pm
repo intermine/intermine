@@ -101,7 +101,7 @@ sub get_result
   my $count_only = shift; # Support for this feature has been discontinued
 
   if (ref $query) {
-    $query = $query->to_xml_string();
+    $query = $query->to_query_xml();
   }
 
   if (!defined $count_only) {

@@ -42,6 +42,10 @@ under the same terms as Perl itself.
 =cut
 
 use strict;
+use Carp;
+
+use base 'InterMine::PathQuery::ConstraintLogic';
+use InterMine::PathQuery::ConstraintSet;
 
 # value is 1 for unary operators and 2 for binary operators
 my %OPS = ('IS NOT NULL' => 1,
@@ -69,48 +73,50 @@ my %OPS = ('IS NOT NULL' => 1,
 
 =cut
 
-sub new
-{
-  my $class = shift;
-  my %args;
-  if (@_ == 1) {
-      my $constraint_string = shift;
-    
-      my @bits = $constraint_string =~ 
-                m/^(IS\sNOT\sNULL|IS\sNULL|\S+)
+my $next_code = 'A';
+
+sub new {
+    my $class = shift;
+    my %args;
+    if (@_ == 1) {
+	my $constraint_string = shift;
+	
+	my @bits = $constraint_string =~ 
+	    m/^(IS\sNOT\sNULL|IS\sNULL|\S+)
                    (?:\s+(.*))?
                  /x;
-    
-      if (@bits < 1) {
-        die "can't parse constraint: $constraint_string\n";
-      }
+	
+	if (@bits < 1) {
+	    croak "can't parse constraint: $constraint_string\n";
+	}
         
-      $args{op}    = $bits[0];
-      $args{value} = $bits[1];
-  }
-  else {
-      %args = @_;
-  }
-  if (!exists $OPS{$args{op}}) {
-    die qq[unknown operation "$args{op}" in constraint\n];
-  }   
-
-  if (defined $args{value}) {
-    if ($OPS{$args{op}} == 1) {
-      die qq[operator "$args{op}" should not have a value ($args{value})];
+	$args{op}    = $bits[0];
+	$args{value} = $bits[1];
+	$args{code}  = $next_code++;
     }
-    $args{value} =~ s/^'(.*)'$/$1/;
-    $args{value} =~ s/^"(.*)"$/$1/;
+    else {
+	%args = @_;
+    }
+    if (!exists $OPS{$args{op}}) {
+	croak qq[unknown operation "$args{op}" in constraint\n];
+    }   
+
+    if (defined $args{value}) {
+	if ($OPS{$args{op}} == 1) {
+	    croak qq[operator "$args{op}" should not have a value ($args{value})];
+	}
+	$args{value} =~ s/^'(.*)'$/$1/;
+	$args{value} =~ s/^"(.*)"$/$1/;
+	
+    } else {
+	if ($OPS{$args{op}} == 2) {
+	    croak qq[operator "$args{op}" needs a value];
+	}
+    }
+
+    my $self = {%args};
     
-  } else {
-    if ($OPS{$args{op}} == 2) {
-      die qq[operator "$args{op}" needs a value];
-    }
-  }
-
-  my $self = {%args};
-  
-  return bless $self, $class;
+    return bless $self, $class;
 
 }
 
@@ -118,7 +124,7 @@ sub new
 sub _set_path {
     my $self = shift;
     my $path = shift;
-    die "_set_path needs a path!\n" unless ($path);
+    croak "_set_path needs a path!\n" unless ($path);
     $self->{path} = $path;
     return $self->{path};
 }
@@ -128,7 +134,6 @@ sub get_path {
     my $path = $self->{path};
     return $path;
 }
-
 
 =head2 op
 
@@ -146,7 +151,7 @@ sub op
   my $op = shift;
   if (defined $op) {
       $self->{op} = $op;
-      die "Unknown operation: $op" unless $OPS{$op};
+      croak "Unknown operation: $op" unless $OPS{$op};
       if ($OPS{$op} == 1) {
       $self->{value} = undef;
       }
@@ -169,7 +174,7 @@ sub value
   if (defined $value) {
       my $op = $self->{op};
       if ($OPS{$op} == 1) {
-      die qq[operator "$op" should not have a value ($value)];
+      croak qq[operator "$op" should not have a value ($value)];
       }
       $self->{value} = $value;
   }  
@@ -243,4 +248,14 @@ sub as_string {
     $ret   .= ' IN "'.$self->{extraValue}.'"' if (defined $self->{extraValue});
     return $ret;
 }
+
+sub get_xml_tags {
+    my $self = shift;
+    my %tags;
+    for (qw/op value extraValue code description identifier editable/) {
+	$tags{$_} = $self->{$_} if (defined $self->{$_});
+    }
+    return %tags;
+}
+
 1;
