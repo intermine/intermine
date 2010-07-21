@@ -411,7 +411,9 @@ public final class MetadataManager
                     throw new IOException("Wrong data returned");
                 }
             } catch (SQLException e) {
-                throw new IOException(e);
+                IOException e2 = new IOException("Error reading from database");
+                e2.initCause(e);
+                throw e2;
             }
         }
 
