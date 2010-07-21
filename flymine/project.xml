@@ -6,7 +6,7 @@
   <property name="intermine.properties.file" value="flymine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-  
+
     <source name="chado-db-flybase-dmel" type="chado-db">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7227"/>
@@ -128,7 +128,8 @@
       <property name="src.data.dir" location="/shared/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
       <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
-      <property name="treefam.organisms" value="7227 6239 7165 4932 9606 10090 10116 7955"/> 
+      <property name="treefam.organisms" value="7227 6239 7165 4932 9606 10090 10116 7955"/>
+      <property name="treefam.homologues" value="7227 6239 7165 4932 9606 10090 10116 7955"/>
     </source>
 
     <source name="tiffin" type="tiffin">
@@ -157,7 +158,7 @@
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
     </source>
-    <source name="so" type="so">  
+    <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source>
     <source name="go" type="go">
@@ -473,7 +474,7 @@
     <source name="interpro-go" type="interpro-go">
       <property name="src.data.dir" location="/shared/data/go-annotation/interpro/current"/>
     </source>
-    
+
     <source name="reactome" type="biopax">
       <property name="src.data.dir" location="/shared/data/biopax/reactome/current/not-curated"/>
       <property name="biopax.organisms" value="7227 6239"/>
@@ -489,7 +490,7 @@
       <property name="biopax.datasetname" value="FlyReactome data set"/>
       <property name="biopax.curated" value="true"/>
     </source>
-    
+
     <source name="reactome-yeast" type="biopax">
       <property name="src.data.dir" location="/shared/data/biopax/reactome/current/not-curated"/>
       <property name="biopax.organisms" value="4932"/>
