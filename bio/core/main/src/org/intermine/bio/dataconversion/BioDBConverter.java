@@ -254,7 +254,7 @@ public abstract class BioDBConverter extends DBConverter
      */
     public Item createSynonym(String subjectId, String type, String value, String isPrimary,
             boolean store)
-    throws SAXException, ObjectStoreException {
+        throws SAXException, ObjectStoreException {
         if (StringUtils.isEmpty(value)) {
             return null;
         }
