@@ -17,6 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,13 +33,18 @@ import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.StringUtil;
+import org.postgresql.largeobject.LargeObject;
+import org.postgresql.largeobject.LargeObjectManager;
 
 /**
  * Class to handle persistence of an intermine objectstore's metadata to the objectstore's database
  * @author Mark Woodbridge
  */
-public class MetadataManager
+public final class MetadataManager
 {
+    private MetadataManager() {
+    }
+
     /**
      * Name of the metadata table (created by TorqueModelOutput)
      */
@@ -219,6 +225,215 @@ public class MetadataManager
     }
 
     /**
+     * Returns an OutputStream object with which to write a large binary value to the database.
+     * The OutputStream should be closed correctly when the writing is finished in order for the
+     * value to be committed to the database and the connection released.
+     *
+     * @param database the database
+     * @param key the key
+     * @return an OutputStream to write to
+     * @throws SQLException if an error occurs
+     */
+    public static LargeObjectOutputStream storeLargeBinary(Database database, String key)
+        throws SQLException {
+        Connection con = database.getConnection();
+        try {
+            con.setAutoCommit(false);
+            Statement s = con.createStatement();
+            ResultSet r = s.executeQuery("SELECT value FROM " + METADATA_TABLE + " WHERE key = '"
+                    + key + "'");
+            long blob = 0;
+            boolean needNewBlob = true;
+            if (r.next()) {
+                String blobValue = r.getString(1);
+                if (blobValue.startsWith("BLOB: ")) {
+                    blob = Long.parseLong(blobValue.substring(6));
+                    needNewBlob = false;
+                }
+            }
+            LargeObjectManager lom = ((org.postgresql.PGConnection) con).getLargeObjectAPI();
+            if (needNewBlob) {
+                blob = lom.createLO(LargeObjectManager.READ | LargeObjectManager.WRITE);
+                s.execute("DELETE FROM " + METADATA_TABLE + " WHERE key = '" + key + "'");
+                s.execute("INSERT INTO " + METADATA_TABLE + " (key, value) VALUES('" + key
+                        + "', 'BLOB: " + blob + "')");
+            }
+            LargeObject obj = lom.open(blob, LargeObjectManager.WRITE);
+            obj.truncate(0);
+            return new LargeObjectOutputStream(con, obj);
+        } catch (SQLException e) {
+            try {
+                con.setAutoCommit(true);
+                con.close();
+            } catch (SQLException e2) {
+                // Ignore - we already have a problem
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * OutputStream class that writes to a large object in the database. This object must be closed
+     * in order to commit the value and release the connection associated with it.
+     *
+     * @author Matthew Wakeling
+     */
+    public static class LargeObjectOutputStream extends OutputStream
+    {
+        Connection con;
+        LargeObject obj;
+
+        /**
+         * Constructs a new object.
+         *
+         * @param con a database Connection, to which this object will have exclusive access, and
+         * which must not be in autocommit mode. The connection will be closed when this object is
+         * closed
+         * @param obj a LargeObject to write to
+         */
+        public LargeObjectOutputStream(Connection con, LargeObject obj) {
+            this.con = con;
+            this.obj = obj;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            byte[] array = new byte[1];
+            array[0] = (byte) b;
+            write(array, 0, 1);
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            try {
+                obj.write(b, off, len);
+            } catch (SQLException e) {
+                throw new IOException("Error writing to large object", e);
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                obj.close();
+                con.commit();
+                con.setAutoCommit(true);
+                con.close();
+            } catch (SQLException e) {
+                throw new IOException("Error closing large object", e);
+            }
+        }
+    }
+
+    /**
+     * Returns an InputStream object with which to read a large binary value from the database.
+     * The InputStream should be closed correctly when the reading is finished in order for the
+     * connection to be released.
+     *
+     * @param database the database
+     * @param key the key
+     * @return an InputStream to read from
+     * @throws SQLException if an error occurs
+     */
+    public static LargeObjectInputStream readLargeBinary(Database database, String key)
+        throws SQLException {
+        Connection con = database.getConnection();
+        try {
+            con.setAutoCommit(false);
+            Statement s = con.createStatement();
+            ResultSet r = s.executeQuery("SELECT value FROM " + METADATA_TABLE + " WHERE key = '"
+                    + key + "'");
+            long blob = 0;
+            if (r.next()) {
+                String blobValue = r.getString(1);
+                if (blobValue.startsWith("BLOB: ")) {
+                    blob = Long.parseLong(blobValue.substring(6));
+                    LargeObjectManager lom = ((org.postgresql.PGConnection) con)
+                        .getLargeObjectAPI();
+                    LargeObject obj = lom.open(blob, LargeObjectManager.READ);
+                    return new LargeObjectInputStream(con, obj);
+                } else {
+                    throw new SQLException("Value is not a large object");
+                }
+            } else {
+                con.setAutoCommit(true);
+                con.close();
+                return null;
+            }
+        } catch (SQLException e) {
+            try {
+                con.setAutoCommit(true);
+                con.close();
+            } catch (SQLException e2) {
+                // Ignore - we already have a problem
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * Class providing an InputStream interface to read a value from the database. This object must
+     * be closed when it has been finished with, in order to correctly release the connection it is
+     * using.
+     *
+     * @author Matthew Wakeling
+     */
+    public static class LargeObjectInputStream extends InputStream
+    {
+        private Connection con;
+        private LargeObject obj;
+
+        /**
+         * Constructor.
+         *
+         * @param con a Connection that will be exclusively used by this object until it is closed
+         * @param obj a LargeObject
+         */
+        public LargeObjectInputStream(Connection con, LargeObject obj) {
+            this.con = con;
+            this.obj = obj;
+        }
+
+        @Override
+        public int read() throws IOException {
+            try {
+                byte[] array = new byte[1];
+                int c = obj.read(array, 0, 1);
+                if (c == 1) {
+                    return array[0] & 0xff;
+                } else if (c == 0) {
+                    return -1;
+                } else {
+                    throw new IOException("Wrong data returned");
+                }
+            } catch (SQLException e) {
+                throw new IOException(e);
+            }
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            try {
+                return obj.read(b, off, len);
+            } catch (SQLException e) {
+                throw new IOException(e);
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                obj.close();
+                con.commit();
+                con.setAutoCommit(true);
+                con.close();
+            } catch (SQLException e) {
+                throw new IOException("Error closing large object", e);
+            }
+        }
+    }
+
+    /**
      * Load a named model from the classpath
      * @param name the model name
      * @return the model
@@ -260,10 +475,9 @@ public class MetadataManager
 
     /**
      * Load the class key / key field definitions.
-     * @param classKeys the prefix of the class_keys file.
      * @return the class key definitions
      */
-    public static Properties loadClassKeyDefinitions(String classKeys) {
+    public static Properties loadClassKeyDefinitions() {
         return PropertiesUtil.loadProperties(getFilename(CLASS_KEYS, null));
     }
 
