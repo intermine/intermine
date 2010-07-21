@@ -144,7 +144,7 @@
   </class>
 
   <class name="SequenceCollection" extends="BioEntity" is-interface="true">
-    <collection name="sequenceOntologyTerm" referenced-type="SOTerm"/>    
+    <reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>    
   </class>
 
   <class name="SequenceFeature" extends="BioEntity" is-interface="true">
@@ -156,8 +156,8 @@
     <reference name="sequence" referenced-type="Sequence"/>
     <reference name="chromosome" referenced-type="Chromosome"/>
     <reference name="chromosomeLocation" referenced-type="Location" />   
+    <reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>    
     <collection name="overlappingFeatures" referenced-type="SequenceFeature" />
-    <collection name="sequenceOntologyTerm" referenced-type="SOTerm"/>    
   </class>
 
   <class name="Synonym" is-interface="true">
