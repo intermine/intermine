@@ -26,13 +26,13 @@ import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.session.SessionMethods;
-import org.modmine.web.MetadataCache.GBrowseTrack;
+import org.modmine.web.GBrowseParser.GBrowseTrack;
 
 /**
  * Set up for the tracksDisplayer.jsp
  * @author Daniela Butano
  */
-public class TrackDisplayerController extends TilesAction 
+public class TrackDisplayerController extends TilesAction
 {
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,
@@ -43,9 +43,9 @@ public class TrackDisplayerController extends TilesAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ObjectStore os = im.getObjectStore();
         InterMineObject o = (InterMineObject) request.getAttribute("object");
-        
+
         Integer dccId = ((Submission) o).getdCCid();
-       
+
         List<GBrowseTrack> subTracks = MetadataCache.getTracksByDccId(dccId);
         request.setAttribute("subTracks", subTracks);
 

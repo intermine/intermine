@@ -62,7 +62,7 @@ under the same terms as Perl itself.
 =cut
 
 use strict;
-use Carp qw/confess/;
+use Carp qw/croak confess/;
 
 =head2 new
 
@@ -76,7 +76,7 @@ sub new
   my $class = shift;
 
   if ((@_ < 2) || (@_ > 3)) {
-    confess "wrong aguments to Path::new: InterMine::Model, \$path_string, \\%type_hash\n";
+    croak "wrong aguments to Path::new: InterMine::Model, \$path_string, \\%type_hash\n";
   }
 
   my $model       = shift;
@@ -106,8 +106,9 @@ sub validate
   my $class = shift;
   my $model = shift;
   my $path_string = shift;
+  my $type_hash = shift;
 
-  return _get_parts($model, $path_string);
+  return _get_parts($model, $path_string, $type_hash);
 }
 
 =head2 parts
@@ -192,7 +193,7 @@ sub _get_parts
 
     my @parts = ();
 
-    my @bits       = split /[\.:]/, $path_string;
+    my @bits       = map {s/\s.*$//; $_} split /[\.:]/, $path_string; #split on joins, and remove trailing asc/desc
     my @separators = split /\w+/,   $path_string;
 
 # This cuts off the first part (eg Gene of Gene.name) and treats it
@@ -204,7 +205,7 @@ sub _get_parts
     if (defined $top_class) {
 	push @parts, $top_class;
     } else {
-	confess qq[illegal path ($path_string), "$top_class_name" is not in the model];
+	croak qq[illegal path ($path_string), "$top_class_name" is not in the model];
     }
 
     my $current_class = $top_class;
@@ -224,13 +225,12 @@ sub _get_parts
 	    }
 	    push @parts, $current_field;
 
-	    if ($current_field->field_type() eq 'attribute') {
+	   # if ($current_field->field_type() eq 'attribute') {
 		# if this is not the last bit, it will caught next time around the loop
 		$current_class = undef;
-	    } 
-	    else {
-		my $index = @parts - 1;
-		my $key = join('', zip(@separators[0 .. $index], map {$_->name} @parts));
+	   # } 
+	    unless ($current_field->field_type eq 'attribute') {
+		my $key = join('', zip(@separators[0 .. $#parts], map {$_->name} @parts));
 	
 		if (my $type = $type_hashref->{$key}) {  # if the type was given, respect it
 		    if ($type eq 'Relation') {
@@ -240,14 +240,21 @@ sub _get_parts
 			$current_class = $model->get_classdescriptor_by_name($type);
 		    }
 		} 
-		else {
+		unless (defined $current_class) {
 		    if ( ($current_field->can('is_many_to_0')) && ($current_field->is_many_to_0) ){
-			$current_class = $current_field->rev_referenced_classdescriptor();
+			$current_class = $current_field->rev_referenced_classdescriptor()
+			    ||
+			    $current_field->referenced_classdescriptor();
 		    }
 		    else { 
 			$current_class = $current_field->referenced_classdescriptor();
 		    }
 		}
+		use Data::Dumper;
+		confess "$path_string: current class not set at end of loop for ", 
+		      $current_field->name, Dumper($type_hashref)
+		    unless (UNIVERSAL::can($current_class, 'isa') 
+			    and $current_class->isa('InterMine::Model::ClassDescriptor'));
 	    }
 	}
     }
