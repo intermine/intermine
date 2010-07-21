@@ -143,6 +143,10 @@
     <attribute name="md5checksum" type="java.lang.String"/>
   </class>
 
+  <class name="SequenceCollection" extends="BioEntity" is-interface="true">
+    <collection name="sequenceOntologyTerm" referenced-type="SOTerm"/>    
+  </class>
+
   <class name="SequenceFeature" extends="BioEntity" is-interface="true">
     <attribute name="featureType" type="java.lang.String"/>
     <attribute name="score" type="java.lang.Double"/>
