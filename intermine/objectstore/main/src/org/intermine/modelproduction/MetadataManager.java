@@ -316,15 +316,19 @@ public final class MetadataManager
 
         @Override
         public void close() throws IOException {
-            try {
-                obj.close();
-                con.commit();
-                con.setAutoCommit(true);
-                con.close();
-            } catch (SQLException e) {
-                IOException e2 = new IOException("Error closing large object");
-                e2.initCause(e);
-                throw e2;
+            if (con != null) {
+                try {
+                    obj.close();
+                    con.commit();
+                    con.setAutoCommit(true);
+                    con.close();
+                    obj = null;
+                    con = null;
+                } catch (SQLException e) {
+                    IOException e2 = new IOException("Error closing large object");
+                    e2.initCause(e);
+                    throw e2;
+                }
             }
         }
     }
@@ -430,15 +434,19 @@ public final class MetadataManager
 
         @Override
         public void close() throws IOException {
-            try {
-                obj.close();
-                con.commit();
-                con.setAutoCommit(true);
-                con.close();
-            } catch (SQLException e) {
-                IOException e2 = new IOException("Error closing large object");
-                e2.initCause(e);
-                throw e2;
+            if (con != null) {
+                try {
+                    obj.close();
+                    con.commit();
+                    con.setAutoCommit(true);
+                    con.close();
+                    obj = null;
+                    con = null;
+                } catch (SQLException e) {
+                    IOException e2 = new IOException("Error closing large object");
+                    e2.initCause(e);
+                    throw e2;
+                }
             }
         }
     }
