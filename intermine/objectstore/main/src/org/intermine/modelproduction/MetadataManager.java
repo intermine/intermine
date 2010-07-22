@@ -251,7 +251,7 @@ public final class MetadataManager
             boolean needNewBlob = true;
             if (r.next()) {
                 String blobValue = r.getString(1);
-                if (blobValue.startsWith("BLOB: ")) {
+                if ((blobValue != null) && blobValue.startsWith("BLOB: ")) {
                     blob = Long.parseLong(blobValue.substring(6));
                     needNewBlob = false;
                 }
@@ -313,7 +313,9 @@ public final class MetadataManager
             try {
                 obj.write(b, off, len);
             } catch (SQLException e) {
-                throw new IOException("Error writing to large object", e);
+                IOException e2 = new IOException("Error writing to large object");
+                e2.initCause(e);
+                throw e2;
             }
         }
 
@@ -325,7 +327,9 @@ public final class MetadataManager
                 con.setAutoCommit(true);
                 con.close();
             } catch (SQLException e) {
-                throw new IOException("Error closing large object", e);
+                IOException e2 = new IOException("Error closing large object");
+                e2.initCause(e);
+                throw e2;
             }
         }
     }
@@ -351,7 +355,7 @@ public final class MetadataManager
             long blob = 0;
             if (r.next()) {
                 String blobValue = r.getString(1);
-                if (blobValue.startsWith("BLOB: ")) {
+                if ((blobValue != null) && blobValue.startsWith("BLOB: ")) {
                     blob = Long.parseLong(blobValue.substring(6));
                     LargeObjectManager lom = ((org.postgresql.PGConnection) con)
                         .getLargeObjectAPI();
@@ -412,7 +416,9 @@ public final class MetadataManager
                     throw new IOException("Wrong data returned");
                 }
             } catch (SQLException e) {
-                throw new IOException(e);
+                IOException e2 = new IOException("Error reading from database");
+                e2.initCause(e);
+                throw e2;
             }
         }
 
@@ -421,7 +427,9 @@ public final class MetadataManager
             try {
                 return obj.read(b, off, len);
             } catch (SQLException e) {
-                throw new IOException(e);
+                IOException e2 = new IOException("Error reading from database");
+                e2.initCause(e);
+                throw e2;
             }
         }
 
@@ -433,7 +441,9 @@ public final class MetadataManager
                 con.setAutoCommit(true);
                 con.close();
             } catch (SQLException e) {
-                throw new IOException("Error closing large object", e);
+                IOException e2 = new IOException("Error closing large object");
+                e2.initCause(e);
+                throw e2;
             }
         }
     }
