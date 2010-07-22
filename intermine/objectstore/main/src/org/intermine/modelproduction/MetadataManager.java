@@ -246,7 +246,7 @@ public final class MetadataManager
             boolean needNewBlob = true;
             if (r.next()) {
                 String blobValue = r.getString(1);
-                if (blobValue.startsWith("BLOB: ")) {
+                if ((blobValue != null) && blobValue.startsWith("BLOB: ")) {
                     blob = Long.parseLong(blobValue.substring(6));
                     needNewBlob = false;
                 }
@@ -350,7 +350,7 @@ public final class MetadataManager
             long blob = 0;
             if (r.next()) {
                 String blobValue = r.getString(1);
-                if (blobValue.startsWith("BLOB: ")) {
+                if ((blobValue != null) && blobValue.startsWith("BLOB: ")) {
                     blob = Long.parseLong(blobValue.substring(6));
                     LargeObjectManager lom = ((org.postgresql.PGConnection) con)
                         .getLargeObjectAPI();
