@@ -11,8 +11,12 @@ package org.modmine.web;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +38,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
+ * Controller Action for spanUploadOptions.jsp
  * Set up environment for the spanUploadOptions page. It is called immediately before the
  * spanUploadOptions.jsp is inserted.
  *
@@ -64,11 +69,9 @@ public class SpanUploadOptionsController extends TilesAction
         Set<String> orgSet = new HashSet<String>();
 
         // Category-Experiment Map
+        // Category is ordered
         Map<String, List<DisplayExperiment>> cagExpMap = CategoryExperiments
                 .getCategoryExperiments(servletContext, os);
-
-
-
 
         // Experiment-Category Map
         // One experiment can belong to different categories, make cag a list here
@@ -89,34 +92,45 @@ public class SpanUploadOptionsController extends TilesAction
             }
         }
 
-        // Submission-LocatedFeatureTypes Map
+        // Submission(DCCid)-LocatedFeatureTypes(Class) Map
         Map<Integer, List<String>> subFTMap = MetadataCache.getLocatedFeatureTypes(os);
+
+        // Experiment(name) - LocatedFeatureTypes(Class) Map
+        Map<String, List<String>> expFTMap = new HashMap<String, List<String>>();
 
         // Set of DisplayExperiment objects
         Set<DisplayExperiment> expSet =
-            new HashSet<DisplayExperiment>(MetadataCache.getExperiments(os));
+            new LinkedHashSet<DisplayExperiment>(MetadataCache.getExperiments(os));
 
-        // Build organism set from DisplayExperiment set
         for (DisplayExperiment exp: expSet) {
+            // Build organism set from DisplayExperiment set
             Set<String> orgs = exp.getOrganisms();
             orgSet.addAll(orgs);
+
+            // Build Experiment(name) - FeatureTypes Map
+            if (exp.getFeatureCounts() != null) {
+                expFTMap.put(exp.getName(), new ArrayList<String>(exp
+                        .getFeatureCounts().keySet()));
+            }
         }
 
+        // Sort orgSet to orgList in ascending order
+        List<String> orgList = new ArrayList<String>(orgSet);
+        Collections.sort(orgList);
+
         // >>>>> Prepare data <<<<<
-        // Organism-Org Tree Map
-        Map<String, String> orgMap = new HashMap<String, String>();
 
         // Make a complex data structure
         //[org [cag [exp [sub {ft}]]]], [] for Map, {} for List
-        Map<String, Map<String, Map<DisplayExperiment, Map<Integer, List<String>>>>> theMap =
+        Map<String, Map<String, Map<DisplayExperiment, Map<Integer, List<String>>>>> orgMap =
             new HashMap<String, Map<String, Map<DisplayExperiment, Map<Integer,
-            List<String>>>>>();
+                List<String>>>>>();
         for (String org : orgSet) {
             Map<String, Map<DisplayExperiment, Map<Integer, List<String>>>> cagMap =
-                new HashMap<String, Map<DisplayExperiment, Map<Integer, List<String>>>>();
+                new LinkedHashMap<String, Map<DisplayExperiment, Map<Integer, List<String>>>>();
             for (String cag : cagExpMap.keySet()) {
                 Map<DisplayExperiment, Map<Integer, List<String>>> expMap =
-                     new HashMap<DisplayExperiment, Map<Integer, List<String>>>();
+                     new LinkedHashMap<DisplayExperiment, Map<Integer, List<String>>>();
                 for (DisplayExperiment exp : expSet) {
                     if (exp.getOrganisms().contains(org) // DisplayExperiment uses org short name
                             && (new HashSet<String>(expCagMap.get(exp)).contains(cag))) {
@@ -136,45 +150,54 @@ public class SpanUploadOptionsController extends TilesAction
                 cagMap.put(cag, expMap);
             }
             // [org [cag [exp [sub {ft}]]]]
-            theMap.put(org, cagMap);
+            orgMap.put(org, cagMap);
         }
 
-        // set trees as request attributes
-        for (String org : orgSet) {
-            //request.setAttribute(org, buildHtmlTree(orgMap, org));
-            orgMap.put(org, buildHtmlTree(theMap, org));
-        }
+//        // set trees as request attributes
+//        // Organism-Org Tree Map
+//        Map<String, String> orgMap = new HashMap<String, String>();
+//        for (String org : orgSet) {
+//            //request.setAttribute(org, buildHtmlTree(orgMap, org));
+//            orgMap.put(org, buildHtmlTree(theMap, org));
+//        }
 
         // >>>>> Setup request <<<<<
-        request.setAttribute("orgSet", orgSet);
+        request.setAttribute("orgList", orgList);
+        request.setAttribute("expFTMap", expFTMap);
+//        request.setAttribute("theMap", theMap);
         request.setAttribute("orgMap", orgMap);
+        request.setAttribute("spanConstraint", "Organism");
+        request.setAttribute("exampleSpans", "2L:10345..15409");
 
         return null;
     }
 
     /**
      * Build a tree for spanUploadOptions.jsp use.
-     * Write HTML tags in Java might not be a good idea. (Alternative options?)
      *
+     * @Deprecated
      * @param orgMap Organism-Org Tree Map
      * @param org organism name
      * @return aTree the HTML tree
      */
+    @Deprecated
     private String buildHtmlTree(
-            Map<String, Map<String, Map<DisplayExperiment, Map<Integer, List<String>>>>> orgMap,
+            Map<String, Map<String, Map<DisplayExperiment, Map<Integer, List<String>>>>> theMap,
             String org) {
 
         StringBuffer aTree = new StringBuffer();
         Set<String> ftSet = new HashSet<String>();
 
         // id = organism.shortname
+        aTree.append("<li>");
+        aTree.append("<div id='tree'>");
         aTree.append("<ul id='" + org + "'>");
 
-        Map<String, Map<DisplayExperiment, Map<Integer, List<String>>>> cagMap = orgMap.get(org);
+        Map<String, Map<DisplayExperiment, Map<Integer, List<String>>>> cagMap = theMap.get(org);
         for (String cag : cagMap.keySet()) {
-            aTree.append("<li><input type='checkbox' value='" + cag + "'/>");
+            aTree.append("<li><a href='#'>");
             aTree.append(cag);
-            aTree.append("<ul>");
+            aTree.append("</a><ul>");
             Map<DisplayExperiment, Map<Integer, List<String>>> expMap = cagMap.get(cag);
             for (DisplayExperiment exp : expMap.keySet()) {
                 // Add all feature types to ftSet for one organism
@@ -185,27 +208,33 @@ public class SpanUploadOptionsController extends TilesAction
                     ftSet.addAll(expMap.get(exp).get(sub));
                 }
                 // Continue building the tree
-                aTree.append("<li><input type='checkbox' name='experiments' value='"
-                    + exp.getName() + "'/>");
+                aTree.append("<li id='" + exp.getName() + "'><a href='#'>");
                 aTree.append(exp.getName());
-                aTree.append("</li>");
+                aTree.append("</a></li>");
             }
 
             aTree.append("</ul></li>");
         }
 
         aTree.append("</ul>");
+        aTree.append("</div>");
+        aTree.append("</li>");
 
         // Add feature types to html as checkboxes
         // e.g.
         // <input type="checkbox" name="vehicle" value="Bike" /> I have a bike<br />
         // <input type="checkbox" name="vehicle" value="Car" /> I have a car
+        aTree.append("<li>");
+        aTree.append("<fieldset>");
+        aTree.append("<legend>Feature Types:</legend>");
         aTree.append("<div id='featureType'>");
         for (String ft : ftSet) {
             aTree.append("<input type='checkbox' name='featureTypes' value='"
                     + ft + "'/>" + ft + "<br/>");
         }
         aTree.append("</div>");
+        aTree.append("</fieldset>");
+        aTree.append("</li>");
 
         return aTree.toString();
     }
