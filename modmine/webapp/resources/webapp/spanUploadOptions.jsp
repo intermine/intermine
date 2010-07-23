@@ -127,10 +127,17 @@
        <c:forEach var="orgMap" items="${orgMap}">
          if ("${orgMap.key}" == "${orgName}") {
           <c:forEach var="cagMap" items="${orgMap.value}">
-            treeHTMLArray.push("<li><a href='#'>");
-            treeHTMLArray.push("${cagMap.key}");
-            treeHTMLArray.push("</a><ul>");
-
+          if ("${cagMap.value}" == "{}") {
+              // if exp is null, fix this
+              treeHTMLArray.push("<li><a>");
+              treeHTMLArray.push("${cagMap.key}");
+              treeHTMLArray.push("</a><ul>");
+          }
+          else {
+              treeHTMLArray.push("<li><a>");
+              treeHTMLArray.push("${cagMap.key}");
+              treeHTMLArray.push("</a><ul>");
+          }
           <c:forEach var="expMap" items="${cagMap.value}">
             // Link out experiments by right click and open a new page
             treeHTMLArray.push("<li id=\"${expMap.key.name}\"><a href=\"${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${expMap.key.name}\">");
@@ -145,14 +152,17 @@
        treeHTMLArray.push("</div>");
        treeHTMLArray.push("</li>");
 
+       treeHTMLArray.push("<br/>");
+
        // Build feature type div
+       // Set in a table
        treeHTMLArray.push("<li>");
        treeHTMLArray.push("<p id='selectFeatureTypes'>Select Feature Types:</p>");
-       treeHTMLArray.push("<fieldset>");
+       treeHTMLArray.push("<table cellpadding='0' cellspacing='0' border='0'>");
        treeHTMLArray.push("<div id='featureType'>");
        // Add content by jQuery according to selected exps
        treeHTMLArray.push("</div>");
-       treeHTMLArray.push("</fieldset>");
+       treeHTMLArray.push("</table>");
        treeHTMLArray.push("</li>");
 
        // Add to array
@@ -256,9 +266,8 @@
 
 <html:xhtml />
 <c:set var="exampleSpans" value="${exampleSpans}"/>
-<%-- <c:set var="bagExampleIdentifiers" value="${WEB_PROPERTIES['bag.example.identifiers']}"/> --%>
 
-<im:boxarea titleKey="spanUpload.makeNewSpan" stylename="plainbox" fixedWidth="60%">
+<im:boxarea titleKey="spanUpload.makeNewSpan" stylename="plainbox" >
   <div class="body">
     <html:form action="/spanUploadAction" method="POST" enctype="multipart/form-data">
 
@@ -266,11 +275,13 @@
       <br/>
       <ul>
         <li>Span should be <strong>tab delimited</strong> as <strong>chr   start   end</strong> in BED format or <strong>chr:start..end</strong> and separated by a <strong>new line</strong>.</li>
+        <li>Right click <strong>a experiment</strong> in the tree to go to experiment report page.</li>
       </ul>
       <br/>
 
     <ol id="spanUploadlist">
-      <li>
+
+   <li>
       <label>
         <fmt:message key="spanUpload.spanConstraint">
         <fmt:param value="${spanConstraint}"/>
@@ -281,47 +292,43 @@
           <html:option value="${orgName}">${orgName}</html:option>
       </c:forEach>
       </html:select>
-      </li>
+   </li>
 
-      <div id='exp'><%-- experiments tree and feature types --%></div>
+   <%-- experiments tree and feature types --%>
+      <div id='exp'></div>
       <input type="hidden" id="hiddenExpFiled" name='experiments' value="">
+      <br/>
 
    <li>
    <%-- textarea --%>
    <label><fmt:message key="spanUpload.spanPaste"/></label>
 
-   <span>
-
-   <%-- example bag --%>
-     <%-- <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/> --%>
+   <%-- example span --%>
      <c:if test="${!empty exampleSpans}">
-         <div style="text-align:right;width:87%;">
+         <div style="text-align:left;">
            <html:link href=""
                       onclick="javascript:loadExample('${exampleSpans}');return false;">
              (click to see an example)<img src="images/disclosed.gif" title="Click to Show example"/>
            </html:link>
          </div>
      </c:if>
-
-   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="if (this.value != '') switchInputs('paste','file');" onkeypress="switchInputs('paste','file');" />
-
-   </span>
-
+     <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="if (this.value != '') switchInputs('paste','file');" onkeypress="switchInputs('paste','file');" />
    </li>
-     <%-- file input --%>
-    <li>
-      <label><fmt:message key="spanUpload.spanFromFile"/></label>
-      <html:file styleId="fileInput" property="formFile" onchange="switchInputs('file','paste');" onkeydown="switchInputs('file','paste');" size="28" />
-    </li>
-    </ol>
+
+   <%-- file input --%>
+   <li>
+     <label><fmt:message key="spanUpload.spanFromFile"/></label>
+     <html:file styleId="fileInput" property="formFile" onchange="switchInputs('file','paste');" onkeydown="switchInputs('file','paste');" size="28" />
+     <html:hidden styleId="whichInput" property="whichInput" />
+   </li>
+
+   </ol>
 
     <div align="right">
        <%-- reset button --%>
        <input type="button" onClick="resetInputs()" value="Reset" />
        <html:submit styleId="submitSpan" onclick="beforeSubmit();"><fmt:message key="spanBuild.search"/></html:submit>
     </div>
-
-    <html:hidden styleId="whichInput" property="whichInput" />
 
     </html:form>
   </div>

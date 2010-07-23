@@ -27,6 +27,13 @@
 </script>
 
 <p align="center"><h1>Result</h1></p>
+
+<div id="errorMessage">
+  <c:if test="${!empty errorMsg}">
+    <p>${errorMsg}</p>
+  </c:if>
+</div>
+
 <div>
 
 <table cellspacing="0" cellpadding="0" border="0" align="center" >
