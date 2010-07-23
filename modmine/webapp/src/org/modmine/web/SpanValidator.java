@@ -23,8 +23,8 @@ import java.util.Map;
  */
 public class SpanValidator
 {
-    public static String PASS = "pass";
-    public static String  ERROR = "error";
+    private static String PASS = "pass";
+    private static String  ERROR = "error";
 
     /**
      *

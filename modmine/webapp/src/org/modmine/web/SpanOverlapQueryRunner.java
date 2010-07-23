@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -101,7 +102,7 @@ public class SpanOverlapQueryRunner
 
             Results results = im.getObjectStore().execute(q);
 
-            // a List contains all the chrInfo query back from db
+            // a List contains all the chrInfo (organism, chrPID, length)
             List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>();
             // a Set contains all the orgName
             Set<String> orgSet = new HashSet<String>();
@@ -114,7 +115,7 @@ public class SpanOverlapQueryRunner
                 String chrPID = (String) row.get(1);
                 Integer chrLength = (Integer) row.get(2);
 
-                // add orgName to HashSet to filter out duplication
+                // Add orgName to HashSet to filter out duplication
                 orgSet.add(orgName);
 
                 if (chrLength != null) {
@@ -122,12 +123,13 @@ public class SpanOverlapQueryRunner
                     chrInfo.setOrgName(orgName);
                     chrInfo.setChrPID(chrPID);
                     chrInfo.setChrLength(chrLength);
-                    // add ChromosomeInfo to Arraylist
+
+                    // Add ChromosomeInfo to Arraylist
                     chrInfoList.add(chrInfo);
                 }
             }
 
-            // iterate orgSet and chrInfoList to put data in chrInfoMap which has the key as the
+            // Iterate orgSet and chrInfoList to put data in chrInfoMap which has the key as the
             // orgName and value as a ArrayList containing a list of chrInfo which has the same
             // orgName
             for (String orgName : orgSet) {
@@ -148,7 +150,6 @@ public class SpanOverlapQueryRunner
         }
 
         return chrInfoMap;
-
     }
 
     /**
@@ -161,7 +162,7 @@ public class SpanOverlapQueryRunner
      * @return spanOverlapResultMap A HashMap contains all the spans and their query results
      * @throws ClassNotFoundException Model.getQualifiedTypeName() throws
      */
-    public static Map<String, Results> runSpanOverlapQuery(SpanUploadForm form,
+    public static Map<Span, Results> runSpanOverlapQuery(SpanUploadForm form,
             List<Span> spanList, InterMineAPI im) throws ClassNotFoundException {
 
         String orgName = form.getOrgName();
@@ -210,8 +211,8 @@ public class SpanOverlapQueryRunner
 
         //>>>>> TEST CODE <<<<<
 
-//        Map<Span, Results> spanOverlapResultMap = new HashMap<Span, Results>();
-        Map<String, Results> spanOverlapResultDisplayMap = new HashMap<String, Results>();
+        Map<Span, Results> spanOverlapResultDisplayMap = new LinkedHashMap<Span, Results>();
+//        Map<String, Results> spanOverlapResultDisplayMap = new LinkedHashMap<String, Results>();
 
         try {
             for (Span aSpan: spanList) {
@@ -223,10 +224,12 @@ public class SpanOverlapQueryRunner
                 Integer end = aSpan.getEnd();
 
                 //>>>>> TEST CODE <<<<<
-//                LOG.info("orgName: " + orgName);
-//                LOG.info("chrPID: " + chrPID);
-//                LOG.info("start: " + start);
-//                LOG.info("end: " + end);
+                LOG.info("OrgName: " + orgName);
+                LOG.info("chrPID: " + chrPID);
+                LOG.info("start: " + start);
+                LOG.info("end: " + end);
+                LOG.info("FeatureTypes: " + ftKeys);
+                LOG.info("Submissions: " + subKeys);
                 //>>>>> TEST CODE <<<<<
 
                 // DB tables
@@ -240,7 +243,7 @@ public class SpanOverlapQueryRunner
                 QueryField qfChrPID = new QueryField(qcChr, "primaryIdentifier");
                 QueryField qfFeaturePID = new QueryField(qcFeature, "primaryIdentifier");
                 QueryField qfFeatureType = new QueryField(qcFeature, "featureType");
-//                QueryField qfFeatureClass = new QueryField(qcFeature, "class");
+                QueryField qfFeatureClass = new QueryField(qcFeature, "class");
 //                QueryField qfSubmissionTitle = new QueryField(qcSubmission, "title");
                 QueryField qfSubmissionDCCid = new QueryField(qcSubmission, "DCCid");
                 QueryField qfChr = new QueryField(qcChr, "primaryIdentifier");
@@ -249,7 +252,7 @@ public class SpanOverlapQueryRunner
 
                 q.addToSelect(qfFeaturePID);
                 q.addToSelect(qfFeatureType);
-//                q.addToSelect(qfFeatureClass);
+                q.addToSelect(qfFeatureClass);
                 q.addToSelect(qfChr);
                 q.addToSelect(qfLocStart);
                 q.addToSelect(qfLocEnd);
@@ -260,6 +263,8 @@ public class SpanOverlapQueryRunner
                 q.addFrom(qcFeature);
                 q.addFrom(qcLoc);
                 q.addFrom(qcSubmission);
+
+                q.addToOrderBy(qfLocStart, "ascending");
 
                 ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
 
@@ -322,12 +327,13 @@ public class SpanOverlapQueryRunner
                 Results results = im.getObjectStore().execute(q);
 
                 //>>>>> TEST CODE <<<<<
-//                LOG.info("Result Size: " + results.size());
-//                LOG.info("Result: " + results);
+                LOG.info("Query: " + q.toString());
+                LOG.info("Result Size: " + results.size());
+                LOG.info("Result: " + results);
                 //>>>>> TEST CODE <<<<<
 
-//                spanOverlapResultMap.put(aSpan, results);
-                spanOverlapResultDisplayMap.put(formatSpan(aSpan), results);
+                spanOverlapResultDisplayMap.put(aSpan, results);
+//                spanOverlapResultDisplayMap.put(formatSpan(aSpan), results);
             }
 
         } catch (Exception e) {
@@ -432,7 +438,10 @@ public class SpanOverlapQueryRunner
                 Class<?> featureClass = (Class<?>) row.get(0);
                 String featureType = (String) row.get(1);
 
-                ftMap.put(TypeUtil.unqualifiedName(featureClass.getName()), featureType);
+                // Gene featureType is null in modmine-val
+                if (featureType != null) {
+                    ftMap.put(TypeUtil.unqualifiedName(featureClass.getName()), featureType);
+                }
             }
         } catch (Exception err) {
             err.printStackTrace();
@@ -449,9 +458,11 @@ public class SpanOverlapQueryRunner
     /**
      * format a Span object to a string like "chr:start..end"
      *
+     * @Deprecated
      * @param aSpan a span object
      * @return a string in form of "chr:start..end"
      */
+    @Deprecated
     private static String formatSpan(Span aSpan) {
         return aSpan.getChr() + ":" + aSpan.getStart() + ".." + aSpan.getEnd();
     }
