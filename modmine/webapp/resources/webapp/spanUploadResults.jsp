@@ -28,13 +28,36 @@
 
 <p align="center"><h1>Result</h1></p>
 
-<div id="errorMessage">
-  <c:if test="${!empty errorMsg}">
-    <p>${errorMsg}</p>
-  </c:if>
+<c:if test="${!empty errorMsg}">
+<div id="errorMsg" class="topBar errors">
+  <span style="float: right; padding: 0pt; margin: 0pt;">
+    <img onclick="javascript:jQuery('#errorMsg').hide('slow');" style="cursor: pointer;" title="Dismiss" alt="Dismiss" src="images/close.png">
+  </span>
+    ${errorMsg}<br>
 </div>
+</c:if>
 
-<div>
+<c:if test="${(!empty selectedFt)&&(!empty selectedExp)}">
+<div id="selectionInfo" class="topBar hints">
+    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+    <tbody><tr>
+      <td width="30px" valign="middle"><img border="0" align="middle" width="20px" height="20px" title="hint" src="images/tick.png"></td>
+      <td valign="middle">
+      ${selectedFt}<br>
+      ${selectedExp}<br>        
+      </td>
+      <td align="right" valign="middle">
+          <a onclick="javascript:jQuery('#selectionInfo').hide('slow');return false" href="#">
+            Hide
+          </a>
+      </td>
+    </tr>
+    </tbody></table>
+</div>
+</c:if>
+
+<c:if test="${!empty results}">
+<div align="center">
 
 <table cellspacing="0" cellpadding="0" border="0" align="center" >
 <tr>
@@ -114,6 +137,6 @@
 </table>
 
 </div>
-
+</c:if>
 
 <!--  /spanUploadResults.jsp -->

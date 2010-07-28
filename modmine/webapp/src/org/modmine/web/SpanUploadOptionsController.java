@@ -11,7 +11,6 @@ package org.modmine.web;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.HashMap;
@@ -101,6 +100,9 @@ public class SpanUploadOptionsController extends TilesAction
         // Set of DisplayExperiment objects
         Set<DisplayExperiment> expSet =
             new LinkedHashSet<DisplayExperiment>(MetadataCache.getExperiments(os));
+        
+        // A subset of expSet which contains experiments with feature types
+        Set<DisplayExperiment> expWithFtSet = new LinkedHashSet<DisplayExperiment>();
 
         for (DisplayExperiment exp: expSet) {
             // Build organism set from DisplayExperiment set
@@ -111,6 +113,8 @@ public class SpanUploadOptionsController extends TilesAction
             if (exp.getFeatureCounts() != null) {
                 expFTMap.put(exp.getName(), new ArrayList<String>(exp
                         .getFeatureCounts().keySet()));
+                expWithFtSet.add(exp);
+ 
             }
         }
 
@@ -131,7 +135,8 @@ public class SpanUploadOptionsController extends TilesAction
             for (String cag : cagExpMap.keySet()) {
                 Map<DisplayExperiment, Map<Integer, List<String>>> expMap =
                      new LinkedHashMap<DisplayExperiment, Map<Integer, List<String>>>();
-                for (DisplayExperiment exp : expSet) {
+//                for (DisplayExperiment exp : expSet) {
+                for (DisplayExperiment exp : expWithFtSet) { // Show only experiments with feature types
                     if (exp.getOrganisms().contains(org) // DisplayExperiment uses org short name
                             && (new HashSet<String>(expCagMap.get(exp)).contains(cag))) {
                         Map<Integer, List<String>> subMap =

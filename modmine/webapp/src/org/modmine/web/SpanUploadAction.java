@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -70,13 +71,23 @@ public class SpanUploadAction extends InterMineAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws Exception {
-
-        // Step 1 - Data preparation >>>>
+    	HttpSession session = request.getSession();
+    	
+        // > Step 1 - Data preparation >>>>>
         // >> 1.1 Parse all the fields of SpanUploadForm
         SpanUploadForm spanUploadForm = (SpanUploadForm) form;
         String orgName = spanUploadForm.getOrgName();
         String whichInput = spanUploadForm.getWhichInput();
         FormFile formFile = spanUploadForm.getFormFile();
+        
+		session.setAttribute("selectedExp", "Selected experiments: "
+				+ spanUploadForm.getExperiments()[0]);
+		String ftString = "";
+		for (String aFeaturetype : spanUploadForm.getFeatureTypes()) {
+			ftString = ftString + aFeaturetype + ",";
+		}
+		session.setAttribute("selectedFt", "Selected feature types: "
+				+ ftString.substring(0, ftString.lastIndexOf(",")-1));
         // >>> Parse experiments strings
         // Due to jsTree, the checkbox values regarding to experiments is in one
         // string
@@ -87,6 +98,7 @@ public class SpanUploadAction extends InterMineAction {
         if (spanUploadForm.getExperiments()[0].equals("")
                 || spanUploadForm.getExperiments()[0] == null) {
 
+            // TODO message is not shown in the spanUploadOptions page?
             recordError(new ActionMessage("spanBuild.spanFieldSelection",
                     "experiments"), request);
             return mapping.findForward("spanUploadOptions");
@@ -113,14 +125,14 @@ public class SpanUploadAction extends InterMineAction {
                     && spanUploadForm.getText().length() != 0) {
                 String trimmedText = spanUploadForm.getText().trim();
                 if (trimmedText.length() == 0) {
-                    // recordError(new ActionMessage("bagBuild.noBagPaste"),
-                    // request);
+                    recordError(new ActionMessage("spanBuild.noSpanPaste"),
+                        request);
                     return mapping.findForward("spanUploadOptions");
                 }
                 reader = new BufferedReader(new StringReader(trimmedText));
             } else {
-                // recordError(new ActionMessage("bagBuild.noBagFile"),
-                // request);
+                recordError(new ActionMessage("spanBuild.noSpanFile"),
+                    request);
                 return mapping.findForward("spanUploadOptions");
             }
 
@@ -131,21 +143,20 @@ public class SpanUploadAction extends InterMineAction {
                 String mimetype = formFile.getContentType();
                 if (!mimetype.equals("application/octet-stream")
                         && !mimetype.startsWith("text")) {
-                    // recordError(new ActionMessage("bagBuild.notText",
-                    // mimetype), request);
+                    recordError(new ActionMessage("spanBuild.notText",
+                        mimetype), request);
                     return mapping.findForward("spanUploadOptions");
                 }
                 if (formFile.getFileSize() == 0) {
-                    // recordError(new
-                    // ActionMessage("bagBuild.noBagFileOrEmpty"), request);
+                    recordError(new
+                        ActionMessage("spanBuild.noSpanFileOrEmpty"), request);
                     return mapping.findForward("spanUploadOptions");
                 }
                 reader = new BufferedReader(new InputStreamReader(formFile
                         .getInputStream()));
             }
         } else {
-            // recordError(new ActionMessage("spanBuild.spanMisformatted",
-            // thisLine), request);
+            recordError(new ActionMessage("spanBuild.spanInputType"), request);
             return mapping.findForward("spanUploadOptions");
         }
 
@@ -158,8 +169,8 @@ public class SpanUploadAction extends InterMineAction {
 
         for (int i = 0; i < read; i++) {
             if (buf[i] == 0) {
-                // recordError(new ActionMessage("bagBuild.notText", "binary"),
-                // request);
+                 recordError(new ActionMessage("spanBuild.notText", "binary"),
+                 request);
                 return mapping.findForward("spanUploadOptions");
             }
         }
@@ -178,10 +189,13 @@ public class SpanUploadAction extends InterMineAction {
             // >>> Use regular expression to validate user's input
             // span in the form of "chr:start..end" as in a pattern
             // [^:]+:\d+\.{2,}\d+
+            // span in the form of "chr:start-end" as in a pattern
+            // [^:]+:\d+\-\d+
             // span in the form of "chr(tab)start(tab)end" as in a pattern
             // [^\t]+\t\d+\t\d+
             String tabRegex = "[^:]+:\\d+\\.\\.\\d+";
             String bedRegex = "[^\\t]+\\t\\d+\\t\\d+";
+            String dashRegex = "[^:]+:\\d+\\-\\d+";
 
             if (Pattern.matches(tabRegex, thisLine)) {
                 aSpan.setChr((thisLine.split(":"))[0]);
@@ -193,9 +207,14 @@ public class SpanUploadAction extends InterMineAction {
                 aSpan.setChr(spanItems[0]);
                 aSpan.setStart(Integer.valueOf(spanItems[1]));
                 aSpan.setEnd(Integer.valueOf(spanItems[2]));
+            } else if (Pattern.matches(dashRegex, thisLine)) {
+                aSpan.setChr((thisLine.split(":"))[0]);
+                String[] spanItems = (thisLine.split(":"))[1].split("-");
+                aSpan.setStart(Integer.valueOf(spanItems[0]));
+                aSpan.setEnd(Integer.valueOf(spanItems[1]));
             } else {
                 // redirect to the option page with error msg
-                recordError(new ActionMessage("spanBuild.spanMisformatted",
+                recordError(new ActionMessage("spanBuild.spanInWrongformat",
                         thisLine), request);
                 return mapping.findForward("spanUploadOptions");
             }
@@ -207,12 +226,12 @@ public class SpanUploadAction extends InterMineAction {
         // Refer to code from BuildBagAction.java
         // <<<<<<
 
-        // Step 2 - Logic >>>>
+        // > Step 2 - Logic >>>>>
         // >> 2.1 Query chromosome info for span validation purpose
 
-        HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
+        
         Map<String, List<ChromosomeInfo>> chrInfoMap = SpanOverlapQueryRunner
                 .runSpanValidationQuery(im);
 
@@ -222,10 +241,8 @@ public class SpanUploadAction extends InterMineAction {
 
         // store the error in the session and return it to the webpage
         // what if all spans are wrong or no error???
-        String errorMsg = resultMap.get(SpanUploadAction.ERROR).toString();
-        // TODO
-        // Forward error msg to the result page
-        LOG.info("error spans are: " + errorMsg);
+        String errorMsg = "Invalid spans: " + resultMap.get(SpanUploadAction.ERROR).toString();
+        
 
         // >> 2.3 Query the overlapped features
         Map<Span, Results> spanOverlapResultDisplayMap = SpanOverlapQueryRunner
@@ -233,25 +250,8 @@ public class SpanUploadAction extends InterMineAction {
                         .get(SpanUploadAction.PASS), im);
 //         .runSpanOverlapQuery(spanUploadForm, spanList, im);
 
-        // >>>>> for test use <<<<<
-        // SpanUploadForm suform = new SpanUploadForm();
-        // suform.setOrgName("Drosophila melanogaster");
-        //
-        // Span span = new Span();
-        // span.setChr("2L");
-        // span.setStart(60000);
-        // span.setEnd(70000);
-        // List<Span> list = new ArrayList<Span>();
-        // list.add(span);
-        // Map<Span, Results> spanOverlapResultMap = SpanOverlapQuery
-        // .runSpanOverlapQuery(suform, list, im);
-        //
-        // session.setAttribute("resultsize",
-        // spanOverlapResultMap.get(span).size());
-        // >>>>> for test use <<<<<
-
-        // Step3 - Session data preparation
-        // session.setAttribute("errorMsg", errorMsg);
+        // > Step3 - Session data preparation >>>>>
+        session.setAttribute("errorMsg", errorMsg);
         session.setAttribute("results", spanOverlapResultDisplayMap);
 
         return mapping.findForward("spanUploadResults");
