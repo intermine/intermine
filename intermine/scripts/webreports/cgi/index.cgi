@@ -12,7 +12,7 @@ print(header,
       p('Available reports:'),
       ul(li({-type => 'disc'},
 	    [
-	     a({-href => '/webreports/analytics'}, 'Google Analytics Report on Templates'),
+#	     a({-href => '/webreports/analytics'}, 'Google Analytics Report on Templates'),
 	     a({-href => '/webreports/models'},    'Comparison of Various InterMine models'),
 	     a({-href => '/webreports/templates'}, 'Comparison of Various InterMine template collections'),
 	    ]
