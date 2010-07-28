@@ -95,17 +95,22 @@
 
          var ftHTMLArray = [];
          for(i=0; i<uniqueFeatureTypes.length; i++) {
-           ftHTMLArray.push("<input type='checkbox' name='featureTypes' value='"
+           ftHTMLArray.push("<input type='checkbox' checked='yes' name='featureTypes' value='"
                     + uniqueFeatureTypes[i] + "'/>" + uniqueFeatureTypes[i] + "<br/>");
          }
 
          jQuery("#featureType").html(ftHTMLArray.join(""));
          if(ftHTMLArray.join("") != "") {
-             jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id, 'featureTypes')\"/>Select Feature Types:"); }
+             jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id, 'featureTypes')\"/>Select Feature Types:"); }
            else {
              jQuery("#selectFeatureTypes").html("Select Feature Types:"); }
      })
      .jstree({
+         "themes" : {
+                     "theme" : "apple",
+                     "dots" : true,
+                     "icons" : false
+                     },
          "plugins" : [ "themes", "html_data", "checkbox" ]
      });
 
@@ -113,6 +118,13 @@
 
    jQuery(document).ready(function(){
 
+     // store expriments with feature types in an array
+       expArray = [];
+
+       <c:forEach var="expFTMap" items="${expFTMap}" varStatus="counter">
+         expArray.push("${expFTMap.key}");
+       </c:forEach>
+     
      // Store org-tree in a 2D array
      // as array[orgName][HTML]
      orgArray = new Array(${fn:length(orgSet)});
@@ -121,7 +133,7 @@
      <c:forEach var="orgName" items="${orgList}" varStatus="counter">
        var treeHTMLArray = [];
        treeHTMLArray.push("<li><p id='selectExperiments'>Select Experiments:</p>");
-       treeHTMLArray.push("<div id='tree'>");
+       treeHTMLArray.push("<div id='tree' style='width:750px;'>");
        treeHTMLArray.push("<ul id='${orgName}'>");
 
        <c:forEach var="orgMap" items="${orgMap}">
@@ -129,20 +141,25 @@
           <c:forEach var="cagMap" items="${orgMap.value}">
           if ("${cagMap.value}" == "{}") {
               // if exp is null, fix this
-              treeHTMLArray.push("<li><a>");
+              treeHTMLArray.push("<li><i><b>");
               treeHTMLArray.push("${cagMap.key}");
-              treeHTMLArray.push("</a><ul>");
+              treeHTMLArray.push("</i></b><ul>");
           }
           else {
-              treeHTMLArray.push("<li><a>");
+              treeHTMLArray.push("<li><a><i><b>");
               treeHTMLArray.push("${cagMap.key}");
-              treeHTMLArray.push("</a><ul>");
+              treeHTMLArray.push("</b></i></a><ul>");
           }
           <c:forEach var="expMap" items="${cagMap.value}">
             // Link out experiments by right click and open a new page
-            treeHTMLArray.push("<li id=\"${expMap.key.name}\"><a href=\"${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${expMap.key.name}\">");
-            treeHTMLArray.push("${expMap.key.name}");
-            treeHTMLArray.push("</a></li>");
+            // Check if experiments have feature types
+            for (i=0; i<expArray.length; i++) {
+              if ("${expMap.key.name}" == expArray[i]) {
+                treeHTMLArray.push("<li id=\"${expMap.key.name}\"><a href=\"${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${expMap.key.name}\">");
+                treeHTMLArray.push("${expMap.key.name}");
+                treeHTMLArray.push("</a></li>");
+              }
+            }
           </c:forEach>
           treeHTMLArray.push("</ul></li>");
           </c:forEach>
@@ -199,17 +216,22 @@
 
          var ftHTMLArray = [];
          for(i=0; i<uniqueFeatureTypes.length; i++) {
-           ftHTMLArray.push("<input type='checkbox' name='featureTypes' value='"
+           ftHTMLArray.push("<input type='checkbox' checked='yes' name='featureTypes' value='"
                     + uniqueFeatureTypes[i] + "'/>" + uniqueFeatureTypes[i] + "<br/>");
          }
 
          jQuery("#featureType").html(ftHTMLArray.join(""));
          if(ftHTMLArray.join("") != "") {
-           jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id, 'featureTypes')\"/>Select Feature Types:"); }
+           jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id, 'featureTypes')\"/>Select Feature Types:"); }
          else {
            jQuery("#selectFeatureTypes").html("Select Feature Types:"); }
      })
      .jstree({
+         "themes" : {
+                     "theme" : "apple",
+                     "dots" : true,
+                     "icons" : false
+                    },
          "plugins" : [ "themes", "html_data", "checkbox" ]
      });
 
@@ -267,14 +289,22 @@
 <html:xhtml />
 <c:set var="exampleSpans" value="${exampleSpans}"/>
 
-<im:boxarea titleKey="spanUpload.makeNewSpan" stylename="plainbox" >
+<div align="center">
+<im:boxarea titleKey="spanUpload.makeNewSpan" stylename="plainbox" fixedWidth="60%">
   <div class="body">
     <html:form action="/spanUploadAction" method="POST" enctype="multipart/form-data">
 
       <p><fmt:message key="spanUpload.spanUploadFormCaption"/></p>
       <br/>
       <ul>
-        <li>Span should be <strong>tab delimited</strong> as <strong>chr   start   end</strong> in BED format or <strong>chr:start..end</strong> and separated by a <strong>new line</strong>.</li>
+         <li>Spans in the following formats are accepted:
+          <ul>
+            <li><strong>chr:start..end</strong></li>
+            <li><strong>chr:start-end</strong></li>
+            <li>Simple <strong>tab delimited</strong> BED format as <strong>chr   start   end</strong></li>
+          </ul>
+        </li>
+        <li>Only experiments with features are displayed.</li>
         <li>Right click <strong>a experiment</strong> in the tree to go to experiment report page.</li>
       </ul>
       <br/>
@@ -333,5 +363,6 @@
     </html:form>
   </div>
 </im:boxarea>
+</div>
 
 <!--  /spanUploadOptions.jsp -->
