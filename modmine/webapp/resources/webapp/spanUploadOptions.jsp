@@ -290,7 +290,7 @@
 <c:set var="exampleSpans" value="${exampleSpans}"/>
 
 <div align="center">
-<im:boxarea titleKey="spanUpload.makeNewSpan" stylename="plainbox" fixedWidth="60%">
+<im:boxarea titleKey="spanUpload.makeNewSpan" stylename="plainbox" fixedWidth="80%">
   <div class="body">
     <html:form action="/spanUploadAction" method="POST" enctype="multipart/form-data">
 
