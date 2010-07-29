@@ -19,20 +19,22 @@
 <div class="keywordSearch">
   <h2>Keyword Search</h2>
   <p><i>Search our database by keyword</i></p>
-    <html:form action="/keywordSearchAction" focus="searchTerm">
-      <html:text property="searchTerm" style="width: 350px;" />     
-      <html:submit>Search</html:submit>
-    </html:form>
+    <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
+        <div>
+		  <input type="text" name="searchTerm" value="<c:out value="${searchTerm}"></c:out>" style="width: 350px;" />  
+		  <input type="submit" value="Search" />
+		</div>
+    </form>
     
     <div class="examples">
 	    <ul>
-		    <li>
-		    	All fields will be searched, for example:
-		    	antibody names (e.g. <i>'PolII</i>', <i>'H3K4me1</i>', <i>'CP190</i>'),
-		    	lab names (e.g. <i>'Reinke</i>', <i>'Snyder'</i>),
-		    	data types (e.g. <i>'UTR'</i>, <i>'bindingsite'</i>)
-		    </li>
-		    <li>Boolean search is supported: e.g. <i>'fly AND embryo'</i> to combine terms, <i>'fly AND NOT embryo'</i> to exclude one</li>
+            <li>
+                Use <i>AND</i> to combine two terms (e.g. <i>fly AND embryo</i>)
+                or quotations marks to search for phrases  (e.g. <i>"dna binding"</i>)
+            </li>
+            <li>
+                Boolean search syntax is supported: e.g. <i>dros*</i> for partial matches or <i>fly AND NOT embryo</i> to exclude a term
+            </li>
 	    </ul>
     </div>
 </div>

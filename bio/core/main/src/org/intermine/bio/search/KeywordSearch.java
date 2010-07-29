@@ -10,32 +10,37 @@ package org.intermine.bio.search;
  *
  */
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.io.Serializable;
-import java.sql.Blob;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -44,31 +49,26 @@ import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
-import org.apache.tools.ant.util.OutputStreamFunneler;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.Exon;
-import org.intermine.model.bio.GOTerm;
-import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.Organism;
-import org.intermine.model.bio.Pathway;
-import org.intermine.model.bio.Protein;
-import org.intermine.model.bio.Transcript;
 import org.intermine.modelproduction.MetadataManager;
+import org.intermine.modelproduction.MetadataManager.LargeObjectOutputStream;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -85,105 +85,218 @@ import org.intermine.pathquery.PathException;
 import org.intermine.sql.Database;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.postgresql.largeobject.BlobOutputStream;
 
+import com.browseengine.bobo.api.BoboBrowser;
+import com.browseengine.bobo.api.BoboIndexReader;
+import com.browseengine.bobo.api.Browsable;
+import com.browseengine.bobo.api.BrowseException;
+import com.browseengine.bobo.api.BrowseRequest;
+import com.browseengine.bobo.api.BrowseResult;
+import com.browseengine.bobo.api.BrowseSelection;
+import com.browseengine.bobo.api.FacetSpec;
+import com.browseengine.bobo.api.FacetSpec.FacetSortSpec;
+import com.browseengine.bobo.facets.FacetHandler;
+import com.browseengine.bobo.facets.impl.SimpleFacetHandler;
+
+/**
+ * container class to cache class attributes
+ * @author nils
+ */
 class ClassAttributes
 {
     String className;
     Set<AttributeDescriptor> attributes;
 
+    /**
+     * constructor
+     * @param className
+     *            name of the class
+     * @param attributes
+     *            set of attributes for the class
+     */
     public ClassAttributes(String className, Set<AttributeDescriptor> attributes) {
         super();
         this.className = className;
         this.attributes = attributes;
     }
 
+    /**
+     * name of the class
+     * @return name of the class
+     */
     public String getClassName() {
         return className;
     }
 
+    /**
+     * attributes associated with the class
+     * @return attributes associated with the class
+     */
     public Set<AttributeDescriptor> getAttributes() {
         return attributes;
     }
 }
 
-class LuceneIndexContainer implements Serializable {
+/**
+ * container for the lucene index to hold field list
+ * @author nils
+ */
+class LuceneIndexContainer implements Serializable
+{
     private static final long serialVersionUID = 1L;
-    private RAMDirectory ram = new RAMDirectory();
+    private transient Directory directory;
+    private String directoryType;
     private HashSet<String> fieldNames = new HashSet<String>();
     private HashMap<String, Float> fieldBoosts = new HashMap<String, Float>();
-    
-    public RAMDirectory getRam() {
-        return ram;
+
+    /**
+     * get lucene directory for this index
+     * @return directory
+     */
+    public Directory getDirectory() {
+        return directory;
     }
 
-    public void setRam(RAMDirectory ram) {
-        this.ram = ram;
+    /**
+     * set lucene directory
+     * @param directory
+     *            directory
+     */
+    public void setDirectory(Directory directory) {
+        this.directory = directory;
     }
 
+    /**
+     * get type of directory
+     * @return FSDirectory or RAMDirectory
+     */
+    public String getDirectoryType() {
+        return directoryType;
+    }
+
+    /**
+     * set type of directory
+     * @param directoryType
+     *            class name of lucene directory
+     */
+    public void setDirectoryType(String directoryType) {
+        this.directoryType = directoryType;
+    }
+
+    /**
+     * get list of fields in the index
+     * @return fields
+     */
     public HashSet<String> getFieldNames() {
         return fieldNames;
     }
 
+    /**
+     * set list of fields in the index
+     * @param fieldNames
+     *            fields
+     */
     public void setFieldNames(HashSet<String> fieldNames) {
         this.fieldNames = fieldNames;
     }
 
+    /**
+     * get list of boost associated with fields
+     * @return boosts
+     */
     public HashMap<String, Float> getFieldBoosts() {
         return fieldBoosts;
     }
 
+    /**
+     * set boost associated with fields
+     * @param fieldBoosts
+     *            boosts
+     */
     public void setFieldBoosts(HashMap<String, Float> fieldBoosts) {
         this.fieldBoosts = fieldBoosts;
     }
-    
+
     @Override
     public String toString() {
-        return "INDEX [[" + ram.sizeInBytes()/1024/1024 + " MB"
-            + ", fields = " + fieldNames + ""
-            + ", boosts = " + fieldBoosts + ""
-            + "]]";
+        return "INDEX [[" + directory + "" + ", fields = " + fieldNames + "" + ", boosts = "
+                + fieldBoosts + "" + "]]";
     }
 }
 
+/**
+ * fetched objects from database, generates documents and adds them to a queue
+ * for indexing
+ * @author nils
+ */
 class DocumentFetcher implements Runnable
 {
     private static final Logger LOG = Logger.getLogger(DocumentFetcher.class);
 
-    ObjectStore os;
-    LinkedList<Document> indexingQueue; //FIXME
-    Class<? extends InterMineObject> cls;
-    ClassDescriptor clsDescriptor;
-    String[] references;
+    final ObjectStore os;
+    final ConcurrentLinkedQueue<Document> indexingQueue;
+    final HashMap<Class<? extends InterMineObject>, String[]> specialIndexClasses;
+    final Class<? extends InterMineObject> cls;
+    final boolean overwrite;
 
-    HashMap<Integer, Document> documents = new HashMap<Integer, Document>();
-    HashSet<String> fieldNames = new HashSet<String>();
-    HashMap<Class<?>, Vector<ClassAttributes>> decomposedClassesCache = new HashMap<Class<?>, Vector<ClassAttributes>>();
+    final HashMap<Integer, Document> documents = new HashMap<Integer, Document>();
+    final HashSet<String> fieldNames = new HashSet<String>();
+    final HashMap<Class<?>, Vector<ClassAttributes>> decomposedClassesCache =
+            new HashMap<Class<?>, Vector<ClassAttributes>>();
 
-    public DocumentFetcher(ObjectStore os, LinkedList<Document> indexingQueue,
-            Class<? extends InterMineObject> cls) {
-        this(os, indexingQueue, cls, null);
-    }
-
-    public DocumentFetcher(ObjectStore os, LinkedList<Document> indexingQueue,
-            Class<? extends InterMineObject> cls, String[] references) {
+    /**
+     * initialize the documentfetcher thread
+     * @param os
+     *            intermine objectstore
+     * @param indexingQueue
+     *            queue shared with indexer
+     * @param specialIndexClasses
+     *            map of classes that are not handled by the default bioentity
+     *            fetcher
+     * @param cls
+     *            class of object to index
+     * @param overwrite
+     *            if false the fetcher will check if an object class is in
+     *            specialProperties.keySet() before adding it
+     */
+    public DocumentFetcher(ObjectStore os, ConcurrentLinkedQueue<Document> indexingQueue,
+            HashMap<Class<? extends InterMineObject>, String[]> specialIndexClasses,
+            Class<? extends InterMineObject> cls, boolean overwrite) {
         this.os = os;
         this.indexingQueue = indexingQueue;
+        this.specialIndexClasses = specialIndexClasses;
         this.cls = cls;
-        this.references = references;
-
-        clsDescriptor = os.getModel().getClassDescriptorByName(cls.getName());
+        this.overwrite = overwrite;
     }
 
+    /**
+     * get list of fields contained in the fetched documents
+     * @return fields
+     */
     public HashSet<String> getFieldNames() {
         return fieldNames;
     }
 
+    /**
+     * fetch objects from database, create documents and add them to the queue
+     */
     @SuppressWarnings("unchecked")
     public void run() {
         try {
             long time = System.currentTimeMillis();
             LOG.info("Fetching class '" + cls.getSimpleName() + "'...");
+
+            HashSet<String> specialClassNames = new HashSet<String>();
+            for (Class<? extends InterMineObject> specialClass : specialIndexClasses.keySet()) {
+                specialClassNames.add(specialClass.getName());
+            }
+            LOG.info("Special Class Names = " + specialClassNames);
+
+            String[] references = specialIndexClasses.get(cls);
+            LOG.info("References = " + Arrays.toString(references));
+
+            HashMap<Class<? extends InterMineObject>, Boolean> ignoredClasses;
+            ignoredClasses = new HashMap<Class<? extends InterMineObject>, Boolean>();
 
             Query q = new Query();
             QueryClass qcGene = new QueryClass(cls);
@@ -194,6 +307,7 @@ class DocumentFetcher implements Runnable
 
             Iterator<ResultsRow<InterMineObject>> it = results.iterator();
             int i = 0;
+            int ignored = 0;
             int size = results.size();
             LOG.info("Query returned " + size + " results");
 
@@ -205,13 +319,71 @@ class DocumentFetcher implements Runnable
                 }
 
                 for (InterMineObject object : row) {
-                    Document doc = getDocumentForObject(object);
-                    if (references == null) {
-                        synchronized (os) {
-                            indexingQueue.add(doc);
+                    if (!overwrite) {
+                        boolean ignore = false;
+                        Boolean cachedIgnore = ignoredClasses.get(object.getClass());
+
+                        if (cachedIgnore != null) {
+                            ignore = cachedIgnore.booleanValue();
+                        } else {
+                            LOG.info("'" + cls.getSimpleName()
+                                    + "': checking whether to ignore class " + object.getClass());
+
+                            for (Class<?> objectClass : DynamicUtil.decomposeClass(object
+                                    .getClass())) {
+                                ClassDescriptor cld =
+                                        os.getModel().getClassDescriptorByName(
+                                                objectClass.getName());
+
+                                LOG.info("'" + cls.getSimpleName()
+                                        + "': checking decomposed part of " + object.getClass()
+                                        + " -> " + objectClass + " -- super="
+                                        + cld.getSuperclassNames());
+
+                                if (specialClassNames.contains(objectClass.getName())) {
+                                    ignore = true;
+                                } else if (cld.getSuperclassNames() != null) {
+                                    if (cld.getSuperclassNames().removeAll(specialClassNames)) {
+                                        ignore = true;
+                                    }
+                                } else {
+                                    LOG.info("'" + cls.getSimpleName()
+                                            + "': class CLD has no superclassnames - "
+                                            + object.getClass());
+                                }
+                            }
+
+                            // cache result
+                            LOG.info("'" + cls.getSimpleName() + "': putting ignore=" + ignore
+                                    + " into cache for class " + object.getClass());
+                            ignoredClasses.put(object.getClass(), Boolean.valueOf(ignore));
                         }
-                    } else {
-                        documents.put(object.getId(), doc);
+
+                        if (ignore) {
+                            ignored++;
+
+                            if (ignored % 10000 == 1) {
+                                LOG.info("'" + cls.getSimpleName() + "': ignored " + ignored
+                                        + " out of " + i);
+                            }
+
+                            continue;
+                        }
+                    }
+
+                    // if this takes too long we can cache it...
+                    Class<?> objectClass =
+                            DynamicUtil.decomposeClass(object.getClass()).iterator().next();
+                    ClassDescriptor classDescriptor =
+                            os.getModel().getClassDescriptorByName(objectClass.getName());
+
+                    Document doc = getDocumentForObject(object, classDescriptor);
+                    if (doc != null) {
+                        if (references == null) {
+                            indexingQueue.add(doc);
+                        } else {
+                            documents.put(object.getId(), doc);
+                        }
                     }
                 }
 
@@ -224,86 +396,98 @@ class DocumentFetcher implements Runnable
                     + i
                     + " objects of class '"
                     + cls.getSimpleName()
-                    + "' in "
+                    + "' ("
+                    + ignored
+                    + " ignored) in "
                     + String.format("%02d:%02d.%03d", (int) Math.floor(seconds / 60), seconds % 60,
                             time % 1000) + " minutes");
 
             if (references != null) {
-                for(int j = 0; j < references.length; j++) {
+                for (int j = 0; j < references.length; j++) {
                     String reference = references[j];
                     time = System.currentTimeMillis();
                     LOG.info(cls.getSimpleName() + "::" + reference + " - Querying...");
 
                     Query qc = getPathQuery(cls, reference);
-                    Results resultsc = os.execute(qc);
-                    int sizec = resultsc.size();
+                    ((ObjectStoreInterMineImpl) os).goFaster(qc);
+                    try {
+                        Results resultsc = os.execute(qc);
+                        int sizec = resultsc.size();
 
-                    LOG.info(cls.getSimpleName() + "::" + reference + " - Query returned " + sizec
-                            + " results");
+                        LOG.info(cls.getSimpleName() + "::" + reference + " - Query returned "
+                                + sizec + " results");
 
-                    Iterator<ResultsRow<?>> itc = resultsc.iterator();
+                        Iterator<ResultsRow<?>> itc = resultsc.iterator();
 
-                    int k = 0;
-                    int previousId = -1;
-                    while (itc.hasNext()) {
-                        ResultsRow<?> row = itc.next();
+                        int k = 0;
+                        int previousId = -1;
+                        while (itc.hasNext()) {
+                            ResultsRow<?> row = itc.next();
 
-                        Integer docId = (Integer) row.get(0);
-                        InterMineObject collectionObject = (InterMineObject) row.get(1);
+                            Integer docId = (Integer) row.get(0);
+                            InterMineObject collectionObject = (InterMineObject) row.get(1);
 
-                        Document doc = documents.get(docId);
-                        if (doc != null) {
-                            addObjectToDocument(collectionObject, doc);
-                            
-                            //speed - submit completed documents already if we are at last reference
-                            if((j == references.length - 1) && previousId != docId) {
-                                synchronized (os) {
-                                    indexingQueue.add(documents.remove(previousId));
+                            Document doc = documents.get(docId);
+                            if (doc != null) {
+                                addObjectToDocument(collectionObject, doc);
+
+                                // speed - submit completed documents already
+                                // if we are at last reference
+                                if ((j == references.length - 1) && previousId != docId) {
+                                    Document docOld = documents.remove(previousId);
+
+                                    if (docOld != null) {
+                                        indexingQueue.add(docOld);
+                                    } else {
+                                        LOG.warn("docOld is null! (id = " + previousId + ")");
+                                    }
                                 }
+                            } else {
+                                LOG.warn(cls.getSimpleName() + "::" + reference
+                                        + " - Did not find document #" + docId);
                             }
-                        } else {
-                            LOG.warn(cls.getSimpleName() + "::" + reference
-                                    + " - Did not find document #" + docId);
+
+                            if (k % 10000 == 1) {
+                                LOG.info(cls.getSimpleName() + "::" + reference + " - Fetched " + k
+                                        + " of " + sizec);
+                            }
+
+                            previousId = docId;
+
+                            k++;
                         }
 
-                        if (k % 10000 == 1) {
-                            LOG.info(cls.getSimpleName() + "::" + reference + " - Fetched " + k
-                                    + " of " + sizec);
-                        }
-                        
-                        previousId = docId;
-
-                        k++;
+                        time = System.currentTimeMillis() - time;
+                        LOG.info(cls.getSimpleName()
+                                + "::"
+                                + reference
+                                + " - Fetched "
+                                + k
+                                + " objects in "
+                                + String.format("%02d:%02d.%03d", (int) Math.floor(time / 60000),
+                                        time / 1000 % 60, time % 1000) + " minutes");
+                    } finally {
+                        ((ObjectStoreInterMineImpl) os).releaseGoFaster(qc);
                     }
-
-                    time = System.currentTimeMillis() - time;
-                    LOG.info(cls.getSimpleName()
-                            + "::"
-                            + reference
-                            + " - Fetched "
-                            + k
-                            + " objects in "
-                            + String.format("%02d:%02d.%03d", (int) Math.floor(time / 60000),
-                                    time / 1000 % 60, time % 1000) + " minutes");
                 }
 
-                synchronized (os) {
-                    LOG.info("Adding remaining " + documents.size() + " documents to queue");
-                    indexingQueue.addAll(documents.values());
-                }
+                LOG.info("Adding remaining " + documents.size() + " documents to queue");
+                indexingQueue.addAll(documents.values());
             }
         } catch (Exception e) {
             LOG.warn(null, e);
         }
     }
 
-    private Document getDocumentForObject(InterMineObject object) {
+    private Document getDocumentForObject(InterMineObject object, ClassDescriptor classDescriptor) {
         Document doc = new Document();
-        doc.add(new Field("id", object.getId().toString(), Field.Store.YES, Field.Index.NO));        
-        doc.add(new Field("Category", clsDescriptor.getUnqualifiedName(), Field.Store.YES, Field.Index.ANALYZED));
-        
-        if(object instanceof BioEntity && ((BioEntity) object).getOrganism() != null) {
-            doc.add(new Field("Organism", ((BioEntity) object).getOrganism().getShortName(), Field.Store.YES, Field.Index.ANALYZED));
+        doc.add(new Field("id", object.getId().toString(), Field.Store.YES, Field.Index.NO));
+        doc.add(new Field("Category", classDescriptor.getUnqualifiedName(), Field.Store.YES,
+                Field.Index.NOT_ANALYZED));
+
+        if (object instanceof BioEntity && ((BioEntity) object).getOrganism() != null) {
+            doc.add(new Field("Organism", ((BioEntity) object).getOrganism().getShortName(),
+                    Field.Store.YES, Field.Index.NOT_ANALYZED));
         }
 
         addObjectToDocument(object, doc);
@@ -320,8 +504,8 @@ class DocumentFetcher implements Runnable
 
     private HashMap<String, String> getAttributeMapForObject(Model model, Object obj) {
         HashMap<String, String> values = new HashMap<String, String>();
-        Vector<ClassAttributes> decomposedClassAttributes = getClassAttributes(model, obj
-                .getClass());
+        Vector<ClassAttributes> decomposedClassAttributes =
+                getClassAttributes(model, obj.getClass());
 
         for (ClassAttributes classAttributes : decomposedClassAttributes) {
             for (AttributeDescriptor att : classAttributes.getAttributes()) {
@@ -372,40 +556,13 @@ class DocumentFetcher implements Runnable
         return attributes;
     }
 
-    // private Query getCollectionQuery(Class<? extends InterMineObject>
-    // mainCls, String collectionName) {
-    // Query q = new Query();
-    // QueryClass qcMain = new QueryClass(mainCls);
-    // QueryField qfMainId = new QueryField(qcMain, "id");
-    // q.addToSelect(qfMainId);
-    // q.addFrom(qcMain);
-    //
-    // ClassDescriptor classDescriptor =
-    // os.getModel().getClassDescriptorByName(mainCls.getName());
-    // Class<?> classInCollection =
-    // classDescriptor.getCollectionDescriptorByName(collectionName).getReferencedClassDescriptor().getType();
-    //        
-    // QueryClass qcInCollection = new QueryClass(classInCollection);
-    // q.addToSelect(qcInCollection);
-    // q.addFrom(qcInCollection);
-    // QueryCollectionReference col = new QueryCollectionReference(qcMain,
-    // collectionName);
-    // ContainsConstraint cc = new ContainsConstraint(col,
-    // ConstraintOp.CONTAINS, qcInCollection);
-    // q.setConstraint(cc);
-    //        
-    // q.addToOrderBy(qfMainId);
-    //       
-    // return q;
-    // }
-
     private Query getPathQuery(Class<? extends InterMineObject> mainCls, String pathString)
-            throws PathException {
+        throws PathException {
         Query q = new Query();
         ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
 
-        org.intermine.pathquery.Path path = new org.intermine.pathquery.Path(os.getModel(),
-                pathString);
+        org.intermine.pathquery.Path path =
+                new org.intermine.pathquery.Path(os.getModel(), pathString);
         List<ClassDescriptor> classDescriptors = path.getElementClassDescriptors();
         List<String> fieldNames = path.getElements();
 
@@ -426,7 +583,7 @@ class DocumentFetcher implements Runnable
 
                 QueryField topId = new QueryField(queryClass, "id");
                 q.addToSelect(topId);
-                q.addToOrderBy(topId); //important for optimization in run()
+                q.addToOrderBy(topId); // important for optimization in run()
             } else {
                 String fieldName = fieldNames.get(i - 1);
 
@@ -434,17 +591,19 @@ class DocumentFetcher implements Runnable
 
                 if (parentClassDescriptor.getReferenceDescriptorByName(fieldName, true) != null) {
                     LOG.info(fieldName + " is OBJECT");
-                    QueryObjectReference objectReference = new QueryObjectReference(
-                            parentQueryClass, fieldName);
-                    ContainsConstraint cc = new ContainsConstraint(objectReference,
-                            ConstraintOp.CONTAINS, queryClass);
+                    QueryObjectReference objectReference =
+                            new QueryObjectReference(parentQueryClass, fieldName);
+                    ContainsConstraint cc =
+                            new ContainsConstraint(objectReference, ConstraintOp.CONTAINS,
+                                    queryClass);
                     constraints.addConstraint(cc);
                 } else if (parentClassDescriptor.getCollectionDescriptorByName(fieldName, true) != null) {
                     LOG.info(fieldName + " is COLLECTION");
-                    QueryCollectionReference collectionReference = new QueryCollectionReference(
-                            parentQueryClass, fieldName);
-                    ContainsConstraint cc = new ContainsConstraint(collectionReference,
-                            ConstraintOp.CONTAINS, queryClass);
+                    QueryCollectionReference collectionReference =
+                            new QueryCollectionReference(parentQueryClass, fieldName);
+                    ContainsConstraint cc =
+                            new ContainsConstraint(collectionReference, ConstraintOp.CONTAINS,
+                                    queryClass);
                     constraints.addConstraint(cc);
                 } else {
                     LOG.warn("Unknown field '" + parentClassDescriptor.getUnqualifiedName()
@@ -470,17 +629,24 @@ class DocumentFetcher implements Runnable
  */
 public class KeywordSearch
 {
-    // public static final String SEARCH_KEY = "modminesearch";
+    private static final String LUCENE_INDEX_PATH = "lucene_index";
 
     /**
      * maximum number of hits returned
      */
     public static final int MAX_HITS = 500;
 
-    private static final Logger LOG = Logger.getLogger(KeywordSearch.class);
-    private static final String[] BOOLEAN_WORDS = {"AND", "OR", "NOT"};
+    /**
+     * maximum number of items to be displayed on a page
+     */
+    public static final int PER_PAGE = 100;
 
-    private static LinkedList<Document> indexingQueue = new LinkedList<Document>();
+    private static final Logger LOG = Logger.getLogger(KeywordSearch.class);
+
+    private static IndexReader reader = null;
+    private static BoboIndexReader boboIndexReader = null;
+    private static ConcurrentLinkedQueue<Document> indexingQueue =
+            new ConcurrentLinkedQueue<Document>();
     private static LuceneIndexContainer index = null;
 
     /**
@@ -490,60 +656,130 @@ public class KeywordSearch
      */
     public static void initKeywordSearch(InterMineAPI im) {
         if (index == null) {
-            //try to load index from database first
+            // try to load index from database first
             loadIndexFromDatabase(im.getObjectStore());
-            
-            //still nothing, create new one
-            if(index == null) {
+
+            // still nothing, create new one
+            // TODO: we may just want to error out here
+            if (index == null) {
                 createIndex(im.getObjectStore());
             }
         }
-    }
-    
-    public static void saveIndexToDatabase(ObjectStore os) {
-        if(index == null) {
-            createIndex(os);
-        }     
 
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try {
-//            PipedOutputStream out = new PipedOutputStream();
-//            PipedInputStream in = new PipedInputStream(out);
-//            BufferedOutputStream outb = new BufferedOutputStream(out);
-            ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
-            
-            try {
-                LOG.info("memory 1="
-                        + Runtime.getRuntime().freeMemory() / 1024 + "k/"
-                        + Runtime.getRuntime().maxMemory() / 1024 + "k");
-                
-                LOG.info("Serializing index...");
-                objectStream.writeObject(index);
+            if (reader == null) {
+                reader = IndexReader.open(index.getDirectory(), true);
+            }
 
-                LOG.info("memory 2="
-                        + Runtime.getRuntime().freeMemory() / 1024 + "k/"
-                        + Runtime.getRuntime().maxMemory() / 1024 + "k");
-                
-                index = null;
-                System.gc();
+            if (boboIndexReader == null) {
+                // prepare faceting
+                SimpleFacetHandler categoryFacet = new SimpleFacetHandler("Category");
+                SimpleFacetHandler organismFacet = new SimpleFacetHandler("Organism");
+                List<FacetHandler<?>> facetHandlers =
+                        Arrays.asList(new FacetHandler<?>[] {categoryFacet, organismFacet});
 
-                LOG.info("memory 3="
-                        + Runtime.getRuntime().freeMemory() / 1024 + "k/"
-                        + Runtime.getRuntime().maxMemory() / 1024 + "k");
+                boboIndexReader = BoboIndexReader.getInstance(reader, facetHandlers);
+            }
+        } catch (CorruptIndexException e) {
+            LOG.error(e);
+        } catch (IOException e) {
+            LOG.error(e);
+        }
+    }
 
-                LOG.info("Saving index to database...");
-                Database db = ((ObjectStoreInterMineImpl) os).getDatabase();                
-                MetadataManager.storeBinary(db, MetadataManager.SEARCH_INDEX, byteStream.toByteArray());
-    
-                LOG.info("Successfully saved search index to database: " + index);
-            } catch (IOException e) {
-                LOG.error(null, e);
-            } catch (SQLException e) {
-                LOG.error(null, e);
-            } finally {
-                objectStream.close();
+    private static void writeObjectToDB(ObjectStore os, String key, Object object)
+        throws IOException, SQLException {
+        LOG.info("Saving stream to database...");
+        Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+        LargeObjectOutputStream streamOut = MetadataManager.storeLargeBinary(db, key);
+
+        GZIPOutputStream gzipStream = new GZIPOutputStream(new BufferedOutputStream(streamOut));
+        ObjectOutputStream objectStream = new ObjectOutputStream(gzipStream);
+
+        LOG.info("GZipping and serializing object...");
+        objectStream.writeObject(object);
+
+        objectStream.flush();
+        gzipStream.finish();
+        gzipStream.flush();
+
+        streamOut.close();
+    }
+
+    /**
+     * writes index and associated directory to the database using the
+     * metadatamanager
+     * @param os
+     *            intermine objectstore
+     */
+    public static void saveIndexToDatabase(ObjectStore os) {
+        if (index == null) {
+            createIndex(os);
+        }
+
+        try {
+            LOG.info("Saving search index information to database...");
+            writeObjectToDB(os, MetadataManager.SEARCH_INDEX, index);
+            LOG.info("Successfully saved search index information to database.");
+
+            // if we have a FSDirectory we need to zip and save that separately
+            if ("FSDirectory".equals(index.getDirectoryType())) {
+                final int bufferSize = 2048;
+
+                try {
+                    LOG.info("Zipping up FSDirectory...");
+
+                    LOG.info("Saving stream to database...");
+                    Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+                    LargeObjectOutputStream streamOut =
+                            MetadataManager.storeLargeBinary(db,
+                                    MetadataManager.SEARCH_INDEX_DIRECTORY);
+
+                    ZipOutputStream zipOut =
+                            new ZipOutputStream(new BufferedOutputStream(streamOut));
+
+                    byte data[] = new byte[bufferSize];
+
+                    // get a list of files from current directory
+                    File fsDirectory = ((FSDirectory) index.getDirectory()).getFile();
+                    String files[] = fsDirectory.list();
+
+                    for (int i = 0; i < files.length; i++) {
+                        File file =
+                                new File(fsDirectory.getAbsolutePath() + File.separator + files[i]);
+                        LOG.info("Zipping file: " + file.getName() + " (" + file.length() / 1024
+                                + " KB)");
+
+                        FileInputStream fi = new FileInputStream(file);
+                        BufferedInputStream fileInput = new BufferedInputStream(fi, bufferSize);
+
+                        try {
+                            ZipEntry entry = new ZipEntry(files[i]);
+                            entry.setSize(file.length());
+                            zipOut.putNextEntry(entry);
+
+                            int count;
+                            while ((count = fileInput.read(data, 0, bufferSize)) != -1) {
+                                zipOut.write(data, 0, count);
+                            }
+                        } finally {
+                            fileInput.close();
+                        }
+                    }
+
+                    zipOut.close();
+                    LOG.info("Successfully saved search directory to database!");
+                } catch (IOException e) {
+                    LOG.error(null, e);
+                }
+            } else if ("RAMDirectory".equals(index.getDirectoryType())) {
+                LOG.info("Saving search directory to database...");
+                writeObjectToDB(os, MetadataManager.SEARCH_INDEX_DIRECTORY, index.getDirectory());
+                LOG.info("Successfully saved search directory to database.");
             }
         } catch (IOException e) {
+            LOG.error(null, e);
+        } catch (SQLException e) {
             LOG.error(null, e);
         }
     }
@@ -562,10 +798,11 @@ public class KeywordSearch
         long time = System.currentTimeMillis();
 
         try {
-            IndexSearcher searcher = new IndexSearcher(index.getRam());
+            IndexSearcher searcher = new IndexSearcher(reader);
 
-            Analyzer analyzer = new SnowballAnalyzer(Version.LUCENE_30, "English",
-                    StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+            Analyzer analyzer =
+                    new SnowballAnalyzer(Version.LUCENE_30, "English",
+                            StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
             org.apache.lucene.search.Query query;
 
@@ -573,31 +810,25 @@ public class KeywordSearch
             // => search through all fields
             String[] fieldNamesArray = new String[index.getFieldNames().size()];
             index.getFieldNames().toArray(fieldNamesArray);
-            QueryParser queryParser = new MultiFieldQueryParser(Version.LUCENE_30, fieldNamesArray,
-                    analyzer, index.getFieldBoosts());
+            QueryParser queryParser =
+                    new MultiFieldQueryParser(Version.LUCENE_30, fieldNamesArray, analyzer, index
+                            .getFieldBoosts());
             query = queryParser.parse(queryString);
 
             // required to expand search terms
-            query = query.rewrite(IndexReader.open(index.getRam()));
+            query = query.rewrite(reader);
             LOG.debug("Actual query: " + query);
 
             TopDocs topDocs = searcher.search(query, 500);
             // Filter filter = new TermsFilter();
             // searcher.search(query, filter, collector);
 
-            time = System.currentTimeMillis() - time;
             LOG.info("Found " + topDocs.totalHits + " document(s) that matched query '"
-                    + queryString + "' in " + time + " milliseconds:");
+                    + queryString + "'");
 
             for (int i = 0; (i < MAX_HITS && i < topDocs.totalHits); i++) {
                 Document doc = searcher.doc(topDocs.scoreDocs[i].doc);
                 Integer id = Integer.valueOf(doc.get("id"));
-
-                // show how score was calculated
-                if (i < 5) {
-                    Explanation explanation = searcher.explain(query, topDocs.scoreDocs[i].doc);
-                    LOG.info("Score for #" + id + ": " + explanation);
-                }
 
                 matches.put(id, new Float(topDocs.scoreDocs[i].score));
             }
@@ -608,75 +839,235 @@ public class KeywordSearch
             // just return an empty list
             LOG.info("Exception caught, returning no results", e);
         }
+
+        LOG.info("Lucene search finished in " + (System.currentTimeMillis() - time) + " ms");
+
         return matches;
+    }
+
+    /**
+     * perform a keyword search using bobo-browse for faceting and pagination
+     * @param searchString
+     *            string to search for
+     * @param offset
+     *            display offset
+     * @param categories
+     *            category facets to search in
+     * @param organisms
+     *            organism facets to search in
+     * @return bobo browse result or null if failed
+     */
+    public static BrowseResult runBrowseSearch(String searchString, int offset,
+            String[] categories, String[] organisms) {
+        BrowseResult result = null;
+        long time = System.currentTimeMillis();
+
+        String queryString = parseQueryString(searchString);
+
+        try {
+            Analyzer analyzer =
+                    new SnowballAnalyzer(Version.LUCENE_30, "English",
+                            StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+
+            org.apache.lucene.search.Query query;
+
+            // pass entire list of field names to the multi-field parser
+            // => search through all fields
+            String[] fieldNamesArray = new String[index.getFieldNames().size()];
+            index.getFieldNames().toArray(fieldNamesArray);
+            QueryParser queryParser =
+                    new MultiFieldQueryParser(Version.LUCENE_30, fieldNamesArray, analyzer, index
+                            .getFieldBoosts());
+            query = queryParser.parse(queryString);
+
+            LOG.info("Parsed query in " + (System.currentTimeMillis() - time) + " ms");
+            time = System.currentTimeMillis();
+
+            // required to expand search terms
+            query = query.rewrite(reader);
+
+            LOG.info("Rewrote query in " + (System.currentTimeMillis() - time) + " ms");
+            time = System.currentTimeMillis();
+
+            // initialize request
+            BrowseRequest browseRequest = new BrowseRequest();
+            browseRequest.setQuery(query);
+            browseRequest.setFetchStoredFields(true);
+
+            // pagination
+            browseRequest.setOffset(offset);
+            browseRequest.setCount(PER_PAGE);
+
+            // add faceting selections
+            if (categories != null && categories.length > 0) {
+                BrowseSelection browseSelection = new BrowseSelection("Category");
+                for (int i = 0; i < categories.length; i++) {
+                    String string = categories[i];
+                    browseSelection.addValue(string);
+                }
+                browseRequest.addSelection(browseSelection);
+            }
+
+            if (organisms != null && organisms.length > 0) {
+                BrowseSelection browseSelection = new BrowseSelection("Organism");
+                for (int i = 0; i < organisms.length; i++) {
+                    String string = organisms[i];
+                    browseSelection.addValue(string);
+                }
+                browseRequest.addSelection(browseSelection);
+            }
+
+            // order faceting results by hits
+            FacetSpec orderByHitsSpec = new FacetSpec();
+            orderByHitsSpec.setOrderBy(FacetSortSpec.OrderHitsDesc);
+            browseRequest.setFacetSpec("Category", orderByHitsSpec);
+            browseRequest.setFacetSpec("Organism", orderByHitsSpec);
+
+            LOG.info("Prepared browserequest in " + (System.currentTimeMillis() - time) + " ms");
+            time = System.currentTimeMillis();
+
+            // execute query and return result
+            Browsable browser = new BoboBrowser(boboIndexReader);
+            result = browser.browse(browseRequest);
+        } catch (ParseException e) {
+            // just return an empty list
+            LOG.info("Exception caught, returning no results", e);
+        } catch (IOException e) {
+            // just return an empty list
+            LOG.info("Exception caught, returning no results", e);
+        } catch (BrowseException e) {
+            // just return an empty list
+            LOG.info("Exception caught, returning no results", e);
+        }
+
+        LOG.info("Bobo browse finished in " + (System.currentTimeMillis() - time) + " ms");
+
+        return result;
     }
 
     private static String parseQueryString(String queryString) {
         queryString = queryString.replaceAll("\\b(\\s+)\\+(\\s+)\\b", "$1AND$2");
+        queryString = queryString.replaceAll("(^|\\s+)'(\\b[^']+ [^']+\\b)'(\\s+|$)", "$1\"$2\"$3");
 
-        // to support partial matches we have to add a asterisk to the end of
-        // every word, taking care of keywords, quoted phrases and hyphenated
-        // terms
-        String queryStringNew = queryString;
-
-        // find all words without special characters around them
-        Pattern pattern = Pattern.compile("(?<!(\\w-|[:.]))\\b(\\w+)\\b(?![.:*-])");
-        // remove all quoted terms
-        Matcher matcher = pattern.matcher(queryString.replaceAll("\"[^\"]+\"", ""));
-        HashSet<String> words = new HashSet<String>();
-        while (matcher.find()) {
-            String word = matcher.group(2);
-
-            // ignore words that are boolean keywords
-            boolean isKeyword = false;
-            for (int i = 0; i < BOOLEAN_WORDS.length; i++) {
-                if (BOOLEAN_WORDS[i].equals(word)) {
-                    isKeyword = true;
-                    break;
-                }
-            }
-
-            if (isKeyword) {
-                continue;
-            }
-
-            // only allow partial matches for words >= 3 characters
-            if (word.length() > 2) {
-                words.add(word);
-            }
-        }
-
-        // finally replace all words by (word word*) -- separate from main loop
-        // to avoid
-        // issues with duplicates
-        for (String word : words) {
-            queryStringNew = queryStringNew.replaceAll("\\b(" + Pattern.quote(word) + ")\\b",
-                    "($1 $1*)");
-        }
-
-        queryString = queryStringNew; // apply changes
         return queryString;
     }
 
     private static void loadIndexFromDatabase(ObjectStore os) {
+        long time = System.currentTimeMillis();
+        LOG.info("Attempting to restore search index from database...");
         if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             try {
-                InputStream is = MetadataManager.retrieveBLOBInputStream(db,
-                        MetadataManager.SEARCH_INDEX);
+                InputStream is = MetadataManager.readLargeBinary(db, MetadataManager.SEARCH_INDEX);
 
                 if (is != null) {
-                    ObjectInputStream objectInput = new ObjectInputStream(is);
+                    GZIPInputStream gzipInput = new GZIPInputStream(is);
+                    ObjectInputStream objectInput = new ObjectInputStream(gzipInput);
 
                     try {
                         Object object = objectInput.readObject();
 
                         if (object instanceof LuceneIndexContainer) {
-                            index = (LuceneIndexContainer)object;
-                            LOG.info("Successfully restored search index from database: " + index);
+                            index = (LuceneIndexContainer) object;
+
+                            LOG.info("Successfully restored search index information"
+                                    + " from database in " + (System.currentTimeMillis() - time)
+                                    + " ms");
+                            LOG.info("Index: " + index);
+                        } else {
+                            LOG.warn("Object from DB has wrong class:"
+                                    + object.getClass().getName());
                         }
                     } finally {
                         objectInput.close();
+                        gzipInput.close();
+                    }
+                } else {
+                    LOG.warn("IS is null");
+                }
+
+                if (index != null) {
+                    time = System.currentTimeMillis();
+                    LOG.info("Attempting to restore search directory from database...");
+                    is =
+                            MetadataManager.readLargeBinary(db,
+                                    MetadataManager.SEARCH_INDEX_DIRECTORY);
+
+                    if (is != null) {
+                        if ("FSDirectory".equals(index.getDirectoryType())) {
+                            final int bufferSize = 2048;
+                            File directoryPath = new File(LUCENE_INDEX_PATH);
+
+                            // make sure we start with a new index
+                            if (directoryPath.exists()) {
+                                String files[] = directoryPath.list();
+                                for (int i = 0; i < files.length; i++) {
+                                    LOG.info("Deleting old file: " + files[i]);
+                                    new File(directoryPath.getAbsolutePath() + File.separator
+                                            + files[i]).delete();
+                                }
+                            } else {
+                                directoryPath.mkdir();
+                            }
+
+                            ZipInputStream zis = new ZipInputStream(is);
+                            ZipEntry entry;
+                            while ((entry = zis.getNextEntry()) != null) {
+                                LOG.info("Extracting: " + entry.getName() + " (" + entry.getSize()
+                                        + " MB)");
+
+                                FileOutputStream fos =
+                                        new FileOutputStream(directoryPath.getAbsolutePath()
+                                                + File.separator + entry.getName());
+                                BufferedOutputStream bos =
+                                        new BufferedOutputStream(fos, bufferSize);
+
+                                int count;
+                                byte data[] = new byte[bufferSize];
+
+                                while ((count = zis.read(data, 0, bufferSize)) != -1) {
+                                    bos.write(data, 0, count);
+                                }
+
+                                bos.flush();
+                                bos.close();
+                            }
+
+                            FSDirectory directory = FSDirectory.open(directoryPath);
+                            // RAMDirectory ramDirectory = new
+                            // RAMDirectory(directory);
+                            index.setDirectory(directory);
+
+                            LOG.info("Successfully restored FS directory from database in "
+                                    + (System.currentTimeMillis() - time) + " ms");
+                            time = System.currentTimeMillis();
+                        } else if ("RAMDirectory".equals(index.getDirectoryType())) {
+                            GZIPInputStream gzipInput = new GZIPInputStream(is);
+                            ObjectInputStream objectInput = new ObjectInputStream(gzipInput);
+
+                            try {
+                                Object object = objectInput.readObject();
+
+                                if (object instanceof FSDirectory) {
+                                    RAMDirectory directory = (RAMDirectory) object;
+                                    index.setDirectory(directory);
+
+                                    time = System.currentTimeMillis() - time;
+                                    LOG.info("Successfully restored RAM directory"
+                                            + " from database in " + time + " ms");
+                                }
+                            } finally {
+                                objectInput.close();
+                                gzipInput.close();
+                            }
+                        } else {
+                            LOG.warn("Unknown directory type specified: "
+                                    + index.getDirectoryType());
+                        }
+
+                        LOG.info("Directory: " + index.getDirectory());
+                    } else {
+                        LOG.warn("index is null!");
                     }
                 }
             } catch (ClassNotFoundException e) {
@@ -686,99 +1077,193 @@ public class KeywordSearch
             } catch (IOException e) {
                 LOG.error("Could not load search index", e);
             }
+        } else {
+            LOG.error("ObjectStore is of wrong type!");
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static void createIndex(ObjectStore os) {
         long time = System.currentTimeMillis();
         LOG.info("Indexing metadata...");
 
-        ExecutorService fetchThreadPool = Executors.newFixedThreadPool(3);
+        // special classes are the classes we index in addition to bioentities
+        // and/or
+        // classes which have special references that need to be indexed with
+        // the objects
+        HashMap<Class<? extends InterMineObject>, String[]> specialIndexClasses =
+                new HashMap<Class<? extends InterMineObject>, String[]>();
 
-        HashMap<Future<?>, DocumentFetcher> fetchThreads = new HashMap<Future<?>, DocumentFetcher>();
+        // load config file to figure out special classes
+        String configFileName = "keyword_search.properties";
+        ClassLoader classLoader = KeywordSearch.class.getClassLoader();
+        InputStream configStream = classLoader.getResourceAsStream(configFileName);
+        if (configStream != null) {
+            Properties properties = new Properties();
+            try {
+                properties.load(configStream);
 
-//        addFetcherThread(os, fetchThreadPool, fetchThreads, Gene.class, new String[] {
-//            "Gene.pathways", "Gene.omimDiseases", "Gene.goAnnotation.ontologyTerm"});
-//        addFetcherThread(os, fetchThreadPool, fetchThreads, Exon.class, null);
-        addFetcherThread(os, fetchThreadPool, fetchThreads, Transcript.class, null);
-        addFetcherThread(os, fetchThreadPool, fetchThreads, Pathway.class, null);
-        addFetcherThread(os, fetchThreadPool, fetchThreads, GOTerm.class, null);
-        addFetcherThread(os, fetchThreadPool, fetchThreads, Protein.class, null);
-        addFetcherThread(os, fetchThreadPool, fetchThreads, Organism.class, null);
+                for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                    String key = (String) entry.getKey();
+                    String value = (String) entry.getValue();
 
+                    if (key.startsWith("index.class.")) {
+                        String classToIndex = key.substring("index.class.".length());
+                        ClassDescriptor cld = os.getModel().getClassDescriptorByName(classToIndex);
+                        if (cld != null) {
+                            Class<? extends InterMineObject> cls =
+                                    (Class<? extends InterMineObject>) cld.getType();
+
+                            // special fields (references to follow) come as a
+                            // space-separated list
+                            String[] specialFields;
+                            if (!StringUtils.isBlank(value)) {
+                                specialFields = value.split("\\s+");
+                                for (int i = 0; i < specialFields.length; i++) {
+                                    specialFields[i] = classToIndex + "." + specialFields[i];
+                                }
+                            } else {
+                                specialFields = null;
+                            }
+
+                            specialIndexClasses.put(cls, specialFields);
+                        } else {
+                            LOG.error("keyword_search.properties: classDescriptor for '"
+                                    + classToIndex + "' not found!");
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                LOG.error("keyword_search.properties: errow while loading file '" + configFileName
+                        + "'", e);
+            }
+        } else {
+            LOG.error("keyword_search.properties: file '" + configFileName + "' not found!");
+        }
+
+        for (Entry<Class<? extends InterMineObject>, String[]> e : specialIndexClasses.entrySet()) {
+            LOG.info("Indexing additional class: " + e.getKey() + ", special fields = "
+                    + Arrays.toString(e.getValue()));
+        }
+
+        // fetching happens in multiple threads since the bottleneck is
+        // generally the DB
+        ExecutorService fetchThreadPool = Executors.newFixedThreadPool(5);
+        HashMap<Future<?>, DocumentFetcher> fetchThreads =
+                new HashMap<Future<?>, DocumentFetcher>();
+
+        // start threads for special classes
+        for (Class<? extends InterMineObject> specialClass : specialIndexClasses.keySet()) {
+            addFetcherThread(os, fetchThreadPool, fetchThreads, specialIndexClasses, specialClass,
+                    true);
+        }
+
+        // start general thread for all bioentities
+        addFetcherThread(os, fetchThreadPool, fetchThreads, specialIndexClasses, BioEntity.class,
+                false);
+
+        // index the docs queued by the fetchers
         index = new LuceneIndexContainer();
+        try {
+            File directoryPath = new File(LUCENE_INDEX_PATH);
+            index.setDirectory(FSDirectory.open(directoryPath));
+            index.setDirectoryType("FSDirectory");
+
+            // make sure we start with a new index
+            if (directoryPath.exists()) {
+                String files[] = directoryPath.list();
+                for (int i = 0; i < files.length; i++) {
+                    LOG.info("Deleting old file: " + files[i]);
+                    new File(directoryPath.getAbsolutePath() + File.separator + files[i]).delete();
+                }
+            }
+        } catch (IOException e) {
+            LOG.error("Could not create index directory, using RAM!", e);
+            index.setDirectory(new RAMDirectory());
+            index.setDirectoryType("RAMDirectory");
+        }
+
         IndexWriter writer;
         try {
-            SnowballAnalyzer snowballAnalyzer = new SnowballAnalyzer(Version.LUCENE_30, "English",
-                    StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-            writer = new IndexWriter(index.getRam(), snowballAnalyzer, true,
-                    IndexWriter.MaxFieldLength.UNLIMITED);
+            SnowballAnalyzer snowballAnalyzer =
+                    new SnowballAnalyzer(Version.LUCENE_30, "English",
+                            StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+            writer =
+                    new IndexWriter(index.getDirectory(), snowballAnalyzer, true,
+                            IndexWriter.MaxFieldLength.UNLIMITED);
+
+            int indexed = 0;
+
+            // loop and index while we still have fetchers running
+            while (true) {
+                Document doc = null;
+                doc = indexingQueue.poll();
+
+                // nothing in the queue?
+                if (doc == null) {
+                    if (fetchThreads.size() > 0) {
+                        // purge thread list
+                        purgeFetcherThreads(fetchThreads);
+
+                        // sleep a bit
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                        }
+                    } else {
+                        // only stop if the queue is actually empty
+                        if (indexingQueue.isEmpty()) {
+                            break;
+                        }
+                    }
+                } else {
+                    try {
+                        writer.addDocument(doc);
+                        indexed++;
+                    } catch (IOException e) {
+                        LOG.error("Failed to submit #" + doc.getFieldable("id") + " to the index",
+                                e);
+                    }
+
+                    if (indexed % 10000 == 1) {
+                        purgeFetcherThreads(fetchThreads);
+
+                        LOG.info("docs indexed=" + indexed + "; threads=" + fetchThreads.size()
+                                + "; docs/ms=" + indexed * 1.0F
+                                / (System.currentTimeMillis() - time) + "; memory="
+                                + Runtime.getRuntime().freeMemory() / 1024 + "k/"
+                                + Runtime.getRuntime().maxMemory() / 1024 + "k");
+                    }
+                }
+            }
+
+            LOG.info("Indexing done, optimizing index files...");
+
+            try {
+                writer.optimize();
+                writer.close();
+            } catch (IOException e) {
+                LOG.error("IOException while optimizing and closing IndexWriter", e);
+            }
+
+            time = System.currentTimeMillis() - time;
+            int seconds = (int) Math.floor(time / 1000);
+            LOG.info("Indexing of "
+                    + indexed
+                    + " documents finished in "
+                    + String.format("%02d:%02d.%03d", (int) Math.floor(seconds / 60), seconds % 60,
+                            time % 1000) + " minutes");
         } catch (IOException err) {
             throw new RuntimeException("Failed to create lucene IndexWriter", err);
         }
-
-        int indexed = 0;
-
-        // loop and index while we still have fetchers running
-        while (true) {
-            Document doc = null;
-            synchronized (os) {
-                doc = indexingQueue.poll();
-            }
-
-            // nothing in the queue?
-            if (doc == null) {
-                if (fetchThreads.size() > 0) {
-                    // purge thread list
-                    purgeFetcherThreads(fetchThreads);
-
-                    // sleep a bit
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                    }
-                } else {
-                    break;
-                }
-            } else {
-                try {
-                    writer.addDocument(doc);
-                    indexed++;
-                } catch (IOException e) {
-                    LOG.error("Failed to submit #" + doc.getFieldable("id") + " to the index", e);
-                }
-
-                if (indexed % 10000 == 1) {
-                    purgeFetcherThreads(fetchThreads);
-
-                    LOG.info("docs indexed=" + indexed + "; queue=" + indexingQueue.size()
-                            + "; threads=" + fetchThreads.size() + "; docs/ms=" + indexed * 1.0F
-                            / (System.currentTimeMillis() - time) + "; memory="
-                            + Runtime.getRuntime().freeMemory() / 1024 + "k/"
-                            + Runtime.getRuntime().maxMemory() / 1024 + "k");
-                }
-            }
-        }
-
-        try {
-            writer.close();
-        } catch (IOException e) {
-            LOG.error("IOException while closing IndexWriter", e);
-        }
-
-        time = System.currentTimeMillis() - time;
-        int seconds = (int) Math.floor(time / 1000);
-        LOG.info("Indexing finished in "
-                + String.format("%02d:%02d.%03d", (int) Math.floor(seconds / 60), seconds % 60,
-                        time % 1000) + " minutes");
-
-        LOG.info("INDEXING: " + index);
     }
 
     private static void addFetcherThread(ObjectStore os, ExecutorService fetchThreadPool,
-            HashMap<Future<?>, DocumentFetcher> fetchThreads, Class<? extends InterMineObject> cls,
-            String[] collections) {
-        DocumentFetcher fetcher = new DocumentFetcher(os, indexingQueue, cls, collections);
+            HashMap<Future<?>, DocumentFetcher> fetchThreads,
+            HashMap<Class<? extends InterMineObject>, String[]> specialIndexClasses,
+            Class<? extends InterMineObject> cls, boolean overwrite) {
+        DocumentFetcher fetcher =
+                new DocumentFetcher(os, indexingQueue, specialIndexClasses, cls, overwrite);
         fetchThreads.put(fetchThreadPool.submit(fetcher), fetcher);
     }
 

@@ -24,6 +24,8 @@ public class KeywordSearchForm extends ActionForm
     private static final long serialVersionUID = 1L;
 
     private String searchTerm;
+    private String searchOffset;
+    private String searchCategory;
 
     /**
      *
@@ -44,6 +46,22 @@ public class KeywordSearchForm extends ActionForm
      */
     public void setSearchTerm(String searchTerm) {
         this.searchTerm = searchTerm;
+    }
+    
+    public String getSearchOffset() {
+        return searchOffset;
+    }
+    
+    public void setSearchOffset(String searchOffset) {
+        this.searchOffset = searchOffset;
+    }
+    
+    public String getSearchCategory() {
+        return searchCategory;
+    }
+    
+    public void setSearchCategory(String searchCategory) {
+        this.searchCategory = searchCategory;
     }
 
 
