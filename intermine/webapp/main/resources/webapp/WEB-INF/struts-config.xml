@@ -436,6 +436,9 @@
     <action path="/initTemplates" type="org.intermine.web.struts.TemplatesController"/>
     <action path="/initPasswordReset" type="org.intermine.web.struts.PasswordResetController"/>
     <action path="/initHints" type="org.intermine.web.struts.HintsController"/>
+	        
+	<action path="/initKeywordSearchResults" type="org.intermine.web.struts.KeywordSearchResultsController" />
+	<action path="/keywordSearchResults" forward="keywordsearchresults.page" />
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->

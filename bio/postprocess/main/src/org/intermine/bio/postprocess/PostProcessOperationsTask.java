@@ -20,7 +20,6 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.intermine.bio.search.KeywordSearch;
 import org.intermine.bio.util.LinkInTask;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
@@ -37,6 +36,7 @@ import org.intermine.task.DynamicAttributeTask;
 import org.intermine.task.PrecomputeTask;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
+import org.intermine.web.search.KeywordSearch;
 
 /**
  * Run operations on genomic model database after DataLoading

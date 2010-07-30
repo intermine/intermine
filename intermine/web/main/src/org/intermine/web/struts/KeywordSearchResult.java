@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web.struts;
 
 import java.util.HashMap;
 import java.util.List;
