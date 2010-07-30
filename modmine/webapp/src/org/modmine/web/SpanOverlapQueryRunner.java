@@ -215,8 +215,9 @@ public class SpanOverlapQueryRunner
 //        Map<String, Results> spanOverlapResultDisplayMap = new LinkedHashMap<String, Results>();
 
         try {
+            Query q;
             for (Span aSpan: spanList) {
-                Query q = new Query();
+                q = new Query();
                 q.setDistinct(true);
 
                 String chrPID = aSpan.getChr();
@@ -224,12 +225,12 @@ public class SpanOverlapQueryRunner
                 Integer end = aSpan.getEnd();
 
                 //>>>>> TEST CODE <<<<<
-                LOG.info("OrgName: " + orgName);
-                LOG.info("chrPID: " + chrPID);
-                LOG.info("start: " + start);
-                LOG.info("end: " + end);
-                LOG.info("FeatureTypes: " + ftKeys);
-                LOG.info("Submissions: " + subKeys);
+//                LOG.info("OrgName: " + orgName);
+//                LOG.info("chrPID: " + chrPID);
+//                LOG.info("start: " + start);
+//                LOG.info("end: " + end);
+//                LOG.info("FeatureTypes: " + ftKeys);
+//                LOG.info("Submissions: " + subKeys);
                 //>>>>> TEST CODE <<<<<
 
                 // DB tables
@@ -327,9 +328,9 @@ public class SpanOverlapQueryRunner
                 Results results = im.getObjectStore().execute(q);
 
                 //>>>>> TEST CODE <<<<<
-                LOG.info("Query: " + q.toString());
-                LOG.info("Result Size: " + results.size());
-                LOG.info("Result: " + results);
+//                LOG.info("Query: " + q.toString());
+//                LOG.info("Result Size: " + results.size());
+//                LOG.info("Result: " + results);
                 //>>>>> TEST CODE <<<<<
 
                 spanOverlapResultDisplayMap.put(aSpan, results);
