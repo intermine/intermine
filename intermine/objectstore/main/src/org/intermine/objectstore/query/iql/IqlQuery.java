@@ -200,6 +200,8 @@ public class IqlQuery
             } else if (obj instanceof Date) {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
                 return "'" + format.format((Date) obj) + "'";
+            } else if (obj instanceof Class) {
+                return "'" + ((Class<?>) obj).getName() + "'";
             } else {
                 return obj.toString();
             }

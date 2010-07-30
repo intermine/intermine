@@ -14,24 +14,32 @@
                  the spans they upload.
   --%>
 
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <!--  spanUploadOptions.jsp -->
 
-<html:xhtml />
-<c:set var="bagExampleIdentifiers" value="${WEB_PROPERTIES['bag.example.identifiers']}"/>
+<link type="text/css" rel="stylesheet" href="model/jsTree/_docs/syntax/!style.css"/>
+<link type="text/css" rel="stylesheet" href="model/jsTree/_docs/!style.css"/>
 
-<link rel="stylesheet" href="model/collapsibleCheckboxTree/css/jquery.collapsibleCheckboxTree.css" type="text/css" />
-<script type="text/javascript" src="model/collapsibleCheckboxTree/js/jquery.collapsibleCheckboxTree.js"></script>
-<script language="javascript">
+<%-- <script type="text/javascript" src="model/jsTree/_lib/jquery.js"></script> --%>
+<script type="text/javascript" src="model/jsTree/_lib/jquery.cookie.js"></script>
+<script type="text/javascript" src="model/jsTree/_lib/jquery.hotkeys.js"></script>
+
+<script type="text/javascript" src="model/jsTree/jquery.jstree.js"></script>
+
+<script type="text/javascript" src="model/jsTree/_docs/syntax/!script.js"></script>
+
+<script type="text/javascript" class="source">
 <!--//<![CDATA[
-
    function switchInputs(open, close) {
       jQuery('#' + open + 'Input').attr("disabled","");
       jQuery('#' + close + 'Input').attr("disabled","disabled");
+      jQuery('#whichInput').val(open);
     }
 
     function clearExample() {
@@ -52,48 +60,132 @@
     function loadExample(example) {
       switchInputs('paste','file');
       jQuery('#pasteInput').focus();
-      jQuery('#pasteInput').val(example);
+      if (jQuery("#orgSelector").val() == "C. elegans") {
+        jQuery('#pasteInput').val("I:2145137..2146137\nII:3631105..3631106\nIII:8245810..8245811\nIV:2263659..2263660");}
+      else {
+        jQuery('#pasteInput').val("2L:10345..12409");}
       return false;
     }
 
-   var typeToEnable = new Array();
-   <c:forEach items="${typesWithConnectingField}" var="type">
-   typeToEnable['${type}'] = 1;
-   </c:forEach>
-
-   function typeChanged() {
-     var type = document.getElementById('typeSelector').value;
-     var el = document.getElementById('extraConstraintSelect');
-     if (typeToEnable[type] == null){
-        el.disabled = true;
-     } else {
-        el.disabled = false;
-     }
-     if (type.length > 0){
-        jQuery('#submitBag').attr('disabled', '');
-     } else {
-        jQuery('#submitBag').attr('disabled', 'disabled');
-     }
-   }
-
    function orgNameChanged(org) {
-     //org = org.replace(". ", "\\.\\ ");
-       //jQuery('ul#'+org).collapsibleCheckboxTree();
 
      // Show the tree of selected organism
-     loadOrgTree(org)
+     loadOrgTree(org);
 
-       }
+     // jsTree
+     jQuery("#tree")
+     .bind("loaded.jstree", function (event, data) {
+         data.inst.open_all(-1);
+       })
+     .bind("change_state.jstree", function(event, data) {
+         var checked_ids = getCheckedNodeIds();
+
+         var featureTypes = [];
+         for(i=0; i<checked_ids.length; i++) {
+           <c:forEach var="expFTMap" items="${expFTMap}">
+             if(checked_ids[i] == "${expFTMap.key}") {
+               <c:forEach var="featureTypeList" items="${expFTMap.value}">
+                 featureTypes.push("${featureTypeList}");
+               </c:forEach>
+             }
+           </c:forEach>
+         }
+
+         var uniqueFeatureTypes = featureTypes.unique().sort();
+
+         var ftHTMLArray = [];
+         for(i=0; i<uniqueFeatureTypes.length; i++) {
+           ftHTMLArray.push("<input type='checkbox' checked='yes' name='featureTypes' value='"
+                    + uniqueFeatureTypes[i] + "'/>" + uniqueFeatureTypes[i] + "<br/>");
+         }
+
+         jQuery("#featureType").html(ftHTMLArray.join(""));
+         if(ftHTMLArray.join("") != "") {
+             jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id, 'featureTypes')\"/>Select Feature Types:"); }
+           else {
+             jQuery("#selectFeatureTypes").html("Select Feature Types:"); }
+     })
+     .jstree({
+         "themes" : {
+                     "theme" : "apple",
+                     "dots" : true,
+                     "icons" : false
+                     },
+         "plugins" : [ "themes", "html_data", "checkbox" ]
+     });
+
+   }
 
    jQuery(document).ready(function(){
 
+     // store expriments with feature types in an array
+       expArray = [];
+
+       <c:forEach var="expFTMap" items="${expFTMap}" varStatus="counter">
+         expArray.push("${expFTMap.key}");
+       </c:forEach>
+
      // Store org-tree in a 2D array
+     // as array[orgName][HTML]
      orgArray = new Array(${fn:length(orgSet)});
 
-     <c:forEach var="orgMap" items="${orgMap}" varStatus="counter">
+     // Build experiment tree and featureType checkbox
+     <c:forEach var="orgName" items="${orgList}" varStatus="counter">
+       var treeHTMLArray = [];
+       treeHTMLArray.push("<li><p id='selectExperiments'>Select Experiments:</p>");
+       treeHTMLArray.push("<div id='tree' style='width:780px;'>");
+       treeHTMLArray.push("<ul id='${orgName}'>");
+
+       <c:forEach var="orgMap" items="${orgMap}">
+         if ("${orgMap.key}" == "${orgName}") {
+          <c:forEach var="cagMap" items="${orgMap.value}">
+          if ("${cagMap.value}" == "{}") {
+              // if exp is null, fix this
+              treeHTMLArray.push("<li><i><b>");
+              treeHTMLArray.push("${cagMap.key}");
+              treeHTMLArray.push("</i></b><ul>");
+          }
+          else {
+              treeHTMLArray.push("<li><a><i><b>");
+              treeHTMLArray.push("${cagMap.key}");
+              treeHTMLArray.push("</b></i></a><ul>");
+          }
+          <c:forEach var="expMap" items="${cagMap.value}">
+            // Link out experiments by right click and open a new page
+            // Check if experiments have feature types
+            for (i=0; i<expArray.length; i++) {
+              if ("${expMap.key.name}" == expArray[i]) {
+                treeHTMLArray.push("<li id=\"${expMap.key.name}\"><a href=\"${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${expMap.key.name}\">");
+                treeHTMLArray.push("${expMap.key.name}");
+                treeHTMLArray.push("</a></li>");
+              }
+            }
+          </c:forEach>
+          treeHTMLArray.push("</ul></li>");
+          </c:forEach>
+         }
+       </c:forEach>
+       treeHTMLArray.push("</ul>");
+       treeHTMLArray.push("</div>");
+       treeHTMLArray.push("</li>");
+
+       treeHTMLArray.push("<br/>");
+
+       // Build feature type div
+       // Set in a table
+       treeHTMLArray.push("<li>");
+       treeHTMLArray.push("<p id='selectFeatureTypes'>Select Feature Types:</p>");
+       treeHTMLArray.push("<table cellpadding='0' cellspacing='0' border='0'>");
+       treeHTMLArray.push("<div id='featureType'>");
+       // Add content by jQuery according to selected exps
+       treeHTMLArray.push("</div>");
+       treeHTMLArray.push("</table>");
+       treeHTMLArray.push("</li>");
+
+       // Add to array
        orgArray[${counter.count-1}] = new Array(2);
-       orgArray[${counter.count-1}][0] = "${orgMap.key}";
-       orgArray[${counter.count-1}][1] = "${orgMap.value}";
+       orgArray[${counter.count-1}][0] = "${orgName}";
+       orgArray[${counter.count-1}][1] = treeHTMLArray.join("");
      </c:forEach>
 
      // Get the current organism name in the dropbox
@@ -102,78 +194,176 @@
      // Show the tree of selected organism
      loadOrgTree(orgSelected);
 
+     jQuery("#tree")
+     .bind("loaded.jstree", function (event, data) {
+        data.inst.open_all(-1);
+      })
+     .bind("change_state.jstree", function(event, data) {
+         var checked_ids = getCheckedNodeIds();
+
+         var featureTypes = [];
+         for(i=0; i<checked_ids.length; i++) {
+           <c:forEach var="expFTMap" items="${expFTMap}">
+             if(checked_ids[i] == "${expFTMap.key}") {
+               <c:forEach var="featureTypeList" items="${expFTMap.value}">
+                 featureTypes.push("${featureTypeList}");
+               </c:forEach>
+             }
+           </c:forEach>
+         }
+
+         var uniqueFeatureTypes = featureTypes.unique().sort();
+
+         var ftHTMLArray = [];
+         for(i=0; i<uniqueFeatureTypes.length; i++) {
+           ftHTMLArray.push("<input type='checkbox' checked='yes' name='featureTypes' value='"
+                    + uniqueFeatureTypes[i] + "'/>" + uniqueFeatureTypes[i] + "<br/>");
+         }
+
+         jQuery("#featureType").html(ftHTMLArray.join(""));
+         if(ftHTMLArray.join("") != "") {
+           jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id, 'featureTypes')\"/>Select Feature Types:"); }
+         else {
+           jQuery("#selectFeatureTypes").html("Select Feature Types:"); }
+     })
+     .jstree({
+         "themes" : {
+                     "theme" : "apple",
+                     "dots" : true,
+                     "icons" : false
+                    },
+         "plugins" : [ "themes", "html_data", "checkbox" ]
+     });
+
    });
 
    function loadOrgTree(org) {
        for(i=0; i<orgArray.length; i++) {
            if(orgArray[i][0]==org) {
-             jQuery('#tree').html(orgArray[i][1]);
+             jQuery('#exp').html(orgArray[i][1]);
            }
        }
    }
-//]]>-->
+
+   function beforeSubmit() {
+     var checked_ids = getCheckedNodeIds();
+     jQuery("#hiddenExpFiled").val(checked_ids.join(","))
+   }
+
+   function getCheckedNodeIds() {
+       var checked_ids = [];
+       jQuery("li.jstree-checked").each(function(){
+                if(this.id != "") {
+                checked_ids.push(this.id);
+             }
+       });
+
+     return checked_ids;
+  }
+
+   // function to remove duplicates from Array
+   Array.prototype.unique = function () {
+      var r = new Array();
+      o:for(var i = 0, n = this.length; i < n; i++)
+      {
+          for(var x = 0, y = r.length; x < y; x++)
+          {
+              if(r[x]==this[i])
+              {
+                  continue o;
+              }
+          }
+          r[r.length] = this[i];
+      }
+      return r;
+  }
+
+   // (un)Check all feature types
+   function checkAll(id, name)
+   {
+     jQuery("input[@name=" + name + "]:checkbox").attr('checked', jQuery('#' + id).is(':checked'));
+   }
+ //]]>-->
 </script>
 
-<im:boxarea titleKey="bagBuild.makeNewBag" stylename="plainbox" fixedWidth="60%">
+<html:xhtml />
+<c:set var="exampleSpans" value="${exampleSpans}"/>
+
+<div align="center">
+<im:boxarea titleKey="spanUpload.makeNewSpan" stylename="plainbox" fixedWidth="85%" htmlId="spanUploadOptions">
   <div class="body">
     <html:form action="/spanUploadAction" method="POST" enctype="multipart/form-data">
 
-      <p><fmt:message key="bagBuild.bagFormText1"/></p>
+      <p><fmt:message key="spanUpload.spanUploadFormCaption"/></p>
       <br/>
       <ul>
-        <li>Separate identifiers by a <strong>comma</strong>, <strong>space</strong>, <strong>tab</strong> or <strong>new line</strong>.</li>
-        <li>Qualify any identifiers that contain whitespace with double quotes like so:  "even skipped".</li>
+         <li>Spans in the following formats are accepted:
+          <ul>
+            <li><strong>chr:start..end</strong></li>
+            <li><strong>chr:start-end</strong></li>
+            <li>Simple <strong>tab delimited</strong> BED format as <strong>chr   start   end</strong></li>
+          </ul>
+        </li>
+        <li>Each span needs to take a <strong>new line</strong>.</li>
+        <li>Only experiments with features are displayed.</li>
+        <li>Right click <strong>a experiment</strong> in the tree to go to experiment report page.</li>
       </ul>
       <br/>
 
-      <li>
-      <label><fmt:message key="bagBuild.bagType"/></label>
+    <ol id="spanUploadlist">
+
+   <li>
+      <label>
+        <fmt:message key="spanUpload.spanConstraint">
+        <fmt:param value="${spanConstraint}"/>
+        </fmt:message>
+      </label>
       <html:select styleId="orgSelector" property="orgName" onchange="orgNameChanged(this.value);">
-      <c:forEach items="${orgSet}" var="orgName">
+      <c:forEach items="${orgList}" var="orgName">
           <html:option value="${orgName}">${orgName}</html:option>
       </c:forEach>
       </html:select>
-      </li>
+   </li>
 
-<div id='tree'>
+   <%-- experiments tree and feature types --%>
+      <div id='exp'></div>
+      <input type="hidden" id="hiddenExpFiled" name='experiments' value="">
+      <br/>
 
-</div>
-
+   <li>
    <%-- textarea --%>
-   <label><fmt:message key="bagBuild.bagPaste"/></label>
+   <label><fmt:message key="spanUpload.spanPaste"/></label>
 
-   <span>
-   <%-- example bag --%>
-   <%--
-     <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
-     <c:if test="${!empty bagExampleIdentifiers}">
-         <div style="text-align:right;width:87%;">
+   <%-- example span --%>
+     <c:if test="${!empty exampleSpans}">
+         <div style="text-align:left;">
            <html:link href=""
-                      onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
+                      onclick="javascript:loadExample('${exampleSpans}');return false;">
              (click to see an example)<img src="images/disclosed.gif" title="Click to Show example"/>
            </html:link>
          </div>
      </c:if>
-     --%>
-   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="if (this.value != '') switchInputs('paste','file');" onkeypress="switchInputs('paste','file');" />
-   </span>
-
+     <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="if (this.value != '') switchInputs('paste','file');" onkeypress="switchInputs('paste','file');" />
    </li>
-     <%-- file input --%>
-    <li>
-      <label><fmt:message key="bagBuild.or"/></label>
-      <html:file styleId="fileInput" property="formFile" onchange="switchInputs('file','paste');" onkeydown="switchInputs('file','paste');" size="28" />
-    </li>
-    </ol>
+
+   <%-- file input --%>
+   <li>
+     <label><fmt:message key="spanUpload.spanFromFile"/></label>
+     <html:file styleId="fileInput" property="formFile" onchange="switchInputs('file','paste');" onkeydown="switchInputs('file','paste');" size="28" />
+     <html:hidden styleId="whichInput" property="whichInput" />
+   </li>
+
+   </ol>
+
     <div align="right">
        <%-- reset button --%>
        <input type="button" onClick="resetInputs()" value="Reset" />
-       <html:submit styleId="submitBag"><fmt:message key="bagBuild.makeBag"/></html:submit>
+       <html:submit styleId="submitSpan" onclick="beforeSubmit();"><fmt:message key="spanBuild.search"/></html:submit>
     </div>
-
-    <html:hidden styleId="whichInput" property="whichInput" />
 
     </html:form>
   </div>
 </im:boxarea>
+</div>
+
 <!--  /spanUploadOptions.jsp -->

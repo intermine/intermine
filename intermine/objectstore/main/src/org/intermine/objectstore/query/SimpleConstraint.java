@@ -210,7 +210,8 @@ public class SimpleConstraint extends Constraint
                     || arg1.equals(Date.class) || arg1.equals(Short.class)
                     || arg1.equals(Integer.class) || arg1.equals(Long.class)
                     || arg1.equals(Float.class) || arg1.equals(Double.class)
-                    || arg1.equals(BigDecimal.class) || arg1.equals(UnknownTypeValue.class))) {
+                    || arg1.equals(BigDecimal.class) || arg1.equals(UnknownTypeValue.class)
+                    || arg1.equals(Class.class))) {
             return true;
         }
         return false;
@@ -230,6 +231,8 @@ public class SimpleConstraint extends Constraint
             return BOOLEAN_OPS;
         } else if (Date.class.equals(arg)) {
             return DATE_OPS;
+        } else if (Class.class.equals(arg)) {
+            return BOOLEAN_OPS;
         } else if (UnknownTypeValue.class.equals(arg)) {
             return ALL_OPS;
         }
@@ -253,6 +256,8 @@ public class SimpleConstraint extends Constraint
             return BOOLEAN_OPS;
         } else if (Date.class.equals(arg)) {
             return DATE_OPS;
+        } else if (Class.class.equals(arg)) {
+            return BOOLEAN_OPS;
         } else {
             return ALL_OPS;
         }
