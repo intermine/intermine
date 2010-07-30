@@ -12,12 +12,15 @@ package org.intermine.objectstore.query.iql;
 
 import junit.framework.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Company;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.objectstore.SetupDataTestCase;
 import org.intermine.objectstore.query.ObjectStoreBag;
@@ -296,5 +299,8 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("MultiColumnObjectInCollection", new IqlQuery("SELECT a1_, a1_.departments(SELECT default, a1_.0, a1_.1 PATH default.company(SELECT default, default.contractors) AS a1_) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
         results.put("Range1", new IqlQuery("SELECT a1_.id AS a3_, a2_.id AS a4_ FROM org.intermine.model.testmodel.Range AS a1_, org.intermine.model.testmodel.Range AS a2_ WHERE RANGE(a1_.rangeStart, a1_.rangeEnd, a1_.parent) OVERLAPS RANGE(a2_.rangeStart, a2_.rangeEnd, a2_.parent)", null));
         results.put("ConstrainClass1", new IqlQuery("SELECT a1_ FROM org.intermine.model.InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee'", null));
+        fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.InterMineObject AS a1_ WHERE a1_.class IN ?", null);
+        fq.setParameters(Arrays.asList(Arrays.asList(Employee.class, Company.class)));
+        results.put("ConstrainClass2", fq);
     }
 }

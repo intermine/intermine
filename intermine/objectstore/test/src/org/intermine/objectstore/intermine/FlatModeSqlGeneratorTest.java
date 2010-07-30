@@ -264,6 +264,8 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("Company", "Department", "ImportantPerson", "CompanysContractors")));
         results.put("ConstrainClass1", NO_RESULT);
         results2.put("ConstrainClass1", NO_RESULT);
+        results.put("ConstrainClass2", NO_RESULT);
+        results2.put("ConstrainClass2", NO_RESULT);
     }
 
     protected DatabaseSchema getSchema() throws Exception {

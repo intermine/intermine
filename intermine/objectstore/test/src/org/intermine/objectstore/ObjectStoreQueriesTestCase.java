@@ -275,6 +275,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("MultiColumnObjectInCollection", multiColumnObjectInCollection());
         queries.put("Range1", range1());
         queries.put("ConstrainClass1", constrainClass1());
+        queries.put("ConstrainClass2", constrainClass2());
     }
 
     /*
@@ -2222,6 +2223,20 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addToSelect(qc1);
         QueryField qf = new QueryField(qc1, "class");
         q.setConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(Employee.class)));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_ FROM InterMineObject WHERE a1_.class IN (Employee.class, Company.class)
+     */
+    public static Query constrainClass2() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(InterMineObject.class);
+        q.addFrom(qc1);
+        q.addToSelect(qc1);
+        QueryField qf = new QueryField(qc1, "class");
+        q.setConstraint(new BagConstraint(qf, ConstraintOp.IN, Arrays.asList(Employee.class, Company.class)));
         q.setDistinct(false);
         return q;
     }

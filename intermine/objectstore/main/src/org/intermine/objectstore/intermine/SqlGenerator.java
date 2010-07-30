@@ -1682,6 +1682,8 @@ public class SqlGenerator
                         filteredBag.add(bagValue);
                     //    lowest = Math.min(bagValue.intValue(), lowest);
                     //    highest = Math.max(bagValue.intValue(), highest);
+                    } else if (bagItem instanceof Class<?>) {
+                        filteredBag.add(((Class<?>) bagItem).getName());
                     } else {
                         filteredBag.add(bagItem);
                     //    if (bagItem instanceof Integer) {
