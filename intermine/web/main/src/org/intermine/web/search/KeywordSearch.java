@@ -1,4 +1,4 @@
-package org.intermine.bio.search;
+package org.intermine.web.search;
 
 /*
  * Copyright (C) 2002-2010 FlyMine

@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.web.struts;
 
 /*
  * Copyright (C) 2002-2010 FlyMine
@@ -28,8 +28,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.bio.search.KeywordSearch;
-import org.intermine.bio.search.KeywordSearchHit;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -37,6 +35,8 @@ import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.search.KeywordSearch;
+import org.intermine.web.search.KeywordSearchHit;
 
 import com.browseengine.bobo.api.BrowseFacet;
 import com.browseengine.bobo.api.BrowseHit;
