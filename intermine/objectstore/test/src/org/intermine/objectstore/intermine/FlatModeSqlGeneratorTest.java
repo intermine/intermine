@@ -262,6 +262,8 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("SelectWhereBackslash", Collections.singleton("Employee"));
         results.put("MultiColumnObjectInCollection", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("Company", "Department", "ImportantPerson", "CompanysContractors")));
+        results.put("ConstrainClass1", NO_RESULT);
+        results2.put("ConstrainClass1", NO_RESULT);
     }
 
     protected DatabaseSchema getSchema() throws Exception {

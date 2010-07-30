@@ -274,6 +274,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("SelectWhereBackslash", selectWhereBackslash());
         queries.put("MultiColumnObjectInCollection", multiColumnObjectInCollection());
         queries.put("Range1", range1());
+        queries.put("ConstrainClass1", constrainClass1());
     }
 
     /*
@@ -2207,6 +2208,20 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         OverlapRange r1 = new OverlapRange(new QueryField(qc1, "rangeStart"), new QueryField(qc1, "rangeEnd"), new QueryObjectReference(qc1, "parent"));
         OverlapRange r2 = new OverlapRange(new QueryField(qc2, "rangeStart"), new QueryField(qc2, "rangeEnd"), new QueryObjectReference(qc2, "parent"));
         q.setConstraint(new OverlapConstraint(r1, ConstraintOp.OVERLAPS, r2));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_ FROM InterMineObject WHERE a1_.class = Employee.class
+     */
+    public static Query constrainClass1() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(InterMineObject.class);
+        q.addFrom(qc1);
+        q.addToSelect(qc1);
+        QueryField qf = new QueryField(qc1, "class");
+        q.setConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(Employee.class)));
         q.setDistinct(false);
         return q;
     }
