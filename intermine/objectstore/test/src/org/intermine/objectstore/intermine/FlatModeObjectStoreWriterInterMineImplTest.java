@@ -58,6 +58,7 @@ public class FlatModeObjectStoreWriterInterMineImplTest extends ObjectStoreWrite
         results.put("SelectClassFromBrokeEmployable", NO_RESULT);
         results.put("SubclassCollection2", NO_RESULT);
         results.put("ConstrainClass1", NO_RESULT);
+        results.put("ConstrainClass2", NO_RESULT);
     }
 
     public static void oneTimeTearDown() throws Exception {

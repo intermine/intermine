@@ -422,6 +422,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("Range1", new HashSet(Arrays.asList("intermine_Range")));
         results.put("ConstrainClass1", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
         results2.put("ConstrainClass1", new HashSet(Arrays.asList("InterMineObject")));
+        results.put("ConstrainClass2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class IN ('org.intermine.model.testmodel.Company', 'org.intermine.model.testmodel.Employee') ORDER BY a1_.id");
+        results2.put("ConstrainClass2", new HashSet(Arrays.asList("InterMineObject")));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";
