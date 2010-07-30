@@ -25,8 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.text.StrMatcher;
-import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -34,7 +32,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagQueryResult;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
@@ -43,7 +40,8 @@ import org.intermine.web.struts.InterMineAction;
  * @author Fengyuan Hu
  *
  */
-public class SpanUploadAction extends InterMineAction {
+public class SpanUploadAction extends InterMineAction
+{
     private static final int READ_AHEAD_CHARS = 10000;
 
     private static String PASS = "pass";
@@ -71,23 +69,15 @@ public class SpanUploadAction extends InterMineAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws Exception {
-    	HttpSession session = request.getSession();
-    	
+        HttpSession session = request.getSession();
+
         // > Step 1 - Data preparation >>>>>
         // >> 1.1 Parse all the fields of SpanUploadForm
         SpanUploadForm spanUploadForm = (SpanUploadForm) form;
         String orgName = spanUploadForm.getOrgName();
         String whichInput = spanUploadForm.getWhichInput();
         FormFile formFile = spanUploadForm.getFormFile();
-        
-		session.setAttribute("selectedExp", "Selected experiments: "
-				+ spanUploadForm.getExperiments()[0]);
-		String ftString = "";
-		for (String aFeaturetype : spanUploadForm.getFeatureTypes()) {
-			ftString = ftString + aFeaturetype + ",";
-		}
-		session.setAttribute("selectedFt", "Selected feature types: "
-				+ ftString.substring(0, ftString.lastIndexOf(",")-1));
+
         // >>> Parse experiments strings
         // Due to jsTree, the checkbox values regarding to experiments is in one
         // string
@@ -169,8 +159,8 @@ public class SpanUploadAction extends InterMineAction {
 
         for (int i = 0; i < read; i++) {
             if (buf[i] == 0) {
-                 recordError(new ActionMessage("spanBuild.notText", "binary"),
-                 request);
+                recordError(new ActionMessage("spanBuild.notText", "binary"),
+                    request);
                 return mapping.findForward("spanUploadOptions");
             }
         }
@@ -231,18 +221,29 @@ public class SpanUploadAction extends InterMineAction {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
-        
+
         Map<String, List<ChromosomeInfo>> chrInfoMap = SpanOverlapQueryRunner
                 .runSpanValidationQuery(im);
 
         // >> 2.2 Validate the spans (parse and validate by AJAX???)
+        ///*
         Map<String, List<Span>> resultMap = SpanValidator.runSpanValidation(
                 orgName, spanList, chrInfoMap);
 
         // store the error in the session and return it to the webpage
         // what if all spans are wrong or no error???
-        String errorMsg = "Invalid spans: " + resultMap.get(SpanUploadAction.ERROR).toString();
-        
+        String errorMsg = "";
+        if (resultMap.get(SpanUploadAction.ERROR).size() == 0) {
+            errorMsg = null;
+        } else {
+            String spanString = "";
+            for (Span span : resultMap.get(SpanUploadAction.ERROR)) {
+                spanString = spanString + span.getChr() + ":" + span.getStart()
+                        + ".." + span.getEnd() + ",";
+            }
+            errorMsg = "Invalid spans: " + spanString.substring(0, spanString.lastIndexOf(","));
+        }
+        //*/
 
         // >> 2.3 Query the overlapped features
         Map<Span, Results> spanOverlapResultDisplayMap = SpanOverlapQueryRunner
@@ -251,6 +252,18 @@ public class SpanUploadAction extends InterMineAction {
 //         .runSpanOverlapQuery(spanUploadForm, spanList, im);
 
         // > Step3 - Session data preparation >>>>>
+        String expString = "";
+        for (String aExperiment : spanUploadForm.getExperiments()) {
+            expString = expString + aExperiment + ",";
+        }
+        session.setAttribute("selectedExp", "Selected experiments: "
+                + expString.substring(0, expString.lastIndexOf(",")));
+        String ftString = "";
+        for (String aFeaturetype : spanUploadForm.getFeatureTypes()) {
+            ftString = ftString + aFeaturetype + ",";
+        }
+        session.setAttribute("selectedFt", "Selected feature types: "
+                + ftString.substring(0, ftString.lastIndexOf(",")));
         session.setAttribute("errorMsg", errorMsg);
         session.setAttribute("results", spanOverlapResultDisplayMap);
 

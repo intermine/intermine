@@ -26,7 +26,7 @@
 <link type="text/css" rel="stylesheet" href="model/jsTree/_docs/syntax/!style.css"/>
 <link type="text/css" rel="stylesheet" href="model/jsTree/_docs/!style.css"/>
 
-<script type="text/javascript" src="model/jsTree/_lib/jquery.js"></script>
+<%-- <script type="text/javascript" src="model/jsTree/_lib/jquery.js"></script> --%>
 <script type="text/javascript" src="model/jsTree/_lib/jquery.cookie.js"></script>
 <script type="text/javascript" src="model/jsTree/_lib/jquery.hotkeys.js"></script>
 
@@ -61,9 +61,9 @@
       switchInputs('paste','file');
       jQuery('#pasteInput').focus();
       if (jQuery("#orgSelector").val() == "C. elegans") {
-        jQuery('#pasteInput').val("I:2145137..13728436");}
+        jQuery('#pasteInput').val("I:2145137..2146137\nII:3631105..3631106\nIII:8245810..8245811\nIV:2263659..2263660");}
       else {
-        jQuery('#pasteInput').val("2L:10345..15409");}
+        jQuery('#pasteInput').val("2L:10345..12409");}
       return false;
     }
 
@@ -124,7 +124,7 @@
        <c:forEach var="expFTMap" items="${expFTMap}" varStatus="counter">
          expArray.push("${expFTMap.key}");
        </c:forEach>
-     
+
      // Store org-tree in a 2D array
      // as array[orgName][HTML]
      orgArray = new Array(${fn:length(orgSet)});
@@ -133,7 +133,7 @@
      <c:forEach var="orgName" items="${orgList}" varStatus="counter">
        var treeHTMLArray = [];
        treeHTMLArray.push("<li><p id='selectExperiments'>Select Experiments:</p>");
-       treeHTMLArray.push("<div id='tree' style='width:750px;'>");
+       treeHTMLArray.push("<div id='tree' style='width:780px;'>");
        treeHTMLArray.push("<ul id='${orgName}'>");
 
        <c:forEach var="orgMap" items="${orgMap}">
@@ -281,7 +281,7 @@
    // (un)Check all feature types
    function checkAll(id, name)
    {
-     jQuery("input[@name=" + name + "]:checkbox").attr('checked', $('#' + id).is(':checked'));
+     jQuery("input[@name=" + name + "]:checkbox").attr('checked', jQuery('#' + id).is(':checked'));
    }
  //]]>-->
 </script>
@@ -290,7 +290,7 @@
 <c:set var="exampleSpans" value="${exampleSpans}"/>
 
 <div align="center">
-<im:boxarea titleKey="spanUpload.makeNewSpan" stylename="plainbox" fixedWidth="80%">
+<im:boxarea titleKey="spanUpload.makeNewSpan" stylename="plainbox" fixedWidth="85%" htmlId="spanUploadOptions">
   <div class="body">
     <html:form action="/spanUploadAction" method="POST" enctype="multipart/form-data">
 
@@ -304,6 +304,7 @@
             <li>Simple <strong>tab delimited</strong> BED format as <strong>chr   start   end</strong></li>
           </ul>
         </li>
+        <li>Each span needs to take a <strong>new line</strong>.</li>
         <li>Only experiments with features are displayed.</li>
         <li>Right click <strong>a experiment</strong> in the tree to go to experiment report page.</li>
       </ul>

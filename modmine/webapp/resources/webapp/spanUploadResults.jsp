@@ -20,6 +20,15 @@
 
 <!--  spanUploadResults.jsp -->
 
+<script type="text/javascript" class="source">
+   jQuery(document).ready(function(){
+   if (jQuery("#firstLine").html()==null) {
+     jQuery("#resultDiv").addClass("altmessage").html("<br>No results found.<p>But if you tell us what you want to find out, maybe we can help!  Send us your question using the contact form at the bottom of the page.</p><br>");
+   }
+   });
+
+</script>
+
 <html:xhtml />
 
 <script language="javascript">
@@ -44,7 +53,7 @@
       <td width="30px" valign="middle"><img border="0" align="middle" width="20px" height="20px" title="hint" src="images/tick.png"></td>
       <td valign="middle">
       ${selectedFt}<br>
-      ${selectedExp}<br>        
+      ${selectedExp}<br>
       </td>
       <td align="right" valign="middle">
           <a onclick="javascript:jQuery('#selectionInfo').hide('slow');return false" href="#">
@@ -56,8 +65,7 @@
 </div>
 </c:if>
 
-<c:if test="${!empty results}">
-<div align="center">
+<div id="resultDiv" align="center">
 
 <table cellspacing="0" cellpadding="0" border="0" align="center" >
 <tr>
@@ -74,8 +82,8 @@
     </tr>
 
     <c:forEach var="element" items="${results}">
-
-    <tr>
+    <c:if test="${!empty element.value}">
+    <tr id="firstLine">
       <td rowspan="${fn:length(element.value)}">
         <c:out value="${element.key.chr}:${element.key.start}..${element.key.end}"/>
       </td>
@@ -128,7 +136,7 @@
           <td><a href="${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/portal.do?externalid=${result[6]}&class=Submission"><c:out value="${result[6]}"/></a></td>
         </tr>
     </c:forEach>
-
+    </c:if>
     </c:forEach>
 
   </table>
@@ -137,6 +145,5 @@
 </table>
 
 </div>
-</c:if>
 
 <!--  /spanUploadResults.jsp -->

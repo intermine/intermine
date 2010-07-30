@@ -100,7 +100,7 @@ public class SpanUploadOptionsController extends TilesAction
         // Set of DisplayExperiment objects
         Set<DisplayExperiment> expSet =
             new LinkedHashSet<DisplayExperiment>(MetadataCache.getExperiments(os));
-        
+
         // A subset of expSet which contains experiments with feature types
         Set<DisplayExperiment> expWithFtSet = new LinkedHashSet<DisplayExperiment>();
 
@@ -114,7 +114,7 @@ public class SpanUploadOptionsController extends TilesAction
                 expFTMap.put(exp.getName(), new ArrayList<String>(exp
                         .getFeatureCounts().keySet()));
                 expWithFtSet.add(exp);
- 
+
             }
         }
 
@@ -136,7 +136,8 @@ public class SpanUploadOptionsController extends TilesAction
                 Map<DisplayExperiment, Map<Integer, List<String>>> expMap =
                      new LinkedHashMap<DisplayExperiment, Map<Integer, List<String>>>();
 //                for (DisplayExperiment exp : expSet) {
-                for (DisplayExperiment exp : expWithFtSet) { // Show only experiments with feature types
+                // Show only experiments with feature types
+                for (DisplayExperiment exp : expWithFtSet) {
                     if (exp.getOrganisms().contains(org) // DisplayExperiment uses org short name
                             && (new HashSet<String>(expCagMap.get(exp)).contains(cag))) {
                         Map<Integer, List<String>> subMap =
