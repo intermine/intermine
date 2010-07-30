@@ -644,6 +644,8 @@ public class DatabaseUtil
             return objectToString(((CharSequence) o).toString());
         } else if (o instanceof Boolean) {
             return ((Boolean) o).booleanValue() ? "'true'" : "'false'";
+        } else if (o instanceof Class<?>) {
+            return objectToString(((Class<?>) o).getName());
         } else if (o == null) {
             return "NULL";
         } else {

@@ -35,9 +35,10 @@ public class QueryValue implements QueryEvaluable
             throw new NullPointerException("Cannot create a QueryValue with null");
         }
         if (!((value instanceof Number) || (value instanceof String) || (value instanceof Boolean)
-                    || (value instanceof Date) || (value instanceof UnknownTypeValue))) {
+                    || (value instanceof Date) || (value instanceof UnknownTypeValue)
+                    || (value instanceof Class))) {
             throw new IllegalArgumentException("value (" + value
-                    + ") must be a Number, String, Boolean, Date or unknown but was: "
+                    + ") must be a Number, String, Boolean, Date, Class or unknown but was: "
                     + value.getClass());
         }
         this.value = value;

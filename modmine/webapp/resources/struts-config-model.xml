@@ -96,8 +96,9 @@
 <action path="/initSpanUploadResults"
   type="org.modmine.web.SpanUploadResultsController" />
 
-<action path="/spanUploadAction" name="spanUploadForm" type="org.modmine.web.SpanUploadAction" input="/spanUploadOptions.jsp">
+<action input="/spanUploadOptions.jsp" name="spanUploadForm" path="/spanUploadAction" scope="request" type="org.modmine.web.SpanUploadAction" >
     <forward name="spanUploadResults" path="/spanUploadResults.do" redirect="true"/>
+    <forward name="spanUploadOptions" path="/spanUploadOptions.do" redirect="true"/>
 </action>
 <!-- End of Span Upload configuration -->
 

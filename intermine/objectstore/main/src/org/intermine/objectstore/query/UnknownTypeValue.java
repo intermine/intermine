@@ -88,10 +88,16 @@ public class UnknownTypeValue
                 return Double.valueOf(value);
             } else if (cls.equals(BigDecimal.class)) {
                 return new BigDecimal(value);
+            } else if (cls.equals(Class.class)) {
+                if ((value.charAt(0) == '\'') && (value.charAt(value.length() - 1) == '\'')) {
+                    return Class.forName(value.substring(1, value.length() - 1));
+                }
             }
         } catch (ParseException e) {
             // Fall through to general exception
         } catch (NumberFormatException e) {
+            // Fall through to general exception
+        } catch (ClassNotFoundException e) {
             // Fall through to general exception
         }
         throw new ClassCastException("Cannot parse value \"" + value + "\" into " + cls.toString());
