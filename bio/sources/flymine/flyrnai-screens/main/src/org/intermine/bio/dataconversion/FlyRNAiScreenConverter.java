@@ -204,8 +204,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                         String refId = screenHit.getIdentifier();
                         screenHit.setReference("rnaiScreen", screens[j]);
                         screenHit.setAttribute("result", resultValue);
-                        screenHit.setReference("amplicon", amplicon);
-                        amplicon.addToCollection("rnaiScreenHits", refId);
+                        screenHit.setReference("pcrProduct", amplicon);
                         screens[j].addToCollection("rnaiScreenHits", refId);
                         store(screenHit);
                     } else {

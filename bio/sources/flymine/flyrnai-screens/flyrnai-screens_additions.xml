@@ -18,7 +18,7 @@
     <reference name="rnaiScreen" referenced-type="RNAiScreen" reverse-reference="rnaiScreenHits"/>
   </class>
   <class name="PCRProduct" is-interface="true">
-    <collection name="rnaiScreenHits" referenced-type="RNAiScreenHit"/>
+    <collection name="rnaiScreenHits" referenced-type="RNAiScreenHit" reverse-reference="pcrProduct"/>
     <collection name="genes" referenced-type="Gene"/>
   </class>
   <class name="Gene" is-interface="true">
