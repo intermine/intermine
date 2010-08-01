@@ -215,10 +215,9 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                             screenHit.setReference("rnaiScreen", screens[j]);
                             screenHit.setReference("gene", gene);
                             screenHit.setAttribute("result", resultValue);
-                            screenHit.setReference("amplicon", amplicon);
+                            screenHit.setReference("pcrProduct", amplicon);
                             //screens[j].getCollection("genes").addRefId(gene.getIdentifier());
                             gene.addToCollection("rnaiResults", screenHit.getIdentifier());
-                            amplicon.addToCollection("rnaiScreenHits", refId);
                             screens[j].addToCollection("rnaiScreenHits", refId);
                             store(screenHit);
                         }
