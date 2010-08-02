@@ -23,7 +23,7 @@
         <%--<c:out value="PAGE: ${pageName}"/>--%>
       </td>
       <td align="right" valign="top">
-          <a href="#" onclick="javascript:document.getElementById('hintsDiv').style.display='none';return false">
+          <a href="#" onclick="javascript:jQuery('#hintsDiv').hide('slow');return false">
             Hide
           </a>
       </td>
