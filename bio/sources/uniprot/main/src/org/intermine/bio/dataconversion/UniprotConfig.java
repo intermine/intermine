@@ -29,8 +29,9 @@ public class UniprotConfig
 {
     private static final Logger LOG = Logger.getLogger(UniprotConfig.class);
     private static final String PROP_FILE = "uniprot_config.properties";
-    private List<String> featureTypes = new ArrayList();
-    private Map<String, ConfigEntry> entries = new HashMap();
+    private List<String> featureTypes = new ArrayList<String>();
+    private List<String> xrefs = new ArrayList<String>();
+    private Map<String, ConfigEntry> entries = new HashMap<String, ConfigEntry>();
 
     /**
      * read configuration file
@@ -40,11 +41,20 @@ public class UniprotConfig
     }
 
     /**
-     * @return list of feature types.  will return null if "feature.types" attribute
+     * if NULL, all feature types will be loaded.
+     * @return list of feature types.  will return EMPTY if "feature.types" attribute
      * not set in property file.
      */
     public List<String> getFeatureTypes() {
         return featureTypes;
+    }
+
+    /**
+     * @return list of cross references.  will return null if "crossReferences.dbs" attribute
+     * not set in property file.
+     */
+    public List<String> getCrossReferences() {
+        return xrefs;
     }
 
     /**
@@ -85,6 +95,12 @@ public class UniprotConfig
                 continue;
             }
 
+            if (taxonId.equals("crossReference")) {
+                String[] types = value.split("[, ]+");
+                xrefs.addAll(Arrays.asList(types));
+                continue;
+            }
+
             ConfigEntry configEntry = getConfig(taxonId);
 
             if (attributes[1].equals("uniqueField")) {
@@ -115,8 +131,8 @@ public class UniprotConfig
     public Set<String> getGeneIdentifierFields(String taxonId) {
         ConfigEntry configEntry = entries.get(taxonId);
         if (configEntry == null) {
-            return null; 
-        } 
+            return null;
+        }
         return configEntry.getIdentifierFields();
     }
 
@@ -153,7 +169,7 @@ public class UniprotConfig
     public class ConfigEntry
     {
         private String uniqueIdentifier = null;
-        private Map<String, IdentifierConfig> identifiers = new HashMap();
+        private Map<String, IdentifierConfig> identifiers = new HashMap<String, IdentifierConfig>();
 
         /**
          * @return the uniqueIdentifier

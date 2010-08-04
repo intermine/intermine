@@ -1,9 +1,4 @@
 <items>
-<item id="17_1" class="SOTerm">
-<attribute name="name" value="gene"/>
-<reference name="ontology" ref_id="2_2"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
 <item id="7_15" class="Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="identifier"/>
@@ -30,13 +25,10 @@
 <reference name="subject" ref_id="15_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="0_2" class="DataSource">
-<attribute name="name" value="GO"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="13_1" class="CrossReference">
-<attribute name="identifier" value="GO:0000001"/>
-<reference name="source" ref_id="0_2"/>
+<item id="7_12" class="Synonym">
+<attribute name="isPrimary" value="false"/>
+<attribute name="type" value="name"/>
+<attribute name="value" value="alternativeName - short"/>
 <reference name="subject" ref_id="9_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
@@ -47,24 +39,11 @@
 <reference name="subject" ref_id="9_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="7_12" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="alternativeName - short"/>
-<reference name="subject" ref_id="9_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
 <item id="7_10" class="Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="name"/>
 <attribute name="value" value="shortname"/>
 <reference name="subject" ref_id="9_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="13_6" class="CrossReference">
-<attribute name="identifier" value="GO:0000001"/>
-<reference name="source" ref_id="0_2"/>
-<reference name="subject" ref_id="9_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="8_3" class="UniProtFeature">
@@ -73,10 +52,6 @@
 <attribute name="type" value="helix"/>
 <reference name="feature" ref_id="5_4"/>
 <reference name="protein" ref_id="9_1"/>
-</item>
-<item id="2_2" class="Ontology">
-<attribute name="name" value="Sequence Ontology"/>
-<attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
 <item id="7_4" class="Synonym">
 <attribute name="isPrimary" value="false"/>
@@ -111,17 +86,17 @@
 <collection name="proteinDomains"><reference ref_id="6_1"/><reference ref_id="6_2"/></collection>
 <collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>
+<item id="7_5" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="FBgn0000002"/>
+<reference name="subject" ref_id="15_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 <item id="7_11" class="Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="name"/>
 <attribute name="value" value="alternativeName - full"/>
 <reference name="subject" ref_id="9_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="7_5" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBgn0000002"/>
-<reference name="subject" ref_id="15_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="14_1" class="GOTerm">
@@ -133,6 +108,21 @@
 <reference name="ontology" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
+<item id="5_1" class="OntologyTerm">
+<attribute name="name" value="keyword!"/>
+<reference name="ontology" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="1_1" class="DataSet">
+<attribute name="name" value="Swiss-Prot data set"/>
+<reference name="dataSource" ref_id="0_1"/>
+</item>
+<item id="15_2" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0000001"/>
+<reference name="organism" ref_id="11_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="goAnnotation"><reference ref_id="16_4"/><reference ref_id="16_5"/><reference ref_id="16_6"/></collection>
+</item>
 <item id="8_2" class="UniProtFeature">
 <attribute name="begin" value="97"/>
 <attribute name="end" value="107"/>
@@ -140,14 +130,11 @@
 <reference name="feature" ref_id="5_4"/>
 <reference name="protein" ref_id="9_1"/>
 </item>
-<item id="1_1" class="DataSet">
-<attribute name="name" value="Swiss-Prot data set"/>
-<reference name="dataSource" ref_id="0_1"/>
-</item>
-<item id="5_1" class="OntologyTerm">
-<attribute name="name" value="keyword!"/>
-<reference name="ontology" ref_id="2_1"/>
+<item id="15_1" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0000002"/>
+<reference name="organism" ref_id="11_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="goAnnotation"><reference ref_id="16_1"/><reference ref_id="16_2"/><reference ref_id="16_3"/></collection>
 </item>
 <item id="16_3" class="GOAnnotation">
 <reference name="ontologyTerm" ref_id="14_3"/>
@@ -159,30 +146,11 @@
 <reference name="subject" ref_id="15_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="15_2" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn0000001"/>
-<reference name="organism" ref_id="11_1"/>
-<reference name="sequenceOntologyTerm" ref_id="17_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="goAnnotation"><reference ref_id="16_4"/><reference ref_id="16_5"/><reference ref_id="16_6"/></collection>
-</item>
-<item id="13_10" class="CrossReference">
-<attribute name="identifier" value="FBgn0000001"/>
-<reference name="source" ref_id="0_3"/>
-<reference name="subject" ref_id="9_2"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
 <item id="7_13" class="Synonym">
 <attribute name="isPrimary" value="true"/>
 <attribute name="type" value="accession"/>
 <attribute name="value" value="Q1234-2"/>
 <reference name="subject" ref_id="9_2"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="13_5" class="CrossReference">
-<attribute name="identifier" value="FBgn0000001"/>
-<reference name="source" ref_id="0_3"/>
-<reference name="subject" ref_id="9_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="10_1" class="Sequence">
@@ -196,14 +164,14 @@
 <reference name="subject" ref_id="9_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="0_3" class="DataSource">
-<attribute name="name" value="FlyBase"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="13_2" class="CrossReference">
-<attribute name="identifier" value="GO:0000002"/>
+<item id="13_1" class="CrossReference">
+<attribute name="identifier" value="NP_523670.2"/>
 <reference name="source" ref_id="0_2"/>
 <reference name="subject" ref_id="9_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="0_2" class="DataSource">
+<attribute name="name" value="RefSeq"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="6_1" class="ProteinDomain">
@@ -237,6 +205,12 @@
 <collection name="proteinDomains"><reference ref_id="6_1"/><reference ref_id="6_2"/></collection>
 <collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>
+<item id="13_2" class="CrossReference">
+<attribute name="identifier" value="NP_523670.2"/>
+<reference name="source" ref_id="0_2"/>
+<reference name="subject" ref_id="9_2"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 <item id="7_14" class="Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="accession"/>
@@ -263,13 +237,6 @@
 <reference name="subject" ref_id="15_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="15_1" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn0000002"/>
-<reference name="organism" ref_id="11_1"/>
-<reference name="sequenceOntologyTerm" ref_id="17_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="goAnnotation"><reference ref_id="16_1"/><reference ref_id="16_2"/><reference ref_id="16_3"/></collection>
-</item>
 <item id="8_1" class="UniProtFeature">
 <attribute name="begin" value="79"/>
 <attribute name="end" value="91"/>
@@ -284,29 +251,11 @@
 <reference name="subject" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="13_4" class="CrossReference">
-<attribute name="identifier" value="FBgn0000002"/>
-<reference name="source" ref_id="0_3"/>
-<reference name="subject" ref_id="9_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="13_8" class="CrossReference">
-<attribute name="identifier" value="GO:0000003"/>
-<reference name="source" ref_id="0_2"/>
-<reference name="subject" ref_id="9_2"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
 <item id="7_3" class="Synonym">
 <attribute name="isPrimary" value="true"/>
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="IPR017970"/>
 <reference name="subject" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="13_3" class="CrossReference">
-<attribute name="identifier" value="GO:0000003"/>
-<reference name="source" ref_id="0_2"/>
-<reference name="subject" ref_id="9_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="14_3" class="GOTerm">
@@ -352,12 +301,6 @@
 <attribute name="shortName" value="Homeobox_CS"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="13_7" class="CrossReference">
-<attribute name="identifier" value="GO:0000002"/>
-<reference name="source" ref_id="0_2"/>
-<reference name="subject" ref_id="9_2"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
 <item id="7_2" class="Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="name"/>
@@ -374,11 +317,5 @@
 </item>
 <item id="11_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
-</item>
-<item id="13_9" class="CrossReference">
-<attribute name="identifier" value="FBgn0000002"/>
-<reference name="source" ref_id="0_3"/>
-<reference name="subject" ref_id="9_2"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 </items>
