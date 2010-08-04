@@ -131,7 +131,7 @@ public class UniprotConverter extends BioDirectoryConverter
             }
             UniprotHandler handler = new UniprotHandler();
             try {
-                System.out.println("Processing file: " + file.getPath());
+                System .out.println("Processing file: " + file.getPath());
                 Reader reader = new FileReader(file);
                 SAXParser.parse(new InputSource(reader), handler);
             } catch (Exception e) {
@@ -696,16 +696,24 @@ public class UniprotConverter extends BioDirectoryConverter
                         protein.setAttribute("ecNumber", identifier);
                         return;
                     }
-                    Item item = createCrossReference(protein.getIdentifier(), identifier, key,
-                            false);
-                    synonymsAndXrefs.add(item);
-                    if (key.equals("RefSeq")) {
-                        item = createSynonym(protein.getIdentifier(), "identifier",
-                                identifier, "false", false);
-                        synonymsAndXrefs.add(item);
-                    } else if (creatego && key.equals("GO")) {
+                    setCrossReference(protein.getIdentifier(), identifier, key, false);
+                    if (creatego && key.equals("GO")) {
                         entry.addGOTerm(getGoTerm(identifier));
                     }
+                }
+            }
+        }
+
+        // if cross references not listed in CONFIG, load all
+        private void setCrossReference(String subjectId, String value, String dataSource,
+                boolean store) throws SAXException, ObjectStoreException {
+            List<String> xrefs = CONFIG.getCrossReferences();
+            System.out.println("xrefs: " +xrefs.contains(dataSource));
+            if (xrefs.isEmpty() || xrefs.contains(dataSource)) {
+                System.out.println("processing!: " +xrefs.contains(dataSource));
+                Item item = createCrossReference(subjectId, value, dataSource, store);
+                if (item != null) {
+                    synonymsAndXrefs.add(item);
                 }
             }
         }
