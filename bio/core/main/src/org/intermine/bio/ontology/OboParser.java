@@ -218,7 +218,7 @@ public class OboParser
         OboTypeDefinition oboType = new OboTypeDefinition("is_a", "is_a", true);
         types.put(oboType.getId() , oboType);
         for (Iterator<Map> iter = typeTagValuesList.iterator(); iter.hasNext();) {
-            Map<?, ?> tvs = (Map<?, ?>) iter.next();
+            Map<?, ?> tvs = iter.next();
             String id = (String) ((List<?>) tvs.get("id")).get(0);
             String name = (String) ((List<?>) tvs.get("name")).get(0);
             boolean isTransitive = isTrue(tvs, "is_transitive");
@@ -228,7 +228,7 @@ public class OboParser
 
         // Just build all the OboTerms disconnected
         for (Iterator<Map> iter = termTagValuesList.iterator(); iter.hasNext();) {
-            Map<?, ?> tvs = (Map<?, ?>) iter.next();
+            Map<?, ?> tvs = iter.next();
             String id = (String) ((List<?>) tvs.get("id")).get(0);
             String name = (String) ((List<?>) tvs.get("name")).get(0);
             OboTerm term = new OboTerm(id, name);
@@ -238,7 +238,7 @@ public class OboParser
 
         // Now connect them all together
         for (Iterator<Map> iter = termTagValuesList.iterator(); iter.hasNext();) {
-            Map<?, ?> tvs = (Map<?, ?>) iter.next();
+            Map<?, ?> tvs = iter.next();
             if (!isTrue(tvs, "is_obsolete")) {
                 configureDagTerm(tvs);
             }
