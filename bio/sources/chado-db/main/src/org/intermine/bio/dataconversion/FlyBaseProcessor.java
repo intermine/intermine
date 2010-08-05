@@ -172,7 +172,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.put("chromosomal_translocation",
                                                   "ChromosomalTranslocation");
         CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.put("transposition",
-                                                  "Transposition");
+                                                  "ChromosomalTransposition");
     }
 
     private static final String CHROMOSOME_STRUCTURE_VARIATION_SO_NAME =
@@ -598,7 +598,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             map.put(new MultiKey("synonym", "ChromosomalTranslocation", "fullname", Boolean.TRUE),
                     Arrays.asList(new SetFieldConfigAction("name"),
                                   CREATE_SYNONYM_ACTION));
-            map.put(new MultiKey("synonym", "Transposition", "fullname", Boolean.TRUE),
+            map.put(new MultiKey("synonym", "ChromosomalTransposition", "fullname", Boolean.TRUE),
                     Arrays.asList(new SetFieldConfigAction("name"),
                                   CREATE_SYNONYM_ACTION));
 
@@ -663,7 +663,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             List<String> chromosomeStructureVariationClassNames =
                 Arrays.asList("ChromosomeStructureVariation", "ChromosomalDeletion",
                               "ChromosomalDuplication", "ChromosomalInversion",
-                              "ChromosomalTranslocation", "Transposition");
+                              "ChromosomalTranslocation", "ChromosomalTransposition");
             for (String className: chromosomeStructureVariationClassNames) {
                 map.put(new MultiKey("cvterm", className, "SO"),
                         Arrays.asList(new CreateCollectionAction("SOTerm", "featureTerms", "name",
@@ -816,7 +816,6 @@ public class FlyBaseProcessor extends SequenceProcessor
                 return null;
             }
             realInterMineType = "Chromosome";
-
         }
 
         if (chadoFeatureType.equals("golden_path_region")) {
@@ -829,7 +828,7 @@ public class FlyBaseProcessor extends SequenceProcessor
                 if (taxonId != 7227 && !uniqueName.contains("_")) {
                     realInterMineType = "Chromosome";
                 } else {
-                    // golden_path_fragment is the actual SO term
+                    // golden_path_fragment is the actual SO term (call scaffold instead?)
                     realInterMineType = "GoldenPathFragment";
                 }
             }
