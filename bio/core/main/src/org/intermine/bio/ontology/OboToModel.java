@@ -164,9 +164,9 @@ public class OboToModel
         Set<ReferenceDescriptor> references = Collections.emptySet();
         Set<CollectionDescriptor> collections = Collections.emptySet();
         Set<String> referenceIdentifiers = oboToModelMapping.getPartOfs(childIdentifier);
-        Set<String> collectionIdentifiers =  oboToModelMapping.getReverseReferences(childIdentifier);
+        Set<String> collectionIdentifiers
+            =  oboToModelMapping.getReverseReferences(childIdentifier);
         String childOBOName = oboToModelMapping.getName(childIdentifier);
-
 
         // collections
         if (collectionIdentifiers != null) {
@@ -179,8 +179,9 @@ public class OboToModel
                     String collectionName = TypeUtil.javaiseClassName(partOfName) + "s";
                     collectionName = StringUtil.decapitalise(collectionName);
                     String reverseReference = TypeUtil.javaiseClassName(childOBOName);
+                    reverseReference = StringUtil.decapitalise(reverseReference);
                     CollectionDescriptor cd = new CollectionDescriptor(collectionName,
-                            fullyQualifiedClassName, null);
+                            fullyQualifiedClassName, reverseReference);
                     collections.add(cd);
                 }
             }
@@ -198,7 +199,7 @@ public class OboToModel
                     String reverseReference = TypeUtil.javaiseClassName(childOBOName) + "s";
                     reverseReference = StringUtil.decapitalise(reverseReference);
                     ReferenceDescriptor rd = new ReferenceDescriptor(refName,
-                            fullyQualifiedClassName, null);
+                            fullyQualifiedClassName, reverseReference);
                     references.add(rd);
                 }
             }
