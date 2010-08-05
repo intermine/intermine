@@ -154,7 +154,6 @@
     <attribute name="symbol" type="java.lang.String"/>
     <attribute name="length" type="java.lang.Integer"/>
     <reference name="sequence" referenced-type="Sequence"/>
-    <reference name="chromosome" referenced-type="Chromosome"/>
     <reference name="chromosomeLocation" referenced-type="Location" />   
     <reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>    
     <collection name="overlappingFeatures" referenced-type="SequenceFeature" />

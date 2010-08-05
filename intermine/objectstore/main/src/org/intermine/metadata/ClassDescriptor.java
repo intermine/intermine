@@ -225,7 +225,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
                                 throw new MetaDataException("Incompatible similarly named fields ("
                                                             + fd.getName() + ") inherited"
                                         + " from multiple superclasses and interfaces ["
-                                        + reverseFieldName + " instead of " + alreadyRevFieldName
+                                        + alreadyRevFieldName + " instead of " + reverseFieldName
                                         + "] in " + getName());
                             }
                         } else {

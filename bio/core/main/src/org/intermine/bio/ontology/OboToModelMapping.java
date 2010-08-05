@@ -192,11 +192,12 @@ public class OboToModelMapping
             trimModel();
         }
 
+        // gene.transcripts is in part_ofs map, now set transcript.gene
+        setReverseReferences();
+
         // remove tRNA.genes if Transcript.genes exists
         removeRedundantCollections();
 
-        // gene.transcripts is in part_ofs map, now set transcript.gene
-        setReverseReferences();
     }
 
     // set many-to-one relationships
@@ -379,27 +380,45 @@ public class OboToModelMapping
     // eg. Gene.transcripts should mean that Gene.mRNAs never happens
     private void removeRedundantCollections() {
         for (String parent : validOboTerms.keySet()) {
+            Set<String> refs = reverseReferences.get(parent);
+            if (refs != null) {
+                for (String refName : refs) {
+                    removeCollectionFromChildren(reverseReferences, partOfs, parent,
+                            refName);
+                }
+            }
             Set<String> collections = partOfs.get(parent);
             if (collections != null) {
-                for (String collectionName : collections) {
-                    removeCollection(parent, collectionName);
+                for (String coll : collections) {
+                    removeCollectionFromChildren(partOfs, reverseReferences, parent, coll);
                 }
             }
         }
     }
 
-    // remove collection from children of the specified term
-    private void removeCollection(String parent, String collectionName) {
+    /*
+     * remove collection from children of the specified term.  eg. remove MRNA.cDSs because that
+     * collection is in a parent, transcript.
+     * @param parent eg. transcript
+     * @collectioName eg. CDSs
+     */
+    private void removeCollectionFromChildren(Map<String, Set<String>> map1,
+            Map<String, Set<String>> map2, String parent, String collectionName) {
         Set<String> children = parentToChildren.get(parent);
         if (children == null) {
             return;
         }
         for (String child : children) {
-            Set<String> childCollections = partOfs.get(child);
+            Set<String> childCollections = map1.get(child);
             if (childCollections != null) {
                 childCollections.remove(collectionName);
+                // remove opposite reference
+                Set<String> coll = map2.get(collectionName);
+                if (coll != null) {
+                    coll.remove(child);
+                }
             }
-            removeCollection(child, collectionName);
+            removeCollectionFromChildren(map1, map2, child, collectionName);
         }
     }
 
