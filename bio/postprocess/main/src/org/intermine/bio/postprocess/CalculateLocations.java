@@ -85,7 +85,7 @@ public class CalculateLocations
      * @throws Exception if anything goes wrong
      */
     public void createOverlapRelations(List classNamesToIgnore, boolean ignoreSelfMatches)
-    throws Exception {
+        throws Exception {
         osw.beginTransaction();
         Map summary = new HashMap();
         Map chromosomeMap = makeChromosomeMap();
@@ -167,7 +167,7 @@ public class CalculateLocations
      * @throws ObjectStoreException if the is a problem with the ObjectStore
      */
     public void createSpanningLocations(Class parentClass, Class childClass, String refField)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
 
         Query parentIdQuery =
             new IqlQuery("SELECT DISTINCT a1_.id as id FROM "
