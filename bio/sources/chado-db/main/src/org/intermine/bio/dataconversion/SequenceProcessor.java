@@ -144,7 +144,6 @@ public class SequenceProcessor extends ChadoProcessor
         featureMap.putAll(initialMap);
     }
 
-
     /**
      * Return the config Map.
      * @param taxonId return the configuration for this organism
@@ -659,7 +658,7 @@ public class SequenceProcessor extends ChadoProcessor
                         }
                     } else {
                         LOG.warn("featureId (" + featureId + ") from location " + featureLocId
-                                + " was expected to be a LocatedSequenceFeature");
+                                + " was expected to be a SequenceFeature");
                     }
                     count++;
                 } else {

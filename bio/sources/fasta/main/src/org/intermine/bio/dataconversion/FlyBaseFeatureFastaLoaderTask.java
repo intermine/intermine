@@ -40,7 +40,7 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
      * @throws ObjectStoreException if problem fetching Chromosome
      */
     protected Region getChromosome(String chromosomeId, Organism organism)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         if (chrMap.containsKey(chromosomeId)) {
             return chrMap.get(chromosomeId);
         }
@@ -61,7 +61,7 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
      * @throws ObjectStoreException if there is a problem storing
      */
     public void createSynonym(BioEntity interMineObject, DataSet dataSet, String identifier)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         Synonym synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
         synonym.setValue(identifier);
         synonym.setType("identifier");
@@ -81,7 +81,7 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
      */
     protected Location getLocationFromHeader(String header, SequenceFeature lsf,
                                              Organism organism)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         final String regexp = ".*loc=(\\S+):(\\S+).*";
         Pattern p = Pattern.compile(regexp);
         Matcher m = p.matcher(header);
