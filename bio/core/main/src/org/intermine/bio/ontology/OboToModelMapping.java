@@ -44,6 +44,8 @@ public class OboToModelMapping
 
     private static final boolean DEBUG = false;
 
+    private Map<String, Set<String>> reverseReferences = new HashMap<String, Set<String>>();
+
     /**
      * Constructor.
      *
@@ -70,6 +72,14 @@ public class OboToModelMapping
      */
     public Set<String> getPartOfs(String childIdentifier) {
         return partOfs.get(childIdentifier);
+    }
+
+    /**
+     * @param childIdentifier the oboterm to get relationships for
+     * @return all collections for given class
+     */
+    public Set<String> getReverseReferences(String childIdentifier) {
+        return reverseReferences.get(childIdentifier);
     }
 
     /**
@@ -185,7 +195,24 @@ public class OboToModelMapping
         // remove tRNA.genes if Transcript.genes exists
         removeRedundantCollections();
 
+        // gene.transcripts is in part_ofs map, now set transcript.gene
         setReverseReferences();
+    }
+
+    // set many-to-one relationships
+    private void setReverseReferences() {
+        for (Map.Entry<String, Set<String>> entry : partOfs.entrySet()) {
+            String oboTerm = entry.getKey();
+            Set<String> colls = new HashSet<String>(entry.getValue());
+            for (String collectionName : colls) {
+                Set<String> currentReverseRefs =  reverseReferences.get(collectionName);
+                if (currentReverseRefs == null) {
+                    currentReverseRefs = new HashSet<String>();
+                    reverseReferences.put(collectionName, currentReverseRefs);
+                }
+                currentReverseRefs.add(oboTerm);
+            }
+        }
     }
 
     private void assignPartOf(String parent, String child) {
@@ -375,17 +402,6 @@ public class OboToModelMapping
             removeCollection(child, collectionName);
         }
     }
-
-    private void setReverseReferences() {
-        for (Map.Entry<String, Set<String>> entry : partOfs.entrySet()) {
-            String oboTerm = entry.getKey();
-            Set<String> colls = new HashSet<String>(entry.getValue());
-            for (String collectionName : colls) {
-                assignPartOf(oboTerm, collectionName);
-            }
-        }
-    }
-
 
     private void debugOutput(String oboTerm, String err) {
         if (DEBUG) {
