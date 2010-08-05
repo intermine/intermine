@@ -104,7 +104,7 @@ public class OboToModel
         // process each oboterm - add parent and collections
         for (String childIdentifier : oboToModelMapping.getOboTermIdentifiers()) {
             String parents = processParents(oboToModelMapping, childIdentifier);
-            ClassDescriptor cd = processCollections(oboToModelMapping, parents, childIdentifier);
+            ClassDescriptor cd = processRefsAndColls(oboToModelMapping, parents, childIdentifier);
             clds.add(cd);
         }
 
@@ -158,30 +158,55 @@ public class OboToModel
         return parentList;
     }
 
-    private static ClassDescriptor processCollections(OboToModelMapping oboToModelMapping,
+    private static ClassDescriptor processRefsAndColls(OboToModelMapping oboToModelMapping,
             String parents, String childIdentifier) {
         Set<AttributeDescriptor> fakeAttributes = Collections.emptySet();
-        Set<ReferenceDescriptor> fakeReferences = Collections.emptySet();
+        Set<ReferenceDescriptor> references = Collections.emptySet();
         Set<CollectionDescriptor> collections = Collections.emptySet();
-        Set<String> collectionIdentifiers = oboToModelMapping.getPartOfs(childIdentifier);
+        Set<String> referenceIdentifiers = oboToModelMapping.getPartOfs(childIdentifier);
+        Set<String> collectionIdentifiers =  oboToModelMapping.getReverseReferences(childIdentifier);
+        String childOBOName = oboToModelMapping.getName(childIdentifier);
+
+
+        // collections
         if (collectionIdentifiers != null) {
             collections = new HashSet<CollectionDescriptor>();
-            for (String partof : oboToModelMapping.getPartOfs(childIdentifier)) {
+            for (String partof : collectionIdentifiers) {
                 if (oboToModelMapping.classInModel(partof)) {
                     String partOfName = oboToModelMapping.getName(partof);
                     String fullyQualifiedClassName = TypeUtil.generateClassName(
                             oboToModelMapping.getNamespace(), partOfName);
                     String collectionName = TypeUtil.javaiseClassName(partOfName) + "s";
                     collectionName = StringUtil.decapitalise(collectionName);
+                    String reverseReference = TypeUtil.javaiseClassName(childOBOName);
                     CollectionDescriptor cd = new CollectionDescriptor(collectionName,
                             fullyQualifiedClassName, null);
                     collections.add(cd);
                 }
             }
         }
+
+        //references
+        if (referenceIdentifiers != null) {
+            references = new HashSet<ReferenceDescriptor>();
+            for (String ref : referenceIdentifiers) {
+                if (oboToModelMapping.classInModel(ref)) {
+                    String refName = TypeUtil.javaiseClassName(oboToModelMapping.getName(ref));
+                    refName = StringUtil.decapitalise(refName);
+                    String fullyQualifiedClassName = TypeUtil.generateClassName(
+                            oboToModelMapping.getNamespace(), refName);
+                    String reverseReference = TypeUtil.javaiseClassName(childOBOName) + "s";
+                    reverseReference = StringUtil.decapitalise(reverseReference);
+                    ReferenceDescriptor rd = new ReferenceDescriptor(refName,
+                            fullyQualifiedClassName, null);
+                    references.add(rd);
+                }
+            }
+        }
+
         String childName = TypeUtil.generateClassName(oboToModelMapping.getNamespace(),
                 oboToModelMapping.getName(childIdentifier));
-        return new ClassDescriptor(childName, parents, true, fakeAttributes, fakeReferences,
+        return new ClassDescriptor(childName, parents, true, fakeAttributes, references,
                 collections);
     }
 
