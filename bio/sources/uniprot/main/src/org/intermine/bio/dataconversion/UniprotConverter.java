@@ -708,9 +708,7 @@ public class UniprotConverter extends BioDirectoryConverter
         private void setCrossReference(String subjectId, String value, String dataSource,
                 boolean store) throws SAXException, ObjectStoreException {
             List<String> xrefs = CONFIG.getCrossReferences();
-            System.out.println("xrefs: " +xrefs.contains(dataSource));
             if (xrefs.isEmpty() || xrefs.contains(dataSource)) {
-                System.out.println("processing!: " +xrefs.contains(dataSource));
                 Item item = createCrossReference(subjectId, value, dataSource, store);
                 if (item != null) {
                     synonymsAndXrefs.add(item);
