@@ -58,3 +58,8 @@ transcript
 transposable_element
 transposable_element_insertion_site
 UTR
+
+# many-to-many part_of relationships (default is many-to-one)
+exon.transcript
+intron.transcript
+UTR.transcript

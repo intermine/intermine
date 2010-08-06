@@ -10,7 +10,6 @@ package org.intermine.bio.ontology;
  *
  */
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -87,14 +86,12 @@ public class OboToModel
     public static void createAndWriteModel(String oboName, String oboFilename, String packageName,
             File termsFile, File outputFile) {
 
-        Set<String> termsToKeep = processTermFile(termsFile);
-
-        OboToModelMapping oboToModelMapping = new OboToModelMapping(termsToKeep, packageName);
+        OboToModelMapping oboToModelMapping = new OboToModelMapping(termsFile, packageName);
 
         // parse oboterms, delete terms not in list
         String msg = "Starting OboToModel conversion from " + oboFilename + " to "
-            + outputFile.getPath() + ".  Filtering on " + termsToKeep.size() + " obo terms from "
-            + termsFile.getPath();
+            + outputFile.getPath() + ".  Filtering on " + oboToModelMapping.getTermsCount()
+            + " obo terms from " + termsFile.getPath();
         System.out .println(msg);
         parseOboTerms(oboToModelMapping, oboFilename, termsFile.getName());
 
@@ -127,7 +124,7 @@ public class OboToModel
             model = new Model(oboName, oboToModelMapping.getNamespace(), sortedClds);
             out = new PrintWriter(new BufferedWriter(new FileWriter(outputFile)));
         } catch (MetaDataException e) {
-            throw new RuntimeException("Bad model", e);
+            throw new RuntimeException("Invalid model", e);
         } catch (IOException e) {
             throw new RuntimeException("Couldn't create new model file", e);
         }
@@ -163,9 +160,8 @@ public class OboToModel
         Set<AttributeDescriptor> fakeAttributes = Collections.emptySet();
         Set<ReferenceDescriptor> references = Collections.emptySet();
         Set<CollectionDescriptor> collections = Collections.emptySet();
-        Set<String> referenceIdentifiers = oboToModelMapping.getPartOfs(childIdentifier);
-        Set<String> collectionIdentifiers
-            =  oboToModelMapping.getReverseReferences(childIdentifier);
+        Set<String> referenceIdentifiers = oboToModelMapping.getReverseReferences(childIdentifier);
+        Set<String> collectionIdentifiers =  oboToModelMapping.getPartOfs(childIdentifier);
         String childOBOName = oboToModelMapping.getName(childIdentifier);
 
         // collections
@@ -179,6 +175,9 @@ public class OboToModel
                     String collectionName = TypeUtil.javaiseClassName(partOfName) + "s";
                     collectionName = StringUtil.decapitalise(collectionName);
                     String reverseReference = TypeUtil.javaiseClassName(childOBOName);
+                    if (oboToModelMapping.isManyToMany(partof, childIdentifier)) {
+                        reverseReference = reverseReference + "s";
+                    }
                     reverseReference = StringUtil.decapitalise(reverseReference);
                     CollectionDescriptor cd = new CollectionDescriptor(collectionName,
                             fullyQualifiedClassName, reverseReference);
@@ -230,27 +229,5 @@ public class OboToModel
         oboToModelMapping.processOboTerms(parser.getOboTerms());
         oboToModelMapping.validateTermsToKeep(oboFilename, termsFileName);
         oboToModelMapping.processRelations(parser.getOboRelations());
-    }
-
-    // move terms from (user provided) file to list
-    // only these terms (and dependents) will be processed
-    private static Set<String> processTermFile(File filename) {
-        Set<String> terms = new HashSet<String>();
-        try {
-            BufferedReader br =  new BufferedReader(new FileReader(filename));
-            try {
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    if (StringUtils.isNotEmpty(line)) {
-                        terms.add(line);
-                    }
-                }
-            } finally {
-                br.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return terms;
     }
 }
