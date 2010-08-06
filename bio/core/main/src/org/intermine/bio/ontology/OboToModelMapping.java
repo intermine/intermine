@@ -50,7 +50,7 @@ public class OboToModelMapping
 
     private static final boolean DEBUG = false;
 
-    private Map<String, Set<String>> reverseReferences = new HashMap<String, Set<String>>();
+    private Map<String, Set<String>> reversePartOfs = new HashMap<String, Set<String>>();
 
 //    private static final String TRANSCRIPT = "SO:0000673";
 //    private static final String EXON = "SO:0000147";
@@ -94,8 +94,8 @@ public class OboToModelMapping
      * @param childIdentifier the oboterm to get relationships for
      * @return all collections for given class
      */
-    public Set<String> getReverseReferences(String childIdentifier) {
-        return reverseReferences.get(childIdentifier);
+    public Set<String> getReversePartOfs(String childIdentifier) {
+        return reversePartOfs.get(childIdentifier);
     }
 
     /**
@@ -250,32 +250,28 @@ public class OboToModelMapping
             String oboTerm = entry.getKey();
             Set<String> parents = new HashSet<String>(entry.getValue());
             for (String parent : parents) {
-                // check if this is one of our many-to-many exceptions
-                if (checkManyToMany(parent, oboTerm) || checkManyToMany(oboTerm, parent)) {
-                    continue;
-                }
-                Set<String> currentReverseRefs =  reverseReferences.get(parent);
+                Set<String> currentReverseRefs =  reversePartOfs.get(parent);
                 if (currentReverseRefs == null) {
                     currentReverseRefs = new HashSet<String>();
-                    reverseReferences.put(parent, currentReverseRefs);
+                    reversePartOfs.put(parent, currentReverseRefs);
                 }
                 currentReverseRefs.add(oboTerm);
             }
         }
     }
 
-    private boolean checkManyToMany(String parent, String child) {
-        if (testManyToMany(parent, child)) {
-            Set<String> parentPartOfs = partOfs.get(parent);
-            if (parentPartOfs == null) {
-                parentPartOfs = new HashSet<String>();
-                partOfs.put(parent, parentPartOfs);
-            }
-            parentPartOfs.add(child);
-            return true;
-        }
-        return false;
-    }
+//    private boolean checkManyToMany(String parent, String child) {
+//        if (testManyToMany(parent, child)) {
+//            Set<String> parentPartOfs = partOfs.get(parent);
+//            if (parentPartOfs == null) {
+//                parentPartOfs = new HashSet<String>();
+//                partOfs.put(parent, parentPartOfs);
+//            }
+//            parentPartOfs.add(child);
+//            return true;
+//        }
+//        return false;
+//    }
 
     private void assignPartOf(String parent, String child) {
         Set<String> refs = partOfs.get(child);
@@ -441,16 +437,16 @@ public class OboToModelMapping
     // eg. Gene.transcripts should mean that Gene.mRNAs never happens
     private void removeRedundantCollections() {
         for (String parent : validOboTerms.keySet()) {
-            Set<String> refs = reverseReferences.get(parent);
+            Set<String> refs = reversePartOfs.get(parent);
             if (refs != null) {
                 for (String refName : refs) {
-                    removeRelationshipFromChildren(reverseReferences, partOfs, parent, refName);
+                    removeRelationshipFromChildren(reversePartOfs, partOfs, parent, refName);
                 }
             }
             Set<String> collections = partOfs.get(parent);
             if (collections != null) {
                 for (String coll : collections) {
-                    removeRelationshipFromChildren(partOfs, reverseReferences, parent, coll);
+                    removeRelationshipFromChildren(partOfs, reversePartOfs, parent, coll);
                 }
             }
         }

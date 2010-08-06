@@ -100,12 +100,14 @@ public class OboToModel
 
         // process each oboterm - add parent and collections
         for (String childIdentifier : oboToModelMapping.getOboTermIdentifiers()) {
+            // is_a
             String parents = processParents(oboToModelMapping, childIdentifier);
+            // part_of
             ClassDescriptor cd = processRefsAndColls(oboToModelMapping, parents, childIdentifier);
             clds.add(cd);
         }
 
-        // sort classes by name
+        // sort classes by name for readability
         Comparator<ClassDescriptor> comparator = new Comparator<ClassDescriptor>() {
             public int compare(ClassDescriptor o1, ClassDescriptor o2) {
                 String fieldName1 = o1.getName().toLowerCase();
@@ -158,48 +160,63 @@ public class OboToModel
     private static ClassDescriptor processRefsAndColls(OboToModelMapping oboToModelMapping,
             String parents, String childIdentifier) {
         Set<AttributeDescriptor> fakeAttributes = Collections.emptySet();
-        Set<ReferenceDescriptor> references = Collections.emptySet();
-        Set<CollectionDescriptor> collections = Collections.emptySet();
-        Set<String> referenceIdentifiers = oboToModelMapping.getReverseReferences(childIdentifier);
-        Set<String> collectionIdentifiers =  oboToModelMapping.getPartOfs(childIdentifier);
+        Set<ReferenceDescriptor> references = new HashSet<ReferenceDescriptor>();
+        Set<CollectionDescriptor> collections = new HashSet<CollectionDescriptor>();
+        Set<String> reversePartOfs = oboToModelMapping.getReversePartOfs(childIdentifier);
+        Set<String> partOfIdentifiers = oboToModelMapping.getPartOfs(childIdentifier);
         String childOBOName = oboToModelMapping.getName(childIdentifier);
 
-        // collections
-        if (collectionIdentifiers != null) {
-            collections = new HashSet<CollectionDescriptor>();
-            for (String partof : collectionIdentifiers) {
-                if (oboToModelMapping.classInModel(partof)) {
-                    String partOfName = oboToModelMapping.getName(partof);
+        // part ofs, reference to parent
+        // can be a collection if in config, though
+        if (partOfIdentifiers != null) {
+            for (String parent : partOfIdentifiers) {
+                if (oboToModelMapping.classInModel(parent)) {
+                    // reference
+                    String parentName = oboToModelMapping.getName(parent);
                     String fullyQualifiedClassName = TypeUtil.generateClassName(
-                            oboToModelMapping.getNamespace(), partOfName);
-                    String collectionName = TypeUtil.javaiseClassName(partOfName) + "s";
-                    collectionName = StringUtil.decapitalise(collectionName);
-                    String reverseReference = TypeUtil.javaiseClassName(childOBOName);
-                    if (oboToModelMapping.isManyToMany(partof, childIdentifier)) {
-                        reverseReference = reverseReference + "s";
-                    }
+                            oboToModelMapping.getNamespace(), parentName);
+                    parentName = TypeUtil.javaiseClassName(parentName);
+                    parentName = StringUtil.decapitalise(parentName);
+
+                    // reverse reference
+                    String reverseReference = TypeUtil.javaiseClassName(childOBOName) + "s";
                     reverseReference = StringUtil.decapitalise(reverseReference);
-                    CollectionDescriptor cd = new CollectionDescriptor(collectionName,
-                            fullyQualifiedClassName, reverseReference);
-                    collections.add(cd);
+
+                    if (oboToModelMapping.isManyToMany(parent, childIdentifier)) {
+                        parentName = parentName + "s";
+                        CollectionDescriptor cd = new CollectionDescriptor(parentName,
+                                fullyQualifiedClassName, reverseReference);
+                        collections.add(cd);
+                    } else {
+                        ReferenceDescriptor rd = new ReferenceDescriptor(parentName,
+                                fullyQualifiedClassName, reverseReference);
+                        references.add(rd);
+                    }
                 }
             }
         }
 
-        //references
-        if (referenceIdentifiers != null) {
-            references = new HashSet<ReferenceDescriptor>();
-            for (String ref : referenceIdentifiers) {
-                if (oboToModelMapping.classInModel(ref)) {
-                    String refName = TypeUtil.javaiseClassName(oboToModelMapping.getName(ref));
-                    refName = StringUtil.decapitalise(refName);
+        // other side of part_of relationship, collection of children
+        // reverse reference can be a collection if in config
+        if (reversePartOfs != null) {
+            for (String collection : reversePartOfs) {
+                if (oboToModelMapping.classInModel(collection)) {
+                    // collection
+                    String collectionName = TypeUtil.javaiseClassName(
+                            oboToModelMapping.getName(collection));
                     String fullyQualifiedClassName = TypeUtil.generateClassName(
-                            oboToModelMapping.getNamespace(), refName);
-                    String reverseReference = TypeUtil.javaiseClassName(childOBOName) + "s";
+                            oboToModelMapping.getNamespace(), collectionName);
+                    collectionName = StringUtil.decapitalise(collectionName) + "s";
+                    // reverse reference
+                    String reverseReference = TypeUtil.javaiseClassName(childOBOName);
                     reverseReference = StringUtil.decapitalise(reverseReference);
-                    ReferenceDescriptor rd = new ReferenceDescriptor(refName,
+                    if (oboToModelMapping.isManyToMany(collection, childIdentifier)) {
+                        reverseReference = reverseReference + "s";
+                    }
+                    // cd
+                    CollectionDescriptor cd = new CollectionDescriptor(collectionName ,
                             fullyQualifiedClassName, reverseReference);
-                    references.add(rd);
+                    collections.add(cd);
                 }
             }
         }
