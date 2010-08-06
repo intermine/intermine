@@ -10,6 +10,10 @@ package org.intermine.bio.ontology;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +35,8 @@ public class OboToModelMapping
     private Map<String, Set<String>> childToParents, parentToChildren, partOfs;
     // SO terms to filter on, eg. sequence_feature
     private Set<String> termsToKeep = new HashSet<String>();
+    // partOf relationships that are many-to-many.  default is many-to-one
+    private Map<String, Set<String>> manyToManyPartOfs = new HashMap<String, Set<String>>();
 
     // list of classes to load into the model.  OboOntology is an object that contains the SO term
     // value eg. sequence_feature and the Java name, eg. org.intermine.bio.SequenceFeature
@@ -46,15 +52,25 @@ public class OboToModelMapping
 
     private Map<String, Set<String>> reverseReferences = new HashMap<String, Set<String>>();
 
+//    private static final String TRANSCRIPT = "SO:0000673";
+//    private static final String EXON = "SO:0000147";
+
     /**
      * Constructor.
      *
-     * @param termsToKeep list of terms to filter the results on
+     * @param termsFile file containing list of SO terms to filter on
      * @param namespace the namespace to use in generating URI-based identifiers
      */
-    public OboToModelMapping(Set<String> termsToKeep, String namespace) {
+    public OboToModelMapping(File termsFile, String namespace) {
         this.namespace = namespace;
-        this.termsToKeep = termsToKeep;
+        processTermFile(termsFile);
+    }
+
+    /**
+     * @return number of OBO terms we are filtering on
+     */
+    public int getTermsCount() {
+        return termsToKeep.size();
     }
 
     /**
@@ -91,6 +107,33 @@ public class OboToModelMapping
      */
     public boolean classInModel(String identifier) {
         return validOboTerms.containsKey(identifier);
+    }
+
+    /**
+     * In the OBO file, part_of relationships are processed as many-to-one relationships.  Special
+     * exceptions are listed in the config file and are processed as many-to-many relationships.
+     *
+     * @param parent the term to test
+     * @param child the term to test
+     * @return TRUE if this term is listed in the config file as a many-to-many relationship.
+     */
+    public boolean isManyToMany(String parent, String child) {
+        if (!testManyToMany(parent, child)) {
+            return testManyToMany(child, parent);
+        } else {
+            return true;
+        }
+    }
+
+    private boolean testManyToMany(String parent, String child) {
+        Set<String> manyToManyConfig = manyToManyPartOfs.get(getName(child));
+        if (manyToManyConfig == null) {
+            return false;
+        }
+        if (manyToManyConfig.contains(getName(parent))) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -166,7 +209,7 @@ public class OboToModelMapping
             if ((relationshipType.equals("part_of") || relationshipType.equals("member_of"))
                     && r.direct) {
                 assignPartOf(parent, child);
-                assignPartOf(child, parent);
+//                assignPartOf(child, parent);
             } else if (relationshipType.equals("is_a") && r.direct) {
                 Set<String> parents = childToParents.get(child);
                 if (parents == null) {
@@ -197,32 +240,49 @@ public class OboToModelMapping
 
         // remove tRNA.genes if Transcript.genes exists
         removeRedundantCollections();
-
     }
 
     // set many-to-one relationships
     private void setReverseReferences() {
-        for (Map.Entry<String, Set<String>> entry : partOfs.entrySet()) {
+        Map<String, Set<String>> partOfsCopy = new HashMap<String, Set<String>>(partOfs);
+        for (Map.Entry<String, Set<String>> entry : partOfsCopy.entrySet()) {
             String oboTerm = entry.getKey();
-            Set<String> colls = new HashSet<String>(entry.getValue());
-            for (String collectionName : colls) {
-                Set<String> currentReverseRefs =  reverseReferences.get(collectionName);
+            Set<String> parents = new HashSet<String>(entry.getValue());
+            for (String parent : parents) {
+                // check if this is one of our many-to-many exceptions
+                if (checkManyToMany(parent, oboTerm) || checkManyToMany(oboTerm, parent)) {
+                    continue;
+                }
+                Set<String> currentReverseRefs =  reverseReferences.get(parent);
                 if (currentReverseRefs == null) {
                     currentReverseRefs = new HashSet<String>();
-                    reverseReferences.put(collectionName, currentReverseRefs);
+                    reverseReferences.put(parent, currentReverseRefs);
                 }
                 currentReverseRefs.add(oboTerm);
             }
         }
     }
 
-    private void assignPartOf(String parent, String child) {
-        Set<String> colls = partOfs.get(child);
-        if (colls == null) {
-            colls = new HashSet<String>();
-            partOfs.put(child, colls);
+    private boolean checkManyToMany(String parent, String child) {
+        if (isManyToMany(parent, child)) {
+            Set<String> parentPartOfs = partOfs.get(parent);
+            if (parentPartOfs == null) {
+                parentPartOfs = new HashSet<String>();
+                partOfs.put(parent, parentPartOfs);
+            }
+            parentPartOfs.add(child);
+            return true;
         }
-        colls.add(parent);
+        return false;
+    }
+
+    private void assignPartOf(String parent, String child) {
+        Set<String> refs = partOfs.get(child);
+        if (refs == null) {
+            refs = new HashSet<String>();
+            partOfs.put(child, refs);
+        }
+        refs.add(parent);
     }
 
     private void assignPartOfsToChild(String parent, String child) {
@@ -383,14 +443,13 @@ public class OboToModelMapping
             Set<String> refs = reverseReferences.get(parent);
             if (refs != null) {
                 for (String refName : refs) {
-                    removeCollectionFromChildren(reverseReferences, partOfs, parent,
-                            refName);
+                    removeRelationship(reverseReferences, partOfs, parent, refName);
                 }
             }
             Set<String> collections = partOfs.get(parent);
             if (collections != null) {
                 for (String coll : collections) {
-                    removeCollectionFromChildren(partOfs, reverseReferences, parent, coll);
+                    removeRelationship(partOfs, reverseReferences, parent, coll);
                 }
             }
         }
@@ -402,7 +461,7 @@ public class OboToModelMapping
      * @param parent eg. transcript
      * @collectioName eg. CDSs
      */
-    private void removeCollectionFromChildren(Map<String, Set<String>> map1,
+    private void removeRelationship(Map<String, Set<String>> map1,
             Map<String, Set<String>> map2, String parent, String collectionName) {
         Set<String> children = parentToChildren.get(parent);
         if (children == null) {
@@ -418,7 +477,7 @@ public class OboToModelMapping
                     coll.remove(child);
                 }
             }
-            removeCollectionFromChildren(map1, map2, child, collectionName);
+            removeRelationship(map1, map2, child, collectionName);
         }
     }
 
@@ -506,9 +565,10 @@ public class OboToModelMapping
      */
     public void validateTermsToKeep(String oboFilename, String termsToKeepFileName) {
         List<String> invalidTermsConfigured = new ArrayList<String>();
-        for (String soTermInModel : termsToKeep) {
-            if (oboNameToIdentifier.get(soTermInModel) == null) {
-                invalidTermsConfigured.add(soTermInModel);
+        for (String term : termsToKeep) {
+            if (!term.contains("#") && !term.contains(".")
+                    && oboNameToIdentifier.get(term) == null) {
+                invalidTermsConfigured.add(term);
             }
         }
         if (!invalidTermsConfigured.isEmpty()) {
@@ -517,6 +577,46 @@ public class OboToModelMapping
                     + " according to: " + oboFilename + ": "
                     + StringUtil.prettyList(invalidTermsConfigured));
         }
+    }
+
+    // move terms from (user provided) file to list
+    // only these terms (and dependents) will be processed
+    private void processTermFile(File filename) {
+        Set<String> terms = new HashSet<String>();
+        Map<String, Set<String>> manyToMany = new HashMap<String, Set<String>>();
+        try {
+            BufferedReader br =  new BufferedReader(new FileReader(filename));
+            try {
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    if (StringUtils.isNotEmpty(line) && !line.startsWith("#")) {
+                        if (line.contains(".")) {
+                            String[] bits = line.split("\\.");
+                            if (bits.length != 2) {
+                                throw new RuntimeException("Invalid entry in "
+                                        + filename.getPath() + ": " + line);
+                            }
+                            String child = bits[0];
+                            String parent = bits[1];
+                            Set<String> parents = manyToMany.get(child);
+                            if (parents == null) {
+                                parents = new HashSet<String>();
+                                manyToMany.put(child, parents);
+                            }
+                            parents.add(parent);
+                        } else {
+                            terms.add(line);
+                        }
+                    }
+                }
+            } finally {
+                br.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        termsToKeep = terms;
+        manyToManyPartOfs = manyToMany;
     }
 
     /**
