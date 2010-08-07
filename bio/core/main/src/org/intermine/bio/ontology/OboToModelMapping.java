@@ -47,7 +47,10 @@ public class OboToModelMapping
 
     // special case for sequence_feature, we always need this term in the model
     private static final String SEQUENCE_FEATURE = "SO:0000110";
-
+    
+    // TODO put this in config file instead
+    private static final String CHROMOSOME = "SO:0000340";
+    
     private static final boolean DEBUG = false;
 
     private Map<String, Set<String>> reversePartOfs = new HashMap<String, Set<String>>();
@@ -209,7 +212,6 @@ public class OboToModelMapping
             if ((relationshipType.equals("part_of") || relationshipType.equals("member_of"))
                     && r.direct) {
                 assignPartOf(parent, child);
-//                assignPartOf(child, parent);
             } else if (relationshipType.equals("is_a") && r.direct) {
                 Set<String> parents = childToParents.get(child);
                 if (parents == null) {
@@ -250,6 +252,10 @@ public class OboToModelMapping
             String oboTerm = entry.getKey();
             Set<String> parents = new HashSet<String>(entry.getValue());
             for (String parent : parents) {
+            	// TODO put this in config file
+            	if (parent.equals(CHROMOSOME)) {
+            		continue;
+            	}
                 Set<String> currentReverseRefs =  reversePartOfs.get(parent);
                 if (currentReverseRefs == null) {
                     currentReverseRefs = new HashSet<String>();
@@ -259,19 +265,6 @@ public class OboToModelMapping
             }
         }
     }
-
-//    private boolean checkManyToMany(String parent, String child) {
-//        if (testManyToMany(parent, child)) {
-//            Set<String> parentPartOfs = partOfs.get(parent);
-//            if (parentPartOfs == null) {
-//                parentPartOfs = new HashSet<String>();
-//                partOfs.put(parent, parentPartOfs);
-//            }
-//            parentPartOfs.add(child);
-//            return true;
-//        }
-//        return false;
-//    }
 
     private void assignPartOf(String parent, String child) {
         Set<String> refs = partOfs.get(child);
@@ -284,7 +277,6 @@ public class OboToModelMapping
 
     private void assignPartOfsToChild(String parent, String child) {
         transferPartOfs(parent, child);
-        // keep going up the tree
         Set<String> grandparents = childToParents.get(parent);
         if (grandparents != null && !grandparents.isEmpty()) {
             for (String grandparent : grandparents) {

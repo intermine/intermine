@@ -41,7 +41,9 @@ import org.intermine.util.TypeUtil;
  */
 public class OboToModel
 {
-
+    // TODO put this in config file - SO:0000340
+    private static final String CHROMOSOME = "chromosome";
+	
     /**
      * Run conversion from Obo to Model format.
      *
@@ -179,9 +181,7 @@ public class OboToModel
                     parentName = StringUtil.decapitalise(parentName);
 
                     // reverse reference
-                    String reverseReference = TypeUtil.javaiseClassName(childOBOName) + "s";
-                    reverseReference = StringUtil.decapitalise(reverseReference);
-
+                    String reverseReference = generateReverseReference(parentName, childOBOName, true);
                     if (oboToModelMapping.isManyToMany(parent, childIdentifier)) {
                         parentName = parentName + "s";
                         CollectionDescriptor cd = new CollectionDescriptor(parentName,
@@ -208,11 +208,8 @@ public class OboToModel
                             oboToModelMapping.getNamespace(), collectionName);
                     collectionName = StringUtil.decapitalise(collectionName) + "s";
                     // reverse reference
-                    String reverseReference = TypeUtil.javaiseClassName(childOBOName);
-                    reverseReference = StringUtil.decapitalise(reverseReference);
-                    if (oboToModelMapping.isManyToMany(collection, childIdentifier)) {
-                        reverseReference = reverseReference + "s";
-                    }
+                    String reverseReference = generateReverseReference(collectionName, childOBOName, 
+                    		oboToModelMapping.isManyToMany(collection, childIdentifier));
                     // cd
                     CollectionDescriptor cd = new CollectionDescriptor(collectionName ,
                             fullyQualifiedClassName, reverseReference);
@@ -227,6 +224,19 @@ public class OboToModel
                 collections);
     }
 
+    private static String generateReverseReference(String parent, String child, boolean manyToMany) {
+    	// TODO put this in config file
+    	if (parent.equals(CHROMOSOME) || child.equals(CHROMOSOME)) {
+    		return null;
+    	}
+        String reverseReference = TypeUtil.javaiseClassName(child);
+        reverseReference = StringUtil.decapitalise(reverseReference);
+        if (manyToMany) {
+            reverseReference = reverseReference + "s";
+        }
+        return reverseReference;
+    }
+    
     private static void parseOboTerms(OboToModelMapping oboToModelMapping, String oboFilename,
             String termsFileName) {
         File oboFile = new File(oboFilename);
