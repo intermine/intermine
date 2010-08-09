@@ -12,7 +12,6 @@ package org.intermine.bio.postprocess;
 
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -51,7 +50,7 @@ public class PostProcessUtil
      * @throws IllegalAccessException if problems with reflection
      */
     public static InterMineObject cloneInterMineObject(InterMineObject obj)
-    throws IllegalAccessException {
+        throws IllegalAccessException {
         return PostProcessUtil.cloneInterMineObject(obj, false);
     }
 
