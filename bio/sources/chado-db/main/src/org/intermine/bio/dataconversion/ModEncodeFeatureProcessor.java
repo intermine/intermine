@@ -565,10 +565,10 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             }
         }
         Item feature = getChadoDBConverter().createItem(realInterMineType);
-        // See #2287
-        if (feature.checkAttribute("featureType")) {
-            feature.setAttribute("featureType", chadoFeatureType);
-        }
+        // See #2287 replaced with SOTerm
+//        if (feature.checkAttribute("featureType")) {
+//            feature.setAttribute("featureType", chadoFeatureType);
+//        }
         return feature;
     }
 

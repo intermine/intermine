@@ -249,7 +249,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
                 protein.setAttribute("uniprotAccession", identifier);
                 proteinMap.put(identifier, protein.getIdentifier());
                 store(protein);
-                createSynonym(protein.getIdentifier(), "accession", identifier, "true", true);
+                createSynonym(protein.getIdentifier(), identifier, "true", true);
                 return protein.getIdentifier();
             }
             return proteinIdentifier;

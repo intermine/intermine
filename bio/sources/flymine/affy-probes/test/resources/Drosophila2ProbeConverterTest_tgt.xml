@@ -1,6 +1,5 @@
 <items>
 <item id="7_1" class="Synonym">
-<attribute name="type" value="identifier"/>
 <attribute name="value" value="FBgn002"/>
 <reference name="subject" ref_id="6_1"/>
 </item>
@@ -35,7 +34,6 @@
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="7_2" class="Synonym">
-<attribute name="type" value="identifier"/>
 <attribute name="value" value="FBtr0111068"/>
 <reference name="subject" ref_id="8_1"/>
 </item>
@@ -79,7 +77,6 @@
 <attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
 <item id="7_3" class="Synonym">
-<attribute name="type" value="identifier"/>
 <attribute name="value" value="142519_at"/>
 <reference name="subject" ref_id="9_1"/>
 </item>

@@ -280,7 +280,7 @@ public class HomophilaConverter extends BioFileConverter
             }
             proteins.put(array[PROTEIN_ID], protein);
             store(protein);
-            createSynonym(protein, "identifier", primaryIdentifier, "true", true);
+            createSynonym(protein, primaryIdentifier, "true", true);
         }
         return protein;
     }
@@ -308,7 +308,7 @@ public class HomophilaConverter extends BioFileConverter
             gene.setReference("organism", orgHuman);
             gene.addToCollection("omimDiseases", findDisease(array));
             store(gene);
-            createSynonym(gene, "symbol", geneId, null, true);
+            createSynonym(gene, geneId, null, true);
         }
         return gene;
     }

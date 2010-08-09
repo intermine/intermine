@@ -290,7 +290,7 @@ public class TreefamConverter extends BioFileConverter
         throws ObjectStoreException, SAXException {
         store(item);
         if (StringUtils.isNotEmpty(identifier)) {
-            createSynonym(item, "identifier", identifier, null, true);
+            createSynonym(item, identifier, null, true);
         }
     }
 
