@@ -29,11 +29,10 @@ import javax.servlet.ServletContext;
 import org.apache.log4j.Logger;
 import org.intermine.model.bio.DatabaseRecord;
 import org.intermine.model.bio.Experiment;
-import org.intermine.model.bio.ExpressionLevel;
-import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.ResultFile;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -54,8 +53,8 @@ import org.modmine.web.GBrowseParser.GBrowseTrack;
 
 /**
  * Read modENCODE metadata into objects that simplify display code, cache results.
- * @author Richard Smith
  *
+ * @author Richard Smith
  */
 public class MetadataCache
 {
@@ -423,8 +422,7 @@ public class MetadataCache
             tracks.put(exp.getName(), expTracks);
             for (Submission sub : exp.getSubmissions()) {
 
-                if (subTracksMap.get(sub.getdCCid()) != null){
-
+                if (subTracksMap.get(sub.getdCCid()) != null) {
                     List<GBrowseTrack> subTracks = subTracksMap.get(sub.getdCCid());
                     if (subTracks != null) {
                         // check so it is unique
@@ -495,8 +493,8 @@ public class MetadataCache
                     dup.add(s);
                 }
             }
-                db.add(s[0]);
-                acc.add(s[1]);
+            db.add(s[0]);
+            acc.add(s[1]);
         }
         // do the difference between sets and return it
         Set<String[]> uniques = new HashSet<String[]>(expReps);
@@ -506,9 +504,9 @@ public class MetadataCache
 
 
     /**
-    *
-    * @param os objectStore
-    * @return map exp-repository entries
+     *
+     * @param os objectStore
+     * @return map exp-repository entries
     */
     public static Map<String, Integer> getExperimentExpressionLevels(ObjectStore os) {
         Map<String, Integer> experimentELevel = new HashMap<String, Integer>();
@@ -701,8 +699,8 @@ public class MetadataCache
             new LinkedHashMap<String, Map<String, Long>>();
 
         // for each classes set the values for jsp
-        for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
-            ResultsRow row = iter.next();
+        for (Iterator<ResultsRow<?>> iter = results.iterator(); iter.hasNext(); ) {
+            ResultsRow<?> row = iter.next();
             String expName = (String) row.get(0);
             Class<?> feat = (Class<?>) row.get(1);
             Long count = (Long) row.get(2);
@@ -758,10 +756,10 @@ public class MetadataCache
         Results results = os.execute(q);
 
         // for each classes set the values for jsp
-        for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
-            ResultsRow row = iter.next();
+        for (Iterator<ResultsRow<?>> iter = results.iterator(); iter.hasNext(); ) {
+            ResultsRow<?> row = iter.next();
             Submission sub = (Submission) row.get(0);
-            Class feat = (Class) row.get(1);
+            Class<?> feat = (Class<?>) row.get(1);
             Long count = (Long) row.get(2);
 
             submissionIdCache.put(sub.getdCCid(), sub.getId());
@@ -822,10 +820,10 @@ public class MetadataCache
         Results results = os.execute(q);
 
         // for each classes set the values for jsp
-        for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
-            ResultsRow row = iter.next();
+        for (Iterator<ResultsRow<?>> iter = results.iterator(); iter.hasNext(); ) {
+            ResultsRow<?> row = iter.next();
             Submission sub = (Submission) row.get(0);
-            Class feat = (Class) row.get(1);
+            Class<?> feat = (Class<?>) row.get(1);
             Long count = (Long) row.get(2);
 
             //submissionIdCache.put(sub.getdCCid(), sub.getId());
@@ -896,10 +894,10 @@ public class MetadataCache
         Results results = os.execute(q);
 
         // for each classes set the values for jsp
-        for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
-            ResultsRow row = iter.next();
+        for (Iterator<ResultsRow<?>> iter = results.iterator(); iter.hasNext(); ) {
+            ResultsRow<?> row = iter.next();
             Experiment exp = (Experiment) row.get(0);
-            Class feat = (Class) row.get(1);
+            Class<?> feat = (Class<?>) row.get(1);
             Long count = (Long) row.get(2);
 
             //submissionIdCache.put(sub.getdCCid(), sub.getId());
@@ -937,7 +935,7 @@ public class MetadataCache
             Results results = os.executeSingleton(q);
 
             // for submission, get result files and expression level count
-            Iterator i = results.iterator();
+            Iterator<?> i = results.iterator();
             while (i.hasNext()) {
                 Submission sub = (Submission) i.next();
                 Set<ResultFile> files = sub.getResultFiles();
@@ -954,39 +952,6 @@ public class MetadataCache
                 + submissionFilesCache.size() + ", expression levels = "
                 + submissionExpressionLevelCounts.size());
     }
-
-
-    private static void readSubmissionFiles(ObjectStore os) {
-        //
-        long startTime = System.currentTimeMillis();
-        try {
-            Query q = new Query();
-            QueryClass qcSubmission = new QueryClass(Submission.class);
-            QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
-            q.addFrom(qcSubmission);
-            q.addToSelect(qcSubmission);
-
-            q.addToOrderBy(qfDCCid);
-
-            submissionFilesCache = new HashMap<Integer, Set<ResultFile>>();
-            Results results = os.executeSingleton(q);
-
-            // for each project, get its labs
-            Iterator<?> i = results.iterator();
-            while (i.hasNext()) {
-                Submission sub = (Submission) i.next();
-                Set<ResultFile> files = sub.getResultFiles();
-                submissionFilesCache.put(sub.getdCCid(), files);
-            }
-
-        } catch (Exception err) {
-            err.printStackTrace();
-        }
-        long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed file names cache, took: " + timeTaken + "ms size = "
-                + submissionFilesCache.size());
-    }
-
 
     private static void readSubmissionLocatedFeature(ObjectStore os) {
         long startTime = System.currentTimeMillis();
@@ -1023,10 +988,10 @@ public class MetadataCache
         Results results = os.execute(q);
 
         // for each classes set the values for jsp
-        for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
-            ResultsRow row = iter.next();
+        for (Iterator<ResultsRow<?>> iter = results.iterator(); iter.hasNext(); ) {
+            ResultsRow<?> row = iter.next();
             Submission sub = (Submission) row.get(0);
-            Class feat = (Class) row.get(1);
+            Class<?> feat = (Class<?>) row.get(1);
 
             addToMap(submissionLocatedFeatureTypes, sub.getdCCid(),
                     TypeUtil.unqualifiedName(feat.getName()));
@@ -1194,25 +1159,25 @@ public class MetadataCache
 
         Properties props = new Properties();
 
-            InputStream is
+        InputStream is
             = servletContext.getResourceAsStream("/WEB-INF/featureTypeDescr.properties");
-            if (is == null) {
-                LOG.info("Unable to find /WEB-INF/featureTypeDescr.properties, "
-                + "there will be no feature type descriptions");
-            } else {
-                try {
-                    props.load(is);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                Enumeration<?> en = props.keys();
-                while (en.hasMoreElements()) {
-                    String expFeat = (String) en.nextElement();
-                    String descr = props.getProperty(expFeat);
-                    featDescriptionCache.put(expFeat, descr);
-                }
+        if (is == null) {
+            LOG.info("Unable to find /WEB-INF/featureTypeDescr.properties, "
+                    + "there will be no feature type descriptions");
+        } else {
+            try {
+                props.load(is);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
+            Enumeration<?> en = props.keys();
+            while (en.hasMoreElements()) {
+                String expFeat = (String) en.nextElement();
+                String descr = props.getProperty(expFeat);
+                featDescriptionCache.put(expFeat, descr);
+            }
+        }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed feature description cache, took: " + timeTaken + "ms size = "
                 + featDescriptionCache.size());
