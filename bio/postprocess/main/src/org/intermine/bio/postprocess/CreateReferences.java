@@ -229,6 +229,14 @@ public class CreateReferences
             destCld = model.getClassDescriptorByName(secondClass.getName());
         }
         CollectionDescriptor col = destCld.getCollectionDescriptorByName(createFieldName);
+        if (col == null) {
+            String msg = "Error running post-process `create-references` for `" + createFieldName
+                + "` since this collection doesn't exist in the model.  Remove this post-process "
+                + " from the project.xml file to avoid this error.";
+            LOG.error(msg);
+            return;
+        }
+
         if (col.relationType() == CollectionDescriptor.M_N_RELATION) {
             manyToMany = true;
         }
