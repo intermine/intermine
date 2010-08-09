@@ -124,7 +124,7 @@ public class SynonymUpdater
             BioEntity bioEntity = (BioEntity) rr.get(0);
             Synonym synonym = (Synonym) rr.get(1);
             String synonymValue = synonym.getValue();
-            Set<Class<?>> classes = DynamicUtil.decomposeClass(bioEntity.getClass());
+            Set<Class> classes = DynamicUtil.decomposeClass(bioEntity.getClass());
             // clone so we don't change the ObjectStore cache
             Synonym synonymCopy = (Synonym) PostProcessUtil.cloneInterMineObject(synonym);
             boolean isPrimary = false;
