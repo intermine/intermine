@@ -230,7 +230,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
             } catch (ObjectStoreException e) {
                 throw new ObjectStoreException(e);
             }
-            createSynonym(refId, "identifier", identifier, null, true);
+            createSynonym(refId, identifier, null, true);
         }
         return refId;
     }

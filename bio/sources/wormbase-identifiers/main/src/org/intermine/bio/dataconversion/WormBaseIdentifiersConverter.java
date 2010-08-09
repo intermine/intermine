@@ -75,11 +75,11 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
             Item gene = createItem("Gene");
             if (primaryidentifier != null && !primaryidentifier.equals("")) {
                 gene.setAttribute("primaryIdentifier", primaryidentifier);
-                synonyms.add(createSynonym(gene, "identifier", primaryidentifier, null, false));
+                synonyms.add(createSynonym(gene, primaryidentifier, null, false));
             }
             if (identifier != null && !identifier.equals("")) {
                 gene.setAttribute("secondaryIdentifier", identifier);
-                synonyms.add(createSynonym(gene, "identifier", identifier, null, false));
+                synonyms.add(createSynonym(gene, identifier, null, false));
             }
             if (symbol != null && !symbol.equals("")) {
                 gene.setAttribute("symbol", symbol);
@@ -87,7 +87,7 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
                 gene.setAttribute("name", symbol);
 
                 if (!symbol.equals(identifier)) {
-                    synonyms.add(createSynonym(gene, "symbol", symbol, null, false));
+                    synonyms.add(createSynonym(gene, symbol, null, false));
                 }
             }
 

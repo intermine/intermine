@@ -84,7 +84,7 @@ public class AffyConverter extends CDNACloneConverter
                     probe.addToCollection("genes", gene);
                 }
                 store(probe);
-                createSynonym(probe, "identifier", PROBEPREFIX + probeId.trim(), "true", true);
+                createSynonym(probe, PROBEPREFIX + probeId.trim(), "true", true);
             }
         }
     }

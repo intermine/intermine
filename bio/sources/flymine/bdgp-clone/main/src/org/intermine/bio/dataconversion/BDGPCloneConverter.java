@@ -78,7 +78,7 @@ public class BDGPCloneConverter extends CDNACloneConverter
                     clone.setReference("gene", gene.getIdentifier());
                 }
                 store(clone);
-                createSynonym(clone, "identifier", cloneIds[i], "true", true);
+                createSynonym(clone, cloneIds[i], "true", true);
             }
         }
     }

@@ -99,13 +99,11 @@ public class InterProConverter extends BioFileConverter
                 proteinDomain.setAttribute("type", attrs.getValue("type"));
 
                 try {
-                    Item synonym = createSynonym(proteinDomain.getIdentifier(), "name",
-                            name, null, false);
+                    Item synonym = createSynonym(proteinDomain.getIdentifier(), name, null, false);
                     if (synonym != null) {
                         delayedItems.add(synonym);
                     }
-                    synonym = createSynonym(proteinDomain.getIdentifier(), "identifier",
-                            identifier, null, false);
+                    synonym = createSynonym(proteinDomain.getIdentifier(), identifier, null, false);
                     if (synonym != null) {
                         delayedItems.add(synonym);
                     }
@@ -126,7 +124,7 @@ public class InterProConverter extends BioFileConverter
                 attName = "description";
             } else if (qName.equals("sec_ac")) {
                 try {
-                    Item synonym = createSynonym(proteinDomain.getIdentifier(), "identifier",
+                    Item synonym = createSynonym(proteinDomain.getIdentifier(),
                             attrs.getValue("acc"), null, false);
                     if (synonym != null) {
                         delayedItems.add(synonym);
@@ -145,7 +143,7 @@ public class InterProConverter extends BioFileConverter
                     if (item != null) {
                         delayedItems.add(item);
                     }
-                    item = createSynonym(proteinDomain.getIdentifier(), "name", name, null, false);
+                    item = createSynonym(proteinDomain.getIdentifier(), name, null, false);
                     if (item != null) {
                         delayedItems.add(item);
                     }
@@ -210,8 +208,7 @@ public class InterProConverter extends BioFileConverter
                 proteinDomain.setAttribute("name", name);
                 Item synonym;
                 try {
-                    synonym = createSynonym(proteinDomain.getIdentifier(), "name", name, null,
-                            false);
+                    synonym = createSynonym(proteinDomain.getIdentifier(), name, null, false);
                     if (synonym != null) {
                         delayedItems.add(synonym);
                     }

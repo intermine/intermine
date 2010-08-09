@@ -99,11 +99,11 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
             feature.setReference("organism", organism.getIdentifier());
             store(feature);
             String refId = feature.getIdentifier();
-            createSynonym(refId, "identifier", secondaryIdentifier, "false", true);
-            createSynonym(refId, "identifier", primaryIdentifier, "true", true);
+            createSynonym(refId, secondaryIdentifier, "false", true);
+            createSynonym(refId, primaryIdentifier, "true", true);
             // create addidtional synonyms for other ensembl ids
             for (String ensId : ensIds) {
-                createSynonym(refId, "identifier", ensId, "false", true);
+                createSynonym(refId, ensId, "false", true);
             }
         }
     }

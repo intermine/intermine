@@ -464,7 +464,7 @@ public class BioGridConverter extends BioFileConverter
                 store(item);
                 refId = item.getIdentifier();
                 genes.put(identifier, refId);
-                createSynonym(refId, "identifier", identifier, null, true);
+                createSynonym(refId, identifier, null, true);
             }
             ih.identifier = identifier;
             ih.refId = refId;
