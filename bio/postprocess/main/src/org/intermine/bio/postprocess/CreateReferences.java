@@ -85,7 +85,8 @@ public class CreateReferences
                 Exon.class, "gene");
         LOG.info("insertReferences stage 3");
         // UTR.gene / Gene.UTRs
-        insertReferenceField(Gene.class, "transcripts", Transcript.class, "UTRs", UTR.class, "gene");
+        insertReferenceField(Gene.class, "transcripts", Transcript.class, "UTRs", UTR.class,
+                "gene");
 
         LOG.info("insertReferences stage 4");
         // CDS.gene / Gene.CDSs
@@ -318,7 +319,7 @@ public class CreateReferences
         Query q = new Query();
         q.setDistinct(false);
 
-        QueryClass qcMRNA = new QueryClass(MRNA.class);
+        QueryClass qcMRNA = new QueryClass(Transcript.class);
         q.addFrom(qcMRNA);
         q.addToSelect(qcMRNA);
         q.addToOrderBy(qcMRNA);
