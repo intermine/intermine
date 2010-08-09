@@ -56,11 +56,27 @@
 	        <div class="pages">
 	            <c:choose>
 		            <c:when test="${searchOffset > 0}">                     
-			            <a href="<c:url value="/keywordSearchResults.do"><c:param name="searchTerm" value="${searchTerm}" /><c:param name="searchBag" value="${searchBag}" /><c:param name="searchCategory" value="${searchCategory}" /><c:param name="searchOrganism" value="${searchOrganism}" /><c:param name="searchOffset" value="0" /></c:url>">
+			            <a href="<c:url value="/keywordSearchResults.do">
+			                 <c:param name="searchTerm" value="${searchTerm}" />
+			                 <c:param name="searchBag" value="${searchBag}" />
+                             <c:forEach items="${searchFacets}" var="facetOTHER">
+                                 <c:if test="${facetOTHER.value != null && facetOTHER.value != ''}">
+                                     <c:param name="facet_${facetOTHER.field}" value="${facetOTHER.value}" />
+                                 </c:if>
+                             </c:forEach>
+                             <c:param name="searchOffset" value="0" /></c:url>">
 			               &lt;&lt;&nbsp;First
 			            </a>
 			            &nbsp;&nbsp;      
-		                <a href="<c:url value="/keywordSearchResults.do"><c:param name="searchTerm" value="${searchTerm}" /><c:param name="searchBag" value="${searchBag}" /><c:param name="searchCategory" value="${searchCategory}" /><c:param name="searchOrganism" value="${searchOrganism}" /><c:param name="searchOffset" value="${searchOffset - searchPerPage}" /></c:url>">
+		                <a href="<c:url value="/keywordSearchResults.do">
+                             <c:param name="searchTerm" value="${searchTerm}" />
+                             <c:param name="searchBag" value="${searchBag}" />
+                             <c:forEach items="${searchFacets}" var="facetOTHER">
+                                 <c:if test="${facetOTHER.value != null && facetOTHER.value != ''}">
+                                     <c:param name="facet_${facetOTHER.field}" value="${facetOTHER.value}" />
+                                 </c:if>
+                             </c:forEach>
+                             <c:param name="searchOffset" value="${searchOffset - searchPerPage}" /></c:url>">
 		                   &lt;&nbsp;Previous
 		                </a>
 		            </c:when>
@@ -73,11 +89,27 @@
 	            &nbsp;|&nbsp;  
 	            <c:choose>
 		            <c:when test="${searchOffset + searchPerPage < searchTotalHits}">                     
-		                <a href="<c:url value="/keywordSearchResults.do"><c:param name="searchTerm" value="${searchTerm}" /><c:param name="searchBag" value="${searchBag}" /><c:param name="searchCategory" value="${searchCategory}" /><c:param name="searchOrganism" value="${searchOrganism}" /><c:param name="searchOffset" value="${searchOffset + searchPerPage}" /></c:url>">
+		                <a href="<c:url value="/keywordSearchResults.do">
+                             <c:param name="searchTerm" value="${searchTerm}" />
+                             <c:param name="searchBag" value="${searchBag}" />
+                             <c:forEach items="${searchFacets}" var="facetOTHER">
+                                 <c:if test="${facetOTHER.value != null && facetOTHER.value != ''}">
+                                     <c:param name="facet_${facetOTHER.field}" value="${facetOTHER.value}" />
+                                 </c:if>
+                             </c:forEach>
+                             <c:param name="searchOffset" value="${searchOffset + searchPerPage}" /></c:url>">
 		                   Next&nbsp;&gt;
 		                </a>
 		                &nbsp;&nbsp;   
-		                <a href="<c:url value="/keywordSearchResults.do"><c:param name="searchTerm" value="${searchTerm}" /><c:param name="searchBag" value="${searchBag}" /><c:param name="searchCategory" value="${searchCategory}" /><c:param name="searchOrganism" value="${searchOrganism}" /><c:param name="searchOffset" value="${searchTotalHits - searchTotalHits % searchPerPage}" /></c:url>">
+		                <a href="<c:url value="/keywordSearchResults.do">
+                             <c:param name="searchTerm" value="${searchTerm}" />
+                             <c:param name="searchBag" value="${searchBag}" />
+                             <c:forEach items="${searchFacets}" var="facetOTHER">
+                                 <c:if test="${facetOTHER.value != null && facetOTHER.value != ''}">
+                                     <c:param name="facet_${facetOTHER.field}" value="${facetOTHER.value}" />
+                                 </c:if>
+                             </c:forEach>
+                             <c:param name="searchOffset" value="${searchTotalHits - searchTotalHits % searchPerPage}" /></c:url>">
 		                   Last&nbsp;&gt;&gt;
 		                </a>
 		            </c:when>
@@ -94,79 +126,52 @@
 	<div style="clear: both;">
 	
 	<div class="facets">
-	    <c:if test="${categoryFacets != null && !empty categoryFacets}">
-	        <c:choose>
-		        <c:when test="${searchCategory != ''}">
-		            <div class="facetHeader">Type: <i>${searchCategory}</i></div>
-	                <div class="facetContents">
-		            <a href="<c:url value="/keywordSearchResults.do">
-	                       <c:param name="searchTerm" value="${searchTerm}" />
-                           <c:param name="searchBag" value="${searchBag}" />
-	                       <c:param name="searchOrganism" value="${searchOrganism}" />
-	                </c:url>">                           
-		                &laquo; show all
-		            </a>
-		            </div>
-		        </c:when>
-		        <c:otherwise>
-			        <div class="facetHeader">Hits by Type</div>
-			        <div class="facetContents">
-			        <ol>
-			            <c:forEach items="${categoryFacets}" var="facet">
-			                <li>
-			                    <a href="<c:url value="/keywordSearchResults.do">
-			                           <c:param name="searchTerm" value="${searchTerm}" />
-                                       <c:param name="searchBag" value="${searchBag}" />
-			                           <c:param name="searchCategory" value="${facet.value}" />
-		                               <c:param name="searchOrganism" value="${searchOrganism}" />
-	                            </c:url>" title="Click to only show '<c:out value="${facet.value}" />'">
-		                           <c:out value="${facet.value}" />:
-			                       <c:out value="${facet.facetValueHitCount}"></c:out>
-			                    </a>
-			                </li>
-			            </c:forEach>
-			        </ol>
-			        </div>
-		        </c:otherwise>
-	        </c:choose>
-		</c:if>
-		
-	    <c:if test="${organismFacets != null && !empty organismFacets}">
-	        <c:choose>
-	            <c:when test="${searchOrganism != ''}">
-	                <div class="facetHeader">Organism: <i>${searchOrganism}</i></div>
-	                <div class="facetContents">
-	                <a href="<c:url value="/keywordSearchResults.do">
-	                       <c:param name="searchTerm" value="${searchTerm}" />
-                           <c:param name="searchBag" value="${searchBag}" />
-	                       <c:param name="searchCategory" value="${searchCategory}" />
-	                </c:url>">                           
-	                    &laquo; show all
-	                </a>
-	                </div>
-	            </c:when>
-	            <c:otherwise>
-	                <div class="facetHeader">Hits by Organism</div>
-	                <div class="facetContents">
-	                <ol>
-	                    <c:forEach items="${organismFacets}" var="facet">
-	                        <li>
-	                            <a href="<c:url value="/keywordSearchResults.do">
-	                                   <c:param name="searchTerm" value="${searchTerm}" />
-                                       <c:param name="searchBag" value="${searchBag}" />
-	                                   <c:param name="searchOrganism" value="${facet.value}" />
-	                                   <c:param name="searchCategory" value="${searchCategory}" />
-	                            </c:url>" title="Click to only show '<c:out value="${facet.value}" />'">
-	                               <c:out value="${facet.value}" />:
-	                               <c:out value="${facet.facetValueHitCount}"></c:out>
-	                            </a>
-	                        </li>
-	                    </c:forEach>
-	                </ol>
-	                </div>
-	            </c:otherwise>
-	        </c:choose>
-	    </c:if>
+        <c:forEach items="${searchFacets}" var="facet">
+	        <c:if test="${facet.items != null && !empty facet.items}">
+	            <c:choose>
+	                <c:when test="${facet.value != null && facet.value != ''}">
+	                    <div class="facetHeader">${facet.name}: <i>${facet.value}</i></div>
+	                    <div class="facetContents">
+	                    <a href="<c:url value="/keywordSearchResults.do">
+	                           <c:param name="searchTerm" value="${searchTerm}" />
+	                           <c:param name="searchBag" value="${searchBag}" />
+	                           <c:forEach items="${searchFacets}" var="facetOTHER">
+	                               <c:if test="${facetOTHER.field != facet.field && facetOTHER.value != null && facetOTHER.value != ''}">
+                                       <c:param name="facet_${facetOTHER.field}" value="${facetOTHER.value}" />
+	                               </c:if>
+	                           </c:forEach>
+	                    </c:url>">                           
+	                        &laquo; show all
+	                    </a>
+	                    </div>
+	                </c:when>
+	                <c:otherwise>
+	                    <div class="facetHeader">Hits by ${facet.name}</div>
+	                    <div class="facetContents">
+	                    <ol>
+                            <c:forEach items="${facet.items}" var="facetItem">
+                                <li>
+                                    <a href="<c:url value="/keywordSearchResults.do">
+                                           <c:param name="searchTerm" value="${searchTerm}" />
+                                           <c:param name="searchBag" value="${searchBag}" />
+                                           <c:param name="facet_${facet.field}" value="${facetItem.value}" />
+			                               <c:forEach items="${searchFacets}" var="facetOTHER">
+			                                   <c:if test="${facetOTHER.field != facet.field && facetOTHER.value != null && facetOTHER.value != ''}">
+			                                       <c:param name="facet_${facetOTHER.field}" value="${facetOTHER.value}" />
+			                                   </c:if>
+			                               </c:forEach>
+                                    </c:url>" title="Click to only show '<c:out value="${facetItem.value}" />'">
+                                       <c:out value="${facetItem.value}" />:
+                                       <c:out value="${facetItem.facetValueHitCount}"></c:out>
+                                    </a>
+                                </li>
+                            </c:forEach>
+	                    </ol>
+	                    </div>
+	                </c:otherwise>
+	            </c:choose>
+	        </c:if>                
+        </c:forEach>
 	</div>
 	
 	<div class="resultTableContainer">
@@ -182,6 +187,9 @@
 		      <td>
 		          <div class="objectKeys">
 		          <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${searchResult.id}">
+		          <c:if test="${empty searchResult.keyFields}">
+		              <c:out value="${searchResult.type}"></c:out>
+		          </c:if>
 		          <c:forEach items="${searchResult.keyFields}" var="field" varStatus="status">
 		            <c:set var="fieldConfig" value="${searchResult.fieldConfigs[field]}"/>
 		            <span title="<c:out value="${field}"/>" class="objectKey">

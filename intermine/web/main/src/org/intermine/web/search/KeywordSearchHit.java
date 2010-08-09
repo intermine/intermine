@@ -24,20 +24,38 @@ public class KeywordSearchHit
     final Document document;
     final InterMineObject object;
 
+    /**
+     * constructor
+     * @param score lucene score
+     * @param document lucene document
+     * @param object intermine object
+     */
     public KeywordSearchHit(float score, Document document, InterMineObject object) {
         this.score = score;
         this.document = document;
         this.object = object;
     }
 
+    /**
+     * score
+     * @return score
+     */
     public float getScore() {
         return score;
     }
 
+    /**
+     * document
+     * @return document
+     */
     public Document getDocument() {
         return document;
     }
 
+    /**
+     * object
+     * @return intermineobject
+     */
     public InterMineObject getObject() {
         return object;
     }

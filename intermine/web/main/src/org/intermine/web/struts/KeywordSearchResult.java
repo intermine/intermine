@@ -1,5 +1,15 @@
 package org.intermine.web.struts;
 
+/*
+ * Copyright (C) 2002-2010 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,7 +142,7 @@ public class KeywordSearchResult
 
     /**
      * returns the name of the class for this object (category)
-     * @return
+     * @return type
      */
     public String getType() {
         return type;
@@ -154,22 +164,42 @@ public class KeywordSearchResult
         return points;
     }
 
+    /**
+     * webconfig
+     * @return webconfig
+     */
     public WebConfig getWebconfig() {
         return webconfig;
     }
 
+    /**
+     * fieldConfigs
+     * @return map from field expression to fieldConfigs
+     */
     public HashMap<String, FieldConfig> getFieldConfigs() {
         return fieldConfigs;
     }
 
+    /**
+     * key field expressions
+     * @return keyFields
+     */
     public final Vector<String> getKeyFields() {
         return keyFields;
     }
 
+    /**
+     * additional display field expressions
+     * @return additionalFields
+     */
     public final Vector<String> getAdditionalFields() {
         return additionalFields;
     }
 
+    /**
+     * values of all fields
+     * @return map from field expression to value
+     */
     public HashMap<String, Object> getFieldValues() {
         return fieldValues;
     }

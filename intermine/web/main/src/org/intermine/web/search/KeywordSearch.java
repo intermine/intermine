@@ -22,20 +22,19 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
@@ -55,6 +54,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryParser.QueryParser.Operator;
+import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
@@ -62,15 +63,17 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.bio.BioEntity;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.modelproduction.MetadataManager.LargeObjectOutputStream;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -138,7 +141,7 @@ class ClassAttributes
 }
 
 /**
- * container for the lucene index to hold field list
+ * container for the lucene index to hold field list and directory
  * @author nils
  */
 class LuceneIndexContainer implements Serializable
@@ -168,7 +171,7 @@ class LuceneIndexContainer implements Serializable
 
     /**
      * get type of directory
-     * @return FSDirectory or RAMDirectory
+     * @return 'FSDirectory' or 'RAMDirectory'
      */
     public String getDirectoryType() {
         return directoryType;
@@ -225,55 +228,165 @@ class LuceneIndexContainer implements Serializable
 }
 
 /**
- * fetched objects from database, generates documents and adds them to a queue
- * for indexing
- * @author nils
+ * container to hold results for a reference query
+ * and associated iterator
+ * @author nils *
  */
-class DocumentFetcher implements Runnable
+class InterMineResultsContainer
 {
-    private static final Logger LOG = Logger.getLogger(DocumentFetcher.class);
+    final Results results;
+    final ListIterator<ResultsRow<InterMineObject>> iterator;
+
+    /**
+     * create container and set iterator
+     * @param results result object from os.execute(query)
+     */
+    @SuppressWarnings("unchecked")
+    public InterMineResultsContainer(Results results) {
+        this.results = results;
+        this.iterator = results.listIterator();
+    }
+
+    /**
+     * the results
+     * @return the results
+     */
+    public Results getResults() {
+        return results;
+    }
+
+    /**
+     * the iterator on the results
+     * @return iterator
+     */
+    public ListIterator<ResultsRow<InterMineObject>> getIterator() {
+        return iterator;
+    }
+}
+
+/**
+ * container class to hold the name and value of an attribute for an object
+ * to be added as a field to the document
+ * @author nils
+ *
+ */
+class ObjectValueContainer
+{
+    final String className;
+    final String name;
+    final String value;
+
+    /**
+     * constructor
+     * @param className name of the class the attribute belongs to
+     * @param name name of the field
+     * @param value value of the field
+     */
+    public ObjectValueContainer(String className, String name, String value) {
+        super();
+        this.className = className;
+        this.name = name;
+        this.value = value;
+    }
+
+    /**
+     * className
+     * @return className
+     */
+    public String getClassName() {
+        return className;
+    }
+
+    /**
+     * name
+     * @return name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * value
+     * @return value
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * generate the name to be used as a field name in lucene
+     * @return lowercase classname and field name
+     */
+    public String getLuceneName() {
+        return (className + "_" + name).toLowerCase();
+    }
+}
+
+/**
+ * thread to fetch all intermineobjects (with exceptions) from database,
+ * create a lucene document for them, add references (if applicable)
+ * and put the final document in the indexing queue
+ * @author nils
+ *
+ */
+class InterMineObjectFetcher extends Thread
+{
+    private static final Logger LOG = Logger.getLogger(InterMineObjectFetcher.class);
 
     final ObjectStore os;
+    final Map<String, List<FieldDescriptor>> classKeys;
     final ConcurrentLinkedQueue<Document> indexingQueue;
-    final HashMap<Class<? extends InterMineObject>, String[]> specialIndexClasses;
-    final Class<? extends InterMineObject> cls;
-    final boolean overwrite;
+    final Set<Class<? extends InterMineObject>> ignoredClasses;
+    final Map<Class<? extends InterMineObject>, String[]> specialReferences;
+    final Map<ClassDescriptor, Float> classBoost;
+    final Collection<String> facetFields;
 
-    final HashMap<Integer, Document> documents = new HashMap<Integer, Document>();
-    final HashSet<String> fieldNames = new HashSet<String>();
-    final HashMap<Class<?>, Vector<ClassAttributes>> decomposedClassesCache =
+    final Map<Integer, Document> documents = new HashMap<Integer, Document>();
+    final Set<String> fieldNames = new HashSet<String>();
+    final Map<Class<?>, Vector<ClassAttributes>> decomposedClassesCache =
             new HashMap<Class<?>, Vector<ClassAttributes>>();
+
+    Field idField = null;
+    Field categoryField = null;
 
     /**
      * initialize the documentfetcher thread
      * @param os
      *            intermine objectstore
+     * @param classKeys classKeys from InterMineAPI, map of classname to all key field descriptors
      * @param indexingQueue
      *            queue shared with indexer
-     * @param specialIndexClasses
-     *            map of classes that are not handled by the default bioentity
-     *            fetcher
-     * @param cls
-     *            class of object to index
-     * @param overwrite
-     *            if false the fetcher will check if an object class is in
-     *            specialProperties.keySet() before adding it
+     * @param ignoredClasses
+     *            classes that should not be indexed (as specified in config + subclasses)
+     * @param specialReferences
+     *            map of classname to references to index in additional to normal attributes
+     * @param classBoost apply per-class doc boost as specified here (all other classes get 1.0)
+     * @param facetFields
+     *            fields used for faceting - will be indexed untokenized in addition to the normal
+     *            indexing
      */
-    public DocumentFetcher(ObjectStore os, ConcurrentLinkedQueue<Document> indexingQueue,
-            HashMap<Class<? extends InterMineObject>, String[]> specialIndexClasses,
-            Class<? extends InterMineObject> cls, boolean overwrite) {
+    public InterMineObjectFetcher(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
+            ConcurrentLinkedQueue<Document> indexingQueue,
+            Set<Class<? extends InterMineObject>> ignoredClasses,
+            Map<Class<? extends InterMineObject>, String[]> specialReferences,
+            Map<ClassDescriptor, Float> classBoost,
+            Collection<String> facetFields) {
+        super();
+
         this.os = os;
+        this.classKeys = classKeys;
         this.indexingQueue = indexingQueue;
-        this.specialIndexClasses = specialIndexClasses;
-        this.cls = cls;
-        this.overwrite = overwrite;
+        this.ignoredClasses = ignoredClasses;
+        this.specialReferences = specialReferences;
+        this.classBoost = classBoost;
+        this.facetFields = facetFields;
     }
 
     /**
      * get list of fields contained in the fetched documents
      * @return fields
      */
-    public HashSet<String> getFieldNames() {
+    public Set<String> getFieldNames() {
         return fieldNames;
     }
 
@@ -284,239 +397,228 @@ class DocumentFetcher implements Runnable
     public void run() {
         try {
             long time = System.currentTimeMillis();
-            LOG.info("Fetching class '" + cls.getSimpleName() + "'...");
+            long objectParseTime = 0;
+            LOG.info("Fetching all InterMineObjects...");
 
-            HashSet<String> specialClassNames = new HashSet<String>();
-            for (Class<? extends InterMineObject> specialClass : specialIndexClasses.keySet()) {
-                specialClassNames.add(specialClass.getName());
-            }
-            LOG.info("Special Class Names = " + specialClassNames);
+            HashSet<Class<? extends InterMineObject>> seenClasses =
+                    new HashSet<Class<? extends InterMineObject>>();
+            HashMap<String, InterMineResultsContainer> referenceResults =
+                    new HashMap<String, InterMineResultsContainer>();
 
-            String[] references = specialIndexClasses.get(cls);
-            LOG.info("References = " + Arrays.toString(references));
+            try {
+                Query q = new Query();
+                QueryClass qc = new QueryClass(InterMineObject.class);
+                q.addFrom(qc);
+                q.addToSelect(qc);
 
-            HashMap<Class<? extends InterMineObject>, Boolean> ignoredClasses;
-            ignoredClasses = new HashMap<Class<? extends InterMineObject>, Boolean>();
+                QueryField qf = new QueryField(qc, "class");
+                q.setConstraint(new BagConstraint(qf, ConstraintOp.NOT_IN, ignoredClasses));
 
-            Query q = new Query();
-            QueryClass qcGene = new QueryClass(cls);
-            q.addFrom(qcGene);
-            q.addToSelect(qcGene);
+                LOG.info("QUERY: " + q.toString());
 
-            Results results = os.execute(q);
+                Results results = os.execute(q, 0, true, false, true);
 
-            Iterator<ResultsRow<InterMineObject>> it = results.iterator();
-            int i = 0;
-            int ignored = 0;
-            int size = results.size();
-            LOG.info("Query returned " + size + " results");
+                ListIterator<ResultsRow<InterMineObject>> it = results.listIterator();
+                int i = 0;
+                int size = results.size();
+                LOG.info("Query returned " + size + " results");
 
-            while (it.hasNext()) {
-                ResultsRow<InterMineObject> row = it.next();
+                while (it.hasNext()) {
+                    ResultsRow<InterMineObject> row = it.next();
 
-                if (i % 10000 == 1) {
-                    LOG.info("'" + cls.getSimpleName() + "': fetched " + i + " of " + size);
-                }
-
-                for (InterMineObject object : row) {
-                    if (!overwrite) {
-                        boolean ignore = false;
-                        Boolean cachedIgnore = ignoredClasses.get(object.getClass());
-
-                        if (cachedIgnore != null) {
-                            ignore = cachedIgnore.booleanValue();
-                        } else {
-                            LOG.info("'" + cls.getSimpleName()
-                                    + "': checking whether to ignore class " + object.getClass());
-
-                            for (Class<?> objectClass : DynamicUtil.decomposeClass(object
-                                    .getClass())) {
-                                ClassDescriptor cld =
-                                        os.getModel().getClassDescriptorByName(
-                                                objectClass.getName());
-
-                                LOG.info("'" + cls.getSimpleName()
-                                        + "': checking decomposed part of " + object.getClass()
-                                        + " -> " + objectClass + " -- super="
-                                        + cld.getSuperclassNames());
-
-                                if (specialClassNames.contains(objectClass.getName())) {
-                                    ignore = true;
-                                } else if (cld.getSuperclassNames() != null) {
-                                    if (cld.getSuperclassNames().removeAll(specialClassNames)) {
-                                        ignore = true;
-                                    }
-                                } else {
-                                    LOG.info("'" + cls.getSimpleName()
-                                            + "': class CLD has no superclassnames - "
-                                            + object.getClass());
-                                }
-                            }
-
-                            // cache result
-                            LOG.info("'" + cls.getSimpleName() + "': putting ignore=" + ignore
-                                    + " into cache for class " + object.getClass());
-                            ignoredClasses.put(object.getClass(), Boolean.valueOf(ignore));
-                        }
-
-                        if (ignore) {
-                            ignored++;
-
-                            if (ignored % 10000 == 1) {
-                                LOG.info("'" + cls.getSimpleName() + "': ignored " + ignored
-                                        + " out of " + i);
-                            }
-
-                            continue;
-                        }
+                    if (i % 10000 == 1) {
+                        LOG.info("IMOFetcher: fetched " + i + " of " + size + " in "
+                                + (System.currentTimeMillis() - time) + "ms total, "
+                                + (objectParseTime) + "ms spent on parsing");
                     }
 
-                    // if this takes too long we can cache it...
-                    Class<?> objectClass =
-                            DynamicUtil.decomposeClass(object.getClass()).iterator().next();
-                    ClassDescriptor classDescriptor =
-                            os.getModel().getClassDescriptorByName(objectClass.getName());
+                    for (InterMineObject object : row) {
+                        long time2 = System.currentTimeMillis();
 
-                    Document doc = getDocumentForObject(object, classDescriptor);
-                    if (doc != null) {
-                        if (references == null) {
-                            indexingQueue.add(doc);
-                        } else {
-                            documents.put(object.getId(), doc);
-                        }
-                    }
-                }
+                        Set<Class> objectClasses = DynamicUtil.decomposeClass(object.getClass());
+                        Class objectTopClass = objectClasses.iterator().next();
+                        ClassDescriptor classDescriptor =
+                                os.getModel().getClassDescriptorByName(objectTopClass.getName());
 
-                i++;
-            }
+                        // create base doc for object
+                        Document doc = createDocument(object, classDescriptor);
 
-            time = System.currentTimeMillis() - time;
-            int seconds = (int) Math.floor(time / 1000);
-            LOG.info("Fetched "
-                    + i
-                    + " objects of class '"
-                    + cls.getSimpleName()
-                    + "' ("
-                    + ignored
-                    + " ignored) in "
-                    + String.format("%02d:%02d.%03d", (int) Math.floor(seconds / 60), seconds % 60,
-                            time % 1000) + " minutes");
+                        HashSet<String> references = new HashSet<String>();
+                        HashMap<String, String> referenceFacetFields =
+                                new HashMap<String, String>();
 
-            if (references != null) {
-                for (int j = 0; j < references.length; j++) {
-                    String reference = references[j];
-                    time = System.currentTimeMillis();
-                    LOG.info(cls.getSimpleName() + "::" + reference + " - Querying...");
+                        // find all references associated with this object or
+                        // its superclasses
+                        for (Entry<Class<? extends InterMineObject>, String[]> specialClass
+                                : specialReferences.entrySet()) {
+                            for (Class<?> objectClass : objectClasses) {
+                                if (specialClass.getKey().isAssignableFrom(objectClass)) {
+                                    for (String reference : specialClass.getValue()) {
+                                        String fullReference =
+                                                classDescriptor.getUnqualifiedName() + "."
+                                                        + reference;
+                                        references.add(fullReference);
 
-                    Query qc = getPathQuery(cls, reference);
-                    ((ObjectStoreInterMineImpl) os).goFaster(qc);
-                    try {
-                        Results resultsc = os.execute(qc);
-                        int sizec = resultsc.size();
-
-                        LOG.info(cls.getSimpleName() + "::" + reference + " - Query returned "
-                                + sizec + " results");
-
-                        Iterator<ResultsRow<?>> itc = resultsc.iterator();
-
-                        int k = 0;
-                        int previousId = -1;
-                        while (itc.hasNext()) {
-                            ResultsRow<?> row = itc.next();
-
-                            Integer docId = (Integer) row.get(0);
-                            InterMineObject collectionObject = (InterMineObject) row.get(1);
-
-                            Document doc = documents.get(docId);
-                            if (doc != null) {
-                                addObjectToDocument(collectionObject, doc);
-
-                                // speed - submit completed documents already
-                                // if we are at last reference
-                                if ((j == references.length - 1) && previousId != docId) {
-                                    Document docOld = documents.remove(previousId);
-
-                                    if (docOld != null) {
-                                        indexingQueue.add(docOld);
-                                    } else {
-                                        LOG.warn("docOld is null! (id = " + previousId + ")");
+                                        for (String facetField : facetFields) {
+                                            if (facetField.startsWith(reference + ".")
+                                                    && !facetField
+                                                            .substring(reference.length() + 1)
+                                                            .contains(".")) {
+                                                referenceFacetFields.put(fullReference, facetField);
+                                            }
+                                        }
                                     }
                                 }
-                            } else {
-                                LOG.warn(cls.getSimpleName() + "::" + reference
-                                        + " - Did not find document #" + docId);
                             }
-
-                            if (k % 10000 == 1) {
-                                LOG.info(cls.getSimpleName() + "::" + reference + " - Fetched " + k
-                                        + " of " + sizec);
-                            }
-
-                            previousId = docId;
-
-                            k++;
                         }
 
-                        time = System.currentTimeMillis() - time;
-                        LOG.info(cls.getSimpleName()
-                                + "::"
-                                + reference
-                                + " - Fetched "
-                                + k
-                                + " objects in "
-                                + String.format("%02d:%02d.%03d", (int) Math.floor(time / 60000),
-                                        time / 1000 % 60, time % 1000) + " minutes");
-                    } finally {
-                        ((ObjectStoreInterMineImpl) os).releaseGoFaster(qc);
-                    }
-                }
+                        // check if we have seen an object of this class before
+                        if (!seenClasses.contains(object.getClass())) {
+                            LOG.info("Getting references for new class: " + object.getClass());
 
-                LOG.info("Adding remaining " + documents.size() + " documents to queue");
-                indexingQueue.addAll(documents.values());
+                            // query all references that we need
+                            for (String reference : references) {
+                                // LOG.info("Querying reference " + reference);
+
+                                Query queryReference = getPathQuery(reference);
+
+                                // do not count this towards objectParseTime
+                                objectParseTime += (System.currentTimeMillis() - time2);
+
+                                Results resultsc = os.execute(queryReference, 0, true, false, true);
+                                ((ObjectStoreInterMineImpl) os).goFaster(queryReference);
+                                referenceResults.put(reference, new InterMineResultsContainer(
+                                        resultsc));
+                                LOG.info("Querying reference " + reference + " done -- "
+                                        + resultsc.size() + " results");
+
+                                // start counting objectParseTime again
+                                time2 = System.currentTimeMillis();
+                            }
+
+                            seenClasses.add(object.getClass());
+                        }
+
+                        // find all references and add them
+                        for (String reference : references) {
+                            InterMineResultsContainer resultsContainer =
+                                    referenceResults.get(reference);
+                            while (resultsContainer.getIterator().hasNext()) {
+                                ResultsRow next = resultsContainer.getIterator().next();
+
+                                if (!next.get(0).equals(object.getId())) {
+                                    // go back one step
+                                    if (resultsContainer.getIterator().hasPrevious()) { // always
+                                        // true
+                                        resultsContainer.getIterator().previous();
+                                    }
+
+                                    break;
+                                }
+
+                                // add reference to doc
+                                addObjectToDocument((InterMineObject) next.get(1), null, doc);
+
+                                String referenceFacetField = referenceFacetFields.get(reference);
+                                if (referenceFacetField != null) {
+                                    String facetAttribute =
+                                            referenceFacetField.substring(referenceFacetField
+                                                    .lastIndexOf('.') + 1);
+                                    Object facetValue =
+                                            TypeUtil.getFieldValue((InterMineObject) next.get(1),
+                                                    facetAttribute);
+
+                                    if (facetValue instanceof String
+                                            && !StringUtils.isBlank((String) facetValue)) {
+                                        doc.add(new Field(referenceFacetField, (String) facetValue,
+                                                Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+                                    }
+                                }
+                            }
+                        }
+
+                        // finally add doc to queue
+                        indexingQueue.add(doc);
+
+                        objectParseTime += (System.currentTimeMillis() - time2);
+                    }
+
+                    i++;
+                }
+            } finally {
+                for (InterMineResultsContainer resultsContainer : referenceResults.values()) {
+                    ((ObjectStoreInterMineImpl) os).releaseGoFaster(resultsContainer.getResults()
+                            .getQuery());
+                }
             }
         } catch (Exception e) {
             LOG.warn(null, e);
         }
     }
 
-    private Document getDocumentForObject(InterMineObject object, ClassDescriptor classDescriptor) {
+    private Document createDocument(InterMineObject object, ClassDescriptor classDescriptor) {
         Document doc = new Document();
-        doc.add(new Field("id", object.getId().toString(), Field.Store.YES, Field.Index.NO));
-        doc.add(new Field("Category", classDescriptor.getUnqualifiedName(), Field.Store.YES,
-                Field.Index.NOT_ANALYZED));
 
-        if (object instanceof BioEntity && ((BioEntity) object).getOrganism() != null) {
-            doc.add(new Field("Organism", ((BioEntity) object).getOrganism().getShortName(),
-                    Field.Store.YES, Field.Index.NOT_ANALYZED));
+        Float boost = classBoost.get(classDescriptor);
+        if (boost != null) {
+            doc.setBoost(boost);
         }
 
-        addObjectToDocument(object, doc);
+        // id has to be stored so we can fetch the actual objects for the
+        // results
+        doc.add(new Field("id", object.getId().toString(), Field.Store.YES, Field.Index.NO));
+
+        // special case for faceting
+        doc.add(new Field("Category", classDescriptor.getUnqualifiedName(), Field.Store.NO,
+                Field.Index.NOT_ANALYZED_NO_NORMS));
+
+        addToDocument(doc, "classname", classDescriptor.getUnqualifiedName(), 1F, false);
+
+        addObjectToDocument(object, classDescriptor, doc);
 
         return doc;
     }
 
-    private void addObjectToDocument(InterMineObject object, Document doc) {
-        HashMap<String, String> attributes = getAttributeMapForObject(os.getModel(), object);
-        for (Entry<String, String> attribute : attributes.entrySet()) {
-            addToDocument(doc, attribute.getKey(), attribute.getValue());
+    private void addObjectToDocument(InterMineObject object, ClassDescriptor classDescriptor,
+            Document doc) {
+        Collection<String> keyFields;
+
+        //if we know the class, get a list of key fields
+        if (classDescriptor != null) {
+            keyFields =
+                    ClassKeyHelper
+                            .getKeyFieldNames(classKeys, classDescriptor.getUnqualifiedName());
+        } else {
+            keyFields = Collections.emptyList();
+        }
+
+        Set<ObjectValueContainer> attributes = getAttributeMapForObject(os.getModel(), object);
+        for (ObjectValueContainer attribute : attributes) {
+            addToDocument(doc, attribute.getLuceneName(), attribute.getValue(), 1F, false);
+
+            //index all key fields as raw data with a higher boost, favors "exact matches"
+            if (keyFields.contains(attribute.getName())) {
+                addToDocument(doc, attribute.getLuceneName(), attribute.getValue(), 2F, true);
+            }
         }
     }
 
-    private HashMap<String, String> getAttributeMapForObject(Model model, Object obj) {
-        HashMap<String, String> values = new HashMap<String, String>();
+    private Set<ObjectValueContainer> getAttributeMapForObject(Model model, Object obj) {
+        Set<ObjectValueContainer> values = new HashSet<ObjectValueContainer>();
         Vector<ClassAttributes> decomposedClassAttributes =
                 getClassAttributes(model, obj.getClass());
 
         for (ClassAttributes classAttributes : decomposedClassAttributes) {
             for (AttributeDescriptor att : classAttributes.getAttributes()) {
                 try {
+                    //only index strings
                     if ("java.lang.String".equals(att.getType())) {
                         Object value = TypeUtil.getFieldValue(obj, att.getName());
 
                         // ignore null values
                         if (value != null) {
-                            values.put((classAttributes.getClassName() + "_" + att.getName())
-                                    .toLowerCase(), String.valueOf(value));
+                            values.add(new ObjectValueContainer(classAttributes.getClassName(), att
+                                    .getName(), String.valueOf(value)));
                         }
                     }
                 } catch (IllegalAccessException e) {
@@ -528,12 +630,28 @@ class DocumentFetcher implements Runnable
         return values;
     }
 
-    private void addToDocument(Document doc, String fieldName, String value) {
+    private Field addToDocument(Document doc, String fieldName, String value, float boost,
+            boolean raw) {
         if (!StringUtils.isBlank(fieldName) && !StringUtils.isBlank(value)) {
-            Field f = new Field(fieldName, value, Field.Store.NO, Field.Index.ANALYZED);
+            Field f;
+
+            if (!raw) {
+                f = new Field(fieldName, value, Field.Store.NO, Field.Index.ANALYZED);
+            } else {
+                f =
+                        new Field(fieldName + "_raw", value.toLowerCase(), Field.Store.NO,
+                                Field.Index.NOT_ANALYZED);
+            }
+
+            f.setBoost(boost);
+
             doc.add(f);
-            fieldNames.add(fieldName);
+            fieldNames.add(f.name());
+
+            return f;
         }
+
+        return null;
     }
 
     // simple caching of attributes
@@ -556,8 +674,7 @@ class DocumentFetcher implements Runnable
         return attributes;
     }
 
-    private Query getPathQuery(Class<? extends InterMineObject> mainCls, String pathString)
-        throws PathException {
+    private Query getPathQuery(String pathString) throws PathException {
         Query q = new Query();
         ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
 
@@ -579,26 +696,25 @@ class DocumentFetcher implements Runnable
 
             if (i == 0) {
                 // first class
-                LOG.info("TOP: " + classDescriptor);
-
                 QueryField topId = new QueryField(queryClass, "id");
                 q.addToSelect(topId);
                 q.addToOrderBy(topId); // important for optimization in run()
             } else {
                 String fieldName = fieldNames.get(i - 1);
 
-                LOG.info(fieldName + " -> " + classDescriptor);
-
                 if (parentClassDescriptor.getReferenceDescriptorByName(fieldName, true) != null) {
-                    LOG.info(fieldName + " is OBJECT");
+                    LOG.info(parentClassDescriptor.getType().getSimpleName() + " -> " + fieldName
+                            + " (OBJECT)");
                     QueryObjectReference objectReference =
                             new QueryObjectReference(parentQueryClass, fieldName);
                     ContainsConstraint cc =
                             new ContainsConstraint(objectReference, ConstraintOp.CONTAINS,
                                     queryClass);
                     constraints.addConstraint(cc);
-                } else if (parentClassDescriptor.getCollectionDescriptorByName(fieldName, true) != null) {
-                    LOG.info(fieldName + " is COLLECTION");
+                } else if (parentClassDescriptor.getCollectionDescriptorByName(fieldName, true)
+                        != null) {
+                    LOG.info(parentClassDescriptor.getType().getSimpleName() + " -> " + fieldName
+                            + " (COLLECTION)");
                     QueryCollectionReference collectionReference =
                             new QueryCollectionReference(parentQueryClass, fieldName);
                     ContainsConstraint cc =
@@ -649,22 +765,132 @@ public class KeywordSearch
             new ConcurrentLinkedQueue<Document>();
     private static LuceneIndexContainer index = null;
 
+    private static Properties properties = null;
+    private static Map<Class<? extends InterMineObject>, String[]> specialReferences;
+    private static Set<Class<? extends InterMineObject>> ignoredClasses;
+    private static Map<ClassDescriptor, Float> classBoost;
+    private static Map<String, String> facets;
+    private static boolean debugOutput;
+
+    @SuppressWarnings("unchecked")
+    private static synchronized void parseProperties(ObjectStore os) {
+        if (properties == null) {
+            specialReferences = new HashMap<Class<? extends InterMineObject>, String[]>();
+            ignoredClasses = new HashSet<Class<? extends InterMineObject>>();
+            classBoost = new HashMap<ClassDescriptor, Float>();
+            facets = new HashMap<String, String>();
+            debugOutput = false;
+
+            // load config file to figure out special classes
+            String configFileName = "keyword_search.properties";
+            ClassLoader classLoader = KeywordSearch.class.getClassLoader();
+            InputStream configStream = classLoader.getResourceAsStream(configFileName);
+            if (configStream != null) {
+                properties = new Properties();
+                try {
+                    properties.load(configStream);
+
+                    for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                        String key = (String) entry.getKey();
+                        String value = (String) entry.getValue();
+
+                        if ("index.ignore".equals(key) && !StringUtils.isBlank(value)) {
+                            String[] ignoreClassNames = value.split("\\s+");
+
+                            for (String className : ignoreClassNames) {
+                                ClassDescriptor cld =
+                                        os.getModel().getClassDescriptorByName(className);
+
+                                addCldToIgnored(ignoredClasses, cld);
+                            }
+                        } else if (key.startsWith("index.references.")) {
+                            String classToIndex = key.substring("index.references.".length());
+                            ClassDescriptor cld =
+                                    os.getModel().getClassDescriptorByName(classToIndex);
+                            if (cld != null) {
+                                Class<? extends InterMineObject> cls =
+                                        (Class<? extends InterMineObject>) cld.getType();
+
+                                // special fields (references to follow) come as
+                                // a
+                                // space-separated list
+                                String[] specialFields;
+                                if (!StringUtils.isBlank(value)) {
+                                    specialFields = value.split("\\s+");
+                                } else {
+                                    specialFields = null;
+                                }
+
+                                specialReferences.put(cls, specialFields);
+                            } else {
+                                LOG.error("keyword_search.properties: classDescriptor for '"
+                                        + classToIndex + "' not found!");
+                            }
+                        } else if (key.startsWith("index.facet.")) {
+                            String facetName = key.substring("index.facet.".length());
+                            String facetField = value;
+                            facets.put(facetField, facetName);
+                        } else if (key.startsWith("index.boost.")) {
+                            String classToBoost = key.substring("index.boost.".length());
+                            ClassDescriptor cld =
+                                    os.getModel().getClassDescriptorByName(classToBoost);
+                            if (cld != null) {
+                                classBoost.put(cld, Float.valueOf(value));
+                            } else {
+                                LOG.error("keyword_search.properties: classDescriptor for '"
+                                        + classToBoost + "' not found!");
+                            }
+                        } else if ("search.debug".equals(key) && !StringUtils.isBlank(value)) {
+                            debugOutput =
+                                    "1".equals(value) || "true".equals(value.toLowerCase())
+                                            || "on".equals(value.toLowerCase());
+                        }
+                    }
+                } catch (IOException e) {
+                    LOG.error("keyword_search.properties: errow while loading file '"
+                            + configFileName + "'", e);
+                }
+            } else {
+                LOG.error("keyword_search.properties: file '" + configFileName + "' not found!");
+            }
+
+            LOG.info("Indexing - Ignored classes:");
+            for (Class<? extends InterMineObject> class1 : ignoredClasses) {
+                LOG.info("- " + class1.getSimpleName());
+            }
+
+            LOG.info("Indexing - Special References:");
+            for (Entry<Class<? extends InterMineObject>, String[]> specialReference
+                    : specialReferences.entrySet()) {
+                LOG.info("- " + specialReference.getKey() + " = "
+                        + Arrays.toString(specialReference.getValue()));
+            }
+
+            LOG.info("Indexing - Facets:");
+            for (Entry<String, String> facet : facets.entrySet()) {
+                LOG.info("- field = " + facet.getKey() + ", name = " + facet.getValue());
+            }
+
+            LOG.info("Search - Debug mode: " + debugOutput);
+        }
+    }
+
     /**
      * loads or creates the lucene index
      * @param im
      *            API for accessing object store
      */
-    public static void initKeywordSearch(InterMineAPI im) {
+    public static synchronized void initKeywordSearch(InterMineAPI im) {
         if (index == null) {
             // try to load index from database first
             loadIndexFromDatabase(im.getObjectStore());
 
-            // still nothing, create new one
-            // TODO: we may just want to error out here
             if (index == null) {
-                createIndex(im.getObjectStore());
+                throw new RuntimeException("lucene index missing!");
             }
         }
+
+        parseProperties(im.getObjectStore());
 
         try {
             if (reader == null) {
@@ -673,10 +899,11 @@ public class KeywordSearch
 
             if (boboIndexReader == null) {
                 // prepare faceting
-                SimpleFacetHandler categoryFacet = new SimpleFacetHandler("Category");
-                SimpleFacetHandler organismFacet = new SimpleFacetHandler("Organism");
-                List<FacetHandler<?>> facetHandlers =
-                        Arrays.asList(new FacetHandler<?>[] {categoryFacet, organismFacet});
+                HashSet<FacetHandler<?>> facetHandlers = new HashSet<FacetHandler<?>>();
+                facetHandlers.add(new SimpleFacetHandler("Category"));
+                for (String facet : facets.keySet()) {
+                    facetHandlers.add(new SimpleFacetHandler(facet));
+                }
 
                 boboIndexReader = BoboIndexReader.getInstance(reader, facetHandlers);
             }
@@ -711,10 +938,12 @@ public class KeywordSearch
      * metadatamanager
      * @param os
      *            intermine objectstore
+     * @param classKeys map of classname to key field descriptors (from InterMineAPI)
      */
-    public static void saveIndexToDatabase(ObjectStore os) {
+    public static void saveIndexToDatabase(ObjectStore os,
+            Map<String, List<FieldDescriptor>> classKeys) {
         if (index == null) {
-            createIndex(os);
+            createIndex(os, classKeys);
         }
 
         try {
@@ -729,7 +958,6 @@ public class KeywordSearch
                 try {
                     LOG.info("Zipping up FSDirectory...");
 
-                    LOG.info("Saving stream to database...");
                     Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
                     LargeObjectOutputStream streamOut =
                             MetadataManager.storeLargeBinary(db,
@@ -748,7 +976,7 @@ public class KeywordSearch
                         File file =
                                 new File(fsDirectory.getAbsolutePath() + File.separator + files[i]);
                         LOG.info("Zipping file: " + file.getName() + " (" + file.length() / 1024
-                                + " KB)");
+                                / 1024 + " MB)");
 
                         FileInputStream fi = new FileInputStream(file);
                         BufferedInputStream fileInput = new BufferedInputStream(fi, bufferSize);
@@ -768,14 +996,13 @@ public class KeywordSearch
                     }
 
                     zipOut.close();
-                    LOG.info("Successfully saved search directory to database!");
                 } catch (IOException e) {
                     LOG.error(null, e);
                 }
             } else if ("RAMDirectory".equals(index.getDirectoryType())) {
-                LOG.info("Saving search directory to database...");
+                LOG.info("Saving RAM directory to database...");
                 writeObjectToDB(os, MetadataManager.SEARCH_INDEX_DIRECTORY, index.getDirectory());
-                LOG.info("Successfully saved search directory to database.");
+                LOG.info("Successfully saved RAM directory to database.");
             }
         } catch (IOException e) {
             LOG.error(null, e);
@@ -790,6 +1017,7 @@ public class KeywordSearch
      *            string to search for
      * @return map of document IDs with their respective scores
      */
+    @Deprecated
     public static Map<Integer, Float> runLuceneSearch(String searchString) {
         LinkedHashMap<Integer, Float> matches = new LinkedHashMap<Integer, Float>();
 
@@ -851,14 +1079,12 @@ public class KeywordSearch
      *            string to search for
      * @param offset
      *            display offset
-     * @param categories
-     *            category facets to search in
-     * @param organisms
-     *            organism facets to search in
+     * @param facetValues
+     *            map of 'facet field name' to 'value to restrict field to' (optional)
      * @return bobo browse result or null if failed
      */
     public static BrowseResult runBrowseSearch(String searchString, int offset,
-            String[] categories, String[] organisms) {
+            Map<String, String> facetValues) {
         BrowseResult result = null;
         long time = System.currentTimeMillis();
 
@@ -876,21 +1102,22 @@ public class KeywordSearch
             String[] fieldNamesArray = new String[index.getFieldNames().size()];
             index.getFieldNames().toArray(fieldNamesArray);
             QueryParser queryParser =
-                    new MultiFieldQueryParser(Version.LUCENE_30, fieldNamesArray, analyzer, index
-                            .getFieldBoosts());
+                    new MultiFieldQueryParser(Version.LUCENE_30, fieldNamesArray, analyzer);
+            queryParser.setDefaultOperator(Operator.AND);
             query = queryParser.parse(queryString);
-
-            LOG.info("Parsed query in " + (System.currentTimeMillis() - time) + " ms");
-            time = System.currentTimeMillis();
 
             // required to expand search terms
             query = query.rewrite(reader);
 
-            LOG.info("Rewrote query in " + (System.currentTimeMillis() - time) + " ms");
-            time = System.currentTimeMillis();
+            if (debugOutput) {
+                LOG.info("Rewritten query: " + query);
+            }
 
             // initialize request
             BrowseRequest browseRequest = new BrowseRequest();
+            if (debugOutput) {
+                browseRequest.setShowExplanation(true);
+            }
             browseRequest.setQuery(query);
             browseRequest.setFetchStoredFields(true);
 
@@ -899,29 +1126,21 @@ public class KeywordSearch
             browseRequest.setCount(PER_PAGE);
 
             // add faceting selections
-            if (categories != null && categories.length > 0) {
-                BrowseSelection browseSelection = new BrowseSelection("Category");
-                for (int i = 0; i < categories.length; i++) {
-                    String string = categories[i];
-                    browseSelection.addValue(string);
+            for (Entry<String, String> facetValue : facetValues.entrySet()) {
+                if (facetValue != null) {
+                    BrowseSelection browseSelection = new BrowseSelection(facetValue.getKey());
+                    browseSelection.addValue(facetValue.getValue());
+                    browseRequest.addSelection(browseSelection);
                 }
-                browseRequest.addSelection(browseSelection);
-            }
-
-            if (organisms != null && organisms.length > 0) {
-                BrowseSelection browseSelection = new BrowseSelection("Organism");
-                for (int i = 0; i < organisms.length; i++) {
-                    String string = organisms[i];
-                    browseSelection.addValue(string);
-                }
-                browseRequest.addSelection(browseSelection);
             }
 
             // order faceting results by hits
             FacetSpec orderByHitsSpec = new FacetSpec();
             orderByHitsSpec.setOrderBy(FacetSortSpec.OrderHitsDesc);
             browseRequest.setFacetSpec("Category", orderByHitsSpec);
-            browseRequest.setFacetSpec("Organism", orderByHitsSpec);
+            for (String facet : facets.keySet()) {
+                browseRequest.setFacetSpec(facet, orderByHitsSpec);
+            }
 
             LOG.info("Prepared browserequest in " + (System.currentTimeMillis() - time) + " ms");
             time = System.currentTimeMillis();
@@ -929,6 +1148,16 @@ public class KeywordSearch
             // execute query and return result
             Browsable browser = new BoboBrowser(boboIndexReader);
             result = browser.browse(browseRequest);
+
+            if (debugOutput) {
+                for (int i = 0; i < result.getHits().length && i < 5; i++) {
+                    Explanation expl = result.getHits()[i].getExplanation();
+                    if (expl != null) {
+                        LOG.info(result.getHits()[i].getStoredFields().getFieldable("id")
+                                + " - score explanation: " + expl.toString());
+                    }
+                }
+            }
         } catch (ParseException e) {
             // just return an empty list
             LOG.info("Exception caught, returning no results", e);
@@ -1034,8 +1263,6 @@ public class KeywordSearch
                             }
 
                             FSDirectory directory = FSDirectory.open(directoryPath);
-                            // RAMDirectory ramDirectory = new
-                            // RAMDirectory(directory);
                             index.setDirectory(directory);
 
                             LOG.info("Successfully restored FS directory from database in "
@@ -1082,87 +1309,20 @@ public class KeywordSearch
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static void createIndex(ObjectStore os) {
+    private static void createIndex(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys) {
         long time = System.currentTimeMillis();
         LOG.info("Indexing metadata...");
 
-        // special classes are the classes we index in addition to bioentities
-        // and/or
-        // classes which have special references that need to be indexed with
-        // the objects
-        HashMap<Class<? extends InterMineObject>, String[]> specialIndexClasses =
-                new HashMap<Class<? extends InterMineObject>, String[]>();
+        parseProperties(os);
 
-        // load config file to figure out special classes
-        String configFileName = "keyword_search.properties";
-        ClassLoader classLoader = KeywordSearch.class.getClassLoader();
-        InputStream configStream = classLoader.getResourceAsStream(configFileName);
-        if (configStream != null) {
-            Properties properties = new Properties();
-            try {
-                properties.load(configStream);
-
-                for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                    String key = (String) entry.getKey();
-                    String value = (String) entry.getValue();
-
-                    if (key.startsWith("index.class.")) {
-                        String classToIndex = key.substring("index.class.".length());
-                        ClassDescriptor cld = os.getModel().getClassDescriptorByName(classToIndex);
-                        if (cld != null) {
-                            Class<? extends InterMineObject> cls =
-                                    (Class<? extends InterMineObject>) cld.getType();
-
-                            // special fields (references to follow) come as a
-                            // space-separated list
-                            String[] specialFields;
-                            if (!StringUtils.isBlank(value)) {
-                                specialFields = value.split("\\s+");
-                                for (int i = 0; i < specialFields.length; i++) {
-                                    specialFields[i] = classToIndex + "." + specialFields[i];
-                                }
-                            } else {
-                                specialFields = null;
-                            }
-
-                            specialIndexClasses.put(cls, specialFields);
-                        } else {
-                            LOG.error("keyword_search.properties: classDescriptor for '"
-                                    + classToIndex + "' not found!");
-                        }
-                    }
-                }
-            } catch (IOException e) {
-                LOG.error("keyword_search.properties: errow while loading file '" + configFileName
-                        + "'", e);
-            }
-        } else {
-            LOG.error("keyword_search.properties: file '" + configFileName + "' not found!");
-        }
-
-        for (Entry<Class<? extends InterMineObject>, String[]> e : specialIndexClasses.entrySet()) {
-            LOG.info("Indexing additional class: " + e.getKey() + ", special fields = "
-                    + Arrays.toString(e.getValue()));
-        }
-
-        // fetching happens in multiple threads since the bottleneck is
-        // generally the DB
-        ExecutorService fetchThreadPool = Executors.newFixedThreadPool(5);
-        HashMap<Future<?>, DocumentFetcher> fetchThreads =
-                new HashMap<Future<?>, DocumentFetcher>();
-
-        // start threads for special classes
-        for (Class<? extends InterMineObject> specialClass : specialIndexClasses.keySet()) {
-            addFetcherThread(os, fetchThreadPool, fetchThreads, specialIndexClasses, specialClass,
-                    true);
-        }
-
-        // start general thread for all bioentities
-        addFetcherThread(os, fetchThreadPool, fetchThreads, specialIndexClasses, BioEntity.class,
-                false);
+        LOG.info("Starting fetcher thread...");
+        InterMineObjectFetcher fetchThread =
+                new InterMineObjectFetcher(os, classKeys, indexingQueue, ignoredClasses,
+                        specialReferences, classBoost, facets.keySet());
+        fetchThread.start();
 
         // index the docs queued by the fetchers
+        LOG.info("Preparing indexer...");
         index = new LuceneIndexContainer();
         try {
             File directoryPath = new File(LUCENE_INDEX_PATH);
@@ -1195,16 +1355,14 @@ public class KeywordSearch
             int indexed = 0;
 
             // loop and index while we still have fetchers running
+            LOG.info("Starting to index...");
             while (true) {
                 Document doc = null;
                 doc = indexingQueue.poll();
 
                 // nothing in the queue?
                 if (doc == null) {
-                    if (fetchThreads.size() > 0) {
-                        // purge thread list
-                        purgeFetcherThreads(fetchThreads);
-
+                    if (fetchThread.isAlive()) {
                         // sleep a bit
                         try {
                             Thread.sleep(10);
@@ -1213,6 +1371,7 @@ public class KeywordSearch
                     } else {
                         // only stop if the queue is actually empty
                         if (indexingQueue.isEmpty()) {
+                            index.getFieldNames().addAll(fetchThread.getFieldNames());
                             break;
                         }
                     }
@@ -1226,13 +1385,12 @@ public class KeywordSearch
                     }
 
                     if (indexed % 10000 == 1) {
-                        purgeFetcherThreads(fetchThreads);
-
-                        LOG.info("docs indexed=" + indexed + "; threads=" + fetchThreads.size()
-                                + "; docs/ms=" + indexed * 1.0F
+                        LOG.info("docs indexed=" + indexed + "; thread state="
+                                + fetchThread.getState() + "; docs/ms=" + indexed * 1.0F
                                 / (System.currentTimeMillis() - time) + "; memory="
                                 + Runtime.getRuntime().freeMemory() / 1024 + "k/"
-                                + Runtime.getRuntime().maxMemory() / 1024 + "k");
+                                + Runtime.getRuntime().maxMemory() / 1024 + "k" + "; time="
+                                + (System.currentTimeMillis() - time) + "ms");
                     }
                 }
             }
@@ -1258,22 +1416,32 @@ public class KeywordSearch
         }
     }
 
-    private static void addFetcherThread(ObjectStore os, ExecutorService fetchThreadPool,
-            HashMap<Future<?>, DocumentFetcher> fetchThreads,
-            HashMap<Class<? extends InterMineObject>, String[]> specialIndexClasses,
-            Class<? extends InterMineObject> cls, boolean overwrite) {
-        DocumentFetcher fetcher =
-                new DocumentFetcher(os, indexingQueue, specialIndexClasses, cls, overwrite);
-        fetchThreads.put(fetchThreadPool.submit(fetcher), fetcher);
+    /**
+     * recurse into class descriptor and add all subclasses to ignoredClasses
+     * @param ignoredClasses
+     *            set of classes
+     * @param cld
+     *            super class descriptor
+     */
+    @SuppressWarnings("unchecked")
+    private static void addCldToIgnored(Set<Class<? extends InterMineObject>> ignoredClasses,
+            ClassDescriptor cld) {
+        if (InterMineObject.class.isAssignableFrom(cld.getType())) {
+            ignoredClasses.add(cld.getType());
+        } else {
+            LOG.error("cld " + cld + " is not IMO!");
+        }
+
+        for (ClassDescriptor subCld : cld.getSubDescriptors()) {
+            addCldToIgnored(ignoredClasses, subCld);
+        }
     }
 
-    private static void purgeFetcherThreads(HashMap<Future<?>, DocumentFetcher> fetchThreads) {
-        for (Iterator<Future<?>> iterator = fetchThreads.keySet().iterator(); iterator.hasNext();) {
-            Future<?> future = iterator.next();
-            if (future.isDone()) {
-                index.getFieldNames().addAll(fetchThreads.get(future).getFieldNames());
-                iterator.remove();
-            }
-        }
+    /**
+     * get list of facet fields and names
+     * @return map of internal fieldname -> displayed name
+     */
+    public static Map<String, String> getFacets() {
+        return facets;
     }
 }
