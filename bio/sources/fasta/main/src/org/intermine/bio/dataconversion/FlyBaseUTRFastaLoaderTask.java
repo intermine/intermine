@@ -57,7 +57,7 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         String utrIdentifier = utr.getPrimaryIdentifier();
 
         MRNA mrna = getMRNA(mrnaIdentifier, organism);
-        utr.setTranscript(mrna);
+        utr.addtranscripts(mrna);
 
         createSynonym(interMineObject, dataSet, utrIdentifier);
 
