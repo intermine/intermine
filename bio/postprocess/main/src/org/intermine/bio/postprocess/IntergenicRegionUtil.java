@@ -89,7 +89,7 @@ public class IntergenicRegionUtil
 
         Integer previousChrId = null;
         Set<Location> locationSet = new HashSet<Location>();
-        Map<Location, Gene> locToGeneMap = new HashMap<Location, Gene>();
+        Map<Location, Set<Gene>> locToGeneMap = new HashMap<Location, Set<Gene>>();
 
         osw.beginTransaction();
         while (resIter.hasNext()) {
@@ -103,7 +103,7 @@ public class IntergenicRegionUtil
                         locToGeneMap, previousChrId);
                 storeItergenicRegions(osw, irIter);
                 locationSet = new HashSet<Location>();
-                locToGeneMap = new HashMap<Location, Gene>();
+                locToGeneMap = new HashMap<Location, Set<Gene>>();
             }
 
             addToLocToGeneMap(locToGeneMap, loc, gene);
@@ -123,9 +123,9 @@ public class IntergenicRegionUtil
         osw.commitTransaction();
     }
 
-    private void addToLocToGeneMap(Map<Location, Gene> locToGeneMap, Location loc, Gene gene) {
-        BioConverterUtil.addToListMap(locToGeneMap, loc.getStart(), gene);
-        BioConverterUtil.addToListMap(locToGeneMap, loc.getEnd(), gene);
+    private void addToLocToGeneMap(Map<Location, Set<Gene>> locToGeneMap, Location loc, Gene gene) {
+        BioConverterUtil.addToSetMap(locToGeneMap, loc.getStart(), gene);
+        BioConverterUtil.addToSetMap(locToGeneMap, loc.getEnd(), gene);
     }
 
     /**
@@ -166,7 +166,7 @@ public class IntergenicRegionUtil
      *             if there is an ObjectStore problem
      */
     protected Iterator<?> createIntergenicRegionFeatures(Set<Location> locationSet,
-            final Map<Location, Gene> locToGeneMap, Integer chrId) throws ObjectStoreException {
+            final Map<Location, Set<Gene>> locToGeneMap, Integer chrId) throws ObjectStoreException {
         final Chromosome chr = (Chromosome) os.getObjectById(chrId);
 
         // do nothing if chromosome has no length set
@@ -249,7 +249,7 @@ public class IntergenicRegionUtil
 
                 Set<Gene> adjacentGenes = new HashSet<Gene>();
 
-                List<Gene> nextGenes = (List<Gene>) locToGeneMap.get(new Integer(newLocEnd + 1));
+                Set<Gene> nextGenes = (Set<Gene>) locToGeneMap.get(new Integer(newLocEnd + 1));
                 if (nextGenes != null) {
                     Iterator<?> nextGenesIter = nextGenes.iterator();
 
@@ -270,7 +270,7 @@ public class IntergenicRegionUtil
                     }
                 }
 
-                List<Gene> prevGenes = (List<Gene>) locToGeneMap.get(new Integer(
+                Set<Gene> prevGenes = (Set<Gene>) locToGeneMap.get(new Integer(
                         newLocStart - 1));
                 if (prevGenes != null) {
                     Iterator<?> prevGenesIter = prevGenes.iterator();
