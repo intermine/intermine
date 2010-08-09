@@ -63,8 +63,8 @@ public class SetCollectionCounts
      * @throws ObjectStoreException if an ObjectStore method fails
      * @throws IllegalAccessException if a field cannot be accessed
      */
-    void setCollectionCountField(Class c, String collectionName, String countFieldName)
-    throws ObjectStoreException, IllegalAccessException {
+    void setCollectionCountField(Class<?> c, String collectionName, String countFieldName)
+        throws ObjectStoreException, IllegalAccessException {
         Query q = new Query();
 
         QueryClass qc = new QueryClass(c);
@@ -75,16 +75,16 @@ public class SetCollectionCounts
 
         osw.beginTransaction();
 
-        Iterator resultsIter = results.iterator();
+        Iterator<?> resultsIter = results.iterator();
 
         // TODO XXX FIXME - this is very ineffecient, we should get all the collection size in one
         // query
         while (resultsIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resultsIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resultsIter.next();
 
             InterMineObject o = (InterMineObject) rr.get(0);
 
-            Collection collection = (Collection) o.getFieldValue(collectionName);
+            Collection<?> collection = (Collection<?>) o.getFieldValue(collectionName);
 
             o.setFieldValue(countFieldName, new Integer(collection.size()));
 

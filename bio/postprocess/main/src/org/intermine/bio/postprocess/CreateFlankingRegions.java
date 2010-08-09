@@ -97,13 +97,13 @@ public class CreateFlankingRegions
         dataSet.setUrl("http://intermine.modencode.org");
         dataSet.setDataSource(dataSource);
 
-        Iterator resIter = results.iterator();
+        Iterator<?> resIter = results.iterator();
 
         int count = 0;
 
         osw.beginTransaction();
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             Integer chrId = (Integer) rr.get(0);
             Gene gene = (Gene) rr.get(1);
             Location loc = (Location) rr.get(2);
@@ -120,7 +120,7 @@ public class CreateFlankingRegions
 
 
     private void createAndStoreFlankingRegion(Chromosome chr, Location geneLoc, Gene gene)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         // This code can't cope with chromosomes that don't have a length
         if (chr.getLength() == null) {
             LOG.warn("Attempted to create GeneFlankingRegions on a chromosome without a length: "

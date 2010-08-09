@@ -67,10 +67,10 @@ public abstract class OverlapUtil
     public static void createOverlaps(final ObjectStore os, SequenceFeature subject,
             List<?> classNamesToIgnore, boolean ignoreSelfMatches, ObjectStoreWriter osw,
             Map<String, Integer> summary)
-    throws ObjectStoreException, ClassNotFoundException {
+        throws ObjectStoreException, ClassNotFoundException {
         Model model = os.getModel();
 
-        Map<Class<?>, Set> classesToIgnore = new HashMap<Class<?>, Set>();
+        Map<Class<?>, Set<Class<?>>> classesToIgnore = new HashMap<Class<?>, Set<Class<?>>>();
 
         Iterator<?> classNamesToIgnoreIter = classNamesToIgnore.iterator();
 
@@ -91,7 +91,7 @@ public abstract class OverlapUtil
                 Class<?> thisClass = Class.forName(className);
                 Class<?> targetClass = Class.forName(targetClassName);
 
-                Set<Class<?>> targetClasses = (Set) classesToIgnore.get(thisClass);
+                Set<Class<?>> targetClasses = (Set<Class<?>>) classesToIgnore.get(thisClass);
                 if (targetClasses == null) {
                     targetClasses = new HashSet<Class<?>>();
                     classesToIgnore.put(thisClass, targetClasses);
@@ -129,12 +129,13 @@ public abstract class OverlapUtil
         try {
             ((ObjectStoreInterMineImpl) os).goFaster(q);
             Results results = os.execute(q);
-            Map<Location, SequenceFeature> currentLocations = new HashMap();
+            Map<Location, SequenceFeature> currentLocations
+                = new HashMap<Location, SequenceFeature>();
             int count = 0;
-            Iterator resIter = results.iterator();
+            Iterator<?> resIter = results.iterator();
 
             while (resIter.hasNext()) {
-                ResultsRow rr = (ResultsRow) resIter.next();
+                ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
 
                 Location location = (Location) rr.get(0);
 
@@ -151,9 +152,10 @@ public abstract class OverlapUtil
                 int start = location.getStart().intValue();
 
                 // Okay, first we compare this location to all the currentLocations.
-                Iterator currIter = currentLocations.entrySet().iterator();
+                Iterator<?> currIter = currentLocations.entrySet().iterator();
                 while (currIter.hasNext()) {
-                    Map.Entry currEntry = (Map.Entry) currIter.next();
+                    Map.Entry<Location, SequenceFeature> currEntry = (Map.Entry<Location,
+                            SequenceFeature>) currIter.next();
                     Location currLoc = (Location) currEntry.getKey();
                     SequenceFeature currLsf = (SequenceFeature) currEntry
                         .getValue();
@@ -210,25 +212,28 @@ public abstract class OverlapUtil
      * Return true if and only if the given SequenceFeature should be ignored when looking
      * for overlaps.
      */
-    private static boolean isAClassToIgnore(Map classesToIgnore, Class clazz) {
+    private static boolean isAClassToIgnore(Map<Class<?>, Set<Class<?>>> classesToIgnore,
+            Class<?> clazz) {
         return ignoreCombination(classesToIgnore, clazz, InterMineObject.class);
     }
 
     /**
      * Return true if the given class should be ignored when overlapping with the other given class.
      */
-    private static boolean ignoreCombination(Map classesToIgnore, Class class1, Class class2) {
-        Iterator iter = classesToIgnore.entrySet().iterator();
+    private static boolean ignoreCombination(Map<Class<?>, Set<Class<?>>> classesToIgnore,
+            Class<?> class1, Class<?> class2) {
+        Iterator<?> iter = classesToIgnore.entrySet().iterator();
 
         while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            Class thisClass = (Class) entry.getKey();
-            Set targetClasses = (Set) entry.getValue();
+            Map.Entry<Class<?>, Set<Class<?>>> entry = (Map.Entry<Class<?>, Set<Class<?>>>)
+                iter.next();
+            Class<?> thisClass = (Class<?>) entry.getKey();
+            Set<Class<?>> targetClasses = (Set<Class<?>>) entry.getValue();
 
             if (thisClass.isAssignableFrom(class1)) {
-                Iterator iter2 = targetClasses.iterator();
+                Iterator<?> iter2 = targetClasses.iterator();
                 while (iter2.hasNext()) {
-                    Class targetClass = (Class) iter2.next();
+                    Class<?> targetClass = (Class<?>) iter2.next();
                     if (targetClass.isAssignableFrom(class2)) {
                         return true;
                     }

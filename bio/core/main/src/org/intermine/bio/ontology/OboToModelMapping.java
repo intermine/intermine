@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.util.StringUtil;
 
 /**
@@ -47,10 +48,7 @@ public class OboToModelMapping
 
     // special case for sequence_feature, we always need this term in the model
     private static final String SEQUENCE_FEATURE = "SO:0000110";
-    
-    // TODO put this in config file instead
-    private static final String CHROMOSOME = "SO:0000340";
-    
+
     private static final boolean DEBUG = false;
 
     private Map<String, Set<String>> reversePartOfs = new HashMap<String, Set<String>>();
@@ -213,12 +211,7 @@ public class OboToModelMapping
                     && r.direct) {
                 assignPartOf(parent, child);
             } else if (relationshipType.equals("is_a") && r.direct) {
-                Set<String> parents = childToParents.get(child);
-                if (parents == null) {
-                    parents = new HashSet<String>();
-                    childToParents.put(child, parents);
-                }
-                parents.add(parent);
+                BioConverterUtil.addToListMap(childToParents, child, parent);
             }
         }
 
@@ -252,31 +245,18 @@ public class OboToModelMapping
             String oboTerm = entry.getKey();
             Set<String> parents = new HashSet<String>(entry.getValue());
             for (String parent : parents) {
-            	// TODO put this in config file
-            	if (parent.equals(CHROMOSOME)) {
-            		continue;
-            	}
-                Set<String> currentReverseRefs =  reversePartOfs.get(parent);
-                if (currentReverseRefs == null) {
-                    currentReverseRefs = new HashSet<String>();
-                    reversePartOfs.put(parent, currentReverseRefs);
-                }
-                currentReverseRefs.add(oboTerm);
+                BioConverterUtil.addToListMap(reversePartOfs, parent, oboTerm);
             }
         }
     }
 
     private void assignPartOf(String parent, String child) {
-        Set<String> refs = partOfs.get(child);
-        if (refs == null) {
-            refs = new HashSet<String>();
-            partOfs.put(child, refs);
-        }
-        refs.add(parent);
+        BioConverterUtil.addToListMap(partOfs, child, parent);
     }
 
     private void assignPartOfsToChild(String parent, String child) {
         transferPartOfs(parent, child);
+        // keep going up the tree
         Set<String> grandparents = childToParents.get(parent);
         if (grandparents != null && !grandparents.isEmpty()) {
             for (String grandparent : grandparents) {
@@ -303,12 +283,7 @@ public class OboToModelMapping
         for (String child : childToParents.keySet()) {
             Set<String> parents = childToParents.get(child);
             for (String parent : parents) {
-                Set<String> kids = parentToChildren.get(parent);
-                if (kids == null) {
-                    kids = new HashSet<String>();
-                    parentToChildren.put(parent, kids);
-                }
-                kids.add(child);
+                BioConverterUtil.addToListMap(parentToChildren, parent, child);
             }
         }
     }

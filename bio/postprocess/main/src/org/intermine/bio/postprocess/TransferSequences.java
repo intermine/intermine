@@ -106,7 +106,7 @@ public class TransferSequences
         q.setConstraint(cc);
 
         SingletonResults res = os.executeSingleton(q);
-        Iterator chrIter = res.iterator();
+        Iterator<?> chrIter = res.iterator();
 
         Set<Chromosome> chromosomes = new HashSet<Chromosome>();
         while (chrIter.hasNext()) {
@@ -177,12 +177,12 @@ public class TransferSequences
             Constants.PRECOMPUTE_CATEGORY);
         Results results = os.execute(q, 1000, true, true, true);
 
-        Iterator<ResultsRow> resIter = results.iterator();
+        Iterator<ResultsRow<?>> resIter = results.iterator();
 
         long start = System.currentTimeMillis();
         int i = 0;
         while (resIter.hasNext()) {
-            ResultsRow rr = resIter.next();
+            ResultsRow<?> rr = resIter.next();
 
             SequenceFeature feature = (SequenceFeature) rr.get(0);
             Location locationOnChr = (Location) rr.get(1);
@@ -384,7 +384,7 @@ public class TransferSequences
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q, 1000, true, true, true);
 
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
 
         Transcript currentTranscript = null;
         StringBuffer currentTranscriptBases = new StringBuffer();
@@ -392,32 +392,32 @@ public class TransferSequences
         long start = System.currentTimeMillis();
         int i = 0;
         while (resIter.hasNext()) {
-           ResultsRow rr = (ResultsRow) resIter.next();
-           Transcript transcript =  (Transcript) rr.get(0);
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
+            Transcript transcript =  (Transcript) rr.get(0);
 
-           if (currentTranscript == null || !transcript.equals(currentTranscript)) {
-               if (currentTranscript != null) {
-                   storeNewSequence(currentTranscript,
-                                    currentTranscriptBases.toString());
-                   i++;
-                   if (i % 100 == 0) {
-                       long now = System.currentTimeMillis();
-                       LOG.info("Set sequences for " + i + " Transcripts"
+            if (currentTranscript == null || !transcript.equals(currentTranscript)) {
+                if (currentTranscript != null) {
+                    storeNewSequence(currentTranscript,
+                            currentTranscriptBases.toString());
+                    i++;
+                    if (i % 100 == 0) {
+                        long now = System.currentTimeMillis();
+                        LOG.info("Set sequences for " + i + " Transcripts"
                                 + " (avg = " + ((60000L * i) / (now - start)) + " per minute)");
-                   }
-               }
-               currentTranscriptBases = new StringBuffer();
-               currentTranscript = transcript;
-           }
+                    }
+                }
+                currentTranscriptBases = new StringBuffer();
+                currentTranscript = transcript;
+            }
 
-           Sequence exonSequence = (Sequence) rr.get(2);
-           Location  location = (Location) rr.get(3);
+            Sequence exonSequence = (Sequence) rr.get(2);
+            Location  location = (Location) rr.get(3);
 
-           if (location.getStrand() != null && location.getStrand().equals("-1")) {
-               currentTranscriptBases.insert(0, exonSequence.getResidues());
-           } else {
-               currentTranscriptBases.append(exonSequence.getResidues());
-           }
+            if (location.getStrand() != null && location.getStrand().equals("-1")) {
+                currentTranscriptBases.insert(0, exonSequence.getResidues());
+            } else {
+                currentTranscriptBases.append(exonSequence.getResidues());
+            }
         }
         if (currentTranscript == null) {
             LOG.error("in transferToTranscripts(): no Transcripts found");
