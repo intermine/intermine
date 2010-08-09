@@ -203,9 +203,9 @@ public class CalculateLocations
             // the object that childObject is located on
             BioEntity locatedOnObject = (BioEntity) rr.get(3);
 
-            // ignore objects that already have locations on Chromosomes
+            // ignore objects that already have locations
             Integer parentObjectId = parentObject.getId();
-            if (locatedOnObject instanceof Chromosome && locatedParents.contains(parentObjectId)) {
+            if (locatedParents.contains(parentObjectId)) {
                 continue;
             }
 
