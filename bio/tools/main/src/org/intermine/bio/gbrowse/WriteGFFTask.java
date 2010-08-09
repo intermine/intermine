@@ -195,8 +195,6 @@ public class WriteGFFTask extends Task
                 }
 
                 synonymMap = makeSynonymMap(os, resultChrId);
-                evidenceMap = makeEvidenceMap(os, resultChrId);
-
                 currentChr = (Chromosome) os.getObjectById(resultChrId);
 
                 if (currentChr == null) {
@@ -229,7 +227,7 @@ public class WriteGFFTask extends Task
                     writeFeature(gffWriter, currentChr, currentChr, null,
                                  chromosomeFileNamePrefix(currentChr),
                                  "chromosome",
-                                 "Chromosome", null, synonymList, evidenceList, currentChr.getId());
+                                 "Chromosome", null, synonymList, currentChr.getId());
 
                     objectCounts = new HashMap<String, Integer>();
                     currentChrId = resultChrId;
@@ -263,8 +261,6 @@ public class WriteGFFTask extends Task
             }
 
             List<String> synonymList = synonymMap.get(feature.getId());
-            List<String> evidenceList = evidenceMap.get(feature.getId());
-
             Map<String, List<String>> extraAttributes = new HashMap<String, List<String>>();
 
             if (feature instanceof ChromosomeBand) {
@@ -275,7 +271,7 @@ public class WriteGFFTask extends Task
 
             writeFeature(gffWriter, currentChr, feature, loc, identifier,
                     featureType.toLowerCase(), featureType, extraAttributes,
-                    synonymList, evidenceList, feature.getId());
+                    synonymList, feature.getId());
 
             incrementCount(objectCounts, feature);
         }
@@ -358,7 +354,7 @@ public class WriteGFFTask extends Task
             writeFeature(gffWriter, chr, transcript, transcriptLocation,
                          transcript.getPrimaryIdentifier(),
                          transcriptFeatureType, "mRNA", geneNameAttributeMap, synonymList,
-                         evidenceList, transcript.getId());
+                         transcript.getId());
 
             Collection<Exon> exons = transcript.getExons();
 
@@ -374,45 +370,11 @@ public class WriteGFFTask extends Task
                 Location exonLocation = seenTranscriptParts.get(exon.getPrimaryIdentifier());
 
                 List<String> exonSynonymValues = synonymMap.get(exon.getId());
-                List<String> exonEvidence = evidenceMap.get(exon.getId());
 
                 writeFeature(gffWriter, chr, exon, exonLocation, transcript.getPrimaryIdentifier(),
-                             "CDS", "mRNA", null, exonSynonymValues, exonEvidence,
+                             "CDS", "mRNA", null, exonSynonymValues,
                              transcript.getId());
             }
-
-            /*
-
-            --- we need correct CDS locations before this can work properly
-            --- curently we write out the Exons as CDSs so the exons overlap the CDS feature
-
-            if (transcript instanceof MRNA) {
-            MRNA mRNA = (MRNA) transcript;
-            FivePrimeUTR fivePrimeUTR = mRNA.getFivePrimeUTR();
-            if (fivePrimeUTR != null) {
-                Location fivePrimeUTRLocation = (Location) seenTranscriptParts.get(fivePrimeUTR);
-
-                List fivePrimeUTRSynonymValues = (List) synonymMap.get(fivePrimeUTR.getId());
-                List fivePrimeUTREvidence = (List) evidenceMap.get(fivePrimeUTR.getId());
-
-                writeFeature(gffWriter, chr, fivePrimeUTR, fivePrimeUTRLocation,
-                             transcript.getIdentifier(), "5'-UTR", "mRNA", null,
-                             fivePrimeUTRSynonymValues, fivePrimeUTREvidence, transcript.getId());
-            }
-
-            ThreePrimeUTR threePrimeUTR = mRNA.getThreePrimeUTR();
-            if (threePrimeUTR != null) {
-                Location threePrimeUTRLocation = (Location) seenTranscriptParts.get(threePrimeUTR);
-
-                List threePrimeUTRSynonymValues = (List) synonymMap.get(threePrimeUTR.getId());
-                List threePrimeUTREvidence = (List) evidenceMap.get(threePrimeUTR.getId());
-
-                writeFeature(gffWriter, chr, threePrimeUTR, threePrimeUTRLocation,
-                             transcript.getIdentifier(), "3'-UTR", "mRNA", null,
-                             threePrimeUTRSynonymValues, threePrimeUTREvidence, transcript.getId());
-            }
-            }
-            */
         }
     }
 
@@ -436,13 +398,10 @@ public class WriteGFFTask extends Task
      * @param synonymValues a List of synonyms for this feature
      * @param evidenceList a List of evidence objects for this feature
      */
-    private void writeFeature(PrintWriter gffWriter, Chromosome chr,
-                              SequenceFeature bioEntity, Location chromosomeLocation,
-                              String identifier,
-                              String featureType, String idType,
-                              Map<String, List<String>> extraAttributes,
-                              List<String> synonymValues,
-                              List<String> evidenceList, Integer flyMineId) {
+    private void writeFeature(PrintWriter gffWriter, Chromosome chr, SequenceFeature bioEntity,
+            Location chromosomeLocation, String identifier, String featureType, String idType,
+            Map<String, List<String>> extraAttributes, List<String> synonymValues,
+            Integer flyMineId) {
 
         StringBuffer lineBuffer = new StringBuffer();
 
@@ -658,81 +617,6 @@ public class WriteGFFTask extends Task
             }
 
             synonymValues.add(synonymValue);
-        }
-
-        return returnMap;
-    }
-
-    /**
-     * Make a Map from SequenceFeature ID to List of Evidence objects for
-     * SequenceFeature objects located on the chromosome with the given ID.
-     * @param os the ObjectStore to read from
-     * @param chromosomeId the chromosome ID of the SequenceFeature objects to examine
-     * @return a Map from id to Evidence List
-     * @throws ObjectStoreException
-     */
-    private Map<Integer, List<String>> makeEvidenceMap(ObjectStore os, Integer chromosomeId)
-        throws ObjectStoreException {
-        Query q = new Query();
-        q.setDistinct(true);
-        QueryClass qcEnt = new QueryClass(SequenceFeature.class);
-        QueryField qfEnt = new QueryField(qcEnt, "id");
-        q.addFrom(qcEnt);
-        q.addToSelect(qfEnt);
-
-        // FIXME
-        QueryClass qcEvidence = null;
-
-        QueryClass qcLoc = new QueryClass(Location.class);
-        q.addFrom(qcLoc);
-
-        QueryClass qcChr = new QueryClass(Chromosome.class);
-        QueryField qfChr = new QueryField(qcChr, "id");
-        q.addFrom(qcChr);
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        QueryCollectionReference col = new QueryCollectionReference(qcEnt, "evidence");
-        ContainsConstraint cc1 = new ContainsConstraint(col, ConstraintOp.CONTAINS, qcEvidence);
-        cs.addConstraint(cc1);
-
-        QueryValue chrIdQueryValue = new QueryValue(chromosomeId);
-        SimpleConstraint sc = new SimpleConstraint(qfChr, ConstraintOp.EQUALS, chrIdQueryValue);
-        cs.addConstraint(sc);
-
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "feature");
-        ContainsConstraint cc2 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcEnt);
-        cs.addConstraint(cc2);
-
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "locatedOn");
-        ContainsConstraint cc3 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcChr);
-        cs.addConstraint(cc3);
-
-        q.setConstraint(cs);
-        Set<QueryNode> indexesToCreate = new HashSet<QueryNode>();
-        indexesToCreate.add(qfEnt);
-        ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
-                                                   Constants.PRECOMPUTE_CATEGORY);
-
-        Results res = os.execute(q, 50000, true, true, true);
-
-        Iterator<ResultsRow<?>> resIter = res.iterator();
-
-        Map<Integer, List<String>> returnMap = new HashMap<Integer, List<String>>();
-
-        while (resIter.hasNext()) {
-            ResultsRow<?> rr = resIter.next();
-            Integer bioEntityId = (Integer) rr.get(0);
-            String evidence = (String) rr.get(1);
-
-            List<String> idEvidence = returnMap.get(bioEntityId);
-
-            if (idEvidence == null) {
-                idEvidence = new ArrayList<String>();
-                returnMap.put(bioEntityId, idEvidence);
-            }
-
-            idEvidence.add(evidence);
         }
 
         return returnMap;
