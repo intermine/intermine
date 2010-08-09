@@ -218,7 +218,12 @@ public class StringUtil
     }
 
     /**
-     * Returns a decapitalised version of the given String
+     * Returns a decapitalised version of the given String unless string is an acronym.
+     *
+     * Gene    --> gene
+     * Protein --> protein
+     * MRNA    --> MRNA
+     * CDS     --> CDS
      *
      * @param str the String to decapitalise
      * @return the decapitalised version of str
@@ -229,6 +234,10 @@ public class StringUtil
         }
         if (str.length() <= 1) {
             return str.toLowerCase();
+        }
+        // second character is uppercase, so we probably have an acronym.  leave as upper
+        if (Character.isUpperCase(str.charAt(1))) {
+            return str;
         }
         return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
