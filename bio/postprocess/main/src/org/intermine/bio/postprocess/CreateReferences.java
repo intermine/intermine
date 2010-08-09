@@ -118,9 +118,9 @@ public class CreateReferences
      * collection to create/set
      * @throws Exception if anything goes wrong
      */
-    protected void insertReferenceField(Class sourceClass, String sourceClassFieldName,
-                                        Class connectingClass, String connectingClassFieldName,
-                                        Class destinationClass, String createFieldName)
+    protected void insertReferenceField(Class<?> sourceClass, String sourceClassFieldName,
+                                        Class<?> connectingClass, String connectingClassFieldName,
+                                        Class<?> destinationClass, String createFieldName)
         throws Exception {
         LOG.info("Beginning insertReferences("
                  + sourceClass.getName() + ", "
@@ -131,7 +131,7 @@ public class CreateReferences
                  + createFieldName + ")");
         long startTime = System.currentTimeMillis();
 
-        Iterator resIter =
+        Iterator<?> resIter =
             PostProcessUtil.findConnectingClasses(osw.getObjectStore(),
                                           sourceClass, sourceClassFieldName,
                                           connectingClass, connectingClassFieldName,
@@ -143,7 +143,7 @@ public class CreateReferences
         int count = 0;
 
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             InterMineObject thisSourceObject = (InterMineObject) rr.get(0);
             InterMineObject thisDestObject = (InterMineObject) rr.get(1);
 
@@ -201,13 +201,13 @@ public class CreateReferences
      * create in secondClass
      * @throws Exception if anything goes wrong
      */
-    protected void insertCollectionField(Class firstClass, String firstClassFieldName,
-                                         Class connectingClass, String connectingClassFieldName,
-                                         Class secondClass, String createFieldName,
+    protected void insertCollectionField(Class<?> firstClass, String firstClassFieldName,
+                                         Class<?> connectingClass, String connectingClassFieldName,
+                                         Class<?> secondClass, String createFieldName,
                                          boolean createInFirstClass)
         throws Exception {
         InterMineObject lastDestObject = null;
-        Set newCollection = new HashSet();
+        Set<InterMineObject> newCollection = new HashSet<InterMineObject>();
 
         LOG.info("Beginning insertCollectionField("
                  + firstClass.getName() + ", "
@@ -233,7 +233,7 @@ public class CreateReferences
             manyToMany = true;
         }
 
-        Iterator resIter =
+        Iterator<?> resIter =
             PostProcessUtil.findConnectingClasses(osw.getObjectStore(),
                                           firstClass, firstClassFieldName,
                                           connectingClass, connectingClassFieldName,
@@ -244,7 +244,7 @@ public class CreateReferences
         int count = 0;
 
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             InterMineObject thisSourceObject;
             InterMineObject thisDestObject;
 
@@ -263,7 +263,8 @@ public class CreateReferences
                     try {
                         InterMineObject tempObject =
                             PostProcessUtil.cloneInterMineObject(lastDestObject);
-                        Set oldCollection = (Set) tempObject.getFieldValue(createFieldName);
+                        Set<InterMineObject> oldCollection
+                            = (Set<InterMineObject>) tempObject.getFieldValue(createFieldName);
                         newCollection.addAll(oldCollection);
                         tempObject.setFieldValue(createFieldName, newCollection);
                         count += newCollection.size();
@@ -274,7 +275,7 @@ public class CreateReferences
                     }
                 }
 
-                newCollection = new HashSet();
+                newCollection = new HashSet<InterMineObject>();
             }
 
             if (manyToMany) {
@@ -362,9 +363,9 @@ public class CreateReferences
 
         osw.beginTransaction();
 
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             MRNA mrna = (MRNA) rr.get(0);
             UTR utr = (UTR) rr.get(1);
 

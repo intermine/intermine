@@ -13,6 +13,7 @@ package org.intermine.bio.postprocess;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -77,7 +78,8 @@ public class SynonymUpdater
         Properties classKeyProperties = new Properties();
         classKeyProperties.load(is);
 
-        Map classKeyMap = ClassKeyHelper.readKeys(model, classKeyProperties);
+        Map<String, List<FieldDescriptor>> classKeyMap
+            = ClassKeyHelper.readKeys(model, classKeyProperties);
 
         Query q = new Query();
 
@@ -113,23 +115,23 @@ public class SynonymUpdater
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q, 5000, true, true, true);
 
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
 
         osw.beginTransaction();
 
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             BioEntity bioEntity = (BioEntity) rr.get(0);
             Synonym synonym = (Synonym) rr.get(1);
             String synonymValue = synonym.getValue();
-            Set classes = DynamicUtil.decomposeClass(bioEntity.getClass());
+            Set<Class<?>> classes = DynamicUtil.decomposeClass(bioEntity.getClass());
             // clone so we don't change the ObjectStore cache
             Synonym synonymCopy = (Synonym) PostProcessUtil.cloneInterMineObject(synonym);
             boolean isPrimary = false;
-            Iterator classesIter = classes.iterator();
-            CLASSES:
-                while (classesIter.hasNext()) {
-                String className = ((Class) classesIter.next()).getName();
+            Iterator<?> classesIter = classes.iterator();
+        CLASSES:
+            while (classesIter.hasNext()) {
+                String className = ((Class<?>) classesIter.next()).getName();
                 Collection<FieldDescriptor> keyFields = ClassKeyHelper.getKeyFields(classKeyMap,
                                                                                     className);
                 for (FieldDescriptor keyField: keyFields) {

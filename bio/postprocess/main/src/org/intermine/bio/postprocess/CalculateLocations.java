@@ -84,12 +84,12 @@ public class CalculateLocations
      * same class
      * @throws Exception if anything goes wrong
      */
-    public void createOverlapRelations(List classNamesToIgnore, boolean ignoreSelfMatches)
+    public void createOverlapRelations(List<String> classNamesToIgnore, boolean ignoreSelfMatches)
         throws Exception {
         osw.beginTransaction();
-        Map summary = new HashMap();
-        Map chromosomeMap = makeChromosomeMap();
-        Iterator chromosomeIdIter = chromosomeMap.keySet().iterator();
+        Map<String, Integer> summary = new HashMap<String, Integer>();
+        Map<Integer, Chromosome> chromosomeMap = makeChromosomeMap();
+        Iterator<?> chromosomeIdIter = chromosomeMap.keySet().iterator();
         while (chromosomeIdIter.hasNext()) {
             Integer id = (Integer) chromosomeIdIter.next();
             createSubjectOverlapRelations((Chromosome) chromosomeMap.get(id), classNamesToIgnore,
@@ -97,10 +97,11 @@ public class CalculateLocations
         }
         osw.commitTransaction();
         LOG.info("Stored a total of " + summary.remove("total") + " overlaps");
-        List sortList = new ArrayList();
-        Iterator summaryIter = summary.entrySet().iterator();
+        List<SortElement> sortList = new ArrayList<SortElement>();
+        Iterator<?> summaryIter = summary.entrySet().iterator();
         while (summaryIter.hasNext()) {
-            Map.Entry summaryEntry = (Map.Entry) summaryIter.next();
+            Map.Entry<String, Integer> summaryEntry = (Map.Entry<String, Integer>)
+                summaryIter.next();
             sortList.add(new SortElement((String) summaryEntry.getKey(),
                         ((Integer) summaryEntry.getValue()).intValue()));
         }
@@ -146,8 +147,8 @@ public class CalculateLocations
      * same class
      * @param summary a Map to which summary data will be added
      */
-    private void createSubjectOverlapRelations(Chromosome subject, List classNamesToIgnore,
-            boolean ignoreSelfMatches, Map summary) throws Exception {
+    private void createSubjectOverlapRelations(Chromosome subject, List<String> classNamesToIgnore,
+            boolean ignoreSelfMatches, Map<String, Integer> summary) throws Exception {
         LOG.info("Creating overlaps for id " + subject.getId() + ", identifier: "
                  + subject.getPrimaryIdentifier());
 
@@ -166,7 +167,7 @@ public class CalculateLocations
      * @param refField the linking field eg. "exons"
      * @throws ObjectStoreException if the is a problem with the ObjectStore
      */
-    public void createSpanningLocations(Class parentClass, Class childClass, String refField)
+    public void createSpanningLocations(Class<?> parentClass, Class<?> childClass, String refField)
         throws ObjectStoreException {
 
         Query parentIdQuery =
@@ -177,23 +178,24 @@ public class CalculateLocations
                          + "and a3_.locatedFeatures CONTAINS a2_)", null).toQuery();
 
         Results parentIdResults = os.execute(parentIdQuery);
-        Set locatedParents = new HashSet();
-        Iterator parentIdIter = parentIdResults.iterator();
+        Set<Object> locatedParents = new HashSet<Object>();
+        Iterator<?> parentIdIter = parentIdResults.iterator();
 
         while (parentIdIter.hasNext()) {
-            Object parentId = ((ResultsRow) parentIdIter.next()).get(0);
+            Object parentId = ((ResultsRow<?>) parentIdIter.next()).get(0);
             locatedParents.add(parentId);
         }
 
-        Iterator resIter = findCollections(os, parentClass, childClass, refField);
+        Iterator<?> resIter = findCollections(os, parentClass, childClass, refField);
 
         // Map of location.objects to Maps from parent objects to a to their (new) start and end
         // positions.  eg.  Chromosome10 -> Exon1 -> SimpleLoc {start -> 2111, end -> 2999}
         //                  Contig23 ->     Exon1 -> SimpleLoc {start -> 1111, end -> 1999}
-        Map locatedOnObjectMap = new HashMap();
+        Map<Integer, Map<Integer, SimpleLoc>> locatedOnObjectMap
+            = new HashMap<Integer, Map<Integer, SimpleLoc>>();
 
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
 
             BioEntity parentObject = (BioEntity) rr.get(0);
             Location location = (Location) rr.get(2);
@@ -207,10 +209,11 @@ public class CalculateLocations
                 continue;
             }
 
-            Map parentObjectMap = (Map) locatedOnObjectMap.get(locatedOnObject.getId());
+            Map<Integer, SimpleLoc> parentObjectMap
+                = (Map<Integer, SimpleLoc>) locatedOnObjectMap.get(locatedOnObject.getId());
 
             if (parentObjectMap == null) {
-                parentObjectMap = new HashMap();
+                parentObjectMap = new HashMap<Integer, SimpleLoc>();
                 locatedOnObjectMap.put(locatedOnObject.getId(), parentObjectMap);
             }
 
@@ -240,12 +243,13 @@ public class CalculateLocations
 
         osw.beginTransaction();
         // make new locations and store them
-        Iterator locatedOnObjectIterator = locatedOnObjectMap.keySet().iterator();
+        Iterator<?> locatedOnObjectIterator = locatedOnObjectMap.keySet().iterator();
         while (locatedOnObjectIterator.hasNext()) {
             Integer locatedOnObjectId = (Integer) locatedOnObjectIterator.next();
             BioEntity locatedOnObject = (BioEntity) os.getObjectById(locatedOnObjectId);
-            Map parentObjectMap = (Map) locatedOnObjectMap.get(locatedOnObjectId);
-            Iterator parentObjectMapIterator = parentObjectMap.keySet().iterator();
+            Map<Integer, SimpleLoc> parentObjectMap
+                = (Map<Integer, SimpleLoc>) locatedOnObjectMap.get(locatedOnObjectId);
+            Iterator<?> parentObjectMapIterator = parentObjectMap.keySet().iterator();
 
             while (parentObjectMapIterator.hasNext()) {
                 Integer parentObjectId = (Integer) parentObjectMapIterator.next();
@@ -270,8 +274,8 @@ public class CalculateLocations
      * Query a class like Transcript that refers to a collection of located classes (like Exon) and
      * return an Results object containing Transcript, Exon, Exon location and location.object
      */
-    private static Iterator findCollections(ObjectStore os, Class parentClass, Class childClass,
-                                            String refField)
+    private static Iterator<?> findCollections(ObjectStore os, Class<?> parentClass,
+            Class<?> childClass, String refField)
         throws ObjectStoreException {
 
         Query q = new Query();
@@ -317,15 +321,15 @@ public class CalculateLocations
     /**
      * Hold Chromosomes in map by id
      */
-    private Map makeChromosomeMap() throws Exception {
-        Map returnMap = new HashMap();
+    private Map<Integer, Chromosome> makeChromosomeMap() throws Exception {
+        Map<Integer, Chromosome>  returnMap = new HashMap<Integer, Chromosome> ();
         Query q = new Query();
         QueryClass qc = new QueryClass(Chromosome.class);
         q.addToSelect(qc);
         q.addFrom(qc);
 
         SingletonResults sr = os.executeSingleton(q);
-        Iterator chrIter = sr.iterator();
+        Iterator<?> chrIter = sr.iterator();
         while (chrIter.hasNext()) {
             Chromosome chr = (Chromosome) chrIter.next();
             returnMap.put(chr.getId(), chr);
@@ -343,7 +347,7 @@ public class CalculateLocations
     public void setChromosomeLocationsAndLengths() throws Exception {
         Results results = BioQueries.findLocationAndObjects(os, Chromosome.class,
                 SequenceFeature.class, true, false, false, 10000);
-        Iterator resIter = results.iterator();
+        Iterator<?> resIter = results.iterator();
 
         osw.beginTransaction();
 
@@ -356,7 +360,7 @@ public class CalculateLocations
         Location lastLoc = null;
 
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
 
             Integer chrId = (Integer) rr.get(0);
             SequenceFeature lsf = (SequenceFeature) rr.get(1);
@@ -395,7 +399,7 @@ public class CalculateLocations
     public void setMissingChromosomeLocations() throws Exception {
         Results results = BioQueries.findLocationAndObjects(os, Chromosome.class,
                 SequenceFeature.class, false, false, true, 10000);
-        Iterator resIter = results.iterator();
+        Iterator<?> resIter = results.iterator();
 
         osw.beginTransaction();
 
@@ -409,7 +413,7 @@ public class CalculateLocations
         int count = 0;
 
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
 
             Integer chrId = (Integer) rr.get(0);
             SequenceFeature lsf = (SequenceFeature) rr.get(1);

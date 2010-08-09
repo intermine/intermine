@@ -107,11 +107,11 @@ public class PostProcessUtil
      * @throws IllegalAccessException if one of the field names doesn't exist in the corresponding
      * class.
      */
-    public static Iterator findConnectingClasses(ObjectStore os,
-                                                 Class sourceClass, String sourceClassFieldName,
-                                                 Class connectingClass,
+    public static Iterator<?> findConnectingClasses(ObjectStore os,
+                                                 Class<?> sourceClass, String sourceClassFieldName,
+                                                 Class<?> connectingClass,
                                                  String connectingClassFieldName,
-                                                 Class destinationClass, boolean orderBySource)
+                                                 Class<?> destinationClass, boolean orderBySource)
         throws ObjectStoreException, IllegalAccessException {
 
         Query q = new Query();
@@ -140,7 +140,8 @@ public class PostProcessUtil
         cs.addConstraint(cc1);
         QueryReference ref2;
 
-        Map descriptorMap = os.getModel().getFieldDescriptorsForClass(connectingClass);
+        Map<String, FieldDescriptor> descriptorMap
+            = os.getModel().getFieldDescriptorsForClass(connectingClass);
         FieldDescriptor fd = (FieldDescriptor) descriptorMap.get(connectingClassFieldName);
 
         if (fd == null) {
