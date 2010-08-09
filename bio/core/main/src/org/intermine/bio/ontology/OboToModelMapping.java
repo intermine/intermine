@@ -213,7 +213,7 @@ public class OboToModelMapping
                     && r.direct) {
                 assignPartOf(parent, child);
             } else if (relationshipType.equals("is_a") && r.direct) {
-                BioConverterUtil.addToListMap(childToParents, child, parent);
+                BioConverterUtil.addToSetMap(childToParents, child, parent);
             }
         }
 
@@ -251,13 +251,13 @@ public class OboToModelMapping
                 if (parent.equals(CHROMOSOME)) {
                     continue;
                 }
-                BioConverterUtil.addToListMap(reversePartOfs, parent, oboTerm);
+                BioConverterUtil.addToSetMap(reversePartOfs, parent, oboTerm);
             }
         }
     }
 
     private void assignPartOf(String parent, String child) {
-        BioConverterUtil.addToListMap(partOfs, child, parent);
+        BioConverterUtil.addToSetMap(partOfs, child, parent);
     }
 
     private void assignPartOfsToChild(String parent, String child) {
@@ -288,7 +288,7 @@ public class OboToModelMapping
         for (String child : childToParents.keySet()) {
             Set<String> parents = childToParents.get(child);
             for (String parent : parents) {
-                BioConverterUtil.addToListMap(parentToChildren, parent, child);
+                BioConverterUtil.addToSetMap(parentToChildren, parent, child);
             }
         }
     }

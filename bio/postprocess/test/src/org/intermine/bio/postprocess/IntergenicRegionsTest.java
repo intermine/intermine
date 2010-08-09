@@ -289,8 +289,8 @@ public class IntergenicRegionsTest extends TestCase
             geneLocs[i] = createLocation(chr, genes[i], "1", start, end, Location.class);
             geneLocs[i].setId(new Integer(100 + geneId));
             genes[i].setChromosomeLocation(geneLocs[i]);
-            BioConverterUtil.addToListMap(chrXlocMap, geneLocs[i].getStart(), genes[i]);
-            BioConverterUtil.addToListMap(chrXlocMap, geneLocs[i].getEnd(), genes[i]);
+            BioConverterUtil.addToSetMap(chrXlocMap, geneLocs[i].getStart(), genes[i]);
+            BioConverterUtil.addToSetMap(chrXlocMap, geneLocs[i].getEnd(), genes[i]);
         }
 
         toStore.addAll(Arrays.asList(genes));
@@ -344,8 +344,8 @@ public class IntergenicRegionsTest extends TestCase
             geneLocs[i] = createLocation(chr, genes[i], "1", start, end, Location.class);
             geneLocs[i].setId(new Integer(100 + geneId));
             genes[i].setChromosomeLocation(geneLocs[i]);
-            BioConverterUtil.addToListMap(chr1locMap, geneLocs[i].getStart(), genes[i]);
-            BioConverterUtil.addToListMap(chr1locMap, geneLocs[i].getEnd(), genes[i]);
+            BioConverterUtil.addToSetMap(chr1locMap, geneLocs[i].getStart(), genes[i]);
+            BioConverterUtil.addToSetMap(chr1locMap, geneLocs[i].getEnd(), genes[i]);
         }
 
         toStore.addAll(Arrays.asList(genes));

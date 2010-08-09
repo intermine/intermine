@@ -14,10 +14,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.BuildException;
@@ -57,17 +57,35 @@ public class BioConverterUtil
     }
 
     /**
-     * Add a value to a Map from keys to List of values, creating the value list
+     * Add values to a Map from keys to Set of values, creating the value list
+     * as needed.
+     *
+     * @param map the Map
+     * @param key the key
+     * @param values the set of values
+     */
+    public static void addToSetMap(Map map, Object key, Set<Object> values) {
+        Set valuesList = (Set) map.get(key);
+        if (valuesList == null) {
+            valuesList = new HashSet();
+            map.put(key, valuesList);
+        }
+        valuesList.addAll(values);
+    }
+
+
+    /**
+     * Add a value to a Map from keys to Set of values, creating the value list
      * as needed.
      *
      * @param map the Map
      * @param key the key
      * @param value the value
      */
-    public static void addToListMap(Map map, Object key, Object value) {
-        List valuesList = (List) map.get(key);
+    public static void addToSetMap(Map map, Object key, Object value) {
+        Set valuesList = (Set) map.get(key);
         if (valuesList == null) {
-            valuesList = new ArrayList();
+            valuesList = new HashSet();
             map.put(key, valuesList);
         }
         valuesList.add(value);
