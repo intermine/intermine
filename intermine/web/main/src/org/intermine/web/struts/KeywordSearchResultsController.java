@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,7 +39,6 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.search.KeywordSearch;
 import org.intermine.web.search.KeywordSearchHit;
 
-import com.browseengine.bobo.api.BrowseFacet;
 import com.browseengine.bobo.api.BrowseHit;
 import com.browseengine.bobo.api.BrowseResult;
 import com.browseengine.bobo.api.FacetAccessible;
@@ -46,28 +46,27 @@ import com.browseengine.bobo.api.FacetAccessible;
 /**
  * controller for keyword search
  * @author nils
- *
  */
 public class KeywordSearchResultsController extends TilesAction
 {
-
     private static final Logger LOG = Logger.getLogger(KeywordSearchResultsController.class);
 
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+    public ActionForward execute(ComponentContext context,
+            ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         long time = System.currentTimeMillis();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
 
         KeywordSearch.initKeywordSearch(im);
         Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
-        List<BrowseFacet> categoryFacets = null;
-        List<BrowseFacet> organismFacets = null;
+        Vector<KeywordSearchFacet> searchResultsFacets = new Vector<KeywordSearchFacet>();
+        Map<String, String> facets = KeywordSearch.getFacets();
         int totalHits = 0;
 
         WebConfig webconfig = SessionMethods.getWebConfig(request);
@@ -96,43 +95,31 @@ public class KeywordSearchResultsController extends TilesAction
         }
         LOG.info("SEARCH OFFSET: " + offset + "");
 
-        // faceting
-        String searchCategory = request.getParameter("searchCategory");
-        if (searchCategory == null) {
-            searchCategory = "";
+        // faceting - find all parameters that begin with facet_ and have a
+        // value, add them to map
+        HashMap<String, String> facetValues = new HashMap<String, String>();
+        for (Entry<String, String[]> requestParameter : ((Map<String, String[]>) request
+                .getParameterMap()).entrySet()) {
+            if (requestParameter.getKey().startsWith("facet_")
+                    && facets.containsKey(requestParameter.getKey().substring("facet_".length()))
+                    && requestParameter.getValue().length > 0) {
+                facetValues.put(requestParameter.getKey().substring("facet_".length()),
+                        requestParameter.getValue()[0]);
+            }
         }
-        LOG.info("SEARCH CATEGORY: '" + searchCategory + "'");
 
-        String searchOrganism = request.getParameter("searchOrganism");
-        if (searchOrganism == null) {
-            searchOrganism = "";
+        for (Entry<String, String> facetValue : facetValues.entrySet()) {
+            LOG.info("SEARCH FACET: " + facetValue.getKey() + " = " + facetValue.getValue());
         }
-        LOG.info("SEARCH ORGANISM: '" + searchOrganism + "'");
 
         LOG.info("Initializing took " + (System.currentTimeMillis() - time) + " ms");
 
         if (!StringUtils.isBlank(searchTerm) && !searchTerm.trim().equals('*')) {
-            String[] categoryValues;
-            if (!StringUtils.isBlank(searchCategory)) {
-                categoryValues = new String[] {searchCategory};
-            } else {
-                categoryValues = null;
-            }
-
-            String[] organismValues;
-            if (!StringUtils.isBlank(searchOrganism)) {
-                organismValues = new String[] {searchOrganism};
-            } else {
-                organismValues = null;
-            }
-
             // KeywordSearch.runLuceneSearch(searchTerm); //TODO remove - just
             // for performance testing
 
             Vector<KeywordSearchHit> searchHits = new Vector<KeywordSearchHit>();
-            BrowseResult result =
-                    KeywordSearch.runBrowseSearch(searchTerm, offset, categoryValues,
-                            organismValues);
+            BrowseResult result = KeywordSearch.runBrowseSearch(searchTerm, offset, facetValues);
 
             long time2 = System.currentTimeMillis();
             if (result != null) {
@@ -147,6 +134,8 @@ public class KeywordSearchResultsController extends TilesAction
                         Document doc = browseHit.getStoredFields();
                         if (doc != null) {
                             objectIds.add(Integer.valueOf(doc.getFieldable("id").stringValue()));
+                        } else {
+                            LOG.error("doc is null for browseHit " + browseHit);
                         }
                     } catch (NumberFormatException e) {
                         LOG.info("Invalid id '" + browseHit.getField("id") + "' for hit '"
@@ -175,6 +164,8 @@ public class KeywordSearchResultsController extends TilesAction
                                             .valueOf(doc.getFieldable("id").stringValue()));
 
                             searchHits.add(new KeywordSearchHit(browseHit.getScore(), doc, obj));
+                        } else {
+                            LOG.error("doc is null for browseHit " + browseHit);
                         }
                     } catch (NumberFormatException e) {
                     }
@@ -200,11 +191,14 @@ public class KeywordSearchResultsController extends TilesAction
                                 + " ms");
                 time2 = System.currentTimeMillis();
 
-                Map<String, FacetAccessible> facets = result.getFacetMap();
-                categoryFacets = facets.get("Category").getFacets();
-                organismFacets = facets.get("Organism").getFacets();
+                for (Entry<String, FacetAccessible> resultFacet : result.getFacetMap().entrySet()) {
+                    searchResultsFacets.add(new KeywordSearchFacet(resultFacet.getKey(), facets
+                            .get(resultFacet.getKey()), facetValues.get(resultFacet.getKey()),
+                            resultFacet.getValue().getFacets()));
+                }
 
-                LOG.info("Parsing facets took " + (System.currentTimeMillis() - time2) + " ms");
+                LOG.info("Parsing " + searchResultsFacets.size() + " facets took "
+                        + (System.currentTimeMillis() - time2) + " ms");
                 time2 = System.currentTimeMillis();
             }
         }
@@ -213,8 +207,6 @@ public class KeywordSearchResultsController extends TilesAction
 
         request.setAttribute("searchResults", searchResultsParsed);
         request.setAttribute("searchTerm", searchTerm);
-        // request.setAttribute("searchOffset", searchOffset);
-        // request.setAttribute("searchCategory", searchCategory);
 
         if (!StringUtils.isBlank(searchTerm)) {
             context.putAttribute("searchTerm", searchTerm);
@@ -226,20 +218,12 @@ public class KeywordSearchResultsController extends TilesAction
             context.putAttribute("searchTotalHits", totalHits);
 
             // facet lists
-            if (categoryFacets != null) {
-                context.putAttribute("categoryFacets", categoryFacets);
-            }
-            if (organismFacets != null) {
-                context.putAttribute("organismFacets", organismFacets);
-            }
+            context.putAttribute("searchFacets", searchResultsFacets);
 
             // facet values
-            context.putAttribute("searchCategory", searchCategory);
-            context.putAttribute("searchOrganism", searchOrganism);
-
-            // if (searchResultsParsed.size() == KeywordSearch.MAX_HITS) {
-            // context.putAttribute("displayMax", KeywordSearch.MAX_HITS);
-            // }
+            for (Entry<String, String> facetValue : facetValues.entrySet()) {
+                context.putAttribute("facet_" + facetValue.getKey(), facetValue.getValue());
+            }
         }
 
         LOG.info("--> TOTAL: " + (System.currentTimeMillis() - time) + " ms");

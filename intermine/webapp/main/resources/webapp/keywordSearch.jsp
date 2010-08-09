@@ -29,8 +29,13 @@
     <div class="examples">
 	    <ul>
             <li>
-                Use <i>AND</i> to combine two terms (e.g. <i>fly AND embryo</i>)
-                or quotations marks to search for phrases  (e.g. <i>"dna binding"</i>)
+                Search all of FlyMine.  Enter identifiers, names or keywords for
+				genes, pathways, authors, ontology terms, etc.  (e.g. <i>eve</i>, <i>embryo</i>,
+				<i>zen</i>, <i>allele</i>)
+            </li>
+            <li>
+                Use <i>OR</i> to search for either of two terms (e.g. <i>fly OR drosophila</i>)
+                or quotation marks to search for phrases  (e.g. <i>"dna binding"</i>)
             </li>
             <li>
                 Boolean search syntax is supported: e.g. <i>dros*</i> for partial matches or <i>fly AND NOT embryo</i> to exclude a term
