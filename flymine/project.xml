@@ -86,10 +86,11 @@
       <property name="gff3.seqDataSourceName" value="Micklem lab"/>
       <property name="src.data.dir" location="/shared/data/long-oligo"/>
     </source>
-
+<!--
     <source name="ensembl" type="ensembl">
      <property name="src.data.dir" location="/shared/data/ensembl/model_update"/>
     </source>
+-->
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
