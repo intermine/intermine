@@ -215,7 +215,7 @@ public class SpanOverlapQueryRunner
                 // DB tables
                 QueryClass qcOrg = new QueryClass(Organism.class);
                 QueryClass qcChr = new QueryClass(Chromosome.class);
-                QueryClass qcFeature = new QueryClass(LocatedSequenceFeature.class);
+                QueryClass qcFeature = new QueryClass(SequenceFeature.class);
                 QueryClass qcLoc = new QueryClass(Location.class);
                 QueryClass qcSubmission = new QueryClass(Submission.class);
 
