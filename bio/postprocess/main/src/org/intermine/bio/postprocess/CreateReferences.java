@@ -85,7 +85,7 @@ public class CreateReferences
                 Exon.class, "gene");
         LOG.info("insertReferences stage 3");
         // UTR.gene / Gene.UTRs
-        insertReferenceField(Gene.class, "transcripts", MRNA.class, "UTRs", UTR.class, "gene");
+        insertReferenceField(Gene.class, "transcripts", Transcript.class, "UTRs", UTR.class, "gene");
 
         LOG.info("insertReferences stage 4");
         // CDS.gene / Gene.CDSs
