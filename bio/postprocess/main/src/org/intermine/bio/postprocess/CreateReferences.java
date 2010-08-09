@@ -330,7 +330,7 @@ public class CreateReferences
         q.addToOrderBy(qcUTR);
 
         QueryCollectionReference mrnaUtrsRef =
-            new QueryCollectionReference(qcMRNA, "UTRs");
+            new QueryCollectionReference(qcMRNA, "uTRs");
         ContainsConstraint mrnaUtrsConstraint =
             new ContainsConstraint(mrnaUtrsRef, ConstraintOp.CONTAINS, qcUTR);
 
