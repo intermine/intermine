@@ -53,6 +53,8 @@ public class OboToModelMapping
 
     private Map<String, Set<String>> reversePartOfs = new HashMap<String, Set<String>>();
 
+    // TODO put this in config file instead
+    private static final String CHROMOSOME = "SO:0000340";
 //    private static final String TRANSCRIPT = "SO:0000673";
 //    private static final String EXON = "SO:0000147";
 
@@ -245,6 +247,10 @@ public class OboToModelMapping
             String oboTerm = entry.getKey();
             Set<String> parents = new HashSet<String>(entry.getValue());
             for (String parent : parents) {
+                // TODO put this in config file
+                if (parent.equals(CHROMOSOME)) {
+                    continue;
+                }
                 BioConverterUtil.addToListMap(reversePartOfs, parent, oboTerm);
             }
         }
@@ -256,7 +262,6 @@ public class OboToModelMapping
 
     private void assignPartOfsToChild(String parent, String child) {
         transferPartOfs(parent, child);
-        // keep going up the tree
         Set<String> grandparents = childToParents.get(parent);
         if (grandparents != null && !grandparents.isEmpty()) {
             for (String grandparent : grandparents) {
