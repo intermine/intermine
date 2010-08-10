@@ -634,9 +634,6 @@ public class FlyBaseProcessor extends SequenceProcessor
                     Arrays.asList(new SetFieldConfigAction("cytoLocation")));
             map.put(new MultiKey("prop", "Gene", "symbol"),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
-            // the feature type for gene, eg. "rRNA_gene", "protein_coding_gene"
-//            map.put(new MultiKey("prop", "Gene", "promoted_gene_type"),
-//                    Arrays.asList(new SetFieldConfigAction("featureType")));
             map.put(new MultiKey("prop", "TransposableElementInsertionSite",
                                  "curated_cytological_location"),
                                  Arrays.asList(new SetFieldConfigAction("cytoLocation")));
@@ -881,14 +878,13 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     private static final List<String> FEATURES = Arrays.asList(
-            "gene"
-//            "gene", "mRNA", "transcript", "protein",
-//            "intron", "exon", "regulatory_region", "enhancer", "EST", "cDNA_clone",
-//            "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
-//            "chromosome_band", "transposable_element_insertion_site",
-//            CHROMOSOME_STRUCTURE_VARIATION_SO_NAME,
-//            "point_mutation", "natural_transposable_element",
-//            "transposable_element"
+            "gene", "mRNA", "transcript", "protein",
+            "intron", "exon", "regulatory_region", "enhancer", "EST", "cDNA_clone",
+            "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
+            "chromosome_band", "transposable_element_insertion_site",
+            CHROMOSOME_STRUCTURE_VARIATION_SO_NAME,
+            "point_mutation", "natural_transposable_element",
+            "transposable_element"
     );
 
     /**
