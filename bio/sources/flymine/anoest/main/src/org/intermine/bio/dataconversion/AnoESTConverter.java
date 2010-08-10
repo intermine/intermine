@@ -80,7 +80,6 @@ public class AnoESTConverter extends BioDBConverter
             cluster.setAttribute("primaryIdentifier", identifier);
             cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
             store(cluster);
-            createSynonym(cluster.getIdentifier(), identifier, null, true);
 
             // some clusters have no location
             if (chromosomeIdentifier != null && !chromosomeIdentifier.equals("mitochondrial")
@@ -135,12 +134,8 @@ public class AnoESTConverter extends BioDBConverter
             }
         }
 
-        for (Map.Entry<String, Item> entry: ests.entrySet()) {
-            String accession = entry.getKey();
-            Item est = entry.getValue();
-            store(est);
-            createSynonym(est.getIdentifier(), accession, null, true);
-            createSynonym(est.getIdentifier(), cloneIds.get(accession), null, true);
+        for (Item item: ests.values()) {
+            store(item);
         }
     }
 

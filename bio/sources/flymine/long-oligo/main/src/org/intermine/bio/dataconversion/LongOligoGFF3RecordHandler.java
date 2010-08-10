@@ -64,7 +64,7 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
         Iterator<?> aliasIter = aliases.iterator();
 
         while (aliasIter.hasNext()) {
-            addItem(createSynonym(oligo, "identifier", (String) aliasIter.next()));
+            addItem(createSynonym(oligo, (String) aliasIter.next()));
         }
     }
 
@@ -72,9 +72,8 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
     /**
      * Create a synonym Item from the given information.
      */
-    private Item createSynonym(Item subject, String type, String value) {
+    private Item createSynonym(Item subject, String value) {
         Item synonym = getItemFactory().makeItem(null, "Synonym", "");
-        synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
         synonym.setReference("subject", subject.getIdentifier());
         synonym.addToCollection("dataSets", getDataSet());

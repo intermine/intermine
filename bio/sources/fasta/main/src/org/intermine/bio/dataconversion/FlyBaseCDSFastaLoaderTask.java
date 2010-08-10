@@ -52,7 +52,6 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         cds.setTranscript(getMRNA(mrnaIdentifier, organism));
         Location loc = getLocationFromHeader(header, cds, organism);
         getDirectDataLoader().store(loc);
-        createSynonym(interMineObject, dataSet, cds.getPrimaryIdentifier());
     }
 
     /**

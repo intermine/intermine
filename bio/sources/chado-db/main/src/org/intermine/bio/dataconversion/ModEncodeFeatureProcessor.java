@@ -339,15 +339,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      * {@inheritDoc}
      */
     @Override
-    protected Item createSynonym(FeatureData fdat, String type, String identifier,
-            boolean isPrimary)
+    protected Item createSynonym(FeatureData fdat, String identifier)
         throws ObjectStoreException {
-        // Don't create synonyms for main identifiers of modENCODE features.  There are too many and
-        // not useful to quick search.
-        if (isPrimary) {
-            return null;
-        }
-        Item synonym = super.createSynonym(fdat, type, identifier, isPrimary);
+        Item synonym = super.createSynonym(fdat, identifier);
         OrganismData od = fdat.getOrganismData();
         processItem(synonym, od.getTaxonId());
         return synonym;
@@ -532,9 +526,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             map.put(new MultiKey("prop", "TranscriptRegion", "rank_score"),
                     Arrays.asList(new SetFieldConfigAction("rankScore")));
 
-            map.put(new MultiKey("prop", "LocatedSequenceFeature", "prediction_status"),
+            map.put(new MultiKey("prop", "SequenceFeature", "prediction_status"),
                     Arrays.asList(new SetFieldConfigAction("predictionStatus")));
-            map.put(new MultiKey("prop", "LocatedSequenceFeature", "note"),
+            map.put(new MultiKey("prop", "SequenceFeature", "note"),
                     Arrays.asList(new SetFieldConfigAction("note")));
 
         }

@@ -624,7 +624,6 @@
   <class className="org.intermine.model.bio.Synonym">
     <fields>
       <fieldconfig fieldExpr="value"/>
-      <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
 

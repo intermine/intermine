@@ -224,7 +224,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                     }
                 }
                 store(amplicon);
-                createSynonym(amplicon, ampliconIdentifier, "true", true);
             }
         }
 

@@ -132,7 +132,6 @@ public class PdbConverter extends BioDirectoryConverter
         List<String> dbrefs = pdbBuffReader.getDbrefs();
         for (String accnum: dbrefs) {
             String proteinRefId = getProtein(accnum, taxonId);
-            createSynonym(proteinRefId, "accession", accnum, "true", true);
             proteinStructure.addToCollection("proteins", proteinRefId);
         }
 

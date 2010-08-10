@@ -672,7 +672,6 @@ public class PsiConverter extends BioFileConverter
                 }
                 itemId = item.getIdentifier();
                 genes.put(identifier, itemId);
-                createSynonym(itemId, identifier, null, true);
             }
             return itemId;
         }

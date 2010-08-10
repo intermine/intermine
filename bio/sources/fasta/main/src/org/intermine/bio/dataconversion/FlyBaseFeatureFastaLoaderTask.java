@@ -54,23 +54,6 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
     }
 
     /**
-     * Create a Synonym.
-     * @param interMineObject the subject InterMineObject of the Synonym
-     * @param dataSet the DataSet for the Synonym
-     * @param identifier the synonym value
-     * @throws ObjectStoreException if there is a problem storing
-     */
-    public void createSynonym(BioEntity interMineObject, DataSet dataSet, String identifier)
-        throws ObjectStoreException {
-        Synonym synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
-        synonym.setValue(identifier);
-        synonym.setType("identifier");
-        synonym.setSubject(interMineObject);
-        synonym.addDataSets(dataSet);
-        getDirectDataLoader().store(synonym);
-    }
-
-    /**
      * Return a Location object create by parsing the useful information from a FlyBase fasta
      * header line.
      * @param header the header line

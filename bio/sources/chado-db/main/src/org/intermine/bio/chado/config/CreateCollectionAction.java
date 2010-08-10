@@ -19,7 +19,7 @@ public class CreateCollectionAction extends MatchingFieldConfigAction
     private final String fieldName;
     private final String className;
     private final String referenceName;
-    private final boolean createSingletons;
+    private final boolean createSingletons, isReference;
 
     /**
      * Create a new CreateCollectionAction object.
@@ -28,16 +28,18 @@ public class CreateCollectionAction extends MatchingFieldConfigAction
      * object to
      * @param fieldName the field name to set in the new object
      * @param createSingletons if true, create only one object of class className with each
+     * @param isReference if true, create a reference not a collection
      * possible fieldName; if false, multiple objects with the same value for fieldName might
      * be created
      */
     public CreateCollectionAction(String className, String referenceName, String fieldName,
-                                  boolean createSingletons) {
+                                  boolean createSingletons, boolean isReference) {
         super(null);
         this.className = className;
         this.referenceName = referenceName;
         this.fieldName = fieldName;
         this.createSingletons = createSingletons;
+        this.isReference = isReference;
     }
 
     /**
@@ -72,4 +74,13 @@ public class CreateCollectionAction extends MatchingFieldConfigAction
     public final boolean createSingletons() {
         return createSingletons;
     }
+
+    /**
+     * If true, set cvterm as a reference, not a collection
+     * @return the isReference
+     */
+    public boolean isReference() {
+        return isReference;
+    }
+
 }

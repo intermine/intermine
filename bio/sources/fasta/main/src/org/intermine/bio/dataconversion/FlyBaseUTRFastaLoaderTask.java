@@ -59,8 +59,6 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         MRNA mrna = getMRNA(mrnaIdentifier, organism);
         utr.addTranscripts(mrna);
 
-        createSynonym(interMineObject, dataSet, utrIdentifier);
-
         String header = (String) annotation.getProperty("description");
 
         Location loc = getLocationFromHeader(header, utr, organism);

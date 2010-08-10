@@ -496,10 +496,9 @@ public class FlyBaseProcessor extends SequenceProcessor
      * {@inheritDoc}
      */
     @Override
-    protected Item createSynonym(FeatureData fdat, String type, String identifier,
-            boolean isPrimary)
+    protected Item createSynonym(FeatureData fdat, String identifier)
         throws ObjectStoreException {
-        Item synonym = super.createSynonym(fdat, type, identifier, isPrimary);
+        Item synonym = super.createSynonym(fdat, identifier);
         /* synonym can be null if it's been created earlier.  this would happen only if
          * the synonym was created when another protein was created in favour of this one.  */
         if (synonym != null) {
@@ -636,8 +635,8 @@ public class FlyBaseProcessor extends SequenceProcessor
             map.put(new MultiKey("prop", "Gene", "symbol"),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
             // the feature type for gene, eg. "rRNA_gene", "protein_coding_gene"
-            map.put(new MultiKey("prop", "Gene", "promoted_gene_type"),
-                    Arrays.asList(new SetFieldConfigAction("featureType")));
+//            map.put(new MultiKey("prop", "Gene", "promoted_gene_type"),
+//                    Arrays.asList(new SetFieldConfigAction("featureType")));
             map.put(new MultiKey("prop", "TransposableElementInsertionSite",
                                  "curated_cytological_location"),
                                  Arrays.asList(new SetFieldConfigAction("cytoLocation")));
@@ -655,20 +654,9 @@ public class FlyBaseProcessor extends SequenceProcessor
 //            map.put(new MultiKey("anatomyterm", "CDNAClone", null),
 //                    Arrays.asList(new SetFieldConfigAction("tissueSource")));
 
-            // feature_cvterm example for Transposition: we create a featureTerms collection in the
-            // Transposition objects containing SequenceOntologyTerm objects.  For the current
-            // feature we create one SequenceOntologyTerm object for each associated "SO" cvterm.
-            // We set the "name" field of the SequenceOntologyTerm to be the name from the cvterm
-            // table.
-            List<String> chromosomeStructureVariationClassNames =
-                Arrays.asList("ChromosomeStructureVariation", "ChromosomalDeletion",
-                              "ChromosomalDuplication", "ChromosomalInversion",
-                              "ChromosomalTranslocation", "ChromosomalTransposition");
-            for (String className: chromosomeStructureVariationClassNames) {
-                map.put(new MultiKey("cvterm", className, "SO"),
-                        Arrays.asList(new CreateCollectionAction("SOTerm", "featureTerms", "name",
-                                true)));
-            }
+            map.put(new MultiKey("cvterm", "Gene", "SO"),
+                    Arrays.asList(new CreateCollectionAction("SOTerm", "sequenceOntologyTerm",
+                            "name", true, true)));
 
             // feature configuration example: for features of class "Exon", from "FlyBase",
             // set the Gene.symbol to be the "name" field from the chado feature
@@ -893,13 +881,14 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     private static final List<String> FEATURES = Arrays.asList(
-            "gene", "mRNA", "transcript", "protein",
-            "intron", "exon", "regulatory_region", "enhancer", "EST", "cDNA_clone",
-            "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
-            "chromosome_band", "transposable_element_insertion_site",
-            CHROMOSOME_STRUCTURE_VARIATION_SO_NAME,
-            "point_mutation", "natural_transposable_element",
-            "transposable_element"
+            "gene"
+//            "gene", "mRNA", "transcript", "protein",
+//            "intron", "exon", "regulatory_region", "enhancer", "EST", "cDNA_clone",
+//            "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
+//            "chromosome_band", "transposable_element_insertion_site",
+//            CHROMOSOME_STRUCTURE_VARIATION_SO_NAME,
+//            "point_mutation", "natural_transposable_element",
+//            "transposable_element"
     );
 
     /**
@@ -1738,12 +1727,12 @@ public class FlyBaseProcessor extends SequenceProcessor
             if (protein != null) {
                 if (StringUtils.isNotEmpty(uniqueName)
                         && !protein.getExistingSynonyms().contains(uniqueName)) {
-                    Item synonym = createSynonym(protein, "identifier", uniqueName, true);
+                    Item synonym = createSynonym(protein, uniqueName);
                     store(synonym);
                 }
                 if (StringUtils.isNotEmpty(name)
                         && !protein.getExistingSynonyms().contains(name)) {
-                    Item synonym = createSynonym(protein, "name", name, false);
+                    Item synonym = createSynonym(protein, name);
                     store(synonym);
                 }
                 return protein;
@@ -1761,7 +1750,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             FeatureData cdnaClone = cdnaCloneMap.get(name);
             if (cdnaClone != null) {
                 if (StringUtils.isNotEmpty(name)) {
-                    Item synonym = createSynonym(cdnaClone, "symbol", name, false);
+                    Item synonym = createSynonym(cdnaClone, name);
                     if (synonym != null) {
                         store(synonym);
                     }
