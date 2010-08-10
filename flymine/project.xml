@@ -27,7 +27,7 @@
     </source>
     <source name="chado-db-flybase-others" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
-      <property name="organisms" value="Dvir"/>
+      <property name="organisms" value="Dana Dere Dgri Dmoj Dper Dsec Dsim Dvir Dwil Dyak"/>
       <property name="dataSourceName" value="FlyBase"/>
       <property name="processors"
                 value="org.intermine.bio.dataconversion.FlyBaseProcessor"/>
@@ -86,11 +86,10 @@
       <property name="gff3.seqDataSourceName" value="Micklem lab"/>
       <property name="src.data.dir" location="/shared/data/long-oligo"/>
     </source>
-<!--
+
     <source name="ensembl" type="ensembl">
      <property name="src.data.dir" location="/shared/data/ensembl/model_update"/>
     </source>
--->
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
