@@ -244,7 +244,6 @@ public abstract class BioDBConverter extends DBConverter
      * The "store" param should be true only if the subject has already been stored.  Storing a
      * synonym first can signficantly slow down the build process.
      * @param subjectId id representing the object (eg. Gene) this synonym describes.
-     * @param type the Synonym type, eg. identifier, name
      * @param value the Synonym value
      * @param isPrimary true if this is a primary identifier, false if not, null if don't know
      * @param store if true, will store item
@@ -252,16 +251,14 @@ public abstract class BioDBConverter extends DBConverter
      * @throws SAXException if the synonym can't be stored
      * @return the synonym item or null if this is a duplicate
      */
-    public Item createSynonym(String subjectId, String type, String value, String isPrimary,
-            boolean store)
+    public Item createSynonym(String subjectId, String value, String isPrimary, boolean store)
         throws SAXException, ObjectStoreException {
         if (StringUtils.isEmpty(value)) {
             return null;
         }
-        String key = subjectId + type + value;
+        String key = subjectId + value;
         if (!synonyms.contains(key)) {
             Item synonym = createItem("Synonym");
-            synonym.setAttribute("type", type);
             synonym.setAttribute("value", value);
             synonym.setReference("subject", subjectId);
             if (!StringUtils.isEmpty(isPrimary)) {
@@ -280,15 +277,13 @@ public abstract class BioDBConverter extends DBConverter
      * Create and return a new Synonym, but don't store it.
      * Used by chado
      * @param subjectId the Synonym subject id
-     * @param type the Synonym type
      * @param value the Synonym value
      * @param isPrimary true if this is a primary identifier
      * @return the new Synonym
      * @deprecated use the new create synonym method that optionally stores the synonym
      */
-    public Item createSynonym(String subjectId, String type, String value, boolean isPrimary) {
+    public Item createSynonym(String subjectId, String value, boolean isPrimary) {
         Item synonym = createItem("Synonym");
-        synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
         synonym.setAttribute("isPrimary", String.valueOf(isPrimary));
         synonym.setReference("subject", subjectId);
