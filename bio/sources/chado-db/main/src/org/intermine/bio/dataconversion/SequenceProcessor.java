@@ -168,20 +168,20 @@ public class SequenceProcessor extends ChadoProcessor
 
         processFeatureTable(connection);
         processFeatureCVTermTable(connection);
-//        processPubTable(connection);
-//
-//        // process direct locations
-//        ResultSet directLocRes = getFeatureLocResultSet(connection);
-//
-//        // we don't call getFeatureLocResultSet() in the processLocationTable() method because
-//        // processLocationTable() is called by subclasses to create locations
-//        processLocationTable(connection, directLocRes);
-//
-//        processRelationTable(connection, true);
-//        processRelationTable(connection, false);
-//        processDbxrefTable(connection);
-//        processSynonymTable(connection);
-//        processFeaturePropTable(connection);
+        processPubTable(connection);
+
+        // process direct locations
+        ResultSet directLocRes = getFeatureLocResultSet(connection);
+
+        // we don't call getFeatureLocResultSet() in the processLocationTable() method because
+        // processLocationTable() is called by subclasses to create locations
+        processLocationTable(connection, directLocRes);
+
+        processRelationTable(connection, true);
+        processRelationTable(connection, false);
+        processDbxrefTable(connection);
+        processSynonymTable(connection);
+        processFeaturePropTable(connection);
         /**
           see #2173
           processLibraryFeatureTable(connection);
