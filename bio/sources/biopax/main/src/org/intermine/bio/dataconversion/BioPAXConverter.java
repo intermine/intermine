@@ -55,7 +55,6 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
     private int depth = 0;
     private Item organism, dataset;
     private String pathwayRefId = null;
-    private Set<Item> synonyms = new HashSet<Item>();
     private Set<String> taxonIds = new HashSet<String>();
     private Map<String, String[]> configs = new HashMap<String, String[]>();
     private OrganismRepository or;
@@ -326,9 +325,6 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
             item.setAttribute(fieldName, identifier);
             item.setReference("organism", organism);
             item.addToCollection("dataSets", dataset);
-            Item synonym = createSynonym(item.getIdentifier(), identifier, null, false);
-            synonym.addToCollection("dataSets", dataset);
-            synonyms.add(synonym);
             genes.put(identifier, item);
         }
         return item;
@@ -423,9 +419,6 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
     public void close()
         throws ObjectStoreException {
         for (Item item : genes.values()) {
-            store(item);
-        }
-        for (Item item : synonyms) {
             store(item);
         }
     }

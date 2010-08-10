@@ -485,7 +485,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 Map<String, String> orgSequences = sequences.get(taxonId);
                 if (orgSequences != null && orgSequences.containsKey(entry.getMd5checksum())) {
                     Item synonym = createSynonym(orgSequences.get(entry.getMd5checksum()),
-                            entry.getPrimaryAccession(), "false", false);
+                            entry.getPrimaryAccession(), false);
                     synonymsAndXrefs.add(synonym);
                 }
                 return isoforms;
@@ -642,34 +642,34 @@ public class UniprotConverter extends BioDirectoryConverter
             throws SAXException, ObjectStoreException {
 
             // primary accession
-            createSynonym(proteinRefId, entry.getPrimaryAccession(), "true", true);
+            createSynonym(proteinRefId, entry.getPrimaryAccession(), true);
 
             // accessions
             for (String accession : entry.getAccessions()) {
-                createSynonym(proteinRefId, accession, "false", true);
+                createSynonym(proteinRefId, accession, true);
             }
 
             // primaryIdentifier
             String primaryIdentifier = entry.getPrimaryIdentifier();
-            createSynonym(proteinRefId, primaryIdentifier, "false", true);
+            createSynonym(proteinRefId, primaryIdentifier, true);
 
             // primaryIdentifier if isoform
             if (entry.isIsoform()) {
                 String isoformIdentifier =
                     getIsoformIdentifier(entry.getPrimaryAccession(), entry.getPrimaryIdentifier());
-                createSynonym(proteinRefId, isoformIdentifier, "false", true);
+                createSynonym(proteinRefId, isoformIdentifier, true);
             }
 
             // name <recommendedName> or <alternateName>
             for (String name : entry.getProteinNames()) {
-                createSynonym(proteinRefId, name, "false", true);
+                createSynonym(proteinRefId, name, true);
             }
 
             // isoforms with extra identifiers
             List<String> isoformSynonyms = entry.getIsoformSynonyms();
             if (!isoformSynonyms.isEmpty()) {
                 for (String identifier : isoformSynonyms) {
-                    createSynonym(proteinRefId, identifier, "false", true);
+                    createSynonym(proteinRefId, identifier, true);
                 }
             }
 
@@ -837,9 +837,9 @@ public class UniprotConverter extends BioDirectoryConverter
                 // synonyms
                 geneRefId = gene.getIdentifier();
                 for (String identifier : geneSynonyms) {
-                    createSynonym(geneRefId, identifier, null, true);
+                    createSynonym(geneRefId, identifier, true);
                 }
-                createSynonym(geneRefId, uniqueIdentifierValue, null, true);
+                createSynonym(geneRefId, uniqueIdentifierValue, true);
             }
             return geneRefId;
         }
@@ -1002,8 +1002,8 @@ public class UniprotConverter extends BioDirectoryConverter
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
-            createSynonym(refId, identifier, "true", true);
-            createSynonym(refId, shortName, "false", true);
+            createSynonym(refId, identifier, true);
+            createSynonym(refId, shortName, true);
         }
         return refId;
     }

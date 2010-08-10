@@ -413,7 +413,6 @@ public class InparanoidConverter extends BioFileConverter
         item.setReference("organism", organismRefId);
         store(item);
         bioEntities.put(key, item);
-        createSynonym(item.getIdentifier(), identifier, null, true);
         return item;
     }
 

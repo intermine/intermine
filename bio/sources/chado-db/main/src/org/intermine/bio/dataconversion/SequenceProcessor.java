@@ -168,20 +168,20 @@ public class SequenceProcessor extends ChadoProcessor
 
         processFeatureTable(connection);
         processFeatureCVTermTable(connection);
-        processPubTable(connection);
-
-        // process direct locations
-        ResultSet directLocRes = getFeatureLocResultSet(connection);
-
-        // we don't call getFeatureLocResultSet() in the processLocationTable() method because
-        // processLocationTable() is called by subclasses to create locations
-        processLocationTable(connection, directLocRes);
-
-        processRelationTable(connection, true);
-        processRelationTable(connection, false);
-        processDbxrefTable(connection);
-        processSynonymTable(connection);
-        processFeaturePropTable(connection);
+//        processPubTable(connection);
+//
+//        // process direct locations
+//        ResultSet directLocRes = getFeatureLocResultSet(connection);
+//
+//        // we don't call getFeatureLocResultSet() in the processLocationTable() method because
+//        // processLocationTable() is called by subclasses to create locations
+//        processLocationTable(connection, directLocRes);
+//
+//        processRelationTable(connection, true);
+//        processRelationTable(connection, false);
+//        processDbxrefTable(connection);
+//        processSynonymTable(connection);
+//        processFeaturePropTable(connection);
         /**
           see #2173
           processLibraryFeatureTable(connection);
@@ -352,12 +352,7 @@ public class SequenceProcessor extends ChadoProcessor
             }
         }
 
-        // always create a synonym for the uniquename
-        boolean uniqueNameSet = false;
-        if (fieldValuesSet.contains(fixedUniqueName)) {
-            uniqueNameSet = true;
-        }
-        Item uniqueNameSynonym = createSynonym(fdat, "identifier", fixedUniqueName, uniqueNameSet);
+        Item uniqueNameSynonym = createSynonym(fdat, fixedUniqueName);
         if (uniqueNameSynonym != null) {
             getChadoDBConverter().store(uniqueNameSynonym);
         }
@@ -375,9 +370,7 @@ public class SequenceProcessor extends ChadoProcessor
                     if (createSynonymAction.isValidValue(fixedName)) {
                         String processedName = createSynonymAction.processValue(fixedName);
                         if (!fdat.getExistingSynonyms().contains(processedName)) {
-                            boolean nameSet = fieldValuesSet.contains(processedName);
-                            Item nameSynonym =
-                                createSynonym(fdat, "name", processedName, nameSet);
+                            Item nameSynonym = createSynonym(fdat, processedName);
                             if (nameSynonym != null) {
                                 getChadoDBConverter().store(nameSynonym);
                             }
@@ -469,10 +462,6 @@ public class SequenceProcessor extends ChadoProcessor
         if (feature.checkAttribute("md5checksum")) {
             feature.setAttribute("md5checksum", md5checksum);
         }
-        // See #2287
-//        if (feature.checkAttribute("featureType")) {
-//            feature.setAttribute("featureType", chadoType);
-//        }
         fdat.setFieldExistenceFlags(feature);
         fdat.setIntermineObjectId(store(feature, taxonId));
         fdat.setItemIdentifier(feature.getIdentifier());
@@ -556,10 +545,7 @@ public class SequenceProcessor extends ChadoProcessor
             return "three_prime_UTR";
         }
         return type;
-
-
     }
-
 
     /**
      * Do any extra processing that is needed before the converter starts querying features
@@ -1072,11 +1058,7 @@ public class SequenceProcessor extends ChadoProcessor
                         if (fdat.getExistingSynonyms().contains(newFieldValue)) {
                             continue;
                         }
-                        boolean isPrimary = false;
-                        if (fieldsSet.contains(newFieldValue)) {
-                            isPrimary = true;
-                        }
-                        Item synonym = createSynonym(fdat, "identifier", newFieldValue, isPrimary);
+                        Item synonym = createSynonym(fdat, newFieldValue);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
                             count++;
@@ -1150,11 +1132,7 @@ public class SequenceProcessor extends ChadoProcessor
                         if (synonymType == null) {
                             synonymType = propTypeName;
                         }
-                        boolean isPrimary = false;
-                        if (fieldsSet.contains(newFieldValue)) {
-                            isPrimary = true;
-                        }
-                        Item synonym = createSynonym(fdat, synonymType, newFieldValue, isPrimary);
+                        Item synonym = createSynonym(fdat, newFieldValue);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
                             count++;
@@ -1347,7 +1325,7 @@ public class SequenceProcessor extends ChadoProcessor
                         if (fieldsSet.contains(newFieldValue)) {
                             isPrimary = true;
                         }
-                        Item synonym = createSynonym(fdat, synonymType, newFieldValue, isPrimary);
+                        Item synonym = createSynonym(fdat, newFieldValue);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
                             count++;
@@ -1359,6 +1337,7 @@ public class SequenceProcessor extends ChadoProcessor
                             Item item = null;
                             String fieldName = cca.getFieldName();
                             String className = cca.getClassName();
+                            boolean isReference = cca.isReference();
                             if (cca.createSingletons()) {
                                 MultiKey singletonKey =
                                     new MultiKey(className, fieldName, cvtermName);
@@ -1375,8 +1354,10 @@ public class SequenceProcessor extends ChadoProcessor
 
                             String referenceName = cca.getReferenceName();
                             List<Item> itemList;
-                            if (dataMap.containsKey(referenceName)) {
+                            // creating collection, already seen this ref
+                            if (!isReference && dataMap.containsKey(referenceName)) {
                                 itemList = dataMap.get(referenceName);
+                            // new collection, or creating a reference
                             } else {
                                 itemList = new ArrayList<Item>();
                                 dataMap.put(referenceName, itemList);
@@ -1525,7 +1506,7 @@ public class SequenceProcessor extends ChadoProcessor
                             continue;
                         }
                         Item synonym =
-                            createSynonym(fdat, synonymTypeName, newFieldValue, setField);
+                            createSynonym(fdat, newFieldValue);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
                             count++;
@@ -1957,6 +1938,11 @@ public class SequenceProcessor extends ChadoProcessor
         return res;
     }
 
+//    SELECT fp.value
+//    FROM feature f, featureprop fp, cvterm cvt
+//    WHERE f.feature_id = fp.feature_id AND fp.type_id = cvt.cvterm_id AND
+//      cvt.name = 'promoted_gene_type' AND f.uniquename = 'FBgn0000011';
+
     /**
      * Return the interesting rows from the libraryprop table.
      * This is a protected method so that it can be overridden for testing
@@ -2077,14 +2063,11 @@ public class SequenceProcessor extends ChadoProcessor
      * Call DataConverter.createSynonym(), store the Item then record in FeatureData that we've
      * created it.
      * @param fdat the FeatureData
-     * @param type the synonym type
      * @param identifier the identifier to store in the Synonym
-     * @param isPrimary true if the synonym is a primary identifier
      * @return the new Synonym
      * @throws ObjectStoreException if there is a problem while storing
      */
-    protected Item createSynonym(FeatureData fdat, String type, String identifier,
-                                 boolean isPrimary)
+    protected Item createSynonym(FeatureData fdat, String identifier)
         throws ObjectStoreException {
         if (fdat.getExistingSynonyms().contains(identifier)) {
             String msg = "feature identifier " + identifier + " is already a synonym for: "
@@ -2094,8 +2077,7 @@ public class SequenceProcessor extends ChadoProcessor
 //          throw new IllegalArgumentException(msg);
             return null;
         }
-        Item returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(),
-                type, identifier, isPrimary);
+        Item returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(), identifier);
         fdat.addExistingSynonym(identifier);
         return returnItem;
     }

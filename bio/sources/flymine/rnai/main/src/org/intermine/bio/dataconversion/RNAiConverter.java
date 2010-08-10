@@ -113,7 +113,6 @@ public class RNAiConverter extends BioFileConverter
             gene.setAttribute("primaryIdentifier", primaryIdentifier);
             geneMap.put(primaryIdentifier, gene);
             store(gene);
-            createSynonym(gene, primaryIdentifier, "true", true);
         }
         return gene;
     }

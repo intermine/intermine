@@ -75,20 +75,14 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
             Item gene = createItem("Gene");
             if (primaryidentifier != null && !primaryidentifier.equals("")) {
                 gene.setAttribute("primaryIdentifier", primaryidentifier);
-                synonyms.add(createSynonym(gene, primaryidentifier, null, false));
             }
             if (identifier != null && !identifier.equals("")) {
                 gene.setAttribute("secondaryIdentifier", identifier);
-                synonyms.add(createSynonym(gene, identifier, null, false));
             }
             if (symbol != null && !symbol.equals("")) {
                 gene.setAttribute("symbol", symbol);
                 // per Rachel.  We can't seem to get the gene names out of wormmart.
                 gene.setAttribute("name", symbol);
-
-                if (!symbol.equals(identifier)) {
-                    synonyms.add(createSynonym(gene, symbol, null, false));
-                }
             }
 
             gene.setReference("organism", worm.getIdentifier());

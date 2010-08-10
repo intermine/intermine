@@ -56,8 +56,6 @@ public class TiffinGFF3RecordHandler extends GFF3RecordHandler
             addEarlyItem(motif);
             Item synonym = createItem("Synonym");
             synonym.setAttribute("value", name);
-            synonym.setAttribute("type", "identifier");
-            synonym.setAttribute("isPrimary", "true");
             synonym.setReference("subject", motif);
             addItem(synonym);
         }

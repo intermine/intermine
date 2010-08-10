@@ -257,8 +257,6 @@ public class AnophExprConverter extends BioFileConverter
         gene.setAttribute("primaryIdentifier", geneCG);
         gene.setReference("organism", org.getIdentifier());
         genes.put(geneCG, gene);
-        Item synonym = createSynonym(gene.getIdentifier(), geneCG, null, false);
-        synonyms.add(synonym);
         return gene;
     }
 }

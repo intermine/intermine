@@ -128,11 +128,6 @@ public class Drosophila2ProbeConverter extends BioFileConverter
         probeSet.setCollection("locations", holder.createLocations(probeSet.getIdentifier(),
                 holder.datasets));
         store(probeSet);
-        try {
-            createSynonym(probeSet.getIdentifier(), holder.probesetIdentifier, null, true);
-        } catch (SAXException e) {
-            throw new ObjectStoreException("Failed to store synonym", e);
-        }
     }
 
     /**
@@ -243,11 +238,6 @@ public class Drosophila2ProbeConverter extends BioFileConverter
             refId = bioentity.getIdentifier();
             store(bioentity);
             bioentities.put(identifier, refId);
-            try {
-                createSynonym(refId, identifier, null, true);
-            } catch (SAXException e) {
-                throw new ObjectStoreException("Failed to store synonym", e);
-            }
         }
         return refId;
     }

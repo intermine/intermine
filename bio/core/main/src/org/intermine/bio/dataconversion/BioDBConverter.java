@@ -245,13 +245,12 @@ public abstract class BioDBConverter extends DBConverter
      * synonym first can signficantly slow down the build process.
      * @param subjectId id representing the object (eg. Gene) this synonym describes.
      * @param value the Synonym value
-     * @param isPrimary true if this is a primary identifier, false if not, null if don't know
      * @param store if true, will store item
      * @throws ObjectStoreException if the synonym can't be stored
      * @throws SAXException if the synonym can't be stored
      * @return the synonym item or null if this is a duplicate
      */
-    public Item createSynonym(String subjectId, String value, String isPrimary, boolean store)
+    public Item createSynonym(String subjectId, String value, boolean store)
         throws SAXException, ObjectStoreException {
         if (StringUtils.isEmpty(value)) {
             return null;
@@ -261,9 +260,6 @@ public abstract class BioDBConverter extends DBConverter
             Item synonym = createItem("Synonym");
             synonym.setAttribute("value", value);
             synonym.setReference("subject", subjectId);
-            if (!StringUtils.isEmpty(isPrimary)) {
-                synonym.setAttribute("isPrimary", isPrimary);
-            }
             synonyms.add(key);
             if (store) {
                 store(synonym);
@@ -278,14 +274,12 @@ public abstract class BioDBConverter extends DBConverter
      * Used by chado
      * @param subjectId the Synonym subject id
      * @param value the Synonym value
-     * @param isPrimary true if this is a primary identifier
      * @return the new Synonym
      * @deprecated use the new create synonym method that optionally stores the synonym
      */
-    public Item createSynonym(String subjectId, String value, boolean isPrimary) {
+    public Item createSynonym(String subjectId, String value) {
         Item synonym = createItem("Synonym");
         synonym.setAttribute("value", value);
-        synonym.setAttribute("isPrimary", String.valueOf(isPrimary));
         synonym.setReference("subject", subjectId);
         return synonym;
     }
