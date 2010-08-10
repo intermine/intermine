@@ -94,6 +94,7 @@ public class CreateReferences
 
         LOG.info("insertReferences stage 5");
 //        insertGeneAnnotationReferences();
+
     }
 
     /**
@@ -328,7 +329,7 @@ public class CreateReferences
         Query q = new Query();
         q.setDistinct(false);
 
-        QueryClass qcMRNA = new QueryClass(Transcript.class);
+        QueryClass qcMRNA = new QueryClass(MRNA.class);
         q.addFrom(qcMRNA);
         q.addToSelect(qcMRNA);
         q.addToOrderBy(qcMRNA);
@@ -339,7 +340,7 @@ public class CreateReferences
         q.addToOrderBy(qcUTR);
 
         QueryCollectionReference mrnaUtrsRef =
-            new QueryCollectionReference(qcMRNA, "uTRs");
+            new QueryCollectionReference(qcMRNA, "UTRs");
         ContainsConstraint mrnaUtrsConstraint =
             new ContainsConstraint(mrnaUtrsRef, ConstraintOp.CONTAINS, qcUTR);
 
