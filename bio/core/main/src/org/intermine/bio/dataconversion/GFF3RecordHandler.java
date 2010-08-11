@@ -426,9 +426,8 @@ public class GFF3RecordHandler
      * @param value the Synonym value
      * @return the new Synonym Item
      */
-    public Item addSynonym(Item subject, String type, String value) {
+    protected Item addSynonym(Item subject, String type, String value) {
         Item synonym = getItemFactory().makeItem(null, "Synonym", "");
-        synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
         synonym.setReference("subject", subject.getIdentifier());
         synonym.addToCollection("dataSets", getDataSet());
