@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,6 +35,7 @@ import org.intermine.bio.chado.config.CreateCollectionAction;
 import org.intermine.bio.chado.config.CreateSynonymAction;
 import org.intermine.bio.chado.config.DoNothingAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
+import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -110,6 +112,9 @@ public class SequenceProcessor extends ChadoProcessor
     // unique
     private static final String TEMP_FEATURE_TABLE_NAME_PREFIX = "intermine_chado_features_temp";
 
+    private static final Map<String, String> SO_TERMS = new HashMap<String, String>();
+    private static String ontologyRefId = null;
+
     // map used by processFeatureCVTermTable() to make sure the singletons objects (eg. those of
     // class "SequenceOntologyTerm") are only created once
     private final MultiKeyMap singletonMap = new MultiKeyMap();
@@ -120,7 +125,6 @@ public class SequenceProcessor extends ChadoProcessor
     static final String NAME_STRING = "name";
     static final String SEQUENCE_STRING = "sequence";
     static final String LENGTH_STRING = "length";
-
     static final String SOURCE_STRING = "source";
 
     /**
@@ -481,7 +485,56 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException if an error occurs while storing
      */
     protected Integer store(Item feature, int taxonId) throws ObjectStoreException {
+        setSOTerm(feature);
         return getChadoDBConverter().store(feature);
+    }
+
+    private void setSOTerm(Item item) {
+        if (item.canHaveReference("sequenceOntologyTerm")
+                && !item.hasReference("sequenceOntologyTerm")) {
+            String soTermId = getSoTerm(item);
+            if (!StringUtils.isEmpty(soTermId)) {
+                item.setReference("sequenceOntologyTerm", soTermId);
+            }
+        }
+    }
+
+    private void setOntology() {
+        if (ontologyRefId == null) {
+            Item item = getChadoDBConverter().createItem("Ontology");
+            item.setAttribute("name", "Sequence Ontology");
+            item.setAttribute("url", "http://www.sequenceontology.org");
+            try {
+                getChadoDBConverter().store(item);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("Can't store ontology", e);
+            }
+            ontologyRefId = item.getIdentifier();
+        }
+    }
+
+    private String getSoTerm(Item item) {
+        String soName = null;
+        try {
+            soName = BioConverterUtil.javaNameToSO(item.getClassName());
+            if (soName == null) {
+                return null;
+            }
+            String soRefId = SO_TERMS.get(soName);
+            if (StringUtils.isEmpty(soRefId)) {
+                Item soterm = getChadoDBConverter().createItem("SOTerm");
+                soterm.setAttribute("name", soName);
+                soterm.setReference("ontology", ontologyRefId);
+                getChadoDBConverter().store(soterm);
+                soRefId = soterm.getIdentifier();
+                SO_TERMS.put(soName, soRefId);
+            }
+            return soRefId;
+        } catch (IOException e) {
+            return null;
+        } catch (ObjectStoreException e) {
+            return null;
+        }
     }
 
     /**
@@ -1320,11 +1373,6 @@ public class SequenceProcessor extends ChadoProcessor
                         if (existingSynonyms.contains(newFieldValue)) {
                             continue;
                         }
-                        String synonymType = synonymAction.getSynonymType();
-                        boolean isPrimary = false;
-                        if (fieldsSet.contains(newFieldValue)) {
-                            isPrimary = true;
-                        }
                         Item synonym = createSynonym(fdat, newFieldValue);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
@@ -1337,7 +1385,6 @@ public class SequenceProcessor extends ChadoProcessor
                             Item item = null;
                             String fieldName = cca.getFieldName();
                             String className = cca.getClassName();
-                            boolean isReference = cca.isReference();
                             if (cca.createSingletons()) {
                                 MultiKey singletonKey =
                                     new MultiKey(className, fieldName, cvtermName);
@@ -1355,9 +1402,9 @@ public class SequenceProcessor extends ChadoProcessor
                             String referenceName = cca.getReferenceName();
                             List<Item> itemList;
                             // creating collection, already seen this ref
-                            if (!isReference && dataMap.containsKey(referenceName)) {
+                            if (dataMap.containsKey(referenceName)) {
                                 itemList = dataMap.get(referenceName);
-                            // new collection, or creating a reference
+                            // new collection
                             } else {
                                 itemList = new ArrayList<Item>();
                                 dataMap.put(referenceName, itemList);
@@ -1475,9 +1522,6 @@ public class SequenceProcessor extends ChadoProcessor
                     // no actions configured for this synonym
                     continue;
                 }
-
-                boolean setField = false;
-
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
@@ -1487,7 +1531,6 @@ public class SequenceProcessor extends ChadoProcessor
                             setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
                                          newFieldValue);
                             existingAttributes.add(setAction.getFieldName());
-                            setField = true;
                             if (setAction.getFieldName().equals("primaryIdentifier")) {
                                 fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
                             }

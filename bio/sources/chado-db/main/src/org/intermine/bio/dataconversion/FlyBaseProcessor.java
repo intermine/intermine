@@ -443,8 +443,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     protected ChadoCV getFlyBaseMiscCV(Connection connection) throws SQLException {
         ChadoCVFactory cvFactory = new ChadoCVFactory(connection);
-        return cvFactory.getChadoCV(FLYBASE_MISCELLANEOUS_CV, getOntology(
-                FLYBASE_SEQUENCE_ONTOLOGY));
+        return cvFactory.getChadoCV(FLYBASE_MISCELLANEOUS_CV);
     }
 
     /**
@@ -456,22 +455,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     protected ChadoCV getFlyBaseSequenceOntologyCV(Connection connection) throws SQLException {
         ChadoCVFactory cvFactory = new ChadoCVFactory(connection);
-        return cvFactory.getChadoCV(FLYBASE_SO_CV_NAME, getOntology(FLYBASE_SEQUENCE_ONTOLOGY));
-    }
-
-    private String getOntology(String ontologyName) {
-        String ontologyRefId = ontologies.get(ontologyName);
-        if (ontologyRefId == null) {
-            Item item = getChadoDBConverter().createItem("Ontology");
-            item.setAttribute("name", ontologyName);
-            try {
-                getChadoDBConverter().store(item);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException("Error storing ontology", e);
-            }
-            ontologyRefId = item.getIdentifier();
-        }
-        return ontologyRefId;
+        return cvFactory.getChadoCV(FLYBASE_SO_CV_NAME);
     }
 
     /**

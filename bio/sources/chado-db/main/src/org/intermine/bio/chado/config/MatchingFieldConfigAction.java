@@ -22,7 +22,7 @@ import org.intermine.util.CacheMap;
 public class MatchingFieldConfigAction extends ConfigAction
 {
     private final Pattern pattern;
-    private final CacheMap cacheMap = new CacheMap();
+    private final CacheMap<String, Matcher> cacheMap = new CacheMap<String, Matcher>();
 
     /**
      * Construct a MatchingFieldConfigAction.
@@ -77,15 +77,15 @@ public class MatchingFieldConfigAction extends ConfigAction
             return value;
         } else {
             if (matcher.groupCount() == 1) {
-               if (matcher.group(1) == null) {
-                   // special case - the pattern matches, but doesn't match the capturing group
-                   return value;
-               } else {
-                   return matcher.group(1);
-               }
+                if (matcher.group(1) == null) {
+                    // special case - the pattern matches, but doesn't match the capturing group
+                    return value;
+                } else {
+                    return matcher.group(1);
+                }
             } else {
                 throw new RuntimeException("more than one capturing group in: "
-                                           + pattern.toString());
+                        + pattern.toString());
             }
         }
     }
