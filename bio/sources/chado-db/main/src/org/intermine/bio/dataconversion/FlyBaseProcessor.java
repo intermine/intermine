@@ -73,6 +73,10 @@ public class FlyBaseProcessor extends SequenceProcessor
     // a pattern the matches attribute stored in FlyBase properties, eg. "@FBcv0000289:hypomorph@"
     private static final String FLYBASE_PROP_ATTRIBUTE_PATTERN = "@([^@]+)@";
 
+    private static final String FLYBASE_SEQUENCE_ONTOLOGY = "Sequence Ontology";
+
+    private Map<String, String> ontologies = new HashMap<String, String>();
+
     /**
      * A ConfigAction that overrides processValue() to change FlyBase attribute tags
      * (like "@FBcv0000289:hypomorph@") to text like: "hypomorph"
@@ -263,21 +267,6 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     /**
-     * Add the typeId to the List that is the value in the map for the featureId, creating the
-     * List if necessary.
-     */
-//    private void addToMapList(Map<Integer, List<Integer>> map, int featureId, int typeId) {
-//        List<Integer> list;
-//        if (map.containsKey(featureId)) {
-//            list = map.get(featureId);
-//        } else {
-//            list = new ArrayList<Integer>();
-//            map.put(featureId, list);
-//        }
-//        list.add(typeId);
-//    }
-
-    /**
      * Return the results of running a query for the chromosome_structure_variation feature types.
      * @param connection the connection
      * @return the results
@@ -454,7 +443,8 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     protected ChadoCV getFlyBaseMiscCV(Connection connection) throws SQLException {
         ChadoCVFactory cvFactory = new ChadoCVFactory(connection);
-        return cvFactory.getChadoCV(FLYBASE_MISCELLANEOUS_CV);
+        return cvFactory.getChadoCV(FLYBASE_MISCELLANEOUS_CV, getOntology(
+                FLYBASE_SEQUENCE_ONTOLOGY));
     }
 
     /**
@@ -466,7 +456,22 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     protected ChadoCV getFlyBaseSequenceOntologyCV(Connection connection) throws SQLException {
         ChadoCVFactory cvFactory = new ChadoCVFactory(connection);
-        return cvFactory.getChadoCV(FLYBASE_SO_CV_NAME);
+        return cvFactory.getChadoCV(FLYBASE_SO_CV_NAME, getOntology(FLYBASE_SEQUENCE_ONTOLOGY));
+    }
+
+    private String getOntology(String ontologyName) {
+        String ontologyRefId = ontologies.get(ontologyName);
+        if (ontologyRefId == null) {
+            Item item = getChadoDBConverter().createItem("Ontology");
+            item.setAttribute("name", ontologyName);
+            try {
+                getChadoDBConverter().store(item);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("Error storing ontology", e);
+            }
+            ontologyRefId = item.getIdentifier();
+        }
+        return ontologyRefId;
     }
 
     /**
@@ -651,9 +656,24 @@ public class FlyBaseProcessor extends SequenceProcessor
 //            map.put(new MultiKey("anatomyterm", "CDNAClone", null),
 //                    Arrays.asList(new SetFieldConfigAction("tissueSource")));
 
-            map.put(new MultiKey("cvterm", "Gene", "SO"),
-                    Arrays.asList(new CreateCollectionAction("SOTerm", "sequenceOntologyTerm",
-                            "name", true, true)));
+            // feature_cvterm example for Transposition: we create a featureTerms collection in the
+            // Transposition objects containing SequenceOntologyTerm objects.  For the current
+            // feature we create one SequenceOntologyTerm object for each associated "SO" cvterm.
+            // We set the "name" field of the SequenceOntologyTerm to be the name from the cvterm
+            // table.
+            List<String> chromosomeStructureVariationClassNames =
+                Arrays.asList("ChromosomeStructureVariation", "ChromosomalDeletion",
+                        "ChromosomalDuplication", "ChromosomalInversion",
+                        "ChromosomalTranslocation", "ChromosomalTransposition");
+            for (String className: chromosomeStructureVariationClassNames) {
+                map.put(new MultiKey("cvterm", className, "SO"),
+                        Arrays.asList(new CreateCollectionAction("SOTerm", "abberationSOTerms", "name",
+                                true)));
+            }
+//
+//            map.put(new MultiKey("cvterm", "Gene", "SO"),
+//                    Arrays.asList(new CreateCollectionAction("SOTerm", "sequenceOntologyTerm",
+//                            "name", true, true)));
 
             // feature configuration example: for features of class "Exon", from "FlyBase",
             // set the Gene.symbol to be the "name" field from the chado feature
@@ -1402,8 +1422,6 @@ public class FlyBaseProcessor extends SequenceProcessor
 
         return phenotypeAnnotation;
     }
-
-
 
     private static final Pattern FLYBASE_TERM_IDENTIFIER_PATTERN =
         Pattern.compile("^FB[^\\d][^\\d]\\d+");

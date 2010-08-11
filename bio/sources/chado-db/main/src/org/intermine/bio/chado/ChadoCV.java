@@ -23,12 +23,16 @@ public class ChadoCV
 {
     private final String cvName;
     private final Map<Integer, ChadoCVTerm> termMap = new HashMap<Integer, ChadoCVTerm>();
+    private String ontology;
+
     /**
      * Create a new ChadoCV.
      * @param cvName the name of the cv in chado that this object represents.
+     * @param ontology refId for ontology for this cv, eg. Sequence Ontology
      */
-    public ChadoCV(String cvName) {
+    public ChadoCV(String cvName, String ontology) {
         this.cvName = cvName;
+        this.ontology = ontology;
     }
 
     /**
@@ -79,5 +83,12 @@ public class ChadoCV
      */
     public Set<ChadoCVTerm> getAllCVTerms() {
         return new HashSet<ChadoCVTerm>(termMap.values());
+    }
+
+    /**
+     * @return the ontology
+     */
+    public String getOntology() {
+        return ontology;
     }
 }
