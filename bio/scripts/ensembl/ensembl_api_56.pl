@@ -2,7 +2,7 @@
 # translates data from ensembl database to intermine items XML file
 
 BEGIN {
-    unshift (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../../intermine/perl/lib');    
+    unshift (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../../intermine/perl/lib');
 }
 
 use strict;
@@ -27,7 +27,7 @@ getopt('rl');
 
 if (@ARGV != 3) {
   die "usage: [-r release] [-l logfile] mine_name taxon_id data_destination\n"
-     ."eg.    [-r preview] [-l out.log] flymine   9606     /shared/data/ensembl/current\n";  
+     ."eg.    [-r preview] [-l out.log] flymine   9606     /shared/data/ensembl/current\n";
 }
 
 # vars from the command line
@@ -46,7 +46,7 @@ else {
     $loghandle->fdopen( \*STDERR,  '>>' ) or die $!;
 }
 my @times = localtime($start_time);
-print $loghandle 
+print $loghandle
     '[',
     join('-', ($times[5] + 1900), ($times[4]+1), $times[3]),
     " $times[2]:$times[1]] Running $0\n";
@@ -83,12 +83,12 @@ foreach my $taxon_id (keys %organisms) {
 
     ############################################
     # Set up the xml writing apparatus
-    my $output = new IO::File(">$data_destination/$taxon_id.xml") or die 
+    my $output = new IO::File(">$data_destination/$taxon_id.xml") or die
 	"Could not open $data_destination/$taxon_id.xml for writing $!";
     my $writer = new XML::Writer(DATA_MODE => 1, DATA_INDENT => 3, OUTPUT => $output);
     $writer->startTag('items');
     ############################################
-    
+
     ############################################
     # Set info for datasource and write it out
     $datasource_item = make_item("DataSource");
@@ -99,7 +99,7 @@ foreach my $taxon_id (keys %organisms) {
 
     ############################################
     # Set info for organism and write it out
-    $org_item = make_item("Organism"); 
+    $org_item = make_item("Organism");
     $org_item->set(taxonId => $taxon_id);
     $org_item->{':uniq'} = $taxon_id;
     writeout($org_item, $writer);
@@ -137,7 +137,7 @@ foreach my $taxon_id (keys %organisms) {
 
     my $slice_adaptor = $dbCore->get_sliceAdaptor();
     my $slices = $slice_adaptor->fetch_all('toplevel');
-    
+
     my %seen_chromosomes;
     while (my $chromosome = shift @{$slices}) { # Ugly, but supposedly more memory-efficient way of doing things
                                           # cf: http://ncbi36.ensembl.org/info/docs/api/core/core_tutorial.html
@@ -149,46 +149,51 @@ foreach my $taxon_id (keys %organisms) {
 
 	############################################
 	# Set info for chromosome and write it out
-        my ($chromosome_item, $syn) = make_chromosome($chromosome_name);
+        my ($chromosome_item, $soterm) = make_chromosome($chromosome_name);
 	writeout($chromosome_item, $writer);
-	writeout($syn, $writer);
+	writeout($soterm, $writer);
 	############################################
 
         my $genes = $chromosome->get_all_Genes; # load genes lazily - then they can be dumped later
-	                                                        
+
         while (my $gene = shift @$genes) {
-	    
+
 	    ############################################
 	    # Set info for gene and write it out
+
             my $gene_item = make_item("Gene");
             my $gene_type = $gene->biotype();
-            
-            $gene_item->set(featureType => $gene_type);
+
+            my $GeneSOitem    = make_soterm($gene_type);
+
+	    $gene_item->set(sequenceOntologyTerm => $GeneSOitem);
 	    #removed from model
-#           $gene_item->set(curated     => ($gene->status eq 'KNOWN')? 'true' : 'false'); 
-            
+#           $gene_item->set(curated     => ($gene->status eq 'KNOWN')? 'true' : 'false');
+
             my $location = parse_feature($gene, $gene_item, $chromosome_item);  # fills in the info for gene_item
-	    add_xrefs($gene, $gene_item) if ($taxon_id == 9606); # add cross references 
+	    add_xrefs($gene, $gene_item) if ($taxon_id == 9606); # add cross references
                                                                  # when run for humans
-	    writeout($gene_item, $writer);
-	    writeout($location, $writer);
-	    
-            my $syn = make_synonym($gene_item, "identifier", $gene->stable_id());
-	    writeout($syn, $writer);
-            ############################################	    
-            
+	    writeout($gene_item,  $writer);
+	    writeout($location,   $writer);
+	    writeout($GeneSOitem, $writer);
+            ############################################
+
 	    my $transcripts = $gene->get_all_Transcripts();
             while (my $transcript = shift @$transcripts) {
-                
+
 		############################################
 		# Set info for transcript and write it out
                 my $transcript_item;
+        		my $TranscriptSOitem;
+
                 if ($gene_type eq "protein_coding") {
                     $transcript_item = make_item("MRNA");
+		            $TranscriptSOitem = make_soterm('mRNA');
                 } else {
                     $transcript_item = make_item("Transcript");
+		            $TranscriptSOitem = make_soterm('transcript');
                 }
-
+		$transcript_item->set(sequenceOntologyTerm => $TranscriptSOitem);
 		my $location = parse_feature($transcript, $transcript_item, $chromosome_item);
 		  writeout($location, $writer);
                 $transcript_item->set(gene     => $gene_item);
@@ -196,9 +201,8 @@ foreach my $taxon_id (keys %organisms) {
 		  writeout($seq, $writer);
                 $transcript_item->set(sequence => $seq);
                   writeout($transcript_item, $writer);
+		writeout($TranscriptSOitem, $writer);
 		  # TODO are these transcripts going to be unique?
-                my $syn = make_synonym($transcript_item, "identifier", $transcript->stable_id());
-		  writeout($syn, $writer);
 		############################################
 
 		if ($transcript->biotype() eq "protein_coding") {
@@ -208,12 +212,12 @@ foreach my $taxon_id (keys %organisms) {
                         warn "no translation for gene: " . $gene->stable_id() . "\n";
                         next;
                     }
-		    
-		    ############################################	
+
+		    ############################################
 		    # Set protein information and write out
                     my $protein_seq  = $translation->seq();
                     my ($protein_item, $prot_seq_item) = make_protein($protein_seq);
-                
+
                     $protein_item->set(genes       => [$gene_item]);
                     $protein_item->set(transcripts => [$transcript_item]);
 
@@ -223,43 +227,48 @@ foreach my $taxon_id (keys %organisms) {
 
 		    ############################################
 		    # Set CDS information and write out
-                    my $cds_item              = make_item("CDS");
-                    my $cds_primaryIdentifier = $transcript->stable_id() . "_CDS";
+            my $cds_item              = make_item("CDS");
+		    my $cdsSOitem             = make_soterm('CDS');
+            $cds_item->set(sequenceOntologyTerm => $cdsSOitem);
+            writeout($cdsSOitem, $writer);
+            my $cds_primaryIdentifier = $transcript->stable_id() . "_CDS";
 		    my $sequence              = make_seq($transcript->translateable_seq());
 		    writeout($sequence, $writer);
-		    
-                    $cds_item->set(primaryIdentifier => $cds_primaryIdentifier);                    
-                    $cds_item->set(sequence          => $sequence);
-                    $cds_item->set(MRNA              => $transcript_item);
-                    $cds_item->set(protein           => $protein_item);
+
+            $cds_item->set(primaryIdentifier => $cds_primaryIdentifier);
+            $cds_item->set(sequence          => $sequence);
+            $cds_item->set(transcript        => $transcript_item);
+            $cds_item->set(protein           => $protein_item);
 		    $cds_item->{':uniq'} = $cds_primaryIdentifier;
 
 		    writeout($cds_item, $writer);
 		    ############################################
-                }
+        }
 
 		my $exons = $transcript->get_all_Exons();
 		while (my $exon = shift @$exons) {
-		    
+
 		    ############################################
 		    # Set exon information and write out
-                    my $primary_identifier = $exon->stable_id();
-                    my ($exon_item, $syn)  = make_exon($primary_identifier);
+            my $primary_identifier = $exon->stable_id();
+            my $exon_item          = make_exon($primary_identifier);
+            my $exonSOitem         = make_soterm('exon');
+            $exon_item->set(sequenceOntologyTerm => $exonSOitem);
 		    my $seq_item           = make_seq($exon->seq->seq);
 
-                    my $location = parse_feature($exon, $exon_item, $chromosome_item);     
-                    $exon_item->set(transcripts => [$transcript_item]);
-                    $exon_item->set(gene        => $gene_item);                    
-                    $exon_item->set(sequence    => $seq);
+            my $location = parse_feature($exon, $exon_item, $chromosome_item);
+            $exon_item->set(transcripts => [$transcript_item]);
+            $exon_item->set(gene        => $gene_item);
+            $exon_item->set(sequence    => $seq);
 
-		    writeout($exon_item, $writer);		
-		    writeout($syn, $writer);
+		    writeout($exon_item, $writer);
+		    writeout($exonSOitem, $writer);
 		    writeout($seq_item, $writer);
 		    writeout($location, $writer);
 		    ############################################
                 }
             }
-        }    
+        }
     }
 
     $writer->endTag('items');
@@ -278,7 +287,7 @@ foreach my $taxon_id (keys %organisms) {
 	    my %seen = ();
 	    my @uniqs = grep { ! $seen{$_} ++ } @{$hash->{$_}};
 	    if (@uniqs > 1) {
-		print $loghandle scalar(@uniqs), 
+		print $loghandle scalar(@uniqs),
 		  " matches for $thing $_: ",
 		  join(' ', @uniqs),
 		  "\n";
@@ -295,6 +304,7 @@ BEGIN {
     my $has_been_written = {}; # state variables written as closures for compatibility with v5.8
     my $total_written;
     my $total_made;
+
     sub writeout {
 	my $item       = shift;
 	my $writer     = shift;
@@ -305,7 +315,7 @@ BEGIN {
 
 	if ($already_written) {
 	    &announce_duplicate($this_id, $implements, $uniq, $already_written)
-		unless ($already_written == $this_id); 
+		unless ($already_written == $this_id);
                 # ie. if it isn't _this_ item which we wrote
 	    return;
 	}
@@ -316,7 +326,7 @@ BEGIN {
 	}
 	return;
     }
-    
+
     sub make_item {
 	my $implements = shift;
 	my $item = $item_factory->make_item(implements => $implements);
@@ -335,7 +345,7 @@ BEGIN {
 
     sub check_output {
 	if ($total_made != $total_written) {
-	    warn "We made $total_made items but wrote out $total_written!\n", 
+	    warn "We made $total_made items but wrote out $total_written!\n",
                  "Something went wrong: please check your logs\n";
 	}
 	return $total_made - $total_written;
@@ -350,13 +360,13 @@ sub announce_duplicate {
 }
 
 
-# parses the feature returned from ensembl and 
+# parses the feature returned from ensembl and
 # assigns the classes to the intermine item
-# used for genes, transcripts, and exons.  
+# used for genes, transcripts, and exons.
 sub parse_feature {
-    my ($feature, $item, $chromosome) = @_;    
+    my ($feature, $item, $chromosome) = @_;
 
-    $item->set(primaryIdentifier  => $feature->stable_id());   
+    $item->set(primaryIdentifier  => $feature->stable_id());
     $item->set(chromosome         => $chromosome);
 
     my $location                  = make_location($feature, $item, $chromosome);
@@ -382,10 +392,10 @@ sub add_xrefs {
 	    push @{$genesncbis{$gene_name}}, $ncbi_no;
 	    push @{$ncbisgenes{$ncbi_no}}, $gene_name;
 	}
-    }   
+    }
 }
 
-# read in the config file 
+# read in the config file
 sub read_file { # Why is this not in the InterMine::Util module?
     my($filename) = shift;
     my @lines     = ();
@@ -398,7 +408,7 @@ sub read_file { # Why is this not in the InterMine::Util module?
         push @lines, $_;    # push the data line onto the array
     }
     close FILE;
-    return @lines;  
+    return @lines;
 }
 
 # parse the config file
@@ -425,7 +435,7 @@ sub make_location {
     my $itemId       = $item->get('primaryIdentifier');
     my $chromosomeId = $chromosome->get('primaryIdentifier');
     my $key          = join('|', $start, $end, $itemId, $chromosomeId);
-    
+
     unless ( exists $item_store{locations}{$key} ) {
 
 	$location = make_item('Location');
@@ -435,34 +445,18 @@ sub make_location {
 	$location->set(strand     => $feature->strand());
 	$location->set(feature    => $item);
 	$location->set(locatedOn  => $chromosome);
-   
+
 	$location->{':uniq'}         = $key;
 	$item_store{locations}{$key} = $location;
     }
 
-    return $item_store{locations}{$key}; 
-}
-
-sub make_synonym {
-    my ($subject, $type, $value) = @_;
-    
-    my $syn = make_item("Synonym");
-    
-    $syn->set(subject   => $subject);
-    $syn->set(type      => $type);
-    $syn->set(value     => $value);
-    $syn->set(isPrimary => 'true');
-    
-    my $key = $subject . $type . $value;
-    $syn->{':uniq'} = $key;
-    
-    return $syn;
+    return $item_store{locations}{$key};
 }
 
 sub make_chromosome {
 
     my $name = shift;
-    
+
     unless (exists $item_store{chromosomes}{real}{$name}) {
 
 	my $chromosome_item                     = make_item('Chromosome');
@@ -470,19 +464,29 @@ sub make_chromosome {
 	$chromosome_item->{':uniq'}             = $name;
 
 	$item_store{chromosomes}{real}{$name} = $chromosome_item;
-	$item_store{chromosomes}{syn}{$name} 
-	         = make_synonym($chromosome_item, 'identifier', $name);
+	my $SOTerm = make_soterm('chromosome');
+    $item_store{chromosomes}{SO}{$name} = $SOTerm;
     }
-    
-    return $item_store{chromosomes}{real}{$name}, 
-           $item_store{chromosomes}{syn}{$name};
-}   
 
+    return $item_store{chromosomes}{real}{$name},
+           $item_store{chromosomes}{SO}{$name};
+}
+
+sub make_soterm {
+    my $term   = shift;
+    unless (exists $item_store{SOTerm}{$term}) {
+        my $soitem = make_item('SOTerm');  
+        $soitem->set(name => $term);
+        $soitem->{':uniq'} = $term;
+        $item_store{SOTerm}{$term} = $soitem;
+    }
+    return $item_store{SOTerm}{$term};
+}
 sub make_protein {
 
     my $seq         = shift;
     my $md5checksum = encodeSeq($seq);
-    
+
     unless ( exists $item_store{proteins}{$md5checksum} ) {
 
 	my $protein_item = make_item('Protein');
@@ -502,19 +506,17 @@ sub make_protein {
 
 sub make_exon {
     my $primary_id = shift;
-    
+
     unless (exists $item_store{exons}{real}{$primary_id}) {
-	my $exon_item = make_item("Exon"); 
+	my $exon_item = make_item("Exon");
 
 	$exon_item->set(primaryIdentifier    => $primary_id);
 	$exon_item->{':uniq'}                 = $primary_id;
 
 	$item_store{exons}{real}{$primary_id} = $exon_item;
-	$item_store{exons}{syn}               = make_synonym($exon_item, "identifier", $primary_id);
     }
-    
-    return $item_store{exons}{real}{$primary_id},
-           $item_store{exons}{syn};
+
+    return $item_store{exons}{real}{$primary_id};
 }
 
 
@@ -522,18 +524,18 @@ sub make_seq {
 
     my $seq = shift;
     my $md5checksum = encodeSeq($seq);
-    
+
     unless (exists $item_store{seqs}{$md5checksum}) {
 	my  $seq_item = make_item('Sequence');
 	$seq_item->set(residues    => $seq);
 	$seq_item->set(length      => length($seq));
 	$seq_item->set(md5checksum => $md5checksum);
-    
+
 	$seq_item->{':uniq'} = $md5checksum;
 	$item_store{seqs}{$md5checksum} = $seq_item;
     }
     return $item_store{seqs}{$md5checksum}; #$seq_item;
-}   
+}
 
 sub encodeSeq {
 
@@ -542,17 +544,17 @@ sub encodeSeq {
     my $ctx = Digest::MD5->new;
     $ctx->add($seq);
     return $ctx->hexdigest;
-    
+
 }
 
-# user can specify which chromosomes to load  
+# user can specify which chromosomes to load
 # eg 1-21,X,Y
 sub parse_chromosomes {
     my ($chromosome_string) = shift;
-  
+
     my @bits = split(",", $chromosome_string);
     my %chromosomes;
- 
+
     foreach (@bits) {
         my $bit = $_;
 
@@ -577,7 +579,7 @@ sub parse_chromosomes {
 sub parse_orgs { # returns a hash with the keys set to the comma-delimited set of taxon ids
                  # and values all set to ''
     my $taxon_ids = shift;
-    my %orgs;    
+    my %orgs;
     for (split(',', $taxon_ids)) {
         $orgs{$_} = "";
     }
