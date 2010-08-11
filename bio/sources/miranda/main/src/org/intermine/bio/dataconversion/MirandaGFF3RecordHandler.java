@@ -26,12 +26,8 @@ import org.intermine.xml.full.Item;
 public class MirandaGFF3RecordHandler extends GFF3RecordHandler
 {
     private Map<String, Item> targets = new HashMap<String, Item>();
-
     private Map<String, Item> miRNAgenes = new HashMap<String, Item>();
-
     private Set<String> problems = new HashSet<String>();
-
-
     protected IdResolverFactory geneResolverFactory;
     protected IdResolverFactory mrnaResolverFactory;
 
@@ -69,7 +65,6 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
 
     private Item getTarget(String targetName) {
         Item target = null;
-
         IdResolver resolver = mrnaResolverFactory.getIdResolver();
         String primaryIdentifier = null;
         int resCount = resolver.countResolutions("7227", targetName);
@@ -131,7 +126,5 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
             addItem(gene);
         }
         return gene;
-
     }
-
 }

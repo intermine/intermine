@@ -265,13 +265,8 @@ public class GFF3Converter
                 feature.setAttribute("name", (String) names.get(0));
                 for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
                     String recordName = (String) i.next();
-                    Item synonym = createItem("Synonym");
                     if (!recordName.equals(record.getId())) {
-                        synonym.setReference("subject", feature.getIdentifier());
-                        synonym.setAttribute("value", recordName);
-                        synonym.setAttribute("type", "name");
-                        synonym.addToCollection("dataSets", dataSet);
-                        synonymsToAdd.add(synonym);
+                        synonymsToAdd.add(getSynonym(feature, recordName));
                     }
                 }
             } else {
@@ -279,12 +274,7 @@ public class GFF3Converter
                 for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
                     String recordName = (String) i.next();
                     if (!recordName.equals(record.getId())) {
-                        Item synonym = createItem("Synonym");
-                        synonym.setReference("subject", feature.getIdentifier());
-                        synonym.setAttribute("value", recordName);
-                        synonym.setAttribute("type", "symbol");
-                        synonym.addToCollection("dataSets", dataSet);
-                        synonymsToAdd.add(synonym);
+                        synonymsToAdd.add(getSynonym(feature, recordName));
                     }
                 }
             }
@@ -297,7 +287,6 @@ public class GFF3Converter
 
         feature.addReference(getOrgRef());
         feature.addToCollection("dataSets", dataSet);
-        setSOTerm(feature);
         if (!record.getType().equals("chromosome") && seq != null) {
             boolean makeLocation = record.getStart() >= 1 && record.getEnd() >= 1
                 && !dontCreateLocations
@@ -344,24 +333,6 @@ public class GFF3Converter
             feature.setAttribute("score", String.valueOf(score));
             feature.setAttribute("scoreType", record.getSource());
         }
-        if (feature.hasAttribute("secondaryIdentifier")) {
-            Item synonym = createItem("Synonym");
-            synonym.setReference("subject", feature.getIdentifier());
-            String value = feature.getAttribute("secondaryIdentifier").getValue();
-            synonym.setAttribute("value", value);
-            synonym.setAttribute("type", "identifier");
-            synonym.addToCollection("dataSets", dataSet);
-            synonymsToAdd.add(synonym);
-        }
-        if (feature.hasAttribute("primaryIdentifier")) {
-            Item synonym = createItem("Synonym");
-            synonym.setReference("subject", feature.getIdentifier());
-            String value = feature.getAttribute("primaryIdentifier").getValue();
-            synonym.setAttribute("value", value);
-            synonym.setAttribute("type", "identifier");
-            synonym.addToCollection("dataSets", dataSet);
-            synonymsToAdd.add(synonym);
-        }
         for (Item synonym : synonymsToAdd) {
             handler.addItem(synonym);
         }
@@ -379,6 +350,7 @@ public class GFF3Converter
             Iterator<?> iter = handler.getItems().iterator();
             while (iter.hasNext()) {
                 Item item = (Item) iter.next();
+                setSOTerm(item);
                 writer.store(ItemHelper.convert(item));
             }
         } catch (ObjectStoreException e) {
@@ -521,15 +493,7 @@ public class GFF3Converter
             if (seq != null) {
                 seq.addReference(getOrgRef());
                 seq.addToCollection("dataSets", getDataSet());
-                setSOTerm(seq);
                 writer.store(ItemHelper.convert(seq));
-
-                Item synonym = createItem("Synonym");
-                synonym.setReference("subject", seq.getIdentifier());
-                synonym.setAttribute("value", identifier);
-                synonym.setAttribute("type", "identifier");
-                synonym.addToCollection("dataSets", getDataSet());
-                handler.addItem(synonym);
                 seqs.put(identifier, seq);
             }
         }
@@ -543,7 +507,8 @@ public class GFF3Converter
      * @return the created item
      */
     protected Item createItem(String className) {
-        return createItem(className, createIdentifier());
+        Item item = createItem(className, createIdentifier());
+        return item;
     }
 
     /**
@@ -567,6 +532,20 @@ public class GFF3Converter
      */
     public void setDontCreateLocations(boolean dontCreateLocations) {
         this.dontCreateLocations = dontCreateLocations;
+    }
+
+    /**
+     * Create and add a synonym Item from the given information.
+     * @param subject the subject of the new Synonym
+     * @param value the Synonym value
+     * @return the new Synonym Item
+     */
+    public Item getSynonym(Item subject, String value) {
+        Item synonym = itemFactory.makeItem(null, "Synonym", "");
+        synonym.setAttribute("value", value);
+        synonym.setReference("subject", subject.getIdentifier());
+        synonym.addToCollection("dataSets", getDataSet());
+        return synonym;
     }
 }
 
