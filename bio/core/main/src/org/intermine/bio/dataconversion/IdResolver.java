@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,9 +19,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.intermine.bio.util.BioConverterUtil;
 
 /**
  * Hold data about primary identifiers and synonyms for a particular class in the
@@ -168,7 +168,7 @@ public class IdResolver
             orgIdMaps.put(taxonId, idMap);
         }
 
-        addToMapList(idMap, primaryIdentifier, ids);
+        BioConverterUtil.addToSetMap(idMap, primaryIdentifier, ids);
 
         Map<String, Set<String>> lookupMap = null;
         Map<String, Set<String>> reverseMap = null;
@@ -200,10 +200,10 @@ public class IdResolver
         }
 
         // map from primaryId back to main/synonym ids
-        addToMapList(reverseMap, primaryIdentifier, ids);
+        BioConverterUtil.addToSetMap(reverseMap, primaryIdentifier, ids);
 
         for (String id : ids) {
-            addToMapList(lookupMap, id, Collections.singleton(primaryIdentifier));
+            BioConverterUtil.addToSetMap(lookupMap, id, primaryIdentifier);
         }
     }
 
@@ -292,7 +292,6 @@ public class IdResolver
         }
     }
 
-
     // check that the given taxon id has some data for it
     private void checkTaxonId(String taxonId) {
         if (!orgIdMaps.containsKey(taxonId)) {
@@ -300,15 +299,5 @@ public class IdResolver
                                                + "no data for taxonId: "
                                                + taxonId + ".");
         }
-    }
-
-    // add a new list to a map or add elements of set to existing map entry
-    private void addToMapList(Map<String, Set<String>> map, String key, Collection<String> values) {
-        Set<String> set = map.get(key);
-        if (set == null) {
-            set = new HashSet<String>();
-            map.put(key, set);
-        }
-        set.addAll(values);
     }
 }
