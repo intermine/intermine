@@ -25,16 +25,13 @@ import junit.framework.TestCase;
 
 public class ChadoCVFactoryTest extends TestCase
 {
-
-    private final static String ONTOLOGY = "Sequence Ontology";
-
     public ChadoCVFactoryTest(String arg) {
         super(arg);
     }
 
     public void testGetChadoCV() throws SQLException {
         ChadoCVFactory factory = new TestChadoCVFactory();
-        ChadoCV cv = factory.getChadoCV("test", ONTOLOGY);
+        ChadoCV cv = factory.getChadoCV("test");
         assertEquals(7, cv.getAllCVTerms().size());
         Set<ChadoCVTerm> rootCVTerms = cv.getRootCVTerms();
         assertEquals(3, rootCVTerms.size());
