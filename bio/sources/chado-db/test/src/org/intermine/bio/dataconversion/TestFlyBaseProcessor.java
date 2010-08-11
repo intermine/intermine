@@ -28,6 +28,8 @@ import com.mockobjects.sql.MockMultiRowResultSet;
 public class TestFlyBaseProcessor extends FlyBaseProcessor
 {
 
+    private final static String ONTOLOGY = "Sequence Ontology";
+
     /**
      * Create a new TestFlyBaseModuleProcessor object.
      * @param chadoDBConverter the ChadoDBConverter
@@ -674,7 +676,7 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
      */
     @Override
     protected ChadoCV getFlyBaseMiscCV(Connection connection) throws SQLException {
-        ChadoCV cv = new ChadoCV(FlyBaseProcessor.FLYBASE_MISCELLANEOUS_CV);
+        ChadoCV cv = new ChadoCV(FlyBaseProcessor.FLYBASE_MISCELLANEOUS_CV, ONTOLOGY);
         ChadoCVTerm root = new ChadoCVTerm("origin of mutation");
         ChadoCVTerm child = new ChadoCVTerm("&agr; ray");
         child.getDirectParents().add(root);
@@ -689,7 +691,7 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
      */
     @Override
     protected ChadoCV getFlyBaseSequenceOntologyCV(Connection connection) throws SQLException {
-        ChadoCV cv = new ChadoCV(FlyBaseProcessor.FLYBASE_SO_CV_NAME);
+        ChadoCV cv = new ChadoCV(FlyBaseProcessor.FLYBASE_SO_CV_NAME, ONTOLOGY);
         ChadoCVTerm root = new ChadoCVTerm("chromosome_structure_variation");
         ChadoCVTerm child1 = new ChadoCVTerm("interchromosomal_transposition");
         ChadoCVTerm child2 = new ChadoCVTerm("chromosomal_translocation");

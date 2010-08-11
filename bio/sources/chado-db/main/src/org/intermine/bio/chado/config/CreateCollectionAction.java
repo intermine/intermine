@@ -33,13 +33,13 @@ public class CreateCollectionAction extends MatchingFieldConfigAction
      * be created
      */
     public CreateCollectionAction(String className, String referenceName, String fieldName,
-                                  boolean createSingletons, boolean isReference) {
+                                  boolean createSingletons) {
         super(null);
         this.className = className;
         this.referenceName = referenceName;
         this.fieldName = fieldName;
         this.createSingletons = createSingletons;
-        this.isReference = isReference;
+        this.isReference = false;
     }
 
     /**

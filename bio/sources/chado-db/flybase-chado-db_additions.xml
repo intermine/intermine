@@ -33,29 +33,20 @@
     <collection name="dataSets" referenced-type="DataSet"/>
   </class>
   <class name="Gene" is-interface="true">
-    <attribute name="featureType" type="java.lang.String"/>
     <collection name="interactions" referenced-type="Interaction" reverse-reference="gene"/>
   </class>
   <class name="Mutagen" is-interface="true">
     <attribute name="description" type="java.lang.String"/>
     <collection name="alleles" referenced-type="Allele" reverse-reference="mutagens"/>
   </class>
-  <class name="PointMutation" extends="Region" is-interface="true"/>
   <class name="AnatomyTerm" extends="OntologyTerm" is-interface="true" />
   <class name="DevelopmentTerm" extends="OntologyTerm" is-interface="true" />
   <class name="CVTerm" extends="OntologyTerm" is-interface="true"/>
   <class name="ChromosomeStructureVariation" extends="SequenceFeature" is-interface="true">
-    <collection name="featureTerms" referenced-type="SOTerm"/>
+    <collection name="abberationSOTerms" referenced-type="SOTerm"/>
   </class>
   <class name="CDNAClone" is-interface="true">
-  <attribute name="stage" type="java.lang.String"/>
-  <reference name="tissueSource" referenced-type="AnatomyTerm" />
-  </class>
-  <class name="GoldenPathFragment" extends="Region" is-interface="true"/>
-  <class name="RegulatoryRegion" is-interface="true">
-    <reference name="gene" referenced-type="Gene" reverse-reference="regulatoryRegions" />
-  </class>
-  <class name="Gene" is-interface="true">
-    <collection name="regulatoryRegions" referenced-type="RegulatoryRegion" reverse-reference="gene"/>
+    <attribute name="stage" type="java.lang.String"/>
+    <reference name="tissueSource" referenced-type="AnatomyTerm" />
   </class>
 </classes>

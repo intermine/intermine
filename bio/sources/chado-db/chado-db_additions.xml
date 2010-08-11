@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <classes>
-
   <class name="Gene" is-interface="true">
     <attribute name="GLEANRsymbol" type="java.lang.String"/>
     <collection name="alleles" referenced-type="Allele" reverse-reference="gene"/>
@@ -30,7 +29,6 @@
     <collection name="cDNAClones" referenced-type="CDNAClone" reverse-reference="EST"/>
   </class>
   <class name="TFmodule" extends="RegulatoryRegion" is-interface="true" />
-  <class name="ChromosomalTransposition" extends="ChromosomeStructureVariation" is-interface="true" />
   <class name="ChromosomeStructureVariation" is-interface="true">
     <attribute name="available" type="java.lang.Boolean"/>
     <attribute name="confirmedByPCR" type="java.lang.Boolean"/>
@@ -44,5 +42,4 @@
   <class name="Allele" extends="BioEntity" is-interface="true">
     <reference name="gene" referenced-type="Gene" reverse-reference="alleles"/>
   </class>
-  <class name="TRNA" extends="Transcript" is-interface="true" />
 </classes>
