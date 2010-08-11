@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,7 +34,6 @@ import org.intermine.bio.chado.config.CreateCollectionAction;
 import org.intermine.bio.chado.config.CreateSynonymAction;
 import org.intermine.bio.chado.config.DoNothingAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
-import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -112,8 +110,7 @@ public class SequenceProcessor extends ChadoProcessor
     // unique
     private static final String TEMP_FEATURE_TABLE_NAME_PREFIX = "intermine_chado_features_temp";
 
-    private static final Map<String, String> SO_TERMS = new HashMap<String, String>();
-    private static String ontologyRefId = null;
+    protected static String ontologyRefId = null;
 
     // map used by processFeatureCVTermTable() to make sure the singletons objects (eg. those of
     // class "SequenceOntologyTerm") are only created once
@@ -133,6 +130,7 @@ public class SequenceProcessor extends ChadoProcessor
      */
     public SequenceProcessor(ChadoDBConverter chadoDBConverter) {
         super(chadoDBConverter);
+        setOntology();
         synchronized (this) {
             tempTableCount++;
             tempFeatureTableName  = TEMP_FEATURE_TABLE_NAME_PREFIX + "_" + tempTableCount;
@@ -466,6 +464,7 @@ public class SequenceProcessor extends ChadoProcessor
         if (feature.checkAttribute("md5checksum")) {
             feature.setAttribute("md5checksum", md5checksum);
         }
+        setSOTerm(feature, chadoType);
         fdat.setFieldExistenceFlags(feature);
         fdat.setIntermineObjectId(store(feature, taxonId));
         fdat.setItemIdentifier(feature.getIdentifier());
@@ -485,16 +484,16 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException if an error occurs while storing
      */
     protected Integer store(Item feature, int taxonId) throws ObjectStoreException {
-        setSOTerm(feature);
         return getChadoDBConverter().store(feature);
     }
 
-    private void setSOTerm(Item item) {
+    private void setSOTerm(Item item, String featureType)
+        throws ObjectStoreException {
         if (item.canHaveReference("sequenceOntologyTerm")
                 && !item.hasReference("sequenceOntologyTerm")) {
-            String soTermId = getSoTerm(item);
-            if (!StringUtils.isEmpty(soTermId)) {
-                item.setReference("sequenceOntologyTerm", soTermId);
+            Item soTerm = getSoTerm(featureType);
+            if (soTerm != null) {
+                item.setReference("sequenceOntologyTerm", soTerm);
             }
         }
     }
@@ -513,28 +512,24 @@ public class SequenceProcessor extends ChadoProcessor
         }
     }
 
-    private String getSoTerm(Item item) {
-        String soName = null;
-        try {
-            soName = BioConverterUtil.javaNameToSO(item.getClassName());
-            if (soName == null) {
-                return null;
-            }
-            String soRefId = SO_TERMS.get(soName);
-            if (StringUtils.isEmpty(soRefId)) {
-                Item soterm = getChadoDBConverter().createItem("SOTerm");
-                soterm.setAttribute("name", soName);
-                soterm.setReference("ontology", ontologyRefId);
-                getChadoDBConverter().store(soterm);
-                soRefId = soterm.getIdentifier();
-                SO_TERMS.put(soName, soRefId);
-            }
-            return soRefId;
-        } catch (IOException e) {
-            return null;
-        } catch (ObjectStoreException e) {
-            return null;
+    /**
+     * Get a SO term for the given featureType.
+     *
+     * @param featureType chado feature type, eg. protein_coding_gene
+     * @return id representing the SO term for the given feature
+     * @throws ObjectStoreException if something goes wrong
+     */
+    protected Item getSoTerm(String featureType) throws ObjectStoreException {
+        MultiKey singletonKey = new MultiKey("SOTerm", "name", featureType);
+        Item item = (Item) singletonMap.get(singletonKey);
+        if (item == null) {
+            Item soterm = getChadoDBConverter().createItem("SOTerm");
+            soterm.setAttribute("name", featureType);
+            soterm.setReference("ontology", ontologyRefId);
+            getChadoDBConverter().store(soterm);
+            singletonMap.put(featureType, soterm);
         }
+        return item;
     }
 
     /**
@@ -1393,6 +1388,7 @@ public class SequenceProcessor extends ChadoProcessor
                             if (item == null) {
                                 item = getChadoDBConverter().createItem(className);
                                 item.setAttribute(fieldName, cvtermName);
+                                item.setReference("Ontology", item);
                                 getChadoDBConverter().store(item);
                                 if (cca.createSingletons()) {
                                     singletonMap.put(key, item);
