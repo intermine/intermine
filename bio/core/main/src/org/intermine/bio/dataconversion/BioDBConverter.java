@@ -55,7 +55,8 @@ public abstract class BioDBConverter extends DBConverter
             dataSource = getDataSourceItem(dataSourceName);
             dataSet = getDataSetItem(dataSetTitle, dataSource);
         }
-        setStoreHook(new BioStoreHook(tgtModel, dataSet, dataSource));
+        setStoreHook(new BioStoreHook(tgtModel, dataSet.getIdentifier(),
+                dataSource.getIdentifier()));
     }
 
     /**
@@ -267,20 +268,5 @@ public abstract class BioDBConverter extends DBConverter
             return synonym;
         }
         return null;
-    }
-
-    /**
-     * Create and return a new Synonym, but don't store it.
-     * Used by chado
-     * @param subjectId the Synonym subject id
-     * @param value the Synonym value
-     * @return the new Synonym
-     * @deprecated use the new create synonym method that optionally stores the synonym
-     */
-    public Item createSynonym(String subjectId, String value) {
-        Item synonym = createItem("Synonym");
-        synonym.setAttribute("value", value);
-        synonym.setReference("subject", subjectId);
-        return synonym;
     }
 }
