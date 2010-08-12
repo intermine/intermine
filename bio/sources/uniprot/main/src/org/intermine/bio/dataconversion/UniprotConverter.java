@@ -641,17 +641,10 @@ public class UniprotConverter extends BioDirectoryConverter
         private void processSynonyms(String proteinRefId, UniprotEntry entry)
             throws SAXException, ObjectStoreException {
 
-            // primary accession
-            createSynonym(proteinRefId, entry.getPrimaryAccession(), true);
-
             // accessions
             for (String accession : entry.getAccessions()) {
                 createSynonym(proteinRefId, accession, true);
             }
-
-            // primaryIdentifier
-            String primaryIdentifier = entry.getPrimaryIdentifier();
-            createSynonym(proteinRefId, primaryIdentifier, true);
 
             // primaryIdentifier if isoform
             if (entry.isIsoform()) {
@@ -1002,8 +995,6 @@ public class UniprotConverter extends BioDirectoryConverter
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
-            createSynonym(refId, identifier, true);
-            createSynonym(refId, shortName, true);
         }
         return refId;
     }
