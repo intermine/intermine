@@ -158,8 +158,8 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         String primaryIdentifier = resolver.resolveId(TAXON_ID, geneId).iterator().next();
         Item geneItem = geneMap.get(primaryIdentifier);
         if (geneItem == null) {
-            geneItem = getItemFactory().makeItem(null, "Gene", "");
-            geneItem.addAttribute(new Attribute("primaryIdentifier", primaryIdentifier));
+            geneItem = converter.createItem("Gene");
+            geneItem.setAttribute("primaryIdentifier", primaryIdentifier);
             geneItem.setReference("organism", getOrganism());
             addItem(geneItem);
             geneMap.put(primaryIdentifier, geneItem);
@@ -171,9 +171,8 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         if (anatomyMap.containsKey(ontologyTermId)) {
             return anatomyMap.get(ontologyTermId);
         }
-
-        Item anatomyItem = getItemFactory().makeItem(null, "AnatomyTerm", "");
-        anatomyItem.addAttribute(new Attribute("identifier", ontologyTermId));
+        Item anatomyItem = converter.createItem("AnatomyTerm");
+        anatomyItem.setAttribute("identifier", ontologyTermId);
         addItem(anatomyItem);
         anatomyMap.put(ontologyTermId, anatomyItem);
         return anatomyItem;
@@ -189,8 +188,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         if (publications.containsKey(pubmedId)) {
             return publications.get(pubmedId);
         }
-
-        Item publicationItem = getItemFactory().makeItem(null, "Publication", "");
+        Item publicationItem = converter.createItem("Publication");
         publicationItem.addAttribute(new Attribute("pubMedId", pubmedId));
         addItem(publicationItem);
         publications.put(pubmedId, publicationItem);

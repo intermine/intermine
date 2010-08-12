@@ -158,7 +158,7 @@ public class GFF3ConverterTask extends Task
      * {@inheritDoc}
      */
     @Override
-    public void execute() throws BuildException {
+    public void execute() {
         if (fileSet == null) {
             throw new BuildException("fileSet must be specified");
         }
@@ -177,9 +177,9 @@ public class GFF3ConverterTask extends Task
         if (dataSourceName == null) {
             throw new BuildException("dataSourceName attribute not set");
         }
-        if (seqDataSourceName == null) {
-            throw new BuildException("seqDataSourceName attribute not set");
-        }
+//        if (seqDataSourceName == null) {
+//            throw new BuildException("seqDataSourceName attribute not set");
+//        }
         if (dataSetTitle == null) {
             throw new BuildException("dataSetTitle attribute not set");
         }
@@ -198,13 +198,13 @@ public class GFF3ConverterTask extends Task
             if (handlerClassName == null) {
                 recordHandler = new GFF3RecordHandler(tgtModel);
             } else {
-                Class handlerClass;
+                Class<?> handlerClass;
                 try {
                     handlerClass = Class.forName(handlerClassName);
                 } catch (ClassNotFoundException e) {
                     throw new BuildException("Class not found for " + handlerClassName, e);
                 }
-                Class [] types = new Class[] {Model.class};
+                Class<?> [] types = new Class[] {Model.class};
                 Object [] args = new Object[] {tgtModel};
                 recordHandler =
                     (GFF3RecordHandler) handlerClass.getConstructor(types).newInstance(args);
@@ -213,13 +213,13 @@ public class GFF3ConverterTask extends Task
             if (seqHandlerClassName == null || seqHandlerClassName.equals("")) {
                 sequenceHandler = new GFF3SeqHandler();
             } else {
-                Class handlerClass;
+                Class<?> handlerClass;
                 try {
                     handlerClass = Class.forName(seqHandlerClassName);
                 } catch (ClassNotFoundException e) {
                     throw new BuildException("Class not found for " + seqHandlerClassName, e);
                 }
-                Class [] types = new Class[] {};
+                Class<?> [] types = new Class[] {};
                 Object [] args = new Object[] {};
                 sequenceHandler =
                     (GFF3SeqHandler) handlerClass.getConstructor(types).newInstance(args);
@@ -227,12 +227,10 @@ public class GFF3ConverterTask extends Task
 
             GFF3Converter gff3converter =
                 new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName,
-                                  dataSetTitle, seqDataSourceName,
-                                  tgtModel, recordHandler, sequenceHandler);
+                                  dataSetTitle, tgtModel, recordHandler, sequenceHandler);
             if (dontCreateLocations) {
                 gff3converter.setDontCreateLocations(dontCreateLocations);
             }
-
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();
             if (files.length == 0) {
@@ -243,7 +241,7 @@ public class GFF3ConverterTask extends Task
                 System.err .println("Processing file: " + f.getName());
                 gff3converter.parse(new BufferedReader(new FileReader(f)));
             }
-            gff3converter.store();
+            gff3converter.storeAll();
             gff3converter.close();
         } catch (Exception e) {
             throw new BuildException(e);

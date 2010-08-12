@@ -34,30 +34,34 @@ public class BioStoreHook implements DataConverterStoreHook
 {
     private String dataSetRefId = null;
     private String dataSourceRefId = null;
+    private String ontologyRefId = null;
     private final Model model;
-    private static final Map<String, String> SO_TERMS = new HashMap<String, String>();
-    private static String ontologyRefId = null;
+    private Map<String, String> soTerms = new HashMap<String, String>();
 
     /**
      * Create a new DataSetStoreHook object.
      * @param model the data model
      * @param dataSet the DataSet to add to items
      * @param dataSource the DataSource to add to the items
+     * @param ontologyRefId id representing Ontology (SO) object
      */
-    public BioStoreHook(Model model, String dataSet, String dataSource) {
+    public BioStoreHook(Model model, String dataSet, String dataSource, String ontologyRefId) {
         this.model = model;
         this.dataSetRefId = dataSet;
         this.dataSourceRefId = dataSource;
+        this.ontologyRefId = ontologyRefId;
     }
 
     /**
      * Create a new DataSetStoreHook object.
      * @param model the data model
+     * @param ontologyRefId id representing Ontology (SO) object
      */
-    public BioStoreHook(Model model) {
+    public BioStoreHook(Model model, String ontologyRefId) {
         this.model = model;
         this.dataSetRefId = null;
         this.dataSourceRefId = null;
+        this.ontologyRefId = ontologyRefId;
     }
 
     /**
@@ -126,24 +130,21 @@ public class BioStoreHook implements DataConverterStoreHook
      * @param item item
      * @return id representing the SO term object
      */
-    protected static String getSoTerm(DataConverter dataConverter, Item item) {
+    protected String getSoTerm(DataConverter dataConverter, Item item) {
         String soName = null;
         try {
             soName = BioConverterUtil.javaNameToSO(item.getClassName());
             if (soName == null) {
                 return null;
             }
-            String soRefId = SO_TERMS.get(soName);
+            String soRefId = soTerms.get(soName);
             if (StringUtils.isEmpty(soRefId)) {
                 Item soterm = dataConverter.createItem("SOTerm");
                 soterm.setAttribute("name", soName);
-                if (ontologyRefId == null) {
-                    setOntology(dataConverter);
-                }
                 soterm.setReference("ontology", ontologyRefId);
                 dataConverter.store(soterm);
                 soRefId = soterm.getIdentifier();
-                SO_TERMS.put(soName, soRefId);
+                soTerms.put(soName, soRefId);
             }
             return soRefId;
         } catch (IOException e) {
@@ -153,19 +154,5 @@ public class BioStoreHook implements DataConverterStoreHook
         }
     }
 
-    /**
-     * create and store ontology object
-     * @param dataConverter data converter
-     */
-    private static void setOntology(DataConverter dataConverter) {
-        Item item = dataConverter.createItem("Ontology");
-        item.setAttribute("name", "Sequence Ontology");
-        item.setAttribute("url", "http://www.sequenceontology.org");
-        try {
-            dataConverter.store(item);
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("Can't store ontology", e);
-        }
-        ontologyRefId = item.getIdentifier();
-    }
+
 }

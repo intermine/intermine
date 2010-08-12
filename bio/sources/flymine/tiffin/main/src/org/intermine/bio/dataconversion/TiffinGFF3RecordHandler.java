@@ -49,14 +49,12 @@ public class TiffinGFF3RecordHandler extends GFF3RecordHandler
     private Item getMotif(String name) {
         Item motif = motifs.get(name);
         if (motif == null) {
-            motif = createItem("Motif");
+            motif = converter.createItem("Motif");
             motif.setAttribute("primaryIdentifier", name);
 
             motifs.put(name, motif);
             addEarlyItem(motif);
-            Item synonym = createItem("Synonym");
-            synonym.setAttribute("value", name);
-            synonym.setReference("subject", motif);
+            Item synonym = converter.getSynonym(motif, name);
             addItem(synonym);
         }
         return motif;

@@ -59,7 +59,7 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
         resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("dl"));
         handler.resolverFactory = resolverFactory;
         converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName,
-                                      dataSetTitle, "FlyBase", tgtModel, handler, null);
+                                      dataSetTitle, tgtModel, handler, null);
 
     }
 
@@ -75,7 +75,7 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
 
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
         converter.parse(srcReader);
-        converter.store();
+        converter.storeAll();
 
         // uncomment to write a new target items files
         //writeItemsFile(writer.getItems(), "flyreg-tgt-items.xml");

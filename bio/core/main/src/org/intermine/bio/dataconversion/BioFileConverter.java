@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -53,7 +54,8 @@ public abstract class BioFileConverter extends FileConverter
             dataSource = getDataSource(dataSourceName);
             dataSet = getDataSet(dataSetTitle, dataSource);
         }
-        setStoreHook(new BioStoreHook(model, dataSet, dataSource));
+        setStoreHook(new BioStoreHook(model, dataSet, dataSource,
+                BioConverterUtil.getOntology(this)));
     }
 
 
@@ -64,7 +66,7 @@ public abstract class BioFileConverter extends FileConverter
      */
     public BioFileConverter (ItemWriter writer, Model model) {
         super(writer, model);
-        setStoreHook(new BioStoreHook(model, "", ""));
+        setStoreHook(new BioStoreHook(model, "", "", BioConverterUtil.getOntology(this)));
     }
 
 
@@ -202,27 +204,6 @@ public abstract class BioFileConverter extends FileConverter
      * @return the refId representing the Organism Item
      */
     public String getOrganism(String taxonId) {
-        String refId = organisms.get(taxonId);
-        if (refId == null) {
-            Item organism = createItem("Organism");
-            organism.setAttribute("taxonId", taxonId);
-            try {
-                store(organism);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException("failed to store organism with taxonId: " + taxonId, e);
-            }
-            refId = organism.getIdentifier();
-            organisms.put(taxonId, refId);
-        }
-        return refId;
-    }
-
-    /**
-     * The Organism item created from the taxon id passed to the constructor.
-     * @param taxonId NCBI taxonomy id of organism to create
-     * @return the refId representing the Organism Item
-     */
-    public String getSOTerm(String taxonId) {
         String refId = organisms.get(taxonId);
         if (refId == null) {
             Item organism = createItem("Organism");

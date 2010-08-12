@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.dataconversion.DirectoryConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -46,8 +47,8 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
      * @param dataSourceName the DataSource name
      * @param dataSetTitle the DataSet title
      */
-    public BioDirectoryConverter (ItemWriter writer, Model model,
-                             String dataSourceName, String dataSetTitle) {
+    public BioDirectoryConverter (ItemWriter writer, Model model, String dataSourceName,
+            String dataSetTitle) {
         super(writer, model);
         String dataSourceRefId = null;
         String dataSetRefId = null;
@@ -57,7 +58,8 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
         if (StringUtils.isNotEmpty(dataSetTitle)) {
             dataSetRefId = getDataSet(dataSetTitle, dataSourceRefId);
         }
-        hook = new BioStoreHook(model, dataSetRefId, dataSourceRefId);
+        hook = new BioStoreHook(model, dataSetRefId, dataSourceRefId,
+                BioConverterUtil.getOntology(this));
         setStoreHook(hook);
     }
 

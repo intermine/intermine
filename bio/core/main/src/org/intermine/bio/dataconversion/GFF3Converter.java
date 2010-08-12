@@ -20,19 +20,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.bio.util.BioConverterUtil;
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 
 /**
@@ -42,24 +40,21 @@ import org.intermine.xml.full.Reference;
  * @author Richard Smith
  */
 
-public class GFF3Converter
+public class GFF3Converter extends DataConverter
 {
     private static final Logger LOG = Logger.getLogger(GFF3Converter.class);
-    private static final Map<String, String> SO_TERMS = new HashMap<String, String>();
-    private static String ontologyRefId = null;
     private Reference orgRef;
-    private ItemWriter writer;
     private String seqClsName, orgTaxonId;
-    private Item organism, dataSet, dataSource, seqDataSource;
+    private Item organism, dataSet, dataSource;
     private Model tgtModel;
-    private int itemid = 0;
     private Map<String, Item> seqs = new HashMap<String, Item>();
     private Map<String, String> identifierMap = new HashMap<String, String>();
     private GFF3RecordHandler handler;
-    private ItemFactory itemFactory;
     private GFF3SeqHandler sequenceHandler;
     private boolean dontCreateLocations;
     protected IdResolverFactory resolverFactory;
+    private final Map<String, Item> dataSets = new HashMap<String, Item>();
+    private final Map<String, Item> dataSources = new HashMap<String, Item>();
 
     /**
      * Constructor
@@ -69,8 +64,6 @@ public class GFF3Converter
      * @param orgTaxonId The taxon ID of the organism we are loading
      * @param dataSourceName name for dataSource
      * @param dataSetTitle title for dataSet
-     * @param seqDataSourceName name of source for synonym on sequence (col 1), often different
-     * to dataSourceName
      * @param tgtModel the model to create items in
      * @param handler object to perform optional additional operations per GFF3 line
      * @param sequenceHandler the GFF3SeqHandler use to create sequence Items
@@ -78,45 +71,28 @@ public class GFF3Converter
      */
 
     public GFF3Converter(ItemWriter writer, String seqClsName, String orgTaxonId,
-            String dataSourceName, String dataSetTitle, String seqDataSourceName, Model tgtModel,
+            String dataSourceName, String dataSetTitle, Model tgtModel,
             GFF3RecordHandler handler, GFF3SeqHandler sequenceHandler) throws ObjectStoreException {
-        this.writer = writer;
+        super(writer, tgtModel);
         this.seqClsName = seqClsName;
         this.orgTaxonId = orgTaxonId;
         this.tgtModel = tgtModel;
         this.handler = handler;
         this.sequenceHandler = sequenceHandler;
-        this.itemFactory = new ItemFactory(tgtModel, "1_");
 
         organism = getOrganism();
-
-        setOntology();
-
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", dataSourceName);
-        writer.store(ItemHelper.convert(dataSource));
-
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("name", dataSetTitle);
-        dataSet.setReference("dataSource", dataSource);
-        writer.store(ItemHelper.convert(dataSet));
-
-        if (!seqDataSourceName.equals(dataSourceName)) {
-            seqDataSource = createItem("DataSource");
-            seqDataSource.setAttribute("name", seqDataSourceName);
-            writer.store(ItemHelper.convert(seqDataSource));
-        } else {
-            seqDataSource = dataSource;
-        }
+        dataSource = getDataSourceItem(dataSourceName);
+        dataSet = getDataSetItem(dataSetTitle, null, null, dataSource);
 
         if (sequenceHandler == null) {
             this.sequenceHandler = new GFF3SeqHandler();
         }
 
-        handler.setItemFactory(itemFactory);
+        setStoreHook(new BioStoreHook(tgtModel, dataSet.getIdentifier(),
+                dataSource.getIdentifier(), BioConverterUtil.getOntology(this)));
+
+        handler.setConverter(this);
         handler.setIdentifierMap(identifierMap);
-        handler.setDataSource(dataSource);
-        handler.setDataSet(dataSet);
         handler.setOrganism(organism);
     }
 
@@ -166,64 +142,14 @@ public class GFF3Converter
      * store all the items
      * @throws ObjectStoreException if an error occurs storing items
      */
-    public void store() throws ObjectStoreException {
+    public void storeAll() throws ObjectStoreException {
         // TODO should probably not store if an empty file
         Iterator<?> iter = handler.getFinalItems().iterator();
         while (iter.hasNext()) {
-            Item item = (Item) iter.next();
-            writer.store(ItemHelper.convert(item));
+            store((Item) iter.next());
         }
         handler.clearFinalItems();
     }
-
-    private void setSOTerm(Item item) {
-        if (item.canHaveReference("sequenceOntologyTerm")
-                && !item.hasReference("sequenceOntologyTerm")) {
-            String soTermId = getSoTerm(item);
-            if (!StringUtils.isEmpty(soTermId)) {
-                item.setReference("sequenceOntologyTerm", soTermId);
-            }
-        }
-    }
-
-    private void setOntology() {
-        if (ontologyRefId == null) {
-            Item item = createItem("Ontology");
-            item.setAttribute("name", "Sequence Ontology");
-            item.setAttribute("url", "http://www.sequenceontology.org");
-            try {
-                writer.store(ItemHelper.convert(item));
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException("Can't store ontology", e);
-            }
-            ontologyRefId = item.getIdentifier();
-        }
-    }
-
-    private String getSoTerm(Item item) {
-        String soName = null;
-        try {
-            soName = BioConverterUtil.javaNameToSO(item.getClassName());
-            if (soName == null) {
-                return null;
-            }
-            String soRefId = SO_TERMS.get(soName);
-            if (StringUtils.isEmpty(soRefId)) {
-                Item soterm = createItem("SOTerm");
-                soterm.setAttribute("name", soName);
-                soterm.setReference("ontology", ontologyRefId);
-                writer.store(ItemHelper.convert(soterm));
-                soRefId = soterm.getIdentifier();
-                SO_TERMS.put(soName, soRefId);
-            }
-            return soRefId;
-        } catch (IOException e) {
-            return null;
-        } catch (ObjectStoreException e) {
-            return null;
-        }
-    }
-
 
     /**
      * process GFF3 record and give a xml presentation
@@ -250,15 +176,13 @@ public class GFF3Converter
         }
         String identifier = record.getId();
         Set<Item> synonymsToAdd = new HashSet<Item>();
-        Item feature;
         // need to look up item id for this feature as may have already been a parent reference
+        Item feature = createItem(className);
         if (identifier != null) {
-            feature = createItem(className, getIdentifier(identifier));
             feature.setAttribute("primaryIdentifier", identifier);
-        } else {
-            feature = createItem(className);
         }
         handler.setFeature(feature);
+        identifierMap.put(identifier, feature.getIdentifier());
 
         if (names != null) {
             if (cd.getFieldDescriptorByName("symbol") == null) {
@@ -292,37 +216,37 @@ public class GFF3Converter
                 && !dontCreateLocations
                 && handler.createLocations(record);
             if (makeLocation) {
-                Item relation = createItem("Location");
+                Item location = createItem("Location");
                 int start = record.getStart();
                 int end = record.getEnd();
                 if (record.getStart() < record.getEnd()) {
-                    relation.setAttribute("start", String.valueOf(start));
-                    relation.setAttribute("end", String.valueOf(end));
+                    location.setAttribute("start", String.valueOf(start));
+                    location.setAttribute("end", String.valueOf(end));
                 } else {
-                    relation.setAttribute("start", String.valueOf(end));
-                    relation.setAttribute("end", String.valueOf(start));
+                    location.setAttribute("start", String.valueOf(end));
+                    location.setAttribute("end", String.valueOf(start));
                 }
                 if (record.getStrand() != null && record.getStrand().equals("+")) {
-                    relation.setAttribute("strand", "1");
+                    location.setAttribute("strand", "1");
                 } else
                     if (record.getStrand() != null && record.getStrand().equals("-")) {
-                        relation.setAttribute("strand", "-1");
+                        location.setAttribute("strand", "-1");
                     } else {
-                        relation.setAttribute("strand", "0");
+                        location.setAttribute("strand", "0");
                     }
                 int length = Math.abs(end - start) + 1;
                 feature.setAttribute("length", String.valueOf(length));
 
-                relation.setReference("locatedOn", seq.getIdentifier());
-                relation.setReference("feature", feature.getIdentifier());
-                relation.addToCollection("dataSets", dataSet);
+                location.setReference("locatedOn", seq.getIdentifier());
+                location.setReference("feature", feature.getIdentifier());
+                location.addToCollection("dataSets", dataSet);
 
-                handler.setLocation(relation);
+                handler.setLocation(location);
                 if (seqClsName.equals("Chromosome")
                         && (cd.getFieldDescriptorByName("chromosome") != null)) {
                     feature.setReference("chromosome", seq.getIdentifier());
                     if (makeLocation) {
-                        feature.setReference("chromosomeLocation", relation);
+                        feature.setReference("chromosomeLocation", location);
                     }
                 }
             }
@@ -347,11 +271,9 @@ public class GFF3Converter
         handler.clearPublicationReferenceList();
 
         try {
-            Iterator<?> iter = handler.getItems().iterator();
+            Iterator<Item> iter = handler.getItems().iterator();
             while (iter.hasNext()) {
-                Item item = (Item) iter.next();
-                setSOTerm(item);
-                writer.store(ItemHelper.convert(item));
+                store(iter.next());
             }
         } catch (ObjectStoreException e) {
             LOG.error("Problem writing item to the itemwriter");
@@ -362,14 +284,15 @@ public class GFF3Converter
     private void setRefsAndCollections(List<String> parents, Item feature) {
         String clsName = feature.getClassName();
         Map<String, String> refsAndCollections = handler.getRefsAndCollections();
-        if (refsAndCollections.containsKey(clsName) && !parents.isEmpty()) {
+        if (refsAndCollections != null && refsAndCollections.containsKey(clsName)
+                && parents != null && !parents.isEmpty()) {
             ClassDescriptor cld =
                 tgtModel.getClassDescriptorByName(tgtModel.getPackageName() + "." + clsName);
             String refName = (String) refsAndCollections.get(clsName);
             Iterator<String> parentIter = parents.iterator();
             if (cld.getReferenceDescriptorByName(refName, true) != null) {
-                String parentRefId = getIdentifier(parentIter.next());
-                feature.setReference(refName, parentRefId);
+                String parent = parentIter.next();
+                feature.setReference(refName, getRefId(parent));
                 if (parentIter.hasNext()) {
                     String primaryIdent  = feature.getAttribute("primaryIdentifier").getValue();
                     throw new RuntimeException("Feature has multiple relations for reference: "
@@ -379,27 +302,15 @@ public class GFF3Converter
             } else if (cld.getCollectionDescriptorByName(refName, true) != null) {
                 List<String> refIds = new ArrayList<String>();
                 while (parentIter.hasNext()) {
-                    refIds.add(getIdentifier(parentIter.next()));
+                    refIds.add(getRefId(parentIter.next()));
                 }
                 feature.setCollection(refName, refIds);
             } else if (parentIter.hasNext()) {
                 throw new RuntimeException("No '" + refName + "' reference/collection found in "
                         + "class: " + clsName + " - is map configured correctly?");
             }
-
         }
     }
-
-
-    private String getIdentifier(String id) {
-        String identifier = (String) identifierMap.get(id);
-        if (identifier == null) {
-            identifier = createIdentifier();
-            identifierMap.put(id, identifier);
-        }
-        return identifier;
-    }
-
 
     /**
      * Perform any necessary clean-up after post-conversion
@@ -437,7 +348,7 @@ public class GFF3Converter
         if (organism == null) {
             organism = createItem("Organism");
             organism.setAttribute("taxonId", orgTaxonId);
-            writer.store(ItemHelper.convert(organism));
+            store(organism);
         }
         return organism;
     }
@@ -492,37 +403,12 @@ public class GFF3Converter
             // sequence handler may choose not to create sequence
             if (seq != null) {
                 seq.addReference(getOrgRef());
-                seq.addToCollection("dataSets", getDataSet());
-                writer.store(ItemHelper.convert(seq));
+                store(seq);
                 seqs.put(identifier, seq);
             }
         }
         handler.setSequence(seq);
         return seq;
-    }
-
-    /**
-     * Create an item with given className
-     * @param className the new class name
-     * @return the created item
-     */
-    protected Item createItem(String className) {
-        Item item = createItem(className, createIdentifier());
-        return item;
-    }
-
-    /**
-     * Create an item with given className and item identifier
-     * @param className the class of the new Item
-     * @param identifier the identifier of the new Item
-     * @return the created item
-     */
-    Item createItem(String className, String identifier) {
-        return itemFactory.makeItem(identifier, className, "");
-    }
-
-    private String createIdentifier() {
-        return "0_" + itemid++;
     }
 
     /**
@@ -541,11 +427,71 @@ public class GFF3Converter
      * @return the new Synonym Item
      */
     public Item getSynonym(Item subject, String value) {
-        Item synonym = itemFactory.makeItem(null, "Synonym", "");
+        Item synonym = createItem("Synonym");
         synonym.setAttribute("value", value);
         synonym.setReference("subject", subject.getIdentifier());
-        synonym.addToCollection("dataSets", getDataSet());
         return synonym;
+    }
+
+    /**
+     * Return a DataSet item for the given title
+     * @param name the DataSet name
+     * @return the DataSet Item
+     */
+    public Item getDataSourceItem(String name) {
+        Item dataSource = dataSources.get(name);
+        if (dataSource == null) {
+            dataSource = createItem("DataSource");
+            dataSource.setAttribute("name", name);
+            try {
+                store(dataSource);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("failed to store DataSource with name: " + name, e);
+            }
+            dataSources.put(name, dataSource);
+        }
+        return dataSource;
+    }
+
+    /**
+     * Return a DataSource item with the given details.
+     * @param title the DataSet title
+     * @param url the new url field, or null if the url shouldn't be set
+     * @param description the new description field, or null if the field shouldn't be set
+     * @param dataSourceItem the DataSource referenced by the the DataSet
+     * @return the DataSet Item
+     */
+    public Item getDataSetItem(String title, String url, String description, Item dataSourceItem) {
+        Item dataSet = dataSets.get(title);
+        if (dataSet == null) {
+            dataSet = createItem("DataSet");
+            dataSet.setAttribute("name", title);
+            dataSet.setReference("dataSource", dataSourceItem);
+            if (url != null) {
+                dataSet.setAttribute("url", url);
+            }
+            if (description != null) {
+                dataSet.setAttribute("description", description);
+            }
+            try {
+                store(dataSet);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("failed to store DataSet with title: " + title, e);
+            }
+            dataSets.put(title, dataSet);
+        }
+        return dataSet;
+    }
+
+    private String getRefId(String identifier) {
+        String refId = identifierMap.get(identifier);
+        if (refId == null) {
+//            identifierMap.put(identifier, refId);
+            String msg = "Failed setting setRefsAndCollections() in GFF3Converter - processing"
+                + " child before parent - " + identifier;
+            throw new RuntimeException(msg);
+        }
+        return refId;
     }
 }
 

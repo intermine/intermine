@@ -21,7 +21,6 @@ import java.util.Set;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ReferenceList;
 
 /**
@@ -39,15 +38,12 @@ public class GFF3RecordHandler
     protected Map<String, String> refsAndCollections;
     private Item sequence;
     private Model tgtModel;
-    private ItemFactory itemFactory;
+    protected GFF3Converter converter;
     private Item organism;
     private ReferenceList dataSetReferenceList = new ReferenceList("dataSets");
     private ReferenceList publicationReferenceList = new ReferenceList("publications");
     private Item tgtOrganism;
     protected Item tgtSequence;
-    private int itemid = 0;
-    private Item dataSource;
-    private Item dataSet;
 
     /**
      * Construct with the model to create items in (for type checking).
@@ -269,22 +265,6 @@ public class GFF3RecordHandler
     }
 
     /**
-     * Set the ItemFactory to use in this handler.
-     * @param itemFactory the ItemFactory
-     */
-    public void setItemFactory(ItemFactory itemFactory) {
-        this.itemFactory = itemFactory;
-    }
-
-    /**
-     * Get the ItemFactory for this handler.
-     * @return the ItemFactory
-     */
-    protected ItemFactory getItemFactory() {
-        return itemFactory;
-    }
-
-    /**
      * Remove all items held locally in handler.
      */
     public void clear() {
@@ -334,8 +314,8 @@ public class GFF3RecordHandler
      * have been read.
      * @return extra Items
      */
-    public Collection<?> getFinalItems() {
-        return new ArrayList();
+    public Collection<Item> getFinalItems() {
+        return new ArrayList<Item>();
     }
 
     /**
@@ -360,78 +340,9 @@ public class GFF3RecordHandler
     }
 
     /**
-     * Create an item with given className and item identifier
-     * @param className the class to create
-     * @param identifier the Item identifier of the new Item
-     * @return the created item
+     * @param converter the converter to set
      */
-    private Item createItem(String className, String identifier) {
-        return itemFactory.makeItem(identifier, className, "");
-    }
-
-    /**
-     * Create an item with given className and a new unique identifier
-     * @param className the class to create
-     * @return the created item
-     */
-    public Item createItem(String className) {
-        return createItem(className, createIdentifier());
-    }
-
-    /**
-     * create item identifier
-     * @return identifier
-     */
-    private String createIdentifier() {
-        return "1_" + itemid++;
-    }
-
-    /**
-     * Get the DataSource to use while processing.
-     * @return the DataSource
-     */
-    public Item getDataSource() {
-        return dataSource;
-    }
-
-    /**
-     * Set the DataSource to use while processing.  The converter will store() the DataSource.
-     * @param dataSource the DataSource
-     */
-    public void setDataSource(Item dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    /**
-     * Get the DataSet to use while processing.  The converter will store() the DataSet.
-     * @return the DataSet
-     */
-    public Item getDataSet() {
-        return dataSet;
-    }
-
-    /**
-     * Set the DataSet to use while processing.  Called by the converter.
-     * @param dataSet the DataSet
-     */
-    public void setDataSet(Item dataSet) {
-        this.dataSet = dataSet;
-    }
-
-
-    /**
-     * Create and add a synonym Item from the given information.
-     * @param subject the subject of the new Synonym
-     * @param type the Synonym type
-     * @param value the Synonym value
-     * @return the new Synonym Item
-     */
-    protected Item addSynonym(Item subject, String type, String value) {
-        Item synonym = getItemFactory().makeItem(null, "Synonym", "");
-        synonym.setAttribute("value", value);
-        synonym.setReference("subject", subject.getIdentifier());
-        synonym.addToCollection("dataSets", getDataSet());
-        addItem(synonym);
-        return synonym;
+    public void setConverter(GFF3Converter converter) {
+        this.converter = converter;
     }
 }
