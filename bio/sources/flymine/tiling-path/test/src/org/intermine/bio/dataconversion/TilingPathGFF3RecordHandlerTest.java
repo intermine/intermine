@@ -48,7 +48,7 @@ public class TilingPathGFF3RecordHandlerTest extends ItemsTestCase
         handler = new TilingPathGFF3RecordHandler(tgtModel);
 
         converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName,
-                                      dataSetTitle, "FlyBase", tgtModel, handler, null);
+                                      dataSetTitle, tgtModel, handler, null);
 
     }
 
@@ -64,7 +64,7 @@ public class TilingPathGFF3RecordHandlerTest extends ItemsTestCase
 
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
         converter.parse(srcReader);
-        converter.store();
+        converter.storeAll();
 
         // uncomment to write a new target items files
         //writeItemsFile(writer.getItems(), "tiling-path-tgt-items.xml");

@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.dataconversion.DBConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -51,13 +52,14 @@ public abstract class BioDBConverter extends DBConverter
         super(database, tgtModel, writer);
         Item dataSource = null;
         Item dataSet = null;
+        String ontologyRefId = BioConverterUtil.getOntology(this);
         if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
             dataSource = getDataSourceItem(dataSourceName);
             dataSet = getDataSetItem(dataSetTitle, dataSource);
             setStoreHook(new BioStoreHook(tgtModel, dataSet.getIdentifier(),
-                    dataSource.getIdentifier()));
+                    dataSource.getIdentifier(), ontologyRefId));
         } else {
-            setStoreHook(new BioStoreHook(tgtModel, null, null));
+            setStoreHook(new BioStoreHook(tgtModel, null, null, ontologyRefId));
         }
     }
 
@@ -70,7 +72,7 @@ public abstract class BioDBConverter extends DBConverter
      */
     public BioDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
-        setStoreHook(new BioStoreHook(tgtModel, "", ""));
+        setStoreHook(new BioStoreHook(tgtModel, "", "", BioConverterUtil.getOntology(this)));
     }
 
     /**
@@ -271,4 +273,5 @@ public abstract class BioDBConverter extends DBConverter
         }
         return null;
     }
+
 }

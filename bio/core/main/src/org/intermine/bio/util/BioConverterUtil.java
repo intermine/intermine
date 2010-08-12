@@ -21,6 +21,9 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.BuildException;
+import org.intermine.dataconversion.DataConverter;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.xml.full.Item;
 
 /**
  * Helper class for data converters
@@ -89,5 +92,24 @@ public class BioConverterUtil
             map.put(key, valuesList);
         }
         valuesList.add(value);
+    }
+
+
+    /**
+     * Create and store ontology object.
+     *
+     * @param dataConverter data converter
+     * @return refId representing the ontology (SO) object
+     */
+    public static String getOntology(DataConverter dataConverter) {
+        Item item = dataConverter.createItem("Ontology");
+        item.setAttribute("name", "Sequence Ontology");
+        item.setAttribute("url", "http://www.sequenceontology.org");
+        try {
+            dataConverter.store(item);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Can't store ontology", e);
+        }
+        return item.getIdentifier();
     }
 }

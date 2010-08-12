@@ -57,7 +57,7 @@ public class MirandaConverterTest extends ItemsTestCase
         mrnaResolverFactory.addResolverEntry("7227", "FBtr0089256", Collections.singleton("CG11023-RA"));
         handler.mrnaResolverFactory = mrnaResolverFactory;
         converter = new GFF3Converter(writer, seqClsName, taxonId, dataSourceName,
-                                      dataSetTitle, "FlyBase", tgtModel, handler, null);
+                                      dataSetTitle, tgtModel, handler, null);
     }
 
     protected void tearDown() throws Exception {
@@ -73,7 +73,7 @@ public class MirandaConverterTest extends ItemsTestCase
 
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
         converter.parse(srcReader);
-        converter.store();
+        converter.storeAll();
 
         // uncomment to write a new tgt items file
         //writeItemsFile(writer.getItems(), "miranda-tgt-items.xml");

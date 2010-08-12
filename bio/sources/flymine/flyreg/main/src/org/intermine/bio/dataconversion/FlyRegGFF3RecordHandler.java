@@ -10,8 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,10 +68,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             throw new RuntimeException("can't find identifier in " + name
                                        + " - pattern doesn't match");
         }
-
         bindingSite.setAttribute("primaryIdentifier", primaryIdentifier);
-        addSynonym(bindingSite, "identifier", primaryIdentifier);
-
         bindingSite.setAttribute("name", name);
 
         if (record.getAttributes().containsKey("Evidence")) {
@@ -81,8 +76,6 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             String elementEvidence = evidenceList.get(0);
             bindingSite.setAttribute("evidenceMethod", elementEvidence);
         }
-
-        String publicationNs = "Publication";
 
         List<String> dbxrefs = record.getAttributes().get("Dbxref");
 
@@ -108,14 +101,11 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         }
 
         bindingSite.setAttribute("secondaryIdentifier", redflyID);
-        addSynonym(bindingSite, "internal_id", "REDfly:" + redflyID);
-
         Item pubmedItem;
-
         if (pubmedIdMap.containsKey(pmid)) {
             pubmedItem = pubmedIdMap.get(pmid);
         } else {
-            pubmedItem = getItemFactory().makeItemForClass(publicationNs);
+            pubmedItem = converter.createItem("Publication");
             pubmedIdMap.put(pmid, pubmedItem);
             pubmedItem.setAttribute("pubMedId", pmid);
             addItem(pubmedItem);
@@ -144,7 +134,6 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         }
     }
 
-
     private Item getGene(String symbol) {
         IdResolver resolver = resolverFactory.getIdResolver();
         int resCount = resolver.countResolutions(TAXON_ID, symbol);
@@ -157,13 +146,10 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         String primaryIdentifier = resolver.resolveId(TAXON_ID, symbol).iterator().next();
         Item gene = geneIdMap.get(primaryIdentifier);
         if (gene == null) {
-            gene = getItemFactory().makeItemForClass("Gene");
+            gene = converter.createItem("Gene");
             geneIdMap.put(primaryIdentifier, gene);
             gene.setAttribute("primaryIdentifier", primaryIdentifier);
-            gene.setReference("organism", getOrganism().getIdentifier());
-            gene.setCollection("dataSets",
-                               new ArrayList<String>(Collections.singleton(
-                                       getDataSet().getIdentifier())));
+            gene.setReference("organism", getOrganism());
             addItem(gene);
         }
         return gene;
