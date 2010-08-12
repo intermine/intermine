@@ -54,9 +54,11 @@ public abstract class BioDBConverter extends DBConverter
         if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
             dataSource = getDataSourceItem(dataSourceName);
             dataSet = getDataSetItem(dataSetTitle, dataSource);
+            setStoreHook(new BioStoreHook(tgtModel, dataSet.getIdentifier(),
+                    dataSource.getIdentifier()));
+        } else {
+            setStoreHook(new BioStoreHook(tgtModel, null, null));
         }
-        setStoreHook(new BioStoreHook(tgtModel, dataSet.getIdentifier(),
-                dataSource.getIdentifier()));
     }
 
     /**
