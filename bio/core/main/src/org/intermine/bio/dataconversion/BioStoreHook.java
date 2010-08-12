@@ -43,21 +43,6 @@ public class BioStoreHook implements DataConverterStoreHook
      * @param model the data model
      * @param dataSet the DataSet to add to items
      * @param dataSource the DataSource to add to the items
-     * @deprecated Use the other constructor instead
-     */
-    public BioStoreHook(Model model, Item dataSet, Item dataSource) {
-        this.model = model;
-        if (dataSet != null && dataSource != null) {
-            this.dataSetRefId = dataSet.getIdentifier();
-            this.dataSourceRefId = dataSource.getIdentifier();
-        }
-    }
-
-    /**
-     * Create a new DataSetStoreHook object.
-     * @param model the data model
-     * @param dataSet the DataSet to add to items
-     * @param dataSource the DataSource to add to the items
      */
     public BioStoreHook(Model model, String dataSet, String dataSource) {
         this.model = model;
