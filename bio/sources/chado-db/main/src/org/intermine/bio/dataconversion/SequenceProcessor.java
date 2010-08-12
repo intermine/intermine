@@ -46,6 +46,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -1388,7 +1389,6 @@ public class SequenceProcessor extends ChadoProcessor
                             if (item == null) {
                                 item = getChadoDBConverter().createItem(className);
                                 item.setAttribute(fieldName, cvtermName);
-                                item.setReference("Ontology", item);
                                 getChadoDBConverter().store(item);
                                 if (cca.createSingletons()) {
                                     singletonMap.put(key, item);
@@ -2116,7 +2116,13 @@ public class SequenceProcessor extends ChadoProcessor
 //          throw new IllegalArgumentException(msg);
             return null;
         }
-        Item returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(), identifier);
+        Item returnItem = null;
+        try {
+            returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(), identifier,
+                    false);
+        } catch (SAXException e) {
+            throw new RuntimeException("Couldn't create synonym", e);
+        }
         fdat.addExistingSynonym(identifier);
         return returnItem;
     }
