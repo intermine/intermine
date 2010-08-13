@@ -37,6 +37,7 @@ public abstract class BioDBConverter extends DBConverter
     private final Map<String, Item> dataSources = new HashMap<String, Item>();
     private String dataSourceName = null;
     private Set<String> synonyms = new HashSet<String>();
+    protected final String sequenceOntologyRefId;
 
     /**
      * Create a new BioDBConverter object.  The constructor will automatically create a
@@ -52,14 +53,14 @@ public abstract class BioDBConverter extends DBConverter
         super(database, tgtModel, writer);
         Item dataSource = null;
         Item dataSet = null;
-        String ontologyRefId = BioConverterUtil.getOntology(this);
+        sequenceOntologyRefId = BioConverterUtil.getOntology(this);
         if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
             dataSource = getDataSourceItem(dataSourceName);
             dataSet = getDataSetItem(dataSetTitle, dataSource);
             setStoreHook(new BioStoreHook(tgtModel, dataSet.getIdentifier(),
-                    dataSource.getIdentifier(), ontologyRefId));
+                    dataSource.getIdentifier(), sequenceOntologyRefId));
         } else {
-            setStoreHook(new BioStoreHook(tgtModel, null, null, ontologyRefId));
+            setStoreHook(new BioStoreHook(tgtModel, null, null, sequenceOntologyRefId));
         }
     }
 
@@ -72,7 +73,8 @@ public abstract class BioDBConverter extends DBConverter
      */
     public BioDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
-        setStoreHook(new BioStoreHook(tgtModel, "", "", BioConverterUtil.getOntology(this)));
+        sequenceOntologyRefId = BioConverterUtil.getOntology(this);
+        setStoreHook(new BioStoreHook(tgtModel, "", "", sequenceOntologyRefId));
     }
 
     /**

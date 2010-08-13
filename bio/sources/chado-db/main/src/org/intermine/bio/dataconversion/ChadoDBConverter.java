@@ -10,6 +10,11 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.lang.reflect.Constructor;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,22 +22,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.bio.util.BioConverterUtil;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.sql.Database;
 import org.intermine.util.StringUtil;
-
-import java.lang.reflect.Constructor;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * DataConverter to read from a Chado database into items
@@ -54,7 +51,6 @@ public class ChadoDBConverter extends BioDBConverter
 
     private Connection connection;
 
-    protected String ontologyRefId;
 
     /**
      * Create a new ChadoDBConverter object.
@@ -68,7 +64,6 @@ public class ChadoDBConverter extends BioDBConverter
         throws SQLException {
         super(database, tgtModel, writer, null, null);
         organismRepository = OrganismRepository.getOrganismRepository();
-        setOntology();
         if (getDatabase() == null) {
             // no Database when testing and no connection needed
             connection = null;
@@ -268,11 +263,5 @@ public class ChadoDBConverter extends BioDBConverter
      */
     public List<ChadoProcessor> getCompletedProcessors() {
         return completedProcessors;
-    }
-
-    private void setOntology() {
-        if (ontologyRefId == null) {
-            ontologyRefId = BioConverterUtil.getOntology(this);
-        }
     }
 }
