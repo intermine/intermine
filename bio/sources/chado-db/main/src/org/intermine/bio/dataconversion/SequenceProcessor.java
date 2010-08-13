@@ -489,7 +489,7 @@ public class SequenceProcessor extends ChadoProcessor
         throws ObjectStoreException {
         if (item.canHaveReference("sequenceOntologyTerm")
                 && !item.hasReference("sequenceOntologyTerm")) {
-            Item soTerm = getSoTerm(featureType);
+            String soTerm = getSoTerm(featureType);
             if (soTerm != null) {
                 item.setReference("sequenceOntologyTerm", soTerm);
             }
@@ -503,17 +503,16 @@ public class SequenceProcessor extends ChadoProcessor
      * @return id representing the SO term for the given feature
      * @throws ObjectStoreException if something goes wrong
      */
-    protected Item getSoTerm(String featureType) throws ObjectStoreException {
-        MultiKey singletonKey = new MultiKey("SOTerm", "name", featureType);
-        Item item = (Item) singletonMap.get(singletonKey);
-        if (item == null) {
+    protected String getSoTerm(String featureType) throws ObjectStoreException {
+        String refId = getChadoDBConverter().getUniqueItemId(featureType);
+        if (refId == null) {
             Item soterm = getChadoDBConverter().createItem("SOTerm");
             soterm.setAttribute("name", featureType);
             soterm.setReference("ontology", getChadoDBConverter().sequenceOntologyRefId);
             getChadoDBConverter().store(soterm);
-            singletonMap.put(singletonKey, soterm);
+            getChadoDBConverter().addUniqueItemId(featureType, refId);
         }
-        return item;
+        return refId;
     }
 
     /**
