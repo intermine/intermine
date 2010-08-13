@@ -17,12 +17,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -43,7 +42,6 @@ public class AnophExprConverter extends BioFileConverter
     private Map<String, Item> genes = new HashMap<String, Item>();
     private Map<String, Item> assays = new HashMap<String, Item>();
     private static final String TYPE = "Geometric mean of ratios";
-    private Set<Item> synonyms = new HashSet<Item>();
     Item org;
     private Item pub;
     private Item experiment;
@@ -242,9 +240,6 @@ public class AnophExprConverter extends BioFileConverter
             }
         }
         for (Item item : genes.values()) {
-            store(item);
-        }
-        for (Item item : synonyms) {
             store(item);
         }
     }
