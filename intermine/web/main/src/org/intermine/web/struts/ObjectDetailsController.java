@@ -54,9 +54,7 @@ import org.intermine.model.userprofile.Tag;
  */
 public class ObjectDetailsController extends InterMineAction
 {
-
-    protected static final Logger LOG = Logger
-            .getLogger(ObjectDetailsController.class);
+    protected static final Logger LOG = Logger.getLogger(ObjectDetailsController.class);
 
     /**
      * {@inheritDoc}
@@ -148,8 +146,7 @@ public class ObjectDetailsController extends InterMineAction
             // get all summary tags for all refs and collections of
             // this class
             List<Tag> placementTags = new ArrayList<Tag>(tagManager.getTags(TagNames.IM_SUMMARY,
-                                                                    cd.getUnqualifiedName() + ".%",
-                                                                    "reference", superuser));
+                    cd.getUnqualifiedName() + ".%", "reference", superuser));
             placementTags.addAll(tagManager.getTags(TagNames.IM_SUMMARY,
                     cd.getUnqualifiedName() + ".%", "collection", superuser));
 

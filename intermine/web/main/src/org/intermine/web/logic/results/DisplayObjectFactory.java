@@ -10,12 +10,14 @@ package org.intermine.web.logic.results;
  *
  */
 
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.CacheMap;
@@ -64,7 +66,7 @@ public class DisplayObjectFactory extends CacheMap<InterMineObject, DisplayObjec
             try {
                 final InterMineAPI im = SessionMethods.getInterMineAPI(session);
                 Model model = im.getModel();
-                Map classKeys = im.getClassKeys();
+                Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
                 ServletContext servletContext = session.getServletContext();
                 WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
                 Properties webProperties = SessionMethods.getWebProperties(servletContext);
