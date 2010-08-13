@@ -12,9 +12,6 @@ package org.intermine.bio.dataconversion;
 
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.dataconversion.DataConverter;
@@ -28,6 +25,7 @@ import org.intermine.xml.full.Item;
 /**
  * An implementation of DataConverterStoreHook that adds DataSet and DataSource references and
  * collections to Items as they are stored.
+ *
  * @author Kim Rutherford
  */
 public class BioStoreHook implements DataConverterStoreHook
@@ -36,7 +34,6 @@ public class BioStoreHook implements DataConverterStoreHook
     private String dataSourceRefId = null;
     private String ontologyRefId = null;
     private final Model model;
-    private Map<String, String> soTerms = new HashMap<String, String>();
 
     /**
      * Create a new DataSetStoreHook object.
@@ -137,14 +134,15 @@ public class BioStoreHook implements DataConverterStoreHook
             if (soName == null) {
                 return null;
             }
-            String soRefId = soTerms.get(soName);
+
+            String soRefId = dataConverter.getUniqueItemId(soName);
             if (StringUtils.isEmpty(soRefId)) {
                 Item soterm = dataConverter.createItem("SOTerm");
                 soterm.setAttribute("name", soName);
                 soterm.setReference("ontology", ontologyRefId);
                 dataConverter.store(soterm);
                 soRefId = soterm.getIdentifier();
-                soTerms.put(soName, soRefId);
+                dataConverter.addUniqueItemId(soName, soRefId);
             }
             return soRefId;
         } catch (IOException e) {
