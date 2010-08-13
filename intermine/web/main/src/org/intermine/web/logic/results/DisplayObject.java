@@ -51,7 +51,7 @@ public class DisplayObject
 {
     private InterMineObject object;
     private WebConfig webConfig;
-    private Map webProperties;
+    private Map<String, String> webProperties;
     private Model model;
 
     private Set<ClassDescriptor> clds;
@@ -66,7 +66,7 @@ public class DisplayObject
     private Map<String, FieldConfig> fieldConfigMap = null;
     private List<String> fieldExprs = null;
     private Map<String, String> verbosity = new HashMap<String, String>();
-    private final Map classKeys;
+    private final Map<String, List<FieldDescriptor>> classKeys;
 
     /**
      * Create a new DisplayObject.
@@ -79,7 +79,8 @@ public class DisplayObject
      * @throws Exception if an error occurs
      */
     public DisplayObject(InterMineObject object, Model model, WebConfig webConfig,
-            Map webProperties, Map classKeys) throws Exception {
+            Map webProperties, Map<String, List<FieldDescriptor>> classKeys)
+        throws Exception {
         this.object = object;
         this.model = model;
         this.webConfig = webConfig;
@@ -102,7 +103,7 @@ public class DisplayObject
      * @param model model
      * @return Set of ClassDescriptor objects
      */
-    public static Set<ClassDescriptor> getLeafClds(Class clazz, Model model) {
+    public static Set<ClassDescriptor> getLeafClds(Class<?> clazz, Model model) {
         Map<Model, Map<Class, Set<ClassDescriptor>>> cache = getLeafCldsCache.get();
         Map<Class, Set<ClassDescriptor>> classCache = cache.get(model);
         if (classCache == null) {
