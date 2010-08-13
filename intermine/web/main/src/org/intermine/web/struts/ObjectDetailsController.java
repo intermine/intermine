@@ -62,9 +62,9 @@ public class ObjectDetailsController extends InterMineAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+    public ActionForward execute(ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         TagManager tagManager = im.getTagManager();
@@ -86,7 +86,8 @@ public class ObjectDetailsController extends InterMineAction
         dobj.getClass();
         request.setAttribute("object", dobj);
 
-        Map<String, Map> placementRefsAndCollections = new TreeMap<String, Map>();
+        Map<String, Map<String, DisplayField>> placementRefsAndCollections = new TreeMap<String,
+            Map<String, DisplayField>>();
         Set<String> aspects = new HashSet<String>(SessionMethods.getCategories(servletContext));
 
         Set<ClassDescriptor> cds = os.getModel().getClassDescriptorsForClass(object.getClass());
@@ -96,15 +97,16 @@ public class ObjectDetailsController extends InterMineAction
 
         for (String aspect : aspects) {
             placementRefsAndCollections.put(TagNames.IM_ASPECT_PREFIX + aspect,
-                                            new TreeMap(String.CASE_INSENSITIVE_ORDER));
+                    new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER));
         }
 
-        Map miscRefs = new TreeMap(dobj.getRefsAndCollections());
+        Map<String, DisplayField> miscRefs = new TreeMap<String, DisplayField>(
+                dobj.getRefsAndCollections());
         placementRefsAndCollections.put(TagNames.IM_ASPECT_MISC, miscRefs);
 
-        for (Iterator iter = dobj.getRefsAndCollections().entrySet().iterator(); iter
-                .hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
+        for (Iterator<Entry<String, DisplayField>> iter
+                = dobj.getRefsAndCollections().entrySet().iterator(); iter.hasNext();) {
+            Map.Entry<String, DisplayField> entry = iter.next();
             DisplayField df = (DisplayField) entry.getValue();
             if (df instanceof DisplayReference) {
                 categoriseBasedOnTags(((DisplayReference) df).getDescriptor(),
@@ -181,9 +183,9 @@ public class ObjectDetailsController extends InterMineAction
      * @param isSuperUser if current user is superuser
      */
     public static void categoriseBasedOnTags(FieldDescriptor fd,
-            String taggedType, DisplayField dispRef, Map miscRefs,
-            TagManager tagManager, String sup,
-            Map<String, Map> placementRefsAndCollections, boolean isSuperUser) {
+            String taggedType, DisplayField dispRef, Map<String, DisplayField> miscRefs,
+            TagManager tagManager, String sup, Map<String, Map<String, DisplayField>>
+            placementRefsAndCollections, boolean isSuperUser) {
         List<Tag> tags = tagManager.getTags(null, fd.getClassDescriptor()
                 .getUnqualifiedName()
                 + "." + fd.getName(), taggedType, sup);
@@ -213,11 +215,11 @@ public class ObjectDetailsController extends InterMineAction
      * @param placementRefsAndCollections
      */
     private static void removeField(String name,
-            Map<String, Map> placementRefsAndCollections) {
-        Iterator<Entry<String, Map>> it = placementRefsAndCollections
+            Map<String, Map<String, DisplayField>> placementRefsAndCollections) {
+        Iterator<Entry<String, Map<String, DisplayField>>> it = placementRefsAndCollections
                 .entrySet().iterator();
         while (it.hasNext()) {
-            Entry<String, Map> entry = it.next();
+            Entry<String, Map<String, DisplayField>> entry = it.next();
             entry.getValue().remove(name);
         }
     }
