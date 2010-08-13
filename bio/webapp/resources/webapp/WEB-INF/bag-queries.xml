@@ -1,11 +1,8 @@
 <bag-queries>
   <extra-bag-query-class connect-field="organism" class-name="org.intermine.model.bio.Organism" constrain-field="shortName"/>
   <bag-type type="BioEntity">
-    <query message="searching key fields for all types" matchesAreIssues="true" runBeforeDefault="false">
-        SELECT DISTINCT a1_.id as a3_, a1_.primaryIdentifier as a4_ FROM org.intermine.model.bio.BioEntity AS a1_ WHERE a1_.primaryIdentifier IN ? OR a1_.secondaryIdentifier IN ? OR a1_.name IN ?
-    </query>
     <query message="searching xrefs for all types" matchesAreIssues="true" runBeforeDefault="false">
-        SELECT DISTINCT a1_.id as a3_, a2_.value as a4_ FROM org.intermine.model.bio.BioEntity AS a1_, org.intermine.model.bio.CrossReference AS a2_ WHERE (a1_.crossReferences CONTAINS a2_ AND lower(a2_.value) in ?)
+        SELECT DISTINCT a1_.id as a3_, a2_.identifier as a4_ FROM org.intermine.model.bio.BioEntity AS a1_, org.intermine.model.bio.CrossReference AS a2_ WHERE (a1_.crossReferences CONTAINS a2_ AND lower(a2_.identifier) in ?)
     </query>
     <query message="searching synonyms for all types" matchesAreIssues="true" runBeforeDefault="false">
         SELECT DISTINCT a1_.id as a3_, a2_.value as a4_ FROM org.intermine.model.bio.BioEntity AS a1_, org.intermine.model.bio.Synonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ AND lower(a2_.value) in ?)
