@@ -509,7 +509,7 @@ public class SequenceProcessor extends ChadoProcessor
         if (item == null) {
             Item soterm = getChadoDBConverter().createItem("SOTerm");
             soterm.setAttribute("name", featureType);
-            soterm.setReference("ontology", getChadoDBConverter().ontologyRefId);
+            soterm.setReference("ontology", getChadoDBConverter().sequenceOntologyRefId);
             getChadoDBConverter().store(soterm);
             singletonMap.put(singletonKey, soterm);
         }
