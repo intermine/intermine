@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -53,6 +54,8 @@ public class ChadoDBConverter extends BioDBConverter
 
     private Connection connection;
 
+    protected String ontologyRefId;
+
     /**
      * Create a new ChadoDBConverter object.
      * @param database the database to read from
@@ -65,6 +68,7 @@ public class ChadoDBConverter extends BioDBConverter
         throws SQLException {
         super(database, tgtModel, writer, null, null);
         organismRepository = OrganismRepository.getOrganismRepository();
+        setOntology();
         if (getDatabase() == null) {
             // no Database when testing and no connection needed
             connection = null;
@@ -264,5 +268,11 @@ public class ChadoDBConverter extends BioDBConverter
      */
     public List<ChadoProcessor> getCompletedProcessors() {
         return completedProcessors;
+    }
+
+    private void setOntology() {
+        if (ontologyRefId == null) {
+            ontologyRefId = BioConverterUtil.getOntology(this);
+        }
     }
 }
