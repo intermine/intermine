@@ -228,6 +228,7 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description" showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
