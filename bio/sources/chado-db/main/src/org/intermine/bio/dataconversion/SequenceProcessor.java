@@ -111,8 +111,6 @@ public class SequenceProcessor extends ChadoProcessor
     // unique
     private static final String TEMP_FEATURE_TABLE_NAME_PREFIX = "intermine_chado_features_temp";
 
-    protected static String ontologyRefId = null;
-
     // map used by processFeatureCVTermTable() to make sure the singletons objects (eg. those of
     // class "SequenceOntologyTerm") are only created once
     private final MultiKeyMap singletonMap = new MultiKeyMap();
@@ -131,7 +129,6 @@ public class SequenceProcessor extends ChadoProcessor
      */
     public SequenceProcessor(ChadoDBConverter chadoDBConverter) {
         super(chadoDBConverter);
-        setOntology();
         synchronized (this) {
             tempTableCount++;
             tempFeatureTableName  = TEMP_FEATURE_TABLE_NAME_PREFIX + "_" + tempTableCount;
@@ -499,20 +496,6 @@ public class SequenceProcessor extends ChadoProcessor
         }
     }
 
-    private void setOntology() {
-        if (ontologyRefId == null) {
-            Item item = getChadoDBConverter().createItem("Ontology");
-            item.setAttribute("name", "Sequence Ontology");
-            item.setAttribute("url", "http://www.sequenceontology.org");
-            try {
-                getChadoDBConverter().store(item);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException("Can't store ontology", e);
-            }
-            ontologyRefId = item.getIdentifier();
-        }
-    }
-
     /**
      * Get a SO term for the given featureType.
      *
@@ -526,7 +509,7 @@ public class SequenceProcessor extends ChadoProcessor
         if (item == null) {
             Item soterm = getChadoDBConverter().createItem("SOTerm");
             soterm.setAttribute("name", featureType);
-            soterm.setReference("ontology", ontologyRefId);
+            soterm.setReference("ontology", getChadoDBConverter().ontologyRefId);
             getChadoDBConverter().store(soterm);
             singletonMap.put(singletonKey, soterm);
         }
