@@ -47,6 +47,7 @@ public class DatabaseUtilTest extends TestCase
     public void setUp() throws Exception {
         db = DatabaseFactory.getDatabase("db.unittest");
         con = db.getConnection();
+        con.setAutoCommit(true);
     }
 
     public void tearDown() throws Exception {
@@ -57,15 +58,12 @@ public class DatabaseUtilTest extends TestCase
         try {
             dropTable();
         } catch (SQLException e) {
-            con.rollback();
         }
         con.createStatement().execute("CREATE TABLE table1(col1 int)");
-        con.commit();
     }
 
     protected void dropTable() throws Exception {
         con.createStatement().execute("DROP TABLE table1");
-        con.commit();
     }
 
     public void testTableExistsNullConnection() throws Exception {
@@ -98,9 +96,7 @@ public class DatabaseUtilTest extends TestCase
         synchronized (con) {
             try {
                 con.createStatement().execute("DROP TABLE table2");
-                con.commit();
             } catch (SQLException e) {
-                con.rollback();
             }
             createTable();
             assertTrue(!(DatabaseUtil.tableExists(con, "table2")));
@@ -291,9 +287,9 @@ public class DatabaseUtilTest extends TestCase
         }
 
         expected = new HashSet();
-        expected.add(new Short((short) -10000));
-        expected.add(new Short((short) 0));
-        expected.add(new Short((short) 10000));
+        expected.add(new Integer((short) -10000));
+        expected.add(new Integer((short) 0));
+        expected.add(new Integer((short) 10000));
 
         assertEquals(expected, result);
 

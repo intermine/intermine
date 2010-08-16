@@ -11,6 +11,7 @@ package org.intermine.sql.writebatch;
  */
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.sql.SQLException;
 
 import org.postgresql.copy.CopyManager;
@@ -47,16 +48,20 @@ public class FlushJobPostgresCopyImpl implements FlushJob
      */
     public void flush() throws SQLException {
         try {
-            copyManager.copyInQuery(sql, new ByteArrayInputStream(data, 0, size));
+            copyManager.copyIn(sql, new ByteArrayInputStream(data, 0, size));
             copyManager = null;
             sql = null;
             data = null;
         } catch (SQLException e) {
             SQLException e2 = new SQLException("Error writing to database, running statement "
-                    + sql);
+                    + sql + ", data size = " + size);
+            e2.initCause(e);
+            throw e2;
+        } catch (IOException e) {
+            SQLException e2 = new SQLException("Error writing to database, running statement "
+                    + sql + ", data size = " + size);
             e2.initCause(e);
             throw e2;
         }
     }
 }
-

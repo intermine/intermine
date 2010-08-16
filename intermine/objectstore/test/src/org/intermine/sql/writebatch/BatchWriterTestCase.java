@@ -347,13 +347,17 @@ public abstract class BatchWriterTestCase extends TestCase
             s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT key, int2, int4, int8, float, double, bool, bigdecimal, string FROM table1");
             Map got = new TreeMap();
+            StringBuilder message = new StringBuilder();
             while (r.next()) {
                 for (int i = 1; i <= 8; i++) {
-                    got.put(new Integer(r.getInt(1) * 10 + i), r.getObject(i + 1));
+                    Integer key = new Integer(r.getInt(1) * 10 + i);
+                    Object value = r.getObject(i + 1);
+                    got.put(key, value);
+                    message.append(key + "=(" + value.getClass().getName() + ", " + value + "), ");
                 }
             }
             Map expected = new TreeMap();
-            expected.put(new Integer(11), new Short((short) 45));
+            expected.put(new Integer(11), new Integer((short) 45));
             expected.put(new Integer(12), new Integer(765234));
             expected.put(new Integer(13), new Long(86523876513242L));
             expected.put(new Integer(14), new Float(5.45));
@@ -361,7 +365,7 @@ public abstract class BatchWriterTestCase extends TestCase
             expected.put(new Integer(16), Boolean.TRUE);
             expected.put(new Integer(17), new BigDecimal("982413415465245.87639871238764321"));
             expected.put(new Integer(18), "kjhlasdurhe");
-            expected.put(new Integer(21), new Short((short) 0));
+            expected.put(new Integer(21), new Integer((short) 0));
             expected.put(new Integer(22), new Integer(0));
             expected.put(new Integer(23), new Long(0L));
             expected.put(new Integer(24), new Float(0.0));
@@ -369,7 +373,7 @@ public abstract class BatchWriterTestCase extends TestCase
             expected.put(new Integer(26), Boolean.FALSE);
             expected.put(new Integer(27), new BigDecimal("0.0"));
             expected.put(new Integer(28), "turnip");
-            expected.put(new Integer(31), new Short((short) -1));
+            expected.put(new Integer(31), new Integer((short) -1));
             expected.put(new Integer(32), new Integer(-12342));
             expected.put(new Integer(33), new Long(-12465432646L));
             expected.put(new Integer(34), new Float(-5.4));
@@ -377,7 +381,7 @@ public abstract class BatchWriterTestCase extends TestCase
             expected.put(new Integer(36), Boolean.FALSE);
             expected.put(new Integer(37), new BigDecimal("0"));
             expected.put(new Integer(38), "blooglark");
-            expected.put(new Integer(41), new Short((short) -6));
+            expected.put(new Integer(41), new Integer((short) -6));
             expected.put(new Integer(42), new Integer(-54321));
             expected.put(new Integer(43), new Long(-98765432198L));
             expected.put(new Integer(44), new Float(-5.4321));
@@ -385,7 +389,7 @@ public abstract class BatchWriterTestCase extends TestCase
             expected.put(new Integer(46), Boolean.TRUE);
             expected.put(new Integer(47), new BigDecimal("0.000000"));
             expected.put(new Integer(48), "wmd");
-            assertEquals(expected, got);
+            assertEquals(message.toString(), expected, got);
         } catch (SQLException e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);

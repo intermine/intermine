@@ -644,6 +644,17 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                     Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range2")).getId()),
                     Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range3")).getId()),
                     Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range4")).getId())));
+
+        results.put("ConstrainClass1", Arrays.asList(
+                    Arrays.asList(data.get("EmployeeA2")),
+                    Arrays.asList(data.get("EmployeeA3")),
+                    Arrays.asList(data.get("EmployeeB2"))));
+
+        results.put("ConstrainClass2", Arrays.asList(
+                    Arrays.asList(data.get("CompanyB")),
+                    Arrays.asList(data.get("EmployeeA2")),
+                    Arrays.asList(data.get("EmployeeA3")),
+                    Arrays.asList(data.get("EmployeeB2"))));
     }
 
     /**

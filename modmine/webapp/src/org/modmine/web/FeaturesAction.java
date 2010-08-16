@@ -230,7 +230,6 @@ public class FeaturesAction extends InterMineAction
         // For the expression levels
         else if (type.equals("subEL")) {
             dccId = (String) request.getParameter("submission");
-
             PathNode node = q.addNode("Submission.features");
             node.setType(featureType);
             String path = "Submission.features.expressionLevels";

@@ -340,8 +340,8 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
       <displayer src="/model/modmineGBrowse.jsp"/>
+      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
       <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
   </class>

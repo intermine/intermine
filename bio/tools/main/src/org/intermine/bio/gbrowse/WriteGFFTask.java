@@ -343,7 +343,7 @@ public class WriteGFFTask extends Task
             if (transcript instanceof MRNA) {
                 // special case for CDS objects - display them as MRNA as GBrowse uses the CDS class
                 // for displaying MRNAs
-                Iterator<CDS> cdsIter = ((MRNA) transcript).getcDSs().iterator();
+                Iterator<CDS> cdsIter = ((MRNA) transcript).getCDSs().iterator();
                 while (cdsIter.hasNext()) {
                     CDS cds = cdsIter.next();
                     synonymList.add(makeIdString(cds.getId()));

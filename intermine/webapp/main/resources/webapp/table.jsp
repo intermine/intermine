@@ -91,9 +91,11 @@
 
 <div class="body">
 
+<%--
 <c:if test="${! empty GALAXY_URL}">
   <tiles:insert name="galaxy.tile"/>
 </c:if>
+--%>
 
 <%-- Toolbar --%>
 <link rel="stylesheet" href="css/toolbar.css" type="text/css" />
@@ -188,7 +190,7 @@
 <%-- Export --%>
 <div id="tool_bar_item_export" style="display:none;width:370px" class="tool_bar_item">
     <c:set var="tableName" value="${param.table}" scope="request"/>
-    <c:set var="pagedTable" value="${resultsTable}" scope="request"/>
+    <c:set var="pagedTable" value="${resultsTable}" scope="request"/> <!-- This is not used by ExportController-->
     <tiles:get name="export.tile"/>
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_export')" ><fmt:message key="confirm.cancel"/></a>

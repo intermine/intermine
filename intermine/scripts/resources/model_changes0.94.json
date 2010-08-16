@@ -50,6 +50,7 @@
       
    },
    "translation_for":{
+      "MicroarrayOligo":"MicroArrayOligo", 
       "GOEvidence":"GOEvidenceCode",
       "GoAnnotation.property":"ontologyTerm",
       "FlyAtlasResult.MRNASignal":"mRNASignal",

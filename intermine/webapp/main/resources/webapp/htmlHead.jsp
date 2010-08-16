@@ -29,7 +29,15 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
 
-<script type="text/javascript" src="<html:rewrite page='/js/jquery-1.3.2.min.js'/>"></script>
+<c:choose>
+  <c:when test="${pageName == 'spanUploadOptions'}">
+    <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.4.2.min.js'/>"></script>
+  </c:when>
+  <c:otherwise>
+    <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.3.2.min.js'/>"></script>
+  </c:otherwise>
+</c:choose>
+
 <c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'objectDetails'}">
   <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
 </c:if>
@@ -43,11 +51,11 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
   <script type="text/javascript" src="<html:rewrite page='/js/jquery.dimensions.min.js'/>"></script>
   <script type="text/javascript" src="<html:rewrite page='/js/jquery.center.js'/>"></script>
 </c:if>
- 
+
 <c:if test="${pageName == 'query' || pageName == 'exportOptions'}">
   <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/jquery-ui-1.7.2.custom.css'/>"/>
   <script type="text/javascript" src="<html:rewrite page='/js/jquery-ui-1.7.2.custom.min.js'/>"></script>
-</c:if>  
+</c:if>
 
 <script type="text/javascript">
   jQuery.noConflict();

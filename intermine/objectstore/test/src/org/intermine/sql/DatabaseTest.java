@@ -13,6 +13,7 @@ package org.intermine.sql;
 import java.util.Properties;
 
 import junit.framework.TestCase;
+import org.postgresql.ds.PGPoolingDataSource;
 
 public class DatabaseTest extends TestCase
 {
@@ -20,7 +21,7 @@ public class DatabaseTest extends TestCase
 
     public void setUp() throws Exception {
         props = new Properties();
-        props.put("datasource.class", "org.postgresql.jdbc2.optional.PoolingDataSource");
+        props.put("datasource.class", "org.postgresql.ds.PGPoolingDataSource");
         props.put("datasource.serverName", "dbserver.mydomain.org");
         props.put("datasource.databaseName", "test");
         props.put("datasource.user", "auser");
@@ -38,11 +39,11 @@ public class DatabaseTest extends TestCase
         Database db = new Database();
         db.configure(props);
         assertTrue(db.getDataSource() != null);
-        assertTrue(db.getDataSource() instanceof org.postgresql.jdbc2.optional.PoolingDataSource);
+        assertTrue(db.getDataSource() instanceof PGPoolingDataSource);
         assertEquals("PostgreSQL", db.getPlatform());
-        assertEquals("dbserver.mydomain.org", ((org.postgresql.jdbc2.optional.PoolingDataSource) db.getDataSource()).getServerName());
-        assertEquals("test", ((org.postgresql.jdbc2.optional.PoolingDataSource) db.getDataSource()).getDatabaseName());
-        assertEquals(10, ((org.postgresql.jdbc2.optional.PoolingDataSource) db.getDataSource()).getMaxConnections());
+        assertEquals("dbserver.mydomain.org", ((PGPoolingDataSource) db.getDataSource()).getServerName());
+        assertEquals("test", ((PGPoolingDataSource) db.getDataSource()).getDatabaseName());
+        assertEquals(10, ((PGPoolingDataSource) db.getDataSource()).getMaxConnections());
     }
 
     public void testInvalidDataSourceClass() throws Exception {
@@ -57,7 +58,7 @@ public class DatabaseTest extends TestCase
 
     public void testInvalidMethod() throws Exception {
         Properties invalidProps = new Properties();
-        invalidProps.put("datasource.class", "org.postgresql.jdbc3.Jdbc3PoolingDataSource");
+        invalidProps.put("datasource.class", "org.postgresql.ds.PGPoolingDataSource");
         invalidProps.put("datasource.someRubbish", "blahblahblah");
         Database db = new Database(invalidProps);
     }
