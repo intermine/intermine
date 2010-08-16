@@ -177,7 +177,7 @@
     <put name="view" value="view.tile"/>
   </definition>
   <definition name="templateList.tile" path="/templateList.jsp" controllerUrl="/initTemplateList.do"/>
-  <definition name="objectDetailsTemplateTable.tile" path="/objectDetailsTemplateTable.jsp" 
+  <definition name="objectDetailsTemplateTable.tile" path="/objectDetailsTemplateTable.jsp"
               controllerUrl="/initObjectDetailsTemplateTable.do"/>
   <definition name="main.tile" path="/main.jsp" controllerUrl="/initMain.do"/>
   <definition name="mainConstraint.tile" path="/mainConstraint.jsp" controllerUrl="/initMainConstraint.do"/>
@@ -190,22 +190,24 @@
   <definition name="view.tile" path="/view.jsp">
     <put name="saveQuery" value="/saveQuery.jsp"/>
     <put name="createTemplate" value="/createTemplate.jsp"/>
-  </definition> 
+  </definition>
   <definition name="objectDetailsBags.tile" path="/objectDetailsBags.jsp" controllerUrl="/objectDetailsBags.do"/>
   <definition name="classChooser.tile" path="/queryClassSelect.jsp" controllerUrl="/initClassChooser.do"/>
   <definition name="mymine.tile" path="/mymine.jsp" controllerUrl="/initMymine.do"/>
   <definition name="objectTrail.tile" path="/objectTrail.jsp" controllerUrl="/initObjectTrail.do"/>
-  <definition name="htmlHead.tile" path="/htmlHead.jsp" controllerUrl="/initHtmlHead.do"/>  
-  <definition name="objectView.tile" path="/objectView.jsp"/>
+
+  <definition name="htmlHead.tile" path="/htmlHead.jsp" controllerUrl="/initHtmlHead.do"/>
+  <definition name="objectView.tile" path="/objectView.jsp" controllerUrl="/initObjectView.do"/>
+
   <definition name="objectDetailsPage.tile" path="/objectDetails.jsp" controllerUrl="/initObjectDetails.do"/>
   <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>
   <definition name="bag.tile" path="/bag.jsp"/>
   <definition name="bagBuild.tile" path="/bagBuild.jsp" controllerUrl="/initBagBuild.do"/>
   <definition name="table.tile" path="/table.jsp" controllerUrl="/initTable.do"/>
   <definition name="noResults.tile" path="/noResults.jsp"/>
-  <definition name="singleResult.tile" path="/singleResult.jsp" 
+  <definition name="singleResult.tile" path="/singleResult.jsp"
               controllerUrl="/initSingleResult.do"/>
-  <definition name="tableCountEstimate.tile" path="/tableCountEstimate.jsp" 
+  <definition name="tableCountEstimate.tile" path="/tableCountEstimate.jsp"
               controllerUrl="/initTableCountEstimate.do"/>
   <definition name="aspect.tile" path="/aspect.jsp" controllerUrl="/initAspect.do"/>
   <definition name="webSearchableList.tile" path="/webSearchableList.jsp"
@@ -231,29 +233,29 @@
   <definition name="bagDetails.tile" path="bagDetails.jsp" controllerUrl="/initBagDetails.do" />
   <definition name="bagView.tile" path="bagView.jsp" controllerUrl="/initBagView.do" />
   <definition name="dataCategories.tile" path="/dataCategories.jsp" />
-  <definition name="convertBag.tile" path="convertBag.jsp" controllerUrl="/initConvertBag.do" />  
-  <definition name="errorMessages.tile" path="errorMessages.jsp" controllerUrl="/initErrorMessages.do" />  
-  <definition name="errorMessagesContainers.tile" path="errorMessagesContainers.jsp" />  
+  <definition name="convertBag.tile" path="convertBag.jsp" controllerUrl="/initConvertBag.do" />
+  <definition name="errorMessages.tile" path="errorMessages.jsp" controllerUrl="/initErrorMessages.do" />
+  <definition name="errorMessagesContainers.tile" path="errorMessagesContainers.jsp" />
   <definition name="resultsTable.tile" path="resultsTable.jsp"/>
-  <definition name="paging.tile" path="paging.jsp" />  
-  <definition name="widget.tile" path="widget.jsp" />  
+  <definition name="paging.tile" path="paging.jsp" />
+  <definition name="widget.tile" path="widget.jsp" />
   <definition name="linkPopUp.tile" path="linkPopUp.jsp" />
   <definition name="objectDetailsInList.tile" path="objectDetailsInList.jsp" controllerUrl="/initObjectDetailsInList.do"/>
   <definition name="news.tile" path="news.jsp" />
   <definition name="exportOptions.tile" path="/exportOptions.jsp" controllerUrl="/initExportOptions.do"/>
   <definition name="addColumn.tile" path="/addColumn.jsp"/>
   <definition name="availableColumns.tile" path="/availableColumns.jsp"  controllerUrl="/initAvailableColumns.do"/>
-  <definition name="galaxy.tile" path="/galaxy.jsp"  controllerUrl="/initGalaxy.do"/>
+  <!-- <definition name="galaxy.tile" path="/galaxy.jsp"  controllerUrl="/initGalaxy.do"/> -->
   <definition name="tagSelect.tile" path="/tagSelect.jsp" />
   <definition name="bagTagSelect.tile" path="/bagTagSelect.jsp" />
-  <definition name="headMenu.tile" path="/headMenu.jsp" controllerUrl="/initSubMenu.do" />  
-  <definition name="templates.tile" path="/templates.jsp" controllerUrl="/initTemplates.do" />  
+  <definition name="headMenu.tile" path="/headMenu.jsp" controllerUrl="/initSubMenu.do" />
+  <definition name="templates.tile" path="/templates.jsp" controllerUrl="/initTemplates.do" />
   <definition name="passwordReset.tile" path="/passwordReset.jsp" controllerUrl="/initPasswordReset.do"/>
-  <definition name="hints.tile" path="/hints.jsp" controllerUrl="/initHints.do" />  
+  <definition name="hints.tile" path="/hints.jsp" controllerUrl="/initHints.do" />
 
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->
-  
+
 </tiles-definitions>
 
 
