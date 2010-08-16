@@ -238,7 +238,6 @@ public class IntergenicRegionUtil
                 intergenicRegion.addDataSets(dataSet);
                 synonym.addDataSets(dataSet);
                 synonym.setSubject(intergenicRegion);
-                synonym.setType("identifier");
                 int length = location.getEnd().intValue() - location.getStart().intValue() + 1;
                 intergenicRegion.setLength(new Integer(length));
 

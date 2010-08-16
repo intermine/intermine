@@ -143,11 +143,6 @@ public class SynonymUpdater
                     }
                 }
             }
-            if (isPrimary) {
-                synonymCopy.setIsPrimary(Boolean.TRUE);
-            } else {
-                synonymCopy.setIsPrimary(Boolean.FALSE);
-            }
             osw.store(synonymCopy);
         }
 

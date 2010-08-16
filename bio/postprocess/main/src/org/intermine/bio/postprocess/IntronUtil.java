@@ -331,7 +331,6 @@ public class IntronUtil
 
                 synonym.addDataSets(dataSet);
                 synonym.setSubject(intron);
-                synonym.setType("identifier");
                 synonym.setValue(intron.getPrimaryIdentifier());
                 osw.store(synonym);
 
