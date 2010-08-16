@@ -99,6 +99,8 @@ import com.browseengine.bobo.api.BrowseSelection;
 import com.browseengine.bobo.api.FacetSpec;
 import com.browseengine.bobo.api.FacetSpec.FacetSortSpec;
 import com.browseengine.bobo.facets.FacetHandler;
+import com.browseengine.bobo.facets.impl.MultiValueFacetHandler;
+import com.browseengine.bobo.facets.impl.PathFacetHandler;
 import com.browseengine.bobo.facets.impl.SimpleFacetHandler;
 
 /**
@@ -228,8 +230,7 @@ class LuceneIndexContainer implements Serializable
 }
 
 /**
- * container to hold results for a reference query
- * and associated iterator
+ * container to hold results for a reference query and associated iterator
  * @author nils *
  */
 class InterMineResultsContainer
@@ -239,7 +240,8 @@ class InterMineResultsContainer
 
     /**
      * create container and set iterator
-     * @param results result object from os.execute(query)
+     * @param results
+     *            result object from os.execute(query)
      */
     @SuppressWarnings("unchecked")
     public InterMineResultsContainer(Results results) {
@@ -265,10 +267,9 @@ class InterMineResultsContainer
 }
 
 /**
- * container class to hold the name and value of an attribute for an object
- * to be added as a field to the document
+ * container class to hold the name and value of an attribute for an object to
+ * be added as a field to the document
  * @author nils
- *
  */
 class ObjectValueContainer
 {
@@ -278,9 +279,12 @@ class ObjectValueContainer
 
     /**
      * constructor
-     * @param className name of the class the attribute belongs to
-     * @param name name of the field
-     * @param value value of the field
+     * @param className
+     *            name of the class the attribute belongs to
+     * @param name
+     *            name of the field
+     * @param value
+     *            value of the field
      */
     public ObjectValueContainer(String className, String name, String value) {
         super();
@@ -323,11 +327,10 @@ class ObjectValueContainer
 }
 
 /**
- * thread to fetch all intermineobjects (with exceptions) from database,
- * create a lucene document for them, add references (if applicable)
- * and put the final document in the indexing queue
+ * thread to fetch all intermineobjects (with exceptions) from database, create
+ * a lucene document for them, add references (if applicable) and put the final
+ * document in the indexing queue
  * @author nils
- *
  */
 class InterMineObjectFetcher extends Thread
 {
@@ -339,7 +342,7 @@ class InterMineObjectFetcher extends Thread
     final Set<Class<? extends InterMineObject>> ignoredClasses;
     final Map<Class<? extends InterMineObject>, String[]> specialReferences;
     final Map<ClassDescriptor, Float> classBoost;
-    final Collection<String> facetFields;
+    final Vector<KeywordSearchFacetData> facets;
 
     final Map<Integer, Document> documents = new HashMap<Integer, Document>();
     final Set<String> fieldNames = new HashSet<String>();
@@ -353,24 +356,29 @@ class InterMineObjectFetcher extends Thread
      * initialize the documentfetcher thread
      * @param os
      *            intermine objectstore
-     * @param classKeys classKeys from InterMineAPI, map of classname to all key field descriptors
+     * @param classKeys
+     *            classKeys from InterMineAPI, map of classname to all key field
+     *            descriptors
      * @param indexingQueue
      *            queue shared with indexer
      * @param ignoredClasses
-     *            classes that should not be indexed (as specified in config + subclasses)
+     *            classes that should not be indexed (as specified in config +
+     *            subclasses)
      * @param specialReferences
-     *            map of classname to references to index in additional to normal attributes
-     * @param classBoost apply per-class doc boost as specified here (all other classes get 1.0)
-     * @param facetFields
-     *            fields used for faceting - will be indexed untokenized in addition to the normal
-     *            indexing
+     *            map of classname to references to index in additional to
+     *            normal attributes
+     * @param classBoost
+     *            apply per-class doc boost as specified here (all other classes
+     *            get 1.0)
+     * @param facets
+     *            fields used for faceting - will be indexed untokenized in
+     *            addition to the normal indexing
      */
     public InterMineObjectFetcher(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
             ConcurrentLinkedQueue<Document> indexingQueue,
             Set<Class<? extends InterMineObject>> ignoredClasses,
             Map<Class<? extends InterMineObject>, String[]> specialReferences,
-            Map<ClassDescriptor, Float> classBoost,
-            Collection<String> facetFields) {
+            Map<ClassDescriptor, Float> classBoost, Vector<KeywordSearchFacetData> facets) {
         super();
 
         this.os = os;
@@ -379,7 +387,7 @@ class InterMineObjectFetcher extends Thread
         this.ignoredClasses = ignoredClasses;
         this.specialReferences = specialReferences;
         this.classBoost = classBoost;
-        this.facetFields = facetFields;
+        this.facets = facets;
     }
 
     /**
@@ -406,6 +414,7 @@ class InterMineObjectFetcher extends Thread
                     new HashMap<String, InterMineResultsContainer>();
 
             try {
+                //query all objects except the ones we are ignoring
                 Query q = new Query();
                 QueryClass qc = new QueryClass(InterMineObject.class);
                 q.addFrom(qc);
@@ -423,6 +432,7 @@ class InterMineObjectFetcher extends Thread
                 int size = results.size();
                 LOG.info("Query returned " + size + " results");
 
+                //iterate over objects
                 while (it.hasNext()) {
                     ResultsRow<InterMineObject> row = it.next();
 
@@ -444,13 +454,14 @@ class InterMineObjectFetcher extends Thread
                         Document doc = createDocument(object, classDescriptor);
 
                         HashSet<String> references = new HashSet<String>();
-                        HashMap<String, String> referenceFacetFields =
-                                new HashMap<String, String>();
+                        HashMap<String, KeywordSearchFacetData> referenceFacetFields =
+                                new HashMap<String, KeywordSearchFacetData>();
 
                         // find all references associated with this object or
                         // its superclasses
                         for (Entry<Class<? extends InterMineObject>, String[]> specialClass
-                                : specialReferences.entrySet()) {
+                                : specialReferences
+                                .entrySet()) {
                             for (Class<?> objectClass : objectClasses) {
                                 if (specialClass.getKey().isAssignableFrom(objectClass)) {
                                     for (String reference : specialClass.getValue()) {
@@ -459,12 +470,15 @@ class InterMineObjectFetcher extends Thread
                                                         + reference;
                                         references.add(fullReference);
 
-                                        for (String facetField : facetFields) {
-                                            if (facetField.startsWith(reference + ".")
-                                                    && !facetField
-                                                            .substring(reference.length() + 1)
-                                                            .contains(".")) {
-                                                referenceFacetFields.put(fullReference, facetField);
+                                        //check if this reference returns a field we are
+                                        //faceting by. if so, add it to referenceFacetFields
+                                        for (KeywordSearchFacetData facet : facets) {
+                                            for (String field : facet.getFields()) {
+                                                if (field.startsWith(reference + ".")
+                                                        && !field.substring(reference.length() + 1)
+                                                                .contains(".")) {
+                                                    referenceFacetFields.put(fullReference, facet);
+                                                }
                                             }
                                         }
                                     }
@@ -472,7 +486,7 @@ class InterMineObjectFetcher extends Thread
                             }
                         }
 
-                        // check if we have seen an object of this class before
+                        // if we have not seen an object of this class before, query references
                         if (!seenClasses.contains(object.getClass())) {
                             LOG.info("Getting references for new class: " + object.getClass());
 
@@ -503,13 +517,14 @@ class InterMineObjectFetcher extends Thread
                         for (String reference : references) {
                             InterMineResultsContainer resultsContainer =
                                     referenceResults.get(reference);
+                            //step through the reference results (ordered) while ref.id = obj.id
                             while (resultsContainer.getIterator().hasNext()) {
                                 ResultsRow next = resultsContainer.getIterator().next();
 
+                                //reference is not for the current object?
                                 if (!next.get(0).equals(object.getId())) {
                                     // go back one step
-                                    if (resultsContainer.getIterator().hasPrevious()) { // always
-                                        // true
+                                    if (resultsContainer.getIterator().hasPrevious()) {
                                         resultsContainer.getIterator().previous();
                                     }
 
@@ -519,19 +534,59 @@ class InterMineObjectFetcher extends Thread
                                 // add reference to doc
                                 addObjectToDocument((InterMineObject) next.get(1), null, doc);
 
-                                String referenceFacetField = referenceFacetFields.get(reference);
-                                if (referenceFacetField != null) {
-                                    String facetAttribute =
-                                            referenceFacetField.substring(referenceFacetField
-                                                    .lastIndexOf('.') + 1);
-                                    Object facetValue =
-                                            TypeUtil.getFieldValue((InterMineObject) next.get(1),
-                                                    facetAttribute);
+                                //check if this reference contains an attribute we need for a facet
+                                KeywordSearchFacetData referenceFacet =
+                                        referenceFacetFields.get(reference);
+                                if (referenceFacet != null) {
+                                    //handle PATH facets FIXME: UNTESTED!
+                                    if (referenceFacet.getType() == KeywordSearchFacetType.PATH) {
+                                        String virtualPathField =
+                                                "path_" + referenceFacet.getName().toLowerCase();
+                                        for (String field : referenceFacet.getFields()) {
+                                            if (field.startsWith(reference + ".")) {
+                                                String facetAttribute =
+                                                        field.substring(field.lastIndexOf('.') + 1);
+                                                Object facetValue =
+                                                        TypeUtil.getFieldValue(
+                                                                (InterMineObject) next.get(1),
+                                                                facetAttribute);
 
-                                    if (facetValue instanceof String
-                                            && !StringUtils.isBlank((String) facetValue)) {
-                                        doc.add(new Field(referenceFacetField, (String) facetValue,
-                                                Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+                                                if (facetValue instanceof String
+                                                        && !StringUtils
+                                                                .isBlank((String) facetValue)) {
+                                                    Field f = doc.getField(virtualPathField);
+
+                                                    if (f != null) {
+                                                        f.setValue(f.stringValue() + "/"
+                                                                + facetValue);
+                                                    } else {
+                                                        doc.add(new Field(virtualPathField,
+                                                                (String) facetValue,
+                                                                Field.Store.NO,
+                                                                Field.Index.NOT_ANALYZED_NO_NORMS));
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        //SINGLE/MULTI facet
+                                        //add attribute to document a second time, but unstemmed
+                                        //and with the field name corresponding to the facet name
+                                        String facetAttribute =
+                                                referenceFacet.getField()
+                                                        .substring(
+                                                                referenceFacet.getField()
+                                                                        .lastIndexOf('.') + 1);
+                                        Object facetValue =
+                                                TypeUtil.getFieldValue((InterMineObject) next
+                                                        .get(1), facetAttribute);
+
+                                        if (facetValue instanceof String
+                                                && !StringUtils.isBlank((String) facetValue)) {
+                                            doc.add(new Field(referenceFacet.getField(),
+                                                    (String) facetValue, Field.Store.NO,
+                                                    Field.Index.NOT_ANALYZED_NO_NORMS));
+                                        }
                                     }
                                 }
                             }
@@ -583,7 +638,7 @@ class InterMineObjectFetcher extends Thread
             Document doc) {
         Collection<String> keyFields;
 
-        //if we know the class, get a list of key fields
+        // if we know the class, get a list of key fields
         if (classDescriptor != null) {
             keyFields =
                     ClassKeyHelper
@@ -596,7 +651,8 @@ class InterMineObjectFetcher extends Thread
         for (ObjectValueContainer attribute : attributes) {
             addToDocument(doc, attribute.getLuceneName(), attribute.getValue(), 1F, false);
 
-            //index all key fields as raw data with a higher boost, favors "exact matches"
+            // index all key fields as raw data with a higher boost, favors
+            // "exact matches"
             if (keyFields.contains(attribute.getName())) {
                 addToDocument(doc, attribute.getLuceneName(), attribute.getValue(), 2F, true);
             }
@@ -611,7 +667,7 @@ class InterMineObjectFetcher extends Thread
         for (ClassAttributes classAttributes : decomposedClassAttributes) {
             for (AttributeDescriptor att : classAttributes.getAttributes()) {
                 try {
-                    //only index strings
+                    // only index strings
                     if ("java.lang.String".equals(att.getType())) {
                         Object value = TypeUtil.getFieldValue(obj, att.getName());
 
@@ -745,7 +801,7 @@ class InterMineObjectFetcher extends Thread
  */
 public class KeywordSearch
 {
-    private static final String LUCENE_INDEX_PATH = "lucene_index";
+    private static final String LUCENE_INDEX_DIR = "lucene_index_nils";
 
     /**
      * maximum number of hits returned
@@ -769,130 +825,145 @@ public class KeywordSearch
     private static Map<Class<? extends InterMineObject>, String[]> specialReferences;
     private static Set<Class<? extends InterMineObject>> ignoredClasses;
     private static Map<ClassDescriptor, Float> classBoost;
-    private static Map<String, String> facets;
+    private static Vector<KeywordSearchFacetData> facets;
     private static boolean debugOutput;
 
     @SuppressWarnings("unchecked")
     private static synchronized void parseProperties(ObjectStore os) {
-        if (properties == null) {
-            specialReferences = new HashMap<Class<? extends InterMineObject>, String[]>();
-            ignoredClasses = new HashSet<Class<? extends InterMineObject>>();
-            classBoost = new HashMap<ClassDescriptor, Float>();
-            facets = new HashMap<String, String>();
-            debugOutput = false;
-
-            // load config file to figure out special classes
-            String configFileName = "keyword_search.properties";
-            ClassLoader classLoader = KeywordSearch.class.getClassLoader();
-            InputStream configStream = classLoader.getResourceAsStream(configFileName);
-            if (configStream != null) {
-                properties = new Properties();
-                try {
-                    properties.load(configStream);
-
-                    for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                        String key = (String) entry.getKey();
-                        String value = (String) entry.getValue();
-
-                        if ("index.ignore".equals(key) && !StringUtils.isBlank(value)) {
-                            String[] ignoreClassNames = value.split("\\s+");
-
-                            for (String className : ignoreClassNames) {
-                                ClassDescriptor cld =
-                                        os.getModel().getClassDescriptorByName(className);
-
-                                addCldToIgnored(ignoredClasses, cld);
-                            }
-                        } else if (key.startsWith("index.references.")) {
-                            String classToIndex = key.substring("index.references.".length());
-                            ClassDescriptor cld =
-                                    os.getModel().getClassDescriptorByName(classToIndex);
-                            if (cld != null) {
-                                Class<? extends InterMineObject> cls =
-                                        (Class<? extends InterMineObject>) cld.getType();
-
-                                // special fields (references to follow) come as
-                                // a
-                                // space-separated list
-                                String[] specialFields;
-                                if (!StringUtils.isBlank(value)) {
-                                    specialFields = value.split("\\s+");
-                                } else {
-                                    specialFields = null;
-                                }
-
-                                specialReferences.put(cls, specialFields);
-                            } else {
-                                LOG.error("keyword_search.properties: classDescriptor for '"
-                                        + classToIndex + "' not found!");
-                            }
-                        } else if (key.startsWith("index.facet.")) {
-                            String facetName = key.substring("index.facet.".length());
-                            String facetField = value;
-                            facets.put(facetField, facetName);
-                        } else if (key.startsWith("index.boost.")) {
-                            String classToBoost = key.substring("index.boost.".length());
-                            ClassDescriptor cld =
-                                    os.getModel().getClassDescriptorByName(classToBoost);
-                            if (cld != null) {
-                                classBoost.put(cld, Float.valueOf(value));
-                            } else {
-                                LOG.error("keyword_search.properties: classDescriptor for '"
-                                        + classToBoost + "' not found!");
-                            }
-                        } else if ("search.debug".equals(key) && !StringUtils.isBlank(value)) {
-                            debugOutput =
-                                    "1".equals(value) || "true".equals(value.toLowerCase())
-                                            || "on".equals(value.toLowerCase());
-                        }
-                    }
-                } catch (IOException e) {
-                    LOG.error("keyword_search.properties: errow while loading file '"
-                            + configFileName + "'", e);
-                }
-            } else {
-                LOG.error("keyword_search.properties: file '" + configFileName + "' not found!");
-            }
-
-            LOG.info("Indexing - Ignored classes:");
-            for (Class<? extends InterMineObject> class1 : ignoredClasses) {
-                LOG.info("- " + class1.getSimpleName());
-            }
-
-            LOG.info("Indexing - Special References:");
-            for (Entry<Class<? extends InterMineObject>, String[]> specialReference
-                    : specialReferences.entrySet()) {
-                LOG.info("- " + specialReference.getKey() + " = "
-                        + Arrays.toString(specialReference.getValue()));
-            }
-
-            LOG.info("Indexing - Facets:");
-            for (Entry<String, String> facet : facets.entrySet()) {
-                LOG.info("- field = " + facet.getKey() + ", name = " + facet.getValue());
-            }
-
-            LOG.info("Search - Debug mode: " + debugOutput);
+        if (properties != null) {
+            return;
         }
+
+        specialReferences = new HashMap<Class<? extends InterMineObject>, String[]>();
+        ignoredClasses = new HashSet<Class<? extends InterMineObject>>();
+        classBoost = new HashMap<ClassDescriptor, Float>();
+        facets = new Vector<KeywordSearchFacetData>();
+        debugOutput = false;
+
+        // load config file to figure out special classes
+        String configFileName = "keyword_search.properties";
+        ClassLoader classLoader = KeywordSearch.class.getClassLoader();
+        InputStream configStream = classLoader.getResourceAsStream(configFileName);
+        if (configStream != null) {
+            properties = new Properties();
+            try {
+                properties.load(configStream);
+
+                for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                    String key = (String) entry.getKey();
+                    String value = (String) entry.getValue();
+
+                    if ("index.ignore".equals(key) && !StringUtils.isBlank(value)) {
+                        String[] ignoreClassNames = value.split("\\s+");
+
+                        for (String className : ignoreClassNames) {
+                            ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
+
+                            addCldToIgnored(ignoredClasses, cld);
+                        }
+                    } else if (key.startsWith("index.references.")) {
+                        String classToIndex = key.substring("index.references.".length());
+                        ClassDescriptor cld = os.getModel().getClassDescriptorByName(classToIndex);
+                        if (cld != null) {
+                            Class<? extends InterMineObject> cls =
+                                    (Class<? extends InterMineObject>) cld.getType();
+
+                            // special fields (references to follow) come as
+                            // a
+                            // space-separated list
+                            String[] specialFields;
+                            if (!StringUtils.isBlank(value)) {
+                                specialFields = value.split("\\s+");
+                            } else {
+                                specialFields = null;
+                            }
+
+                            specialReferences.put(cls, specialFields);
+                        } else {
+                            LOG.error("keyword_search.properties: classDescriptor for '"
+                                    + classToIndex + "' not found!");
+                        }
+                    } else if (key.startsWith("index.facet.single.")) {
+                        String facetName = key.substring("index.facet.single.".length());
+                        String facetField = value;
+                        facets.add(new KeywordSearchFacetData(facetField, facetName,
+                                KeywordSearchFacetType.SINGLE));
+                    } else if (key.startsWith("index.facet.multi.")) {
+                        String facetName = key.substring("index.facet.multi.".length());
+                        String facetField = value;
+                        facets.add(new KeywordSearchFacetData(facetField, facetName,
+                                KeywordSearchFacetType.MULTI));
+                    } else if (key.startsWith("index.facet.path.")) {
+                        String facetName = key.substring("index.facet.path.".length());
+                        String[] facetFields = value.split(" ");
+                        facets.add(new KeywordSearchFacetData(facetFields, facetName,
+                                KeywordSearchFacetType.PATH));
+                    } else if (key.startsWith("index.boost.")) {
+                        String classToBoost = key.substring("index.boost.".length());
+                        ClassDescriptor cld = os.getModel().getClassDescriptorByName(classToBoost);
+                        if (cld != null) {
+                            classBoost.put(cld, Float.valueOf(value));
+                        } else {
+                            LOG.error("keyword_search.properties: classDescriptor for '"
+                                    + classToBoost + "' not found!");
+                        }
+                    } else if ("search.debug".equals(key) && !StringUtils.isBlank(value)) {
+                        debugOutput =
+                                "1".equals(value) || "true".equals(value.toLowerCase())
+                                        || "on".equals(value.toLowerCase());
+                    }
+                }
+            } catch (IOException e) {
+                LOG.error("keyword_search.properties: errow while loading file '" + configFileName
+                        + "'", e);
+            }
+        } else {
+            LOG.error("keyword_search.properties: file '" + configFileName + "' not found!");
+        }
+
+        LOG.info("Indexing - Ignored classes:");
+        for (Class<? extends InterMineObject> class1 : ignoredClasses) {
+            LOG.info("- " + class1.getSimpleName());
+        }
+
+        LOG.info("Indexing - Special References:");
+        for (Entry<Class<? extends InterMineObject>, String[]> specialReference : specialReferences
+                .entrySet()) {
+            LOG.info("- " + specialReference.getKey() + " = "
+                    + Arrays.toString(specialReference.getValue()));
+        }
+
+        LOG.info("Indexing - Facets:");
+        for (KeywordSearchFacetData facet : facets) {
+            LOG.info("- field = " + facet.getField() + ", name = " + facet.getName() + ", type = "
+                    + facet.getType().toString());
+        }
+
+        LOG.info("Search - Debug mode: " + debugOutput);
     }
 
     /**
      * loads or creates the lucene index
      * @param im
      *            API for accessing object store
+     * @param path path to store the fsdirectory in
      */
-    public static synchronized void initKeywordSearch(InterMineAPI im) {
-        if (index == null) {
-            // try to load index from database first
-            loadIndexFromDatabase(im.getObjectStore());
+    public static synchronized void initKeywordSearch(InterMineAPI im, String path) {
+        try {
 
             if (index == null) {
-                throw new RuntimeException("lucene index missing!");
+                // try to load index from database first
+                loadIndexFromDatabase(im.getObjectStore(), path);
+
+                if (index == null) {
+                    throw new RuntimeException("lucene index missing!");
+                }
             }
-        }
 
-        parseProperties(im.getObjectStore());
+            if (properties == null) {
+                parseProperties(im.getObjectStore());
+            }
 
-        try {
             if (reader == null) {
                 reader = IndexReader.open(index.getDirectory(), true);
             }
@@ -901,8 +972,15 @@ public class KeywordSearch
                 // prepare faceting
                 HashSet<FacetHandler<?>> facetHandlers = new HashSet<FacetHandler<?>>();
                 facetHandlers.add(new SimpleFacetHandler("Category"));
-                for (String facet : facets.keySet()) {
-                    facetHandlers.add(new SimpleFacetHandler(facet));
+                for (KeywordSearchFacetData facet : facets) {
+                    if (facet.getType().equals(KeywordSearchFacetType.MULTI)) {
+                        facetHandlers.add(new MultiValueFacetHandler(facet.getField()));
+                    } else if (facet.getType().equals(KeywordSearchFacetType.PATH)) {
+                        facetHandlers.add(new PathFacetHandler("path_"
+                                + facet.getName().toLowerCase()));
+                    } else {
+                        facetHandlers.add(new SimpleFacetHandler(facet.getField()));
+                    }
                 }
 
                 boboIndexReader = BoboIndexReader.getInstance(reader, facetHandlers);
@@ -938,7 +1016,8 @@ public class KeywordSearch
      * metadatamanager
      * @param os
      *            intermine objectstore
-     * @param classKeys map of classname to key field descriptors (from InterMineAPI)
+     * @param classKeys
+     *            map of classname to key field descriptors (from InterMineAPI)
      */
     public static void saveIndexToDatabase(ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys) {
@@ -1080,7 +1159,8 @@ public class KeywordSearch
      * @param offset
      *            display offset
      * @param facetValues
-     *            map of 'facet field name' to 'value to restrict field to' (optional)
+     *            map of 'facet field name' to 'value to restrict field to'
+     *            (optional)
      * @return bobo browse result or null if failed
      */
     public static BrowseResult runBrowseSearch(String searchString, int offset,
@@ -1138,11 +1218,11 @@ public class KeywordSearch
             FacetSpec orderByHitsSpec = new FacetSpec();
             orderByHitsSpec.setOrderBy(FacetSortSpec.OrderHitsDesc);
             browseRequest.setFacetSpec("Category", orderByHitsSpec);
-            for (String facet : facets.keySet()) {
-                browseRequest.setFacetSpec(facet, orderByHitsSpec);
+            for (KeywordSearchFacetData facet : facets) {
+                browseRequest.setFacetSpec(facet.getField(), orderByHitsSpec);
             }
 
-            LOG.info("Prepared browserequest in " + (System.currentTimeMillis() - time) + " ms");
+            LOG.debug("Prepared browserequest in " + (System.currentTimeMillis() - time) + " ms");
             time = System.currentTimeMillis();
 
             // execute query and return result
@@ -1169,7 +1249,7 @@ public class KeywordSearch
             LOG.info("Exception caught, returning no results", e);
         }
 
-        LOG.info("Bobo browse finished in " + (System.currentTimeMillis() - time) + " ms");
+        LOG.debug("Bobo browse finished in " + (System.currentTimeMillis() - time) + " ms");
 
         return result;
     }
@@ -1181,7 +1261,7 @@ public class KeywordSearch
         return queryString;
     }
 
-    private static void loadIndexFromDatabase(ObjectStore os) {
+    private static void loadIndexFromDatabase(ObjectStore os, String path) {
         long time = System.currentTimeMillis();
         LOG.info("Attempting to restore search index from database...");
         if (os instanceof ObjectStoreInterMineImpl) {
@@ -1225,7 +1305,8 @@ public class KeywordSearch
                     if (is != null) {
                         if ("FSDirectory".equals(index.getDirectoryType())) {
                             final int bufferSize = 2048;
-                            File directoryPath = new File(LUCENE_INDEX_PATH);
+                            File directoryPath = new File(path + File.separator + LUCENE_INDEX_DIR);
+                            LOG.info("Directory path: " + directoryPath);
 
                             // make sure we start with a new index
                             if (directoryPath.exists()) {
@@ -1318,14 +1399,14 @@ public class KeywordSearch
         LOG.info("Starting fetcher thread...");
         InterMineObjectFetcher fetchThread =
                 new InterMineObjectFetcher(os, classKeys, indexingQueue, ignoredClasses,
-                        specialReferences, classBoost, facets.keySet());
+                        specialReferences, classBoost, facets);
         fetchThread.start();
 
         // index the docs queued by the fetchers
         LOG.info("Preparing indexer...");
         index = new LuceneIndexContainer();
         try {
-            File directoryPath = new File(LUCENE_INDEX_PATH);
+            File directoryPath = new File(LUCENE_INDEX_DIR);
             index.setDirectory(FSDirectory.open(directoryPath));
             index.setDirectoryType("FSDirectory");
 
@@ -1441,7 +1522,7 @@ public class KeywordSearch
      * get list of facet fields and names
      * @return map of internal fieldname -> displayed name
      */
-    public static Map<String, String> getFacets() {
+    public static Vector<KeywordSearchFacetData> getFacets() {
         return facets;
     }
 }

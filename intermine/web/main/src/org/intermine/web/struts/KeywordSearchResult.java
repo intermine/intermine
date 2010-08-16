@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
@@ -40,8 +41,9 @@ public class KeywordSearchResult
     final int id;
     final String type;
     final float score;
-    final int points;
+    final Map<String, TemplateQuery> templates;
 
+    final int points;
     final HashMap<String, FieldConfig> fieldConfigs;
     final Vector<String> keyFields;
     final Vector<String> additionalFields;
@@ -54,10 +56,11 @@ public class KeywordSearchResult
      * @param classKeys keys associated with this class
      * @param classDescriptor descriptor for this class
      * @param score score for this hit
+     * @param templates templatequeries for this class
      */
     public KeywordSearchResult(WebConfig webconfig, InterMineObject object,
             Map<String, List<FieldDescriptor>> classKeys, ClassDescriptor classDescriptor,
-            float score) {
+            float score, Map<String, TemplateQuery> templates) {
         super();
 
         List<FieldConfig> fieldConfigList = FieldConfigHelper.getClassFieldConfigs(webconfig,
@@ -90,8 +93,8 @@ public class KeywordSearchResult
         this.id = object.getId();
         this.type = classDescriptor.getUnqualifiedName();
         this.score = score;
-        this.points = Math.round(Math.max(0.1F, Math.min(1, getScore())) * 10); // range
-        // 1..10
+        this.templates = templates;
+        this.points = Math.round(Math.max(0.1F, Math.min(1, getScore())) * 10); // range 1..10
     }
 
     private Object getValueForField(InterMineObject object, String expression) {
@@ -157,19 +160,19 @@ public class KeywordSearchResult
     }
 
     /**
+     * templates associated with this class
+     * @return map of internal template name to template query
+     */
+    public Map<String, TemplateQuery> getTemplates() {
+        return templates;
+    }
+
+    /**
      * return points
      * @return 1..10
      */
     public int getPoints() {
         return points;
-    }
-
-    /**
-     * webconfig
-     * @return webconfig
-     */
-    public WebConfig getWebconfig() {
-        return webconfig;
     }
 
     /**
