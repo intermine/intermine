@@ -11,6 +11,12 @@
 
 <div class="body">
 
+<div style="text-align: center; font-size: 1.5em; padding: 10px 5px;">
+	<a href="<c:url value="/keywordSearchResults.do"></c:url>">
+	   Try our new Keyword Search!
+	</a>
+</div>
+
 <!-- First column -->
      <im:boxarea title="Data Categories" titleLink="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
      <em><p><fmt:message key="begin.data"/></p></em>

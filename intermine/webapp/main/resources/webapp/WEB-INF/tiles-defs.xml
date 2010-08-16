@@ -251,6 +251,14 @@
   <definition name="passwordReset.tile" path="/passwordReset.jsp" controllerUrl="/initPasswordReset.do"/>
   <definition name="hints.tile" path="/hints.jsp" controllerUrl="/initHints.do" />
 
+  <definition name="keywordSearch.tile" path="/keywordSearch.jsp"/>
+  <definition name="keywordsearchresults.tile" path="/keywordSearchResults.jsp"
+        controllerUrl="/initKeywordSearchResults.do"/>
+  <definition name="keywordsearchresults.page" extends="layout.template">
+    <put name="body" value="keywordsearchresults.tile"/>
+    <put name="pageName" value="keywordsearchresults"/>
+  </definition>
+
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->
 
