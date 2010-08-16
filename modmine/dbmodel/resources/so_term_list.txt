@@ -1,5 +1,5 @@
-cdna
-cdna_clone
+cDNA
+cDNA_clone
 CDS
 chromosomal_deletion
 chromosomal_duplication
@@ -17,9 +17,8 @@ enhancer
 EST
 exon
 exon_region
-five_prime_utr
+five_prime_UTR
 flanking_region
-gene_part
 histone_binding_site
 insertion
 insertion_site
@@ -30,7 +29,7 @@ mRNA
 natural_transposable_element
 ncRNA
 origin_of_replication
-overlapping_est_set
+overlapping_EST_set
 point_mutation
 polyA_sequence
 polyA_signal_sequence
@@ -39,19 +38,18 @@ processed_transcript
 reagent
 region
 regulatory_region
-repeat_family
 repeat_region
 rRNA
 sequence_feature
 sequence_variant
 SL1_acceptor_site
-SL1_acceptor_site2
+SL2_acceptor_site
 small_regulatory_ncRNA
 snoRNA
 snRNA
 start_codon
 stop_codon
-Substitutions
+substitution
 TF_binding_site
 three_prime_RST
 three_prime_UST
@@ -59,7 +57,6 @@ three_prime_UTR
 transcript
 transcript_region
 transcription_end_site
-transcription_start_site
 transposable_element
 transposable_element_gene
 transposable_element_insertion_site
