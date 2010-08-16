@@ -432,7 +432,7 @@
     <action path="/initObjectDetailsInList" type="org.intermine.web.struts.ObjectDetailsInListController"/>
     <action path="/initExportOptions" type="org.intermine.web.struts.ExportOptionsController"/>
     <action path="/initAvailableColumns" type="org.intermine.web.struts.AvailableColumnsController"/>
-    <action path="/initGalaxy" type="org.intermine.web.struts.GalaxyController"/>
+    <!-- <action path="/initGalaxy" type="org.intermine.web.struts.GalaxyController"/> -->
     <action path="/initTemplates" type="org.intermine.web.struts.TemplatesController"/>
     <action path="/initPasswordReset" type="org.intermine.web.struts.PasswordResetController"/>
     <action path="/initHints" type="org.intermine.web.struts.HintsController"/>
