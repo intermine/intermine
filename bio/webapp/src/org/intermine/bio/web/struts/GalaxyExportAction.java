@@ -1,5 +1,15 @@
 package org.intermine.bio.web.struts;
 
+/*
+ * Copyright (C) 2002-2010 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -8,13 +18,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -22,8 +30,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
-import org.intermine.model.FastPathObject;
-import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Organism;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
@@ -40,7 +46,6 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.web.util.URLGenerator;
-import org.jfree.util.Log;
 
 /*
  * Copyright (C) 2002-2010 FlyMine
@@ -192,25 +197,26 @@ public class GalaxyExportAction extends InterMineAction
 }
 
 /**
+ * To find the organisms that the exported sequence features belong to.
  *
  * @author Fengyuan Hu
  *
  */
 class ResultManipulater extends HttpExporterBase
 {
-    private static final Logger LOG = Logger.getLogger(ResultManipulater.class);
+//    private static final Logger LOG = Logger.getLogger(ResultManipulater.class);
 
     /**
      *
-     * @param pt
-     * @param request
-     * @param index
-     * @return
+     * @param pt PagedTable
+     * @param request Http Request
+     * @param index index of pagedTable column for the feature to export
+     * @return A Map: Key - organism's TaxonId; Value - organism's shortName
      */
     public Map<Integer, String> findOrganisms(PagedTable pt,
             HttpServletRequest request, int index) {
 
-        if (pt.getEstimatedSize() > 10000) {}
+//        if (pt.getEstimatedSize() > 10000) { }
         ExportResultsIterator resultIt = getResultRows(pt, request);
 
         Map<Integer, String> orgNameMap = new LinkedHashMap<Integer, String>();

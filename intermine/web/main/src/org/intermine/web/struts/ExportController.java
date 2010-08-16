@@ -64,7 +64,8 @@ public class ExportController extends TilesAction
         }
 
         Map<String, TableExportConfig> allExporters = webConfig.getTableExportConfigs();
-        Map<String, Map<String, String>> usableExporters = new HashMap();
+        Map<String, Map<String, String>> usableExporters =
+            new HashMap<String, Map<String, String>>();
 
         for (Iterator<String> i = allExporters.keySet().iterator(); i.hasNext(); ) {
             String exporterId = i.next();
@@ -80,7 +81,7 @@ public class ExportController extends TilesAction
             }
             if (canExport) {
                 // parameters to pass via the URL to the exportOptions page
-                Map<String, String> config = new HashMap();
+                Map<String, String> config = new HashMap<String, String>();
                 config.put("id", tableExportConfig.getId());
                 config.put("className", tableExportConfig.getClassName());
                 usableExporters.put(exporterId, config);
