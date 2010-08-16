@@ -45,26 +45,28 @@ public class BeginAction extends InterMineAction
      *                if the application business logic throws an exception
      */
     public ActionForward execute(ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form,
+            ActionForm form,
             HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response)
+            HttpServletResponse response)
         throws Exception {
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
-        // TODO this message should be moved to properties file
+        Properties properties = SessionMethods.getWebProperties(session.getServletContext());
+
+        // If GALAXY_URL is sent from a Galaxy server, then save it in the session; if not, read
+        // the default value from web.properties and save it in the session
         if (request.getParameter("GALAXY_URL") != null) {
             request.getSession().setAttribute("GALAXY_URL",
                     request.getParameter("GALAXY_URL"));
-
-            String msg = "<b>Welcome to FlyMine, GALAXY users!</b><br/><br/>"
-                    + "You can run queries by clicking on the 'Templates' tab at the top of this"
-                    + " page.&nbsp;&nbsp;Above your query results will be a 'Send to Galaxy'"
-                    + " button; clicking this button will take you back to Galaxy with the results"
-                    + " of that query.";
-
+            String msg = properties.getProperty("galaxy.welcomeMessage");
             SessionMethods.recordMessage(msg, session);
+        } else {
+            request.getSession().setAttribute(
+                    "GALAXY_URL",
+                    properties.getProperty("galaxy.baseurl.default")
+                            + properties.getProperty("galaxy.url.value"));
         }
 
         /* count number of templates and bags */
@@ -73,7 +75,7 @@ public class BeginAction extends InterMineAction
         request.setAttribute("templateCount", new Integer(im
                 .getTemplateManager().getGlobalTemplates().size()));
 
-        Properties properties = SessionMethods.getWebProperties(session.getServletContext());
+
         String[] beginQueryClasses = (properties.get("begin.query.classes").toString())
             .split("[ ,]+");
         request.setAttribute("beginQueryClasses", beginQueryClasses);
