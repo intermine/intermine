@@ -33,6 +33,27 @@
   margin-left: 0px;
 }
 
+.keywordSearchIndex {
+    background: #927F97;
+    border: 1px solid #C1DAD7;
+    color: #fff;
+    margin: 10px auto;
+    overflow: hidden;
+    width: 60%;
+}
+
+.keywordSearchIndexColumn {
+	float: left;
+	margin: 5px;
+}
+
+.keywordSearchIndex h2,
+.keywordSearchIndex a,
+.keywordSearchIndex a:visited,
+.keywordSearchIndex a:hover {
+	color: #fff;
+}
+
 .keywordSearchResults {
 	text-align: center;
 }

@@ -20,9 +20,40 @@
   <h2>Keyword Search</h2>
   <p><i>Search our database by keyword</i></p>
     <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
+        <c:forEach items="${searchFacetValues}" var="facetValue">
+            <input type="hidden" name="facet_${facetValue.key}" value="${facetValue.value}" />
+        </c:forEach>
         <div>
-		  <input type="text" name="searchTerm" value="<c:out value="${searchTerm}"></c:out>" style="width: 350px;" />  
-		  <input type="submit" value="Search" />
+          <c:if test="${!empty searchTerm || !empty searchFacetValues}">
+	          <a href="<c:url value="/keywordSearchResults.do" />">
+	             &laquo; Back to index</a>
+          </c:if>
+		  <input type="text" name="searchTerm" value="<c:out value="${searchTerm}"></c:out>" style="width: 350px;" /> 
+          <c:if test="${!empty searchFacetValues}">
+              <!-- <select name="searchKeepRestrictions">
+                <option value="on">
+                  <c:if test="${empty searchTerm}">
+                    in this list
+                  </c:if>
+                  <c:if test="${!empty searchTerm}">
+                        restricted to 
+				        <c:forEach items="${searchFacetValues}" var="facetValue" varStatus="facetValueStatus">
+				            ${facetValue.value}<c:if test="${!facetValueStatus.last}">,</c:if>
+				        </c:forEach>
+                  </c:if>
+                </option>
+                <option value="">
+                    in entire database
+                </option>
+              </select>
+              
+              <input type="submit" name="searchSubmitRestricted"
+                value="Search (only <c:forEach items="${searchFacetValues}" var="facetValue" varStatus="facetValueStatus">${facetValue.value}<c:if test="${!facetValueStatus.last}">, </c:if></c:forEach>)" />
+               -->
+              <input type="submit" name="searchSubmitRestricted"
+                value="Search (with current restrictions)" />
+          </c:if>
+          <input type="submit" name="searchSubmit" value="Search entire database" />
 		</div>
     </form>
     
