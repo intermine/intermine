@@ -76,7 +76,7 @@ public class BioStoreHook implements DataConverterStoreHook
      * {@inheritDoc}
      */
     public void processItem(DataConverter dataConverter, Item item) {
-        setSOTerm(dataConverter, item);
+        setSOTerm(dataConverter, item, null, ontologyRefId);
         if (StringUtils.isNotEmpty(dataSetRefId)) {
             setDataSets(model, item, dataSetRefId, dataSourceRefId);
         }
@@ -110,10 +110,20 @@ public class BioStoreHook implements DataConverterStoreHook
         }
     }
 
-    private void setSOTerm(DataConverter dataConverter, Item item) {
+    /**
+     * For an item, set the SO term reference if one is not already set.  Use the name provided
+     * else use the class name.
+     *
+     * @param dataConverter data converter
+     * @param item item of intered
+     * @param ontology id representing the Sequence Ontology object
+     * @param featureType type of feature eg. sequence_feature
+     */
+    public static void setSOTerm(DataConverter dataConverter, Item item, String featureType,
+            String ontology) {
         if (item.canHaveReference("sequenceOntologyTerm")
                 && !item.hasReference("sequenceOntologyTerm")) {
-            String soTermId = getSoTerm(dataConverter, item);
+            String soTermId = getSoTerm(dataConverter, item, featureType, ontology);
             if (!StringUtils.isEmpty(soTermId)) {
                 item.setReference("sequenceOntologyTerm", soTermId);
             }
@@ -121,25 +131,32 @@ public class BioStoreHook implements DataConverterStoreHook
     }
 
     /**
-     * get and store a SO term based on intermine item's class.  Only will store a SO term if
-     * the item is a SequenceFeature
+     * Get and store a SO term based on intermine item's class or featureType (if provided).
+     * Only will store a SO term if the item is a SequenceFeature.
+     *
      * @param dataConverter data converter
      * @param item item
+     * @param ontology id representing the SO object
+     * @param featureType type of feature, eg. sequence_feature
      * @return id representing the SO term object
      */
-    protected String getSoTerm(DataConverter dataConverter, Item item) {
+    protected static String getSoTerm(DataConverter dataConverter, Item item, String featureType,
+            String ontology) {
         String soName = null;
         try {
-            soName = BioConverterUtil.javaNameToSO(item.getClassName());
-            if (soName == null) {
-                return null;
+            if (StringUtils.isNotEmpty(featureType)) {
+                soName = featureType;
+            } else {
+                soName = BioConverterUtil.javaNameToSO(item.getClassName());
+                if (soName == null) {
+                    return null;
+                }
             }
-
             String soRefId = dataConverter.getUniqueItemId(soName);
             if (StringUtils.isEmpty(soRefId)) {
                 Item soterm = dataConverter.createItem("SOTerm");
                 soterm.setAttribute("name", soName);
-                soterm.setReference("ontology", ontologyRefId);
+                soterm.setReference("ontology", ontology);
                 dataConverter.store(soterm);
                 soRefId = soterm.getIdentifier();
                 dataConverter.addUniqueItemId(soName, soRefId);
