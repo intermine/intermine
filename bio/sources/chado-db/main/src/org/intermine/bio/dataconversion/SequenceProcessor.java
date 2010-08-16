@@ -431,6 +431,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Create and store a new Item, returning a FeatureData object for the feature.
+     *
      * @param featureId the chado id from the feature table
      * @param chadoType the type of the feature from the feature + cvterm tables
      * @param uniqueName the uniquename from chado
@@ -455,14 +456,14 @@ public class SequenceProcessor extends ChadoProcessor
             return null;
         }
         int taxonId = organismData.getTaxonId();
-        FeatureData fdat;
-        fdat = new FeatureData();
+        FeatureData fdat = new FeatureData();
         Item organismItem = getChadoDBConverter().getOrganismItem(taxonId);
         feature.setReference("organism", organismItem);
         if (feature.checkAttribute("md5checksum")) {
             feature.setAttribute("md5checksum", md5checksum);
         }
-        setSOTerm(feature, chadoType);
+        BioStoreHook.setSOTerm(getChadoDBConverter(), feature, chadoType,
+                getChadoDBConverter().sequenceOntologyRefId);
         fdat.setFieldExistenceFlags(feature);
         fdat.setIntermineObjectId(store(feature, taxonId));
         fdat.setItemIdentifier(feature.getIdentifier());
@@ -483,36 +484,6 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected Integer store(Item feature, int taxonId) throws ObjectStoreException {
         return getChadoDBConverter().store(feature);
-    }
-
-    private void setSOTerm(Item item, String featureType)
-        throws ObjectStoreException {
-        if (item.canHaveReference("sequenceOntologyTerm")
-                && !item.hasReference("sequenceOntologyTerm")) {
-            String soTerm = getSoTerm(featureType);
-            if (soTerm != null) {
-                item.setReference("sequenceOntologyTerm", soTerm);
-            }
-        }
-    }
-
-    /**
-     * Get a SO term for the given featureType.
-     *
-     * @param featureType chado feature type, eg. protein_coding_gene
-     * @return id representing the SO term for the given feature
-     * @throws ObjectStoreException if something goes wrong
-     */
-    protected String getSoTerm(String featureType) throws ObjectStoreException {
-        String refId = getChadoDBConverter().getUniqueItemId(featureType);
-        if (refId == null) {
-            Item soterm = getChadoDBConverter().createItem("SOTerm");
-            soterm.setAttribute("name", featureType);
-            soterm.setReference("ontology", getChadoDBConverter().sequenceOntologyRefId);
-            getChadoDBConverter().store(soterm);
-            getChadoDBConverter().addUniqueItemId(featureType, refId);
-        }
-        return refId;
     }
 
     /**
@@ -1357,38 +1328,39 @@ public class SequenceProcessor extends ChadoProcessor
                             count++;
                         }
                     } else {
-                        if (action instanceof CreateCollectionAction) {
-                            CreateCollectionAction cca = (CreateCollectionAction) action;
-
-                            Item item = null;
-                            String fieldName = cca.getFieldName();
-                            String className = cca.getClassName();
-                            if (cca.createSingletons()) {
-                                MultiKey singletonKey =
-                                    new MultiKey(className, fieldName, cvtermName);
-                                item = (Item) singletonMap.get(singletonKey);
-                            }
-                            if (item == null) {
-                                item = getChadoDBConverter().createItem(className);
-                                item.setAttribute(fieldName, cvtermName);
-                                getChadoDBConverter().store(item);
-                                if (cca.createSingletons()) {
-                                    singletonMap.put(key, item);
-                                }
-                            }
-
-                            String referenceName = cca.getReferenceName();
-                            List<Item> itemList;
-                            // creating collection, already seen this ref
-                            if (dataMap.containsKey(referenceName)) {
-                                itemList = dataMap.get(referenceName);
-                            // new collection
-                            } else {
-                                itemList = new ArrayList<Item>();
-                                dataMap.put(referenceName, itemList);
-                            }
-                            itemList.add(item);
-                        }
+                        // TODO fixme
+//                        if (action instanceof CreateCollectionAction) {
+//                            CreateCollectionAction cca = (CreateCollectionAction) action;
+//
+//                            Item item = null;
+//                            String fieldName = cca.getFieldName();
+//                            String className = cca.getClassName();
+//                            if (cca.createSingletons()) {
+//                                MultiKey singletonKey =
+//                                    new MultiKey(className, fieldName, cvtermName);
+//                                item = (Item) singletonMap.get(singletonKey);
+//                            }
+//                            if (item == null) {
+//                                item = getChadoDBConverter().createItem(className);
+//                                item.setAttribute(fieldName, cvtermName);
+//                                getChadoDBConverter().store(item);
+//                                if (cca.createSingletons()) {
+//                                    singletonMap.put(key, item);
+//                                }
+//                            }
+//
+//                            String referenceName = cca.getReferenceName();
+//                            List<Item> itemList;
+//                            // creating collection, already seen this ref
+//                            if (dataMap.containsKey(referenceName)) {
+//                                itemList = dataMap.get(referenceName);
+//                            // new collection
+//                            } else {
+//                                itemList = new ArrayList<Item>();
+//                                dataMap.put(referenceName, itemList);
+//                            }
+//                            itemList.add(item);
+//                        }
                     }
                 }
             }

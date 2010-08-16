@@ -32,7 +32,6 @@ import org.intermine.bio.chado.ChadoCV;
 import org.intermine.bio.chado.ChadoCVFactory;
 import org.intermine.bio.chado.ChadoCVTerm;
 import org.intermine.bio.chado.config.ConfigAction;
-import org.intermine.bio.chado.config.CreateCollectionAction;
 import org.intermine.bio.chado.config.CreateSynonymAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
 import org.intermine.bio.util.OrganismData;
@@ -641,15 +640,16 @@ public class FlyBaseProcessor extends SequenceProcessor
             // feature we create one SequenceOntologyTerm object for each associated "SO" cvterm.
             // We set the "name" field of the SequenceOntologyTerm to be the name from the cvterm
             // table.
-            List<String> chromosomeStructureVariationClassNames =
-                Arrays.asList("ChromosomeStructureVariation", "ChromosomalDeletion",
-                        "ChromosomalDuplication", "ChromosomalInversion",
-                        "ChromosomalTranslocation", "ChromosomalTransposition");
-            for (String className: chromosomeStructureVariationClassNames) {
-                map.put(new MultiKey("cvterm", className, "SO"),
-                        Arrays.asList(new CreateCollectionAction("SOTerm", "abberationSOTerms",
-                                "name", true)));
-            }
+            // TODO fixme
+//            List<String> chromosomeStructureVariationClassNames =
+//                Arrays.asList("ChromosomeStructureVariation", "ChromosomalDeletion",
+//                        "ChromosomalDuplication", "ChromosomalInversion",
+//                        "ChromosomalTranslocation", "ChromosomalTransposition");
+//            for (String className: chromosomeStructureVariationClassNames) {
+//                map.put(new MultiKey("cvterm", className, "SO"),
+//                        Arrays.asList(new CreateCollectionAction("SOTerm", "abberationSOTerms",
+//                                "name", true)));
+//            }
             // feature configuration example: for features of class "Exon", from "FlyBase",
             // set the Gene.symbol to be the "name" field from the chado feature
             map.put(new MultiKey("feature", "Exon", FLYBASE_DB_NAME, "name"),
