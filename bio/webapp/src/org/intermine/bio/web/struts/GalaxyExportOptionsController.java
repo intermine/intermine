@@ -30,20 +30,19 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.Column;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
 
-import org.intermine.model.bio.LocatedSequenceFeature;
-import org.intermine.model.bio.Chromosome;
-
 /**
  * Controller for galaxyExportOptions.tile.
+ *
  * @author Fengyuan Hu
  */
 
