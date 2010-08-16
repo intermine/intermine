@@ -53,9 +53,9 @@ public class ExportOptionsController extends TilesAction
      * @return an ActionForward object defining where control goes next
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-            ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
-            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
+    public ActionForward execute(ComponentContext context,
+            ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         String type = request.getParameter("type");
         String table = request.getParameter("table");
@@ -71,7 +71,7 @@ public class ExportOptionsController extends TilesAction
         try {
             TableHttpExporter exporter = factory.getExporter(type);
             List<Path> initialPaths = exporter.getInitialExportPaths(pt);
-            Map<String, String> pathsMap = new LinkedHashMap();
+            Map<String, String> pathsMap = new LinkedHashMap<String, String>();
             PathQuery query = pt.getWebTable().getPathQuery();
             for (Path path : initialPaths) {
                 String pathString = path.toStringNoConstraints();

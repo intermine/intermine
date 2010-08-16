@@ -26,7 +26,24 @@
   <br/>
 </c:if>
 
-
+<html:link action="/exportOptions?table=${tableName}&amp;type=galaxy&amp;exportAsBED=${exportAsBED}&amp;trail=${queryTrailLink}|${tableName}">
+  <fmt:message key="exporter.galaxy.description"/>
+</html:link>
+<br/>
+<%--
+  <c:choose>
+    <c:when test="${exportAsBED}">
+        <a href="${GALAXY_URL}" target="_blank" onclick="javascript:jQuery.post('${GALAXY_URL}',jQuery('#galaxyform').serialize());">
+        <a href="javascript:jQuery('#galaxyform').submit();">
+          <fmt:message key="exporter.galaxy.description"/>
+        </a>
+        <br/>
+    </c:when>
+    <c:otherwise>
+      <span class="nullStrike"><fmt:message key="exporter.galaxy.description"/></span><br>
+    </c:otherwise>
+  </c:choose>
+--%>
 
 <c:forEach var="entry" items="${exporters}" varStatus="status">
   <c:set var="exporterId" value="${entry.key}"/>
