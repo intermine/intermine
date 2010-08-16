@@ -801,7 +801,7 @@ class InterMineObjectFetcher extends Thread
  */
 public class KeywordSearch
 {
-    private static final String LUCENE_INDEX_DIR = "lucene_index_nils";
+    private static final String LUCENE_INDEX_DIR = "keyword_search_index";
 
     /**
      * maximum number of hits returned
