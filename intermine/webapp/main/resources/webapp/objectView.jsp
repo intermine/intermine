@@ -11,27 +11,38 @@
 <!-- objectView.jsp -->
 <html:xhtml/>
 <c:set var="object" value="${resultElement.field}"/>
+<c:set var="doNotTruncate" value="${doNotTruncate}"/>
 
 <c:set var="leafClds" value="${LEAF_DESCRIPTORS_MAP[object]}"/>
 
 <c:set var="detailsLink" value="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}" scope="request"/>
-
+***${resultElement.type}***
   <c:choose>
     <c:when test="${empty leafClds}">
       <fmt:message key="objectDetails.nullField" var="nullFieldText"/>
       <c:set var="maxLength" value="70"/>
       <c:choose>
         <c:when test="${!empty object && fn:startsWith(fn:trim(object), 'http://')}">
-          <a href="${object}" class="value extlink">
-            ${object}
-          </a>
+
+            <c:choose>
+               <%-- IMAGE --%>
+               <c:when test="${!empty fieldName && resultElement.type == 'Image')}">
+                  <img src="${object}"/>
+                </c:when>
+
+                <%-- LINK --%>
+                <c:otherwise>
+                    <a href="${object}" class="value extlink">${object}</a>
+                </c:otherwise>
+            </c:choose>
+
         </c:when>
-        <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength && resultElement.keyField}">
+        <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength && resultElement.keyField && !doNotTruncate}">
            <html:link action="${detailsLink}">
              <im:abbreviate value="${object}" length="${maxLength}"/>
            </html:link>
         </c:when>
-        <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength && !resultElement.keyField}">
+        <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength && !resultElement.keyField && !doNotTruncate}">
           <im:abbreviate value="${object}" length="${maxLength}"/>
         </c:when>
         <c:when test="${resultElement.keyField}">
