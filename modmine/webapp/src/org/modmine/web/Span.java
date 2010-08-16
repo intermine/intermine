@@ -17,27 +17,56 @@ package org.modmine.web;
  * @author Fengyuan Hu
  *
  */
-public class Span {
-
+public class Span
+{
     private String chr;
     private Integer start;
     private Integer end;
 
+    /**
+     *
+     * @return chr
+     */
     public String getChr() {
         return chr;
     }
+
+    /**
+     *
+     * @param chr chromosome
+     */
     public void setChr(String chr) {
         this.chr = chr;
     }
+
+    /**
+     *
+     * @return start
+     */
     public Integer getStart() {
         return start;
     }
+
+    /**
+     *
+     * @param start start poistion
+     */
     public void setStart(Integer start) {
         this.start = start;
     }
+
+    /**
+     *
+     * @return end
+     */
     public Integer getEnd() {
         return end;
     }
+
+    /**
+     *
+     * @param end end position
+     */
     public void setEnd(Integer end) {
         this.end = end;
     }

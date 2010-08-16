@@ -12,6 +12,12 @@
 <action path="/gff3ExportAction" name="gff3ExportForm"
         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
 
+<action path="/initGalaxyExportOptions"
+        type="org.intermine.bio.web.struts.GalaxyExportOptionsController"/>
+
+<action path="/galaxyExportAction" name="galaxyExportForm"
+        type="org.intermine.bio.web.struts.GalaxyExportAction" parameter="method"/>
+
 <action path="/chartRenderer" type="org.flymine.web.ChartRenderer" parameter="method" />
 
 <action path="/initAttributeLinkDisplayer"
@@ -34,6 +40,9 @@
 
 <action path="/initExperiment"
   type="org.modmine.web.ExperimentController" />
+
+<action path="/initModmineGBrowse"
+  type="org.modmine.web.ModmineGBrowseController" />
 
 <action path="/initProjects"
   type="org.modmine.web.ProjectsController" />
@@ -93,8 +102,9 @@
 <action path="/initSpanUploadResults"
   type="org.modmine.web.SpanUploadResultsController" />
 
-<action path="/spanUploadAction" name="spanUploadForm" type="org.modmine.web.SpanUploadAction" input="/spanUploadOptions.jsp">
+<action input="/spanUploadOptions.jsp" name="spanUploadForm" path="/spanUploadAction" scope="request" type="org.modmine.web.SpanUploadAction" >
     <forward name="spanUploadResults" path="/spanUploadResults.do" redirect="true"/>
+    <forward name="spanUploadOptions" path="/spanUploadOptions.do" redirect="true"/>
 </action>
 <!-- End of Span Upload configuration -->
 

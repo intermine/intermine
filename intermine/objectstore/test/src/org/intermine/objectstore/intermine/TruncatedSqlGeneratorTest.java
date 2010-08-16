@@ -322,6 +322,8 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("InterMineObject", "CompanysContractors")));
         results.put("Range1", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Range' AND a2_.tableclass = 'org.intermine.model.testmodel.Range' AND a1_.parentId = a2_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id");
         results2.put("Range1", new HashSet(Arrays.asList("InterMineObject")));
+        results.put("ConstrainClass1", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.InterMineObject' AND a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
+        results.put("ConstrainClass2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.InterMineObject' AND a1_.class IN ('org.intermine.model.testmodel.Company', 'org.intermine.model.testmodel.Employee') ORDER BY a1_.id");
     }
 
     protected DatabaseSchema getSchema() throws Exception {

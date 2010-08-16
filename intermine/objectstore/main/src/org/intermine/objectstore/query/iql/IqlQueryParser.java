@@ -131,6 +131,17 @@ public class IqlQueryParser
             throw new IllegalArgumentException("Expected: an IQL SELECT statement");
         }
         processAST(ast.getFirstChild(), q, modelPackage, iterator);
+        for (QuerySelectable qs : q.getSelect()) {
+            if (qs instanceof QueryValue) {
+                QueryValue qv = (QueryValue) qs;
+                if (UnknownTypeValue.class.equals(qv.getType())) {
+                    if (((UnknownTypeValue) qv.getValue()).getApproximateType()
+                            == UnknownTypeValue.TYPE_STRING) {
+                        qv.youAreType(String.class);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -539,11 +550,6 @@ public class IqlQueryParser
      */
     private static QueryValue processNewQueryValue(AST ast, Query q) {
         String value = unescape(ast.getText());
-        if ((value.charAt(0) == '\'') && ((value.charAt(1) < '0')
-                    || (value.charAt(1) > '9'))
-                && (value.charAt(value.length() - 1) == '\'')) {
-            return new QueryValue(value.substring(1, value.length() - 1));
-        }
         return new QueryValue(new UnknownTypeValue(value));
     }
 

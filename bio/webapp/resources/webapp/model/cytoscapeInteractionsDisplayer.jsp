@@ -52,10 +52,14 @@
         <script type="text/javascript">
 
         // network data could alternatively be fetched via ajax (jQuery)
-        <c:set var="data" value="${networkdata}"/>
-        var data = "${data}";
+        var networkdata = "${networkdata}";
+        var extNetworkData = "${extNetworkData}";
 
-        if (data == "") {
+        var webapp_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
+        var webapp_path = "${WEB_PROPERTIES['webapp.path']}";
+        var project_title = "${WEB_PROPERTIES['project.title']}";
+
+        if (networkdata == "") {
             jQuery(document).ready(function() {
               jQuery('#cytoscapeweb').html("no interactions found")
                                 .css('font-style','italic')
@@ -64,12 +68,12 @@
             });
         }
         else {
-            var webapp_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
-            var webapp_path = "${WEB_PROPERTIES['webapp.path']}";
-            var project_title = "${WEB_PROPERTIES['project.title']}";
+            // Parse extNetworkData
+            var extNetworkDataArray = extNetworkData.split(/\r\n|\r|\n/);
+            extNetworkDataArray.pop();
 
             jQuery(document).ready(function() {
-                showInteractions(data, webapp_baseurl, webapp_path, project_title);
+                showInteractions(networkdata, webapp_baseurl, webapp_path, project_title, extNetworkDataArray);
             });
         }
         </script>

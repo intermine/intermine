@@ -420,6 +420,10 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("Company", "InterMineObject", "Department", "Contractor", "CompanysContractors")));
         results.put("Range1", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id");
         results2.put("Range1", new HashSet(Arrays.asList("intermine_Range")));
+        results.put("ConstrainClass1", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
+        results2.put("ConstrainClass1", new HashSet(Arrays.asList("InterMineObject")));
+        results.put("ConstrainClass2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class IN ('org.intermine.model.testmodel.Company', 'org.intermine.model.testmodel.Employee') ORDER BY a1_.id");
+        results2.put("ConstrainClass2", new HashSet(Arrays.asList("InterMineObject")));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";

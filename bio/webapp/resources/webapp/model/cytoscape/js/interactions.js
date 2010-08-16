@@ -1,6 +1,6 @@
 // Functions for network display
 
-function showInteractions(data, webapp_baseurl, webapp_path, project_title) {
+function showInteractions(networkdata, webapp_baseurl, webapp_path, project_title, extNetworkDataArray) {
 
     jQuery('#menu').html("&nbsp;");
 
@@ -109,12 +109,12 @@ function showInteractions(data, webapp_baseurl, webapp_path, project_title) {
 
     .addContextMenuItem("View interaction report...", "edges", function(evt) {
 
-        shortname_array = shortnames.split(/\r\n|\r|\n/);
-        a_shortname = shortname_array[0];
+        // shortname_array = shortnames.split(/\r\n|\r|\n/);
+        // a_shortname = shortname_array[0];
 
         var data = evt.target.data;
         var url = data.url;
-        if (url == null) { url = webapp_baseurl+"/"+webapp_path+"/portal.do?externalid="+a_shortname+"&class=Interaction";}
+        if (url == null) { url = webapp_baseurl+"/"+webapp_path+"/portal.do?externalid="+shortname+"&class=Interaction";}
         window.open(url);
     })
 
@@ -129,13 +129,31 @@ function showInteractions(data, webapp_baseurl, webapp_path, project_title) {
         vis.visualStyleBypass(bypass);
 
         // get interaction info via ajax
-        var interactionRecords = queryInteractionDatasource(a_edge);
-        shortnames = queryInteractionShortname(a_edge);
+        // var datasources = queryInteractionDatasource(a_edge);
+        // shortnames = queryInteractionShortname(a_edge);
 
-        splitRecords = interactionRecords.split(/\r\n|\r|\n/);
-        splitRecords.pop();
+        // splitRecords = interactionRecords.split(/\r\n|\r|\n/);
+        // splitRecords.pop();
 
-        var data_to_update = { data_source: splitRecords };
+        // extNetworkDataArray
+        var datasources;
+
+        var source = a_edge.data.source;
+        var interaction = a_edge.data.interaction;
+        var target = a_edge.data.target;
+        var interactionString = source + "-" + interaction + "-" + target;
+        var interactionRevString = target + "-" + interaction + "-" + source;
+
+        for (i=0; i<extNetworkDataArray.length; i++) {
+           var extRec = extNetworkDataArray[i].split(";");
+           if(interactionString == extRec[0] || interactionRevString == extRec[0]) {
+              datasources = extRec[1].split(",");
+              shortname =  extRec[2];
+           }
+        }
+
+
+        var data_to_update = { data_source: datasources };
         vis.updateData("edges", edge_id, data_to_update);
     })
 
@@ -181,7 +199,7 @@ function showInteractions(data, webapp_baseurl, webapp_path, project_title) {
     // draw options
     var draw_options = {
         // your data goes here
-        network: data,
+        network: networkdata,
 
         // show edge labels too
         edgeLabelsVisible: false,

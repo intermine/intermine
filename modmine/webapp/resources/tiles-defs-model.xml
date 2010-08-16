@@ -3,6 +3,9 @@
 
 <definition name="gff3ExportOptions.tile" path="/model/gff3ExportOptions.jsp" />
 
+<definition name="galaxyExportOptions.tile" path="/model/galaxyExportOptions.jsp"
+        controllerUrl="/initGalaxyExportOptions.do"/>
+
 <definition name="submissionDisplayer.tile" path="/model/submissionDisplayer.jsp"
           controllerUrl="/initSubmissionDisplayer.do"/>
 
@@ -22,6 +25,9 @@
 
 <definition name="experiment.tile" path="/model/experiment.jsp"
         controllerUrl="/initExperiment.do"/>
+
+<definition name="modmineGBrowse.tile" path="/model/modmineGBrowse.jsp"
+        controllerUrl="/initModmineGBrowseController.do"/>
 
 <definition name="projectList.tile" path="/model/projectList.jsp"
         controllerUrl="/initProjectList.do"/>

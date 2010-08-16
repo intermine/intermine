@@ -49,7 +49,8 @@ public class ProjectXmlBinding
                 throw new Exception("The underlying parser does not support "
                                     + " the requested features", e);
             } catch (SAXException e) {
-                throw new Exception("Error parsing XML document", e);
+                throw new Exception("Error parsing the project.xml file, please check the format.",
+                        e);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

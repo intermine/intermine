@@ -9,7 +9,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/jaxrpc.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/libreadline-java.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/postgresql.jar"/>
+	<classpathentry exported="true" kind="lib" path="/home/mnw21/svn/dev/intermine/objectstore/main/lib/postgresql-cvs-2010-07-20-patched.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/saaj.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/torque-3.2-dev.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/torque-gen-3.2-dev.jar"/>

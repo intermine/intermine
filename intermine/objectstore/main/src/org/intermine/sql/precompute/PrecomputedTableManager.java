@@ -503,7 +503,7 @@ public class PrecomputedTableManager
     protected void setupDatabase(Connection con) throws SQLException {
         Statement stmt = con.createStatement();
         stmt.execute("CREATE TABLE " + TABLE_INDEX
-                + "(name varchar(255), statement BYTEA, category varchar(255))");
+                + "(name text, statement text, category text)");
         if (!con.getAutoCommit()) {
             con.commit();
         }
