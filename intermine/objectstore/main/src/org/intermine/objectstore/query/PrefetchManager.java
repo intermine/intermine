@@ -344,6 +344,9 @@ public class PrefetchManager
                         reportDone(request);
                     }
                 }
+            } catch (Error e) {
+                LOG.error("Failure of PrefetchManager service thread with error", e);
+                throw e;
             } finally {
                 // Like I said, we REALLY NEED to know if something has gone wrong here, as it is a
                 // BIG BAD BUG.

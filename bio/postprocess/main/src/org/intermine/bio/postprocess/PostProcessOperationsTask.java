@@ -16,10 +16,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
+
+
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.bio.util.LinkInTask;
+
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Transcript;
@@ -35,6 +42,7 @@ import org.intermine.task.DynamicAttributeTask;
 import org.intermine.task.PrecomputeTask;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
+import org.intermine.web.search.KeywordSearch;
 
 /**
  * Run operations on genomic model database after DataLoading
@@ -240,6 +248,38 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                     MetadataManager.storeBinary(db, MetadataManager.AUTOCOMPLETE_INDEX,
                                         ac.getBinaryIndexMap());
                 }
+            } else if ("create-search-index".equals(operation)) {
+                System.out.println("creating lucene index for keyword search...");
+                LOGGER.info("creating lucene index for keyword search...");
+
+                ObjectStore os = getObjectStoreWriter().getObjectStore();
+                if (!(os instanceof ObjectStoreInterMineImpl)) {
+                    throw new RuntimeException("Got invalid ObjectStore - must be an "
+                            + "instance of ObjectStoreInterMineImpl!");
+                }
+
+                ClassLoader classLoader = PostProcessOperationsTask.class.getClassLoader();
+
+                /*
+                String configFileName = "objectstoresummary.config.properties";
+                InputStream configStream = classLoader.getResourceAsStream(configFileName);
+                if (configStream == null) {
+                    throw new RuntimeException("can't find resource: " + configFileName);
+                }
+
+                Properties properties = new Properties();
+                properties.load(configStream);*/
+                
+                //read class keys to figure out what are keyFields during indexing
+                InputStream is = classLoader.getResourceAsStream("class_keys.properties");
+                Properties classKeyProperties = new Properties();
+                classKeyProperties.load(is);
+                Map<String, List<FieldDescriptor>> classKeys =
+                    ClassKeyHelper.readKeys(os.getModel(), classKeyProperties);
+
+                //index and save 
+                KeywordSearch.saveIndexToDatabase(os, classKeys);
+                System.out.println("Index saved!");
             } else if ("create-overlap-view".equals(operation)) {
                 OverlapViewTask ovt = new OverlapViewTask(getObjectStoreWriter());
                 ovt.createView();
