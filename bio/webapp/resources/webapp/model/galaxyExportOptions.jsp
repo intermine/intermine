@@ -75,8 +75,7 @@
           dataArray = data.split(">>>>>"); //size = 4
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
-          jQuery("#info").val(dataArray[1]);
-          jQuery("#organism").val(dataArray[2]);
+          jQuery("#info").val("Column features:" + dataArray[1] + "; Organisms:" + dataArray[2]);
           jQuery("#db").val(dataArray[3]);
         });
 
@@ -93,8 +92,7 @@
           dataArray = data.split(">>>>>"); //size = 4
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
-          jQuery("#info").val(dataArray[1]);
-          jQuery("#organism").val(dataArray[2]);
+          jQuery("#info").val("Column features:" + dataArray[1] + "; Organisms:" + dataArray[2]);
           jQuery("#db").val(dataArray[3]);
         });
      }
@@ -117,8 +115,7 @@
           dataArray = data.split(">>>>>"); //size = 4
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
-          jQuery("#info").val(dataArray[1]);
-          jQuery("#organism").val(dataArray[2]);
+          jQuery("#info").val("Column features:" + dataArray[1] + "; Organisms:" + dataArray[2]);
           jQuery("#db").val(dataArray[3]);
         });
     }
@@ -129,7 +126,6 @@
     jQuery("#data_type").val("");
     jQuery("#URL").val("");
     jQuery("#info").val("");
-    jQuery("#organism").val("");
     jQuery("#db").val("");
   }
 
@@ -148,7 +144,7 @@ li { margin-bottom:0.5em; }
             <img src="images/wait18.gif"/><br>Loading...
     </div>
 
-    <form id="galaxyform" action="${GALAXY_URL}" name="galaxyform" method="POST">
+    <form id="galaxyform" action="${GALAXY_URL}" name="galaxyform" method="POST" target="_blank">
     <fieldset>
 
       <legend>
@@ -206,8 +202,6 @@ li { margin-bottom:0.5em; }
     <input id="data_type" type="hidden" name="data_type">
     <input id="db" type="hidden" name="db">
     <input id="info" type="hidden" name="info">
-    <input id="organism" type="hidden" name="organism">
-    <input id="description" type="hidden" name="description">
 
     </form>
 

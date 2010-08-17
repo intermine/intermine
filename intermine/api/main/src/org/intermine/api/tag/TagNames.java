@@ -60,9 +60,15 @@ public interface TagNames
      * String used to tag objects to appear in the summary section of the report page
      */
     public static final String IM_SUMMARY = "im:summary";
+    
+    /**
+     * templates to be displayed on search results page
+     */
+    public static final String IM_SEARCH_RESULTS = "im:searchresults";
 
     /**
      * Tag separator.
      */
     public static final String SEPARATOR = ":";
+    
 }

@@ -74,6 +74,16 @@ public final class MetadataManager
      * The name of the key to use to store the autocomplete RAMIndexes.
      */
     public static final String AUTOCOMPLETE_INDEX = "autocomplete";
+
+    /**
+     * The name of the key to use to store the search index.
+     */
+    public static final String SEARCH_INDEX = "search";
+
+    /**
+     * The name of the key to use to store the search Directory.
+     */
+    public static final String SEARCH_INDEX_DIRECTORY = "search_directory";
     /**
      * Name of the key under which to store the serialized version of the class descriptions
      */

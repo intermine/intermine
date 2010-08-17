@@ -137,6 +137,7 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap<String, String>());
 
         loadAutoCompleter(servletContext, os);
+        
 
         cleanTags(im.getTagManager());
 
