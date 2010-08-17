@@ -35,11 +35,6 @@
 <attribute name="name" value="procephalic ectoderm primordium"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_1" class="SOTerm">
-<attribute name="name" value="DNA_motif"/>
-<reference name="ontology" ref_id="4_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
 <item id="7_56" class="MRNAExpressionTerm">
 <attribute name="name" value="adult hindgut specific anlage"/>
 <attribute name="type" value="ImaGO"/>
@@ -75,12 +70,6 @@
 <item id="7_20" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S1 oocyte"/>
 <attribute name="type" value="ImaGO"/>
-</item>
-<item id="6_3" class="Motif">
-<attribute name="primaryIdentifier" value="TIFDMEM0000009"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="expressionTerms"><reference ref_id="7_59"/><reference ref_id="7_60"/><reference ref_id="7_61"/><reference ref_id="7_62"/><reference ref_id="7_63"/><reference ref_id="7_64"/><reference ref_id="7_65"/><reference ref_id="7_66"/><reference ref_id="7_67"/><reference ref_id="7_68"/><reference ref_id="7_69"/><reference ref_id="7_70"/><reference ref_id="7_71"/><reference ref_id="7_72"/><reference ref_id="7_73"/><reference ref_id="7_74"/><reference ref_id="7_75"/><reference ref_id="7_76"/><reference ref_id="7_77"/><reference ref_id="7_78"/><reference ref_id="7_79"/><reference ref_id="7_80"/><reference ref_id="7_81"/><reference ref_id="7_82"/><reference ref_id="7_83"/><reference ref_id="7_84"/><reference ref_id="7_85"/><reference ref_id="7_86"/><reference ref_id="7_87"/><reference ref_id="7_88"/><reference ref_id="7_89"/><reference ref_id="7_90"/><reference ref_id="7_91"/><reference ref_id="7_92"/><reference ref_id="7_93"/><reference ref_id="7_94"/><reference ref_id="7_95"/><reference ref_id="7_96"/><reference ref_id="7_97"/><reference ref_id="7_98"/><reference ref_id="7_99"/><reference ref_id="7_100"/></collection>
 </item>
 <item id="7_16" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S13A oocyte"/>
@@ -158,9 +147,19 @@
 <attribute name="name" value="stage S12C oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="Sanger Institute"/>
+</item>
 <item id="7_86" class="MRNAExpressionTerm">
 <attribute name="name" value="stomodeal invagination"/>
 <attribute name="type" value="ImaGO"/>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="Tiffin"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="3_1" class="Organism">
+<attribute name="taxonId" value="7227"/>
 </item>
 <item id="7_91" class="MRNAExpressionTerm">
 <attribute name="name" value="anterior ectoderm"/>
@@ -182,15 +181,15 @@
 <attribute name="name" value="P2 primordium"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="6_1" class="Motif">
-<attribute name="primaryIdentifier" value="TIFDMEM0000005"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="expressionTerms"><reference ref_id="7_1"/><reference ref_id="7_2"/><reference ref_id="7_3"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_6"/><reference ref_id="7_7"/><reference ref_id="7_8"/><reference ref_id="7_9"/><reference ref_id="7_10"/><reference ref_id="7_11"/><reference ref_id="7_12"/><reference ref_id="7_13"/><reference ref_id="7_14"/><reference ref_id="7_15"/><reference ref_id="7_16"/><reference ref_id="7_17"/><reference ref_id="7_18"/><reference ref_id="7_19"/><reference ref_id="7_20"/><reference ref_id="7_21"/><reference ref_id="7_22"/><reference ref_id="7_23"/><reference ref_id="7_24"/><reference ref_id="7_25"/><reference ref_id="7_26"/><reference ref_id="7_27"/><reference ref_id="7_28"/><reference ref_id="7_29"/><reference ref_id="7_30"/><reference ref_id="7_31"/><reference ref_id="7_32"/><reference ref_id="7_33"/><reference ref_id="7_34"/><reference ref_id="7_35"/><reference ref_id="7_36"/><reference ref_id="7_37"/><reference ref_id="7_38"/><reference ref_id="7_39"/><reference ref_id="7_40"/><reference ref_id="7_41"/><reference ref_id="7_42"/><reference ref_id="7_43"/><reference ref_id="7_44"/><reference ref_id="7_45"/><reference ref_id="7_46"/><reference ref_id="7_47"/><reference ref_id="7_48"/><reference ref_id="7_49"/></collection>
-</item>
 <item id="7_92" class="MRNAExpressionTerm">
 <attribute name="name" value="stomodeum"/>
 <attribute name="type" value="ImaGO"/>
+</item>
+<item id="6_2" class="Motif">
+<attribute name="primaryIdentifier" value="TIFDMEM0000007"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="expressionTerms"><reference ref_id="7_50"/><reference ref_id="7_51"/><reference ref_id="7_52"/><reference ref_id="7_53"/><reference ref_id="7_54"/><reference ref_id="7_55"/><reference ref_id="7_56"/><reference ref_id="7_57"/><reference ref_id="7_58"/></collection>
 </item>
 <item id="7_71" class="MRNAExpressionTerm">
 <attribute name="name" value="embryo"/>
@@ -215,9 +214,6 @@
 <item id="7_87" class="MRNAExpressionTerm">
 <attribute name="name" value="organ system"/>
 <attribute name="type" value="ImaGO"/>
-</item>
-<item id="2_1" class="Organism">
-<attribute name="taxonId" value="7227"/>
 </item>
 <item id="7_83" class="MRNAExpressionTerm">
 <attribute name="name" value="stage13-16"/>
@@ -250,6 +246,12 @@
 <item id="7_43" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S4 oocyte"/>
 <attribute name="type" value="ImaGO"/>
+</item>
+<item id="6_1" class="Motif">
+<attribute name="primaryIdentifier" value="TIFDMEM0000005"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="expressionTerms"><reference ref_id="7_1"/><reference ref_id="7_2"/><reference ref_id="7_3"/><reference ref_id="7_4"/><reference ref_id="7_5"/><reference ref_id="7_6"/><reference ref_id="7_7"/><reference ref_id="7_8"/><reference ref_id="7_9"/><reference ref_id="7_10"/><reference ref_id="7_11"/><reference ref_id="7_12"/><reference ref_id="7_13"/><reference ref_id="7_14"/><reference ref_id="7_15"/><reference ref_id="7_16"/><reference ref_id="7_17"/><reference ref_id="7_18"/><reference ref_id="7_19"/><reference ref_id="7_20"/><reference ref_id="7_21"/><reference ref_id="7_22"/><reference ref_id="7_23"/><reference ref_id="7_24"/><reference ref_id="7_25"/><reference ref_id="7_26"/><reference ref_id="7_27"/><reference ref_id="7_28"/><reference ref_id="7_29"/><reference ref_id="7_30"/><reference ref_id="7_31"/><reference ref_id="7_32"/><reference ref_id="7_33"/><reference ref_id="7_34"/><reference ref_id="7_35"/><reference ref_id="7_36"/><reference ref_id="7_37"/><reference ref_id="7_38"/><reference ref_id="7_39"/><reference ref_id="7_40"/><reference ref_id="7_41"/><reference ref_id="7_42"/><reference ref_id="7_43"/><reference ref_id="7_44"/><reference ref_id="7_45"/><reference ref_id="7_46"/><reference ref_id="7_47"/><reference ref_id="7_48"/><reference ref_id="7_49"/></collection>
 </item>
 <item id="7_3" class="MRNAExpressionTerm">
 <attribute name="name" value="stage1-3"/>
@@ -331,12 +333,6 @@
 <attribute name="name" value="larva"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="6_2" class="Motif">
-<attribute name="primaryIdentifier" value="TIFDMEM0000007"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="expressionTerms"><reference ref_id="7_50"/><reference ref_id="7_51"/><reference ref_id="7_52"/><reference ref_id="7_53"/><reference ref_id="7_54"/><reference ref_id="7_55"/><reference ref_id="7_56"/><reference ref_id="7_57"/><reference ref_id="7_58"/></collection>
-</item>
 <item id="7_17" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S12B oocyte"/>
 <attribute name="type" value="ImaGO"/>
@@ -381,9 +377,6 @@
 <attribute name="name" value="prothoracic gland plate"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="0_1" class="DataSource">
-<attribute name="name" value="Sanger Institute"/>
-</item>
 <item id="7_47" class="MRNAExpressionTerm">
 <attribute name="name" value="lateral cord neuron"/>
 <attribute name="type" value="ImaGO"/>
@@ -392,19 +385,20 @@
 <attribute name="name" value="whole organism"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="3_1" class="Publication">
-<attribute name="pubMedId" value="17238282"/>
-</item>
 <item id="7_89" class="MRNAExpressionTerm">
 <attribute name="name" value="embryonic/larval proventriculus"/>
 <attribute name="type" value="ImaGO"/>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
 <item id="7_22" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S12A oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="4_1" class="Ontology">
-<attribute name="name" value="Sequence Ontology"/>
+<item id="4_1" class="Publication">
+<attribute name="pubMedId" value="17238282"/>
 </item>
 <item id="7_59" class="MRNAExpressionTerm">
 <attribute name="name" value="embryonic epidermis"/>
@@ -418,6 +412,11 @@
 <attribute name="name" value="embryonic/larval foregut"/>
 <attribute name="type" value="ImaGO"/>
 </item>
+<item id="5_1" class="SOTerm">
+<attribute name="name" value="DNA_motif"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
 <item id="7_58" class="MRNAExpressionTerm">
 <attribute name="name" value="adult hindgut primordium"/>
 <attribute name="type" value="ImaGO"/>
@@ -426,9 +425,11 @@
 <attribute name="name" value="female reproductive system"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="1_1" class="DataSet">
-<attribute name="name" value="Tiffin"/>
-<reference name="dataSource" ref_id="0_1"/>
+<item id="6_3" class="Motif">
+<attribute name="primaryIdentifier" value="TIFDMEM0000009"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="expressionTerms"><reference ref_id="7_59"/><reference ref_id="7_60"/><reference ref_id="7_61"/><reference ref_id="7_62"/><reference ref_id="7_63"/><reference ref_id="7_64"/><reference ref_id="7_65"/><reference ref_id="7_66"/><reference ref_id="7_67"/><reference ref_id="7_68"/><reference ref_id="7_69"/><reference ref_id="7_70"/><reference ref_id="7_71"/><reference ref_id="7_72"/><reference ref_id="7_73"/><reference ref_id="7_74"/><reference ref_id="7_75"/><reference ref_id="7_76"/><reference ref_id="7_77"/><reference ref_id="7_78"/><reference ref_id="7_79"/><reference ref_id="7_80"/><reference ref_id="7_81"/><reference ref_id="7_82"/><reference ref_id="7_83"/><reference ref_id="7_84"/><reference ref_id="7_85"/><reference ref_id="7_86"/><reference ref_id="7_87"/><reference ref_id="7_88"/><reference ref_id="7_89"/><reference ref_id="7_90"/><reference ref_id="7_91"/><reference ref_id="7_92"/><reference ref_id="7_93"/><reference ref_id="7_94"/><reference ref_id="7_95"/><reference ref_id="7_96"/><reference ref_id="7_97"/><reference ref_id="7_98"/><reference ref_id="7_99"/><reference ref_id="7_100"/></collection>
 </item>
 <item id="7_90" class="MRNAExpressionTerm">
 <attribute name="name" value="ectoderm anlage in statu nascendi"/>
