@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -47,6 +48,8 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.web.util.URLGenerator;
 
+import org.intermine.model.bio.LocatedSequenceFeature;
+
 /*
  * Copyright (C) 2002-2010 FlyMine
  *
@@ -64,7 +67,7 @@ import org.intermine.web.util.URLGenerator;
  */
 public class GalaxyExportAction extends InterMineAction
 {
-//    private static final Logger LOG = Logger.getLogger(GalaxyExportAction.class);
+    private static final Logger LOG = Logger.getLogger(GalaxyExportAction.class);
     @Override
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
@@ -98,9 +101,26 @@ public class GalaxyExportAction extends InterMineAction
 
         // Reorder the view, move chr, start and end to the first three columns
         List<Path> newView = new ArrayList<Path>();
-        newView.add(view.get(5)); //Chr
-        newView.add(view.get(6)); //start
-        newView.add(view.get(7)); //end
+        // TODO This is wrong!
+        // Find the index of chr, start and end in the view
+        // Do all the lsf have these 3 field in the default view???
+        int chrIdx = -1;
+        int startIdx = -1;
+        int endIdx = -1;
+        for (Path path : view) {
+            if (path.toString().contains("chromosome.primaryIdentifier")) {
+                chrIdx = view.indexOf(path);
+            }
+            if (path.toString().contains("chromosomeLocation.start")) {
+                startIdx = view.indexOf(path);
+            }
+            if (path.toString().contains("chromosomeLocation.end")) {
+                endIdx = view.indexOf(path);
+            }
+        }
+        newView.add(view.get(chrIdx)); //Chr
+        newView.add(view.get(startIdx)); //start
+        newView.add(view.get(endIdx)); //end
         view.removeAll(newView);
         newView.addAll(view);
         query.setViewPaths(newView);
@@ -114,13 +134,12 @@ public class GalaxyExportAction extends InterMineAction
                         + "/service/query/results?query=" + encodedQueryXML
                         + "&size=1000000");
 
-        // Get extra information - genomeBuild & organism & info
-        ResultManipulater rm = new ResultManipulater();
-        int idx = 8; // organism is the 8th in the view from webConfig
-        Map<Integer, String> orgNameMap = rm.findOrganisms(pt, request, idx);
+        // Get extra information - genomeBuild & organism & extra info
+//        ResultManipulater rm = new ResultManipulater();
+//        Map<Integer, String> orgNameMap = rm.findOrganisms(pt, request, index);
 
-        /*
-         * Same function as ResultManipulater, but slower
+
+        // Same function as ResultManipulater, reliable but slower
         Map<Integer, String> orgNameMap = new LinkedHashMap<Integer, String>();
 
         for (int i = 0; i < pt.getExactSize(); i++) {
@@ -128,7 +147,6 @@ public class GalaxyExportAction extends InterMineAction
                     .get(index).getValue().getObject()).getOrganism();
             orgNameMap.put(org.getTaxonId(), org.getShortName());
         }
-        */
 
         String genomeBuild = "";
         String organism = "";
@@ -173,16 +191,16 @@ public class GalaxyExportAction extends InterMineAction
     }
 
     /**
-     * If view contains joined organism, this will make sure, that organism is
-     * joined as a inner join. Else constraint on organism doesn't work.
+     * Colon (:) is outer join and dot (.) is inner join, id replace colon with dot, it will change
+     * the original query but return results which are with chr, start and end.
      *
      * @param pathQuery
      * @param joinPath
      * @throws PathException
      * */
     private List<Path> getFixedView(List<Path> view) throws PathException {
-        String invalidPath = ":organism";
-        String validPath = ".organism";
+        String invalidPath = ":";
+        String validPath = ".";
         List<Path> ret = new ArrayList<Path>();
         for (Path path : view) {
             if (path.toString().contains(invalidPath)) {
@@ -225,7 +243,7 @@ class ResultManipulater extends HttpExporterBase
                 List<ResultElement> row = resultIt.next();
                 List<ResultElement> elWithObject = getResultElements(row, index);
                 for (ResultElement re : elWithObject) {
-                    Organism org = (Organism) re.getObject();
+                    Organism org = ((LocatedSequenceFeature) re.getObject()).getOrganism();
                     orgNameMap.put(org.getTaxonId(), org.getShortName());
                 }
             }
