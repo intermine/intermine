@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -27,6 +28,7 @@ import java.util.TreeMap;
 import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
+import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DatabaseRecord;
 import org.intermine.model.bio.Experiment;
 import org.intermine.model.bio.ExpressionLevel;
@@ -46,8 +48,10 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.TypeUtil;
 import org.modmine.web.GBrowseParser.GBrowseTrack;
 
@@ -597,7 +601,8 @@ public class MetadataCache
 
     private static void readExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-        Map <String, Map<String, Long>> featureCounts = getExperimentFeatureCounts(os);
+//        Map <String, Map<String, Long>> featureCounts = getExperimentFeatureCounts(os);
+        Map <String, Map<String, Long>> featureCounts = getUniqueExperimentFeatureCounts(os);
 
         try {
             Query q = new Query();
@@ -643,6 +648,9 @@ public class MetadataCache
                 + experimentCache.size());
     }
 
+    /**
+     * The counts are duplicated in the method, see getUniqueExperimentFeatureCounts
+     */
     private static Map<String, Map<String, Long>> getExperimentFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
 
@@ -716,6 +724,309 @@ public class MetadataCache
             }
             expFeatureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
         }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Read experiment feature counts, took: " + timeTaken + "ms");
+
+        return featureCounts;
+    }
+
+    /**
+     * Method equivalent to getExperimentFeatureCounts but return Unique counts
+     *
+     * @param os
+     * @return Map<String: expName, Map<String: feature type, Long: count>>
+     */
+    private static Map<String, Map<String, Long>> getUniqueExperimentFeatureCounts(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+
+        Query q = new Query();
+
+        QueryClass qcExp = new QueryClass(Experiment.class);
+        QueryClass qcSub = new QueryClass(Submission.class);
+        QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcChr = new QueryClass(Chromosome.class);
+        QueryClass qcLoc = new QueryClass(Location.class);
+
+
+        QueryField qfExpName = new QueryField(qcExp, "name");
+        QueryField qfFT = new QueryField(qcLsf, "class");
+        QueryField qfChrID = new QueryField(qcChr, "primaryIdentifier");
+        QueryField qfStart = new QueryField(qcLoc, "start");
+        QueryField qfEnd = new QueryField(qcLoc, "end");
+
+        q.addFrom(qcSub);
+        q.addFrom(qcLsf);
+        q.addFrom(qcExp);
+        q.addFrom(qcChr);
+        q.addFrom(qcLoc);
+
+        q.addToSelect(qfExpName);
+        q.addToSelect(qfFT);
+        q.addToSelect(qfChrID);
+        q.addToSelect(qfStart);
+        q.addToSelect(qfEnd);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryCollectionReference submissions = new QueryCollectionReference(qcExp, "submissions");
+        ContainsConstraint ccSubs = new ContainsConstraint(submissions, ConstraintOp.CONTAINS,
+                qcSub);
+        cs.addConstraint(ccSubs);
+
+        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
+        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
+        cs.addConstraint(ccFeats);
+
+        QueryObjectReference chromosome = new QueryObjectReference(qcLsf, "chromosome");
+        ContainsConstraint ccChr = new ContainsConstraint(chromosome,
+                ConstraintOp.CONTAINS, qcChr);
+        cs.addConstraint(ccChr);
+
+        QueryObjectReference chromosomeLocation = new QueryObjectReference(qcLsf,
+            "chromosomeLocation");
+        ContainsConstraint ccChrLoc = new ContainsConstraint(chromosomeLocation,
+                ConstraintOp.CONTAINS, qcLoc);
+        cs.addConstraint(ccChrLoc);
+
+        q.setConstraint(cs);
+
+        q.setDistinct(true);
+
+        Query superQ = new Query();
+        superQ.addFrom(q);
+        QueryField superQfName = new QueryField(q, qfExpName);
+        QueryField superQfFT = new QueryField(q, qfFT);
+
+        superQ.addToSelect(superQfName);
+        superQ.addToSelect(superQfFT);
+
+        superQ.addToOrderBy(superQfName);
+        superQ.addToOrderBy(superQfFT);
+        superQ.addToGroupBy(superQfName);
+        superQ.addToGroupBy(superQfFT);
+
+        superQ.addToSelect(new QueryFunction());
+        superQ.setDistinct(false);
+
+        Results results = os.execute(superQ);
+
+        Map<String, Map<String, Long>> featureCounts =
+            new LinkedHashMap<String, Map<String, Long>>();
+
+        // for each classes set the values for jsp
+        for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
+            ResultsRow row = iter.next();
+            String expName = (String) row.get(0);
+            Class feat = (Class) row.get(1);
+            Long count = (Long) row.get(2);
+
+            Map<String, Long> expFeatureCounts = featureCounts.get(expName);
+            if (expFeatureCounts == null) {
+                expFeatureCounts = new HashMap<String, Long>();
+                featureCounts.put(expName, expFeatureCounts);
+            }
+            expFeatureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Read experiment feature counts, took: " + timeTaken + "ms");
+
+        return featureCounts;
+    }
+
+    /**
+     * Method to find the feature types and the count for each of them within an experiment
+     *
+     * @param expName name of an experiment
+     * @param os
+     * @return featureCounts Map<String: feature type, Long: feature count>
+     */
+    private static Map<String, Long> getUniqueExperimentFeatureCountsByExpNameSlow(
+            String expName, ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+
+        Query q = new Query();
+
+        QueryClass qcExp = new QueryClass(Experiment.class);
+        QueryClass qcSub = new QueryClass(Submission.class);
+        QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);
+
+        QueryField qfExpName = new QueryField(qcExp, "name");
+        QueryField qfClass = new QueryField(qcLsf, "class");
+
+        q.addFrom(qcSub);
+        q.addFrom(qcLsf);
+        q.addFrom(qcExp);
+
+        q.addToSelect(qfClass);
+        q.addToSelect(qcLsf);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        SimpleConstraint scChr = new SimpleConstraint(qfExpName,
+                ConstraintOp.EQUALS, new QueryValue(expName));
+        cs.addConstraint(scChr);
+
+        QueryCollectionReference submissions = new QueryCollectionReference(qcExp, "submissions");
+        ContainsConstraint ccSubs = new ContainsConstraint(submissions, ConstraintOp.CONTAINS,
+                qcSub);
+        cs.addConstraint(ccSubs);
+
+        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
+        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
+        cs.addConstraint(ccFeats);
+
+        q.setConstraint(cs);
+
+        q.setDistinct(true);
+
+        Results results = os.execute(q);
+
+        LinkedHashSet<String> ftClassSet = new LinkedHashSet<String>();
+
+        for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
+            ResultsRow row = iter.next();
+            Class ftClass= (Class) row.get(0);
+
+            ftClassSet.add(TypeUtil.unqualifiedName(ftClass.getName()));
+        }
+
+        LinkedHashMap<String, LinkedHashSet<LocatedSequenceFeature>> featureMap =
+            new LinkedHashMap<String, LinkedHashSet<LocatedSequenceFeature>>();
+
+        for (String ftClassName : ftClassSet) {
+            LinkedHashSet<LocatedSequenceFeature> featureSet =
+                new LinkedHashSet<LocatedSequenceFeature>();
+
+            for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
+                ResultsRow row = iter.next();
+                Class ftClass= (Class) row.get(0);
+                LocatedSequenceFeature feature = (LocatedSequenceFeature) row.get(1);
+
+                if (TypeUtil.unqualifiedName(ftClass.getName()).equals(ftClassName)) {
+                    featureSet.add(feature);
+                }
+            }
+            featureMap.put(ftClassName, featureSet);
+        }
+
+        Map<String, Long> featureCounts = new LinkedHashMap<String, Long>();
+        for (Map.Entry<String, LinkedHashSet<LocatedSequenceFeature>> entry : featureMap
+                .entrySet()) {
+            Map<String, LocatedSequenceFeature> spanMap =
+                new LinkedHashMap<String, LocatedSequenceFeature>();
+
+            for (LocatedSequenceFeature feature : entry.getValue()) {
+                String spanString = feature.getChromosome()
+                        .getPrimaryIdentifier()
+                        + ":"
+                        + feature.getChromosomeLocation().getStart()
+                        + "-"
+                        + feature.getChromosomeLocation().getEnd();
+
+                spanMap.put(spanString, feature);
+            }
+
+            featureCounts.put(entry.getKey(), Long.valueOf(spanMap.size()));
+        }
+
+
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Read experiment feature counts, took: " + timeTaken + "ms");
+
+        return featureCounts;
+    }
+
+    /**
+     * Method equivalent to getUniqueExperimentFeatureCountsByExpNameSlow but much faster
+     *
+     * @param expName name of an experiment
+     * @param os
+     * @return featureCounts Map<String: feature type, Long: feature count>
+     */
+    private static Map<String, Long> getUniqueExperimentFeatureCountsByExpNameFast(
+            String expName, ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+
+        Query q = new Query();
+
+        QueryClass qcExp = new QueryClass(Experiment.class);
+        QueryClass qcSub = new QueryClass(Submission.class);
+        QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcChr = new QueryClass(Chromosome.class);
+        QueryClass qcLoc = new QueryClass(Location.class);
+
+
+        QueryField qfExpName = new QueryField(qcExp, "name");
+        QueryField qfFT = new QueryField(qcLsf, "class");
+        QueryField qfChrID = new QueryField(qcChr, "primaryIdentifier");
+        QueryField qfStart = new QueryField(qcLoc, "start");
+        QueryField qfEnd = new QueryField(qcLoc, "end");
+
+        q.addFrom(qcSub);
+        q.addFrom(qcLsf);
+        q.addFrom(qcExp);
+        q.addFrom(qcChr);
+        q.addFrom(qcLoc);
+
+        q.addToSelect(qfFT);
+        q.addToSelect(qfChrID);
+        q.addToSelect(qfStart);
+        q.addToSelect(qfEnd);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        SimpleConstraint scExpName = new SimpleConstraint(qfExpName,
+                ConstraintOp.EQUALS, new QueryValue(expName));
+        cs.addConstraint(scExpName);
+
+        QueryCollectionReference submissions = new QueryCollectionReference(qcExp, "submissions");
+        ContainsConstraint ccSubs = new ContainsConstraint(submissions, ConstraintOp.CONTAINS,
+                qcSub);
+        cs.addConstraint(ccSubs);
+
+        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
+        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
+        cs.addConstraint(ccFeats);
+
+        QueryObjectReference chromosome = new QueryObjectReference(qcLsf, "chromosome");
+        ContainsConstraint ccChr = new ContainsConstraint(chromosome,
+                ConstraintOp.CONTAINS, qcChr);
+        cs.addConstraint(ccChr);
+
+        QueryObjectReference chromosomeLocation = new QueryObjectReference(qcLsf,
+            "chromosomeLocation");
+        ContainsConstraint ccChrLoc = new ContainsConstraint(chromosomeLocation,
+                ConstraintOp.CONTAINS, qcLoc);
+        cs.addConstraint(ccChrLoc);
+
+        q.setConstraint(cs);
+
+        q.setDistinct(true);
+
+        Query superQ = new Query();
+        superQ.addFrom(q);
+        QueryField superQfFT = new QueryField(q, qfFT);
+
+        superQ.addToSelect(superQfFT);
+
+        superQ.addToOrderBy(superQfFT);
+        superQ.addToGroupBy(superQfFT);
+
+        superQ.addToSelect(new QueryFunction());
+        superQ.setDistinct(false);
+
+        Results results = os.execute(superQ);
+
+        Map<String, Long> featureCounts = new LinkedHashMap<String, Long>();
+        for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
+            ResultsRow row = iter.next();
+
+            Class feat = (Class) row.get(0);
+            Long count = (Long) row.get(1);
+
+            featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
+        }
+
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Read experiment feature counts, took: " + timeTaken + "ms");
 
