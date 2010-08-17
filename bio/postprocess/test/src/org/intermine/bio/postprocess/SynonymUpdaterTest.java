@@ -109,19 +109,19 @@ public class SynonymUpdaterTest extends TestCase {
             (Synonym) DynamicUtil.createObject(Collections.singleton(Synonym.class));
         prot3Synonym1.setValue("random name");
         prot3Synonym1.setSubject(storedProtein3);
-        prot3Synonym1.setIsPrimary(Boolean.TRUE);
+
         osw.store(prot3Synonym1);
         Synonym prot3Synonym2 =
             (Synonym) DynamicUtil.createObject(Collections.singleton(Synonym.class));
         prot3Synonym2.setValue("non-primary name");
         prot3Synonym2.setSubject(storedProtein3);
-        prot3Synonym2.setIsPrimary(Boolean.FALSE);
+
         osw.store(prot3Synonym2);
         Synonym prot3Synonym3 =
             (Synonym) DynamicUtil.createObject(Collections.singleton(Synonym.class));
         prot3Synonym3.setValue("Protein name 3");
         prot3Synonym3.setSubject(storedProtein3);
-        prot3Synonym3.setIsPrimary(Boolean.TRUE);
+
         osw.store(prot3Synonym3);
 
         SynonymUpdater synonymUpdater = new SynonymUpdater() {
@@ -147,35 +147,13 @@ public class SynonymUpdaterTest extends TestCase {
             ResultsRow row = (ResultsRow) iter.next();
             Synonym synonym = (Synonym) row.get(0);
             if (synonym.getValue().equals("Protein1")) {
-                assertTrue(synonym.getIsPrimary().booleanValue());
+
                 assertEquals(synonym.getSubject().getPrimaryIdentifier(), "Protein1");
             } else {
                 if (synonym.getValue().equals("Protein name")) {
-                    assertTrue(synonym.getIsPrimary().booleanValue());
+
                     assertEquals(synonym.getSubject().getName(), "Protein name");
-                } else {
-                    if (synonym.getValue().equals("Protein2")) {
-                        assertTrue(synonym.getIsPrimary().booleanValue());
-                    } else {
-                        if (synonym.getValue().equals("non match")) {
-                            assertFalse(synonym.getIsPrimary().booleanValue());
-                        } else {
-                            if (synonym.getValue().equals("random name")) {
-                                assertTrue(synonym.getIsPrimary().booleanValue());
-                            } else {
-                                if (synonym.getValue().equals("non-primary name")) {
-                                    assertFalse(synonym.getIsPrimary().booleanValue());
-                                } else {
-                                    if (synonym.getValue().equals("Protein name 3")) {
-                                        assertTrue(synonym.getIsPrimary().booleanValue());
-                                    } else {
-                                        throw new RuntimeException("unknown synonym: "
-                                                                   + synonym.getValue());
-                                    }
-                                }
-                            }
-                        }
-                    }
+
                 }
             }
         }
