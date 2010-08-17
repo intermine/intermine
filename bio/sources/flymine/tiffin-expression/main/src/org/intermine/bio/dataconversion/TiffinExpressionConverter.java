@@ -30,7 +30,8 @@ import org.intermine.xml.full.Item;
 public class TiffinExpressionConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(TiffinExpressionConverter.class);
-    protected Item soterm, pub, orgDrosophila;
+    protected Item pub, orgDrosophila;
+    private String soterm;
     private Map<String, Item> termItems = new HashMap<String, Item>();
 
     /**
@@ -51,10 +52,8 @@ public class TiffinExpressionConverter extends BioFileConverter
         pub.setAttribute("pubMedId", "17238282");
         store(pub);
 
-        soterm = createItem("SOTerm");
-        soterm.setAttribute("name", "DNA_motif");
-        soterm.setReference("ontology", sequenceOntologyRefId);
-        store(soterm);
+        soterm = BioStoreHook.getSoTerm(this, null, "DNA_motif", sequenceOntologyRefId);
+
     }
 
     private static final Pattern MOTIF_NAME_PATTERN = Pattern.compile("(TIFDMEM\\d+)\\.\\d+\\s*");
