@@ -43,6 +43,7 @@ region
 regulatory_region
 repeat_region
 rRNA
+sequence_collection
 sequence_feature
 sequence_variant
 SL1_acceptor_site
