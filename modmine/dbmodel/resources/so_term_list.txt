@@ -12,6 +12,7 @@ chromosome_arm
 chromosome_band
 chromosome_structure_variation
 clone
+codon
 copy_number_variation
 enhancer
 EST
