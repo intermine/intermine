@@ -13,7 +13,7 @@
   <collection name="proteins" referenced-type="Protein" reverse-reference="structures"/>
   <collection name="dataSets" referenced-type="DataSet"/>
 </class>
-<class name="Protein" extends="BioEntity" is-interface="true">
+<class name="Protein" is-interface="true">
   <attribute name="uniprotAccession" type="java.lang.String"/>
   <collection name="structures" referenced-type="ProteinStructure" reverse-reference="proteins"/>
 </class>
