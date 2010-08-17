@@ -1,46 +1,15 @@
 <?xml version="1.0"?>
 <classes>
-<!-- FEATURES -->
-
-<!-- Extension of classes defined elsewhere, e.g.
-     bio/core/genomic_additions.xml
-     bio/sources/so/so_additions.xml
--->
-
-<class name="SequenceFeature" is-interface="true">
-  <attribute name="featureType" type="java.lang.String" />
-  <attribute name="score" type="java.lang.Double" />
-  <attribute name="scoreType" type="java.lang.String" />
-  <attribute name="predictionStatus" type="java.lang.String" />
-  <attribute name="note" type="java.lang.String" />
-  <reference name="scoreProtocol" referenced-type="Protocol" />
-  <collection name="submissions" referenced-type="Submission" reverse-reference="features" />
-  <collection name="featureEvidence" referenced-type="SequenceFeature" reverse-reference="supportedFeatures" />
-  <collection name="supportedFeatures" referenced-type="SequenceFeature" reverse-reference="featureEvidence" />
-  <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="feature"/>
-</class>
-<class name="ThreePrimeUTR" is-interface="true">
-  <attribute name="externalEvidence" type="java.lang.String" />
-  <reference name="CDS" referenced-type="CDS" reverse-reference="threePrimeUTRs" />
-  <collection name="polyASignalSequences" referenced-type="PolyASignalSequence" reverse-reference="threePrimeUTR" />
-  <collection name="exons" referenced-type="Exon" reverse-reference="threePrimeUTR" />
-</class>
-<class name="CDS" is-interface="true">
-  <attribute name="status" type="java.lang.String" />
-  <attribute name="wormpep" type="java.lang.String" />
-<!-- <collection name="transcripts" referenced-type="Transcript" reverse-reference="CDSs"/>
--->
-  <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="CDS"/>
-</class>
 <class name="BindingSite" is-interface="true">
   <attribute name="qvalue" type="java.lang.Double" />
 </class>
-<class name="MRNA" is-interface="true">
-  <attribute name="CDS" type="java.lang.String" />
+
+<class name="CDS" is-interface="true">
+  <attribute name="status" type="java.lang.String" />
   <attribute name="wormpep" type="java.lang.String" />
-  <collection name="startCodons" referenced-type="StartCodon" reverse-reference="mRNA"/>
-  <collection name="stopCodons" referenced-type="StopCodon" reverse-reference="mRNA"/>
+  <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="CDS"/>
 </class>
+
 <class name="EST" is-interface="true">
   <collection name="overlappingESTSets" referenced-type="OverlappingESTSet" reverse-reference="ESTs" />
 </class>
@@ -57,61 +26,61 @@
   <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="exons" />
 </class>
 
+<class name="Gene" is-interface="true">
+  <attribute name="source" type="java.lang.String" />
+</class>
+
 <class name="Intron" is-interface="true">
   <collection name="transcriptRegions" referenced-type="TranscriptRegion" reverse-reference="introns"/>
 </class>
 
-<!-- these references should be checked: maybe collections? -->
-<class name="Transcript" is-interface="true">
-  <attribute name="transcribed" type="java.lang.String" />
-<!-- FAILING: let's wait for SO update
-<collection name="CDSs" referenced-type="CDS" reverse-reference="transcripts" />
-<collection name="polyASites" referenced-type="PolyASite" reverse-reference="transcripts" />
-<collection name="transcriptionEndSites" referenced-type="TranscriptionEndSite" reverse-reference="transcripts" />
--->
-  <collection name="SL1AcceptorSites" referenced-type="SL1AcceptorSite" reverse-reference="transcripts" />
-  <collection name="SL2AcceptorSites" referenced-type="SL2AcceptorSite" reverse-reference="transcripts" />
-  <collection name="TSSs" referenced-type="TSS" reverse-reference="transcripts" />
+<class name="MRNA" is-interface="true">
+  <attribute name="CDS" type="java.lang.String" />
+  <attribute name="wormpep" type="java.lang.String" />
 </class>
-<class name="Gene" is-interface="true">
-  <attribute name="source" type="java.lang.String" />
+
+<class name="OverlappingESTSet" extends="Region" is-interface="true">
+  <attribute name="fdr" type="java.lang.String" />
+  <attribute name="fp" type="java.lang.String" />
+  <attribute name="overlap" type="java.lang.String" />
+  <attribute name="reads" type="java.lang.Integer" />
+  <attribute name="strandsConfirmed" type="java.lang.String" />
+  <attribute name="trimT" type="java.lang.String" />
+  <collection name="ESTs" referenced-type="EST" reverse-reference="overlappingESTSets" />
 </class>
-<!-- PolyASite is already in so_additions extending 'GenePart', not in miso -->
+
 <class name="PolyASite" is-interface="true">
   <attribute name="externalEvidence" type="java.lang.String" />
   <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="polyASite"/>
-<!--
-  <collection name="transcripts" referenced-type="Transcript" reverse-reference="polyASites"/>
--->
 </class>
 
-<!--
-<class name="TranscriptionEndSite" is-interface="true">
-  <collection name="transcripts" referenced-type="Transcript" reverse-reference="transcriptionEndSites"/>
-</class>
--->
-
-<!-- NEW FEATURE classes for modENCODE -->
-
-<class name="Codon" extends="Region" is-interface="true"/>
-<class name="StopCodon" extends="Codon" is-interface="true">
-  <reference name="mRNA" referenced-type="MRNA" reverse-reference="stopCodons"/>
-</class>
-<class name="StartCodon" extends="Codon" is-interface="true">
-  <reference name="mRNA" referenced-type="MRNA" reverse-reference="startCodons"/>
+<class name="PolyASignalSequence" extends="Region" is-interface="true">
+  <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="polyASignalSequences"/>
 </class>
 
-
-<class name="TranscriptRegion" extends="Region" is-interface="true">
-  <attribute name="marginalFpr" type="java.lang.Double" />
-  <attribute name="marginalSensitivity" type="java.lang.Double" />
-  <attribute name="meanIntensity" type="java.lang.Double" />
-  <attribute name="rankScore" type="java.lang.Double" />
-  <collection name="introns" referenced-type="Intron" reverse-reference="transcriptRegions" />
-
+<class name="SequenceFeature" is-interface="true">
+  <attribute name="predictionStatus" type="java.lang.String" />
+  <attribute name="note" type="java.lang.String" />
+  <reference name="scoreProtocol" referenced-type="Protocol" />
+  <collection name="submissions" referenced-type="Submission" reverse-reference="features" />
+  <collection name="featureEvidence" referenced-type="SequenceFeature" reverse-reference="supportedFeatures" />
+  <collection name="supportedFeatures" referenced-type="SequenceFeature" reverse-reference="featureEvidence" />
+  <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="feature"/>
 </class>
 
-<class name="CopyNumberVariation" extends="SequenceVariant" is-interface="true"/>
+<class name="SL1AcceptorSite" extends="Region" is-interface="true">
+  <collection name="transcripts" referenced-type="Transcript" reverse-reference="SL1AcceptorSites"/>
+</class>
+<class name="SL2AcceptorSite" extends="Region" is-interface="true">
+  <collection name="transcripts" referenced-type="Transcript" reverse-reference="SL2AcceptorSites"/>
+</class>
+
+<class name="ThreePrimeUTR" is-interface="true">
+  <attribute name="externalEvidence" type="java.lang.String" />
+  <reference name="CDS" referenced-type="CDS" reverse-reference="threePrimeUTRs" />
+  <collection name="polyASignalSequences" referenced-type="PolyASignalSequence" reverse-reference="threePrimeUTR" />
+  <collection name="exons" referenced-type="Exon" reverse-reference="threePrimeUTR" />
+</class>
 <class name="ThreePrimeRACEClone" extends="Region" is-interface="true">
   <reference name="polyASite" referenced-type="PolyASite" reverse-reference="threePrimeRACEClone"/>
   <reference name="threePrimeRST" referenced-type="ThreePrimeRST" reverse-reference="threePrimeRACEClone"/>
@@ -127,34 +96,91 @@
   <reference name="threePrimeRST" referenced-type="ThreePrimeRST" reverse-reference="threePrimeUST"/>
 </class>
 
-<class name="OverlappingESTSet" extends="Region" is-interface="true">
-  <attribute name="fdr" type="java.lang.String" />
-  <attribute name="fp" type="java.lang.String" />
-  <attribute name="overlap" type="java.lang.String" />
-  <attribute name="reads" type="java.lang.Integer" />
-  <attribute name="strandsConfirmed" type="java.lang.String" />
-  <attribute name="trimT" type="java.lang.String" />
-  <collection name="ESTs" referenced-type="EST" reverse-reference="overlappingESTSets" />
-<!--
-  <reference name="gene" referenced-type="Gene" reverse-reference="overlappingESTSet" />
-  <reference name="mRNA" referenced-type="MRNA" reverse-reference="overlappingESTSet" />
-  <reference name="transcriptRegion" referenced-type="TranscriptRegion" reverse-reference="overlappingESTSet"/>
+<!-- these references should be checked: maybe collections? -->
+<class name="Transcript" is-interface="true">
+  <attribute name="transcribed" type="java.lang.String" />
+<!-- FAILING: let's wait for SO update
+<collection name="CDSs" referenced-type="CDS" reverse-reference="transcripts" />
+<collection name="polyASites" referenced-type="PolyASite" reverse-reference="transcripts" />
+<collection name="transcriptionEndSites" referenced-type="TranscriptionEndSite" reverse-reference="transcripts" />
 -->
+  <collection name="SL1AcceptorSites" referenced-type="SL1AcceptorSite" reverse-reference="transcripts" />
+  <collection name="SL2AcceptorSites" referenced-type="SL2AcceptorSite" reverse-reference="transcripts" />
+  <collection name="TSSs" referenced-type="TSS" reverse-reference="transcripts" />
 </class>
-<class name="PolyASignalSequence" extends="Region" is-interface="true">
-  <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="polyASignalSequences"/>
+
+<class name="TranscriptRegion" extends="Region" is-interface="true">
+  <attribute name="marginalFpr" type="java.lang.Double" />
+  <attribute name="marginalSensitivity" type="java.lang.Double" />
+  <attribute name="meanIntensity" type="java.lang.Double" />
+  <attribute name="rankScore" type="java.lang.Double" />
+  <collection name="introns" referenced-type="Intron" reverse-reference="transcriptRegions" />
 </class>
-<class name="SL1AcceptorSite" extends="Region" is-interface="true">
-  <collection name="transcripts" referenced-type="Transcript" reverse-reference="SL1AcceptorSites"/>
-</class>
-<class name="SL2AcceptorSite" extends="Region" is-interface="true">
-  <collection name="transcripts" referenced-type="Transcript" reverse-reference="SL2AcceptorSites"/>
-</class>
+
 <class name="TSS" extends="Region" is-interface="true">
   <collection name="transcripts" referenced-type="Transcript" reverse-reference="TSSs"/>
 </class>
 
 <!-- OTHER modENCODE classes -->
+
+  <class name="Antibody" extends="SubmissionProperty" is-interface="true">
+    <attribute name="hostOrganism" type="java.lang.String"/>
+    <attribute name="targetName" type="java.lang.String"/>
+    <attribute name="antigen" type="java.lang.String"/>
+    <reference name="target" referenced-type="Gene"/>
+  </class>
+
+  <class name="AppliedProtocol" is-interface="true">
+    <attribute name="step" type="java.lang.Integer" />
+    <attribute name="name" type="java.lang.String" />
+    <reference name="protocol" referenced-type="Protocol" reverse-reference="appliedProtocols" />
+    <reference name="submission" referenced-type="Submission" reverse-reference="appliedProtocols" />
+    <collection name="inputs" referenced-type="SubmissionData" reverse-reference="nextAppliedProtocols" />
+    <collection name="outputs" referenced-type="SubmissionData" reverse-reference="previousAppliedProtocols" />
+  </class>
+
+  <class name="Array" extends="SubmissionProperty" is-interface="true">
+    <attribute name="platform" type="java.lang.String"/>
+    <attribute name="resolution" type="java.lang.String"/>
+    <attribute name="genome" type="java.lang.String"/>
+  </class>
+
+  <class name="CellLine" extends="SubmissionProperty" is-interface="true">
+    <attribute name="sex" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="cellType" type="java.lang.String"/>
+    <attribute name="tissue" type="java.lang.String"/>
+    <attribute name="species" type="java.lang.String"/>
+    <attribute name="targetName" type="java.lang.String"/>
+    <reference name="target" referenced-type="Gene"/>
+  </class>
+
+<class name="DatabaseRecord" is-interface="true">
+    <attribute name="database" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="accession" type="java.lang.String"/>
+    <attribute name="url" type="java.lang.String"/>
+    <collection name="submissions" referenced-type="Submission" reverse-reference="databaseRecords"/>
+  </class>
+
+  <class name="DevelopmentalStage" extends="SubmissionProperty" is-interface="true">
+    <attribute name="sex" type="java.lang.String"/>
+    <collection name="ontologyTerms" referenced-type="OntologyTerm"/>
+  </class>
+
+<class name="Experiment" is-interface="true">
+  <attribute name="name" type="java.lang.String" />
+  <reference name="project" referenced-type="Project" reverse-reference="experiments" />
+  <collection name="submissions" referenced-type="Submission" reverse-reference="experiment" />
+</class>
+
+  <class name="ExperimentalFactor"
+    is-interface="true">
+    <attribute name="name" type="java.lang.String" />
+    <attribute name="type" type="java.lang.String" />
+    <reference name="property" referenced-type="SubmissionProperty"/>
+    <collection name="submissions" referenced-type="Submission" reverse-reference="experimentalFactors" />
+  </class>
 
 <class name="ExpressionLevel" is-interface="true">
   <attribute name="name" type="java.lang.String" />
@@ -166,18 +192,17 @@
   <attribute name="predictionStatus" type="java.lang.String" />
   <reference name="feature" referenced-type="SequenceFeature" reverse-reference="expressionLevels"/>
   <reference name="submission" referenced-type="Submission"/>
-
-<!--   <reference name="transcript" referenced-type="Transcript" reverse-reference="expressionLevels"/>
-  <reference name="submission" referenced-type="Submission" reverse-reference="expressionLevels"/>
-
-  <reference name="miRNA" referenced-type="MiRNA" reverse-reference="expressionLevels"/>
-  <reference name="exon" referenced-type="Exon" reverse-reference="expressionLevels"/>
-  <reference name="exonRegion" referenced-type="ExonRegion" reverse-reference="expressionLevels"/>
-  <reference name="intron" referenced-type="Intron" reverse-reference="expressionLevels"/>
-  -->
 </class>
 
+  <class name="GrowthTemperature" extends="SubmissionProperty" is-interface="true"/>
 
+<class name="Lab" extends="DataSource" is-interface="true">
+  <attribute name="name" type="java.lang.String" />
+  <attribute name="surname" type="java.lang.String" />
+  <attribute name="affiliation" type="java.lang.String" />
+  <reference name="project" referenced-type="Project" reverse-reference="labs" />
+  <collection name="submissions" referenced-type="Submission" reverse-reference="lab" />
+</class>
 
 <class name="Project" is-interface="true">
   <attribute name="name" type="java.lang.String" />
@@ -191,19 +216,34 @@
   <collection name="organisms" referenced-type="Organism" />
 </class>
 
-<class name="Lab" extends="DataSource" is-interface="true">
-  <attribute name="name" type="java.lang.String" />
-  <attribute name="surname" type="java.lang.String" />
-  <attribute name="affiliation" type="java.lang.String" />
-  <reference name="project" referenced-type="Project" reverse-reference="labs" />
-  <collection name="submissions" referenced-type="Submission" reverse-reference="lab" />
-</class>
+  <class name="Protocol" is-interface="true">
+    <attribute name="name" type="java.lang.String" />
+    <attribute name="description" type="java.lang.String" />
+    <attribute name="type" type="java.lang.String" />
+    <attribute name="url" type="java.lang.String" />
+    <attribute name="wikiLink" type="java.lang.String" />
+    <attribute name="version" type="java.lang.Integer" />
+    <collection name="submissions" referenced-type="Submission" reverse-reference="protocols" />
+    <collection name="appliedProtocols" referenced-type="AppliedProtocol" reverse-reference="protocol" />
+  </class>
 
-<class name="Experiment" is-interface="true">
-  <attribute name="name" type="java.lang.String" />
-  <reference name="project" referenced-type="Project" reverse-reference="experiments" />
-  <collection name="submissions" referenced-type="Submission" reverse-reference="experiment" />
-</class>
+  <class name="ResultFile" is-interface="true">
+    <attribute name="type" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="url" type="java.lang.String"/>
+    <reference name="submission" referenced-type="Submission" reverse-reference="resultFiles"/>
+  </class>
+
+    <class name="Strain" extends="SubmissionProperty" is-interface="true">
+    <attribute name="species" type="java.lang.String"/>
+    <attribute name="source" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="fullName" type="java.lang.String"/>
+    <attribute name="reference" type="java.lang.String"/>
+    <attribute name="targetName" type="java.lang.String"/>
+    <reference name="target" referenced-type="Gene"/>
+  </class>
 
 <class name="Submission" extends="DataSet" is-interface="true">
   <attribute name="title" type="java.lang.String" />
@@ -218,29 +258,13 @@
   <attribute name="experimentType" type="java.lang.String" />
   <reference name="organism" referenced-type="Organism" />
   <reference name="publication" referenced-type="Publication"/>
-<!-- <attribute name="fileFormat" type="java.lang.String"/> -->
-    <reference name="experiment"
-      referenced-type="Experiment"
-      reverse-reference="submissions" />
-    <reference name="lab"
-      referenced-type="Lab"
-      reverse-reference="submissions" />
-    <reference name="project"
-      referenced-type="Project"
-      reverse-reference="submissions" />
-    <collection name="appliedProtocols"
-      referenced-type="AppliedProtocol"
-      reverse-reference="submission" />
-    <collection name="protocols"
-      referenced-type="Protocol"
-      reverse-reference="submissions" />
-    <collection name="submissionData"
-      referenced-type="SubmissionData"
-      reverse-reference="submission" />
-    <collection name="experimentalFactors"
-      referenced-type="ExperimentalFactor"
-      reverse-reference="submissions" />
-
+    <reference name="experiment" referenced-type="Experiment" reverse-reference="submissions" />
+    <reference name="lab" referenced-type="Lab" reverse-reference="submissions" />
+    <reference name="project" referenced-type="Project" reverse-reference="submissions" />
+    <collection name="appliedProtocols" referenced-type="AppliedProtocol" reverse-reference="submission" />
+    <collection name="protocols" referenced-type="Protocol" reverse-reference="submissions" />
+    <collection name="submissionData" referenced-type="SubmissionData" reverse-reference="submission" />
+    <collection name="experimentalFactors" referenced-type="ExperimentalFactor" reverse-reference="submissions" />
     <collection name="properties" referenced-type="SubmissionProperty" reverse-reference="submissions"/>
     <collection name="antibodies" referenced-type="Antibody"/>
     <collection name="developmentalStages" referenced-type="DevelopmentalStage"/>
@@ -255,87 +279,16 @@
     <collection name="expressionLevels" referenced-type="ExpressionLevel" reverse-reference="submission"/>
   </class>
 
-  <class name="ExperimentalFactor"
-    is-interface="true">
-    <attribute name="name" type="java.lang.String" />
-    <attribute name="type" type="java.lang.String" />
-    <reference name="property" referenced-type="SubmissionProperty"/>
-    <collection name="submissions"
-      referenced-type="Submission"
-      reverse-reference="experimentalFactors" />
-  </class>
-
-  <class name="DatabaseRecord" is-interface="true">
-    <attribute name="database" type="java.lang.String"/>
-    <attribute name="description" type="java.lang.String"/>
-    <attribute name="accession" type="java.lang.String"/>
-    <attribute name="url" type="java.lang.String"/>
-    <collection name="submissions" referenced-type="Submission" reverse-reference="databaseRecords"/>
-  </class>
-
-  <class name="ResultFile" is-interface="true">
-    <attribute name="type" type="java.lang.String"/>
-    <attribute name="name" type="java.lang.String"/>
-    <attribute name="url" type="java.lang.String"/>
-    <reference name="submission" referenced-type="Submission" reverse-reference="resultFiles"/>
-  </class>
-
-  <class name="Protocol"
-    is-interface="true">
-    <attribute name="name" type="java.lang.String" />
-    <attribute name="description" type="java.lang.String" />
-    <attribute name="type" type="java.lang.String" />
-    <attribute name="url" type="java.lang.String" />
-    <attribute name="wikiLink" type="java.lang.String" />
-    <attribute name="version" type="java.lang.Integer" />
-    <collection name="submissions"
-      referenced-type="Submission"
-      reverse-reference="protocols" />
-    <collection name="appliedProtocols"
-      referenced-type="AppliedProtocol"
-      reverse-reference="protocol" />
-  </class>
-
-  <class name="AppliedProtocol"
-    is-interface="true">
-    <attribute name="step" type="java.lang.Integer" />
-    <attribute name="name" type="java.lang.String" />
-    <!-- parameter values
-    <attribute name="label" type="java.lang.String" />
--->
-    <reference name="protocol"
-      referenced-type="Protocol"
-      reverse-reference="appliedProtocols" />
-    <reference name="submission"
-      referenced-type="Submission"
-      reverse-reference="appliedProtocols" />
-    <collection name="inputs"
-      referenced-type="SubmissionData"
-      reverse-reference="nextAppliedProtocols" />
-    <collection name="outputs"
-      referenced-type="SubmissionData"
-      reverse-reference="previousAppliedProtocols" />
-  </class>
-
   <class name="SubmissionData"
     is-interface="true">
     <attribute name="name" type="java.lang.String" />
     <attribute name="type" type="java.lang.String" />
     <attribute name="value" type="java.lang.String" />
-    <collection name="dataAttributes"
-      referenced-type="SubmissionDataAttribute"
-      reverse-reference="submissionData" />
-    <collection name="features"
-      referenced-type="SequenceFeature" />
-    <collection name="nextAppliedProtocols"
-      referenced-type="AppliedProtocol"
-      reverse-reference="inputs" />
-    <collection name="previousAppliedProtocols"
-      referenced-type="AppliedProtocol"
-      reverse-reference="outputs" />
-    <reference name="submission"
-      referenced-type="Submission"
-      reverse-reference="submissionData" />
+    <collection name="dataAttributes" referenced-type="SubmissionDataAttribute" reverse-reference="submissionData" />
+    <collection name="features" referenced-type="SequenceFeature" />
+    <collection name="nextAppliedProtocols" referenced-type="AppliedProtocol" reverse-reference="inputs" />
+    <collection name="previousAppliedProtocols" referenced-type="AppliedProtocol" reverse-reference="outputs" />
+    <reference name="submission" referenced-type="Submission" reverse-reference="submissionData" />
   </class>
 
   <class name="SubmissionDataAttribute"
@@ -343,9 +296,7 @@
     <attribute name="name" type="java.lang.String" />
     <attribute name="value" type="java.lang.String" />
     <attribute name="type" type="java.lang.String" />
-    <reference name="submissionData"
-      referenced-type="SubmissionData"
-      reverse-reference="dataAttributes" />
+    <reference name="submissionData" referenced-type="SubmissionData" reverse-reference="dataAttributes" />
   </class>
 
   <class name="SubmissionProperty" is-interface="true">
@@ -355,51 +306,10 @@
     <collection name="submissions" referenced-type="Submission" reverse-reference="properties" />
   </class>
 
-  <class name="CellLine" extends="SubmissionProperty" is-interface="true">
-    <attribute name="sex" type="java.lang.String"/>
-    <attribute name="description" type="java.lang.String"/>
-    <attribute name="cellType" type="java.lang.String"/>
-    <attribute name="tissue" type="java.lang.String"/>
-    <attribute name="species" type="java.lang.String"/>
-    <attribute name="targetName" type="java.lang.String"/>
-    <reference name="target" referenced-type="Gene"/>
-  </class>
-
-  <class name="Strain" extends="SubmissionProperty" is-interface="true">
-    <attribute name="species" type="java.lang.String"/>
-    <attribute name="source" type="java.lang.String"/>
-    <attribute name="description" type="java.lang.String"/>
-    <attribute name="name" type="java.lang.String"/>
-    <attribute name="fullName" type="java.lang.String"/>
-    <attribute name="reference" type="java.lang.String"/>
-    <attribute name="targetName" type="java.lang.String"/>
-    <reference name="target" referenced-type="Gene"/>
-  </class>
-
   <class name="Tissue" extends="SubmissionProperty" is-interface="true">
     <attribute name="species" type="java.lang.String"/>
     <attribute name="sex" type="java.lang.String"/>
     <attribute name="organismPart" type="java.lang.String"/>
   </class>
-
-  <class name="DevelopmentalStage" extends="SubmissionProperty" is-interface="true">
-    <attribute name="sex" type="java.lang.String"/>
-    <collection name="ontologyTerms" referenced-type="OntologyTerm"/>
-  </class>
-
-  <class name="Antibody" extends="SubmissionProperty" is-interface="true">
-    <attribute name="hostOrganism" type="java.lang.String"/>
-    <attribute name="targetName" type="java.lang.String"/>
-    <attribute name="antigen" type="java.lang.String"/>
-    <reference name="target" referenced-type="Gene"/>
-  </class>
-
-  <class name="Array" extends="SubmissionProperty" is-interface="true">
-    <attribute name="platform" type="java.lang.String"/>
-    <attribute name="resolution" type="java.lang.String"/>
-    <attribute name="genome" type="java.lang.String"/>
-  </class>
-
-  <class name="GrowthTemperature" extends="SubmissionProperty" is-interface="true"/>
 
 </classes>
