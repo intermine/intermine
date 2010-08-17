@@ -77,7 +77,7 @@
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
           jQuery("#info").val("Column features:" + dataArray[1] + "; Organisms:" + dataArray[2]);
-          jQuery("#db").val(dataArray[3].trim());
+          jQuery("#dbkey").val(jQuery.trim(dataArray[3]));
         });
 
      } else
@@ -94,7 +94,7 @@
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
           jQuery("#info").val("Column features:" + dataArray[1] + "; Organisms:" + dataArray[2]);
-          jQuery("#db").val(dataArray[3].trim());
+          jQuery("#dbkey").val(jQuery.trim(dataArray[3]));
         });
      }
   }
@@ -116,7 +116,7 @@
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
           jQuery("#info").val("Column features:" + dataArray[1] + "; Organisms:" + dataArray[2]);
-          jQuery("#db").val(dataArray[3].trim());
+          jQuery("#dbkey").val(jQuery.trim(dataArray[3]));
         });
     }
   }
@@ -126,7 +126,7 @@
     jQuery("#data_type").val("");
     jQuery("#URL").val("");
     jQuery("#info").val("");
-    jQuery("#db").val("");
+    jQuery("#dbkey").val("");
   }
 
 </script>
@@ -202,7 +202,7 @@ li { margin-bottom:0.5em; }
 
     <input id="URL" type="hidden" name="URL">
     <input id="data_type" type="hidden" name="data_type">
-    <input id="db" type="hidden" name="db">
+    <input id="dbkey" type="hidden" name="dbkey">
     <input id="info" type="hidden" name="info">
 
     </form>
