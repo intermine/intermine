@@ -77,7 +77,7 @@
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
           jQuery("#info").val("Column features:" + dataArray[1] + "; Organisms:" + dataArray[2]);
-          jQuery("#db").val(dataArray[3]);
+          jQuery("#db").val(dataArray[3].trim());
         });
 
      } else
@@ -94,7 +94,7 @@
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
           jQuery("#info").val("Column features:" + dataArray[1] + "; Organisms:" + dataArray[2]);
-          jQuery("#db").val(dataArray[3]);
+          jQuery("#db").val(dataArray[3].trim());
         });
      }
   }
@@ -116,7 +116,7 @@
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
           jQuery("#info").val("Column features:" + dataArray[1] + "; Organisms:" + dataArray[2]);
-          jQuery("#db").val(dataArray[3]);
+          jQuery("#db").val(dataArray[3].trim());
         });
     }
   }
