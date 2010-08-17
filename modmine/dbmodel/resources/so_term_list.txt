@@ -1,3 +1,4 @@
+binding_site
 cDNA
 cDNA_clone
 CDS
@@ -20,6 +21,7 @@ exon
 exon_region
 five_prime_UTR
 flanking_region
+gene
 histone_binding_site
 insertion
 insertion_site
