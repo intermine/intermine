@@ -153,15 +153,17 @@ li { margin-bottom:0.5em; }
 
     <ol>
 
+      <ol>Export results of this query to the Galaxy tool:</ol>
+
       <li>
       <fieldset>
-      <input type="radio" name="exportOptions" checked="checked" value="view"/><label>Export View</label>
+      <input type="radio" name="exportOptions" checked="checked" value="view"/><label>Send the results as a table</label>
       </fieldset>
       </li>
 
       <li>
       <fieldset>
-      <input type="radio" name="exportOptions" value="feature"/><label>Export Feature</label>
+      <input type="radio" name="exportOptions" value="feature"/><label>Send feature data in BED format which will be recognised by Galaxy</label>
       </fieldset>
 
 
@@ -196,7 +198,7 @@ li { margin-bottom:0.5em; }
     </ol>
 
     </fieldset>
-      <fieldset class="submit"><input name="submit" type="submit" value="Export" /></fieldset>
+      <fieldset class="submit"><input name="submit" type="submit" value="Send to Galaxy" /></fieldset>
 
     <input id="URL" type="hidden" name="URL">
     <input id="data_type" type="hidden" name="data_type">
