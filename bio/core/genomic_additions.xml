@@ -33,8 +33,6 @@
       <collection name="adjacentGenes" referenced-type="Gene"/>
 	 </class>
 
-    <class name="Intron" is-interface="true"/>
-    
     <class name="MRNA" is-interface="true">
       <reference name="fivePrimeUTR" referenced-type="FivePrimeUTR"/>
       <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR"/>
