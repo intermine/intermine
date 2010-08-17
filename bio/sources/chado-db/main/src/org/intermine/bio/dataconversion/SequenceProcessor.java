@@ -30,7 +30,6 @@ import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.chado.config.ConfigAction;
-import org.intermine.bio.chado.config.CreateCollectionAction;
 import org.intermine.bio.chado.config.CreateSynonymAction;
 import org.intermine.bio.chado.config.DoNothingAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
@@ -110,10 +109,6 @@ public class SequenceProcessor extends ChadoProcessor
     // the prefix to use when making a temporary table, the tempTableCount will be added to make it
     // unique
     private static final String TEMP_FEATURE_TABLE_NAME_PREFIX = "intermine_chado_features_temp";
-
-    // map used by processFeatureCVTermTable() to make sure the singletons objects (eg. those of
-    // class "SequenceOntologyTerm") are only created once
-    private final MultiKeyMap singletonMap = new MultiKeyMap();
 
     static final String PRIMARY_IDENTIFIER_STRING = "primaryIdentifier";
     static final String SECONDARY_IDENTIFIER_STRING = "secondaryIdentifier";

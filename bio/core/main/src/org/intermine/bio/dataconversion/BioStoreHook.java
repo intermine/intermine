@@ -163,9 +163,9 @@ public class BioStoreHook implements DataConverterStoreHook
             }
             return soRefId;
         } catch (IOException e) {
-            return null;
+            throw new RuntimeException("Error reading `soClassName.properties`", e);
         } catch (ObjectStoreException e) {
-            return null;
+            throw new RuntimeException("Error storing SOTerm", e);
         }
     }
 
