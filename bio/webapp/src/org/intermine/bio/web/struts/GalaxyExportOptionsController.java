@@ -12,9 +12,12 @@ package org.intermine.bio.web.struts;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,15 +30,20 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.Column;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.PropertiesUtil;
+import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
@@ -48,6 +56,7 @@ import org.intermine.web.util.URLGenerator;
 
 public class GalaxyExportOptionsController extends TilesAction
 {
+//    private static final Logger LOG = Logger.getLogger(GalaxyExportOptionsController.class);
     /**
      * {@inheritDoc}
      */
@@ -82,13 +91,6 @@ public class GalaxyExportOptionsController extends TilesAction
         request.setAttribute("exportClassPaths", pathMap);
         request.setAttribute("pathIndexMap", pathIndexMap);
 
-        // If can export feature
-        if (request.getParameter("exportAsBED") != null) {
-            request.setAttribute("exportAsBED", request.getParameter("exportAsBED"));
-        } else {
-            request.setAttribute("exportAsBED", false);
-        }
-
         // Build webservice URL
         PathQuery query = pt.getWebTable().getPathQuery();
 
@@ -103,8 +105,52 @@ public class GalaxyExportOptionsController extends TilesAction
                         + "&size=1000000");
 
         request.setAttribute("viewURL", stringUrl.toString());
+        request.setAttribute("exportAsBED", canExportAsBEDToGalaxy(pt));
+
+        // If can be exported as BED
+        Profile profile = SessionMethods.getProfile(session);
+        WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
+
+        Set<String> orgSet = new LinkedHashSet<String>();
+        List<String> summaryPathList = new ArrayList<String>();
+        if (canExportAsBEDToGalaxy(pt)) {
+            for (Map.Entry<String, Integer> entry : pathIndexMap.entrySet()) {
+                String pathToAdd = entry.getKey() + ".organism.shortName";
+                query.addView(pathToAdd);
+                summaryPathList.add(pathToAdd);
+            }
+            for (String orgPath : summaryPathList) {
+                @SuppressWarnings({ "unchecked", "rawtypes" })
+                List<ResultsRow> results = webResultsExecutor.summariseQuery(query, orgPath);
+                orgSet.add((String) results.get(0).get(0));
+            }
+
+            String genomeBuild = "";
+            Properties props = PropertiesUtil.getProperties();
+            if (orgSet.size() == 1) {
+                if (orgSet.iterator().next().equals("D. melanogaster")) {
+                    genomeBuild = props.getProperty("genomeVersion.fly");
+                }
+                if (orgSet.iterator().next().equals("C. elegans")) {
+                    genomeBuild = props.getProperty("genomeVersion.worm");
+                }
+            }
+            request.setAttribute("genomeBuild", genomeBuild);
+            request.setAttribute("organism", Arrays.toString(orgSet.toArray()));
+        }
 
         return null;
+    }
+
+    /**
+     * Whether the results can be exported as BED format.
+     *
+     * @param pt PagedTable in the session
+     * @return a boolean
+     */
+    private boolean canExportAsBEDToGalaxy(PagedTable pt) {
+        return ExportHelper.getClassIndex(ExportHelper.getColumnClasses(pt),
+                LocatedSequenceFeature.class) >= 0;
     }
 
 
@@ -125,6 +171,7 @@ public class GalaxyExportOptionsController extends TilesAction
         for (int index = 0; index < columns.size(); index++) {
             Path prefix = columns.get(index).getPath().getPrefix();
             ClassDescriptor prefixCD = prefix.getLastClassDescriptor();
+            @SuppressWarnings("rawtypes")
             Set<Class> prefixClasses = DynamicUtil.decomposeClass(prefixCD.getType());
             Class<?> prefixClass = prefixClasses.iterator().next();
             // Chromosome is treated as a sequence feature in the model
