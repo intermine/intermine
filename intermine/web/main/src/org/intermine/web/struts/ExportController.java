@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,13 +26,9 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.web.logic.config.TableExportConfig;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.model.bio.SequenceFeature;
-
-
 
 /**
  * Controller to initialise for the export.tile
@@ -49,11 +44,11 @@ public class ExportController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         WebConfig webConfig = SessionMethods.getWebConfig(request);
@@ -67,7 +62,8 @@ public class ExportController extends TilesAction
         }
 
         Map<String, TableExportConfig> allExporters = webConfig.getTableExportConfigs();
-        Map<String, Map<String, String>> usableExporters = new HashMap();
+        Map<String, Map<String, String>> usableExporters
+            = new HashMap<String, Map<String, String>>();
 
         for (Iterator<String> i = allExporters.keySet().iterator(); i.hasNext(); ) {
             String exporterId = i.next();
@@ -83,7 +79,7 @@ public class ExportController extends TilesAction
             }
             if (canExport) {
                 // parameters to pass via the URL to the exportOptions page
-                Map<String, String> config = new HashMap();
+                Map<String, String> config = new HashMap<String, String>();
                 config.put("id", tableExportConfig.getId());
                 config.put("className", tableExportConfig.getClassName());
                 usableExporters.put(exporterId, config);
@@ -92,12 +88,6 @@ public class ExportController extends TilesAction
             }
         }
         request.setAttribute("exporters", usableExporters);
-
-        // For Galaxy
-        // Maybe it's a good practice to create a GalaxyHttpExporter, and move
-        // canExportAsBEDToGalaxy(PagedTable) into it.
-        request.setAttribute("exportAsBED", canExportAsBEDToGalaxy(pt));
-
         return null;
     }
 
