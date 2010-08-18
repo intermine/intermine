@@ -4,16 +4,6 @@
 <reference name="subject" ref_id="14_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_36" class="Synonym">
-<attribute name="value" value="FBti0031976"/>
-<reference name="subject" ref_id="14_4"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_22" class="Synonym">
-<attribute name="value" value="Scer\GAL4[sd-SG29.1]"/>
-<reference name="subject" ref_id="12_2"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
 <item id="11_1" class="Protein">
 <attribute name="length" value="41"/>
 <attribute name="md5checksum" value="824c7d2cbdc711dd49892c63b71832ac"/>
@@ -23,9 +13,9 @@
 <reference name="sequence" ref_id="6_10"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_51" class="Synonym">
-<attribute name="value" value="FBcl0000002"/>
-<reference name="subject" ref_id="16_1"/>
+<item id="7_22" class="Synonym">
+<attribute name="value" value="Scer\GAL4[sd-SG29.1]"/>
+<reference name="subject" ref_id="12_2"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="18_6" class="Location">
@@ -51,9 +41,9 @@
 <reference name="subject" ref_id="8_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_56" class="Synonym">
-<attribute name="value" value="FBgn0000001_fullname_synonym"/>
-<reference name="subject" ref_id="1_1"/>
+<item id="7_30" class="Synonym">
+<attribute name="value" value="FBti0031976"/>
+<reference name="subject" ref_id="14_4"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="8_3" class="MRNA">
@@ -64,11 +54,6 @@
 <reference name="protein" ref_id="11_1"/>
 <reference name="sequence" ref_id="6_5"/>
 <reference name="sequenceOntologyTerm" ref_id="3_2"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_37" class="Synonym">
-<attribute name="value" value="P{RS5r}5-HA-1496"/>
-<reference name="subject" ref_id="14_4"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="10_2" class="Exon">
@@ -88,9 +73,9 @@
 <reference name="subject" ref_id="8_3"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_35" class="Synonym">
-<attribute name="value" value="P{RS5r}5-SZ-4122"/>
-<reference name="subject" ref_id="14_3"/>
+<item id="7_37" class="Synonym">
+<attribute name="value" value="UUGC0315"/>
+<reference name="subject" ref_id="16_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="9_2" class="Chromosome">
@@ -131,9 +116,6 @@
 <reference name="sequenceOntologyTerm" ref_id="3_6"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="4_1" class="DataSource">
-<attribute name="name" value="FlyBase"/>
-</item>
 <item id="12_1" class="Allele">
 <attribute name="alleleClass" value="hypomorph"/>
 <attribute name="primaryIdentifier" value="FBal0198867"/>
@@ -143,10 +125,8 @@
 <reference name="sequenceOntologyTerm" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_25" class="Synonym">
-<attribute name="value" value="P{RS3}CB-5069-3"/>
-<reference name="subject" ref_id="14_1"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
+<item id="4_1" class="DataSource">
+<attribute name="name" value="FlyBase"/>
 </item>
 <item id="17_2" class="Publication">
 <attribute name="pubMedId" value="8543160"/>
@@ -157,11 +137,6 @@
 <reference name="allele" ref_id="12_1"/>
 <reference name="developmentTerm" ref_id="22_1"/>
 <collection name="cvTerms"><reference ref_id="21_2"/><reference ref_id="21_3"/><reference ref_id="21_4"/></collection>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_47" class="Synonym">
-<attribute name="value" value="f07990"/>
-<reference name="subject" ref_id="14_9"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="3_6" class="SOTerm">
@@ -180,11 +155,6 @@
 <reference name="subject" ref_id="9_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_31" class="Synonym">
-<attribute name="value" value="T(2;3)V21"/>
-<reference name="subject" ref_id="15_3"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
 <item id="14_3" class="TransposableElementInsertionSite">
 <attribute name="primaryIdentifier" value="FBti0032815"/>
 <attribute name="secondaryIdentifier" value="P{RS5r}5-SZ-4122"/>
@@ -200,14 +170,14 @@
 <attribute name="length" value="27905053"/>
 <attribute name="residues" value="ggtggaacttgagaacgagttcaagagcaacatgtactgatgaatctgtcgtggggcgagcctgctgccaagtcgagaaagctgag"/>
 </item>
-<item id="7_32" class="Synonym">
-<attribute name="value" value="FBti0028225"/>
-<reference name="subject" ref_id="14_2"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
 <item id="7_4" class="Synonym">
 <attribute name="value" value="CG10000-RA"/>
 <reference name="subject" ref_id="8_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_34" class="Synonym">
+<attribute name="value" value="FBti0029528"/>
+<reference name="subject" ref_id="14_8"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="17_8" class="Publication">
@@ -247,14 +217,9 @@
 <reference name="subject" ref_id="11_2"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_43" class="Synonym">
-<attribute name="value" value="P{RS5}5-SZ-4122"/>
-<reference name="subject" ref_id="14_7"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_58" class="Synonym">
-<attribute name="value" value="dmel_GLEANR_1_synonym"/>
-<reference name="subject" ref_id="1_1"/>
+<item id="7_31" class="Synonym">
+<attribute name="value" value="FBti0030830"/>
+<reference name="subject" ref_id="14_5"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="11_2" class="Protein">
@@ -264,11 +229,6 @@
 <attribute name="secondaryIdentifier" value="FBpp99999"/>
 <reference name="organism" ref_id="2_1"/>
 <reference name="sequence" ref_id="6_11"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_38" class="Synonym">
-<attribute name="value" value="FBti0030830"/>
-<reference name="subject" ref_id="14_5"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="8_2" class="MRNA">
@@ -285,21 +245,16 @@
 <attribute name="url" value="http://www.flybase.org"/>
 <reference name="dataSource" ref_id="4_1"/>
 </item>
-<item id="7_48" class="Synonym">
-<attribute name="value" value="PBac{WH}f07990"/>
-<reference name="subject" ref_id="14_9"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
 <item id="3_1" class="SOTerm">
 <attribute name="name" value="gene"/>
 <reference name="ontology" ref_id="0_1"/>
 </item>
+<item id="21_1" class="CVTerm">
+<attribute name="identifier" value="FBcv:0000031"/>
+</item>
 <item id="25_2" class="InteractionExperiment">
 <attribute name="name" value="Another paper about interactions"/>
 <reference name="publication" ref_id="17_9"/>
-</item>
-<item id="21_1" class="CVTerm">
-<attribute name="identifier" value="FBcv:0000031"/>
 </item>
 <item id="3_8" class="SOTerm">
 <attribute name="name" value="cDNA_clone"/>
@@ -311,6 +266,11 @@
 <attribute name="strand" value="-1"/>
 <reference name="feature" ref_id="10_1"/>
 <reference name="locatedOn" ref_id="9_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_28" class="Synonym">
+<attribute name="value" value="FBti0028225"/>
+<reference name="subject" ref_id="14_2"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="14_1" class="TransposableElementInsertionSite">
@@ -332,9 +292,9 @@
 <item id="21_5" class="CVTerm">
 <attribute name="identifier" value="FBcv:0000354"/>
 </item>
-<item id="7_41" class="Synonym">
-<attribute name="value" value="P{RS3r}CB-0697-3"/>
-<reference name="subject" ref_id="14_6"/>
+<item id="7_26" class="Synonym">
+<attribute name="value" value="FBab0031842"/>
+<reference name="subject" ref_id="15_2"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="1_1" class="Gene">
@@ -360,11 +320,11 @@
 <reference name="locatedOn" ref_id="9_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="2_1" class="Organism">
-<attribute name="taxonId" value="7227"/>
-</item>
 <item id="21_4" class="CVTerm">
 <attribute name="identifier" value="FBcv:0000311"/>
+</item>
+<item id="2_1" class="Organism">
+<attribute name="taxonId" value="7227"/>
 </item>
 <item id="7_10" class="Synonym">
 <attribute name="value" value="3R"/>
@@ -394,14 +354,14 @@
 <reference name="subject" ref_id="10_2"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
+<item id="7_43" class="Synonym">
+<attribute name="value" value="dmel_GLEANR_1_synonym"/>
+<reference name="subject" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
 <item id="7_8" class="Synonym">
 <attribute name="value" value="CG10000-RC"/>
 <reference name="subject" ref_id="8_3"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_28" class="Synonym">
-<attribute name="value" value="FBab0031842"/>
-<reference name="subject" ref_id="15_2"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="18_3" class="Location">
@@ -412,9 +372,9 @@
 <reference name="locatedOn" ref_id="9_2"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_46" class="Synonym">
-<attribute name="value" value="FBti0068355"/>
-<reference name="subject" ref_id="14_9"/>
+<item id="7_32" class="Synonym">
+<attribute name="value" value="FBti0030675"/>
+<reference name="subject" ref_id="14_6"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="19_1" class="PhenotypeAnnotation">
@@ -425,17 +385,17 @@
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 <collection name="publications"><reference ref_id="17_7"/><reference ref_id="17_8"/></collection>
 </item>
+<item id="7_29" class="Synonym">
+<attribute name="value" value="FBti0032815"/>
+<reference name="subject" ref_id="14_3"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
 <item id="3_4" class="SOTerm">
 <attribute name="name" value="exon"/>
 <reference name="ontology" ref_id="0_1"/>
 </item>
 <item id="17_4" class="Publication">
 <attribute name="pubMedId" value="2612903"/>
-</item>
-<item id="7_42" class="Synonym">
-<attribute name="value" value="FBti0030367"/>
-<reference name="subject" ref_id="14_7"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="17_5" class="Publication">
 <attribute name="pubMedId" value="7720555"/>
@@ -470,22 +430,12 @@
 <reference name="sequenceOntologyTerm" ref_id="3_6"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_21" class="Synonym">
-<attribute name="value" value="FBal0060667"/>
-<reference name="subject" ref_id="12_2"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
 <item id="17_3" class="Publication">
 <attribute name="pubMedId" value="2892759"/>
 </item>
-<item id="7_59" class="Synonym">
-<attribute name="value" value="CG10006_symbol"/>
-<reference name="subject" ref_id="1_2"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_29" class="Synonym">
-<attribute name="value" value="Df(2L)ED1454"/>
-<reference name="subject" ref_id="15_2"/>
+<item id="7_21" class="Synonym">
+<attribute name="value" value="FBal0060667"/>
+<reference name="subject" ref_id="12_2"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="7_14" class="Synonym">
@@ -493,14 +443,9 @@
 <reference name="subject" ref_id="11_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_40" class="Synonym">
-<attribute name="value" value="FBti0030675"/>
-<reference name="subject" ref_id="14_6"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_44" class="Synonym">
-<attribute name="value" value="FBti0029528"/>
-<reference name="subject" ref_id="14_8"/>
+<item id="7_39" class="Synonym">
+<attribute name="value" value="FBgn0000001_dbxref2"/>
+<reference name="subject" ref_id="1_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="19_2" class="PhenotypeAnnotation">
@@ -530,11 +475,6 @@
 <reference name="locatedOn" ref_id="9_2"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_34" class="Synonym">
-<attribute name="value" value="FBti0032815"/>
-<reference name="subject" ref_id="14_3"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
 <item id="14_8" class="TransposableElementInsertionSite">
 <attribute name="primaryIdentifier" value="FBti0029528"/>
 <attribute name="secondaryIdentifier" value="P{RS5}5-HA-1496"/>
@@ -561,11 +501,6 @@
 <reference name="sequenceOntologyTerm" ref_id="3_5"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_45" class="Synonym">
-<attribute name="value" value="P{RS5}5-HA-1496"/>
-<reference name="subject" ref_id="14_8"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
 <item id="10_1" class="Exon">
 <attribute name="length" value="148"/>
 <attribute name="primaryIdentifier" value="CG10000:1"/>
@@ -586,11 +521,6 @@
 <item id="6_8" class="Sequence">
 <attribute name="length" value="148"/>
 <attribute name="residues" value="gattgctcagcgcgaacg"/>
-</item>
-<item id="7_27" class="Synonym">
-<attribute name="value" value="Df(2L)ED482"/>
-<reference name="subject" ref_id="15_1"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="3_3" class="SOTerm">
 <attribute name="name" value="chromosome_arm"/>
@@ -620,27 +550,12 @@
 <attribute name="name" value="point_mutation"/>
 <reference name="ontology" ref_id="0_1"/>
 </item>
-<item id="7_54" class="Synonym">
-<attribute name="value" value="FBgn0000001_dbxref3"/>
-<reference name="subject" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_30" class="Synonym">
-<attribute name="value" value="FBab0010281"/>
-<reference name="subject" ref_id="15_3"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
 <item id="9_1" class="Chromosome">
 <attribute name="length" value="24543557"/>
 <attribute name="primaryIdentifier" value="3L"/>
 <reference name="organism" ref_id="2_1"/>
 <reference name="sequence" ref_id="6_6"/>
 <reference name="sequenceOntologyTerm" ref_id="3_3"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_26" class="Synonym">
-<attribute name="value" value="FBab0032193"/>
-<reference name="subject" ref_id="15_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="19_5" class="PhenotypeAnnotation">
@@ -667,6 +582,11 @@
 <reference name="locatedOn" ref_id="9_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
+<item id="7_25" class="Synonym">
+<attribute name="value" value="FBab0032193"/>
+<reference name="subject" ref_id="15_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
 <item id="7_1" class="Synonym">
 <attribute name="value" value="FBgn0000001"/>
 <reference name="subject" ref_id="1_1"/>
@@ -683,19 +603,14 @@
 <reference name="sequenceOntologyTerm" ref_id="3_6"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_33" class="Synonym">
-<attribute name="value" value="P{RS3}CB-0697-3"/>
-<reference name="subject" ref_id="14_2"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
 <item id="7_19" class="Synonym">
 <attribute name="value" value="FBal0198867"/>
 <reference name="subject" ref_id="12_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_55" class="Synonym">
-<attribute name="value" value="FBgn0036461_dbxref4"/>
-<reference name="subject" ref_id="1_2"/>
+<item id="7_36" class="Synonym">
+<attribute name="value" value="FBcl0000001"/>
+<reference name="subject" ref_id="16_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="0_1" class="Ontology">
@@ -721,9 +636,9 @@
 <item id="23_1" class="Mutagen">
 <attribute name="description" value="&amp;alpha; ray"/>
 </item>
-<item id="7_50" class="Synonym">
-<attribute name="value" value="UUGC0315"/>
-<reference name="subject" ref_id="16_1"/>
+<item id="7_35" class="Synonym">
+<attribute name="value" value="FBti0068355"/>
+<reference name="subject" ref_id="14_9"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="18_9" class="Location">
@@ -734,8 +649,13 @@
 <reference name="locatedOn" ref_id="9_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_53" class="Synonym">
-<attribute name="value" value="FBgn0000001_dbxref2"/>
+<item id="7_42" class="Synonym">
+<attribute name="value" value="FBgn0000001_symbol_SYNONYM"/>
+<reference name="subject" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_40" class="Synonym">
+<attribute name="value" value="FBgn0000001_dbxref3"/>
 <reference name="subject" ref_id="1_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
@@ -755,6 +675,16 @@
 <item id="20_1" class="AnatomyTerm">
 <attribute name="identifier" value="FBbt:00004729"/>
 </item>
+<item id="7_33" class="Synonym">
+<attribute name="value" value="FBti0030367"/>
+<reference name="subject" ref_id="14_7"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_27" class="Synonym">
+<attribute name="value" value="FBab0010281"/>
+<reference name="subject" ref_id="15_3"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
 <item id="7_2" class="Synonym">
 <attribute name="value" value="FBgn0036461"/>
 <reference name="subject" ref_id="1_2"/>
@@ -771,8 +701,13 @@
 <reference name="locatedOn" ref_id="9_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_49" class="Synonym">
-<attribute name="value" value="FBcl0000001"/>
+<item id="7_44" class="Synonym">
+<attribute name="value" value="CG10006_symbol"/>
+<reference name="subject" ref_id="1_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_38" class="Synonym">
+<attribute name="value" value="FBcl0000002"/>
 <reference name="subject" ref_id="16_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
@@ -787,11 +722,6 @@
 </item>
 <item id="17_9" class="Publication">
 <attribute name="pubMedId" value="2345671"/>
-</item>
-<item id="7_39" class="Synonym">
-<attribute name="value" value="P{RS3r}CB-5069-3"/>
-<reference name="subject" ref_id="14_5"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="15_2" class="ChromosomeStructureVariation">
 <attribute name="primaryIdentifier" value="FBab0031842"/>
@@ -808,14 +738,9 @@
 <reference name="subject" ref_id="10_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="7_52" class="Synonym">
-<attribute name="value" value="FBgn0000001_dbxref1"/>
-<reference name="subject" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_57" class="Synonym">
-<attribute name="value" value="FBgn0000001_symbol_synonym"/>
-<reference name="subject" ref_id="1_1"/>
+<item id="7_41" class="Synonym">
+<attribute name="value" value="FBgn0036461_dbxref4"/>
+<reference name="subject" ref_id="1_2"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 <item id="7_16" class="Synonym">
