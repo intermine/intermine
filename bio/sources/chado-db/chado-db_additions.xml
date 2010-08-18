@@ -29,7 +29,7 @@
     <collection name="cDNAClones" referenced-type="CDNAClone" reverse-reference="EST"/>
   </class>
   <class name="TFmodule" extends="RegulatoryRegion" is-interface="true" />
-  <class name="ChromosomeStructureVariation"  extends="SequenceCollection" is-interface="true">
+  <class name="ChromosomeStructureVariation"  extends="SequenceFeature" is-interface="true">
     <attribute name="available" type="java.lang.Boolean"/>
     <attribute name="confirmedByPCR" type="java.lang.Boolean"/>
     <attribute name="confirmedByGenetics" type="java.lang.Boolean"/>
