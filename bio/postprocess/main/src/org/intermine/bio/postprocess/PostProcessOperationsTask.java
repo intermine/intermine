@@ -24,8 +24,6 @@ import org.apache.tools.ant.BuildException;
 
 
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.bio.util.LinkInTask;
-
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
