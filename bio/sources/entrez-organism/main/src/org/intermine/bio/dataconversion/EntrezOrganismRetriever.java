@@ -83,7 +83,7 @@ public class EntrezOrganismRetriever extends Task
      * fill in the details in the organism object.
      * @throws BuildException if an error occurs
      */
-    public void execute() throws BuildException {
+    public void execute() {
         // Needed so that STAX can find it's implementation classes
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
