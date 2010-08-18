@@ -1125,10 +1125,6 @@ public class SequenceProcessor extends ChadoProcessor
                         if (existingSynonyms.contains(newFieldValue)) {
                             continue;
                         }
-                        String synonymType = synonymAction.getSynonymType();
-                        if (synonymType == null) {
-                            synonymType = propTypeName;
-                        }
                         Item synonym = createSynonym(fdat, newFieldValue);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
