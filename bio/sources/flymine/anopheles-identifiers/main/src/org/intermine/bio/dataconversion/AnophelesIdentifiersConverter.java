@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -32,7 +33,7 @@ import org.intermine.xml.full.Item;
  */
 public class AnophelesIdentifiersConverter extends BioFileConverter
 {
-    protected Item organism;
+    protected String organismRefId = null;
     protected Set<String> seenEnsIds = new HashSet<String>();
 
     /**
@@ -44,9 +45,7 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
     public AnophelesIdentifiersConverter(ItemWriter writer, Model model)
         throws ObjectStoreException {
         super(writer, model, "VectorBase", "VectorBase Anopheles");
-        organism = createItem("Organism");
-        organism.setAttribute("taxonId", "7165");
-        store(organism);
+        organismRefId = getOrganism("7165");
     }
 
 
@@ -88,17 +87,18 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
             ensIds.remove(0);
 
             Item feature = createItem(clsName);
-            if (secondaryIdentifier != null && !secondaryIdentifier.equals("")
+            if (StringUtils.isNotEmpty(secondaryIdentifier)
                 && !seenEnsIds.contains(secondaryIdentifier)) {
                 feature.setAttribute("secondaryIdentifier", secondaryIdentifier);
                 seenEnsIds.add(secondaryIdentifier);
             }
-            if (primaryIdentifier != null && !primaryIdentifier.equals("")) {
+            if (StringUtils.isNotEmpty(primaryIdentifier)) {
                 feature.setAttribute("primaryIdentifier", primaryIdentifier);
             }
-            feature.setReference("organism", organism.getIdentifier());
+            feature.setReference("organism", organismRefId);
             store(feature);
             String refId = feature.getIdentifier();
+            // TODO maybe these should be xrefs?
             // create addidtional synonyms for other ensembl ids
             for (String ensId : ensIds) {
                 createSynonym(refId, ensId, true);

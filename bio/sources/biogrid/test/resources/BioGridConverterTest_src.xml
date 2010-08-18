@@ -38,13 +38,13 @@
                                         <primaryRef db="grid" id="13022" dbAc="MI:0463" />
                                 </xref>
                                 <interactionDetectionMethod>
-                                        <names>
-                                                <shortLabel>Two-hybrid</shortLabel>
-                                                <fullName>Two-hybrid</fullName>
-                                        </names>
-                                        <xref>
-                                                <primaryRef db="grid" id="3" dbAc="MI:0463" />
-                                        </xref>
+                                          <names>
+            <shortLabel>two hybrid</shortLabel>
+            <fullName>two hybrid</fullName>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" id="MI:0018" dbAc="MI:0488" />
+          </xref>
                                 </interactionDetectionMethod>
                         </experimentDescription>
                 </experimentList>
