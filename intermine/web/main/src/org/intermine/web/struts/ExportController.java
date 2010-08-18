@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +32,8 @@ import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.model.bio.SequenceFeature;
+
+
 
 /**
  * Controller to initialise for the export.tile
@@ -94,18 +97,9 @@ public class ExportController extends TilesAction
         // Maybe it's a good practice to create a GalaxyHttpExporter, and move
         // canExportAsBEDToGalaxy(PagedTable) into it.
         request.setAttribute("exportAsBED", canExportAsBEDToGalaxy(pt));
+
         return null;
     }
 
-    /**
-    * For Galaxy Use.
-    * Whether the results can be exported as BED format.
-    *
-    * @param pt PagedTable in the session
-    * @return a boolean
-    */
-    private boolean canExportAsBEDToGalaxy(PagedTable pt) {
-        return ExportHelper.getClassIndex(ExportHelper.getColumnClasses(pt),
-               SequenceFeature.class) >= 0;
-    }
+
 }
