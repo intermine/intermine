@@ -41,7 +41,7 @@ public class InterProConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "interpro-tgt-items.xml");
+        writeItemsFile(itemWriter.getItems(), "interpro-tgt-items.xml");
 
         Set expected = readItemSet("InterproConverterTest_tgt.xml");
 
