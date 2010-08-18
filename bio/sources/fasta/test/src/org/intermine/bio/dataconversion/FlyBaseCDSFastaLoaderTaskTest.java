@@ -79,7 +79,7 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
                 assertEquals(5797861, loc.getEnd().intValue());
                 assertEquals("1", loc.getStrand());
                 assertEquals("X", loc.getLocatedOn().getPrimaryIdentifier());
-                assertEquals("FBtr0070823", cds.getmRNA().getPrimaryIdentifier());
+                assertEquals("FBtr0070823", cds.getTranscript().getPrimaryIdentifier());
                 assertEquals(36329, cds.getOrganism().getTaxonId().intValue());
             } else {
                 if (cds.getPrimaryIdentifier().equals("CG6844-PB_CDS")) {
@@ -89,7 +89,7 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
                     assertEquals(20316734, loc.getEnd().intValue());
                     assertEquals("1", loc.getStrand());
                     assertEquals("3R", loc.getLocatedOn().getPrimaryIdentifier());
-                    assertEquals("FBtr0084640", cds.getmRNA().getPrimaryIdentifier());
+                    assertEquals("FBtr0084640", cds.getTranscript().getPrimaryIdentifier());
                     assertEquals(36329, cds.getOrganism().getTaxonId().intValue());
                 }
             }
