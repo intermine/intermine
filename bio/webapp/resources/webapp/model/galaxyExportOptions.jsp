@@ -61,10 +61,6 @@
      } else
      if (jQuery(this).val() == "feature" && jQuery("input[name='sequencePath']").length>1) {
 
-        jQuery("input[name='sequencePath']").each(function(i) {
-                    jQuery(this).removeAttr('disabled');
-        });
-
         var pathVal = jQuery("input[name='sequencePath']:checked").val();
         var idx;
         <c:forEach var="pathIndexMap" items="${pathIndexMap}">
@@ -78,6 +74,10 @@
           jQuery("#URL").val(dataArray[0]);
           jQuery("#info").val("Column features:" + dataArray[1] + "; Organisms:" + dataArray[2]);
           jQuery("#dbkey").val(jQuery.trim(dataArray[3]));
+        });
+
+        jQuery("input[name='sequencePath']").each(function(i) {
+                    jQuery(this).removeAttr('disabled');
         });
 
      } else
@@ -105,6 +105,18 @@
 
     if (jQuery("input[name='sequencePath']").length>1) {
 
+        // Before ajax call, disable the unchecked radio buttons, to prevent quick click on radio buttons thus the form gets the right ajax response for user's selection
+        // Option 2 - Stop the current ajax call:
+        // If you use $.ajax for your remote calls it returns the XHR object...:
+        // var xhr = $.ajax({...});
+        // You can then stop it using the given function:
+        // xhr.abort();
+
+        // Disable the unchecked
+        jQuery("input[name='sequencePath']:not(:checked)").each(function(i) {
+                jQuery(this).attr('disabled', 'disabled');
+        });
+
         var pathVal = jQuery("input[name='sequencePath']:checked").val();
         var idx;
         <c:forEach var="pathIndexMap" items="${pathIndexMap}">
@@ -117,6 +129,11 @@
           jQuery("#URL").val(dataArray[0]);
           jQuery("#info").val("Column features:" + dataArray[1] + "; Organisms:" + dataArray[2]);
           jQuery("#dbkey").val(jQuery.trim(dataArray[3]));
+        });
+
+        // After ajax call, enable the unchecked
+        jQuery("input[name='sequencePath']:not(:checked)").each(function(i) {
+                jQuery(this).removeAttr('disabled');
         });
     }
   }
