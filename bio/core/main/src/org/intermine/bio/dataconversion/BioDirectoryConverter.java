@@ -39,7 +39,7 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
     private Set<String> crossReferences = new HashSet<String>();
     private Map<String, String> organisms = new HashMap<String, String>();
     private BioStoreHook hook = null;
-    protected final String sequenceOntologyRefId;
+    private String sequenceOntologyRefId;
 
     /**
      * Create a new BioDirectoryConverter.
@@ -51,7 +51,6 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
     public BioDirectoryConverter (ItemWriter writer, Model model, String dataSourceName,
             String dataSetTitle) {
         super(writer, model);
-        sequenceOntologyRefId = BioConverterUtil.getOntology(this);
         String dataSourceRefId = null;
         String dataSetRefId = null;
         if (StringUtils.isNotEmpty(dataSourceName)) {
@@ -203,5 +202,15 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
             return synonym;
         }
         return null;
+    }
+
+    /**
+     * @return ID represening the Ontology object
+     */
+    public String getSequenceOntologyRefId() {
+        if (sequenceOntologyRefId == null) {
+            sequenceOntologyRefId = BioConverterUtil.getOntology(this);
+        }
+        return sequenceOntologyRefId;
     }
 }

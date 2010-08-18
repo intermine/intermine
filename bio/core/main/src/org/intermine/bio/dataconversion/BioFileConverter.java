@@ -37,7 +37,7 @@ public abstract class BioFileConverter extends FileConverter
     private Set<String> synonyms = new HashSet<String>();
     private Set<String> crossReferences = new HashSet<String>();
     private Map<String, String> organisms = new HashMap<String, String>();
-    protected final String sequenceOntologyRefId;
+    private String sequenceOntologyRefId;
 
     /**
      * Create a new BioFileConverter.
@@ -49,7 +49,6 @@ public abstract class BioFileConverter extends FileConverter
     public BioFileConverter (ItemWriter writer, Model model,
                              String dataSourceName, String dataSetTitle) {
         super(writer, model);
-        sequenceOntologyRefId = BioConverterUtil.getOntology(this);
         String dataSource = null;
         String dataSet = null;
         if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
@@ -67,10 +66,18 @@ public abstract class BioFileConverter extends FileConverter
      */
     public BioFileConverter (ItemWriter writer, Model model) {
         super(writer, model);
-        sequenceOntologyRefId = BioConverterUtil.getOntology(this);
         setStoreHook(new BioStoreHook(model, "", "", sequenceOntologyRefId));
     }
 
+    /**
+     * @return ID represening the Ontology object
+     */
+    public String getSequenceOntologyRefId() {
+        if (sequenceOntologyRefId == null) {
+            sequenceOntologyRefId = BioConverterUtil.getOntology(this);
+        }
+        return sequenceOntologyRefId;
+    }
 
     /**
      * Return a DataSource item for the given title

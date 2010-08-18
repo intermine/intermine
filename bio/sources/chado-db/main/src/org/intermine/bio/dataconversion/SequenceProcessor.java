@@ -458,7 +458,7 @@ public class SequenceProcessor extends ChadoProcessor
             feature.setAttribute("md5checksum", md5checksum);
         }
         BioStoreHook.setSOTerm(getChadoDBConverter(), feature, chadoType,
-                getChadoDBConverter().sequenceOntologyRefId);
+                getChadoDBConverter().getSequenceOntologyRefId());
         fdat.setFieldExistenceFlags(feature);
         fdat.setIntermineObjectId(store(feature, taxonId));
         fdat.setItemIdentifier(feature.getIdentifier());

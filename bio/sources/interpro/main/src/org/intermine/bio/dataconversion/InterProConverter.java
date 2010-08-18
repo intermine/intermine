@@ -194,15 +194,6 @@ public class InterProConverter extends BioFileConverter
                             && attName != null) {
                 String name = attValue.toString();
                 proteinDomain.setAttribute("name", name);
-                Item synonym;
-                try {
-                    synonym = createSynonym(proteinDomain.getIdentifier(), name, false);
-                    if (synonym != null) {
-                        delayedItems.add(synonym);
-                    }
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
-                }
             // <interpro><abstract>
             } else if (qName.equals("abstract") && stack.peek().equals("interpro")) {
                 proteinDomain.setAttribute("description", description.toString());

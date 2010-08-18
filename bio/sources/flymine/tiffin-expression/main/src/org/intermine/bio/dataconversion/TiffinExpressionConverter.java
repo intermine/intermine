@@ -52,7 +52,7 @@ public class TiffinExpressionConverter extends BioFileConverter
         pub.setAttribute("pubMedId", "17238282");
         store(pub);
 
-        soterm = BioStoreHook.getSoTerm(this, null, "DNA_motif", sequenceOntologyRefId);
+        soterm = BioStoreHook.getSoTerm(this, null, "DNA_motif", getSequenceOntologyRefId());
 
     }
 
