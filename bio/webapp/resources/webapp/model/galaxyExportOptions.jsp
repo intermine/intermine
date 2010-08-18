@@ -69,11 +69,11 @@
 
         // Use ajax to get the GALAXY_URL, data_type, genome build and extra info back from galaxyExportAction
         jQuery.get("${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/galaxyExportAction.do", { tableName: "${table}", index: idx, prefix: pathVal}, function(data){
-          dataArray = data.split(">>>>>"); //size = 4
+          dataArray = data.split(">>>>>"); //size = 2
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
-          jQuery("#info").val("Column features:" + dataArray[1] + "; Organisms:" + dataArray[2]);
-          jQuery("#dbkey").val(jQuery.trim(dataArray[3]));
+          jQuery("#info").val("Column features:" + jQuery.trim(dataArray[1]) + "; Organisms:${organism}");
+          jQuery("#dbkey").val("${genomeBuild}");
         });
 
         jQuery("input[name='sequencePath']").each(function(i) {
@@ -90,11 +90,11 @@
         </c:forEach>
 
         jQuery.get("${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/galaxyExportAction.do", { tableName: "${table}", index: idx, prefix: pathVal}, function(data){
-          dataArray = data.split(">>>>>"); //size = 4
+          dataArray = data.split(">>>>>"); //size = 2
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
-          jQuery("#info").val("Column features:" + dataArray[1] + "; Organisms:" + dataArray[2]);
-          jQuery("#dbkey").val(jQuery.trim(dataArray[3]));
+          jQuery("#info").val("Column features:" + jQuery.trim(dataArray[1]) + "; Organisms:${organism}");
+          jQuery("#dbkey").val("${genomeBuild}");
         });
      }
   }
@@ -124,11 +124,11 @@
         </c:forEach>
 
         jQuery.get("${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/galaxyExportAction.do", { tableName: "${table}", index: idx, prefix: pathVal}, function(data){
-          dataArray = data.split(">>>>>"); //size = 4
+          dataArray = data.split(">>>>>"); //size = 2
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
-          jQuery("#info").val("Column features:" + dataArray[1] + "; Organisms:" + dataArray[2]);
-          jQuery("#dbkey").val(jQuery.trim(dataArray[3]));
+          jQuery("#info").val("Column features:" + jQuery.trim(dataArray[1]) + "; Organisms:${organism}");
+          jQuery("#dbkey").val("${genomeBuild}");
         });
 
         // After ajax call, enable the unchecked
