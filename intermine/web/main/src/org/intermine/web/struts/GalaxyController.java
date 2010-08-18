@@ -27,12 +27,10 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.WebTable;
-import org.intermine.model.bio.SequenceFeature;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
@@ -157,19 +155,5 @@ public class GalaxyController extends TilesAction
         }
 
         return null;
-    }
-
-    /**
-     *
-     * @param pt PagedTable in the session
-     * @return
-     */
-    private boolean canExportAsBED (PagedTable pt) {
-        return ExportHelper.getClassIndex(ExportHelper.getColumnClasses(pt),
-                SequenceFeature.class) >= 0;
-    }
-
-    private void exportAsBED () {
-
     }
 }
