@@ -22,6 +22,7 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
@@ -37,8 +38,6 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.web.util.URLGenerator;
-
-import org.intermine.model.bio.LocatedSequenceFeature;
 
 /*
  * Copyright (C) 2002-2010 FlyMine
@@ -133,7 +132,7 @@ public class GalaxyExportAction extends InterMineAction
         Map<Integer, String> orgNameMap = new LinkedHashMap<Integer, String>();
 
         for (int i = 0; i < pt.getExactSize(); i++) {
-            Organism org = ((LocatedSequenceFeature) pt.getWebTable().getResultElements(i).get(0)
+            Organism org = ((SequenceFeature) pt.getWebTable().getResultElements(i).get(0)
                     .get(index).getValue().getObject()).getOrganism();
             orgNameMap.put(org.getTaxonId(), org.getShortName());
         }
@@ -232,7 +231,7 @@ class ResultManipulater extends HttpExporterBase
                 List<ResultElement> row = resultIt.next();
                 List<ResultElement> elWithObject = getResultElements(row, index);
                 for (ResultElement re : elWithObject) {
-                    Organism org = ((LocatedSequenceFeature) re.getObject()).getOrganism();
+                    Organism org = ((SequenceFeature) re.getObject()).getOrganism();
                     orgNameMap.put(org.getTaxonId(), org.getShortName());
                 }
             }
