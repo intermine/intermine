@@ -60,7 +60,7 @@ public class LongOligoGFF3RecordHandlerTest extends ItemsTestCase
         converter.storeAll();
 
         // uncomment to write a new items xml file
-        //writeItemsFile(writer.getItems(), "long-oligo_items.xml");
+        writeItemsFile(writer.getItems(), "long-oligo_items.xml");
 
         Set<?> expected = readItemSet("LongOligoGFF3RecordHandlerTest.xml");
         assertEquals(expected, writer.getItems());

@@ -51,6 +51,7 @@ public abstract class BioFileConverter extends FileConverter
         super(writer, model);
         String dataSource = null;
         String dataSet = null;
+        sequenceOntologyRefId = BioConverterUtil.getOntology(this);
         if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
             dataSource = getDataSource(dataSourceName);
             dataSet = getDataSet(dataSetTitle, dataSource);
@@ -58,6 +59,25 @@ public abstract class BioFileConverter extends FileConverter
         setStoreHook(new BioStoreHook(model, dataSet, dataSource, sequenceOntologyRefId));
     }
 
+    /**
+     * Create a new BioFileConverter.
+     * @param writer the Writer used to output the resultant items
+     * @param model the data model
+     * @param dataSourceName the DataSource name
+     * @param dataSetTitle the DataSet title
+     * @param ontology ID of ontology object.  if NULL no SO object will be stored
+     */
+    public BioFileConverter (ItemWriter writer, Model model, String dataSourceName,
+            String dataSetTitle, String ontology) {
+        super(writer, model);
+        String dataSource = null;
+        String dataSet = null;
+        if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
+            dataSource = getDataSource(dataSourceName);
+            dataSet = getDataSet(dataSetTitle, dataSource);
+        }
+        setStoreHook(new BioStoreHook(model, dataSet, dataSource, ontology));
+    }
 
     /**
      * Create a new BioFileConverter.
@@ -66,6 +86,7 @@ public abstract class BioFileConverter extends FileConverter
      */
     public BioFileConverter (ItemWriter writer, Model model) {
         super(writer, model);
+        sequenceOntologyRefId = BioConverterUtil.getOntology(this);
         setStoreHook(new BioStoreHook(model, "", "", sequenceOntologyRefId));
     }
 

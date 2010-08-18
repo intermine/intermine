@@ -53,6 +53,7 @@ public abstract class BioDBConverter extends DBConverter
         super(database, tgtModel, writer);
         Item dataSource = null;
         Item dataSet = null;
+        sequenceOntologyRefId = BioConverterUtil.getOntology(this);
         if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
             dataSource = getDataSourceItem(dataSourceName);
             dataSet = getDataSetItem(dataSetTitle, dataSource);
@@ -72,6 +73,7 @@ public abstract class BioDBConverter extends DBConverter
      */
     public BioDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
+        sequenceOntologyRefId = BioConverterUtil.getOntology(this);
         setStoreHook(new BioStoreHook(tgtModel, "", "", sequenceOntologyRefId));
     }
 

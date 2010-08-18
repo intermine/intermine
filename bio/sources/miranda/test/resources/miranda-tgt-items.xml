@@ -17,12 +17,6 @@
 <reference name="ontology" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_1" class="Chromosome">
-<attribute name="primaryIdentifier" value="3R"/>
-<reference name="organism" ref_id="0_1"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/><reference ref_id="2_1"/></collection>
-</item>
 <item id="8_1" class="Location">
 <attribute name="end" value="9424"/>
 <attribute name="start" value="9403"/>
@@ -79,6 +73,12 @@
 <item id="9_1" class="Gene">
 <attribute name="primaryIdentifier" value="FBgn002"/>
 <reference name="sequenceOntologyTerm" ref_id="5_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="Chromosome">
+<attribute name="primaryIdentifier" value="3R"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="0_1" class="Organism">

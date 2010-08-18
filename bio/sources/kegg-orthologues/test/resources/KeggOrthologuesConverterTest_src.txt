@@ -2,13 +2,6 @@ ENTRY       K00001                      KO
 NAME        E1.1.1.1, adh
 DEFINITION  alcohol dehydrogenase [EC:1.1.1.1]
 PATHWAY     ko00010  Glycolysis / Gluconeogenesis
-            ko00071  Fatty acid metabolism
-            ko00350  Tyrosine metabolism
-            ko00624  1- and 2-Methylnaphthalene degradation
-            ko00641  3-Chloroacrylic acid degradation
-            ko00830  Retinol metabolism
-            ko00980  Metabolism of xenobiotics by cytochrome P450
-            ko00982  Drug metabolism - cytochrome P450
 MODULE      M00076  Dopamine / noradrenaline / adrenaline metabolism
             M00236  Retinol biosynthesis, beta-cacrotene => retinol
 CLASS       Metabolism; Carbohydrate Metabolism; Glycolysis / Gluconeogenesis
@@ -31,7 +24,5 @@ DBLINKS     RN: R00623 R00754 R02124 R04805 R04880 R05233 R05234 R06917 R06927
             COG: COG1012 COG1062 COG1064 COG1454
             GO: 0004022 0004023 0004024 0004025
 GENES       HSA: 124(ADH1A)
-            PTR: 461394(ADH4) 461395(ADH6) 461396(ADH1B) 471257(ADH7)
             DME: Dmel_CG18814
-            CEL: D2063.1(dehydrogenase)
 ///
