@@ -54,8 +54,6 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
                                        + "UTR");
         }
 
-        String utrIdentifier = utr.getPrimaryIdentifier();
-
         MRNA mrna = getMRNA(mrnaIdentifier, organism);
         utr.addTranscripts(mrna);
 

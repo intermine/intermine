@@ -15,13 +15,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.DataSet;
-import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Region;
-import org.intermine.model.bio.Synonym;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 
 /**
