@@ -330,5 +330,6 @@ ant -v precompute-queries -Drelease=test
                  bio/core/main/src/org/intermine/bio/util/CreateFlyBaseLinkIns.java
         <post-process name="link-ins"/>
         -->
+    <post-process name="create-search-index"/>
   </post-processing>
 </project>
