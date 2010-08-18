@@ -30,7 +30,7 @@ import org.intermine.xml.full.Item;
 public class FlyAtlasConverter extends BioFileConverter
 {
     private Item expt, org;
-    protected Map<String, Item> assays = new HashMap();
+    protected Map<String, Item> assays = new HashMap<String, Item>();
 
     /**
      * Constructor
@@ -46,7 +46,7 @@ public class FlyAtlasConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         String [] headers = null;
         int lineNo = 0;
         while (lineIter.hasNext()) {
@@ -179,7 +179,7 @@ public class FlyAtlasConverter extends BioFileConverter
                 + " available at http://www.flyatlas.org.");
 
 
-        assays = new HashMap();
+        assays = new HashMap<String, Item>();
         // names of assays from column headins, could be made more descriptive
         assays.put("brain", createAssay("Brain"));
         assays.put("head", createAssay("Head"));
