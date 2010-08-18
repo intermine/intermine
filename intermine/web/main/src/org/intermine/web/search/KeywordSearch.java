@@ -668,13 +668,18 @@ class InterMineObjectFetcher extends Thread
             for (AttributeDescriptor att : classAttributes.getAttributes()) {
                 try {
                     // only index strings
-                    if ("java.lang.String".equals(att.getType())) {
+                    if ("java.lang.String".equals(att.getType())
+                            || "java.lang.Integer".equals(att.getType())) {
                         Object value = TypeUtil.getFieldValue(obj, att.getName());
 
                         // ignore null values
                         if (value != null) {
-                            values.add(new ObjectValueContainer(classAttributes.getClassName(), att
-                                    .getName(), String.valueOf(value)));
+                            String string = String.valueOf(value);
+
+                            if (!string.startsWith("http://")) {
+                                values.add(new ObjectValueContainer(classAttributes.getClassName(),
+                                        att.getName(), string));
+                            }
                         }
                     }
                 } catch (IllegalAccessException e) {
@@ -1508,7 +1513,7 @@ public class KeywordSearch
     private static void addCldToIgnored(Set<Class<? extends InterMineObject>> ignoredClasses,
             ClassDescriptor cld) {
         if (InterMineObject.class.isAssignableFrom(cld.getType())) {
-            ignoredClasses.add(cld.getType());
+            ignoredClasses.add((Class<? extends InterMineObject>) cld.getType());
         } else {
             LOG.error("cld " + cld + " is not IMO!");
         }
