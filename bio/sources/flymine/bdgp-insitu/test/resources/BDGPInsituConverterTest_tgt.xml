@@ -1,18 +1,12 @@
 <items>
-<item id="4_9" class="Stage">
-<attribute name="name" value="Stage 9"/>
-</item>
 <item id="9_3" class="Image">
 <attribute name="url" value="http://www.fruitfly.org/insituimages/insitu_images/thumbnails/image3.jpg"/>
 </item>
-<item id="4_15" class="Stage">
-<attribute name="name" value="Stage 15"/>
+<item id="5_3" class="Stage">
+<attribute name="name" value="Stage 3"/>
 </item>
-<item id="4_7" class="Stage">
-<attribute name="name" value="Stage 7"/>
-</item>
-<item id="4_4" class="Stage">
-<attribute name="name" value="Stage 4"/>
+<item id="5_12" class="Stage">
+<attribute name="name" value="Stage 12"/>
 </item>
 <item id="10_4" class="MRNAExpressionTerm">
 <attribute name="name" value="no staining"/>
@@ -21,70 +15,73 @@
 <item id="9_5" class="Image">
 <attribute name="url" value="http://www.fruitfly.org/insituimages/insitu_images/thumbnails/image5.jpg"/>
 </item>
+<item id="6_2" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn2"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
 <item id="9_2" class="Image">
 <attribute name="url" value="http://www.fruitfly.org/insituimages/insitu_images/thumbnails/image2.jpg"/>
+</item>
+<item id="5_4" class="Stage">
+<attribute name="name" value="Stage 4"/>
+</item>
+<item id="8_1" class="MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 1-3 (BDGP in situ)"/>
+<reference name="dataSet" ref_id="2_1"/>
+<reference name="gene" ref_id="6_1"/>
+<reference name="publication" ref_id="4_1"/>
+<collection name="images"><reference ref_id="9_1"/><reference ref_id="9_2"/></collection>
+<collection name="mRNAExpressionTerms"><reference ref_id="10_1"/><reference ref_id="10_2"/></collection>
+<collection name="stages"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
 </item>
 <item id="10_1" class="MRNAExpressionTerm">
 <attribute name="name" value="term1"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="8_1" class="MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 1-3 (BDGP in situ)"/>
-<reference name="dataSet" ref_id="1_1"/>
-<reference name="gene" ref_id="5_1"/>
-<reference name="publication" ref_id="3_1"/>
-<collection name="images"><reference ref_id="9_1"/><reference ref_id="9_2"/></collection>
-<collection name="mRNAExpressionTerms"><reference ref_id="10_1"/><reference ref_id="10_2"/></collection>
-<collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
+<item id="5_9" class="Stage">
+<attribute name="name" value="Stage 9"/>
 </item>
-<item id="4_6" class="Stage">
-<attribute name="name" value="Stage 6"/>
+<item id="5_16" class="Stage">
+<attribute name="name" value="Stage 16"/>
 </item>
-<item id="0_1" class="DataSource">
+<item id="7_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_13" class="Stage">
+<attribute name="name" value="Stage 13"/>
+</item>
+<item id="1_1" class="DataSource">
 <attribute name="name" value="BDGP"/>
 </item>
-<item id="1_1" class="DataSet">
-<attribute name="name" value="BDGP in situ data set"/>
-<reference name="dataSource" ref_id="0_1"/>
+<item id="5_1" class="Stage">
+<attribute name="name" value="Stage 1"/>
 </item>
-<item id="8_4" class="MRNAExpressionResult">
-<attribute name="expressed" value="false"/>
-<attribute name="stageRange" value="stage 4-6 (BDGP in situ)"/>
-<reference name="dataSet" ref_id="1_1"/>
-<reference name="gene" ref_id="5_2"/>
-<reference name="publication" ref_id="3_1"/>
-<collection name="images"><reference ref_id="9_6"/></collection>
-<collection name="mRNAExpressionTerms"><reference ref_id="10_4"/></collection>
-<collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_6"/></collection>
+<item id="3_1" class="Organism">
+<attribute name="taxonId" value="7227"/>
 </item>
-<item id="4_11" class="Stage">
-<attribute name="name" value="Stage 11"/>
+<item id="6_1" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn1"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_14" class="Stage">
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="5_6" class="Stage">
+<attribute name="name" value="Stage 6"/>
+</item>
+<item id="5_14" class="Stage">
 <attribute name="name" value="Stage 14"/>
 </item>
-<item id="4_10" class="Stage">
-<attribute name="name" value="Stage 10"/>
-</item>
-<item id="4_2" class="Stage">
-<attribute name="name" value="Stage 2"/>
-</item>
-<item id="5_2" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn2"/>
-<reference name="organism" ref_id="2_1"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="8_2" class="MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 4-6 (BDGP in situ)"/>
-<reference name="dataSet" ref_id="1_1"/>
-<reference name="gene" ref_id="5_1"/>
-<reference name="publication" ref_id="3_1"/>
-<collection name="images"><reference ref_id="9_3"/></collection>
-<collection name="mRNAExpressionTerms"><reference ref_id="10_1"/><reference ref_id="10_3"/></collection>
-<collection name="stages"><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_6"/></collection>
+<item id="5_11" class="Stage">
+<attribute name="name" value="Stage 11"/>
 </item>
 <item id="10_6" class="MRNAExpressionTerm">
 <attribute name="name" value="no image term"/>
@@ -93,81 +90,84 @@
 <item id="9_4" class="Image">
 <attribute name="url" value="http://www.fruitfly.org/insituimages/insitu_images/thumbnails/image4.jpg"/>
 </item>
-<item id="3_1" class="Publication">
-<attribute name="pubMedId" value="17645804"/>
+<item id="8_3" class="MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 1-3 (BDGP in situ)"/>
+<reference name="dataSet" ref_id="2_1"/>
+<reference name="gene" ref_id="6_2"/>
+<reference name="publication" ref_id="4_1"/>
+<collection name="images"><reference ref_id="9_4"/><reference ref_id="9_5"/></collection>
+<collection name="mRNAExpressionTerms"><reference ref_id="10_1"/><reference ref_id="10_2"/></collection>
+<collection name="stages"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
 </item>
-<item id="4_13" class="Stage">
-<attribute name="name" value="Stage 13"/>
+<item id="5_2" class="Stage">
+<attribute name="name" value="Stage 2"/>
+</item>
+<item id="5_5" class="Stage">
+<attribute name="name" value="Stage 5"/>
+</item>
+<item id="4_1" class="Publication">
+<attribute name="pubMedId" value="17645804"/>
 </item>
 <item id="10_2" class="MRNAExpressionTerm">
 <attribute name="name" value="term2"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="6_1" class="SOTerm">
-<attribute name="name" value="gene"/>
-<reference name="ontology" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<item id="8_2" class="MRNAExpressionResult">
+<attribute name="expressed" value="true"/>
+<attribute name="stageRange" value="stage 4-6 (BDGP in situ)"/>
+<reference name="dataSet" ref_id="2_1"/>
+<reference name="gene" ref_id="6_1"/>
+<reference name="publication" ref_id="4_1"/>
+<collection name="images"><reference ref_id="9_3"/></collection>
+<collection name="mRNAExpressionTerms"><reference ref_id="10_1"/><reference ref_id="10_3"/></collection>
+<collection name="stages"><reference ref_id="5_4"/><reference ref_id="5_5"/><reference ref_id="5_6"/></collection>
 </item>
-<item id="4_1" class="Stage">
-<attribute name="name" value="Stage 1"/>
+<item id="5_8" class="Stage">
+<attribute name="name" value="Stage 8"/>
 </item>
-<item id="4_5" class="Stage">
-<attribute name="name" value="Stage 5"/>
-</item>
-<item id="4_12" class="Stage">
-<attribute name="name" value="Stage 12"/>
-</item>
-<item id="7_1" class="Ontology">
-<attribute name="name" value="Sequence Ontology"/>
-<attribute name="url" value="http://www.sequenceontology.org"/>
+<item id="8_4" class="MRNAExpressionResult">
+<attribute name="expressed" value="false"/>
+<attribute name="stageRange" value="stage 4-6 (BDGP in situ)"/>
+<reference name="dataSet" ref_id="2_1"/>
+<reference name="gene" ref_id="6_2"/>
+<reference name="publication" ref_id="4_1"/>
+<collection name="images"><reference ref_id="9_6"/></collection>
+<collection name="mRNAExpressionTerms"><reference ref_id="10_4"/></collection>
+<collection name="stages"><reference ref_id="5_4"/><reference ref_id="5_5"/><reference ref_id="5_6"/></collection>
 </item>
 <item id="10_5" class="MRNAExpressionTerm">
 <attribute name="name" value="comma's,handled,correctly"/>
 <attribute name="type" value="ImaGO"/>
 </item>
+<item id="5_10" class="Stage">
+<attribute name="name" value="Stage 10"/>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="BDGP in situ data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
 <item id="9_1" class="Image">
 <attribute name="url" value="http://www.fruitfly.org/insituimages/insitu_images/thumbnails/image1.jpg"/>
 </item>
-<item id="2_1" class="Organism">
-<attribute name="taxonId" value="7227"/>
-</item>
-<item id="4_16" class="Stage">
-<attribute name="name" value="Stage 16"/>
-</item>
-<item id="8_3" class="MRNAExpressionResult">
-<attribute name="expressed" value="true"/>
-<attribute name="stageRange" value="stage 1-3 (BDGP in situ)"/>
-<reference name="dataSet" ref_id="1_1"/>
-<reference name="gene" ref_id="5_2"/>
-<reference name="publication" ref_id="3_1"/>
-<collection name="images"><reference ref_id="9_4"/><reference ref_id="9_5"/></collection>
-<collection name="mRNAExpressionTerms"><reference ref_id="10_1"/><reference ref_id="10_2"/></collection>
-<collection name="stages"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
-</item>
-<item id="5_1" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn1"/>
-<reference name="organism" ref_id="2_1"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<item id="5_15" class="Stage">
+<attribute name="name" value="Stage 15"/>
 </item>
 <item id="8_5" class="MRNAExpressionResult">
 <attribute name="expressed" value="true"/>
 <attribute name="stageRange" value="stage 7-8 (BDGP in situ)"/>
-<reference name="dataSet" ref_id="1_1"/>
-<reference name="gene" ref_id="5_2"/>
-<reference name="publication" ref_id="3_1"/>
+<reference name="dataSet" ref_id="2_1"/>
+<reference name="gene" ref_id="6_2"/>
+<reference name="publication" ref_id="4_1"/>
 <collection name="images"><reference ref_id="9_7"/></collection>
 <collection name="mRNAExpressionTerms"><reference ref_id="10_5"/><reference ref_id="10_6"/></collection>
-<collection name="stages"><reference ref_id="4_7"/><reference ref_id="4_8"/></collection>
+<collection name="stages"><reference ref_id="5_7"/><reference ref_id="5_8"/></collection>
+</item>
+<item id="5_7" class="Stage">
+<attribute name="name" value="Stage 7"/>
 </item>
 <item id="9_7" class="Image">
 <attribute name="url" value="http://www.fruitfly.org/insituimages/insitu_images/thumbnails/imageNoTerm.jpg"/>
-</item>
-<item id="4_8" class="Stage">
-<attribute name="name" value="Stage 8"/>
-</item>
-<item id="4_3" class="Stage">
-<attribute name="name" value="Stage 3"/>
 </item>
 <item id="10_3" class="MRNAExpressionTerm">
 <attribute name="name" value="term3"/>
