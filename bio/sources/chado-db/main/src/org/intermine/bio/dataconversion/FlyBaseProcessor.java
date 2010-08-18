@@ -527,14 +527,11 @@ public class FlyBaseProcessor extends SequenceProcessor
             // the synonym is "fullname" and "is_current" is true, set the "name" attribute of
             // the new Gene to be this synonym and then make a Synonym object
             map.put(new MultiKey("synonym", "Gene", "fullname", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  CREATE_SYNONYM_ACTION));
-
+                    Arrays.asList(new SetFieldConfigAction("name")));
             map.put(new MultiKey("synonym", "Gene", "fullname", Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("synonym", "Gene", "symbol", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("symbol"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("symbol")));
             map.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
@@ -547,8 +544,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             // Synonym object
             map.put(new MultiKey("dbxref", "Gene", FLYBASE_DB_NAME + " Annotation IDs",
                                  Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier")));
             map.put(new MultiKey("dbxref", "Gene", FLYBASE_DB_NAME + " Annotation IDs",
                                  Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
@@ -559,35 +555,26 @@ public class FlyBaseProcessor extends SequenceProcessor
 
             map.put(new MultiKey("dbxref", "MRNA", FLYBASE_DB_NAME + " Annotation IDs",
                                  Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier")));
             map.put(new MultiKey("dbxref", "TransposableElementInsertionSite", "drosdel", null),
-                    Arrays.asList(new SetFieldConfigAction("symbol"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("symbol")));
 
             map.put(new MultiKey("synonym", "ChromosomeStructureVariation", "fullname",
                                  Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("name")));
             map.put(new MultiKey("synonym", "ChromosomalDeletion", "fullname", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("name")));
             map.put(new MultiKey("synonym", "ChromosomalDuplication", "fullname", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("name")));
             map.put(new MultiKey("synonym", "ChromosomalInversion", "fullname", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("name")));
             map.put(new MultiKey("synonym", "ChromosomalTranslocation", "fullname", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("name")));
             map.put(new MultiKey("synonym", "ChromosomalTransposition", "fullname", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("name")));
 
             map.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("symbol"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("symbol")));
             map.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("dbxref", "MRNA", FLYBASE_DB_NAME + " Annotation IDs", null),
@@ -653,8 +640,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             // feature configuration example: for features of class "Exon", from "FlyBase",
             // set the Gene.symbol to be the "name" field from the chado feature
             map.put(new MultiKey("feature", "Exon", FLYBASE_DB_NAME, "name"),
-                    Arrays.asList(new SetFieldConfigAction("symbol"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("symbol")));
             // DO_NOTHING_ACTION means skip the name from this feature
             map.put(new MultiKey("feature", "Chromosome", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(DO_NOTHING_ACTION));
@@ -665,9 +651,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             map.put(new MultiKey("feature", "TransposableElementInsertionSite", FLYBASE_DB_NAME,
                                  "name"),
                     Arrays.asList(new SetFieldConfigAction("symbol", PB_INSERTION_PATTERN),
-                                  new CreateSynonymAction(PB_INSERTION_PATTERN),
-                                  new SetFieldConfigAction("secondaryIdentifier"),
-                                  new CreateSynonymAction()));
+                                  new SetFieldConfigAction("secondaryIdentifier")));
 
             map.put(new MultiKey("feature", "Gene", FLYBASE_DB_NAME, "uniquename"),
                     Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
@@ -676,8 +660,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
             map.put(new MultiKey("feature", "ChromosomeStructureVariation", FLYBASE_DB_NAME,
                                  "name"),
-                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier")));
 
             // just make a Synonym because the secondaryIdentifier and the symbol are set from the
             // dbxref and synonym tables
@@ -686,8 +669,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
             map.put(new MultiKey("feature", "PointMutation", FLYBASE_DB_NAME, "uniquename"),
                     Arrays.asList(new SetFieldConfigAction("name"),
-                                  new SetFieldConfigAction("primaryIdentifier"),
-                                  CREATE_SYNONYM_ACTION));
+                                  new SetFieldConfigAction("primaryIdentifier")));
             // name isn't set in flybase:
             map.put(new MultiKey("feature", "PointMutation", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(DO_NOTHING_ACTION));
@@ -706,19 +688,16 @@ public class FlyBaseProcessor extends SequenceProcessor
             // transposable_element and natural_transposable_element
             map.put(new MultiKey("feature", "TransposableElement", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                  new SetFieldConfigAction("symbol"),
-                                  CREATE_SYNONYM_ACTION));
+                                  new SetFieldConfigAction("symbol")));
             map.put(new MultiKey("feature", "NaturalTransposableElement", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                  new SetFieldConfigAction("symbol"),
-                                  CREATE_SYNONYM_ACTION));
+                                  new SetFieldConfigAction("symbol")));
             map.put(new MultiKey("relationship", "TransposableElement",
                     "producedby", "NaturalTransposableElement"),
                     Arrays.asList(new SetFieldConfigAction("insertedElement")));
             map.put(new MultiKey("synonym", "NaturalTransposableElement", "fullname",
                     Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                            CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("name")));
         }
         return map;
     }
