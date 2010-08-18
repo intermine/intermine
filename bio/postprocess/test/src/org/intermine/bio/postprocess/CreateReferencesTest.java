@@ -213,12 +213,12 @@ public class CreateReferencesTest extends TestCase {
         storedThreePrimeUTR =
             (ThreePrimeUTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
         storedThreePrimeUTR.setPrimaryIdentifier("utr1-threePrimeUTR");
-        storedThreePrimeUTR.setmRNA(storedTranscript1);
+        storedThreePrimeUTR.addTranscripts(storedTranscript1);
 
         storedFivePrimeUTR =
             (FivePrimeUTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
         storedFivePrimeUTR.setPrimaryIdentifier("utr2-fivePrimeUTR");
-        storedFivePrimeUTR.setmRNA(storedTranscript1);
+        storedFivePrimeUTR.addTranscripts(storedTranscript1);
 
         Set toStore = new HashSet(Arrays.asList(new Object[] {
                 storedChromosome,

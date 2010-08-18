@@ -10,8 +10,29 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Iterator;
+import java.util.Set;
 
+import junit.framework.TestCase;
+
+import org.apache.log4j.Logger;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.DataSet;
+import org.intermine.model.bio.FivePrimeUTR;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.Sequence;
+import org.intermine.model.bio.SequenceFeature;
+import org.intermine.model.bio.ThreePrimeUTR;
+import org.intermine.model.bio.Transcript;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -20,29 +41,6 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
-
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-
-import org.intermine.model.bio.DataSet;
-import org.intermine.model.bio.FivePrimeUTR;
-import org.intermine.model.bio.SequenceFeature;
-import org.intermine.model.bio.Location;
-import org.intermine.model.bio.Sequence;
-import org.intermine.model.bio.ThreePrimeUTR;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import junit.framework.TestCase;
-
-import org.apache.log4j.Logger;
 
 /**
  * Tests for {@link FlyBaseUTRFastaLoaderTask}
@@ -82,7 +80,8 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                 assertEquals(10307410, loc.getEnd().intValue());
                 assertEquals("-1", loc.getStrand());
                 assertEquals("3R", loc.getLocatedOn().getPrimaryIdentifier());
-                assertEquals("FBtr0112632", utr.getmRNA().getPrimaryIdentifier());
+                Transcript transcript = utr.getTranscripts().iterator().next();
+                assertEquals("FBtr0112632", transcript.getPrimaryIdentifier());
                 assertEquals(36329, utr.getOrganism().getTaxonId().intValue());
             } else {
                 if (utr.getPrimaryIdentifier().equals("FBtr0100521-5-prime-utr")) {
@@ -92,8 +91,9 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                     assertEquals(18050424, loc.getEnd().intValue());
                     assertEquals("1", loc.getStrand());
                     assertEquals("2R", loc.getLocatedOn().getPrimaryIdentifier());
-                    assertEquals("FBtr0100521", utr.getmRNA().getPrimaryIdentifier());
-                    assertEquals(36329, utr.getmRNA().getOrganism().getTaxonId().intValue());
+                    Transcript transcript = utr.getTranscripts().iterator().next();
+                    assertEquals("FBtr0100521", transcript.getPrimaryIdentifier());
+                    assertEquals(36329, transcript.getOrganism().getTaxonId().intValue());
                 }
             }
         }
@@ -129,7 +129,8 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                 assertEquals(18060033, loc.getStart().intValue());
                 assertEquals(18060346, loc.getEnd().intValue());
                 assertEquals("2R", loc.getLocatedOn().getPrimaryIdentifier());
-                assertEquals("FBtr0071764", utr.getmRNA().getPrimaryIdentifier());
+                Transcript transcript = utr.getTranscripts().iterator().next();
+                assertEquals("FBtr0071764", transcript.getPrimaryIdentifier());
                 assertEquals(36329, utr.getOrganism().getTaxonId().intValue());
             } else {
                 if (utr.getPrimaryIdentifier().equals("FBtr0082533-3-prime-utr")) {
@@ -138,8 +139,9 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                     assertEquals(7594335, loc.getStart().intValue());
                     assertEquals(7595561, loc.getEnd().intValue());
                     assertEquals("3R", loc.getLocatedOn().getPrimaryIdentifier());
-                    assertEquals("FBtr0082533", utr.getmRNA().getPrimaryIdentifier());
-                    assertEquals(36329, utr.getmRNA().getOrganism().getTaxonId().intValue());
+                    Transcript transcript = utr.getTranscripts().iterator().next();
+                    assertEquals("FBtr0082533", transcript.getPrimaryIdentifier());
+                    assertEquals(36329, transcript.getOrganism().getTaxonId().intValue());
                 }
             }
         }

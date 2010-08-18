@@ -52,7 +52,6 @@ public class GoConverter extends BioFileConverter
     private Map<String, String> geneAttributes = new HashMap<String, String>();
     private Map<String, String> readColumns = new HashMap<String, String>();
     private Map<String, WithType> withTypes = new LinkedHashMap<String, WithType>();
-    private Map<String, String> synonymTypes = new HashMap<String, String>();
 
     // maps retained across all files
     protected Map<String, String> goTerms = new LinkedHashMap<String, String>();
@@ -90,10 +89,6 @@ public class GoConverter extends BioFileConverter
         super(writer, model);
         addWithType("FB", "Gene", "primaryIdentifier");
         addWithType("UniProt", "Protein", "accession");
-        synonymTypes.put("protein", "accession");
-        synonymTypes.put("Protein", "accession");
-        synonymTypes.put("gene", "identifier");
-        synonymTypes.put("Gene", "identifier");
 
         // only construct factory here so can be replaced by mock factory in tests
         flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
