@@ -57,7 +57,7 @@ public class BDGPInsituConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "bdgp_tgt.xml");
+        //writeItemsFile(itemWriter.getItems(), "bdgp_tgt.xml");
 
         assertEquals(readItemSet("BDGPInsituConverterTest_tgt.xml"), itemWriter.getItems());
 
