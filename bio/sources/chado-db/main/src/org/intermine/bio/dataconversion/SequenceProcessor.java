@@ -499,7 +499,7 @@ public class SequenceProcessor extends ChadoProcessor
     }
 
     /**
-     * Get a list of the chado/so types of the LocatedSequenceFeatures we wish to load.  The list
+     * Get a list of the chado/so types of the SequenceFeatures we wish to load.  The list
      * will not include chromosome-like features (eg. "chromosome" and "chromosome_arm").  The
      * process methods will ignore features that are not in this list.
      * @return the list of features
@@ -668,12 +668,12 @@ public class SequenceProcessor extends ChadoProcessor
     }
 
     /**
-     * Make a Location Relation between a LocatedSequenceFeature and a Chromosome.
+     * Make a Location between a SequenceFeature and a Chromosome.
      * @param start the start position
      * @param end the end position
      * @param strand the strand
      * @param srcFeatureData the FeatureData for the src feature (the Chromosome)
-     * @param featureData the FeatureData for the LocatedSequenceFeature
+     * @param featureData the FeatureData for the SequenceFeature
      * @param taxonId the taxon id to use when finding the Chromosome for the Location
      * @return the new Location object
      * @throws ObjectStoreException if there is a problem while storing
