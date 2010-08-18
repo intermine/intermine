@@ -53,6 +53,7 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
         super(writer, model);
         String dataSourceRefId = null;
         String dataSetRefId = null;
+        sequenceOntologyRefId = BioConverterUtil.getOntology(this);
         if (StringUtils.isNotEmpty(dataSourceName)) {
             dataSourceRefId = getDataSource(dataSourceName);
         }

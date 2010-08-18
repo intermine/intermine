@@ -46,7 +46,9 @@ public class BioStoreHook implements DataConverterStoreHook
         this.model = model;
         this.dataSetRefId = dataSet;
         this.dataSourceRefId = dataSource;
-        this.ontologyRefId = ontologyRefId;
+        if (StringUtils.isNotEmpty(ontologyRefId)) {
+            this.ontologyRefId = ontologyRefId;
+        }
     }
 
     /**
@@ -58,7 +60,9 @@ public class BioStoreHook implements DataConverterStoreHook
         this.model = model;
         this.dataSetRefId = null;
         this.dataSourceRefId = null;
-        this.ontologyRefId = ontologyRefId;
+        if (StringUtils.isNotEmpty(ontologyRefId)) {
+            this.ontologyRefId = ontologyRefId;
+        }
     }
 
     /**
@@ -122,7 +126,8 @@ public class BioStoreHook implements DataConverterStoreHook
     public static void setSOTerm(DataConverter dataConverter, Item item, String featureType,
             String ontology) {
         if (item.canHaveReference("sequenceOntologyTerm")
-                && !item.hasReference("sequenceOntologyTerm")) {
+                && !item.hasReference("sequenceOntologyTerm")
+                && StringUtils.isNotEmpty(ontology)) {
             String soTermId = getSoTerm(dataConverter, item, featureType, ontology);
             if (!StringUtils.isEmpty(soTermId)) {
                 item.setReference("sequenceOntologyTerm", soTermId);
