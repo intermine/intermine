@@ -35,7 +35,7 @@ public class RNAiConverter extends BioFileConverter
     screenMap = new HashMap<String, Item>(),
     pubMap = new HashMap<String, Item>(),
     phenotypeMap = new HashMap<String, Item>();
-    private Item org, ontology;
+    private Item ontology;
 
     /**
      * Constructor
@@ -46,10 +46,6 @@ public class RNAiConverter extends BioFileConverter
     public RNAiConverter(ItemWriter writer, Model model)
         throws ObjectStoreException {
         super(writer, model, "WormBase", "WormBase RNAi Phenotypes");
-
-        org = createItem("Organism");
-        org.setAttribute("taxonId", "6239");
-        store(org);
 
         ontology = createItem("Ontology");
         ontology.setAttribute("name", "WormBase phenotype codes");
@@ -109,7 +105,7 @@ public class RNAiConverter extends BioFileConverter
         Item gene = (Item) geneMap.get(primaryIdentifier);
         if (gene == null) {
             gene = createItem("Gene");
-            gene.setReference("organism", org.getIdentifier());
+            gene.setReference("organism", getOrganism("6239"));
             gene.setAttribute("primaryIdentifier", primaryIdentifier);
             geneMap.put(primaryIdentifier, gene);
             store(gene);
@@ -173,7 +169,7 @@ public class RNAiConverter extends BioFileConverter
         if (screen == null) {
             screen = createItem("RNAiScreen");
             screen.setReference("publication", pubId);
-            screen.setReference("organism", org.getIdentifier());
+            screen.setReference("organism", getOrganism("6239"));
             screenMap.put(pubId, screen);
             store(screen);
         }
