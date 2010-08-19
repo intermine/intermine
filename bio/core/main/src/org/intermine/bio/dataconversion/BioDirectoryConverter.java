@@ -65,6 +65,28 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
     }
 
     /**
+     * Create a new BioDirectoryConverter.
+     * @param writer the Writer used to output the resultant items
+     * @param model the data model
+     * @param dataSourceName the DataSource name
+     * @param dataSetTitle the DataSet title
+     */
+    public BioDirectoryConverter (ItemWriter writer, Model model, String dataSourceName,
+            String dataSetTitle, String ontology) {
+        super(writer, model);
+        String dataSourceRefId = null;
+        String dataSetRefId = null;
+        if (StringUtils.isNotEmpty(dataSourceName)) {
+            dataSourceRefId = getDataSource(dataSourceName);
+        }
+        if (StringUtils.isNotEmpty(dataSetTitle)) {
+            dataSetRefId = getDataSet(dataSetTitle, dataSourceRefId);
+        }
+        hook = new BioStoreHook(model, dataSetRefId, dataSourceRefId, ontology);
+        setStoreHook(hook);
+    }
+    
+    /**
      * Update the dataset reference Id.  Overwrites the one set in the constructor.  Needed for
      * Uniprot which has a few different datasets.
      *

@@ -52,7 +52,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
      * @param model the Model
      */
     public ProteinStructureDataConverter(ItemWriter writer, Model model) {
-        super(writer, model, "Kenji Mizuguchi", "Mizuguchi protein structure predictions");
+        super(writer, model, "Kenji Mizuguchi", "Mizuguchi protein structure predictions", null);
     }
 
     /**
