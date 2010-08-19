@@ -580,8 +580,6 @@
     </post-process>
     <post-process name="create-bioseg-location-index"/>
     <post-process name="create-overlap-view" />
-
-    <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
     <post-process name="summarise-objectstore"/>
     <post-process name="create-autocomplete-index"/>
