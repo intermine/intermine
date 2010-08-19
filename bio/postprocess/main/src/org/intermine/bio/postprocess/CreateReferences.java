@@ -90,7 +90,7 @@ public class CreateReferences
 
         LOG.info("insertReferences stage 4");
         // CDS.gene / Gene.CDSs
-        insertReferenceField(Gene.class, "transcripts", Transcript.class, "cDSs", CDS.class,
+        insertReferenceField(Gene.class, "transcripts", Transcript.class, "CDSs", CDS.class,
                 "gene");
 
         LOG.info("insertReferences stage 5");
