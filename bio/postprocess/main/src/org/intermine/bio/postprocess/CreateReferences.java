@@ -85,7 +85,7 @@ public class CreateReferences
                 Exon.class, "gene");
         LOG.info("insertReferences stage 3");
         // UTR.gene / Gene.UTRs
-        insertReferenceField(Gene.class, "transcripts", Transcript.class, "uTRs", UTR.class,
+        insertReferenceField(Gene.class, "transcripts", Transcript.class, "UTRs", UTR.class,
                 "gene");
 
         LOG.info("insertReferences stage 4");
@@ -340,7 +340,7 @@ public class CreateReferences
         q.addToSelect(qcUTR);
         q.addToOrderBy(qcUTR);
 
-        QueryCollectionReference mrnaUtrsRef = new QueryCollectionReference(qcMRNA, "uTRs");
+        QueryCollectionReference mrnaUtrsRef = new QueryCollectionReference(qcMRNA, "UTRs");
         ContainsConstraint mrnaUtrsConstraint =
             new ContainsConstraint(mrnaUtrsRef, ConstraintOp.CONTAINS, qcUTR);
 
