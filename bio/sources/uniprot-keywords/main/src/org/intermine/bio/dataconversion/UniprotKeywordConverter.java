@@ -40,7 +40,7 @@ public class UniprotKeywordConverter extends BioFileConverter
      * @param model the Model
      */
     public UniprotKeywordConverter(ItemWriter writer, Model model) {
-        super(writer, model, "UniProt", "UniProt keywords data set");
+        super(writer, model, "UniProt", "UniProt keywords data set", null);
     }
 
     /**
