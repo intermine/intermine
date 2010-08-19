@@ -11,9 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -35,14 +33,9 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
-     * @throws ObjectStoreException if an error occurs in storing
-     */
-    public WormBaseIdentifiersConverter(ItemWriter writer, Model model)
-        throws ObjectStoreException {
+      */
+    public WormBaseIdentifiersConverter(ItemWriter writer, Model model) {
         super(writer, model, "WormBase", "WormBase genes");
-        worm = createItem("Organism");
-        worm.setAttribute("taxonId", "6239");
-        store(worm);
     }
 
     /**
@@ -70,7 +63,6 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
             String primaryidentifier = line[0];
             String identifier = line[1];
             String symbol = line[2];
-            List<Item> synonyms = new ArrayList<Item>();
 
             Item gene = createItem("Gene");
             if (primaryidentifier != null && !primaryidentifier.equals("")) {
@@ -85,9 +77,8 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
                 gene.setAttribute("name", symbol);
             }
 
-            gene.setReference("organism", worm.getIdentifier());
+            gene.setReference("organism", getOrganism("6239"));
             store(gene);
-            store(synonyms);
         }
     }
 }
