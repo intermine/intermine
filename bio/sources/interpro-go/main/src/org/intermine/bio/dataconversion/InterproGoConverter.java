@@ -45,7 +45,7 @@ public class InterproGoConverter extends BioFileConverter
      * @param model the Model
      */
     public InterproGoConverter(ItemWriter writer, Model model) {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE, null);
     }
 
     /**
