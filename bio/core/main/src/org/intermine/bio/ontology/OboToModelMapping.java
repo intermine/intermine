@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -139,6 +140,10 @@ public class OboToModelMapping
         return false;
     }
 
+    private String getIdentifier(String name) {
+    	return oboNameToIdentifier.get(name);
+    }
+    
     /**
      * Test whether a term is in the list the user provided.
      *
@@ -216,6 +221,9 @@ public class OboToModelMapping
                 BioConverterUtil.addToSetMap(childToParents, child, parent);
             }
         }
+        
+        // manually add the part of relationships in config
+        addPartOfsFromConfig();
 
         buildParentsMap();
 
@@ -238,6 +246,17 @@ public class OboToModelMapping
         // remove UTR.mRNA if UTR.transcript exists
         removeRedundantCollections();
 
+    }
+    
+    private void addPartOfsFromConfig() {
+    	for (Map.Entry<String, Set<String>> entry : manyToManyPartOfs.entrySet()) {
+    		String child = getIdentifier(entry.getKey());
+    		Set<String> parents = entry.getValue();
+    		for (String parent : parents) {
+    			parent = getIdentifier(parent);
+    			assignPartOf(parent, child);
+    		}
+    	}
     }
 
     // set many-to-one relationships
@@ -408,19 +427,31 @@ public class OboToModelMapping
     // make sure collection is at the highest level term
     // eg. Gene.transcripts should mean that Gene.mRNAs never happens
     private void removeRedundantCollections() {
+    	Map<String, Set<String>> invalidPartOfs = new HashMap<String, Set<String>>();
         for (String parent : validOboTerms.keySet()) {
             Set<String> refs = reversePartOfs.get(parent);
             if (refs != null) {
                 for (String refName : refs) {
-                    removeRelationshipFromChildren(reversePartOfs, partOfs, parent, refName);
+                	removeRelationshipFromChildren(reversePartOfs, partOfs, invalidPartOfs, parent, refName);
                 }
             }
             Set<String> collections = partOfs.get(parent);
             if (collections != null) {
                 for (String coll : collections) {
-                    removeRelationshipFromChildren(partOfs, reversePartOfs, parent, coll);
+                    removeRelationshipFromChildren(partOfs, reversePartOfs, invalidPartOfs, parent, coll);
                 }
             }
+        }
+        
+        if (!invalidPartOfs.isEmpty()) {
+        	for (Map.Entry<String, Set<String>> entry : invalidPartOfs.entrySet()) {
+        		String parent = entry.getKey();
+        		Set<String> collections = entry.getValue();
+        		for (String collectionName : collections) {
+        			removeRelationship(partOfs, reversePartOfs, parent, collectionName);
+        			removeRelationship(reversePartOfs, partOfs, parent, collectionName);
+        		}
+        	}
         }
     }
 
@@ -437,21 +468,39 @@ public class OboToModelMapping
      * @param parent eg. transcript
      * @collectioName eg. CDSs
      */
-    private void removeRelationshipFromChildren(Map<String, Set<String>> map1,
-            Map<String, Set<String>> map2, String parent, String collectionName) {
+    private Map<String, Set<String>> removeRelationshipFromChildren(Map<String, Set<String>> map1,
+            Map<String, Set<String>> map2, Map<String, Set<String>> invalidPartOfs, String parent, 
+            String collectionName) {
         Set<String> children = parentToChildren.get(parent);
+        
         if (children == null) {
-            return;
+            return Collections.emptyMap();
         }
+        
         for (String child : children) {
-            // remove collection from both ends
-            removeCollection(map1, child, collectionName);
-            removeCollection(map1, collectionName, child);
-            // remove both ends of reference
-            removeReference(map2, child, collectionName);
-            removeReference(map2, collectionName, child);
-            removeRelationshipFromChildren(map1, map2, child, collectionName);
+        	
+        	// this relationship is in config, so we can't delete
+        	// remove parent relationship instead
+        	if (isManyToMany(collectionName, child)) {
+        		BioConverterUtil.addToSetMap(invalidPartOfs, parent, collectionName);
+        		continue;
+        	}
+        	removeRelationship(map1, map2, child, collectionName);
+
+            removeRelationshipFromChildren(map1, map2, invalidPartOfs, child, collectionName);
         }
+        return invalidPartOfs;
+    }
+    
+    private void removeRelationship(Map<String, Set<String>> map1,
+            Map<String, Set<String>> map2, String child, 
+            String collectionName) {
+        // remove collection from both ends
+        removeCollection(map1, child, collectionName);
+        removeCollection(map1, collectionName, child);
+        // remove both ends of reference
+        removeReference(map2, child, collectionName);
+        removeReference(map2, collectionName, child);
     }
 
     private void removeCollection(Map<String, Set<String>> relationshipMap, String child,
@@ -587,12 +636,7 @@ public class OboToModelMapping
                             }
                             String child = bits[0];
                             String parent = bits[1];
-                            Set<String> parents = manyToMany.get(child);
-                            if (parents == null) {
-                                parents = new HashSet<String>();
-                                manyToMany.put(child, parents);
-                            }
-                            parents.add(parent);
+                            BioConverterUtil.addToSetMap(manyToMany, child, parent.trim());
                         } else {
                             terms.add(line);
                         }
