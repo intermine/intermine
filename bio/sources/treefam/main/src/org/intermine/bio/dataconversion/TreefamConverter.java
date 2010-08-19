@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -202,7 +201,7 @@ public class TreefamConverter extends BioFileConverter
             identifiersToGenes.put(identifier, item);
             // only store if this is an organism of interest.  homologues will be stored later
             if (taxonIds.contains(taxonId)) {
-                storeItem(item, identifier);
+                store(item);
             }
         }
         return item;
@@ -271,7 +270,7 @@ public class TreefamConverter extends BioFileConverter
         homologue.setAttribute("type", type);
 
         storeHomologueGene(holder1);
-        storeItem(homologue, null);
+        store(homologue);
     }
 
     // now that we know this gene is a homologue, store
@@ -281,14 +280,8 @@ public class TreefamConverter extends BioFileConverter
         if (gene == null) {
             return;
         }
-        String identifier = holder.getIdentifier();
-        storeItem(gene, identifier);
+        store(gene);
         holder.storedGene();
-    }
-
-    private void storeItem(Item item, String identifier)
-        throws ObjectStoreException, SAXException {
-        store(item);
     }
 
     private String getEvidence()
