@@ -53,7 +53,7 @@ public class PdbConverter extends BioDirectoryConverter
      * @param model the Model
      */
     public PdbConverter(ItemWriter writer, Model model)  {
-        super(writer, model, "PDB", "PDB dmel data set");
+        super(writer, model, "PDB", "PDB dmel data set", null);
     }
 
     /**
