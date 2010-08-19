@@ -601,8 +601,8 @@ public class MetadataCache
 
     private static void readExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-//        Map <String, Map<String, Long>> featureCounts = getExperimentFeatureCounts(os);
-        Map <String, Map<String, Long>> featureCounts = getUniqueExperimentFeatureCounts(os);
+        Map <String, Map<String, Long>> featureCounts = getExperimentFeatureCounts(os);
+        Map <String, Map<String, Long>> uniqueFeatureCounts = getUniqueExperimentFeatureCounts(os);
 
         try {
             Query q = new Query();
@@ -629,15 +629,37 @@ public class MetadataCache
             experimentCache = new HashMap<String, DisplayExperiment>();
 
             Iterator i = results.iterator();
+
             while (i.hasNext()) {
                 ResultsRow row = (ResultsRow) i.next();
 
                 Project project = (Project) row.get(0);
                 Experiment experiment = (Experiment) row.get(1);
 
+                // expFeatureUniqueCounts is a subset of expFeatureCounts
                 Map<String, Long> expFeatureCounts = featureCounts.get(experiment.getName());
+                Map<String, Long> expFeatureUniqueCounts = uniqueFeatureCounts
+                        .get(experiment.getName());
+
+                Set<FeatureCountsRecord> featureCountsRecords =
+                    new LinkedHashSet<FeatureCountsRecord>();
+
+                if (expFeatureCounts != null) {
+                    for (Map.Entry<String, Long> entry : expFeatureCounts.entrySet()) {
+                        String ft = entry.getKey();
+                        Long fc = entry.getValue();
+                        Long ufc = null;
+                        if (expFeatureUniqueCounts.get(ft) != null) {
+                            ufc = expFeatureUniqueCounts.get(ft);
+                        }
+
+                        FeatureCountsRecord fcr = new FeatureCountsRecord(ft, fc, ufc);
+                        featureCountsRecords.add(fcr);
+                    }
+                } else { featureCountsRecords = null; }
+
                 DisplayExperiment displayExp = new DisplayExperiment(experiment, project,
-                        expFeatureCounts, os);
+                        featureCountsRecords, os);
                 experimentCache.put(displayExp.getName(), displayExp);
             }
         } catch (Exception err) {

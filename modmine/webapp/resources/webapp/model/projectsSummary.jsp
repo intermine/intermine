@@ -6,7 +6,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil"%>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
-	prefix="str"%>
+  prefix="str"%>
 
 
 <tiles:importAttribute />
@@ -34,24 +34,24 @@
   <tr>
   <td >
     <c:forEach items="${exp.organisms}" var="organism" varStatus="orgStatus">
-      <c:if test="${organism eq 'D. melanogaster'}"> 
+      <c:if test="${organism eq 'D. melanogaster'}">
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/><br>
       </c:if>
-      <c:if test="${organism eq 'C. elegans'}"> 
+      <c:if test="${organism eq 'C. elegans'}">
         <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/><br>
       </c:if>
-    </c:forEach> 
+    </c:forEach>
   </td>
 </td>
-  
-  
+
+
   <td><h4><html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link></h4>
 
-<%-- LABS Note: linking with surname only, 2 Green and Kim--%>  
+<%-- LABS Note: linking with surname only, 2 Green and Kim--%>
 Project:${exp.projectName } &nbsp;&nbsp;(${exp.pi })&nbsp;&nbsp;
-Labs: 
-    <c:forEach items="${exp.labs}" var="lab" varStatus="labStatus"><c:if test="${!labStatus.first}">, </c:if><b>${lab}</b></c:forEach> 
+Labs:
+    <c:forEach items="${exp.labs}" var="lab" varStatus="labStatus"><c:if test="${!labStatus.first}">, </c:if><b>${lab}</b></c:forEach>
 
 <br>
 <%-- SUBMISSIONS --%>
@@ -63,7 +63,7 @@ Labs:
       This experiment has <b><c:out value="${exp.submissionCount}"></c:out> data submission</b>.
     </c:when>
     <c:otherwise>
-      This experiment has <b><c:out value="${exp.submissionCount}"></c:out> data submissions</b>. 
+      This experiment has <b><c:out value="${exp.submissionCount}"></c:out> data submissions</b>.
     </c:otherwise>
   </c:choose>
 
@@ -78,7 +78,7 @@ Labs:
 
 
 <%-- EXPERIMENTAL FACTORS --%>
-     <c:if test="${fn:length(exp.factorTypes) > 0 }"> 
+     <c:if test="${fn:length(exp.factorTypes) > 0 }">
        <c:choose>
          <c:when test="${ fn:length(exp.factorTypes) == 1}">
            <c:out value="The experimental factor is"/>
@@ -86,23 +86,30 @@ Labs:
          <c:otherwise>
            <c:out value="The experimental factors are"/>
          </c:otherwise>
-       </c:choose>  
+       </c:choose>
        <c:forEach items="${exp.factorTypes}" var="ft" varStatus="ft_status"><c:if test="${ft_status.count > 1 && !ft_status.last }">, </c:if><c:if test="${ft_status.count > 1 && ft_status.last }"> and </c:if><b>${ft}</b></c:forEach>.
      </c:if>
 </td>
 
 <td>
 <%-- FEATURES --%>
-      <c:forEach items="${exp.featureCounts}" var="fc" varStatus="fc_status">
-     <c:if test="${fc_status.count > 1 }"><br> </c:if> 
-      ${fc.key}:&nbsp;${fc.value}
-     <c:if test="${fc_status.last }"><br> </c:if> 
+      <c:forEach items="${exp.featureCountsRecords}" var="fc" varStatus="fc_status">
+     <c:if test="${fc_status.count > 1 }"><br> </c:if>
+      ${fc.featureType}:&nbsp;${fc.featureCounts}
+
+      <c:if test="${!empty fc.uniqueFeatureCounts && fc.uniqueFeatureCounts != fc.featureCounts}">
+      <br>
+      <i style="font-size:0.9em;">
+      (${fc.uniqueFeatureCounts} unique ${fc.featureType}s)
+      </i>
+      </c:if>
+     <c:if test="${fc_status.last }"><br> </c:if>
       </c:forEach>
-      
+
     <c:if test="${exp.expressionLevelCount > 0}">
        with ${exp.expressionLevelCount} expression levels.
     </c:if>
-      
+
 <p/>
 <%-- TRACKS --%>
      <c:if test="${!empty tracks[exp.name]}">
@@ -120,13 +127,13 @@ Labs:
      <c:if test="${exp.repositedCount > 0}">
 
       <c:forEach items="${exp.reposited}" var="rep" varStatus="rep_status">
-      ${rep.value} 
+      ${rep.value}
       <c:choose>
         <c:when test="${rep.value == 1}">
          entry
         </c:when>
         <c:otherwise>
-        entries 
+        entries
         </c:otherwise>
       </c:choose>
       in ${rep.key}
@@ -155,13 +162,13 @@ Labs:
 
 
 <%--
-     <c:if test="${fn:length(exp.featureCounts) > 0 }"> 
-It generates 
-      <c:forEach items="${exp.featureCounts}" var="fc" varStatus="status">
-     <c:if test="${status.count > 1 && !status.last }">, </c:if> 
-     <c:if test="${status.count > 1 && status.last }"> and </c:if> 
+     <c:if test="${fn:length(exp.featureCountsRecords) > 0 }">
+It generates
+      <c:forEach items="${exp.featureCountsRecords}" var="fc" varStatus="status">
+     <c:if test="${status.count > 1 && !status.last }">, </c:if>
+     <c:if test="${status.count > 1 && status.last }"> and </c:if>
      <html:link
-href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.key}">${fc.value} ${fc.key}s
+href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.featureType}">${fc.featureCounts} ${fc.featureType}s
 </html:link>
       </c:forEach>.
 --%>
@@ -171,7 +178,7 @@ href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=resul
 
 <table cellspacing="4"><tr>
 
-<td>    
+<td>
 <im:querylink text="Fly" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
     view="Submission.title Submission.DCCid Submission.design Submission.factorName Submission.publicReleaseDate"
@@ -203,7 +210,7 @@ href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=resul
 </im:querylink>
 </td>
 
-<td>    
+<td>
 <im:querylink text="All submissions" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
     view="Submission.title Submission.DCCid Submission.design Submission.factorName Submission.publicReleaseDate"

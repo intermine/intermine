@@ -6,16 +6,16 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil"%>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
-	prefix="str"%>
+  prefix="str"%>
 
 <tiles:importAttribute />
 <html:xhtml />
 
 <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
 <script type="text/javascript" src="js/tablesort.js"></script>
-<link rel="stylesheet" type="text/css" href="css/sorting_experiments.css"/>    
-<link rel="stylesheet" type="text/css" href="model/css/experiment.css"/>     
-            
+<link rel="stylesheet" type="text/css" href="css/sorting_experiments.css"/>
+<link rel="stylesheet" type="text/css" href="model/css/experiment.css"/>
+
 <div class="body">
 
 <table cellpadding="0" cellspacing="0" border="0" class="sortable-onload-2 rowstyle-alt no-arrow submission_table">
@@ -90,7 +90,7 @@ ${exp.piSurname}<br>
         <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/>
             <c:set var="worm" value="1" />
           </c:if>
-    </c:forEach> 
+    </c:forEach>
 </td>
 
 <td class="sorting">
@@ -109,13 +109,13 @@ ${exp.piSurname}<br>
          <c:when test="${catStatus.first && catStatus.last }">
            ${cat}
          </c:when>
-         <c:otherwise> 
+         <c:otherwise>
            &middot;${cat}
          </c:otherwise>
        </c:choose>
        </c:forEach>
      </c:if>
-   </c:forEach> 
+   </c:forEach>
 <br></br>
 <%-- SUBMISSIONS --%>
     <c:if test="${exp.submissionCount == 1}">
@@ -139,7 +139,7 @@ ${exp.piSurname}<br>
 
 <%-- EXPERIMENTAL FACTORS --%>
 
-     <c:if test="${fn:length(exp.factorTypes) > 0 }"><br></br> 
+     <c:if test="${fn:length(exp.factorTypes) > 0 }"><br></br>
        <c:choose>
          <c:when test="${ fn:length(exp.factorTypes) == 1}">
            <c:out value="Experimental factor: "/>
@@ -165,7 +165,7 @@ ${exp.piSurname}<br>
 
      <c:forEach items="${tracks[exp.name]}" var="etrack"  varStatus="status">
      <%-- build the url for getting all the labels in this experiment --%>
-     
+
      <c:set var="organism" value="${etrack.organism}"/>
 
 <c:choose>
@@ -173,11 +173,11 @@ ${exp.piSurname}<br>
 <c:set var="wormTracksCounter" value="${wormTracksCounter +1 }" />
   <c:choose>
   <c:when test="${empty wormlabels}">
-     <c:set var="wormlabels" value="${etrack.track}" /> 
+     <c:set var="wormlabels" value="${etrack.track}" />
   </c:when>
   <c:otherwise>
      <c:if test="${!fn:contains(wormlabels, etrack.track)}">
-       <c:set var="wormlabels" value="${wormlabels}-${etrack.track}" /> 
+       <c:set var="wormlabels" value="${wormlabels}-${etrack.track}" />
      </c:if>
   </c:otherwise>
   </c:choose>
@@ -186,7 +186,7 @@ ${exp.piSurname}<br>
 <c:set var="flyTracksCounter" value="${flyTracksCounter +1}" />
   <c:choose>
   <c:when test="${empty flylabels}">
-     <c:set var="flylabels" value="${etrack.track}" /> 
+     <c:set var="flylabels" value="${etrack.track}" />
   </c:when>
   <c:otherwise>
      <c:if test="${!fn:contains(flylabels, etrack.track)}">
@@ -201,15 +201,15 @@ ${exp.piSurname}<br>
 
 
 <c:if test="${flyTracksCounter > 0 }">
-<html:link 
+<html:link
      href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?label=${flylabels}" target="_blank" title="View all the tracks for this experiment">
      ${flyTracksCounter}
         <img border="0" class="arrow" src="model/images/fly_gb.png"/>
-</html:link>    
+</html:link>
 </c:if>
 <%--
 <c:if test="${ flyTracksCounter== 1}">
-<html:link 
+<html:link
      href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?label=${flylabels}" target="_blank" title="View the track generated for this experiment">
      ${flyTracksCounter} GBrowse track
         <img border="0" class="arrow" src="model/images/fly_gb.png" title="fly"/>
@@ -221,16 +221,16 @@ ${exp.piSurname}<br>
 </c:if>
 
 <c:if test="${wormTracksCounter > 0 }">
-<html:link 
+<html:link
      href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?label=${wormlabels}" target="_blank" title="View all the tracks for this experiment">
-     ${wormTracksCounter} 
+     ${wormTracksCounter}
         <img border="0" class="arrow" src="model/images/worm_gb.png" />
 </html:link>
 </c:if>
 
 <%--
 <c:if test="${ wormTracksCounter== 1}">
-<html:link 
+<html:link
      href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?label=${wormlabels}" target="_blank" title="View the track generated for this experiment">
      ${wormTracksCounter} GBrowse track
         <img border="0" class="arrow" src="model/images/worm_gb.png" title="worm"/>
@@ -285,40 +285,40 @@ ${exp.piSurname}<br>
 
 <%-- FEATURES --%>
 <td class="sorting">
-      <c:forEach items="${exp.featureCounts}" var="fc" varStatus="fc_status">
+      <c:forEach items="${exp.featureCountsRecords}" var="fc" varStatus="fc_status">
      <nobr>
        <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.key}"
-        title="View all ${fc.key}s">${fc.value}&nbsp;${fc.key}
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.featureType}"
+        title="View all ${fc.featureType}s">${fc.featureCounts}&nbsp;${fc.featureType}
             </html:link>
-            
+
                <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=tab"
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=tab"
         title="Download in tab separated value format">
-          <img border="0" class="arrow" src="model/images/tab_s.png" title="export in tab format" height="18" width="6"/>        
+          <img border="0" class="arrow" src="model/images/tab_s.png" title="export in tab format" height="18" width="6"/>
         </html:link>
-            
+
               <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=csv"
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=csv"
         title="Download in comma separated value format">
           <img border="0" class="arrow" src="model/images/csv_s.png" title="export in cvs format"  height="18" width="6"/>
           </html:link>
-            
+
 <c:choose>
-<c:when test="${!empty exp.unlocated && fn:contains(exp.unlocated, fc.key)}">
+<c:when test="${!empty exp.unlocated && fn:contains(exp.unlocated, fc.featureType)}">
 </c:when>
 <c:otherwise>
              <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=gff3"
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=gff3"
         title="Download in GFF3 format">
         <img border="0" class="arrow" src="model/images/gff_s.png" title="export in gff3 format"  height="18" width="6"/>
         </html:link>
              <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=sequence"
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=sequence"
         title="Download the sequences">
                   <img border="0" class="arrow" src="model/images/seq_s.png" title="export in fasta format"  height="18" width="6"/>
         </html:link>
-           
+
 </c:otherwise>
 </c:choose>
 &nbsp;
@@ -352,7 +352,7 @@ ${exp.piSurname}<br>
     <img border="0" class="arrow" src="model/images/seq_s.png" title="fasta format"  height="30" width="10"/>
     </th>
   </tr>
-  
+
 <c:forEach items="${experiments}" var="exp" varStatus="exp_status">
 <tr>
 <td class="sorting">
@@ -405,7 +405,7 @@ ${exp.piSurname}<br>
         <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/>
             <c:set var="worm" value="1" />
           </c:if>
-    </c:forEach> 
+    </c:forEach>
 </td>
 
 <td class="sorting">
@@ -425,13 +425,13 @@ ${exp.piSurname}<br>
          <c:when test="${catStatus.first && catStatus.last }">
            ${cat}
          </c:when>
-         <c:otherwise> 
+         <c:otherwise>
            &middot;${cat}
          </c:otherwise>
        </c:choose>
        </c:forEach>
      </c:if>
-   </c:forEach> 
+   </c:forEach>
 </td>
 
 <td>
@@ -455,7 +455,7 @@ ${exp.piSurname}<br>
 </im:querylink>
 
 <td>
-     <c:if test="${fn:length(exp.factorTypes) > 0 }"><br></br> 
+     <c:if test="${fn:length(exp.factorTypes) > 0 }"><br></br>
        <c:choose>
          <c:when test="${ fn:length(exp.factorTypes) == 1}">
            <c:out value="Experimental factor: "/>
@@ -479,7 +479,7 @@ ${exp.piSurname}<br>
 <c:set var="wormTracksCounter" value="" />
 <c:set var="flyTracksCounter" value="" />
      <c:forEach items="${tracks[exp.name]}" var="etrack"  varStatus="status">
-     
+
      <c:set var="organism" value="${etrack.organism}"/>
 
 <c:choose>
@@ -487,11 +487,11 @@ ${exp.piSurname}<br>
 <c:set var="wormTracksCounter" value="${wormTracksCounter +1 }" />
   <c:choose>
   <c:when test="${empty wormlabels}">
-     <c:set var="wormlabels" value="${etrack.track}" /> 
+     <c:set var="wormlabels" value="${etrack.track}" />
   </c:when>
   <c:otherwise>
      <c:if test="${!fn:contains(wormlabels, etrack.track)}">
-       <c:set var="wormlabels" value="${wormlabels}-${etrack.track}" /> 
+       <c:set var="wormlabels" value="${wormlabels}-${etrack.track}" />
      </c:if>
   </c:otherwise>
   </c:choose>
@@ -500,7 +500,7 @@ ${exp.piSurname}<br>
 <c:set var="flyTracksCounter" value="${flyTracksCounter +1}" />
   <c:choose>
   <c:when test="${empty flylabels}">
-     <c:set var="flylabels" value="${etrack.track}" /> 
+     <c:set var="flylabels" value="${etrack.track}" />
   </c:when>
   <c:otherwise>
      <c:if test="${!fn:contains(flylabels, etrack.track)}">
@@ -515,20 +515,20 @@ ${exp.piSurname}<br>
 
 
 <c:if test="${flyTracksCounter > 0 }">
-<html:link 
+<html:link
      href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?label=${flylabels}" target="_blank" title="View all the tracks for this experiment">
      ${flyTracksCounter}
         <img border="0" class="arrow" src="model/images/fly_gb.png"/>
-</html:link>    
+</html:link>
 </c:if>
 <c:if test="${ flyTracksCounter > 0 && wormTracksCounter > 0}">
 <br></br>
 </c:if>
 
 <c:if test="${wormTracksCounter > 0 }">
-<html:link 
+<html:link
      href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?label=${wormlabels}" target="_blank" title="View all the tracks for this experiment">
-     ${wormTracksCounter} 
+     ${wormTracksCounter}
         <img border="0" class="arrow" src="model/images/worm_gb.png" />
 </html:link>
 </c:if>
@@ -574,36 +574,36 @@ ${exp.piSurname}<br>
 </td>
 
 <td class="sorting">
-      <c:forEach items="${exp.featureCounts}" var="fc" varStatus="fc_status">
+      <c:forEach items="${exp.featureCountsRecords}" var="fc" varStatus="fc_status">
      <nobr>
        <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.key}"
-        title="View all ${fc.key}s">${fc.value}&nbsp;${fc.key}
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.featureType}"
+        title="View all ${fc.featureType}s">${fc.featureCounts}&nbsp;${fc.featureType}
             </html:link>
-            
+
                <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=tab"
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=tab"
         title="Download in tab separated value format">
-          <img border="0" class="arrow" src="model/images/tab_s.png" title="export in tab format" height="18" width="6"/>        
+          <img border="0" class="arrow" src="model/images/tab_s.png" title="export in tab format" height="18" width="6"/>
         </html:link>
-            
+
               <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=csv"
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=csv"
         title="Download in comma separated value format">
           <img border="0" class="arrow" src="model/images/csv_s.png" title="export in cvs format"  height="18" width="6"/>
           </html:link>
-            
+
 <c:choose>
-<c:when test="${!empty exp.unlocated && fn:contains(exp.unlocated, fc.key)}">
+<c:when test="${!empty exp.unlocated && fn:contains(exp.unlocated, fc.featureType)}">
 </c:when>
 <c:otherwise>
              <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=gff3"
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=gff3"
         title="Download in GFF3 format">
         <img border="0" class="arrow" src="model/images/gff_s.png" title="export in gff3 format"  height="18" width="6"/>
         </html:link>
              <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=sequence"
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=sequence"
         title="Download the sequences">
                   <img border="0" class="arrow" src="model/images/seq_s.png" title="export in fasta format"  height="18" width="6"/>
         </html:link>
@@ -611,7 +611,7 @@ ${exp.piSurname}<br>
 </c:otherwise>
 </c:choose>
 &nbsp;
-     
+
 
       </c:forEach>
 <p/>
