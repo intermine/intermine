@@ -107,10 +107,11 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
 
             String orgConstraint = "";
             if (taxonId != null) {
-                String abbrev = or.getOrganismDataByTaxon(new Integer(taxonId)).getAbbreviation();
+                String species = or.getOrganismDataByTaxon(new Integer(taxonId)).getSpecies();
+                String genus = or.getOrganismDataByTaxon(new Integer(taxonId)).getGenus();
                 query = "select organism_id"
                     + " from organism"
-                    + " where abbreviation = \'" + abbrev + "\'";
+                    + " where species = \'" + species + "\' and genus = \'" + genus + "\'";
                 LOG.info("QUERY: " + query);
                 stmt = conn.createStatement();
                 res = stmt.executeQuery(query);
@@ -127,7 +128,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
             }
 
             // fetch feature name for located genes
-            query = "select distinct o.abbreviation, f.uniquename, f.name"
+            query = "select distinct o.species, o.genus, f.uniquename, f.name"
                 + " from feature f, featureloc l, organism o"
                 + " where f.organism_id = o.organism_id"
                 + " and f.is_obsolete = false"
@@ -142,8 +143,9 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
             while (res.next()) {
                 String uniquename = res.getString("uniquename");
                 String name = res.getString("name");
-                String organism = res.getString("abbreviation");
-                String taxonId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
+                String species = res.getString("species");
+                String genus = res.getString("genus");
+                String taxonId = "" + or.getOrganismDataByGenusSpecies(genus, species).getTaxonId();
                 resolver.addSynonyms(taxonId, uniquename, Collections.singleton(name));
                 i++;
             }
@@ -151,7 +153,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
             stmt.close();
 
             // fetch gene synonyms
-            query = "select distinct o.abbreviation, f.uniquename, s.name, "
+            query = "select distinct o.genus, o.species, f.uniquename, s.name, "
                 + " fs.is_current, c.name as type"
                 + " from feature f, feature_synonym fs, synonym s, featureloc l,"
                 + " organism o, cvterm c"
@@ -171,8 +173,9 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
             while (res.next()) {
                 String uniquename = res.getString("uniquename");
                 String synonym = res.getString("name");
-                String organism = res.getString("abbreviation");
-                String taxonId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
+                String species = res.getString("species");
+                String genus = res.getString("genus");
+                String taxonId = "" + or.getOrganismDataByGenusSpecies(genus, species).getTaxonId();
                 Boolean isCurrent = res.getBoolean("is_current");
                 String type = res.getString("type");
                 if (isCurrent && type.equals("symbol")) {
@@ -185,7 +188,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
             LOG.info("synonym query returned " + i + " rows.");
 
             // fetch FlyBase dbxrefs for located genes
-            query = "select distinct o.abbreviation, f.uniquename,"
+            query = "select distinct o.species, o.genus, f.uniquename,"
                 + " d.accession, db.name, fd.is_current"
                 + " from feature f, dbxref d, feature_dbxref fd, db, featureloc l, organism o"
                 + " where f.organism_id = o.organism_id"
@@ -205,10 +208,11 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
             while (res.next()) {
                 String uniquename = res.getString("uniquename");
                 String accession = res.getString("accession");
-                String organism = res.getString("abbreviation");
+                String species = res.getString("species");
+                String genus = res.getString("genus");
+                String taxonId = "" + or.getOrganismDataByGenusSpecies(genus, species).getTaxonId();
                 String dbName = res.getString("name");
                 Boolean isCurrent = res.getBoolean("is_current");
-                String taxonId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
                 if (isCurrent && dbName.equals("FlyBase Annotation IDs")) {
                     resolver.addMainIds(taxonId, uniquename, Collections.singleton(accession));
                 } else {
