@@ -277,7 +277,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         // keep map of feature to submissions it has been referenced by, some features appear in
         // more than one submission
-        Map<Integer, List<String>> subCollections = new HashMap<Integer, List<String>>();
+        Map<Integer, Set<String>> subCollections = new HashMap<Integer, Set<String>>();
 
         // hold features that should only be processed once across all submissions, initialise
         // processor with this map each time
@@ -334,11 +334,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
 
-    private void storeSubmissionsCollections(Map<Integer, List<String>> subCollections)
+    private void storeSubmissionsCollections(Map<Integer, Set<String>> subCollections)
     throws ObjectStoreException {
-        for (Map.Entry<Integer, List<String>> entry : subCollections.entrySet()) {
+        for (Map.Entry<Integer, Set<String>> entry : subCollections.entrySet()) {
                 Integer featureObjectId = entry.getKey();
-                ReferenceList collection = new ReferenceList("submissions", entry.getValue());
+                ReferenceList collection = new ReferenceList("submissions", new ArrayList<String>(entry.getValue()));
             getChadoDBConverter().store(collection, featureObjectId);
         }
     }
@@ -353,7 +353,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
-    private void processDataFeatureTable(Connection connection, Map<Integer, List<String>> subCols,
+    private void processDataFeatureTable(Connection connection, Map<Integer, Set<String>> subCols,
                 Map<Integer, FeatureData> featureMap, Integer chadoExperimentId, String queryList)
         throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
@@ -369,9 +369,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
             Integer featureObjectId = featureData.getIntermineObjectId();
-            List<String> subs = subCols.get(featureObjectId);
+            Set<String> subs = subCols.get(featureObjectId);
             if (subs == null) {
-                subs = new ArrayList<String>();
+                subs = new HashSet<String>();
                 subCols.put(featureObjectId, subs);
             }
             subs.add(submissionItemId);
