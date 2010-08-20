@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -56,7 +57,7 @@ import org.intermine.web.util.URLGenerator;
 
 public class GalaxyExportOptionsController extends TilesAction
 {
-//    private static final Logger LOG = Logger.getLogger(GalaxyExportOptionsController.class);
+    private static final Logger LOG = Logger.getLogger(GalaxyExportOptionsController.class);
     /**
      * {@inheritDoc}
      */
@@ -93,6 +94,7 @@ public class GalaxyExportOptionsController extends TilesAction
 
         // Build webservice URL
         PathQuery query = pt.getWebTable().getPathQuery();
+        PathQuery alteredQuery = new PathQuery(query);
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Model model = im.getModel();
@@ -111,32 +113,42 @@ public class GalaxyExportOptionsController extends TilesAction
         Profile profile = SessionMethods.getProfile(session);
         WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
 
-        Set<String> orgSet = new LinkedHashSet<String>();
-        List<String> summaryPathList = new ArrayList<String>();
         if (canExportAsBEDToGalaxy(pt)) {
+            List<OrganismInfo> orgInfoList = new ArrayList<OrganismInfo>();
+
             for (Map.Entry<String, Integer> entry : pathIndexMap.entrySet()) {
+
                 String pathToAdd = entry.getKey() + ".organism.shortName";
-                query.addView(pathToAdd);
-                summaryPathList.add(pathToAdd);
-            }
-            for (String orgPath : summaryPathList) {
+                if (!alteredQuery.getViewStrings().contains(
+                        entry.getKey() + ".organism.shortName")) {
+                    pathToAdd = entry.getKey() + ".organism.shortName";
+                    alteredQuery.addView(pathToAdd);
+                }
+
+                Set<String> orgSet = new LinkedHashSet<String>();
                 @SuppressWarnings({ "unchecked", "rawtypes" })
-                List<ResultsRow> results = webResultsExecutor.summariseQuery(query, orgPath);
-                orgSet.add((String) results.get(0).get(0));
+                List<ResultsRow> results = webResultsExecutor.summariseQuery(
+                        alteredQuery, pathToAdd);
+                for (@SuppressWarnings("rawtypes") ResultsRow row : results) {
+                    orgSet.add((String) row.get(0));
+                }
+
+                String genomeBuild = "";
+                Properties props = PropertiesUtil.getProperties();
+                if (orgSet.size() == 1) {
+                    if (orgSet.iterator().next().equals("D. melanogaster")) {
+                        genomeBuild = props.getProperty("genomeVersion.fly");
+                    }
+                    if (orgSet.iterator().next().equals("C. elegans")) {
+                        genomeBuild = props.getProperty("genomeVersion.worm");
+                    }
+                }
+
+                orgInfoList.add(new OrganismInfo(entry.getValue(), Arrays
+                        .toString(orgSet.toArray()), genomeBuild));
             }
 
-            String genomeBuild = "";
-            Properties props = PropertiesUtil.getProperties();
-            if (orgSet.size() == 1) {
-                if (orgSet.iterator().next().equals("D. melanogaster")) {
-                    genomeBuild = props.getProperty("genomeVersion.fly");
-                }
-                if (orgSet.iterator().next().equals("C. elegans")) {
-                    genomeBuild = props.getProperty("genomeVersion.worm");
-                }
-            }
-            request.setAttribute("genomeBuild", genomeBuild);
-            request.setAttribute("organism", Arrays.toString(orgSet.toArray()));
+            request.setAttribute("orgInfoList", orgInfoList);
         }
 
         return null;
