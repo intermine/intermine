@@ -72,8 +72,12 @@
           dataArray = data.split(">>>>>"); //size = 2
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
-          jQuery("#info").val("Column features:" + jQuery.trim(dataArray[1]) + "; Organisms:${organism}");
-          jQuery("#dbkey").val("${genomeBuild}");
+          <c:forEach var="orgInfo" items="${orgInfoList}">
+             if(idx == "${orgInfo.idx}") {
+               jQuery("#info").val("Column features:" + jQuery.trim(dataArray[1]) + "; Organisms:${orgInfo.orgList}");
+               jQuery("#dbkey").val("${orgInfo.genomeBuild}");
+             }
+           </c:forEach>
         });
 
         jQuery("input[name='sequencePath']").each(function(i) {
@@ -93,8 +97,12 @@
           dataArray = data.split(">>>>>"); //size = 2
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
-          jQuery("#info").val("Column features:" + jQuery.trim(dataArray[1]) + "; Organisms:${organism}");
-          jQuery("#dbkey").val("${genomeBuild}");
+          <c:forEach var="orgInfo" items="${orgInfoList}">
+             if(idx == "${orgInfo.idx}") {
+               jQuery("#info").val("Column features:" + jQuery.trim(dataArray[1]) + "; Organisms:${orgInfo.orgList}");
+               jQuery("#dbkey").val("${orgInfo.genomeBuild}");
+             }
+           </c:forEach>
         });
      }
   }
@@ -127,8 +135,12 @@
           dataArray = data.split(">>>>>"); //size = 2
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(dataArray[0]);
-          jQuery("#info").val("Column features:" + jQuery.trim(dataArray[1]) + "; Organisms:${organism}");
-          jQuery("#dbkey").val("${genomeBuild}");
+          <c:forEach var="orgInfo" items="${orgInfoList}">
+             if(idx == "${orgInfo.idx}") {
+               jQuery("#info").val("Column features:" + jQuery.trim(dataArray[1]) + "; Organisms:${orgInfo.orgList}");
+               jQuery("#dbkey").val("${orgInfo.genomeBuild}");
+             }
+           </c:forEach>
         });
 
         // After ajax call, enable the unchecked
