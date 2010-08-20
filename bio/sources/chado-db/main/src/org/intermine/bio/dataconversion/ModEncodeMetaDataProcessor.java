@@ -100,7 +100,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // for experiment, the maps link the exp name (description!) with the identifiers...
     private Map<String, Integer> experimentIdMap = new HashMap<String, Integer>();
     private Map<String, String> experimentIdRefMap = new HashMap<String, String>();
-    private Map<String, List<Integer>> expSubMap = new HashMap<String, List<Integer>>();
+    private Map<String, Set<Integer>> expSubMap = new HashMap<String, Set<Integer>>();
 
     // ...we need a further map to link to submission
     private Map<Integer, String> submissionProjectMap = new HashMap<Integer, String>();
@@ -122,13 +122,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<Integer, String> appliedProtocolIdRefMap = new HashMap<Integer, String>();
     // list of firstAppliedProtocols, first level of the DAG linking
     // the applied protocols through the data (and giving the flow of data)
-    private List<Integer> firstAppliedProtocols = new ArrayList<Integer>();
+    private Set<Integer> firstAppliedProtocols = new HashSet<Integer>();
 
     // experimental factor maps
     // ------------------------
     private Map<String, Integer> eFactorIdMap = new HashMap<String, Integer>();
     private Map<String, String> eFactorIdRefMap = new HashMap<String, String>();
-    private Map<Integer, List<String>> submissionEFactorMap = new HashMap<Integer, List<String>>();
+    private Map<Integer, Set<String>> submissionEFactorMap = new HashMap<Integer, Set<String>>();
 
     // caches
     // ------
@@ -596,8 +596,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private void traverseDag()
         throws SQLException, ObjectStoreException {
-        List<Integer> currentIterationAP = firstAppliedProtocols;
-        List<Integer> nextIterationAP = new ArrayList<Integer>();
+        Set<Integer> currentIterationAP = firstAppliedProtocols;
+        Set<Integer> nextIterationAP = new HashSet<Integer>();
         Integer step = 1; // DAG level
 
         while (currentIterationAP.size() > 0) {
@@ -619,9 +619,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
-    private List<Integer> buildADagLevel(List<Integer> previousAppliedProtocols, Integer step)
+    private Set<Integer> buildADagLevel(Set<Integer> previousAppliedProtocols, Integer step)
         throws SQLException, ObjectStoreException {
-        List<Integer> nextIterationProtocols = new ArrayList<Integer>();
+        Set<Integer> nextIterationProtocols = new HashSet<Integer>();
         Iterator<Integer> pap = previousAppliedProtocols.iterator();
         while (pap.hasNext()) {
             List<Integer> outputs = new ArrayList<Integer>();
@@ -2526,7 +2526,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         String ontologyId = devOntologies.get(ontologyName);
         if (ontologyId == null) {
             Item ontology = getChadoDBConverter().createItem("Ontology");
-            ontology.setAttribute("title", ontologyName);
+            ontology.setAttribute("name", ontologyName);
             getChadoDBConverter().store(ontology);
             ontologyId = ontology.getIdentifier();
             devOntologies.put(ontologyName, ontologyId);
@@ -3058,7 +3058,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Iterator<String> exp = expSubMap.keySet().iterator();
         while (exp.hasNext()) {
             String thisExp = exp.next();
-            List<Integer> subs = expSubMap.get(thisExp);
+            Set<Integer> subs = expSubMap.get(thisExp);
             Iterator <Integer> s = subs.iterator();
             while (s.hasNext()) {
                 Integer thisSubId = s.next();
@@ -3080,7 +3080,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Iterator<Integer> subs = submissionEFactorMap.keySet().iterator();
         while (subs.hasNext()) {
             Integer thisSubmissionId = subs.next();
-            List<String> eFactors = submissionEFactorMap.get(thisSubmissionId);
+            Set<String> eFactors = submissionEFactorMap.get(thisSubmissionId);
 
             LOG.debug("EF REFS: " + thisSubmissionId + " (" + eFactors + ")");
             Iterator<String> ef = eFactors.iterator();
