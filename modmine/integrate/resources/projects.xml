@@ -7,7 +7,7 @@
     <attribute name="species" value="melanogaster"/>
     <attribute name="name" value="Drosophila melanogaster"/>
     <attribute name="shortName" value="D. melanogaster"/>
-    <attribute name="abbreviation" value="Dmel"/>
+
   </item>
 	<item id="1" class="" implements="Organism">
 		<attribute name="taxonId" value="6239"/>
@@ -15,7 +15,7 @@
     <attribute name="species" value="elegans"/>
     <attribute name="name" value="Caenorhabditis elegans"/>
     <attribute name="shortName" value="C. elegans"/>
-    <attribute name="abbreviation" value="Cele"/>
+
 	</item>
 	<!--
 	<item id="0" class="" implements="Organism">
