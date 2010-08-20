@@ -46,7 +46,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private static final Logger LOG = Logger.getLogger(ModEncodeFeatureProcessor.class);
 
     private final String dataSetIdentifier;
-    private final List<Integer> dataList;
+    private final Set<Integer> dataList;
     private final String title;
     private final String scoreProtocolItemId;
 
@@ -95,7 +95,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
     public ModEncodeFeatureProcessor(ChadoDBConverter chadoDBConverter,
             String dataSetIdentifier, String dataSourceIdentifier,
-            List <Integer> dataList, String title, String scoreProtocolItemId) {
+            Set<Integer> dataList, String title, String scoreProtocolItemId) {
         super(chadoDBConverter);
         this.dataSetIdentifier = dataSetIdentifier;
         this.dataList = dataList;

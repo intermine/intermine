@@ -77,7 +77,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // -------------------
 
     // chado submission id to chado data_id
-    private Map<Integer, List<Integer>> submissionDataMap = new HashMap<Integer, List<Integer>>();
+    private Map<Integer, Set<Integer>> submissionDataMap = new HashMap<Integer, Set<Integer>>();
     // chado data id to chado submission id
     private Map<Integer, Integer> dataSubmissionMap = new HashMap<Integer, Integer>();
 
@@ -293,7 +293,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String submissionTitle = submissionDetails.title;
 
 
-            List<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
+            Set<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
             LOG.debug("DATA IDS " + chadoExperimentId + ": " + thisSubmissionDataIds.size());
 
             ModEncodeFeatureProcessor processor =
