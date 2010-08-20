@@ -2526,7 +2526,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         String ontologyId = devOntologies.get(ontologyName);
         if (ontologyId == null) {
             Item ontology = getChadoDBConverter().createItem("Ontology");
-            ontology.setAttribute("title", ontologyName);
+            ontology.setAttribute("name", ontologyName);
             getChadoDBConverter().store(ontology);
             ontologyId = ontology.getIdentifier();
             devOntologies.put(ontologyName, ontologyId);
