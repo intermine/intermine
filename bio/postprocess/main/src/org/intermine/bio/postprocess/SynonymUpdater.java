@@ -102,11 +102,6 @@ public class SynonymUpdater
                 new ContainsConstraint(synonymsRef, ConstraintOp.CONTAINS, synonymQC);
         cs.addConstraint(synonymConstraint);
 
-        QueryField isPrimaryQF = new QueryField(synonymQC, "isPrimary");
-        SimpleConstraint isPrimaryNotSetConstraint =
-            new SimpleConstraint(isPrimaryQF, ConstraintOp.IS_NULL);
-        cs.addConstraint(isPrimaryNotSetConstraint);
-
         q.setConstraint(cs);
 
         ObjectStore os = osw.getObjectStore();

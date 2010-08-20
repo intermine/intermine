@@ -101,11 +101,10 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
 
             String orgConstraint = "";
             if (taxonId != null) {
-                String species = or.getOrganismDataByTaxon(new Integer(taxonId)).getSpecies();
-                String genus = or.getOrganismDataByTaxon(new Integer(taxonId)).getGenus();
+                String abbrev = or.getOrganismDataByTaxon(new Integer(taxonId)).getAbbreviation();
                 query = "select organism_id"
                     + " from organism"
-                    + " where genus = \'" + genus + "\' and species = \'" + species + "\'";
+                    + " where abbreviation = \'" + abbrev + "\'";
                 LOG.info("QUERY: " + query);
                 stmt = conn.createStatement();
                 res = stmt.executeQuery(query);
@@ -117,7 +116,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
             }
 
             // fetch feature name for located genes
-            query = "select distinct o.species, o.genus, f.uniquename, f.name"
+            query = "select distinct o.abbreviation, f.uniquename, f.name"
                 + " from feature f, featureloc l, organism o"
                 + " where f.organism_id = o.organism_id"
                 + " and f.is_obsolete = false"
@@ -131,9 +130,8 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
             while (res.next()) {
                 String uniquename = res.getString("uniquename");
                 String name = res.getString("name");
-                String species = res.getString("species");
-                String genus = res.getString("genus");
-                String taxonId = "" + or.getOrganismDataByGenusSpecies(genus, species).getTaxonId();
+                String organism = res.getString("abbreviation");
+                String taxonId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
                 resolver.addMainIds(taxonId, uniquename, Collections.singleton(name));
                 i++;
             }
@@ -141,7 +139,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
             stmt.close();
 
             // fetch gene synonyms
-            query = "select distinct o.species, o.genus, f.uniquename, s.name, "
+            query = "select distinct o.abbreviation, f.uniquename, s.name, "
                 + " fs.is_current, c.name as type"
                 + " from feature f, feature_synonym fs, synonym s,"
                 + " organism o, cvterm c"
@@ -159,9 +157,8 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
             while (res.next()) {
                 String uniquename = res.getString("uniquename");
                 String synonym = res.getString("name");
-                String species = res.getString("species");
-                String genus = res.getString("genus");
-                String taxonId = "" + or.getOrganismDataByGenusSpecies(genus, species).getTaxonId();
+                String organism = res.getString("abbreviation");
+                String taxonId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
                 Boolean isCurrent = res.getBoolean("is_current");
                 String type = res.getString("type");
                 if (isCurrent && type.equals("symbol")) {
