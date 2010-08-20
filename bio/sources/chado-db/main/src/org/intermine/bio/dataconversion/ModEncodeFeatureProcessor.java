@@ -46,7 +46,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private static final Logger LOG = Logger.getLogger(ModEncodeFeatureProcessor.class);
 
     private final String dataSetIdentifier;
-    private final Set<Integer> dataList;
+    private final List<Integer> dataList;
     private final String title;
     private final String scoreProtocolItemId;
 
@@ -95,7 +95,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
     public ModEncodeFeatureProcessor(ChadoDBConverter chadoDBConverter,
             String dataSetIdentifier, String dataSourceIdentifier,
-            Set<Integer> dataList, String title, String scoreProtocolItemId) {
+            List <Integer> dataList, String title, String scoreProtocolItemId) {
         super(chadoDBConverter);
         this.dataSetIdentifier = dataSetIdentifier;
         this.dataList = dataList;
@@ -114,7 +114,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         commonFeatureInterMineTypes.add("CDS");
     }
 
-    /**
+	/**
      * Get a list of the chado/so types of the LocatedSequenceFeatures we wish to load.  The list
      * will not include chromosome-like features.
      * @return the list of features

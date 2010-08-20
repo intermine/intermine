@@ -77,7 +77,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // -------------------
 
     // chado submission id to chado data_id
-    private Map<Integer, Set<Integer>> submissionDataMap = new HashMap<Integer, Set<Integer>>();
+    private Map<Integer, List<Integer>> submissionDataMap = new HashMap<Integer, List<Integer>>();
     // chado data id to chado submission id
     private Map<Integer, Integer> dataSubmissionMap = new HashMap<Integer, Integer>();
 
@@ -100,7 +100,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // for experiment, the maps link the exp name (description!) with the identifiers...
     private Map<String, Integer> experimentIdMap = new HashMap<String, Integer>();
     private Map<String, String> experimentIdRefMap = new HashMap<String, String>();
-    private Map<String, Set<Integer>> expSubMap = new HashMap<String, Set<Integer>>();
+    private Map<String, List<Integer>> expSubMap = new HashMap<String, List<Integer>>();
 
     // ...we need a further map to link to submission
     private Map<Integer, String> submissionProjectMap = new HashMap<Integer, String>();
@@ -122,13 +122,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<Integer, String> appliedProtocolIdRefMap = new HashMap<Integer, String>();
     // list of firstAppliedProtocols, first level of the DAG linking
     // the applied protocols through the data (and giving the flow of data)
-    private Set<Integer> firstAppliedProtocols = new HashSet<Integer>();
+    private List<Integer> firstAppliedProtocols = new ArrayList<Integer>();
 
     // experimental factor maps
     // ------------------------
     private Map<String, Integer> eFactorIdMap = new HashMap<String, Integer>();
     private Map<String, String> eFactorIdRefMap = new HashMap<String, String>();
-    private Map<Integer, Set<String>> submissionEFactorMap = new HashMap<Integer, Set<String>>();
+    private Map<Integer, List<String>> submissionEFactorMap = new HashMap<Integer, List<String>>();
 
     // caches
     // ------
@@ -277,7 +277,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         // keep map of feature to submissions it has been referenced by, some features appear in
         // more than one submission
-        Map<Integer, Set<String>> subCollections = new HashMap<Integer, Set<String>>();
+        Map<Integer, List<String>> subCollections = new HashMap<Integer, List<String>>();
 
         // hold features that should only be processed once across all submissions, initialise
         // processor with this map each time
@@ -293,7 +293,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String submissionTitle = submissionDetails.title;
 
 
-            Set<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
+            List<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
             LOG.debug("DATA IDS " + chadoExperimentId + ": " + thisSubmissionDataIds.size());
 
             ModEncodeFeatureProcessor processor =
@@ -334,11 +334,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
 
-    private void storeSubmissionsCollections(Map<Integer, Set<String>> subCollections)
+    private void storeSubmissionsCollections(Map<Integer, List<String>> subCollections)
     throws ObjectStoreException {
-        for (Map.Entry<Integer, Set<String>> entry : subCollections.entrySet()) {
+        for (Map.Entry<Integer, List<String>> entry : subCollections.entrySet()) {
                 Integer featureObjectId = entry.getKey();
-                ReferenceList collection = new ReferenceList("submissions", new ArrayList<String>(entry.getValue()));
+                ReferenceList collection = new ReferenceList("submissions", entry.getValue());
             getChadoDBConverter().store(collection, featureObjectId);
         }
     }
@@ -353,7 +353,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
-    private void processDataFeatureTable(Connection connection, Map<Integer, Set<String>> subCols,
+    private void processDataFeatureTable(Connection connection, Map<Integer, List<String>> subCols,
                 Map<Integer, FeatureData> featureMap, Integer chadoExperimentId, String queryList)
         throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
@@ -369,9 +369,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
             Integer featureObjectId = featureData.getIntermineObjectId();
-            Set<String> subs = subCols.get(featureObjectId);
+            List<String> subs = subCols.get(featureObjectId);
             if (subs == null) {
-                subs = new HashSet<String>();
+                subs = new ArrayList<String>();
                 subCols.put(featureObjectId, subs);
             }
             subs.add(submissionItemId);
@@ -596,8 +596,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private void traverseDag()
         throws SQLException, ObjectStoreException {
-        Set<Integer> currentIterationAP = firstAppliedProtocols;
-        Set<Integer> nextIterationAP = new HashSet<Integer>();
+        List<Integer> currentIterationAP = firstAppliedProtocols;
+        List<Integer> nextIterationAP = new ArrayList<Integer>();
         Integer step = 1; // DAG level
 
         while (currentIterationAP.size() > 0) {
@@ -619,9 +619,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
-    private Set<Integer> buildADagLevel(Set<Integer> previousAppliedProtocols, Integer step)
+    private List<Integer> buildADagLevel(List<Integer> previousAppliedProtocols, Integer step)
         throws SQLException, ObjectStoreException {
-        Set<Integer> nextIterationProtocols = new HashSet<Integer>();
+        List<Integer> nextIterationProtocols = new ArrayList<Integer>();
         Iterator<Integer> pap = previousAppliedProtocols.iterator();
         while (pap.hasNext()) {
             List<Integer> outputs = new ArrayList<Integer>();
@@ -887,7 +887,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer submissionId = new Integer(res.getInt("experiment_id"));
             String name = cleanWikiLinks(res.getString("name"));
 
-            BioConverterUtil.addToSetMap(expSubMap, name, submissionId);
+            BioConverterUtil.addToListMap(expSubMap, name, submissionId);
             expProMap.put(name, submissionProjectMap.get(submissionId));
         }
         res.close();
@@ -1894,7 +1894,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             eFactorIdRefMap.put(efName, ef.getIdentifier());
         }
         // if pertinent to the current sub, add to the map for the references
-        BioConverterUtil.addToSetMap(submissionEFactorMap, current, efName);
+        BioConverterUtil.addToListMap(submissionEFactorMap, current, efName);
     }
 
 
@@ -2526,7 +2526,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         String ontologyId = devOntologies.get(ontologyName);
         if (ontologyId == null) {
             Item ontology = getChadoDBConverter().createItem("Ontology");
-            ontology.setAttribute("name", ontologyName);
+            ontology.setAttribute("title", ontologyName);
             getChadoDBConverter().store(ontology);
             ontologyId = ontology.getIdentifier();
             devOntologies.put(ontologyName, ontologyId);
@@ -2909,7 +2909,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         while (apId.hasNext()) {
             Integer thisAP = apId.next();
             AppliedProtocol ap = appliedProtocolMap.get(thisAP);
-            BioConverterUtil.addToSetMap(submissionProtocolMap, ap.submissionId, ap.protocolId);
+            BioConverterUtil.addToListMap(submissionProtocolMap, ap.submissionId, ap.protocolId);
         }
 
         Iterator<Integer> subs = submissionProtocolMap.keySet().iterator();
@@ -3058,7 +3058,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Iterator<String> exp = expSubMap.keySet().iterator();
         while (exp.hasNext()) {
             String thisExp = exp.next();
-            Set<Integer> subs = expSubMap.get(thisExp);
+            List<Integer> subs = expSubMap.get(thisExp);
             Iterator <Integer> s = subs.iterator();
             while (s.hasNext()) {
                 Integer thisSubId = s.next();
@@ -3080,7 +3080,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Iterator<Integer> subs = submissionEFactorMap.keySet().iterator();
         while (subs.hasNext()) {
             Integer thisSubmissionId = subs.next();
-            Set<String> eFactors = submissionEFactorMap.get(thisSubmissionId);
+            List<String> eFactors = submissionEFactorMap.get(thisSubmissionId);
 
             LOG.debug("EF REFS: " + thisSubmissionId + " (" + eFactors + ")");
             Iterator<String> ef = eFactors.iterator();
@@ -3252,7 +3252,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
 
     private void mapSubmissionAndData(Integer submissionId, Integer dataId) {
-        BioConverterUtil.addToSetMap(submissionDataMap, submissionId, dataId);
+        BioConverterUtil.addToListMap(submissionDataMap, submissionId, dataId);
         dataSubmissionMap.put(dataId, submissionId);
     }
 
