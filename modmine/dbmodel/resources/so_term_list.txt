@@ -40,6 +40,7 @@ polyA_sequence
 polyA_signal_sequence
 polyA_site
 processed_transcript
+protein_binding_site
 reagent
 region
 regulatory_region
