@@ -256,12 +256,12 @@ public class SourcePriorityComparator implements Comparator
             throw new IllegalArgumentException("Conflicting values for field "
                     + DynamicUtil.getFriendlyName(clazz) + "." + fieldName + " between "
                     + source1.getName() + " (value \""
-                    +  value1
+                    +  value1 + "\""
                     + (o1 != defObj ? " in database with ID " + ((InterMineObject) o1).getId()
-                        : "being stored") + ") and " + source2.getName() + " (value \""
+                        : " being stored") + ") and " + source2.getName() + " (value \""
                     + value2
                     + (o2 != defObj ? " in database with ID " + ((InterMineObject) o2).getId()
-                        : "being stored") + "). This field needs configuring in the "
+                        : " being stored") + "). This field needs configuring in the "
                     + iw.getModel().getName() + "_priorities.properties file");
         }
         throw new ClassCastException("Trying to compare priorities for objects that are not"
