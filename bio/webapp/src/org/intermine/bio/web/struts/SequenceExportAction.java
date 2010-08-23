@@ -92,7 +92,7 @@ public class SequenceExportAction extends InterMineAction
     }
 
     private BioSequence createBioSequence(InterMineObject obj)
-            throws IllegalSymbolException, IllegalAccessException,
+        throws IllegalSymbolException, IllegalAccessException,
             ChangeVetoException {
         BioSequence bioSequence;
         BioEntity bioEntity = (BioEntity) obj;

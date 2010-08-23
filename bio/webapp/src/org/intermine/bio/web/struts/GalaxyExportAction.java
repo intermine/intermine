@@ -57,7 +57,7 @@ import org.intermine.web.util.URLGenerator;
  */
 public class GalaxyExportAction extends InterMineAction
 {
-    private static final Logger LOG = Logger.getLogger(GalaxyExportAction.class);
+//    private static final Logger LOG = Logger.getLogger(GalaxyExportAction.class);
     @Override
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
