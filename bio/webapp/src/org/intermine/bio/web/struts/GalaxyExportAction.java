@@ -1,16 +1,29 @@
 package org.intermine.bio.web.struts;
 
+/*
+ * Copyright (C) 2002-2010 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -18,13 +31,13 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
-import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ExportException;
@@ -36,15 +49,6 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.web.util.URLGenerator;
 
-/*
- * Copyright (C) 2002-2010 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
 
 /**
  * Generate feature path query.
@@ -53,7 +57,7 @@ import org.intermine.web.util.URLGenerator;
  */
 public class GalaxyExportAction extends InterMineAction
 {
-//    private static final Logger LOG = Logger.getLogger(GalaxyExportAction.class);
+    private static final Logger LOG = Logger.getLogger(GalaxyExportAction.class);
     @Override
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
@@ -85,8 +89,11 @@ public class GalaxyExportAction extends InterMineAction
                 prefix, false);
         view = getFixedView(view);
 
-        // Reorder the view, place chr, start and end at the first three columns
+        // Reorder the view, move chr, start and end to the first three columns
         List<Path> newView = new ArrayList<Path>();
+        // TODO This is wrong!
+        // Find the index of chr, start and end in the view
+        // Do all the lsf have these 3 field in the default view???
         int chrIdx = -1;
         int startIdx = -1;
         int endIdx = -1;
@@ -123,8 +130,6 @@ public class GalaxyExportAction extends InterMineAction
 
 
         // Same function as ResultManipulater, reliable but slower
-        /**
-         *  Removed to GalaxyExportOptionsController
         Map<Integer, String> orgNameMap = new LinkedHashMap<Integer, String>();
 
         for (int i = 0; i < pt.getExactSize(); i++) {
@@ -149,21 +154,24 @@ public class GalaxyExportAction extends InterMineAction
 
             organism = Arrays.toString(orgNameMap.values().toArray());
         }
-        */
+
         // Write to Response
-        StringBuffer pathString = new StringBuffer();
-        pathString.append("|");
+        StringBuffer viewString = new StringBuffer();
+        viewString.append("|");
         for (Path path : newView) {
-            pathString.append(path.toStringNoConstraints());
-            pathString.append("|");
+            viewString.append(path.toStringNoConstraints());
+            viewString.append("|");
         }
 
         StringBuffer returnString = new StringBuffer();
         // URL>>>>>info>>>organism>>>>>genomeBuild
         returnString.append(stringUrl);
         returnString.append(">>>>>");
-        returnString.append(pathString);
-
+        returnString.append(viewString);
+        returnString.append(">>>>>");
+        returnString.append(organism);
+        returnString.append(">>>>>");
+        returnString.append(genomeBuild);
         out.println(returnString.toString());
 
         out.flush();
