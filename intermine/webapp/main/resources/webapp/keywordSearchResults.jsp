@@ -29,7 +29,7 @@
 		            <div class="overviewFacetContents">
 		            <ul>
 		                <c:forEach items="${facet.items}" var="facetItem">
-		                    <li>
+                            <li>
 		                        <a href="<c:url value="/keywordSearchResults.do">
 		                               <c:param name="searchTerm" value="${searchTerm}" />
 		                               <c:param name="searchBag" value="${searchBag}" />
@@ -207,8 +207,19 @@
 			                    <div class="facetHeader">Hits by ${facet.name}</div>
 			                    <div class="facetContents">
 			                    <ol>
-		                            <c:forEach items="${facet.items}" var="facetItem">
-		                                <li>
+		                            <c:forEach items="${facet.items}" var="facetItem" varStatus="facetItemStat">
+		                                <c:if test="${facetItemStat.index == 10}">
+			                                  <li style="border-bottom: 1px dashed #fff; text-align: right;">
+			                                      <a href="javascript:{}" onclick="jQuery(this).parent('li').next('ul').slideToggle('fast');">
+			                                         ... and <b>${fn:length(facet.items) - facetItemStat.index }</b> more values &raquo;
+			                                      </a>
+			                                  </li>
+			                              </ul>
+			                              
+			                              <ul style="display: none;">
+			                            </c:if>
+                        
+                                        <li>
 		                                    <a href="<c:url value="/keywordSearchResults.do">
 		                                           <c:param name="searchTerm" value="${searchTerm}" />
 		                                           <c:param name="searchBag" value="${searchBag}" />
