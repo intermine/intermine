@@ -1046,12 +1046,12 @@ public class AjaxServices
                 }
 
                 //http://blog.flymine.org/2009/08/
-                WebContext ctx = WebContextFactory.get();
-                ServletContext servletContext = ctx.getServletContext();
-                Properties properties = SessionMethods.getWebProperties(servletContext);
+//                WebContext ctx = WebContextFactory.get();
+//                ServletContext servletContext = ctx.getServletContext();
+//                Properties properties = SessionMethods.getWebProperties(servletContext);
 
-                String url = properties.getProperty("project.news") + "/" + year + "/"
-                    + monthString;
+                String url = syndEntry.getLink();
+//                properties.getProperty("project.news") + "/" + year + "/"   + monthString;
 
                 html.append("<li>");
                 html.append("<strong>");
@@ -1059,8 +1059,8 @@ public class AjaxServices
                 html.append(syndEntry.getTitle());
                 html.append("</a>");
                 html.append("</strong>");
-                html.append(" - <em>" + dayMonth + " " + year + "</em><br/>");
-//                html.append("- <em>" + syndEntry.getPublishedDate().toString() + "</em><br/>");
+//                html.append(" - <em>" + dayMonth + " " + year + "</em><br/>");
+                html.append("- <em>" + syndEntry.getPublishedDate().toString() + "</em><br/>");
                 html.append(syndEntry.getDescription().getValue());
                 html.append("</li>");
                 counter++;

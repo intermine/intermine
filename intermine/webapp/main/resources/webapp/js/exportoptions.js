@@ -17,16 +17,16 @@ function removePathElement(path, pathTitle) {
 
 function addSelectedPath() {
     //var value = document.getElementById("columnToAdd").value;
-    
+
     var index = document.getElementById('columnToAdd').selectedIndex;
     var child = document.getElementById('columnToAdd')[index];
     var path = child.value;
     var pathTitle = child.text;
-    
+
     addPathElement(path, pathTitle);
-    
+
     document.getElementById('columnToAdd').removeChild(child);
-    
+
 }
 
 function addSelectItem(path, pathTitle) {
@@ -38,7 +38,7 @@ function addSelectItem(path, pathTitle) {
 }
 
 // Functions for creating path element
-// It cannot by done by innerHTML, because IE doesn't draw img element 
+// It cannot by done by innerHTML, because IE doesn't draw img element
 // contained in innerHTML
 //=================================================
 
@@ -52,7 +52,7 @@ function addPathElement(path, pathTitle) {
 }
 
 function createPathDiv(path, pathTitle)  {
-    var div = document.createElement('div');    
+    var div = document.createElement('div');
     div.setAttribute('class', 'viewpath');
     div.innerHTML = pathTitle;
     div.appendChild(createLink(path, pathTitle));
@@ -68,7 +68,7 @@ function createLink(path, pathTitle) {
 }
 
 function createImg() {
-    var img = document.createElement('img');    
+    var img = document.createElement('img');
     img.setAttribute('src', 'images/cross.gif');
     img.setAttribute('align', 'top');
     img.setAttribute('border', '0px');
