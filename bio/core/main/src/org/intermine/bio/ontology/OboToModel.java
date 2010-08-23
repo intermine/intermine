@@ -88,24 +88,24 @@ public class OboToModel
     public static void createAndWriteModel(String oboName, String oboFilename, String packageName,
             File termsFile, File outputFile) {
 
-        OboToModelMapping oboToModelMapping = new OboToModelMapping(termsFile, packageName);
+        OboToModelProcessor oboToModelProcessor = new OboToModelProcessor(termsFile, packageName);
 
         // parse oboterms, delete terms not in list
         String msg = "Starting OboToModel conversion from " + oboFilename + " to "
-            + outputFile.getPath() + ".  Filtering on " + oboToModelMapping.getTermsCount()
+            + outputFile.getPath() + ".  Filtering on " + oboToModelProcessor.getTermsCount()
             + " obo terms from " + termsFile.getPath();
         System.out .println(msg);
-        parseOboTerms(oboToModelMapping, oboFilename, termsFile.getName());
+        parseOboTerms(oboToModelProcessor, oboFilename, termsFile.getName());
 
         // classes to go into the final model
         LinkedHashSet<ClassDescriptor> clds = new LinkedHashSet<ClassDescriptor>();
 
         // process each oboterm - add parent and collections
-        for (String childIdentifier : oboToModelMapping.getOboTermIdentifiers()) {
+        for (String childIdentifier : oboToModelProcessor.getOboTermIdentifiers()) {
             // is_a
-            String parents = processParents(oboToModelMapping, childIdentifier);
+            String parents = processParents(oboToModelProcessor, childIdentifier);
             // part_of
-            ClassDescriptor cd = processRefsAndColls(oboToModelMapping, parents, childIdentifier);
+            ClassDescriptor cd = processRefsAndColls(oboToModelProcessor, parents, childIdentifier);
             clds.add(cd);
         }
 
@@ -125,7 +125,7 @@ public class OboToModel
         Model model = null;
         PrintWriter out = null;
         try {
-            model = new Model(oboName, oboToModelMapping.getNamespace(), sortedClds);
+            model = new Model(oboName, oboToModelProcessor.getNamespace(), sortedClds);
             out = new PrintWriter(new BufferedWriter(new FileWriter(outputFile)));
         } catch (MetaDataException e) {
             throw new RuntimeException("Invalid model", e);
@@ -138,7 +138,7 @@ public class OboToModel
         System.out .println("Wrote " + outputFile.getPath());
     }
 
-    private static String processParents(OboToModelMapping oboToModelMapping,
+    private static String processParents(OboToModelProcessor oboToModelMapping,
             String childIdentifier) {
         Set<String> parents = oboToModelMapping.getParents(childIdentifier);
         Set<String> parentsInModel = new HashSet<String>();
@@ -159,7 +159,7 @@ public class OboToModel
         return parentList;
     }
 
-    private static ClassDescriptor processRefsAndColls(OboToModelMapping oboToModelMapping,
+    private static ClassDescriptor processRefsAndColls(OboToModelProcessor oboToModelMapping,
             String parents, String childIdentifier) {
         Set<AttributeDescriptor> fakeAttributes = Collections.emptySet();
         Set<ReferenceDescriptor> references = new HashSet<ReferenceDescriptor>();
@@ -239,7 +239,7 @@ public class OboToModel
         return reverseReference;
     }
 
-    private static void parseOboTerms(OboToModelMapping oboToModelMapping, String oboFilename,
+    private static void parseOboTerms(OboToModelProcessor oboToModelMapping, String oboFilename,
             String termsFileName) {
         File oboFile = new File(oboFilename);
 

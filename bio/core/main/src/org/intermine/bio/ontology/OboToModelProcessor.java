@@ -31,7 +31,7 @@ import org.intermine.util.StringUtil;
  *
  * @author Julie Sullivan
  */
-public class OboToModelMapping
+public class OboToModelProcessor
 {
     private String namespace;
     private Map<String, Set<String>> childToParents, parentToChildren, partOfs;
@@ -40,9 +40,9 @@ public class OboToModelMapping
     // partOf relationships that are many-to-many.  default is many-to-one
     private Map<String, Set<String>> manyToManyPartOfs = new HashMap<String, Set<String>>();
 
-    // list of classes to load into the model.  OboOntology is an object that contains the SO term
+    // list of classes to load into the model.  OboTerm is an object that contains the SO term
     // value eg. sequence_feature and the Java name, eg. org.intermine.bio.SequenceFeature
-    private Map<String, OboOntology> validOboTerms = new HashMap<String, OboOntology>();
+    private Map<String, OboTerm> validOboTerms = new HashMap<String, OboTerm>();
 
     // contains ALL non-obsolete terms.  key = sequence_feature, value = SO:001
     private Map<String, String> oboNameToIdentifier = new HashMap<String, String>();
@@ -65,7 +65,7 @@ public class OboToModelMapping
      * @param termsFile file containing list of SO terms to filter on
      * @param namespace the namespace to use in generating URI-based identifiers
      */
-    public OboToModelMapping(File termsFile, String namespace) {
+    public OboToModelProcessor(File termsFile, String namespace) {
         this.namespace = namespace;
         processTermFile(termsFile);
     }
@@ -141,9 +141,9 @@ public class OboToModelMapping
     }
 
     private String getIdentifier(String name) {
-    	return oboNameToIdentifier.get(name);
+        return oboNameToIdentifier.get(name);
     }
-    
+
     /**
      * Test whether a term is in the list the user provided.
      *
@@ -151,11 +151,11 @@ public class OboToModelMapping
      * @return false if oboterm isn't in list user provided, true if term in list or list empty
      */
     private boolean validTerm(String identifier) {
-        OboOntology o = validOboTerms.get(identifier);
+        OboTerm o = validOboTerms.get(identifier);
         if (o == null) {
             return false;
         }
-        String oboName = o.getOboTermName();
+        String oboName = o.getName();
         if (termsToKeep.isEmpty() || termsToKeep.contains(oboName)
                 || SEQUENCE_FEATURE.equals(identifier)) {
             return true;
@@ -181,11 +181,11 @@ public class OboToModelMapping
      * @return name of term, eg. sequence_feature
      */
     public String getName(String identifier) {
-        OboOntology o = validOboTerms.get(identifier);
+        OboTerm o = validOboTerms.get(identifier);
         if (o == null) {
             return null;
         }
-        return o.getOboTermName();
+        return o.getName();
     }
 
     /**
@@ -221,7 +221,7 @@ public class OboToModelMapping
                 BioConverterUtil.addToSetMap(childToParents, child, parent);
             }
         }
-        
+
         // manually add the part of relationships in config
         addPartOfsFromConfig();
 
@@ -247,16 +247,16 @@ public class OboToModelMapping
         removeRedundantCollections();
 
     }
-    
+
     private void addPartOfsFromConfig() {
-    	for (Map.Entry<String, Set<String>> entry : manyToManyPartOfs.entrySet()) {
-    		String child = getIdentifier(entry.getKey());
-    		Set<String> parents = entry.getValue();
-    		for (String parent : parents) {
-    			parent = getIdentifier(parent);
-    			assignPartOf(parent, child);
-    		}
-    	}
+        for (Map.Entry<String, Set<String>> entry : manyToManyPartOfs.entrySet()) {
+            String child = getIdentifier(entry.getKey());
+            Set<String> parents = entry.getValue();
+            for (String parent : parents) {
+                parent = getIdentifier(parent);
+                assignPartOf(parent, child);
+            }
+        }
     }
 
     // set many-to-one relationships
@@ -314,7 +314,7 @@ public class OboToModelMapping
 
     private void trimModel() {
 
-        Map<String, OboOntology> oboTermsCopy = new HashMap<String, OboOntology>(validOboTerms);
+        Map<String, OboTerm> oboTermsCopy = new HashMap<String, OboTerm>(validOboTerms);
 
         System.out .println("Total terms: " + validOboTerms.size());
 
@@ -324,7 +324,7 @@ public class OboToModelMapping
 
         System.out .println("Total terms, post-pruning: " + validOboTerms.size());
 
-        oboTermsCopy = new HashMap<String, OboOntology>(validOboTerms);
+        oboTermsCopy = new HashMap<String, OboTerm>(validOboTerms);
 
         for (String oboTermIdentifier : oboTermsCopy.keySet()) {
             if (!validTerm(oboTermIdentifier)) {
@@ -427,31 +427,33 @@ public class OboToModelMapping
     // make sure collection is at the highest level term
     // eg. Gene.transcripts should mean that Gene.mRNAs never happens
     private void removeRedundantCollections() {
-    	Map<String, Set<String>> invalidPartOfs = new HashMap<String, Set<String>>();
+        Map<String, Set<String>> invalidPartOfs = new HashMap<String, Set<String>>();
         for (String parent : validOboTerms.keySet()) {
             Set<String> refs = reversePartOfs.get(parent);
             if (refs != null) {
                 for (String refName : refs) {
-                	removeRelationshipFromChildren(reversePartOfs, partOfs, invalidPartOfs, parent, refName);
+                    removeRelationshipFromChildren(reversePartOfs, partOfs, invalidPartOfs, parent,
+                            refName);
                 }
             }
             Set<String> collections = partOfs.get(parent);
             if (collections != null) {
                 for (String coll : collections) {
-                    removeRelationshipFromChildren(partOfs, reversePartOfs, invalidPartOfs, parent, coll);
+                    removeRelationshipFromChildren(partOfs, reversePartOfs, invalidPartOfs, parent,
+                            coll);
                 }
             }
         }
-        
+
         if (!invalidPartOfs.isEmpty()) {
-        	for (Map.Entry<String, Set<String>> entry : invalidPartOfs.entrySet()) {
-        		String parent = entry.getKey();
-        		Set<String> collections = entry.getValue();
-        		for (String collectionName : collections) {
-        			removeRelationship(partOfs, reversePartOfs, parent, collectionName);
-        			removeRelationship(reversePartOfs, partOfs, parent, collectionName);
-        		}
-        	}
+            for (Map.Entry<String, Set<String>> entry : invalidPartOfs.entrySet()) {
+                String parent = entry.getKey();
+                Set<String> collections = entry.getValue();
+                for (String collectionName : collections) {
+                    removeRelationship(partOfs, reversePartOfs, parent, collectionName);
+                    removeRelationship(reversePartOfs, partOfs, parent, collectionName);
+                }
+            }
         }
     }
 
@@ -469,31 +471,31 @@ public class OboToModelMapping
      * @collectioName eg. CDSs
      */
     private Map<String, Set<String>> removeRelationshipFromChildren(Map<String, Set<String>> map1,
-            Map<String, Set<String>> map2, Map<String, Set<String>> invalidPartOfs, String parent, 
+            Map<String, Set<String>> map2, Map<String, Set<String>> invalidPartOfs, String parent,
             String collectionName) {
         Set<String> children = parentToChildren.get(parent);
-        
+
         if (children == null) {
             return Collections.emptyMap();
         }
-        
+
         for (String child : children) {
-        	
-        	// this relationship is in config, so we can't delete
-        	// remove parent relationship instead
-        	if (isManyToMany(collectionName, child)) {
-        		BioConverterUtil.addToSetMap(invalidPartOfs, parent, collectionName);
-        		continue;
-        	}
-        	removeRelationship(map1, map2, child, collectionName);
+
+            // this relationship is in config, so we can't delete
+            // remove parent relationship instead
+            if (isManyToMany(collectionName, child)) {
+                BioConverterUtil.addToSetMap(invalidPartOfs, parent, collectionName);
+                continue;
+            }
+            removeRelationship(map1, map2, child, collectionName);
 
             removeRelationshipFromChildren(map1, map2, invalidPartOfs, child, collectionName);
         }
         return invalidPartOfs;
     }
-    
+
     private void removeRelationship(Map<String, Set<String>> map1,
-            Map<String, Set<String>> map2, String child, 
+            Map<String, Set<String>> map2, String child,
             String collectionName) {
         // remove collection from both ends
         removeCollection(map1, child, collectionName);
@@ -587,7 +589,7 @@ public class OboToModelMapping
                 String identifier = term.getId().trim();
                 String name = term.getName().trim();
                 if (!StringUtils.isEmpty(identifier) && !StringUtils.isEmpty(name)) {
-                    OboOntology c = new OboOntology(identifier, name);
+                    OboTerm c = new OboTerm(identifier, name);
                     validOboTerms.put(identifier, c);
                     oboNameToIdentifier.put(name, identifier);
                 }
@@ -650,41 +652,5 @@ public class OboToModelMapping
         }
         termsToKeep = terms;
         manyToManyPartOfs = manyToMany;
-    }
-
-    /**
-     * Represents a class/oboterm in the Model.
-     *
-     * @author julie sullivan
-     */
-    public class OboOntology
-    {
-        private String oboTermIdentifier, oboTermName;
-
-        /**
-         * The constructor.
-         *
-         * @param oboTermIdentifier the sequence ontology term identifier, eg. SO:001
-         * @param oboTermName name of so term, eg. sequence_feature
-         */
-        protected OboOntology(String oboTermIdentifier, String oboTermName) {
-            super();
-            this.oboTermIdentifier = oboTermIdentifier;
-            this.oboTermName = oboTermName;
-        }
-
-        /**
-         * @return the identifier, eg. SO:001
-         */
-        protected String getOboTermIdentifier() {
-            return oboTermIdentifier;
-        }
-
-        /**
-         * @return obo term name, eg. sequence_feature
-         */
-        protected String getOboTermName() {
-            return oboTermName;
-        }
     }
 }
