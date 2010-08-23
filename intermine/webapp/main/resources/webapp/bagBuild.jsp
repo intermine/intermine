@@ -67,10 +67,7 @@
     <html:form action="/buildBag" method="post" enctype="multipart/form-data" >
       <p><fmt:message key="bagBuild.bagFormText1"/></p>
       <br/>
-      <ul>
-        <li>Separate identifiers by a <strong>comma</strong>, <strong>space</strong>, <strong>tab</strong> or <strong>new line</strong>.</li>
-        <li>Qualify any identifiers that contain whitespace with double quotes like so:  "even skipped".</li>
-      </ul>
+      <p><fmt:message key="bagBuild.helpText"/></p>
       <br/>
 <ol id="buildbaglist">
   <li>

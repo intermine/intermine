@@ -15,7 +15,9 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -33,6 +35,7 @@ import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -46,7 +49,6 @@ import org.intermine.web.logic.session.SessionMethods;
 public class BuildBagAction extends InterMineAction
 {
     private static final int READ_AHEAD_CHARS = 10000;
-    private static final String BAG_UPLOAD_DELIMITER = "\n\t, ";
 
     /**
      * Action for creating a bag of InterMineObjects or Strings from identifiers in text field.
@@ -63,6 +65,9 @@ public class BuildBagAction extends InterMineAction
             HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ServletContext servletContext = request.getSession().getServletContext();
+        Properties webProperties
+            = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         BuildBagForm buildBagForm = (BuildBagForm) form;
 
         String type = buildBagForm.getType();
@@ -136,7 +141,9 @@ public class BuildBagAction extends InterMineAction
         List<String> list = new ArrayList<String>();
         int elementCount = 0;
         while ((thisLine = reader.readLine()) != null) {
-            StrMatcher matcher = StrMatcher.charSetMatcher(BAG_UPLOAD_DELIMITER);
+            // append whitespace to valid delimiters
+            String bagUploadDelims = (String) webProperties.get("list.upload.delimiters") + " ";
+            StrMatcher matcher = StrMatcher.charSetMatcher(bagUploadDelims);
             StrTokenizer st = new StrTokenizer(thisLine, matcher, StrMatcher.doubleQuoteMatcher());
             while (st.hasNext()) {
                 String token = st.nextToken();
