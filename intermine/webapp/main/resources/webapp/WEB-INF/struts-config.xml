@@ -7,7 +7,6 @@
   <form-beans>
     <form-bean name="loginForm" type="org.intermine.web.struts.LoginForm"/>
     <form-bean name="templateForm" type="org.intermine.web.struts.TemplateForm"/>
-    <form-bean name="quickSearchForm" type="org.intermine.web.struts.QuickSearchForm"/>
     <form-bean name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryForm"/>
     <form-bean name="modifyBagForm" type="org.intermine.web.struts.ModifyBagForm"/>
     <form-bean name="modifyTemplateForm" type="org.intermine.web.struts.ModifyTemplateForm"/>
@@ -260,13 +259,6 @@
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
-    <action path="/quickSearchAction" name="quickSearchForm" type="org.intermine.web.struts.QuickSearchAction" input="begin">
-      <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
-      <forward name="begin" redirect="true" path="/begin.do"/>
-      <forward name="templates" path="templates.page"/>
-      <forward name="bags" path="/bag.do"/>
-      <forward name="error" redirect="true" path="/begin.do"/>
-    </action>
     <action path="/contactAction" name="contactForm" type="org.intermine.web.struts.ContactAction" scope="request" input="contact">
       <forward name="contact" path="contact.page"/>
     </action>
@@ -378,8 +370,6 @@
     </action>
     <action path="/initInlineTagEditor" type="org.intermine.web.struts.InlineTagEditorController">
     </action>
-    <action path="/initQuickSearch" type="org.intermine.web.struts.QuickSearchController">
-    </action>
     <action path="/initTemplateList" type="org.intermine.web.struts.TemplateListController">
     </action>
     <action path="/initObjectDetailsTemplateTable" type="org.intermine.web.struts.ObjectDetailsTemplateController">
@@ -439,9 +429,9 @@
 
     <action path="/initObjectView" type="org.intermine.web.struts.ObjectViewController"/>
 
-	        
-	<action path="/initKeywordSearchResults" type="org.intermine.web.struts.KeywordSearchResultsController" />
-	<action path="/keywordSearchResults" forward="keywordsearchresults.page" />
+
+  <action path="/initKeywordSearchResults" type="org.intermine.web.struts.KeywordSearchResultsController" />
+  <action path="/keywordSearchResults" forward="keywordsearchresults.page" />
 
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
