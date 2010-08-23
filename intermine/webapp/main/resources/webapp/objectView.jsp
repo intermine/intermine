@@ -26,7 +26,7 @@
 
             <c:choose>
                <%-- IMAGE --%>
-               <c:when test="${!empty fieldName && resultElement.type == 'Image')}">
+               <c:when test="${!empty fieldName && resultElement.type == 'Image'}">
                   <img src="${object}"/>
                 </c:when>
 
