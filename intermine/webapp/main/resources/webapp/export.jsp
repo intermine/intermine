@@ -26,7 +26,7 @@
   <br/>
 </c:if>
 
-<html:link action="/exportOptions?table=${tableName}&amp;type=galaxy&amp;exportAsBED=${exportAsBED}&amp;trail=${queryTrailLink}|${tableName}">
+<html:link action="/exportOptions?table=${tableName}&amp;type=galaxy&amp;trail=${queryTrailLink}|${tableName}">
   <fmt:message key="exporter.galaxy.description"/>
 </html:link>
 <br/>

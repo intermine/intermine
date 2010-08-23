@@ -863,8 +863,9 @@ public class KeywordSearch
 
                         for (String className : ignoreClassNames) {
                             ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
-
-                            addCldToIgnored(ignoredClasses, cld);
+                            if (cld != null) {
+                                addCldToIgnored(ignoredClasses, cld);
+                            }
                         }
                     } else if (key.startsWith("index.references.")) {
                         String classToIndex = key.substring("index.references.".length());
@@ -1067,7 +1068,6 @@ public class KeywordSearch
 
                         try {
                             ZipEntry entry = new ZipEntry(files[i]);
-                            entry.setSize(file.length());
                             zipOut.putNextEntry(entry);
 
                             int count;

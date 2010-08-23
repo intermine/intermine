@@ -88,8 +88,7 @@ public class ExportController extends TilesAction
             }
         }
         request.setAttribute("exporters", usableExporters);
+
         return null;
     }
-
-
 }

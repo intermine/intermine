@@ -110,9 +110,12 @@ public class SpanUploadOptionsController extends TilesAction
             orgSet.addAll(orgs);
 
             // Build Experiment(name) - FeatureTypes Map
-            if (exp.getFeatureCounts() != null) {
-                expFTMap.put(exp.getName(), new ArrayList<String>(exp
-                        .getFeatureCounts().keySet()));
+            if (exp.getFeatureCountsRecords() != null) {
+                Set<String> ftSet = new LinkedHashSet<String>();
+                for (FeatureCountsRecord fcr : exp.getFeatureCountsRecords()) {
+                    ftSet.add(fcr.getFeatureType());
+                }
+                expFTMap.put(exp.getName(), new ArrayList<String>(ftSet));
                 expWithFtSet.add(exp);
 
             }
