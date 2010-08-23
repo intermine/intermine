@@ -20,16 +20,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.results.WebTable;
+import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
@@ -54,6 +58,7 @@ public class GalaxyController extends TilesAction
         String  tableName = (String) request.getAttribute("table");
         PagedTable pt = SessionMethods.getResultsTable(session, tableName);
 
+        WebTable wt = pt.getWebTable();
         PathQuery query = pt.getWebTable().getPathQuery();
 
         // TODO the query will be NULL if the query just ran isn't on the session, eg. a quicksearch
@@ -153,5 +158,19 @@ public class GalaxyController extends TilesAction
         }
 
         return null;
+    }
+
+    /**
+     *
+     * @param pt PagedTable in the session
+     * @return
+     */
+    private boolean canExportAsBED (PagedTable pt) {
+        return ExportHelper.getClassIndex(ExportHelper.getColumnClasses(pt),
+                LocatedSequenceFeature.class) >= 0;
+    }
+
+    private void exportAsBED () {
+
     }
 }

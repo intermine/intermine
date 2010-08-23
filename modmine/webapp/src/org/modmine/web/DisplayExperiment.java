@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +44,8 @@ public class DisplayExperiment
     private String description = null;
     private Set<String> factorTypes = new TreeSet<String>(new FactorTypeComparator());
     private Set<String> organisms = new HashSet<String>();
-    private Map<String, Long> featureCounts = new HashMap<String, Long>();
+    private Set<FeatureCountsRecord> featureCountsRecords =
+        new LinkedHashSet<FeatureCountsRecord>();
     private ObjectStore os;
     private String experimentType;
     private Set<String> labs = new TreeSet<String>();
@@ -53,13 +55,13 @@ public class DisplayExperiment
      * Construct with objects from database and feature counts summary map.
      * @param exp the experiment
      * @param project the experiment's project
-     * @param featureCounts a map of feature type to count
+     * @param featureCountsRecords a set of FeatureCountsRecord
      * @param os the objectstore
      */
-    public DisplayExperiment(Experiment exp, Project project, Map<String, Long> featureCounts,
-            ObjectStore os) {
+    public DisplayExperiment(Experiment exp, Project project,
+            Set<FeatureCountsRecord> featureCountsRecords, ObjectStore os) {
         initialise(exp, project);
-        this.featureCounts = featureCounts;
+        this.featureCountsRecords = featureCountsRecords;
         this.os = os;
     }
 
@@ -107,35 +109,35 @@ public class DisplayExperiment
 
             if (ft1.equals(ANTIBODYTARGET) &&  ft2.equals(ANTIBODYTARGET)) {
                 return 0;
-    		} else if (ft1.equals(ANTIBODYTARGET) || ft2.equals(ANTIBODYTARGET)) {
-        		if (ft1.equals(ANTIBODYTARGET)) {
-        			return -1;
-        		} else {
-        			return 1;
-        		}
-        	}
-    		if (ft1.equals(DEVELOPMENTALSTAGE) && ft2.equals(DEVELOPMENTALSTAGE)) {
-    			return 0;
-    		} else if (ft1.equals(DEVELOPMENTALSTAGE) || ft2.equals(DEVELOPMENTALSTAGE)) {
-        		if (ft1.equals(DEVELOPMENTALSTAGE)) {
-        			return -1;
-        		} else {
-        			return 1;
-        		}
-        	}
-        	
-    		if (ft1.equals(ANTIBODY) && ft2.equals(ANTIBODY)) {
-    			return 0;
-    		} else if (ft1.equals(ANTIBODY) || ft2.equals(ANTIBODY)) {
-        		if (ft1.equals(ANTIBODY)) {
-        			return -1;
-        		} else {
-        			return 1;
-        		}
-        	}
-        	
-    		return ft1.compareTo(ft2);
-    	}
+            } else if (ft1.equals(ANTIBODYTARGET) || ft2.equals(ANTIBODYTARGET)) {
+                if (ft1.equals(ANTIBODYTARGET)) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+            if (ft1.equals(DEVELOPMENTALSTAGE) && ft2.equals(DEVELOPMENTALSTAGE)) {
+                return 0;
+            } else if (ft1.equals(DEVELOPMENTALSTAGE) || ft2.equals(DEVELOPMENTALSTAGE)) {
+                if (ft1.equals(DEVELOPMENTALSTAGE)) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+
+            if (ft1.equals(ANTIBODY) && ft2.equals(ANTIBODY)) {
+                return 0;
+            } else if (ft1.equals(ANTIBODY) || ft2.equals(ANTIBODY)) {
+                if (ft1.equals(ANTIBODY)) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+
+            return ft1.compareTo(ft2);
+        }
     }
 
     /**
@@ -228,10 +230,10 @@ public class DisplayExperiment
     }
 
     /**
-     * @return the featureCounts
+     * @return the featureCountsRecords
      */
-    public Map<String, Long> getFeatureCounts() {
-        return featureCounts;
+    public Set<FeatureCountsRecord> getFeatureCountsRecords() {
+        return featureCountsRecords;
     }
 
     /**

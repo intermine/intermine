@@ -205,7 +205,7 @@ SOURCES=modmine-static,"$PLIST"
 else
 SOURCES=modmine-static,modencode-metadata
 fi
-echo $SOURCES
+ echo $SOURCES
 
 echo
 echo "================================="
@@ -708,7 +708,9 @@ echo
 exit;
 fi
 
-echo "$sub loaded in chado"
+echo -n "$sub loaded in chado -- "
+date "+%d%b%Y %H:%M"
+
 
 }
 
@@ -864,6 +866,7 @@ echo; echo "Quick restart of the build (using current db).."
 elif [ $META = "y" ]
 then
 # new build. static, metadata, organism
+echo "SOURCES: $SOURCES"
 ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
 || { printf "%b" "\n modMine build (only metadata) FAILED.\n" ; exit 1 ; }
 cd postprocess
