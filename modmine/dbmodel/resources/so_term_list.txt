@@ -42,7 +42,6 @@ polyA_site
 processed_transcript
 protein_binding_site
 reagent
-region
 regulatory_region
 repeat_region
 rRNA
@@ -62,7 +61,6 @@ three_prime_RST
 three_prime_UST
 three_prime_UTR
 transcript
-transcript_region
 transcription_end_site
 transposable_element
 transposable_element_gene
@@ -75,4 +73,6 @@ UTR
 exon.transcript 
 intron.transcript 
 UTR.transcript 
-
+SL1AcceptorSite.transcript
+SL2AcceptorSite.transcript
+TSS.transcript
