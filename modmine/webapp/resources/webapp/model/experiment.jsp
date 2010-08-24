@@ -123,7 +123,9 @@ Expression Levels
 
       <c:if test="${!empty fc.uniqueFeatureCounts && fc.uniqueFeatureCounts != fc.featureCounts}">
       <br>
+      <i style="font-size:0.9em;">
       This represents ${fc.uniqueFeatureCounts} unique ${fc.featureType}s
+      </i>
       </c:if>
             </td>
 

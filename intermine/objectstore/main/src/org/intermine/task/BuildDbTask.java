@@ -50,12 +50,14 @@ public class BuildDbTask extends Task
     protected Database database;
     protected String databaseAlias;
     protected String schemaFile;
+    private String os;
 
     /**
      * Sets the objectstore
      * @param os String used to identify objectstore and therefore database
      */
     public void setOsName(String os) {
+        this.os = os;
         try {
             this.databaseAlias = PropertiesUtil.getProperties().getProperty(os + ".db");
             this.database = DatabaseFactory.getDatabase(databaseAlias);
@@ -87,8 +89,11 @@ public class BuildDbTask extends Task
         if (tempDir == null) {
             throw new BuildException("tempDir attribute is not set");
         }
+        if (databaseAlias == null) {
+            throw new BuildException("Could not find database attribute for: '" + os + ".db'");
+        }
         if (database == null) {
-            throw new BuildException("database attribute is not set or database is not present");
+            throw new BuildException("Could not access database: " + databaseAlias);
         }
         if (schemaFile == null) {
             throw new BuildException("schemaFile attribute is not set");

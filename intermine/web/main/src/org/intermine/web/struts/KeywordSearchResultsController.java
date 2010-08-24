@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
@@ -32,6 +34,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -124,11 +128,21 @@ public class KeywordSearchResultsController extends TilesAction
         LOG.debug("SEARCH TERM: '" + searchTerm + "'");
 
         // search in bag (list)
+        List<Integer> ids = null;
         String searchBag = request.getParameter("searchBag");
         if (searchBag == null) {
             searchBag = "";
         }
-        LOG.debug("SEARCH BAG: '" + searchBag + "'");
+
+        if (!StringUtils.isEmpty(searchBag)) {
+            LOG.debug("SEARCH BAG: '" + searchBag + "'");
+            InterMineBag bag = im.getBagManager().getUserOrGlobalBag(
+                    SessionMethods.getProfile(request.getSession()), searchBag);
+            if (bag != null) {
+                ids = bag.getContentsAsIds();
+                LOG.debug("SEARCH LIST: " + Arrays.toString(ids.toArray()) + "");
+            }
+        }
 
         // offset (-> paging)
         int offset = 0;
@@ -187,7 +201,7 @@ public class KeywordSearchResultsController extends TilesAction
 
             Vector<KeywordSearchHit> searchHits = new Vector<KeywordSearchHit>();
             long timeSearch = System.currentTimeMillis();
-            BrowseResult result = KeywordSearch.runBrowseSearch(searchTerm, offset, facetValues);
+            BrowseResult result = KeywordSearch.runBrowseSearch(searchTerm, offset, facetValues, ids);
             timeSearch = System.currentTimeMillis() - timeSearch;
 
             long time2 = System.currentTimeMillis();
@@ -311,10 +325,12 @@ public class KeywordSearchResultsController extends TilesAction
         // think...)
         request.setAttribute("searchResults", searchResultsParsed);
         request.setAttribute("searchTerm", searchTerm);
+        request.setAttribute("searchBag", searchBag);
         request.setAttribute("searchFacetValues", facetValues);
 
         context.putAttribute("searchResults", request.getAttribute("searchResults"));
         context.putAttribute("searchTerm", request.getAttribute("searchTerm"));
+        context.putAttribute("searchBag", request.getAttribute("searchBag"));
         context.putAttribute("searchFacetValues", request.getAttribute("searchFacetValues"));
 
         // pagination
