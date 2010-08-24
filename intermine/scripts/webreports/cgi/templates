@@ -46,7 +46,10 @@ sub make_table_from_rows {
 	@rows = grep {uniq(@{$_}{@columns[1 .. $#columns]}) > 1} @rows;
 	return '' unless @rows;
     }
-    my $table = HTML::Table->new((@rows + 1), scalar(@columns));
+    my $table = HTML::Table->new( -rows  => (@rows + 1), 
+                                  -cols => scalar(@columns),
+                                  -class => 'list',
+                                  -oddrowclass => 'odd');
     for my $col (1 .. @columns) {
 	# Set headers
 	$table->setCell(1, $col, strong($columns[$col -1]) );
@@ -56,7 +59,6 @@ sub make_table_from_rows {
 	    my $content = $rows[$row - 2]->{$columns[$col -1]};
 	    $table->setCell($row, $col, $content);
 	    if ($col == 1) {
-		$table->setCellBGColor($row, $col, ($row % 2 == 0)? '#DDDDDD' : '#EEEEEE');
 		$table->setCellBGColor($row, $col, 'DarkSalmon') if ($content =~ /color:red/);
 	    }
 	}
@@ -87,7 +89,9 @@ while (<DATA>) {
     push @services, $service_name;
     $link_to{$service_name}       = $_;
     $version_of{$service_name}    = get($_ . '/service/version/release');
-    next if ($data->{version_of}{$service_name} >= $version_of{$service_name}
+    next unless ($version_of{$service_name});
+    next 
+	if ($data->{version_of}{$service_name} eq $version_of{$service_name}
 	and defined $data->{ts_from}{$service_name});
     next if ((param('submitted')) and (not param($service_name)));
     $data->{ts_from}{$service_name} =
@@ -107,10 +111,10 @@ my %active = map
 my $service_table = HTML::Table->new();
 while (my ($service, $url) = each %link_to) {
     $service_table->addRow(
- 	checkbox(-name    => $service, 
-		  -checked => $active{$service}, 
-		  -value   => 'ON', 
-		  -label   => '',
+ 	checkbox(-name    => $service,
+		 -checked => $active{$service},
+		 -value   => 'ON',
+		 -label   => '',
 	),
 	strong(a({-href => $url},$service)),
 	"Version: $version_of{$service}");
@@ -206,42 +210,67 @@ my $title = 'Template Comparison Tables';
 
 my $main_table_link = a({-href => '#maintable'}, 'main table');
 my $sub_table_link  = a({-href => '#subtables'}, 'sub-table');
-print 
-    header,
-    start_html($title),
-    h1($title),
-    p(small(i("Automatically generated on $date at $time"))),
-    a({-href => '/webreports'}, 'All Webreports'),
-    p(<<'ENDQUOTE'),
+print(
+      header,
+      start_html( -title => $title,
+		  -style =>{src => '/css/style.css'}),
+      div({id => 'heading'},
+	  div({id => 'banner'}, h1($title)),
+	  img({
+	       id => 'logo',
+	       src => '/chrome/intermine_logo.png',
+	       alt => 'Logo',
+	       width => 100,
+	       height => 100,
+	      }),
+	  div({class => 'clearall'}, ''),
+	 ),
+      div({id => 'content'},
+	  div({id => 'menu'},
+	      ul(li({-type => 'disc'},
+		    [
+		     a({-href => '/webreports'}, 'All Reports'),
+		     a({-href => '/webreports/analytics'}, 'Google Analytics for Templates'),
+		     a({-href => '/webreports/models'},    'Model Comparison'),
+		     a({-href => '/webreports/templates'}, 'Template Collection Comparison'),
+		    ]
+		   )
+		),
+	     ),
+	  br,
+	  p({align => 'right'}, small(i("Automatically generated on $date at $time"))),
+	  p(<<'ENDQUOTE'),
 This page has several tables to compare the templates used by different InterMine implementations. These templates were fetched from the respective webservices, and then analysed to create these tables. You can select which mines you would like to compare by using the checkboxes next to their names.
 ENDQUOTE
-    p(<<"ENDQUOTE"),
+	  p(<<"ENDQUOTE"),
 The $main_table_link lists which templates are available from which mines. Where the template is absent, the word "NO" appears in a red box. If the template is present, then either the number of constraints declared in that template, or the number of columns in the output (the "view"), will appear in the cell, depending on the option selected. If the mines with this template all have a template with the same number of constraints or view-columns, then those mine's cells are green. If there is a difference in the number of constraints/view columns, then the cell is coloured orange. To filter out the uninteresting rows (ie. the ones where all the values are the same), you can choose to "hide rows without differences".
 ENDQUOTE
-    p(<<"ENDQUOTE"),
+	  p(<<"ENDQUOTE"),
 To further investigate templates with differences you can click on the template name, which is a link that will take you to a $sub_table_link, showing which constraints are present or absent in a particular model. Only templates that are present in more than one model, and where at least one model declares constraints in that template, will have a sub-table, and thus a link. If a template is invalid in one of the mines, it will be highlighted in red, and holding the mouse over its name will bring up a box with a list of the specific problems with the template, preprepended with the mine in which the template is broken. This list of problems can also be viewed by visiting the individual table for this template.
 ENDQUOTE
-    start_form,
-    $service_table,
-    br,
-    strong('Analyse differences in'),
-    br,
-    radio_group(
-	-name      => 'wanted',
-	-values    => \@wanted_values,
-	-default   => 'get_all_constraints',
-	-linebreak => 1,
-	-labels    => \%label_hash,
-    ),
-    checkbox(
-	-name    => 'only_differences',
-	-checked => 0,
-	-value   => 'ON',
-	-label   => 'Hide rows without differences',
-    ),
-    br,
-    submit('submitted', 'reanalyse'),
-    end_form;
+	  start_form,
+	  $service_table,
+	  br,
+	  strong('Analyse differences in'),
+	  br,
+	  radio_group(
+		      -name      => 'wanted',
+		      -values    => \@wanted_values,
+		      -default   => 'get_all_constraints',
+		      -linebreak => 1,
+		      -labels    => \%label_hash,
+		     ),
+	  checkbox(
+		   -name    => 'only_differences',
+		   -checked => 0,
+		   -value   => 'ON',
+		   -label   => 'Hide rows without differences',
+		  ),
+	  br,
+	  submit('submitted', 'reanalyse'),
+	  end_form,
+	 ),
+     );
 
 if (@services) {
     print 
