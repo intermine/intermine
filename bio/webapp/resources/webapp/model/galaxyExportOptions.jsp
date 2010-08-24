@@ -11,6 +11,9 @@
      initForm();
      jQuery("#URL").val("${viewURL}");
 
+     // IMPORTANT: BED format exporting is disabled due to chromosome name and the difference of start of sequence feature between GFF3(in database) and BED
+     jQuery("input[name='exportOptions']").filter("[value='feature']").attr('disabled', 'disabled');
+
      if ("${exportAsBED}" == "false") {
        jQuery("input[name='exportOptions']").filter("[value='feature']").attr('disabled', 'disabled');
      }
@@ -69,12 +72,11 @@
 
         // Use ajax to get the GALAXY_URL, data_type, genome build and extra info back from galaxyExportAction
         jQuery.get("${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/galaxyExportAction.do", { tableName: "${table}", index: idx, prefix: pathVal}, function(data){
-          dataArray = data.split(">>>>>"); //size = 2
           jQuery("#data_type").val("bed");
-          jQuery("#URL").val(dataArray[0]);
+          jQuery("#URL").val(jQuery.trim(data));
           <c:forEach var="orgInfo" items="${orgInfoList}">
              if(idx == "${orgInfo.idx}") {
-               jQuery("#info").val("Column features:" + jQuery.trim(dataArray[1]) + "; Organisms:${orgInfo.orgList}");
+               jQuery("#info").val("Organisms:${orgInfo.orgList}");
                jQuery("#dbkey").val("${orgInfo.genomeBuild}");
              }
            </c:forEach>
@@ -94,12 +96,11 @@
         </c:forEach>
 
         jQuery.get("${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/galaxyExportAction.do", { tableName: "${table}", index: idx, prefix: pathVal}, function(data){
-          dataArray = data.split(">>>>>"); //size = 2
           jQuery("#data_type").val("bed");
-          jQuery("#URL").val(dataArray[0]);
+          jQuery("#URL").val(jQuery.trim(data));
           <c:forEach var="orgInfo" items="${orgInfoList}">
              if(idx == "${orgInfo.idx}") {
-               jQuery("#info").val("Column features:" + jQuery.trim(dataArray[1]) + "; Organisms:${orgInfo.orgList}");
+               jQuery("#info").val("Organisms:${orgInfo.orgList}");
                jQuery("#dbkey").val("${orgInfo.genomeBuild}");
              }
            </c:forEach>
@@ -132,12 +133,11 @@
         </c:forEach>
 
         jQuery.get("${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/galaxyExportAction.do", { tableName: "${table}", index: idx, prefix: pathVal}, function(data){
-          dataArray = data.split(">>>>>"); //size = 2
           jQuery("#data_type").val("bed");
-          jQuery("#URL").val(dataArray[0]);
+          jQuery("#URL").val(jQuery.trim(data));
           <c:forEach var="orgInfo" items="${orgInfoList}">
              if(idx == "${orgInfo.idx}") {
-               jQuery("#info").val("Column features:" + jQuery.trim(dataArray[1]) + "; Organisms:${orgInfo.orgList}");
+               jQuery("#info").val("Organisms:${orgInfo.orgList}");
                jQuery("#dbkey").val("${orgInfo.genomeBuild}");
              }
            </c:forEach>
