@@ -51,12 +51,16 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.IndexReader.FieldOption;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.queryParser.QueryParser.Operator;
+import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.TermsFilter;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -87,6 +91,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathException;
 import org.intermine.sql.Database;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.ObjectPipe;
 import org.intermine.util.TypeUtil;
 
 import com.browseengine.bobo.api.BoboBrowser;
@@ -338,7 +343,7 @@ class InterMineObjectFetcher extends Thread
 
     final ObjectStore os;
     final Map<String, List<FieldDescriptor>> classKeys;
-    final ConcurrentLinkedQueue<Document> indexingQueue;
+    final ObjectPipe<Document> indexingQueue;
     final Set<Class<? extends InterMineObject>> ignoredClasses;
     final Map<Class<? extends InterMineObject>, String[]> specialReferences;
     final Map<ClassDescriptor, Float> classBoost;
@@ -375,7 +380,7 @@ class InterMineObjectFetcher extends Thread
      *            addition to the normal indexing
      */
     public InterMineObjectFetcher(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
-            ConcurrentLinkedQueue<Document> indexingQueue,
+            ObjectPipe<Document> indexingQueue,
             Set<Class<? extends InterMineObject>> ignoredClasses,
             Map<Class<? extends InterMineObject>, String[]> specialReferences,
             Map<ClassDescriptor, Float> classBoost, Vector<KeywordSearchFacetData> facets) {
@@ -593,7 +598,7 @@ class InterMineObjectFetcher extends Thread
                         }
 
                         // finally add doc to queue
-                        indexingQueue.add(doc);
+                        indexingQueue.put(doc);
 
                         objectParseTime += (System.currentTimeMillis() - time2);
                     }
@@ -609,6 +614,9 @@ class InterMineObjectFetcher extends Thread
         } catch (Exception e) {
             LOG.warn(null, e);
         }
+
+        //notify main thread that we're done
+        indexingQueue.finish();
     }
 
     private Document createDocument(InterMineObject object, ClassDescriptor classDescriptor) {
@@ -621,7 +629,8 @@ class InterMineObjectFetcher extends Thread
 
         // id has to be stored so we can fetch the actual objects for the
         // results
-        doc.add(new Field("id", object.getId().toString(), Field.Store.YES, Field.Index.NO));
+        doc.add(new Field("id", object.getId().toString(), Field.Store.YES,
+                Field.Index.NOT_ANALYZED_NO_NORMS));
 
         // special case for faceting
         doc.add(new Field("Category", classDescriptor.getUnqualifiedName(), Field.Store.NO,
@@ -822,8 +831,7 @@ public class KeywordSearch
 
     private static IndexReader reader = null;
     private static BoboIndexReader boboIndexReader = null;
-    private static ConcurrentLinkedQueue<Document> indexingQueue =
-            new ConcurrentLinkedQueue<Document>();
+    private static ObjectPipe<Document> indexingQueue = new ObjectPipe<Document>(50000);
     private static LuceneIndexContainer index = null;
 
     private static Properties properties = null;
@@ -863,7 +871,10 @@ public class KeywordSearch
 
                         for (String className : ignoreClassNames) {
                             ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
-                            if (cld != null) {
+
+                            if (cld == null) {
+                                LOG.error("Unknown class in config file: " + className);
+                            } else {
                                 addCldToIgnored(ignoredClasses, cld);
                             }
                         }
@@ -990,6 +1001,13 @@ public class KeywordSearch
                 }
 
                 boboIndexReader = BoboIndexReader.getInstance(reader, facetHandlers);
+
+                LOG.info("Fields:"
+                        + Arrays.toString(boboIndexReader.getFieldNames(FieldOption.ALL)
+                                .toArray()));
+                LOG.info("Indexed fields:"
+                        + Arrays.toString(boboIndexReader.getFieldNames(FieldOption.INDEXED)
+                                .toArray()));
             }
         } catch (CorruptIndexException e) {
             LOG.error(e);
@@ -1166,10 +1184,11 @@ public class KeywordSearch
      * @param facetValues
      *            map of 'facet field name' to 'value to restrict field to'
      *            (optional)
+     * @param ids ids to research the search to (for search in list)
      * @return bobo browse result or null if failed
      */
     public static BrowseResult runBrowseSearch(String searchString, int offset,
-            Map<String, String> facetValues) {
+            Map<String, String> facetValues, List<Integer> ids) {
         BrowseResult result = null;
         long time = System.currentTimeMillis();
 
@@ -1205,6 +1224,16 @@ public class KeywordSearch
             }
             browseRequest.setQuery(query);
             browseRequest.setFetchStoredFields(true);
+
+            if (ids != null && !ids.isEmpty()) {
+                TermsFilter idFilter = new TermsFilter(); //we may want fieldcachetermsfilter
+
+                for (int id : ids) {
+                    idFilter.addTerm(new Term("id", Integer.toString(id)));
+                }
+
+                browseRequest.setFilter(idFilter);
+            }
 
             // pagination
             browseRequest.setOffset(offset);
@@ -1442,26 +1471,11 @@ public class KeywordSearch
 
             // loop and index while we still have fetchers running
             LOG.info("Starting to index...");
-            while (true) {
-                Document doc = null;
-                doc = indexingQueue.poll();
+            while (indexingQueue.hasNext()) {
+                Document doc = indexingQueue.next();
 
                 // nothing in the queue?
-                if (doc == null) {
-                    if (fetchThread.isAlive()) {
-                        // sleep a bit
-                        try {
-                            Thread.sleep(10);
-                        } catch (InterruptedException e) {
-                        }
-                    } else {
-                        // only stop if the queue is actually empty
-                        if (indexingQueue.isEmpty()) {
-                            index.getFieldNames().addAll(fetchThread.getFieldNames());
-                            break;
-                        }
-                    }
-                } else {
+                if (doc != null) {
                     try {
                         writer.addDocument(doc);
                         indexed++;
@@ -1480,6 +1494,8 @@ public class KeywordSearch
                     }
                 }
             }
+
+            index.getFieldNames().addAll(fetchThread.getFieldNames());
 
             LOG.info("Indexing done, optimizing index files...");
 
@@ -1512,14 +1528,16 @@ public class KeywordSearch
     @SuppressWarnings("unchecked")
     private static void addCldToIgnored(Set<Class<? extends InterMineObject>> ignoredClasses,
             ClassDescriptor cld) {
-        if (InterMineObject.class.isAssignableFrom(cld.getType())) {
+        if (cld == null) {
+            LOG.error("cld is null!");
+        } else if (InterMineObject.class.isAssignableFrom(cld.getType())) {
             ignoredClasses.add((Class<? extends InterMineObject>) cld.getType());
+
+            for (ClassDescriptor subCld : cld.getSubDescriptors()) {
+                addCldToIgnored(ignoredClasses, subCld);
+            }
         } else {
             LOG.error("cld " + cld + " is not IMO!");
-        }
-
-        for (ClassDescriptor subCld : cld.getSubDescriptors()) {
-            addCldToIgnored(ignoredClasses, subCld);
         }
     }
 

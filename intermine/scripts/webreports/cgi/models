@@ -18,7 +18,6 @@ use lib '/home/alex/svn/dev/intermine/perl/lib';
 use InterMine::WebService::Service::ModelService;
 
 my $cache_file = dirname($ENV{SCRIPT_FILENAME}).'/../cached_data/models';
-warn $cache_file;
 my $cache = eval{retrieve($cache_file)} || {};
 my $order = sub {lc($a) cmp lc($b)};
 
@@ -44,17 +43,18 @@ sub make_table_from_rows {
 	@rows = grep {uniq(@{$_}{@columns[1 .. $#columns]}) > 1} @rows;
 	return '' unless @rows;
     }
-    my $table = HTML::Table->new((@rows + 1), scalar(@columns));
+    my $table = HTML::Table->new( -rows  => (@rows + 1), 
+                                  -cols => scalar(@columns),
+                                  -class => 'list',
+                                  -oddrowclass => 'odd');
     for my $col (1 .. @columns) {
-	# Set headers
-	$table->setCell(1, $col, strong($columns[$col -1]) ); 
-	$table->setCellBGColor(1, $col, 'DarkGray');
-	# Fill body
-	for my $row (2 .. @rows + 1) {
-	    my $content = $rows[$row - 2]->{$columns[$col -1]};
-	    $table->setCell($row, $col, $content);
-	    $table->setCellBGColor($row, $col, ($row % 2 == 0)? '#DDDDDD' : '#EEEEEE') if ($col == 1);
-	}
+	#    Set headers
+        $table->setCell(1, $col, strong($columns[$col -1]) ); 
+		# Fill body
+        for my $row (2 .. @rows + 1) {
+            my $content = $rows[$row - 2]->{$columns[$col -1]};
+            $table->setCell($row, $col, $content);
+        }
     }
     for my $row (2 .. @rows + 1) {
 	my $colour;
@@ -86,9 +86,10 @@ while (<DATA>) {
     push @services, $service_name;
     $link_to{$service_name}       = $_;
     $version_of{$service_name}    = get($_ . '/service/version/release');
-    
-    next if ($cache->{version_of}{$service_name} >= $version_of{$service_name}
-	and defined $cache->{model_from});
+    next unless ($version_of{$service_name});
+    next
+	if ($cache->{version_of}{$service_name} eq $version_of{$service_name}
+	    and defined $cache->{model_from});
     next if ((param('submitted')) and (not param($service_name)));
     my $ms = 
 	InterMine::WebService::Service::ModelService->new($_ . '/service', APP);	
@@ -142,7 +143,7 @@ for my $row (@rows) {
     # Set internal Anchors
     my @values = @{$row}{@services};
     next if (grep({$_ eq '0'} @values) == @values); # if all are '0'
-    if ( grep({$_ ne 'NO'} @values) > 1 ) {         # If more than one value is non-'NO' 
+    if ( grep({$_ ne 'NO' and $_ ne '0'} @values) > 1 ) {         # If more than one value is non-'NO' 
                                                     # (ie, there is something to compare)
 	$row->{Class} = strong(a({-href => '#' . $row->{Class}}, $row->{Class}));
     }
@@ -186,49 +187,75 @@ my $title = 'Model Comparison Tables';
 
 my $main_table_link = a({-href => '#maintable'}, 'main table');
 my $sub_table_link  = a({-href => '#subtables'}, 'sub-table');
-print 
-    header,
-    start_html($title),
-    h1($title),
-    p(small(i("Automatically generated on $date at $time"))),
-    a({-href => '/webreports'}, 'All Webreports'),
-    p(<<'ENDQUOTE'),
+print(
+      header,
+      start_html( -title => $title,
+		  -style =>{src => '/css/style.css'}),
+      div({id => 'heading'},
+	  div({id => 'banner'}, h1($title)),
+	  img({
+	       id => 'logo',
+	       src => '/chrome/intermine_logo.png',
+	       alt => 'Logo',
+	       width => 100,
+	       height => 100,
+	      }),
+	  div({class => 'clearall'}, ''),
+	 ),
+
+      div({id => 'content'},
+	  div({id => 'menu'},
+	      ul(li({-type => 'disc'},
+		    [
+		     a({-href => '/webreports'}, 'All Reports'),
+		     a({-href => '/webreports/analytics'}, 'Google Analytics for Templates'),
+		     a({-href => '/webreports/models'},    'Model Comparison'),
+		     a({-href => '/webreports/templates'}, 'Template Collection Comparison'),
+		    ]
+		   )
+		),
+	     ),
+	  br,
+	  p({align => 'right'}, small(i("Automatically generated on $date at $time"))),
+	  p(<<'ENDQUOTE'),
 This page has several tables to compare different elements found within the genomic models used by different InterMine implementations. These models were fetched from the respective webservices, and then analysed to create these tables. You can select which mines you would like to compare by using the checkboxes next to their names.
 ENDQUOTE
-    p(<<"ENDQUOTE"),
+	  p(<<"ENDQUOTE"),
 The $main_table_link lists which classes appear in which Mine's model. Where the class is absent, the word "NO" appears in a red box. If the class is present, then either the number of fields declared in that class, or the number of classes the class directly inherits from, will appear in the cell, depending on the option selected. If the models with this class all have a class the same number of fields or supeclasses, then those models' cells are green. If there is a difference in the number of fields, then the cell is coloured orange. To filter out the uninteresting rows (ie. the ones where all the values are the same), you can choose to "hide rows without differences".
 ENDQUOTE
-    p(<<"ENDQUOTE"),
+	  p(<<"ENDQUOTE"),
 To further investigate classes with differences you can click on the class name, which is a link that will take you to a $sub_table_link, showing which fields are present or absent in a particular model. Only classes that are present in more than one model, and where at least one model declares fields in that class, will have a sub-table, and thus a link.
 ENDQUOTE
-    start_form,
-    $service_table,
-    br,
-    strong('Analyse differences in'),
-    br,
-    radio_group(
-	-name      => 'wanted',
-	-values    => \@wanted_values,
-	-default   => 'get_own_fields',
-	-linebreak => 1,
-	-labels    => \%label_hash,
-    ),
-    checkbox(
-	-name    => 'only_differences',
-	-checked => 0,
-	-value   => 'ON',
-	-label   => 'Hide rows without differences',
-    ),
-    br,
-    submit('submitted', 'reanalyse'),
-    end_form;
+	  start_form,
+	  $service_table,
+	  br,
+	  strong('Analyse differences in'),
+	  br,
+	  radio_group(
+		      -name      => 'wanted',
+		      -values    => \@wanted_values,
+		      -default   => 'get_own_fields',
+		      -linebreak => 1,
+		      -labels    => \%label_hash,
+		     ),
+	  checkbox(
+		   -name    => 'only_differences',
+		   -checked => 0,
+		   -value   => 'ON',
+		   -label   => 'Hide rows without differences',
+		  ),
+	  br,
+	  submit('submitted', 'reanalyse'),
+	  end_form,
+	 ),
+     );
 
 if (@services) {
     print 
-	h2(a({-name => 'maintable'}, $label_hash{$wanted} . ' of Classes By Model')),
-	$model_class_table,
-	br,
-	h2(a({-name => 'subtables'}, $label_hash{$wanted} . ' of Individual Classes By Model'));
+	div({id => 'sect'}, 
+        h2(a({-name => 'maintable'}, $label_hash{$wanted} . ' of Classes By Model')),
+        $model_class_table,
+    ),	h2(a({-name => 'subtables'}, $label_hash{$wanted} . ' of Individual Classes By Model'));
 
     for my $table (@class_tables) {
 	print h2(a({-name => $table->{name}}, $table->{name})),
