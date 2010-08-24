@@ -73,7 +73,8 @@ public class GalaxyExportAction extends InterMineAction
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
 
-        // Make a new view
+        /*
+        // >>>>> Reset view - Use Default view for different types of Sequence features
         Integer index = Integer.parseInt(request.getParameter("index"));
         String prefix = request.getParameter("prefix");
 
@@ -82,6 +83,7 @@ public class GalaxyExportAction extends InterMineAction
         // Type - Class name. e.g. Gene, Protein, etc.
         List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
                 prefix, false);
+        // Use inner joint
         view = getFixedView(view);
 
         // Reorder the view, place chr, start and end at the first three columns
@@ -106,6 +108,22 @@ public class GalaxyExportAction extends InterMineAction
         view.removeAll(newView);
         newView.addAll(view);
         query.setViewPaths(newView);
+        // <<<<<
+        */
+
+        // >>>>> Reset view - BED
+        // chr start end sequenceId score strand
+        String prefix = request.getParameter("prefix");
+
+        List<String> newView = new ArrayList<String>();
+        newView.add(prefix + ".chromosome.primaryIdentifier");
+        newView.add(prefix + ".chromosomeLocation.start");
+        newView.add(prefix + ".chromosomeLocation.end");
+        newView.add(prefix + ".primaryIdentifier");
+        newView.add(prefix + ".score");
+        newView.add(prefix + ".chromosomeLocation.strand");
+        query.setView(newView);
+        // <<<<<
 
         // Build Webservice URL
         String queryXML = PathQueryBinding.marshal(query, "tmpName", model.getName(),
@@ -149,6 +167,8 @@ public class GalaxyExportAction extends InterMineAction
             organism = Arrays.toString(orgNameMap.values().toArray());
         }
         */
+
+        /*
         // Write to Response
         StringBuffer pathString = new StringBuffer();
         pathString.append("|");
@@ -156,12 +176,13 @@ public class GalaxyExportAction extends InterMineAction
             pathString.append(path.toStringNoConstraints());
             pathString.append("|");
         }
+        */
 
         StringBuffer returnString = new StringBuffer();
-        // URL>>>>>info>>>organism>>>>>genomeBuild
+        // URL
         returnString.append(stringUrl);
-        returnString.append(">>>>>");
-        returnString.append(pathString);
+//        returnString.append(">>>>>");
+//        returnString.append(pathString);
 
         out.println(returnString.toString());
 
