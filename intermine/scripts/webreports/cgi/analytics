@@ -213,49 +213,77 @@ if (param('display') eq 'as graph') {
 else {
     my $interval  = ucfirst(substr($intervals, 0, -1));
     my $title     = 'Template Analytics';
-    print header, start_html($title), h1($title),
-	p(small(i("Automatically generated on $date at $time")));
-    print a({-href => '/webreports'}, 'All Webreports');
-
     print(
-	  start_form,
-	  "Go back",
-	  textfield(
-		    'spanlen',
-		    6,
-		    10,
-		    10,
-		   ),
-	  popup_menu(
-		     'spanunit',
-		     [
-		      'years',
-		      'months',
-		      'weeks',
-		      'days',
-		     ],
-		     'months',
+	  header,
+	  start_html( -title => $title,
+		      -style =>{src => '/css/style.css'}),
+	  div({id => 'heading'},
+	      div({id => 'banner'}, h1($title)),
+	      img({
+		   id => 'logo',
+		   src => '/chrome/intermine_logo.png',
+		   alt => 'Logo',
+		   width => 100,
+		   height => 100,
+		  }),
+	      div({class => 'clearall'}, ''),
+	     ),
+	  div({id => 'content'},
+	      div({id => 'menu'},
+		  ul(li({-type => 'disc'},
+			[
+			 a({-href => '/webreports'}, 'All Reports'),
+			 a({-href => '/webreports/analytics'}, 'Google Analytics for Templates'),
+			 a({-href => '/webreports/models'},    'Model Comparison'),
+			 a({-href => '/webreports/templates'}, 'Template Collection Comparison'),
+			]
+		       )
 		    ),
-	  "and show data by",
-	  popup_menu(
-		     'interval',
-		     [
-		      'years',
-		      'months',
-		      'weeks',
-		      'days',
-		     ],
-		     'weeks',
-		    ),
-	  popup_menu(
-		     'display',
-		     [
-		      'as tables',
-		      'as graph',
-		     ],
-		    ),
-	  submit,
-	  end_form,
+		 ),
+	      br,
+	      p({align => 'right'},
+		small(i("Automatically generated on $date at $time"))
+	       ),
+	      div({class => 'clearall'}),
+	      start_form,
+	      "Go back",
+	      textfield(
+			'spanlen',
+			6,
+			10,
+			10,
+		       ),
+	      popup_menu(
+			 'spanunit',
+			 [
+			  'years',
+			  'months',
+			  'weeks',
+			  'days',
+			 ],
+			 'months',
+			),
+	      "and show data by",
+	      popup_menu(
+			 'interval',
+			 [
+			  'years',
+			  'months',
+			  'weeks',
+			  'days',
+			 ],
+			 'weeks',
+			),
+	      popup_menu(
+			 'display',
+			 [
+			  'as tables',
+			  'as graph',
+			 ],
+			),
+	      submit,
+	      end_form,
+	     ),
 	 );
     for my $key (keys %error_with) {
 	for my $error (@{$error_with{$key}}) {
@@ -264,18 +292,24 @@ else {
     }
     my (@used_dates, $i);
     while (my $date = shift @dates) {
-	my $table = HTML::Table->new;
+	my $table = HTML::Table->new( -class => 'list',
+				      -oddrowclass => 'odd');
 	$table->addRow(strong('Template Name'), 'Unique Pageviews');
 	$table->setRowBGColor('-1', 'Orange');
 	for my $path (sort {$results->{$date}{$b} <=> $results->{$date}{$a}} keys %{$results->{$date}}) {
 	    $table->addRow($path, strong($results->{$date}{$path}));
-	    $table->setRowBGColor('-1','#EEEEEE');
 	}
 	my $rows = $table->getTableRows;
-	map {$table->setRowBGColor($_,  '#DDDDDD')} grep {$_ % 2 ==0} (1 .. $rows);
 	print h2(a({-name => $date}, $interval, ++$i, ": $date"));
-	print a({-href => '#'.$used_dates[-1]},'<< previous'), ' ' if  @used_dates;
-	print a({-href => '#'.$dates[0]},      'next >>')          if  @dates;
+	my @links;
+	push @links, a({-href => '#'.$used_dates[-1]},'<< previous')
+	    if  @used_dates;
+	push @links, a({-href => '#'.$dates[0]},      'next >>')
+	    if  @dates;
+	print(
+	      div({id => 'menu'},ul(li([@links]))),
+	      div({class => 'clearall'}),
+	     );
 	print $table;
 	push @used_dates, $date;
     }
