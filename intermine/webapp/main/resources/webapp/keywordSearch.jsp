@@ -17,15 +17,25 @@
 <html:xhtml />
 
 <div class="keywordSearch">
-  <h2>Keyword Search</h2>
-  <p><i>Search our database by keyword</i></p>
+  <h2>
+     <c:if test="${!empty searchBag}">
+         List Search: ${searchBag}
+     </c:if>
+     <c:if test="${empty searchBag}">
+         Keyword Search
+     </c:if>
+  </h2>
+  <p><i>Search <c:if test="${!empty searchBag}"><b>the list "${searchBag}"</b></c:if><c:if test="${empty searchBag}">our database</c:if> by keyword</i></p>
     <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
         <c:forEach items="${searchFacetValues}" var="facetValue">
             <input type="hidden" name="facet_${facetValue.key}" value="${facetValue.value}" />
         </c:forEach>
+        <c:if test="${!empty searchBag}">
+            <input type="hidden" name="searchBag" value="${searchBag}" />
+        </c:if>
         <div>
           <c:if test="${!empty searchTerm || !empty searchFacetValues}">
-	          <a href="<c:url value="/keywordSearchResults.do" />">
+	          <a href="<c:url value="/keywordSearchResults.do"><c:param name="searchBag" value="${searchBag}" /></c:url>">
 	             &laquo; Back to index</a>
           </c:if>
 		  <input type="text" name="searchTerm" value="<c:out value="${searchTerm}"></c:out>" style="width: 350px;" /> 
@@ -53,7 +63,7 @@
               <input type="submit" name="searchSubmitRestricted"
                 value="Search (with current restrictions)" />
           </c:if>
-          <input type="submit" name="searchSubmit" value="Search entire database" />
+          <input type="submit" name="searchSubmit" value="Search entire <c:if test="${!empty searchBag}">list</c:if><c:if test="${empty searchBag}">database</c:if>" />
 		</div>
     </form>
     
