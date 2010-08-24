@@ -100,15 +100,20 @@
     padding-left: 0;
 }
 
-.keywordSearchResults .facetHeader {
+.facetHeader {
 	font-weight: bold;
     margin: 0.5em 0 0.25em 0;
     text-decoration: underline;	
 }	
 
-.keywordSearchResults .facetContents {
+.facetContents {
     margin-bottom: 0.5em;
-}   
+}
+
+.facetMoreLink {
+	border-bottom: 1px dashed #fff;
+	text-align: right;
+}
 
 .keywordSearchResults .facets a {
     color: #fff;
