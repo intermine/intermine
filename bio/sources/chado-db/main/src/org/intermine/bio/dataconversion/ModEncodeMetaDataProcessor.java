@@ -1565,7 +1565,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return unified;
     }
 
-    private class SubmissionReference {
+    private class SubmissionReference
+    {
         public SubmissionReference(Integer referencedSubmissionId, String dataValue) {
             this.referencedSubmissionId = referencedSubmissionId;
             this.dataValue = dataValue;
@@ -1582,8 +1583,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         ResultSet res = getAppliedDataAll(connection);
-        String comma = ",";
-        String reportName = getChadoDBConverter().getDatabase().getName() + "_subs_report.csv";
+        final String comma = ",";
+        String reportName = "build/"
+            + getChadoDBConverter().getDatabase().getName() + "_subs_report.csv";
         File f = new File(reportName);
         FileWriter writer = new FileWriter(f);
 
