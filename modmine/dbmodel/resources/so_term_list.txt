@@ -69,10 +69,12 @@ tRNA
 TSS
 UTR
 
-# many-to-many part_of relationships (default is many-to-one) 
-exon.transcript 
-intron.transcript 
-UTR.transcript 
+# many-to-many part_of relationships (default is many-to-one)
+# must be CHILD.PARENT or else it won't work
+exon.transcript
+intron.transcript
+UTR.transcript
 SL1AcceptorSite.transcript
 SL2AcceptorSite.transcript
 TSS.transcript
+EST.overlapping_EST_set

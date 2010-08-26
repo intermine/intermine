@@ -12,10 +12,6 @@
   <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="CDS"/>
 </class>
 
-<class name="EST" is-interface="true">
-  <collection name="overlappingESTSets" referenced-type="OverlappingESTSet" reverse-reference="ESTs" />
-</class>
-
 <class name="Exon" is-interface="true">
   <attribute name="acceptor" type="java.lang.String" />
   <attribute name="connectedToWormbaseTranscript" type="java.lang.String" />
@@ -44,7 +40,6 @@
   <attribute name="reads" type="java.lang.Integer" />
   <attribute name="strandsConfirmed" type="java.lang.String" />
   <attribute name="trimT" type="java.lang.String" />
-  <collection name="ESTs" referenced-type="EST" reverse-reference="overlappingESTSets" />
 </class>
 
 <class name="PolyASite" is-interface="true">
