@@ -214,11 +214,25 @@ public class OboToModelProcessor
                 continue;
             }
             String relationshipType = r.getRelationship().getName();
+            /**
+             * PART_OF
+             * parent = transcript
+             * child  = exon
+             * Transcript has a collection of exons
+             */
             if ((relationshipType.equals("part_of") || relationshipType.equals("member_of"))
                     && r.direct) {
                 assignPartOf(parent, child);
             } else if (relationshipType.equals("is_a") && r.direct) {
                 BioConverterUtil.addToSetMap(childToParents, child, parent);
+           /**
+           * HAS_PART (inverse of part_of)
+           * parent = EST
+           * child  = OverlappingESTSet
+           * OverlappingESTSet has a collection of ESTs
+           */
+            } else if (relationshipType.equals("has_part") && r.direct) {
+                assignPartOf(child, parent);
             }
         }
 
