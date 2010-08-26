@@ -147,6 +147,7 @@ public class GalaxyExportAction extends InterMineAction
 
 
         // Same function as ResultManipulater, reliable but slower
+/*
         Map<Integer, String> orgNameMap = new LinkedHashMap<Integer, String>();
 
         for (int i = 0; i < pt.getExactSize(); i++) {
@@ -171,7 +172,7 @@ public class GalaxyExportAction extends InterMineAction
 
             organism = Arrays.toString(orgNameMap.values().toArray());
         }
-
+*/
 
         /*
         // Write to Response
