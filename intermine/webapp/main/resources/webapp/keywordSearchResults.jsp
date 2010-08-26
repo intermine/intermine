@@ -81,7 +81,23 @@
 			    </div>
 		    </c:if>
 		</c:forEach>
+		
+		<c:if test="${!empty searchBag}">
+			<div class="facetRestriction">
+			    Searching only in list <b>${searchBag}</b>
+			    <a href="<c:url value="/keywordSearchResults.do">
+			           <c:param name="searchTerm" value="${searchTerm}" />
+			           <c:forEach items="${searchFacets}" var="facetOTHER">
+			               <c:if test="${facetOTHER.value != null && facetOTHER.value != ''}">
+			                   <c:param name="facet_${facetOTHER.field}" value="${facetOTHER.value}" />
+			               </c:if>
+			           </c:forEach>
+			    </c:url>">                           
+			        <img border="0" src="images/cross.gif" alt="(x)" title="Remove restriction"/>
+			    </a>
 			</div>
+		</c:if>
+	   </div>
 		
 		<c:if test="${searchTotalHits == 0}">
 		    <div style="margin-top: 2em; text-align: center;">
