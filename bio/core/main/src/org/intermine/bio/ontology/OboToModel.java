@@ -239,7 +239,7 @@ public class OboToModel
         return reverseReference;
     }
 
-    private static void parseOboTerms(OboToModelProcessor oboToModelMapping, String oboFilename,
+    private static void parseOboTerms(OboToModelProcessor oboToModelProcessor, String oboFilename,
             String termsFileName) {
         File oboFile = new File(oboFilename);
 
@@ -255,8 +255,8 @@ public class OboToModel
         }
 
         // process results of parsing by OBOEdit.  flatten and trim unwanted terms
-        oboToModelMapping.processOboTerms(parser.getOboTerms());
-        oboToModelMapping.validateTermsToKeep(oboFilename, termsFileName);
-        oboToModelMapping.processRelations(parser.getOboRelations());
+        oboToModelProcessor.processOboTerms(parser.getOboTerms());
+        oboToModelProcessor.validateTermsToKeep(oboFilename, termsFileName);
+        oboToModelProcessor.processRelations(parser.getOboRelations());
     }
 }
