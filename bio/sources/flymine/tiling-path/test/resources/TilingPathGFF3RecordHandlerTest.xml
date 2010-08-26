@@ -12,7 +12,19 @@
 <reference name="locatedOn" ref_id="4_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="9_1" class="PCRProduct">
+<item id="7_2" class="Location">
+<attribute name="end" value="103425"/>
+<attribute name="start" value="102297"/>
+<attribute name="strand" value="0"/>
+<reference name="feature" ref_id="8_1"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="8_1" class="PCRProduct">
 <attribute name="length" value="1129"/>
 <attribute name="primaryIdentifier" value="span2L:0000013_amplimer_1"/>
 <attribute name="promoter" value="false"/>
@@ -23,25 +35,16 @@
 <reference name="tilingPathSpan" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="10_1" class="ForwardPrimer">
+<item id="9_1" class="ForwardPrimer">
 <attribute name="length" value="22"/>
 <attribute name="primaryIdentifier" value="span2L:0000013_amplimer_1_forward_primer"/>
 <attribute name="symbol" value="ACTAAGAGTGAGCTCCGTGAGG"/>
 <reference name="chromosome" ref_id="4_1"/>
 <reference name="chromosomeLocation" ref_id="7_3"/>
 <reference name="organism" ref_id="0_1"/>
-<reference name="pcrProduct" ref_id="9_1"/>
+<reference name="pcrProduct" ref_id="8_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_3"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="8_3" class="Synonym">
-<attribute name="value" value="ACTAAGAGTGAGCTCCGTGAGG"/>
-<reference name="subject" ref_id="10_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="3_1" class="Ontology">
-<attribute name="name" value="Sequence Ontology"/>
-<attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
 <item id="1_1" class="DataSource">
 <attribute name="name" value="Genetics"/>
@@ -59,6 +62,11 @@
 <reference name="ontology" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="10_1" class="Synonym">
+<attribute name="value" value="ACTAAGAGTGAGCTCCGTGAGG"/>
+<reference name="subject" ref_id="9_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
 <item id="4_1" class="Chromosome">
 <attribute name="primaryIdentifier" value="2L"/>
 <reference name="organism" ref_id="0_1"/>
@@ -69,19 +77,11 @@
 <attribute name="name" value="Department of Genetics tiling path data set"/>
 <reference name="dataSource" ref_id="1_1"/>
 </item>
-<item id="7_2" class="Location">
-<attribute name="end" value="103425"/>
-<attribute name="start" value="102297"/>
-<attribute name="strand" value="0"/>
-<reference name="feature" ref_id="9_1"/>
-<reference name="locatedOn" ref_id="4_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
 <item id="7_3" class="Location">
 <attribute name="end" value="102318"/>
 <attribute name="start" value="102297"/>
 <attribute name="strand" value="0"/>
-<reference name="feature" ref_id="10_1"/>
+<reference name="feature" ref_id="9_1"/>
 <reference name="locatedOn" ref_id="4_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
