@@ -12,9 +12,28 @@
 <html:xhtml />
 
 <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
+<script type="text/javascript" src="model/jquery_contextMenu/jquery.contextMenu.js"></script>
 <script type="text/javascript" src="js/tablesort.js"></script>
 <link rel="stylesheet" type="text/css" href="css/sorting_experiments.css"/>
 <link rel="stylesheet" type="text/css" href="model/css/experiment.css"/>
+<link href="model/jquery_contextMenu/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+
+    jQuery(document).ready( function() {
+        jQuery(".exportMenu").hide();
+        //
+        jQuery(".exportDiv").mouseover(function(e) {
+          jQuery('.contextMenu').removeAttr('id');
+          jQuery(e.target).parent().children(".contextMenu").attr('id', 'exportMenu');
+          });
+
+          jQuery(".exportDiv").contextMenu({ menu: 'exportMenu', leftButton: true },
+            function(action, el, pos) { window.open(action, '_self');
+             });
+    });
+
+</script>
 
 <div class="body">
 
@@ -27,14 +46,7 @@
     <th width="5" class="sortable"></th>
     <th width="600" class="sortable" >EXPERIMENTS</th>
     <th colspan=2 >GBrowse Tracks & Submissions to Repositories</th>
-    <th width="300">FEATURES &nbsp;&nbsp;&nbsp;&nbsp;export formats:
-    <nobr>
-    <img border="0" class="arrow" src="model/images/tab.png" title="tab separated value format"  height="30" width="10"/>
-    <img border="0" class="arrow" src="model/images/csv.png" title="comma separated value format"  height="30" width="10"/>
-    <img border="0" class="arrow" src="model/images/gff_s.png" title="gff3 format"  height="30" width="10"/>
-    <img border="0" class="arrow" src="model/images/seq_s.png" title="fasta format"  height="30" width="10"/>
-    </nobr>
-    </th>
+    <th width="300">FEATURES</th>
   </tr>
 
 
@@ -292,35 +304,28 @@ ${exp.piSurname}<br>
         title="View all ${fc.featureType}s">${fc.featureCounts}&nbsp;${fc.featureType}
             </html:link>
 
-               <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=tab"
-        title="Download in tab separated value format">
-          <img border="0" class="arrow" src="model/images/tab_s.png" title="export in tab format" height="18" width="6"/>
-        </html:link>
+    <img class="exportDiv" style="position:relative; top:3px;" border="0" src="model/images/download.png" title="export data" height="16" width="16"/>
 
-              <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=csv"
-        title="Download in comma separated value format">
-          <img border="0" class="arrow" src="model/images/csv_s.png" title="export in cvs format"  height="18" width="6"/>
-          </html:link>
+    <ul class="contextMenu">
+        <li class="tab"><a href="#/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=tab"
+            title="Download in tab separated value format">TAB</a></li>
+        <li class="csv"><a href="#/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=csv"
+            title="Download in comma separated value format">CSV</a></li>
 
-<c:choose>
-<c:when test="${!empty exp.unlocated && fn:contains(exp.unlocated, fc.featureType)}">
-</c:when>
-<c:otherwise>
-             <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=gff3"
-        title="Download in GFF3 format">
-        <img border="0" class="arrow" src="model/images/gff_s.png" title="export in gff3 format"  height="18" width="6"/>
-        </html:link>
-             <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=sequence"
-        title="Download the sequences">
-                  <img border="0" class="arrow" src="model/images/seq_s.png" title="export in fasta format"  height="18" width="6"/>
-        </html:link>
+        <c:choose>
+        <c:when test="${!empty exp.unlocated && fn:contains(exp.unlocated, fc.featureType)}">
+        </c:when>
+        <c:otherwise>
 
-</c:otherwise>
-</c:choose>
+            <li class="gff"><a href="#/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=gff3"
+                title="Download in GFF3 format">GFF3</a></li>
+            <li class="seq"><a href="#/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=sequence"
+                title="Download the sequences">FASTA</a></li>
+
+        </c:otherwise>
+        </c:choose>
+    </ul>
+
 &nbsp;
      </nobr>
       </c:forEach>

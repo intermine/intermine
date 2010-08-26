@@ -149,6 +149,8 @@ class ClassAttributes
 
 /**
  * container for the lucene index to hold field list and directory
+ * TODO: we could probably get rid of this whole thing and just use the directory since
+ * we can get the indexed fields from the directory itself
  * @author nils
  */
 class LuceneIndexContainer implements Serializable
@@ -831,10 +833,11 @@ public class KeywordSearch
 
     private static IndexReader reader = null;
     private static BoboIndexReader boboIndexReader = null;
-    private static ObjectPipe<Document> indexingQueue = new ObjectPipe<Document>(50000);
+    private static ObjectPipe<Document> indexingQueue = new ObjectPipe<Document>(100000);
     private static LuceneIndexContainer index = null;
 
     private static Properties properties = null;
+    private static String tempDirectory = null;
     private static Map<Class<? extends InterMineObject>, String[]> specialReferences;
     private static Set<Class<? extends InterMineObject>> ignoredClasses;
     private static Map<ClassDescriptor, Float> classBoost;
@@ -929,6 +932,8 @@ public class KeywordSearch
                                 "1".equals(value) || "true".equals(value.toLowerCase())
                                         || "on".equals(value.toLowerCase());
                     }
+
+                    tempDirectory = properties.getProperty("index.temp.directory", "");
                 }
             } catch (IOException e) {
                 LOG.error("keyword_search.properties: errow while loading file '" + configFileName
@@ -957,6 +962,7 @@ public class KeywordSearch
         }
 
         LOG.info("Search - Debug mode: " + debugOutput);
+        LOG.info("Indexing - Temp Dir: " + tempDirectory);
     }
 
     /**
@@ -1045,11 +1051,11 @@ public class KeywordSearch
      */
     public static void saveIndexToDatabase(ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys) {
-        if (index == null) {
-            createIndex(os, classKeys);
-        }
-
         try {
+            if (index == null) {
+                createIndex(os, classKeys);
+            }
+
             LOG.info("Saving search index information to database...");
             writeObjectToDB(os, MetadataManager.SEARCH_INDEX, index);
             LOG.info("Successfully saved search index information to database.");
@@ -1424,9 +1430,11 @@ public class KeywordSearch
         }
     }
 
-    private static void createIndex(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys) {
+    private static File createIndex(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys)
+        throws IOException {
         long time = System.currentTimeMillis();
-        LOG.info("Indexing metadata...");
+        File tempFile = null;
+        LOG.info("Creating keyword search index...");
 
         parseProperties(os);
 
@@ -1440,82 +1448,92 @@ public class KeywordSearch
         LOG.info("Preparing indexer...");
         index = new LuceneIndexContainer();
         try {
-            File directoryPath = new File(LUCENE_INDEX_DIR);
-            index.setDirectory(FSDirectory.open(directoryPath));
+            tempFile = File.createTempFile("search_index", "", new File(tempDirectory));
+            if (!tempFile.delete()) {
+                throw new IOException("Could not delete temp file");
+            }
+
+            index.setDirectory(FSDirectory.open(tempFile));
             index.setDirectoryType("FSDirectory");
 
             // make sure we start with a new index
-            if (directoryPath.exists()) {
-                String files[] = directoryPath.list();
+            if (tempFile.exists()) {
+                String files[] = tempFile.list();
                 for (int i = 0; i < files.length; i++) {
                     LOG.info("Deleting old file: " + files[i]);
-                    new File(directoryPath.getAbsolutePath() + File.separator + files[i]).delete();
+                    new File(tempFile.getAbsolutePath() + File.separator + files[i]).delete();
                 }
+            } else {
+                tempFile.mkdir();
             }
         } catch (IOException e) {
-            LOG.error("Could not create index directory, using RAM!", e);
-            index.setDirectory(new RAMDirectory());
-            index.setDirectoryType("RAMDirectory");
+//            LOG.error("Could not create index directory, using RAM!", e);
+//            index.setDirectory(new RAMDirectory());
+//            index.setDirectoryType("RAMDirectory");
+            LOG.error("Creating temp directory failed", e);
+            throw e;
         }
+
+        LOG.info("Index directory: " + tempFile.getAbsolutePath());
 
         IndexWriter writer;
-        try {
-            SnowballAnalyzer snowballAnalyzer =
-                    new SnowballAnalyzer(Version.LUCENE_30, "English",
-                            StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-            writer =
-                    new IndexWriter(index.getDirectory(), snowballAnalyzer, true,
-                            IndexWriter.MaxFieldLength.UNLIMITED);
+        SnowballAnalyzer snowballAnalyzer =
+                new SnowballAnalyzer(Version.LUCENE_30, "English",
+                        StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+        writer =
+                new IndexWriter(index.getDirectory(), snowballAnalyzer, true,
+                        IndexWriter.MaxFieldLength.UNLIMITED); //autocommit = false?
+        writer.setMergeFactor(10); //10 default, higher values = more parts
+        writer.setRAMBufferSizeMB(64); //flush to disk when docs take up X MB
 
-            int indexed = 0;
+        int indexed = 0;
 
-            // loop and index while we still have fetchers running
-            LOG.info("Starting to index...");
-            while (indexingQueue.hasNext()) {
-                Document doc = indexingQueue.next();
+        // loop and index while we still have fetchers running
+        LOG.info("Starting to index...");
+        while (indexingQueue.hasNext()) {
+            Document doc = indexingQueue.next();
 
-                // nothing in the queue?
-                if (doc != null) {
-                    try {
-                        writer.addDocument(doc);
-                        indexed++;
-                    } catch (IOException e) {
-                        LOG.error("Failed to submit #" + doc.getFieldable("id") + " to the index",
-                                e);
-                    }
+            // nothing in the queue?
+            if (doc != null) {
+                try {
+                    writer.addDocument(doc);
+                    indexed++;
+                } catch (IOException e) {
+                    LOG.error("Failed to submit #" + doc.getFieldable("id") + " to the index",
+                            e);
+                }
 
-                    if (indexed % 10000 == 1) {
-                        LOG.info("docs indexed=" + indexed + "; thread state="
-                                + fetchThread.getState() + "; docs/ms=" + indexed * 1.0F
-                                / (System.currentTimeMillis() - time) + "; memory="
-                                + Runtime.getRuntime().freeMemory() / 1024 + "k/"
-                                + Runtime.getRuntime().maxMemory() / 1024 + "k" + "; time="
-                                + (System.currentTimeMillis() - time) + "ms");
-                    }
+                if (indexed % 10000 == 1) {
+                    LOG.info("docs indexed=" + indexed + "; thread state="
+                            + fetchThread.getState() + "; docs/ms=" + indexed * 1.0F
+                            / (System.currentTimeMillis() - time) + "; memory="
+                            + Runtime.getRuntime().freeMemory() / 1024 + "k/"
+                            + Runtime.getRuntime().maxMemory() / 1024 + "k" + "; time="
+                            + (System.currentTimeMillis() - time) + "ms");
                 }
             }
-
-            index.getFieldNames().addAll(fetchThread.getFieldNames());
-
-            LOG.info("Indexing done, optimizing index files...");
-
-            try {
-                writer.optimize();
-                writer.close();
-            } catch (IOException e) {
-                LOG.error("IOException while optimizing and closing IndexWriter", e);
-            }
-
-            time = System.currentTimeMillis() - time;
-            int seconds = (int) Math.floor(time / 1000);
-            LOG.info("Indexing of "
-                    + indexed
-                    + " documents finished in "
-                    + String.format("%02d:%02d.%03d", (int) Math.floor(seconds / 60), seconds % 60,
-                            time % 1000) + " minutes");
-        } catch (IOException err) {
-            throw new RuntimeException("Failed to create lucene IndexWriter", err);
         }
+
+        index.getFieldNames().addAll(fetchThread.getFieldNames());
+
+        LOG.info("Indexing done, optimizing index files...");
+
+        try {
+            writer.optimize();
+            writer.close();
+        } catch (IOException e) {
+            LOG.error("IOException while optimizing and closing IndexWriter", e);
+        }
+
+        time = System.currentTimeMillis() - time;
+        int seconds = (int) Math.floor(time / 1000);
+        LOG.info("Indexing of "
+                + indexed
+                + " documents finished in "
+                + String.format("%02d:%02d.%03d", (int) Math.floor(seconds / 60), seconds % 60,
+                        time % 1000) + " minutes");
+
+        return tempFile;
     }
 
     /**
@@ -1547,5 +1565,31 @@ public class KeywordSearch
      */
     public static Vector<KeywordSearchFacetData> getFacets() {
         return facets;
+    }
+
+    /**
+     * delete the directory used for the index (used in postprocessing)
+     */
+    public static void deleteIndexDirectory() {
+        if (index != null && "FSDirectory".equals(index.getDirectoryType())) {
+            File tempFile = ((FSDirectory) index.getDirectory()).getFile();
+            LOG.info("Deleting index directory: " + tempFile.getAbsolutePath());
+
+            if (tempFile.exists()) {
+                String files[] = tempFile.list();
+                for (int i = 0; i < files.length; i++) {
+                    LOG.info("Deleting index file: " + files[i]);
+                    new File(tempFile.getAbsolutePath() + File.separator + files[i]).delete();
+                }
+
+                tempFile.delete();
+
+                LOG.warn("Deleted index directory!");
+            } else {
+                LOG.warn("Index directory does not exist!");
+            }
+
+            index = null;
+        }
     }
 }
