@@ -8,7 +8,7 @@
 <attribute name="primaryIdentifier" value="3R"/>
 <reference name="organism" ref_id="0_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/><reference ref_id="2_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="8_1" class="AnatomyTerm">
 <attribute name="identifier" value="FBbt:00005304"/>
@@ -18,7 +18,7 @@
 <attribute name="primaryIdentifier" value="2L"/>
 <reference name="organism" ref_id="0_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/><reference ref_id="2_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="10_2" class="Publication">
 <attribute name="pubMedId" value="7713432"/>
