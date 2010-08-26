@@ -267,7 +267,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
 
                 Properties properties = new Properties();
                 properties.load(configStream);*/
-                
+
                 //read class keys to figure out what are keyFields during indexing
                 InputStream is = classLoader.getResourceAsStream("class_keys.properties");
                 Properties classKeyProperties = new Properties();
@@ -275,7 +275,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 Map<String, List<FieldDescriptor>> classKeys =
                     ClassKeyHelper.readKeys(os.getModel(), classKeyProperties);
 
-                //index and save 
+                //index and save
                 KeywordSearch.saveIndexToDatabase(os, classKeys);
                 System.out.println("Index saved!");
             } else if ("create-overlap-view".equals(operation)) {
