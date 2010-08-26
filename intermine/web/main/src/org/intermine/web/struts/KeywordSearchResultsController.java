@@ -167,7 +167,8 @@ public class KeywordSearchResultsController extends TilesAction
             for (Entry<String, String[]> requestParameter : ((Map<String, String[]>) request
                     .getParameterMap()).entrySet()) {
                 if (requestParameter.getKey().startsWith("facet_")
-                        && requestParameter.getValue().length > 0) {
+                        && requestParameter.getValue().length > 0
+                        && !StringUtils.isBlank(requestParameter.getValue()[0])) {
                     String facetField = requestParameter.getKey().substring("facet_".length());
                     boolean found = false;
                     for (KeywordSearchFacetData keywordSearchFacetData : facets) {

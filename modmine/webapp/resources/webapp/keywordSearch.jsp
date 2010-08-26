@@ -28,7 +28,10 @@
   <p><i>Search <c:if test="${!empty searchBag}"><b>the list "${searchBag}"</b></c:if><c:if test="${empty searchBag}">our database</c:if> by keyword</i></p>
     <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
         <c:forEach items="${searchFacetValues}" var="facetValue">
-            <input type="hidden" name="facet_${facetValue.key}" value="${facetValue.value}" />
+            <!-- modmine special: category is taken care of later -->
+            <c:if test="${facetValue.key != 'Category'}">
+                <input type="hidden" name="facet_${facetValue.key}" value="${facetValue.value}" />
+            </c:if>
         </c:forEach>
         <c:if test="${!empty searchBag}">
             <input type="hidden" name="searchBag" value="${searchBag}" />
@@ -39,38 +42,27 @@
 	             &laquo; Back to index</a>
           </c:if>
 		  <input type="text" name="searchTerm" value="<c:out value="${searchTerm}"></c:out>" style="width: 350px;" /> 
-          <c:if test="${!empty searchFacetValues}">
-              <!-- <select name="searchKeepRestrictions">
-                <option value="on">
-                  <c:if test="${empty searchTerm}">
-                    in this list
-                  </c:if>
-                  <c:if test="${!empty searchTerm}">
-                        restricted to 
-				        <c:forEach items="${searchFacetValues}" var="facetValue" varStatus="facetValueStatus">
-				            ${facetValue.value}<c:if test="${!facetValueStatus.last}">,</c:if>
-				        </c:forEach>
-                  </c:if>
-                </option>
-                <option value="">
-                    in entire database
-                </option>
-              </select>
-              
-              <input type="submit" name="searchSubmitRestricted"
-                value="Search (only <c:forEach items="${searchFacetValues}" var="facetValue" varStatus="facetValueStatus">${facetValue.value}<c:if test="${!facetValueStatus.last}">, </c:if></c:forEach>)" />
-               -->
-              <input type="submit" name="searchSubmitRestricted"
-                value="Search (with current restrictions)" />
-          </c:if>
-          <input type="submit" name="searchSubmit" value="Search entire <c:if test="${!empty searchBag}">list</c:if><c:if test="${empty searchBag}">database</c:if>" />
-		</div>
+		  
+		  <!-- modmine special: only search submission -> change output format -->
+          <select name="facet_Category">
+              <option value="<c:if test="${searchFacetValues['Category'] != null && searchFacetValues['Category'] != 'Submission'}">${searchFacetValues['Category']}</c:if>">
+                any object
+              </option>
+              <option value="Submission"<c:if test="${searchFacetValues['Category'] == 'Submission'}"> selected="selected"</c:if>>
+                only submissions
+              </option>
+          </select>  
+		  
+		  <!-- modmine special: no "search entire db" button because that would conflict with Category select above -->
+          <input type="submit" name="searchSubmitRestricted"
+                value="Search" />
+        </div>
     </form>
     
     <div class="examples">
 	    <ul>
             <li>
-                Search this entire website. Enter identifiers, names or keywords for
+                Search all of modMine.  Enter identifiers, names or keywords for
 				genes, pathways, authors, ontology terms, etc.  (e.g. <i>eve</i>, <i>embryo</i>,
 				<i>zen</i>, <i>allele</i>)
             </li>
