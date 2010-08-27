@@ -584,7 +584,7 @@
   <class className="org.intermine.model.bio.RNAiScreenHit">
     <fields>
       <fieldconfig fieldExpr="result"/>
-      <fieldconfig fieldExpr="amplicon.primaryIdentifier"/>
+      <fieldconfig fieldExpr="pcrProduct.primaryIdentifier"/>
       <fieldconfig fieldExpr="rnaiScreen.name"/>
       <fieldconfig fieldExpr="rnaiScreen.publication.pubMedId"/>
     </fields>
