@@ -27,7 +27,7 @@
         controllerUrl="/initExperiment.do"/>
 
 <definition name="modmineGBrowse.tile" path="/model/modmineGBrowse.jsp"
-        controllerUrl="/initModmineGBrowseController.do"/>
+        controllerUrl="/initExperiment.do"/>
 
 <definition name="projectList.tile" path="/model/projectList.jsp"
         controllerUrl="/initProjectList.do"/>
