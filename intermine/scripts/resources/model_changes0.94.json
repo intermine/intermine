@@ -28,7 +28,6 @@
       "GenomeRegion":1,
       "features":1,
       "genes":1,
-      "Deletion":1,
       "curated":1,
       "Annotation":1,
       "Experiment":1,
@@ -50,6 +49,8 @@
       
    },
    "translation_for":{
+      "Amplicon":"PCRProduct",
+      "Deletion":"ChromosomalDeletion",
       "GOEvidence":"GOEvidenceCode",
       "GoAnnotation.property":"ontologyTerm",
       "FlyAtlasResult.MRNASignal":"mRNASignal",
