@@ -47,70 +47,43 @@
       </node>
    </query>
 </template>
-<template name="AmpliconHit_RNAiResults" title="Amplicon [D. melanogaster] + Result type  --&gt; RNAi screen results." longDescription="List all DRSC RNAi screens where a specific amplicon has been found to be a certain type of result. Result types can be: not screened, not a hit, weak, medium or strong hit." comment="">
-  <query name="AmpliconHit_RNAiResults" model="genomic" view="RNAiScreenHit.amplicon.primaryIdentifier RNAiScreenHit.result RNAiScreenHit.rnaiScreen.publication.pubMedId RNAiScreenHit.rnaiScreen.publication.firstAuthor RNAiScreenHit.rnaiScreen.name RNAiScreenHit.rnaiScreen.analysisDescription RNAiScreenHit.rnaiScreen.cellLine" longDescription="List all DRSC RNAi screens where a specific amplicon has been found to be a certain type of result. Result types can be: not screened, not a hit, weak, medium or strong hit." sortOrder="RNAiScreenHit.amplicon.primaryIdentifier asc" constraintLogic="A and B">
-    <node path="RNAiScreenHit" type="RNAiScreenHit">
-    </node>
-    <node path="RNAiScreenHit.amplicon" type="Amplicon">
-    </node>
-    <node path="RNAiScreenHit.amplicon.synonyms" type="Synonym">
-    </node>
-    <node path="RNAiScreenHit.amplicon.synonyms.value" type="String">
-      <constraint op="=" value="DRSC04651" description="List all screens where the following amplicon" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="RNAiScreenHit.result" type="String">
-      <constraint op="=" value="Strong Hit" description="has been found to be the following type of result:" identifier="" editable="true" code="A" extraValue="">
-      </constraint>
-    </node>
-  </query>
+<template longDescription="List all DRSC RNAi screens where a specific amplicon has been found to be a certain type of result. Result types can be: not screened, not a hit, weak, medium or strong hit." name="AmpliconHit_RNAiResults" title="Amplicon [D. melanogaster] + Result type  --&gt; RNAi screen results.">
+   <query longDescription="List all DRSC RNAi screens where a specific amplicon has been found to be a certain type of result. Result types can be: not screened, not a hit, weak, medium or strong hit." view="RNAiScreenHit.pcrProduct.primaryIdentifier RNAiScreenHit.result RNAiScreenHit.rnaiScreen.publication.pubMedId RNAiScreenHit.rnaiScreen.publication.firstAuthor RNAiScreenHit.rnaiScreen.name RNAiScreenHit.rnaiScreen.analysisDescription RNAiScreenHit.rnaiScreen.cellLine" model="genomic" name="AmpliconHit_RNAiResults" sortOrder="RNAiScreenHit.pcrProduct.primaryIdentifier asc" constraintLogic="A and B">
+      <node path="RNAiScreenHit" type="RNAiScreenHit"></node>
+      <node path="RNAiScreenHit.pcrProduct" type="PCRProduct"></node>
+      <node path="RNAiScreenHit.pcrProduct.synonyms" type="Synonym"></node>
+      <node path="RNAiScreenHit.pcrProduct.synonyms.value" type="String">
+         <constraint identifier="" value="DRSC04651" editable="true" description="List all screens where the following amplicon" op="=" code="B"></constraint>
+      </node>
+      <node path="RNAiScreenHit.result" type="String">
+         <constraint extraValue="" identifier="" value="Strong Hit" editable="true" description="has been found to be the following type of result:" op="=" code="A"></constraint>
+      </node>
+   </query>
 </template>
-
-
-
-
-<template name="AmpliconScreen_RNAiResults" title="Amplicon [D. melanogaster] + RNAi screen --&gt; RNAi screen results." longDescription="Find all screen results for a specified amplicon from a specified DRSC RNAi screen. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." comment="">
-  <query name="AmpliconScreen_RNAiResults" model="genomic" view="RNAiScreenHit.amplicon.primaryIdentifier RNAiScreenHit.result RNAiScreenHit.rnaiScreen.publication.pubMedId RNAiScreenHit.rnaiScreen.publication.firstAuthor RNAiScreenHit.rnaiScreen.name RNAiScreenHit.rnaiScreen.analysisDescription RNAiScreenHit.rnaiScreen.cellLine" longDescription="Find all screen results for a specified amplicon from a specified DRSC RNAi screen. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." sortOrder="RNAiScreenHit.amplicon.primaryIdentifier asc" constraintLogic="A and B">
-    <node path="RNAiScreenHit" type="RNAiScreenHit">
-    </node>
-    <node path="RNAiScreenHit.amplicon" type="Amplicon">
-    </node>
-    <node path="RNAiScreenHit.amplicon.synonyms" type="Synonym">
-    </node>
-    <node path="RNAiScreenHit.amplicon.synonyms.value" type="String">
-      <constraint op="=" value="DRSC04651" description="Show all results for the following amplicon" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="RNAiScreenHit.rnaiScreen" type="RNAiScreen">
-    </node>
-    <node path="RNAiScreenHit.rnaiScreen.publication" type="Publication">
-    </node>
-    <node path="RNAiScreenHit.rnaiScreen.publication.pubMedId" type="String">
-      <constraint op="=" value="16452979" description="from the RNAi screen published in this paper:" identifier="" editable="true" code="A" extraValue="">
-      </constraint>
-    </node>
-  </query>
+<template longDescription="Find all screen results for a specified amplicon from a specified DRSC RNAi screen. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." name="AmpliconScreen_RNAiResults" title="Amplicon [D. melanogaster] + RNAi screen --&gt; RNAi screen results.">
+   <query longDescription="Find all screen results for a specified amplicon from a specified DRSC RNAi screen. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." view="RNAiScreenHit.pcrProduct.primaryIdentifier RNAiScreenHit.result RNAiScreenHit.rnaiScreen.publication.pubMedId RNAiScreenHit.rnaiScreen.publication.firstAuthor RNAiScreenHit.rnaiScreen.name RNAiScreenHit.rnaiScreen.analysisDescription RNAiScreenHit.rnaiScreen.cellLine" model="genomic" name="AmpliconScreen_RNAiResults" sortOrder="RNAiScreenHit.pcrProduct.primaryIdentifier asc" constraintLogic="A and B">
+      <node path="RNAiScreenHit" type="RNAiScreenHit"></node>
+      <node path="RNAiScreenHit.pcrProduct" type="PCRProduct"></node>
+      <node path="RNAiScreenHit.pcrProduct.synonyms" type="Synonym"></node>
+      <node path="RNAiScreenHit.pcrProduct.synonyms.value" type="String">
+         <constraint identifier="" value="DRSC04651" editable="true" description="Show all results for the following amplicon" op="=" code="B"></constraint>
+      </node>
+      <node path="RNAiScreenHit.rnaiScreen" type="RNAiScreen"></node>
+      <node path="RNAiScreenHit.rnaiScreen.publication" type="Publication"></node>
+      <node path="RNAiScreenHit.rnaiScreen.publication.pubMedId" type="String">
+         <constraint extraValue="" identifier="" value="16452979" editable="true" description="from the RNAi screen published in this paper:" op="=" code="A"></constraint>
+      </node>
+   </query>
 </template>
-
-
-
-
-<template name="Amplicon_RNAiResults" title="Amplicon [D. melanogaster] --&gt; RNAi screen results." longDescription="Find all RNAi screen results from the DRSC for a particular amplicon. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." comment="">
-  <query name="Amplicon_RNAiResults" model="genomic" view="RNAiScreenHit.amplicon.primaryIdentifier RNAiScreenHit.result RNAiScreenHit.rnaiScreen.publication.pubMedId RNAiScreenHit.rnaiScreen.publication.firstAuthor RNAiScreenHit.rnaiScreen.name RNAiScreenHit.rnaiScreen.analysisDescription RNAiScreenHit.rnaiScreen.cellLine" longDescription="Find all RNAi screen results from the DRSC for a particular amplicon. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." sortOrder="RNAiScreenHit.amplicon.primaryIdentifier asc">
-    <node path="RNAiScreenHit" type="RNAiScreenHit">
-    </node>
-    <node path="RNAiScreenHit.amplicon" type="Amplicon">
-    </node>
-    <node path="RNAiScreenHit.amplicon.primaryIdentifier" type="String">
-      <constraint op="=" value="DRSC04651" description="" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
+<template longDescription="Find all RNAi screen results from the DRSC for a particular amplicon. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." name="Amplicon_RNAiResults" title="Amplicon [D. melanogaster] --&gt; RNAi screen results.">
+   <query longDescription="Find all RNAi screen results from the DRSC for a particular amplicon. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." view="RNAiScreenHit.pcrProduct.primaryIdentifier RNAiScreenHit.result RNAiScreenHit.rnaiScreen.publication.pubMedId RNAiScreenHit.rnaiScreen.publication.firstAuthor RNAiScreenHit.rnaiScreen.name RNAiScreenHit.rnaiScreen.analysisDescription RNAiScreenHit.rnaiScreen.cellLine" model="genomic" name="Amplicon_RNAiResults" sortOrder="RNAiScreenHit.pcrProduct.primaryIdentifier asc">
+      <node path="RNAiScreenHit" type="RNAiScreenHit"></node>
+      <node path="RNAiScreenHit.pcrProduct" type="PCRProduct"></node>
+      <node path="RNAiScreenHit.pcrProduct.primaryIdentifier" type="String">
+         <constraint identifier="" value="DRSC04651" editable="true" description="" op="=" code="A"></constraint>
+      </node>
+   </query>
 </template>
-
-
-
-
 <template longDescription="Find all D. melanogaster alleles that have a phenotype in  a specific anatomical structure and that are from a certain allele class. (Data Source: FlyBase)" name="AnatomyTerm_Alleles" title="Phenotype [D. melanogaster] --&gt; Alleles.">
    <query longDescription="Find all D. melanogaster alleles that have a phenotype in  a specific anatomical structure and that are from a certain allele class. (Data Source: FlyBase)" view="Gene.primaryIdentifier Gene.symbol Gene.alleles.alleleClass Gene.alleles.primaryIdentifier Gene.alleles.secondaryIdentifier Gene.alleles.ontologyAnnotations.description" model="genomic" name="AnatomyTerm_Alleles" sortOrder="Gene.primaryIdentifier asc" constraintLogic="B and A and C">
       <pathDescription pathString="Gene.alleles" description="Allele"></pathDescription>
@@ -304,83 +277,58 @@
       </node>
    </query>
 </template>
-<template name="ChromLocation_Gene" title="Chromosomal location --&gt; All genes." longDescription="Show the genes located between two points on a chromosome. (Data Source: FlyBase, Ensembl)." comment="">
-  <query name="ChromLocation_Gene" model="genomic" view="Chromosome.genes.primaryIdentifier Chromosome.genes.symbol Chromosome.primaryIdentifier Chromosome.genes.chromosomeLocation.start Chromosome.genes.chromosomeLocation.end Chromosome.genes.chromosomeLocation.strand" longDescription="Show the genes located between two points on a chromosome. (Data Source: FlyBase, Ensembl)." sortOrder="Chromosome.genes.primaryIdentifier asc" constraintLogic="A and B and C and D">
-    <pathDescription pathString="Chromosome.genes" description="Gene">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.genes.chromosomeLocation" description="Chromosome location">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.genes.evidence" description="Dataset">
-    </pathDescription>
-    <node path="Chromosome" type="Chromosome">
-    </node>
-    <node path="Chromosome.primaryIdentifier" type="String">
-      <constraint op="=" value="2L" description="Show the genes located on chromosome:" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Chromosome.organism" type="Organism">
-    </node>
-    <node path="Chromosome.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="from organism:" identifier="from organism:" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="Chromosome.genes" type="Gene">
-    </node>
-    <node path="Chromosome.genes.chromosomeLocation" type="Location">
-    </node>
-    <node path="Chromosome.genes.chromosomeLocation.start" type="Integer">
-      <constraint op="&gt;" value="1" description="between:" identifier="between:" editable="true" code="C">
-      </constraint>
-    </node>
-    <node path="Chromosome.genes.chromosomeLocation.end" type="Integer">
-      <constraint op="&lt;" value="50000" description="and:" identifier="and:" editable="true" code="D">
-      </constraint>
-    </node>
-  </query>
+<template longDescription="Show the genes located between two points on a chromosome. (Data Source: FlyBase, Ensembl)." name="ChromLocation_Gene" title="Chromosomal location --&gt; All genes.">
+   <query longDescription="Show the genes located between two points on a chromosome. (Data Source: FlyBase, Ensembl)." view="Chromosome.locatedFeatures.primaryIdentifier Chromosome.locatedFeatures.symbol Chromosome.primaryIdentifier Chromosome.locatedFeatures.chromosomeLocation.start Chromosome.locatedFeatures.chromosomeLocation.end Chromosome.locatedFeatures.chromosomeLocation.strand" model="genomic" name="ChromLocation_Gene" sortOrder="Chromosome.locatedFeatures.primaryIdentifier asc" constraintLogic="A and B and C and D">
+      <pathDescription pathString="Chromosome.locatedFeatures" description="Gene"></pathDescription>
+      <pathDescription pathString="Chromosome.locatedFeatures.chromosomeLocation" description="Chromosome location"></pathDescription>
+      <pathDescription pathString="Chromosome.locatedFeatures.dataSets" description="Dataset"></pathDescription>
+      <node path="Chromosome" type="Chromosome"></node>
+      <node path="Chromosome.locatedFeatures" type="Gene"></node>
+      <node path="Chromosome.locatedFeatures.chromosomeLocation" type="Location"></node>
+      <node path="Chromosome.locatedFeatures.chromosomeLocation.end" type="Integer">
+         <constraint identifier="and:" value="50000" editable="true" description="and:" op="&lt;" code="D"></constraint>
+      </node>
+      <node path="Chromosome.locatedFeatures.chromosomeLocation.start" type="Integer">
+         <constraint identifier="between:" value="1" editable="true" description="between:" op="&gt;" code="C"></constraint>
+      </node>
+      <node path="Chromosome.organism" type="Organism"></node>
+      <node path="Chromosome.organism.name" type="String">
+         <constraint identifier="from organism:" value="Drosophila melanogaster" editable="true" description="from organism:" op="=" code="B"></constraint>
+      </node>
+      <node path="Chromosome.primaryIdentifier" type="String">
+         <constraint identifier="" value="2L" editable="true" description="Show the genes located on chromosome:" op="=" code="A"></constraint>
+      </node>
+   </query>
 </template>
 
 
 
 
-<template name="ChromLocation_GeneTranscriptExon" title="Chromosomal location --&gt; All genes + Transcripts + Exons." longDescription="For a specified organism and chromosomal location show all genes, transcripts and exons." comment="">
-  <query name="ChromLocation_GeneTranscriptExon" model="genomic" view="Chromosome.primaryIdentifier Chromosome.exons.gene.primaryIdentifier Chromosome.exons.gene.symbol Chromosome.exons.transcripts.primaryIdentifier Chromosome.exons.primaryIdentifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand" longDescription="For a specified organism and chromosomal location show all genes, transcripts and exons." sortOrder="Chromosome.primaryIdentifier asc" constraintLogic="D and A and C and B">
-    <pathDescription pathString="Chromosome.exons" description="Exon">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.exons.transcripts" description="Transcript">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.exons.gene" description="Gene">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.exons.evidence" description="Dataset">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.exons.objects" description="Exon &gt; Chromosome location">
-    </pathDescription>
-    <node path="Chromosome" type="Chromosome">
-    </node>
-    <node path="Chromosome.organism" type="Organism">
-    </node>
-    <node path="Chromosome.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="Chromosome.primaryIdentifier" type="String">
-      <constraint op="=" value="2L" description="show the genes, transcripts and exons located on chromosome:" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Chromosome.exons" type="Exon">
-    </node>
-    <node path="Chromosome.exons.objects" type="Location">
-    </node>
-    <node path="Chromosome.exons.objects.object" type="Chromosome">
-    </node>
-    <node path="Chromosome.exons.objects.start" type="Integer">
-      <constraint op="&gt;" value="1" description="between base:" identifier="" editable="true" code="C">
-      </constraint>
-    </node>
-    <node path="Chromosome.exons.objects.end" type="Integer">
-      <constraint op="&lt;" value="10000" description="and:" identifier="" editable="true" code="D">
-      </constraint>
-    </node>
-  </query>
+<template longDescription="For a specified organism and chromosomal location show all genes, transcripts and exons." name="ChromLocation_GeneTranscriptExon" title="Chromosomal location --&gt; All genes + Transcripts + Exons.">
+   <query longDescription="For a specified organism and chromosomal location show all genes, transcripts and exons." view="Chromosome.primaryIdentifier Chromosome.locatedFeatures.gene.primaryIdentifier Chromosome.locatedFeatures.gene.symbol Chromosome.locatedFeatures.transcripts.primaryIdentifier Chromosome.locatedFeatures.primaryIdentifier Chromosome.locatedFeatures.locations.start Chromosome.locatedFeatures.locations.end Chromosome.locatedFeatures.locations.strand" model="genomic" name="ChromLocation_GeneTranscriptExon" sortOrder="Chromosome.primaryIdentifier asc" constraintLogic="D and A and C and B">
+      <pathDescription pathString="Chromosome.locatedFeatures" description="Exon"></pathDescription>
+      <pathDescription pathString="Chromosome.locatedFeatures.dataSets" description="Dataset"></pathDescription>
+      <pathDescription pathString="Chromosome.locatedFeatures.gene" description="Gene"></pathDescription>
+      <pathDescription pathString="Chromosome.locatedFeatures.locations" description="Exon &gt; Chromosome location"></pathDescription>
+      <pathDescription pathString="Chromosome.locatedFeatures.transcripts" description="Transcript"></pathDescription>
+      <node path="Chromosome" type="Chromosome"></node>
+      <node path="Chromosome.locatedFeatures" type="Exon"></node>
+      <node path="Chromosome.locatedFeatures.locations" type="Location"></node>
+      <node path="Chromosome.locatedFeatures.locations.end" type="Integer">
+         <constraint identifier="" value="10000" editable="true" description="and:" op="&lt;" code="D"></constraint>
+      </node>
+      <node path="Chromosome.locatedFeatures.locations.locatedOn" type="Chromosome"></node>
+      <node path="Chromosome.locatedFeatures.locations.start" type="Integer">
+         <constraint identifier="" value="1" editable="true" description="between base:" op="&gt;" code="C"></constraint>
+      </node>
+      <node path="Chromosome.organism" type="Organism"></node>
+      <node path="Chromosome.organism.name" type="String">
+         <constraint identifier="" value="Drosophila melanogaster" editable="true" description="From:" op="=" code="B"></constraint>
+      </node>
+      <node path="Chromosome.primaryIdentifier" type="String">
+         <constraint identifier="" value="2L" editable="true" description="show the genes, transcripts and exons located on chromosome:" op="=" code="A"></constraint>
+      </node>
+   </query>
 </template>
 
 
