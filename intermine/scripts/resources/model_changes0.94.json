@@ -50,6 +50,10 @@
    },
    "translation_for":{
       "Amplicon":"PCRProduct",
+      "RNAiScreenHit.amplicon":"pcrProduct",
+      "Chromosome.features":"locatedFeatures",
+      "Chromosome.genes":"locatedFeatures",
+      "Chromosome.exons":"locatedFeatures",
       "Deletion":"ChromosomalDeletion",
       "GOEvidence":"GOEvidenceCode",
       "GoAnnotation.property":"ontologyTerm",
