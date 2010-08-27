@@ -5,14 +5,6 @@
   <queries>
   </queries>
 <template-queries>
-<template longDescription="Find an entry in the database using any identifier or synonym." comment="This is the template that the quick search runs.  If the name is changed it also has to be changed for the quick search configuration - Rachel. Removed tags so no longer displayed - just used for quick search now.  Rachel." name="A_IdentifierSynonym_Object" title="Identifier or synonym --&gt; Database object.">
-   <query longDescription="Find an entry in the database using any identifier or synonym." view="Synonym.subject.primaryIdentifier Synonym.value Synonym.subject.organism.name" model="genomic" name="A_IdentifierSynonym_Object" sortOrder="Synonym.subject.primaryIdentifier asc">
-      <node path="Synonym" type="Synonym"></node>
-      <node path="Synonym.value" type="String">
-         <constraint identifier="Synonym.value.1" value="timeout" editable="true" description="" op="=" code="A"></constraint>
-      </node>
-   </query>
-</template>
 <template longDescription="For a specified organism, show the chromosomal location and sequence length for all genes." name="AllGene_Chromosome" title="All genes in organism --&gt; All chromosomal locations.">
    <query longDescription="For a specified organism, show the chromosomal location and sequence length for all genes." view="Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.strand Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.length Gene.primaryIdentifier Gene.symbol" model="genomic" name="AllGene_Chromosome" sortOrder="Gene.chromosome.primaryIdentifier asc">
       <pathDescription pathString="Gene.chromosome" description="Chromosome"></pathDescription>
@@ -76,6 +68,7 @@
 
 
 
+
 <template name="AmpliconScreen_RNAiResults" title="Amplicon [D. melanogaster] + RNAi screen --&gt; RNAi screen results." longDescription="Find all screen results for a specified amplicon from a specified DRSC RNAi screen. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." comment="">
   <query name="AmpliconScreen_RNAiResults" model="genomic" view="RNAiScreenHit.amplicon.primaryIdentifier RNAiScreenHit.result RNAiScreenHit.rnaiScreen.publication.pubMedId RNAiScreenHit.rnaiScreen.publication.firstAuthor RNAiScreenHit.rnaiScreen.name RNAiScreenHit.rnaiScreen.analysisDescription RNAiScreenHit.rnaiScreen.cellLine" longDescription="Find all screen results for a specified amplicon from a specified DRSC RNAi screen. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." sortOrder="RNAiScreenHit.amplicon.primaryIdentifier asc" constraintLogic="A and B">
     <node path="RNAiScreenHit" type="RNAiScreenHit">
@@ -101,6 +94,7 @@
 
 
 
+
 <template name="Amplicon_RNAiResults" title="Amplicon [D. melanogaster] --&gt; RNAi screen results." longDescription="Find all RNAi screen results from the DRSC for a particular amplicon. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." comment="">
   <query name="Amplicon_RNAiResults" model="genomic" view="RNAiScreenHit.amplicon.primaryIdentifier RNAiScreenHit.result RNAiScreenHit.rnaiScreen.publication.pubMedId RNAiScreenHit.rnaiScreen.publication.firstAuthor RNAiScreenHit.rnaiScreen.name RNAiScreenHit.rnaiScreen.analysisDescription RNAiScreenHit.rnaiScreen.cellLine" longDescription="Find all RNAi screen results from the DRSC for a particular amplicon. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." sortOrder="RNAiScreenHit.amplicon.primaryIdentifier asc">
     <node path="RNAiScreenHit" type="RNAiScreenHit">
@@ -113,6 +107,7 @@
     </node>
   </query>
 </template>
+
 
 
 
@@ -346,6 +341,7 @@
 
 
 
+
 <template name="ChromLocation_GeneTranscriptExon" title="Chromosomal location --&gt; All genes + Transcripts + Exons." longDescription="For a specified organism and chromosomal location show all genes, transcripts and exons." comment="">
   <query name="ChromLocation_GeneTranscriptExon" model="genomic" view="Chromosome.primaryIdentifier Chromosome.exons.gene.primaryIdentifier Chromosome.exons.gene.symbol Chromosome.exons.transcripts.primaryIdentifier Chromosome.exons.primaryIdentifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand" longDescription="For a specified organism and chromosomal location show all genes, transcripts and exons." sortOrder="Chromosome.primaryIdentifier asc" constraintLogic="D and A and C and B">
     <pathDescription pathString="Chromosome.exons" description="Exon">
@@ -386,6 +382,7 @@
     </node>
   </query>
 </template>
+
 
 
 
@@ -447,105 +444,74 @@
       </node>
    </query>
 </template>
-<template name="ChromosomeLocation_ESTcluster" title="Chromosomal location [A. gambiae] --&gt; EST cluster." longDescription="For a particular chromosome location show all the EST clusters. (Data available for Anopheles gambiae only)." comment="">
-  <query name="ChromosomeLocation_ESTcluster" model="genomic" view="Chromosome.primaryIdentifier Chromosome.features.chromosomeLocation.start Chromosome.features.chromosomeLocation.end Chromosome.features.primaryIdentifier Chromosome.features.chromosomeLocation.strand" longDescription="For a particular chromosome location show all the EST clusters. (Data available for Anopheles gambiae only)." sortOrder="Chromosome.primaryIdentifier asc" constraintLogic="A and B and C">
-    <pathDescription pathString="Chromosome.features.chromosomeLocation" description="EST cluster &gt; chromosome location">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.features" description="EST cluster">
-    </pathDescription>
-    <node path="Chromosome" type="Chromosome">
-    </node>
-    <node path="Chromosome.features" type="ESTCluster">
-    </node>
-    <node path="Chromosome.features.chromosomeLocation" type="Location">
-    </node>
-    <node path="Chromosome.features.chromosomeLocation.start" type="Integer">
-      <constraint op="&gt;=" value="100" description="" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="Chromosome.features.chromosomeLocation.end" type="Integer">
-      <constraint op="&lt;=" value="50000" description="" identifier="" editable="true" code="C">
-      </constraint>
-    </node>
-    <node path="Chromosome.primaryIdentifier" type="String">
-      <constraint op="=" value="2L" description="" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
+<template longDescription="For a particular chromosome location show all the EST clusters. (Data available for Anopheles gambiae only)." name="ChromosomeLocation_ESTcluster" title="Chromosomal location [A. gambiae] --&gt; EST cluster.">
+   <query longDescription="For a particular chromosome location show all the EST clusters. (Data available for Anopheles gambiae only)." view="Chromosome.primaryIdentifier Chromosome.locatedFeatures.chromosomeLocation.start Chromosome.locatedFeatures.chromosomeLocation.end Chromosome.locatedFeatures.primaryIdentifier Chromosome.locatedFeatures.chromosomeLocation.strand" model="genomic" name="ChromosomeLocation_ESTcluster" sortOrder="Chromosome.primaryIdentifier asc" constraintLogic="A and B and C">
+      <pathDescription pathString="Chromosome.locatedFeatures" description="EST cluster"></pathDescription>
+      <pathDescription pathString="Chromosome.locatedFeatures.chromosomeLocation" description="EST cluster &gt; chromosome location"></pathDescription>
+      <node path="Chromosome" type="Chromosome"></node>
+      <node path="Chromosome.locatedFeatures" type="OverlappingESTSet"></node>
+      <node path="Chromosome.locatedFeatures.chromosomeLocation" type="Location"></node>
+      <node path="Chromosome.locatedFeatures.chromosomeLocation.end" type="Integer">
+         <constraint identifier="" value="50000" editable="true" description="" op="&lt;=" code="C"></constraint>
+      </node>
+      <node path="Chromosome.locatedFeatures.chromosomeLocation.start" type="Integer">
+         <constraint identifier="" value="100" editable="true" description="" op="&gt;=" code="B"></constraint>
+      </node>
+      <node path="Chromosome.primaryIdentifier" type="String">
+         <constraint identifier="" value="2L" editable="true" description="" op="=" code="A"></constraint>
+      </node>
+   </query>
 </template>
 
 
 
-<template name="ChromosomeLocation_ESTclusterandESTs" title="Chromosomal location [A. gambiae] --&gt; EST clusters + ESTs." longDescription="For a particular chromosomal location from A. gambiae show all EST clusters and ESTs. (Data Source: VectorBase)." comment="">
-  <query name="ChromosomeLocation_ESTclusterandESTs" model="genomic" view="Chromosome.primaryIdentifier Chromosome.features.primaryIdentifier Chromosome.features.chromosomeLocation.start Chromosome.features.chromosomeLocation.end Chromosome.features.chromosomeLocation.strand Chromosome.features.ESTs.primaryIdentifier Chromosome.features.ESTs.dataSets.dataSource.name" longDescription="For a particular chromosomal location from A. gambiae show all EST clusters and ESTs. (Data Source: VectorBase)." sortOrder="Chromosome.primaryIdentifier asc" constraintLogic="A and B and C">
-    <pathDescription pathString="Chromosome.features.ESTs" description="EST">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.features.chromosomeLocation" description="EST cluster &gt; chromosome location">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.features.ESTs.evidence" description="Data set">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.features" description="EST cluster">
-    </pathDescription>
-    <node path="Chromosome" type="Chromosome">
-    </node>
-    <node path="Chromosome.features" type="ESTCluster">
-    </node>
-    <node path="Chromosome.features.chromosomeLocation" type="Location">
-    </node>
-    <node path="Chromosome.features.chromosomeLocation.start" type="Integer">
-      <constraint op="&gt;=" value="100" description="" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="Chromosome.features.chromosomeLocation.end" type="Integer">
-      <constraint op="&lt;=" value="50000" description="" identifier="" editable="true" code="C">
-      </constraint>
-    </node>
-    <node path="Chromosome.features.ESTs" type="EST">
-    </node>
-    <node path="Chromosome.primaryIdentifier" type="String">
-      <constraint op="=" value="2L" description="" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
+<template longDescription="For a particular chromosomal location from A. gambiae show all EST clusters and ESTs. (Data Source: VectorBase)." name="ChromosomeLocation_ESTclusterandESTs" title="Chromosomal location [A. gambiae] --&gt; EST clusters + ESTs.">
+   <query longDescription="For a particular chromosomal location from A. gambiae show all EST clusters and ESTs. (Data Source: VectorBase)." view="Chromosome.primaryIdentifier Chromosome.locatedFeatures.primaryIdentifier Chromosome.locatedFeatures.chromosomeLocation.start Chromosome.locatedFeatures.chromosomeLocation.end Chromosome.locatedFeatures.chromosomeLocation.strand Chromosome.locatedFeatures.ESTs.primaryIdentifier Chromosome.locatedFeatures.ESTs.dataSets.dataSource.name" model="genomic" name="ChromosomeLocation_ESTclusterandESTs" sortOrder="Chromosome.primaryIdentifier asc" constraintLogic="A and B and C">
+      <pathDescription pathString="Chromosome.locatedFeatures" description="EST cluster"></pathDescription>
+      <pathDescription pathString="Chromosome.locatedFeatures.ESTs" description="EST"></pathDescription>
+      <pathDescription pathString="Chromosome.locatedFeatures.ESTs.dataSets" description="Data set"></pathDescription>
+      <pathDescription pathString="Chromosome.locatedFeatures.chromosomeLocation" description="EST cluster &gt; chromosome location"></pathDescription>
+      <node path="Chromosome" type="Chromosome"></node>
+      <node path="Chromosome.locatedFeatures" type="OverlappingESTSet"></node>
+      <node path="Chromosome.locatedFeatures.ESTs" type="EST"></node>
+      <node path="Chromosome.locatedFeatures.chromosomeLocation" type="Location"></node>
+      <node path="Chromosome.locatedFeatures.chromosomeLocation.end" type="Integer">
+         <constraint identifier="" value="50000" editable="true" description="" op="&lt;=" code="C"></constraint>
+      </node>
+      <node path="Chromosome.locatedFeatures.chromosomeLocation.start" type="Integer">
+         <constraint identifier="" value="100" editable="true" description="" op="&gt;=" code="B"></constraint>
+      </node>
+      <node path="Chromosome.primaryIdentifier" type="String">
+         <constraint identifier="" value="2L" editable="true" description="" op="=" code="A"></constraint>
+      </node>
+   </query>
 </template>
 
 
 
-<template name="ChromosomeLocation_Tiffin" title="Chromosomal location [D. melanogaster] --&gt; Predicted binding sites from Tiffin." longDescription="For a particular chromosomal location from D. melanogaster, show all the computationally predicted binding sites from Tiffin. (Data Source: Tiffin)." comment="">
-  <query name="ChromosomeLocation_Tiffin" model="genomic" view="Chromosome.primaryIdentifier Chromosome.features.chromosomeLocation.start Chromosome.features.chromosomeLocation.end Chromosome.features.chromosomeLocation.strand Chromosome.features.primaryIdentifier Chromosome.features.motif.primaryIdentifier" longDescription="For a particular chromosomal location from D. melanogaster, show all the computationally predicted binding sites from Tiffin. (Data Source: Tiffin)." sortOrder="Chromosome.primaryIdentifier asc" constraintLogic="A and C and D and B">
-    <pathDescription pathString="Chromosome.features.motif" description="Predicted binding site &gt; motif">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.features.chromosomeLocation" description="Predicted binding site &gt; chromosome location ">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.features.evidence" description="Dataset">
-    </pathDescription>
-    <pathDescription pathString="Chromosome.features" description="Predicted binding site">
-    </pathDescription>
-    <node path="Chromosome" type="Chromosome">
-    </node>
-    <node path="Chromosome.primaryIdentifier" type="String">
-      <constraint op="=" value="2R" description="" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Chromosome.features" type="TFBindingSite">
-    </node>
-    <node path="Chromosome.features.chromosomeLocation" type="Location">
-    </node>
-    <node path="Chromosome.features.chromosomeLocation.start" type="Integer">
-      <constraint op="&gt;=" value="300000" description="" identifier="" editable="true" code="C">
-      </constraint>
-    </node>
-    <node path="Chromosome.features.chromosomeLocation.end" type="Integer">
-      <constraint op="&lt;=" value="500000" description="" identifier="" editable="true" code="D">
-      </constraint>
-    </node>
-    <node path="Chromosome.features.dataSets" type="DataSet">
-    </node>
-    <node path="Chromosome.features.dataSets.title" type="String">
-      <constraint op="=" value="Tiffin" description="" identifier="" code="B">
-      </constraint>
-    </node>
-  </query>
+<template longDescription="For a particular chromosomal location from D. melanogaster, show all the computationally predicted binding sites from Tiffin. (Data Source: Tiffin)." name="ChromosomeLocation_Tiffin" title="Chromosomal location [D. melanogaster] --&gt; Predicted binding sites from Tiffin.">
+   <query longDescription="For a particular chromosomal location from D. melanogaster, show all the computationally predicted binding sites from Tiffin. (Data Source: Tiffin)." view="Chromosome.primaryIdentifier Chromosome.locatedFeatures.chromosomeLocation.start Chromosome.locatedFeatures.chromosomeLocation.end Chromosome.locatedFeatures.chromosomeLocation.strand Chromosome.locatedFeatures.primaryIdentifier Chromosome.locatedFeatures.motif.primaryIdentifier" model="genomic" name="ChromosomeLocation_Tiffin" sortOrder="Chromosome.primaryIdentifier asc" constraintLogic="A and C and D and B">
+      <pathDescription pathString="Chromosome.locatedFeatures" description="Predicted binding site"></pathDescription>
+      <pathDescription pathString="Chromosome.locatedFeatures.chromosomeLocation" description="Predicted binding site &gt; chromosome location "></pathDescription>
+      <pathDescription pathString="Chromosome.locatedFeatures.dataSets" description="Dataset"></pathDescription>
+      <pathDescription pathString="Chromosome.locatedFeatures.motif" description="Predicted binding site &gt; motif"></pathDescription>
+      <node path="Chromosome" type="Chromosome"></node>
+      <node path="Chromosome.locatedFeatures" type="TFBindingSite"></node>
+      <node path="Chromosome.locatedFeatures.chromosomeLocation" type="Location"></node>
+      <node path="Chromosome.locatedFeatures.chromosomeLocation.end" type="Integer">
+         <constraint identifier="" value="500000" editable="true" description="" op="&lt;=" code="D"></constraint>
+      </node>
+      <node path="Chromosome.locatedFeatures.chromosomeLocation.start" type="Integer">
+         <constraint identifier="" value="300000" editable="true" description="" op="&gt;=" code="C"></constraint>
+      </node>
+      <node path="Chromosome.locatedFeatures.dataSets" type="DataSet"></node>
+      <node path="Chromosome.locatedFeatures.dataSets.name" type="String">
+         <constraint identifier="" value="Tiffin" description="" op="=" code="B"></constraint>
+      </node>
+      <node path="Chromosome.primaryIdentifier" type="String">
+         <constraint identifier="" value="2R" editable="true" description="" op="=" code="A"></constraint>
+      </node>
+   </query>
 </template>
 
 
