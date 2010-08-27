@@ -67,7 +67,7 @@ public class HomophilaConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to create a new target items files
-        writeItemsFile(itemWriter.getItems(), "homophila-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "homophila-tgt-items.xml");
 
         Set expected = readItemSet("test/HomophilaConverterTest.xml");
         assertEquals(expected, itemWriter.getItems());

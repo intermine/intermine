@@ -19,14 +19,14 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.dataconversion.MockItemsTestCase;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 
 
-public class GoConverterTest extends ItemsTestCase
+public class GoConverterTest extends MockItemsTestCase
 {
     private File goOboFile;
     Model model;
@@ -74,7 +74,7 @@ public class GoConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write a new target items file
-        writeItemsFile(writer.getItems(), "go-tgt-items.xml");
+        //writeItemsFile(writer.getItems(), "go-tgt-items.xml");
 
         assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
     }
