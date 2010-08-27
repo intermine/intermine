@@ -41,7 +41,6 @@ promoter
 protein_binding_site
 pseudogene
 rRNA
-region
 regulatory_region
 reverse_primer
 sequence_collection
