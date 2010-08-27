@@ -60,21 +60,21 @@ public class FlyAtlasGridDataSetLdr implements GridDataSetLdr
         Query q = createQuery(bag);
 
         results = os.execute(q, 100000, true, true, true);
-        Iterator iter = results.iterator();
+        Iterator<?> iter = results.iterator();
         //LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
 
         while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
+            ResultsRow<?> resRow = (ResultsRow<?>) iter.next();
 
             String affyCall = (String) resRow.get(0);
             String tissue = (String) resRow.get(1);
             String identifier = (String) resRow.get(2);
             if (affyCall != null) {
-                    if (affyCall.equals("Up")) {
-                        dataSet.addValue(tissue, identifier, true);
-                    } else if (affyCall.equals("Down")) {
-                        dataSet.addValue(tissue, identifier, false);
-                    }
+                if (affyCall.equals("Up")) {
+                    dataSet.addValue(tissue, identifier, true);
+                } else if (affyCall.equals("Down")) {
+                    dataSet.addValue(tissue, identifier, false);
+                }
                 genes.add(identifier);
             }
 

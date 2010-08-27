@@ -147,11 +147,7 @@ public class BDGPLdr extends EnrichmentWidgetLdr
             if (action.equals("sample")) {
                 q.addToSelect(outerQfTerm);
             }
-         }
+        }
         return q;
     }
 }
-
-
-
-
