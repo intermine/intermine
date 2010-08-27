@@ -8,25 +8,9 @@
 <c:set var="ids" value="${WEB_PROPERTIES['quickSearch.identifiers']}"/>
 
 <script type="text/javascript">
-function updateExample(i) {
-  if (isUpdatedByUser(jQuery('#quickSearchInput').val())) {
-   return;
-  }
-  jQuery('#quickSearchInput').val('${ids}');
-  jQuery('#quickSearchInput').css("color", "#666");
-  jQuery('#quickSearchInput').css("fontStyle","italic");
-}
-
-function isUpdatedByUser(value) {
-    if (value == '${ids}') {
-        return false;
-    } else {
-        return true;
-    }
-}
-
 function clearElement(e) {
-   var value =document.getElementById('quickSearchInput').searchTerm;
+   var value =document.getElementById('quickSearchInput').value;
+   alert(value);
    if(value == '${ids}') {
       e.value = "";
       jQuery('#quickSearchInput').css("color", "#000");
