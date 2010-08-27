@@ -8,11 +8,17 @@
 <script type="text/javascript">
 
   jQuery(document).ready(function() {
-     initForm();
-     jQuery("#URL").val("${viewURL}");
+
+     //>>>>>
+     // Hide the export feature function for now till the webservice refactory finish in the near future
+     jQuery("#exportFeature").hide();
 
      // IMPORTANT: BED format exporting is disabled due to chromosome name and the difference of start of sequence feature between GFF3(in database) and BED
      jQuery("input[name='exportOptions']").filter("[value='feature']").attr('disabled', 'disabled');
+     //<<<<<
+
+     initForm();
+     jQuery("#URL").val("${viewURL}");
 
      if ("${exportAsBED}" == "false") {
        jQuery("input[name='exportOptions']").filter("[value='feature']").attr('disabled', 'disabled');
@@ -190,7 +196,7 @@ li { margin-bottom:0.5em; }
       </fieldset>
       </li>
 
-      <li>
+      <li id="exportFeature">
       <fieldset>
       <input type="radio" name="exportOptions" value="feature"/><label>Send feature data in BED format which will be recognised by Galaxy</label>
       </fieldset>
