@@ -17,6 +17,14 @@ function updateExample(i) {
   jQuery('#quickSearchInput').css("fontStyle","italic");
 }
 
+function isUpdatedByUser(value) {
+    if (value == '${ids}') {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 function clearElement(e) {
    var value =document.getElementById('quickSearchInput').searchTerm;
    if(value == '${ids}') {
