@@ -154,7 +154,7 @@ public class MirandaLdr extends EnrichmentWidgetLdr
 
             // group by target
             q.addToGroupBy(qfUniqueTargets);
-         }
+        }
         return q;
     }
 }
