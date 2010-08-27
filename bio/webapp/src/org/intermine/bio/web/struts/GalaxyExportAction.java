@@ -140,8 +140,8 @@ public class GalaxyExportAction extends InterMineAction
 
 
         // Same function as ResultManipulater, reliable but slower
-        /**
-         *  Removed to GalaxyExportOptionsController
+        // Function removed to GalaxyExportOptionsController
+        /*
         Map<Integer, String> orgNameMap = new LinkedHashMap<Integer, String>();
 
         for (int i = 0; i < pt.getExactSize(); i++) {
