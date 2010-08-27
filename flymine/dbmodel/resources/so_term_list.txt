@@ -14,7 +14,6 @@ chromosome
 chromosome_arm
 chromosome_band
 chromosome_structure_variation
-clone
 EST
 enhancer
 exon
@@ -29,7 +28,6 @@ mRNA
 miRNA
 miRNA_target_site
 microarray_oligo
-mobile_genetic_element
 natural_transposable_element
 ncRNA
 oligo
@@ -37,8 +35,6 @@ overlapping_EST_set
 PCR_product
 point_mutation
 primer
-promoter
-protein_binding_site
 pseudogene
 rRNA
 regulatory_region
@@ -48,7 +44,6 @@ sequence_feature
 sequence_variant
 snRNA
 snoRNA
-substitution
 syntenic_region
 TF_binding_site
 tRNA
