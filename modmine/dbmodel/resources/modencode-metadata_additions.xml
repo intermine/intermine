@@ -25,6 +25,15 @@
   <attribute name="tsl" type="java.lang.String" />
   <attribute name="tss" type="java.lang.String" />
   <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="exons" />
+  <collection name="transcriptRegions" referenced-type="TranscriptRegion" reverse-reference="exons" />
+</class>
+
+<class name="ExonRegion" is-interface="true">
+  <collection name="transcriptRegions" referenced-type="TranscriptRegion" reverse-reference="exonRegions" />
+</class>
+
+<class name="Intron" is-interface="true">
+  <collection name="transcriptRegions" referenced-type="TranscriptRegion" reverse-reference="introns" />
 </class>
 
 <class name="Gene" is-interface="true">
@@ -100,6 +109,9 @@
   <attribute name="marginalSensitivity" type="java.lang.Double" />
   <attribute name="meanIntensity" type="java.lang.Double" />
   <attribute name="rankScore" type="java.lang.Double" />
+  <collection name="exons" referenced-type="Exon" reverse-reference="transcriptRegions" />  
+  <collection name="exonRegions" referenced-type="ExonRegion" reverse-reference="transcriptRegions" />  
+  <collection name="introns" referenced-type="Intron" reverse-reference="transcriptRegions" />  
 </class>
 
 <!-- OTHER modENCODE classes -->
