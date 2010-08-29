@@ -4,7 +4,10 @@
   <attribute name="qvalue" type="java.lang.Double" />
 </class>
 
-<class name="CDNA" extends="BioEntity" is-interface="true"/>
+<!-- CDNA isn't a SequenceFeature in SO, declare submissions collection separately -->
+<class name="CDNA" extends="BioEntity" is-interface="true">
+  <collection name="submissions" referenced-type="Submission"/>
+</class>
 
 <class name="CDS" is-interface="true">
   <attribute name="status" type="java.lang.String" />
