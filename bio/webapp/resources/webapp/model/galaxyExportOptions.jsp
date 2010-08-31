@@ -73,9 +73,10 @@
         var pathVal = jQuery("input[name='sequencePath']:checked").val();
         var idx;
         <c:forEach var="pathIndexMap" items="${pathIndexMap}">
-            if (pathVal == "${pathIndexMap.key}") { idx = "${pathIndexMap.value}" };
+            if (pathVal == "${pathIndexMap.key}") { idx = "${pathIndexMap.value}" }; // the index of the column
         </c:forEach>
 
+        // Use ajax to get the GALAXY_URL, data_type, genome build and extra info back from galaxyExportAction
         jQuery.get("${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/galaxyExportAction.do", { tableName: "${table}", index: idx, prefix: pathVal}, function(data){
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(jQuery.trim(data));
@@ -137,7 +138,6 @@
             if (pathVal == "${pathIndexMap.key}") { idx = "${pathIndexMap.value}" };
         </c:forEach>
 
-        // some ajax here
         jQuery.get("${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/galaxyExportAction.do", { tableName: "${table}", index: idx, prefix: pathVal}, function(data){
           jQuery("#data_type").val("bed");
           jQuery("#URL").val(jQuery.trim(data));
