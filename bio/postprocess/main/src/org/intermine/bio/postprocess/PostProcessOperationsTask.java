@@ -188,10 +188,6 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             } else if ("set-collection-counts".equals(operation)) {
                 SetCollectionCounts setCounts = new SetCollectionCounts(getObjectStoreWriter());
                 setCounts.setCollectionCount();
-
-            } else if ("synonym-update".equals(operation)) {
-                SynonymUpdater synonymUpdater = new SynonymUpdater(getObjectStoreWriter());
-                synonymUpdater.update();
             } else if ("create-attribute-indexes".equals(operation)) {
                 CreateIndexesTask cit = new CreateIndexesTask();
                 cit.setAttributeIndexes(true);
@@ -247,7 +243,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                                         ac.getBinaryIndexMap());
                 }
             } else if ("create-search-index".equals(operation)) {
-                System.out.println("Creating lucene index for keyword search...");
+                System .out.println("Creating lucene index for keyword search...");
 
                 ObjectStore os = getObjectStoreWriter().getObjectStore();
                 if (!(os instanceof ObjectStoreInterMineImpl)) {
@@ -277,7 +273,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 //index and save
                 KeywordSearch.saveIndexToDatabase(os, classKeys);
                 System.out.println("Search index created and saved to database!");
-                
+
                 KeywordSearch.deleteIndexDirectory();
                 System.out.println("Temp directory deleted");
             } else if ("create-overlap-view".equals(operation)) {
