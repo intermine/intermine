@@ -132,7 +132,7 @@
      // Build experiment tree and featureType checkbox
      <c:forEach var="orgName" items="${orgList}" varStatus="counter">
        var treeHTMLArray = [];
-       treeHTMLArray.push("<li><p id='selectExperiments'>Select Experiments:</p>");
+       treeHTMLArray.push("<p id='selectExperiments'>Select Experiments:</p>");
        treeHTMLArray.push("<div id='tree' style='width:780px;'>");
        treeHTMLArray.push("<ul id='${orgName}'>");
 
@@ -167,20 +167,6 @@
        </c:forEach>
        treeHTMLArray.push("</ul>");
        treeHTMLArray.push("</div>");
-       treeHTMLArray.push("</li>");
-
-       treeHTMLArray.push("<br/>");
-
-       // Build feature type div
-       // Set in a table
-       treeHTMLArray.push("<li>");
-       treeHTMLArray.push("<p id='selectFeatureTypes'>Select Feature Types:</p>");
-       treeHTMLArray.push("<table cellpadding='0' cellspacing='0' border='0'>");
-       treeHTMLArray.push("<div id='featureType'>");
-       // Add content by jQuery according to selected exps
-       treeHTMLArray.push("</div>");
-       treeHTMLArray.push("</table>");
-       treeHTMLArray.push("</li>");
 
        // Add to array
        orgArray[${counter.count-1}] = new Array(2);
@@ -216,15 +202,15 @@
 
          var ftHTMLArray = [];
          for(i=0; i<uniqueFeatureTypes.length; i++) {
-           ftHTMLArray.push("<input type='checkbox' checked='yes' name='featureTypes' value='"
-                    + uniqueFeatureTypes[i] + "'/>" + uniqueFeatureTypes[i] + "<br/>");
+           ftHTMLArray.push("<input type='checkbox' checked='yes' class='featureTypes' value='"
+                    + uniqueFeatureTypes[i] + "' onclick='uncheck(this.checked, \"featureTypes\")'/>" + uniqueFeatureTypes[i] + "<br/>");
          }
 
          jQuery("#featureType").html(ftHTMLArray.join(""));
          if(ftHTMLArray.join("") != "") {
            jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id, 'featureTypes')\"/>Select Feature Types:"); }
          else {
-           jQuery("#selectFeatureTypes").html("Select Feature Types:"); }
+           jQuery("#selectFeatureTypes").html("Select Feature Types:<br><i>Please select some experiments first</i>"); }
      })
      .jstree({
          "themes" : {
@@ -278,11 +264,44 @@
       return r;
   }
 
-   // (un)Check all feature types
+   // (un)Check all featureType checkboxes
    function checkAll(id, name)
    {
-     jQuery("input[@name=" + name + "]:checkbox").attr('checked', jQuery('#' + id).is(':checked'));
+     jQuery(".featureTypes").attr('checked', jQuery('#' + id).is(':checked'));
+     jQuery("#check").css("opacity", 1);
    }
+
+   // check/uncheck any featureType checkbox
+   function uncheck(status, name)
+   {
+     var statTag;
+     if (!status) { //unchecked
+       jQuery(".featureTypes").each(function() {
+         if (this.checked) {statTag=true;}
+       });
+
+       if (statTag) {
+        jQuery("#check").attr('checked', true);
+        jQuery("#check").css("opacity", 0.5); }
+       else {
+        jQuery("#check").removeAttr('checked');
+        jQuery("#check").css("opacity", 1);}
+     }
+     else { //checked
+       jQuery(".featureTypes").each(function() {
+         if (!this.checked) {statTag=true;}
+     });
+
+     if (statTag) {
+       jQuery("#check").attr('checked', true);
+       jQuery("#check").css("opacity", 0.5); }
+     else {
+       jQuery("#check").attr('checked', true);
+       jQuery("#check").css("opacity", 1);}
+     }
+}
+
+
  //]]>-->
 </script>
 
@@ -326,9 +345,19 @@
    </li>
 
    <%-- experiments tree and feature types --%>
+    <li>
       <div id='exp'></div>
       <input type="hidden" id="hiddenExpFiled" name='experiments' value="">
-      <br/>
+    </li>
+    <br/>
+
+    <li>
+      <p id='selectFeatureTypes'></p>
+      <table cellpadding='0' cellspacing='0' border='0'>
+        <div id='featureType'></div>
+      </table>
+    </li>
+    <br/>
 
    <li>
    <%-- textarea --%>
