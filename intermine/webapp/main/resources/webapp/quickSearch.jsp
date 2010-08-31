@@ -10,7 +10,6 @@
 <script type="text/javascript">
 function clearElement(e) {
    var value =document.getElementById('quickSearchInput').value;
-   alert(value);
    if(value == '${ids}') {
       e.value = "";
       jQuery('#quickSearchInput').css("color", "#000");
