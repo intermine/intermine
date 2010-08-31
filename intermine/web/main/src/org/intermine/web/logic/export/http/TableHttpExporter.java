@@ -51,7 +51,7 @@ public interface TableHttpExporter
      * for this exporter.
      * @param pt the PagedTable
      * @return the Paths
-     * @throws PathException
+     * @throws PathException if bad path encountered
      */
     public List<Path> getInitialExportPaths(PagedTable pt) throws PathException;
 }

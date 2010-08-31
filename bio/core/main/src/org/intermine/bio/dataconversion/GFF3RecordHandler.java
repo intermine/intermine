@@ -12,23 +12,16 @@ package org.intermine.bio.dataconversion;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.xml.full.Attribute;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.ClassDescriptor;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ReferenceList;
 
 /**
  * Permits specific operations to be performed when processing an line of GFF3.
@@ -39,23 +32,18 @@ import org.intermine.metadata.ClassDescriptor;
  */
 public class GFF3RecordHandler
 {
-    protected Map items = new LinkedHashMap();
-    protected List<Item> earlyItems = new ArrayList();
+    protected Map<String, Item> items = new LinkedHashMap<String, Item>();
+    protected List<Item> earlyItems = new ArrayList<Item>();
+    protected List<String> parents = new ArrayList<String>();
+    protected Map<String, String> refsAndCollections;
     private Item sequence;
-    protected Item analysis;
     private Model tgtModel;
-    private ItemFactory itemFactory;
+    protected GFF3Converter converter;
     private Item organism;
-    private ReferenceList evidenceReferenceList = new ReferenceList("evidence");
     private ReferenceList dataSetReferenceList = new ReferenceList("dataSets");
     private ReferenceList publicationReferenceList = new ReferenceList("publications");
-    protected Map tgtSeqs = new HashMap();
     private Item tgtOrganism;
-    private Reference tgtOrgRef;
     protected Item tgtSequence;
-    private int itemid = 0;
-    private Item dataSource;
-    private Item dataSet;
 
     /**
      * Construct with the model to create items in (for type checking).
@@ -82,9 +70,9 @@ public class GFF3RecordHandler
      * feature.
      * @param identifierMap map from GFF ID to item identifier for all features
      */
-    public void setIdentifierMap(Map identifierMap) {
+    public void setIdentifierMap(Map<?, ?> identifierMap) {
         // empty
-     }
+    }
 
     /**
      * Return the Model that was passed to the constructor.
@@ -173,37 +161,6 @@ public class GFF3RecordHandler
     }
 
     /**
-     * Set the ComputationalAnalysis item created for this record, should not be edited in handler.
-     * @param analysis the ComputationalAnalysis item
-     */
-    public void setAnalysis(final Item analysis) {
-        this.analysis = analysis;
-    }
-
-    /**
-     * Add an Evidence Item to this handler, to be retrieved later with getEvidenceReferenceList().
-     * @param evidence the evidence
-     */
-    public void addEvidence(Item evidence) {
-        evidenceReferenceList.addRefId(evidence.getIdentifier());
-    }
-
-    /**
-     * Return a ReferenceList containing the evidence Items ids set by addEvidence()
-     * @return the ReferenceList
-     */
-    public ReferenceList getEvidenceReferenceList() {
-        return evidenceReferenceList;
-    }
-
-    /**
-     * Reset the list of evidence items.
-     */
-    public void clearEvidenceReferenceList() {
-        evidenceReferenceList = new ReferenceList("evidence");
-    }
-
-    /**
      * Add an DataSet Item to this handler, to be retrieved later with getDataSetReferenceList().
      * @param dataSet the data set
      */
@@ -248,51 +205,6 @@ public class GFF3RecordHandler
      */
     public void clearPublicationReferenceList() {
         publicationReferenceList = new ReferenceList("publications");
-    }
-
-    /**
-     * Set the ComputationalResult item for this record.
-     * @param result the ComputationalResult item
-     */
-    public void setResult(Item result) {
-        items.put("_result", result);
-        earlyItems.add(result);
-    }
-
-    /**
-     * Return the result Item set by setResult()
-     * @return the result Item
-     */
-    protected Item getResult() {
-        return (Item) items.get("_result");
-    }
-
-    /**
-     * Get the SimpleRelation item from feature to parent feature for this record.
-     * @param relation the relation item
-     */
-    public void addParentRelation(Item relation) {
-        items.put("_relation" + relation.getIdentifier(), relation);
-    }
-
-    /**
-     * Return the SimpleRelation Item set by addParentRelation()
-     * @return the location Item
-     */
-    protected Set getParentRelations() {
-        Set entrySet = items.entrySet();
-        if (entrySet != null) {
-            Iterator entryIter = entrySet.iterator();
-            Set relations = new HashSet();
-            while (entryIter.hasNext()) {
-                Map.Entry entry = (Map.Entry) entryIter.next();
-                if (((String) entry.getKey()).startsWith("_relation")) {
-                    relations.add(entry.getValue());
-                }
-            }
-            return relations;
-        }
-        return null;
     }
 
      /**
@@ -353,28 +265,11 @@ public class GFF3RecordHandler
     }
 
     /**
-     * Set the ItemFactory to use in this handler.
-     * @param itemFactory the ItemFactory
-     */
-    public void setItemFactory(ItemFactory itemFactory) {
-        this.itemFactory = itemFactory;
-    }
-
-    /**
-     * Get the ItemFactory for this handler.
-     * @return the ItemFactory
-     */
-    protected ItemFactory getItemFactory() {
-        return itemFactory;
-    }
-
-    /**
      * Remove all items held locally in handler.
      */
     public void clear() {
-        items = new LinkedHashMap();
+        items = new LinkedHashMap<String, Item>();
         sequence = null;
-        analysis = null;
         earlyItems.clear();
     }
 
@@ -383,9 +278,9 @@ public class GFF3RecordHandler
      * ComputationalAnalysis items.
      * @return a set of items
      */
-    public Collection getItems() {
-        Set all = new LinkedHashSet(items.values());
-        Set retval = new LinkedHashSet();
+    public Collection<Item> getItems() {
+        Set<Item> all = new LinkedHashSet<Item>(items.values());
+        Set<Item> retval = new LinkedHashSet<Item>();
         for (Item item : earlyItems) {
             if (all.remove(item)) {
                 retval.add(item);
@@ -419,8 +314,8 @@ public class GFF3RecordHandler
      * have been read.
      * @return extra Items
      */
-    public Collection getFinalItems() {
-        return new ArrayList();
+    public Collection<Item> getFinalItems() {
+        return new ArrayList<Item>();
     }
 
     /**
@@ -431,227 +326,23 @@ public class GFF3RecordHandler
     }
 
     /**
-     * Given a map from class name to reference name populate the reference for
-     * a particular class with the parents of any SimpleRelations.
-     * @param references map from classname to name of reference/collection to populate
+     * @param parent item ID
      */
-    protected void setReferences(Map references) {
-        Item feature = getFeature();
-
-        // set additional references from parents according to references map
-        String clsName = feature.getClassName();
-        if (references.containsKey(clsName) && getParentRelations() != null) {
-            ClassDescriptor cld =
-                tgtModel.getClassDescriptorByName(tgtModel.getPackageName() + "." + clsName);
-
-            String refName = (String) references.get(clsName);
-            Iterator parentIter = getParentRelations().iterator();
-
-            if (cld.getReferenceDescriptorByName(refName, true) != null && parentIter.hasNext()) {
-                Item relation = (Item) parentIter.next();
-                feature.setReference(refName, relation.getReference("object").getRefId());
-                if (parentIter.hasNext()) {
-                    String primaryIdentifier = feature.getAttribute("primaryIdentifier").getValue();
-                    throw new RuntimeException("Feature has multiple relations for reference: "
-                                               + refName + " for feature: " + feature.getClassName()
-                                               + ", " + feature.getIdentifier() + ", "
-                                               + primaryIdentifier);
-                }
-            } else if (cld.getCollectionDescriptorByName(refName, true) != null
-                       && parentIter.hasNext()) {
-                List refIds = new ArrayList();
-                while (parentIter.hasNext()) {
-                    refIds.add(((Item) parentIter.next()).getReference("object").getRefId());
-                }
-                feature.addCollection(new ReferenceList(refName, refIds));
-            } else if (parentIter.hasNext()) {
-                throw new RuntimeException("No '" + refName + "' reference/collection found in "
-                                      + "class: " + clsName + " - is map configured correctly?");
-            }
-        }
+    public void addParent(String parent) {
+        parents.add(parent);
     }
 
     /**
-     * if the feature is CrossGenomeMatch, more specific properties added to
-     * the feature through the handler.
-     * @param feature item feature
-     * @param orgAbb string organism abbreviation
-     * @param seqIdentifier sequence identifier
-     * @param seq item sequence
-     * @param locString location string got from converter
+     * @return map listing references and collections to set for this record
      */
-    protected void setCrossGenomeMatch(Item feature, String orgAbb, String seqIdentifier,
-                                       Item seq, String locString) {
-        String clsName = feature.getClassName();
-        String seqClsName = seq.getClassName();
-        if (clsName.equals("CrossGenomeMatch")) {
-            if (orgAbb != null) {
-                tgtOrganism = getTargetOrganism(orgAbb);
-
-                Item targetSeq = getTargetSeq(seqIdentifier, seqClsName, orgAbb);
-                targetSeq.addToCollection("dataSets", getDataSet());
-
-                String locStart = locString.split(" ")[1];
-                String locEnd = locString.split(" ")[2];
-                String locStrand = locString.split(" ")[3];
-
-                Item targetLocation = createItem("Location", createIdentifier());
-                if (Integer.parseInt(locStart) < Integer.parseInt(locEnd)) {
-                    targetLocation.setAttribute("start", locStart);
-                    targetLocation.setAttribute("end", locEnd);
-                } else {
-                    targetLocation.setAttribute("start", locEnd);
-                    targetLocation.setAttribute("end", locStart);
-                }
-
-                targetLocation.addToCollection("dataSets", getDataSet());
-
-                if (locStrand != null && locStrand.equals("+")) {
-                    targetLocation.setAttribute("strand", "1");
-                } else if (locStrand != null && locStrand.equals("-")) {
-                    targetLocation.setAttribute("strand", "-1");
-                } else {
-                    targetLocation.setAttribute("strand", "0");
-                }
-
-                targetLocation.setReference("object", targetSeq.getIdentifier());
-                targetLocation.setReference("subject", feature.getIdentifier());
-                setTgtLocation(targetLocation);
-
-                feature.setReference("chromosome", seq.getIdentifier());
-                feature.setReference("chromosomeLocation", getLocation().getIdentifier());
-                feature.setReference("targetOrganism", tgtOrganism.getIdentifier());
-                feature.setReference("targetLocatedSequenceFeature", targetSeq.getIdentifier());
-                feature.setReference("targetLocatedSequenceFeatureLocation",
-                                      targetLocation.getIdentifier());
-            } else {
-                throw new NullPointerException("No target organism for " + feature);
-            }
-        }
+    public Map<String, String> getRefsAndCollections() {
+        return refsAndCollections;
     }
 
     /**
-     * @param identifier target sequence identifier
-     * @param seqClsName passed by converter param, normally chromosome,
-     * in case of opposumchain, it is scaffold
-     * @param orgAbb organism abbreivation
-     * @return target sequence
+     * @param converter the converter to set
      */
-     private Item getTargetSeq(String identifier, String seqClsName, String orgAbb) {
-        Item tseq = (Item) tgtSeqs.get(identifier);
-        if (tseq == null) {
-            if (identifier.startsWith("scaffold_")) {
-                tseq = createItem("Scaffold", createIdentifier());
-                tseq.setAttribute("primaryIdentifier", identifier.substring("scaffold_".length()));
-            } else {
-                tseq = createItem(seqClsName, createIdentifier());
-                tseq.setAttribute("primaryIdentifier", identifier);
-            }
-            tseq.addReference(getTargetOrgRef(orgAbb));
-            tgtSeqs.put(identifier, tseq);
-            setTgtSequence(tseq);
-        }
-        return tseq;
-    }
-
-    /**
-     * @param orgAbb organism abbreivation
-     * @return tgtOrganism
-     */
-    private Item getTargetOrganism(String orgAbb) {
-        if (tgtOrganism == null) {
-            tgtOrganism = createItem("Organism", createIdentifier());
-            tgtOrganism.addAttribute(new Attribute("abbreviation", orgAbb));
-            setTgtOrganism(tgtOrganism);
-        }
-        return tgtOrganism;
-    }
-
-    /**
-     * @param orgAbb organism abbreivation
-     * @return tgtOrganismReference
-     */
-    private Reference getTargetOrgRef(String orgAbb) {
-        if (tgtOrgRef == null) {
-            tgtOrgRef = new Reference("organism", getTargetOrganism(orgAbb).getIdentifier());
-        }
-        return tgtOrgRef;
-    }
-
-    /**
-     * Create an item with given className and item identifier
-     * @param className the class to create
-     * @param identifier the Item identifier of the new Item
-     * @return the created item
-     */
-    private Item createItem(String className, String identifier) {
-        return itemFactory.makeItem(identifier, className, "");
-    }
-
-    /**
-     * Create an item with given className and a new unique identifier
-     * @param className the class to create
-     * @return the created item
-     */
-    public Item createItem(String className) {
-        return createItem(className, createIdentifier());
-    }
-
-    /**
-     * create item identifier
-     * @return identifier
-     */
-    private String createIdentifier() {
-        return "1_" + itemid++;
-    }
-
-    /**
-     * Get the DataSource to use while processing.
-     * @return the DataSource
-     */
-    public Item getDataSource() {
-        return dataSource;
-    }
-
-    /**
-     * Set the DataSource to use while processing.  The converter will store() the DataSource.
-     * @param dataSource the DataSource
-     */
-    public void setDataSource(Item dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    /**
-     * Get the DataSet to use while processing.  The converter will store() the DataSet.
-     * @return the DataSet
-     */
-    public Item getDataSet() {
-        return dataSet;
-    }
-
-    /**
-     * Set the DataSet to use while processing.  Called by the converter.
-     * @param dataSet the DataSet
-     */
-    public void setDataSet(Item dataSet) {
-        this.dataSet = dataSet;
-    }
-
-
-    /**
-     * Create and add a synonym Item from the given information.
-     * @param subject the subject of the new Synonym
-     * @param type the Synonym type
-     * @param value the Synonym value
-     * @return the new Synonym Item
-     */
-    public Item addSynonym(Item subject, String type, String value) {
-        Item synonym = getItemFactory().makeItem(null, "Synonym", "");
-        synonym.setAttribute("type", type);
-        synonym.setAttribute("value", value);
-        synonym.setReference("subject", subject.getIdentifier());
-        synonym.addToCollection("dataSets", getDataSet());
-        addItem(synonym);
-        return synonym;
+    public void setConverter(GFF3Converter converter) {
+        this.converter = converter;
     }
 }

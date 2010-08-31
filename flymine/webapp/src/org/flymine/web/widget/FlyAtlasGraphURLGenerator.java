@@ -30,7 +30,7 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
      * @param bagName the bag name
      * @param extra unused
      */
-    public FlyAtlasGraphURLGenerator(String bagName, @SuppressWarnings("unused") String extra) {
+    public FlyAtlasGraphURLGenerator(String bagName, String extra) {
         super();
         this.bagName = bagName;
     }

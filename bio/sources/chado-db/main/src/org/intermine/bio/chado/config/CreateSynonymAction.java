@@ -14,19 +14,16 @@ import java.util.regex.Pattern;
 
 /**
  * An action that sets a Synonym.
+ *
  * @author Kim Rutherford
  */
 public class CreateSynonymAction extends MatchingFieldConfigAction
 {
-    private final String synonymType;
-
     /**
-     * Make a synonym and use the type from chado ("symbol", "identifier" etc.) as the Synonym
-     * type
+     * Make a synonym
      */
     public CreateSynonymAction() {
         super(null);
-        synonymType = null;
     }
 
     /**
@@ -36,23 +33,5 @@ public class CreateSynonymAction extends MatchingFieldConfigAction
      */
     public CreateSynonymAction(Pattern pattern) {
         super(pattern);
-        synonymType = null;
-    }
-
-    /**
-     * Make a synonym and use given type as the Synonym type
-     * @param synonymType the synonym type
-     */
-    public CreateSynonymAction(String synonymType) {
-        super(null);
-        this.synonymType = synonymType;
-    }
-
-    /**
-     * Return the synonym type that was passed to the constructor.
-     * @return the synonym type
-     */
-    public String getSynonymType() {
-        return synonymType;
     }
 }

@@ -1,0 +1,4 @@
+<project name="long-oligo-tasks" default="default" basedir=".">
+  <description>build long-oligo tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>

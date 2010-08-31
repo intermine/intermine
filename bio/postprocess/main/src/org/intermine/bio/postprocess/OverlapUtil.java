@@ -10,7 +10,6 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,6 +17,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.SequenceFeature;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -27,20 +35,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.DynamicUtil;
-
-import org.intermine.model.bio.LocatedSequenceFeature;
-import org.intermine.model.bio.Location;
-import org.intermine.model.bio.OverlapRelation;
-
-import org.apache.log4j.Logger;
 
 /**
  * Utility methods for finding overlaps.
@@ -53,11 +48,11 @@ public abstract class OverlapUtil
     private static final Logger LOG = Logger.getLogger(OverlapUtil.class);
 
     /**
-     * Creates OverlapRelations for overlapping LocatedSequenceFeature objects that are located
+     * Creates OverlapRelations for overlapping SequenceFeature objects that are located
      * on the given subject (generally a Chromosome).
      *
      * @param os the ObjectStore to query
-     * @param subject the LocatedSequenceFeature (eg. a Chromosome) where the LSFs are located
+     * @param subject the SequenceFeature (eg. a Chromosome) where the LSFs are located
      * @param classNamesToIgnore a List of the names of those classes that should be ignored when
      * searching for overlaps.  Sub classes to these classes are ignored too. In addition, an
      * entry can be of the form class=class, which specifies that the particular combination should
@@ -69,14 +64,15 @@ public abstract class OverlapUtil
      * @throws ObjectStoreException if an error occurs while writing
      * @throws ClassNotFoundException if there is an ObjectStore problem
      */
-    public static void createOverlaps(final ObjectStore os, LocatedSequenceFeature subject,
-            List classNamesToIgnore, boolean ignoreSelfMatches, ObjectStoreWriter osw, Map summary)
-    throws ObjectStoreException, ClassNotFoundException {
+    public static void createOverlaps(final ObjectStore os, SequenceFeature subject,
+            List<?> classNamesToIgnore, boolean ignoreSelfMatches, ObjectStoreWriter osw,
+            Map<String, Integer> summary)
+        throws ObjectStoreException, ClassNotFoundException {
         Model model = os.getModel();
 
-        Map classesToIgnore = new HashMap();
+        Map<Class<?>, Set<Class<?>>> classesToIgnore = new HashMap<Class<?>, Set<Class<?>>>();
 
-        Iterator classNamesToIgnoreIter = classNamesToIgnore.iterator();
+        Iterator<?> classNamesToIgnoreIter = classNamesToIgnore.iterator();
 
         while (classNamesToIgnoreIter.hasNext()) {
             String className = (String) classNamesToIgnoreIter.next();
@@ -92,12 +88,12 @@ public abstract class OverlapUtil
                     + targetClassName : targetClassName);
 
             try {
-                Class thisClass = Class.forName(className);
-                Class targetClass = Class.forName(targetClassName);
+                Class<?> thisClass = Class.forName(className);
+                Class<?> targetClass = Class.forName(targetClassName);
 
-                Set targetClasses = (Set) classesToIgnore.get(thisClass);
+                Set<Class<?>> targetClasses = (Set<Class<?>>) classesToIgnore.get(thisClass);
                 if (targetClasses == null) {
-                    targetClasses = new HashSet();
+                    targetClasses = new HashSet<Class<?>>();
                     classesToIgnore.put(thisClass, targetClasses);
                 }
                 targetClasses.add(targetClass);
@@ -115,15 +111,15 @@ public abstract class OverlapUtil
         q.addToSelect(qcLoc);
 
         q.setDistinct(false);
-        QueryClass qcObj = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcObj = new QueryClass(SequenceFeature.class);
         q.addFrom(qcObj);
         q.addToSelect(qcObj);
 
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "subject");
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "feature");
         ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj);
         cs.addConstraint(cc1);
 
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "object");
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "locatedOn");
         ContainsConstraint subjectIdConstraint = new ContainsConstraint(ref2, ConstraintOp.CONTAINS,
                 subject);
         cs.addConstraint(subjectIdConstraint);
@@ -132,17 +128,14 @@ public abstract class OverlapUtil
 
         try {
             ((ObjectStoreInterMineImpl) os).goFaster(q);
-
             Results results = os.execute(q);
-
-            // A Map from Location to the corresponding LocatedSequenceFeature
-            Map currentLocations = new HashMap();
-
+            Map<Location, SequenceFeature> currentLocations
+                = new HashMap<Location, SequenceFeature>();
             int count = 0;
-            Iterator resIter = results.iterator();
+            Iterator<?> resIter = results.iterator();
 
             while (resIter.hasNext()) {
-                ResultsRow rr = (ResultsRow) resIter.next();
+                ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
 
                 Location location = (Location) rr.get(0);
 
@@ -150,7 +143,7 @@ public abstract class OverlapUtil
                     continue;
                 }
 
-                LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
+                SequenceFeature lsf = (SequenceFeature) rr.get(1);
 
                 if (isAClassToIgnore(classesToIgnore, lsf.getClass())) {
                     continue;
@@ -159,11 +152,12 @@ public abstract class OverlapUtil
                 int start = location.getStart().intValue();
 
                 // Okay, first we compare this location to all the currentLocations.
-                Iterator currIter = currentLocations.entrySet().iterator();
+                Iterator<?> currIter = currentLocations.entrySet().iterator();
                 while (currIter.hasNext()) {
-                    Map.Entry currEntry = (Map.Entry) currIter.next();
+                    Map.Entry<Location, SequenceFeature> currEntry = (Map.Entry<Location,
+                            SequenceFeature>) currIter.next();
                     Location currLoc = (Location) currEntry.getKey();
-                    LocatedSequenceFeature currLsf = (LocatedSequenceFeature) currEntry
+                    SequenceFeature currLsf = (SequenceFeature) currEntry
                         .getValue();
                     if (currLoc.getEnd().intValue() < start) {
                         currIter.remove();
@@ -175,20 +169,10 @@ public abstract class OverlapUtil
                                             currLsf.getClass())
                                     || ignoreCombination(classesToIgnore, currLsf.getClass(),
                                         lsf.getClass()))) {
-                                OverlapRelation overlapRelation = (OverlapRelation)
-                                    DynamicUtil.createObject(Collections.singleton(
-                                                OverlapRelation.class));
-                                Set bioEntityCollection = overlapRelation.getBioEntities();
-                                bioEntityCollection.add(lsf);
-                                bioEntityCollection.add(currLsf);
-
                                 ++count;
-
-                                osw.store(overlapRelation);
-                                osw.addToCollection(lsf.getId(), LocatedSequenceFeature.class,
+                                osw.addToCollection(lsf.getId(), SequenceFeature.class,
                                         "overlappingFeatures", currLsf.getId());
-                                osw.addToCollection(currLsf.getId(),
-                                        LocatedSequenceFeature.class,
+                                osw.addToCollection(currLsf.getId(), SequenceFeature.class,
                                         "overlappingFeatures", lsf.getId());
 
                                 // Log it, for the summary.
@@ -225,28 +209,31 @@ public abstract class OverlapUtil
     }
 
     /**
-     * Return true if and only if the given LocatedSequenceFeature should be ignored when looking
+     * Return true if and only if the given SequenceFeature should be ignored when looking
      * for overlaps.
      */
-    private static boolean isAClassToIgnore(Map classesToIgnore, Class clazz) {
+    private static boolean isAClassToIgnore(Map<Class<?>, Set<Class<?>>> classesToIgnore,
+            Class<?> clazz) {
         return ignoreCombination(classesToIgnore, clazz, InterMineObject.class);
     }
 
     /**
      * Return true if the given class should be ignored when overlapping with the other given class.
      */
-    private static boolean ignoreCombination(Map classesToIgnore, Class class1, Class class2) {
-        Iterator iter = classesToIgnore.entrySet().iterator();
+    private static boolean ignoreCombination(Map<Class<?>, Set<Class<?>>> classesToIgnore,
+            Class<?> class1, Class<?> class2) {
+        Iterator<?> iter = classesToIgnore.entrySet().iterator();
 
         while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            Class thisClass = (Class) entry.getKey();
-            Set targetClasses = (Set) entry.getValue();
+            Map.Entry<Class<?>, Set<Class<?>>> entry = (Map.Entry<Class<?>, Set<Class<?>>>)
+                iter.next();
+            Class<?> thisClass = (Class<?>) entry.getKey();
+            Set<Class<?>> targetClasses = (Set<Class<?>>) entry.getValue();
 
             if (thisClass.isAssignableFrom(class1)) {
-                Iterator iter2 = targetClasses.iterator();
+                Iterator<?> iter2 = targetClasses.iterator();
                 while (iter2.hasNext()) {
-                    Class targetClass = (Class) iter2.next();
+                    Class<?> targetClass = (Class<?>) iter2.next();
                     if (targetClass.isAssignableFrom(class2)) {
                         return true;
                     }

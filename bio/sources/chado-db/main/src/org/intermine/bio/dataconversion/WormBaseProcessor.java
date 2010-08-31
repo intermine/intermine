@@ -67,15 +67,15 @@ public class WormBaseProcessor extends SequenceProcessor
             Thread.currentThread().setContextClassLoader(classLoader);
             try {
                 throw new RuntimeException("getCurrentTaxonId() returned null while processing "
-                                           + item);
+                        + item);
             } finally {
                 Thread.currentThread().setContextClassLoader(currentClassLoader);
             }
         }
         ChadoDBConverter converter = getChadoDBConverter();
-        DataSetStoreHook.setDataSets(getModel(), item,
-                                     converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
-                                     converter.getDataSourceItem().getIdentifier());
+        BioStoreHook.setDataSets(getModel(), item,  converter.getDataSetItem(
+                taxonId.intValue()).getIdentifier(), converter.getDataSourceItem().getIdentifier());
+
     }
 
     /**
@@ -83,7 +83,7 @@ public class WormBaseProcessor extends SequenceProcessor
      */
     @SuppressWarnings("unchecked")
     @Override
-    protected Map<MultiKey, List<ConfigAction>> getConfig(@SuppressWarnings("unused") int taxonId) {
+    protected Map<MultiKey, List<ConfigAction>> getConfig(int taxonId) {
        if (config == null) {
            config = new MultiKeyMap();
            config.put(new MultiKey("feature", "Gene", "WormBase", "uniquename"),

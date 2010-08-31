@@ -41,10 +41,10 @@ public class GFF3RecordHandlerTest extends TestCase
 
         Item gene = itemFactory.makeItem(null, "Gene", "");
 
-        Item relation = itemFactory.makeItem(null, "SimpleRelation", "");
-        relation.setReference("subject", threePrimeUTR.getIdentifier());
-        relation.setReference("object", gene.getIdentifier());
-        handler.addParentRelation(relation);
+//        Item relation = itemFactory.makeItem(null, "SimpleRelation", "");
+//        relation.setReference("subject", threePrimeUTR.getIdentifier());
+//        relation.setReference("object", gene.getIdentifier());
+        handler.addParent(gene.getIdentifier());
 
         Item expected = itemFactory.makeItem(threePrimeUTR.getIdentifier(), "ThreePrimeUTR", "");
         expected.setReference("gene", gene.getIdentifier());
@@ -52,7 +52,7 @@ public class GFF3RecordHandlerTest extends TestCase
         Map refs = new HashMap();
         refs.put("ThreePrimeUTR", "gene");
 
-        handler.setReferences(refs);
+//        handler.setReferences(refs);
         assertEquals(expected, handler.getFeature());
     }
 
@@ -65,14 +65,14 @@ public class GFF3RecordHandlerTest extends TestCase
         Item transcript1 = itemFactory.makeItem(null, "Transcript", "");
         Item transcript2 = itemFactory.makeItem(null, "Transcript", "");
 
-        Item relation1 = itemFactory.makeItem(null, "SimpleRelation", "");
-        relation1.setReference("subject", exon.getIdentifier());
-        relation1.setReference("object", transcript1.getIdentifier());
-        handler.addParentRelation(relation1);
-        Item relation2 = itemFactory.makeItem(null, "SimpleRelation", "");
-        relation2.setReference("subject", exon.getIdentifier());
-        relation2.setReference("object", transcript2.getIdentifier());
-        handler.addParentRelation(relation2);
+//        Item relation1 = itemFactory.makeItem(null, "SimpleRelation", "");
+//        relation1.setReference("subject", exon.getIdentifier());
+//        relation1.setReference("object", transcript1.getIdentifier());
+        handler.addParent(transcript1.getIdentifier());
+//        Item relation2 = itemFactory.makeItem(null, "SimpleRelation", "");
+//        relation2.setReference("subject", exon.getIdentifier());
+//        relation2.setReference("object", transcript2.getIdentifier());
+        handler.addParent(transcript2.getIdentifier());
 
         Item expected = itemFactory.makeItem(exon.getIdentifier(), "Exon", "");
         ReferenceList transcripts = new ReferenceList("transcripts", Arrays.asList(new String[] {transcript1.getIdentifier(),
@@ -82,7 +82,7 @@ public class GFF3RecordHandlerTest extends TestCase
         Map refs = new HashMap();
         refs.put("Exon", "transcripts");
 
-        handler.setReferences(refs);
+//        handler.setReferences(refs);
         assertEquals(expected, handler.getFeature());
     }
 

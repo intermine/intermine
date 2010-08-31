@@ -33,7 +33,7 @@
   <attribute name="name" type="java.lang.String"/>
   <attribute name="description" type="java.lang.String"/>
 </class>
-<class name="MicroArrayExperiment" extends="Experiment" is-interface="true">
+<class name="MicroArrayExperiment" is-interface="true">
   <attribute name="identifier" type="java.lang.String"/>
   <attribute name="description" type="java.lang.String"/>
   <attribute name="name" type="java.lang.String"/>
@@ -47,12 +47,9 @@
   <reference name="material" referenced-type="BioEntity"/>
   <collection name="results" referenced-type="MicroArrayResult" reverse-reference="reporters"/>
 </class>
-
-<class name="CDNAClone" extends="BioEntity" is-interface="true">
+<class name="CDNAClone" is-interface="true">
   <collection name="results" referenced-type="MicroArrayResult"/>
 </class>
-<class name="NuclearDNA" extends="BioEntity" is-interface="true"/>
-<class name="Vector" extends="BioEntity" is-interface="true"/>
 <class name="Sample" extends="BioEntity" is-interface="true">
   <attribute name="materialType" type="java.lang.String"/>
   <attribute name="name" type="java.lang.String"/>
@@ -63,7 +60,7 @@
   <collection name="characteristics" referenced-type="SampleCharacteristic"/>
   <collection name="treatments" referenced-type="Treatment"/>
 </class>
-<class name="MicroArrayResult" extends="ExperimentalResult" is-interface="true">
+<class name="MicroArrayResult" is-interface="true">
   <attribute name="scale" type="java.lang.String"/>
   <attribute name="type" type="java.lang.String"/>
   <attribute name="isControl" type="java.lang.Boolean"/>
@@ -74,19 +71,10 @@
   <collection name="reporters" referenced-type="Reporter" reverse-reference="results"/>
   <collection name="genes" referenced-type="Gene" reverse-reference="microArrayResults"/>
   <collection name="samples" referenced-type="Sample"/>
+  <collection name="dataSets" referenced-type="DataSet"/>
 </class>
 <class name="Gene" is-interface="true">
   <collection name="microArrayResults" referenced-type="MicroArrayResult" reverse-reference="genes"/>
 </class>
-<!-- These classes were added for StemCellMine, they should be in a separate additions file if needed again
-  <class name="MasCall" extends="MicroArrayResult" is-interface="true">
-    <attribute name="flag" type="java.lang.String"/>
-  </class>
-  <class name="DifferentialExpression" extends="MicroArrayResult" is-interface="true">
-    <attribute name="flag" type="java.lang.String"/>
-    <reference name="referenceAssay" referenced-type="MicroArrayAssay" reverse-reference="results"/>
-    <reference name="targetAssay" referenced-type="MicroArrayAssay" reverse-reference="results"/>
-  </class>
--->
 </classes>
 

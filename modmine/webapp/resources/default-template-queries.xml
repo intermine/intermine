@@ -24,7 +24,7 @@
       </query>
     </template>
     <template name="AllGene_Chromosome" title="All genes in organism --&gt; All chromosomal locations." longDescription="Show the chromosomal location and sequence for all genes from a particular organism." comment="">
-      <query name="AllGene_Chromosome" model="genomic" view="Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.strand Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.length Gene.primaryIdentifier Gene.symbol Gene.dataSets.title" sortOrder="Gene.chromosome.primaryIdentifier asc">
+      <query name="AllGene_Chromosome" model="genomic" view="Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.strand Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.length Gene.primaryIdentifier Gene.symbol Gene.dataSets.name" sortOrder="Gene.chromosome.primaryIdentifier asc">
         <pathDescription pathString="Gene.dataSets" description="Dataset">
         </pathDescription>
         <pathDescription pathString="Gene.chromosomeLocation" description="Chromosome location">
@@ -66,7 +66,7 @@
       </query>
     </template>
     <template name="ChromLocation_Gene" title="Chromosomal location --&gt; All genes." longDescription="Show the genes located between two points on a chromosome" comment="">
-      <query name="ChromLocation_Gene" model="genomic" view="Chromosome.genes.primaryIdentifier Chromosome.genes.symbol Chromosome.primaryIdentifier Chromosome.genes.chromosomeLocation.start Chromosome.genes.chromosomeLocation.end Chromosome.genes.chromosomeLocation.strand Chromosome.genes.dataSets.title" sortOrder="Chromosome.genes.primaryIdentifier asc" constraintLogic="A and B and C and D">
+      <query name="ChromLocation_Gene" model="genomic" view="Chromosome.genes.primaryIdentifier Chromosome.genes.symbol Chromosome.primaryIdentifier Chromosome.genes.chromosomeLocation.start Chromosome.genes.chromosomeLocation.end Chromosome.genes.chromosomeLocation.strand Chromosome.genes.dataSets.name" sortOrder="Chromosome.genes.primaryIdentifier asc" constraintLogic="A and B and C and D">
         <pathDescription pathString="Chromosome.genes" description="Gene">
         </pathDescription>
         <pathDescription pathString="Chromosome.genes.dataSets" description="Dataset">
@@ -102,7 +102,7 @@
       </query>
     </template>
     <template name="ChromLocation_GeneTranscriptExon" title="Chromosomal location --&gt; All genes, transcripts, exons." longDescription="Show the genes, transcripts and exons located between two points on a chromosome.  Give the location of the exons." comment="">
-      <query name="ChromLocation_GeneTranscriptExon" model="genomic" view="Chromosome.primaryIdentifier Chromosome.exons.gene.symbol Chromosome.exons.gene.primaryIdentifier Chromosome.exons.transcripts.primaryIdentifier Chromosome.exons.primaryIdentifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand Chromosome.exons.dataSets.title" sortOrder="Chromosome.primaryIdentifier asc" constraintLogic="D and A and C and B">
+      <query name="ChromLocation_GeneTranscriptExon" model="genomic" view="Chromosome.primaryIdentifier Chromosome.exons.gene.symbol Chromosome.exons.gene.primaryIdentifier Chromosome.exons.transcripts.primaryIdentifier Chromosome.exons.primaryIdentifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand Chromosome.exons.dataSets.name" sortOrder="Chromosome.primaryIdentifier asc" constraintLogic="D and A and C and B">
         <pathDescription pathString="Chromosome.exons.objects" description="Exon &gt; Chromosome location">
         </pathDescription>
         <pathDescription pathString="Chromosome.exons.gene" description="Gene">
@@ -144,7 +144,7 @@
       </query>
     </template>
     <template name="Chromosome_Gene" title="Chromosome --&gt; All genes." longDescription="Show genes located on a particular chromosome." comment="">
-      <query name="Chromosome_Gene" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand Gene.dataSets.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+      <query name="Chromosome_Gene" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand Gene.dataSets.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
         <pathDescription pathString="Gene.chromosome" description="Chromosome">
         </pathDescription>
         <node path="Gene" type="Gene">
@@ -166,7 +166,7 @@
       </query>
     </template>
     <template name="Chromosome_IntergenicSequence" title="Chromosome --&gt; All intergenic regions + start, end and length of intergenic regions." longDescription="For a particular chromosome show start, end and length of all intergenic regions." comment="">
-      <query name="Chromosome_IntergenicSequence" model="genomic" view="IntergenicRegion.chromosomeLocation.start IntergenicRegion.chromosomeLocation.end IntergenicRegion.chromosomeLocation.object.primaryIdentifier IntergenicRegion.length IntergenicRegion.primaryIdentifier IntergenicRegion.dataSets.title" sortOrder="IntergenicRegion.chromosomeLocation.start asc" constraintLogic="A and B">
+      <query name="Chromosome_IntergenicSequence" model="genomic" view="IntergenicRegion.chromosomeLocation.start IntergenicRegion.chromosomeLocation.end IntergenicRegion.chromosomeLocation.object.primaryIdentifier IntergenicRegion.length IntergenicRegion.primaryIdentifier IntergenicRegion.dataSets.name" sortOrder="IntergenicRegion.chromosomeLocation.start asc" constraintLogic="A and B">
         <pathDescription pathString="IntergenicRegion.chromosomeLocation.object" description="Chromosome">
         </pathDescription>
         <pathDescription pathString="IntergenicRegion.dataSets" description="Dataset">
@@ -231,7 +231,7 @@
         </node>
         <node path="Submission.submissionData" type="SubmissionData">
         </node>
-        <node path="Submission.submissionData.features" type="LocatedSequenceFeature">
+        <node path="Submission.submissionData.features" type="SequenceFeature">
         </node>
         <node path="Submission.submissionData.features.secondaryIdentifier" type="String">
           <constraint op="=" value="tr*" description="" identifier="" editable="true" code="A">
@@ -245,7 +245,7 @@
         </node>
         <node path="Submission.submissionData" type="SubmissionData">
         </node>
-        <node path="Submission.submissionData.features" type="LocatedSequenceFeature">
+        <node path="Submission.submissionData.features" type="SequenceFeature">
         </node>
         <node path="Submission.submissionData.features.secondaryIdentifier" type="String">
           <constraint op="=" value="tr*" description="" identifier="" editable="true" code="A">
@@ -254,7 +254,7 @@
       </query>
     </template>
     <template name="Gene _adjacent genes" title="Gene --&gt; Adjacent genes (upstream and downstream)." longDescription="For a particular gene, find the upstream and the downstream adjacent genes.  " comment="06.06.07 updated to work from gene class - Philip">
-      <query name="Gene _adjacent genes" model="genomic" view="Gene.primaryIdentifier Gene.downstreamIntergenicRegion.adjacentGenes.primaryIdentifier Gene.upstreamIntergenicRegion.adjacentGenes.primaryIdentifier Gene.downstreamIntergenicRegion.adjacentGenes.dataSets.title Gene.upstreamIntergenicRegion.adjacentGenes.dataSets.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B and C">
+      <query name="Gene _adjacent genes" model="genomic" view="Gene.primaryIdentifier Gene.downstreamIntergenicRegion.adjacentGenes.primaryIdentifier Gene.upstreamIntergenicRegion.adjacentGenes.primaryIdentifier Gene.downstreamIntergenicRegion.adjacentGenes.dataSets.name Gene.upstreamIntergenicRegion.adjacentGenes.dataSets.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B and C">
         <pathDescription pathString="Gene.downstreamIntergenicRegion.adjacentGenes" description="DownstreamIntergenicRegion &gt; adjacentGene">
         </pathDescription>
         <pathDescription pathString="Gene.upstreamIntergenicRegion.adjacentGenes.dataSets" description="Upstream gene &gt; dataset">
@@ -312,7 +312,7 @@
       </query>
     </template>
     <template name="Gene_ExonLocation2" title="Gene --&gt; Exons + chromosomal locations and lengths." longDescription="For a specific gene, show its exons and their chromosomal locations and lengths." comment="07.02.07:re-written to work from gene primaryIdentifier -Rachel. 06.06.07 updated to work from gene class - Philip">
-      <query name="Gene_ExonLocation2" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.exons.primaryIdentifier Gene.exons.length Gene.exons.chromosome.primaryIdentifier Gene.exons.chromosomeLocation.start Gene.exons.chromosomeLocation.end Gene.exons.chromosomeLocation.strand Gene.exons.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
+      <query name="Gene_ExonLocation2" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.exons.primaryIdentifier Gene.exons.length Gene.exons.chromosome.primaryIdentifier Gene.exons.chromosomeLocation.start Gene.exons.chromosomeLocation.end Gene.exons.chromosomeLocation.strand Gene.exons.dataSets.name" sortOrder="Gene.primaryIdentifier asc">
         <pathDescription pathString="Gene.exons.chromosome" description="Chromosome">
         </pathDescription>
         <pathDescription pathString="Gene.exons" description="Exon">
@@ -360,7 +360,7 @@
       </query>
     </template>
     <template name="Gene_Insertion" title="Gene [D. melanogaster] --&gt; Transposon insertions." longDescription="For a particular gene, search for overlapping transposable element insertion sites." comment="06.06.07 updated to work from gene class - Philip">
-      <query name="Gene_Insertion" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.symbol Gene.overlappingFeatures.name Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.chromosomeLocation.strand Gene.overlappingFeatures.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
+      <query name="Gene_Insertion" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.symbol Gene.overlappingFeatures.name Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.chromosomeLocation.strand Gene.overlappingFeatures.dataSets.name" sortOrder="Gene.primaryIdentifier asc">
         <pathDescription pathString="Gene.overlappingFeatures" description="P-element">
         </pathDescription>
         <pathDescription pathString="Gene.overlappingFeatures.chromosomeLocation" description="P-element &gt; chromosome location">
@@ -378,7 +378,7 @@
       </query>
     </template>
     <template name="Gene_IntronChromosome" title="Gene --&gt; Introns + chromosomal locations and lengths." longDescription="For a particular gene, list the introns and show the intron chromosomal locations and lengths." comment="06.06.07 updated to work from gene class - Philip">
-      <query name="Gene_IntronChromosome" model="genomic" view="Gene.primaryIdentifier Gene.transcripts.introns.primaryIdentifier Gene.transcripts.introns.length Gene.transcripts.introns.chromosome.primaryIdentifier Gene.transcripts.introns.chromosomeLocation.start Gene.transcripts.introns.chromosomeLocation.end Gene.transcripts.introns.chromosomeLocation.strand Gene.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
+      <query name="Gene_IntronChromosome" model="genomic" view="Gene.primaryIdentifier Gene.transcripts.introns.primaryIdentifier Gene.transcripts.introns.length Gene.transcripts.introns.chromosome.primaryIdentifier Gene.transcripts.introns.chromosomeLocation.start Gene.transcripts.introns.chromosomeLocation.end Gene.transcripts.introns.chromosomeLocation.strand Gene.dataSets.name" sortOrder="Gene.primaryIdentifier asc">
         <pathDescription pathString="Gene.dataSets" description="Dataset">
         </pathDescription>
         <pathDescription pathString="Gene.transcripts.introns.chromosomeLocation" description="Intron &gt; chromosome location">
@@ -458,7 +458,7 @@
       </query>
     </template>
     <template name="Gene_OverlapppingGenes" title="Gene --&gt; Overlapping genes." longDescription="For a particular gene, search for overlapping genes." comment="06.06.07 updated to work from gene class - Philip">
-      <query name="Gene_OverlapppingGenes" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.symbol Gene.overlappingFeatures.chromosome.primaryIdentifier Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.chromosomeLocation.strand Gene.overlappingFeatures.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
+      <query name="Gene_OverlapppingGenes" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.symbol Gene.overlappingFeatures.chromosome.primaryIdentifier Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.chromosomeLocation.strand Gene.overlappingFeatures.dataSets.name" sortOrder="Gene.primaryIdentifier asc">
         <pathDescription pathString="Gene.overlappingFeatures.chromosome" description="Overlapping gene  &gt; chromosome">
         </pathDescription>
         <pathDescription pathString="Gene.overlappingFeatures" description="Overlapping gene">
@@ -494,7 +494,7 @@
       </query>
     </template>
     <template name="Gene_PointMutationLocation" title="Gene [D. melanogaster] --&gt; Point mutations + chromosomal locations." longDescription="For a particular gene, search for overlapping point mutations. Show the chromosome coordinates of any point mutations." comment="06.06.07 updated to work from gene class - Philip">
-      <query name="Gene_PointMutationLocation" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.chromosome.primaryIdentifier Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
+      <query name="Gene_PointMutationLocation" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.chromosome.primaryIdentifier Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.dataSets.name" sortOrder="Gene.primaryIdentifier asc">
         <pathDescription pathString="Gene.overlappingFeatures.chromosome" description="Point mutation &gt; chromosome">
         </pathDescription>
         <pathDescription pathString="Gene.overlappingFeatures" description="Point mutation">
@@ -514,7 +514,7 @@
       </query>
     </template>
     <template name="Gene_pointMutationsInExons" title="Gene --&gt; Point mutations overlapping exons" longDescription="For a particular gene show the point mutations that overlap its exons. " comment="">
-      <query name="Gene_pointMutationsInExons" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.exons.primaryIdentifier Gene.exons.overlappingFeatures.primaryIdentifier Gene.exons.overlappingFeatures.chromosomeLocation.start Gene.exons.overlappingFeatures.chromosomeLocation.end Gene.exons.overlappingFeatures.chromosomeLocation.strand Gene.exons.overlappingFeatures.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
+      <query name="Gene_pointMutationsInExons" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.exons.primaryIdentifier Gene.exons.overlappingFeatures.primaryIdentifier Gene.exons.overlappingFeatures.chromosomeLocation.start Gene.exons.overlappingFeatures.chromosomeLocation.end Gene.exons.overlappingFeatures.chromosomeLocation.strand Gene.exons.overlappingFeatures.dataSets.name" sortOrder="Gene.primaryIdentifier asc">
         <pathDescription pathString="Gene.exons.overlappingFeatures" description="Point mutation">
         </pathDescription>
         <pathDescription pathString="Gene.chromosome" description="Chromosome">
@@ -540,7 +540,7 @@
       </query>
     </template>
     <template name="Gene_Protein" title="Gene --&gt; Proteins." longDescription="Show the proteins for a particular gene." comment="06.06.07 updated to work from gene class - Philip">
-      <query name="Gene_Protein" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.proteins.primaryIdentifier Gene.proteins.primaryAccession Gene.proteins.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
+      <query name="Gene_Protein" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.proteins.primaryIdentifier Gene.proteins.primaryAccession Gene.proteins.dataSets.name" sortOrder="Gene.primaryIdentifier asc">
         <pathDescription pathString="Gene.proteins" description="Protein">
         </pathDescription>
         <node path="Gene" type="Gene">
@@ -604,7 +604,7 @@
       </query>
     </template>
     <template name="Gene_to_upstream_intergenic" title="Gene --&gt; Upstream intergenic region + chromosomal location" longDescription="For a particular gene show the length and chromosomal location of the upstream intergenic region." comment="06.06.07 updated to work from gene class - Philip">
-      <query name="Gene_to_upstream_intergenic" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.upstreamIntergenicRegion.chromosome.primaryIdentifier Gene.upstreamIntergenicRegion.chromosomeLocation.start Gene.upstreamIntergenicRegion.chromosomeLocation.end Gene.upstreamIntergenicRegion.length Gene.upstreamIntergenicRegion.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
+      <query name="Gene_to_upstream_intergenic" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.upstreamIntergenicRegion.chromosome.primaryIdentifier Gene.upstreamIntergenicRegion.chromosomeLocation.start Gene.upstreamIntergenicRegion.chromosomeLocation.end Gene.upstreamIntergenicRegion.length Gene.upstreamIntergenicRegion.dataSets.name" sortOrder="Gene.primaryIdentifier asc">
         <pathDescription pathString="Gene.upstreamIntergenicRegion.dataSets" description="Dataset">
         </pathDescription>
         <pathDescription pathString="Gene.upstreamIntergenicRegion.chromosomeLocation" description="Upstream intergenic region &gt; chromosome location">
@@ -624,7 +624,7 @@
       </query>
     </template>
     <template name="Gene_TranscriptExon" title="Gene --&gt; Transcripts + number of exons for each transcript." longDescription="Show the predicted transcripts and the number of exons for each transcript for a particular gene." comment="07.02.07:re-written to work from gene primaryIdentifier -Rachel. 06.06.07 updated to work from gene class - Philip">
-      <query name="Gene_TranscriptExon" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.transcripts.primaryIdentifier Gene.transcripts.exonCount Gene.transcripts.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
+      <query name="Gene_TranscriptExon" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.transcripts.primaryIdentifier Gene.transcripts.exonCount Gene.transcripts.dataSets.name" sortOrder="Gene.primaryIdentifier asc">
         <pathDescription pathString="Gene.transcripts.dataSets" description="Dataset">
         </pathDescription>
         <pathDescription pathString="Gene.transcripts" description="Transcript">
@@ -640,7 +640,7 @@
       </query>
     </template>
     <template name="Gene_TranscriptExonIntron" title="Gene --&gt; Transcripts, exons and introns." longDescription="For a particular gene, show all transcripts, exons and introns." comment="06.06.07 updated to work from gene class - Philip">
-      <query name="Gene_TranscriptExonIntron" model="genomic" view="Gene.primaryIdentifier Gene.transcripts.primaryIdentifier Gene.transcripts.introns.primaryIdentifier Gene.transcripts.exons.primaryIdentifier Gene.transcripts.exons.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
+      <query name="Gene_TranscriptExonIntron" model="genomic" view="Gene.primaryIdentifier Gene.transcripts.primaryIdentifier Gene.transcripts.introns.primaryIdentifier Gene.transcripts.exons.primaryIdentifier Gene.transcripts.exons.dataSets.name" sortOrder="Gene.primaryIdentifier asc">
         <pathDescription pathString="Gene.transcripts" description="Transcript">
         </pathDescription>
         <pathDescription pathString="Gene.transcripts.exons" description="Exon">
@@ -662,7 +662,7 @@
       </query>
     </template>
     <template name="Gene_TranscriptExonLocation" title="Gene --&gt; Transcripts and exons + chromosomal locations and lengths." longDescription="For a particular gene, list the transcripts and exons and show the chromosomal locations and lengths of the transcripts and exons." comment="06.06.07 updated to work from gene class - Philip">
-      <query name="Gene_TranscriptExonLocation" model="genomic" view="Gene.primaryIdentifier Gene.transcripts.chromosome.primaryIdentifier Gene.transcripts.primaryIdentifier Gene.transcripts.chromosomeLocation.start Gene.transcripts.chromosomeLocation.end Gene.transcripts.length Gene.transcripts.exons.primaryIdentifier Gene.transcripts.exons.chromosomeLocation.start Gene.transcripts.exons.chromosomeLocation.end Gene.transcripts.exons.length Gene.transcripts.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
+      <query name="Gene_TranscriptExonLocation" model="genomic" view="Gene.primaryIdentifier Gene.transcripts.chromosome.primaryIdentifier Gene.transcripts.primaryIdentifier Gene.transcripts.chromosomeLocation.start Gene.transcripts.chromosomeLocation.end Gene.transcripts.length Gene.transcripts.exons.primaryIdentifier Gene.transcripts.exons.chromosomeLocation.start Gene.transcripts.exons.chromosomeLocation.end Gene.transcripts.exons.length Gene.transcripts.dataSets.name" sortOrder="Gene.primaryIdentifier asc">
         <pathDescription pathString="Gene.transcripts.chromosome" description="Chromosome">
         </pathDescription>
         <pathDescription pathString="Gene.transcripts.dataSets" description="Dataset">
@@ -686,7 +686,7 @@
       </query>
     </template>
     <template name="Gene_TranscriptIntronLocation" title="Gene --&gt; Transcripts and introns + chromosomal locations and lengths." longDescription="For a particular gene, show its transcripts and introns and their chromosomal locations and lengths." comment="06.06.07 updated to work from gene class - Philip">
-      <query name="Gene_TranscriptIntronLocation" model="genomic" view="Gene.primaryIdentifier Gene.transcripts.chromosome.primaryIdentifier Gene.transcripts.primaryIdentifier Gene.transcripts.chromosomeLocation.start Gene.transcripts.chromosomeLocation.end Gene.transcripts.length Gene.transcripts.introns.primaryIdentifier Gene.transcripts.introns.length Gene.transcripts.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
+      <query name="Gene_TranscriptIntronLocation" model="genomic" view="Gene.primaryIdentifier Gene.transcripts.chromosome.primaryIdentifier Gene.transcripts.primaryIdentifier Gene.transcripts.chromosomeLocation.start Gene.transcripts.chromosomeLocation.end Gene.transcripts.length Gene.transcripts.introns.primaryIdentifier Gene.transcripts.introns.length Gene.transcripts.dataSets.name" sortOrder="Gene.primaryIdentifier asc">
         <pathDescription pathString="Gene.transcripts.chromosome" description="Chromosome">
         </pathDescription>
         <pathDescription pathString="Gene.transcripts.dataSets" description="Dataset">
@@ -738,7 +738,7 @@
       </query>
     </template>
     <template name="Gene_transposableElementsOverlappingExons" title="Gene [D. melanogaster] --&gt; Transposable element insertion sites overlapping exons." longDescription="For a particular gene show the transposable element insertion sites that overlap its exons." comment="">
-      <query name="Gene_transposableElementsOverlappingExons" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.exons.primaryIdentifier Gene.exons.overlappingFeatures.primaryIdentifier Gene.exons.overlappingFeatures.chromosomeLocation.start Gene.exons.overlappingFeatures.chromosomeLocation.end Gene.exons.overlappingFeatures.chromosomeLocation.strand Gene.exons.overlappingFeatures.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
+      <query name="Gene_transposableElementsOverlappingExons" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.exons.primaryIdentifier Gene.exons.overlappingFeatures.primaryIdentifier Gene.exons.overlappingFeatures.chromosomeLocation.start Gene.exons.overlappingFeatures.chromosomeLocation.end Gene.exons.overlappingFeatures.chromosomeLocation.strand Gene.exons.overlappingFeatures.dataSets.name" sortOrder="Gene.primaryIdentifier asc">
         <pathDescription pathString="Gene.exons.overlappingFeatures" description="Transposable element">
         </pathDescription>
         <pathDescription pathString="Gene.chromosome" description="Chromosome">
@@ -848,7 +848,7 @@
       </query>
     </template>
     <template name="Insertion_GeneLocation" title="P-element insertion --&gt; Genes that overlap this insertion +  chromosomal coordinates of insertion and genes." longDescription="For a specific P-element insertion, search for overlapping genes. Show chromosomal coordinates of the insertion and the genes." comment="">
-      <query name="Insertion_GeneLocation" model="genomic" view="InsertionSite.primaryIdentifier InsertionSite.chromosome.primaryIdentifier InsertionSite.chromosomeLocation.start InsertionSite.chromosomeLocation.end InsertionSite.overlappingFeatures.primaryIdentifier InsertionSite.overlappingFeatures.symbol InsertionSite.overlappingFeatures.chromosomeLocation.start InsertionSite.overlappingFeatures.chromosomeLocation.end InsertionSite.overlappingFeatures.chromosomeLocation.strand InsertionSite.dataSets.title" sortOrder="InsertionSite.primaryIdentifier asc">
+      <query name="Insertion_GeneLocation" model="genomic" view="InsertionSite.primaryIdentifier InsertionSite.chromosome.primaryIdentifier InsertionSite.chromosomeLocation.start InsertionSite.chromosomeLocation.end InsertionSite.overlappingFeatures.primaryIdentifier InsertionSite.overlappingFeatures.symbol InsertionSite.overlappingFeatures.chromosomeLocation.start InsertionSite.overlappingFeatures.chromosomeLocation.end InsertionSite.overlappingFeatures.chromosomeLocation.strand InsertionSite.dataSets.name" sortOrder="InsertionSite.primaryIdentifier asc">
         <pathDescription pathString="InsertionSite.dataSets" description="Dataset">
         </pathDescription>
         <pathDescription pathString="InsertionSite.overlappingFeatures.chromosomeLocation" description="Overlapping gene &gt; chromosome location">
@@ -1052,7 +1052,7 @@
       </query>
     </template>
     <template name="Organism_GenePointMutation" title="Organism [D. melanogaster] --&gt; All genes with point mutations + chromosomal locations." longDescription="For a particular organism, search for any genes with overlapping point mutations. Show chromosome coordinates of genes and point mutations." comment="">
-      <query name="Organism_GenePointMutation" model="genomic" view="Gene.chromosome.primaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.dataSets.title" sortOrder="Gene.chromosome.primaryIdentifier asc">
+      <query name="Organism_GenePointMutation" model="genomic" view="Gene.chromosome.primaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.dataSets.name" sortOrder="Gene.chromosome.primaryIdentifier asc">
         <pathDescription pathString="Gene.overlappingFeatures" description="Point mutation">
         </pathDescription>
         <pathDescription pathString="Gene.overlappingFeatures.chromosomeLocation" description="Point mutation &gt; chromosome location">
@@ -1144,7 +1144,7 @@
       </query>
     </template>
     <template name="Organism_Intergenic" title="Organism --&gt; All intergenic regions." longDescription="For a particular organism, show all intergenic regions." comment="">
-      <query name="Organism_Intergenic" model="genomic" view="IntergenicRegion.primaryIdentifier IntergenicRegion.length IntergenicRegion.chromosome.primaryIdentifier IntergenicRegion.chromosomeLocation.start IntergenicRegion.chromosomeLocation.end IntergenicRegion.adjacentGenes.primaryIdentifier IntergenicRegion.dataSets.title" sortOrder="IntergenicRegion.primaryIdentifier asc">
+      <query name="Organism_Intergenic" model="genomic" view="IntergenicRegion.primaryIdentifier IntergenicRegion.length IntergenicRegion.chromosome.primaryIdentifier IntergenicRegion.chromosomeLocation.start IntergenicRegion.chromosomeLocation.end IntergenicRegion.adjacentGenes.primaryIdentifier IntergenicRegion.dataSets.name" sortOrder="IntergenicRegion.primaryIdentifier asc">
         <pathDescription pathString="IntergenicRegion.dataSets" description="Dataset">
         </pathDescription>
         <node path="IntergenicRegion" type="IntergenicRegion">
@@ -1192,7 +1192,7 @@
       </query>
     </template>
     <template name="Organism_Transcript" title="Organism --&gt; All transcripts." longDescription="For a particular organism, show all its transcripts." comment="">
-      <query name="Organism_Transcript" model="genomic" view="Transcript.primaryIdentifier Transcript.length Transcript.dataSets.title" sortOrder="Transcript.primaryIdentifier asc">
+      <query name="Organism_Transcript" model="genomic" view="Transcript.primaryIdentifier Transcript.length Transcript.dataSets.name" sortOrder="Transcript.primaryIdentifier asc">
         <pathDescription pathString="Transcript.dataSets" description="Dataset">
         </pathDescription>
         <node path="Transcript" type="Transcript">
@@ -1208,7 +1208,7 @@
       </query>
     </template>
     <template name="OrganismGoterm_genesPointMutations" title="Organism + GO term name --&gt; Genes + point mutations" longDescription="Show all genes from a particular organism that have been annotated with a particular Go term(s) and the point mutations which overlap these genes." comment="">
-      <query name="OrganismGoterm_genesPointMutations" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.name Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.dataSets.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+      <query name="OrganismGoterm_genesPointMutations" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.name Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.dataSets.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
         <pathDescription pathString="Gene.goAnnotation" description="Go annotation">
         </pathDescription>
         <pathDescription pathString="Gene.overlappingFeatures" description="Point mutation">
@@ -1236,7 +1236,7 @@
       </query>
     </template>
     <template name="OrganismGOterm_GenesTEinsertionsite" title="Organism + GO term name --&gt; genes + transposable element insertion site" longDescription="Show all genes from a particular organism that have been annotated with a particular Go term(s) and the transposable element insertion sites which overlap these genes." comment="">
-      <query name="OrganismGOterm_GenesTEinsertionsite" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.name Gene.goAnnotation.qualifier Gene.overlappingFeatures.symbol Gene.overlappingFeatures.dataSets.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+      <query name="OrganismGOterm_GenesTEinsertionsite" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.name Gene.goAnnotation.qualifier Gene.overlappingFeatures.symbol Gene.overlappingFeatures.dataSets.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
         <pathDescription pathString="Gene.goAnnotation" description="Go annotation">
         </pathDescription>
         <pathDescription pathString="Gene.overlappingFeatures" description="Transposable element insertion site">
@@ -1264,7 +1264,7 @@
       </query>
     </template>
     <template name="PointMutation_Gene_Chromosome" title="Point mutation [D. melanogaster] --&gt; Genes + chromosomal locations." longDescription="For a particular point mutation, search for overlapping genes. Show chromosome coordinates for the genes." comment="">
-      <query name="PointMutation_Gene_Chromosome" model="genomic" view="PointMutation.primaryIdentifier PointMutation.overlappingFeatures.primaryIdentifier PointMutation.overlappingFeatures.symbol PointMutation.overlappingFeatures.chromosome.primaryIdentifier PointMutation.overlappingFeatures.chromosomeLocation.start PointMutation.overlappingFeatures.chromosomeLocation.end PointMutation.overlappingFeatures.chromosomeLocation.strand PointMutation.dataSets.title" sortOrder="PointMutation.primaryIdentifier asc">
+      <query name="PointMutation_Gene_Chromosome" model="genomic" view="PointMutation.primaryIdentifier PointMutation.overlappingFeatures.primaryIdentifier PointMutation.overlappingFeatures.symbol PointMutation.overlappingFeatures.chromosome.primaryIdentifier PointMutation.overlappingFeatures.chromosomeLocation.start PointMutation.overlappingFeatures.chromosomeLocation.end PointMutation.overlappingFeatures.chromosomeLocation.strand PointMutation.dataSets.name" sortOrder="PointMutation.primaryIdentifier asc">
         <node path="PointMutation" type="PointMutation">
         </node>
         <node path="PointMutation.overlappingFeatures" type="Gene">
@@ -1320,7 +1320,7 @@
       </query>
     </template>
     <template name="Protein_GeneChromosomeLength" title="Protein --&gt; Gene + chromosomal location and length of the gene." longDescription="Show the chromosomal location and the length of the gene that codes for the following protein." comment="06.06.07 updated to work from protein class - Philip">
-      <query name="Protein_GeneChromosomeLength" model="genomic" view="Protein.primaryAccession Protein.genes.primaryIdentifier Protein.genes.symbol Protein.genes.chromosome.primaryIdentifier Protein.genes.chromosomeLocation.start Protein.genes.chromosomeLocation.end Protein.genes.chromosomeLocation.strand Protein.genes.length Protein.dataSets.title" sortOrder="Protein.primaryAccession asc">
+      <query name="Protein_GeneChromosomeLength" model="genomic" view="Protein.primaryAccession Protein.genes.primaryIdentifier Protein.genes.symbol Protein.genes.chromosome.primaryIdentifier Protein.genes.chromosomeLocation.start Protein.genes.chromosomeLocation.end Protein.genes.chromosomeLocation.strand Protein.genes.length Protein.dataSets.name" sortOrder="Protein.primaryAccession asc">
         <pathDescription pathString="Protein.genes" description="Gene">
         </pathDescription>
         <pathDescription pathString="Protein.dataSets" description="Dataset">
@@ -1868,7 +1868,7 @@
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="AAB_Synonyms" type="template">
     </tag>
-    <tag name="aspect:Genomics" objectIdentifier="LocatedSequenceFeature.sequence" type="reference">
+    <tag name="aspect:Genomics" objectIdentifier="SequenceFeature.sequence" type="reference">
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="Exon.transcripts" type="collection">
     </tag>
@@ -1924,7 +1924,7 @@
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="UnalignedESTclusters" type="template">
     </tag>
-    <tag name="aspect:Genomics" objectIdentifier="LocatedSequenceFeature.overlappingFeatures" type="collection">
+    <tag name="aspect:Genomics" objectIdentifier="SequenceFeature.overlappingFeatures" type="collection">
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="org.intermine.model.bio.IntergenicRegion" type="class">
     </tag>
@@ -1964,7 +1964,7 @@
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="org.intermine.model.bio.Exon" type="class">
     </tag>
-    <tag name="aspect:Genomics" objectIdentifier="LocatedSequenceFeature.chromosome" type="reference">
+    <tag name="aspect:Genomics" objectIdentifier="SequenceFeature.chromosome" type="reference">
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="Gene_TranscriptIntronChromosome" type="template">
     </tag>
@@ -2068,7 +2068,7 @@
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="org.intermine.model.bio.CDS" type="class">
     </tag>
-    <tag name="aspect:Genomics" objectIdentifier="LocatedSequenceFeature.chromosomeLocation" type="reference">
+    <tag name="aspect:Genomics" objectIdentifier="SequenceFeature.chromosomeLocation" type="reference">
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="AAAA_Symbol_toCG" type="template">
     </tag>
@@ -3096,7 +3096,7 @@
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="AAB_Synonyms" type="template">
     </tag>
-    <tag name="im:aspect:Genomics" objectIdentifier="LocatedSequenceFeature.sequence" type="reference">
+    <tag name="im:aspect:Genomics" objectIdentifier="SequenceFeature.sequence" type="reference">
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="Exon.transcripts" type="collection">
     </tag>
@@ -3150,7 +3150,7 @@
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="UnalignedESTclusters" type="template">
     </tag>
-    <tag name="im:aspect:Genomics" objectIdentifier="LocatedSequenceFeature.overlappingFeatures" type="collection">
+    <tag name="im:aspect:Genomics" objectIdentifier="SequenceFeature.overlappingFeatures" type="collection">
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.IntergenicRegion" type="class">
     </tag>
@@ -3190,7 +3190,7 @@
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.Exon" type="class">
     </tag>
-    <tag name="im:aspect:Genomics" objectIdentifier="LocatedSequenceFeature.chromosome" type="reference">
+    <tag name="im:aspect:Genomics" objectIdentifier="SequenceFeature.chromosome" type="reference">
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptIntronChromosome" type="template">
     </tag>
@@ -3292,7 +3292,7 @@
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.CDS" type="class">
     </tag>
-    <tag name="im:aspect:Genomics" objectIdentifier="LocatedSequenceFeature.chromosomeLocation" type="reference">
+    <tag name="im:aspect:Genomics" objectIdentifier=".chromosomeLocation" type="reference">
     </tag>
     <tag name="im:aspect:Genomics" objectIdentifier="AAAA_Symbol_toCG" type="template">
     </tag>

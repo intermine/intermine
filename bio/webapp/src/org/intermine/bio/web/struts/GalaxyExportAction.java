@@ -13,9 +13,11 @@ package org.intermine.bio.web.struts;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,12 +30,13 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
-import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ExportException;
@@ -86,8 +89,11 @@ public class GalaxyExportAction extends InterMineAction
         // Use inner joint
         view = getFixedView(view);
 
-        // Reorder the view, place chr, start and end at the first three columns
+        // Reorder the view, move chr, start and end to the first three columns
         List<Path> newView = new ArrayList<Path>();
+        // TODO This is wrong!
+        // Find the index of chr, start and end in the view
+        // Do all the lsf have these 3 field in the default view???
         int chrIdx = -1;
         int startIdx = -1;
         int endIdx = -1;
@@ -138,52 +144,19 @@ public class GalaxyExportAction extends InterMineAction
 //        ResultManipulater rm = new ResultManipulater();
 //        Map<Integer, String> orgNameMap = rm.findOrganisms(pt, request, index);
 
-
-        // Same function as ResultManipulater, reliable but slower
-        // Function removed to GalaxyExportOptionsController
-        /*
-        Map<Integer, String> orgNameMap = new LinkedHashMap<Integer, String>();
-
-        for (int i = 0; i < pt.getExactSize(); i++) {
-            Organism org = ((LocatedSequenceFeature) pt.getWebTable().getResultElements(i).get(0)
-                    .get(index).getValue().getObject()).getOrganism();
-            orgNameMap.put(org.getTaxonId(), org.getShortName());
-        }
-
-        String genomeBuild = "";
-        String organism = "";
-        if (orgNameMap != null) {
-
-            Properties props = PropertiesUtil.getProperties();
-            if (orgNameMap.keySet().size() == 1) {
-                if (orgNameMap.keySet().iterator().next() == 7227) {
-                    genomeBuild = props.getProperty("genomeVersion.fly");
-                }
-                if (orgNameMap.keySet().iterator().next() == 6239) {
-                    genomeBuild = props.getProperty("genomeVersion.worm");
-                }
-            }
-
-            organism = Arrays.toString(orgNameMap.values().toArray());
-        }
-        */
-
         /*
         // Write to Response
-        StringBuffer pathString = new StringBuffer();
-        pathString.append("|");
+        StringBuffer viewString = new StringBuffer();
+        viewString.append("|");
         for (Path path : newView) {
-            pathString.append(path.toStringNoConstraints());
-            pathString.append("|");
+            viewString.append(path.toStringNoConstraints());
+            viewString.append("|");
         }
         */
 
         StringBuffer returnString = new StringBuffer();
         // URL
         returnString.append(stringUrl);
-//        returnString.append(">>>>>");
-//        returnString.append(pathString);
-
         out.println(returnString.toString());
 
         out.flush();
@@ -245,7 +218,7 @@ class ResultManipulater extends HttpExporterBase
                 List<ResultElement> row = resultIt.next();
                 List<ResultElement> elWithObject = getResultElements(row, index);
                 for (ResultElement re : elWithObject) {
-                    Organism org = ((LocatedSequenceFeature) re.getObject()).getOrganism();
+                    Organism org = ((SequenceFeature) re.getObject()).getOrganism();
                     orgNameMap.put(org.getTaxonId(), org.getShortName());
                 }
             }

@@ -68,7 +68,7 @@ public class OboConverter extends DataConverter
         this.termClass = termClass;
 
         ontology = createItem("Ontology");
-        ontology.addAttribute(new Attribute("title", dagName));
+        ontology.addAttribute(new Attribute("name", dagName));
         ontology.addAttribute(new Attribute("url", url));
     }
 
@@ -219,9 +219,8 @@ public class OboConverter extends DataConverter
      * @throws ObjectStoreException if an error occurs while writing to the itemWriter
      */
     protected void configureSynonymItem(OboTermSynonym syn, Item item, OboTerm term)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         item.setAttribute("name", syn.getName());
-        item.setAttribute("type", syn.getType());
     }
 
     /**
@@ -230,7 +229,7 @@ public class OboConverter extends DataConverter
      * @throws ObjectStoreException if problem storing
      */
     protected void processRelation(OboRelation oboRelation)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         // create the relation item
         if (nameToTerm.get(oboRelation.getParentTermId()) != null
             && nameToTerm.get(oboRelation.getChildTermId()) != null) {

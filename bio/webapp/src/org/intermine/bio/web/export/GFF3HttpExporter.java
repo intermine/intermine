@@ -32,7 +32,7 @@ import javax.servlet.http.HttpSession;
 import org.intermine.api.results.Column;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.struts.GFF3ExportForm;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
@@ -62,7 +62,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
 
     /**
      * Method called to export a PagedTable object as GFF3.  The PagedTable can only be exported if
-     * there is exactly one LocatedSequenceFeature column and the other columns (if any), are simple
+     * there is exactly one SequenceFeature column and the other columns (if any), are simple
      * attributes (rather than objects).
      * {@inheritDoc}
      */
@@ -86,7 +86,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         }
 
         List<Integer> indexes = ExportHelper.getClassIndexes(ExportHelper.getColumnClasses(pt),
-                LocatedSequenceFeature.class);
+        SequenceFeature.class);
 
         // get the project title to be written in GFF3 records
         Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);

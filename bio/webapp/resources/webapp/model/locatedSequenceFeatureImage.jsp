@@ -7,9 +7,7 @@
 
 
 <c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
-                || cld.unqualifiedName == 'Chromosome')
-            && object.organism.abbreviation != 'MM' && object.organism.abbreviation != 'MD'
-            && object.organism.abbreviation != 'RN' && cld.unqualifiedName != 'ChromosomeBand'}">
+                || cld.unqualifiedName == 'Chromosome') && cld.unqualifiedName != 'ChromosomeBand'}">
 
   <c:set var="type" value="${cld.unqualifiedName}s"/>
 
@@ -70,7 +68,7 @@
 
   <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};name=${name};width=750">
     <div>
-      <fmt:message key="locatedSequenceFeature.GBrowse.message"/>
+      <fmt:message key="sequenceFeature.GBrowse.message"/>
     </div>
     <c:if test="${cld.unqualifiedName != 'Chromosome'}">
       <div>

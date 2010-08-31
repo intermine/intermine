@@ -39,6 +39,7 @@ public abstract class DataConverter
     private Model model;
     private ItemFactory itemFactory;
     private DataConverterStoreHook storeHook = null;
+    private Map<String, String> uniqueItems = new HashMap<String, String>();
 
     /**
     * Constructor that should be called by children
@@ -175,5 +176,27 @@ public abstract class DataConverter
         for (Item item : c) {
             store(item);
         }
+    }
+
+    /**
+     * List of unique identifiers and their refIds.  this is needed to keep the SOterms unique
+     * between the converter and the biostorehook.
+     *
+     * @param key value of key field, eg. SO:001
+     * @return ref id representing the unique object or NULL if this object isn't in map
+     */
+    public String getUniqueItemId(String key) {
+        return uniqueItems.get(key);
+    }
+
+    /**
+    * List of unique identifiers and their refIds.  this is needed to keep the SOterms unique
+    * between the converter and the biostorehook.
+    *
+    * @param key value of key field, eg. SO:001
+    * @param refId id representing the unique Object
+    */
+    public void addUniqueItemId(String key, String refId) {
+        uniqueItems.put(key, refId);
     }
 }

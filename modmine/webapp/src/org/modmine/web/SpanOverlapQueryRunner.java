@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Experiment;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Submission;
@@ -236,7 +236,7 @@ public class SpanOverlapQueryRunner
                 // DB tables
                 QueryClass qcOrg = new QueryClass(Organism.class);
                 QueryClass qcChr = new QueryClass(Chromosome.class);
-                QueryClass qcFeature = new QueryClass(LocatedSequenceFeature.class);
+                QueryClass qcFeature = new QueryClass(SequenceFeature.class);
                 QueryClass qcLoc = new QueryClass(Location.class);
                 QueryClass qcSubmission = new QueryClass(Submission.class);
 
@@ -420,7 +420,7 @@ public class SpanOverlapQueryRunner
             Query q = new Query();
             q.setDistinct(true);
 
-            QueryClass qcFeature = new QueryClass(LocatedSequenceFeature.class);
+            QueryClass qcFeature = new QueryClass(SequenceFeature.class);
             q.addFrom(qcFeature);
 
             QueryField qfFeatureType = new QueryField(qcFeature, "featureType");

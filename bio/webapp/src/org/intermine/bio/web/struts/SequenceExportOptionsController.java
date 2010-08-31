@@ -27,7 +27,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.results.Column;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Sequence;
 import org.intermine.pathquery.Path;
@@ -92,7 +92,7 @@ public class SequenceExportOptionsController extends TilesAction
             Set<Class> prefixClasses = DynamicUtil.decomposeClass(prefixCD.getType());
             Class<?> prefixClass = prefixClasses.iterator().next();
             if (Protein.class.isAssignableFrom(prefixClass)
-                || LocatedSequenceFeature.class.isAssignableFrom(prefixClass)
+                || SequenceFeature.class.isAssignableFrom(prefixClass)
                 || Sequence.class.isAssignableFrom(prefixClass)) {
                 if (!retPaths.contains(prefix)) {
                     retPaths.add(prefix);

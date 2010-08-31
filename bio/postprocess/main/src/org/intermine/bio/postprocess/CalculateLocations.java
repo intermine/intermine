@@ -20,10 +20,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.model.bio.AssemblyComponent;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.Constants;
@@ -75,7 +74,7 @@ public class CalculateLocations
 
 
     /**
-     * Create OverlapRelation objects for all overlapping LocatedSequenceFeatures by querying
+     * Create OverlapRelation objects for all overlapping SequenceFeatures by querying
      * objects that are located on chromosomes and overlap.
      * @param classNamesToIgnore a List of the names of those classes that should be ignored when
      * searching for overlaps.  Sub classes to these classes are ignored too. In addition, an
@@ -85,12 +84,12 @@ public class CalculateLocations
      * same class
      * @throws Exception if anything goes wrong
      */
-    public void createOverlapRelations(List classNamesToIgnore, boolean ignoreSelfMatches)
-    throws Exception {
+    public void createOverlapRelations(List<String> classNamesToIgnore, boolean ignoreSelfMatches)
+        throws Exception {
         osw.beginTransaction();
-        Map summary = new HashMap();
-        Map chromosomeMap = makeChromosomeMap();
-        Iterator chromosomeIdIter = chromosomeMap.keySet().iterator();
+        Map<String, Integer> summary = new HashMap<String, Integer>();
+        Map<Integer, Chromosome> chromosomeMap = makeChromosomeMap();
+        Iterator<?> chromosomeIdIter = chromosomeMap.keySet().iterator();
         while (chromosomeIdIter.hasNext()) {
             Integer id = (Integer) chromosomeIdIter.next();
             createSubjectOverlapRelations((Chromosome) chromosomeMap.get(id), classNamesToIgnore,
@@ -98,10 +97,11 @@ public class CalculateLocations
         }
         osw.commitTransaction();
         LOG.info("Stored a total of " + summary.remove("total") + " overlaps");
-        List sortList = new ArrayList();
-        Iterator summaryIter = summary.entrySet().iterator();
+        List<SortElement> sortList = new ArrayList<SortElement>();
+        Iterator<?> summaryIter = summary.entrySet().iterator();
         while (summaryIter.hasNext()) {
-            Map.Entry summaryEntry = (Map.Entry) summaryIter.next();
+            Map.Entry<String, Integer> summaryEntry = (Map.Entry<String, Integer>)
+                summaryIter.next();
             sortList.add(new SortElement((String) summaryEntry.getKey(),
                         ((Integer) summaryEntry.getValue()).intValue()));
         }
@@ -147,8 +147,8 @@ public class CalculateLocations
      * same class
      * @param summary a Map to which summary data will be added
      */
-    private void createSubjectOverlapRelations(Chromosome subject, List classNamesToIgnore,
-            boolean ignoreSelfMatches, Map summary) throws Exception {
+    private void createSubjectOverlapRelations(Chromosome subject, List<String> classNamesToIgnore,
+            boolean ignoreSelfMatches, Map<String, Integer> summary) throws Exception {
         LOG.info("Creating overlaps for id " + subject.getId() + ", identifier: "
                  + subject.getPrimaryIdentifier());
 
@@ -167,34 +167,35 @@ public class CalculateLocations
      * @param refField the linking field eg. "exons"
      * @throws ObjectStoreException if the is a problem with the ObjectStore
      */
-    public void createSpanningLocations(Class parentClass, Class childClass, String refField)
-    throws ObjectStoreException {
+    public void createSpanningLocations(Class<?> parentClass, Class<?> childClass, String refField)
+        throws ObjectStoreException {
 
         Query parentIdQuery =
             new IqlQuery("SELECT DISTINCT a1_.id as id FROM "
                          + parentClass.getName() + " AS a1_, org.intermine.model.bio.Location "
-                         + "AS a2_, org.intermine.model.bio.BioEntity as a3_"
-                         + " WHERE (a1_.objects CONTAINS a2_ and a3_.subjects CONTAINS a2_)",
-                         null).toQuery();
+                         + "AS a2_, org.intermine.model.bio.BioEntity as a3_ "
+                         + "WHERE (a1_.locations CONTAINS a2_ "
+                         + "and a3_.locatedFeatures CONTAINS a2_)", null).toQuery();
 
         Results parentIdResults = os.execute(parentIdQuery);
-        Set locatedParents = new HashSet();
-        Iterator parentIdIter = parentIdResults.iterator();
+        Set<Object> locatedParents = new HashSet<Object>();
+        Iterator<?> parentIdIter = parentIdResults.iterator();
 
         while (parentIdIter.hasNext()) {
-            Object parentId = ((ResultsRow) parentIdIter.next()).get(0);
+            Object parentId = ((ResultsRow<?>) parentIdIter.next()).get(0);
             locatedParents.add(parentId);
         }
 
-        Iterator resIter = findCollections(os, parentClass, childClass, refField);
+        Iterator<?> resIter = findCollections(os, parentClass, childClass, refField);
 
         // Map of location.objects to Maps from parent objects to a to their (new) start and end
         // positions.  eg.  Chromosome10 -> Exon1 -> SimpleLoc {start -> 2111, end -> 2999}
         //                  Contig23 ->     Exon1 -> SimpleLoc {start -> 1111, end -> 1999}
-        Map locatedOnObjectMap = new HashMap();
+        Map<Integer, Map<Integer, SimpleLoc>> locatedOnObjectMap
+            = new HashMap<Integer, Map<Integer, SimpleLoc>>();
 
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
 
             BioEntity parentObject = (BioEntity) rr.get(0);
             Location location = (Location) rr.get(2);
@@ -202,18 +203,17 @@ public class CalculateLocations
             // the object that childObject is located on
             BioEntity locatedOnObject = (BioEntity) rr.get(3);
 
-            // ignore objects that already have locations on Chromosomes
+            // ignore objects that already have locations
             Integer parentObjectId = parentObject.getId();
-            if ((locatedOnObject instanceof Chromosome
-                 || locatedOnObject instanceof AssemblyComponent)
-                && locatedParents.contains(parentObjectId)) {
+            if (locatedParents.contains(parentObjectId)) {
                 continue;
             }
 
-            Map parentObjectMap = (Map) locatedOnObjectMap.get(locatedOnObject.getId());
+            Map<Integer, SimpleLoc> parentObjectMap
+                = (Map<Integer, SimpleLoc>) locatedOnObjectMap.get(locatedOnObject.getId());
 
             if (parentObjectMap == null) {
-                parentObjectMap = new HashMap();
+                parentObjectMap = new HashMap<Integer, SimpleLoc>();
                 locatedOnObjectMap.put(locatedOnObject.getId(), parentObjectMap);
             }
 
@@ -243,12 +243,13 @@ public class CalculateLocations
 
         osw.beginTransaction();
         // make new locations and store them
-        Iterator locatedOnObjectIterator = locatedOnObjectMap.keySet().iterator();
+        Iterator<?> locatedOnObjectIterator = locatedOnObjectMap.keySet().iterator();
         while (locatedOnObjectIterator.hasNext()) {
             Integer locatedOnObjectId = (Integer) locatedOnObjectIterator.next();
             BioEntity locatedOnObject = (BioEntity) os.getObjectById(locatedOnObjectId);
-            Map parentObjectMap = (Map) locatedOnObjectMap.get(locatedOnObjectId);
-            Iterator parentObjectMapIterator = parentObjectMap.keySet().iterator();
+            Map<Integer, SimpleLoc> parentObjectMap
+                = (Map<Integer, SimpleLoc>) locatedOnObjectMap.get(locatedOnObjectId);
+            Iterator<?> parentObjectMapIterator = parentObjectMap.keySet().iterator();
 
             while (parentObjectMapIterator.hasNext()) {
                 Integer parentObjectId = (Integer) parentObjectMapIterator.next();
@@ -257,14 +258,11 @@ public class CalculateLocations
                 Location newLocation =
                     (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
 
-
                 newLocation.setStart(new Integer(parentObjectSimpleLoc.getStart()));
                 newLocation.setEnd(new Integer(parentObjectSimpleLoc.getEnd()));
-                newLocation.setStartIsPartial(Boolean.FALSE);
-                newLocation.setEndIsPartial(Boolean.FALSE);
                 newLocation.setStrand(parentObjectSimpleLoc.getStrand());
-                newLocation.setSubject(parentObject);
-                newLocation.setObject(locatedOnObject);
+                newLocation.setFeature(parentObject);
+                newLocation.setLocatedOn(locatedOnObject);
 
                 osw.store(newLocation);
             }
@@ -276,8 +274,8 @@ public class CalculateLocations
      * Query a class like Transcript that refers to a collection of located classes (like Exon) and
      * return an Results object containing Transcript, Exon, Exon location and location.object
      */
-    private static Iterator findCollections(ObjectStore os, Class parentClass, Class childClass,
-                                            String refField)
+    private static Iterator<?> findCollections(ObjectStore os, Class<?> parentClass,
+            Class<?> childClass, String refField)
         throws ObjectStoreException {
 
         Query q = new Query();
@@ -300,10 +298,10 @@ public class CalculateLocations
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "object");
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "locatedOn");
         ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcLocObject);
         cs.addConstraint(cc1);
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "feature");
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcChild);
         cs.addConstraint(cc2);
 
@@ -323,15 +321,15 @@ public class CalculateLocations
     /**
      * Hold Chromosomes in map by id
      */
-    private Map makeChromosomeMap() throws Exception {
-        Map returnMap = new HashMap();
+    private Map<Integer, Chromosome> makeChromosomeMap() throws Exception {
+        Map<Integer, Chromosome>  returnMap = new HashMap<Integer, Chromosome> ();
         Query q = new Query();
         QueryClass qc = new QueryClass(Chromosome.class);
         q.addToSelect(qc);
         q.addFrom(qc);
 
         SingletonResults sr = os.executeSingleton(q);
-        Iterator chrIter = sr.iterator();
+        Iterator<?> chrIter = sr.iterator();
         while (chrIter.hasNext()) {
             Chromosome chr = (Chromosome) chrIter.next();
             returnMap.put(chr.getId(), chr);
@@ -341,15 +339,15 @@ public class CalculateLocations
 
 
     /**
-     * For each LocatedSequenceFeature, if it has a Location on a Chromosome, set the
-     * LocatedSequenceFeature.chromosomeLocation reference to be that Location and set the length
-     * field of the LocatedSequenceFeature to chromosomeLocation.end - chromosomeLocation.start + 1
+     * For each SequenceFeature, if it has a Location on a Chromosome, set the
+     * SequenceFeature.chromosomeLocation reference to be that Location and set the length
+     * field of the SequenceFeature to chromosomeLocation.end - chromosomeLocation.start + 1
      * @throws Exception if anything goes wrong
      */
     public void setChromosomeLocationsAndLengths() throws Exception {
         Results results = BioQueries.findLocationAndObjects(os, Chromosome.class,
-                LocatedSequenceFeature.class, true, false, false, 10000);
-        Iterator resIter = results.iterator();
+                SequenceFeature.class, true, false, false, 10000);
+        Iterator<?> resIter = results.iterator();
 
         osw.beginTransaction();
 
@@ -357,15 +355,15 @@ public class CalculateLocations
         // references.  If there are duplicates do nothing - this has happened for some affy
         // probes in FlyMine.
         Integer lastChrId = null;
-        LocatedSequenceFeature lastFeature = null;
+        SequenceFeature lastFeature = null;
         boolean storeLastFeature = true;  // will get set to false if duplicate locations seen
         Location lastLoc = null;
 
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
 
             Integer chrId = (Integer) rr.get(0);
-            LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
+            SequenceFeature lsf = (SequenceFeature) rr.get(1);
             Location locOnChr = (Location) rr.get(2);
 
             if (lastFeature != null && !lsf.getId().equals(lastFeature.getId())) {
@@ -394,14 +392,14 @@ public class CalculateLocations
 
 
     /**
-     * For each LocatedSequenceFeature, if it has a Location on a Chromosome, set the
-     * LocatedSequenceFeature.chromosomeLocation reference *if* the reference is not already set.
+     * For each SequenceFeature, if it has a Location on a Chromosome, set the
+     * SequenceFeature.chromosomeLocation reference *if* the reference is not already set.
      * @throws Exception if anything goes wrong
      */
     public void setMissingChromosomeLocations() throws Exception {
         Results results = BioQueries.findLocationAndObjects(os, Chromosome.class,
-                LocatedSequenceFeature.class, false, false, true, 10000);
-        Iterator resIter = results.iterator();
+                SequenceFeature.class, false, false, true, 10000);
+        Iterator<?> resIter = results.iterator();
 
         osw.beginTransaction();
 
@@ -409,16 +407,16 @@ public class CalculateLocations
         // references.  If there are duplicates do nothing - this has happened for some affy
         // probes in FlyMine.
         Integer lastChrId = null;
-        LocatedSequenceFeature lastFeature = null;
+        SequenceFeature lastFeature = null;
         boolean storeLastFeature = true;  // will get set to false if duplicate locations seen
         Location lastLoc = null;
         int count = 0;
 
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
 
             Integer chrId = (Integer) rr.get(0);
-            LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
+            SequenceFeature lsf = (SequenceFeature) rr.get(1);
             Location locOnChr = (Location) rr.get(2);
 
             if (lastFeature != null && !lsf.getId().equals(lastFeature.getId())) {
@@ -445,12 +443,9 @@ public class CalculateLocations
         LOG.info("Set missing chromosomeLocation references for " + count + " features.");
     }
 
-
-
-    private void setChromosomeReferencesAndStore(LocatedSequenceFeature lsf, Location loc,
+    private void setChromosomeReferencesAndStore(SequenceFeature lsf, Location loc,
                                                  Integer chrId) throws Exception {
-        LocatedSequenceFeature lsfClone =
-            (LocatedSequenceFeature) PostProcessUtil.cloneInterMineObject(lsf);
+        SequenceFeature lsfClone = (SequenceFeature) PostProcessUtil.cloneInterMineObject(lsf);
 
         lsfClone.setChromosomeLocation(loc);
         if (loc.getStart() != null && loc.getEnd() != null) {
@@ -498,8 +493,6 @@ public class CalculateLocations
         private int childId;
         private String strand;
         private int end;
-        private boolean startIsPartial;
-        private boolean endIsPartial;
 
         /**
          * Construct with integer values
@@ -510,28 +503,11 @@ public class CalculateLocations
          * @param strand strand value
          */
         public SimpleLoc(int parentId, int childId, int start, int end, String strand) {
-            this(parentId, childId, start, end, strand, false, false);
-        }
-
-        /**
-         * Construct with integer values
-         * @param parentId id of object
-         * @param childId id of subject
-         * @param start start value
-         * @param end end value
-         * @param strand strand value
-         * @param startIsPartial start is partial flag
-         * @param endIsPartial end is partial flag
-         */
-        public SimpleLoc(int parentId, int childId, int start, int end, String strand,
-                         boolean startIsPartial, boolean endIsPartial) {
             this.parentId = parentId;
             this.childId = childId;
             this.start = start;
             this.end = end;
             this.strand = strand;
-            this.startIsPartial = startIsPartial;
-            this.endIsPartial = endIsPartial;
         }
 
         /**
@@ -545,16 +521,6 @@ public class CalculateLocations
             this.childId = childId;
             this.start = loc.getStart().intValue();
             this.end = loc.getEnd().intValue();
-            if (loc.getStartIsPartial() == null) {
-                this.startIsPartial = false;
-            } else {
-                this.startIsPartial = loc.getStartIsPartial().booleanValue();
-            }
-            if (loc.getEndIsPartial() == null) {
-                this.endIsPartial = false;
-            } else {
-                this.endIsPartial = loc.getEndIsPartial().booleanValue();
-            }
             if (loc.getStrand() != null) {
                 this.strand = loc.getStrand();
             } else {
@@ -626,45 +592,6 @@ public class CalculateLocations
             this.strand = strand;
         }
 
-        /**
-         * Return true if and only if the start is partial.
-         * @return true if and only if the start is partial.
-         */
-        public boolean startIsPartial() {
-            return startIsPartial;
-        }
-
-        /**
-         * Set the start-is-partial flag
-         * @param startIsPartial new start-is-partial flag
-         */
-        public void setStartIsPartial(boolean startIsPartial) {
-            this.startIsPartial = startIsPartial;
-        }
-
-        /**
-         * Return true if and only if the end is partial.
-         * @return true if and only if the end is partial.
-         */
-        public boolean endIsPartial() {
-            return endIsPartial;
-        }
-
-        /**
-         * Set the end-is-partial flag
-         * @param endIsPartial the new end-is-partial
-         */
-        public void setEndIsPartial(boolean endIsPartial) {
-            this.endIsPartial = endIsPartial;
-        }
-
-        /**
-         * Return true if the start or end of this SimpleLoc are partial.
-         * @return true if the start or end of this SimpleLoc are partial.
-         */
-        public boolean isPartial() {
-            return (startIsPartial() || endIsPartial());
-        }
 
         /**
          * @see Object#toString()
@@ -672,8 +599,7 @@ public class CalculateLocations
          */
         public String toString() {
             return "parent " + parentId + " child " + childId + " start " + start
-                + " end " + end + " strand " + strand + " startIsPartial: " + startIsPartial
-                + " endIsPartial: " + endIsPartial;
+                + " end " + end + " strand " + strand;
         }
     }
 }

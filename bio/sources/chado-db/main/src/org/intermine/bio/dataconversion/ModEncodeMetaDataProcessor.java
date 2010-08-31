@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
@@ -114,19 +115,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, Integer> protocolItemToObjectId = new HashMap<String, Integer>();
     // submission chado id to item identifier of Protocol used to generate GFF
     private Map<Integer, String> scoreProtocols = new HashMap<Integer, String>();
-
     private Map<Integer, Integer> publicationIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> publicationIdRefMap = new HashMap<Integer, String>();
-
-
-
     private Map<Integer, String> protocolTypesMap = new HashMap<Integer, String>();
     private Map<Integer, Integer> appliedProtocolIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> appliedProtocolIdRefMap = new HashMap<Integer, String>();
     // list of firstAppliedProtocols, first level of the DAG linking
     // the applied protocols through the data (and giving the flow of data)
     private List<Integer> firstAppliedProtocols = new ArrayList<Integer>();
-
 
     // experimental factor maps
     // ------------------------
@@ -152,7 +148,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, String> geneToItemIdentifier = new HashMap<String, String>();
 
     private Map<DatabaseRecordKey, String> dbRecords = new HashMap<DatabaseRecordKey, String>();
-
 
     private static class SubmissionDetails
     {
@@ -208,8 +203,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         private Map<String, String> efTypes = new HashMap<String, String>();
         private List<String> efNames = new ArrayList<String>();
     }
-
-
 
     /**
      * Create a new ChadoProcessor object
@@ -279,7 +272,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private void processFeatures(Connection connection,
             Map<Integer, SubmissionDetails> submissionMap)
-    throws Exception {
+        throws Exception {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         // keep map of feature to submissions it has been referenced by, some features appear in
@@ -360,26 +353,21 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
-
     private void processDataFeatureTable(Connection connection, Map<Integer, List<String>> subCols,
                 Map<Integer, FeatureData> featureMap, Integer chadoExperimentId, String queryList)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
         ResultSet res = getDataFeature(connection, queryList);
-
         String submissionItemId = submissionMap.get(chadoExperimentId).itemIdentifier;
-
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
             Integer featureId = new Integer(res.getInt("feature_id"));
-
             FeatureData featureData = featureMap.get(featureId);
             if (featureData == null) {
                 LOG.debug("Check feature type: no data for feature_id: " + featureId
                         + " in processDataFeatureTable(), data_id =" + dataId);
                 continue;
             }
-
             Integer featureObjectId = featureData.getIntermineObjectId();
             List<String> subs = subCols.get(featureObjectId);
             if (subs == null) {
@@ -390,9 +378,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         LOG.info("PROCESS TIME data_feature table: " + (System.currentTimeMillis() - bT));
     }
-
     private ResultSet getDataFeature(Connection connection, String queryList)
-    throws SQLException {
+        throws SQLException {
         String query =
             "SELECT df.data_id, df.feature_id"
             + " FROM data_feature df "
@@ -400,7 +387,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         return doQuery(connection, query, "getDataFeature");
     }
-
 
     /**
      *
@@ -420,7 +406,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws ObjectStoreException
      */
     private void processDag(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         ResultSet res = getDAG(connection);
@@ -543,12 +529,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
-     *
      * to set the step attribute for the applied protocols
-     *
      */
     private void setAppliedProtocolSteps(Connection connection)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         for (Integer appliedProtocolId : appliedProtocolMap.keySet()) {
             Integer step = appliedProtocolMap.get(appliedProtocolId).step;
             if (step != null) {
@@ -563,7 +547,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
-
     // Look for protocols that were used to generated GFF files, these are passed to the feature
     // processor, if features have a score the protocol is set as the scoreProtocol reference.
     // NOTE this could equally be done with data, data_feature and applied_protocol_data
@@ -571,7 +554,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         for (Map.Entry<Integer, AppliedData> entry : appliedDataMap.entrySet()) {
             Integer dataId = entry.getKey();
             AppliedData aData = entry.getValue();
-
             if (aData.type.equals("Result File")
                     && (aData.value.endsWith(".gff") || aData.value.endsWith("gff3"))) {
                 for (Integer papId : aData.previousAppliedProtocols) {
@@ -582,7 +564,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
         }
     }
-
 
     /**
      * Return the rows needed to construct the DAG of the data/protocols.
@@ -595,7 +576,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getDAG(Connection connection)
-    throws SQLException {
+        throws SQLException {
         String query =
             "SELECT eap.experiment_id, ap.protocol_id, apd.applied_protocol_id"
             + " , apd.data_id, apd.applied_protocol_data_id, apd.direction"
@@ -614,7 +595,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws ObjectStoreException
      */
     private void traverseDag()
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         List<Integer> currentIterationAP = firstAppliedProtocols;
         List<Integer> nextIterationAP = new ArrayList<Integer>();
         Integer step = 1; // DAG level
@@ -639,7 +620,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws ObjectStoreException
      */
     private List<Integer> buildADagLevel(List<Integer> previousAppliedProtocols, Integer step)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         List<Integer> nextIterationProtocols = new ArrayList<Integer>();
         Iterator<Integer> pap = previousAppliedProtocols.iterator();
         while (pap.hasNext()) {
@@ -703,11 +684,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
-    *
     * ==============
     *    ORGANISM
     * ==============
-    *
     * Organism for a submission is derived from the organism associated with
     * the protocol of the first applied protocol (of the submission).
     * it is the name. a request to associate the submission directly with
@@ -717,25 +696,24 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     * @throws SQLException
     * @throws ObjectStoreException
     */
-   private void processSubmissionOrganism(Connection connection)
-   throws SQLException, ObjectStoreException {
-       long bT = System.currentTimeMillis(); // to monitor time spent in the process
+    private void processSubmissionOrganism(Connection connection)
+        throws SQLException, ObjectStoreException {
+        long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
-       ResultSet res = getSubmissionOrganism(connection);
-       int count = 0;
-       while (res.next()) {
-           Integer submissionId = new Integer(res.getInt("experiment_id"));
-           String value = res.getString("value");
-           submissionOrganismMap.put(submissionId, value);
-           count++;
-       }
-       res.close();
-       LOG.info("found an organism for " + submissionOrganismMap.size() + " submissions.");
-       LOG.info("PROCESS TIME organisms: " + (System.currentTimeMillis() - bT));
-}
+        ResultSet res = getSubmissionOrganism(connection);
+        int count = 0;
+        while (res.next()) {
+            Integer submissionId = new Integer(res.getInt("experiment_id"));
+            String value = res.getString("value");
+            submissionOrganismMap.put(submissionId, value);
+            count++;
+        }
+        res.close();
+        LOG.info("found an organism for " + submissionOrganismMap.size() + " submissions.");
+        LOG.info("PROCESS TIME organisms: " + (System.currentTimeMillis() - bT));
+    }
 
-
-   /**
+    /**
     * Return the row needed for the organism.
     * This is a protected method so that it can be overridden for testing
     *
@@ -743,25 +721,23 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     * @return the SQL result set
     * @throws SQLException if a database problem occurs
     */
-   protected ResultSet getSubmissionOrganism(Connection connection)
-   throws SQLException {
-       String query =
-           "select distinct eap.experiment_id, a.value "
-           + " from experiment_applied_protocol eap, applied_protocol ap, "
-           + " protocol_attribute pa, attribute a "
-           + " where eap.first_applied_protocol_id = ap.applied_protocol_id "
-           + " and ap.protocol_id=pa.protocol_id "
-           + " and pa.attribute_id=a.attribute_id "
-           + " and a.heading='species' ";
-       return doQuery(connection, query, "getSubmissionOrganism");
-   }
+    protected ResultSet getSubmissionOrganism(Connection connection)
+        throws SQLException {
+        String query =
+            "select distinct eap.experiment_id, a.value "
+            + " from experiment_applied_protocol eap, applied_protocol ap, "
+            + " protocol_attribute pa, attribute a "
+            + " where eap.first_applied_protocol_id = ap.applied_protocol_id "
+            + " and ap.protocol_id=pa.protocol_id "
+            + " and pa.attribute_id=a.attribute_id "
+            + " and a.heading='species' ";
+        return doQuery(connection, query, "getSubmissionOrganism");
+    }
 
     /**
-     *
      * ==============
      *    PROJECT
      * ==============
-     *
      * Projects are loaded statically. A map is built between submissionId and
      * project's name and used for the references. 2 maps store intermine
      * objectId and itemId, with key the project name.
@@ -772,7 +748,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws ObjectStoreException
      */
     private void processProjectTable(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         ResultSet res = getProjects(connection);
@@ -813,7 +789,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getProjects(Connection connection)
-    throws SQLException {
+        throws SQLException {
         String query =
             "SELECT distinct a.experiment_id, a.value "
             + " FROM experiment_prop a "
@@ -822,13 +798,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return doQuery(connection, query, "getProjects");
     }
 
-
     /**
-     *
      * ==============
      *    LAB
      * ==============
-     *
      * Labs are also loaded statically (affiliation is not given in the chado file).
      * A map is built between submissionId and
      * lab's name and used for the references. 2 maps store intermine
@@ -840,7 +813,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws ObjectStoreException
      */
     private void processLabTable(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         ResultSet res = getLabs(connection);
@@ -884,7 +857,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getLabs(Connection connection)
-    throws SQLException {
+        throws SQLException {
         String query =
             "SELECT distinct a.experiment_id, a.name, a.value "
             + " FROM experiment_prop a "
@@ -893,13 +866,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return doQuery(connection, query, "getLabs");
     }
 
-
     /**
-     *
      * ================
      *    EXPERIMENT
      * ================
-     *
      * Experiment is a collection of submissions. They all share the same description.
      * It has been added later to the model.
      * A map is built between submissionId and experiment name.
@@ -908,7 +878,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      *
      */
     private void processExperiment(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         ResultSet res = getExperimentTitles(connection);
@@ -917,7 +887,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer submissionId = new Integer(res.getInt("experiment_id"));
             String name = cleanWikiLinks(res.getString("name"));
 
-            addToMap(expSubMap, name, submissionId);
+            BioConverterUtil.addToListMap(expSubMap, name, submissionId);
             expProMap.put(name, submissionProjectMap.get(submissionId));
         }
         res.close();
@@ -956,7 +926,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // (:->&)
         String w1 = StringUtils.replace(w, url, "");
         String s1 = null;
-        if (w1.contains(":")){
+        if (w1.contains(":")) {
             s1 = StringUtils.substringBefore(w1, ":");
         } else {
             // for links missing the : char, e.g.
@@ -981,7 +951,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getExperimentTitles(Connection connection)
-    throws SQLException {
+        throws SQLException {
         // TODO use standard SQl and deal with string in java
         String query =
             "select e.experiment_id, "
@@ -992,19 +962,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return doQuery(connection, query, "getExperimentTitles");
     }
 
-
     /**
-     *
      * ================
      *    SUBMISSION
      * ================
-     *
-     * @param connection
-     * @throws SQLException
-     * @throws ObjectStoreException
      */
     private void processSubmission(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         ResultSet res = getSubmissions(connection);
@@ -1031,16 +995,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             OrganismRepository or = OrganismRepository.getOrganismRepository();
 
-            Integer taxId = Integer.valueOf
-            (or.getOrganismDataByGenusSpecies(genus, species).getTaxonId());
-
+            Integer taxId = Integer.valueOf(
+                    or.getOrganismDataByGenusSpecies(genus, species).getTaxonId());
             LOG.debug("SPECIES: " + organismName + "|" + taxId);
-
-            String organismItemIdentifier = getChadoDBConverter().getOrganismItem
-            (or.getOrganismDataByGenusSpecies(genus, species).getTaxonId()).getIdentifier();
-
+            String organismItemIdentifier = getChadoDBConverter().getOrganismItem(
+                    or.getOrganismDataByGenusSpecies(genus, species).getTaxonId()).getIdentifier();
             submission.setReference("organism", organismItemIdentifier);
-
             // ..store all
             Integer intermineObjectId = getChadoDBConverter().store(submission);
             // ..and fill the SubmissionDetails object
@@ -1050,7 +1010,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             details.labItemIdentifier = labItemIdentifier;
             details.title = name;
             submissionMap.put(submissionId, details);
-
             debugMap .put(details.itemIdentifier, submission.getClassName());
             count++;
         }
@@ -1068,10 +1027,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getSubmissions(Connection connection)
-    throws SQLException {
+        throws SQLException {
         String query =
-            "SELECT experiment_id, uniquename"
-            + "  FROM experiment";
+            "SELECT experiment_id, uniquename "
+            + "FROM experiment";
         return doQuery(connection, query, "getSubmissions");
     }
 
@@ -1083,7 +1042,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws ObjectStoreException
      */
     private void processExperimentProps(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         ResultSet res = getExperimentProperties(connection);
@@ -1143,27 +1102,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getExperimentProperties(Connection connection)
-    throws SQLException {
+        throws SQLException {
         String query =
             "SELECT ep.experiment_id, ep.name, ep.value, ep.rank "
             + "from experiment_prop ep ";
         return doQuery(connection, query, "getExperimentProperties");
     }
 
-
     /**
-     *
      * ==========================
      *    EXPERIMENTAL FACTORS
      * ==========================
-     *
-     *
-     * @param connection
-     * @throws SQLException
-     * @throws ObjectStoreException
      */
     private void processEFactor(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         ResultSet res = getEFactors(connection);
@@ -1209,7 +1161,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         res.close();
         LOG.info("created " + count + " experimental factors");
         LOG.info("PROCESS TIME experimental factors: " + (System.currentTimeMillis() - bT));
-}
+    }
 
     /**
      * Return the rows needed for the experimental factors.
@@ -1220,7 +1172,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getEFactors(Connection connection)
-    throws SQLException {
+        throws SQLException {
         String query =
             "SELECT ep.experiment_id, ep.name, ep.value, ep.rank "
             + " FROM experiment_prop ep "
@@ -1232,17 +1184,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
 
     /**
-     *
      * ==============
      *    PROTOCOL
      * ==============
-     *
-     * @param connection
-     * @throws SQLException
-     * @throws ObjectStoreException
      */
     private void processProtocolTable(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         ResultSet res = getProtocols(connection);
@@ -1276,8 +1223,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             protocol.setAttribute("wikiLink", wikiLink);
             protocol.setAttribute("version", "" + version);
             Integer intermineObjectId = getChadoDBConverter().store(protocol);
-
-
             protocolItemId = protocol.getIdentifier();
             protocolItemToObjectId.put(protocolItemId, intermineObjectId);
             protocolsMap.put(wikiLink, protocolItemId);
@@ -1289,7 +1234,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Integer getProtocolInterMineId(Integer chadoId) {
         return protocolItemToObjectId.get(protocolItemIds.get(chadoId));
     }
-
 
     /**
      * Return the rows needed from the protocol table.
@@ -1309,13 +1253,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     /**
      * to store protocol attributes
-     *
-     * @param connection
-     * @throws SQLException
-     * @throws ObjectStoreException
      */
     private void processProtocolAttributes(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         ResultSet res = getProtocolAttributes(connection);
@@ -1345,10 +1285,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     /**
      * Return the rows needed for protocols from the attribute table.
      * This is a protected method so that it can be overridden for testing
-     *
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
+     * @param connection database connection
+     * @return rows needed for protocols from the attribute table
+     * @throws SQLException if something goes wrong.
      */
     protected ResultSet getProtocolAttributes(Connection connection) throws SQLException {
         String query =
@@ -1363,13 +1302,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * ======================
      *    APPLIED PROTOCOL
      * ======================
-     *
-     * @param connection
-     * @throws SQLException
-     * @throws ObjectStoreException
      */
     private void processAppliedProtocolTable(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         ResultSet res = getAppliedProtocols(connection);
@@ -1410,34 +1345,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getAppliedProtocols(Connection connection)
-    throws SQLException {
+        throws SQLException {
         String query =
             "SELECT eap.experiment_id ,ap.applied_protocol_id, ap.protocol_id"
             + " FROM applied_protocol ap"
             + " LEFT JOIN experiment_applied_protocol eap"
             + " ON (eap.first_applied_protocol_id = ap.applied_protocol_id )";
-
-        /*        "SELECT ap.applied_protocol_id, ap.protocol_id, apd.data_id, apd.direction"
-        + " FROM applied_protocol ap, applied_protocol_data apd"
-        + " WHERE apd.applied_protocol_id = ap.applied_protocol_id";
-         */
-
         return doQuery(connection, query, "getAppliedProtocols");
     }
-
 
     /**
      * ======================
      *    APPLIED DATA
      * ======================
-     *
-     * @param connection
-     * @throws SQLException
-     * @throws ObjectStoreException
      */
-
     private void processAppliedData(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         ResultSet res = getAppliedData(connection);
@@ -1457,14 +1380,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
 
             // if there is one, use it instead of the value
-            String datumType = name = getCvterm(connection, typeId);
+            String datumType = getCvterm(connection, typeId);
+            name = getCvterm(connection, typeId);
             if (!StringUtils.isEmpty(officialName)
                     && doReplaceWithOfficialName(heading, datumType)) {
                 value = officialName;
             }
-
             Item submissionData = getChadoDBConverter().createItem("SubmissionData");
-
             if (name != null && !name.equals("")) {
                 submissionData.setAttribute("name", name);
             }
@@ -1491,7 +1413,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             aData.type = heading;
             aData.name = name;
             appliedDataMap.put(dataId, aData);
-
             count++;
         }
         LOG.info("created " + count + " SubmissionData");
@@ -1511,6 +1432,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         return true;
     }
+
     /**
      * Return the rows needed for data from the applied_protocol_data table.
      *
@@ -1519,14 +1441,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getAppliedData(Connection connection)
-    throws SQLException {
+        throws SQLException {
         String query =
             "SELECT d.data_id,"
             + " d.heading, d.name, d.value, d.type_id"
             + " FROM data d";
         return doQuery(connection, query, "getAppliedData");
     }
-
 
     /**
      * Return the rows needed for data from the applied_protocol_data table.
@@ -1537,7 +1458,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getOfficialName(Connection connection, Integer dataId)
-    throws SQLException {
+        throws SQLException {
         String query =
             "SELECT a.value "
             + " from attribute a, data_attribute da "
@@ -1562,9 +1483,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 "SELECT c.name "
                 + " from cvterm c"
                 + " where c.cvterm_id=" + cvtermId;
-
             Statement stmt = connection.createStatement();
-
             ResultSet res = stmt.executeQuery(query);
             while (res.next()) {
                 cvTerm = res.getString("name");
@@ -1574,18 +1493,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return cvTerm;
     }
 
-
     /**
      * =====================
      *    DATA ATTRIBUTES
      * =====================
-     *
-     * @param connection
-     * @throws SQLException
-     * @throws ObjectStoreException
      */
     private void processAppliedDataAttributes(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         ResultSet res = getAppliedDataAttributes(connection);
@@ -1596,7 +1510,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String value = res.getString("value");
             String type  = res.getString("name");
             Item dataAttribute = getChadoDBConverter().createItem("SubmissionDataAttribute");
-
             if (name != null && !name.equals("")) {
                 dataAttribute.setAttribute("name", name);
             }
@@ -1606,12 +1519,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (!StringUtils.isEmpty(type)) {
                 dataAttribute.setAttribute("type", type);
             }
-
             // setting references to SubmissionData
             dataAttribute.setReference("submissionData", appliedDataMap.get(dataId).itemIdentifier);
-
             getChadoDBConverter().store(dataAttribute);
-
             count++;
         }
         LOG.info("created " + count + " data attributes");
@@ -1621,15 +1531,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     // first value in the list of synonyms is the 'preferred' value
     private static String[][] synonyms = new String[][]{
-            new String[] {"developmental stage", "stage",
-                    "developmental_stage", "dev stage", "devstage"},
-                    new String[] {"strain", "strain_or_line"},
-                    new String[] {"cell line", "cell_line", "Cell line", "cell id"},
-                    new String[] {"array", "adf"},
-                    new String[] {"compound", "Compound"},
-                    new String[] {"incubation time", "Incubation Time"},
-                    new String[] {"RNAi reagent", "RNAi_reagent", "dsRNA"},
-                    new String[] {"temperature", "temp"}
+        new String[] {"developmental stage", "stage",
+                      "developmental_stage", "dev stage", "devstage"},
+        new String[] {"strain", "strain_or_line"},
+        new String[] {"cell line", "cell_line", "Cell line", "cell id"},
+        new String[] {"array", "adf"},
+        new String[] {"compound", "Compound"},
+        new String[] {"incubation time", "Incubation Time"},
+        new String[] {"RNAi reagent", "RNAi_reagent", "dsRNA"},
+        new String[] {"temperature", "temp"}
     };
 
     private static List<String> makeLookupList(String initialLookup) {
@@ -1655,7 +1565,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return unified;
     }
 
-
     private class SubmissionReference
     {
         public SubmissionReference(Integer referencedSubmissionId, String dataValue) {
@@ -1669,14 +1578,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // process new query
     // get DCC id
     // add antibody to types
-
     private void processSubmissionProperties(Connection connection) throws SQLException,
     IOException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         ResultSet res = getAppliedDataAll(connection);
-        String comma = ",";
-        String reportName = getChadoDBConverter().getDatabase().getName() + "_subs_report.csv";
+        final String comma = ",";
+        String reportName = "build/"
+            + getChadoDBConverter().getDatabase().getName() + "_subs_report.csv";
         File f = new File(reportName);
         FileWriter writer = new FileWriter(f);
 
@@ -1799,14 +1708,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (devStageItems.isEmpty()) {
                 devStageItems.addAll(lookForAttributesInOtherWikiPages(dccId, "DevelopmentalStage",
                         typeToProp, new String[] {
-                        "developmental stage.developmental stage",
-                        "tissue.developmental stage",
-                        "tissue source.developmental stage",
-                        "cell line.developmental stage",
-                        "cell id.developmental stage"
+                            "developmental stage.developmental stage",
+                            "tissue.developmental stage",
+                            "tissue source.developmental stage",
+                            "cell line.developmental stage",
+                            "cell id.developmental stage"
                         }));
-                if (!devStageItems.isEmpty()) {
-                 }
             }
             storeSubmissionCollection(storedSubmissionId, "developmentalStages", devStageItems);
             if (!devStageItems.isEmpty() && exFactorNames.contains("developmental stage")) {
@@ -1827,7 +1734,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             allPropertyItems.addAll(strainItems);
 
-
             // ARRAY
             List<Item> arrayItems = new ArrayList<Item>();
             arrayItems.addAll(createFromWikiPage(
@@ -1836,7 +1742,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (arrayItems.isEmpty()) {
                 arrayItems.addAll(lookForAttributesInOtherWikiPages(dccId, "Array",
                         typeToProp, new String[] {
-                        "adf.official name"
+                            "adf.official name"
                         }));
                 if (!arrayItems.isEmpty()) {
                     LOG.debug("Attribute found in other wiki pages: "
@@ -1879,7 +1785,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 LOG.debug("ANTIBODY: " + typeToProp.get("antibody"));
                 antibodyItems.addAll(lookForAttributesInOtherWikiPages(dccId, "Antibody",
                         typeToProp, new String[] {
-                        "antibody.official name"
+                            "antibody.official name"
                         }));
                 if (!antibodyItems.isEmpty()) {
                     LOG.debug("Attribute found in other wiki pages: "
@@ -1893,7 +1799,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             allPropertyItems.addAll(antibodyItems);
 
-
             // TISSUE
             List<Item> tissueItems = new ArrayList<Item>();
             tissueItems.addAll(createFromWikiPage(
@@ -1901,9 +1806,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (tissueItems.isEmpty()) {
                 tissueItems.addAll(lookForAttributesInOtherWikiPages(dccId, "Tissue",
                         typeToProp, new String[] {
-                        "stage.tissue"
-                        , "cell line.tissue"
-                        , "cell id.tissue"
+                            "stage.tissue"
+                            , "cell line.tissue"
+                            , "cell id.tissue"
                         }));
                 if (!tissueItems.isEmpty()) {
                     LOG.info("Attribute found in other wiki pages: "
@@ -1917,8 +1822,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             allPropertyItems.addAll(tissueItems);
 
-
-
             // There may be some other experimental factors that require SubmissionProperty objects
             // but don't fall into the categories above.  Create them here and set experimental
             // factors.
@@ -1931,7 +1834,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 createExperimentalFactors(submissionId, exFactor, extraPropItems);
                 exFactorNames.remove(exFactor);
             }
-
 
             // Store Submission.properties/ SubmissionProperty.submissions
             storeSubmissionCollection(storedSubmissionId, "properties", allPropertyItems);
@@ -1994,7 +1896,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             eFactorIdRefMap.put(efName, ef.getIdentifier());
         }
         // if pertinent to the current sub, add to the map for the references
-        addToMap(submissionEFactorMap, current, efName);
+        BioConverterUtil.addToListMap(submissionEFactorMap, current, efName);
     }
 
 
@@ -2022,7 +1924,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private void addSubmissionPropsFromCharacteristics(
             Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes,
             Connection connection)
-    throws SQLException {
+        throws SQLException {
 
         ResultSet res = getAppliedDataCharacteristics(connection);
 
@@ -2157,10 +2059,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
-
     private List<Item> createFromWikiPage(String dccId, String clsName,
             Map<String, List<SubmissionProperty>> typeToProp, List<String> types)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         List<Item> items = new ArrayList<Item>();
 
         List<SubmissionProperty> props = new ArrayList<SubmissionProperty>();
@@ -2175,7 +2076,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private void storeSubmissionCollection(Integer storedSubmissionId, String name,
             List<Item> items)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         if (!items.isEmpty()) {
             ReferenceList refList = new ReferenceList(name, getIdentifiersFromItems(items));
             getChadoDBConverter().store(refList, storedSubmissionId);
@@ -2192,7 +2093,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private List<Item> createItemsForSubmissionProperties(String dccId, String clsName,
             List<SubmissionProperty> subProps)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         List<Item> items = new ArrayList<Item>();
         for (SubmissionProperty subProp : subProps) {
             Item item = getItemForSubmissionProperty(clsName, subProp, dccId);
@@ -2203,10 +2104,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return items;
     }
 
-
-
     private Item getItemForSubmissionProperty(String clsName, SubmissionProperty prop, String dccId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         Item propItem = subItemsMap.get(prop.wikiPageUrl);
         if (propItem == null) {
 
@@ -2285,7 +2184,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     private void setGeneItem(String dccId, SubmissionProperty prop, Item propItem, String source)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         String targetText = null;
         String[] possibleTypes = new String[] {"target id"};
 
@@ -2313,24 +2212,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
-    /**
-     * @param prop
-     * @param source
-     * @param targetType
-     * @throws RuntimeException
-     */
     private void checkIfSameValue(SubmissionProperty prop, String source,
-            String targetType) throws RuntimeException {
+            String targetType) {
         String value = prop.details.get(targetType).get(0);
         for (int i = 1; i < prop.details.get(targetType).size(); i++) {
             String newValue = prop.details.get(targetType).get(i);
             if (!newValue.equals(value)) {
-              throw new RuntimeException(source + " should only have one value for '" + targetType
-              + "' field: " + prop.details.get(targetType));
+                throw new RuntimeException(source + " should only have one value for '"
+                        + targetType + "' field: " + prop.details.get(targetType));
             }
         }
     }
-
 
     private void setAttributeOnProp(SubmissionProperty subProp, Item item, String metadataName,
             String attributeName) {
@@ -2364,9 +2256,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
-
     private String getTargetGeneItemIdentfier(String geneTargetIdText, String dccId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         String taxonId = "";
         String originalId = null;
 
@@ -2430,10 +2321,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return primaryIdentifier;
     }
 
-
     private List<Item> lookForAttributesInOtherWikiPages(String dccId, String clsName,
             Map<String, List<SubmissionProperty>> typeToProp, String[] lookFor)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
 
         List<Item> items = new ArrayList<Item>();
         for (String typeProp : lookFor) {
@@ -2488,10 +2378,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return value;
     }
 
-
     private Item createNonWikiSubmissionPropertyItem(String dccId, String clsName, String type,
             String name)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         if (clsName.equals("DevelopmentalStage")) {
             name = correctDevStageTerm(name);
         }
@@ -2584,8 +2473,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return name;
     }
 
-
-
     private String getDevStageTerm(String value, String dccId) throws ObjectStoreException {
         value = correctDevStageTerm(value);
 
@@ -2641,7 +2528,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         String ontologyId = devOntologies.get(ontologyName);
         if (ontologyId == null) {
             Item ontology = getChadoDBConverter().createItem("Ontology");
-            ontology.setAttribute("title", ontologyName);
+            ontology.setAttribute("name", ontologyName);
             getChadoDBConverter().store(ontology);
             ontologyId = ontology.getIdentifier();
             devOntologies.put(ontologyName, ontologyId);
@@ -2666,7 +2553,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getAppliedDataAll(Connection connection)
-    throws SQLException {
+        throws SQLException {
 
         String sraAcc = "SRA acc";
 
@@ -2694,7 +2581,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getAppliedDataCharacteristics(Connection connection)
-    throws SQLException {
+        throws SQLException {
         String query = "select d.data_id, d.heading as data_heading,"
             + " d.name as data_name, d.value as data_value,"
             + " a.attribute_id, a.heading as att_heading, a.name as att_name, a.value as att_value,"
@@ -2741,7 +2628,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             return this.type + ": " + this.wikiPageUrl + this.details.entrySet();
         }
     }
-
 
     private class DatabaseRecordConfig
     {
@@ -2794,18 +2680,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return configs;
     }
 
-
     /**
-     * Query to get data attributes
-     * This is a protected method so that it can be overridden for testing.
-     *
+     * Query to get data attributes.
      *
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getAppliedDataAttributes(Connection connection)
-    throws SQLException {
+        throws SQLException {
         String query =
             "select da.data_id, a.heading, a.value, a.name "
             + " from data_attribute da, attribute a"
@@ -2813,17 +2696,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return doQuery(connection, query, "getAppliedDataAttributes");
     }
 
-
     /**
      * ================
      *    REFERENCES
      * ================
-     *
      * to store references between submission and submissionData
      * (1 to many)
      */
     private void setSubmissionRefs(Connection connection)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         for (Integer submissionId : submissionDataMap.keySet()) {
@@ -2843,9 +2724,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("TIME setting submission-data references: " + (System.currentTimeMillis() - bT));
     }
 
-
     private void createDatabaseRecords(Connection connection)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         Set<DatabaseRecordConfig> configs = initDatabaseRecordConfigs();
@@ -2874,7 +2754,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     private void createResultFiles(Connection connection)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         for (Integer submissionId : submissionDataMap.keySet()) {
@@ -2892,7 +2772,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
 
     private List<String> createDatabaseRecords(String accession, DatabaseRecordConfig config)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         List<String> dbRecordIds = new ArrayList<String>();
 
         Set<String> cleanAccessions = new HashSet<String>();
@@ -2920,9 +2800,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return dbRecordIds;
     }
 
-
     private String createDatabaseRecord(String accession, DatabaseRecordConfig config)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         DatabaseRecordKey key = new DatabaseRecordKey(config.dbName, accession);
         String dbRecordId = dbRecords.get(key);
         if (dbRecordId == null) {
@@ -2942,7 +2821,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         return dbRecordId;
     }
-
 
     private class DatabaseRecordKey
     {
@@ -2968,7 +2846,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (StringUtils.isNotEmpty(accession)
                         && StringUtils.isNotEmpty(otherKey.accession)) {
                     return this.db.equals(otherKey.db)
-                    && this.accession.equals(otherKey.accession);
+                        && this.accession.equals(otherKey.accession);
                 }
             }
             return false;
@@ -2982,9 +2860,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
-
     private void createResultFile(String fileName, String type, Integer submissionId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         Item resultFile = getChadoDBConverter().createItem("ResultFile");
         resultFile.setAttribute("name", fileName);
         String url = null;
@@ -3026,7 +2903,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
     //sub -> prot
     private void setSubmissionProtocolsRefs(Connection connection)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         Map<Integer, List<Integer>> submissionProtocolMap = new HashMap<Integer, List<Integer>>();
@@ -3034,7 +2911,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         while (apId.hasNext()) {
             Integer thisAP = apId.next();
             AppliedProtocol ap = appliedProtocolMap.get(thisAP);
-            addToMap(submissionProtocolMap, ap.submissionId, ap.protocolId);
+            BioConverterUtil.addToListMap(submissionProtocolMap, ap.submissionId, ap.protocolId);
         }
 
         Iterator<Integer> subs = submissionProtocolMap.keySet().iterator();
@@ -3085,14 +2962,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     + " populated, this method needs to be called after"
                     + " processSubmissionProperties");
         }
-
         SubmissionReference subRef = submissionRefs.get(submissionId);
         if (subRef != null) {
             for (AppliedProtocol aProtocol : findAppliedProtocolsFromReferencedSubmission(subRef)) {
                 protocolIds.add(aProtocol.protocolId);
             }
         }
-
         return protocolIds;
     }
 
@@ -3151,20 +3026,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             } else {
                 return "Tiling array";
             }
-
         }
-
         // annotation = Computational annotation
         if (containsMatch(protocolTypes, "annotation")) {
             return "Computational annotation";
         }
-
         // If we haven't found a type yet, and there is a growth protocol, then
         // this is probably an RNA sample creation experiment from Celniker
         if (containsMatch(protocolTypes, "grow")) {
             return "RNA sample creation";
         }
-
         return null;
     }
 
@@ -3183,7 +3054,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     //sub -> exp
     private void setSubmissionExperimetRefs(Connection connection)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         Iterator<String> exp = expSubMap.keySet().iterator();
@@ -3204,12 +3075,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 + (System.currentTimeMillis() - bT));
     }
 
-
     //sub -> ef
     private void setSubmissionEFactorsRefs(Connection connection)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
-
         Iterator<Integer> subs = submissionEFactorMap.keySet().iterator();
         while (subs.hasNext()) {
             Integer thisSubmissionId = subs.next();
@@ -3235,29 +3104,23 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 + (System.currentTimeMillis() - bT));
     }
 
-
     //sub -> publication
     private void setSubmissionPublicationRefs(Connection connection)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         Iterator<Integer> subs = publicationIdMap.keySet().iterator();
         while (subs.hasNext()) {
             Integer thisSubmissionId = subs.next();
-//            Integer im_oid = publicationIdMap.get(thisSubmissionId);
             Reference reference = new Reference();
             reference.setName("publication");
             reference.setRefId(publicationIdRefMap.get(thisSubmissionId));
             getChadoDBConverter().store(reference,
                     submissionMap.get(thisSubmissionId).interMineObjectId);
-            }
+        }
         LOG.info("TIME setting submission-publication references: "
                 + (System.currentTimeMillis() - bT));
     }
-
-
-
-
 
     /**
      * to store references between applied protocols and their input data
@@ -3267,7 +3130,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * (many to many)
      */
     private void setDAGRefs(Connection connection)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         for (Integer thisAP : appliedProtocolMap.keySet()) {
@@ -3355,7 +3218,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws ObjectStoreException
      */
     private void storeInProjectMaps(Item i, String surnamePI, Integer intermineObjectId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         if (i.getClassName().equals("Project")) {
             projectIdMap .put(surnamePI, intermineObjectId);
             projectIdRefMap .put(surnamePI, i.getIdentifier());
@@ -3376,7 +3239,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws ObjectStoreException
      */
     private void storeInLabMaps(Item i, String labName, Integer intermineObjectId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         if (i.getClassName().equals("Lab")) {
             labIdMap .put(labName, intermineObjectId);
             labIdRefMap .put(labName, i.getIdentifier());
@@ -3391,7 +3254,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
 
     private void mapSubmissionAndData(Integer submissionId, Integer dataId) {
-        addToMap(submissionDataMap, submissionId, dataId);
+        BioConverterUtil.addToListMap(submissionDataMap, submissionId, dataId);
         dataSubmissionMap.put(dataId, submissionId);
     }
 
@@ -3409,7 +3272,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException
      */
     private ResultSet doQuery(Connection connection, String query)
-    throws SQLException {
+        throws SQLException {
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -3423,7 +3286,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException
      */
     private ResultSet doQuery(Connection connection, String query, String comment)
-    throws SQLException {
+        throws SQLException {
         // we could avoid passing comment if we trace the calling method
         // new Throwable().fillInStackTrace().getStackTrace()[1].getMethodName()
         LOG.info("executing: " + query);
@@ -3433,64 +3296,4 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("QUERY TIME " + comment + ": " + (System.currentTimeMillis() - bT));
         return res;
     }
-
-
-    /**
-     * adds an element to a list which is the value of a map
-     * @param m       the map (<Integer, List<Integer>>)
-     * @param key     the key for the map
-     * @param value   the list
-     */
-    private void addToMap(Map<Integer, List<Integer>> m, Integer key, Integer value) {
-
-        List<Integer> values = new ArrayList<Integer>();
-
-        if (m.containsKey(key)) {
-            values = m.get(key);
-        }
-        if (!values.contains(value)) {
-            values.add(value);
-            m.put(key, values);
-        }
-    }
-
-    /**
-     * adds an element to a list which is the value of a map
-     * @param m       the map (<Integer, List<String>>)
-     * @param key     the key for the map
-     * @param value   the list
-     */
-    private void addToMap(Map<Integer, List<String>> m, Integer key, String value) {
-
-        List<String> ids = new ArrayList<String>();
-
-        if (m.containsKey(key)) {
-            ids = m.get(key);
-        }
-        if (!ids.contains(value)) {
-            ids.add(value);
-            m.put(key, ids);
-        }
-    }
-
-
-    /**
-     * adds an element to a list which is the value of a map
-     * @param m       the map (<String, List<Integer>>)
-     * @param key     the key for the map
-     * @param value   the list
-     */
-    private void addToMap(Map<String, List<Integer>> m, String key, Integer value) {
-
-        List<Integer> ids = new ArrayList<Integer>();
-
-        if (m.containsKey(key)) {
-            ids = m.get(key);
-        }
-        if (!ids.contains(value)) {
-            ids.add(value);
-            m.put(key, ids);
-        }
-    }
-
 }

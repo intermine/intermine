@@ -43,7 +43,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 /**
- * 
+ *
  * @author Julie Sullivan
   */
 public class FeatureLengthDataSetLdr implements DataSetLdr
@@ -55,8 +55,8 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
     private Results results;
     private int widgetTotal = 0;
     private static final double MINIMUM_VALUE = 0.0;
-    private static CacheMap<String, XYSeries> featureLengthCache = new CacheMap();
-    
+    private static CacheMap<String, XYSeries> featureLengthCache = new CacheMap<String, XYSeries>();
+
     /**
      * Creates a FeatureLengthDataSetLdr used to retrieve, organise
      * and structure the data to create a graph
@@ -66,13 +66,10 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
      * @throws Exception if getting the list of organisms fails
      *
      */
-    @SuppressWarnings({
-            "unchecked"
-        })
     public FeatureLengthDataSetLdr(InterMineBag bag, ObjectStore os, String organismName)
-    throws Exception {
+        throws Exception {
         super();
-        
+
         model = os.getModel();
         bagType = bag.getType();
 
@@ -80,7 +77,7 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
             LOG.warn("can't render graph widgets without organism name");
             return;
         }
-        
+
         XYSeries actual = getSeries(bag, os, organismName);
         XYSeries expected = getSeries(null, os, organismName);
         dataSet = new XYSeriesCollection();
@@ -110,14 +107,14 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
     }
 
     @SuppressWarnings("boxing")
-    private XYSeries getSeries(InterMineBag bag, ObjectStore os,  String organismName) 
-    throws ClassNotFoundException {
+    private XYSeries getSeries(InterMineBag bag, ObjectStore os,  String organismName)
+        throws ClassNotFoundException {
 
         Query q = getQuery(organismName, bag);
         XYSeries series = featureLengthCache.get(q.toString());
 
-        /** 
-         * actual   = series will always be null for bag queries, we probably don't want to cache 
+        /**
+         * actual   = series will always be null for bag queries, we probably don't want to cache
          *            those, the bag could change
          * expected = series will only be null if this is the first time the query is run
          */
@@ -125,9 +122,9 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
             results = os.execute(q, 50000, true, true, true);
             DescriptiveStatistics stats = new DescriptiveStatistics();
 
-            Iterator iter = results.iterator();
+            Iterator<?> iter = results.iterator();
             while (iter.hasNext()) {
-                ResultsRow resRow = (ResultsRow) iter.next();
+                ResultsRow<?> resRow = (ResultsRow<?>) iter.next();
                 Integer length = (java.lang.Integer) resRow.get(0);
                 stats.addValue(length);
             }
@@ -135,8 +132,8 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
             Double mean = stats.getMean();
             DecimalFormat twoDigits = new DecimalFormat("0.00");
             String prettyMean = twoDigits.format(mean);
-            Function2D actual 
-            = new NormalDistributionFunction2D(mean, stats.getStandardDeviation());
+            Function2D actual
+                = new NormalDistributionFunction2D(mean, stats.getStandardDeviation());
 
             int total = (int) stats.getN();
             String legend = "[mean: " + prettyMean + " count:  " + String.valueOf(total) + "]";
@@ -144,9 +141,9 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
             if (bag != null) {
                 seriesName = "Features in this list " + legend;
                 widgetTotal = total;
-            }        
-            series = DatasetUtilities.sampleFunction2DToSeries(actual, MINIMUM_VALUE, 
-                                                                        stats.getMax(), 
+            }
+            series = DatasetUtilities.sampleFunction2DToSeries(actual, MINIMUM_VALUE,
+                                                                        stats.getMax(),
                                                                         total, seriesName);
             if (bag == null) {
                 featureLengthCache.put(q.toString(), series);
@@ -157,9 +154,9 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
         }
         return series;
     }
-    
+
     private Query getQuery(String organism, InterMineBag bag)
-    throws ClassNotFoundException {
+        throws ClassNotFoundException {
 
         QueryClass organismQC = new QueryClass(Organism.class);
         Class<?> bagCls = Class.forName(model.getPackageName() + "." + bagType);

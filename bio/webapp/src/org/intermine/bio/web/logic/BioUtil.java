@@ -32,6 +32,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.widget.WidgetHelper;
+import org.intermine.xml.full.Item;
 
 /**
  * Utility methods for the flymine package.

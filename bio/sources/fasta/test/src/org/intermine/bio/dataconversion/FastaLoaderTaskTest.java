@@ -27,7 +27,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
 import org.intermine.model.bio.DataSet;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Sequence;
 
@@ -85,7 +85,7 @@ public class FastaLoaderTaskTest extends TestCase {
         ObjectStore os = osw.getObjectStore();
 
         Query q = new Query();
-        QueryClass lsfQueryClass = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass lsfQueryClass = new QueryClass(SequenceFeature.class);
         QueryClass seqQueryClass = new QueryClass(Sequence.class);
         q.addToSelect(lsfQueryClass);
         q.addToSelect(seqQueryClass);
@@ -153,7 +153,7 @@ public class FastaLoaderTaskTest extends TestCase {
         Protein protein = (Protein) ((List) r.get(0)).get(0);
 
         DataSet dataSet = protein.getDataSets().iterator().next();
-        assertEquals(dataSetTitle, dataSet.getTitle());
+        assertEquals(dataSetTitle, dataSet.getName());
 
         assertEquals("MNRVNDMSPVEGDLGLQLSSEADKKFDAYMKRHGLFEPGNLSNNDKERNLEDQFNSMKLS"
                      + "PVASSKENYPDNHMHSKHISKLPIASPIPRGLDRSGELSYKDNNHWSDRSSTGSPRWENG"

@@ -42,7 +42,7 @@ public class KeggOrthologuesConverterTest extends MockItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        
+
 
         ClassLoader loader = getClass().getClassLoader();
         String input = IOUtils.toString(loader.getResourceAsStream("KeggOrthologuesConverterTest_src.txt"));

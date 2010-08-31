@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,12 +26,8 @@ import org.intermine.xml.full.Item;
 public class MirandaGFF3RecordHandler extends GFF3RecordHandler
 {
     private Map<String, Item> targets = new HashMap<String, Item>();
-
     private Map<String, Item> miRNAgenes = new HashMap<String, Item>();
-
     private Set<String> problems = new HashSet<String>();
-
-
     protected IdResolverFactory geneResolverFactory;
     protected IdResolverFactory mrnaResolverFactory;
 
@@ -70,7 +65,6 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
 
     private Item getTarget(String targetName) {
         Item target = null;
-
         IdResolver resolver = mrnaResolverFactory.getIdResolver();
         String primaryIdentifier = null;
         int resCount = resolver.countResolutions("7227", targetName);
@@ -78,9 +72,8 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
             primaryIdentifier = resolver.resolveId("7227", targetName).iterator().next();
             target = targets.get(primaryIdentifier);
             if (target == null) {
-                target = createItem("MRNA");
+                target = converter.createItem("MRNA");
                 target.setAttribute("primaryIdentifier", primaryIdentifier);
-                target.addToCollection("dataSets", getDataSet());
                 target.setReference("organism", getOrganism().getIdentifier());
                 targets.put(primaryIdentifier, target);
                 addEarlyItem(target);
@@ -113,9 +106,8 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
             String primaryIdentifier = resolver.resolveId(taxonId, symbol).iterator().next();
             Item gene = miRNAgenes.get(primaryIdentifier);
             if (gene == null) {
-                gene = createItem("Gene");
+                gene = converter.createItem("Gene");
                 gene.setAttribute("primaryIdentifier", primaryIdentifier);
-                gene.addToCollection("dataSets", getDataSet());
                 miRNAgenes.put(primaryIdentifier, gene);
                 addItem(gene);
             }
@@ -124,15 +116,12 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
         // no resolver available so use gene symbol
         Item gene = miRNAgenes.get(symbol);
         if (gene == null) {
-            gene = createItem("Gene");
+            gene = converter.createItem("Gene");
             gene.setAttribute("symbol", symbol);
             gene.setReference("organism", getOrganism());
-            gene.addToCollection("dataSets", getDataSet());
             miRNAgenes.put(symbol, gene);
             addItem(gene);
         }
         return gene;
-
     }
-
 }

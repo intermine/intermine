@@ -13,7 +13,6 @@ package org.intermine.bio.web;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +24,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.bio.logic.HomologueMapping;
 import org.intermine.bio.logic.Mine;
 import org.intermine.bio.logic.OrthologueLinkManager;
 import org.intermine.bio.web.logic.BioUtil;
@@ -46,11 +46,8 @@ public class OrthologueLinkController  extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response) {
+    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
@@ -69,12 +66,10 @@ public class OrthologueLinkController  extends TilesAction
         String identifierList = BagHelper.getIdList(bag, im.getObjectStore(), "", identifierField);
         request.setAttribute("identifierList", identifierList);
 
-        OrthologueLinkManager orthologueLinkManager
-        = OrthologueLinkManager.getInstance(im, webProperties);
+        OrthologueLinkManager olm = OrthologueLinkManager.getInstance(im, webProperties);
         Collection<String> organismNamesInBag = BioUtil.getOrganisms(im.getObjectStore(), bag,
                 false, "shortName");
-        Map<Mine, Map<String, Set[]>> mines
-            = orthologueLinkManager.getMines(organismNamesInBag);
+        Map<Mine, Map<String, HomologueMapping>> mines = olm.getMines(organismNamesInBag);
         if (!mines.isEmpty()) {
             request.setAttribute("mines", mines);
         }

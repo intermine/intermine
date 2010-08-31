@@ -15,13 +15,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.DataSet;
-import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Region;
-import org.intermine.model.bio.Synonym;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 
 /**
@@ -40,7 +37,7 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
      * @throws ObjectStoreException if problem fetching Chromosome
      */
     protected Region getChromosome(String chromosomeId, Organism organism)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         if (chrMap.containsKey(chromosomeId)) {
             return chrMap.get(chromosomeId);
         }
@@ -54,34 +51,17 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
     }
 
     /**
-     * Create a Synonym.
-     * @param interMineObject the subject InterMineObject of the Synonym
-     * @param dataSet the DataSet for the Synonym
-     * @param identifier the synonym value
-     * @throws ObjectStoreException if there is a problem storing
-     */
-    public void createSynonym(BioEntity interMineObject, DataSet dataSet, String identifier)
-    throws ObjectStoreException {
-        Synonym synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
-        synonym.setValue(identifier);
-        synonym.setType("identifier");
-        synonym.setSubject(interMineObject);
-        synonym.addDataSets(dataSet);
-        getDirectDataLoader().store(synonym);
-    }
-
-    /**
      * Return a Location object create by parsing the useful information from a FlyBase fasta
      * header line.
      * @param header the header line
-     * @param lsf the LocatedSequenceFeature that is the subject of this Location
+     * @param lsf the SequenceFeature that is the subject of this Location
      * @param organism the Organism object used when creating Chromosomes
      * @return the Location
      * @throws ObjectStoreException there is a problem while creating the Location
      */
-    protected Location getLocationFromHeader(String header, LocatedSequenceFeature lsf,
+    protected Location getLocationFromHeader(String header, SequenceFeature lsf,
                                              Organism organism)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         final String regexp = ".*loc=(\\S+):(\\S+).*";
         Pattern p = Pattern.compile(regexp);
         Matcher m = p.matcher(header);
@@ -98,8 +78,8 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
             } else {
                 loc.setStrand("1");
             }
-            loc.setSubject(lsf);
-            loc.setObject(getChromosome(chromosomeId, organism));
+            loc.setFeature(lsf);
+            loc.setLocatedOn(getChromosome(chromosomeId, organism));
             lsf.setChromosomeLocation(loc);
             return loc;
         }

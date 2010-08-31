@@ -67,7 +67,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(String action, @SuppressWarnings("unused") List<String> keys) {
+    public Query getQuery(String action, List<String> keys) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcPathway = null;
@@ -95,7 +95,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
         QueryCollectionReference c1 = new QueryCollectionReference(qcGene, "pathways");
         cs.addConstraint(new ContainsConstraint(c1, ConstraintOp.CONTAINS, qcPathway));
 
-        Collection<Integer> taxonIdInts = new ArrayList();
+        Collection<Integer> taxonIdInts = new ArrayList<Integer>();
         // constrained only for memory reasons
         for (String taxonId : taxonIds) {
             try {

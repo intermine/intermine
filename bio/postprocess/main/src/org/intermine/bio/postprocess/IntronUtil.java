@@ -62,11 +62,11 @@ public class IntronUtil
     private DataSource dataSource;
     private Set<Integer> taxonIds = new HashSet<Integer>();
 
-    protected Map intronMap = new HashMap();
+    protected Map<String, Intron> intronMap = new HashMap<String, Intron>();
 
     /**
      * Create a new IntronUtil object that will operate on the given ObjectStoreWriter.
-     * NOTE - needs to be run after LocatedSequenceFeature.chromosomeLocation has been set.
+     * NOTE - needs to be run after SequenceFeature.chromosomeLocation has been set.
      * @param osw the ObjectStoreWriter to use when creating/changing objects
      */
     public IntronUtil(ObjectStoreWriter osw) {
@@ -102,10 +102,10 @@ public class IntronUtil
      * @throws ObjectStoreException if there is an ObjectStore problem
      */
     public void createIntronFeatures()
-    throws ObjectStoreException {
+        throws ObjectStoreException {
 
         dataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
-        dataSet.setTitle("FlyMine introns");
+        dataSet.setName("FlyMine introns");
         dataSet.setDescription("Introns calculated by FlyMine");
         dataSet.setVersion("" + new Date()); // current time and date
         dataSet.setUrl("http://www.flymine.org");
@@ -175,17 +175,16 @@ public class IntronUtil
 
         // Precompute this query first, this will create a precomputed table holding
         // all the results.  The will make all batches after the first faster to fetch
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
-                                                   .PRECOMPUTE_CATEGORY);
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
 
         // Set up the results, the query isn't actually executed until we begin
         // iterating through the results
         Results results = os.execute(q, 500, true, true, true);
 
         // When we start interating the query will be executed
-        Iterator resultsIter = results.iterator();
+        Iterator<?> resultsIter = results.iterator();
 
-        Set locationSet = new HashSet();
+        Set<Object> locationSet = new HashSet<Object>();
         Transcript lastTran = null;
         Location lastTranLoc = null;
         int tranCount = 0, exonCount = 0, intronCount = 0;
@@ -196,7 +195,7 @@ public class IntronUtil
             // Results is a list of ResultsRows, each ResultsRow contains the objects/fields
             // that were added to the select list of the query.  The order of columns is
             // as they were added to the select list.
-            ResultsRow rr = (ResultsRow) resultsIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resultsIter.next();
             Transcript thisTran = (Transcript) rr.get(0);
 
             if (lastTran == null) {
@@ -212,7 +211,7 @@ public class IntronUtil
                     LOG.info("Created " + intronCount + " Introns for " + tranCount
                              + " Transcripts with " + exonCount + " Exons.");
                 }
-                locationSet = new HashSet();
+                locationSet = new HashSet<Object>();
                 lastTran = thisTran;
                 lastTranLoc = (Location) rr.get(1);
             }
@@ -229,7 +228,7 @@ public class IntronUtil
 
         //osw.beginTransaction();
         int stored = 0;
-        for (Iterator i = intronMap.keySet().iterator(); i.hasNext();) {
+        for (Iterator<String> i = intronMap.keySet().iterator(); i.hasNext();) {
             String identifier = (String) i.next();
             Intron intron = (Intron) intronMap.get(identifier);
             osw.store(intron);
@@ -258,17 +257,21 @@ public class IntronUtil
      * @return a set of Intron objects
      * @throws ObjectStoreException if there is an ObjectStore problem
      */
-    protected int createIntronFeatures(Set locationSet, Transcript transcript, Location tranLoc)
+    protected int createIntronFeatures(Set<Object> locationSet, Transcript transcript,
+            Location tranLoc)
         throws ObjectStoreException {
+        if (locationSet.size() == 1 || tranLoc == null || transcript == null
+                || transcript.getLength() == null) {
+            return 0;
+        }
+
         //final BitSet bs = new BitSet(transcript.getLength().intValue() + 1);
         final BitSet bs = new BitSet(transcript.getLength().intValue());
 
-        if (locationSet.size() == 1) {
-            return 0;
-        }
+
         Chromosome chr = transcript.getChromosome();
 
-        Iterator locationIter = locationSet.iterator();
+        Iterator<Object> locationIter = locationSet.iterator();
         int tranStart = tranLoc.getStart().intValue();
 
         while (locationIter.hasNext()) {
@@ -322,16 +325,12 @@ public class IntronUtil
                 location.setStart(new Integer(newLocStart));
                 location.setEnd(new Integer(newLocEnd));
                 location.setStrand(tranLoc.getStrand());
-                location.setPhase(new Integer(0));
-                location.setStartIsPartial(Boolean.FALSE);
-                location.setEndIsPartial(Boolean.FALSE);
-                location.setSubject(intron);
-                location.setObject(transcript);
+                location.setFeature(intron);
+                location.setLocatedOn(transcript);
                 location.addDataSets(dataSet);
 
                 synonym.addDataSets(dataSet);
                 synonym.setSubject(intron);
-                synonym.setType("identifier");
                 synonym.setValue(intron.getPrimaryIdentifier());
                 osw.store(synonym);
 

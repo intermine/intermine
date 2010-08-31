@@ -62,8 +62,8 @@ public class ExportController extends TilesAction
         }
 
         Map<String, TableExportConfig> allExporters = webConfig.getTableExportConfigs();
-        Map<String, Map<String, String>> usableExporters =
-            new HashMap<String, Map<String, String>>();
+        Map<String, Map<String, String>> usableExporters
+            = new HashMap<String, Map<String, String>>();
 
         for (Iterator<String> i = allExporters.keySet().iterator(); i.hasNext(); ) {
             String exporterId = i.next();

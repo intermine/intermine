@@ -63,13 +63,12 @@ public class BioGridConverter extends BioFileConverter
     private static final Logger LOG = Logger.getLogger(BioGridConverter.class);
     private static final String PROP_FILE = "biogrid_config.properties";
     protected IdResolverFactory resolverFactory;
-    private Map<String, String> terms = new HashMap();
-    private Map<String, String> pubs = new HashMap();
-    private Map<String, String> organisms = new HashMap();
-    private static final Map<String, String> PSI_TERMS = new HashMap();
-    private Map<String, String> genes = new HashMap();
-    private Set<String> synonyms = new HashSet();
-    private Map<String, Map<String, String>> config = new HashMap();
+    private Map<String, String> terms = new HashMap<String, String>();
+    private Map<String, String> pubs = new HashMap<String, String>();
+    private Map<String, String> organisms = new HashMap<String, String>();
+    private static final Map<String, String> PSI_TERMS = new HashMap<String, String>();
+    private Map<String, String> genes = new HashMap<String, String>();
+    private Map<String, Map<String, String>> config = new HashMap<String, Map<String, String>>();
     private Set<String> taxonIds = null;
 
     /**
@@ -85,13 +84,13 @@ public class BioGridConverter extends BioFileConverter
     }
 
     static {
-        PSI_TERMS.put("Biochemical Activity", "biochemical");
-        PSI_TERMS.put("Co-localization", "colocalization");
-        PSI_TERMS.put("Co-purification", "copurification");
-        PSI_TERMS.put("Far Western", "far western blotting");
-        PSI_TERMS.put("PCA", "protein complementation assay");
-        PSI_TERMS.put("Synthetic Lethality", "synthetic lethal");
-        PSI_TERMS.put("Two-hybrid", "two hybrid");
+        PSI_TERMS.put("MI:0915", "physical");
+        PSI_TERMS.put("MI:0407", "physical");
+        PSI_TERMS.put("MI:0403", "physical");
+        PSI_TERMS.put("MI:0914", "physical");
+        PSI_TERMS.put("MI:0794", "genetic");
+        PSI_TERMS.put("MI:0796", "genetic");
+        PSI_TERMS.put("MI:0799", "genetic");
     }
 
     /**
@@ -105,7 +104,6 @@ public class BioGridConverter extends BioFileConverter
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-
     }
 
     private void readConfig() {
@@ -131,7 +129,7 @@ public class BioGridConverter extends BioFileConverter
 
             String taxonId = attributes[0];
             if (config.get(taxonId) == null) {
-                Map<String, String> configs = new HashMap();
+                Map<String, String> configs = new HashMap<String, String>();
                 config.put(taxonId, configs);
             }
             if (attributes[1].equals("xref")) {
@@ -153,23 +151,22 @@ public class BioGridConverter extends BioFileConverter
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
     }
 
-
     /**
      * Handles xml file
      */
     class BioGridHandler extends DefaultHandler
     {
-        private Map<String, InteractorHolder> interactors = new HashMap();
+        private Map<String, InteractorHolder> interactors = new HashMap<String, InteractorHolder>();
         // id to temporary holding object
-        private Map<String, ExperimentHolder> experiments = new HashMap();
+        private Map<String, ExperimentHolder> experiments = new HashMap<String, ExperimentHolder>();
         // id to intermine object representing experiment
-        private Map<MultiKey, Item> idsToExperiments = new HashMap();
+        private Map<MultiKey, Item> idsToExperiments = new HashMap<MultiKey, Item>();
         private InteractionHolder holder;
         private ExperimentHolder experimentHolder;
         private InteractorHolder interactorHolder;
         private String participantId = null;
 
-        private Stack<String> stack = new Stack();
+        private Stack<String> stack = new Stack<String>();
         private String attName = null;
         private StringBuffer attValue = null;
 
@@ -177,7 +174,7 @@ public class BioGridConverter extends BioFileConverter
          * {@inheritDoc}
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
-        throws SAXException {
+            throws SAXException {
             attName = null;
 
             /********************************* EXPERIMENT **********************************/
@@ -206,10 +203,11 @@ public class BioGridConverter extends BioFileConverter
                 if (StringUtil.allDigits(pubMedId)) {
                     experimentHolder.setPublication(getPub(pubMedId));
                 }
-            //<experimentList><experimentDescription><interactionDetectionMethod><names><shortLabel>
-            } else if (qName.equals("shortLabel") && stack.peek().equals("names")
-                            && stack.search("interactionDetectionMethod") == 2) {
-                attName = "interactionDetectionMethod";
+            //<experimentList><experimentDescription><interactionDetectionMethod><xref><primaryRef>
+            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
+                    && stack.search("interactionDetectionMethod") == 2) {
+                String term = attrs.getValue("id");
+                experimentHolder.setMethod(getTerm(term));
 
             /*********************************** GENES ***********************************/
 
@@ -282,10 +280,16 @@ public class BioGridConverter extends BioFileConverter
                     holder.identifiers.add(ih.identifier);
                     holder.addInteractor(participantId, ih);
                 }
-            //<interactionList><interaction><interactionType><names><shortLabel
-            } else if (qName.equals("shortLabel") && stack.peek().equals("names")
+            //<interactionList><interaction><interactionType><xref><primaryRef>
+            } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                             && stack.search("interactionType") == 2) {
-                attName = "interactionType";
+                String termIdentifier = attrs.getValue("id");
+                holder.methodRefId = getTerm(termIdentifier);
+                String interactionType = PSI_TERMS.get(termIdentifier);
+                if (interactionType == null) {
+                    throw new RuntimeException("Bad interaction type:" + termIdentifier);
+                }
+                holder.interactionType = interactionType;
             // <participant id="62692"><interactorRef>62692</interactorRef>
             // <experimentalRoleList><experimentalRole><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.search("experimentalRole") == 2) {
@@ -317,7 +321,7 @@ public class BioGridConverter extends BioFileConverter
          * {@inheritDoc}
          */
         public void endElement(String uri, String localName, String qName)
-        throws SAXException {
+            throws SAXException {
             super.endElement(uri, localName, qName);
             stack.pop();
 
@@ -337,15 +341,6 @@ public class BioGridConverter extends BioFileConverter
                 if (descr != null) {
                     experimentHolder.setDescription(descr);
                 }
-            //<experimentList><experimentDescription>
-            //<interactionDetectionMethod><names><shortLabel>
-            } else if (attName != null && attName.equals("interactionDetectionMethod")
-                            && qName.equals("shortLabel")) {
-                String term = attValue.toString();
-                if (term != null) {
-                    experimentHolder.setMethod(getTerm(term));
-                }
-
             } else if (qName.equals("experimentDescription")) {
                 setExperiment(experimentHolder);
             } else if (qName.equals("entrySet")) {
@@ -378,15 +373,7 @@ public class BioGridConverter extends BioFileConverter
                             && qName.equals("experimentRef")
                             && stack.peek().equals("experimentList")) {
                 holder.setExperimentHolder(experiments.get(attValue.toString()));
-            //<interactionType><names><shortLabel>
-            } else if (attName != null && attName.equals("interactionType")
-                            && qName.equals("shortLabel")) {
-                String term = attValue.toString();
-                holder.methodRefId = getTerm(term);
-                if (term.equalsIgnoreCase("phenotypic enhancement")
-                                || term.equalsIgnoreCase("phenotypic suppression")) {
-                    holder.interactionType = "genetic";
-                }
+
                 //</interaction>
             } else if (qName.equals("interaction") && holder != null && holder.validActors) {
                 storeInteraction(holder);
@@ -418,7 +405,6 @@ public class BioGridConverter extends BioFileConverter
                 interaction.setAttribute("name", interactionName);
                 interaction.setAttribute("shortName", interactionName);
                 interaction.setReference("experiment", h.eh.experimentRefId);
-
                 try {
                     store(interaction);
                 } catch (ObjectStoreException e) {
@@ -428,7 +414,7 @@ public class BioGridConverter extends BioFileConverter
         }
 
         private String getPub(String pubMedId)
-        throws SAXException {
+            throws SAXException {
             String itemId = pubs.get(pubMedId);
             if (itemId == null) {
                 try {
@@ -446,7 +432,7 @@ public class BioGridConverter extends BioFileConverter
 
         private boolean setGene(String taxonId, InteractorHolder ih, String identifierField,
                                 String db)
-        throws ObjectStoreException, SAXException {
+            throws ObjectStoreException, SAXException {
 
             IdResolver resolver = resolverFactory.getIdResolver(false);
 
@@ -478,30 +464,11 @@ public class BioGridConverter extends BioFileConverter
                 store(item);
                 refId = item.getIdentifier();
                 genes.put(identifier, refId);
-                setSynonym(refId, "identifier", identifier);
             }
-
             ih.identifier = identifier;
             ih.refId = refId;
             ih.valid = true;
             return true;
-        }
-
-        private void setSynonym(String subjectRefId, String type, String value)
-        throws SAXException {
-            String key = subjectRefId + type + value;
-            if (!synonyms.contains(key)) {
-                Item synonym = createItem("Synonym");
-                synonym.setAttribute("type", type);
-                synonym.setAttribute("value", value);
-                synonym.setReference("subject", subjectRefId);
-                synonyms.add(key);
-                try {
-                    store(synonym);
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
-                }
-            }
         }
 
         /**
@@ -526,7 +493,7 @@ public class BioGridConverter extends BioFileConverter
         }
 
         private String getOrganism(String taxonId)
-        throws ObjectStoreException {
+            throws ObjectStoreException {
             String refId = organisms.get(taxonId);
             if (refId != null) {
                 return refId;
@@ -542,22 +509,15 @@ public class BioGridConverter extends BioFileConverter
             return item.getIdentifier();
         }
 
-        private String getTerm(String name)
-        throws SAXException {
-            String term = name;
-            if (PSI_TERMS.get(term) != null) {
-                term = PSI_TERMS.get(term);
-            } else {
-                term = term.toLowerCase();
-            }
-            String refId = terms.get(term);
+        private String getTerm(String identifier)
+            throws SAXException {
+            String refId = terms.get(identifier);
             if (refId != null) {
                 return refId;
             }
-
             Item item = createItem("InteractionTerm");
-            item.setAttribute("name", term);
-            terms.put(term, item.getIdentifier());
+            item.setAttribute("identifier", identifier);
+            terms.put(identifier, item.getIdentifier());
             try {
                 store(item);
             } catch (ObjectStoreException e) {
@@ -610,7 +570,7 @@ public class BioGridConverter extends BioFileConverter
 
         private ArrayList<String> getInteractingObjects(InteractionHolder interactionHolder,
                                                         String refId) {
-            ArrayList<String> interactorIds = new ArrayList(interactionHolder.refIds);
+            ArrayList<String> interactorIds = new ArrayList<String>(interactionHolder.refIds);
             // remove the gene from the list of interactors, unless this gene is interacting
             // with itself - which is common
             if (interactorIds.size() > 1) {
@@ -661,7 +621,7 @@ public class BioGridConverter extends BioFileConverter
             protected String biogridId;
             protected String identifier;
             protected String refId;
-            protected Map<String, String> xrefs = new HashMap();
+            protected Map<String, String> xrefs = new HashMap<String, String>();
             protected String shortLabel;
             protected boolean valid = true;
             protected String organismRefId;

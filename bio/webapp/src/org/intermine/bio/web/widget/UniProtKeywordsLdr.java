@@ -75,7 +75,7 @@ public class UniProtKeywordsLdr extends EnrichmentWidgetLdr
         QueryField qfProtId = new QueryField(qcProtein, "id");
         QueryField qfName = new QueryField(qcOntoTerm, "name");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-        QueryField qfOnto = new QueryField(qcOntology, "title");
+        QueryField qfOnto = new QueryField(qcOntology, "name");
         QueryField qfPrimaryIdentifier = new QueryField(qcProtein, "primaryIdentifier");
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);

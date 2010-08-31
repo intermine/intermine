@@ -149,7 +149,7 @@ public class OrthologueConverter extends BagConverter
                 + "Gene.homologues.homologue.primaryIdentifier,"
                 + "Gene.homologues.homologue.organism.shortName,"
                 + "Gene.homologues.type,"
-                + "Gene.homologues.dataSets.title");
+                + "Gene.homologues.dataSets.name");
 
         // homologue.type = "orthologue"
         q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
@@ -168,13 +168,10 @@ public class OrthologueConverter extends BagConverter
         String encodedurl = URLEncoder.encode(query, "UTF-8");
 
         String[] values = new String[]
-            {
-                String.valueOf(convertedSize),
-                parameter,
-                String.valueOf(externalids.split(",").length),
-                type,
-                encodedurl
-            };
+        {
+                String.valueOf(convertedSize), parameter,
+                String.valueOf(externalids.split(",").length), type, encodedurl
+        };
         ActionMessage am = new ActionMessage("portal.orthologues", values);
         return am;
     }

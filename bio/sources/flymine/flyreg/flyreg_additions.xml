@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <classes>
 <class name="BindingSite" is-interface="true">
-  <attribute name="primaryIdentifier" type="java.lang.String"/>
   <reference name="factor" referenced-type="Gene"/>
 </class>
 <class name="RegulatoryRegion" is-interface="true">

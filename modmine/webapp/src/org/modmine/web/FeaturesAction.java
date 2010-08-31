@@ -51,9 +51,9 @@ import org.intermine.web.struts.TableExportForm;
 
 /**
  * Generate queries for overlaps of submission features and overlaps with gene flanking regions.
- * @author Richard Smith
  *
- */
+ * @author Richard Smith
+  */
 public class FeaturesAction extends InterMineAction
 {
     /**
@@ -68,12 +68,10 @@ public class FeaturesAction extends InterMineAction
      *  an exception
      */
 
-    private static final Logger LOG = Logger.getLogger(MetadataCache.class);
+//    private static final Logger LOG = Logger.getLogger(MetadataCache.class);
 
-    public ActionForward execute(ActionMapping mapping,
-            ActionForm form,
-            HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response)
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);

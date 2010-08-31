@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.biojava.bio.structure.Structure;
 import org.biojava.bio.structure.io.PDBFileParser;
@@ -45,17 +43,16 @@ public class PdbConverter extends BioDirectoryConverter
 
     private static final Logger LOG = Logger.getLogger(PdbConverter.class);
     protected static final String ENDL = System.getProperty("line.separator");
-    private Map<String, String> synonyms = new HashMap();
     private Set<String> taxonIds = null;
-    private Map<String, String> organisms = new HashMap();
-    private Map<String, String> proteins = new HashMap();
+    private Map<String, String> proteins = new HashMap<String, String>();
+
     /**
      * Create a new PdbConverter object.
      * @param writer the ItemWriter to store the objects in
      * @param model the Model
      */
     public PdbConverter(ItemWriter writer, Model model)  {
-        super(writer, model, "PDB", "PDB dmel data set");
+        super(writer, model, "PDB", "PDB dmel data set", null);
     }
 
     /**
@@ -70,11 +67,11 @@ public class PdbConverter extends BioDirectoryConverter
          */
 
         File[] directories = dataDir.listFiles();
-        List<File> directoriesToProcess = new ArrayList();
+        List<File> directoriesToProcess = new ArrayList<File>();
 
         if (directories == null || directories.length == 0) {
             throw new RuntimeException("no valid PDB directories found");
-            
+
         }
 
         for (File f : directories) {
@@ -92,18 +89,18 @@ public class PdbConverter extends BioDirectoryConverter
 
         // check that we have valid files before we start storing ANY data
         if (directoriesToProcess.isEmpty()) {
-            throw new RuntimeException("no valid PDB directories found.");            
+            throw new RuntimeException("no valid PDB directories found.");
         }
 
         // one dir per org
         for (File dir : directoriesToProcess) {
             String taxonId = dir.getName();
             File[] filesToProcess = dir.listFiles();
-            proteins = new HashMap();
+            proteins = new HashMap<String, String>();
             for (File f : filesToProcess) {
-              if (f.getName().endsWith(".pdb")) {
-                  processPDBFile(f, taxonId);
-              }
+                if (f.getName().endsWith(".pdb")) {
+                    processPDBFile(f, taxonId);
+                }
             }
         }
     }
@@ -119,7 +116,7 @@ public class PdbConverter extends BioDirectoryConverter
     }
 
     private void processPDBFile(File file, String taxonId)
-    throws FileNotFoundException, IOException, Exception {
+        throws Exception {
         Item proteinStructure = createItem("ProteinStructure");
 
         PDBFileParser pdbfileparser = new PDBFileParser();
@@ -131,11 +128,9 @@ public class PdbConverter extends BioDirectoryConverter
         String idCode = (String) structure.getHeader().get("idCode");
         proteinStructure.setAttribute("identifier", idCode);
 
-
         List<String> dbrefs = pdbBuffReader.getDbrefs();
         for (String accnum: dbrefs) {
             String proteinRefId = getProtein(accnum, taxonId);
-            createSynonym(proteinRefId, "accession", accnum);
             proteinStructure.addToCollection("proteins", proteinRefId);
         }
 
@@ -165,42 +160,8 @@ public class PdbConverter extends BioDirectoryConverter
         store(proteinStructure);
     }
 
-    private Item createSynonym(String subjectId, String type, String value) throws Exception {
-        String key = subjectId + type + value;
-        if (StringUtils.isEmpty(value)) {
-            return null;
-        }
-        if (!synonyms.containsKey(key)) {
-            Item syn = createItem("Synonym");
-            syn.setReference("subject", subjectId);
-            syn.setAttribute("type", type);
-            syn.setAttribute("value", value);
-            store(syn);
-            synonyms.put(key, syn.getIdentifier());
-            return syn;
-        }
-        return null;
-    }
-
-//    private String getOrganism(String taxonId)
-//    throws SAXException {
-//        String refId = organisms.get(taxonId);
-//        if (refId == null) {
-//            Item item = createItem("Organism");
-//            item.setAttribute("taxonId", taxonId);
-//            refId = item.getIdentifier();
-//            organisms.put(taxonId, refId);
-//            try {
-//                store(item);
-//            } catch (ObjectStoreException e) {
-//                throw new SAXException(e);
-//            }
-//        }
-//        return refId;
-//    }
-
     private String getProtein(String accession, String taxonId)
-    throws SAXException {
+        throws SAXException {
         String refId = proteins.get(accession);
         if (refId == null) {
             Item item = createItem("Protein");
@@ -256,7 +217,7 @@ public class PdbConverter extends BioDirectoryConverter
          * Return the db refs read from the Reader.
          * @return the List of db refs
          */
-        public List getDbrefs() {
+        public List<String> getDbrefs() {
             return dbrefs;
         }
     }

@@ -27,7 +27,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
 import org.intermine.model.bio.DataSet;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Sequence;
 
@@ -108,7 +108,7 @@ public class UniProtFastaLoaderTaskTest extends TestCase
         protein.getOrganism().getTaxonId().equals("7227");
 
         DataSet dataSet = protein.getDataSets().iterator().next();
-        assertEquals(dataSetTitle, dataSet.getTitle());
+        assertEquals(dataSetTitle, dataSet.getName());
 
         /*
         >sp|Q9V8R9-2|41_DROME Isoform 2 of Protein 4.1 homolog OS=Drosophila melanogaster GN=cora

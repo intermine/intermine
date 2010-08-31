@@ -27,6 +27,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
+import org.xml.sax.SAXException;
 
 /**
  * DataConverter to parse Anopheles Expression data file into Items.
@@ -36,10 +37,9 @@ import org.intermine.xml.full.ReferenceList;
 public class AnophExprConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(AnophExprConverter.class);
-    private Map<String, String> reporterToGene = new HashMap();
-    private Map<String, Item> genes = new HashMap();
-    private Map<String, Item> assays = new HashMap();
-    private Map<String, Item> synonyms = new HashMap();
+    private Map<String, String> reporterToGene = new HashMap<String, String>();
+    private Map<String, Item> genes = new HashMap<String, Item>();
+    private Map<String, Item> assays = new HashMap<String, Item>();
     private static final String TYPE = "Geometric mean of ratios";
     Item org;
     private Item pub;
@@ -71,7 +71,6 @@ public class AnophExprConverter extends BioFileConverter
         experiment.setAttribute("name", experimentName);
         experiment.setReference("publication", pub.getIdentifier());
         store(experiment);
-
     }
 
     /**
@@ -157,7 +156,6 @@ public class AnophExprConverter extends BioFileConverter
             headerArray = StringUtils.split(line, '\t');
             for (int colIndex = 1; colIndex < headerArray.length; colIndex++) {
                 if (!headerArray[lineIndex].equals("")) {
-
                     if (lineIndex == 0) {
                         stageNames[colIndex] = new StageName();
                         String age =  headerArray[colIndex];
@@ -197,7 +195,7 @@ public class AnophExprConverter extends BioFileConverter
                 Item gene = getGene(geneIdentifier);
 
                 ReferenceList microArrayResults
-                                = new ReferenceList("microArrayResults", new ArrayList<String>());
+                    = new ReferenceList("microArrayResults", new ArrayList<String>());
 
                 Item material = createItem("ProbeSet");
                 material.setAttribute("name", probe);
@@ -243,12 +241,9 @@ public class AnophExprConverter extends BioFileConverter
         for (Item item : genes.values()) {
             store(item);
         }
-        for (Item item : synonyms.values()) {
-            store(item);
-        }
     }
 
-    private Item getGene(String geneCG) {
+    private Item getGene(String geneCG) throws SAXException, ObjectStoreException {
         if (genes.containsKey(geneCG)) {
             return genes.get(geneCG);
         }
@@ -256,24 +251,7 @@ public class AnophExprConverter extends BioFileConverter
         gene.setAttribute("primaryIdentifier", geneCG);
         gene.setReference("organism", org.getIdentifier());
         genes.put(geneCG, gene);
-        createSynonym(gene.getIdentifier(), "identifier", geneCG);
         return gene;
-    }
-
-    private Item createSynonym(String subjectId, String type, String value) {
-        String key = subjectId + type + value;
-        if (StringUtils.isEmpty(value)) {
-            return null;
-        }
-        if (!synonyms.containsKey(key)) {
-            Item syn = createItem("Synonym");
-            syn.setReference("subject", subjectId);
-            syn.setAttribute("type", type);
-            syn.setAttribute("value", value);
-            synonyms.put(key, syn);
-            return syn;
-        }
-        return null;
     }
 }
 

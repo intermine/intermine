@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.BioEntity;
@@ -45,7 +44,7 @@ import org.intermine.xml.full.ReferenceList;
  * @author Julie Sullivan - changed evidence to be collection
  * @author Xavier Watkins - refactored model
  */
-public class GoConverter extends FileConverter
+public class GoConverter extends BioFileConverter
 {
     protected static final String PROP_FILE = "go-annotation_config.properties";
 
@@ -53,12 +52,10 @@ public class GoConverter extends FileConverter
     private Map<String, String> geneAttributes = new HashMap<String, String>();
     private Map<String, String> readColumns = new HashMap<String, String>();
     private Map<String, WithType> withTypes = new LinkedHashMap<String, WithType>();
-    private Map<String, String> synonymTypes = new HashMap<String, String>();
 
     // maps retained across all files
     protected Map<String, String> goTerms = new LinkedHashMap<String, String>();
     private Map<String, String> goEvidence = new LinkedHashMap<String, String>();
-    private Map<String, String> dataSources = new LinkedHashMap<String, String>();
     private Map<String, String> dataSets = new LinkedHashMap<String, String>();
     private Map<String, String> publications = new LinkedHashMap<String, String>();
     private Map<String, Item> organisms = new LinkedHashMap<String, Item>();
@@ -78,7 +75,7 @@ public class GoConverter extends FileConverter
     protected IdResolverFactory flybaseResolverFactory;
     protected IdResolverFactory hgncResolverFactory;
     private Set<String> resolverFails = new HashSet<String>();
-    
+
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
 
     /**
@@ -92,15 +89,11 @@ public class GoConverter extends FileConverter
         super(writer, model);
         addWithType("FB", "Gene", "primaryIdentifier");
         addWithType("UniProt", "Protein", "accession");
-        synonymTypes.put("protein", "accession");
-        synonymTypes.put("Protein", "accession");
-        synonymTypes.put("gene", "identifier");
-        synonymTypes.put("Gene", "identifier");
 
         // only construct factory here so can be replaced by mock factory in tests
         flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
         hgncResolverFactory = new HgncIdResolverFactory();
-        
+
         readConfig();
     }
 
@@ -113,7 +106,7 @@ public class GoConverter extends FileConverter
         } catch (IOException e) {
             throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
         }
-        Enumeration propNames = props.propertyNames();
+        Enumeration<?> propNames = props.propertyNames();
         while (propNames.hasMoreElements()) {
             String taxonId = (String) propNames.nextElement();
             taxonId = taxonId.substring(0, taxonId.indexOf("."));
@@ -280,7 +273,7 @@ public class GoConverter extends FileConverter
     private Integer createGoAnnotation(String productIdentifier, String productType,
             String termIdentifier, Item organism, String qualifier, String withText,
             String dataSourceCode)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         Item goAnnotation = createItem(annotationClassName);
         goAnnotation.setReference("subject", productIdentifier);
         goAnnotation.setReference("ontologyTerm", termIdentifier);
@@ -336,7 +329,7 @@ public class GoConverter extends FileConverter
      * @return a list of Items
      */
     protected List<String> createWithObjects(String withText, Item organism, String dataSourceCode)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
 
         List<String> withProductList = new ArrayList<String>();
         try {
@@ -427,7 +420,7 @@ public class GoConverter extends FileConverter
                     if (resCount != 1) {
                         if (!resolverFails.contains(accession)) {
                             LOG.info("RESOLVER: HGNC failed to resolve gene to one identifier, "
-                                    + "ignoring gene: " + accession + " count: " + resCount 
+                                    + "ignoring gene: " + accession + " count: " + resCount
                                     + " symbol: " + resolver.resolveId(taxonId, accession));
                             resolverFails.add(accession);
                         }
@@ -448,12 +441,12 @@ public class GoConverter extends FileConverter
             String typeCls = TypeUtil.javaiseClassName(type);
 
             if (getModel().getClassDescriptorByName(typeCls) != null) {
-                Class cls = getModel().getClassDescriptorByName(typeCls).getType();
+                Class<?> cls = getModel().getClassDescriptorByName(typeCls).getType();
                 if (BioEntity.class.isAssignableFrom(cls)) {
                     clsName = typeCls;
                 }
             }
-             if (clsName == null) {   
+            if (clsName == null) {
                 throw new IllegalArgumentException("Unrecognised geneProduct type '" + type + "'");
             }
         }
@@ -486,14 +479,6 @@ public class GoConverter extends FileConverter
         Integer storedProductId = store(product);
         storedProductIds.put(product.getIdentifier(), storedProductId);
         productMap.put(key, product.getIdentifier());
-
-        Item synonym = newSynonym(
-                product.getIdentifier(),
-                synonymTypes.get(type),
-                accession,
-                dataSetIdentifier);
-        store(synonym);
-
         return product.getIdentifier();
     }
 
@@ -537,22 +522,6 @@ public class GoConverter extends FileConverter
         return refId;
     }
 
-    private String getDataSource(String code) throws ObjectStoreException {
-        String dataSourceIdentifier = dataSources.get(code);
-        if (dataSourceIdentifier == null) {
-            String name = getDataSourceName(code);
-            Item item = createItem("DataSource");
-            item.setAttribute("name", name);
-            store(item);
-
-            dataSourceIdentifier = item.getIdentifier();
-            dataSources.put(code, dataSourceIdentifier);
-        }
-        return dataSourceIdentifier;
-    }
-
-
-
     private String getDataSourceName(String sourceCode) {
         String title = sourceCode;
 
@@ -572,7 +541,7 @@ public class GoConverter extends FileConverter
         } else if ("GOA".equals(sourceCode)) {
             title = "Gene Ontology";
         } else if ("PINC".equals(sourceCode)) {
-          title = "Proteome Inc.";
+            title = "Proteome Inc.";
         } else if ("Pfam".equals(sourceCode)) {
             title = "PFAM"; // to merge with interpro
         }
@@ -580,21 +549,20 @@ public class GoConverter extends FileConverter
     }
 
     private String getDataset(String code)
-    throws ObjectStoreException {
-
+        throws ObjectStoreException {
         String dataSetIdentifier = dataSets.get(code);
         if (dataSetIdentifier == null) {
-            String title = "GO Annotation from " + getDataSourceName(code);
+            String dataSourceName = getDataSourceName(code);
+            String title = "GO Annotation from " + dataSourceName;
             Item item = createItem("DataSet");
-            item.setAttribute("title", title);
-            item.setReference("dataSource", getDataSource(code));
+            item.setAttribute("name", title);
+            item.setReference("dataSource", getDataSource(dataSourceName));
             dataSetIdentifier = item.getIdentifier();
             dataSets.put(code, dataSetIdentifier);
             store(item);
         }
         return dataSetIdentifier;
     }
-
 
     private String newPublication(String codes) throws ObjectStoreException {
         String pubRefId = null;
@@ -638,15 +606,6 @@ public class GoConverter extends FileConverter
             taxonId = taxonId.split("\\|")[0];
         }
         return taxonId;
-    }
-    
-    private Item newSynonym(String subjectId, String type, String value, String datasetId) {
-        Item synonym = createItem("Synonym");
-        synonym.setReference("subject", subjectId);
-        synonym.setAttribute("type", type);
-        synonym.setAttribute("value", value);
-        synonym.addToCollection("dataSets", datasetId);
-        return synonym;
     }
 
     private class AssignmentEvidence

@@ -29,7 +29,7 @@ import org.intermine.xml.full.Item;
 public class BDGPCloneConverter extends CDNACloneConverter
 {
     protected static final Logger LOG = Logger.getLogger(BDGPCloneConverter.class);
-    private Map<String, Item> genes = new HashMap();
+    private Map<String, Item> genes = new HashMap<String, Item>();
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";
 
@@ -64,31 +64,20 @@ public class BDGPCloneConverter extends CDNACloneConverter
         BufferedReader br = new BufferedReader(reader);
         //intentionally throw away first line
         String line = br.readLine();
-
         while ((line = br.readLine()) != null) {
             String[] array = line.split("\t", -1); //keep trailing empty Strings
-
             if (line.length() == 0 || line.startsWith("#")) {
                 continue;
             }
-
             Item gene = getGene(array[0]);
-
             String[] cloneIds = array[3].split(";");
-
             for (int i = 0; i < cloneIds.length; i++) {
                 Item clone = createBioEntity("CDNAClone", cloneIds[i], "secondaryIdentifier",
                                              organism.getIdentifier());
                 if (gene != null) {
                     clone.setReference("gene", gene.getIdentifier());
                 }
-                Item synonym = createItem("Synonym");
-                synonym.setAttribute("type", "identifier");
-                synonym.setAttribute("value", cloneIds[i]);
-                synonym.setReference("subject", clone.getIdentifier());
-
                 store(clone);
-                store(synonym);
             }
         }
     }

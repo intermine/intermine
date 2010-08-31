@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="CDNAClone" extends="Clone" is-interface="true">
+  <class name="CDNAClone" is-interface="true">
     <reference name="gene" referenced-type="Gene" reverse-reference="clones"/>
   </class>
   <class name="Gene" is-interface="true">

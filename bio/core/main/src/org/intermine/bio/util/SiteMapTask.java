@@ -69,7 +69,7 @@ public class SiteMapTask extends Task
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
 
         if (outputFile == null) {
             throw new BuildException("outputFile attribute is not set");

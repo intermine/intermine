@@ -1,0 +1,4 @@
+<project name="protein-structure-tasks" default="default" basedir=".">
+  <description>build protein-structure tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>

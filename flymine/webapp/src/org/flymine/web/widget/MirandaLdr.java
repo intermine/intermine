@@ -18,7 +18,6 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.MRNA;
-import org.intermine.model.bio.MiRNATarget;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -37,12 +36,12 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
  */
 public class MirandaLdr extends EnrichmentWidgetLdr
 {
-    
+
 //    private static final Logger LOG = Logger.getLogger(MirandaLdr.class);
     private Collection<String> organisms = new ArrayList<String>();
     private Collection<String> organismsLower = new ArrayList<String>();
     private InterMineBag bag;
-    
+
     /**
      * Create a new Loader.
      * @param bag list of objects for this widget
@@ -64,11 +63,16 @@ public class MirandaLdr extends EnrichmentWidgetLdr
      */
     public Query getQuery(String action, List<String> keys) {
 
-        QueryClass qcMiRNATarget = new QueryClass(MiRNATarget.class);
+        QueryClass qcMiRNATarget = null;
+        try {
+            qcMiRNATarget = new QueryClass(Class.forName("MiRNATarget"));
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcMiR = new QueryClass(Gene.class);
         QueryClass qcTranscript = new QueryClass(MRNA.class);
-        
+
         QueryField qfGeneIdentifier = new QueryField(qcGene, "symbol");
         QueryField qfGeneId = new QueryField(qcGene, "id");
         QueryField qfMiRIdentifier = new QueryField(qcMiR, "symbol");
@@ -85,13 +89,13 @@ public class MirandaLdr extends EnrichmentWidgetLdr
 
         QueryCollectionReference r1 = new QueryCollectionReference(qcMiR, "miRNAtargets");
         cs.addConstraint(new ContainsConstraint(r1, ConstraintOp.CONTAINS, qcMiRNATarget));
-        
+
         QueryObjectReference qcr1 = new QueryObjectReference(qcMiRNATarget, "target");
         cs.addConstraint(new ContainsConstraint(qcr1, ConstraintOp.CONTAINS, qcTranscript));
-        
+
         QueryObjectReference qcr2 = new QueryObjectReference(qcTranscript, "gene");
         cs.addConstraint(new ContainsConstraint(qcr2, ConstraintOp.CONTAINS, qcGene));
-      
+
 
         Query q = new Query();
 
@@ -99,7 +103,7 @@ public class MirandaLdr extends EnrichmentWidgetLdr
         q.addFrom(qcGene);
         q.addFrom(qcMiR);
         q.addFrom(qcTranscript);
-        
+
         q.setConstraint(cs);
 
         // which columns to return when the user clicks on 'export'
@@ -107,20 +111,20 @@ public class MirandaLdr extends EnrichmentWidgetLdr
             q.addToSelect(qfMiRIdentifier);
             q.addToSelect(qfGeneIdentifier);
             q.addToOrderBy(qfMiRIdentifier);
-            
+
         // analysed query:  return the gene only
         } else if (action.equals("analysed")) {
             q.addToSelect(qfGeneId);
-            
+
         // total query:  only return the count of unique genes
         } else if (action.endsWith("Total")) {
             q.addToSelect(qfGeneId);
-            
+
             Query subQ = q;
             q = new Query();
             q.addFrom(subQ);
             q.addToSelect(new QueryFunction());
-                        
+
         // enrichment queries
         } else {
 
@@ -136,25 +140,21 @@ public class MirandaLdr extends EnrichmentWidgetLdr
             q = new Query();
             q.setDistinct(false);
             q.addFrom(subQ);
-            
+
             // add the unique-ified targets to select
             q.addToSelect(qfUniqueTargets);
-            
+
             // gene count
             q.addToSelect(new QueryFunction());
-            
+
             // if this is the sample query, it expects a third column
             if (action.equals("sample")) {
                 q.addToSelect(qfUniqueTargets);
             }
-            
+
             // group by target
             q.addToGroupBy(qfUniqueTargets);
-         }
+        }
         return q;
     }
 }
-
-
-
-

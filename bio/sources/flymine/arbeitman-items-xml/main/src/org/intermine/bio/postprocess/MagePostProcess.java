@@ -88,12 +88,12 @@ public class MagePostProcess extends PostProcessor
 
     /**
      * Creates a collection of MicroArrayResult objects on Genes.
-     * @throws ObjectStoreException
-     * @throws IllegalAccessException
-     * @throws SQLException
+     * @throws ObjectStoreException if something goes wrong
+     * @throws IllegalAccessException if something goes wrong
+     * @throws SQLException if something goes wrong
      */
     protected void createMicroArrayResultsCollection()
-             throws ObjectStoreException, IllegalAccessException, SQLException {
+        throws ObjectStoreException, IllegalAccessException, SQLException {
         Query q = new Query();
         q.setDistinct(false);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -138,9 +138,9 @@ public class MagePostProcess extends PostProcessor
 
         osw.beginTransaction();
 
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             Gene thisGene = (Gene) rr.get(0);
             MicroArrayResult maResult = (MicroArrayResult) rr.get(2);
 
@@ -152,7 +152,7 @@ public class MagePostProcess extends PostProcessor
                     osw.store(tempGene);
                     count++;
                 }
-                newCollection = new HashSet();
+                newCollection = new HashSet<MicroArrayResult>();
             }
 
             newCollection.add(maResult);
@@ -228,9 +228,9 @@ public class MagePostProcess extends PostProcessor
 
         osw.beginTransaction();
 
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             CDNAClone thisClone = (CDNAClone) rr.get(0);
             MicroArrayResult maResult = (MicroArrayResult) rr.get(2);
 
@@ -319,9 +319,9 @@ public class MagePostProcess extends PostProcessor
 
         osw.beginTransaction();
 
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             ProbeSet thisComSeq = (ProbeSet) rr.get(0);
             MicroArrayResult maResult = (MicroArrayResult) rr.get(2);
 

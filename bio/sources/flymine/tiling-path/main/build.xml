@@ -1,0 +1,4 @@
+<project name="tiling-path-tasks" default="default" basedir=".">
+  <description>build tiling_path tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>

@@ -1,0 +1,17 @@
+<project name="protein-structure" default="default" basedir=".">
+  <description>build, test, package protein_structure</description>
+
+  <import file="../../../../imbuild/source.xml"/>
+
+  <target name="-retrieve-tgt-from-custom-file" if="have.file.custom.tgt">
+    <convert-file      
+       modelName="${target.model}"
+       clsName="${converter.class}"
+       osName="osw.${common.os.prefix}-tgt-items">
+      <fileset dir="${src.data.dir}" >
+        <include name="**/*.xml"/>
+	  </fileset>
+    </convert-file>
+  </target>
+
+</project>

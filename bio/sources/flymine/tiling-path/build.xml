@@ -1,0 +1,5 @@
+<project name="tiling-path" default="default" basedir=".">
+  <description>build, test, package tiling_path</description>
+  <import file="../../../../imbuild/source.xml"/>
+</project>
+

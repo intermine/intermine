@@ -90,7 +90,7 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         q.addConstraint("Gene",  Constraints.in(bag.getName()));
 
         // filter out BDGP
-        q.addConstraint("Gene.mRNAExpressionResults.dataSet.title",  Constraints.eq(DATASET));
+        q.addConstraint("Gene.mRNAExpressionResults.dataSet.name",  Constraints.eq(DATASET));
 
         // stage (category)
         q.addConstraint("Gene.mRNAExpressionResults.stageRange",

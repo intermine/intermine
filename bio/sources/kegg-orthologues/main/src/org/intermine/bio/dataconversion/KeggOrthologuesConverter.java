@@ -29,10 +29,12 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 /**
+ * Create orthologues based on KEGG pathways.
  *
- * @author
+ * @author Julie Sullivan
  */
 public class KeggOrthologuesConverter extends BioFileConverter
 {
@@ -48,11 +50,9 @@ public class KeggOrthologuesConverter extends BioFileConverter
     private static final Pattern HOMOLOGUE_PATTERN = Pattern.compile(REGULAR_EXPRESSION);
     protected IdResolverFactory resolverFactory;
     private IdResolver flyResolver;
-    private Map<String, String[]> config = new HashMap();
-    private Set<String> taxonIds = new HashSet();
-    private Map<String, String> identifiersToGenes = new HashMap();
-    private Set<String> synonyms = new HashSet();
-    private Map<String, String> organisms = new HashMap();
+    private Map<String, String[]> config = new HashMap<String, String[]>();
+    private Set<String> taxonIds = new HashSet<String>();
+    private Map<String, String> identifiersToGenes = new HashMap<String, String>();
 
     /**
      * Constructor
@@ -117,7 +117,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        Set<String> homologues = new HashSet();
+        Set<String> homologues = new HashSet<String>();
         BufferedReader br = new BufferedReader(reader);
         String line = null;
         while ((line = br.readLine()) != null) {
@@ -136,12 +136,13 @@ public class KeggOrthologuesConverter extends BioFileConverter
                     processHomologues(identifier, homologues);
                 }
                 // reset list
-                homologues = new HashSet();
+                homologues = new HashSet<String>();
             }
         }
     }
 
-    private void processLine(String line, Set<String> homologues) throws ObjectStoreException {
+    private void processLine(String line, Set<String> homologues)
+        throws ObjectStoreException, SAXException {
         // split taxon abbreviation and identifier, eg. HSA: 7358(UGDH)
         String[] bits = line.split(" ");
         if (bits.length < 2) {
@@ -174,7 +175,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
 
     // for this gene, loop through other genes and make homologue pair
     private void processHomologues(String identifier, Set<String> homologues)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         for (String homologue : homologues) {
             if (!homologue.equals(identifier)) {
                 processHomologue(identifier, homologue);
@@ -195,7 +196,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
 
     // save homologue pair
     private void processHomologue(String gene1, String gene2)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         Item homologue = createItem("Homologue");
         homologue.setReference("gene", gene1);
         homologue.setReference("homologue", gene2);
@@ -209,7 +210,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
     }
 
     private String getGene(String identifierType, String id, String taxonId)
-    throws ObjectStoreException {
+        throws ObjectStoreException, SAXException {
         String identifier = id;
         if (taxonId.equals("7227")) {
             identifier = resolveGene(identifier);
@@ -224,47 +225,8 @@ public class KeggOrthologuesConverter extends BioFileConverter
             gene.setAttribute(identifierType, identifier);
             gene.setReference("organism", getOrganism(taxonId));
             identifiersToGenes.put(identifier, refId);
-            getSynonym(refId, "identifier", identifier);
             try {
                 store(gene);
-            } catch (ObjectStoreException e) {
-                throw new ObjectStoreException(e);
-            }
-
-        }
-        return refId;
-    }
-
-    private void getSynonym(String subjectId, String type, String value)
-    throws ObjectStoreException {
-        String key = subjectId + type + value;
-        if (StringUtils.isEmpty(value)) {
-            return;
-        }
-        if (!synonyms.contains(key)) {
-            Item syn = createItem("Synonym");
-            syn.setReference("subject", subjectId);
-            syn.setAttribute("type", type);
-            syn.setAttribute("value", value);
-            synonyms.add(key);
-            try {
-                store(syn);
-            } catch (ObjectStoreException e) {
-                throw new ObjectStoreException(e);
-            }
-        }
-    }
-
-    private String getOrganism(String taxonId)
-    throws ObjectStoreException {
-        String refId = organisms.get(taxonId);
-        if (refId == null) {
-            Item item = createItem("Organism");
-            item.setAttribute("taxonId", taxonId);
-            refId = item.getIdentifier();
-            organisms.put(taxonId, refId);
-            try {
-                store(item);
             } catch (ObjectStoreException e) {
                 throw new ObjectStoreException(e);
             }
@@ -273,7 +235,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
     }
 
     private String getEvidence()
-    throws ObjectStoreException {
+        throws ObjectStoreException {
 
         if (evidenceRefId == null) {
 

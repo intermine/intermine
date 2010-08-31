@@ -72,7 +72,7 @@ public class GenesFileProcessor
     }
 
     private void initReader(Reader fileReader) {
-         infoReader = new BufferedReader(fileReader);
+        infoReader = new BufferedReader(fileReader);
     }
 
     /**
@@ -244,7 +244,7 @@ public class GenesFileProcessor
         gene.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
         gene.setAttribute("primaryIdentifier", primaryIdentifier);
         gene.setReference("organism", organism);
-        gene.setCollection("dataSets", new ArrayList(Collections.singleton(datasetRefId)));
+        gene.setCollection("dataSets", new ArrayList<String>(Collections.singleton(datasetRefId)));
         return gene;
     }
 

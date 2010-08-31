@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * A task the replace the locatedsequencefeatureoverlappingfeatures table with a view that uses the
+ * A task the replace the sequencefeatureoverlappingfeatures table with a view that uses the
  * bioseg type to calculate the overlaps.
  * @author Kim Rutherford
  */
@@ -41,7 +41,7 @@ public class OverlapViewTask
     }
 
     /**
-     * Drop the locatedsequencefeatureoverlappingfeatures table and replace it with a view that
+     * Drop the sequencefeatureoverlappingfeatures table and replace it with a view that
      * uses the bioseg type to calculate the overlaps.
      * @throws SQLException if there is a problem dropping the table or creating the view
      */
@@ -51,14 +51,14 @@ public class OverlapViewTask
 
         con.setAutoCommit(false);
 
-        String dropSql = "DROP TABLE locatedsequencefeatureoverlappingfeatures";
+        String dropSql = "DROP TABLE overlappingfeaturessequencefeature";
         String viewSql =
-            "CREATE VIEW locatedsequencefeatureoverlappingfeatures "
-            + " AS SELECT l1.subjectid AS overlappingfeatures, "
-            + "           l2.subjectid AS locatedsequencefeature "
+            "CREATE VIEW overlappingfeaturessequencefeature "
+            + " AS SELECT l1.featureid AS overlappingfeatures, "
+            + "           l2.featureid AS sequencefeature "
             + "      FROM location l1, location l2 "
-            + "     WHERE l1.objectid = l2.objectid "
-            + "       AND l1.subjectid != l2.subjectid"
+            + "     WHERE l1.locatedonid = l2.locatedonid "
+            + "       AND l1.featureid != l2.featureid"
             + "       AND bioseg_create(l1.intermine_start, l1.intermine_end) "
             + "              && bioseg_create(l2.intermine_start, l2.intermine_end)";
 

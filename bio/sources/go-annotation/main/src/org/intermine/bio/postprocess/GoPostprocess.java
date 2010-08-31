@@ -59,20 +59,20 @@ public class GoPostprocess extends PostProcessor
      * @throws ObjectStoreException if anything goes wrong
      */
     public void postProcess()
-    throws ObjectStoreException {
+        throws ObjectStoreException {
 
         long startTime = System.currentTimeMillis();
 
         osw.beginTransaction();
 
-        Iterator resIter = findProteinProperties(false);
+        Iterator<?> resIter = findProteinProperties(false);
 
         int count = 0;
         Gene lastGene = null;
         Set<GOAnnotation> goCollection = new HashSet<GOAnnotation>();
 
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             Gene thisGene = (Gene) rr.get(0);
             GOAnnotation thisAnnotation = (GOAnnotation) rr.get(1);
 
@@ -121,8 +121,8 @@ public class GoPostprocess extends PostProcessor
      * @param restrictToPrimaryGoTermsOnly Only get primary Annotation items linking the gene
      *  and the go term.
      */
-    private Iterator findProteinProperties(boolean restrictToPrimaryGoTermsOnly)
-    throws ObjectStoreException {
+    private Iterator<?> findProteinProperties(boolean restrictToPrimaryGoTermsOnly)
+        throws ObjectStoreException {
         Query q = new Query();
 
         q.setDistinct(false);

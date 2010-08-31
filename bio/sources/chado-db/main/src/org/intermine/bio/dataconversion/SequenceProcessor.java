@@ -30,7 +30,6 @@ import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.chado.config.ConfigAction;
-import org.intermine.bio.chado.config.CreateCollectionAction;
 import org.intermine.bio.chado.config.CreateSynonymAction;
 import org.intermine.bio.chado.config.DoNothingAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
@@ -39,14 +38,15 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.bio.LocatedSequenceFeature;
-import org.intermine.model.bio.Transcript;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
+import org.xml.sax.SAXException;
+
 
 /**
  * A processor for the chado sequence module.
@@ -60,7 +60,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     private static final Logger LOG = Logger.getLogger(SequenceProcessor.class);
 
-    // a map from chado feature id to FeatureData objects, populated by processFeatureTable()
+    // a map from chado feature id to FeatureData objects, prpulated by processFeatureTable()
     // and used to get object types, Item IDs etc. (see FeatureData)
     protected Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
 
@@ -110,17 +110,12 @@ public class SequenceProcessor extends ChadoProcessor
     // unique
     private static final String TEMP_FEATURE_TABLE_NAME_PREFIX = "intermine_chado_features_temp";
 
-    // map used by processFeatureCVTermTable() to make sure the singletons objects (eg. those of
-    // class "SequenceOntologyTerm") are only created once
-    private final MultiKeyMap singletonMap = new MultiKeyMap();
-
     static final String PRIMARY_IDENTIFIER_STRING = "primaryIdentifier";
     static final String SECONDARY_IDENTIFIER_STRING = "secondaryIdentifier";
     static final String SYMBOL_STRING = "symbol";
     static final String NAME_STRING = "name";
     static final String SEQUENCE_STRING = "sequence";
     static final String LENGTH_STRING = "length";
-
     static final String SOURCE_STRING = "source";
 
     /**
@@ -143,7 +138,6 @@ public class SequenceProcessor extends ChadoProcessor
     protected void initialiseFeatureMap(Map<Integer, FeatureData> initialMap) {
         featureMap.putAll(initialMap);
     }
-
 
     /**
      * Return the config Map.
@@ -263,7 +257,7 @@ public class SequenceProcessor extends ChadoProcessor
                                            String name, int seqlen, String residues,
                                            String md5checksum, String chadoType,
                                            Integer organismId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
 
         if (featureMap.containsKey(featureId)) {
             return false;
@@ -353,35 +347,19 @@ public class SequenceProcessor extends ChadoProcessor
             }
         }
 
-        // always create a synonym for the uniquename
-        boolean uniqueNameSet = false;
-        if (fieldValuesSet.contains(fixedUniqueName)) {
-            uniqueNameSet = true;
-        }
-        Item uniqueNameSynonym = createSynonym(fdat, "identifier", fixedUniqueName,
-                                               uniqueNameSet, null);
-        if (uniqueNameSynonym != null) {
-            getChadoDBConverter().store(uniqueNameSynonym);
-        }
-
         // create a synonym for name, if configured
         if (!StringUtils.isBlank(name)) {
-            if (nameActionList == null || nameActionList.size() == 0) {
-                nameActionList = new ArrayList<ConfigAction>();
-                nameActionList.add(new CreateSynonymAction());
-            }
-
-            for (ConfigAction action : nameActionList) {
-                if (action instanceof CreateSynonymAction) {
-                    CreateSynonymAction createSynonymAction = (CreateSynonymAction) action;
-                    if (createSynonymAction.isValidValue(fixedName)) {
-                        String processedName = createSynonymAction.processValue(fixedName);
-                        if (!fdat.getExistingSynonyms().contains(processedName)) {
-                            boolean nameSet = fieldValuesSet.contains(processedName);
-                            Item nameSynonym =
-                                createSynonym(fdat, "name", processedName, nameSet, null);
-                            if (nameSynonym != null) {
-                                getChadoDBConverter().store(nameSynonym);
+            if (nameActionList != null) {
+                for (ConfigAction action : nameActionList) {
+                    if (action instanceof CreateSynonymAction) {
+                        CreateSynonymAction createSynonymAction = (CreateSynonymAction) action;
+                        if (createSynonymAction.isValidValue(fixedName)) {
+                            String processedName = createSynonymAction.processValue(fixedName);
+                            if (!fdat.getExistingSynonyms().contains(processedName)) {
+                                Item nameSynonym = createSynonym(fdat, processedName);
+                                if (nameSynonym != null) {
+                                    getChadoDBConverter().store(nameSynonym);
+                                }
                             }
                         }
                     }
@@ -407,7 +385,7 @@ public class SequenceProcessor extends ChadoProcessor
      */
 
     protected void setGeneSource(Integer imObjectId, String dataSourceName)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         // for gene in modENCODE
         ClassDescriptor cd = getModel().getClassDescriptorByName("Gene");
         if (cd.getFieldDescriptorByName("source") != null) {
@@ -440,6 +418,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Create and store a new Item, returning a FeatureData object for the feature.
+     *
      * @param featureId the chado id from the feature table
      * @param chadoType the type of the feature from the feature + cvterm tables
      * @param uniqueName the uniquename from chado
@@ -464,17 +443,14 @@ public class SequenceProcessor extends ChadoProcessor
             return null;
         }
         int taxonId = organismData.getTaxonId();
-        FeatureData fdat;
-        fdat = new FeatureData();
+        FeatureData fdat = new FeatureData();
         Item organismItem = getChadoDBConverter().getOrganismItem(taxonId);
         feature.setReference("organism", organismItem);
         if (feature.checkAttribute("md5checksum")) {
             feature.setAttribute("md5checksum", md5checksum);
         }
-        // See #2287
-//        if (feature.checkAttribute("featureType")) {
-//            feature.setAttribute("featureType", chadoType);
-//        }
+        BioStoreHook.setSOTerm(getChadoDBConverter(), feature, chadoType,
+                getChadoDBConverter().getSequenceOntologyRefId());
         fdat.setFieldExistenceFlags(feature);
         fdat.setIntermineObjectId(store(feature, taxonId));
         fdat.setItemIdentifier(feature.getIdentifier());
@@ -515,7 +491,7 @@ public class SequenceProcessor extends ChadoProcessor
     }
 
     /**
-     * Get a list of the chado/so types of the LocatedSequenceFeatures we wish to load.  The list
+     * Get a list of the chado/so types of the SequenceFeatures we wish to load.  The list
      * will not include chromosome-like features (eg. "chromosome" and "chromosome_arm").  The
      * process methods will ignore features that are not in this list.
      * @return the list of features
@@ -558,10 +534,7 @@ public class SequenceProcessor extends ChadoProcessor
             return "three_prime_UTR";
         }
         return type;
-
-
     }
-
 
     /**
      * Do any extra processing that is needed before the converter starts querying features
@@ -641,7 +614,7 @@ public class SequenceProcessor extends ChadoProcessor
                         throw new RuntimeException("unable to find class object for setting "
                                                    + "a chromosome reference", e);
                     }
-                    if (LocatedSequenceFeature.class.isAssignableFrom(featureClass)) {
+                    if (SequenceFeature.class.isAssignableFrom(featureClass)) {
                         Integer featureIntermineObjectId = featureData.getIntermineObjectId();
                         if (srcFeatureData.getInterMineType().equals("Chromosome")) {
                             Reference chrReference = new Reference();
@@ -660,7 +633,7 @@ public class SequenceProcessor extends ChadoProcessor
                         }
                     } else {
                         LOG.warn("featureId (" + featureId + ") from location " + featureLocId
-                                + " was expected to be a LocatedSequenceFeature");
+                                + " was expected to be a SequenceFeature");
                     }
                     count++;
                 } else {
@@ -687,12 +660,12 @@ public class SequenceProcessor extends ChadoProcessor
     }
 
     /**
-     * Make a Location Relation between a LocatedSequenceFeature and a Chromosome.
+     * Make a Location between a SequenceFeature and a Chromosome.
      * @param start the start position
      * @param end the end position
      * @param strand the strand
      * @param srcFeatureData the FeatureData for the src feature (the Chromosome)
-     * @param featureData the FeatureData for the LocatedSequenceFeature
+     * @param featureData the FeatureData for the SequenceFeature
      * @param taxonId the taxon id to use when finding the Chromosome for the Location
      * @return the new Location object
      * @throws ObjectStoreException if there is a problem while storing
@@ -714,9 +687,6 @@ public class SequenceProcessor extends ChadoProcessor
         throws SQLException, ObjectStoreException {
         ResultSet res = getFeatureRelationshipResultSet(connection, subjectFirst);
         Integer lastSubjectId = null;
-
-        // a Map from transcript object id to count of exons
-        Map<Integer, Integer> countMap = new HashMap<Integer, Integer>();
 
         // Map from relation type to Map from object type to FeatureData - used to collect up all
         // the collection/reference information for one subject feature
@@ -772,35 +742,6 @@ public class SequenceProcessor extends ChadoProcessor
                                                       featureDataList);
                     }
                     featureDataList.add(objectFeatureData);
-
-                    // special case: collect data for setting Transcript.exonCount
-                    Class<?> objectClass;
-                    try {
-                        objectClass = Class.forName(getModel().getPackageName() + "."
-                                                    + objectFeatureType);
-                    } catch (ClassNotFoundException e) {
-                        final String message =
-                            "can't find class for " + objectFeatureType
-                            + " while processing relation: " + featRelationshipId;
-                        throw new RuntimeException(message);
-                    }
-                    if (Transcript.class.isAssignableFrom(objectClass)) {
-                        FeatureData subjectFeatureData = featureMap.get(firstFeature1Id);
-
-                        // XXX FIXME TODO Hacky special case: count the exons so we can set
-                        // exonCount later.  Perhaps this should be configurable.
-                        if (subjectFeatureData.getInterMineType().equals("Exon")) {
-                            if (!countMap.containsKey(objectFeatureData.getIntermineObjectId())) {
-                                countMap.put(objectFeatureData.getIntermineObjectId(),
-                                             new Integer(1));
-                            } else {
-                                Integer currentVal =
-                                    countMap.get(objectFeatureData.getIntermineObjectId());
-                                countMap.put(objectFeatureData.getIntermineObjectId(),
-                                             new Integer(currentVal.intValue() + 1));
-                            }
-                        }
-                    }
                 } else {
                     if (featureWarnings <= 20) {
                         if (featureWarnings < 20) {
@@ -834,13 +775,6 @@ public class SequenceProcessor extends ChadoProcessor
         LOG.info("processed " + count + " relations");
         LOG.info("total collection elements created: " + collectionTotal);
         res.close();
-
-        // XXX FIXME TODO Hacky special case: set the exonCount fields
-        for (Map.Entry<Integer, Integer> entry: countMap.entrySet()) {
-            Integer featureId = entry.getKey();
-            Integer collectionCount = entry.getValue();
-            setAttribute(featureId, "exonCount", String.valueOf(collectionCount));
-        }
     }
 
     /**
@@ -928,7 +862,7 @@ public class SequenceProcessor extends ChadoProcessor
 
                 if (fds.size() == 0) {
                     if (!loggedMissingCols.contains(subjectInterMineType + relationType)) {
-                        LOG.error("can't find collection for type " + objectClass 
+                        LOG.error("can't find collection for type " + objectClass
                                 + " with relationship " + relationType
                                 + " in " + subjectInterMineType + " (was processing feature "
                                 + chadoSubjectId + ")");
@@ -1045,7 +979,7 @@ public class SequenceProcessor extends ChadoProcessor
         throws SQLException, ObjectStoreException {
 
         ResultSet res = getDbxrefResultSet(connection);
-        Set<String> existingAttributes = new HashSet();
+        Set<String> existingAttributes = new HashSet<String>();
         Integer currentFeatureId = null;
         int count = 0;
 
@@ -1113,13 +1047,7 @@ public class SequenceProcessor extends ChadoProcessor
                         if (fdat.getExistingSynonyms().contains(newFieldValue)) {
                             continue;
                         }
-                        boolean isPrimary = false;
-                        if (fieldsSet.contains(newFieldValue)) {
-                            isPrimary = true;
-                        }
-                        Item synonym = createSynonym(fdat, "identifier", newFieldValue,
-                                                     isPrimary, null);
-
+                        Item synonym = createSynonym(fdat, newFieldValue);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
                             count++;
@@ -1189,16 +1117,7 @@ public class SequenceProcessor extends ChadoProcessor
                         if (existingSynonyms.contains(newFieldValue)) {
                             continue;
                         }
-                        String synonymType = synonymAction.getSynonymType();
-                        if (synonymType == null) {
-                            synonymType = propTypeName;
-                        }
-                        boolean isPrimary = false;
-                        if (fieldsSet.contains(newFieldValue)) {
-                            isPrimary = true;
-                        }
-                        Item synonym = createSynonym(fdat, synonymType, newFieldValue,
-                                                     isPrimary, null);
+                        Item synonym = createSynonym(fdat, newFieldValue);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
                             count++;
@@ -1217,7 +1136,7 @@ public class SequenceProcessor extends ChadoProcessor
      */
     @SuppressWarnings("unused")
     private void processLibraryFeatureTable(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getLibraryFeatureResultSet(connection);
         while (res.next()) {
 
@@ -1239,7 +1158,7 @@ public class SequenceProcessor extends ChadoProcessor
                     // no actions configured for this prop
                     continue;
                 }
-                Set<String> fieldsSet = new HashSet();
+                Set<String> fieldsSet = new HashSet<String>();
 
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
@@ -1266,7 +1185,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException if somethign goes wrong
      */
     protected String makeAnatomyTerm(String identifier)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         // override in subclasses as necessary
         return null;
     }
@@ -1277,7 +1196,7 @@ public class SequenceProcessor extends ChadoProcessor
      */
     @SuppressWarnings("unused")
     private void processLibraryCVTermTable(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getLibraryCVTermResultSet(connection);
 
         while (res.next()) {
@@ -1386,48 +1305,45 @@ public class SequenceProcessor extends ChadoProcessor
                         if (existingSynonyms.contains(newFieldValue)) {
                             continue;
                         }
-                        String synonymType = synonymAction.getSynonymType();
-                        boolean isPrimary = false;
-                        if (fieldsSet.contains(newFieldValue)) {
-                            isPrimary = true;
-                        }
-                        Item synonym = createSynonym(fdat, synonymType, newFieldValue,
-                                                     isPrimary, null);
+                        Item synonym = createSynonym(fdat, newFieldValue);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
                             count++;
                         }
                     } else {
-                        if (action instanceof CreateCollectionAction) {
-                            CreateCollectionAction cca = (CreateCollectionAction) action;
-
-                            Item item = null;
-                            String fieldName = cca.getFieldName();
-                            String className = cca.getClassName();
-                            if (cca.createSingletons()) {
-                                MultiKey singletonKey =
-                                    new MultiKey(className, fieldName, cvtermName);
-                                item = (Item) singletonMap.get(singletonKey);
-                            }
-                            if (item == null) {
-                                item = getChadoDBConverter().createItem(className);
-                                item.setAttribute(fieldName, cvtermName);
-                                getChadoDBConverter().store(item);
-                                if (cca.createSingletons()) {
-                                    singletonMap.put(key, item);
-                                }
-                            }
-
-                            String referenceName = cca.getReferenceName();
-                            List<Item> itemList;
-                            if (dataMap.containsKey(referenceName)) {
-                                itemList = dataMap.get(referenceName);
-                            } else {
-                                itemList = new ArrayList<Item>();
-                                dataMap.put(referenceName, itemList);
-                            }
-                            itemList.add(item);
-                        }
+                        // TODO fixme
+//                        if (action instanceof CreateCollectionAction) {
+//                            CreateCollectionAction cca = (CreateCollectionAction) action;
+//
+//                            Item item = null;
+//                            String fieldName = cca.getFieldName();
+//                            String className = cca.getClassName();
+//                            if (cca.createSingletons()) {
+//                                MultiKey singletonKey =
+//                                    new MultiKey(className, fieldName, cvtermName);
+//                                item = (Item) singletonMap.get(singletonKey);
+//                            }
+//                            if (item == null) {
+//                                item = getChadoDBConverter().createItem(className);
+//                                item.setAttribute(fieldName, cvtermName);
+//                                getChadoDBConverter().store(item);
+//                                if (cca.createSingletons()) {
+//                                    singletonMap.put(key, item);
+//                                }
+//                            }
+//
+//                            String referenceName = cca.getReferenceName();
+//                            List<Item> itemList;
+//                            // creating collection, already seen this ref
+//                            if (dataMap.containsKey(referenceName)) {
+//                                itemList = dataMap.get(referenceName);
+//                            // new collection
+//                            } else {
+//                                itemList = new ArrayList<Item>();
+//                                dataMap.put(referenceName, itemList);
+//                            }
+//                            itemList.add(item);
+//                        }
                     }
                 }
             }
@@ -1539,9 +1455,6 @@ public class SequenceProcessor extends ChadoProcessor
                     // no actions configured for this synonym
                     continue;
                 }
-
-                boolean setField = false;
-
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
@@ -1551,7 +1464,6 @@ public class SequenceProcessor extends ChadoProcessor
                             setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
                                          newFieldValue);
                             existingAttributes.add(setAction.getFieldName());
-                            setField = true;
                             if (setAction.getFieldName().equals("primaryIdentifier")) {
                                 fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
                             }
@@ -1570,8 +1482,7 @@ public class SequenceProcessor extends ChadoProcessor
                             continue;
                         }
                         Item synonym =
-                            createSynonym(fdat, synonymTypeName, newFieldValue, setField,
-                                          null);
+                            createSynonym(fdat, newFieldValue);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
                             count++;
@@ -2003,6 +1914,11 @@ public class SequenceProcessor extends ChadoProcessor
         return res;
     }
 
+//    SELECT fp.value
+//    FROM feature f, featureprop fp, cvterm cvt
+//    WHERE f.feature_id = fp.feature_id AND fp.type_id = cvt.cvterm_id AND
+//      cvt.name = 'promoted_gene_type' AND f.uniquename = 'FBgn0000011';
+
     /**
      * Return the interesting rows from the libraryprop table.
      * This is a protected method so that it can be overridden for testing
@@ -2123,31 +2039,27 @@ public class SequenceProcessor extends ChadoProcessor
      * Call DataConverter.createSynonym(), store the Item then record in FeatureData that we've
      * created it.
      * @param fdat the FeatureData
-     * @param type the synonym type
      * @param identifier the identifier to store in the Synonym
-     * @param isPrimary true if the synonym is a primary identifier
-     * @param otherEvidence the evidence collection to store in the Synonym
      * @return the new Synonym
      * @throws ObjectStoreException if there is a problem while storing
      */
-    protected Item createSynonym(FeatureData fdat, String type, String identifier,
-                                 boolean isPrimary, List<Item> otherEvidence)
+    protected Item createSynonym(FeatureData fdat, String identifier)
         throws ObjectStoreException {
         if (fdat.getExistingSynonyms().contains(identifier)) {
             String msg = "feature identifier " + identifier + " is already a synonym for: "
-            + fdat.getExistingSynonyms();
+                + fdat.getExistingSynonyms();
             LOG.info(msg);
 //          TODO:  why would a duplicate synonym require an exception to be thrown?
 //          throw new IllegalArgumentException(msg);
             return null;
         }
-        List<Item> allEvidence = new ArrayList();
-        if (otherEvidence != null) {
-            allEvidence.addAll(otherEvidence);
+        Item returnItem = null;
+        try {
+            returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(), identifier,
+                    false);
+        } catch (SAXException e) {
+            throw new RuntimeException("Couldn't create synonym", e);
         }
-        Item returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(), type,
-                                                              identifier, isPrimary,
-                                                              allEvidence);
         fdat.addExistingSynonym(identifier);
         return returnItem;
     }

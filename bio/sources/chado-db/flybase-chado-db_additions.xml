@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="NaturalTransposableElement" extends="Region" is-interface="true"/>
-
-  <class name="PhenotypeAnnotation" extends="Annotation" is-interface="true">
+  <class name="PhenotypeAnnotation" is-interface="true">
     <attribute name="description" type="java.lang.String"/>
     <attribute name="annotationType" type="java.lang.String"/>
     <reference name="allele" referenced-type="Allele" reverse-reference="phenotypeAnnotations"/>
@@ -20,8 +18,9 @@
     <collection name="mutagens" referenced-type="Mutagen" reverse-reference="alleles"/>
     <collection name="phenotypeAnnotations" referenced-type="PhenotypeAnnotation" reverse-reference="allele"/>
   </class>
-  <class name="InteractionExperiment" extends="Experiment" is-interface="true">
+  <class name="InteractionExperiment" is-interface="true">
    <attribute name="name" type="java.lang.String"/>
+   <reference name="publication" referenced-type="Publication"/>
    <collection name="interactions" referenced-type="Interaction" reverse-reference="experiment"/>
   </class>
   <class name="Interaction" is-interface="true">
@@ -34,7 +33,6 @@
     <collection name="dataSets" referenced-type="DataSet"/>
   </class>
   <class name="Gene" is-interface="true">
-    <attribute name="featureType" type="java.lang.String"/>
     <collection name="interactions" referenced-type="Interaction" reverse-reference="gene"/>
   </class>
   <class name="Mutagen" is-interface="true">
@@ -44,12 +42,11 @@
   <class name="AnatomyTerm" extends="OntologyTerm" is-interface="true" />
   <class name="DevelopmentTerm" extends="OntologyTerm" is-interface="true" />
   <class name="CVTerm" extends="OntologyTerm" is-interface="true"/>
-  <class name="ChromosomeStructureVariation" extends="LocatedSequenceFeature" is-interface="true">
-    <collection name="featureTerms" referenced-type="SequenceOntologyTerm"/>
+  <class name="ChromosomeStructureVariation" is-interface="true">
+    <collection name="abberationSOTerms" referenced-type="SOTerm"/>
   </class>
-  <class name="CDNAClone" extends="BioEntity" is-interface="true">
-	<attribute name="stage" type="java.lang.String"/>	
-	<attribute name="length" type="java.lang.String"/>
-	<reference name="tissueSource" referenced-type="AnatomyTerm" />
-  </class>  
+  <class name="CDNAClone" is-interface="true">
+    <attribute name="stage" type="java.lang.String"/>
+    <reference name="tissueSource" referenced-type="AnatomyTerm" />
+  </class>
 </classes>

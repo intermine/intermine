@@ -10,422 +10,253 @@ package org.intermine.bio.ontology;
  *
  */
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
 /**
  * Processes list of root OboTerms to produce the equivalent Model
  *
- * @author Mark Woodbridge
- * @author Matthew Wakeling
+ * @author Julie Sullivan
  */
 public class OboToModel
 {
-    protected static String packageName;
-    protected static Map<String, Set<String>> childNamesToParentNames;
-    protected static Map<String, Set<String>> parentNamesToChildNames;
-    protected static Set<String> termListFromFile;
-    protected static Map<String, Set<String>> namesToPartOfs;
-    // identifier TO fully qualified intermine name, eg. `org.intermine.bio.Gene`
-    protected static Map<String, String> identifierToFullName = new HashMap();
-    // fully qualified name to identifier
-    protected static Map<String, String> fullNameToIdentifier = new HashMap();
-    protected Model model;
-
-    /**
-     * Constructor.
-     *
-     * @param namespace the namespace to use in generating URI-based identifiers
-     */
-    public OboToModel(String namespace) {
-        this.packageName = namespace;
-    }
-
-    /**
-     * Return the model.
-     *
-     * @return the model
-     */
-    public Model getModel() {
-        return model;
-    }
-
-    /**
-     * Specifies how a class name is generated.
-     *
-     * @param term the relevant term
-     * @return the generated class name
-     */
-    private static String generateClassName(String className) {
-        return packageName + "." + TypeUtil.javaiseClassName(className);
-    }
+    // TODO put this in config file - SO:0000340
+    private static final String CHROMOSOME = "chromosome";
 
     /**
      * Run conversion from Obo to Model format.
      *
-     * @param args oboFilename, modelFilename, packageName (eg. org.intermine.model.bio)
-     * @throws IllegalArgumentException if invalid arguments supplied
+     * Examples:
+     *  oboName = so
+     *  oboFileName = $PATH/bio/sources/so/so.obo
+     *  additionsFile = $PATH/bio/sources/so/so_additions.xml
+     *  packageName = org.intermine.model.bio
+     *  filename = so_terms.txt (OPTIONAL)
+     * @param args oboName oboFileName additionsFile packageName filename
      */
-    public static void main(String[] args) throws IllegalArgumentException {
-        if (args.length < 4) {
-            throw new IllegalArgumentException("Usage: newModelName oboFileName modelFileName"
-                    + " packageName filename");
+    public static void main(String[] args) {
+        if (args.length < 3) {
+            String msg = "Usage: oboName oboFileName packageName filename\n "
+                   + "eg. so /home/guest/so.obo org.intermine.bio /home/guest/so_terms.txt";
+            throw new IllegalArgumentException(msg);
         }
 
-        String newModelName = args[0];
+        String oboName = args[0];
         String oboFilename = args[1];
-        String modelFilename = args[2];
-        String newPackageName = args[3];
-        String termsFileName = null;
-        if (args.length > 4) {
-            termsFileName = args[4];
+        String packageName = args[2];
+        File termsFile = null;
+        if (args.length > 3) {
+            termsFile = new File(args[3]);
+        }
+        String additions = oboName + "_additions.xml";
+        File additionsFile = new File(additions);
+
+        OboToModel.createAndWriteModel(oboName, oboFilename,  packageName, termsFile,
+                additionsFile);
+    }
+
+    /**
+     * Parses OBO file and writes an OBO_additions.xml file including those terms.
+     *
+     * @param oboName name of ontology, eg. SO
+     * @param oboFilename path to file, eg. /home/guest/so.obo
+     * @param packageName name of package, eg. org.intermine.bio
+     * @param termsFile file containing list of SO terms to be included in model (optional)
+     * @param outputFile file to write to
+     */
+    public static void createAndWriteModel(String oboName, String oboFilename, String packageName,
+            File termsFile, File outputFile) {
+
+        OboToModelProcessor oboToModelProcessor = new OboToModelProcessor(termsFile, packageName);
+
+        // parse oboterms, delete terms not in list
+        String msg = "Starting OboToModel conversion from " + oboFilename + " to "
+            + outputFile.getPath() + ".  Filtering on " + oboToModelProcessor.getTermsCount()
+            + " obo terms from " + termsFile.getPath();
+        System.out .println(msg);
+        parseOboTerms(oboToModelProcessor, oboFilename, termsFile.getName());
+
+        // classes to go into the final model
+        LinkedHashSet<ClassDescriptor> clds = new LinkedHashSet<ClassDescriptor>();
+
+        // process each oboterm - add parent and collections
+        for (String childIdentifier : oboToModelProcessor.getOboTermIdentifiers()) {
+            // is_a
+            String parents = processParents(oboToModelProcessor, childIdentifier);
+            // part_of
+            ClassDescriptor cd = processRefsAndColls(oboToModelProcessor, parents, childIdentifier);
+            clds.add(cd);
         }
 
-        try {
-            File oboFile = new File(oboFilename);
-            File modelFile = new File(modelFilename);
+        // sort classes by name for readability
+        Comparator<ClassDescriptor> comparator = new Comparator<ClassDescriptor>() {
+            public int compare(ClassDescriptor o1, ClassDescriptor o2) {
+                String fieldName1 = o1.getName().toLowerCase();
+                String fieldName2 = o2.getName().toLowerCase();
+                return fieldName1.compareTo(fieldName2);
+            }
+        };
 
-            System.out .println("Starting OboToModel conversion from " + oboFilename + " to "
-                    + modelFilename);
-            OboParser parser = new OboParser();
+        TreeSet<ClassDescriptor> sortedClds = new TreeSet<ClassDescriptor>(comparator);
+        sortedClds.addAll(clds);
+
+        // write out final model
+        Model model = null;
+        PrintWriter out = null;
+        try {
+            model = new Model(oboName, oboToModelProcessor.getNamespace(), sortedClds);
+            out = new PrintWriter(new BufferedWriter(new FileWriter(outputFile)));
+        } catch (MetaDataException e) {
+            throw new RuntimeException("Invalid model", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't create new model file", e);
+        }
+        out.println(model.toAdditionsXML());
+        out.flush();
+        out.close();
+        System.out .println("Wrote " + outputFile.getPath());
+    }
+
+    private static String processParents(OboToModelProcessor oboToModelMapping,
+            String childIdentifier) {
+        Set<String> parents = oboToModelMapping.getParents(childIdentifier);
+        Set<String> parentsInModel = new HashSet<String>();
+        if (parents != null && !parents.isEmpty()) {
+            for (String parentIdentifier : parents) {
+                if (oboToModelMapping.classInModel(parentIdentifier)) {
+                    String parentName = oboToModelMapping.getName(parentIdentifier);
+                    parentName = TypeUtil.generateClassName(oboToModelMapping.getNamespace(),
+                            parentName);
+                    parentsInModel.add(parentName);
+                }
+            }
+        }
+        String parentList = StringUtil.join(parentsInModel, " ");
+        if (StringUtils.isBlank(parentList)) {
+            parentList = null;
+        }
+        return parentList;
+    }
+
+    private static ClassDescriptor processRefsAndColls(OboToModelProcessor oboToModelMapping,
+            String parents, String childIdentifier) {
+        Set<AttributeDescriptor> fakeAttributes = Collections.emptySet();
+        Set<ReferenceDescriptor> references = new HashSet<ReferenceDescriptor>();
+        Set<CollectionDescriptor> collections = new HashSet<CollectionDescriptor>();
+        Set<String> reversePartOfs = oboToModelMapping.getReversePartOfs(childIdentifier);
+        Set<String> partOfIdentifiers = oboToModelMapping.getPartOfs(childIdentifier);
+        String childOBOName = oboToModelMapping.getName(childIdentifier);
+
+        // part ofs, reference to parent
+        // can be a collection if in config, though
+        if (partOfIdentifiers != null) {
+            for (String parent : partOfIdentifiers) {
+                if (oboToModelMapping.classInModel(parent)) {
+                    // reference
+                    String parentName = oboToModelMapping.getName(parent);
+                    String fullyQualifiedClassName = TypeUtil.generateClassName(
+                            oboToModelMapping.getNamespace(), parentName);
+                    parentName = TypeUtil.javaiseClassName(parentName);
+                    parentName = StringUtil.decapitalise(parentName);
+
+                    // reverse reference
+                    String reverseReference = generateReverseReference(parentName, childOBOName,
+                            true);
+                    if (oboToModelMapping.isManyToMany(parent, childIdentifier)) {
+                        parentName = parentName + "s";
+                        CollectionDescriptor cd = new CollectionDescriptor(parentName,
+                                fullyQualifiedClassName, reverseReference);
+                        collections.add(cd);
+                    } else {
+                        ReferenceDescriptor rd = new ReferenceDescriptor(parentName,
+                                fullyQualifiedClassName, reverseReference);
+                        references.add(rd);
+                    }
+                }
+            }
+        }
+
+        // other side of part_of relationship, collection of children
+        // reverse reference can be a collection if in config
+        if (reversePartOfs != null) {
+            for (String collection : reversePartOfs) {
+                if (oboToModelMapping.classInModel(collection)) {
+                    // collection
+                    String collectionName = TypeUtil.javaiseClassName(
+                            oboToModelMapping.getName(collection));
+                    String fullyQualifiedClassName = TypeUtil.generateClassName(
+                            oboToModelMapping.getNamespace(), collectionName);
+                    collectionName = StringUtil.decapitalise(collectionName) + "s";
+                    // reverse reference
+                    String reverseReference = generateReverseReference(collectionName, childOBOName,
+                            oboToModelMapping.isManyToMany(collection, childIdentifier));
+                    // cd
+                    CollectionDescriptor cd = new CollectionDescriptor(collectionName ,
+                            fullyQualifiedClassName, reverseReference);
+                    collections.add(cd);
+                }
+            }
+        }
+
+        String childName = TypeUtil.generateClassName(oboToModelMapping.getNamespace(),
+                oboToModelMapping.getName(childIdentifier));
+        return new ClassDescriptor(childName, parents, true, fakeAttributes, references,
+                collections);
+    }
+
+    private static String generateReverseReference(String parent, String child,
+            boolean manyToMany) {
+        // TODO put this in config file
+        if (parent.equals(CHROMOSOME) || child.equals(CHROMOSOME)) {
+            return null;
+        }
+        String reverseReference = TypeUtil.javaiseClassName(child);
+        reverseReference = StringUtil.decapitalise(reverseReference);
+        if (manyToMany) {
+            reverseReference = reverseReference + "s";
+        }
+        return reverseReference;
+    }
+
+    private static void parseOboTerms(OboToModelProcessor oboToModelProcessor, String oboFilename,
+            String termsFileName) {
+        File oboFile = new File(oboFilename);
+
+        // parse file using OBOEdit
+        OboParser parser = new OboParser();
+        try {
             parser.processOntology(new FileReader(oboFile));
             parser.processRelations(oboFilename);
-
-            OboToModel owler = new OboToModel(newPackageName);
-            owler.processOboTerms(parser.getOboTerms());
-            owler.processRelations(parser.getOboRelations(), termsFileName);
-
-            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(modelFile)));
-            Set<ClassDescriptor> clds = new HashSet();
-
-            // process each oboterm
-            for (String childName : owler.identifierToFullName.values()) {
-
-                // set parents
-                StringBuffer parents = new StringBuffer();
-                boolean needComma = false;
-                Set<String> parentNames = owler.childNamesToParentNames.get(childName);
-                if (parentNames != null) {
-                    for (String parentName : parentNames) {
-                        if (owler.identifierToFullName.containsValue(parentName)) {
-                            if (needComma) {
-                                parents.append(" ");
-                            }
-                            needComma = true;
-                            parents.append(parentName);
-                        }
-                    }
-                    String parentString = parents.toString();
-                    parentString = parentString.trim();
-                    if (StringUtils.isEmpty(parentString)) {
-                        parentNames = null;
-                    }
-                }
-                Set<AttributeDescriptor> fakeAttributes = Collections.emptySet();
-                Set<ReferenceDescriptor> fakeReferences = Collections.emptySet();
-                Set<CollectionDescriptor> collections = Collections.emptySet();
-                Set<String> collectionIdentifiers = owler.namesToPartOfs.get(childName);
-
-                // add collections
-                if (collectionIdentifiers != null) {
-                    collections = new HashSet();
-                    for (String partof : owler.namesToPartOfs.get(childName)) {
-                        // only add collections in our model
-                        if (owler.identifierToFullName.containsValue(partof)) {
-                            String[] bits = partof.split("\\.");
-                            CollectionDescriptor cd = new CollectionDescriptor(
-                                    TypeUtil.javaiseClassName(bits[bits.length - 1])
-                                    + "s", partof, null);
-                            collections.add(cd);
-                        }
-                    }
-                }
-                clds.add(new ClassDescriptor(childName,
-                        (parentNames == null ? null : parents.toString()),
-                        true, fakeAttributes, fakeReferences, collections));
-            }
-            Model model = new Model(newModelName, newPackageName, clds);
-            out.println(model);
-            out.flush();
-            out.close();
-            System.out .println("Wrote " + modelFile.getCanonicalPath());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Couldn't find obo file", e);
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void processRelations(List<OboRelation> oboRelations, String termsFileName) {
-        childNamesToParentNames = new HashMap();
-        namesToPartOfs = new HashMap();
-        for (OboRelation r : oboRelations) {
-            String childName = identifierToFullName.get(r.childTermId);
-            String parentName = identifierToFullName.get(r.parentTermId);
-
-            if (StringUtils.isEmpty(childName) || StringUtils.isEmpty(parentName)) {
-                continue;
-            }
-
-            String relationshipType = r.getRelationship().getName();
-            if (relationshipType.equals("part_of") && r.direct) {
-                Set<String> partofs = namesToPartOfs.get(childName);
-                if (partofs == null) {
-                    partofs = new HashSet();
-                    namesToPartOfs.put(childName, partofs);
-                }
-                partofs.add(parentName);
-            } else if (relationshipType.equals("is_a") && r.direct) {
-                Set<String> parents = childNamesToParentNames.get(childName);
-                if (parents == null) {
-                    parents = new HashSet();
-                    childNamesToParentNames.put(childName, parents);
-                }
-                parents.add(parentName);
-            }
-        }
-        if (StringUtils.isNotEmpty(termsFileName)) {
-            trimModel(termsFileName);
-        }
-    }
-
-
-    private static void trimModel(String termsFileName) {
-
-        // build parent --> children map
-        parentNamesToChildNames = new HashMap();
-        for (String child : childNamesToParentNames.keySet()) {
-            Set<String> parents = childNamesToParentNames.get(child);
-            for (String parent : parents) {
-                Set<String> kids = parentNamesToChildNames.get(parent);
-                if (kids == null) {
-                    kids = new HashSet();
-                    parentNamesToChildNames.put(parent, kids);
-                }
-                kids.add(child);
-            }
+            throw new RuntimeException("Parsing obo file failed", e);
         }
 
-        termListFromFile = processTermFile(termsFileName);
-        Map<String, String> oboTermsCopy = new HashMap(identifierToFullName);
-
-        System.out.println("Total terms: " + identifierToFullName.size());
-
-        for (String oboTerm : oboTermsCopy.values()) {
-            if (!termListFromFile.contains(oboTerm)) {
-                prune(oboTerm);
-            }
-        }
-
-        System.out.println("Total terms, post-pruning: " + identifierToFullName.size());
-
-        oboTermsCopy = new HashMap(identifierToFullName);
-
-        for (String oboTerm : oboTermsCopy.values()) {
-            if (!termListFromFile.contains(oboTerm)) {
-                flatten(oboTerm);
-            }
-        }
-
-        System.out.println("Total terms, post-flattening: " + identifierToFullName.size());
-    }
-
-    /*
-     * remove term if:
-     *  1. not in list of desired terms
-     *  2. no children
-     */
-    private static void prune(String oboTermName) {
-        // process each child term
-        if (parentNamesToChildNames.get(oboTermName) != null) {
-            Set<String> children = new HashSet(parentNamesToChildNames.get(oboTermName));
-            for (String childName : children) {
-                prune(childName);
-            }
-        }
-
-        // if this term has no children AND it's not on our list = DELETE
-        if (!parentNamesToChildNames.containsKey(oboTermName)) {
-            removeTerm(oboTermName);
-        }
-    }
-
-    /*
-     * remove term if not on list AND:
-     *  (a) term has only ONE parent and ONE child
-     *  (b) term has only ONE parent and NO children
-     *  (c) term has NO parents and only ONE child
-     */
-    private static void flatten(String oboTerm) {
-
-        // process children of this term first
-        // can't do this, `Exception in thread "main" java.lang.StackOverflowError`
-//        if (parentNamesToChildNames.get(oboTerm) != null) {
-//            Set<String> children = new HashSet(parentNamesToChildNames.get(oboTerm));
-//            for (String child : children) {
-//                flatten(child);
-//            }
-//        }
-
-        Set<String> parents = childNamesToParentNames.get(oboTerm);
-        Set<String> kids = parentNamesToChildNames.get(oboTerm);
-
-        // has both parents and children
-        if (parents != null && kids != null) {
-
-            // multiple parents and children.  can't flatten.
-            if (parents.size() > 1 && kids.size() > 1) {
-                return;
-            }
-
-            // term only has one parent.  remove and assign parents and kids to each other.
-            if (parents.size() == 1) {
-                String parent = parents.toArray()[0].toString();
-
-                // add kids to new parent
-                parentNamesToChildNames.get(parent).addAll(kids);
-
-                // reassign kids to new parent
-                for (String kid : kids) {
-                    Set<String> otherParents = childNamesToParentNames.get(kid);
-                    otherParents.remove(oboTerm);
-                    otherParents.add(parent);
-                }
-                System.out.println("Flattening: " + oboTerm);
-                removeTerm(oboTerm);
-                return;
-            }
-
-            // term has only one child.  remove and assign child to new parents.
-            if (kids.size() == 1) {
-                String kid = kids.toArray()[0].toString();
-
-                // add parents to new kid
-                childNamesToParentNames .get(kid).addAll(parents);
-
-                // reassign parents to new kid
-                for (String parent : parents) {
-                    Set<String> otherChildren = parentNamesToChildNames.get(parent);
-                    otherChildren .remove(oboTerm);
-                    otherChildren.add(kid);
-                }
-                System.out.println("Flattening: " + oboTerm);
-                removeTerm(oboTerm);
-                return;
-            }
-
-        // root term
-        } else if (parents == null) {
-            // leave roots
-        }
-
-        // no children, delete!
-        if (kids == null) {
-            System.out.println("Flattening: " + oboTerm);
-            removeTerm(oboTerm);
-        }
-    }
-
-    // remove term from every map
-    private static void removeTerm(String oboTerm) {
-        if (!termListFromFile.contains(oboTerm)) {  // TODO removed, redundant
-            identifierToFullName.remove(fullNameToIdentifier.get(oboTerm));
-            childNamesToParentNames.remove(oboTerm);
-            parentNamesToChildNames.remove(oboTerm);
-            namesToPartOfs.remove(oboTerm);
-            removeCollections(oboTerm);
-
-            // remove mention in maps
-            Map<String, Set<String>> mapCopy = new HashMap(parentNamesToChildNames);
-            for (Map.Entry<String, Set<String>> entry : mapCopy.entrySet()) {
-                String parent = entry.getKey();
-                Set<String> children = entry.getValue();
-
-                // remove current term
-                children.remove(oboTerm);
-
-                // if parent is childless, remove
-                if (children.size() == 0) {
-                    parentNamesToChildNames.remove(parent);
-                }
-            }
-
-            mapCopy = new HashMap(childNamesToParentNames);
-            for (Map.Entry<String, Set<String>> entry : mapCopy.entrySet()) {
-                String child = entry.getKey();
-                Set<String> parents = entry.getValue();
-
-                // remove current term
-                parents.remove(oboTerm);
-
-                // if child has no parents remove from p
-                if (parents.size() == 0) {
-                    childNamesToParentNames.remove(child);
-                }
-            }
-
-        }
-    }
-
-    private static void removeCollections(String oboTerm) {
-        Map<String, Set<String>> mapCopy = new HashMap(namesToPartOfs);
-        for (Map.Entry<String, Set<String>> entry : mapCopy.entrySet()) {
-            Set<String> partOfs = entry.getValue();
-            if (partOfs.contains(oboTerm)) {
-                partOfs.remove(oboTerm);
-            }
-        }
-     }
-
-    private static void processOboTerms(Set<OboTerm> terms) {
-        for (OboTerm term : terms) {
-            if (!term.isObsolete()) {
-                String identifier = term.getId().trim();
-                String name = term.getName().trim();
-                if (!StringUtils.isEmpty(identifier) && !StringUtils.isEmpty(name)) {
-                    identifierToFullName.put(identifier,  generateClassName(name));
-                    fullNameToIdentifier.put(generateClassName(name), identifier);
-                }
-            }
-        }
-    }
-
-    // only these terms (and dependents) will be processed
-    private static Set<String> processTermFile(String filename) {
-        Set<String> terms = new HashSet();
-        try {
-            BufferedReader br =  new BufferedReader(new FileReader(filename));
-            try {
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    if (StringUtils.isNotEmpty(line)) {
-                        terms.add(generateClassName(line));
-                    }
-                }
-            } finally {
-                br.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return terms;
+        // process results of parsing by OBOEdit.  flatten and trim unwanted terms
+        oboToModelProcessor.processOboTerms(parser.getOboTerms());
+        oboToModelProcessor.validateTermsToKeep(oboFilename, termsFileName);
+        oboToModelProcessor.processRelations(parser.getOboRelations());
     }
 }
-

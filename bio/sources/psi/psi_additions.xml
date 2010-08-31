@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <classes>
-    <class name="InteractionExperiment" extends="Experiment" is-interface="true">
+    <class name="InteractionExperiment" is-interface="true">
         <attribute name="name" type="java.lang.String"/>
         <attribute name="description" type="java.lang.String"/>
         <attribute name="hostOrganism" type="java.lang.String" />
+        <reference name="publication" referenced-type="Publication"/>
         <collection name="interactionDetectionMethods" referenced-type="InteractionTerm"/>
         <collection name="participantIdentificationMethods" referenced-type="InteractionTerm"/>
         <collection name="comments" referenced-type="Comment"/>

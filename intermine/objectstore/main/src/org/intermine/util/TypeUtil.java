@@ -326,9 +326,9 @@ public class TypeUtil
             infos = classToFieldnameToFieldInfo.get(c);
 
             if (infos == null) {
-                infos = new TreeMap();
+                infos = new TreeMap<String, FieldInfo>();
 
-                Map<String, Method> methods = new HashMap();
+                Map<String, Method> methods = new HashMap<String, Method>();
                 Method methodArray[] = c.getMethods();
                 for (int i = 0; i < methodArray.length; i++) {
                     String methodName = methodArray[i].getName();
@@ -392,7 +392,7 @@ public class TypeUtil
      */
     public static Method[] getGetters(Class c) throws IntrospectionException {
         PropertyDescriptor[] pd = Introspector.getBeanInfo(c).getPropertyDescriptors();
-        Collection getters = new HashSet();
+        Collection<Method> getters = new HashSet<Method>();
         for (int i = 0; i < pd.length; i++) {
             Method getter = pd[i].getReadMethod();
             if ((!getter.getName().equals("getClass"))
@@ -599,6 +599,18 @@ public class TypeUtil
         }
         filtered = sb.toString();
         return filtered;
+    }
+
+    /**
+     * Generate the full class name, eg. org.intermine.bio.SequenceFeature from a SO term and a
+     * package name.
+     *
+     * @param packageName namespace, eg. org.intermine.bio
+     * @param className so term name, eg. sequence_feature
+     * @return full name of class, eg. org.intermine.bio.SequenceFeature
+     */
+    public static String generateClassName(String packageName, String className) {
+        return packageName + "." + javaiseClassName(className);
     }
 
     /**

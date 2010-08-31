@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -27,36 +26,36 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 /**
  * DataConverter to parse an INPARANOID Orthologue/Paralogue "sqltable" data file into Items
  * @author Mark Woodbridge
  * @author Richard Smith
  */
-public class InparanoidConverter extends FileConverter
+public class InparanoidConverter extends BioFileConverter
 {
     protected static final String PROP_FILE = "inparanoid_config.properties";
-    protected Map bioEntities = new HashMap();
-    protected Item dataSource, dataSet, pub, evidence;
-    protected Map organisms = new LinkedHashMap();
+    protected Map<String, Item> bioEntities = new HashMap<String, Item>();
+    protected Item pub, evidence;
     protected Map<String, Item> sources = new LinkedHashMap<String, Item>();
-    protected Map orgSources = new HashMap();
-    protected Map taxonIds = new HashMap();
-    protected Map attributes = new HashMap();
-    protected Map createObjects = new HashMap(); // which objects to create from which source
+    protected Map<String, String> orgSources = new HashMap<String, String>();
+    protected Map<String, String> taxonIds = new HashMap<String, String>();
+    protected Map<String, String> attributes = new HashMap<String, String>();
+    // which objects to create from which source
+    protected Map<String, String> createObjects = new HashMap<String, String>();
     private File genePeptideDir = null;
     private Map<String, Map<String, String>> peptideGeneMaps = null;
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
     //private static final Logger LOG = Logger.getLogger(InparanoidConverter.class);
-    
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -64,9 +63,9 @@ public class InparanoidConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     public InparanoidConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model);
+        super(writer, model, "InParanoid", "InParanoid data set");
         setupItems();
-        readConfig();        
+        readConfig();
     }
 
     private void readConfig() {
@@ -76,7 +75,7 @@ public class InparanoidConverter extends FileConverter
         } catch (IOException e) {
             throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
         }
-        Enumeration propNames = props.propertyNames();
+        Enumeration<?> propNames = props.propertyNames();
 
         while (propNames.hasMoreElements()) {
             String code = (String) propNames.nextElement();
@@ -113,7 +112,7 @@ public class InparanoidConverter extends FileConverter
             createObjects.put(code, object);
         }
     }
-    
+
     /**
      * Set a directory where files mapping gene ids to peptide ids can be found.  The files are
      * expected to be in standard BioMart export style:
@@ -126,29 +125,30 @@ public class InparanoidConverter extends FileConverter
         this.genePeptideDir = genePeptideDir;
     }
 
-    
+
     /**
      * Given a directory for gene/peptide mappings: find files, determine taxon id from file name
      * and read files contents into a map from peptide id to gene id.
-     * @throws FileNotFoundException
-     * @throws IOException
+     * @throws IOException if we can't read the file
      */
-    private void readGenePeptideMappings() throws FileNotFoundException, IOException {
-        peptideGeneMaps = new HashMap();  // contruct here whatever so calling method can test null
-        
+    private void readGenePeptideMappings()
+        throws IOException {
+         // contruct here whatever so calling method can test null
+        peptideGeneMaps = new HashMap<String, Map<String, String>>();
+
         if (genePeptideDir != null) {
             if (genePeptideDir.isDirectory()) {
-                for (File file : genePeptideDir.listFiles()) {                    
+                for (File file : genePeptideDir.listFiles()) {
                     String fileName = file.getName();
                     if (!fileName.endsWith("gene_peptide.txt")) {
                         continue;
                     }
                     String taxonId = fileName.substring(0, fileName.indexOf('_'));
-                    Map<String, String> peptideGeneMap = new HashMap();
+                    Map<String, String> peptideGeneMap = new HashMap<String, String>();
                     peptideGeneMaps.put(taxonId, peptideGeneMap);
-                    
+
                     BufferedReader reader = new BufferedReader(new FileReader(file));
-                    Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);    
+                    Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
                     while (lineIter.hasNext()) {
                         String[] line = (String[]) lineIter.next();
                         if (line.length >= 2) {
@@ -156,7 +156,7 @@ public class InparanoidConverter extends FileConverter
                             String peptideId = line[1];
                             peptideGeneMap.put(peptideId, geneId);
                         }
-                    }   
+                    }
                 }
             }
         }
@@ -170,16 +170,17 @@ public class InparanoidConverter extends FileConverter
         // 2. call homolog creation method (orgA, orgB) then (orgB, orgA)
 
         if (peptideGeneMaps == null) {
-            readGenePeptideMappings();  
+            readGenePeptideMappings();
         }
-                
+
         int lineNum = 0;
         String line, lastCode = null, oldIndex = null, index = null;
 
         Item bio = null;
         boolean isGene, onFirstOrganism = true;
-        Set<String> abortClusters = new HashSet();
-        List<BioAndScores> orgA = new ArrayList(), orgB = new ArrayList();
+        Set<String> abortClusters = new HashSet<String>();
+        List<BioAndScores> orgA = new ArrayList<BioAndScores>(),
+        orgB = new ArrayList<BioAndScores>();
 
         BufferedReader br = new BufferedReader(reader);
         while ((line = br.readLine()) != null) {
@@ -207,7 +208,7 @@ public class InparanoidConverter extends FileConverter
             }
             String score = array[3];
             String identifier = array[4];
-            
+
             // code tells us which organism data is from
             String code = null;
             if (array[2].indexOf('.') > 0) {
@@ -226,7 +227,7 @@ public class InparanoidConverter extends FileConverter
                     // if we have found a mapping file for this organism then convert protein
                     // to genes and don't create proteins
                     String taxonId = (String) taxonIds.get(code);
-                   
+
                     if (peptideGeneMaps.containsKey(taxonId)) {
                         isGene = true;
                         Map<String, String> peptideGeneMap = peptideGeneMaps.get(taxonId);
@@ -241,9 +242,7 @@ public class InparanoidConverter extends FileConverter
                             // the invalid id is a paralogue could still create orthologues.
                             abortClusters.add(index);
                         }
-                        
                     } else {
-
                         // create protein as a last resort
                         bio = newBioEntity(identifier, (String) attributes.get(code),
                                 getOrganism(code), "Protein");
@@ -253,8 +252,7 @@ public class InparanoidConverter extends FileConverter
             } else {
                 throw new RuntimeException("No configuration provided for organism code: " + code);
             }
-            
-            
+
             String orgName = code.substring(3);
             BioAndScores bands = null;
             if (!abortClusters.contains(index)) {
@@ -272,8 +270,8 @@ public class InparanoidConverter extends FileConverter
 
                 // reset for next group
                 onFirstOrganism = true;
-                orgA = new ArrayList();
-                orgB = new ArrayList();
+                orgA = new ArrayList<BioAndScores>();
+                orgB = new ArrayList<BioAndScores>();
             } else if (!code.equals(lastCode)) {
                 // we are on the first line of the second organism in group
                 onFirstOrganism = false;
@@ -289,7 +287,7 @@ public class InparanoidConverter extends FileConverter
                     orgB.add(bands);
                 }
             }
-            
+
             oldIndex = index;
             lastCode = code;
         }
@@ -298,7 +296,7 @@ public class InparanoidConverter extends FileConverter
             // make sure final group gets stored
             createHomologues(orgA, orgB, oldIndex);
             createHomologues(orgB, orgA, oldIndex);
-         }
+        }
     }
 
 
@@ -316,11 +314,11 @@ public class InparanoidConverter extends FileConverter
     //       do nothing (these are two separate inParalogues of main orthologue)
 
     private void createHomologues(List<BioAndScores> orgA, List<BioAndScores> orgB, String index)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         // generate a name for the cluster based on organisms (in order) and index
         String cluster = orgA.get(0).getOrganism() + "-" + orgB.get(0).getOrganism() + ":" + index;
 
-        Set alreadyDone = new HashSet();
+        Set<String> alreadyDone = new HashSet<String>();
         for (BioAndScores thisBio : orgA) {
             // create paralogues with other orgA bios
             for (BioAndScores otherBio : orgA) {
@@ -334,7 +332,7 @@ public class InparanoidConverter extends FileConverter
                     String nameToUse;
                     if (alreadyDone.contains("" + otherBio.bioIdentifier + thisBio.bioIdentifier)) {
                         nameToUse = orgB.get(0).getOrganism() + "-" + orgA.get(0).getOrganism()
-                        + ":" + index;
+                            + ":" + index;
                     } else {
                         nameToUse = cluster;
                     }
@@ -387,7 +385,6 @@ public class InparanoidConverter extends FileConverter
 
         homologue.setAttribute("type", type);
         homologue.setAttribute("clusterName", cluster);
-        homologue.addToCollection("dataSets", dataSet);
         homologue.addToCollection("evidence", evidence);
         return homologue;
     }
@@ -395,74 +392,28 @@ public class InparanoidConverter extends FileConverter
     /**
      * Convenience method to create and cache Genes/Proteins by identifier
      * @param identifier identifier for the new Gene/Protein
-     * @param organism the Organism for this Gene/Protein
+     * @param organismRefId id representing the organism object
      * @param type create either a Gene or Protein
      * @param attribute the attribute of the BioEntity set, e.g. identifier or primaryIdentifier
      * @return a new Gene/Protein Item
      * @throws ObjectStoreException if an error occurs in storing
+     * @throws SAXException if something goes horribly wrong
      */
-    protected Item newBioEntity(String identifier, String attribute, Item organism, String type)
-        throws ObjectStoreException {
+    protected Item newBioEntity(String identifier, String attribute, String organismRefId,
+            String type)
+        throws ObjectStoreException, SAXException {
 
         // lookup by identifier and type, sometimes same id for protein and gene
         String key = type + identifier;
         if (bioEntities.containsKey(key)) {
             return (Item) bioEntities.get(key);
         }
-
         Item item = createItem(type);
         item.setAttribute(attribute, identifier);
-        item.setReference("organism", organism.getIdentifier());
-        item.addToCollection("dataSets", dataSet);
-        store(item);                                                 // Stores BioEntity
+        item.setReference("organism", organismRefId);
+        store(item);
         bioEntities.put(key, item);
-
-        // create a synonm - lookup source according to organism
-        Item synonym = createItem("Synonym");
-        synonym.setAttribute("type", "identifier");
-        synonym.setAttribute("value", identifier);
-        synonym.setReference("subject", item.getIdentifier());
-        // TODO should we change dataset instead?
-        //Item source = getSourceForOrganism(organism.getAttribute("taxonId").getValue());
-        //synonym.setReference("source", source.getIdentifier());
-        synonym.addToCollection("dataSets", dataSet);
-        store(synonym);                                              // Stores Synonym -> BioEntity
-
         return item;
-    }
-
-    // get source for synonyms, depends on organism
-//    private Item getSourceForOrganism(String taxonId) throws ObjectStoreException {
-//        String sourceName = (String) orgSources.get(taxonId);
-//        if (sourceName == null) {
-//                throw new IllegalArgumentException("unable to find source name for organism: "
-//                                                   + taxonId);
-//        }
-//        Item source = sources.get(sourceName);
-//        if (source == null) {
-//            source = createItem("DataSource");
-//            source.setAttribute("name", sourceName);
-//            store(source);
-//            sources.put(sourceName, source);
-//        }
-//        return source;
-//    }
-
-    private Item getOrganism(String code) throws ObjectStoreException {
-        String taxonId = (String) taxonIds.get(code);
-        if (taxonId == null) {
-            throw new IllegalArgumentException("Unable to find taxonId for code: "
-                                               + code + ", check properties: " + PROP_FILE);
-        }
-
-        Item organism = (Item) organisms.get(taxonId);
-        if (organism == null) {
-            organism = createItem("Organism");
-            organism.setAttribute("taxonId", taxonId);
-            store(organism);
-            organisms.put(taxonId, organism);
-        }
-        return organism;
     }
 
     /**
@@ -473,18 +424,10 @@ public class InparanoidConverter extends FileConverter
         pub = createItem("Publication");
         pub.setAttribute("pubMedId", "11743721");
         store(pub);
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "InParanoid");
-        store(dataSource);
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "InParanoid data set");
-        dataSet.setReference("dataSource", dataSource);
-        store(dataSet);
-        
         Item evidenceCode = createItem("OrthologueEvidenceCode");
         evidenceCode.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
         evidenceCode.setAttribute("name", EVIDENCE_CODE_NAME);
-        store(evidenceCode);        
+        store(evidenceCode);
         evidence = createItem("OrthologueEvidence");
         evidence.setReference("evidenceCode", evidenceCode);
         evidence.addToCollection("publications", pub);
@@ -529,5 +472,18 @@ public class InparanoidConverter extends FileConverter
             return bioIdentifier + " " + organism + " " + score;
         }
     }
-}
 
+    /**
+     * @param code inparanoid's code for an organism
+     * @return ID representing the stored organism object
+     */
+    public String getOrganism(String code) {
+        String taxonId = (String) taxonIds.get(code);
+        if (taxonId == null) {
+            throw new IllegalArgumentException("Unable to find taxonId for code: "
+                    + code + ", check properties: " + PROP_FILE);
+        }
+        String refId = super.getOrganism(taxonId);
+        return refId;
+    }
+}

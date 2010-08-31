@@ -18,15 +18,15 @@ import java.util.Map;
  **/
 public class PubMedReference
 {
-    
+
     private Map<Integer, List<Integer>> references;
-    
+
     private Integer organism;
 
     /**
      * Constructor.
      * @param organism id of organism of which references this object carries
-     * @param references references between id of gene and ids of publications in PubMed 
+     * @param references references between id of gene and ids of publications in PubMed
      */
     public PubMedReference(Integer organism, Map<Integer, List<Integer>> references) {
         this.organism = organism;
@@ -58,7 +58,7 @@ public class PubMedReference
     }
 
     /**
-     * 
+     *
      * @param organism organism
      * {@link #PubMedReference(Integer, Map)}
      */

@@ -36,11 +36,12 @@ public class ChadoCVFactory
 
     /**
      * Get a new ChadoCV containing only cv terms from the cv with the given name.
-     * @param cvName the name of the cv = cv.name in chado
+     * @param cvName name of controlled vocabulary, eg. sequence ontology
      * @return the new ChadoCV object
      * @throws SQLException if there is problem while querying
      */
-    public ChadoCV getChadoCV(String cvName) throws SQLException {
+    public ChadoCV getChadoCV(String cvName)
+        throws SQLException {
         ChadoCV cv = new ChadoCV(cvName);
 
         ResultSet cvtermRes = getCVTermResultSet(connection, cvName);

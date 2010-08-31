@@ -28,7 +28,6 @@
       "GenomeRegion":1,
       "features":1,
       "genes":1,
-      "Deletion":1,
       "curated":1,
       "Annotation":1,
       "Experiment":1,
@@ -50,7 +49,12 @@
       
    },
    "translation_for":{
-      "MicroarrayOligo":"MicroArrayOligo", 
+      "Amplicon":"PCRProduct",
+      "RNAiScreenHit.amplicon":"pcrProduct",
+      "Chromosome.features":"locatedFeatures",
+      "Chromosome.genes":"locatedFeatures",
+      "Chromosome.exons":"locatedFeatures",
+      "Deletion":"ChromosomalDeletion",
       "GOEvidence":"GOEvidenceCode",
       "GoAnnotation.property":"ontologyTerm",
       "FlyAtlasResult.MRNASignal":"mRNASignal",

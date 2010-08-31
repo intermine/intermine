@@ -28,7 +28,7 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 
 import org.intermine.model.bio.CDS;
 import org.intermine.model.bio.DataSet;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Sequence;
 
@@ -71,15 +71,15 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
             CDS cds = (CDS) ((ResultsRow) rr).get(0);
             assertNotNull(cds.getChromosomeLocation());
             DataSet dataSet = cds.getDataSets().iterator().next();
-            assertEquals(dataSetTitle, dataSet.getTitle());
+            assertEquals(dataSetTitle, dataSet.getName());
             if (cds.getPrimaryIdentifier().equals("CG4027-PB_CDS")) {
                 seenCG4027PB = true;
                 Location loc = cds.getChromosomeLocation();
                 assertEquals(5796731, loc.getStart().intValue());
                 assertEquals(5797861, loc.getEnd().intValue());
                 assertEquals("1", loc.getStrand());
-                assertEquals("X", loc.getObject().getPrimaryIdentifier());
-                assertEquals("FBtr0070823", cds.getmRNA().getPrimaryIdentifier());
+                assertEquals("X", loc.getLocatedOn().getPrimaryIdentifier());
+                assertEquals("FBtr0070823", cds.getTranscript().getPrimaryIdentifier());
                 assertEquals(36329, cds.getOrganism().getTaxonId().intValue());
             } else {
                 if (cds.getPrimaryIdentifier().equals("CG6844-PB_CDS")) {
@@ -88,8 +88,8 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
                     assertEquals(20311671, loc.getStart().intValue());
                     assertEquals(20316734, loc.getEnd().intValue());
                     assertEquals("1", loc.getStrand());
-                    assertEquals("3R", loc.getObject().getPrimaryIdentifier());
-                    assertEquals("FBtr0084640", cds.getmRNA().getPrimaryIdentifier());
+                    assertEquals("3R", loc.getLocatedOn().getPrimaryIdentifier());
+                    assertEquals("FBtr0084640", cds.getTranscript().getPrimaryIdentifier());
                     assertEquals(36329, cds.getOrganism().getTaxonId().intValue());
                 }
             }
@@ -147,7 +147,7 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
         ObjectStore os = osw.getObjectStore();
 
         Query q = new Query();
-        QueryClass lsfQueryClass = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass lsfQueryClass = new QueryClass(SequenceFeature.class);
         QueryClass seqQueryClass = new QueryClass(Sequence.class);
         q.addToSelect(lsfQueryClass);
         q.addToSelect(seqQueryClass);

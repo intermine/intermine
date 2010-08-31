@@ -38,15 +38,13 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
 {
     private Model tgtModel;
     private RedFlyGFF3RecordHandler handler;
-    private MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
     private String seqClsName = "Chromosome";
     private String taxonId = "DM";
     private String dataSourceName = "FlyReg";
     private String dataSetTitle = "FlyReg data set";
-    private ItemFactory itemFactory;
-    private List featureIdentifiers;
     private GFF3Converter converter;
     private String ENDL = System.getProperty("line.separator");
+    private MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
 
     public RedFlyGFF3RecordHandlerTest(String arg) {
         super(arg);
@@ -57,9 +55,9 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
         tgtModel = Model.getInstanceByName("genomic");
         handler = new RedFlyGFF3RecordHandler(tgtModel);
         // call the GFF3Converter constructor to initialise the handler
-        converter = new GFF3Converter(tgtIw, seqClsName, taxonId, dataSourceName,
-                          "FlyBase", dataSetTitle, tgtModel, handler, null);
-        itemFactory = handler.getItemFactory();
+        converter = new GFF3Converter(writer, seqClsName, taxonId, dataSourceName,
+                          dataSetTitle, tgtModel, handler, null);
+
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn0001", Collections.singleton("FBgn0003145"));
         resolverFactory.addResolverEntry("7227", "FBgn0002", Collections.singleton("FBgn0003339"));
@@ -77,32 +75,14 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
             + "3R\tREDfly\tregulatory_region\t2667896\t2676484\t.\t.\t.\tID=\"Scr_BSR\"; Dbxref=\"Flybase:FBgn0003339\", \"PMID:7713432\", \"REDfly:576\"; Evidence=\"reporter construct (in vivo)\"; Ontology_term=\"FBbt:00000090\"";
 
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
-
-        HashSet allItems = new HashSet();
-
-        Iterator iter = GFF3Parser.parse(srcReader);
-
-        featureIdentifiers = new ArrayList();
-
-        while (iter.hasNext()) {
-            GFF3Record record = (GFF3Record) iter.next();
-            String term = record.getType();
-            String className = TypeUtil.javaiseClassName(term);
-            Item feature = itemFactory.makeItem(null, className, "");
-
-            handler.setFeature(feature);
-            handler.process(record);
-
-            featureIdentifiers.add(feature.getIdentifier());
-
-            allItems.addAll(handler.getItems());
-        }
+        converter.parse(srcReader);
+        converter.storeAll();
 
         // uncomment to write a new tgt items file
-        //writeItemsFile(allItems, "redfly-tgt-items.xml");
+        //writeItemsFile(writer.getItems(), "redfly-tgt-items.xml");
 
         Set expected = new HashSet(readItemSet("RedFlyGFF3RecordHandlerTest.xml"));
-        System.out.println(ItemsTestCase.compareItemSets(expected, allItems));
-        assertEquals(expected, allItems);
+        //System.out.println(ItemsTestCase.compareItemSets(expected, allItems));
+        assertEquals(expected, writer.getItems());
     }
 }

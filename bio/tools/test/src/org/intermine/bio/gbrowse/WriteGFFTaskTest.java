@@ -140,7 +140,6 @@ public class WriteGFFTaskTest extends TestCase
         storedOrganism = (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
         storedOrganism.setGenus("Drosophila");
         storedOrganism.setSpecies("melanogaster");
-        storedOrganism.setAbbreviation("DM");
 
         String residues =
             "ggcgaggcggggaaagcactgcgcgctgacggtggtgctgattgtattttttcagcgtct" +
@@ -206,48 +205,48 @@ public class WriteGFFTaskTest extends TestCase
 
         storedTranscript1Location =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        storedTranscript1Location.setObject(storedChromosome);
-        storedTranscript1Location.setSubject(storedTranscript1);
+        storedTranscript1Location.setLocatedOn(storedChromosome);
+        storedTranscript1Location.setFeature(storedTranscript1);
         storedTranscript1Location.setStart(new Integer(201));
         storedTranscript1Location.setEnd(new Integer(400));
         storedTranscript1Location.setStrand("1");
 
         storedTranscript2Location =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        storedTranscript2Location.setObject(storedChromosome);
-        storedTranscript2Location.setSubject(storedTranscript2);
+        storedTranscript2Location.setLocatedOn(storedChromosome);
+        storedTranscript2Location.setFeature(storedTranscript2);
         storedTranscript2Location.setStart(new Integer(351));
         storedTranscript2Location.setEnd(new Integer(620));
         storedTranscript2Location.setStrand("1");
 
         storedGeneLocation =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        storedGeneLocation.setObject(storedChromosome);
-        storedGeneLocation.setSubject(storedGene);
+        storedGeneLocation.setLocatedOn(storedChromosome);
+        storedGeneLocation.setFeature(storedGene);
         storedGeneLocation.setStart(new Integer(201));
         storedGeneLocation.setEnd(new Integer(620));
         storedGeneLocation.setStrand("1");
 
         storedExon1Location =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        storedExon1Location.setObject(storedChromosome);
-        storedExon1Location.setSubject(storedExon1);
+        storedExon1Location.setLocatedOn(storedChromosome);
+        storedExon1Location.setFeature(storedExon1);
         storedExon1Location.setStart(new Integer(201));
         storedExon1Location.setEnd(new Integer(300));
         storedExon1Location.setStrand("1");
 
         storedExon2Location =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        storedExon2Location.setObject(storedChromosome);
-        storedExon2Location.setSubject(storedExon2);
+        storedExon2Location.setLocatedOn(storedChromosome);
+        storedExon2Location.setFeature(storedExon2);
         storedExon2Location.setStart(new Integer(351));
         storedExon2Location.setEnd(new Integer(400));
         storedExon2Location.setStrand("1");
 
         storedExon3Location =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        storedExon3Location.setObject(storedChromosome);
-        storedExon3Location.setSubject(storedExon3);
+        storedExon3Location.setLocatedOn(storedChromosome);
+        storedExon3Location.setFeature(storedExon3);
         storedExon3Location.setStart(new Integer(591));
         storedExon3Location.setEnd(new Integer(620));
         storedExon3Location.setStrand("1");

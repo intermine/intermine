@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.model.bio.Annotation;
 import org.intermine.model.bio.BlastMatch;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Disease;
@@ -84,9 +83,9 @@ public class HomophilaPostProcess extends PostProcessor
         pub2 = (Publication) osw.getObjectByExample(pub2, Collections.singleton("pubMedId"));
 
         homophilaDataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
-        homophilaDataSet.setTitle("Homophila data set");
+        homophilaDataSet.setName("Homophila data set");
         homophilaDataSet =
-            (DataSet) osw.getObjectByExample(homophilaDataSet, Collections.singleton("title"));
+            (DataSet) osw.getObjectByExample(homophilaDataSet, Collections.singleton("name"));
 
         if (homophilaDataSet == null) {
             LOG.error("Failed to find homophila DataSet object");
@@ -99,12 +98,12 @@ public class HomophilaPostProcess extends PostProcessor
         }
 
         Results results = findHomophilaGenesDiseases(osw.getObjectStore());
-        Iterator iter = results.iterator();
+        Iterator<?> iter = results.iterator();
         int count = 0;
 
         osw.beginTransaction();
         while (iter.hasNext()) {
-            ResultsRow rr = (ResultsRow) iter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) iter.next();
             Gene gene = (Gene) rr.get(0);
             Disease disease = (Disease) rr.get(1);
             LOG.debug("gene = " + gene.getSecondaryIdentifier() + "  disease = "
@@ -119,16 +118,6 @@ public class HomophilaPostProcess extends PostProcessor
                 newCollection.addAll(oldCollection);
                 tempObject.setFieldValue("omimDiseases", newCollection);
                 osw.store(tempObject);
-
-                // Create annotation
-                Annotation annotation =
-                    (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
-                annotation.setSubject(gene);
-                annotation.setProperty(disease);
-                annotation.addDataSets(homophilaDataSet);
-                annotation.addPublications(pub1);
-                annotation.addPublications(pub2);
-                osw.store(annotation);
 
             } catch (IllegalAccessException e) {
                 LOG.error("Object with ID: " + gene.getId() + " has no omimDiseases field", e);
@@ -181,12 +170,12 @@ public class HomophilaPostProcess extends PostProcessor
         cs.addConstraint(tgc);
 
         // Match object translation
-        QueryObjectReference bmo = new QueryObjectReference(bmc, "object");
+        QueryObjectReference bmo = new QueryObjectReference(bmc, "query");
         ContainsConstraint bmoc = new ContainsConstraint(bmo, ConstraintOp.CONTAINS, tc);
         cs.addConstraint(bmoc);
 
         // Match subject protein
-        QueryObjectReference po = new QueryObjectReference(bmc, "subject");
+        QueryObjectReference po = new QueryObjectReference(bmc, "hit");
         ContainsConstraint poc = new ContainsConstraint(po, ConstraintOp.CONTAINS, pc);
         cs.addConstraint(poc);
 

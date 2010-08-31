@@ -176,8 +176,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @throws BuildException if an ObjectStore method fails
      */
     @Override
-    public void execute()
-    throws BuildException {
+    public void execute() {
         if (fastaTaxonId == null) {
             throw new RuntimeException("fastaTaxonId needs to be set");
         }
@@ -202,7 +201,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @throws BuildException if the is a problem
      */
     @Override
-    public void processFile(File file) throws BuildException {
+    public void processFile(File file) {
         try {
             FileReader fileReader = new FileReader(file);
             BufferedReader reader = new BufferedReader(fileReader);
@@ -322,19 +321,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
         Synonym synonym = null;
         if (dataSource != null) {
-
             synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
             synonym.setValue(attributeValue);
             synonym.setSubject(imo);
-
-            // rename so these synonyms merge correctly
-            String synonymType = classAttribute;
-            if (classAttribute.equals("primaryAccession")) {
-                synonymType = "accession";
-            } else if (classAttribute.equals("primaryIdentifier")) {
-                synonymType = "identifier";
-            }
-            synonym.setType(synonymType);
         }
 
         if (StringUtils.isEmpty(dataSetTitle)) {
@@ -370,7 +359,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             return dataSets.get(dataSetTitle);
         }
         DataSet dataSet = (DataSet) getDirectDataLoader().createObject(DataSet.class);
-        dataSet.setTitle(dataSetTitle);
+        dataSet.setName(dataSetTitle);
         if (dataSource != null) {
             dataSet.setDataSource(getDataSource());
         }

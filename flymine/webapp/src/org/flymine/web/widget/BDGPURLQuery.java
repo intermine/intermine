@@ -46,15 +46,15 @@ public class BDGPURLQuery implements WidgetURLQuery
             + "Gene.primaryIdentifier";
         String expressionStrings = "Gene.mRNAExpressionResults.stageRange,"
             + "Gene.mRNAExpressionResults.mRNAExpressionTerms.name,"
-            + "Gene.mRNAExpressionResults.dataSet.title";
+            + "Gene.mRNAExpressionResults.dataSet.name";
         q.setView(viewStrings);
         q.addView(expressionStrings);
         q.addConstraint(bag.getType(),  Constraints.in(bag.getName()));
-        
+
         q.addConstraint("Gene.mRNAExpressionResults.expressed", Constraints.eq(Boolean.TRUE));
-        q.addConstraint("Gene.mRNAExpressionResults.dataSet.title", Constraints.eq(DATASET));
+        q.addConstraint("Gene.mRNAExpressionResults.dataSet.name", Constraints.eq(DATASET));
         if (!showAll) {
-            q.addConstraint("Gene.mRNAExpressionResults.mRNAExpressionTerms", 
+            q.addConstraint("Gene.mRNAExpressionResults.mRNAExpressionTerms",
                             Constraints.lookup(key));
             q.setConstraintLogic("A and B and C and D");
         } else {

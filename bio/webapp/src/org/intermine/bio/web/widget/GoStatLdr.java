@@ -150,7 +150,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         cs.addConstraint(new SimpleConstraint(c7, ConstraintOp.EQUALS,
                 new QueryValue(namespace.toLowerCase())));
 
-        Collection<Integer> taxonIdInts = new ArrayList();
+        Collection<Integer> taxonIdInts = new ArrayList<Integer>();
         // constrained only for memory reasons
         for (String taxonId : taxonIds) {
             try {

@@ -91,7 +91,7 @@
       </li>
       <c:if test="${type == 'csv'}">
       <li class="columnHeaderOption">
-        <html:checkbox property="includeHeaders"/>
+        <input type="checkbox" name="includeHeaders" checked/>
         <label>Include column headers in output</label>
       </li>
       </c:if>

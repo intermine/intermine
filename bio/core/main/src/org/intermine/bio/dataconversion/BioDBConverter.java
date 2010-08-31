@@ -11,15 +11,19 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.dataconversion.DBConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 /**
  * A DBConverter with helper methods for bio sources.
@@ -32,6 +36,8 @@ public abstract class BioDBConverter extends DBConverter
     private final Map<String, Item> dataSets = new HashMap<String, Item>();
     private final Map<String, Item> dataSources = new HashMap<String, Item>();
     private String dataSourceName = null;
+    private Set<String> synonyms = new HashSet<String>();
+    private String sequenceOntologyRefId;
 
     /**
      * Create a new BioDBConverter object.  The constructor will automatically create a
@@ -45,21 +51,30 @@ public abstract class BioDBConverter extends DBConverter
     public BioDBConverter(Database database, Model tgtModel, ItemWriter writer,
                           String dataSourceName, String dataSetTitle) {
         super(database, tgtModel, writer);
-        Item dataSource = getDataSourceItem(dataSourceName);
-        Item dataSet = getDataSetItem(dataSetTitle, dataSource);
-        DataSetStoreHook hook = new DataSetStoreHook(tgtModel, dataSet, dataSource);
-        setStoreHook(hook);
+        Item dataSource = null;
+        Item dataSet = null;
+        sequenceOntologyRefId = BioConverterUtil.getOntology(this);
+        if (StringUtils.isNotEmpty(dataSourceName) && StringUtils.isNotEmpty(dataSetTitle)) {
+            dataSource = getDataSourceItem(dataSourceName);
+            dataSet = getDataSetItem(dataSetTitle, dataSource);
+            setStoreHook(new BioStoreHook(tgtModel, dataSet.getIdentifier(),
+                    dataSource.getIdentifier(), sequenceOntologyRefId));
+        } else {
+            setStoreHook(new BioStoreHook(tgtModel, null, null, sequenceOntologyRefId));
+        }
     }
 
     /**
-     * Create a new BioDBConverter object.  The caller should call setStoreHook() before
-     * processing starts.
+     * Create a new BioDBConverter object.  The constructor will automatically create a
+     * DataConverterStoreHook for this converter that sets DataSet references and collections.
      * @param database the database to read from
      * @param tgtModel the Model used by the object store we will write to with the ItemWriter
      * @param writer an ItemWriter used to handle the resultant Items
      */
     public BioDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
+        sequenceOntologyRefId = BioConverterUtil.getOntology(this);
+        setStoreHook(new BioStoreHook(tgtModel, "", "", sequenceOntologyRefId));
     }
 
     /**
@@ -117,8 +132,8 @@ public abstract class BioDBConverter extends DBConverter
             location.setAttribute("end", String.valueOf(start));
         }
         location.setAttribute("strand", String.valueOf(strand));
-        location.setReference("object", chromosomeId);
-        location.setReference("subject", locatedSequenceFeatureId);
+        location.setReference("locatedOn", chromosomeId);
+        location.setReference("feature", locatedSequenceFeatureId);
         return location;
     }
 
@@ -192,7 +207,7 @@ public abstract class BioDBConverter extends DBConverter
         Item dataSet = dataSets.get(title);
         if (dataSet == null) {
             dataSet = createItem("DataSet");
-            dataSet.setAttribute("title", title);
+            dataSet.setAttribute("name", title);
             dataSet.setReference("dataSource", dataSourceItem);
             if (url != null) {
                 dataSet.setAttribute("url", url);
@@ -219,7 +234,7 @@ public abstract class BioDBConverter extends DBConverter
      * @return the Chromsome Item
      */
     protected Item getChromosome(String identifier, int taxonId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         Item chromosome = chromosomes.get(identifier);
         if (chromosome == null) {
             chromosome = createItem("Chromosome");
@@ -232,26 +247,42 @@ public abstract class BioDBConverter extends DBConverter
     }
 
     /**
-     * Create and return a new Synonym, but don't store it.
-     * @param subjectId the Synonym subject id
-     * @param type the Synonym type
+     * Create a new Synonym.  Keeps a map of already processed synonyms, ignores duplicates.
+     * The "store" param should be true only if the subject has already been stored.  Storing a
+     * synonym first can signficantly slow down the build process.
+     * @param subjectId id representing the object (eg. Gene) this synonym describes.
      * @param value the Synonym value
-     * @param isPrimary true if this is a primary identifier
-     * @param evidence the Synonym evidence
-     * @return the new Synonym
+     * @param store if true, will store item
+     * @throws ObjectStoreException if the synonym can't be stored
+     * @throws SAXException if the synonym can't be stored
+     * @return the synonym item or null if this is a duplicate
      */
-    public Item createSynonym(String subjectId, String type, String value, boolean isPrimary,
-                              List<Item> evidence) {
-        Item synonym = createItem("Synonym");
-        synonym.setAttribute("type", type);
-        synonym.setAttribute("value", value);
-        synonym.setAttribute("isPrimary", String.valueOf(isPrimary));
-        synonym.setReference("subject", subjectId);
-//        if (evidence != null) {
-//            for (Item evidenceItem: evidence) {
-//                synonym.addToCollection("evidence", evidenceItem);
-//            }
-//        }
-        return synonym;
+    public Item createSynonym(String subjectId, String value, boolean store)
+        throws SAXException, ObjectStoreException {
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+        String key = subjectId + value;
+        if (!synonyms.contains(key)) {
+            Item synonym = createItem("Synonym");
+            synonym.setAttribute("value", value);
+            synonym.setReference("subject", subjectId);
+            synonyms.add(key);
+            if (store) {
+                store(synonym);
+            }
+            return synonym;
+        }
+        return null;
+    }
+
+    /**
+     * @return ID represening the Ontology object
+     */
+    public String getSequenceOntologyRefId() {
+        if (sequenceOntologyRefId == null) {
+            sequenceOntologyRefId = BioConverterUtil.getOntology(this);
+        }
+        return sequenceOntologyRefId;
     }
 }

@@ -26,8 +26,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.gff3.GFF3Record;
-import org.intermine.bio.util.GFF3Util;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.PropertiesUtil;
@@ -177,7 +176,7 @@ public class GFF3Exporter implements Exporter
     /* State for the exportRow method, to allow several rows to be merged. */
     private Map<String, Integer> attributeVersions = new HashMap<String, Integer>();
     private Integer lastLsfId = null;
-    private LocatedSequenceFeature lastLsf = null;
+    private SequenceFeature lastLsf = null;
     private Map<String, List<String>> attributes = null;
     private Map<String, Set<Integer>> seenAttributes = new HashMap<String, Set<Integer>>();
 
@@ -193,7 +192,7 @@ public class GFF3Exporter implements Exporter
 
         // loop through all the objects in a row
         for (ResultElement re : elWithObject) {
-            LocatedSequenceFeature lsf = (LocatedSequenceFeature) re.getObject();
+            SequenceFeature lsf = (SequenceFeature) re.getObject();
             //             LOG.info("GFFrePath: " + re.getPath());
             boolean isCollection = re.getPath().containsCollections();
 
@@ -396,7 +395,7 @@ public class GFF3Exporter implements Exporter
      * @return true if this exporter can export result composed of specified classes
      */
     public static boolean canExportStatic(List<Class> clazzes) {
-        return ExportHelper.getClassIndex(clazzes, LocatedSequenceFeature.class) >= 0;
+        return ExportHelper.getClassIndex(clazzes, SequenceFeature.class) >= 0;
     }
 
     /**

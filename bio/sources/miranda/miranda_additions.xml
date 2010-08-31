@@ -3,7 +3,7 @@
 <class name="Gene" is-interface="true" >
   <collection name="miRNAtargets" referenced-type="MiRNATarget" reverse-reference="mirnagene"/>
 </class>
-<class name="MiRNATarget" extends="LocatedSequenceFeature" is-interface="true" >
+<class name="MiRNATarget" extends="SequenceFeature" is-interface="true" >
   <attribute name="pvalue" type="java.lang.Float"/>
   <reference name="target" referenced-type="MRNA" reverse-reference="miRNAinteractions"/>
   <reference name="mirnagene" referenced-type="Gene" reverse-reference="miRNAtargets"/>

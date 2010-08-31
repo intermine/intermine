@@ -30,8 +30,7 @@ class FeatureData
     OrganismData organismData;
     private String uniqueName;
     private String chadoFeatureName;
-    // the synonyms that have already been created
-    private Set<String> existingSynonyms = new TreeSet(String.CASE_INSENSITIVE_ORDER);
+    private Set<String> existingSynonyms = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
     private String itemIdentifier;
     private String interMineType;
     private Integer intermineObjectId;

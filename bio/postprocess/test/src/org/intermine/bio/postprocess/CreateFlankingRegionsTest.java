@@ -23,13 +23,13 @@ import junit.framework.TestCase;
 public class CreateFlankingRegionsTest extends TestCase {
 
     private ObjectStoreWriter osw;
-    
-    
+
+
     public CreateFlankingRegionsTest(String arg) {
         super(arg);
     }
-    
-    
+
+
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         osw.getObjectStore().flushObjectById();
@@ -55,16 +55,16 @@ public class CreateFlankingRegionsTest extends TestCase {
         osw.close();
     }
 
-    
+
     public void testCreateFlankingFeatures() throws Exception {
         CreateFlankingRegions cfr = new CreateFlankingRegions(osw);
         cfr.createFlankingFeatures();
-        
+
         Query q = new Query();
         QueryClass qcRegion = new QueryClass(GeneFlankingRegion.class);
         q.addFrom(qcRegion);
         q.addToSelect(qcRegion);
-        
+
         SingletonResults res = osw.getObjectStore().executeSingleton(q);
         Iterator resIter = res.iterator();
         while (resIter.hasNext()) {
@@ -75,20 +75,20 @@ public class CreateFlankingRegionsTest extends TestCase {
             assertNotNull(o.getChromosome());
             assertNotNull(o.getGene());
             assertNotNull(o.getOrganism());
-            assertNotNull(o.getChromosomeLocation());   
-        }       
+            assertNotNull(o.getChromosomeLocation());
+        }
     }
-    
-    
+
+
     private void setupData() throws Exception {
         Set<InterMineObject> toStore = new HashSet<InterMineObject>();
-        
+
         Organism organism =
             (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
         organism.setTaxonId(new Integer(7227));
-        
+
         toStore.add(organism);
-        
+
         Chromosome chr =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         chr.setPrimaryIdentifier("X");
@@ -97,24 +97,24 @@ public class CreateFlankingRegionsTest extends TestCase {
         chr.setOrganism(organism);
 
         toStore.add(chr);
-        
+
         Gene gene =
             (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         gene.setChromosome(chr);
         gene.setPrimaryIdentifier("gene1");
         gene.setOrganism(organism);
-        
+
         toStore.add(gene);
-        
+
         Location loc =  (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         loc.setStart(new Integer(100000));
         loc.setEnd(new Integer(101000));
         loc.setStrand("-1");
-        loc.setObject(chr);
-        loc.setSubject(gene);
-        
+        loc.setLocatedOn(chr);
+        loc.setFeature(gene);
+
         toStore.add(loc);
-       
+
         Iterator iter = toStore.iterator();
         while (iter.hasNext()) {
             InterMineObject o = (InterMineObject) iter.next();

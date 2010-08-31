@@ -13,21 +13,21 @@ package org.intermine.bio.ontology;
 import java.util.List;
 
 /**
- * Class representing and OBO type
- * 
+ * Class representing an OBO type.
+ *
  * @author Xavier Watkins
  *
  */
 public class OboTypeDefinition
 {
-    String id;
-    String name;
+    private String id;
+    private String name;
     boolean isTransitive;
-    List<String> transitiveOver;
-    
+    private List<String> transitiveOver;
+
     /**
      * The constructor
-     * 
+     *
      * @param id the identifier
      * @param name the name
      * @param isTransitive the transitivity
@@ -94,5 +94,4 @@ public class OboTypeDefinition
     public void setTransitiveOver(List<String> transitiveOver) {
         this.transitiveOver = transitiveOver;
     }
-    
 }

@@ -43,7 +43,7 @@ public class GFF3SeqHandler
     public String getSeqIdentifier(String id) {
         return id;
     }
-    
+
     /**
      * Create the sequence item from the converter.
      * @param converter that we are handling the sequence for

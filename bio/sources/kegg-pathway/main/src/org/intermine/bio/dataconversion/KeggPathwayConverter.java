@@ -41,11 +41,10 @@ public class KeggPathwayConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(KeggPathwayConverter.class);
     private static final String PROP_FILE = "kegg_config.properties";
-    protected HashMap pathwayMap = new HashMap();
     private Map<String, Item> geneItems = new HashMap<String, Item>();
     protected IdResolverFactory resolverFactory;
-    private Map<String, String[]> config = new HashMap();
-    private Set<String> taxonIds = new HashSet();
+    private Map<String, String[]> config = new HashMap<String, String[]>();
+    private Set<String> taxonIds = new HashSet<String>();
 
     protected Map<String, String> pathwayIdentifiers = new HashMap<String, String>();
     protected Map<String, Item> pathwaysNotStored = new HashMap<String, Item>();
@@ -63,7 +62,6 @@ public class KeggPathwayConverter extends BioFileConverter
         resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
-
     /**
      * Sets the list of taxonIds that should be imported
      *
@@ -73,7 +71,6 @@ public class KeggPathwayConverter extends BioFileConverter
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
         LOG.info("Setting list of organisms to " + this.taxonIds);
     }
-
 
     private void readConfig() {
         Properties props = new Properties();
@@ -118,7 +115,7 @@ public class KeggPathwayConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         // there are two files
         // data is in format
