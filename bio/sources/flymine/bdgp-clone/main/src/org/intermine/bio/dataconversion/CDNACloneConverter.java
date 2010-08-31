@@ -68,5 +68,3 @@ public abstract class CDNACloneConverter extends BioFileConverter
         return bioEntity;
     }
 }
-
-

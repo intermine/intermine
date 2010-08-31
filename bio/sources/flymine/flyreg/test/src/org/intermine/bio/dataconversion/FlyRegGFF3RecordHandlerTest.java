@@ -12,21 +12,13 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
-import org.intermine.bio.io.gff3.GFF3Parser;
-import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.util.TypeUtil;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
 
 /**
  * Tests for the FlyRegGFF3RecordHandler class.
@@ -59,7 +51,7 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
         resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("dl"));
         handler.resolverFactory = resolverFactory;
         converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName,
-                                      dataSetTitle, "FlyBase", tgtModel, handler, null);
+                                      dataSetTitle, tgtModel, handler, null);
 
     }
 
@@ -75,10 +67,10 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
 
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
         converter.parse(srcReader);
-        converter.store();
+        converter.storeAll();
 
         // uncomment to write a new target items files
-        // writeItemsFile(writer.getItems(), "/tmp/flyreg-tgt-items.xml");
+        //writeItemsFile(writer.getItems(), "flyreg-tgt-items.xml");
 
         Set expected = readItemSet("FlyRegGFF3RecordHandlerTest.xml");
 

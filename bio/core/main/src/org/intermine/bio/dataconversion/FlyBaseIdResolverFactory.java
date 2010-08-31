@@ -43,7 +43,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
         this.soTerm = soTerm;
     }
 
-    
+
     /**
      * Construct with SO term of the feature type to read from chado database and restrict to
      * data from only one organism.
@@ -54,20 +54,20 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
         this.soTerm = soTerm;
         this.taxonId = taxonId;
     }
-    
-    
+
+
     /**
      * Build an IdResolver for FlyBase by accessing a FlyBase chado database.
      * @return an IdResolver for FlyBase
      */
     protected IdResolver createIdResolver() {
         IdResolver resolver = new IdResolver(soTerm);
-        
+
         try {
             // TODO maybe this shouldn't be hard coded here?
             db = DatabaseFactory.getDatabase("db.flybase");
 
-            String cacheFileName = "build/" + db.getName() + "." + soTerm 
+            String cacheFileName = "build/" + db.getName() + "." + soTerm
                 + ((taxonId != null) ? "." + taxonId : "");
             File f = new File(cacheFileName);
             if (f.exists()) {
@@ -84,14 +84,14 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
         }
         return resolver;
     }
-    
-    
+
+
     private IdResolver createFromDb(Database db) {
         IdResolver resolver = new IdResolver(soTerm);
         Connection conn = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
-        
-        
+
+
         try {
             conn = db.getConnection();
             String query = "select c.cvterm_id"
@@ -117,15 +117,15 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 String organismId = null;
                 res.next();
                 organismId = res.getString("organism_id");
-                stmt.close(); 
+                stmt.close();
                 orgConstraint = " and o.organism_id = " + organismId;
             }
-            
+
             String extraConstraint = "";
             if (soTerm.equals("gene")) {
                 extraConstraint = " and  f.uniquename like \'FBgn%\'";
             }
-            
+
             // fetch feature name for located genes
             query = "select distinct o.abbreviation, f.uniquename, f.name"
                 + " from feature f, featureloc l, organism o"
@@ -149,7 +149,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
             }
             LOG.info("feature query returned " + i + " rows.");
             stmt.close();
-            
+
             // fetch gene synonyms
             query = "select distinct o.abbreviation, f.uniquename, s.name, "
                 + " fs.is_current, c.name as type"
@@ -183,7 +183,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
             }
             stmt.close();
             LOG.info("synonym query returned " + i + " rows.");
-            
+
             // fetch FlyBase dbxrefs for located genes
             query = "select distinct o.abbreviation, f.uniquename,"
                 + " d.accession, db.name, fd.is_current"
@@ -229,7 +229,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 throw new RuntimeException(e);
             }
         }
-        
+
         return resolver;
     }
 }

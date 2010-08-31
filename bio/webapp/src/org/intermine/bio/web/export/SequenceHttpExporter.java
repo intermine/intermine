@@ -25,7 +25,7 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.struts.SequenceExportForm;
 import org.intermine.bio.web.struts.SequenceExportOptionsController;
 import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
@@ -155,7 +155,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
 
         for (Path seqPath: sequencePaths) {
             Class<?> seqPathClass = seqPath.getEndClassDescriptor().getType();
-            if (LocatedSequenceFeature.class.isAssignableFrom(seqPathClass)) {
+            if (SequenceFeature.class.isAssignableFrom(seqPathClass)) {
                 // skip chromosome class, so ...chromosome.chromosomeLocation doesn't appear in
                 // paths, because chromosome.chromosomeLocation is empty and it caused empty
                 // export results

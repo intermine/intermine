@@ -19,20 +19,20 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.dataconversion.MockItemsTestCase;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 
 
-public class GoConverterTest extends ItemsTestCase
+public class GoConverterTest extends MockItemsTestCase
 {
     private File goOboFile;
     Model model;
     GoConverter converter;
     MockItemWriter writer;
-    
+
     public GoConverterTest(String arg) {
         super(arg);
     }
@@ -70,7 +70,7 @@ public class GoConverterTest extends ItemsTestCase
         Reader reader = new InputStreamReader(
                 getClass().getClassLoader().getResourceAsStream("GoConverterOboTest_src.txt"));
         converter.process(reader);
-        System.out.println("productWrapperMap: " + converter.productMap.keySet());
+        //System.out.println("productWrapperMap: " + converter.productMap.keySet());
         converter.close();
 
         // uncomment to write a new target items file

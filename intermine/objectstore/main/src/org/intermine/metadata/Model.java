@@ -10,17 +10,18 @@ package org.intermine.metadata;
  *
  */
 
+import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
-import java.math.BigDecimal;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.MetadataManager;
@@ -197,14 +198,17 @@ public class Model
 
     /**
      * Get all ClassDescriptors in this model.
+     *
      * @return a set of all ClassDescriptors in the model
      */
     public Set<ClassDescriptor> getClassDescriptors() {
+
         return new LinkedHashSet<ClassDescriptor>(cldMap.values());
     }
 
     /**
      * Return true if named ClassDescriptor is found in the model.
+     *
      * @param name named of ClassDescriptor search for
      * @return true if named descriptor found
      */
@@ -215,6 +219,7 @@ public class Model
     /**
      * Get a Set of fully qualified class names in this model (i.e. including
      * package name).
+     *
      * @return Set of fully qualified class names
      */
     public Set<String> getClassNames() {
@@ -257,10 +262,26 @@ public class Model
         sb.append("<model name=\"" + modelName + "\" package=\"" + packageName + "\">" + ENDL);
         for (ClassDescriptor cld : getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
-                sb.append(cld.toString() + ENDL);
+                sb.append(cld.toString());
             }
         }
         sb.append("</model>");
+        return sb.toString();
+    }
+
+    /**
+     * Used to generate the SO additions file
+     * @return the model as an additions file
+     */
+    public String toAdditionsXML() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<?xml version=\"1.0\"?>"  + ENDL + "<classes>" + ENDL);
+        for (ClassDescriptor cld : getClassDescriptors()) {
+            if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
+                sb.append(cld.toString());
+            }
+        }
+        sb.append("</classes>");
         return sb.toString();
     }
 

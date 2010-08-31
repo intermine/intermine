@@ -3,7 +3,7 @@
 <attribute name="name" value="LFS"/>
 </item>
 <item id="1_1" class="DataSet">
-<attribute name="title" value="UniProt keywords data set"/>
+<attribute name="name" value="UniProt keywords data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="4_1" class="OntologyTerm">
@@ -14,7 +14,7 @@
 <collection name="synonyms"><reference ref_id="3_1"/><reference ref_id="3_2"/><reference ref_id="3_3"/></collection>
 </item>
 <item id="2_1" class="Ontology">
-<attribute name="title" value="UniProtKeyword"/>
+<attribute name="name" value="UniProtKeyword"/>
 </item>
 <item id="4_2" class="OntologyTerm">
 <attribute name="description" value="Enzyme that catalyzes the joining of two molecules coupled with thebreakdown of a pyrophosphate bond in ATP or a similar triphosphate.Sometimes the terms &quot;synthase&quot;, &quot;synthetase&quot;or &quot;carboxylase&quot;are alsoused for this class of enzymes."/>

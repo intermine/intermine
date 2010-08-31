@@ -22,13 +22,12 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Reference;
+import org.xml.sax.SAXException;
 
 /**
  * DataConverter to parse homophila data file into Items.
@@ -55,16 +54,16 @@ public class HomophilaConverter extends BioFileConverter
     protected int annotationCount = 0;
 
     /* Singleton items. */
-    protected Item orgHuman;
-    protected Item orgDrosophila;
+    protected String orgHuman;
+    protected String orgDrosophila;
     protected Item pub1, pub2;
 
     protected File diseaseFile;
     protected File proteinGeneFile;
 
     protected IdResolverFactory resolverFactory;
-    Set<String> problemProteins = new HashSet();
-    
+    Set<String> problemProteins = new HashSet<String>();
+
     /**
      * Construct a new instance of HomophilaConverter.
      *
@@ -75,13 +74,8 @@ public class HomophilaConverter extends BioFileConverter
     public HomophilaConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model, "Homophila", "Homophila data set");
 
-        orgHuman = createItem("Organism");
-        orgHuman.addAttribute(new Attribute("taxonId", "9606"));
-        store(orgHuman);
-
-        orgDrosophila = createItem("Organism");
-        orgDrosophila.addAttribute(new Attribute("taxonId", "7227"));
-        store(orgDrosophila);
+        orgHuman = getOrganism("9606");
+        orgDrosophila = getOrganism("7227");
 
         pub1 = createItem("Publication");
         pub1.addAttribute(new Attribute("pubMedId", "11381037"));
@@ -90,7 +84,7 @@ public class HomophilaConverter extends BioFileConverter
         pub2 = createItem("Publication");
         pub2.addAttribute(new Attribute("pubMedId", "11752278"));
         store(pub2);
-        
+
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("protein", "7227");
     }
@@ -195,17 +189,13 @@ public class HomophilaConverter extends BioFileConverter
         } catch (IOException err) {
             throw new RuntimeException("error reading protein to gene file", err);
         }
-
         BufferedReader br = new BufferedReader(reader);
         br.readLine();
         String line;
         int done = 0;
-
         while ((line = br.readLine()) != null) {
             String array[] = StringUtils.split(line, '\t');
-
             newBlastMatch(array);
-
             if (++done % 10000 == 0) {
                 LOG.info("Processed " + done + " homophila matches");
             }
@@ -218,13 +208,15 @@ public class HomophilaConverter extends BioFileConverter
      * @param array line of homophila matches file
      * @return BlastMatch Item
      * @throws ObjectStoreException if something goes wrong
+     * @throws SAXException if something goes wrong
      */
-    protected Item newBlastMatch(String array[]) throws ObjectStoreException {
+    protected Item newBlastMatch(String array[])
+        throws ObjectStoreException, SAXException {
         Item drosophilaProtein = findTranslation(array);
         if (drosophilaProtein != null) {
             Item item = createItem("BlastMatch");
-            item.setReference("subject", findProtein(array));
-            item.setReference("object", drosophilaProtein);
+            item.setReference("hit", findProtein(array));
+            item.setReference("query", drosophilaProtein);
             item.setAttribute("EValue", array[E_VALUE]);
             store(item);
             matchCount++;
@@ -244,7 +236,7 @@ public class HomophilaConverter extends BioFileConverter
         String proteinCG = array[TRANSLATION_ID];
         IdResolver resolver = resolverFactory.getIdResolver();
         int resCount = resolver.countResolutions("7227", proteinCG);
-        if (resCount != 1){
+        if (resCount != 1) {
             if (!problemProteins.contains(proteinCG)) {
                 LOG.info("RESOLVER: failed to resolve protein to one identifier, ignoring protein: "
                         + proteinCG + " count: " + resCount + " FBpp: "
@@ -258,7 +250,7 @@ public class HomophilaConverter extends BioFileConverter
         if (translation == null) {
             translation = createItem("Protein");
             translation.setAttribute("secondaryIdentifier", secondaryIdentifier);
-            translation.setReference("organism", orgDrosophila.getIdentifier());
+            translation.setReference("organism", orgDrosophila);
             proteins.put(secondaryIdentifier, translation);
             store(translation);
         }
@@ -271,26 +263,22 @@ public class HomophilaConverter extends BioFileConverter
      * @param array line of homophila matches file
      * @return Protein Item
      * @throws ObjectStoreException if something goes wrong
+     * @throws SAXException if storing the protein synonym fails
      */
-    protected Item findProtein(String array[]) throws ObjectStoreException {
+    protected Item findProtein(String array[])
+        throws ObjectStoreException, SAXException {
         Item protein = proteins.get(array[PROTEIN_ID]);
         if (protein == null) {
             protein = createItem("Protein");
             String primaryIdentifier = array[PROTEIN_ID];
             protein.setAttribute("primaryIdentifier", primaryIdentifier);
-            protein.setReference("organism", orgHuman.getIdentifier());
+            protein.setReference("organism", orgHuman);
             Item gene = findGene(array);
             if (gene != null) {
                 protein.addToCollection("genes", gene);
             }
             proteins.put(array[PROTEIN_ID], protein);
             store(protein);
-
-            Item synonym = createItem("Synonym");
-            synonym.setAttribute("type", "identifier");
-            synonym.setAttribute("value", primaryIdentifier);
-            synonym.setReference("subject", protein.getIdentifier());
-            store(synonym);
         }
         return protein;
     }
@@ -301,8 +289,10 @@ public class HomophilaConverter extends BioFileConverter
      * @param array line of homophila matches file
      * @return Gene Item
      * @throws ObjectStoreException if something goes wrong
+     * @throws SAXException if storing the protein synonym fails
      */
-    protected Item findGene(String array[]) throws ObjectStoreException {
+    protected Item findGene(String array[])
+        throws ObjectStoreException, SAXException {
         String geneId = proteinToGene.get(array[PROTEIN_ID]);
         if (geneId == null) {
             LOG.warn("protein id " + array[PROTEIN_ID] + " doesn't map to a gene id");
@@ -312,41 +302,12 @@ public class HomophilaConverter extends BioFileConverter
         if (gene == null) {
             gene = createItem("Gene");
             genes.put(geneId, gene);
-            gene.addAttribute(new Attribute("symbol", geneId));
-            gene.addReference(new Reference("organism", orgHuman.getIdentifier()));
+            gene.setAttribute("symbol", geneId);
+            gene.setReference("organism", orgHuman);
             gene.addToCollection("omimDiseases", findDisease(array));
             store(gene);
-
-
-            Item synonym = createItem("Synonym");
-            synonym.setAttribute("type", "symbol");
-            synonym.setAttribute("value", geneId);
-            synonym.setReference("subject", gene.getIdentifier());
-            store(synonym);
-
-            newAnnotation(gene, findDisease(array));
         }
         return gene;
-    }
-
-    /**
-     * Create new Annotation item. Adds the Homophila database and the two publications
-     * as evidence. The subject is the gene and the property is the disease.
-     *
-     * @param gene the Gene Item
-     * @param disease the disease Item
-     * @return the Annotation Item
-     * @throws ObjectStoreException if something goes wrong
-     */
-    protected Item newAnnotation(Item gene, Item disease) throws ObjectStoreException {
-        Item annotation = createItem("Annotation");
-        annotation.setReference("subject", gene.getIdentifier());
-        annotation.setReference("property", disease.getIdentifier());
-        annotation.addToCollection("publications", pub1);
-        annotation.addToCollection("publications", pub2);
-        store(annotation);
-        annotationCount++;
-        return annotation;
     }
 
     /**

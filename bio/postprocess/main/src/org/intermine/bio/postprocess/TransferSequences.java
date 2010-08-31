@@ -21,15 +21,14 @@ import org.biojava.bio.symbol.IllegalAlphabetException;
 import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.bio.symbol.SymbolList;
 import org.intermine.bio.util.Constants;
-import org.intermine.model.bio.Assembly;
 import org.intermine.model.bio.CDS;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.ChromosomeBand;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Sequence;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -73,7 +72,7 @@ public class TransferSequences
     }
 
 
-    private void storeNewSequence(LocatedSequenceFeature feature, String sequenceString)
+    private void storeNewSequence(SequenceFeature feature, String sequenceString)
         throws ObjectStoreException {
         Sequence sequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
@@ -88,7 +87,7 @@ public class TransferSequences
 
     /**
      * Use the Location relations to copy the sequence from the Chromosomes to every
-     * LocatedSequenceFeature that is located on a Chromosome and which doesn't already have a
+     * SequenceFeature that is located on a Chromosome and which doesn't already have a
      * sequence (ie. don't copy to Assembly).  Uses the ObjectStoreWriter that was passed to the
      * constructor
      * @throws Exception if there are problems with the transfer
@@ -96,7 +95,7 @@ public class TransferSequences
     public void transferToLocatedSequenceFeatures()
         throws Exception {
         long startTime = System.currentTimeMillis();
-        
+
         ObjectStore os = osw.getObjectStore();
         Query q = new Query();
         QueryClass qcChr = new QueryClass(Chromosome.class);
@@ -105,19 +104,19 @@ public class TransferSequences
         QueryObjectReference seqRef = new QueryObjectReference(qcChr, "sequence");
         ContainsConstraint cc = new ContainsConstraint(seqRef, ConstraintOp.IS_NOT_NULL);
         q.setConstraint(cc);
-        
+
         SingletonResults res = os.executeSingleton(q);
-        Iterator chrIter = res.iterator();
+        Iterator<?> chrIter = res.iterator();
 
         Set<Chromosome> chromosomes = new HashSet<Chromosome>();
         while (chrIter.hasNext()) {
             Chromosome chr = (Chromosome) chrIter.next();
             chromosomes.add(chr);
         }
-        
-        LOG.info("Found " + chromosomes.size() + " chromosomes with sequence, took " 
+
+        LOG.info("Found " + chromosomes.size() + " chromosomes with sequence, took "
                 + (System.currentTimeMillis() - startTime) + " ms.");
-        
+
         for (Chromosome chr : chromosomes) {
             String organism = "";
             if (chr.getOrganism() != null) {
@@ -128,12 +127,12 @@ public class TransferSequences
             transferForChromosome(chr);
         }
     }
-        
-        
+
+
     private void transferForChromosome(Chromosome chr) throws Exception {
 
         long startTime = System.currentTimeMillis();
-        
+
         ObjectStore os = osw.getObjectStore();
         Query q = new Query();
         q.setDistinct(false);
@@ -145,8 +144,8 @@ public class TransferSequences
         SimpleConstraint sc = new SimpleConstraint(qfChrId, ConstraintOp.EQUALS,
                 new QueryValue(chr.getId()));
         cs.addConstraint(sc);
-        
-        QueryClass qcSub = new QueryClass(LocatedSequenceFeature.class);
+
+        QueryClass qcSub = new QueryClass(SequenceFeature.class);
         q.addFrom(qcSub);
         q.addToSelect(qcSub);
 
@@ -155,10 +154,10 @@ public class TransferSequences
         QueryClass qcLoc = new QueryClass(Location.class);
         q.addFrom(qcLoc);
         q.addToSelect(qcLoc);
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "object");
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "locatedOn");
         ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcChr);
         cs.addConstraint(cc1);
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "feature");
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
         cs.addConstraint(cc2);
 
@@ -170,7 +169,7 @@ public class TransferSequences
         q.setConstraint(cs);
 
         osw.beginTransaction();
-        
+
         Set<QueryNode> indexesToCreate = new HashSet<QueryNode>();
         indexesToCreate.add(qcLoc);
         indexesToCreate.add(qcSub);
@@ -178,20 +177,17 @@ public class TransferSequences
             Constants.PRECOMPUTE_CATEGORY);
         Results results = os.execute(q, 1000, true, true, true);
 
-        Iterator<ResultsRow> resIter = results.iterator();
+        Iterator<ResultsRow<?>> resIter = results.iterator();
 
         long start = System.currentTimeMillis();
         int i = 0;
         while (resIter.hasNext()) {
-            ResultsRow rr = resIter.next();
+            ResultsRow<?> rr = resIter.next();
 
-            LocatedSequenceFeature feature = (LocatedSequenceFeature) rr.get(0);
+            SequenceFeature feature = (SequenceFeature) rr.get(0);
             Location locationOnChr = (Location) rr.get(1);
 
             try {
-                if (feature instanceof Assembly) {
-                    continue;
-                }
 
                 if (feature instanceof ChromosomeBand) {
                     continue;
@@ -208,7 +204,7 @@ public class TransferSequences
                 if (feature instanceof Gene) {
                     Gene gene = (Gene) feature;
                     if (gene.getLength() != null && gene.getLength().intValue() > 2000000) {
-                        LOG.warn("gene too long in transferToLocatedSequenceFeatures() ignoring: "
+                        LOG.warn("gene too long in transferToSequenceFeatures() ignoring: "
                                   + gene);
                         continue;
                     }
@@ -226,8 +222,8 @@ public class TransferSequences
                 sequence.setResidues(featureSeq);
                 sequence.setLength(featureSeq.length());
                 osw.store(sequence);
-                LocatedSequenceFeature cloneLsf =
-                    (LocatedSequenceFeature) PostProcessUtil.cloneInterMineObject(feature);
+                SequenceFeature cloneLsf =
+                    (SequenceFeature) PostProcessUtil.cloneInterMineObject(feature);
                 cloneLsf.setSequence(sequence);
                 cloneLsf.setLength(new Integer(featureSeq.length()));
                 osw.store(cloneLsf);
@@ -238,7 +234,7 @@ public class TransferSequences
                              + " (avg = " + ((60000L * i) / (now - start)) + " per minute)");
                 }
             } catch (Exception e) {
-                Exception e2 = new Exception("Exception while processing LocatedSequenceFeature "
+                Exception e2 = new Exception("Exception while processing SequenceFeature "
                         + feature);
                 e2.initCause(e);
                 throw e2;
@@ -263,8 +259,8 @@ public class TransferSequences
         String chromosomeSequenceString = chromosomeSequence.getResidues();
 
         if (charsToCopy > chromosomeSequenceString.length()) {
-            LOG.warn("LocatedSequenceFeature too long, ignoring - Location: "
-                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getObject());
+            LOG.warn("SequenceFeature too long, ignoring - Location: "
+                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getFeature());
             return null;
         }
 
@@ -272,8 +268,8 @@ public class TransferSequences
         int endPos = startPos + charsToCopy;
 
         if (startPos < 0 || endPos < 0) {
-            LOG.warn("LocatedSequenceFeature has negative coordinate, ignoring Location: "
-                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getObject());
+            LOG.warn("SequenceFeature has negative coordinate, ignoring Location: "
+                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getFeature());
             return null;
 
             // Do we really want an exception?  Not much we can do about it.  (rns 22/10/06)
@@ -293,9 +289,9 @@ public class TransferSequences
         }
 
         if (endPos > chromosomeSequenceString.length()) {
-            LOG.warn("LocatedSequenceFeature has end coordinate greater than chromsome length."
+            LOG.warn(" has end coordinate greater than chromsome length."
                       + "ignoring Location: "
-                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getObject());
+                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getFeature());
             return null;
         }
 
@@ -343,7 +339,7 @@ public class TransferSequences
         QueryClass qcExon = new QueryClass(Exon.class);
         q.addFrom(qcExon);
         q.addToSelect(qcExon);
-        
+
 
         QueryClass qcExonSequence = new QueryClass(Sequence.class);
         q.addFrom(qcExonSequence);
@@ -354,7 +350,7 @@ public class TransferSequences
         q.addToSelect(qcExonLocation);
 
         QueryField qfExonStart = new QueryField(qcExonLocation, "start");
-        q.addToSelect(qfExonStart);        
+        q.addToSelect(qfExonStart);
         q.addToOrderBy(qfExonStart);
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -388,7 +384,7 @@ public class TransferSequences
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q, 1000, true, true, true);
 
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
 
         Transcript currentTranscript = null;
         StringBuffer currentTranscriptBases = new StringBuffer();
@@ -396,32 +392,32 @@ public class TransferSequences
         long start = System.currentTimeMillis();
         int i = 0;
         while (resIter.hasNext()) {
-           ResultsRow rr = (ResultsRow) resIter.next();
-           Transcript transcript =  (Transcript) rr.get(0);
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
+            Transcript transcript =  (Transcript) rr.get(0);
 
-           if (currentTranscript == null || !transcript.equals(currentTranscript)) {
-               if (currentTranscript != null) {
-                   storeNewSequence(currentTranscript,
-                                    currentTranscriptBases.toString());
-                   i++;
-                   if (i % 100 == 0) {
-                       long now = System.currentTimeMillis();
-                       LOG.info("Set sequences for " + i + " Transcripts"
+            if (currentTranscript == null || !transcript.equals(currentTranscript)) {
+                if (currentTranscript != null) {
+                    storeNewSequence(currentTranscript,
+                            currentTranscriptBases.toString());
+                    i++;
+                    if (i % 100 == 0) {
+                        long now = System.currentTimeMillis();
+                        LOG.info("Set sequences for " + i + " Transcripts"
                                 + " (avg = " + ((60000L * i) / (now - start)) + " per minute)");
-                   }
-               }
-               currentTranscriptBases = new StringBuffer();
-               currentTranscript = transcript;
-           }
+                    }
+                }
+                currentTranscriptBases = new StringBuffer();
+                currentTranscript = transcript;
+            }
 
-           Sequence exonSequence = (Sequence) rr.get(2);
-           Location  location = (Location) rr.get(3);
+            Sequence exonSequence = (Sequence) rr.get(2);
+            Location  location = (Location) rr.get(3);
 
-           if (location.getStrand() != null && location.getStrand().equals("-1")) {
-               currentTranscriptBases.insert(0, exonSequence.getResidues());
-           } else {
-               currentTranscriptBases.append(exonSequence.getResidues());
-           }
+            if (location.getStrand() != null && location.getStrand().equals("-1")) {
+                currentTranscriptBases.insert(0, exonSequence.getResidues());
+            } else {
+                currentTranscriptBases.append(exonSequence.getResidues());
+            }
         }
         if (currentTranscript == null) {
             LOG.error("in transferToTranscripts(): no Transcripts found");

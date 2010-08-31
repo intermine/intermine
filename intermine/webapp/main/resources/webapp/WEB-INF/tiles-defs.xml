@@ -183,10 +183,7 @@
   <definition name="mainConstraint.tile" path="/mainConstraint.jsp" controllerUrl="/initMainConstraint.do"/>
   <definition name="mainPaths.tile" path="/mainPaths.jsp" controllerUrl="/initMainPaths.do"/>
   <definition name="inlineTagEditor.tile" path="/inlineTagEditor.jsp" controllerUrl="/initInlineTagEditor.do"/>
-  <definition name="quickSearch.tile" path="/quickSearch.jsp" controllerUrl="/initQuickSearch.do">
-    <put name="prompt" value="Query text"/>
-    <put name="templateName" value=""/>
-  </definition>
+  <definition name="quickSearch.tile" path="/quickSearch.jsp"/>
   <definition name="view.tile" path="/view.jsp">
     <put name="saveQuery" value="/saveQuery.jsp"/>
     <put name="createTemplate" value="/createTemplate.jsp"/>
@@ -195,8 +192,10 @@
   <definition name="classChooser.tile" path="/queryClassSelect.jsp" controllerUrl="/initClassChooser.do"/>
   <definition name="mymine.tile" path="/mymine.jsp" controllerUrl="/initMymine.do"/>
   <definition name="objectTrail.tile" path="/objectTrail.jsp" controllerUrl="/initObjectTrail.do"/>
+
   <definition name="htmlHead.tile" path="/htmlHead.jsp" controllerUrl="/initHtmlHead.do"/>
-  <definition name="objectView.tile" path="/objectView.jsp"/>
+  <definition name="objectView.tile" path="/objectView.jsp" controllerUrl="/initObjectView.do"/>
+
   <definition name="objectDetailsPage.tile" path="/objectDetails.jsp" controllerUrl="/initObjectDetails.do"/>
   <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>
   <definition name="bag.tile" path="/bag.jsp"/>

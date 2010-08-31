@@ -21,6 +21,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -30,9 +31,11 @@ import org.intermine.xml.full.Item;
  */
 public class RNAiConverter extends BioFileConverter
 {
-    private Map geneMap = new HashMap(), screenMap = new HashMap(),
-        pubMap = new HashMap(), phenotypeMap = new HashMap();
-    private Item org, ontology;
+    private Map<String, Item> geneMap = new HashMap<String, Item>(),
+    screenMap = new HashMap<String, Item>(),
+    pubMap = new HashMap<String, Item>(),
+    phenotypeMap = new HashMap<String, Item>();
+    private Item ontology;
 
     /**
      * Constructor
@@ -41,15 +44,11 @@ public class RNAiConverter extends BioFileConverter
      * @throws ObjectStoreException of problem reading/writing data
      */
     public RNAiConverter(ItemWriter writer, Model model)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         super(writer, model, "WormBase", "WormBase RNAi Phenotypes");
 
-        org = createItem("Organism");
-        org.setAttribute("taxonId", "6239");
-        store(org);
-
         ontology = createItem("Ontology");
-        ontology.setAttribute("title", "WormBase phenotype codes");
+        ontology.setAttribute("name", "WormBase phenotype codes");
         store(ontology);
     }
 
@@ -57,7 +56,7 @@ public class RNAiConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         boolean readingData = false;
         File currentFile = getCurrentFile();
         if (currentFile.getName().contains("-final")) {
@@ -89,35 +88,27 @@ public class RNAiConverter extends BioFileConverter
                         }
                     Item phenotype = createPhenotype(line[2], line[4], line[3], comment, isObserved,
                         line[7], line[8]);
-                    phenotype.setReference("subject", gene.getIdentifier());
                     phenotype.setReference("gene", gene.getIdentifier());
 
                     Item pub = createPub(line[11]);
                     phenotype.addToCollection("publications", pub.getIdentifier());
                     Item screen = createScreen(pub);
-                    phenotype.setReference("analysis", screen.getIdentifier());
-
+                    phenotype.setReference("screen", screen.getIdentifier());
                     store(phenotype);
                 }
             }
         }
     }
 
-    private Item createGene(String primaryIdentifier) throws ObjectStoreException {
+    private Item createGene(String primaryIdentifier)
+        throws ObjectStoreException, SAXException {
         Item gene = (Item) geneMap.get(primaryIdentifier);
         if (gene == null) {
             gene = createItem("Gene");
-            gene.setReference("organism", org.getIdentifier());
+            gene.setReference("organism", getOrganism("6239"));
             gene.setAttribute("primaryIdentifier", primaryIdentifier);
             geneMap.put(primaryIdentifier, gene);
-
-            Item synonym = createItem("Synonym");
-            synonym.setAttribute("value", primaryIdentifier);
-            synonym.setAttribute("type", "identifier");
-            synonym.setReference("subject", gene.getIdentifier());
-
             store(gene);
-            store(synonym);
         }
         return gene;
     }
@@ -154,7 +145,7 @@ public class RNAiConverter extends BioFileConverter
 
             store(phenotype);
         }
-        rnaiPhenotype.setReference("property", phenotype.getIdentifier());
+        rnaiPhenotype.setReference("phenotype", phenotype.getIdentifier());
         return rnaiPhenotype;
     }
 
@@ -178,7 +169,7 @@ public class RNAiConverter extends BioFileConverter
         if (screen == null) {
             screen = createItem("RNAiScreen");
             screen.setReference("publication", pubId);
-            screen.setReference("organism", org.getIdentifier());
+            screen.setReference("organism", getOrganism("6239"));
             screenMap.put(pubId, screen);
             store(screen);
         }

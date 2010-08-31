@@ -46,13 +46,12 @@ public class GFF3ConverterTest extends ItemsTestCase {
     String seqClsName = "Chromosome";
     String orgTaxonId = "7227";
     String dataSourceName = "UCSC";
-    String seqDataSourceName = "MGI";
     String dataSetTitle = "UCSC data set";
 
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
         converter = new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName,
-                                      dataSetTitle, seqDataSourceName, tgtModel,
+                                      dataSetTitle, tgtModel,
                                       new GFF3RecordHandler(tgtModel), null);
     }
 
@@ -70,13 +69,13 @@ public class GFF3ConverterTest extends ItemsTestCase {
         BufferedReader srcReader = new BufferedReader(new
                                                       InputStreamReader(getClass().getClassLoader().getResourceAsStream("test.gff")));
         converter.parse(srcReader);
-        converter.store();
+        converter.storeAll();
 
 
         Set expected = new HashSet(getExpectedLocatedItems());
 
         // uncomment to write out a new target items file
-        // writeItemsFile(writer.getItems(), "/tmp/gff_located_item_test.xml");
+        //writeItemsFile(writer.getItems(), "gff_located_item_test.xml");
 
         assertEquals(expected, writer.getItems());
     }
@@ -95,12 +94,12 @@ public class GFF3ConverterTest extends ItemsTestCase {
                                                       InputStreamReader(getClass().getClassLoader().getResourceAsStream("test.gff")));
         converter.setDontCreateLocations(true);
         converter.parse(srcReader);
-        converter.store();
+        converter.storeAll();
 
         Set expected = new HashSet(getExpectedUnLocatedItems());
 
         // uncomment to write out a new target items file
-        // writeItemsFile(writer.getItems(), "/tmp/gff_unlocated_item_test.xml");
+        //writeItemsFile(writer.getItems(), "gff_unlocated_item_test.xml");
 
         assertEquals(expected, writer.getItems());
     }

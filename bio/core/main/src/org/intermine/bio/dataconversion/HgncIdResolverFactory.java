@@ -49,14 +49,12 @@ public class HgncIdResolverFactory extends IdResolverFactory
         if (StringUtils.isBlank(fileName)) {
             String message = "HGNC resolver has no file name specified, set " + propName
                 + " to the file location.";
-            System.out. println(message);
             throw new IllegalArgumentException(message);
         }
-        
+
         IdResolver resolver;
         BufferedReader reader;
         try {
-            System.out. println("Creating HGNC gene resolver from file " + fileName);
             FileReader fr = new FileReader(new File(fileName));
             reader = new BufferedReader(fr);
             resolver = createFromFile(reader);
@@ -85,7 +83,7 @@ public class HgncIdResolverFactory extends IdResolverFactory
         IdResolver resolver = new IdResolver(clsName);
 
         // HGNC ID | Approved Symbol | Approved Name | Status | Previous Symbols | Aliases
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             String symbol = line[1];

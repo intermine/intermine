@@ -64,7 +64,7 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
      * {@inheritDoc}
      */
     public CategoryDataset getDataSet() {
-            return dataSet;
+        return dataSet;
     }
 
     private void buildDataSets(InterMineBag bag, ObjectStore os) {
@@ -72,11 +72,11 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
         Query q = createQuery(bag, false);
 
         results = os.execute(q, 100, true, true, true);
-        Iterator iter = results.iterator();
+        Iterator<?> iter = results.iterator();
         LinkedHashMap<String, int[]> callTable = initCallTable();
 
         while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
+            ResultsRow<?> resRow = (ResultsRow<?>) iter.next();
 
             String stage = (String) resRow.get(0);
             stage = (stage.split(" \\("))[0];
@@ -123,7 +123,7 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
 
 
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
-                                                  new QueryField(ds, "title"));
+                                                  new QueryField(ds, "name"));
         cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS,
                                               new QueryValue(dataset.toLowerCase())));
 
@@ -164,8 +164,7 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
     }
 
 
-    private LinkedHashMap<String, int[]>
-                            initCallTable() {
+    private LinkedHashMap<String, int[]> initCallTable() {
         LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
         String[] stageLabels = new String[6];
 
@@ -187,9 +186,9 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
 
     private void calcTotal(InterMineBag bag, ObjectStore os) {
         Results res = os.execute(createQuery(bag, true));
-        Iterator iter = res.iterator();
+        Iterator<?> iter = res.iterator();
         while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
+            ResultsRow<?> resRow = (ResultsRow<?>) iter.next();
             widgetTotal = ((java.lang.Long) resRow.get(0)).intValue();
         }
     }

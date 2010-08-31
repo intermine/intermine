@@ -55,6 +55,7 @@ public class TreefamConverterTest extends ItemsTestCase
         String input = IOUtils.toString(loader.getResourceAsStream("ortholog.txt.table"));
 
         converter.setTreefamOrganisms("7227");
+        converter.setTreefamHomologues("9606");
         converter.setGeneFile(genes);
         converter.process(new StringReader(input));
         converter.close();

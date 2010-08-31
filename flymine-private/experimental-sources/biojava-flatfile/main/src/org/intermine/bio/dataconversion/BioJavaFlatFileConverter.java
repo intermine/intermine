@@ -308,8 +308,8 @@ public class BioJavaFlatFileConverter extends FileConverter
         Item locItem = makeItem("Location");
         locItem.setAttribute("start", location.getMin() + "");
         locItem.setAttribute("end", location.getMax() + "");
-        locItem.setReference("object", chr);
-        locItem.setReference("subject", lsf);
+        locItem.setReference("locatedOn", chr);
+        locItem.setReference("feature", lsf);
         return locItem;
     }
 

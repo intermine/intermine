@@ -1,9 +1,7 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="Motif" 
-         extends="BioEntity" is-interface="true">
-    <collection name="expressionTerms"
-                referenced-type="MRNAExpressionTerm" />
+  <class name="Motif" extends="Region" is-interface="true">
+    <collection name="expressionTerms" referenced-type="MRNAExpressionTerm" />
   </class>
   <class name="MRNAExpressionTerm" is-interface="true">
     <attribute name="name" type="java.lang.String"/>

@@ -13,21 +13,19 @@ package org.intermine.bio.util;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-
-import org.intermine.model.bio.Location;
 
 /**
  * Bio utility methods for queries.
@@ -48,12 +46,14 @@ public abstract class BioQueries
      * @param hasLength if true, only query locations where the objectCls object has a non-zero
      * length
      * @param batchSize the batch size for the results object
+     * @param hasChromosomeLocation if true, only query where the subject has a chromosome location
      * @return a Results object: object.id, location, subject
      * @throws ObjectStoreException if problem reading ObjectStore
      */
-    public static Results findLocationAndObjects(ObjectStore os, Class objectCls, Class subjectCls,
-            boolean orderBySubject, boolean hasLength, boolean hasChromosomeLocation, int batchSize)
-    throws ObjectStoreException {
+    public static Results findLocationAndObjects(ObjectStore os, Class<?> objectCls,
+        Class<?> subjectCls, boolean orderBySubject, boolean hasLength,
+        boolean hasChromosomeLocation, int batchSize)
+        throws ObjectStoreException {
         // TODO check objectCls and subjectCls assignable to BioEntity
 
         Query q = new Query();
@@ -71,14 +71,20 @@ public abstract class BioQueries
         if (orderBySubject) {
             q.addToOrderBy(qcSub);
         }
-        QueryClass qcLoc = new QueryClass(Location.class);
+        Class<?> locationCls;
+        try {
+            locationCls = Class.forName("org.intermine.model.bio.Location");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        QueryClass qcLoc = new QueryClass(locationCls);
         q.addFrom(qcLoc);
         q.addToSelect(qcLoc);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "object");
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "locatedOn");
         ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj);
         cs.addConstraint(cc1);
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "feature");
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
         cs.addConstraint(cc2);
 
@@ -88,15 +94,16 @@ public abstract class BioQueries
                 new SimpleConstraint(qfObjLength, ConstraintOp.IS_NOT_NULL);
             cs.addConstraint(lengthNotNull);
         }
-        
+
         if (hasChromosomeLocation) {
-            QueryObjectReference chrLocationRef = new QueryObjectReference(qcSub, "chromosomeLocation");
-            ContainsConstraint chrLocRefNotNull = 
+            QueryObjectReference chrLocationRef
+                = new QueryObjectReference(qcSub, "chromosomeLocation");
+            ContainsConstraint chrLocRefNotNull =
                 new ContainsConstraint(chrLocationRef, ConstraintOp.IS_NULL);
             cs.addConstraint(chrLocRefNotNull);
         }
         q.setConstraint(cs);
-        Set indexesToCreate = new HashSet();
+        Set<QueryNode> indexesToCreate = new HashSet<QueryNode>();
         indexesToCreate.add(qfObj);
         indexesToCreate.add(qcLoc);
         indexesToCreate.add(qcSub);

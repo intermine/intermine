@@ -1,897 +1,751 @@
 <items>
-<item id="5_10" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="3R"/>
-<reference name="subject" ref_id="7_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="7_24" class="Synonym">
+<attribute name="value" value="FBti0028380"/>
+<reference name="subject" ref_id="14_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="5_32" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBti0028225"/>
-<reference name="subject" ref_id="12_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="15_2" class="SequenceOntologyTerm">
-<attribute name="name" value="chromosomal_inversion"/>
-</item>
-<item id="17_4" class="Location">
-<attribute name="end" value="24577107"/>
-<attribute name="start" value="24576947"/>
-<attribute name="strand" value="-1"/>
-<reference name="object" ref_id="7_2"/>
-<reference name="subject" ref_id="8_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="12_7" class="TransposableElementInsertionSite">
-<attribute name="primaryIdentifier" value="FBti0030367"/>
-<attribute name="secondaryIdentifier" value="P{RS5}5-SZ-4122"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="9_1" class="Protein">
+<item id="11_1" class="Protein">
 <attribute name="length" value="41"/>
 <attribute name="md5checksum" value="824c7d2cbdc711dd49892c63b71832ac"/>
 <attribute name="primaryIdentifier" value="FBpp88888"/>
 <attribute name="secondaryIdentifier" value="FBpp88888"/>
-<reference name="organism" ref_id="1_1"/>
-<reference name="sequence" ref_id="4_10"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequence" ref_id="6_10"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="5_41" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="P{RS3r}CB-0697-3"/>
-<reference name="subject" ref_id="12_6"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_43" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="P{RS5}5-SZ-4122"/>
-<reference name="subject" ref_id="12_7"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="20_4" class="CVTerm">
-<attribute name="identifier" value="FBcv:0000311"/>
-</item>
-<item id="16_2" class="Publication">
-<attribute name="pubMedId" value="8543160"/>
-</item>
-<item id="4_10" class="Sequence">
-<attribute name="length" value="41"/>
-<attribute name="residues" value="MTRYKQTEFTEDDSSSIGGIQLNEATGHTGMQIRYHTARAT"/>
-</item>
-<item id="24_2" class="InteractionExperiment">
-<attribute name="name" value="Another paper about interactions"/>
-<reference name="publication" ref_id="16_9"/>
-</item>
-<item id="5_39" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="P{RS3r}CB-5069-3"/>
-<reference name="subject" ref_id="12_5"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_49" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBcl0000001"/>
-<reference name="subject" ref_id="14_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="12_1" class="TransposableElementInsertionSite">
-<attribute name="primaryIdentifier" value="FBti0028380"/>
-<attribute name="secondaryIdentifier" value="P{RS3}CB-5069-3"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_35" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="P{RS5r}5-SZ-4122"/>
-<reference name="subject" ref_id="12_3"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_13" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBpp88888"/>
-<reference name="subject" ref_id="9_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_55" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBgn0036461_dbxref4"/>
-<reference name="subject" ref_id="0_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_54" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBgn0000001_dbxref3"/>
-<reference name="subject" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="4_8" class="Sequence">
-<attribute name="length" value="148"/>
-<attribute name="residues" value="gattgctcagcgcgaacg"/>
-</item>
-<item id="12_2" class="TransposableElementInsertionSite">
-<attribute name="primaryIdentifier" value="FBti0028225"/>
-<attribute name="secondaryIdentifier" value="P{RS3}CB-0697-3"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="16_9" class="Publication">
-<attribute name="pubMedId" value="2345671"/>
-</item>
-<item id="11_1" class="PointMutation">
-<attribute name="name" value="&amp;beta;Tub85D[10g]"/>
-<attribute name="primaryIdentifier" value="&amp;beta;Tub85D[10g]"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="18_2" class="PhenotypeAnnotation">
-<attribute name="annotationType" value="manifest in"/>
-<attribute name="description" value="sensory mother cell &amp; dorsal mesothoracic disc | ectopic, with ScerGAL4[sd-SG29.1]"/>
-<reference name="allele" ref_id="10_1"/>
-<reference name="subject" ref_id="10_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-<collection name="publications"><reference ref_id="16_7"/></collection>
-</item>
-<item id="8_2" class="Exon">
-<attribute name="length" value="161"/>
-<attribute name="primaryIdentifier" value="CG10000:2"/>
-<attribute name="symbol" value="CG10000:2"/>
-<reference name="chromosome" ref_id="7_2"/>
-<reference name="organism" ref_id="1_1"/>
-<reference name="sequence" ref_id="4_9"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-<collection name="transcripts"><reference ref_id="6_1"/><reference ref_id="6_2"/></collection>
-</item>
-<item id="5_42" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBti0030367"/>
-<reference name="subject" ref_id="12_7"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="7_2" class="Chromosome">
-<attribute name="length" value="27905053"/>
-<attribute name="primaryIdentifier" value="3R"/>
-<reference name="organism" ref_id="1_1"/>
-<reference name="sequence" ref_id="4_7"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="18_4" class="PhenotypeAnnotation">
-<attribute name="annotationType" value="manifest in"/>
-<attribute name="description" value="lethal | embryonic stage | segment polarity | conditional ts"/>
-<reference name="allele" ref_id="10_1"/>
-<reference name="developmentTerm" ref_id="21_1"/>
-<reference name="property" ref_id="21_1"/>
-<reference name="subject" ref_id="10_1"/>
-<collection name="cvTerms"><reference ref_id="20_2"/><reference ref_id="20_3"/><reference ref_id="20_4"/></collection>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_33" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="P{RS3}CB-0697-3"/>
+<item id="7_22" class="Synonym">
+<attribute name="value" value="Scer\GAL4[sd-SG29.1]"/>
 <reference name="subject" ref_id="12_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="10_2" class="Allele">
-<attribute name="primaryIdentifier" value="FBal0060667"/>
-<attribute name="secondaryIdentifier" value="Scer\GAL4[sd-SG29.1]"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-<collection name="mutagens"><reference ref_id="22_1"/></collection>
-<collection name="publications"><reference ref_id="16_6"/></collection>
-</item>
-<item id="4_6" class="Sequence">
-<attribute name="length" value="24543557"/>
-<attribute name="residues" value="ccacgactcgcagagggtgaagcttaagcgatcacggactcaatcctggcatcccagttcccaaagtcaggtccccacgagcatg"/>
-</item>
-<item id="4_3" class="Sequence">
-<attribute name="length" value="2528"/>
-<attribute name="residues" value="tctgcctcccaactacaatcagatgaactccaaccccaccac"/>
-</item>
-<item id="5_17" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBpp99999"/>
-<reference name="subject" ref_id="9_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_4" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="CG10000-RA"/>
-<reference name="subject" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_1" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBgn0000001"/>
-<reference name="subject" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="2_1" class="DataSource">
-<attribute name="name" value="FlyBase"/>
-</item>
-<item id="13_3" class="ChromosomeStructureVariation">
-<attribute name="primaryIdentifier" value="FBab0010281"/>
-<attribute name="secondaryIdentifier" value="T(2;3)V21"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-<collection name="featureTerms"><reference ref_id="15_1"/><reference ref_id="15_2"/></collection>
-</item>
-<item id="5_31" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="T(2;3)V21"/>
-<reference name="subject" ref_id="13_3"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_12" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="CG10000:2"/>
-<reference name="subject" ref_id="8_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="18_5" class="PhenotypeAnnotation">
-<attribute name="annotationType" value="phenotype class"/>
-<attribute name="description" value="visible, with ScerGAL4[sd-SG29.1]"/>
-<reference name="allele" ref_id="10_1"/>
-<reference name="subject" ref_id="10_1"/>
-<collection name="cvTerms"><reference ref_id="20_5"/></collection>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="18_3" class="PhenotypeAnnotation">
-<attribute name="annotationType" value="manifest in"/>
-<attribute name="description" value="wing | anterior compartment, with ScerGAL4[sd-SG29.1]"/>
-<reference name="allele" ref_id="10_1"/>
-<reference name="anatomyTerm" ref_id="19_1"/>
-<reference name="property" ref_id="19_1"/>
-<reference name="subject" ref_id="10_1"/>
-<collection name="cvTerms"><reference ref_id="20_1"/></collection>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_57" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="symbol"/>
-<attribute name="value" value="FBgn0000001_symbol_synonym"/>
-<reference name="subject" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_20" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="CG10006[GD2461]"/>
-<reference name="subject" ref_id="10_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_40" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBti0030675"/>
-<reference name="subject" ref_id="12_6"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_23" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="&amp;beta;Tub85D[10g]"/>
-<reference name="subject" ref_id="11_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_26" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBab0032193"/>
-<reference name="subject" ref_id="13_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="10_1" class="Allele">
-<attribute name="alleleClass" value="hypomorph"/>
-<attribute name="primaryIdentifier" value="FBal0198867"/>
-<attribute name="secondaryIdentifier" value="CG10006[GD2461]"/>
-<reference name="gene" ref_id="0_2"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_8" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="CG10000-RC"/>
-<reference name="subject" ref_id="6_3"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_21" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBal0060667"/>
-<reference name="subject" ref_id="10_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="23_1" class="Interaction">
-<attribute name="interactionType" value="genetic"/>
-<attribute name="name" value="FlyBase:FBgn0000001_FBgn0036461"/>
-<attribute name="shortName" value="FlyBase:FBgn0000001_FBgn0036461"/>
-<reference name="experiment" ref_id="24_1"/>
-<reference name="gene" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-<collection name="interactingGenes"><reference ref_id="0_2"/></collection>
-</item>
-<item id="0_2" class="Gene">
-<attribute name="cytoLocation" value="71B1-71B1"/>
-<attribute name="featureType" value="protein_coding_gene"/>
-<attribute name="length" value="5023"/>
-<attribute name="primaryIdentifier" value="FBgn0036461"/>
-<reference name="chromosome" ref_id="7_1"/>
-<reference name="organism" ref_id="1_1"/>
-<reference name="sequence" ref_id="4_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-<collection name="publications"><reference ref_id="16_3"/></collection>
-</item>
-<item id="5_51" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBcl0000002"/>
-<reference name="subject" ref_id="14_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="16_3" class="Publication">
-<attribute name="pubMedId" value="2892759"/>
-</item>
-<item id="5_36" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBti0031976"/>
-<reference name="subject" ref_id="12_4"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="1_1" class="Organism">
-<attribute name="taxonId" value="7227"/>
-</item>
-<item id="16_4" class="Publication">
-<attribute name="pubMedId" value="2612903"/>
-</item>
-<item id="5_14" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="CG88888-RA_prot"/>
-<reference name="subject" ref_id="9_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_19" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBal0198867"/>
-<reference name="subject" ref_id="10_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_47" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="f07990"/>
-<reference name="subject" ref_id="12_9"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="16_8" class="Publication">
-<attribute name="pubMedId" value="2226204"/>
-</item>
-<item id="20_1" class="CVTerm">
-<attribute name="identifier" value="FBcv:0000031"/>
-</item>
-<item id="8_1" class="Exon">
-<attribute name="length" value="148"/>
-<attribute name="primaryIdentifier" value="CG10000:1"/>
-<attribute name="symbol" value="CG10000:1"/>
-<reference name="chromosome" ref_id="7_2"/>
-<reference name="organism" ref_id="1_1"/>
-<reference name="sequence" ref_id="4_8"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-<collection name="publications"><reference ref_id="16_1"/><reference ref_id="16_4"/><reference ref_id="16_5"/></collection>
-<collection name="transcripts"><reference ref_id="6_1"/><reference ref_id="6_2"/></collection>
-</item>
-<item id="4_9" class="Sequence">
-<attribute name="length" value="161"/>
-<attribute name="residues" value="cttgtccctgtg"/>
-</item>
-<item id="12_3" class="TransposableElementInsertionSite">
-<attribute name="primaryIdentifier" value="FBti0032815"/>
-<attribute name="secondaryIdentifier" value="P{RS5r}5-SZ-4122"/>
-<reference name="chromosomeLocation" ref_id="17_9"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="12_9" class="TransposableElementInsertionSite">
-<attribute name="primaryIdentifier" value="FBti0068355"/>
-<attribute name="secondaryIdentifier" value="PBac{WH}f07990"/>
-<attribute name="symbol" value="f07990"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_59" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="symbol"/>
-<attribute name="value" value="CG10006_symbol"/>
-<reference name="subject" ref_id="0_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="17_2" class="Location">
-<attribute name="end" value="102000"/>
-<attribute name="start" value="101001"/>
-<attribute name="strand" value="1"/>
-<reference name="object" ref_id="7_1"/>
-<reference name="subject" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="17_6" class="Location">
+<item id="18_6" class="Location">
 <attribute name="end" value="7576637"/>
 <attribute name="start" value="7423765"/>
 <attribute name="strand" value="1"/>
-<reference name="object" ref_id="7_1"/>
-<reference name="subject" ref_id="13_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<reference name="feature" ref_id="15_1"/>
+<reference name="locatedOn" ref_id="9_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="9_2" class="Protein">
+<item id="15_3" class="ChromosomeStructureVariation">
+<attribute name="primaryIdentifier" value="FBab0010281"/>
+<attribute name="secondaryIdentifier" value="T(2;3)V21"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_7"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="21_3" class="CVTerm">
+<attribute name="identifier" value="FBcv:0000323"/>
+</item>
+<item id="7_3" class="Synonym">
+<attribute name="value" value="FBtr0085315"/>
+<reference name="subject" ref_id="8_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_30" class="Synonym">
+<attribute name="value" value="FBti0031976"/>
+<reference name="subject" ref_id="14_4"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="8_3" class="MRNA">
+<attribute name="length" value="2528"/>
+<attribute name="primaryIdentifier" value="FBtr0085317"/>
+<attribute name="symbol" value="CG10000-RC"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="protein" ref_id="11_1"/>
+<reference name="sequence" ref_id="6_5"/>
+<reference name="sequenceOntologyTerm" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="10_2" class="Exon">
+<attribute name="length" value="161"/>
+<attribute name="primaryIdentifier" value="CG10000:2"/>
+<attribute name="symbol" value="CG10000:2"/>
+<reference name="chromosome" ref_id="9_2"/>
+<reference name="chromosomeLocation" ref_id="18_4"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequence" ref_id="6_9"/>
+<reference name="sequenceOntologyTerm" ref_id="3_4"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+<collection name="transcripts"><reference ref_id="8_1"/><reference ref_id="8_2"/></collection>
+</item>
+<item id="7_7" class="Synonym">
+<attribute name="value" value="FBtr0085317"/>
+<reference name="subject" ref_id="8_3"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_37" class="Synonym">
+<attribute name="value" value="UUGC0315"/>
+<reference name="subject" ref_id="16_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="9_2" class="Chromosome">
+<attribute name="length" value="27905053"/>
+<attribute name="primaryIdentifier" value="3R"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequence" ref_id="6_7"/>
+<reference name="sequenceOntologyTerm" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_6" class="Synonym">
+<attribute name="value" value="CG10000-RB"/>
+<reference name="subject" ref_id="8_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="18_4" class="Location">
+<attribute name="end" value="24577107"/>
+<attribute name="start" value="24576947"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="10_2"/>
+<reference name="locatedOn" ref_id="9_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_5" class="Synonym">
+<attribute name="value" value="FBtr0085316"/>
+<reference name="subject" ref_id="8_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="25_1" class="InteractionExperiment">
+<attribute name="name" value="An paper about interactions"/>
+<reference name="publication" ref_id="17_1"/>
+</item>
+<item id="14_9" class="TransposableElementInsertionSite">
+<attribute name="primaryIdentifier" value="FBti0068355"/>
+<attribute name="secondaryIdentifier" value="PBac{WH}f07990"/>
+<attribute name="symbol" value="f07990"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="12_1" class="Allele">
+<attribute name="alleleClass" value="hypomorph"/>
+<attribute name="primaryIdentifier" value="FBal0198867"/>
+<attribute name="secondaryIdentifier" value="CG10006[GD2461]"/>
+<reference name="gene" ref_id="1_2"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="4_1" class="DataSource">
+<attribute name="name" value="FlyBase"/>
+</item>
+<item id="17_2" class="Publication">
+<attribute name="pubMedId" value="8543160"/>
+</item>
+<item id="19_4" class="PhenotypeAnnotation">
+<attribute name="annotationType" value="manifest in"/>
+<attribute name="description" value="lethal | embryonic stage | segment polarity | conditional ts"/>
+<reference name="allele" ref_id="12_1"/>
+<reference name="developmentTerm" ref_id="22_1"/>
+<collection name="cvTerms"><reference ref_id="21_2"/><reference ref_id="21_3"/><reference ref_id="21_4"/></collection>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="3_6" class="SOTerm">
+<attribute name="name" value="transposable_element_insertion_site"/>
+<reference name="ontology" ref_id="0_1"/>
+</item>
+<item id="16_1" class="CDNAClone">
+<attribute name="primaryIdentifier" value="FBcl0000001"/>
+<attribute name="secondaryIdentifier" value="UUGC0315"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_8"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_9" class="Synonym">
+<attribute name="value" value="3L"/>
+<reference name="subject" ref_id="9_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="14_3" class="TransposableElementInsertionSite">
+<attribute name="primaryIdentifier" value="FBti0032815"/>
+<attribute name="secondaryIdentifier" value="P{RS5r}5-SZ-4122"/>
+<reference name="chromosomeLocation" ref_id="18_9"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="17_1" class="Publication">
+<attribute name="pubMedId" value="8344257"/>
+</item>
+<item id="6_7" class="Sequence">
+<attribute name="length" value="27905053"/>
+<attribute name="residues" value="ggtggaacttgagaacgagttcaagagcaacatgtactgatgaatctgtcgtggggcgagcctgctgccaagtcgagaaagctgag"/>
+</item>
+<item id="7_4" class="Synonym">
+<attribute name="value" value="CG10000-RA"/>
+<reference name="subject" ref_id="8_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_34" class="Synonym">
+<attribute name="value" value="FBti0029528"/>
+<reference name="subject" ref_id="14_8"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="17_8" class="Publication">
+<attribute name="pubMedId" value="2226204"/>
+</item>
+<item id="7_15" class="Synonym">
+<attribute name="value" value="FBpp10000"/>
+<reference name="subject" ref_id="11_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="6_11" class="Sequence">
+<attribute name="length" value="63"/>
+<attribute name="residues" value="VSFAQVWCSSTTDETNLLQMEKDPHSPSQFRVIGTLSNMKEFAEVFQCKPGKRMNPTEKCEVW"/>
+</item>
+<item id="7_18" class="Synonym">
+<attribute name="value" value="CG99999-RB_prot"/>
+<reference name="subject" ref_id="11_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="21_2" class="CVTerm">
+<attribute name="identifier" value="FBcv:0000351"/>
+</item>
+<item id="14_2" class="TransposableElementInsertionSite">
+<attribute name="primaryIdentifier" value="FBti0028225"/>
+<attribute name="secondaryIdentifier" value="P{RS3}CB-0697-3"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_20" class="Synonym">
+<attribute name="value" value="CG10006[GD2461]"/>
+<reference name="subject" ref_id="12_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_17" class="Synonym">
+<attribute name="value" value="FBpp99999"/>
+<reference name="subject" ref_id="11_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_31" class="Synonym">
+<attribute name="value" value="FBti0030830"/>
+<reference name="subject" ref_id="14_5"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="11_2" class="Protein">
 <attribute name="length" value="63"/>
 <attribute name="md5checksum" value="4bdcdd74743c6326f277da6fe9e07f2a"/>
 <attribute name="primaryIdentifier" value="FBpp99999"/>
 <attribute name="secondaryIdentifier" value="FBpp99999"/>
-<reference name="organism" ref_id="1_1"/>
-<reference name="sequence" ref_id="4_11"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequence" ref_id="6_11"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="23_2" class="Interaction">
-<attribute name="interactionType" value="genetic"/>
-<attribute name="name" value="FlyBase:FBgn0000001_FBgn0036461-1"/>
-<attribute name="shortName" value="FlyBase:FBgn0000001_FBgn0036461-1"/>
-<reference name="experiment" ref_id="24_2"/>
-<reference name="gene" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-<collection name="interactingGenes"><reference ref_id="0_2"/></collection>
+<item id="8_2" class="MRNA">
+<attribute name="length" value="3000"/>
+<attribute name="primaryIdentifier" value="FBtr0085316"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequence" ref_id="6_4"/>
+<reference name="sequenceOntologyTerm" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="3_1" class="DataSet">
+<item id="5_1" class="DataSet">
 <attribute name="description" value="The FlyBase Drosophila melanogaster genome"/>
-<attribute name="title" value="FlyBase Drosophila melanogaster data set"/>
+<attribute name="name" value="FlyBase Drosophila melanogaster data set"/>
 <attribute name="url" value="http://www.flybase.org"/>
-<reference name="dataSource" ref_id="2_1"/>
+<reference name="dataSource" ref_id="4_1"/>
 </item>
-<item id="5_22" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="Scer\GAL4[sd-SG29.1]"/>
-<reference name="subject" ref_id="10_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="3_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
 </item>
-<item id="5_27" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="Df(2L)ED482"/>
-<reference name="subject" ref_id="13_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="21_1" class="CVTerm">
+<attribute name="identifier" value="FBcv:0000031"/>
 </item>
-<item id="12_8" class="TransposableElementInsertionSite">
-<attribute name="primaryIdentifier" value="FBti0029528"/>
-<attribute name="secondaryIdentifier" value="P{RS5}5-HA-1496"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="25_2" class="InteractionExperiment">
+<attribute name="name" value="Another paper about interactions"/>
+<reference name="publication" ref_id="17_9"/>
 </item>
-<item id="20_3" class="CVTerm">
-<attribute name="identifier" value="FBcv:0000323"/>
+<item id="3_8" class="SOTerm">
+<attribute name="name" value="cDNA_clone"/>
+<reference name="ontology" ref_id="0_1"/>
 </item>
-<item id="5_2" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBgn0036461"/>
-<reference name="subject" ref_id="0_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="18_5" class="Location">
+<attribute name="end" value="24577313"/>
+<attribute name="start" value="24577166"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="10_1"/>
+<reference name="locatedOn" ref_id="9_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="5_50" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="UUGC0315"/>
-<reference name="subject" ref_id="14_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="7_28" class="Synonym">
+<attribute name="value" value="FBti0028225"/>
+<reference name="subject" ref_id="14_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="16_1" class="Publication">
-<attribute name="pubMedId" value="8344257"/>
+<item id="14_1" class="TransposableElementInsertionSite">
+<attribute name="primaryIdentifier" value="FBti0028380"/>
+<attribute name="secondaryIdentifier" value="P{RS3}CB-5069-3"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="5_30" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBab0010281"/>
-<reference name="subject" ref_id="13_3"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="24_1" class="Interaction">
+<attribute name="interactionType" value="genetic"/>
+<attribute name="name" value="FlyBase:FBgn0000001_FBgn0036461"/>
+<attribute name="shortName" value="FlyBase:FBgn0000001_FBgn0036461"/>
+<reference name="experiment" ref_id="25_1"/>
+<reference name="gene" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+<collection name="interactingGenes"><reference ref_id="1_2"/></collection>
 </item>
-<item id="4_11" class="Sequence">
-<attribute name="length" value="63"/>
-<attribute name="residues" value="VSFAQVWCSSTTDETNLLQMEKDPHSPSQFRVIGTLSNMKEFAEVFQCKPGKRMNPTEKCEVW"/>
+<item id="21_5" class="CVTerm">
+<attribute name="identifier" value="FBcv:0000354"/>
 </item>
-<item id="5_45" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="P{RS5}5-HA-1496"/>
-<reference name="subject" ref_id="12_8"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="7_26" class="Synonym">
+<attribute name="value" value="FBab0031842"/>
+<reference name="subject" ref_id="15_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="5_52" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBgn0000001_dbxref1"/>
-<reference name="subject" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_34" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBti0032815"/>
-<reference name="subject" ref_id="12_3"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="17_1" class="Location">
-<attribute name="end" value="14990594"/>
-<attribute name="start" value="14985572"/>
-<attribute name="strand" value="1"/>
-<reference name="object" ref_id="7_1"/>
-<reference name="subject" ref_id="0_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_37" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="P{RS5r}5-HA-1496"/>
-<reference name="subject" ref_id="12_4"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="18_1" class="PhenotypeAnnotation">
-<attribute name="annotationType" value="manifest in"/>
-<attribute name="description" value="wing, with ScerGAL4[sd-SG29.1]"/>
-<reference name="allele" ref_id="10_1"/>
-<reference name="anatomyTerm" ref_id="19_1"/>
-<reference name="property" ref_id="19_1"/>
-<reference name="subject" ref_id="10_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-<collection name="publications"><reference ref_id="16_7"/><reference ref_id="16_8"/></collection>
-</item>
-<item id="22_1" class="Mutagen">
-<attribute name="description" value="&amp;alpha; ray"/>
-</item>
-<item id="12_5" class="TransposableElementInsertionSite">
-<attribute name="primaryIdentifier" value="FBti0030830"/>
-<attribute name="secondaryIdentifier" value="P{RS3r}CB-5069-3"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_29" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="Df(2L)ED1454"/>
-<reference name="subject" ref_id="13_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="16_7" class="Publication">
-<attribute name="pubMedId" value="1902784"/>
-</item>
-<item id="12_6" class="TransposableElementInsertionSite">
-<attribute name="primaryIdentifier" value="FBti0030675"/>
-<attribute name="secondaryIdentifier" value="P{RS3r}CB-0697-3"/>
-<reference name="chromosomeLocation" ref_id="17_8"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="4_2" class="Sequence">
-<attribute name="length" value="5023"/>
-<attribute name="residues" value="gtcatgcactactatccagttcaccaggctaaagtcggctcctat"/>
-</item>
-<item id="5_16" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="CG10000-RA_prot"/>
-<reference name="subject" ref_id="9_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_15" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBpp10000"/>
-<reference name="subject" ref_id="9_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_9" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="3L"/>
-<reference name="subject" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="0_1" class="Gene">
+<item id="1_1" class="Gene">
 <attribute name="GLEANRsymbol" value="dmel_GLEANR_1_synonym"/>
-<attribute name="featureType" value="non_protein_coding_gene"/>
 <attribute name="length" value="1001"/>
 <attribute name="name" value="FBgn0000001_fullname_synonym"/>
 <attribute name="primaryIdentifier" value="FBgn0000001"/>
 <attribute name="secondaryIdentifier" value="FBgn0000001_dbxref1"/>
 <attribute name="symbol" value="FBgn0000001_symbol_synonym"/>
-<reference name="chromosome" ref_id="7_1"/>
-<reference name="organism" ref_id="1_1"/>
-<reference name="sequence" ref_id="4_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-<collection name="publications"><reference ref_id="16_1"/><reference ref_id="16_2"/></collection>
+<reference name="chromosome" ref_id="9_1"/>
+<reference name="chromosomeLocation" ref_id="18_2"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequence" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+<collection name="publications"><reference ref_id="17_1"/><reference ref_id="17_2"/></collection>
 </item>
-<item id="17_5" class="Location">
-<attribute name="end" value="24577313"/>
-<attribute name="start" value="24577166"/>
-<attribute name="strand" value="-1"/>
-<reference name="object" ref_id="7_2"/>
-<reference name="subject" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_28" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBab0031842"/>
-<reference name="subject" ref_id="13_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_48" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="PBac{WH}f07990"/>
-<reference name="subject" ref_id="12_9"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="17_7" class="Location">
-<attribute name="end" value="21657677"/>
-<attribute name="start" value="21629316"/>
-<attribute name="strand" value="1"/>
-<reference name="object" ref_id="7_2"/>
-<reference name="subject" ref_id="13_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="4_1" class="Sequence">
-<attribute name="length" value="1001"/>
-<attribute name="residues" value="acgacagatcattccacttttgacagctcactcggcagtaccagaaaatcc"/>
-</item>
-<item id="4_5" class="Sequence">
-<attribute name="length" value="2528"/>
-<attribute name="residues" value="tctgcctcccaactacaatcagatgaactccaaccccaccac"/>
-</item>
-<item id="5_25" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="P{RS3}CB-5069-3"/>
-<reference name="subject" ref_id="12_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_18" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="CG99999-RB_prot"/>
-<reference name="subject" ref_id="9_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="16_5" class="Publication">
-<attribute name="pubMedId" value="7720555"/>
-</item>
-<item id="13_2" class="ChromosomeStructureVariation">
-<attribute name="primaryIdentifier" value="FBab0031842"/>
-<attribute name="secondaryIdentifier" value="Df(2L)ED1454"/>
-<reference name="chromosomeLocation" ref_id="17_7"/>
-<reference name="element1" ref_id="12_4"/>
-<reference name="element2" ref_id="12_6"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="20_5" class="CVTerm">
-<attribute name="identifier" value="FBcv:0000354"/>
-</item>
-<item id="17_8" class="Location">
-<attribute name="end" value="21657678"/>
-<attribute name="start" value="21657677"/>
-<attribute name="strand" value="1"/>
-<reference name="object" ref_id="7_1"/>
-<reference name="subject" ref_id="12_6"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="15_1" class="SequenceOntologyTerm">
-<attribute name="name" value="chromosomal_translocation"/>
-</item>
-<item id="5_24" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBti0028380"/>
-<reference name="subject" ref_id="12_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="6_1" class="MRNA">
-<attribute name="exonCount" value="2"/>
-<attribute name="length" value="2528"/>
-<attribute name="primaryIdentifier" value="FBtr0085315"/>
-<reference name="chromosome" ref_id="7_2"/>
-<reference name="gene" ref_id="0_2"/>
-<reference name="organism" ref_id="1_1"/>
-<reference name="protein" ref_id="9_1"/>
-<reference name="sequence" ref_id="4_3"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_7" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBtr0085317"/>
-<reference name="subject" ref_id="6_3"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_44" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBti0029528"/>
-<reference name="subject" ref_id="12_8"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="20_2" class="CVTerm">
-<attribute name="identifier" value="FBcv:0000351"/>
-</item>
-<item id="6_2" class="MRNA">
-<attribute name="exonCount" value="2"/>
-<attribute name="length" value="3000"/>
-<attribute name="primaryIdentifier" value="FBtr0085316"/>
-<reference name="organism" ref_id="1_1"/>
-<reference name="sequence" ref_id="4_4"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_6" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="CG10000-RB"/>
-<reference name="subject" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_53" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBgn0000001_dbxref2"/>
-<reference name="subject" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_38" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBti0030830"/>
-<reference name="subject" ref_id="12_5"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="13_1" class="ChromosomeStructureVariation">
-<attribute name="primaryIdentifier" value="FBab0032193"/>
-<attribute name="secondaryIdentifier" value="Df(2L)ED482"/>
-<reference name="chromosomeLocation" ref_id="17_6"/>
-<reference name="element1" ref_id="12_5"/>
-<reference name="element2" ref_id="12_3"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="17_10" class="Location">
+<item id="18_10" class="Location">
 <attribute name="end" value="21629317"/>
 <attribute name="start" value="21629316"/>
 <attribute name="strand" value="1"/>
-<reference name="object" ref_id="7_1"/>
-<reference name="subject" ref_id="12_4"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<reference name="feature" ref_id="14_4"/>
+<reference name="locatedOn" ref_id="9_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="16_6" class="Publication">
-<attribute name="pubMedId" value="7772020"/>
+<item id="21_4" class="CVTerm">
+<attribute name="identifier" value="FBcv:0000311"/>
 </item>
-<item id="24_1" class="InteractionExperiment">
-<attribute name="name" value="An paper about interactions"/>
-<reference name="publication" ref_id="16_1"/>
+<item id="2_1" class="Organism">
+<attribute name="taxonId" value="7227"/>
 </item>
-<item id="12_4" class="TransposableElementInsertionSite">
-<attribute name="primaryIdentifier" value="FBti0031976"/>
-<attribute name="secondaryIdentifier" value="P{RS5r}5-HA-1496"/>
-<reference name="chromosomeLocation" ref_id="17_10"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="7_10" class="Synonym">
+<attribute name="value" value="3R"/>
+<reference name="subject" ref_id="9_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="5_3" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBtr0085315"/>
-<reference name="subject" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="7_13" class="Synonym">
+<attribute name="value" value="FBpp88888"/>
+<reference name="subject" ref_id="11_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="6_3" class="MRNA">
-<attribute name="length" value="2528"/>
-<attribute name="primaryIdentifier" value="FBtr0085317"/>
-<attribute name="symbol" value="CG10000-RC"/>
-<reference name="organism" ref_id="1_1"/>
-<reference name="protein" ref_id="9_1"/>
-<reference name="sequence" ref_id="4_5"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="15_1" class="ChromosomeStructureVariation">
+<attribute name="primaryIdentifier" value="FBab0032193"/>
+<attribute name="secondaryIdentifier" value="Df(2L)ED482"/>
+<reference name="chromosomeLocation" ref_id="18_6"/>
+<reference name="element1" ref_id="14_5"/>
+<reference name="element2" ref_id="14_3"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_7"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="17_3" class="Location">
+<item id="17_7" class="Publication">
+<attribute name="pubMedId" value="1902784"/>
+</item>
+<item id="7_12" class="Synonym">
+<attribute name="value" value="CG10000:2"/>
+<reference name="subject" ref_id="10_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_43" class="Synonym">
+<attribute name="value" value="dmel_GLEANR_1_synonym"/>
+<reference name="subject" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_8" class="Synonym">
+<attribute name="value" value="CG10000-RC"/>
+<reference name="subject" ref_id="8_3"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="18_3" class="Location">
 <attribute name="end" value="24577313"/>
 <attribute name="start" value="24574105"/>
 <attribute name="strand" value="-1"/>
-<reference name="object" ref_id="7_2"/>
-<reference name="subject" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<reference name="feature" ref_id="8_1"/>
+<reference name="locatedOn" ref_id="9_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="21_1" class="DevelopmentTerm">
+<item id="7_32" class="Synonym">
+<attribute name="value" value="FBti0030675"/>
+<reference name="subject" ref_id="14_6"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="19_1" class="PhenotypeAnnotation">
+<attribute name="annotationType" value="manifest in"/>
+<attribute name="description" value="wing, with ScerGAL4[sd-SG29.1]"/>
+<reference name="allele" ref_id="12_1"/>
+<reference name="anatomyTerm" ref_id="20_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+<collection name="publications"><reference ref_id="17_7"/><reference ref_id="17_8"/></collection>
+</item>
+<item id="7_29" class="Synonym">
+<attribute name="value" value="FBti0032815"/>
+<reference name="subject" ref_id="14_3"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="3_4" class="SOTerm">
+<attribute name="name" value="exon"/>
+<reference name="ontology" ref_id="0_1"/>
+</item>
+<item id="17_4" class="Publication">
+<attribute name="pubMedId" value="2612903"/>
+</item>
+<item id="17_5" class="Publication">
+<attribute name="pubMedId" value="7720555"/>
+</item>
+<item id="6_3" class="Sequence">
+<attribute name="length" value="2528"/>
+<attribute name="residues" value="tctgcctcccaactacaatcagatgaactccaaccccaccac"/>
+</item>
+<item id="22_1" class="DevelopmentTerm">
 <attribute name="identifier" value="FBdv:00005289"/>
 </item>
-<item id="5_5" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBtr0085316"/>
-<reference name="subject" ref_id="6_2"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="6_5" class="Sequence">
+<attribute name="length" value="2528"/>
+<attribute name="residues" value="tctgcctcccaactacaatcagatgaactccaaccccaccac"/>
 </item>
-<item id="5_11" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="CG10000:1"/>
-<reference name="subject" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="14_7" class="TransposableElementInsertionSite">
+<attribute name="primaryIdentifier" value="FBti0030367"/>
+<attribute name="secondaryIdentifier" value="P{RS5}5-SZ-4122"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="17_9" class="Location">
-<attribute name="end" value="7576638"/>
-<attribute name="start" value="7576637"/>
+<item id="6_6" class="Sequence">
+<attribute name="length" value="24543557"/>
+<attribute name="residues" value="ccacgactcgcagagggtgaagcttaagcgatcacggactcaatcctggcatcccagttcccaaagtcaggtccccacgagcatg"/>
+</item>
+<item id="14_4" class="TransposableElementInsertionSite">
+<attribute name="primaryIdentifier" value="FBti0031976"/>
+<attribute name="secondaryIdentifier" value="P{RS5r}5-HA-1496"/>
+<reference name="chromosomeLocation" ref_id="18_10"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="17_3" class="Publication">
+<attribute name="pubMedId" value="2892759"/>
+</item>
+<item id="7_21" class="Synonym">
+<attribute name="value" value="FBal0060667"/>
+<reference name="subject" ref_id="12_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_14" class="Synonym">
+<attribute name="value" value="CG88888-RA_prot"/>
+<reference name="subject" ref_id="11_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_39" class="Synonym">
+<attribute name="value" value="FBgn0000001_dbxref2"/>
+<reference name="subject" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="19_2" class="PhenotypeAnnotation">
+<attribute name="annotationType" value="manifest in"/>
+<attribute name="description" value="sensory mother cell &amp; dorsal mesothoracic disc | ectopic, with ScerGAL4[sd-SG29.1]"/>
+<reference name="allele" ref_id="12_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+<collection name="publications"><reference ref_id="17_7"/></collection>
+</item>
+<item id="1_2" class="Gene">
+<attribute name="cytoLocation" value="71B1-71B1"/>
+<attribute name="length" value="5023"/>
+<attribute name="primaryIdentifier" value="FBgn0036461"/>
+<reference name="chromosome" ref_id="9_1"/>
+<reference name="chromosomeLocation" ref_id="18_1"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequence" ref_id="6_2"/>
+<reference name="sequenceOntologyTerm" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+<collection name="publications"><reference ref_id="17_3"/></collection>
+</item>
+<item id="18_7" class="Location">
+<attribute name="end" value="21657677"/>
+<attribute name="start" value="21629316"/>
 <attribute name="strand" value="1"/>
-<reference name="object" ref_id="7_1"/>
-<reference name="subject" ref_id="12_3"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<reference name="feature" ref_id="15_2"/>
+<reference name="locatedOn" ref_id="9_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="5_46" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBti0068355"/>
-<reference name="subject" ref_id="12_9"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="14_8" class="TransposableElementInsertionSite">
+<attribute name="primaryIdentifier" value="FBti0029528"/>
+<attribute name="secondaryIdentifier" value="P{RS5}5-HA-1496"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="19_1" class="AnatomyTerm">
-<attribute name="identifier" value="FBbt:00004729"/>
+<item id="8_1" class="MRNA">
+<attribute name="length" value="2528"/>
+<attribute name="primaryIdentifier" value="FBtr0085315"/>
+<reference name="chromosome" ref_id="9_2"/>
+<reference name="chromosomeLocation" ref_id="18_3"/>
+<reference name="gene" ref_id="1_2"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="protein" ref_id="11_1"/>
+<reference name="sequence" ref_id="6_3"/>
+<reference name="sequenceOntologyTerm" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="5_56" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="fullname"/>
-<attribute name="value" value="FBgn0000001_fullname_synonym"/>
-<reference name="subject" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="13_1" class="PointMutation">
+<attribute name="name" value="&amp;beta;Tub85D[10g]"/>
+<attribute name="primaryIdentifier" value="&amp;beta;Tub85D[10g]"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_5"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="4_4" class="Sequence">
+<item id="10_1" class="Exon">
+<attribute name="length" value="148"/>
+<attribute name="primaryIdentifier" value="CG10000:1"/>
+<attribute name="symbol" value="CG10000:1"/>
+<reference name="chromosome" ref_id="9_2"/>
+<reference name="chromosomeLocation" ref_id="18_5"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequence" ref_id="6_8"/>
+<reference name="sequenceOntologyTerm" ref_id="3_4"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+<collection name="publications"><reference ref_id="17_1"/><reference ref_id="17_4"/><reference ref_id="17_5"/></collection>
+<collection name="transcripts"><reference ref_id="8_1"/><reference ref_id="8_2"/></collection>
+</item>
+<item id="6_9" class="Sequence">
+<attribute name="length" value="161"/>
+<attribute name="residues" value="cttgtccctgtg"/>
+</item>
+<item id="6_8" class="Sequence">
+<attribute name="length" value="148"/>
+<attribute name="residues" value="gattgctcagcgcgaacg"/>
+</item>
+<item id="3_3" class="SOTerm">
+<attribute name="name" value="chromosome_arm"/>
+<reference name="ontology" ref_id="0_1"/>
+</item>
+<item id="6_10" class="Sequence">
+<attribute name="length" value="41"/>
+<attribute name="residues" value="MTRYKQTEFTEDDSSSIGGIQLNEATGHTGMQIRYHTARAT"/>
+</item>
+<item id="6_1" class="Sequence">
+<attribute name="length" value="1001"/>
+<attribute name="residues" value="acgacagatcattccacttttgacagctcactcggcagtaccagaaaatcc"/>
+</item>
+<item id="3_2" class="SOTerm">
+<attribute name="name" value="mRNA"/>
+<reference name="ontology" ref_id="0_1"/>
+</item>
+<item id="18_1" class="Location">
+<attribute name="end" value="14990594"/>
+<attribute name="start" value="14985572"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="1_2"/>
+<reference name="locatedOn" ref_id="9_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="3_5" class="SOTerm">
+<attribute name="name" value="point_mutation"/>
+<reference name="ontology" ref_id="0_1"/>
+</item>
+<item id="9_1" class="Chromosome">
+<attribute name="length" value="24543557"/>
+<attribute name="primaryIdentifier" value="3L"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequence" ref_id="6_6"/>
+<reference name="sequenceOntologyTerm" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="19_5" class="PhenotypeAnnotation">
+<attribute name="annotationType" value="phenotype class"/>
+<attribute name="description" value="visible, with ScerGAL4[sd-SG29.1]"/>
+<reference name="allele" ref_id="12_1"/>
+<collection name="cvTerms"><reference ref_id="21_5"/></collection>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="24_2" class="Interaction">
+<attribute name="interactionType" value="genetic"/>
+<attribute name="name" value="FlyBase:FBgn0000001_FBgn0036461-1"/>
+<attribute name="shortName" value="FlyBase:FBgn0000001_FBgn0036461-1"/>
+<reference name="experiment" ref_id="25_2"/>
+<reference name="gene" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+<collection name="interactingGenes"><reference ref_id="1_2"/></collection>
+</item>
+<item id="18_2" class="Location">
+<attribute name="end" value="102000"/>
+<attribute name="start" value="101001"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="1_1"/>
+<reference name="locatedOn" ref_id="9_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_25" class="Synonym">
+<attribute name="value" value="FBab0032193"/>
+<reference name="subject" ref_id="15_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_1" class="Synonym">
+<attribute name="value" value="FBgn0000001"/>
+<reference name="subject" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="6_2" class="Sequence">
+<attribute name="length" value="5023"/>
+<attribute name="residues" value="gtcatgcactactatccagttcaccaggctaaagtcggctcctat"/>
+</item>
+<item id="14_5" class="TransposableElementInsertionSite">
+<attribute name="primaryIdentifier" value="FBti0030830"/>
+<attribute name="secondaryIdentifier" value="P{RS3r}CB-5069-3"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_19" class="Synonym">
+<attribute name="value" value="FBal0198867"/>
+<reference name="subject" ref_id="12_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_36" class="Synonym">
+<attribute name="value" value="FBcl0000001"/>
+<reference name="subject" ref_id="16_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="6_4" class="Sequence">
 <attribute name="length" value="3000"/>
 <attribute name="residues" value="cccgcagcatgtgcatcagcagcatgtgtcatcggacgag"/>
 </item>
-<item id="5_58" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="symbol"/>
-<attribute name="value" value="dmel_GLEANR_1_synonym"/>
-<reference name="subject" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="3_7" class="SOTerm">
+<attribute name="name" value="chromosome_structure_variation"/>
+<reference name="ontology" ref_id="0_1"/>
 </item>
-<item id="7_1" class="Chromosome">
-<attribute name="length" value="24543557"/>
-<attribute name="primaryIdentifier" value="3L"/>
-<reference name="organism" ref_id="1_1"/>
-<reference name="sequence" ref_id="4_6"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="14_6" class="TransposableElementInsertionSite">
+<attribute name="primaryIdentifier" value="FBti0030675"/>
+<attribute name="secondaryIdentifier" value="P{RS3r}CB-0697-3"/>
+<reference name="chromosomeLocation" ref_id="18_8"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
-<item id="4_7" class="Sequence">
-<attribute name="length" value="27905053"/>
-<attribute name="residues" value="ggtggaacttgagaacgagttcaagagcaacatgtactgatgaatctgtcgtggggcgagcctgctgccaagtcgagaaagctgag"/>
+<item id="23_1" class="Mutagen">
+<attribute name="description" value="&amp;alpha; ray"/>
 </item>
-<item id="14_1" class="CDNAClone">
-<attribute name="primaryIdentifier" value="FBcl0000001"/>
-<attribute name="secondaryIdentifier" value="UUGC0315"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
+<item id="7_35" class="Synonym">
+<attribute name="value" value="FBti0068355"/>
+<reference name="subject" ref_id="14_9"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="18_9" class="Location">
+<attribute name="end" value="7576638"/>
+<attribute name="start" value="7576637"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="14_3"/>
+<reference name="locatedOn" ref_id="9_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_42" class="Synonym">
+<attribute name="value" value="FBgn0000001_symbol_SYNONYM"/>
+<reference name="subject" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_40" class="Synonym">
+<attribute name="value" value="FBgn0000001_dbxref3"/>
+<reference name="subject" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="19_3" class="PhenotypeAnnotation">
+<attribute name="annotationType" value="manifest in"/>
+<attribute name="description" value="wing | anterior compartment, with ScerGAL4[sd-SG29.1]"/>
+<reference name="allele" ref_id="12_1"/>
+<reference name="anatomyTerm" ref_id="20_1"/>
+<collection name="cvTerms"><reference ref_id="21_1"/></collection>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_23" class="Synonym">
+<attribute name="value" value="&amp;beta;Tub85D[10g]"/>
+<reference name="subject" ref_id="13_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="20_1" class="AnatomyTerm">
+<attribute name="identifier" value="FBbt:00004729"/>
+</item>
+<item id="7_33" class="Synonym">
+<attribute name="value" value="FBti0030367"/>
+<reference name="subject" ref_id="14_7"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_27" class="Synonym">
+<attribute name="value" value="FBab0010281"/>
+<reference name="subject" ref_id="15_3"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_2" class="Synonym">
+<attribute name="value" value="FBgn0036461"/>
+<reference name="subject" ref_id="1_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="17_6" class="Publication">
+<attribute name="pubMedId" value="7772020"/>
+</item>
+<item id="18_8" class="Location">
+<attribute name="end" value="21657678"/>
+<attribute name="start" value="21657677"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="14_6"/>
+<reference name="locatedOn" ref_id="9_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_44" class="Synonym">
+<attribute name="value" value="CG10006_symbol"/>
+<reference name="subject" ref_id="1_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_38" class="Synonym">
+<attribute name="value" value="FBcl0000002"/>
+<reference name="subject" ref_id="16_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="12_2" class="Allele">
+<attribute name="primaryIdentifier" value="FBal0060667"/>
+<attribute name="secondaryIdentifier" value="Scer\GAL4[sd-SG29.1]"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+<collection name="mutagens"><reference ref_id="23_1"/></collection>
+<collection name="publications"><reference ref_id="17_6"/></collection>
+</item>
+<item id="17_9" class="Publication">
+<attribute name="pubMedId" value="2345671"/>
+</item>
+<item id="15_2" class="ChromosomeStructureVariation">
+<attribute name="primaryIdentifier" value="FBab0031842"/>
+<attribute name="secondaryIdentifier" value="Df(2L)ED1454"/>
+<reference name="chromosomeLocation" ref_id="18_7"/>
+<reference name="element1" ref_id="14_4"/>
+<reference name="element2" ref_id="14_6"/>
+<reference name="organism" ref_id="2_1"/>
+<reference name="sequenceOntologyTerm" ref_id="3_7"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_11" class="Synonym">
+<attribute name="value" value="CG10000:1"/>
+<reference name="subject" ref_id="10_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_41" class="Synonym">
+<attribute name="value" value="FBgn0036461_dbxref4"/>
+<reference name="subject" ref_id="1_2"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_16" class="Synonym">
+<attribute name="value" value="CG10000-RA_prot"/>
+<reference name="subject" ref_id="11_1"/>
+<collection name="dataSets"><reference ref_id="5_1"/></collection>
 </item>
 </items>

@@ -1,6 +1,6 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="org.intermine.model.bio.LocatedSequenceFeature" %>
+<%@ page import="org.intermine.model.bio.SequenceFeature" %>
 <%@ page import="org.intermine.web.results.DisplayObject" %>
 <%@ page import="org.intermine.model.InterMineObject" %>
 
@@ -8,10 +8,10 @@
 <%
     Object o = request.getAttribute("object");
     if ((o instanceof DisplayObject &&
-       ((LocatedSequenceFeature) ((DisplayObject) o).getObject())
+       ((SequenceFeature) ((DisplayObject) o).getObject())
            .proxGetSequence() != null) ||
         (o instanceof InterMineObject &&
-        ((LocatedSequenceFeature) o)
+        ((SequenceFeature) o)
            .proxGetSequence() != null)) {
 %>
 

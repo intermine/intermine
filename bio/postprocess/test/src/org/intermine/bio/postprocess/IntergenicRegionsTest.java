@@ -24,6 +24,8 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.commons.collections.IteratorUtils;
+import org.intermine.bio.util.BioConverterUtil;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSource;
@@ -32,7 +34,6 @@ import org.intermine.model.bio.IntergenicRegion;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Synonym;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -158,9 +159,6 @@ public class IntergenicRegionsTest extends TestCase
                 assertNotNull(loc.getStart());
                 assertNotNull(loc.getEnd());
                 assertNotNull(loc.getStrand());
-                assertNotNull(loc.getPhase());
-                assertNotNull(loc.getStartIsPartial());
-                assertNotNull(loc.getEndIsPartial());
                 assertEquals(1, loc.getDataSets().size());
 
                 int locStart = loc.getStart().intValue();
@@ -221,7 +219,7 @@ public class IntergenicRegionsTest extends TestCase
                 assertEquals(1, ir.getSynonyms().size());
                 Synonym synonym = ir.getSynonyms().iterator().next();
                 assertEquals(ir.getPrimaryIdentifier(), synonym.getValue());
-                assertEquals("identifier", synonym.getType());
+
 
                 actualIdentifiers.add(ir.getPrimaryIdentifier());
             }
@@ -291,8 +289,8 @@ public class IntergenicRegionsTest extends TestCase
             geneLocs[i] = createLocation(chr, genes[i], "1", start, end, Location.class);
             geneLocs[i].setId(new Integer(100 + geneId));
             genes[i].setChromosomeLocation(geneLocs[i]);
-            IntergenicRegionUtil.addToListMap(chrXlocMap, geneLocs[i].getStart(), genes[i]);
-            IntergenicRegionUtil.addToListMap(chrXlocMap, geneLocs[i].getEnd(), genes[i]);
+            BioConverterUtil.addToSetMap(chrXlocMap, geneLocs[i].getStart(), genes[i]);
+            BioConverterUtil.addToSetMap(chrXlocMap, geneLocs[i].getEnd(), genes[i]);
         }
 
         toStore.addAll(Arrays.asList(genes));
@@ -346,8 +344,8 @@ public class IntergenicRegionsTest extends TestCase
             geneLocs[i] = createLocation(chr, genes[i], "1", start, end, Location.class);
             geneLocs[i].setId(new Integer(100 + geneId));
             genes[i].setChromosomeLocation(geneLocs[i]);
-            IntergenicRegionUtil.addToListMap(chr1locMap, geneLocs[i].getStart(), genes[i]);
-            IntergenicRegionUtil.addToListMap(chr1locMap, geneLocs[i].getEnd(), genes[i]);
+            BioConverterUtil.addToSetMap(chr1locMap, geneLocs[i].getStart(), genes[i]);
+            BioConverterUtil.addToSetMap(chr1locMap, geneLocs[i].getEnd(), genes[i]);
         }
 
         toStore.addAll(Arrays.asList(genes));
@@ -366,13 +364,11 @@ public class IntergenicRegionsTest extends TestCase
     private Location createLocation(BioEntity object, BioEntity subject, String strand,
                                     int start, int end, Class locationClass) {
         Location loc = (Location) DynamicUtil.createObject(Collections.singleton(locationClass));
-        loc.setObject(object);
-        loc.setSubject(subject);
+        loc.setLocatedOn(object);
+        loc.setFeature(subject);
         loc.setStrand(strand);
         loc.setStart(new Integer(start));
         loc.setEnd(new Integer(end));
-        loc.setStartIsPartial(Boolean.FALSE);
-        loc.setEndIsPartial(Boolean.FALSE);
         return loc;
     }
 }

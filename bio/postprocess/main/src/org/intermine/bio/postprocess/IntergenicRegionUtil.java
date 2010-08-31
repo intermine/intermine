@@ -10,7 +10,6 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.Date;
@@ -22,6 +21,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.intermine.bio.util.BioConverterUtil;
+import org.intermine.bio.util.BioQueries;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
@@ -29,8 +30,6 @@ import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.IntergenicRegion;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Synonym;
-
-import org.intermine.bio.util.BioQueries;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -60,15 +59,13 @@ public class IntergenicRegionUtil
     public IntergenicRegionUtil(ObjectStoreWriter osw) {
         this.osw = osw;
         this.os = osw.getObjectStore();
-        dataSource = (DataSource) DynamicUtil.createObject(Collections
-                .singleton(DataSource.class));
+        dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
         dataSource.setName("FlyMine");
         try {
             dataSource = (DataSource) os.getObjectByExample(dataSource,
                     Collections.singleton("name"));
         } catch (ObjectStoreException e) {
-            throw new RuntimeException(
-                    "unable to fetch FlyMine DataSource object", e);
+            throw new RuntimeException("unable to fetch FlyMine DataSource object", e);
         }
     }
 
@@ -79,36 +76,34 @@ public class IntergenicRegionUtil
      *             if there is an ObjectStore problem
      */
     public void createIntergenicRegionFeatures() throws ObjectStoreException {
-        Results results = BioQueries.findLocationAndObjects(os,
-                Chromosome.class, Gene.class, false, false, false, 1000);
-
-        dataSet = (DataSet) DynamicUtil.createObject(Collections
-                .singleton(DataSet.class));
-        dataSet.setTitle("FlyMine intergenic regions");
+        Results results = BioQueries.findLocationAndObjects(os, Chromosome.class, Gene.class, false,
+                false, false, 1000);
+        dataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
+        dataSet.setName("FlyMine intergenic regions");
         dataSet.setDescription("Intergenic regions created by FlyMine");
         dataSet.setVersion("" + new Date()); // current time and date
         dataSet.setUrl("http://www.flymine.org");
         dataSet.setDataSource(dataSource);
 
-        Iterator resIter = results.iterator();
+        Iterator<?> resIter = results.iterator();
 
         Integer previousChrId = null;
-        Set locationSet = new HashSet();
-        Map locToGeneMap = new HashMap();
+        Set<Location> locationSet = new HashSet<Location>();
+        Map<Location, Set<Gene>> locToGeneMap = new HashMap<Location, Set<Gene>>();
 
         osw.beginTransaction();
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             Integer chrId = (Integer) rr.get(0);
             Gene gene = (Gene) rr.get(1);
             Location loc = (Location) rr.get(2);
 
             if (previousChrId != null && !chrId.equals(previousChrId)) {
-                Iterator irIter = createIntergenicRegionFeatures(locationSet,
+                Iterator<?> irIter = createIntergenicRegionFeatures(locationSet,
                         locToGeneMap, previousChrId);
                 storeItergenicRegions(osw, irIter);
-                locationSet = new HashSet();
-                locToGeneMap = new HashMap();
+                locationSet = new HashSet<Location>();
+                locToGeneMap = new HashMap<Location, Set<Gene>>();
             }
 
             addToLocToGeneMap(locToGeneMap, loc, gene);
@@ -118,54 +113,33 @@ public class IntergenicRegionUtil
         }
 
         if (previousChrId != null) {
-            Iterator irIter = createIntergenicRegionFeatures(locationSet,
-                    locToGeneMap, previousChrId);
+            Iterator<?> irIter = createIntergenicRegionFeatures(locationSet, locToGeneMap,
+                    previousChrId);
             storeItergenicRegions(osw, irIter);
 
-            // we've created some IntergenicRegion objects so store() the
-            // DataSet
+            // we've created some IntergenicRegion objects so store() the DataSet
             osw.store(dataSet);
         }
         osw.commitTransaction();
     }
 
-    /**
-     * Add a value to a Map from keys to List of values, creating the value list
-     * as needed.
-     *
-     * @param map
-     *            the Map
-     * @param key
-     *            the key
-     * @param value
-     *            the value
-     */
-    protected static void addToListMap(Map map, Object key, Object value) {
-        List valuesList = (List) map.get(key);
-        if (valuesList == null) {
-            valuesList = new ArrayList();
-            map.put(key, valuesList);
-        }
-        valuesList.add(value);
-    }
-
-    private void addToLocToGeneMap(Map locToGeneMap, Location loc, Gene gene) {
-        addToListMap(locToGeneMap, loc.getStart(), gene);
-        addToListMap(locToGeneMap, loc.getEnd(), gene);
+    private void addToLocToGeneMap(Map<Location, Set<Gene>> locToGeneMap, Location loc, Gene gene) {
+        BioConverterUtil.addToSetMap(locToGeneMap, loc.getStart(), gene);
+        BioConverterUtil.addToSetMap(locToGeneMap, loc.getEnd(), gene);
     }
 
     /**
      * Store the objects returned by createIntergenicRegionFeatures().
      */
     private void storeItergenicRegions(ObjectStoreWriter objectStoreWriter,
-            Iterator irIter) throws ObjectStoreException {
+            Iterator<?> irIter) throws ObjectStoreException {
         while (irIter.hasNext()) {
             IntergenicRegion ir = (IntergenicRegion) irIter.next();
             objectStoreWriter.store(ir);
             objectStoreWriter.store(ir.getChromosomeLocation());
             objectStoreWriter.store(ir.getSynonyms().iterator().next());
-            Set adjacentGenes = ir.getAdjacentGenes();
-            Iterator adjacentGenesIter = adjacentGenes.iterator();
+            Set<Gene> adjacentGenes = ir.getAdjacentGenes();
+            Iterator<?> adjacentGenesIter = adjacentGenes.iterator();
             while (adjacentGenesIter.hasNext()) {
                 objectStoreWriter.store(adjacentGenesIter.next());
             }
@@ -191,27 +165,25 @@ public class IntergenicRegionUtil
      * @throws ObjectStoreException
      *             if there is an ObjectStore problem
      */
-    protected Iterator createIntergenicRegionFeatures(Set locationSet,
-            final Map locToGeneMap, Integer chrId) throws ObjectStoreException {
+    protected Iterator<?> createIntergenicRegionFeatures(Set<Location> locationSet,
+            final Map<Location, Set<Gene>> locToGeneMap, Integer chrId) throws ObjectStoreException {
         final Chromosome chr = (Chromosome) os.getObjectById(chrId);
 
         // do nothing if chromosome has no length set
         if (chr.getLength() == null) {
-            return new HashSet().iterator();
+            return new HashSet<Location>().iterator();
         }
         final BitSet bs = new BitSet(chr.getLength().intValue() + 1);
 
-        Iterator locationIter = locationSet.iterator();
+        Iterator<?> locationIter = locationSet.iterator();
 
         while (locationIter.hasNext()) {
             Location location = (Location) locationIter.next();
-            bs.set(location.getStart().intValue(),
-                    location.getEnd().intValue() + 1);
+            bs.set(location.getStart().intValue(), location.getEnd().intValue() + 1);
         }
 
-        return new Iterator() {
+        return new Iterator<Object>() {
             int prevEndPos = 0;
-
             {
                 if (bs.nextClearBit(prevEndPos) == -1) {
                     prevEndPos = -1;
@@ -237,9 +209,7 @@ public class IntergenicRegionUtil
                     intergenicEnd = nextSetBit - 1;
                 }
 
-                if (nextSetBit == -1
-                        || bs.nextClearBit(nextSetBit) > chr.getLength()
-                                .intValue()) {
+                if (nextSetBit == -1 || bs.nextClearBit(nextSetBit) > chr.getLength().intValue()) {
                     prevEndPos = -1;
                 } else {
                     prevEndPos = intergenicEnd;
@@ -249,20 +219,17 @@ public class IntergenicRegionUtil
                 int newLocEnd = intergenicEnd;
 
                 IntergenicRegion intergenicRegion = (IntergenicRegion) DynamicUtil
-                        .createObject(Collections
-                                .singleton(IntergenicRegion.class));
-                Location location = (Location) DynamicUtil
-                        .createObject(Collections.singleton(Location.class));
+                .createObject(Collections.singleton(IntergenicRegion.class));
+                Location location = (Location) DynamicUtil.createObject(
+                        Collections.singleton(Location.class));
                 Synonym synonym = (Synonym) DynamicUtil
                         .createObject(Collections.singleton(Synonym.class));
                 location.setStart(new Integer(newLocStart));
                 location.setEnd(new Integer(newLocEnd));
                 location.setStrand("1");
-                location.setPhase(new Integer(0));
-                location.setStartIsPartial(Boolean.FALSE);
-                location.setEndIsPartial(Boolean.FALSE);
-                location.setSubject(intergenicRegion);
-                location.setObject(chr);
+
+                location.setFeature(intergenicRegion);
+                location.setLocatedOn(chr);
                 location.addDataSets(dataSet);
                 intergenicRegion.setChromosomeLocation(location);
                 intergenicRegion.setChromosome(chr);
@@ -271,9 +238,7 @@ public class IntergenicRegionUtil
                 intergenicRegion.addDataSets(dataSet);
                 synonym.addDataSets(dataSet);
                 synonym.setSubject(intergenicRegion);
-                synonym.setType("identifier");
-                int length = location.getEnd().intValue()
-                        - location.getStart().intValue() + 1;
+                int length = location.getEnd().intValue() - location.getStart().intValue() + 1;
                 intergenicRegion.setLength(new Integer(length));
 
                 String primaryIdentifier = "intergenic_region_chr"
@@ -281,12 +246,11 @@ public class IntergenicRegionUtil
                         + location.getStart() + ".." + location.getEnd();
                 intergenicRegion.setPrimaryIdentifier(primaryIdentifier);
 
-                Set adjacentGenes = new HashSet();
+                Set<Gene> adjacentGenes = new HashSet<Gene>();
 
-                List nextGenes = (List) locToGeneMap.get(new Integer(
-                        newLocEnd + 1));
+                Set<Gene> nextGenes = (Set<Gene>) locToGeneMap.get(new Integer(newLocEnd + 1));
                 if (nextGenes != null) {
-                    Iterator nextGenesIter = nextGenes.iterator();
+                    Iterator<?> nextGenesIter = nextGenes.iterator();
 
                     while (nextGenesIter.hasNext()) {
                         Gene nextGene = (Gene) nextGenesIter.next();
@@ -296,21 +260,19 @@ public class IntergenicRegionUtil
                         }
                         if (strand != null) {
                             if (strand.equals("1")) {
-                                nextGene
-                                        .setUpstreamIntergenicRegion(intergenicRegion);
+                                nextGene.setUpstreamIntergenicRegion(intergenicRegion);
                             } else {
-                                nextGene
-                                        .setDownstreamIntergenicRegion(intergenicRegion);
+                                nextGene.setDownstreamIntergenicRegion(intergenicRegion);
                             }
                         }
                         adjacentGenes.add(nextGene);
                     }
                 }
 
-                List prevGenes = (List) locToGeneMap.get(new Integer(
+                Set<Gene> prevGenes = (Set<Gene>) locToGeneMap.get(new Integer(
                         newLocStart - 1));
                 if (prevGenes != null) {
-                    Iterator prevGenesIter = prevGenes.iterator();
+                    Iterator<?> prevGenesIter = prevGenes.iterator();
 
                     while (prevGenesIter.hasNext()) {
                         Gene prevGene = (Gene) prevGenesIter.next();
@@ -320,25 +282,21 @@ public class IntergenicRegionUtil
                         }
                         if (strand != null) {
                             if (strand.equals("1")) {
-                                prevGene
-                                        .setDownstreamIntergenicRegion(intergenicRegion);
+                                prevGene.setDownstreamIntergenicRegion(intergenicRegion);
                             } else {
-                                prevGene
-                                        .setUpstreamIntergenicRegion(intergenicRegion);
+                                prevGene.setUpstreamIntergenicRegion(intergenicRegion);
                             }
                         }
                         adjacentGenes.add(prevGene);
                     }
                 }
-
                 synonym.setValue(intergenicRegion.getPrimaryIdentifier());
                 intergenicRegion.setAdjacentGenes(adjacentGenes);
                 return intergenicRegion;
             }
 
             public void remove() {
-            throw new UnsupportedOperationException(
-                        "remove() not implemented");
+                throw new UnsupportedOperationException("remove() not implemented");
             }
         };
     }

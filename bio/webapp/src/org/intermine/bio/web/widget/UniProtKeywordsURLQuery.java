@@ -52,7 +52,7 @@ public class UniProtKeywordsURLQuery implements WidgetURLQuery
             q.addConstraint("Protein.keywords", Constraints.lookup(key));
             q.setConstraintLogic("A and B");
             q.syncLogicExpression("and");
-        }        
+        }
         return q;
     }
 }

@@ -60,11 +60,11 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         Query q = createQuery(bag);
 
         results = os.execute(q, 100000, true, true, true);
-        Iterator iter = results.iterator();
+        Iterator<?> iter = results.iterator();
         LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
 
         while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
+            ResultsRow<?> resRow = (ResultsRow<?>) iter.next();
 
             String affyCall = (String) resRow.get(0);
             String tissue = (String) resRow.get(1);

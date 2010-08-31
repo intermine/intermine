@@ -41,8 +41,6 @@ public class TiffinGFF3RecordHandler extends GFF3RecordHandler
     @Override
     public void process(GFF3Record record) {
         Item bindingSite = getFeature();
-        bindingSite.setAttribute("curated", "false");
-
         String name = record.getNames().get(0);
         Item motif = getMotif(name);
         bindingSite.setReference("motif", motif);
@@ -51,16 +49,12 @@ public class TiffinGFF3RecordHandler extends GFF3RecordHandler
     private Item getMotif(String name) {
         Item motif = motifs.get(name);
         if (motif == null) {
-            motif = createItem("Motif");
+            motif = converter.createItem("Motif");
             motif.setAttribute("primaryIdentifier", name);
-            motif.setAttribute("curated", "false");
+
             motifs.put(name, motif);
             addEarlyItem(motif);
-            Item synonym = createItem("Synonym");
-            synonym.setAttribute("value", name);
-            synonym.setAttribute("type", "identifier");
-            synonym.setAttribute("isPrimary", "true");
-            synonym.setReference("subject", motif);
+            Item synonym = converter.getSynonym(motif, name);
             addItem(synonym);
         }
         return motif;

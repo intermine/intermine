@@ -11,6 +11,7 @@
 <!-- objectView.jsp -->
 <html:xhtml/>
 <c:set var="object" value="${resultElement.field}"/>
+<c:set var="doNotTruncate" value="${doNotTruncate}"/>
 
 <c:set var="leafClds" value="${LEAF_DESCRIPTORS_MAP[object]}"/>
 
@@ -21,27 +22,6 @@
       <fmt:message key="objectDetails.nullField" var="nullFieldText"/>
       <c:set var="maxLength" value="70"/>
       <c:choose>
-        <c:when test="${!empty object && fn:startsWith(fn:trim(object), 'http://')}">
-          <a href="${object}" class="value extlink">
-            ${object}
-          </a>
-        </c:when>
-        <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength && resultElement.keyField}">
-           <html:link action="${detailsLink}">
-             <im:abbreviate value="${object}" length="${maxLength}"/>
-           </html:link>
-        </c:when>
-        <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength && !resultElement.keyField}">
-          <im:abbreviate value="${object}" length="${maxLength}"/>
-        </c:when>
-        <c:when test="${resultElement.keyField}">
-          <html:link action="${detailsLink}">
-            <c:out value="${object}" default="${nullFieldText}"/>
-          </html:link>
-          <c:if test="${(!empty columnType) && (resultElement.type != columnType)}">
-             [<c:out value="${resultElement.type}" />]
-          </c:if>
-        </c:when>
         <c:when test="${empty resultElement}">
           <%-- an outer join where no InterMineObject returned --%>
           &nbsp;
@@ -49,6 +29,39 @@
         <c:when test="${empty object}">
           <%-- InterMineObject present but no value for this field --%>
           <c:out value="${nullFieldText}"/>
+        </c:when>
+        <c:when test="${fn:startsWith(fn:trim(object), 'http://')}">
+            <%-- URL or image --%>
+            <c:choose>
+               <%-- IMAGE --%>
+               <c:when test="${!empty fieldName && resultElement.type == 'Image'}">
+                  <img src="${object}"/>
+                </c:when>
+
+                <%-- LINK --%>
+                <c:otherwise>
+                    <a href="${object}" class="value extlink">${object}</a>
+                </c:otherwise>
+            </c:choose>
+        </c:when>
+        <c:when test="${object.class.name == 'java.lang.String' && fn:length(object) > maxLength && resultElement.keyField && !doNotTruncate}">
+           <%-- key field, truncate --%>
+           <html:link action="${detailsLink}">
+             <im:abbreviate value="${object}" length="${maxLength}"/>
+           </html:link>
+        </c:when>
+        <c:when test="${object.class.name == 'java.lang.String' && fn:length(object) > maxLength && !resultElement.keyField && !doNotTruncate}">
+          <%-- NON key field, truncate --%>
+          <im:abbreviate value="${object}" length="${maxLength}"/>
+        </c:when>
+        <c:when test="${resultElement.keyField}">
+          <%-- key field --%>
+          <html:link action="${detailsLink}">
+            <c:out value="${object}" default="${nullFieldText}"/>
+          </html:link>
+          <c:if test="${(!empty columnType) && (resultElement.type != columnType)}">
+             [<c:out value="${resultElement.type}" />]
+          </c:if>
         </c:when>
         <c:otherwise>
             <c:out escapeXml="false" value="${object}" default="${nullFieldText}"/>

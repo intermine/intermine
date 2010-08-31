@@ -43,7 +43,6 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
         this.soTerm = soTerm;
     }
 
-    
     /**
      * Construct with SO term of the feature type to read from chado database and restrict to
      * data from only one organism.
@@ -54,20 +53,19 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
         this.soTerm = soTerm;
         this.taxonId = taxonId;
     }
-    
-    
+
     /**
      * Build an IdResolver for WormBase by accessing a WormBase chado database.
      * @return an IdResolver for WormBase
      */
     protected IdResolver createIdResolver() {
         IdResolver resolver = new IdResolver(soTerm);
-        
+
         try {
             // TODO maybe this shouldn't be hard coded here?
             db = DatabaseFactory.getDatabase("db.wormbase");
 
-            String cacheFileName = "build/" + db.getName() + "." + soTerm 
+            String cacheFileName = "build/" + db.getName() + "." + soTerm
                 + ((taxonId != null) ? "." + taxonId : "");
             File f = new File(cacheFileName);
             if (f.exists()) {
@@ -83,14 +81,11 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
         }
         return resolver;
     }
-    
-    
+
     private IdResolver createFromDb(Database db) {
         IdResolver resolver = new IdResolver(soTerm);
         Connection conn = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
-        
-        
         try {
             conn = db.getConnection();
             String query = "select c.cvterm_id"
@@ -116,11 +111,9 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
                 String organismId = null;
                 res.next();
                 organismId = res.getString("organism_id");
-                stmt.close(); 
+                stmt.close();
                 orgConstraint = " and o.organism_id = " + organismId;
             }
-            
-
 
             // fetch feature name for located genes
             query = "select distinct o.abbreviation, f.uniquename, f.name"
@@ -144,7 +137,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
             }
             LOG.info("feature query returned " + i + " rows.");
             stmt.close();
-            
+
             // fetch gene synonyms
             query = "select distinct o.abbreviation, f.uniquename, s.name, "
                 + " fs.is_current, c.name as type"
@@ -176,7 +169,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
             }
             stmt.close();
             LOG.info("synonym query returned " + i + " rows.");
-            
+
         } catch (Exception e) {
             LOG.error(e);
             throw new RuntimeException(e);
@@ -189,7 +182,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
                 throw new RuntimeException(e);
             }
         }
-        
+
         return resolver;
     }
 }

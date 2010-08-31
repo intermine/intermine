@@ -31,7 +31,7 @@ import org.intermine.util.Util;
 public class ClassDescriptor implements Comparable<ClassDescriptor>
 {
     private static final String INTERMINEOBJECT_NAME = "org.intermine.model.InterMineObject";
-
+    protected static final String ENDL = System.getProperty("line.separator");
     private final String className;        // name of this class
 
     // the supers string passed to the constructor
@@ -139,7 +139,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      * Returns the Class described by this ClassDescriptor.
      * @return a Class
      */
-    public Class getType() {
+    public Class<?> getType() {
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {
@@ -224,8 +224,9 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
                                 || !Util.equals(reverseFieldName, alreadyRevFieldName)) {
                                 throw new MetaDataException("Incompatible similarly named fields ("
                                                             + fd.getName() + ") inherited"
-                                        + " from multiple superclasses and interfaces in "
-                                        + getName());
+                                        + " from multiple superclasses and interfaces ["
+                                        + alreadyRevFieldName + " instead of " + reverseFieldName
+                                        + "] in " + getName());
                             }
                         } else {
                             throw new IllegalArgumentException("Descriptor has unknown type: "
@@ -436,8 +437,6 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         }
         return null;
     }
-
-
 
     /**
      * Get the name of the super class of this class (may be null)
@@ -735,10 +734,15 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         l.addAll(getAttributeDescriptors());
         l.addAll(getReferenceDescriptors());
         l.addAll(getCollectionDescriptors());
+        boolean firstClass = true;
         for (FieldDescriptor fd : l) {
-            sb.append(fd.toString());
+            if (firstClass) {
+                sb.append(ENDL);
+                firstClass = false;
+            }
+            sb.append("\t" + fd.toString() + ENDL);
         }
-        sb.append("</class>");
+        sb.append("</class>" + ENDL);
         return sb.toString();
     }
 

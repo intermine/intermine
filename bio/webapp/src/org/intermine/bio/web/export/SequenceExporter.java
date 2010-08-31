@@ -24,10 +24,10 @@ import org.intermine.bio.web.biojava.BioSequence;
 import org.intermine.bio.web.biojava.BioSequenceFactory;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Sequence;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.StringUtil;
@@ -102,8 +102,8 @@ public class SequenceExporter implements Exporter
                     continue;
                 }
 
-                if (object instanceof LocatedSequenceFeature) {
-                    bioSequence = createLocatedSequenceFeature(header, object,
+                if (object instanceof SequenceFeature) {
+                    bioSequence = createSequenceFeature(header, object,
                             row);
                 } else if (object instanceof Protein) {
                     bioSequence = createProtein(header, object, row);
@@ -121,21 +121,17 @@ public class SequenceExporter implements Exporter
                 String headerString = header.toString();
 
                 if (headerString.length() > 0) {
-                    annotation.setProperty(
-                            FastaFormat.PROPERTY_DESCRIPTIONLINE, headerString);
+                    annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, headerString);
                 } else {
                     if (object instanceof BioEntity) {
-                        annotation.setProperty(
-                                FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                        annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
                                 ((BioEntity) object).getPrimaryIdentifier());
                     } else {
                         // last resort
-                        annotation.setProperty(
-                                FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                        annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
                                 "sequence_" + exportedIDs.size());
                     }
                 }
-
                 SeqIOTools.writeFasta(out, bioSequence);
                 writtenResultsCount++;
                 exportedIDs.add(objectId);
@@ -159,11 +155,11 @@ public class SequenceExporter implements Exporter
         return bioSequence;
     }
 
-    private BioSequence createLocatedSequenceFeature(StringBuffer header,
+    private BioSequence createSequenceFeature(StringBuffer header,
             Object object, List<ResultElement> row)
-            throws IllegalSymbolException {
+        throws IllegalSymbolException {
         BioSequence bioSequence;
-        LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
+        SequenceFeature feature = (SequenceFeature) object;
         bioSequence = BioSequenceFactory.make(feature);
 
         String primaryIdentifier = feature.getPrimaryIdentifier();
@@ -186,10 +182,10 @@ public class SequenceExporter implements Exporter
         headerBits.add(primaryIdentifier);
 
         // two instances
-        if (object instanceof LocatedSequenceFeature) {
+        if (object instanceof SequenceFeature) {
 
             // add the sequence location info at the second place in the header
-            LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
+            SequenceFeature feature = (SequenceFeature) object;
 
             String chr = feature.getChromosome().getPrimaryIdentifier();
             Integer start = feature.getChromosomeLocation().getStart();
@@ -255,7 +251,7 @@ public class SequenceExporter implements Exporter
      */
     public static boolean canExportStatic(List<Class> clazzes) {
         return (ExportHelper.getClassIndex(clazzes,
-                LocatedSequenceFeature.class) >= 0
+                SequenceFeature.class) >= 0
                 || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0 || ExportHelper
                 .getClassIndex(clazzes, Sequence.class) >= 0);
     }

@@ -37,6 +37,7 @@
       <c:set var="colcount" value="${colcount+1}"/>
       <im:formatColumnName outVar="displayPath" str="${column.name}" />
       <im:unqualify className="${column.name}" var="pathEnd"/>
+
       <im:prefixSubstring str="${column.name}" outVar="columnPathPrefix" delimiter="."/>
       <c:choose>
         <c:when test="${!empty QUERY
@@ -103,8 +104,13 @@
             <em style="font-size:9px;">
             <c:forEach items="${columnDisplayNameList}" var="columnNameItem" varStatus="status2" begin="${begin}">
               <c:choose>
-                <c:when test="${status2.last}"></em><br/>${columnNameItem}</c:when>
-                <c:otherwise>${columnNameItem} &gt; </c:otherwise>
+                <c:when test="${status2.last}">
+                    </em><br/>${columnNameItem}
+                    <c:set var="fieldName" value="${columnNameItem}"/>
+                </c:when>
+                <c:otherwise>
+                    ${columnNameItem} &gt;
+              </c:otherwise>
               </c:choose>
             </c:forEach>
             <!-- ${fn:length(columnDisplayNameList)}:${columnDisplayName} -->
@@ -192,7 +198,10 @@
                       </c:if>
                     </c:if>
                     <c:set var="columnType" value="${column.typeClsString}" scope="request"/>
-                    <tiles:insert name="objectView.tile" /> <%-- uses resultElement? --%>
+                    <tiles:insert name="objectView.tile" >
+                        <tiles:put name="id" value="${resultElement.id}" />
+                        <tiles:put name="fieldName" value="${fieldName}" />
+                    </tiles:insert>
                   </td>
                 </c:if>
               </c:when>

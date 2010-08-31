@@ -117,10 +117,10 @@ public class UpdateOrthologues extends PostProcessor
         String newRef = refType.equals("protein") ? "gene"
             : refType.substring(0, refType.indexOf('P'));
 
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         osw.beginTransaction();
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             InterMineObject o = (InterMineObject) rr.get(0);
             Protein protein = (Protein) rr.get(1);
             Gene gene = (Gene) rr.get(2);

@@ -36,7 +36,8 @@ public class FormattedTextParser
      * @return an Iterator over the lines of the Reader
      * @throws IOException if there is an error while reading from the Reader
      */
-    public static Iterator parseTabDelimitedReader(final Reader reader) throws IOException {
+    public static Iterator<String[]> parseTabDelimitedReader(final Reader reader)
+        throws IOException {
         return parseDelimitedReader(reader, false, "\t");
     }
 
@@ -49,7 +50,7 @@ public class FormattedTextParser
      * @return an Iterator over the lines of the Reader
      * @throws IOException if there is an error while reading from the Reader
      */
-    public static Iterator parseTabDelimitedReader(final Reader reader,
+    public static Iterator<?> parseTabDelimitedReader(final Reader reader,
             boolean stripQuotes) throws IOException {
         return parseDelimitedReader(reader, stripQuotes, "\t");
     }
@@ -81,8 +82,8 @@ public class FormattedTextParser
         return parseDelimitedReader(reader, false, String.valueOf(delim));
     }
 
-    private static Iterator parseDelimitedReader(final Reader reader, final boolean stripQuotes,
-            final String delim) throws IOException {
+    private static Iterator<String[]> parseDelimitedReader(final Reader reader,
+            final boolean stripQuotes, final String delim) throws IOException {
         final BufferedReader bufferedReader = new BufferedReader(reader);
 
         return new Iterator() {

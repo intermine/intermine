@@ -134,7 +134,7 @@ public class OboParser
      * @throws IOException if anything goes wrong
      */
     public Map<String, String> getTermIdNameMap(Reader in)
-    throws IOException {
+        throws IOException {
         readTerms(new BufferedReader(in));
         Map<String, String> idNames = new HashMap<String, String>();
         for (OboTerm ot : terms.values()) {
@@ -166,7 +166,7 @@ public class OboParser
      */
     public void readTerms(BufferedReader in) throws IOException {
         String line;
-        Map tagValues = new MultiValueMap();
+        Map<String, String> tagValues = new MultiValueMap();
         List<Map> termTagValuesList = new ArrayList<Map>();
         List<Map> typeTagValuesList = new ArrayList<Map>();
 
@@ -217,28 +217,28 @@ public class OboParser
         // Build the OboTypeDefinition objects
         OboTypeDefinition oboType = new OboTypeDefinition("is_a", "is_a", true);
         types.put(oboType.getId() , oboType);
-        for (Iterator iter = typeTagValuesList.iterator(); iter.hasNext();) {
-            Map tvs = (Map) iter.next();
-            String id = (String) ((List) tvs.get("id")).get(0);
-            String name = (String) ((List) tvs.get("name")).get(0);
+        for (Iterator<Map> iter = typeTagValuesList.iterator(); iter.hasNext();) {
+            Map<?, ?> tvs = iter.next();
+            String id = (String) ((List<?>) tvs.get("id")).get(0);
+            String name = (String) ((List<?>) tvs.get("name")).get(0);
             boolean isTransitive = isTrue(tvs, "is_transitive");
             oboType = new OboTypeDefinition(id, name, isTransitive);
             types.put(oboType.getId() , oboType);
         }
 
         // Just build all the OboTerms disconnected
-        for (Iterator iter = termTagValuesList.iterator(); iter.hasNext();) {
-            Map tvs = (Map) iter.next();
-            String id = (String) ((List) tvs.get("id")).get(0);
-            String name = (String) ((List) tvs.get("name")).get(0);
+        for (Iterator<Map> iter = termTagValuesList.iterator(); iter.hasNext();) {
+            Map<?, ?> tvs = iter.next();
+            String id = (String) ((List<?>) tvs.get("id")).get(0);
+            String name = (String) ((List<?>) tvs.get("name")).get(0);
             OboTerm term = new OboTerm(id, name);
             term.setObsolete(isTrue(tvs, "is_obsolete"));
             terms.put(term.getId(), term);
         }
 
         // Now connect them all together
-        for (Iterator iter = termTagValuesList.iterator(); iter.hasNext();) {
-            Map tvs = (Map) iter.next();
+        for (Iterator<Map> iter = termTagValuesList.iterator(); iter.hasNext();) {
+            Map<?, ?> tvs = iter.next();
             if (!isTrue(tvs, "is_obsolete")) {
                 configureDagTerm(tvs);
             }
@@ -250,36 +250,36 @@ public class OboParser
      *
      * @param tagValues term config
      */
-    protected void configureDagTerm(Map tagValues) {
-        String id = (String) ((List) tagValues.get("id")).get(0);
+    protected void configureDagTerm(Map<?, ?> tagValues) {
+        String id = (String) ((List<?>) tagValues.get("id")).get(0);
         OboTerm term = terms.get(id);
 
         if (term != null) {
             term.setTagValues(tagValues);
 
-            List synonyms = (List) tagValues.get("synonym");
+            List<?> synonyms = (List<?>) tagValues.get("synonym");
             if (synonyms != null) {
                 addSynonyms(term, synonyms, "synonym");
             }
-            synonyms = (List) tagValues.get("related_synonym");
+            synonyms = (List<?>) tagValues.get("related_synonym");
             if (synonyms != null) {
                 addSynonyms(term, synonyms, "related_synonym");
             }
-            synonyms = (List) tagValues.get("exact_synonym");
+            synonyms = (List<?>) tagValues.get("exact_synonym");
             if (synonyms != null) {
                 addSynonyms(term, synonyms, "exact_synonym");
             }
-            synonyms = (List) tagValues.get("broad_synonym");
+            synonyms = (List<?>) tagValues.get("broad_synonym");
             if (synonyms != null) {
                 addSynonyms(term, synonyms, "broad_synonym");
             }
-            synonyms = (List) tagValues.get("narrow_synonym");
+            synonyms = (List<?>) tagValues.get("narrow_synonym");
             if (synonyms != null) {
                 addSynonyms(term, synonyms, "narrow_synonym");
             }
 
             // Set namespace
-            List nsl = (List) tagValues.get("namespace");
+            List<?> nsl = (List<?>) tagValues.get("namespace");
             if (nsl != null && nsl.size() > 0) {
                 term.setNamespace((String) nsl.get(0));
             } else {
@@ -287,7 +287,7 @@ public class OboParser
             }
 
             // Set description
-            List defl = (List) tagValues.get("def");
+            List<?> defl = (List<?>) tagValues.get("def");
             String def = null;
             if (defl != null && defl.size() > 0) {
                 def = (String) defl.get(0);
@@ -311,8 +311,8 @@ public class OboParser
      * @param tagValue the term to look for in the map
      * @return true if the term is marked true, false if not
      */
-    public static boolean isTrue(Map tagValues, String tagValue) {
-        List vals = (List) tagValues.get(tagValue);
+    public static boolean isTrue(Map<?, ?> tagValues, String tagValue) {
+        List<?> vals = (List<?>) tagValues.get(tagValue);
         if (vals != null && vals.size() > 0) {
             if (vals.size() > 1) {
                 LOG.warn("Term: " + tagValues + " has more than one (" + vals.size()
@@ -330,8 +330,8 @@ public class OboParser
      * @param synonyms List of synonyms (Strings)
      * @param type     synonym type
      */
-    protected void addSynonyms(OboTerm term, List synonyms, String type) {
-        for (Iterator iter = synonyms.iterator(); iter.hasNext();) {
+    protected void addSynonyms(OboTerm term, List<?> synonyms, String type) {
+        for (Iterator<?> iter = synonyms.iterator(); iter.hasNext();) {
             String line = (String) iter.next();
             synMatcher.reset(line);
             if (synMatcher.matches()) {
@@ -359,32 +359,32 @@ public class OboParser
                 boolean asserted = false, redundant = false;
                 for (int i = 0; i < bits.length; i++) {
                     switch (i) {
-                    case 0:// id1
+                        case 0:// id1
                         {
                             id1 = bits[i];
                             break;
                         }
-                    case 1:// type
+                        case 1:// type
                         {
                             // already initialised
                             break;
                         }
-                    case 2:// id2
+                        case 2:// id2
                         {
                             id2 = bits[i];
                             break;
                         }
-                    case 3:// asserted
+                        case 3:// asserted
                         {
                             asserted = (bits[i]).matches("asserted");
                             break;
                         }
-                    case 4:// ??
+                        case 4:// ??
                         {
                             // do nothing
                             break;
                         }
-                    case 5:// redundant
+                        case 5:// redundant
                         {
                             redundant = (bits[i]).matches("redundant");
                             break;

@@ -14,13 +14,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.IntergenicRegion;
-import org.intermine.model.bio.Motif;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.TFBindingSite;
 import org.intermine.objectstore.ObjectStore;
@@ -43,7 +40,7 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
  */
 public class TiffinLdr extends EnrichmentWidgetLdr
 {
-    private static final Logger LOG = Logger.getLogger(TiffinLdr.class);
+//    private static final Logger LOG = Logger.getLogger(TiffinLdr.class);
     private Collection<String> organisms = new ArrayList<String>();
     private Collection<String> organismsLower = new ArrayList<String>();
     private InterMineBag bag;
@@ -53,107 +50,115 @@ public class TiffinLdr extends EnrichmentWidgetLdr
      * @param os object store
      * @param extraAttribute an extra attribute, probably organism
      */
-     public TiffinLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
-         this.bag = bag;
-         organisms = BioUtil.getOrganisms(os, bag, false);
-         for (String s : organisms) {
-             organismsLower.add(s.toLowerCase());
-         }
-     }
+    public TiffinLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
+        this.bag = bag;
+        organisms = BioUtil.getOrganisms(os, bag, false);
+        for (String s : organisms) {
+            organismsLower.add(s.toLowerCase());
+        }
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     public Query getQuery(String action, List<String> keys) {
+    /**
+     * {@inheritDoc}
+     */
+    public Query getQuery(String action, List<String> keys) {
 
-         QueryClass qcGene = new QueryClass(Gene.class);
-         QueryClass qcIntergenicRegion = new QueryClass(IntergenicRegion.class);
-         QueryClass qcTFBindingSite = new QueryClass(TFBindingSite.class);
-         QueryClass qcDataSet = new QueryClass(DataSet.class);
-         QueryClass qcMotif = new QueryClass(Motif.class);
-         QueryClass qcOrganism = new QueryClass(Organism.class);
+        QueryClass qcGene = new QueryClass(Gene.class);
+        QueryClass qcIntergenicRegion = null;
+        QueryClass qcTFBindingSite = new QueryClass(TFBindingSite.class);
+        QueryClass qcDataSet = new QueryClass(DataSet.class);
+        QueryClass qcMotif = null;
+        QueryClass qcOrganism = new QueryClass(Organism.class);
 
-         QueryField qfGeneId = new QueryField(qcGene, "id");
-         QueryField qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
-         QueryField qfOrganismNameMixedCase = new QueryField(qcOrganism, "name");
-         QueryExpression qfOrganismName = new QueryExpression(QueryExpression.LOWER,
-                 qfOrganismNameMixedCase);
-         QueryField qfId = new QueryField(qcMotif, "primaryIdentifier");
-         QueryField qfDataSet = new QueryField(qcDataSet, "title");
 
-         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        try {
+            qcMotif = new QueryClass(Class.forName("Motif"));
+            qcIntergenicRegion  = new QueryClass(Class.forName("IntergenicRegion"));
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
 
-         if (keys != null) {
-             cs.addConstraint(new BagConstraint(qfId, ConstraintOp.IN, keys));
-         }
+        QueryField qfGeneId = new QueryField(qcGene, "id");
+        QueryField qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
+        QueryField qfOrganismNameMixedCase = new QueryField(qcOrganism, "name");
+        QueryExpression qfOrganismName = new QueryExpression(QueryExpression.LOWER,
+                qfOrganismNameMixedCase);
+        QueryField qfId = new QueryField(qcMotif, "primaryIdentifier");
+        QueryField qfDataSet = new QueryField(qcDataSet, "name");
 
-         if (!action.startsWith("population")) {
-             cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
-         }
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-         cs.addConstraint(new BagConstraint(qfOrganismName, ConstraintOp.IN, organismsLower));
+        if (keys != null) {
+            cs.addConstraint(new BagConstraint(qfId, ConstraintOp.IN, keys));
+        }
 
-         QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
-         cs.addConstraint(new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism));
+        if (!action.startsWith("population")) {
+            cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
+        }
 
-         QueryObjectReference qr2 =
-             new QueryObjectReference(qcGene, "upstreamIntergenicRegion");
-         cs.addConstraint(new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcIntergenicRegion));
+        cs.addConstraint(new BagConstraint(qfOrganismName, ConstraintOp.IN, organismsLower));
 
-         QueryCollectionReference qr3 =
-             new QueryCollectionReference(qcIntergenicRegion, "overlappingFeatures");
-         cs.addConstraint(new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcTFBindingSite));
+        QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
+        cs.addConstraint(new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism));
 
-         QueryCollectionReference qr4 =
-             new QueryCollectionReference(qcTFBindingSite, "dataSets");
-         cs.addConstraint(new ContainsConstraint(qr4, ConstraintOp.CONTAINS, qcDataSet));
+        QueryObjectReference qr2 =
+            new QueryObjectReference(qcGene, "upstreamIntergenicRegion");
+        cs.addConstraint(new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcIntergenicRegion));
 
-         QueryObjectReference  qr5 = new QueryObjectReference(qcTFBindingSite, "motif");
-         cs.addConstraint(new ContainsConstraint(qr5, ConstraintOp.CONTAINS, qcMotif));
+        QueryCollectionReference qr3 =
+            new QueryCollectionReference(qcIntergenicRegion, "overlappingFeatures");
+        cs.addConstraint(new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcTFBindingSite));
 
-         cs.addConstraint(new SimpleConstraint(qfDataSet,
-                                               ConstraintOp.EQUALS, new QueryValue("Tiffin")));
-         Query q = new Query();
-         
-         q.setDistinct(true);
+        QueryCollectionReference qr4 =
+            new QueryCollectionReference(qcTFBindingSite, "dataSets");
+        cs.addConstraint(new ContainsConstraint(qr4, ConstraintOp.CONTAINS, qcDataSet));
 
-         q.addFrom(qcGene);
-         q.addFrom(qcIntergenicRegion);
-         q.addFrom(qcTFBindingSite);
-         q.addFrom(qcMotif);
-         q.addFrom(qcDataSet);
-         q.addFrom(qcOrganism);
+        QueryObjectReference  qr5 = new QueryObjectReference(qcTFBindingSite, "motif");
+        cs.addConstraint(new ContainsConstraint(qr5, ConstraintOp.CONTAINS, qcMotif));
 
-         q.setConstraint(cs);
+        cs.addConstraint(new SimpleConstraint(qfDataSet,
+                ConstraintOp.EQUALS, new QueryValue("Tiffin")));
+        Query q = new Query();
 
-//         if (keys != null) {
-//             subQ.addToSelect(qfGeneId);
-//             return subQ;
-//         }
-         
-         
-         if (action.equals("analysed")) {
-             q.addToSelect(qfGeneId);
-         } else if (action.equals("export")) {
-             q.addToSelect(qfId);
-             q.addToSelect(qfPrimaryIdentifier);
-             q.addToOrderBy(qfId);
-         } else if (action.endsWith("Total")) {
-             q.addToSelect(qfGeneId);
-             Query subQ = q;
-             q = new Query();
-             q.addFrom(subQ);
-             q.addToSelect(new QueryFunction()); // gene count
-         } else {
-             q.addToSelect(qfId);
-             q.addToSelect(new QueryFunction()); // gene count
-             if (action.equals("sample")) {
-                 q.addToSelect(qfId);
-             }
-             q.addToGroupBy(qfId);
-         }
-         return q;
-     }
+        q.setDistinct(true);
+
+        q.addFrom(qcGene);
+        q.addFrom(qcIntergenicRegion);
+        q.addFrom(qcTFBindingSite);
+        q.addFrom(qcMotif);
+        q.addFrom(qcDataSet);
+        q.addFrom(qcOrganism);
+
+        q.setConstraint(cs);
+
+        //         if (keys != null) {
+            //             subQ.addToSelect(qfGeneId);
+        //             return subQ;
+        //         }
+
+
+        if (action.equals("analysed")) {
+            q.addToSelect(qfGeneId);
+        } else if (action.equals("export")) {
+            q.addToSelect(qfId);
+            q.addToSelect(qfPrimaryIdentifier);
+            q.addToOrderBy(qfId);
+        } else if (action.endsWith("Total")) {
+            q.addToSelect(qfGeneId);
+            Query subQ = q;
+            q = new Query();
+            q.addFrom(subQ);
+            q.addToSelect(new QueryFunction()); // gene count
+        } else {
+            q.addToSelect(qfId);
+            q.addToSelect(new QueryFunction()); // gene count
+            if (action.equals("sample")) {
+                q.addToSelect(qfId);
+            }
+            q.addToGroupBy(qfId);
+        }
+        return q;
+    }
 }
 
 

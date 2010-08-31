@@ -33,8 +33,8 @@
     <br/>
 
         <span class="smallnote">
-      <html:link action="/import" titleKey="begin.importTemplatesDesc">
-        <fmt:message key="begin.importTemplates"/>
+      <html:link action="/import" titleKey="history.importTemplatesDesc">
+        <fmt:message key="history.importTemplates"/>
       </html:link>
     </span>
 
@@ -179,15 +179,15 @@
     </c:choose>
   <c:if test="${IS_SUPERUSER}">
     <span class="smallnote">
-      <html:link action="/summariseAllTemplates" titleKey="begin.summariseAllTemplatesDesc">
-        <fmt:message key="begin.summariseAllTemplates"/>
+      <html:link action="/summariseTemplates" titleKey="history.summariseTemplates">
+        <fmt:message key="history.summariseTemplates"/>
       </html:link>
     </span>
     <BR/>
     </c:if>
     <span class="smallnote">
-      <html:link action="/import" titleKey="begin.importTemplatesDesc">
-        <fmt:message key="begin.importTemplates"/>
+      <html:link action="/import" titleKey="history.importTemplatesDesc">
+        <fmt:message key="history.importTemplates"/>
       </html:link>
     </span>
   </im:body>

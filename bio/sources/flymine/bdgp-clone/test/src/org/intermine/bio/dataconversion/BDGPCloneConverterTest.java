@@ -41,7 +41,7 @@ public class BDGPCloneConverterTest extends ItemsTestCase
         resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG9480"));
         converter.resolverFactory = resolverFactory;
     }
-    
+
     public void testProcess() throws Exception {
         String ENDL = System.getProperty("line.separator");
         String input = "# comment" + ENDL
@@ -49,6 +49,9 @@ public class BDGPCloneConverterTest extends ItemsTestCase
 
         converter.process(new StringReader(input));
         converter.close();
+
+        // uncomment to write out a new target items file
+        //writeItemsFile(itemWriter.getItems(), "bdgp-clone-tgt-items.xml");
 
         Set expected = readItemSet("BDGPCloneConverterTest.xml");
         assertEquals(expected, itemWriter.getItems());

@@ -27,9 +27,10 @@
         </a>
 
     <%-- orthologue link popup --%>
+    <form action="${mine.url}/portal.do" method="post" name="orthologueLinkForm${status.count}" target="_blank">
     <div id="orthologue_link_${status.count}" style="display:none">
-        <form action="${mine.url}/portal.do" method="post" name="orthologueLinkForm${status.count}" target="_blank">
-        You are being forwarded to ${mineName}
+
+        You are exporting your list to ${mineName}
         <br/><br/>
         <table>
         <tr>
@@ -40,8 +41,8 @@
             <c:forEach var="entry" items="${orthologuesToDatasets}" varStatus="entryStatus">
                 <c:set var="orthologue" value="${entry.key}"/>
                 <c:set var="datasets" value="${entry.value}"/>
-                <c:set var="localMapping" value="${datasets[0]}"/>
-                <c:set var="remoteMapping" value="${datasets[1]}"/>
+                <c:set var="localMapping" value="${datasets.localDataSetsString}"/>
+                <c:set var="remoteMapping" value="${datasets.remoteDataSetsString}"/>
                 <option value="${localMapping}|${remoteMapping}" <c:if test="${mine.defaultOrganismName == orthologue}">selected</c:if>>${orthologue}</option>
             </c:forEach>
             </select>
@@ -66,8 +67,9 @@
         <input type="hidden" name="externalids" value="${identifierList}"/>
         <input type="hidden" name="class" value="${bag.type}"/>
         <input type="button" name="submitButton" value="GO" onClick="javascript:submitOrthologueLinkForm('${bag.type}', '${bag.name}', '${status.count}');" />
-        </form>
+
     </div>
+        </form>
 
     </td>
     </tr>

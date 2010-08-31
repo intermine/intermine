@@ -10,29 +10,32 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.io.File;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.BuildException;
-
-import org.intermine.objectstore.query.*;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.ObjectStoreException;
-
-import org.intermine.util.StringUtil;
-
-import org.intermine.model.bio.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.intermine.model.bio.CDS;
+import org.intermine.model.bio.Protein;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.StringUtil;
 
 /**
  * Task to read a file mapping cds identifiers to UniProt accession numbers and create a protein
@@ -122,10 +125,10 @@ public class FlyBaseUniProtRefsTask extends Task
             }
 
             // map from acc # to Protein
-            Map uniprotAccMap = new HashMap();
+            Map<String, Protein> uniprotAccMap = new HashMap();
 
             // map from translation identifier to Translation
-            Map cdsIdMap = new HashMap();
+            Map<?, ?> cdsIdMap = new HashMap();
 
             Query uniprotQuery = new Query();
 

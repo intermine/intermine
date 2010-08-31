@@ -86,6 +86,40 @@ sub parse_properties_file {
   return \%hash_of_properties;
 }
 
+=head2 parse_properties_file
+
+ Title   : parse_properties_file
+ Usage   : $properties = 
+              InterMine::Util::parse_properties_file(/home/user/.intermine/flymine.properties');
+ Function: Reads properties into a key/value hash
+ Args    : $property_file_name
+
+=cut
+
+sub parse_properties_file {
+
+  my $file = shift;
+
+  open F, '<', "$file" or die "cannot open $file: $!\n";
+
+  my %hash_of_properties;
+
+  while (my $line = <F>) {
+    if ($line =~ /^\s*#/) {
+      next;
+    }
+    if ($line =~ /=/) {
+	my ($k, $v) = split('=', $line);
+	chomp ($k, $v);
+	$hash_of_properties{$k} = $v;
+    }
+  }
+
+  close F;
+
+  return \%hash_of_properties;
+}
+
 =head2 get_latest_properties_version
 
  Title   : get_latest_properties_version

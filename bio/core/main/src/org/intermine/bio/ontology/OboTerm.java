@@ -29,7 +29,7 @@ public class OboTerm
     private String namespace = "";
     private String description = "";
     private boolean obsolete = false;
-    private Map tagValues;
+    private Map<?, ?> tagValues;
 
     /**
      * Construct with an id and name.
@@ -138,7 +138,7 @@ public class OboTerm
      *
      * @param tagValues the values
      */
-    protected void setTagValues(Map tagValues) {
+    protected void setTagValues(Map<?, ?> tagValues) {
         this.tagValues = tagValues;
     }
 
@@ -147,7 +147,7 @@ public class OboTerm
      *
      * @return the tagValues
      */
-    protected Map getTagValues() {
+    protected Map<?, ?> getTagValues() {
         return tagValues;
     }
 }

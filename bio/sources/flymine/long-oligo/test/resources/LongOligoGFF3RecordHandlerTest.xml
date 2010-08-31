@@ -1,0 +1,51 @@
+<items>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="Micklem lab"/>
+</item>
+<item id="5_1" class="SOTerm">
+<attribute name="name" value="mRNA"/>
+<reference name="ontology" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_1" class="Synonym">
+<attribute name="value" value="12-CG4314-RA_1"/>
+<reference name="subject" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="MRNA">
+<attribute name="primaryIdentifier" value="FBtr0075391"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="6_1" class="MicroarrayOligo">
+<attribute name="length" value="14"/>
+<attribute name="primaryIdentifier" value="1000044388"/>
+<attribute name="tm" value="92.25"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequence" ref_id="7_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<reference name="transcript" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_2" class="SOTerm">
+<attribute name="name" value="microarray_oligo"/>
+<reference name="ontology" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_1" class="Sequence">
+<attribute name="length" value="14"/>
+<attribute name="residues" value="ACACGGGTCAGGAT"/>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="INDAC long oligo data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="0_1" class="Organism">
+<attribute name="taxonId" value="7227"/>
+</item>
+</items>

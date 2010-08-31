@@ -59,9 +59,7 @@ public class ExcelHttpExporter extends StandardHttpExporter
      * {@inheritDoc}
      */
     @Override
-    protected Exporter getExporter(OutputStream out,
-                                   @SuppressWarnings("unused") String lineSeparator,
-                                   List<String> headers) {
+    protected Exporter getExporter(OutputStream out, String lineSeparator, List<String> headers) {
         // excel export is independent at the line separator
         return new ExcelExporter(out);
     }

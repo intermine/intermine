@@ -10,6 +10,11 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.lang.reflect.Constructor;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,21 +22,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.sql.Database;
 import org.intermine.util.StringUtil;
-
-import java.lang.reflect.Constructor;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * DataConverter to read from a Chado database into items
@@ -53,6 +51,7 @@ public class ChadoDBConverter extends BioDBConverter
 
     private Connection connection;
 
+
     /**
      * Create a new ChadoDBConverter object.
      * @param database the database to read from
@@ -63,7 +62,7 @@ public class ChadoDBConverter extends BioDBConverter
      */
     public ChadoDBConverter(Database database, Model tgtModel, ItemWriter writer)
         throws SQLException {
-        super(database, tgtModel, writer);
+        super(database, tgtModel, writer, null, null);
         organismRepository = OrganismRepository.getOrganismRepository();
         if (getDatabase() == null) {
             // no Database when testing and no connection needed

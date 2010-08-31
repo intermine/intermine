@@ -10,6 +10,12 @@ package org.intermine.bio.gbrowse;
  *
  */
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,6 +26,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.intermine.bio.util.BioQueries;
+import org.intermine.bio.util.Constants;
+import org.intermine.model.bio.CDS;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.ChromosomeBand;
+import org.intermine.model.bio.Exon;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.MRNA;
+import org.intermine.model.bio.NcRNA;
+import org.intermine.model.bio.Sequence;
+import org.intermine.model.bio.SequenceFeature;
+import org.intermine.model.bio.Synonym;
+import org.intermine.model.bio.Transcript;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -33,44 +61,8 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.bio.util.BioQueries;
-import org.intermine.bio.util.Constants;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-
-import org.intermine.model.bio.Analysis;
-import org.intermine.model.bio.CDS;
-import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.ChromosomeBand;
-import org.intermine.model.bio.ComputationalAnalysis;
-import org.intermine.model.bio.ComputationalResult;
-import org.intermine.model.bio.Evidence;
-import org.intermine.model.bio.Exon;
-import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.LocatedSequenceFeature;
-import org.intermine.model.bio.Location;
-import org.intermine.model.bio.MRNA;
-import org.intermine.model.bio.NcRNA;
-import org.intermine.model.bio.Sequence;
-import org.intermine.model.bio.Synonym;
-import org.intermine.model.bio.Transcript;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-
-import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 
 /**
  * A Task for creating GFF and FASTA files for use by GBrowse.  Only those features that are
@@ -106,7 +98,7 @@ public class WriteGFFTask extends Task
      * {@inheritDoc}
      */
     @Override
-    public void execute() throws BuildException {
+    public void execute() {
         if (destinationDirectory == null) {
             throw new BuildException("dest attribute is not set");
         }
@@ -123,8 +115,8 @@ public class WriteGFFTask extends Task
         }
     }
 
-    private static final Class<LocatedSequenceFeature> LOCATED_SEQUENCE_FEATURE_CLASS =
-        LocatedSequenceFeature.class;
+    private static final Class<SequenceFeature> LOCATED_SEQUENCE_FEATURE_CLASS =
+        SequenceFeature.class;
 
     /**
      * Create a GFF and FASTA files for the objects in the given ObjectStore, suitable for reading
@@ -140,7 +132,7 @@ public class WriteGFFTask extends Task
             BioQueries.findLocationAndObjects(os, Chromosome.class,
                     LOCATED_SEQUENCE_FEATURE_CLASS, false, true, false, 2000);
 
-        Iterator<ResultsRow> resIter = results.iterator();
+        Iterator<ResultsRow<?>> resIter = results.iterator();
 
         PrintWriter gffWriter = null;
 
@@ -157,12 +149,12 @@ public class WriteGFFTask extends Task
         Chromosome currentChr = null;
 
         Map<Integer, List<String>> synonymMap = null;
-        Map<Integer, List<Evidence>> evidenceMap = null;
+        Map<Integer, List<String>> evidenceMap = null;
 
         while (resIter.hasNext()) {
-            ResultsRow rr = resIter.next();
+            ResultsRow<?> rr = resIter.next();
             Integer resultChrId = (Integer) rr.get(0);
-            LocatedSequenceFeature feature = (LocatedSequenceFeature) rr.get(1);
+            SequenceFeature feature = (SequenceFeature) rr.get(1);
             Location loc = (Location) rr.get(2);
 
             // TODO XXX FIXME - see #628
@@ -203,8 +195,6 @@ public class WriteGFFTask extends Task
                 }
 
                 synonymMap = makeSynonymMap(os, resultChrId);
-                evidenceMap = makeEvidenceMap(os, resultChrId);
-
                 currentChr = (Chromosome) os.getObjectById(resultChrId);
 
                 if (currentChr == null) {
@@ -221,13 +211,7 @@ public class WriteGFFTask extends Task
                     continue;
                 }
 
-                if (currentChr.getOrganism().getAbbreviation() == null
-                    || !currentChr.getPrimaryIdentifier().endsWith("_random")
-                    && !currentChr.getPrimaryIdentifier().equals("M")
-                    && !currentChr.getOrganism().getAbbreviation().equals("MM")
-                    && !currentChr.getOrganism().getAbbreviation().equals("MD")
-                    && !currentChr.getOrganism().getAbbreviation().equals("CF")
-                    && !currentChr.getOrganism().getAbbreviation().equals("RN")) {
+                if (!currentChr.getPrimaryIdentifier().endsWith("_random")) {
 
                     writeChromosomeFasta(currentChr);
 
@@ -238,12 +222,12 @@ public class WriteGFFTask extends Task
                     gffWriter = new PrintWriter(new FileWriter(gffFile));
 
                     List<String> synonymList = synonymMap.get(currentChr.getId());
-                    List<Evidence> evidenceList = evidenceMap.get(currentChr.getId());
+                    List<String> evidenceList = evidenceMap.get(currentChr.getId());
 
                     writeFeature(gffWriter, currentChr, currentChr, null,
                                  chromosomeFileNamePrefix(currentChr),
                                  "chromosome",
-                                 "Chromosome", null, synonymList, evidenceList, currentChr.getId());
+                                 "Chromosome", null, synonymList, currentChr.getId());
 
                     objectCounts = new HashMap<String, Integer>();
                     currentChrId = resultChrId;
@@ -268,38 +252,26 @@ public class WriteGFFTask extends Task
                 seenTranscriptParts.put(primaryIdentifier, loc);
             }
 
-            if (currentChr.getOrganism().getAbbreviation() == null
-                || !currentChr.getPrimaryIdentifier().endsWith("_random")
-                && !currentChr.getPrimaryIdentifier().equals("M")
-                && !currentChr.getOrganism().getAbbreviation().equals("MM")
-                && !currentChr.getOrganism().getAbbreviation().equals("CF")
-                && !currentChr.getOrganism().getAbbreviation().equals("MD")
-                && !currentChr.getOrganism().getAbbreviation().equals("RN")) {
+            String identifier = primaryIdentifier;
 
-                String identifier = primaryIdentifier;
+            String featureType = getFeatureName(feature);
 
-                String featureType = getFeatureName(feature);
-
-                if (identifier == null) {
-                    identifier = featureType + "_" + objectCounts.get(feature.getClass());
-                }
-
-                List<String> synonymList = synonymMap.get(feature.getId());
-                List<Evidence> evidenceList = evidenceMap.get(feature.getId());
-
-                Map<String, List<String>> extraAttributes = new HashMap<String, List<String>>();
-
-                if (feature instanceof ChromosomeBand) {
-                    ArrayList<String> indexList = new ArrayList<String>();
-                    indexList.add(objectCounts.get(feature.getClass()).toString());
-                    extraAttributes.put("Index", indexList);
-                }
-
-                writeFeature(gffWriter, currentChr, feature, loc,
-                             identifier,
-                             featureType.toLowerCase(), featureType, extraAttributes,
-                             synonymList, evidenceList, feature.getId());
+            if (identifier == null) {
+                identifier = featureType + "_" + objectCounts.get(feature.getClass());
             }
+
+            List<String> synonymList = synonymMap.get(feature.getId());
+            Map<String, List<String>> extraAttributes = new HashMap<String, List<String>>();
+
+            if (feature instanceof ChromosomeBand) {
+                ArrayList<String> indexList = new ArrayList<String>();
+                indexList.add(objectCounts.get(feature.getClass()).toString());
+                extraAttributes.put("Index", indexList);
+            }
+
+            writeFeature(gffWriter, currentChr, feature, loc, identifier,
+                    featureType.toLowerCase(), featureType, extraAttributes,
+                    synonymList, feature.getId());
 
             incrementCount(objectCounts, feature);
         }
@@ -308,23 +280,15 @@ public class WriteGFFTask extends Task
             throw new RuntimeException("no chromosomes found");
         }
 
-        // special case for t1dmine/stemcellmine
-        if (!currentChr.getPrimaryIdentifier().endsWith("_random")
-            && !currentChr.getPrimaryIdentifier().equals("M")
-            && currentChr.getOrganism().getAbbreviation() != null
-            && !currentChr.getOrganism().getAbbreviation().equals("MM")
-            && !currentChr.getOrganism().getAbbreviation().equals("MD")
-            && !currentChr.getOrganism().getAbbreviation().equals("RN")) {
-            writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
-                                     seenTranscriptParts, synonymMap, evidenceMap);
-        }
+        writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
+                seenTranscriptParts, synonymMap, evidenceMap);
 
         if (gffWriter != null) {
             gffWriter.close();
         }
     }
 
-    private String getFeatureName(LocatedSequenceFeature feature) {
+    private String getFeatureName(SequenceFeature feature) {
         Class<?> bioEntityClass = feature.getClass();
         Set<Class> classes = DynamicUtil.decomposeClass(bioEntityClass);
 
@@ -333,7 +297,7 @@ public class WriteGFFTask extends Task
         Iterator<Class> iter = classes.iterator();
 
         while (iter.hasNext()) {
-            Class thisClass = iter.next();
+            Class<?> thisClass = iter.next();
             if (nameBuffer.length() > 0) {
                 nameBuffer.append("_");
             } else {
@@ -348,16 +312,18 @@ public class WriteGFFTask extends Task
                                           Map<Transcript, Location> seenTranscripts,
                                           Map<String, Location> seenTranscriptParts,
                                           Map<Integer, List<String>> synonymMap,
-                                          Map<Integer, List<Evidence>> evidenceMap) {
+                                          Map<Integer, List<String>> evidenceMap) {
         Iterator<Transcript> transcriptIter = seenTranscripts.keySet().iterator();
         while (transcriptIter.hasNext()) {
             // we can't just use MRNA here because the Transcripts of a pseudogene are Transcripts,
             // but aren't MRNAs
             Transcript transcript = transcriptIter.next();
+
             Gene gene = transcript.getGene();
             if (gene == null) {
                 continue;
             }
+
             Location transcriptLocation = seenTranscripts.get(transcript);
 
             String transcriptFeatureType = "mRNA";
@@ -383,12 +349,12 @@ public class WriteGFFTask extends Task
                     synonymList.add(makeIdString(cds.getId()));
                 }
             }
-            List<Evidence> evidenceList = evidenceMap.get(transcript.getId());
+            List<String> evidenceList = evidenceMap.get(transcript.getId());
 
             writeFeature(gffWriter, chr, transcript, transcriptLocation,
                          transcript.getPrimaryIdentifier(),
                          transcriptFeatureType, "mRNA", geneNameAttributeMap, synonymList,
-                         evidenceList, transcript.getId());
+                         transcript.getId());
 
             Collection<Exon> exons = transcript.getExons();
 
@@ -404,45 +370,11 @@ public class WriteGFFTask extends Task
                 Location exonLocation = seenTranscriptParts.get(exon.getPrimaryIdentifier());
 
                 List<String> exonSynonymValues = synonymMap.get(exon.getId());
-                List<Evidence> exonEvidence = evidenceMap.get(exon.getId());
 
                 writeFeature(gffWriter, chr, exon, exonLocation, transcript.getPrimaryIdentifier(),
-                             "CDS", "mRNA", null, exonSynonymValues, exonEvidence,
+                             "CDS", "mRNA", null, exonSynonymValues,
                              transcript.getId());
             }
-
-            /*
-
-            --- we need correct CDS locations before this can work properly
-            --- curently we write out the Exons as CDSs so the exons overlap the CDS feature
-
-            if (transcript instanceof MRNA) {
-            MRNA mRNA = (MRNA) transcript;
-            FivePrimeUTR fivePrimeUTR = mRNA.getFivePrimeUTR();
-            if (fivePrimeUTR != null) {
-                Location fivePrimeUTRLocation = (Location) seenTranscriptParts.get(fivePrimeUTR);
-
-                List fivePrimeUTRSynonymValues = (List) synonymMap.get(fivePrimeUTR.getId());
-                List fivePrimeUTREvidence = (List) evidenceMap.get(fivePrimeUTR.getId());
-
-                writeFeature(gffWriter, chr, fivePrimeUTR, fivePrimeUTRLocation,
-                             transcript.getIdentifier(), "5'-UTR", "mRNA", null,
-                             fivePrimeUTRSynonymValues, fivePrimeUTREvidence, transcript.getId());
-            }
-
-            ThreePrimeUTR threePrimeUTR = mRNA.getThreePrimeUTR();
-            if (threePrimeUTR != null) {
-                Location threePrimeUTRLocation = (Location) seenTranscriptParts.get(threePrimeUTR);
-
-                List threePrimeUTRSynonymValues = (List) synonymMap.get(threePrimeUTR.getId());
-                List threePrimeUTREvidence = (List) evidenceMap.get(threePrimeUTR.getId());
-
-                writeFeature(gffWriter, chr, threePrimeUTR, threePrimeUTRLocation,
-                             transcript.getIdentifier(), "3'-UTR", "mRNA", null,
-                             threePrimeUTRSynonymValues, threePrimeUTREvidence, transcript.getId());
-            }
-            }
-            */
         }
     }
 
@@ -466,33 +398,16 @@ public class WriteGFFTask extends Task
      * @param synonymValues a List of synonyms for this feature
      * @param evidenceList a List of evidence objects for this feature
      */
-    private void writeFeature(PrintWriter gffWriter, Chromosome chr,
-                              LocatedSequenceFeature bioEntity, Location chromosomeLocation,
-                              String identifier,
-                              String featureType, String idType,
-                              Map<String, List<String>> extraAttributes,
-                              List<String> synonymValues,
-                              List<Evidence> evidenceList, Integer flyMineId) {
+    private void writeFeature(PrintWriter gffWriter, Chromosome chr, SequenceFeature bioEntity,
+            Location chromosomeLocation, String identifier, String featureType, String idType,
+            Map<String, List<String>> extraAttributes, List<String> synonymValues,
+            Integer flyMineId) {
 
         StringBuffer lineBuffer = new StringBuffer();
 
         lineBuffer.append(chromosomeFileNamePrefix(chr)).append("\t");
 
         String source = ".";
-
-        if (evidenceList != null) {
-            Iterator<Evidence> evidenceIter = evidenceList.iterator();
-
-            while (evidenceIter.hasNext()) {
-                Evidence evidence = evidenceIter.next();
-                if (evidence instanceof ComputationalResult) {
-                    Analysis analysis = ((ComputationalResult) evidence).getAnalysis();
-                    if (analysis instanceof ComputationalAnalysis) {
-                        source = ((ComputationalAnalysis) analysis).getAlgorithm();
-                    }
-                }
-            }
-        }
 
         lineBuffer.append(source).append("\t");
         lineBuffer.append(featureType).append("\t");
@@ -526,17 +441,7 @@ public class WriteGFFTask extends Task
         }
 
         lineBuffer.append("\t");
-
-        if (chromosomeLocation == null) {
-            lineBuffer.append(".");
-        } else {
-            if (chromosomeLocation.getPhase() == null) {
-                lineBuffer.append(".");
-            } else {
-                lineBuffer.append(chromosomeLocation.getPhase());
-            }
-        }
-
+        lineBuffer.append(".");
         lineBuffer.append("\t");
 
         Map<String, List<String>> attributes = new LinkedHashMap<String, List<String>>();
@@ -638,19 +543,19 @@ public class WriteGFFTask extends Task
     }
 
     /**
-     * Make a Map from LocatedSequenceFeature ID to List of Synonym values (Strings) for
-     * LocatedSequenceFeature objects located on the chromosome with the given ID.
+     * Make a Map from SequenceFeature ID to List of Synonym values (Strings) for
+     * SequenceFeature objects located on the chromosome with the given ID.
      * @param os the ObjectStore to read from
-     * @param chromosomeId the chromosome ID of the LocatedSequenceFeature objects to examine
+     * @param chromosomeId the chromosome ID of the SequenceFeature objects to examine
      * @return a Map from id to synonym List
      * @throws ObjectStoreException
      */
     private Map<Integer, List<String>> makeSynonymMap(ObjectStore os,
                                                       Integer chromosomeId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         Query q = new Query();
         q.setDistinct(true);
-        QueryClass qcEnt = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcEnt = new QueryClass(SequenceFeature.class);
         QueryField qfEnt = new QueryField(qcEnt, "id");
         q.addFrom(qcEnt);
         q.addToSelect(qfEnt);
@@ -677,11 +582,11 @@ public class WriteGFFTask extends Task
         SimpleConstraint sc = new SimpleConstraint(qfChr, ConstraintOp.EQUALS, chrIdQueryValue);
         cs.addConstraint(sc);
 
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "subject");
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "feature");
         ContainsConstraint cc2 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcEnt);
         cs.addConstraint(cc2);
 
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "object");
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "locatedOn");
         ContainsConstraint cc3 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcChr);
         cs.addConstraint(cc3);
 
@@ -695,12 +600,12 @@ public class WriteGFFTask extends Task
                                                    Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q, 50000, true, true, true);
 
-        Iterator<ResultsRow> resIter = res.iterator();
+        Iterator<ResultsRow<?>> resIter = res.iterator();
 
         Map<Integer, List<String>> returnMap = new HashMap<Integer, List<String>>();
 
         while (resIter.hasNext()) {
-            ResultsRow rr = resIter.next();
+            ResultsRow<?> rr = resIter.next();
             Integer bioEntityId = (Integer) rr.get(0);
             String synonymValue = (String) rr.get(1);
 
@@ -717,84 +622,8 @@ public class WriteGFFTask extends Task
         return returnMap;
     }
 
-    /**
-     * Make a Map from LocatedSequenceFeature ID to List of Evidence objects for
-     * LocatedSequenceFeature objects located on the chromosome with the given ID.
-     * @param os the ObjectStore to read from
-     * @param chromosomeId the chromosome ID of the LocatedSequenceFeature objects to examine
-     * @return a Map from id to Evidence List
-     * @throws ObjectStoreException
-     */
-    private Map<Integer, List<Evidence>> makeEvidenceMap(ObjectStore os, Integer chromosomeId)
-        throws ObjectStoreException {
-        Query q = new Query();
-        q.setDistinct(true);
-        QueryClass qcEnt = new QueryClass(LocatedSequenceFeature.class);
-        QueryField qfEnt = new QueryField(qcEnt, "id");
-        q.addFrom(qcEnt);
-        q.addToSelect(qfEnt);
-
-        QueryClass qcEvidence = new QueryClass(Evidence.class);
-        q.addFrom(qcEvidence);
-        q.addToSelect(qcEvidence);
-
-        QueryClass qcLoc = new QueryClass(Location.class);
-        q.addFrom(qcLoc);
-
-        QueryClass qcChr = new QueryClass(Chromosome.class);
-        QueryField qfChr = new QueryField(qcChr, "id");
-        q.addFrom(qcChr);
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        QueryCollectionReference col = new QueryCollectionReference(qcEnt, "evidence");
-        ContainsConstraint cc1 = new ContainsConstraint(col, ConstraintOp.CONTAINS, qcEvidence);
-        cs.addConstraint(cc1);
-
-        QueryValue chrIdQueryValue = new QueryValue(chromosomeId);
-        SimpleConstraint sc = new SimpleConstraint(qfChr, ConstraintOp.EQUALS, chrIdQueryValue);
-        cs.addConstraint(sc);
-
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "subject");
-        ContainsConstraint cc2 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcEnt);
-        cs.addConstraint(cc2);
-
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "object");
-        ContainsConstraint cc3 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcChr);
-        cs.addConstraint(cc3);
-
-        q.setConstraint(cs);
-        Set<QueryNode> indexesToCreate = new HashSet<QueryNode>();
-        indexesToCreate.add(qfEnt);
-        ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
-                                                   Constants.PRECOMPUTE_CATEGORY);
-
-        Results res = os.execute(q, 50000, true, true, true);
-
-        Iterator<ResultsRow> resIter = res.iterator();
-
-        Map<Integer, List<Evidence>> returnMap = new HashMap<Integer, List<Evidence>>();
-
-        while (resIter.hasNext()) {
-            ResultsRow rr = resIter.next();
-            Integer bioEntityId = (Integer) rr.get(0);
-            Evidence evidence = (Evidence) rr.get(1);
-
-            List<Evidence> idEvidence = returnMap.get(bioEntityId);
-
-            if (idEvidence == null) {
-                idEvidence = new ArrayList<Evidence>();
-                returnMap.put(bioEntityId, idEvidence);
-            }
-
-            idEvidence.add(evidence);
-        }
-
-        return returnMap;
-    }
-
     private void writeChromosomeFasta(Chromosome chr)
-        throws IOException, IllegalArgumentException {
+        throws IOException {
 
         Sequence chromosomeSequence = chr.getSequence();
 
@@ -840,7 +669,7 @@ public class WriteGFFTask extends Task
             orgPrefix = "Unknown_organism";
         } else {
             orgPrefix = chr.getOrganism().getGenus() + "_"
-            + chr.getOrganism().getSpecies().replaceAll(" ", "_");
+                + chr.getOrganism().getSpecies().replaceAll(" ", "_");
         }
         return orgPrefix + "_chr_" + chr.getPrimaryIdentifier();
     }

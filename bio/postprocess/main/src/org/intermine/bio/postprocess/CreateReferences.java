@@ -15,6 +15,11 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.bio.util.Constants;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.CDS;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.ChromosomeBand;
@@ -26,11 +31,6 @@ import org.intermine.model.bio.MRNA;
 import org.intermine.model.bio.ThreePrimeUTR;
 import org.intermine.model.bio.Transcript;
 import org.intermine.model.bio.UTR;
-import org.intermine.bio.util.Constants;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
@@ -76,33 +76,27 @@ public class CreateReferences
 
         LOG.info("insertReferences stage 1");
         // fill in collections on Chromosome
-        insertCollectionField(Gene.class, "objects", Location.class, "object",
-                              Chromosome.class, "genes", false);
-        insertCollectionField(Transcript.class, "objects", Location.class, "object",
-                              Chromosome.class, "transcripts", false);
-        insertCollectionField(Exon.class, "objects", Location.class, "object",
-                              Chromosome.class, "exons", false);
-        insertCollectionField(ChromosomeBand.class, "objects", Location.class, "object",
+        insertCollectionField(ChromosomeBand.class, "locations", Location.class, "locatedOn",
                               Chromosome.class, "chromosomeBands", false);
 
         LOG.info("insertReferences stage 2");
         // Exon.gene / Gene.exons
         insertReferenceField(Gene.class, "transcripts", Transcript.class, "exons",
-                             Exon.class, "gene");
+                Exon.class, "gene");
         LOG.info("insertReferences stage 3");
         // UTR.gene / Gene.UTRs
-        insertReferenceField(Gene.class, "transcripts", MRNA.class, "UTRs",
-                             UTR.class, "gene");
+        insertReferenceField(Gene.class, "transcripts", Transcript.class, "UTRs", UTR.class,
+                "gene");
 
         LOG.info("insertReferences stage 4");
         // CDS.gene / Gene.CDSs
-        insertReferenceField(Gene.class, "transcripts", MRNA.class, "CDSs",
-                             CDS.class, "gene");
+        insertReferenceField(Gene.class, "transcripts", Transcript.class, "CDSs", CDS.class,
+                "gene");
 
         LOG.info("insertReferences stage 5");
 //        insertGeneAnnotationReferences();
-    }
 
+    }
 
     /**
      * Add a reference to and object of type X in objects of type Y by using a connecting class.
@@ -126,9 +120,9 @@ public class CreateReferences
      * collection to create/set
      * @throws Exception if anything goes wrong
      */
-    protected void insertReferenceField(Class sourceClass, String sourceClassFieldName,
-                                        Class connectingClass, String connectingClassFieldName,
-                                        Class destinationClass, String createFieldName)
+    protected void insertReferenceField(Class<?> sourceClass, String sourceClassFieldName,
+                                        Class<?> connectingClass, String connectingClassFieldName,
+                                        Class<?> destinationClass, String createFieldName)
         throws Exception {
         LOG.info("Beginning insertReferences("
                  + sourceClass.getName() + ", "
@@ -139,7 +133,7 @@ public class CreateReferences
                  + createFieldName + ")");
         long startTime = System.currentTimeMillis();
 
-        Iterator resIter =
+        Iterator<?> resIter =
             PostProcessUtil.findConnectingClasses(osw.getObjectStore(),
                                           sourceClass, sourceClassFieldName,
                                           connectingClass, connectingClassFieldName,
@@ -151,7 +145,7 @@ public class CreateReferences
         int count = 0;
 
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             InterMineObject thisSourceObject = (InterMineObject) rr.get(0);
             InterMineObject thisDestObject = (InterMineObject) rr.get(1);
 
@@ -209,13 +203,13 @@ public class CreateReferences
      * create in secondClass
      * @throws Exception if anything goes wrong
      */
-    protected void insertCollectionField(Class firstClass, String firstClassFieldName,
-                                         Class connectingClass, String connectingClassFieldName,
-                                         Class secondClass, String createFieldName,
+    protected void insertCollectionField(Class<?> firstClass, String firstClassFieldName,
+                                         Class<?> connectingClass, String connectingClassFieldName,
+                                         Class<?> secondClass, String createFieldName,
                                          boolean createInFirstClass)
         throws Exception {
         InterMineObject lastDestObject = null;
-        Set newCollection = new HashSet();
+        Set<InterMineObject> newCollection = new HashSet<InterMineObject>();
 
         LOG.info("Beginning insertCollectionField("
                  + firstClass.getName() + ", "
@@ -237,11 +231,19 @@ public class CreateReferences
             destCld = model.getClassDescriptorByName(secondClass.getName());
         }
         CollectionDescriptor col = destCld.getCollectionDescriptorByName(createFieldName);
+        if (col == null) {
+            String msg = "Error running post-process `create-references` for `" + createFieldName
+                + "` since this collection doesn't exist in the model.  Remove this post-process "
+                + " from the project.xml file to avoid this error.";
+            LOG.error(msg);
+            return;
+        }
+
         if (col.relationType() == CollectionDescriptor.M_N_RELATION) {
             manyToMany = true;
         }
-        
-        Iterator resIter =
+
+        Iterator<?> resIter =
             PostProcessUtil.findConnectingClasses(osw.getObjectStore(),
                                           firstClass, firstClassFieldName,
                                           connectingClass, connectingClassFieldName,
@@ -252,7 +254,7 @@ public class CreateReferences
         int count = 0;
 
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             InterMineObject thisSourceObject;
             InterMineObject thisDestObject;
 
@@ -262,8 +264,8 @@ public class CreateReferences
             } else {
                 thisDestObject = (InterMineObject) rr.get(1);
                 thisSourceObject = (InterMineObject) rr.get(0);
-            }            
-            
+            }
+
             if (!manyToMany && (lastDestObject == null
                 || !thisDestObject.getId().equals(lastDestObject.getId()))) {
 
@@ -271,18 +273,19 @@ public class CreateReferences
                     try {
                         InterMineObject tempObject =
                             PostProcessUtil.cloneInterMineObject(lastDestObject);
-                        Set oldCollection = (Set) tempObject.getFieldValue(createFieldName);
+                        Set<InterMineObject> oldCollection
+                            = (Set<InterMineObject>) tempObject.getFieldValue(createFieldName);
                         newCollection.addAll(oldCollection);
                         tempObject.setFieldValue(createFieldName, newCollection);
                         count += newCollection.size();
                         osw.store(tempObject);
-                   } catch (IllegalAccessException e) {
+                    } catch (IllegalAccessException e) {
                         LOG.error("Object with ID " + thisDestObject.getId()
                                   + " has no " + createFieldName + " field", e);
                     }
                 }
 
-                newCollection = new HashSet();
+                newCollection = new HashSet<InterMineObject>();
             }
 
             if (manyToMany) {
@@ -291,7 +294,7 @@ public class CreateReferences
             } else {
                 newCollection.add(thisSourceObject);
             }
-            
+
             lastDestObject = thisDestObject;
         }
 
@@ -337,8 +340,7 @@ public class CreateReferences
         q.addToSelect(qcUTR);
         q.addToOrderBy(qcUTR);
 
-        QueryCollectionReference mrnaUtrsRef =
-            new QueryCollectionReference(qcMRNA, "UTRs");
+        QueryCollectionReference mrnaUtrsRef = new QueryCollectionReference(qcMRNA, "UTRs");
         ContainsConstraint mrnaUtrsConstraint =
             new ContainsConstraint(mrnaUtrsRef, ConstraintOp.CONTAINS, qcUTR);
 
@@ -370,9 +372,9 @@ public class CreateReferences
 
         osw.beginTransaction();
 
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             MRNA mrna = (MRNA) rr.get(0);
             UTR utr = (UTR) rr.get(1);
 

@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -32,7 +33,7 @@ import org.intermine.xml.full.Item;
  */
 public class AnophelesIdentifiersConverter extends BioFileConverter
 {
-    protected Item organism;
+    protected String organismRefId = null;
     protected Set<String> seenEnsIds = new HashSet<String>();
 
     /**
@@ -44,9 +45,7 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
     public AnophelesIdentifiersConverter(ItemWriter writer, Model model)
         throws ObjectStoreException {
         super(writer, model, "VectorBase", "VectorBase Anopheles");
-        organism = createItem("Organism");
-        organism.setAttribute("taxonId", "7165");
-        store(organism);
+        organismRefId = getOrganism("7165");
     }
 
 
@@ -56,7 +55,7 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         // data is in format:
         // primaryIdentifier | identifier | symbol
@@ -83,41 +82,27 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
                                            + Arrays.asList(line));
             }
             String primaryIdentifier = line[0];
-
             List<String> ensIds = new ArrayList<String>(Arrays.asList(line[1].split(" ")));
             String secondaryIdentifier = ensIds.get(0);
             ensIds.remove(0);
 
             Item feature = createItem(clsName);
-            List synonyms = new ArrayList();
-
-            if (secondaryIdentifier != null && !secondaryIdentifier.equals("")
+            if (StringUtils.isNotEmpty(secondaryIdentifier)
                 && !seenEnsIds.contains(secondaryIdentifier)) {
                 feature.setAttribute("secondaryIdentifier", secondaryIdentifier);
-                synonyms.add(createSynonym(feature, "identifier", secondaryIdentifier));
                 seenEnsIds.add(secondaryIdentifier);
             }
-            if (primaryIdentifier != null && !primaryIdentifier.equals("")) {
+            if (StringUtils.isNotEmpty(primaryIdentifier)) {
                 feature.setAttribute("primaryIdentifier", primaryIdentifier);
-                synonyms.add(createSynonym(feature, "identifier", primaryIdentifier));
             }
-
+            feature.setReference("organism", organismRefId);
+            store(feature);
+            String refId = feature.getIdentifier();
+            // TODO maybe these should be xrefs?
             // create addidtional synonyms for other ensembl ids
             for (String ensId : ensIds) {
-                synonyms.add(createSynonym(feature, "identifier", ensId));
+                createSynonym(refId, ensId, true);
             }
-
-            feature.setReference("organism", organism.getIdentifier());
-            store(feature);
-            store(synonyms);
         }
-    }
-
-    private Item createSynonym(Item subject, String type, String value) {
-        Item synonym = createItem("Synonym");
-        synonym.setAttribute("type", type);
-        synonym.setAttribute("value", value);
-        synonym.setReference("subject", subject.getIdentifier());
-        return synonym;
     }
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<classes>
+<class name="MicroarrayOligo" is-interface="true">
+  <attribute name="tm" type="java.lang.Float"/>
+  <reference name="transcript" referenced-type="Transcript" reverse-reference="microarrayOligos"/>
+</class>
+<class name="Transcript" is-interface="true">
+  <collection name="microarrayOligos" referenced-type="MicroarrayOligo" reverse-reference="transcript"/>
+</class>
+</classes>

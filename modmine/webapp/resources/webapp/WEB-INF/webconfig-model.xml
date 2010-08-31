@@ -163,7 +163,7 @@
       <fieldconfig fieldExpr="dcpm"/>
       <fieldconfig fieldExpr="dcpmBases"/>
       <fieldconfig fieldExpr="transcribed"/>
-      <fieldconfig fieldExpr="predictionStatus"/>      
+      <fieldconfig fieldExpr="predictionStatus"/>
     </fields>
   </class>
 
@@ -186,23 +186,6 @@
       <displayer src="attributeLinkDisplayer.tile"/>
     </bagdisplayers>
   </class>
-
-<!--
-  <class className="org.intermine.model.bio.Analysis">
-    <fields>
-      <fieldconfig fieldExpr="publication.title"/>
-      <fieldconfig fieldExpr="publication.firstAuthor"/>
-      <fieldconfig fieldExpr="publication.journal"/>
-    </fields>
-  </class>
--->
-
-  <class className="org.intermine.model.bio.AnalysisResult">
-    <fields>
-      <fieldconfig fieldExpr="confidence"/>
-    </fields>
-  </class>
-
 
   <class className="org.intermine.model.bio.Author">
     <fields>
@@ -279,7 +262,7 @@
     </longdisplayers>
   </class>
 
-<!-- temporarily removed until it's in the preview
+
   <class className="org.intermine.model.bio.ChromosomeStructureVariation">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -293,7 +276,6 @@
     </fields>
 
   </class>
--->
 
   <class className="org.intermine.model.bio.Clone">
     <fields>
@@ -308,16 +290,9 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.ComputationalResult">
-    <fields>
-      <fieldconfig fieldExpr="score"/>
-      <fieldconfig fieldExpr="confidence"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.DataSet">
     <fields>
-      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="url" doNotTruncate="true"/>
     </fields>
   </class>
@@ -402,13 +377,6 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.InfoSource">
-    <fields>
-      <fieldconfig fieldExpr="title"/>
-    </fields>
-  </class>
-
-
     <class className="org.intermine.model.bio.Interaction">
    <fields>
      <fieldconfig fieldExpr="gene.primaryIdentifier"/>
@@ -426,7 +394,7 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.LocatedSequenceFeature">
+  <class className="org.intermine.model.bio.SequenceFeature">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
@@ -563,13 +531,6 @@
     </longdisplayers>
   </class>
 
-  <class className="org.intermine.model.bio.Relation">
-    <fields>
-      <fieldconfig fieldExpr="object.primaryIdentifier"/>
-      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.Sequence">
     <fields>
       <fieldconfig fieldExpr="residues" fieldExporter="org.intermine.bio.web.export.ResidueFieldExporter"
@@ -583,7 +544,6 @@
   <class className="org.intermine.model.bio.Synonym">
     <fields>
       <fieldconfig fieldExpr="value"/>
-      <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
 
@@ -618,7 +578,6 @@
     </longdisplayers>
   </class>
 
-
   <class className="org.intermine.model.bio.TFmodule">
     <longdisplayers>
       <displayer src="/model/redflyDisplayer.jsp"/>
@@ -629,7 +588,6 @@
   <class className="org.intermine.model.bio.Transcript">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="exonCount"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false"/>
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
@@ -697,7 +655,7 @@
         description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
         graphType="BarChart"
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
-        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
+        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.SequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
        />
 
       <!--<graphdisplayer id="feature_length" title="Feature Length"
@@ -707,7 +665,7 @@
         description="The distribution of feature lengths in this list compared to lengths of all features of this type."
         graphType="XYLineChart"
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
-        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
+        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.SequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
        />
        -->
 
@@ -774,7 +732,7 @@
       <htmldisplayer id="dummy" title="Your Widget Idea Here"
                       description=""
                       content="Have an idea for a widget?  Contact us at help [at] modencode.org!"
-                      typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.BindingSite"
+                      typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.SequenceFeature,org.intermine.model.bio.BindingSite"
                       />
 
     </widgets>

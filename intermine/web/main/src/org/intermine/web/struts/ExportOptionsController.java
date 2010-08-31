@@ -53,8 +53,7 @@ public class ExportOptionsController extends TilesAction
      * @return an ActionForward object defining where control goes next
      */
     @Override
-    public ActionForward execute(ComponentContext context,
-            ActionMapping mapping, ActionForm form,
+    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         String type = request.getParameter("type");

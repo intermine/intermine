@@ -29,7 +29,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.chado.config.ConfigAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
-import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Attribute;
@@ -47,7 +46,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private static final Logger LOG = Logger.getLogger(ModEncodeFeatureProcessor.class);
 
     private final String dataSetIdentifier;
-    private final String dataSourceIdentifier;
     private final List<Integer> dataList;
     private final String title;
     private final String scoreProtocolItemId;
@@ -100,7 +98,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             List <Integer> dataList, String title, String scoreProtocolItemId) {
         super(chadoDBConverter);
         this.dataSetIdentifier = dataSetIdentifier;
-        this.dataSourceIdentifier = dataSourceIdentifier;
         this.dataList = dataList;
         this.title = title;
         this.scoreProtocolItemId = scoreProtocolItemId;
@@ -117,7 +114,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         commonFeatureInterMineTypes.add("CDS");
     }
 
-    /**
+	/**
      * Get a list of the chado/so types of the LocatedSequenceFeatures we wish to load.  The list
      * will not include chromosome-like features.
      * @return the list of features
@@ -126,7 +123,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     protected List<String> getFeatures() {
         return FEATURES;
     }
-
 
     /**
      * Get a map of features that are expected to be common between submissions.  This map can be
@@ -137,7 +133,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     protected Map<Integer, FeatureData> getCommonFeaturesMap() {
         return commonFeaturesMap;
     }
-
 
     /**
      * Initialise SequenceProcessor with features that have already been processed and put the same
@@ -155,28 +150,13 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     @Override
     protected String getExtraFeatureConstraint() {
-        /*
-         * tried also other queries (using union, without join), this seems better
-         */
-
         return "(cvterm.name = 'chromosome' OR cvterm.name = 'chromosome_arm') AND "
             + " feature_id IN ( SELECT featureloc.srcfeature_id "
             + " FROM featureloc, " + SUBFEATUREID_TEMP_TABLE_NAME
             + " WHERE featureloc.feature_id = " + SUBFEATUREID_TEMP_TABLE_NAME + ".feature_id) "
             + " OR feature_id IN ( SELECT feature_id "
             + " FROM " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
-
-        /*        return "(cvterm.name = 'chromosome' OR cvterm.name = 'chromosome_arm') AND "
-        + " feature_id IN ( SELECT featureloc.srcfeature_id "
-        + " FROM featureloc "
-        + " WHERE featureloc.feature_id IN ( SELECT feature_id "
-        + " FROM " + SUBFEATUREID_TEMP_TABLE_NAME + " )) "
-        + " OR feature_id IN ( SELECT feature_id "
-        + " FROM " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
-         */
-
     }
-
 
     /**
      * {@inheritDoc}
@@ -210,7 +190,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         processExpressionLevels(connection);
     }
 
-
     /**
      * Method to set the source for gene
      * for modencode datasources it will add the title
@@ -225,7 +204,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         String source = dataSourceName + "-" + title;
         setAttribute(imObjectId, "source", source);
     }
-
 
     /**
      * Override method that adds completed features to featureMap.  Also put features that will
@@ -312,73 +290,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         return res;
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Integer store(Item feature, int taxonId) throws ObjectStoreException {
-        processItem(feature, taxonId);
-        Integer itemId = super.store(feature, taxonId);
-        return itemId;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-            FeatureData featureData, int taxonId) throws ObjectStoreException {
-        Item location =
-            super.makeLocation(start, end, strand, srcFeatureData, featureData, taxonId);
-        processItem(location, taxonId);
-        return location;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Item createSynonym(FeatureData fdat, String type, String identifier,
-            boolean isPrimary, List<Item> otherEvidence)
-        throws ObjectStoreException {
-        // Don't create synonyms for main identifiers of modENCODE features.  There are too many and
-        // not useful to quick search.
-        if (isPrimary) {
-            return null;
-        }
-        Item synonym = super.createSynonym(fdat, type, identifier, isPrimary, otherEvidence);
-        OrganismData od = fdat.getOrganismData();
-        processItem(synonym, od.getTaxonId());
-        return synonym;
-    }
-
-    /**
-     * Method to add dataSets and DataSources to items before storing
-     */
-    private void processItem(Item item, Integer taxonId) {
-        if (item.getClassName().equals("DataSource")
-                || item.getClassName().equals("DataSet")
-                || item.getClassName().equals("Organism")
-                || item.getClassName().equals("Sequence")) {
-            return;
-        }
-
-        if (taxonId == null) {
-            ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
-            ClassLoader classLoader = getClass().getClassLoader();
-            Thread.currentThread().setContextClassLoader(classLoader);
-            try {
-                throw new RuntimeException("getCurrentTaxonId() returned null while processing "
-                        + item);
-            } finally {
-                Thread.currentThread().setContextClassLoader(currentClassLoader);
-            }
-        }
-        DataSetStoreHook.setDataSets(getModel(), item, dataSetIdentifier, dataSourceIdentifier);
-    }
-
-
     /**
      * {@inheritDoc}
      *
@@ -408,6 +319,19 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             // evidence_for_feature
             map.put(new MultiKey("relationship", "OverlappingESTSet",
                     "evidence_for_feature", "TranscriptRegion"),
+                    Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
+
+            map.put(new MultiKey("relationship", "ExperimentalFeature",
+                    "evidence_for_feature", "Transcript"),
+                    Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
+            map.put(new MultiKey("relationship", "ExperimentalFeature",
+                    "evidence_for_feature", "Exon"),
+                    Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
+            map.put(new MultiKey("relationship", "ExperimentalFeature",
+                    "evidence_for_feature", "Intron"),
+                    Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
+            map.put(new MultiKey("relationship", "ExperimentalFeature",
+                    "evidence_for_feature", "ExonRegion"),
                     Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
 
             // partial_evidence_for_feature
@@ -519,9 +443,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             map.put(new MultiKey("prop", "TranscriptRegion", "rank_score"),
                     Arrays.asList(new SetFieldConfigAction("rankScore")));
 
-            map.put(new MultiKey("prop", "LocatedSequenceFeature", "prediction_status"),
+            map.put(new MultiKey("prop", "SequenceFeature", "prediction_status"),
                     Arrays.asList(new SetFieldConfigAction("predictionStatus")));
-            map.put(new MultiKey("prop", "LocatedSequenceFeature", "note"),
+            map.put(new MultiKey("prop", "SequenceFeature", "note"),
                     Arrays.asList(new SetFieldConfigAction("note")));
 
         }
@@ -534,8 +458,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     @Override
     protected Item makeFeature(Integer featureId, String chadoFeatureType, String interMineType,
-            String name, String uniqueName,
-            int seqlen, int taxonId) {
+            String name, String uniqueName, int seqlen, int taxonId) {
         String realInterMineType = interMineType;
 
         if (chadoFeatureType.equals("chromosome_arm")
@@ -551,12 +474,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 return null;
             }
         }
-        Item feature = getChadoDBConverter().createItem(realInterMineType);
-        // See #2287
-        if (feature.checkAttribute("featureType")) {
-            feature.setAttribute("featureType", chadoFeatureType);
-        }
-        return feature;
+        return getChadoDBConverter().createItem(realInterMineType);
     }
 
     /**
@@ -611,7 +529,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         LOG.debug("TIME feature analyzing: " + (System.currentTimeMillis() - bT2));
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -621,7 +538,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         createSubFeatureIdTempTable(connection);
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -629,14 +545,10 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     protected void finishedProcessing(Connection connection,
             Map<Integer, FeatureData> featureDataMap)
         throws SQLException {
-        // override in subclasses as necessary
-        String query =
-            " DROP TABLE " + SUBFEATUREID_TEMP_TABLE_NAME;
-
+        String query = "DROP TABLE " + SUBFEATUREID_TEMP_TABLE_NAME;
         Statement stmt = connection.createStatement();
         LOG.info("executing: " + query);
         stmt.execute(query);
-
     }
 
     /**
@@ -716,7 +628,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         res.close();
     }
 
-
     private ResultSet getFeatureScores(Connection connection) throws SQLException {
         String query =
             "SELECT af.feature_id as feature_id, af.rawscore as score, a.program as program"
@@ -747,8 +658,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             String property = res.getString("property");
             String propValue = res.getString("propvalue");
 
-            LOG.debug("EL: " + id + "|" + previousId + "->" +
-                    featureId + ":" + property + "|" + propValue);
+            LOG.debug("EL: " + id + "|" + previousId + "->"
+                    + featureId + ":" + property + "|" + propValue);
 
             if (!id.equals(previousId)) {
                 // if not first store prev level
@@ -762,8 +673,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                     level.setAttribute("value", value);
                 } else {
                     LOG.warn("ExpressionLevel found with blank value for uniquename: " + name);
-//                    LOG.warn("ExpressionLevel found with blank value for uniquename: " + name +
-//                            " " + value);
                 }
                 if (featureMap.containsKey(featureId)) {
                     FeatureData fData = featureMap.get(featureId);
@@ -790,9 +699,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     }
 
     private String getPropName(String property) {
-        //    if (property.contains("_")) {
-        //        String tmp = StringUtils.property.indexOf('_');
-        //    }
         if (property.equalsIgnoreCase("read_count")) {
             return "readCount";
         }
@@ -809,12 +715,11 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
         String query = "SELECT subject_id as expression_id, f1.uniquename, af.rawscore as value "
             + " , object_id as feature_id, cp.name as property, fp.value as propvalue "
-            + " FROM feature_relationship, cvterm c1, feature f1, analysisfeature af "
-            + " , feature f2, featureprop fp, cvterm cp "
+            + " FROM feature_relationship, cvterm c1, feature f1, analysisfeature af, "
+            + "   featureprop fp, cvterm cp "
             + " WHERE c1.cvterm_id = f1.type_id "
             + " AND f1.feature_id = subject_id "
             + " and af.feature_id = f1.feature_id "
-            + " and f2.feature_id = object_id "
             + " and f1.feature_id = fp.feature_id "
             + " and cp.cvterm_id = fp.type_id "
             + " and c1.name= 'experimental_feature' "

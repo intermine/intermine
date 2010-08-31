@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
 <classes>
-<class name="GOTerm" extends="OntologyTerm" is-interface="true">
-</class>
+<class name="GOTerm" extends="OntologyTerm" is-interface="true"/>
 </classes>

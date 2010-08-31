@@ -43,7 +43,7 @@
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="1_1" class="DataSet">
-<attribute name="title" value="InterPro GO Annotation data set"/>
+<attribute name="name" value="InterPro GO Annotation data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="3_6" class="GOTerm">

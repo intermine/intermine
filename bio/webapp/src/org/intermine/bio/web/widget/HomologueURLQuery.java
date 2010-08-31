@@ -56,7 +56,7 @@ public class HomologueURLQuery implements WidgetURLQuery
         } else {
             q.setConstraintLogic("A and B");
         }
-        
+
         q.syncLogicExpression("and");
         String orderby = "Gene.organism.name,Gene.primaryIdentifier,"
             + "Gene.homologues.homologue.organism.name,Gene.homologues.homologue.primaryIdentifier";

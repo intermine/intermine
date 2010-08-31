@@ -18,6 +18,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -64,7 +65,8 @@ public class AnoESTConverter extends BioDBConverter
         makeEstItems(connection);
     }
 
-    private void makeClusterItems(Connection connection) throws SQLException, ObjectStoreException {
+    private void makeClusterItems(Connection connection)
+        throws SQLException, ObjectStoreException, SAXException {
         ResultSet res = getClusterResultSet(connection);
 
         while (res.next()) {
@@ -74,19 +76,10 @@ public class AnoESTConverter extends BioDBConverter
             int end = res.getInt(4);
             int strand = res.getInt(5);
 
-            Item cluster = createItem("ESTCluster");
+            Item cluster = createItem("OverlappingESTSet");
             cluster.setAttribute("primaryIdentifier", identifier);
-            //cluster.setCollection("dataSets",
-            //                  new ArrayList(Collections.singleton(dataSet.getIdentifier())));
-            cluster.setAttribute("curated", "false");
             cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
-
-
             store(cluster);
-
-            Item synonym =
-                createSynonym(cluster.getIdentifier(), "identifier", identifier, true, null);
-            store(synonym);
 
             // some clusters have no location
             if (chromosomeIdentifier != null && !chromosomeIdentifier.equals("mitochondrial")
@@ -97,7 +90,6 @@ public class AnoESTConverter extends BioDBConverter
                                              strand, ANOPHELES_TAXON_ID);
                 store(location);
             }
-
             clusters.put(identifier, cluster);
         }
     }
@@ -119,10 +111,9 @@ public class AnoESTConverter extends BioDBConverter
         return res;
     }
 
-    private void makeEstItems(Connection connection) throws SQLException, ObjectStoreException {
+    private void makeEstItems(Connection connection)
+        throws SQLException, ObjectStoreException, SAXException {
         ResultSet res = getEstResultSet(connection);
-
-        Item dataSet = getDataSetItem(ANOPHELES_TAXON_ID);
         while (res.next()) {
             String accession = res.getString(1);
             String clusterId = res.getString(2);
@@ -133,31 +124,18 @@ public class AnoESTConverter extends BioDBConverter
                 est = createItem("EST");
                 ests.put(accession, est);
                 est.setAttribute("primaryIdentifier", accession);
-
-                est.setAttribute("curated", "false");
                 est.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
-                est.addToCollection("dataSets", dataSet);
-
                 cloneIds.put(accession, cloneId);
             }
 
             Item cluster = clusters.get(clusterId);
             if (cluster != null) {
-                est.addToCollection("ESTClusters", cluster);
+                est.addToCollection("overlappingESTSets", cluster);
             }
         }
 
-
-        for (Map.Entry<String, Item> entry: ests.entrySet()) {
-            String accession = entry.getKey();
-            Item est = entry.getValue();
-            store(est);
-
-            Item synonym = createSynonym(est.getIdentifier(), "identifier", accession, true, null);
-            store(synonym);
-            Item synonym2 = createSynonym(est.getIdentifier(), "identifier",
-                                          cloneIds.get(accession), false, null);
-            store(synonym2);
+        for (Item item: ests.values()) {
+            store(item);
         }
     }
 
@@ -179,7 +157,7 @@ public class AnoESTConverter extends BioDBConverter
      * {@inheritDoc}
      */
     @Override
-    public String getDataSetTitle(@SuppressWarnings("unused") int taxonId) {
+    public String getDataSetTitle(int taxonId) {
         return DATASET_TITLE;
     }
 

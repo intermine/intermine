@@ -37,7 +37,7 @@ public class OrganismData
     public String getShortName() {
         return genus.substring(0, 1) + ". " + species;
     }
-    
+
     /**
      * Get the genus of this organism.
      * @return the genus

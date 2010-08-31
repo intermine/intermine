@@ -31,7 +31,7 @@ public class BDGPInsituConverterTest extends ItemsTestCase
     Model model = Model.getInstanceByName("genomic");
     BDGPInsituConverter converter;
     MockItemWriter itemWriter;
-    
+
     public BDGPInsituConverterTest(String arg) throws ObjectStoreException {
         super(arg);
     }
@@ -44,7 +44,7 @@ public class BDGPInsituConverterTest extends ItemsTestCase
         resolverFactory.addResolverEntry("7227", "FBgn2", Collections.singleton("CG2"));
         converter.resolverFactory = resolverFactory;
     }
-    
+
     public void testConstruct() throws Exception {
         assertNotNull(converter.orgDrosophila);
     }

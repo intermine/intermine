@@ -10,21 +10,18 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-
-import java.io.BufferedReader;
-import java.io.Reader;
-
-import org.apache.log4j.Logger;
 
 /**
  * DataConverter to parse Tiffin expression data file into Items.
@@ -33,11 +30,9 @@ import org.apache.log4j.Logger;
 public class TiffinExpressionConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(TiffinExpressionConverter.class);
-
+    protected Item pub, orgDrosophila;
+    private String soterm;
     private Map<String, Item> termItems = new HashMap<String, Item>();
-
-    Item orgDrosophila;
-    private Item pub;
 
     /**
      * Construct a new instance of HomophilaCnoverter.
@@ -50,12 +45,15 @@ public class TiffinExpressionConverter extends BioFileConverter
         super(writer, model, "Sanger Institute", "Tiffin");
 
         orgDrosophila = createItem("Organism");
-        orgDrosophila.addAttribute(new Attribute("taxonId", "7227"));
+        orgDrosophila.setAttribute("taxonId", "7227");
         store(orgDrosophila);
 
         pub = createItem("Publication");
-        pub.addAttribute(new Attribute("pubMedId", "17238282"));
+        pub.setAttribute("pubMedId", "17238282");
         store(pub);
+
+        soterm = BioStoreHook.getSoTerm(this, null, "DNA_motif", getSequenceOntologyRefId());
+
     }
 
     private static final Pattern MOTIF_NAME_PATTERN = Pattern.compile("(TIFDMEM\\d+)\\.\\d+\\s*");
@@ -80,6 +78,7 @@ public class TiffinExpressionConverter extends BioFileConverter
                 String currentMotifIdentifier = motifNameMatcher.group(1);
                 currentMotif = createItem("Motif");
                 currentMotif.setAttribute("primaryIdentifier", currentMotifIdentifier);
+                currentMotif.setReference("sequenceOntologyTerm", soterm);
                 //store(currentMotif);
                 motifs.put(currentMotifIdentifier, currentMotif);
             } else {

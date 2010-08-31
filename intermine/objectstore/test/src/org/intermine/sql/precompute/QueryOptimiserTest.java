@@ -860,10 +860,10 @@ public class QueryOptimiserTest extends TestCase
     }
 
     public void testKimsBug() throws Exception {
-        Query q1 = new Query("SELECT a1_.id AS a2_, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Chromosome AS a1_, BioEntity AS a3_, Location AS a4_ WHERE a4_.objectId = a1_.id AND a4_.subjectId = a3_.id ORDER BY a1_.id, a3_.id, a4_.id");
-        Query q2 = new Query("SELECT a1_.id AS a2_, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Chromosome AS a1_, BioEntity AS a3_, Location AS a4_ WHERE (a4_.objectId = a1_.id AND a4_.subjectId = a3_.id) AND a1_.id > 5325019 ORDER BY a1_.id, a3_.id, a4_.id");
-        Query pq1 = new Query("SELECT a1_.id AS a2_, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Chromosome AS a1_, BioEntity AS a3_, Location AS a4_ WHERE a4_.objectId = a1_.id AND a4_.subjectId = a3_.id ORDER BY a1_.id, a3_.id, a4_.id");
-        Query pq2 = new Query("SELECT a1_.id AS a2_, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Chromosome AS a1_, BioEntity AS a3_, Location AS a4_ WHERE a4_.objectId = a1_.id AND a4_.subjectId = a3_.id AND a1_.id = 10669827 ORDER BY a1_.id, a3_.id, a4_.id");
+        Query q1 = new Query("SELECT a1_.id AS a2_, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Chromosome AS a1_, BioEntity AS a3_, Location AS a4_ WHERE a4_.locatedOnId = a1_.id AND a4_.featureId = a3_.id ORDER BY a1_.id, a3_.id, a4_.id");
+        Query q2 = new Query("SELECT a1_.id AS a2_, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Chromosome AS a1_, BioEntity AS a3_, Location AS a4_ WHERE (a4_.locatedOnId = a1_.id AND a4_.subjectId = a3_.id) AND a1_.id > 5325019 ORDER BY a1_.id, a3_.id, a4_.id");
+        Query pq1 = new Query("SELECT a1_.id AS a2_, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Chromosome AS a1_, BioEntity AS a3_, Location AS a4_ WHERE a4_.locatedOnId = a1_.id AND a4_.subjectId = a3_.id ORDER BY a1_.id, a3_.id, a4_.id");
+        Query pq2 = new Query("SELECT a1_.id AS a2_, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Chromosome AS a1_, BioEntity AS a3_, Location AS a4_ WHERE a4_.locatedOnId = a1_.id AND a4_.subjectId = a3_.id AND a1_.id = 10669827 ORDER BY a1_.id, a3_.id, a4_.id");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
         PrecomputedTable pt2 = new PrecomputedTable(pq2, pq2.getSQLString(), "precomp2", null, con);
         Set precomps = new LinkedHashSet();
@@ -935,10 +935,10 @@ public class QueryOptimiserTest extends TestCase
 
     public void testKimsBug4() throws Exception {
         try {
-            con.createStatement().execute("CREATE TABLE LocatedSequenceFeature (id int)");
+            con.createStatement().execute("CREATE TABLE SequenceFeature (id int)");
             con.createStatement().execute("CREATE TABLE OverlapRelation (id int);");
-            Query q1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM LocatedSequenceFeature AS a1_, OverlapRelation AS a2_, LocatedSequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id AND a1_.id > 24081631 ORDER BY a1_.id, a2_.id, a3_.id");
-            Query pq1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM LocatedSequenceFeature AS a1_, OverlapRelation AS a2_, LocatedSequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id ORDER BY a1_.id, a2_.id, a3_.id");
+            Query q1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM SequenceFeature AS a1_, OverlapRelation AS a2_, SequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id AND a1_.id > 24081631 ORDER BY a1_.id, a2_.id, a3_.id");
+            Query pq1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM SequenceFeature AS a1_, OverlapRelation AS a2_, SequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id ORDER BY a1_.id, a2_.id, a3_.id");
             PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
             Set precomps = new LinkedHashSet();
             precomps.add(pt1);
@@ -954,7 +954,7 @@ public class QueryOptimiserTest extends TestCase
             assertEquals(eSet, bestQuery.getQueries());
         } finally {
             try {
-                con.createStatement().execute("DROP TABLE LocatedSequenceFeature");
+                con.createStatement().execute("DROP TABLE SequenceFeature");
             } catch (SQLException e) {
             }
             try {
@@ -966,10 +966,10 @@ public class QueryOptimiserTest extends TestCase
 
     public void testKimsBug5() throws Exception {
         try {
-            con.createStatement().execute("CREATE TABLE LocatedSequenceFeature (id int NOT NULL)");
+            con.createStatement().execute("CREATE TABLE SequenceFeature (id int NOT NULL)");
             con.createStatement().execute("CREATE TABLE OverlapRelation (id int NOT NULL);");
-            Query q1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM LocatedSequenceFeature AS a1_, OverlapRelation AS a2_, LocatedSequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id AND a1_.id > 24081631 ORDER BY a1_.id, a2_.id, a3_.id");
-            Query pq1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM LocatedSequenceFeature AS a1_, OverlapRelation AS a2_, LocatedSequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id ORDER BY a1_.id, a2_.id, a3_.id");
+            Query q1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM SequenceFeature AS a1_, OverlapRelation AS a2_, SequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id AND a1_.id > 24081631 ORDER BY a1_.id, a2_.id, a3_.id");
+            Query pq1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM SequenceFeature AS a1_, OverlapRelation AS a2_, SequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id ORDER BY a1_.id, a2_.id, a3_.id");
             PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
             Set precomps = new LinkedHashSet();
             precomps.add(pt1);
@@ -985,7 +985,7 @@ public class QueryOptimiserTest extends TestCase
             assertEquals(eSet, bestQuery.getQueries());
         } finally {
             try {
-                con.createStatement().execute("DROP TABLE LocatedSequenceFeature");
+                con.createStatement().execute("DROP TABLE SequenceFeature");
             } catch (SQLException e) {
             }
             try {

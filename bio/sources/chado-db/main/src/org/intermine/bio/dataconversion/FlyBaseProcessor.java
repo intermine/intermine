@@ -32,7 +32,6 @@ import org.intermine.bio.chado.ChadoCV;
 import org.intermine.bio.chado.ChadoCVFactory;
 import org.intermine.bio.chado.ChadoCVTerm;
 import org.intermine.bio.chado.config.ConfigAction;
-import org.intermine.bio.chado.config.CreateCollectionAction;
 import org.intermine.bio.chado.config.CreateSynonymAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
 import org.intermine.bio.util.OrganismData;
@@ -116,17 +115,17 @@ public class FlyBaseProcessor extends SequenceProcessor
     private static final Logger LOG = Logger.getLogger(FlyBaseProcessor.class);
 
     // the configuration for this processor, set when getConfig() is called the first time
-    private final Map<Integer, MultiKeyMap> config = new HashMap();
+    private final Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
 
     // a set of feature_ids for those genes that have a location in the featureloc table, set by
     // the constructor
     private final IntPresentSet locatedGeneIds;
 
     // a map from the uniquename of each allele to its item identifier
-    private Map<String, String> alleleIdMap = new HashMap();
+    private Map<String, String> alleleIdMap = new HashMap<String, String>();
 
     // a map from the uniquename of each cdna clone to its item identifier
-    private Map<String, FeatureData> cdnaCloneMap = new HashMap();
+    private Map<String, FeatureData> cdnaCloneMap = new HashMap<String, FeatureData>();
 
     // an object representing the FlyBase miscellaneous CV
     private ChadoCV flyBaseMiscCv = null;
@@ -135,14 +134,14 @@ public class FlyBaseProcessor extends SequenceProcessor
     private ChadoCV sequenceOntologyCV = null;
 
     // a map from mutagen description to Mutagen Item identifier
-    private Map<String, String> mutagensMap = new HashMap();
+    private Map<String, String> mutagensMap = new HashMap<String, String>();
 
     // a map from featureId to seqlen
 //    private Map<Integer, Integer> cdnaLengths = null;
 
     private final Map<Integer, Integer> chromosomeStructureVariationTypes;
 
-    private Map<String, String> interactionExperiments = new HashMap();
+    private Map<String, String> interactionExperiments = new HashMap<String, String>();
 
     private static final String LOCATED_GENES_TEMP_TABLE_NAME = "intermine_located_genes_temp";
     private static final String ALLELE_TEMP_TABLE_NAME = "intermine_flybase_allele_temp";
@@ -157,8 +156,10 @@ public class FlyBaseProcessor extends SequenceProcessor
     // pattern to match GLEANR gene symbols from FlyBase chado
     private static final Pattern GLEANR_PATTERN = Pattern.compile(".*GLEANR.*");
 
-    private static final Map<String, String> CHROMOSOME_STRUCTURE_VARIATION_SO_MAP = new HashMap();
-    private final Map<String, FeatureData> proteinFeatureDataMap = new HashMap();
+    private static final Map<String, String> CHROMOSOME_STRUCTURE_VARIATION_SO_MAP
+        = new HashMap<String, String>();
+    private final Map<String, FeatureData> proteinFeatureDataMap
+        = new HashMap<String, FeatureData>();
 
     static {
         CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.put("chromosomal_deletion",
@@ -170,7 +171,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.put("chromosomal_translocation",
                                                   "ChromosomalTranslocation");
         CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.put("transposition",
-                                                  "Transposition");
+                                                  "ChromosomalTransposition");
     }
 
     private static final String CHROMOSOME_STRUCTURE_VARIATION_SO_NAME =
@@ -259,21 +260,6 @@ public class FlyBaseProcessor extends SequenceProcessor
 
         return retVal;
     }
-
-    /**
-     * Add the typeId to the List that is the value in the map for the featureId, creating the
-     * List if necessary.
-     */
-//    private void addToMapList(Map<Integer, List<Integer>> map, int featureId, int typeId) {
-//        List<Integer> list;
-//        if (map.containsKey(featureId)) {
-//            list = map.get(featureId);
-//        } else {
-//            list = new ArrayList<Integer>();
-//            map.put(featureId, list);
-//        }
-//        list.add(typeId);
-//    }
 
     /**
      * Return the results of running a query for the chromosome_structure_variation feature types.
@@ -494,10 +480,9 @@ public class FlyBaseProcessor extends SequenceProcessor
      * {@inheritDoc}
      */
     @Override
-    protected Item createSynonym(FeatureData fdat, String type, String identifier,
-                                 boolean isPrimary, List<Item> otherEvidence)
+    protected Item createSynonym(FeatureData fdat, String identifier)
         throws ObjectStoreException {
-        Item synonym = super.createSynonym(fdat, type, identifier, isPrimary, otherEvidence);
+        Item synonym = super.createSynonym(fdat, identifier);
         /* synonym can be null if it's been created earlier.  this would happen only if
          * the synonym was created when another protein was created in favour of this one.  */
         if (synonym != null) {
@@ -542,14 +527,9 @@ public class FlyBaseProcessor extends SequenceProcessor
             // the synonym is "fullname" and "is_current" is true, set the "name" attribute of
             // the new Gene to be this synonym and then make a Synonym object
             map.put(new MultiKey("synonym", "Gene", "fullname", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  CREATE_SYNONYM_ACTION));
-
+                    Arrays.asList(new SetFieldConfigAction("name")));
             map.put(new MultiKey("synonym", "Gene", "fullname", Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
-            map.put(new MultiKey("synonym", "Gene", "symbol", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("symbol"),
-                                  CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
@@ -562,8 +542,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             // Synonym object
             map.put(new MultiKey("dbxref", "Gene", FLYBASE_DB_NAME + " Annotation IDs",
                                  Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier")));
             map.put(new MultiKey("dbxref", "Gene", FLYBASE_DB_NAME + " Annotation IDs",
                                  Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
@@ -574,35 +553,26 @@ public class FlyBaseProcessor extends SequenceProcessor
 
             map.put(new MultiKey("dbxref", "MRNA", FLYBASE_DB_NAME + " Annotation IDs",
                                  Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier")));
             map.put(new MultiKey("dbxref", "TransposableElementInsertionSite", "drosdel", null),
-                    Arrays.asList(new SetFieldConfigAction("symbol"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("symbol")));
 
             map.put(new MultiKey("synonym", "ChromosomeStructureVariation", "fullname",
                                  Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("name")));
             map.put(new MultiKey("synonym", "ChromosomalDeletion", "fullname", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("name")));
             map.put(new MultiKey("synonym", "ChromosomalDuplication", "fullname", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("name")));
             map.put(new MultiKey("synonym", "ChromosomalInversion", "fullname", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("name")));
             map.put(new MultiKey("synonym", "ChromosomalTranslocation", "fullname", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  CREATE_SYNONYM_ACTION));
-            map.put(new MultiKey("synonym", "Transposition", "fullname", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("name")));
+            map.put(new MultiKey("synonym", "ChromosomalTransposition", "fullname", Boolean.TRUE),
+                    Arrays.asList(new SetFieldConfigAction("name")));
 
             map.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("symbol"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("symbol")));
             map.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.FALSE),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("dbxref", "MRNA", FLYBASE_DB_NAME + " Annotation IDs", null),
@@ -633,9 +603,6 @@ public class FlyBaseProcessor extends SequenceProcessor
                     Arrays.asList(new SetFieldConfigAction("cytoLocation")));
             map.put(new MultiKey("prop", "Gene", "symbol"),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
-            // the feature type for gene, eg. "rRNA_gene", "protein_coding_gene"
-            map.put(new MultiKey("prop", "Gene", "promoted_gene_type"),
-                    Arrays.asList(new SetFieldConfigAction("featureType")));
             map.put(new MultiKey("prop", "TransposableElementInsertionSite",
                                  "curated_cytological_location"),
                                  Arrays.asList(new SetFieldConfigAction("cytoLocation")));
@@ -658,22 +625,20 @@ public class FlyBaseProcessor extends SequenceProcessor
             // feature we create one SequenceOntologyTerm object for each associated "SO" cvterm.
             // We set the "name" field of the SequenceOntologyTerm to be the name from the cvterm
             // table.
-            List<String> chromosomeStructureVariationClassNames =
-                Arrays.asList("ChromosomeStructureVariation", "ChromosomalDeletion",
-                              "ChromosomalDuplication", "ChromosomalInversion",
-                              "ChromosomalTranslocation", "Transposition");
-            for (String className: chromosomeStructureVariationClassNames) {
-                map.put(new MultiKey("cvterm", className, "SO"),
-                        Arrays.asList(new CreateCollectionAction("SequenceOntologyTerm",
-                                                                 "featureTerms",
-                                                                 "name", true)));
-            }
-
+            // TODO fixme
+//            List<String> chromosomeStructureVariationClassNames =
+//                Arrays.asList("ChromosomeStructureVariation", "ChromosomalDeletion",
+//                        "ChromosomalDuplication", "ChromosomalInversion",
+//                        "ChromosomalTranslocation", "ChromosomalTransposition");
+//            for (String className: chromosomeStructureVariationClassNames) {
+//                map.put(new MultiKey("cvterm", className, "SO"),
+//                        Arrays.asList(new CreateCollectionAction("SOTerm", "abberationSOTerms",
+//                                "name", true)));
+//            }
             // feature configuration example: for features of class "Exon", from "FlyBase",
             // set the Gene.symbol to be the "name" field from the chado feature
             map.put(new MultiKey("feature", "Exon", FLYBASE_DB_NAME, "name"),
-                    Arrays.asList(new SetFieldConfigAction("symbol"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("symbol")));
             // DO_NOTHING_ACTION means skip the name from this feature
             map.put(new MultiKey("feature", "Chromosome", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(DO_NOTHING_ACTION));
@@ -684,9 +649,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             map.put(new MultiKey("feature", "TransposableElementInsertionSite", FLYBASE_DB_NAME,
                                  "name"),
                     Arrays.asList(new SetFieldConfigAction("symbol", PB_INSERTION_PATTERN),
-                                  new CreateSynonymAction(PB_INSERTION_PATTERN),
-                                  new SetFieldConfigAction("secondaryIdentifier"),
-                                  new CreateSynonymAction()));
+                                  new SetFieldConfigAction("secondaryIdentifier")));
 
             map.put(new MultiKey("feature", "Gene", FLYBASE_DB_NAME, "uniquename"),
                     Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
@@ -695,8 +658,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
             map.put(new MultiKey("feature", "ChromosomeStructureVariation", FLYBASE_DB_NAME,
                                  "name"),
-                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                  CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier")));
 
             // just make a Synonym because the secondaryIdentifier and the symbol are set from the
             // dbxref and synonym tables
@@ -705,8 +667,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
             map.put(new MultiKey("feature", "PointMutation", FLYBASE_DB_NAME, "uniquename"),
                     Arrays.asList(new SetFieldConfigAction("name"),
-                                  new SetFieldConfigAction("primaryIdentifier"),
-                                  CREATE_SYNONYM_ACTION));
+                                  new SetFieldConfigAction("primaryIdentifier")));
             // name isn't set in flybase:
             map.put(new MultiKey("feature", "PointMutation", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(DO_NOTHING_ACTION));
@@ -725,21 +686,17 @@ public class FlyBaseProcessor extends SequenceProcessor
             // transposable_element and natural_transposable_element
             map.put(new MultiKey("feature", "TransposableElement", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                  new SetFieldConfigAction("symbol"),
-                                  CREATE_SYNONYM_ACTION));
+                                  new SetFieldConfigAction("symbol")));
             map.put(new MultiKey("feature", "NaturalTransposableElement", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                  new SetFieldConfigAction("symbol"),
-                                  CREATE_SYNONYM_ACTION));
+                                  new SetFieldConfigAction("symbol")));
             map.put(new MultiKey("relationship", "TransposableElement",
                     "producedby", "NaturalTransposableElement"),
                     Arrays.asList(new SetFieldConfigAction("insertedElement")));
             map.put(new MultiKey("synonym", "NaturalTransposableElement", "fullname",
                     Boolean.TRUE),
-                    Arrays.asList(new SetFieldConfigAction("name"),
-                            CREATE_SYNONYM_ACTION));
+                    Arrays.asList(new SetFieldConfigAction("name")));
         }
-
         return map;
     }
 
@@ -816,7 +773,6 @@ public class FlyBaseProcessor extends SequenceProcessor
                 return null;
             }
             realInterMineType = "Chromosome";
-
         }
 
         if (chadoFeatureType.equals("golden_path_region")) {
@@ -829,7 +785,7 @@ public class FlyBaseProcessor extends SequenceProcessor
                 if (taxonId != 7227 && !uniqueName.contains("_")) {
                     realInterMineType = "Chromosome";
                 } else {
-                    // golden_path_fragment is the actual SO term
+                    // golden_path_fragment is the actual SO term (call scaffold instead?)
                     realInterMineType = "GoldenPathFragment";
                 }
             }
@@ -1027,7 +983,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      * @throws ObjectStoreException
      */
     private void createDeletionLocations(Connection connection)
-    throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getDeletionLocationResultSet(connection);
         while (res.next()) {
             Integer delId = new Integer(res.getInt("deletion_feature_id"));
@@ -1079,7 +1035,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     private void makeAndStoreLocation(Integer chrFeatureId, FeatureData subjectFeatureData,
             int start, int end, int strand, int taxonId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
         Item location =
             getChadoDBConverter().makeLocation(chrFeatureData.getItemIdentifier(),
@@ -1161,7 +1117,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      * @param connection
      */
     private void copyInsertionLocations(Connection connection)
-    throws ObjectStoreException, SQLException {
+        throws ObjectStoreException, SQLException {
         ResultSet res = getInsertionLocationsResultSet(connection);
         while (res.next()) {
             int subId = res.getInt("sub_id");
@@ -1242,7 +1198,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         Map<Integer, List<String>> retMap = new HashMap<Integer, List<String>>();
 
         ResultSet res = getAlleleCVTermsResultSet(connection);
-      RESULTS:
+    RESULTS:
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             Integer cvtermId = new Integer(res.getInt("cvterm_id"));
@@ -1381,7 +1337,6 @@ public class FlyBaseProcessor extends SequenceProcessor
         String valueNoUps = valueNoRefs.replaceAll("<up>", "[").replaceAll("</up>", "]");
         phenotypeAnnotation.setAttribute("description", valueNoUps);
         phenotypeAnnotation.setReference("allele", alleleItemIdentifier);
-        phenotypeAnnotation.setReference("subject", alleleItemIdentifier);
         if (publicationsItemIdList != null && publicationsItemIdList.size() > 0) {
             ReferenceList pubReferenceList =
                 new ReferenceList("publications", publicationsItemIdList);
@@ -1392,7 +1347,6 @@ public class FlyBaseProcessor extends SequenceProcessor
             String anatomyIdentifier = dbAnatomyTermIdentifiers.get(0);
             String anatomyTermItemId = makeAnatomyTerm(anatomyIdentifier);
             phenotypeAnnotation.setReference("anatomyTerm", anatomyTermItemId);
-            phenotypeAnnotation.setReference("property", anatomyTermItemId);
         } else {
             if (dbAnatomyTermIdentifiers.size() > 1) {
                 throw new RuntimeException("more than one anatomy term: "
@@ -1404,7 +1358,6 @@ public class FlyBaseProcessor extends SequenceProcessor
             String developmentTermIdentifier = dbDevelopmentTermIdentifiers.get(0);
             String developmentTermItemId = makeDevelopmentTerm(developmentTermIdentifier);
             phenotypeAnnotation.setReference("developmentTerm", developmentTermItemId);
-            phenotypeAnnotation.setReference("property", developmentTermItemId);
         } else {
             if (dbAnatomyTermIdentifiers.size() > 1) {
                 throw new RuntimeException("more than one anatomy term: "
@@ -1421,8 +1374,6 @@ public class FlyBaseProcessor extends SequenceProcessor
 
         return phenotypeAnnotation;
     }
-
-
 
     private static final Pattern FLYBASE_TERM_IDENTIFIER_PATTERN =
         Pattern.compile("^FB[^\\d][^\\d]\\d+");
@@ -1718,8 +1669,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      * {@inheritDoc}
      */
     @Override
-    protected String fixIdentifier(@SuppressWarnings("unused") FeatureData fdat, String identifier)
-    {
+    protected String fixIdentifier(FeatureData fdat, String identifier) {
         if (StringUtils.isBlank(identifier)) {
             return identifier;
         }
@@ -1743,13 +1693,12 @@ public class FlyBaseProcessor extends SequenceProcessor
             if (protein != null) {
                 if (StringUtils.isNotEmpty(uniqueName)
                         && !protein.getExistingSynonyms().contains(uniqueName)) {
-                    Item synonym = createSynonym(protein, "identifier", uniqueName, true,
-                            null);
+                    Item synonym = createSynonym(protein, uniqueName);
                     store(synonym);
                 }
                 if (StringUtils.isNotEmpty(name)
                         && !protein.getExistingSynonyms().contains(name)) {
-                    Item synonym = createSynonym(protein, "name", name, false, null);
+                    Item synonym = createSynonym(protein, name);
                     store(synonym);
                 }
                 return protein;
@@ -1767,7 +1716,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             FeatureData cdnaClone = cdnaCloneMap.get(name);
             if (cdnaClone != null) {
                 if (StringUtils.isNotEmpty(name)) {
-                    Item synonym = createSynonym(cdnaClone, "symbol", name, false, null);
+                    Item synonym = createSynonym(cdnaClone, name);
                     if (synonym != null) {
                         store(synonym);
                     }
@@ -1794,10 +1743,11 @@ public class FlyBaseProcessor extends SequenceProcessor
      * Method to add dataSets and DataSources to items before storing
      */
     private void processItem(Item item, Integer taxonId) {
-        if (item.getClassName().equals("DataSource")
-            || item.getClassName().equals("DataSet")
-            || item.getClassName().equals("Organism")
-            || item.getClassName().equals("Sequence")) {
+        String className = item.getClassName();
+        if (className.equals("DataSource")
+            || className.equals("DataSet")
+            || className.equals("Organism")
+            || className.equals("Sequence")) {
             return;
         }
 
@@ -1813,9 +1763,8 @@ public class FlyBaseProcessor extends SequenceProcessor
             }
         }
         ChadoDBConverter converter = getChadoDBConverter();
-        DataSetStoreHook.setDataSets(getModel(), item,
-                                     converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
-                                     converter.getDataSourceItem().getIdentifier());
-
+        BioStoreHook.setDataSets(getModel(), item,
+                converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
+                converter.getDataSourceItem().getIdentifier());
     }
 }

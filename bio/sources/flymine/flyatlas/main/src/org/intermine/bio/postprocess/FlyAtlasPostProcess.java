@@ -60,7 +60,7 @@ public class FlyAtlasPostProcess extends PostProcessor
      * @throws ObjectStoreException if the objectstore throws an exception
      */
     public void postProcess()
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         Query q = new Query();
         q.setDistinct(false);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -75,11 +75,8 @@ public class FlyAtlasPostProcess extends PostProcessor
         q.addToSelect(qcProbeSet);
         q.addToOrderBy(qcProbeSet);
 
-        QueryCollectionReference geneProbeSets =
-            new QueryCollectionReference(qcGene, "probeSets");
-        ContainsConstraint ccGeneProbeSets =
-            new ContainsConstraint(geneProbeSets, ConstraintOp.CONTAINS, qcProbeSet);
-        cs.addConstraint(ccGeneProbeSets);
+        QueryCollectionReference geneProbeSets = new QueryCollectionReference(qcGene, "probeSets");
+        cs.addConstraint(new ContainsConstraint(geneProbeSets, ConstraintOp.CONTAINS, qcProbeSet));
 
         QueryClass qcResult = new QueryClass(MicroArrayResult.class);
         q.addFrom(qcResult);
@@ -88,26 +85,23 @@ public class FlyAtlasPostProcess extends PostProcessor
 
         QueryCollectionReference probeSetResults =
             new QueryCollectionReference(qcProbeSet, "results");
-        ContainsConstraint ccProbeSetResults =
-            new ContainsConstraint(probeSetResults, ConstraintOp.CONTAINS, qcResult);
-        cs.addConstraint(ccProbeSetResults);
+        cs.addConstraint(new ContainsConstraint(probeSetResults, ConstraintOp.CONTAINS, qcResult));
 
         q.setConstraint(cs);
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q,
-                                                   Constants.PRECOMPUTE_CATEGORY);
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q, 500, true, true, true);
 
         int count = 0;
         Gene lastGene = null;
-        Set newCollection = new HashSet();
+        Set<MicroArrayResult> newCollection = new HashSet<MicroArrayResult>();
 
         osw.beginTransaction();
 
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             Gene thisGene = (Gene) rr.get(0);
             MicroArrayResult maResult = (MicroArrayResult) rr.get(2);
 
@@ -125,7 +119,7 @@ public class FlyAtlasPostProcess extends PostProcessor
                     osw.store(tempGene);
                     count++;
                 }
-                newCollection = new HashSet();
+                newCollection = new HashSet<MicroArrayResult>();
             }
 
             newCollection.add(maResult);

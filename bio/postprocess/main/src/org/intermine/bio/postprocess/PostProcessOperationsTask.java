@@ -21,8 +21,9 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
+
+
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.bio.util.LinkInTask;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
@@ -104,7 +105,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
      * {@inheritDoc}
      */
     @Override
-    public void execute() throws BuildException {
+    public void execute() {
         if (operation == null) {
             throw new BuildException("operation attribute is not set");
         }
@@ -265,7 +266,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
 
                 Properties properties = new Properties();
                 properties.load(configStream);*/
-                
+
                 //read class keys to figure out what are keyFields during indexing
                 InputStream is = classLoader.getResourceAsStream("class_keys.properties");
                 Properties classKeyProperties = new Properties();
@@ -273,7 +274,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 Map<String, List<FieldDescriptor>> classKeys =
                     ClassKeyHelper.readKeys(os.getModel(), classKeyProperties);
 
-                //index and save 
+                //index and save
                 KeywordSearch.saveIndexToDatabase(os, classKeys);
                 System.out.println("Search index created and saved to database!");
                 
@@ -286,7 +287,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 BiosegIndexTask bit = new BiosegIndexTask(getObjectStoreWriter());
                 bit.createIndex();
             } else if ("link-ins".equals(operation)) {
-                LinkInTask.execute(getObjectStoreWriter());
+                CreateFlyBaseLinkIns.createLinkInFile(getObjectStoreWriter().getObjectStore());
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }

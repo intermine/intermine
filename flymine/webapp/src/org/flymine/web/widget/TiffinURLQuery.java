@@ -29,7 +29,7 @@ public class TiffinURLQuery implements WidgetURLQuery
     private String key;
     private ObjectStore os;
     private static final String DATASET = "Tiffin";
-    
+
     /**
      * @param key which bar the user clicked on
      * @param bag bag
@@ -47,18 +47,18 @@ public class TiffinURLQuery implements WidgetURLQuery
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
         PathNode node = q.addNode("Gene.upstreamIntergenicRegion.overlappingFeatures");
-        node.setType("TFBindingSite");        
+        node.setType("TFBindingSite");
         String path = "Gene.upstreamIntergenicRegion.overlappingFeatures.motif.primaryIdentifier";
-        q.setView("Gene.secondaryIdentifier," + path);        
-        q.addConstraint("TFBindingSite.dataSets.title", Constraints.eq(DATASET));
+        q.setView("Gene.secondaryIdentifier," + path);
+        q.addConstraint("TFBindingSite.dataSets.name", Constraints.eq(DATASET));
         q.addConstraint(bag.getType(),  Constraints.in(bag.getName()));
         if (!showAll) {
             q.addConstraint(path, Constraints.eq (key));
             q.setConstraintLogic("A and B and C");
         } else {
             q.setConstraintLogic("A and B");
-        }        
-        q.syncLogicExpression("and");        
+        }
+        q.syncLogicExpression("and");
         return q;
     }
 }

@@ -29,7 +29,7 @@ my $broken  = 1;
 # Set up configured options
 my $config = AppConfig->new({GLOBAL => {EXPAND   => EXPAND_ALL,
                                         ARGCOUNT => ARGCOUNT_ONE}});
-$config->define('model', 'changesfile', 'logfile');
+$config->define('model', 'changesfile', 'logfile', 'mine');
 $config->define('svndirectory' => {DEFAULT => $ENV{HOME}.'/svn/dev'});
 $config->define('help|usage!');
 $config->define('inputfile|infile=s@');

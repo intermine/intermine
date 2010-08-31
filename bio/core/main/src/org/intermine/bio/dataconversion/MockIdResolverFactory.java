@@ -18,7 +18,6 @@ import java.util.Set;
  */
 public class MockIdResolverFactory extends IdResolverFactory
 {
-    private String clsName;
     private IdResolver resolver = null;
 
     /**
@@ -26,7 +25,6 @@ public class MockIdResolverFactory extends IdResolverFactory
      * @param clsName the type to resolve
      */
     public MockIdResolverFactory(String clsName) {
-        this.clsName = clsName;
         resolver = new IdResolver(clsName);
     }
 

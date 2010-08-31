@@ -72,11 +72,11 @@ public class FlyFishDataSetLdr implements DataSetLdr
         Query q = createQuery(bag, false);
 
         results = os.execute(q, 100, true, true, true);
-        Iterator<ResultsRow> iter = results.iterator();
+        Iterator<ResultsRow<?>> iter = results.iterator();
         LinkedHashMap<String, int[]> callTable = initCallTable();
 
         while (iter.hasNext()) {
-            ResultsRow resRow = iter.next();
+            ResultsRow<?> resRow = iter.next();
 
             String stage = (String) resRow.get(0);
             stage = (stage.split(" \\("))[0];
@@ -122,7 +122,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, ds));
 
         QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
-                                                  new QueryField(ds, "title"));
+                                                  new QueryField(ds, "name"));
         cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS,
                                               new QueryValue(dataset.toLowerCase())));
 
@@ -183,9 +183,9 @@ public class FlyFishDataSetLdr implements DataSetLdr
 
     private void calcTotal(InterMineBag bag, ObjectStore os) {
         Results res = os.execute(createQuery(bag, true));
-        Iterator iter = res.iterator();
+        Iterator<?> iter = res.iterator();
         while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
+            ResultsRow<?> resRow = (ResultsRow<?>) iter.next();
             widgetTotal = ((java.lang.Long) resRow.get(0)).intValue();
         }
     }

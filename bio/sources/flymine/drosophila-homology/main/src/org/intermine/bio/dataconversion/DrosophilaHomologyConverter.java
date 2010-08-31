@@ -24,6 +24,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -34,14 +35,13 @@ import org.intermine.xml.full.Item;
 public class DrosophilaHomologyConverter extends BioFileConverter
 {
     private Item pub, evidence;
-    private Map<String, String> genes = new HashMap();
-    private Map<String, String> organisms = new HashMap();
+    private Map<String, String> genes = new HashMap<String, String>();
     protected IdResolverFactory resolverFactory;
     protected static final Logger LOG = Logger.getLogger(DrosophilaHomologyConverter.class);
     private OrganismRepository or;
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
-    
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -59,7 +59,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         Item evidenceCode = createItem("OrthologueEvidenceCode");
         evidenceCode.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
         evidenceCode.setAttribute("name", EVIDENCE_CODE_NAME);
-        store(evidenceCode);        
+        store(evidenceCode);
         evidence = createItem("OrthologueEvidence");
         evidence.setReference("evidenceCode", evidenceCode);
         evidence.addToCollection("publications", pub);
@@ -74,7 +74,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             if (line.length < 6) {
@@ -84,14 +84,14 @@ public class DrosophilaHomologyConverter extends BioFileConverter
             String geneOrganismRefId = parseSymbol(line[1]);
             String homologue = line[5];
             String homoOrganismRefId = parseSymbol(line[6]);
-            createHomologue(getGene(geneIdentifier, geneOrganismRefId), 
+            createHomologue(getGene(geneIdentifier, geneOrganismRefId),
                             getGene(homologue, homoOrganismRefId));
         }
     }
 
     // create and store a Homologue with identifiers of Gene items
     private void createHomologue(String gene, String homGene)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         // if no genes created then ids could not be resolved, don't create a homologue
         if (gene == null || homGene == null) {
             return;
@@ -105,7 +105,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
     }
 
     private String getGene(String identifier, String organismRefId)
-    throws ObjectStoreException {
+        throws ObjectStoreException, SAXException {
         String geneRefId = genes.get(identifier);
         if (geneRefId != null) {
             return geneRefId;
@@ -115,46 +115,17 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         item.setReference("organism", organismRefId);
         geneRefId = item.getIdentifier();
         genes.put(identifier, geneRefId);
-        getSynonym(geneRefId, "identifier", identifier);
         store(item);
         return geneRefId;
     }
 
-    private void getSynonym(String subjectId, String type, String value)
-    throws ObjectStoreException {
-        Item syn = createItem("Synonym");
-        syn.setReference("subject", subjectId);
-        syn.setAttribute("type", type);
-        syn.setAttribute("value", value);
-        try {
-            store(syn);
-        } catch (ObjectStoreException e) {
-            throw new ObjectStoreException(e);
-        }
-    }
-    
-    private String getOrganism(String taxonId) 
-    throws ObjectStoreException  {
-        String refId = organisms.get(taxonId);
-        if (refId != null) {
-            return refId;
-        }
-        Item item = createItem("Organism");
-        item.setAttribute("taxonId", taxonId);
-        refId = item.getIdentifier();
-        organisms.put(taxonId, refId);
-        store(item);
-        return refId;
-    }
-    
-    private String parseSymbol(String symbol) 
-    throws ObjectStoreException  {
+    private String parseSymbol(String symbol)
+        throws ObjectStoreException  {
         if (!symbol.contains("\\")) {
-            return getOrganism("7227"); 
+            return getOrganism("7227");
         }
         String[] bits = symbol.split("\\\\");
         OrganismData od = or.getOrganismDataByAbbreviation(bits[0]);
         return getOrganism(String.valueOf(od.getTaxonId()));
     }
-    
 }
