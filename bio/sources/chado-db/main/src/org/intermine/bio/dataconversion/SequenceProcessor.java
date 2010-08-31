@@ -347,18 +347,8 @@ public class SequenceProcessor extends ChadoProcessor
             }
         }
 
-        Item uniqueNameSynonym = createSynonym(fdat, fixedUniqueName);
-        if (uniqueNameSynonym != null) {
-            getChadoDBConverter().store(uniqueNameSynonym);
-        }
-
         // create a synonym for name, if configured
         if (!StringUtils.isBlank(name)) {
-            if (nameActionList == null || nameActionList.size() == 0) {
-                nameActionList = new ArrayList<ConfigAction>();
-                nameActionList.add(new CreateSynonymAction());
-            }
-
             for (ConfigAction action : nameActionList) {
                 if (action instanceof CreateSynonymAction) {
                     CreateSynonymAction createSynonymAction = (CreateSynonymAction) action;
