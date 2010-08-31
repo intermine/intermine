@@ -349,15 +349,17 @@ public class SequenceProcessor extends ChadoProcessor
 
         // create a synonym for name, if configured
         if (!StringUtils.isBlank(name)) {
-            for (ConfigAction action : nameActionList) {
-                if (action instanceof CreateSynonymAction) {
-                    CreateSynonymAction createSynonymAction = (CreateSynonymAction) action;
-                    if (createSynonymAction.isValidValue(fixedName)) {
-                        String processedName = createSynonymAction.processValue(fixedName);
-                        if (!fdat.getExistingSynonyms().contains(processedName)) {
-                            Item nameSynonym = createSynonym(fdat, processedName);
-                            if (nameSynonym != null) {
-                                getChadoDBConverter().store(nameSynonym);
+            if (nameActionList != null) {
+                for (ConfigAction action : nameActionList) {
+                    if (action instanceof CreateSynonymAction) {
+                        CreateSynonymAction createSynonymAction = (CreateSynonymAction) action;
+                        if (createSynonymAction.isValidValue(fixedName)) {
+                            String processedName = createSynonymAction.processValue(fixedName);
+                            if (!fdat.getExistingSynonyms().contains(processedName)) {
+                                Item nameSynonym = createSynonym(fdat, processedName);
+                                if (nameSynonym != null) {
+                                    getChadoDBConverter().store(nameSynonym);
+                                }
                             }
                         }
                     }
