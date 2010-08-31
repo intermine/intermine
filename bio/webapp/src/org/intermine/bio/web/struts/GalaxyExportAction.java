@@ -145,35 +145,6 @@ public class GalaxyExportAction extends InterMineAction
 //        ResultManipulater rm = new ResultManipulater();
 //        Map<Integer, String> orgNameMap = rm.findOrganisms(pt, request, index);
 
-
-        // Same function as ResultManipulater, reliable but slower
-/*
-        Map<Integer, String> orgNameMap = new LinkedHashMap<Integer, String>();
-
-        for (int i = 0; i < pt.getExactSize(); i++) {
-            Organism org = ((SequenceFeature) pt.getWebTable().getResultElements(i).get(0)
-                    .get(index).getValue().getObject()).getOrganism();
-            orgNameMap.put(org.getTaxonId(), org.getShortName());
-        }
-
-        String genomeBuild = "";
-        String organism = "";
-        if (orgNameMap != null) {
-
-            Properties props = PropertiesUtil.getProperties();
-            if (orgNameMap.keySet().size() == 1) {
-                if (orgNameMap.keySet().iterator().next() == 7227) {
-                    genomeBuild = props.getProperty("genomeVersion.fly");
-                }
-                if (orgNameMap.keySet().iterator().next() == 6239) {
-                    genomeBuild = props.getProperty("genomeVersion.worm");
-                }
-            }
-
-            organism = Arrays.toString(orgNameMap.values().toArray());
-        }
-*/
-
         /*
         // Write to Response
         StringBuffer viewString = new StringBuffer();

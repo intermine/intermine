@@ -204,7 +204,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/modmineGBrowse.jsp"/>
+      <displayer src="modmineGBrowse.tile"/>
     </longdisplayers>
   </class>
 
@@ -219,7 +219,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/modmineGBrowse.jsp"/>
+      <displayer src="modmineGBrowse.tile"/>
     </longdisplayers>
   </class>
 
@@ -246,7 +246,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/modmineGBrowse.jsp"/>
+      <displayer src="modmineGBrowse.tile"/>
     </longdisplayers>
   </class>
 
@@ -258,7 +258,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/modmineGBrowse.jsp"/>
+      <displayer src="modmineGBrowse.tile"/>
     </longdisplayers>
   </class>
 
@@ -321,7 +321,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/modmineGBrowse.jsp"/>
+      <displayer src="modmineGBrowse.tile"/>
     </longdisplayers>
   </class>
 
@@ -340,7 +340,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/modmineGBrowse.jsp"/>
+      <displayer src="modmineGBrowse.tile"/>
       <displayer src="cytoscapeInteractionsDisplayer.tile"/>
       <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
@@ -406,7 +406,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/modmineGBrowse.jsp"/>
+      <displayer src="modmineGBrowse.tile"/>
     </longdisplayers>
     <bagdisplayers>
     </bagdisplayers>
@@ -527,7 +527,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/modmineGBrowse.jsp"/>
+      <displayer src="modmineGBrowse.tile"/>
     </longdisplayers>
   </class>
 
@@ -574,7 +574,7 @@
     <longdisplayers>
       <displayer src="/model/tiffinBindingSiteDisplayer.jsp"/>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/modmineGBrowse.jsp"/>
+      <displayer src="modmineGBrowse.tile"/>
     </longdisplayers>
   </class>
 
@@ -596,7 +596,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/modmineGBrowse.jsp"/>
+      <displayer src="modmineGBrowse.tile"/>
     </longdisplayers>
   </class>
 
@@ -611,7 +611,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/modmineGBrowse.jsp"/>
+      <displayer src="modmineGBrowse.tile"/>
     </longdisplayers>
   </class>
 
