@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -191,25 +190,26 @@ public class GalaxyExportAction extends InterMineAction
 }
 
 /**
+ * To find the organisms that the exported sequence features belong to.
  *
  * @author Fengyuan Hu
  *
  */
 class ResultManipulater extends HttpExporterBase
 {
-    private static final Logger LOG = Logger.getLogger(ResultManipulater.class);
+//    private static final Logger LOG = Logger.getLogger(ResultManipulater.class);
 
     /**
      *
-     * @param pt
-     * @param request
-     * @param index
-     * @return
+     * @param pt PagedTable
+     * @param request Http Request
+     * @param index index of pagedTable column for the feature to export
+     * @return A Map: Key - organism's TaxonId; Value - organism's shortName
      */
     public Map<Integer, String> findOrganisms(PagedTable pt,
             HttpServletRequest request, int index) {
 
-        if (pt.getEstimatedSize() > 10000) { }
+//        if (pt.getEstimatedSize() > 10000) { }
         ExportResultsIterator resultIt = getResultRows(pt, request);
 
         Map<Integer, String> orgNameMap = new LinkedHashMap<Integer, String>();
