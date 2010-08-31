@@ -6,6 +6,8 @@
 
 <!-- CDNA isn't a SequenceFeature in SO, declare submissions collection separately -->
 <class name="CDNA" extends="BioEntity" is-interface="true">
+  <attribute name="length" type="java.lang.Integer"/>
+  <reference name="sequence" referenced-type="Sequence"/>
   <collection name="submissions" referenced-type="Submission"/>
 </class>
 
