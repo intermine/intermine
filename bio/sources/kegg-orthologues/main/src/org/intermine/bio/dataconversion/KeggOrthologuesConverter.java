@@ -29,7 +29,6 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
-import org.xml.sax.SAXException;
 
 /**
  * Create orthologues based on KEGG pathways.
@@ -142,7 +141,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
     }
 
     private void processLine(String line, Set<String> homologues)
-        throws ObjectStoreException, SAXException {
+        throws ObjectStoreException {
         // split taxon abbreviation and identifier, eg. HSA: 7358(UGDH)
         String[] bits = line.split(" ");
         if (bits.length < 2) {
@@ -210,7 +209,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
     }
 
     private String getGene(String identifierType, String id, String taxonId)
-        throws ObjectStoreException, SAXException {
+        throws ObjectStoreException {
         String identifier = id;
         if (taxonId.equals("7227")) {
             identifier = resolveGene(identifier);
