@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <classes>
-<class name="PCRProduct" extends="Region" is-interface="true">
+<class name="PCRProduct" is-interface="true">
   <attribute name="promoter" type="java.lang.Boolean"/>
   <reference name="tilingPathSpan" referenced-type="TilingPathSpan" reverse-reference="pcrProducts"/>
   <collection name="primers" referenced-type="Primer" reverse-reference="pcrProduct"/>
@@ -8,7 +8,7 @@
 <class name="Primer" is-interface="true">
   <reference name="pcrProduct" referenced-type="PCRProduct" reverse-reference="primers"/>
 </class>
-<class name="TilingPathSpan" extends="Region" is-interface="true">
+<class name="TilingPathSpan" extends="SequenceFeature" is-interface="true">
   <collection name="pcrProducts" referenced-type="PCRProduct" reverse-reference="tilingPathSpan"/>
 </class>
 </classes>

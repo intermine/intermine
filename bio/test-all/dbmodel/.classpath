@@ -7,5 +7,6 @@
 	<classpathentry exported="true" kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="build/model"/>
 	<classpathentry kind="lib" path="build/main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/flymine-dbmodel"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
