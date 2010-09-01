@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
-import org.intermine.model.bio.Region;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 
@@ -27,7 +26,7 @@ import org.intermine.objectstore.ObjectStoreException;
  */
 public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
 {
-    private Map<String, Region> chrMap = new HashMap<String, Region>();
+    private Map<String, SequenceFeature> chrMap = new HashMap<String, SequenceFeature>();
 
     /**
      * Return a Chromosome object for the given item.
@@ -36,12 +35,13 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
      * @return the Chromosome
      * @throws ObjectStoreException if problem fetching Chromosome
      */
-    protected Region getChromosome(String chromosomeId, Organism organism)
+    protected SequenceFeature getChromosome(String chromosomeId, Organism organism)
         throws ObjectStoreException {
         if (chrMap.containsKey(chromosomeId)) {
             return chrMap.get(chromosomeId);
         }
-        Region chr = (Region) getDirectDataLoader().createObject(Region.class);
+        SequenceFeature chr = (SequenceFeature) getDirectDataLoader().createObject(
+                SequenceFeature.class);
         chr.setPrimaryIdentifier(chromosomeId);
         chr.setOrganism(organism);
         chr.addDataSets(getDataSet());
