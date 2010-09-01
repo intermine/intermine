@@ -61,10 +61,11 @@
                 <br/>
                 <br/>
                 Or look up a Gene:
-                <html:form action="/keywordSearchResults">
+                <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get" style="display:inline;">
+
                     <input style="" id="quickSearchInput" name="searchTerm" type="text" class="qs_input">
-                    <html:submit><fmt:message key="header.search.button"/></html:submit>
-                </html:form>
+                    <input type="submit" name="searchSubmit" value="GO" />
+                </form>
                 <br/>
                 Or <html:link href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">upload a list</html:link>.
             </div>
