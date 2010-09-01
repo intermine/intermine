@@ -134,18 +134,18 @@
 
           <li>
             <im:querylink text="All <i>Anopheles gambiae</i> EST clusters and chromosomal positions" skipBuilder="true">
-              <query name="" model="genomic" view="ESTCluster.primaryIdentifier ESTCluster.length ESTCluster.chromosome.primaryIdentifier ESTCluster.chromosomeLocation.start ESTCluster.chromosomeLocation.end">
-                <pathDescription pathString="ESTCluster.chromosomeLocation" description="Chromosome location">
+              <query name="" model="genomic" view="OverlappingESTSet.primaryIdentifier OverlappingESTSet.length OverlappingESTSet.chromosome.primaryIdentifier OverlappingESTSet.chromosomeLocation.start OverlappingESTSet.chromosomeLocation.end">
+                <pathDescription pathString="OverlappingESTSet.chromosomeLocation" description="Chromosome location">
                 </pathDescription>
-                <pathDescription pathString="ESTCluster.chromosome" description="Chromosome">
+                <pathDescription pathString="OverlappingESTSet.chromosome" description="Chromosome">
                 </pathDescription>
-                <pathDescription pathString="ESTCluster" description="EST cluster">
+                <pathDescription pathString="OverlappingESTSet" description="EST cluster">
                 </pathDescription>
-                <node path="ESTCluster" type="ESTCluster">
+                <node path="OverlappingESTSet" type="OverlappingESTSet">
                 </node>
-                <node path="ESTCluster.organism" type="Organism">
+                <node path="OverlappingESTSet.organism" type="Organism">
                 </node>
-                <node path="ESTCluster.organism.name" type="String">
+                <node path="OverlappingESTSet.organism.name" type="String">
                   <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A">
                   </constraint>
                 </node>
