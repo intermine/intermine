@@ -255,8 +255,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
         return refId;
     }
 
-    private String createLocation(LocationHolder holder, String probeset, List<String> dataSets)
-        throws ObjectStoreException {
+    private String createLocation(LocationHolder holder, String probeset, List<String> dataSets) {
         String strand = null;
         if (holder.strand != null) {
             strand = holder.strand;

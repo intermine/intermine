@@ -25,7 +25,7 @@
 <reference name="sequenceOntologyTerm" ref_id="5_2"/>
 <collection name="dataSets"><reference ref_id="3_1"/></collection>
 </item>
-<item id="9_1" class="Location">
+<item id="9_2" class="Location">
 <attribute name="end" value="2"/>
 <attribute name="start" value="1"/>
 <attribute name="strand" value="-1"/>
@@ -47,7 +47,7 @@
 <item id="2_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
 </item>
-<item id="9_2" class="Location">
+<item id="9_1" class="Location">
 <attribute name="end" value="4"/>
 <attribute name="start" value="3"/>
 <attribute name="strand" value="-1"/>
