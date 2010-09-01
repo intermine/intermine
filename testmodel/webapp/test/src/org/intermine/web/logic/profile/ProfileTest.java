@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
@@ -27,9 +29,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.PathQuery;
 
-import servletunit.struts.MockStrutsTestCase;
-
-public class ProfileTest extends MockStrutsTestCase
+public class ProfileTest extends TestCase
 {
     PathQuery query;
     SavedQuery sq;
