@@ -221,6 +221,7 @@ public class OboConverter extends DataConverter
     protected void configureSynonymItem(OboTermSynonym syn, Item item, OboTerm term)
         throws ObjectStoreException {
         item.setAttribute("name", syn.getName());
+        item.setAttribute("type", syn.getType());
     }
 
     /**
