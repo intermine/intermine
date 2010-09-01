@@ -213,7 +213,7 @@ public class IdResolver
      * @throws IOException if fail to write
      */
     public void writeToFile(File f) throws IOException {
-        StringBuffer sb = new StringBuffer();
+        FileWriter fw = new FileWriter(f);
         for (String taxonId : orgIdMaps.keySet()) {
             
             // get maps for this organism
@@ -222,6 +222,8 @@ public class IdResolver
             Map<String, Set<String>> synonymMap = orgIdSynMaps.get(taxonId);
             
             for (Map.Entry<String, Set<String>> idMapEntry : idMap.entrySet()) {
+                StringBuffer sb = new StringBuffer();
+
                 String primaryId = idMapEntry.getKey();
                 
                 sb.append(taxonId + "\t");  // write taxon id
@@ -252,10 +254,9 @@ public class IdResolver
                     }
                 }
                 sb.append(System.getProperty("line.separator"));
+                fw.write(sb.toString());
             }
         }
-        FileWriter fw = new FileWriter(f);
-        fw.write(sb.toString());
         fw.flush();
         fw.close();
     }
