@@ -1,6 +1,0 @@
-<project name="pride" default="default" basedir=".">
-  <description>build, test, package pride</description>
-
-  <import file="../../../../../imbuild/source.xml"/>
-
-</project>
