@@ -86,7 +86,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
             Orthologue and paralogue predictions between the 12 <i>Drosophila</i> genomes from FlyBase</p>
           </ul>
       </div>
-   
+
 
 
  <h4>
@@ -124,7 +124,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
         <ul>
           <li>
             <im:querylink text="Homologues: <i>D. melanogaster</i> vs <i>A. gambiae</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue:dataSets.title" sortOrder="Homologue.gene.primaryIdentifier asc Homologue.gene.secondaryIdentifier asc Homologue.gene.symbol asc Homologue.homologue.primaryIdentifier asc Homologue.homologue.secondaryIdentifier asc Homologue.type asc" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue:dataSets.name" sortOrder="Homologue.gene.primaryIdentifier asc Homologue.gene.secondaryIdentifier asc Homologue.gene.symbol asc Homologue.homologue.primaryIdentifier asc Homologue.homologue.secondaryIdentifier asc Homologue.type asc" constraintLogic="A and B">
   <pathDescription pathString="Homologue:dataSets" description="dataset">
   </pathDescription>
   <pathDescription pathString="Homologue.homologue" description="Homologue">
@@ -155,7 +155,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
 
           <li>
             <im:querylink text="Homologues: <i>D. melanogaster</i> vs <i>C. elegans</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue:dataSets.title" sortOrder="Homologue.gene.primaryIdentifier asc Homologue.gene.secondaryIdentifier asc Homologue.gene.symbol asc Homologue.homologue.primaryIdentifier asc Homologue.homologue.secondaryIdentifier asc Homologue.type asc" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue:dataSets.name" sortOrder="Homologue.gene.primaryIdentifier asc Homologue.gene.secondaryIdentifier asc Homologue.gene.symbol asc Homologue.homologue.primaryIdentifier asc Homologue.homologue.secondaryIdentifier asc Homologue.type asc" constraintLogic="A and B">
   <pathDescription pathString="Homologue:dataSets" description="dataset">
   </pathDescription>
   <pathDescription pathString="Homologue.homologue" description="Homologue">
@@ -186,7 +186,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
 
           <li>
            <im:querylink text="Homologues: <i>D. melanogaster</i> vs <i>H. sapiens</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue:dataSets.title" sortOrder="Homologue.gene.primaryIdentifier asc Homologue.gene.secondaryIdentifier asc Homologue.gene.symbol asc Homologue.homologue.primaryIdentifier asc Homologue.homologue.secondaryIdentifier asc Homologue.type asc" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue:dataSets.name" sortOrder="Homologue.gene.primaryIdentifier asc Homologue.gene.secondaryIdentifier asc Homologue.gene.symbol asc Homologue.homologue.primaryIdentifier asc Homologue.homologue.secondaryIdentifier asc Homologue.type asc" constraintLogic="A and B">
   <pathDescription pathString="Homologue:dataSets" description="dataset">
   </pathDescription>
   <pathDescription pathString="Homologue.homologue" description="Homologue">
@@ -217,7 +217,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
 
           <li>
            <im:querylink text="Homologues: <i>D. melanogaster</i> vs <i>M. musculus</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue:dataSets.title" sortOrder="Homologue.gene.primaryIdentifier asc Homologue.gene.secondaryIdentifier asc Homologue.gene.symbol asc Homologue.homologue.primaryIdentifier asc Homologue.homologue.secondaryIdentifier asc Homologue.type asc" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue:dataSets.name" sortOrder="Homologue.gene.primaryIdentifier asc Homologue.gene.secondaryIdentifier asc Homologue.gene.symbol asc Homologue.homologue.primaryIdentifier asc Homologue.homologue.secondaryIdentifier asc Homologue.type asc" constraintLogic="A and B">
   <pathDescription pathString="Homologue:dataSets" description="dataset">
   </pathDescription>
   <pathDescription pathString="Homologue.homologue" description="Homologue">
@@ -249,7 +249,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
 
           <li>
           <im:querylink text="Homologues: <i>D. melanogaster</i> vs <i>D. pseudoobscura</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue:dataSets.title" sortOrder="Homologue.gene.primaryIdentifier asc Homologue.gene.secondaryIdentifier asc Homologue.gene.symbol asc Homologue.homologue.primaryIdentifier asc Homologue.homologue.secondaryIdentifier asc Homologue.type asc" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue:dataSets.name" sortOrder="Homologue.gene.primaryIdentifier asc Homologue.gene.secondaryIdentifier asc Homologue.gene.symbol asc Homologue.homologue.primaryIdentifier asc Homologue.homologue.secondaryIdentifier asc Homologue.type asc" constraintLogic="A and B">
   <pathDescription pathString="Homologue:dataSets" description="dataset">
   </pathDescription>
   <pathDescription pathString="Homologue.homologue" description="Homologue">
@@ -280,7 +280,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
 
           <li>
             <im:querylink text="Homologues: <i>A. gambiae</i> vs <i>C. elegans</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue:dataSets.title" sortOrder="Homologue.gene.primaryIdentifier asc Homologue.gene.secondaryIdentifier asc Homologue.gene.symbol asc Homologue.homologue.primaryIdentifier asc Homologue.homologue.secondaryIdentifier asc Homologue.type asc" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue:dataSets.name" sortOrder="Homologue.gene.primaryIdentifier asc Homologue.gene.secondaryIdentifier asc Homologue.gene.symbol asc Homologue.homologue.primaryIdentifier asc Homologue.homologue.secondaryIdentifier asc Homologue.type asc" constraintLogic="A and B">
   <pathDescription pathString="Homologue:dataSets" description="dataset">
   </pathDescription>
   <pathDescription pathString="Homologue.homologue" description="Homologue">

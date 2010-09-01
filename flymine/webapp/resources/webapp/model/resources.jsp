@@ -200,9 +200,9 @@
     <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
     </constraint>
   </node>
-  <node path="TransposableElementInsertionSite.evidence" type="DataSet">
+  <node path="TransposableElementInsertionSite.dataSets" type="DataSet">
   </node>
-  <node path="TransposableElementInsertionSite.evidence.title" type="String">
+  <node path="TransposableElementInsertionSite.dataSets.name" type="String">
     <constraint op="LIKE" value="*DrosDel*" description="" identifier="" code="B">
     </constraint>
   </node>
@@ -248,7 +248,7 @@
   </node>
   <node path="ProbeSet.dataSets" type="DataSet">
   </node>
-  <node path="ProbeSet.dataSets.title" type="String">
+  <node path="ProbeSet.dataSets.name" type="String">
     <constraint op="=" value="Affymetrix array: DrosGenome1" description="" identifier="" code="A">
     </constraint>
   </node>
@@ -263,7 +263,7 @@
   </node>
   <node path="ProbeSet.dataSets" type="DataSet">
   </node>
-  <node path="ProbeSet.dataSets.title" type="String">
+  <node path="ProbeSet.dataSets.name" type="String">
     <constraint op="=" value="Affymetrix array: DrosGenome1" description="" identifier="" code="A">
     </constraint>
   </node>
@@ -278,7 +278,7 @@
   </node>
   <node path="ProbeSet.dataSets" type="DataSet">
   </node>
-  <node path="ProbeSet.dataSets.title" type="String">
+  <node path="ProbeSet.dataSets.name" type="String">
     <constraint op="=" value="Affymetrix array: Drosophila_2" description="" identifier="" code="A">
     </constraint>
   </node>
@@ -293,7 +293,7 @@
   </node>
   <node path="ProbeSet.dataSets" type="DataSet">
   </node>
-  <node path="ProbeSet.dataSets.title" type="String">
+  <node path="ProbeSet.dataSets.name" type="String">
     <constraint op="=" value="Affymetrix array: Drosophila_2" description="" identifier="" code="A">
     </constraint>
   </node>

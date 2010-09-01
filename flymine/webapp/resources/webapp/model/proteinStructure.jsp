@@ -115,7 +115,7 @@
   </node>
   <node path="Protein.structures.dataSets" type="DataSet">
   </node>
-  <node path="Protein.structures.dataSets.title" type="String">
+  <node path="Protein.structures.dataSets.name" type="String">
     <constraint op="=" value="PDB dmel data set" description="" identifier="" code="A">
     </constraint>
   </node>

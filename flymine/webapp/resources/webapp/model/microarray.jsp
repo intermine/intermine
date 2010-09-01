@@ -132,7 +132,7 @@
   </node>
   <node path="Gene.mRNAExpressionResults.dataSet" type="DataSet">
   </node>
-  <node path="Gene.mRNAExpressionResults.dataSet.title" type="String">
+  <node path="Gene.mRNAExpressionResults.dataSet.name" type="String">
     <constraint op="=" value="BDGP in situ data set" description="" identifier="" code="B">
     </constraint>
   </node>
@@ -161,7 +161,7 @@
   </node>
   <node path="Gene.microArrayResults.dataSets" type="DataSet">
   </node>
-  <node path="Gene.microArrayResults.dataSets.title" type="String">
+  <node path="Gene.microArrayResults.dataSets.name" type="String">
     <constraint op="=" value="FlyAtlas" description="" identifier="" code="A">
     </constraint>
   </node>
@@ -195,7 +195,7 @@
   </node>
   <node path="Gene.mRNAExpressionResults.dataSet" type="DataSet">
   </node>
-  <node path="Gene.mRNAExpressionResults.dataSet.title" type="String">
+  <node path="Gene.mRNAExpressionResults.dataSet.name" type="String">
     <constraint op="=" value="fly-Fish data set" description="" identifier="" code="A">
     </constraint>
   </node>

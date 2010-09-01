@@ -120,12 +120,12 @@
 
           <li>
              <im:querylink text="All <i>D. melanogaster</i> RNAi data " skipBuilder="true">
-<query name="" model="genomic" view="Gene.rnaiResults.rnaiScreen.publication.pubMedId Gene.rnaiResults.amplicon.primaryIdentifier Gene.rnaiResults.result" sortOrder="Gene.rnaiResults.rnaiScreen.publication.pubMedId asc">
+<query name="" model="genomic" view="Gene.rnaiResults.rnaiScreen.publication.pubMedId Gene.rnaiResults.pcrProduct.primaryIdentifier Gene.rnaiResults.result" sortOrder="Gene.rnaiResults.rnaiScreen.publication.pubMedId asc">
   <node path="Gene" type="Gene">
   </node>
   <node path="Gene.rnaiResults" type="RNAiScreenHit">
   </node>
-  <node path="Gene.rnaiResults.amplicon" type="Amplicon">
+  <node path="Gene.rnaiResults.pcrProduct" type="PCRProduct">
   </node>
   <node path="Gene.organism" type="Organism">
   </node>
