@@ -1,5 +1,0 @@
-<project name="haem-atlas-tasks" default="default" basedir=".">
-  <description>build haem-atlas tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>
-

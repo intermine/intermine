@@ -1,6 +1,0 @@
-
-<project name="biogrid-human" default="default" basedir=".">
-  <description>build biogrid-humna tasks</description>
-  <import file="../../../../../../imbuild/library.xml"/> 
-</project>
-
