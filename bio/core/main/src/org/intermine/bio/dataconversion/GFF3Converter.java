@@ -397,7 +397,7 @@ public class GFF3Converter extends DataConverter
             identifier = identifier.substring(3);
         }
 
-        Item seq = (Item) seqs.get(identifier);
+        Item seq = seqs.get(identifier);
         if (seq == null) {
             seq = sequenceHandler.makeSequenceItem(this, identifier);
             // sequence handler may choose not to create sequence
@@ -439,18 +439,18 @@ public class GFF3Converter extends DataConverter
      * @return the DataSet Item
      */
     public Item getDataSourceItem(String name) {
-        Item dataSource = dataSources.get(name);
-        if (dataSource == null) {
-            dataSource = createItem("DataSource");
-            dataSource.setAttribute("name", name);
+        Item item = dataSources.get(name);
+        if (item == null) {
+            item = createItem("DataSource");
+            item.setAttribute("name", name);
             try {
-                store(dataSource);
+                store(item);
             } catch (ObjectStoreException e) {
                 throw new RuntimeException("failed to store DataSource with name: " + name, e);
             }
-            dataSources.put(name, dataSource);
+            dataSources.put(name, item);
         }
-        return dataSource;
+        return item;
     }
 
     /**
@@ -462,25 +462,25 @@ public class GFF3Converter extends DataConverter
      * @return the DataSet Item
      */
     public Item getDataSetItem(String title, String url, String description, Item dataSourceItem) {
-        Item dataSet = dataSets.get(title);
-        if (dataSet == null) {
-            dataSet = createItem("DataSet");
-            dataSet.setAttribute("name", title);
-            dataSet.setReference("dataSource", dataSourceItem);
+        Item item = dataSets.get(title);
+        if (item == null) {
+            item = createItem("DataSet");
+            item.setAttribute("name", title);
+            item.setReference("dataSource", dataSourceItem);
             if (url != null) {
-                dataSet.setAttribute("url", url);
+                item.setAttribute("url", url);
             }
             if (description != null) {
-                dataSet.setAttribute("description", description);
+                item.setAttribute("description", description);
             }
             try {
-                store(dataSet);
+                store(item);
             } catch (ObjectStoreException e) {
                 throw new RuntimeException("failed to store DataSet with title: " + title, e);
             }
-            dataSets.put(title, dataSet);
+            dataSets.put(title, item);
         }
-        return dataSet;
+        return item;
     }
 
     private String getRefId(String identifier) {

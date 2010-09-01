@@ -33,7 +33,7 @@
 <attribute name="primaryIdentifier" value="1"/>
 <reference name="organism" ref_id="0_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/><reference ref_id="2_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="7_3" class="BindingSite">
 <attribute name="primaryIdentifier" value="Mousechain:4246045:10:58864978..58865031"/>
@@ -60,7 +60,7 @@
 <attribute name="primaryIdentifier" value="2"/>
 <reference name="organism" ref_id="0_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/><reference ref_id="2_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="0_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
@@ -90,7 +90,7 @@
 <attribute name="primaryIdentifier" value="7"/>
 <reference name="organism" ref_id="0_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/><reference ref_id="2_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_1" class="SOTerm">
 <attribute name="name" value="chromosome"/>

@@ -85,6 +85,4 @@ public class GFF3RecordHandlerTest extends TestCase
 //        handler.setReferences(refs);
         assertEquals(expected, handler.getFeature());
     }
-
-
 }

@@ -127,7 +127,7 @@ public class GFF3RecordHandler
      * @return the location Item
      */
     protected Item getLocation() {
-        return (Item) items.get("_location");
+        return items.get("_location");
     }
 
     /**
@@ -150,7 +150,7 @@ public class GFF3RecordHandler
      * @return the feature Item
      */
     protected Item getFeature() {
-        return (Item) items.get("_feature");
+        return items.get("_feature");
     }
 
     /**
@@ -252,7 +252,7 @@ public class GFF3RecordHandler
      * @return the tgtLocation Item
      */
     protected Item getTgtLocation() {
-        return (Item) items.get("_tgtLocation");
+        return items.get("_tgtLocation");
     }
 
     /**
