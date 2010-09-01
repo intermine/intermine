@@ -48,7 +48,7 @@ public class OboConverterTest extends ItemsTestCase {
         converter.setOboTerms(Arrays.asList(new OboTerm[] {a, b, c}));
         converter.setOboRelations(Arrays.asList(new OboRelation[] {r1,r2} ));
         converter.storeItems();
-        // writeItemsFile(itemWriter.getItems(), "tmp");
+        //writeItemsFile(itemWriter.getItems(), "obo-converter-tgt.xml");
         assertEquals(readItemSet("OboConverterTest.xml"), itemWriter.getItems());
     }
 

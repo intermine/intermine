@@ -48,7 +48,7 @@
 <attribute name="type" value="narrow_synonym"/>
 </item>
 <item id="0_1" class="Ontology">
-<attribute name="title" value="SO"/>
+<attribute name="name" value="SO"/>
 <attribute name="url" value="http://www.flymine.org"/>
 </item>
 </items>
