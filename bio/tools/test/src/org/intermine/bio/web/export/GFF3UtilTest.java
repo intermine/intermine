@@ -9,6 +9,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.intermine.bio.web.export.GFF3Util;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Exon;
