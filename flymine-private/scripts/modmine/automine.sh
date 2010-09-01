@@ -24,6 +24,7 @@ LOADDIR=$DATADIR/load
 LOGDIR=$DATADIR/logs
 FTPARK=$DATADIR/ark
 
+PATCHDIR=$LOADDIR/patches
 
 FTPURL=http://submit.modencode.org/submit/public
 SUBDIR=/shared/data/modmine/subs
@@ -205,12 +206,11 @@ SOURCES=modmine-static,"$PLIST"
 else
 SOURCES=modmine-static,modencode-metadata
 fi
- echo $SOURCES
 
 echo
-echo "================================="
+echo "==================================="
 echo "Building modmine-$REL on $MINEHOST."
-echo "================================="
+echo "==================================="
 echo "current directory: $MINEDIR"
 echo "Log: $LOG"
 echo
@@ -454,6 +454,16 @@ psql -h  modprod1 -d modchado-dev -U modmine -c "insert into experiment_prop (ex
 fi
 
 
+if [ -e "$PATCHDIR/applied_patches_$DCCID.chadoxml" ]
+then
+echo "$DCCID: adding patch file."
+stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
+$DBPW -noupdate cvterm,dbxref,db,cv,feature $PATCHDIR/applied_patches_$DCCID.chadoxml
+else
+echo "$DCCID: no patch file."
+fi
+
+
 else
 echo
 echo "$DCCID  stag-storenode FAILED. SKIPPING SUBMISSION."
@@ -591,6 +601,9 @@ echo
 # this for confirmation the program runs and to avoid to grep on a non-existent file
 touch $LOG
 
+# copy of last wget.log
+mv $LOGDIR/wget.log $LOGDIR/wget.log.bup
+
 
 #FTPURL=http://submit.modencode.org/submit/public/
 # NB: files are dowloaded gzipped and later decompressed
@@ -633,6 +646,13 @@ interact "START WGET NOW"
 for sub in $LOOPVAR
 do
  wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee -a $LOGDIR/wget.log
+
+cd $PATCHDIR
+ wget -t3 -N $FTPURL/get_file/$sub/extracted/applied_patches_$sub.chadoxml --progress=dot:mega 2>&1 | tee -a $LOGDIR/wget.log
+# it gets the html if nothing there
+rm -vf *extracted*
+cd $MIRROR/new
+
 done
 
 }
