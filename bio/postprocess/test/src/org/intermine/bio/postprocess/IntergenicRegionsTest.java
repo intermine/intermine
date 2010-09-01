@@ -241,9 +241,9 @@ public class IntergenicRegionsTest extends TestCase
     }
 
     private Collection getByLoc(Integer newLoc, Map chrlocMap) {
-        List chrGeneList = (List) chrlocMap.get(newLoc);
+        Set chrGeneList = (Set) chrlocMap.get(newLoc);
         if (chrGeneList == null) {
-            chrGeneList = Collections.EMPTY_LIST;
+            chrGeneList = new HashSet();
         }
         List retList = new ArrayList();
         Iterator iter = chrGeneList.iterator();

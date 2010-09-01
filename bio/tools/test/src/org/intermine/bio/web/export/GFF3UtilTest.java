@@ -80,7 +80,7 @@ public class GFF3UtilTest extends TestCase
         assertEquals("4\tFlyMine\texon\t200\t300\t.\t-\t.\tID=exon1",
                      gff3Exon.toGFF3());
     }
-    
+
     // Exon location has no strand information - should default to '.'
     public void testNoStrandSet() throws Exception {
         Exon exon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
@@ -95,7 +95,7 @@ public class GFF3UtilTest extends TestCase
 
         exonLocation.setStart(new Integer(200));
         exonLocation.setEnd(new Integer(300));
-        
+
         chromosome.setPrimaryIdentifier("4");
         chromosome.setLength(new Integer(1000));
 
@@ -107,7 +107,7 @@ public class GFF3UtilTest extends TestCase
         assertEquals("4\tFlyMine\texon\t200\t300\t.\t.\t.\tID=exon1",
                      gff3Exon.toGFF3());
     }
-    
+
     private Map<String, String> getSoClassNameMap() {
         Map<String, String> soClassNameMap = new LinkedHashMap<String, String>();
         soClassNameMap.put("Gene", "gene");
