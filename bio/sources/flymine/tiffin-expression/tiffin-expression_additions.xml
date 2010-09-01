@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="Motif" extends="Region" is-interface="true">
+  <class name="Motif" extends="SequenceFeature" is-interface="true">
     <collection name="expressionTerms" referenced-type="MRNAExpressionTerm" />
   </class>
   <class name="MRNAExpressionTerm" is-interface="true">
