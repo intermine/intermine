@@ -149,7 +149,6 @@ public class WriteGFFTask extends Task
         Chromosome currentChr = null;
 
         Map<Integer, List<String>> synonymMap = null;
-        Map<Integer, List<String>> evidenceMap = null;
 
         while (resIter.hasNext()) {
             ResultsRow<?> rr = resIter.next();
@@ -189,7 +188,7 @@ public class WriteGFFTask extends Task
             if (currentChrId == null || !currentChrId.equals(resultChrId)) {
                 if (currentChrId != null) {
                     writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
-                                             seenTranscriptParts, synonymMap, evidenceMap);
+                                             seenTranscriptParts, synonymMap);
                     seenTranscripts = new HashMap<Transcript, Location>();
                     seenTranscriptParts = new HashMap<String, Location>();
                 }
@@ -222,7 +221,6 @@ public class WriteGFFTask extends Task
                     gffWriter = new PrintWriter(new FileWriter(gffFile));
 
                     List<String> synonymList = synonymMap.get(currentChr.getId());
-                    List<String> evidenceList = evidenceMap.get(currentChr.getId());
 
                     writeFeature(gffWriter, currentChr, currentChr, null,
                                  chromosomeFileNamePrefix(currentChr),
@@ -234,8 +232,7 @@ public class WriteGFFTask extends Task
                 }
             }
 
-            if (currentChr == null || synonymMap == null || evidenceMap == null
-                || objectCounts == null) {
+            if (currentChr == null || synonymMap == null || objectCounts == null) {
                 throw new RuntimeException("Internal error - failed to set maps");
             }
 
@@ -280,8 +277,8 @@ public class WriteGFFTask extends Task
             throw new RuntimeException("no chromosomes found");
         }
 
-        writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
-                seenTranscriptParts, synonymMap, evidenceMap);
+        writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts, seenTranscriptParts,
+                synonymMap);
 
         if (gffWriter != null) {
             gffWriter.close();
@@ -311,8 +308,7 @@ public class WriteGFFTask extends Task
     private void writeTranscriptsAndExons(PrintWriter gffWriter, Chromosome chr,
                                           Map<Transcript, Location> seenTranscripts,
                                           Map<String, Location> seenTranscriptParts,
-                                          Map<Integer, List<String>> synonymMap,
-                                          Map<Integer, List<String>> evidenceMap) {
+                                          Map<Integer, List<String>> synonymMap) {
         Iterator<Transcript> transcriptIter = seenTranscripts.keySet().iterator();
         while (transcriptIter.hasNext()) {
             // we can't just use MRNA here because the Transcripts of a pseudogene are Transcripts,
@@ -349,7 +345,6 @@ public class WriteGFFTask extends Task
                     synonymList.add(makeIdString(cds.getId()));
                 }
             }
-            List<String> evidenceList = evidenceMap.get(transcript.getId());
 
             writeFeature(gffWriter, chr, transcript, transcriptLocation,
                          transcript.getPrimaryIdentifier(),
