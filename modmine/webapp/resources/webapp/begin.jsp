@@ -61,9 +61,8 @@
                 <br/>
                 <br/>
                 Or look up a Gene:
-                <html:form action="/quickSearchAction">
-                    <input id="quickSearchType" name="quickSearchType" type="hidden" value="ids">
-                    <input style="" id="quickSearchInput" name="value" type="text" class="qs_input">
+                <html:form action="/keywordSearchResults">
+                    <input style="" id="quickSearchInput" name="searchTerm" type="text" class="qs_input">
                     <html:submit><fmt:message key="header.search.button"/></html:submit>
                 </html:form>
                 <br/>
