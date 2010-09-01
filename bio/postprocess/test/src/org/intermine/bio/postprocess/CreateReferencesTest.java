@@ -89,56 +89,56 @@ public class CreateReferencesTest extends TestCase {
     public void testInsertReferenceField() throws Exception {
         CreateReferences cr = new CreateReferences(osw);
         cr.insertReferenceField(Gene.class, "transcripts", Transcript.class, "exons",
-                             Exon.class, "gene");
+                Exon.class, "gene");
 
         Query q = new Query();
         QueryClass qcGene = new QueryClass(Gene.class);
         q.addFrom(qcGene);
         q.addToSelect(qcGene);
-    QueryField qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
-    SimpleConstraint sc = new SimpleConstraint(qfPrimaryIdentifier, ConstraintOp.EQUALS, new QueryValue("gene1"));
-    q.setConstraint(sc);
+        QueryField qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
+        SimpleConstraint sc = new SimpleConstraint(qfPrimaryIdentifier, ConstraintOp.EQUALS, new QueryValue("gene1"));
+        q.setConstraint(sc);
 
-    ObjectStore os = osw.getObjectStore();
+        ObjectStore os = osw.getObjectStore();
         Results res = os.execute(q);
         ResultsRow row = (ResultsRow) res.iterator().next();
 
         Gene resGene = (Gene) row.get(0);
 
-    HashSet<Integer> expectedCollectionIds = new HashSet(Arrays.asList(new Integer[] {storedExon1.getId(), storedExon2.getId(), storedExon3.getId()}));
+        HashSet<Integer> expectedCollectionIds = new HashSet(Arrays.asList(new Integer[] {storedExon1.getId(), storedExon2.getId(), storedExon3.getId()}));
 
-    HashSet<Integer> actualCollectionIds = new HashSet();
-    for (Object o : resGene.getExons()) {
-        actualCollectionIds.add(((Exon) o).getId());
-    }
+        HashSet<Integer> actualCollectionIds = new HashSet();
+        for (Object o : resGene.getExons()) {
+            actualCollectionIds.add(((Exon) o).getId());
+        }
 
-    assertEquals(expectedCollectionIds, actualCollectionIds);
+        assertEquals(expectedCollectionIds, actualCollectionIds);
     }
 
     public void testInsertCollectionField() throws Exception {
         CreateReferences cr = new CreateReferences(osw);
 
-        cr.insertCollectionField(Gene.class, "objects", Location.class, "object",
-                              Chromosome.class, "genes", false);
+        cr.insertCollectionField(Gene.class, "locations", Location.class, "locatedOn",
+                Chromosome.class, "locatedFeatures", false);
         Query q = new Query();
         QueryClass qcChromosome = new QueryClass(Chromosome.class);
         q.addFrom(qcChromosome);
         q.addToSelect(qcChromosome);
 
-    ObjectStore os = osw.getObjectStore();
+        ObjectStore os = osw.getObjectStore();
         Results res = os.execute(q);
         ResultsRow row = (ResultsRow) res.iterator().next();
 
         Chromosome resChromosome = (Chromosome) row.get(0);
 
-    HashSet<Integer> expectedCollectionIds = new HashSet(Arrays.asList(new Integer[] {storedGene1.getId(), storedGene2.getId()}));
+        HashSet<Integer> expectedCollectionIds = new HashSet(Arrays.asList(new Integer[] {storedGeneLocation1.getId(), storedGeneLocation2.getId()}));
 
-    HashSet<Integer> actualCollectionIds = new HashSet();
-    for (Object o : resChromosome.getLocatedFeatures()) {
-        actualCollectionIds.add(((Gene) o).getId());
-    }
+        HashSet<Integer> actualCollectionIds = new HashSet();
+        for (Object o : resChromosome.getLocatedFeatures()) {
+            actualCollectionIds.add(((Location) o).getId());
+        }
 
-    assertEquals(expectedCollectionIds, actualCollectionIds);
+        assertEquals(expectedCollectionIds, actualCollectionIds);
     }
 
 
@@ -150,18 +150,18 @@ public class CreateReferencesTest extends TestCase {
         QueryClass qcMRNA = new QueryClass(MRNA.class);
         q.addFrom(qcMRNA);
         q.addToSelect(qcMRNA);
-    QueryField qfPrimaryIdentifier = new QueryField(qcMRNA, "primaryIdentifier");
-    SimpleConstraint sc = new SimpleConstraint(qfPrimaryIdentifier, ConstraintOp.EQUALS, new QueryValue("transcript1"));
-    q.setConstraint(sc);
+        QueryField qfPrimaryIdentifier = new QueryField(qcMRNA, "primaryIdentifier");
+        SimpleConstraint sc = new SimpleConstraint(qfPrimaryIdentifier, ConstraintOp.EQUALS, new QueryValue("transcript1"));
+        q.setConstraint(sc);
 
-    ObjectStore os = osw.getObjectStore();
+        ObjectStore os = osw.getObjectStore();
         Results res = os.execute(q);
         ResultsRow row = (ResultsRow) res.iterator().next();
 
         MRNA resMRNA = (MRNA) row.get(0);
 
-    assertEquals(storedThreePrimeUTR.getId(), resMRNA.getThreePrimeUTR().getId());
-    assertEquals(storedFivePrimeUTR.getId(), resMRNA.getFivePrimeUTR().getId());
+        assertEquals(storedThreePrimeUTR.getId(), resMRNA.getThreePrimeUTR().getId());
+        assertEquals(storedFivePrimeUTR.getId(), resMRNA.getFivePrimeUTR().getId());
     }
 
 
@@ -190,12 +190,12 @@ public class CreateReferencesTest extends TestCase {
         storedTranscript1 =
             (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
         storedTranscript1.setPrimaryIdentifier("transcript1");
-    storedTranscript1.setGene(storedGene1);
+        storedTranscript1.setGene(storedGene1);
 
         storedTranscript2 =
             (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
         storedTranscript2.setPrimaryIdentifier("transcript2");
-    storedTranscript2.setGene(storedGene1);
+        storedTranscript2.setGene(storedGene1);
 
         storedExon1 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         storedExon1.setPrimaryIdentifier("exon1");
@@ -206,9 +206,9 @@ public class CreateReferencesTest extends TestCase {
         storedExon3 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         storedExon3.setPrimaryIdentifier("exon3");
 
-    storedTranscript1.addExons(storedExon1);
-    storedTranscript1.addExons(storedExon2);
-    storedTranscript2.addExons(storedExon3);
+        storedTranscript1.addExons(storedExon1);
+        storedTranscript1.addExons(storedExon2);
+        storedTranscript2.addExons(storedExon3);
 
         storedThreePrimeUTR =
             (ThreePrimeUTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
@@ -226,8 +226,8 @@ public class CreateReferencesTest extends TestCase {
                 storedGeneLocation1, storedGeneLocation2,
                 storedTranscript1, storedTranscript2,
                 storedExon1, storedExon2, storedExon3,
-        storedThreePrimeUTR, storedFivePrimeUTR
-            }));
+                storedThreePrimeUTR, storedFivePrimeUTR
+        }));
 
         Iterator i = toStore.iterator();
         osw.beginTransaction();
