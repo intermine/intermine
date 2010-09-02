@@ -387,7 +387,7 @@
 
   <class className="org.intermine.model.bio.Location">
     <fields>
-      <fieldconfig fieldExpr="object.primaryIdentifier"/>
+      <fieldconfig fieldExpr="locatedOn.primaryIdentifier"/>
       <fieldconfig fieldExpr="start"/>
       <fieldconfig fieldExpr="end"/>
       <fieldconfig fieldExpr="strand"/>
