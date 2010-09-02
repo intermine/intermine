@@ -85,7 +85,7 @@ function usage () {
 	cat <<EOF
 
 Usage:
-$progname [-F] [-M] [-R] [-V] [-f file_name] [-g] [-i] [-r release] [-s] [-v] DCCid
+$progname [-F] [-M] [-R] [-V] [-P] [-T] [-f file_name] [-g] [-i] [-r release] [-s] [-v] DCCid
 	-F: full (modmine) rebuild (Uses modmine-build as default)
 	-M: test build (metadata only)
 	-R: restart full build after failure
