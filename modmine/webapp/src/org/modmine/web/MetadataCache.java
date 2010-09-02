@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DatabaseRecord;
 import org.intermine.model.bio.Experiment;
+import org.intermine.model.bio.ExpressionLevel;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.ResultFile;
@@ -763,7 +764,7 @@ public class MetadataCache
 
         QueryClass qcExp = new QueryClass(Experiment.class);
         QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
         QueryClass qcChr = new QueryClass(Chromosome.class);
         QueryClass qcLoc = new QueryClass(Location.class);
 
@@ -868,7 +869,7 @@ public class MetadataCache
 
         QueryClass qcExp = new QueryClass(Experiment.class);
         QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
 
         QueryField qfExpName = new QueryField(qcExp, "name");
         QueryField qfClass = new QueryField(qcLsf, "class");
@@ -910,17 +911,17 @@ public class MetadataCache
             ftClassSet.add(TypeUtil.unqualifiedName(ftClass.getName()));
         }
 
-        LinkedHashMap<String, LinkedHashSet<LocatedSequenceFeature>> featureMap =
-            new LinkedHashMap<String, LinkedHashSet<LocatedSequenceFeature>>();
+        LinkedHashMap<String, LinkedHashSet<SequenceFeature>> featureMap =
+            new LinkedHashMap<String, LinkedHashSet<SequenceFeature>>();
 
         for (String ftClassName : ftClassSet) {
-            LinkedHashSet<LocatedSequenceFeature> featureSet =
-                new LinkedHashSet<LocatedSequenceFeature>();
+            LinkedHashSet<SequenceFeature> featureSet =
+                new LinkedHashSet<SequenceFeature>();
 
             for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
                 ResultsRow row = iter.next();
                 Class ftClass= (Class) row.get(0);
-                LocatedSequenceFeature feature = (LocatedSequenceFeature) row.get(1);
+                SequenceFeature feature = (SequenceFeature) row.get(1);
 
                 if (TypeUtil.unqualifiedName(ftClass.getName()).equals(ftClassName)) {
                     featureSet.add(feature);
@@ -930,12 +931,12 @@ public class MetadataCache
         }
 
         Map<String, Long> featureCounts = new LinkedHashMap<String, Long>();
-        for (Map.Entry<String, LinkedHashSet<LocatedSequenceFeature>> entry : featureMap
+        for (Map.Entry<String, LinkedHashSet<SequenceFeature>> entry : featureMap
                 .entrySet()) {
-            Map<String, LocatedSequenceFeature> spanMap =
-                new LinkedHashMap<String, LocatedSequenceFeature>();
+            Map<String, SequenceFeature> spanMap =
+                new LinkedHashMap<String, SequenceFeature>();
 
-            for (LocatedSequenceFeature feature : entry.getValue()) {
+            for (SequenceFeature feature : entry.getValue()) {
                 String spanString = feature.getChromosome()
                         .getPrimaryIdentifier()
                         + ":"
@@ -971,7 +972,7 @@ public class MetadataCache
 
         QueryClass qcExp = new QueryClass(Experiment.class);
         QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
         QueryClass qcChr = new QueryClass(Chromosome.class);
         QueryClass qcLoc = new QueryClass(Location.class);
 
