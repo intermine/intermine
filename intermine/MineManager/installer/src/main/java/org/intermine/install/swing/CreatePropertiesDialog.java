@@ -123,7 +123,7 @@ public class CreatePropertiesDialog extends StandardJDialog
      * @serial
      */
     private JTextField superuserField =
-        new JTextField(new RestrictedInputDocument(USERNAME_CHARACTERS), "", 20);
+        new JTextField(new RestrictedInputDocument(EMAIL_CHARACTERS), "", 30);
     
     /**
      * Text field for the web application super user password.
