@@ -165,6 +165,7 @@
 
 <class name="Experiment" is-interface="true">
   <attribute name="name" type="java.lang.String" />
+  <attribute name="category" type="java.lang.String" />
   <reference name="project" referenced-type="Project" reverse-reference="experiments" />
   <collection name="submissions" referenced-type="Submission" reverse-reference="experiment" />
 </class>
