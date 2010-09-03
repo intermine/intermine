@@ -1,16 +1,6 @@
 <userprofile>
 
   <template-queries>
-    <template name="A_IdentifierSynonym_Object" title="primaryIdentifier or synonym --&gt; Database object." longDescription="Find an entry in the database using any primaryIdentifier or synonym." comment="This is the template that the quick search runs.  If the name is changed it also has to be changed for the quick search configuration - Rachel. Removed tags so no longer displayed - just used for quick search now.  Rachel.">
-      <query name="A_IdentifierSynonym_Object" model="genomic" view="Synonym.subject.primaryIdentifier Synonym.value Synonym.subject.organism.name" sortOrder="Synonym.subject.primaryIdentifier asc">
-        <node path="Synonym" type="Synonym">
-        </node>
-        <node path="Synonym.value" type="String">
-          <constraint op="=" value="timeout" description="" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-      </query>
-    </template>
     <template name="All_Genes_In_Organism_To_Publications" title="All genes in organism -&gt; Publications." longDescription="Show the publications for each gene in an organism. Data currently available for D.melanogaster." comment="">
       <query name="All_Genes_In_Organism_To_Publications" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.publications.pubMedId Gene.publications.firstAuthor Gene.publications.journal Gene.publications.year Gene.organism.name" sortOrder="Gene.primaryIdentifier asc">
         <node path="Gene" type="Gene">
