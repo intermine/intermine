@@ -41,6 +41,7 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
+
 /**
  * Create items from the modENCODE metadata extensions to the chado schema.
  * @author Kim Rutherford,sc,rns
@@ -102,10 +103,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, String> experimentIdRefMap = new HashMap<String, String>();
     private Map<String, List<Integer>> expSubMap = new HashMap<String, List<Integer>>();
 
+
     // ...we need a further map to link to submission
     private Map<Integer, String> submissionProjectMap = new HashMap<Integer, String>();
     private Map<Integer, String> submissionLabMap = new HashMap<Integer, String>();
 
+    // to store the category in experiment
+    private Map<Integer, String> submissionExpCatMap = new HashMap<Integer, String>();
+    // to check if experiment type is set
+    private Set<Integer> submissionWithExpTypeSet = new HashSet<Integer>();
 
     // submission/applied_protocol/protocol maps
     // -----------------------------------------
@@ -900,6 +906,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Item exp = getChadoDBConverter().createItem("Experiment");
             exp.setAttribute("name", name);
 
+            // find experiment category from map (take first available)
+            String category =  null;
+            for (Integer ii : expSubMap.get(name)) {
+                category = submissionExpCatMap.get(ii);
+                if (category != null) {
+                    exp.setAttribute("category", category);
+                    break;
+                }
+            }
+
             String project = expProMap.get(name);
             exp.setReference("project", projectIdRefMap.get(project));
             // note: the reference to submission collection is in a separate method
@@ -1070,6 +1086,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 dccIdMap.put(submissionId, value);
             }
 
+            if (fieldName.equals("category")) { // Data Type
+                submissionExpCatMap.put(submissionId, value);
+                continue;
+            }
+
+            if (fieldName.equals("experimentType")) { // Assay Type
+                submissionWithExpTypeSet.add(submissionId);
+            }
+
             if (fieldName.equals("pubMedId")) {
                 // sometime in the form PMID:16938558
                 if (value.contains(":")) {
@@ -1090,7 +1115,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         LOG.info("created " + count + " submission properties");
         res.close();
-        LOG.info("PROCESS TIME submission properties: " + (System.currentTimeMillis() - bT) + " ms");
+        LOG.info("PROCESS TIME submission properties: "
+                + (System.currentTimeMillis() - bT) + " ms");
     }
 
     /**
@@ -1845,7 +1871,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 createEFItem(submissionId, type, exFactor, null);
             }
         }
-        LOG.info("PROCESS TIME submission properties: " + (System.currentTimeMillis() - bT) + " ms");
+        LOG.info("PROCESS TIME submission properties: "
+                + (System.currentTimeMillis() - bT) + " ms");
     }
 
     // Traverse DAG following previous applied protocol links to build a list of all AppliedData
@@ -2721,7 +2748,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         appliedDataMap.get(dataId).intermineObjectId);
             }
         }
-        LOG.info("TIME setting submission-data references: " + (System.currentTimeMillis() - bT) + " ms");
+        LOG.info("TIME setting submission-data references: "
+                + (System.currentTimeMillis() - bT) + " ms");
     }
 
     private void createDatabaseRecords(Connection connection)
@@ -2750,7 +2778,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 }
             }
         }
-        LOG.info("TIME creating DatabaseRecord objects: " + (System.currentTimeMillis() - bT) + " ms");
+        LOG.info("TIME creating DatabaseRecord objects: "
+                + (System.currentTimeMillis() - bT) + " ms");
     }
 
     private void createResultFiles(Connection connection)
@@ -2927,11 +2956,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer storedSubmissionId = submissionMap.get(thisSubmissionId).interMineObjectId;
             getChadoDBConverter().store(collection, storedSubmissionId);
 
-            // may need protocols from referenced submissions to work out experiment type
-            protocolChadoIds.addAll(findProtocolIdsFromReferencedSubmissions(thisSubmissionId));
+            // TODO use Item?
+            if (!submissionWithExpTypeSet.contains(thisSubmissionId)) {
+                // may need protocols from referenced submissions to work out experiment type
+                protocolChadoIds.addAll(findProtocolIdsFromReferencedSubmissions(thisSubmissionId));
 
-            String piName = submissionProjectMap.get(thisSubmissionId);
-            setSubmissionExperimentType(storedSubmissionId, protocolChadoIds, piName);
+                String piName = submissionProjectMap.get(thisSubmissionId);
+                setSubmissionExperimentType(storedSubmissionId, protocolChadoIds, piName);
+            }
         }
         LOG.info("TIME setting submission-protocol references: "
                 + (System.currentTimeMillis() - bT) + " ms");
@@ -2973,8 +3005,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     /**
      * Work out an experiment type give the combination of protocols used for the
-     * submussion.  e.g. *immunoprecipitation + hybridization = chIP-chip
-     * @param protocolTypes the protocal types
+     * submission.  e.g. *immunoprecipitation + hybridization = chIP-chip
+     * @param protocolTypes the protocol types
      * @param piName name of PI
      * @return a short experiment type
      */
@@ -3194,6 +3226,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("Person Phone", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Person Email", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Person Roles", NOT_TO_BE_LOADED);
+
+        FIELD_NAME_MAP.put("Data Type", "category");
+        FIELD_NAME_MAP.put("Assay Type", "experimentType");
 
         // data: parameter values
         FIELD_NAME_MAP.put("Array Data File", "arrayDataFile");
