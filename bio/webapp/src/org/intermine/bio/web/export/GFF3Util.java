@@ -33,9 +33,9 @@ public abstract class GFF3Util
     private static final Logger LOG = Logger.getLogger(GFF3Util.class);
 
     /**
-     * Create a GFF3Record from a LocatedSequenceFeature.
+     * Create a GFF3Record from a SequenceFeature.
      *
-     * @param lsf the LocatedSequenceFeature
+     * @param lsf the SequenceFeature
      * @param soClassNameMap a Map from FlyMine class names to SO term names
      * @param sourceName the name of the data source encoded in the GFF, so the name of your project
      * @param extraAttributes name/value pairs to add to the attribute field of the GFF3Record
@@ -86,7 +86,7 @@ public abstract class GFF3Util
 
             if (type == null) {
                 throw new IllegalArgumentException("argument to makeGFF3Record isn't a "
-                                                   + "LocatedSequenceFeature");
+                                                   + "SequenceFeature");
             }
 
             start = chrLocation.getStart().intValue();
