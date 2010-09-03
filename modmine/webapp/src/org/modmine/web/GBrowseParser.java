@@ -1,7 +1,14 @@
-/**
+package org.modmine.web;
+
+/*
+ * Copyright (C) 2002-2010 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-package org.modmine.web;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -20,9 +27,9 @@ import org.intermine.util.PropertiesUtil;
  * @author contrino
  *
  */
-public class GBrowseParser {
-
-    private static final Logger LOG = Logger.getLogger(MetadataCache.class);
+public class GBrowseParser
+{
+    private static final Logger LOG = Logger.getLogger(GBrowseParser.class);
 
     private static final String GBROWSE_BASE_URL = getGBrowsePrefix();
     private static final String GBROWSE_URL_END = "/?show_tracks=1";
@@ -42,6 +49,7 @@ public class GBrowseParser {
         private String organism; // {fly,worm}
         private String track;    // e.g. Snyder_PHA4_GFP_COMB
         private String subTrack; // e.g. PHA4_L2_GFP
+        private Integer DCCid;
 
         /**
          * Instantiates a GBrowseTrack only to track level.
@@ -61,11 +69,13 @@ public class GBrowseParser {
          * @param organism     e.g. fly, worm
          * @param track        e.g. Snyder_PHA4_GFP_COMB
          * @param subTrack     e.g. PHA4_L2_GFP
+         * @param DCCid
          */
-        public GBrowseTrack(String organism, String track, String subTrack) {
+        public GBrowseTrack(String organism, String track, String subTrack, Integer DCCid) {
             this.organism  = organism;
             this.track = track;
             this.subTrack = subTrack;
+            this.DCCid = DCCid;
         }
 
         /**
@@ -87,6 +97,13 @@ public class GBrowseParser {
          */
         public String getSubTrack() {
             return subTrack;
+        }
+
+        /**
+         * @return the DCCid
+         */
+        public Integer getDCCid() {
+            return DCCid;
         }
     }
 
@@ -153,7 +170,7 @@ public class GBrowseParser {
                             LOG.debug("SUBTRACK: " + subTrack + "|" + dccId);
                             toAppend.setLength(0); // empty buffer
                             GBrowseTrack newTrack =
-                                new GBrowseTrack(organism, trackName.toString(), subTrack);
+                                new GBrowseTrack(organism, trackName.toString(), subTrack, dccId);
                             addToGBMap(submissionsToTracks, dccId, newTrack);
                         }
                     }
@@ -193,7 +210,7 @@ public class GBrowseParser {
      * or default to one
      * @return the base URL
      */
-    private static String getGBrowsePrefix() {
+    public static String getGBrowsePrefix() {
         Properties props = PropertiesUtil.getProperties();
         String gbURL = props.getProperty("gbrowse.prefix") + "/";
         if (gbURL == null || gbURL.length() < 5) {

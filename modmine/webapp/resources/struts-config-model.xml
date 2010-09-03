@@ -1,4 +1,4 @@
-<!-- this comment is here to prevent ant from setting model.struts.config to null -->
+subListGBrowseTrackDisplayer<!-- this comment is here to prevent ant from setting model.struts.config to null -->
 
 <action path="/sequenceExporter"
   type="org.intermine.bio.web.struts.SequenceExportAction" />
@@ -23,8 +23,8 @@
 <action path="/initAttributeLinkDisplayer"
   type="org.intermine.bio.web.AttributeLinkDisplayerController" />
 
-<action path="/initTracksDisplayer"
-  type="org.modmine.web.TrackDisplayerController" />
+<action path="/initSubListGBrowseTrackDisplayer"
+  type="org.modmine.web.SubListGBrowseTrackController" />
 
 <action path="/initProjectList"
   type="org.modmine.web.ProjectsController" />

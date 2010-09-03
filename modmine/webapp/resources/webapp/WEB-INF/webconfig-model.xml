@@ -129,6 +129,9 @@
       <displayer src="tracksDisplayer.tile"/>
       <displayer src="submissionProtocolsDisplayer.tile" showOnLeft="true"/>
     </longdisplayers>
+    <bagdisplayers>
+      <displayer src="subListGBrowseTrackDisplayer.tile" showOnLeft="true"/>
+    </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.SubmissionData">
