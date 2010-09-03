@@ -147,15 +147,6 @@ echo "Getting FlyBase FASTA files"
 echo "==========================================================="
 echo
 echo "==========================================================="
-echo "Getting Ensembl Anopheles files"
-./get_ensembl_anoph $shared_data anopheles_gambiae core 
-    if [ $? -ne 0 ]
-    then
-        "error getting Ensembl Anopheles files" 2>&1 >> tempfile
-    fi
-echo "==========================================================="
-echo
-echo "==========================================================="
 echo "Getting Redfly GFF files"
 ./get_redfly "$shared_data/redfly" $tempfile
     if [ $? -ne 0 ]
