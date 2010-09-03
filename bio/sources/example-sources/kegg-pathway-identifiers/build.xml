@@ -1,0 +1,5 @@
+<project name="kegg-pathway-identifiers" default="default" basedir=".">
+  <description>build, test, package kegg-pathway-identifiers</description>
+  
+  <import file="../../../../imbuild/source.xml"/>
+</project>
