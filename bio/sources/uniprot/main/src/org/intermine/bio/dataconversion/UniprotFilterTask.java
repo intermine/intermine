@@ -69,7 +69,7 @@ public class UniprotFilterTask extends Task
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (fileSet == null) {
             throw new BuildException("fileSet must be specified");
         }

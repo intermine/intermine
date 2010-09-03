@@ -114,7 +114,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         commonFeatureInterMineTypes.add("CDS");
     }
 
-	/**
+    /**
      * Get a list of the chado/so types of the LocatedSequenceFeatures we wish to load.  The list
      * will not include chromosome-like features.
      * @return the list of features
