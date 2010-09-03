@@ -252,6 +252,10 @@
   <attribute name="embargoDate" type="java.util.Date" />
   <attribute name="DCCid" type="java.lang.Integer" />
   <attribute name="experimentType" type="java.lang.String" />
+  <attribute name="totalReadCount" type="java.lang.Integer" />
+  <attribute name="multiplyMappedReadCount" type="java.lang.Integer" />
+  <attribute name="uniquelyMappedReadCount" type="java.lang.Integer" /> 
+  
   <reference name="organism" referenced-type="Organism" />
   <reference name="publication" referenced-type="Publication"/>
     <reference name="experiment" referenced-type="Experiment" reverse-reference="submissions" />
