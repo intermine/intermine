@@ -97,7 +97,7 @@ public class MetadataCache
     }
 
     /**
-     * Fetch GBrowse tracks per submission fpr display.  This updates automatically from the GBrowse
+     * Fetch GBrowse tracks per submission for display. This updates automatically from the GBrowse
      * server and refreshes periodically (according to threshold).  When refreshing another process
      * is spawned which will update tracks when finished, if GBrowse can't be accessed the current
      * list of tracks of tracks are preserved.
@@ -598,8 +598,8 @@ public class MetadataCache
 
     private static void readExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-//        Map <String, Map<String, Long>> featureCounts = getExperimentFeatureCounts(os);
-        Map <String, Map<String, Long>> featureCounts = getUniqueExperimentFeatureCounts(os);
+        Map <String, Map<String, Long>> featureCounts = getExperimentFeatureCounts(os);
+//        Map <String, Map<String, Long>> featureCounts = getUniqueExperimentFeatureCounts(os);
         Map <String, Map<String, Long>> uniqueFeatureCounts = getUniqueExperimentFeatureCounts(os);
 
 
