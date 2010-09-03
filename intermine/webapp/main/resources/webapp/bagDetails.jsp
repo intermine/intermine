@@ -165,7 +165,7 @@
 <%-- Bag Description --%>
 <c:choose>
     <c:when test="${myBag == 'true'}">
-      <div id="bagDescriptionDiv" onclick="jQuery('#bagDescriptionDiv').toggle();jQuery('#bagDescriptionTextarea').toggle();jQuery('#textarea').focus()">
+      <div id="bagDescriptionDiv" style="height:65px;" onclick="jQuery('#bagDescriptionDiv').toggle();jQuery('#bagDescriptionTextarea').toggle();jQuery('#textarea').focus()">
         <h3><img src="images/icons/description.png" title="Description of your list"/>&nbsp;Description</h3>
         <c:choose>
           <c:when test="${! empty bag.description}">
@@ -194,6 +194,12 @@
 <small>Date Created:  <im:dateDisplay date="${bag.dateCreated}" /></small>
 </div>
 
+<%-- BagDisplayers--%>
+    <tiles:insert page="/bagDisplayers.jsp">
+       <tiles:put name="bag" beanName="bag"/>
+       <tiles:put name="showOnLeft" value="true"/>
+    </tiles:insert>
+
 </TD>
 
 <TD align="left" valign="top" width="40%">
@@ -213,9 +219,7 @@
 
 </p>
 
-<tiles:insert page="/bagDisplayers.jsp">
-   <tiles:put name="bag" beanName="bag"/>
-</tiles:insert>
+<%-- BagDisplayers used to be inserted here --%>
 
 </div>
 </html:form>

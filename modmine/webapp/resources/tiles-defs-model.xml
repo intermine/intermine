@@ -18,6 +18,9 @@
 <definition name="tracksDisplayer.tile" path="/model/tracksDisplayer.jsp"
           controllerUrl="/initTracksDisplayer.do"/>
 
+<definition name="subListGBrowseTrackDisplayer.tile" path="/model/subListGBrowseTrackDisplayer.jsp"
+          controllerUrl="/initSubListGBrowseTrackDisplayer.do"/>
+
 <definition name="projects.tile" path="/model/projects.jsp"
         controllerUrl="/initProjects.do"/>
 <definition name="submissions.tile" path="/model/submissions.jsp"
