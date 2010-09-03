@@ -65,9 +65,9 @@ public class GFF3UtilTest extends TestCase
 
         Map<String, String> soClassNameMap = getSoClassNameMap();
 
-        GFF3Record gff3Gene = org.intermine.bio.web.export.GFF3Util.makeGFF3Record(gene, soClassNameMap, "FlyMine", extraAttributes);
+        GFF3Record gff3Gene = GFF3Util.makeGFF3Record(gene, soClassNameMap, "FlyMine", extraAttributes);
 
-        GFF3Record gff3Exon = org.intermine.bio.web.export.GFF3Util.makeGFF3Record(exon, soClassNameMap, "FlyMine",
+        GFF3Record gff3Exon = GFF3Util.makeGFF3Record(exon, soClassNameMap, "FlyMine",
                                                       new HashMap<String, List<String>>());
 
         System.err.println (gff3Gene);
