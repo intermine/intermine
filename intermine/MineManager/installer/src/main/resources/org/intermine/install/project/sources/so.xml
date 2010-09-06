@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<sd:source xmlns:sd="http://flymine.org/sourcedescriptor/1.0"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://flymine.org/sourcedescriptor/1.0 http://www.flymine.org/download/schemas/sourcedescriptor.xsd"
-           type="so">
-
-</sd:source>
