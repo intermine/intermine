@@ -5,8 +5,8 @@ create-intergenic-region-features,true
 create-overlap-relations-flymine,true
 do-sources,true
 create-intron-features,true
-create-search-index,true
 create-attribute-indexes,true
+creat-search-index,true
 summarise-objectstore,true
 create-autocomplete-index,true
 
