@@ -82,6 +82,7 @@ public class ProjectXmlBinding
         /**
          * @see DefaultHandler#startElement
          */
+        
         public void startElement(String uri, String localName, String qName, Attributes attrs) {
         	if (qName == null) {
         			return;
