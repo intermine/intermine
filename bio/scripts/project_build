@@ -36,7 +36,7 @@ sub usage
 {
   die <<"EOF";
 usage:
-  $0 [-v] [-b] [-l | -r] [-t] [-u | -U] [-V <version>] [-D dest_database_name] [-a <actions>] dump_host dump_prefix
+  $0 [-v] [-b] [-l | -r] [-T] [-u | -U] [-V <version>] [-D dest_database_name] [-a <actions>] dump_host dump_prefix
 
 flags:
  -v is passed to ant
@@ -46,8 +46,10 @@ flags:
     (creating when using the -t flag)
  -n parse files and report actions, but don't execute anything
  -V set the release number to pass to ant (as -Drelease=release_number)
- -t instead of dumping and reloading, make backup copies of the database in the
-    server using the "CREATE DATABASE foo WITH TEMPLATE bar" command
+ -T instead of making backup copies of the database in the
+    server using the "CREATE DATABASE foo WITH TEMPLATE bar" command,
+    dump and reload to restart.
+ -E Set the default database encoding (defaults to SQL_ASCII if not passed)
  -D set the destination database for the completed build; the database will be
     copied to this name in the same postgres server that the build used
  -a set the list of actions to perform - the list must be a subset of the
@@ -91,7 +93,9 @@ my $dry_run = 0;
 
 # if true don't dump and reload, instead do backup copies in the server using
 # the "CREATE DATABASE foo WITH TEMPLATE bar" command
-my $server_backup = 0;
+my $server_backup = 1;
+
+my $db_encoding = 'SQL_ASCII';
 
 # if true, run build-db before starting the integration
 my $run_build_db = 0;
@@ -103,7 +107,7 @@ my $start_action = undef;
 
 my %opts = ();
 
-if (!getopts('vrlbtnuUD:a:V:', \%opts)) {
+if (!getopts('vrlbTnuUD:a:V:', \%opts)) {
   usage();
 }
 
@@ -124,8 +128,12 @@ if ($opts{n}) {
   $dry_run = 1;
 }
 
-if ($opts{t}) {
-  $server_backup = 1;
+if ($opts{T}) {
+  $server_backup = 0;
+}
+
+if (defined $opts{E}) {
+    $db_encoding = $opts{E};
 }
 
 if ($opts{b}) {
@@ -188,7 +196,7 @@ my @psql_command = 'psql';
 my @dump_command = qw[pg_dump -F c -i];
 my @load_command = qw[pg_restore -1 -i];
 my @dropdb_command = qw[dropdb];
-my @createdb_command = qw[createdb -E SQL_ASCII];
+my @createdb_command = (qw[createdb -E ], $db_encoding);
 
 sub log_message
 {
