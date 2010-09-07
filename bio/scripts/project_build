@@ -524,7 +524,6 @@ sub start_element
       $self->{properties_file} = $args->{Attributes}{value};
   } else {
       return;
-    }
   }
 
   if ($dump_flag) {
@@ -975,7 +974,7 @@ for my $action (@actions) {
         die qq{unknown action: "$action_type"\n};
     }
     
-  }
+  
 
     my $end_time = time();
     my $action_time = $end_time - $start_time;
