@@ -169,6 +169,15 @@
       <fieldconfig fieldExpr="predictionStatus"/>
     </fields>
   </class>
+  
+    <class className="org.intermine.model.bio.ReadCount">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="value"/>
+    </fields>
+  </class>
+  
+  
 
 
 <!-- =================================================================== -->

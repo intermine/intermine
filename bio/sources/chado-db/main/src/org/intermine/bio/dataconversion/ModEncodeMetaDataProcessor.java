@@ -1,4 +1,4 @@
-package org.intermine.bio.dataconversion;
+ package org.intermine.bio.dataconversion;
 
 /*
  * Copyright (C) 2002-2010 FlyMine
@@ -121,14 +121,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, Integer> protocolItemToObjectId = new HashMap<String, Integer>();
     // submission chado id to item identifier of Protocol used to generate GFF
     private Map<Integer, String> scoreProtocols = new HashMap<Integer, String>();
-    private Map<Integer, Integer> publicationIdMap = new HashMap<Integer, Integer>();
-    private Map<Integer, String> publicationIdRefMap = new HashMap<Integer, String>();
     private Map<Integer, String> protocolTypesMap = new HashMap<Integer, String>();
     private Map<Integer, Integer> appliedProtocolIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> appliedProtocolIdRefMap = new HashMap<Integer, String>();
     // list of firstAppliedProtocols, first level of the DAG linking
     // the applied protocols through the data (and giving the flow of data)
     private List<Integer> firstAppliedProtocols = new ArrayList<Integer>();
+
+    private Map<Integer, Integer> publicationIdMap = new HashMap<Integer, Integer>();
+    private Map<Integer, String> publicationIdRefMap = new HashMap<Integer, String>();
 
     // experimental factor maps
     // ------------------------
@@ -341,10 +342,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
 
     private void storeSubmissionsCollections(Map<Integer, List<String>> subCollections)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         for (Map.Entry<Integer, List<String>> entry : subCollections.entrySet()) {
-                Integer featureObjectId = entry.getKey();
-                ReferenceList collection = new ReferenceList("submissions", entry.getValue());
+            Integer featureObjectId = entry.getKey();
+            ReferenceList collection = new ReferenceList("submissions", entry.getValue());
             getChadoDBConverter().store(collection, featureObjectId);
         }
     }
@@ -1086,12 +1087,27 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 dccIdMap.put(submissionId, value);
             }
 
-            if (fieldName.equals("category")) { // Data Type
+            if (fieldName.equals("category")) {
+                // Data Type, stored in experiment
                 submissionExpCatMap.put(submissionId, value);
                 continue;
             }
 
-            if (fieldName.equals("experimentType")) { // Assay Type
+            if (fieldName.endsWith("Read Count")) {
+                // all read counts are considered a collection for submission
+                Item readCount = getChadoDBConverter().createItem("ReadCount");
+                readCount.setAttribute("name", fieldName);
+                readCount.setAttribute("value", value);
+
+                // setting references to SubmissionData
+                readCount.setReference("submission",
+                        submissionMap.get(submissionId).itemIdentifier);
+                Integer intermineObjectId = getChadoDBConverter().store(readCount);
+                continue;
+            }
+
+            if (fieldName.equals("experimentType")) {
+                // Assay Type
                 submissionWithExpTypeSet.add(submissionId);
             }
 
@@ -1861,9 +1877,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 exFactorNames.remove(exFactor);
             }
 
-            // Store Submission.properties/ SubmissionProperty.submissions
-            storeSubmissionCollection(storedSubmissionId, "properties", allPropertyItems);
-
             // deal with remaining factor names (e.g. the ones for which we did
             // not find a corresponding attribute
             for (String exFactor : exFactorNames) {
@@ -2436,7 +2449,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         return subProp;
     }
-
 
     private String getCorrectedOfficialName(SubmissionProperty prop) {
         String preferredType = getPreferredSynonym(prop.type);
@@ -3229,10 +3241,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         FIELD_NAME_MAP.put("Data Type", "category");
         FIELD_NAME_MAP.put("Assay Type", "experimentType");
-        FIELD_NAME_MAP.put("Total Read Count", "totalReadCount");
-        FIELD_NAME_MAP.put("Multiply Mapped Read Count", "multiplyMappedReadCount");
-        FIELD_NAME_MAP.put("Uniquely Mapped Read Count", "uniquelyMappedReadCount");
+        // these are names in name/value couples for ReadCount
+        FIELD_NAME_MAP.put("Total Read Count", "Total Read Count");
+        FIELD_NAME_MAP.put("Multiply Mapped Read Count", "Multiply Mapped Read Count");
+        FIELD_NAME_MAP.put("Uniquely Mapped Read Count", "Uniquely Mapped Read Count");
 
+        
         // data: parameter values
         FIELD_NAME_MAP.put("Array Data File", "arrayDataFile");
         FIELD_NAME_MAP.put("Array Design REF", "arrayDesignRef");
