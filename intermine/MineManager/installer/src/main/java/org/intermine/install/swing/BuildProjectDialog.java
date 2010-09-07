@@ -121,6 +121,44 @@ public class BuildProjectDialog extends StandardJDialog
         new JCheckBox(Messages.getMessage("build.project.flag.D"));
     
     /**
+      * Create label for userprofile options group
+      * @serial
+      */
+    private JLabel userDBOptionsLabel =
+        new JLabel(Messages.getMessage("build.projectuserprofile.label"));
+
+    /**
+     * Create write userprofile database without override option radio button
+     * @serial
+     */
+    private JRadioButton writeUserDbRadio = 
+        new JRadioButton(Messages.getMessage("build.project.flag.u"));
+
+    /**
+      * Create force write userprofile database option radio button
+      * @serial
+      */
+    private JRadioButton overwriteUserDbRadio =
+        new JRadioButton(Messages.getMessage("build.project.flag.U"));
+
+   /**
+     * Create do not write userprofile database option radio button
+     * @serial
+     */
+    private JRadioButton nowriteUserDbRadio = 
+        new JRadioButton(Messages.getMessage("build.project.NOWRITE"), true);
+
+    /**
+      * Create Button group for userdb radio buttons
+      * @serial
+      */
+    private ButtonGroup userDBButtonGroup = 
+        new ButtonGroup();
+    userDBButtonGroup.add(writeUserDbRadio);
+    userDBButtonGroup.add(overwriteUserDbRadio);
+    userDBButtonGroup.add(nowriteUserDbRadio);
+
+    /**
      * Destination database text field label.
      * @serial
      */
@@ -237,6 +275,18 @@ public class BuildProjectDialog extends StandardJDialog
         cons.gridy++;
         cp.add(releaseNumberCheckBox, cons);
         
+        cons.gridy++;
+        cp.add(userDBOptionsLabel, cons);
+
+        cons.gridy++;
+        cp.add(writeUserDbRadio, cons);
+
+        cons.gridy++;
+        cp.add(overwriteUserDbRadio, cons);
+
+        cons.gridy++;
+        cp.add(nowriteUserDbRadio, cons);
+
         cons.gridy++;
         cons.gridx++;
         cons.weightx = 0;
@@ -494,6 +544,12 @@ public class BuildProjectDialog extends StandardJDialog
             }
             if (testCheckBox.isSelected()) {
                 commands.add("-n");
+            }
+            if (writeUserDbRadio.isSelected()) {
+                commands.add("-u");
+            }
+            else if (overwriteUserDbRadio.isSelected()) {
+                commands.add("-U");
             }
             if (releaseNumberCheckBox.isSelected()) {
                 assert StringUtils.isNotEmpty(releaseNumberTextField.getText())
