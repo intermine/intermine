@@ -31,6 +31,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.ButtonGroup;
+import javax.swing.JRadioButton; 
+import javax.swing.JCheckBox;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -148,15 +151,6 @@ public class BuildProjectDialog extends StandardJDialog
     private JRadioButton nowriteUserDbRadio = 
         new JRadioButton(Messages.getMessage("build.project.NOWRITE"), true);
 
-    /**
-      * Create Button group for userdb radio buttons
-      * @serial
-      */
-    private ButtonGroup userDBButtonGroup = 
-        new ButtonGroup();
-    userDBButtonGroup.add(writeUserDbRadio);
-    userDBButtonGroup.add(overwriteUserDbRadio);
-    userDBButtonGroup.add(nowriteUserDbRadio);
 
     /**
      * Destination database text field label.
@@ -240,6 +234,8 @@ public class BuildProjectDialog extends StandardJDialog
      * event listeners. 
      */
     private void init() {
+
+        
         setName("Build Project Dialog");
         setTitle(Messages.getMessage("build.project.title"));
         
@@ -349,6 +345,17 @@ public class BuildProjectDialog extends StandardJDialog
         destinationLabel.setEnabled(false);
         destinationTextField.setEnabled(false);
         
+
+        /**
+            * Create Button group for userdb radio buttons
+            * @serial
+        */
+        ButtonGroup userDBButtonGroup = 
+            new ButtonGroup();
+        userDBButtonGroup.add(writeUserDbRadio);
+        userDBButtonGroup.add(overwriteUserDbRadio);
+        userDBButtonGroup.add(nowriteUserDbRadio);
+
         ItemListener restartListener = new RestartCheckBoxListener();
         restart1CheckBox.addItemListener(restartListener);
         restart2CheckBox.addItemListener(restartListener);
