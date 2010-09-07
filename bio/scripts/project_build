@@ -36,7 +36,7 @@ sub usage
 {
   die <<"EOF";
 usage:
-  $0 [-v] [-b] [-l | -r] [-t] [-V <version>] [-D dest_database_name] [-a <actions>] dump_host dump_prefix
+  $0 [-v] [-b] [-l | -r] [-t] [-u | -U] [-V <version>] [-D dest_database_name] [-a <actions>] dump_host dump_prefix
 
 flags:
  -v is passed to ant
@@ -61,6 +61,8 @@ flags:
        name with "-dump" appended
           eg -a fly-fish-dump-  (starts with the fly-fish dump then continues)
              -a fly-fish-dump,flymine-static,create-references,$final_dump_name
+ -u Build userprofile database if not already populated
+ -U Build userprofile database even if already populated
 
 dump_host is the host to run pg_dump and pg_restore on
 
@@ -101,7 +103,7 @@ my $start_action = undef;
 
 my %opts = ();
 
-if (!getopts('vrlbtnD:a:V:', \%opts)) {
+if (!getopts('vrlbtnuUD:a:V:', \%opts)) {
   usage();
 }
 
@@ -132,6 +134,15 @@ if ($opts{b}) {
 
 if ($opts{D}) {
   $dest_db = $opts{D};
+}
+
+my $build_userprofile_db;
+if ($opts{u} or $opts{U}) {
+    $build_userprofile_db = 1;
+}
+my $overwrite_userprofile_ok;
+if ($opts{U}) {
+    $overwrite_userprofile_ok = 1;
 }
 
 if (exists $opts{a}) {
@@ -503,14 +514,15 @@ sub start_element
                                args => ["-Dsource=$action_name"],
                                name => $action_name
                               };
-  } else {
-    if ($element_name eq 'post-process') {
+  } elsif ($element_name eq 'post-process') {
       push @{$self->{actions}}, {
                                  type => 'postprocess',
                                  args => ["-Daction=$action_name"],
                                  name => $action_name
                                 };
-    } else {
+  } elsif ($element_name eq 'property' and $action_name eq 'intermine.properties.file') {
+      $self->{properties_file} = $args->{Attributes}{value};
+  } else {
       return;
     }
   }
@@ -598,6 +610,33 @@ sub fix_pgpass
   chmod 0600, $pgpass_file or die "can't change mode of $pgpass_file: $!\n";
 }
 
+sub userprofile_db_already_populated {
+    my $properties_file = shift;
+    my $userprofiledb;
+    my $psql_opt = q{-c '\d'};
+
+    open (my $props, '<', $ENV{HOME}.'/.intermine/'.$properties_file) 
+        or die "Cannot open $project_file for reading, $!";
+    while (<$props>) {
+        if (/\Qdb.userprofile-production.datasource.databaseName\E/) {
+            (undef, $userprofiledb) = split(/=/);
+            last;
+        }
+    }
+    close $props or die "Could not close $project_file after reading, $!";
+
+    my $command  = join(' ', @psql_command, $psql_opt, $userprofiledb);
+    my $results = qx/$command/;
+    if ($results =~ /(?:psql: FATAL database.*does not exist|No relations found)/) {
+        return 0; # database does not exist, or is empty
+    } elsif ($results =~ /List of Relations.*\d+ rows/s) {
+        return 1; #database exists and is populated
+    } else {
+        die "Unknown psql response status: $results";
+    }
+}
+
+
 sub get_actions
 {
   my $handler = ProjectXML::Hander->new();
@@ -627,6 +666,19 @@ sub get_actions
                     name => "copy_to_$dest_db"
                    };
   }
+
+  my $properties_file = $handler->{properties_file};
+
+  if ($build_userprofile_db) {
+      if ($overwrite_userprofile_ok 
+              or userprofile_db_already_populated($properties_file) ) {
+          push @actions, {
+              type => 'webapp',
+              args => 'build-db-userprofile',
+              name => 'Build_Userprofile_DB',
+          };
+     }
+  };
 
   my @return_actions = ();
 
@@ -899,15 +951,14 @@ for my $action (@actions) {
   if ($seen_start_action) {
     my $start_time = time();
 
-    if ($action_type eq 'integrate' || $action_type eq 'postprocess') {
+    if ($action_type =~ /^(?:integrate|postprocess|webapp)$/) {
       my $saved_dir = getcwd;
       chdir $action_type
         or die "can't change directory into: $saved_dir/$action_type\n";      
       run_and_check_status @ant_command, @action_args;
       chdir $saved_dir
         or die "can't return to previous directory ($saved_dir) after $action_type\n";
-    } else {
-      if ($action_type eq 'dump') {
+    } elsif ($action_type eq 'dump') {
         if (@action_args != 1) {
           die "dump: needs one parameter at: $action: @action_args\n";
         }
@@ -918,14 +969,13 @@ for my $action (@actions) {
           dump_db ($prod_db, $prod_user, $prod_pass, $prod_host, $prod_port,
                    "$dump_file_prefix.$action_args[0]");
         }
-      } else {
-        if ($action_type eq 'copy') {
-          copy_db($prod_db, $prod_user, $prod_pass, $prod_host, $prod_port, $action_args[0]);
-        } else {
-          die qq{unknown action: "$action_type"\n};
-        }
-      }
+    } elsif ($action_type eq 'copy') {
+        copy_db($prod_db, $prod_user, $prod_pass, $prod_host, $prod_port, $action_args[0]);
+    } else {
+        die qq{unknown action: "$action_type"\n};
     }
+    
+  }
 
     my $end_time = time();
     my $action_time = $end_time - $start_time;
