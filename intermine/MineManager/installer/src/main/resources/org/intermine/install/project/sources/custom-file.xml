@@ -3,7 +3,9 @@
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="http://flymine.org/sourcedescriptor/1.0 http://www.flymine.org/download/schemas/sourcedescriptor.xsd"
                type="custom-file">
-    
+
         <property name="src.data.file" required="true" type="file" hidden="true" />
+
+         <derivation antTask="have.file.custom.tgt" />
     </sd:source>
 
