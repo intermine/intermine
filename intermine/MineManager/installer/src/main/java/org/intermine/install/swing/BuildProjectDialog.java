@@ -34,6 +34,8 @@ import javax.swing.JTextField;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton; 
 import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.BorderFactory;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -274,46 +276,58 @@ public class BuildProjectDialog extends StandardJDialog
         cons.weightx = 1;
         cp.add(infoLabel, cons);
         
-        cons.gridy++;
-        cp.add(startPolicyLabel, cons);
+        JPanel startPolicyPanel = new JPanel();
+        startPolicyPanel.setBorder(BorderFactory.createLoweredBevelBorder());
+        GridBagConstraints startPolicyPanelCons = GridBagHelper.setup(startPolicyPanel);
+        startPolicyPanelCons.gridwidth = GridBagConstraints.REMAINDER;
+        startPolicyPanel.add(startPolicyLabel, startPolicyPanelCons);
 
-        cons.gridy++;
-        cons.gridwidth = 3;
-        cp.add(buildDbRadioButton, cons);
+        startPolicyPanelCons.gridy++;
+        startPolicyPanelCons.gridwidth = 3;
+        startPolicyPanel.add(buildDbRadioButton, startPolicyPanelCons);
+        
+        startPolicyPanelCons.gridy++;
+        startPolicyPanel.add(restart1RadioButton, startPolicyPanelCons);
+        
+        startPolicyPanelCons.gridy++;
+        startPolicyPanel.add(restart2RadioButton, startPolicyPanelCons);
+
+        startPolicyPanelCons.gridy++;
+        startPolicyPanel.add(testRadioButton, startPolicyPanelCons);
         
         cons.gridy++;
-        cp.add(restart1RadioButton, cons);
-        
-        cons.gridy++;
-        cp.add(restart2RadioButton, cons);
+        cp.add(startPolicyPanel, cons);
 
-        cons.gridy++;
-        cp.add(testRadioButton, cons);
-        
-        cons.gridy++;
-        cp.add(userDBOptionsLabel, cons);
+        JPanel userDBPanel = new JPanel();
+        userDBPanel.setBorder(BorderFactory.createLoweredBevelBorder());
+        GridBagConstraints userDBCons = GridBagHelper.setup(userDBPanel);
 
-        cons.gridy++;
-        cp.add(nowriteUserDbRadio, cons);
+        cons.gridwidth = GridBagConstraints.REMAINDER;
 
-        cons.gridy++;
-        cp.add(writeUserDbRadio, cons);
+        userDBPanel.add(userDBOptionsLabel, userDBCons);
 
+        userDBCons.gridy++;
+        userDBPanel.add(nowriteUserDbRadio, userDBCons);
+
+        userDBCons.gridy++;
+        userDBPanel.add(writeUserDbRadio, userDBCons);
+
+        userDBCons.gridy++;
+        userDBPanel.add(overwriteUserDbRadio, userDBCons);
+    
         cons.gridy++;
-        cp.add(overwriteUserDbRadio, cons);
+        cp.add(userDBPanel, cons);
 
         cons.gridy++;
         cp.add(releaseNumberCheckBox, cons);
 
         cons.gridy++;
-        cons.gridx++;
         cons.weightx = 0;
         cons.gridwidth = 1;
         cp.add(releaseNumberLabel, cons);
         
-//        cons.gridx++;
-//        cons.weightx = 0.5;
-        cons.gridy++;
+        cons.gridx++;
+        cons.weightx = 0.5;
         cp.add(releaseNumberTextField, cons);
         
         cons.gridy++;
@@ -336,7 +350,6 @@ public class BuildProjectDialog extends StandardJDialog
         cp.add(destinationCheckBox, cons);
         
         cons.gridy++;
-        cons.gridx++;
         cons.weightx = 0;
         cons.gridwidth = 1;
         cp.add(destinationLabel, cons);
