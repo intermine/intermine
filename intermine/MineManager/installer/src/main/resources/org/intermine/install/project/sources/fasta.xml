@@ -4,7 +4,7 @@
            xsi:schemaLocation="http://flymine.org/sourcedescriptor/1.0 http://www.flymine.org/download/schemas/sourcedescriptor.xsd"
            type="fasta">
 
-    <property name="fasta.taxonId">
+    <property name="fasta.taxonId" required="true">
         <validation><![CDATA[^\d+(\s\d+)*$]]></validation>
     </property>
     <property name="fasta.className" type="class" />
