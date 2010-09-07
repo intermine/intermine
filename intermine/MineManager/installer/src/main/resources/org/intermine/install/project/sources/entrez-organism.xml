@@ -4,6 +4,6 @@
            xsi:schemaLocation="http://flymine.org/sourcedescriptor/1.0 http://www.flymine.org/download/schemas/sourcedescriptor.xsd"
            type="entrez-organism">
 
-    <property name="src.data.file" required="true" type="file" hidden="true" />
+    <property name="src.data.file" required="true" hidden="true" />
 
 </sd:source>
