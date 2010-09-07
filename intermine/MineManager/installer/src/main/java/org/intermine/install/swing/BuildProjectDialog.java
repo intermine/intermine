@@ -203,7 +203,8 @@ public class BuildProjectDialog extends StandardJDialog
      * Dump prefix text field.
      * @serial
      */
-    private JTextField prefixTextField = new JTextField(30);
+    private JTextField prefixTextField 
+        = new JTextField(Messages.getMessage("build.project.dump.prefix"), 30);
 
     /**
      * Action to start running <code>project_build</code>.
@@ -574,7 +575,7 @@ public class BuildProjectDialog extends StandardJDialog
                 commands.add("-V");
                 commands.add(releaseNumberTextField.getText());
             }
-            if (! serverBackupCheckBox.isSelected()) {
+            if (serverBackupCheckBox.isSelected()) {
                 commands.add("-T");
             }
             if (destinationCheckBox.isSelected()) {
@@ -584,6 +585,10 @@ public class BuildProjectDialog extends StandardJDialog
                 commands.add(destinationTextField.getText());
             }
             
+            assert StringUtils.isNotEmpty(encodingTextField.getText()) : "No encoding value";
+            commands.add("-E");
+            commands.add(encodingTextField.getText());
+
             assert StringUtils.isNotEmpty(hostTextField.getText()) : "No host value";
             commands.add(hostTextField.getText());
             
