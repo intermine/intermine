@@ -39,6 +39,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
@@ -46,6 +47,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
+import javax.swing.Box;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -192,6 +194,11 @@ public class ProjectEditor extends JFrame
     private JPanel statusPanel = new JPanel();
     
     /**
+     * Button panel 
+     * @serial
+     */
+    private JPanel buttonPanel = new JPanel();
+    /**
      * Status message label.
      * @serial
      */
@@ -236,6 +243,11 @@ public class ProjectEditor extends JFrame
     private Action postProcessorAction = new EditPostProcessorAction();
     
     /**
+      * Create load action
+      */
+    private Action loadAction = new OpenAction();
+
+    /**
      * Support for firing <code>ProjectEvent</code>s.
      * @serial
      */
@@ -270,7 +282,21 @@ public class ProjectEditor extends JFrame
      */
     private transient boolean projectModified;
 
-    
+    /**
+      * Create Build Button
+      */
+    private JButton buildButton = new JButton(Messages.getMessage("buildproject"));
+   
+    /**
+      * Create Load Button
+      */
+    private JButton loadButton = new JButton(Messages.getMessage("loadmine"));
+
+    /**
+      * Create exit Button
+      */
+    private JButton exitButton = new JButton(Messages.getMessage("exit"));
+
     /**
      * Initialise by default.
      * 
@@ -380,8 +406,14 @@ public class ProjectEditor extends JFrame
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         cp.add(splitPane, BorderLayout.CENTER);
         
+        initButtonPanel();
+
+        Box vbox = Box.createVerticalBox();
+        vbox.add(sourcePanel);
+        vbox.add(buttonPanel);
+
         splitPane.setLeftComponent(new JScrollPane(sourceList));
-        splitPane.setRightComponent(sourcePanel);
+        splitPane.setRightComponent(vbox);
         
         splitPane.setDividerLocation(200);
         
@@ -398,7 +430,32 @@ public class ProjectEditor extends JFrame
         
         setSize(800, 600);
     }
-    
+    /**
+      * Initialise the button panel
+      */
+    private void initButtonPanel() {
+        GridBagConstraints cons = GridBagHelper.setup(buttonPanel);
+        cons.weightx = 1;
+        buttonPanel.add(loadButton, cons);
+
+        cons.gridx++;
+        buttonPanel.add(buildButton, cons);
+
+        cons.gridx++;
+        buttonPanel.add(exitButton, cons);
+
+        buildButton.setEnabled(false);
+
+        loadButton.setMnemonic('l');
+        buildButton.setMnemonic('b');
+        exitButton.setMnemonic('x');
+
+        loadButton.addActionListener(loadAction);
+        buildButton.addActionListener(buildProjectAction);
+        exitButton.addActionListener(new ExitAction());
+
+        buttonPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
+    }
     /**
      * Initialise the status panel and its children. 
      */
@@ -521,6 +578,12 @@ public class ProjectEditor extends JFrame
             
             loadModel();
             
+            loadButton.setText(Messages.getMessage("savemine"));
+            loadButton.setMnemonic('s');
+            loadButton.removeActionListener(loadAction);
+            loadButton.addActionListener(saveAction);
+            buildButton.setEnabled(true);
+
             if (project.getSources().getSource().isEmpty()) {
                 JOptionPane.showMessageDialog(this,
                                               Messages.getMessage("project.empty.message"),
@@ -1002,7 +1065,7 @@ public class ProjectEditor extends JFrame
                 MineManagerBackingStore.getInstance().setLastProjectFile(projectFile);
 
                 loadModel();
-                
+
                 if (project.getSources().getSource().isEmpty()) {
                     JOptionPane.showMessageDialog(ProjectEditor.this,
                                                   Messages.getMessage("project.empty.message"),
@@ -1132,6 +1195,46 @@ public class ProjectEditor extends JFrame
         }
     }
     
+    /**
+     * Action to exit the project.
+     */
+    private class ExitAction extends AbstractAction
+    {
+        private static final long serialVersionUID = -5121864068655762163L;
+
+        /**
+         * Constructor.
+         */
+        public ExitAction() {
+            super(Messages.getMessage("cancel"));
+            putValue(MNEMONIC_KEY, KeyEvent.VK_Q);
+            setEnabled(false);
+        }
+
+        /**
+         * Called when the action fires, this method exits project.
+         * prompting first for saving
+         * 
+         * @param event The action event.
+         * 
+         * @see ProjectEditor#exitProject()
+         */
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            boolean close = true;
+            
+            if (projectModified) {
+                boolean cancel = promptedSave();
+                close = !cancel;
+            }
+            
+            if (close) {
+                setVisible(false);
+                dispose();
+            }
+        }
+    }
+
     /**
      * Action to display the build project dialog.
      */
