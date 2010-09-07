@@ -56,35 +56,41 @@ public class BuildProjectDialog extends StandardJDialog
 {
     private static final long serialVersionUID = -523173830816907855L;
     
-    /**
-     * Verbose output check box.
-     * @serial
-     */
-    private JCheckBox verboseCheckBox = new JCheckBox(Messages.getMessage("build.project.flag.v"));
     
     /**
-     * Restart with last dump file check box.
+     * Start policy group label.
      * @serial
      */
-    private JCheckBox restart1CheckBox = new JCheckBox(Messages.getMessage("build.project.flag.l"));
+    private JLabel startPolicyLabel =
+        new JLabel(Messages.getMessage("build.project.start.policy"));
+
+    /**
+     * Restart with last dump file radio button.
+     * @serial
+     */
+    private JRadioButton restart1RadioButton 
+        = new JRadioButton(Messages.getMessage("build.project.flag.l"));
     
     /**
-     * Restart without loading dump check box.
+     * Restart without loading dump radio button.
      * @serial
      */
-    private JCheckBox restart2CheckBox = new JCheckBox(Messages.getMessage("build.project.flag.r"));
+    private JRadioButton restart2RadioButton 
+        = new JRadioButton(Messages.getMessage("build.project.flag.r"));
     
     /**
-     * Run <code>build-db</code> before build check box.
+     * Run <code>build-db</code> before build radio button.
      * @serial
      */
-    private JCheckBox buildDbCheckBox = new JCheckBox(Messages.getMessage("build.project.flag.b"));
+    private JRadioButton buildDbRadioButton 
+        = new JRadioButton(Messages.getMessage("build.project.flag.b"), true);
     
     /**
-     * Test run check box.
+     * Test run radio button.
      * @serial
      */
-    private JCheckBox testCheckBox = new JCheckBox(Messages.getMessage("build.project.flag.n"));
+    private JRadioButton testRadioButton 
+        = new JRadioButton(Messages.getMessage("build.project.flag.n"));
     
     /**
      * Set release number check box.
@@ -114,7 +120,7 @@ public class BuildProjectDialog extends StandardJDialog
      * @serial
      */
     private JCheckBox serverBackupCheckBox =
-        new JCheckBox(Messages.getMessage("build.project.flag.t"));
+        new JCheckBox(Messages.getMessage("build.project.flag.T"));
     
     /**
      * Create destination database check box.
@@ -151,7 +157,22 @@ public class BuildProjectDialog extends StandardJDialog
     private JRadioButton nowriteUserDbRadio = 
         new JRadioButton(Messages.getMessage("build.project.NOWRITE"), true);
 
+    /**
+      * Database encoding text field label
+      * @serial
+      */
+    private JLabel encodingLabel =
+        new JLabel(Messages.getMessage("build.project.db.encoding"));
 
+    /**
+      * Database encoding text field
+      * @serial
+      */
+    private JTextField encodingTextField = 
+        new JTextField(
+                new RestrictedInputDocument(
+                    RestrictedInputDocument.UPPER_CASE
+                    + RestrictedInputDocument.DIGITS + "_", true), "SQL_ASCII", 25);
     /**
      * Destination database text field label.
      * @serial
@@ -253,26 +274,26 @@ public class BuildProjectDialog extends StandardJDialog
         cp.add(infoLabel, cons);
         
         cons.gridy++;
+        cp.add(startPolicyLabel, cons);
+
+        cons.gridy++;
         cons.gridwidth = 3;
-        cp.add(verboseCheckBox, cons);
+        cp.add(buildDbRadioButton, cons);
         
         cons.gridy++;
-        cp.add(restart1CheckBox, cons);
+        cp.add(restart1RadioButton, cons);
         
         cons.gridy++;
-        cp.add(restart2CheckBox, cons);
+        cp.add(restart2RadioButton, cons);
 
         cons.gridy++;
-        cp.add(buildDbCheckBox, cons);
-
-        cons.gridy++;
-        cp.add(testCheckBox, cons);
-
-        cons.gridy++;
-        cp.add(releaseNumberCheckBox, cons);
+        cp.add(testRadioButton, cons);
         
         cons.gridy++;
         cp.add(userDBOptionsLabel, cons);
+
+        cons.gridy++;
+        cp.add(nowriteUserDbRadio, cons);
 
         cons.gridy++;
         cp.add(writeUserDbRadio, cons);
@@ -281,7 +302,7 @@ public class BuildProjectDialog extends StandardJDialog
         cp.add(overwriteUserDbRadio, cons);
 
         cons.gridy++;
-        cp.add(nowriteUserDbRadio, cons);
+        cp.add(releaseNumberCheckBox, cons);
 
         cons.gridy++;
         cons.gridx++;
@@ -289,10 +310,21 @@ public class BuildProjectDialog extends StandardJDialog
         cons.gridwidth = 1;
         cp.add(releaseNumberLabel, cons);
         
-        cons.gridx++;
-        cons.weightx = 0.5;
+//        cons.gridx++;
+//        cons.weightx = 0.5;
+        cons.gridy++;
         cp.add(releaseNumberTextField, cons);
         
+        cons.gridy++;
+        cons.gridx = 0;
+        cons.weightx = 0;
+        cons.gridwidth = 1;
+        cp.add(encodingLabel, cons);
+
+        cons.gridx++;
+        cons.weightx = 0.5;
+        cp.add(encodingTextField, cons);
+
         cons.gridy++;
         cons.gridx = 0;
         cons.gridwidth = 3;
@@ -340,6 +372,7 @@ public class BuildProjectDialog extends StandardJDialog
         cons.weightx = 1;
         cp.add(new ButtonPanel(buildAction, new CancelAction()), cons);
         
+       // encodingTextField.setText("SQL_ASCII");
         releaseNumberLabel.setEnabled(false);
         releaseNumberTextField.setEnabled(false);
         destinationLabel.setEnabled(false);
@@ -355,11 +388,14 @@ public class BuildProjectDialog extends StandardJDialog
         userDBButtonGroup.add(writeUserDbRadio);
         userDBButtonGroup.add(overwriteUserDbRadio);
         userDBButtonGroup.add(nowriteUserDbRadio);
-
-        ItemListener restartListener = new RestartCheckBoxListener();
-        restart1CheckBox.addItemListener(restartListener);
-        restart2CheckBox.addItemListener(restartListener);
         
+        ButtonGroup startPolicyGroup = 
+            new ButtonGroup();
+        startPolicyGroup.add(restart1RadioButton);
+        startPolicyGroup.add(restart2RadioButton);
+        startPolicyGroup.add(buildDbRadioButton);
+        startPolicyGroup.add(testRadioButton);
+
         releaseNumberCheckBox.addActionListener(
                 new LinkedFieldListener(releaseNumberCheckBox, releaseNumberLabel,
                                         releaseNumberTextField));
@@ -409,32 +445,6 @@ public class BuildProjectDialog extends StandardJDialog
         buildAction.setEnabled(ok);
     }
     
-    /**
-     * Listener to state changes in the two "restart" check boxes to ensure
-     * they are not both on at the same time. They can both be off.
-     */
-    private class RestartCheckBoxListener implements ItemListener
-    {
-        /**
-         * Called as the check box state changes. Deselects the other check box
-         * in the pair.
-         * 
-         * @param event The item change event.
-         */
-        @Override
-        public void itemStateChanged(ItemEvent event) {
-            JCheckBox other;
-            if (event.getSource() == restart1CheckBox) {
-                other = restart2CheckBox;
-            } else {
-                other = restart1CheckBox;
-            }
-            
-            if (event.getStateChange() == ItemEvent.SELECTED) {
-                other.setSelected(false);
-            }
-        }
-    }
     
     /**
      * Action listener for check boxes controlling whether other components are relevant
@@ -536,36 +546,36 @@ public class BuildProjectDialog extends StandardJDialog
             
             List<String> commands = new ArrayList<String>();
             commands.add(projectBuildScript.getAbsolutePath());
-            
-            if (verboseCheckBox.isSelected()) {
-                commands.add("-v");
-            }
-            if (restart1CheckBox.isSelected()) {
+            commands.add("-v"); // always be verbose
+
+            if (restart1RadioButton.isSelected()) {
                 commands.add("-l");
             }
-            if (restart2CheckBox.isSelected()) {
+            else if (restart2RadioButton.isSelected()) {
                 commands.add("-r");
             }
-            if (buildDbCheckBox.isSelected()) {
+            else if (buildDbRadioButton.isSelected()) {
                 commands.add("-b");
             }
-            if (testCheckBox.isSelected()) {
+            else if (testRadioButton.isSelected()) {
                 commands.add("-n");
             }
+
             if (writeUserDbRadio.isSelected()) {
                 commands.add("-u");
             }
             else if (overwriteUserDbRadio.isSelected()) {
                 commands.add("-U");
             }
+
             if (releaseNumberCheckBox.isSelected()) {
                 assert StringUtils.isNotEmpty(releaseNumberTextField.getText())
                        : "No release number set";
                 commands.add("-V");
                 commands.add(releaseNumberTextField.getText());
             }
-            if (serverBackupCheckBox.isSelected()) {
-                commands.add("-t");
+            if (! serverBackupCheckBox.isSelected()) {
+                commands.add("-T");
             }
             if (destinationCheckBox.isSelected()) {
                 assert StringUtils.isNotEmpty(destinationTextField.getText())
