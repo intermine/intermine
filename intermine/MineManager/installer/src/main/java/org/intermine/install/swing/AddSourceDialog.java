@@ -152,19 +152,20 @@ public class AddSourceDialog extends StandardJDialog
         
         GridBagConstraints cons = GridBagHelper.setup(cp);
         
-        cp.add(new JLabel(Messages.getMessage("source.name")), cons);
         
-        cons.gridy++;
         cp.add(new JLabel(Messages.getMessage("source.type")), cons);
-        
+
+        cons.gridy++;
+        cp.add(new JLabel(Messages.getMessage("source.name")), cons);
+
         cons.gridx++;
         cons.gridy = 0;
         cons.weightx = 1;
-        cp.add(nameField, cons);
-        
-        cons.gridy++;
         cp.add(typeCombo, cons);
-        
+
+        cons.gridy++;  
+        cp.add(nameField, cons);
+
         cons.gridx = 0;
         cons.gridy++;
         cons.gridwidth = GridBagConstraints.REMAINDER;
@@ -212,6 +213,17 @@ public class AddSourceDialog extends StandardJDialog
         nameField.setText("");
     }
     
+    /**
+      * Update the Name Field when the combo box is selected to give a sane default
+      *
+      */
+    protected void updateName() {
+        String type = (String) typeCombo.getSelectedItem();
+        String name = nameField.getText();
+        if (name.length() == 0) { // hasn't been set - ok to overwrite
+            nameField.setText(type);
+        }
+    }
     /**
      * Update the state of the "add" action. It requires a name in the text field
      * that has not already been used and for a type to be selected in the combo box.
@@ -420,6 +432,7 @@ public class AddSourceDialog extends StandardJDialog
          */
         @Override
         public void actionPerformed(ActionEvent event) {
+            updateName();
             updateState();
         }
     }
