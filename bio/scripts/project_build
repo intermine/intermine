@@ -107,7 +107,7 @@ my $start_action = undef;
 
 my %opts = ();
 
-if (!getopts('vrlbTnuUD:a:V:', \%opts)) {
+if (!getopts('vrlbTnuUE:D:a:V:', \%opts)) {
   usage();
 }
 
