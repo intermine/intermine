@@ -223,6 +223,12 @@
     <collection name="appliedProtocols" referenced-type="AppliedProtocol" reverse-reference="protocol" />
   </class>
 
+  <class name="ReadCount" is-interface="true">
+    <attribute name="name" type="java.lang.String" />
+    <attribute name="value" type="java.lang.Integer"/>
+    <reference name="submission" referenced-type="Submission" reverse-reference="readCounts"/>
+  </class>
+
   <class name="ResultFile" is-interface="true">
     <attribute name="type" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
@@ -272,6 +278,7 @@
     <collection name="strains" referenced-type="Strain"/>
     <collection name="tissues" referenced-type="Tissue"/>
     <collection name="arrays" referenced-type="Array"/>
+    <collection name="readCounts" referenced-type="ReadCount" reverse-reference="submission"/>
     <collection name="features" referenced-type="SequenceFeature" reverse-reference="submissions"/>
     <collection name="databaseRecords" referenced-type="DatabaseRecord" reverse-reference="submissions"/>
     <collection name="resultFiles" referenced-type="ResultFile" reverse-reference="submission"/>
