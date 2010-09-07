@@ -121,12 +121,11 @@ public class SourceInfoLoaderTest
         //s.setType("malaria-gff");
         //project.getSources().getSource().add(s);
 
-        SourceInfo info =
-            SourceInfoLoader.getInstance().findDerivedSourceInfo(
+        SourceInfo info = SourceInfoLoader.getInstance().findDerivedSourceInfo(
                     "malaria-gff", project, projectHome);
 
         assertNotNull("Could not find derived source type for malaria-gff", info);
 
-        assertEquals("Derived type is not gff", "gff", info.getType());
+        assertEquals("Derived type is not gff", "malaria-gff", info.getType());
     }
 }
