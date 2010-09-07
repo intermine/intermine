@@ -34,7 +34,7 @@ public class SourceInfoLoaderTest
 {
     /**
      * Set up by initialising the SourceInfoLoader instance.
-     * 
+     *
      * @throws IOException thrown from {@link SourceInfoLoader#initialise()}
      * @throws JAXBException thrown from {@link SourceInfoLoader#initialise()}
      */
@@ -46,41 +46,41 @@ public class SourceInfoLoaderTest
             // Already loaded.
         }
     }
-    
+
     /**
      * Test loading a FASTA data source.
      */
     @Test
     public void testLoadFastaSource() {
-        
+
         SourceInfoLoader loader = SourceInfoLoader.getInstance();
-        
+
         SourceInfo fastaInfo = loader.getSourceInfo("fasta");
-        
+
         assertNotNull("No source info for 'fasta'", fastaInfo);
-        
+
         assertEquals("Type wrong", "fasta", fastaInfo.getType());
-        
+
         SourceDescriptor source = fastaInfo.getSource();
         assertEquals("SourceDescriptor type wrong", "fasta", source.getType());
         assertEquals("Incorrect number of properties in source", 9, source.getProperty().size());
-        
+
         Map<String, PropertyDescriptor> propMap = new HashMap<String, PropertyDescriptor>();
         for (PropertyDescriptor p : source.getProperty()) {
             propMap.put(p.getName(), p);
         }
-        
+
         PropertyDescriptor srcDataDir = propMap.get("src.data.dir");
         assertNotNull("No property 'src.data.dir'", srcDataDir);
         assertEquals("'src.data.dir' not required when it should be",
                      Boolean.TRUE, srcDataDir.isRequired());
         assertEquals("'src.data.dir' type wrong", PropertyType.DIRECTORY, srcDataDir.getType());
         assertNull("'src.data.dir' has validation", srcDataDir.getValidation());
-        
+
         PropertyDescriptor taxonId = propMap.get("fasta.taxonId");
         assertNotNull("No property 'fasta.taxonId'", taxonId);
         assertEquals("'fasta.taxonId' required when it should not be",
-                     Boolean.FALSE, taxonId.isRequired());
+                     Boolean.TRUE, taxonId.isRequired());
         assertEquals("'fasta.taxonId' type wrong", PropertyType.STRING, taxonId.getType());
         assertEquals("'fasta.taxonId' validation wrong",
                      "^\\d+(\\s\\d+)*$", taxonId.getValidation());
@@ -90,43 +90,43 @@ public class SourceInfoLoaderTest
      * Test loading a named derived source. Searches under the project
      * directory <code>src/test/sourcetest/project</code>, which in this
      * distribution has a dummy Intermine directory structure.
-     * 
+     *
      * @throws IOException if there is an I/O problem during the test.
-     * 
+     *
      * @see SourceInfoLoader#findDerivedSourceInfo(String, Project, File)
      */
     @Test
     public void testDerivedTypeLoad() throws IOException {
-        
+
         File projectHome = new File("src/test/sourcetest/project");
-        
+
         org.intermine.modelviewer.project.ObjectFactory factory =
             new org.intermine.modelviewer.project.ObjectFactory();
-        
+
         Project project = factory.createProject();
         project.setSources(factory.createProjectSources());
-        
+
         Property p = factory.createProperty();
         p.setName(SourceInfoLoader.SOURCE_PATH_PROPERTY);
         p.setLocation("../bio/sources");
         project.getProperty().add(p);
-        
+
         p = factory.createProperty();
         p.setName(SourceInfoLoader.SOURCE_PATH_PROPERTY);
         p.setLocation("../bio/sources/example-sources");
         project.getProperty().add(p);
-        
+
         //Source s = factory.createSource();
         //s.setName("malaria");
         //s.setType("malaria-gff");
         //project.getSources().getSource().add(s);
-        
+
         SourceInfo info =
             SourceInfoLoader.getInstance().findDerivedSourceInfo(
                     "malaria-gff", project, projectHome);
-        
+
         assertNotNull("Could not find derived source type for malaria-gff", info);
-        
+
         assertEquals("Derived type is not gff", "gff", info.getType());
     }
 }
