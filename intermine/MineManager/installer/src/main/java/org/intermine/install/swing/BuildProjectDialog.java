@@ -204,7 +204,7 @@ public class BuildProjectDialog extends StandardJDialog
      * @serial
      */
     private JTextField prefixTextField 
-        = new JTextField(Messages.getMessage("build.project.dump.prefix"), 30);
+        = new JTextField(Messages.getMessage("build.project.dump.prefix.default"), 30);
 
     /**
      * Action to start running <code>project_build</code>.
