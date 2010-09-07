@@ -43,7 +43,6 @@ flags:
  -l attempt to restart by reading the last dump file
  -r attempt to restart just after the last dump point _without_ loading a dump
  -b run build-db before starting build and drop any existing backup databases
-    (creating when using the -t flag)
  -n parse files and report actions, but don't execute anything
  -V set the release number to pass to ant (as -Drelease=release_number)
  -T instead of making backup copies of the database in the
@@ -513,7 +512,7 @@ sub start_element
 
   my $element_name = $args->{Name};
   my $action_name = $args->{Attributes}{name};
-  my $dump_flag = exists $args->{Attributes}{dump};
+  my $dump_flag = (exists $args->{Attributes}{dump} and $args->{Attributes}{dump} eq 'true');
   my $index_flag = exists $args->{Attributes}{index};
 
   if ($element_name eq 'source') {
