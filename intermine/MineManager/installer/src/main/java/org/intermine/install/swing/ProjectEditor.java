@@ -366,7 +366,7 @@ public class ProjectEditor extends JFrame
         setJMenuBar(menuBar);
         
         JMenu fileMenu = new JMenu(Messages.getMessage("file"));
-        fileMenu.setMnemonic(KeyEvent.VK_F);
+        fileMenu.setMnemonic(KeyEvent.VK_P);
         menuBar.add(fileMenu);
         
         fileMenu.add(new NewMineAction());
@@ -386,7 +386,7 @@ public class ProjectEditor extends JFrame
         editMenu.add(postProcessorAction);
         
         JMenu viewMenu = new JMenu(Messages.getMessage("view"));
-        viewMenu.setMnemonic(KeyEvent.VK_V);
+        viewMenu.setMnemonic(KeyEvent.VK_M);
         menuBar.add(viewMenu);
         
         viewMenu.add(new ViewModelAction());
