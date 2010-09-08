@@ -22,12 +22,11 @@ import org.intermine.objectstore.ObjectStoreException;
  * @author contrino
  *
  */
-public class CategoryExperiments {
- 
+public class CategoryExperiments
+{
     private static final Logger LOG = Logger.getLogger(MetadataCache.class);
     private static Map<String, List<DisplayExperiment>> catExperimentCache = null;
 
-    
     /**
      * Get an ordered map [category:experiments]
      * @param servletContext from the controller
@@ -43,7 +42,7 @@ public class CategoryExperiments {
         }
         return catExperimentCache;
     }
-  
+
     /**
      * Build an ordered map from category to experiments.
      * @param os the production ObjectStore
@@ -119,6 +118,5 @@ public class CategoryExperiments {
                 + " in " + totalTime + " ms.");
         return catExperimentCache;
     }
-   
 
 }

@@ -32,6 +32,7 @@
 <c:set var="expCount" value="${fn:length(proj.value)}"></c:set>
 
   <tr>
+
   <td >
     <c:forEach items="${exp.organisms}" var="organism" varStatus="orgStatus">
       <c:if test="${organism eq 'D. melanogaster'}">
@@ -42,8 +43,6 @@
       </c:if>
     </c:forEach>
   </td>
-</td>
-
 
   <td><h4><html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link></h4>
