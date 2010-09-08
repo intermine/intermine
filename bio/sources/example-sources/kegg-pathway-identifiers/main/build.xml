@@ -1,4 +1,0 @@
-<project name="kegg-pathway-identifiers-tasks" default="default" basedir=".">
-  <description>build kegg-pathway-identifiers tasks</description>
-  <import file="../../../../../imbuild/library.xml"/> 
-</project>
