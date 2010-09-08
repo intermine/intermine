@@ -453,7 +453,11 @@ public class PropertyComponentCreator
          */
         @Override
         public boolean accept(File f) {
-            return f.getName().endsWith(extension);
+            boolean ok = f.isDirectory();
+            if (! ok) {
+                ok = f.getName().endsWith(extension);
+            }   
+            return ok;
         }
 
         /**
@@ -463,7 +467,14 @@ public class PropertyComponentCreator
          */
         @Override
         public String getDescription() {
-            return Messages.getMessage("filefilter.extension." + extension);
+            String message;
+
+            if (Messages.hasMessage("filefilter.extension." + extension)) {
+                message = "filefilter.extension." + extension;
+            } else {
+                message = extension.toUpperCase() + Messages.getMessage("filefilter.files");
+            }
+            return Messages.getMessage(message);
         }
     }
 }
