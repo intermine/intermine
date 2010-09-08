@@ -4,7 +4,7 @@
            xsi:schemaLocation="http://flymine.org/sourcedescriptor/1.0 http://www.flymine.org/download/schemas/sourcedescriptor.xsd"
            type="go-annotation">
 
-    <property name="ontologyfile" required="true" type="file" />
-    <property name="src.data.dir" required="true" type="directory" />
+           <property name="ontologyfile" required="true" type="file" extension="obo" />
+           <property name="src.data.dir" required="true" type="directory" />
 
 </sd:source>
