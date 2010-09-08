@@ -48,6 +48,7 @@ public class DisplayExperiment
         new LinkedHashSet<FeatureCountsRecord>();
     private ObjectStore os;
     private String experimentType;
+    private String experimentCategory;
     private Set<String> labs = new TreeSet<String>();
     private String piSurname;
 
@@ -93,6 +94,8 @@ public class DisplayExperiment
         }
 
         this.experimentType = StringUtil.prettyList(expTypes);
+
+        this.experimentCategory = exp.getCategory();
 
         for (Organism organism : proj.getOrganisms()) {
             organisms.add(organism.getShortName());
@@ -311,6 +314,13 @@ public class DisplayExperiment
      */
     public String getExperimentType() {
         return experimentType;
+    }
+
+    /**
+     * @return the experimentType
+     */
+    public String getExperimentCategory() {
+        return experimentCategory;
     }
 
     /**
