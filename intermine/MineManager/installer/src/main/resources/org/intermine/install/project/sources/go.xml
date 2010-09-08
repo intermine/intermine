@@ -4,7 +4,6 @@
            xsi:schemaLocation="http://flymine.org/sourcedescriptor/1.0 http://www.flymine.org/download/schemas/sourcedescriptor.xsd"
            type="go">
 
-    <property name="createrelations" type="boolean" />
-    <property name="src.data.file" required="true" type="file"/>
+    <property name="src.data.file" required="true" type="file" extension="obo"/>
 
 </sd:source>
