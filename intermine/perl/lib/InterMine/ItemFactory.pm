@@ -125,32 +125,37 @@ sub new
  Args    : the classname of the new Item
 
 =cut
-sub make_item
-{
+sub make_item {
   my $self = shift;
   my %args;
+  my %attr;
 
   if (@_ == 1) {
-    $args{implements} = $_[0];
+    $args{implements} = shift;
+  } elsif (@_ % 2 == 1) {
+      $args{implements} = shift;
+      %attr = @_;
   } else {
     %args = @_;
   }
 
   $self->{id_counter}++;
 
-  my $classname = '';
-  if (defined $args{classname}) {
-    $classname = $args{classname};
+  $classname  = $args{classname}  || '';
+  $implements = $args{implements} || '';
+
+  my $item = new InterMine::Item(
+      classname  => $classname, 
+      implements => $implements,
+      model      => $self->{model},
+      id         => $self->{id_counter}
+  );
+
+  while (my ($k, $v) = each %attr) {
+      $item->set($k, $v);
   }
 
-  my $implements = '';
-  if (defined $args{implements}) {
-    $implements = $args{implements};
-  }
-
-  return new InterMine::Item(classname => $classname, implements => $implements,
-                             model => $self->{model},
-                             id => $self->{id_counter});
+  return $item;
 }
 
 1;
