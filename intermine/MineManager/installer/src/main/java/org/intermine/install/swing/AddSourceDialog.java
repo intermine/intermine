@@ -219,10 +219,7 @@ public class AddSourceDialog extends StandardJDialog
       */
     protected void updateName() {
         String type = (String) typeCombo.getSelectedItem();
-        String name = nameField.getText();
-        if (name.length() == 0) { // hasn't been set - ok to overwrite
-            nameField.setText(type);
-        }
+        nameField.setText(type);
     }
     /**
      * Update the state of the "add" action. It requires a name in the text field
