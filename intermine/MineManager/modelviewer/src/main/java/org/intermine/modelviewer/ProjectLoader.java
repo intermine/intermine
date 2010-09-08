@@ -80,12 +80,6 @@ public class ProjectLoader
     public Project loadProject(File projectFile)
     throws JAXBException, SAXException, ParserConfigurationException, IOException {
         Project project = configParser.loadProjectFile(projectFile);
-        Collections.sort(project.getSources().getSource(), SourceNameComparator.INSTANCE);
-        
-        for (Source s : project.getSources().getSource()) {
-            Collections.sort(s.getProperty(), PropertyNameComparator.INSTANCE);
-        }
-        
         return project;
     }
     
