@@ -21,7 +21,7 @@ public class SourceInfo
      * The type name of the data source.
      */
     private String type;
-    
+
     /**
      * The descriptor for the database source.
      */
