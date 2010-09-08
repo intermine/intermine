@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
@@ -39,7 +38,8 @@ public class KeggExampleConverter extends BioFileConverter
     private Item organism = null;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
@@ -64,53 +64,12 @@ public class KeggExampleConverter extends BioFileConverter
         if (StringUtils.isEmpty(taxonId)) {
             throw new IllegalArgumentException("No taxonId provided: " + taxonId);
         }
-
-        // There are two files:
-        //              map_title.tab - pathway ids and their names
-        //      xxx_gene_map.tab - genes and the pathways they are involved in
-        // The following code works out which file we are reading and calls the corresponding method
-        File currentFile = getCurrentFile();
-
-        if (currentFile.getName().equals("map_title.tab")) {
-            processMapTitleFile(reader);
-        } else if (currentFile.getName().endsWith("gene_map.tab")) {
-            processGeneMapFile(reader);
-        } else {
-            throw new IllegalArgumentException("Unexpected file: " + currentFile.getName());
-        }
-    }
-
-
-    /**
-     * Process all rows of the map_title.tab file
-     * @param reader a reader for the map_title.tab file
-     * @throws IOException
-     * @throws ObjectStoreException
-     */
-    private void processMapTitleFile(Reader reader) throws IOException, ObjectStoreException {
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
-
-        // this file has data of the format:
-        // pathway id | pathway name
-        while (lineIter.hasNext()) {
-            // line is a string array with the one element for each tab separated value
-            // on the next line of the file
-            String[] line = (String[]) lineIter.next();
-
-            String pathwayId = line [0];
-            String pathwayName = line[1];
-
-            // getPathway will create an Item or fetch it from a map if seen before
-            Item pathway = getPathway(pathwayId);
-            pathway.setAttribute("name", pathwayName);
-
-            // once we have set the pathway name that is all the information needed so we can store
-            store(pathway);
-        }
+        processGeneMapFile(reader);
     }
 
     /**
-     * Process all rows of the xxx_gene_map.tab file
+     * Process all rows of the xxx_gene_map.tab file.
+     *
      * @param reader a reader for the xxx_gene_map.tab file
      * @throws IOException
      * @throws ObjectStoreException
@@ -149,7 +108,8 @@ public class KeggExampleConverter extends BioFileConverter
     }
 
     /**
-     * Create a new pathway Item or fetch from a map if it has been seen before
+     * Create a new pathway Item or fetch from a map if it has been seen before.
+     *
      * @param pathwayId the id of a KEGG pathway to look up
      * @return an Item representing the pathway
      */
@@ -164,7 +124,8 @@ public class KeggExampleConverter extends BioFileConverter
     }
 
     /**
-     * Get an Item representing an organism, create and store it if called for the first time
+     * Get an Item representing an organism, create and store it if called for the first time.
+     *
      * @return an Item representing the organism
      * @throws ObjectStoreException
      */
