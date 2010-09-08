@@ -10,6 +10,7 @@ package org.modmine.web;
  *
  */
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.session.SessionMethods;
 import org.modmine.web.GBrowseParser.GBrowseTrack;
@@ -41,7 +43,7 @@ public class ProjectsSummaryController extends TilesAction
             @SuppressWarnings("unused") ActionForm form,
             HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response)
-        throws Exception {
+    throws Exception {
         try {
             final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
             ObjectStore os = im.getObjectStore();
@@ -53,12 +55,22 @@ public class ProjectsSummaryController extends TilesAction
             Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
             request.setAttribute("tracks", tracks);
 
-            final ServletContext servletContext = servlet.getServletContext();
+            //            final ServletContext  = servlet.getServletContext();
+            //          Map<String, List<DisplayExperiment>> categories =
+            //          CategoryExperiments.getCategoryExperiments(servletContext, os);
+            //      request.setAttribute("catExp", categories);
 
-            Map<String, List<DisplayExperiment>> categories =
-                CategoryExperiments.getCategoryExperiments(servletContext, os);
-//            request.setAttribute("categories", categories);
-            request.setAttribute("catExp", categories);
+
+            // using the categories form experiment.category (chado)
+            Map<String, List<DisplayExperiment>> categoriesNew = 
+                new HashMap<String, List<DisplayExperiment>>();
+
+            for (List<DisplayExperiment> expList : experiments.values()) {
+                for (DisplayExperiment exp : expList) {
+                    BioConverterUtil.addToListMap(categoriesNew, exp.getExperimentCategory(), exp);
+                }
+            }
+            request.setAttribute("catExp", categoriesNew);
 
         } catch (Exception err) {
             err.printStackTrace();
