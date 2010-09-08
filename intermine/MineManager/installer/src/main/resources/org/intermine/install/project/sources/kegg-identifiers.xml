@@ -7,6 +7,6 @@
     <property name="kegg.organisms" required="true">
         <validation><![CDATA[^\d+(\s\d+)*$]]></validation>
     </property>
-    <property name="src.data.dir" required="true" type="directory"/>
+    <property name="src.data.file" type="file" required="true" />
 
 </sd:source>
