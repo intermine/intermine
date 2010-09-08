@@ -12,7 +12,7 @@ if (@ARGV != 4) {
   die "usage: $0 model_file kegg_map_title_file kegg_gene_map out_file\n";
 }
 
-my ($model_file, $map_title_filename, $gene_map_filename, $outfile) = @ARGV;
+my ($model_file, $map_title_filename, $gene_map_filename, $out_file) = @ARGV;
 
 my $data_source = 'Kegg';
 my $taxon_id    = 36329;
@@ -61,7 +61,7 @@ close($input) or die "Could not close $map_title_filename, $!";
 
 # read the gene map file and create item objects
 
-open(my $input, '<', $gene_map_filename) 
+open($input, '<', $gene_map_filename) 
     or die "Could not open $gene_map_filename for reading, $!";
 
 while (<$input>) {
@@ -83,7 +83,7 @@ close($input) or die "Could not close $gene_map_filename, $!";
 
 # write the items
 open(my $output, '>', $out_file) 
-    or die "Cannot open $outfile for writing, $!";
+    or die "Cannot open $out_file for writing, $!";
 
 my $writer = new XML::Writer(
     DATA_MODE   => 1, 
@@ -95,5 +95,5 @@ $writer->startTag("items");
 $_->as_xml($writer) for @items;
 $writer->endTag("items");
 
-close($output) or die "Cannot close $outfile, $!";
+close($output) or die "Cannot close $out_file, $!";
 exit;
