@@ -204,13 +204,6 @@ public class CreatePropertiesDialog extends StandardJDialog
         new JCheckBox(Messages.getMessage("properties.misc.verboselog"));
     
     /**
-     * Check box for stand alone project.
-     * @serial
-     */
-    private JCheckBox standaloneCheck =
-        new JCheckBox(Messages.getMessage("properties.misc.standalone"));
-    
-    /**
      * Background colour for text fields in a normal state.
      * @serial
      */
@@ -361,9 +354,6 @@ public class CreatePropertiesDialog extends StandardJDialog
         cons.gridy++;
         cp.add(verboseLogCheck, cons);
         
-        cons.gridy++;
-        cp.add(standaloneCheck, cons);
-        
         // Record the next free row for the button panel.
         int rowIndex = cons.gridy + 1;
         
@@ -431,7 +421,6 @@ public class CreatePropertiesDialog extends StandardJDialog
         errorBackground = new Color(255, 232, 232);
         
         verboseLogCheck.setToolTipText(Messages.getMessage("properties.misc.verboselog.tooltip"));
-        standaloneCheck.setToolTipText(Messages.getMessage("properties.misc.standalone.tooltip"));
         
         new EmailFieldListener(superuserField, true);
         new EmailFieldListener(mailFromField, true);
@@ -498,8 +487,6 @@ public class CreatePropertiesDialog extends StandardJDialog
             
             verboseLogCheck.setSelected(
                     Boolean.valueOf(props.getProperty(InterminePropertyKeys.VERBOSE_LOG)));
-            standaloneCheck.setSelected(
-                    Boolean.valueOf(props.getProperty(InterminePropertyKeys.STANDALONE_PROJECT)));
             
             lastMineName = mineName;
         }
@@ -582,8 +569,7 @@ public class CreatePropertiesDialog extends StandardJDialog
         
         props.put(InterminePropertyKeys.VERBOSE_LOG,
                 Boolean.toString(verboseLogCheck.isSelected()));
-        props.put(InterminePropertyKeys.STANDALONE_PROJECT,
-                Boolean.toString(standaloneCheck.isSelected()));
+        props.put(InterminePropertyKeys.STANDALONE_PROJECT, "true"); //should always be true
     }
     
     /**
