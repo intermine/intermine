@@ -444,18 +444,18 @@ public class PropertyComponentCreator
             extension = ext;
         }
         /**
-         * Check whether the given file is a directory.
+         * Check whether the given file has the appropriate extension.
          * 
          * @param f The file to check.
          * 
          * @return <code>true</code> if <code>f</code> is a directory,
-         * <code>false</code> if not.
+         * or has the appropriate extension, <code>false</code> if not.
          */
         @Override
         public boolean accept(File f) {
             boolean ok = f.isDirectory();
             if (! ok) {
-                ok = f.getName().endsWith(extension);
+                ok = f.getName().toUpperCase().endsWith(extension.toUpperCase());
             }   
             return ok;
         }
@@ -472,7 +472,7 @@ public class PropertyComponentCreator
             if (Messages.hasMessage("filefilter.extension." + extension)) {
                 message = "filefilter.extension." + extension;
             } else {
-                message = extension.toUpperCase() + Messages.getMessage("filefilter.files");
+                message = extension + Messages.getMessage("filefilter.files");
             }
             return Messages.getMessage(message);
         }
