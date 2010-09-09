@@ -281,6 +281,10 @@
       <forward name="results" redirect="true" path="/results.do"/>
       <forward name="bag" path="/bagDetails.do"/>
     </action>
+    <action path="/saveFromIdsToBag" type="org.intermine.web.struts.SaveFromIdsToBagAction">
+      <forward name="begin" redirect="true" path="/begin.do"/>
+      <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
+    </action>
     <action path="/saveQuery" name="saveQueryForm" type="org.intermine.web.struts.SaveQueryAction" input="query">
       <forward name="query" path="query.page"/>
       <forward name="mymine" redirect="true" path="/mymine.do"/>
