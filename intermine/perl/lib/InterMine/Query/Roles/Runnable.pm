@@ -1,7 +1,7 @@
 package InterMine::Query::Roles::Runnable;
 
 use Moose::Role;
-requires qw(url view service);
+requires qw(view service url);
 
 use InterMine::Service;
 
@@ -20,20 +20,6 @@ around BUILDARGS => sub {
 	return $class->$orig(@_);
     }
 };
-
-
-sub url {
-    my $self = shift;
-    my $xml = $self->to_xml('query');
-    my $url = $self->service_root.$self->query_path;
-    my $uri = URI->new($url);
-    my %query_form = (
-	query  => $xml,
-	format => 'tab',
-    );
-    $uri->query_form(%query_form);
-    return $uri;
-}
 
 
 sub results_iterator {
