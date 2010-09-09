@@ -39,7 +39,7 @@ public class KeggIdentifiersConverter extends BioFileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
-    public KeggIdentifiersConverter(Model model, ItemWriter writer) {
+    public KeggIdentifiersConverter(ItemWriter writer, Model model) {
         super(writer, model, "GenomeNet", "KEGG PATHWAY");
     }
 
@@ -51,7 +51,6 @@ public class KeggIdentifiersConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
         processMapTitleFile(reader);
     }
-
 
     /**
      * Process all rows of the map_title.tab file
