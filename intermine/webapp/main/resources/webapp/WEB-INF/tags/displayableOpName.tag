@@ -27,6 +27,12 @@
   <c:when test="${opName == '>='}">
     <fmt:message key="query.ops.text.greaterThanEquals"/>
   </c:when>
+  <c:when test="${opName == 'LIKE'}">
+    <fmt:message key="query.ops.text.like"/>
+  </c:when>
+  <c:when test="${opName == 'NOT LIKE'}">
+    <fmt:message key="query.ops.text.notlike"/>
+  </c:when>
   <c:otherwise>
     <c:out value="${opName}"/>
   </c:otherwise>
