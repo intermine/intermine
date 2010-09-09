@@ -83,7 +83,23 @@ sub start_element {
 	    if ($query->name and $nameattr and $query->name ne $nameattr);
 	$query->name($nameattr);
 	confess if ($query->model->model_name ne $args->{Attributes}{model});
-	$query->add_view($args->{Attributes}{view});
+	my $view = $args->{Attributes}{view};
+	my @views = split(/[\s,]/, $view);
+	for (@views) {
+	    if (/:/) { # Old style join
+		my ($before_colon, $after_colon) = split(/:/);
+		my ($field, @rest) =  split(/\./, $after_colon);
+		$query->add_join(
+		    path  => join('.', $before_colon, $field),
+		    style => 'OUTER',
+		);
+		$query->add_view(
+		    join('.', $before_colon, $field, @rest)
+		);
+	    } else {
+		$query->add_view($_);
+	    }
+	}
 	$query->set_sort_order($args->{Attributes}{sortOrder})
 	    if $args->{Attributes}{sortOrder};
 	my ($already, $new) =
@@ -98,8 +114,10 @@ sub start_element {
 
     # pathDescription
     elsif ($args->{Name} eq 'pathDescription') {
+	my $path = $args->{Attributes}{pathString};
+	$path =~ s/:/./g;
 	$query->add_pathdescription(
-		     path        => $args->{Attributes}{pathString},
+		     path        => $path,
 		     description => $args->{Attributes}{description},
 		     );
     }
@@ -107,19 +125,28 @@ sub start_element {
     # Node
     elsif ($args->{Name} eq 'node') {
 	my $path = $args->{Attributes}{path};
+	if ($path =~ /:/) { # add the outer join
+	    my ($before_colon, $after_colon) = split(/:/, $path, 2);
+	    my ($field, @rest) =  split(/\./, $after_colon);
+	    $query->add_join(
+		path  => join('.', $before_colon, $field),
+		style => 'OUTER',
+	    );
+	    $path = join('.', $before_colon, $field, @rest);
+	}
 	$self->set_current_node($path);
 	$query->add_constraint(
-			       path => $path,
-			       type => $args->{Attributes}{type},
-			      );
+	    path => $path,
+	    type => $args->{Attributes}{type},
+	);
     }
 
     # Join
     elsif ($args->{Name} eq 'join') {
 	$query->add_join(
-			 path  => $args->{Attributes}{path},
-			 style => $args->{Attributes}{style},
-			);
+	    path  => $args->{Attributes}{path},
+	    style => $args->{Attributes}{style},
+	);
     }
 
     # constraint
