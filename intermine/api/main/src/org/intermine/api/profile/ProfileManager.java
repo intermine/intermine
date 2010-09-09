@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.xml.SavedQueryBinding;
 import org.intermine.api.xml.TemplateQueryBinding;
@@ -251,13 +252,20 @@ public class ProfileManager
                 if (StringUtils.isBlank(savedBag.getName())) {
                     LOG.warn("Failed to load bag with blank name on login for user: " + username);
                 } else {
-                    InterMineBag bag = new InterMineBag(os, bagId, uosw);
-                    savedBags.put(bag.getName(), bag);
+                	try {
+                		InterMineBag bag = new InterMineBag(os, bagId, uosw);
+                		savedBags.put(bag.getName(), bag);
+                	} catch (UnknownBagTypeException e) {
+                    	LOG.warn("Ignoring a bag '" + savedBag.getName() + " for user '"
+                    			+ username + "' because type: " + savedBag.getType()
+                    			+ " is not in the model.", e);
+                	}
                 }
             }
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
+
         Map<String, org.intermine.api.profile.SavedQuery> savedQueries =
             new HashMap<String, org.intermine.api.profile.SavedQuery>();
         for (SavedQuery query : userProfile.getSavedQuerys()) {
