@@ -131,7 +131,6 @@ public class TemplateResultService extends QueryResultService
                 for (PathConstraint con : constraintsForPath) {
                     ConstraintInput foundConInput = null;
                     String code = template.getConstraints().get(con);
-                    boolean found = false;
                     for (ConstraintInput conInput : inputsForPath) {
                         if (StringUtils.isBlank(conInput.getCode())) {
                             throw new BadRequestException("There are multiple editable constraints"
@@ -141,7 +140,7 @@ public class TemplateResultService extends QueryResultService
                         }
                         if (conInput.getCode().equals(code)) {
                             if (foundConInput != null) {
-                                throw new BadRequestException("There were more than one constraint"
+                                throw new BadRequestException("There was more than one constraint"
                                         + " specified with code: " + conInput.getCode()
                                         + " in the request for path: " + path + "  You should only"
                                         + " provide one value per code.");
@@ -149,14 +148,8 @@ public class TemplateResultService extends QueryResultService
                             foundConInput = conInput;
                         }
                     }
-                    // foundConInput may be null
+                    // foundConInput may be null but that's ok if the constraint is optional
                     checkAndAddValue(values, template, con, foundConInput, code);
-                    if (!found && constraintIsRequired(template, con)) {
-                        throw new BadRequestException("There are multiple editable constraints for "
-                                + "path " + path + " but value and operation for "
-                                + "constraint with code " + code + " wasn't specified in "
-                                + "the request or there is an error. Check the codes.");
-                    }
                 }
             }
         }
