@@ -433,8 +433,8 @@ EDATE=`grep -w ^$DCCID $DATADIR/ftplist | grep -v true | sed -n 's/.*\t//;p'`
 
 echo -n "filling $CHADODB db with $DCCID (eDate: $EDATE) -- "
 date "+%d%b%Y %H:%M"
-
-echo "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
+echo
+echo -n "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
 
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
 $DBPW -noupdate cvterm,dbxref,db,cv,feature $1 
@@ -442,7 +442,7 @@ $DBPW -noupdate cvterm,dbxref,db,cv,feature $1
 exitstatus=$?
 
 if [ "$exitstatus" = "0" ]
-then # insertion of embargo date: this is temporary until all subs have it
+then # insertion of embargo date: temporary until all subs have it
 psql -h $DBHOST -d $CHADODB -U $DBUSER -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'dcc_id', '$DCCID', 1292 from experiment_prop;"
 
 DBDATE=`psql -h modprod1 -d modchado-dev -U modmine -q -t -c "select value from experiment_prop where name = 'Embargo Date' and  experiment_id=(select max(experiment_id) from experiment_prop);"`
@@ -451,6 +451,8 @@ if [ -z "$DBDATE" ]
 then
 echo "Adding Embargo Date: $EDATE.."
 psql -h  modprod1 -d modchado-dev -U modmine -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'Embargo Date', '$EDATE', 1305 from experiment_prop;"
+
+echo -n "  added embargo date: $EDATE " >> $LOG
 fi
 
 
@@ -460,12 +462,14 @@ echo "$DCCID: adding patch file."
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
 $DBPW -noupdate cvterm,dbxref,db,cv,feature $PATCHDIR/applied_patches_$DCCID.chadoxml
 else
+echo -n " no patch file " >> $LOG
 echo "$DCCID: no patch file."
 fi
 
 
 else
 echo
+echo -n "  ERROR: stag-storenode FAILED, skipping submission." >> $LOG
 echo "$DCCID  stag-storenode FAILED. SKIPPING SUBMISSION."
 echo
 STAGFAIL=y
