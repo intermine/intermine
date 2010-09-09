@@ -51,8 +51,10 @@ under the same terms as Perl itself.
 
 use Exporter 'import';
 
-our @EXPORT_OK = qw(validate_path end_is_class b_is_subclass_of_a root);
-our %EXPORT_TAGS = (validate => \@EXPORT_OK);
+my  @validators  = qw(validate_path end_is_class b_is_subclass_of_a root);
+our @EXPORT_OK   = (@validators, 'type_of');
+our %EXPORT_TAGS = (validate => \@validators);
+
 use strict;
 use InterMine::Model::Attribute;
 use Carp qw/confess/;
@@ -99,6 +101,27 @@ sub last_bit {
     my ($model, $path_string) = @_;
     my @bits = _parse($model, $path_string);
     return $bits[-1] || $bits[0];
+}
+
+=head2 type_of
+
+ Usage    : type_of($model, 'Department.name');
+ Function : returns a string with the type that this string evaluates to
+            ie: Department.name => String
+                Department.employees => Employee
+
+=cut
+
+sub type_of {
+    my ($model, $path_string) = @_;
+    my $end = last_bit($model, $path_string);
+    if ($end->isa('InterMine::Model::Reference')) {
+	return $end->referenced_type_name;
+    } elsif ($end->isa('InterMine::Model::Attribute')) {
+	return $end->attribute_type;
+    } else {
+	return $end->name(); # because it's clearly a class
+    }
 }
 
 =head2 end_is_class
@@ -191,14 +214,14 @@ sub _parse {
 	else {
 	    $current_field = $current_class->get_field_by_name($bit);
 	    if (!defined $current_field) {
-		if (my $type = $type_hashref->{$current_class->name}) {
-		    my $type_class = $model->get_classdescriptor_by_name($type);
-		    $current_field = $type_class->get_field_by_name($bit);
-		}
-		if (!defined $current_field) {
-		    my $current_class_name = $current_class->name();
-		    confess qq[illegal path ($path_string) can't find field "$bit" in class $current_class_name\n];
-		}
+            if (my $type = $type_hashref->{$current_class->name}) {
+                my $type_class = $model->get_classdescriptor_by_name($type);
+                $current_field = $type_class->get_field_by_name($bit);
+            }
+            if (!defined $current_field) {
+                my $current_class_name = $current_class->name();
+                confess qq[illegal path ($path_string) can't find field "$bit" in class "$current_class_name"];
+            }
 	    }
 	    push @parts, $current_field;
 	    $current_class = _next_class($current_field, $model, $type_hashref, @parts);
