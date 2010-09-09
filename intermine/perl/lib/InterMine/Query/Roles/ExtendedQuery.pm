@@ -4,38 +4,36 @@ use MooseX::Role::Parameterized;
 use InterMine::TypeLibrary qw(QueryType);
 use MooseX::Types::Moose qw(HashRef);
 use XML::Smart;
-with 'InterMine::Query::Roles::WriteOutAble';
+
+requires (qw/to_xml insertion head apply_attributes_to_element/);;
+
 parameter type => (
     isa	     => QueryType,
     required => 1,
-    );
+);
 
 role {
     my $param = shift;
     my %args = @_;
 
-    around to_xml => sub {
+    around to_DOM => sub {
 	my $orig = shift;
 	my $self = shift;
-	my $wanted = shift;
-	my $coreXML = XML::Smart->new($self->$orig);
-	my $extXML  = XML::Smart->new;
-	my $type    = $param->type;
-	my $core_root = $coreXML->root;
+	my $query = $self->$orig;
+	my $doc = $query->getOwnerDocument;
+	my $head = $doc->createElement($param->type);
+	$self->apply_attributes_to_element($head, %{$self->head});
+	$head->appendChild($query);
+
 	my $insertions = $self->insertion;
 
-	return $coreXML->{$core_root}('<xml>')
-	    if ($wanted and $wanted eq 'query');
-
-	push @{$extXML->{$type}}, $self->head;
-	push @{$extXML->{$type}{$core_root}}, $coreXML->{$core_root};
-
-	while (my ($key, $value) = each %$insertions) {
-	    push @{$extXML->{$type}{$core_root}{$key}}, @$value;
+	while (my ($tag, $hash) = each %$insertions) {
+	    my $elem = $doc->createElement($tag);
+	    $self->apply_attributes_to_element($elem, %$hash);
+	    $query->appendChild($elem);
 	}
 
-	my $xml = $extXML->{$param->type}('<xml>');
-	return $xml;
+	return $head;
     };
 };
 
