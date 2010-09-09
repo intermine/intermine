@@ -131,11 +131,12 @@ sub process_xml {
     confess "Can't find any template strings in the xml I was passed"
 	unless @template_strings;
     for (@template_strings) {
-	my $t = InterMine::Query::Template->new(
+	my $t = eval {InterMine::Query::Template->new(
 	    service       => $self->service,
 	    model         => $self->model,
 	    source_string => $_,
-	);
+	)};
+	next unless (defined $t);
 	my $name = $t->name;
 	confess "Made two templates with the same name - $name"
 	    if $self->get_template_by_name($name);
