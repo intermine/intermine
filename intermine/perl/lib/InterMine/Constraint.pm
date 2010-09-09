@@ -21,6 +21,10 @@ sub requirements_are_met_by {
     }
     return ($matches == @required_attributes);
 }
+
+sub _build_element_name {
+    return 'constraint';
+}
 __PACKAGE__->meta->make_immutable;
 no Moose;
 1;
