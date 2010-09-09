@@ -13,6 +13,83 @@
 
 <html:xhtml />
 
+<style type="text/css">
+input.submit {
+  color: #008AB8;
+  font: bold 84% 'trebuchet ms',helvetica,sans-serif;
+  background-color: #fed;
+  border: 1px solid;
+  border-color: #696 #363 #363 #696;
+}
+</style>
+
+<script>
+
+  jQuery(document).ready(function(){
+    // Unckeck all checkboxes everything the page is (re)loaded
+    initCheck();
+
+    // Do before the form submitted
+    jQuery("#saveFromIdsToBagForm").submit(function() {
+        var ids = new Array();
+        jQuery(".aSub").each(function() {
+          if (this.checked) {ids.push(this.value);}
+       });
+
+        if (ids.length < 1)
+        { alert("Please select some submissions...");
+          return false;
+        } else {
+          jQuery("#ids").val(ids);
+          return true;
+          }
+    });
+  });
+
+     function initCheck()
+     {
+       jQuery('#allSub').removeAttr('checked');
+       jQuery(".aSub").removeAttr('checked');
+     }
+
+     // (un)Check all ids checkboxes
+     function checkAll()
+     {
+         jQuery(".aSub").attr('checked', jQuery('#allSub').is(':checked'));
+         jQuery('#allSub').css("opacity", 1);
+     }
+
+     function updateCheckStatus(status)
+     {
+         var statTag;
+         if (!status) { //unchecked
+           jQuery(".aSub").each(function() {
+             if (this.checked) {statTag=true;}
+           });
+
+           if (statTag) {
+            jQuery("#allSub").attr('checked', true);
+            jQuery("#allSub").css("opacity", 0.5); }
+           else {
+            jQuery("#allSub").removeAttr('checked');
+            jQuery("#allSub").css("opacity", 1);}
+         }
+         else { //checked
+           jQuery(".aSub").each(function() {
+             if (!this.checked) {statTag=true;}
+         });
+
+         if (statTag) {
+           jQuery("#allSub").attr('checked', true);
+           jQuery("#allSub").css("opacity", 0.5); }
+         else {
+           jQuery("#allSub").attr('checked', true);
+           jQuery("#allSub").css("opacity", 1);}
+         }
+     }
+
+</script>
+
 <div class="body">
 
 <tiles:insert name="modMineSearch.tile"/>
@@ -24,7 +101,21 @@ Search Term: <c:out value="${searchTerm}"/>
 <c:if test="${empty displayMax}"><c:out value="Matching submissions: ${fn:length(submissions)}"/></c:if>
 <c:if test="${!empty displayMax}">Matching submissions: more than <c:out value="${displayMax}" /> (only the top <c:out value="${displayMax}" /> matches are displayed)</c:if>
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+
+<c:if test="${fn:length(submissions) > 0}">
+    <form action="/${WEB_PROPERTIES['webapp.path']}/saveFromIdsToBag.do" id="saveFromIdsToBagForm" method="POST">
+      <input type="hidden" id="type" name="type" value="Submission"/>
+      <input type="hidden" id="ids" name="ids" value=""/>
+      <input type="hidden" name="source" value="modMineSearchResults"/>
+      <input type="hidden" name="newBagName" value="new_submission_list"/>
+      <div style="padding:10px;"><input type="submit" class="submit" value="CREATE LIST"/></div>
+    </form>
+</c:if>
+
 <tr>
+    <c:if test="${fn:length(submissions) > 0}">
+      <th><input type="checkbox" id="allSub" onclick="checkAll()"/></th>
+    </c:if>
     <th>DCC id</th>
     <th>Organism</th>
     <th>Group</th>
@@ -36,13 +127,14 @@ Search Term: <c:out value="${searchTerm}"/>
 <c:forEach items="${submissions}" var="subResult">
   <c:set var="sub" value="${subResult.key}"/>
   <tr>
+      <td><input type="checkbox" class="aSub" value="${sub.dCCid}" onclick="updateCheckStatus(this.checked)"/></td>
       <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.id}"><c:out value="${sub.dCCid}"></c:out></html:link></td>
       <td>
-      <c:if test="${sub.organism.genus eq 'Drosophila'}"> 
+      <c:if test="${sub.organism.genus eq 'Drosophila'}">
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/>
                         <c:set var="fly" value="1" />
       </c:if>
-      <c:if test="${sub.organism.genus eq 'Caenorhabditis'}">  
+      <c:if test="${sub.organism.genus eq 'Caenorhabditis'}">
         <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/>
                         <c:set var="worm" value="1" />
                     </c:if>
@@ -53,7 +145,7 @@ Search Term: <c:out value="${searchTerm}"/>
       <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.id}"><c:out value="${sub.title}"></c:out></html:link></td>
       <td><fmt:formatDate value="${sub.publicReleaseDate}" type="date"/></td>
       <td>
-        <c:set var="isPrimer" value="0"/>          
+        <c:set var="isPrimer" value="0"/>
         <c:forEach items="${sub.properties}" var="prop" varStatus="status">
          <c:choose>
           <c:when test="${fn:contains(prop,'primer')}">
@@ -68,7 +160,7 @@ Search Term: <c:out value="${searchTerm}"/>
         </c:when>
         <c:when test="${isPrimer > 5 && status.last}">
         ...<br></br>
-        <im:querylink text="all ${isPrimer} ${prop.type}s" showArrow="true" skipBuilder="true" 
+        <im:querylink text="all ${isPrimer} ${prop.type}s" showArrow="true" skipBuilder="true"
                   title="View all ${isPrimer} ${prop.type}s factors of submission ${sub.dCCid}">
 
 <query name="" model="genomic" view="SubmissionProperty.name SubmissionProperty.type" sortOrder="SubmissionProperty.type asc" constraintLogic="A and B">
@@ -85,12 +177,12 @@ Search Term: <c:out value="${searchTerm}"/>
 </query>
 
                   </im:querylink>
-        
+
         </c:when>
         </c:choose>
         </c:forEach>
       </td>
-      
+
       <td><img height="10" width="${subResult.value * 5}" src="images/heat${subResult.value}.gif" alt="${subResult.value}" title="${subResult.value}"/></td>
 </tr>
 </c:forEach>
