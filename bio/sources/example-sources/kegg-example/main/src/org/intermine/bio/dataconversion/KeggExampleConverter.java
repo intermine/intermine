@@ -43,7 +43,7 @@ public class KeggExampleConverter extends BioFileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
-    public KeggExampleConverter(Model model, ItemWriter writer) {
+    public KeggExampleConverter(ItemWriter writer, Model model) {
         super(writer, model, "GenomeNet", "KEGG PATHWAY");
     }
 
