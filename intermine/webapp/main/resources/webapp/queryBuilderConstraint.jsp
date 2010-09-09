@@ -182,7 +182,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                   <%-- normal inputfield --%>
                   <c:otherwise>
                     <im:dateInput attributeType="${dec.path.type}" property="attributeValue" 
-                        styleId="attribute6" value="${(dec.possibleValuesDisplayed && dec.selectedValue == null) ? dec.possibleValues[0] : dec.selectedValue}" 
+                        styleId="attribute8" value="${(dec.possibleValuesDisplayed && dec.selectedValue == null) ? dec.possibleValues[0] : dec.selectedValue}" 
                         onkeypress="if(event.keyCode == 13) {$('attribute').click();return false;}"
                         visible="${dec.inputFieldDisplayed}"/>
                   </c:otherwise>
