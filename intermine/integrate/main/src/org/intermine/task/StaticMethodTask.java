@@ -56,12 +56,13 @@ public class StaticMethodTask extends Task
      * @throws BuildException if a problem occurs
      * @see Task#execute
      */
+    @Override
     public void execute() {
         try {
-            Class clazz = getClass().getClassLoader().loadClass(className);
+            Class<?> clazz = getClass().getClassLoader().loadClass(className);
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
-            Method method = clazz.getMethod(this.method, new Class[]{ObjectStore.class});
-            method.invoke(null, new Object[]{os});
+            Method m = clazz.getMethod(method, new Class[]{ObjectStore.class});
+            m.invoke(null, new Object[]{os});
         } catch (Exception err) {
             throw new BuildException(err);
         }

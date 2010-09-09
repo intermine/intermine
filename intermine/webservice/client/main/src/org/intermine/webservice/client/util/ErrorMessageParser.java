@@ -11,8 +11,8 @@ package org.intermine.webservice.client.util;
  */
 
 /**
- * Parses service error message. 
- * 
+ * Parses service error message.
+ *
  * @author Jakub Kulaviak
  **/
 public class ErrorMessageParser
@@ -20,7 +20,7 @@ public class ErrorMessageParser
 
     /**
      * Parses service error message.
-     * @param errorStr string with error wrapped inside of tags 
+     * @param errorStr string with error wrapped inside of tags
      * @return error
      */
     public static String parseError(String errorStr) {

@@ -53,7 +53,7 @@ public class SubqueryConstraint extends Constraint
         }
 
         // check that query only has one item in select list
-        List select = query.getSelect();
+        List<QuerySelectable> select = query.getSelect();
         if (select.size() < 1) {
             throw new IllegalArgumentException("Query has no items in select list.");
         }
@@ -63,7 +63,7 @@ public class SubqueryConstraint extends Constraint
         }
 
         // check that the select node is a QueryEvaluable
-        QuerySelectable selectNode = (QuerySelectable) select.get(0);
+        QuerySelectable selectNode = select.get(0);
         if (!QueryEvaluable.class.isAssignableFrom(selectNode.getClass())) {
             throw new IllegalArgumentException("Subquery select item is not a QueryEvaluable");
         }
@@ -107,7 +107,7 @@ public class SubqueryConstraint extends Constraint
         }
 
         // check that query only has one item in select list and it is a QueryClass
-        List select = query.getSelect();
+        List<QuerySelectable> select = query.getSelect();
         if (select.size() < 1) {
             throw new IllegalArgumentException("Query has no items in select list.");
         }
@@ -117,7 +117,7 @@ public class SubqueryConstraint extends Constraint
                                                 + "item in select list.");
         }
 
-        QuerySelectable selectNode = (QuerySelectable) select.get(0);
+        QuerySelectable selectNode = select.get(0);
         if (!QueryClass.class.isAssignableFrom(selectNode.getClass())) {
             throw new IllegalArgumentException("Select item of subquery is not a QueryClass");
         }
@@ -168,6 +168,7 @@ public class SubqueryConstraint extends Constraint
      * @param obj the object to compare with
      * @return true if objects are equal
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof SubqueryConstraint) {
             SubqueryConstraint sc = (SubqueryConstraint) obj;
@@ -184,6 +185,7 @@ public class SubqueryConstraint extends Constraint
      *
      * @return the hashCode
      */
+    @Override
     public int hashCode() {
         return subquery.hashCode()
             + 3 * op.hashCode()
@@ -193,6 +195,6 @@ public class SubqueryConstraint extends Constraint
 
     //-------------------------------------------------------------------------
 
-    protected static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.IN,
-        ConstraintOp.NOT_IN});
+    protected static final List<ConstraintOp> VALID_OPS = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.IN, ConstraintOp.NOT_IN});
 }

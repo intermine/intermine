@@ -14,14 +14,13 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import net.sf.cglib.proxy.*;
-
-import org.apache.log4j.Logger;
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -34,8 +33,8 @@ import org.intermine.objectstore.proxy.ProxyReference;
  */
 public class DynamicBean implements MethodInterceptor
 {
-    private static final Logger LOG = Logger.getLogger(DynamicBean.class);
-    private Map map = new HashMap();
+    //private static final Logger LOG = Logger.getLogger(DynamicBean.class);
+    private Map<String, Object> map = new HashMap<String, Object>();
 
     /**
      * Construct the interceptor
@@ -51,7 +50,7 @@ public class DynamicBean implements MethodInterceptor
      * @param inter the interfaces to implement
      * @return the DynamicBean
      */
-    public static FastPathObject create(Class clazz, Class [] inter) {
+    public static FastPathObject create(Class<? extends FastPathObject> clazz, Class<?> [] inter) {
         if ((clazz != null) && clazz.isInterface()) {
             throw new IllegalArgumentException("clazz must not be an interface");
         }
@@ -74,10 +73,10 @@ public class DynamicBean implements MethodInterceptor
      * @return the return value of the real method call
      * @throws Throwable if an error occurs in executing the real method
      */
-    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy)
-        throws Throwable {
+    public Object intercept(Object obj, Method method, Object[] args,
+            @SuppressWarnings("unused") MethodProxy proxy) throws Throwable {
         // java.lang.Object methods
-        if (method.getName().equals("equals")) {
+        if ("equals".equals(method.getName())) {
             if (args[0] instanceof InterMineObject) {
                 Integer otherId = ((InterMineObject) args[0]).getId();
                 Integer thisId = (Integer) map.get("id");
@@ -85,47 +84,14 @@ public class DynamicBean implements MethodInterceptor
             }
             return Boolean.FALSE;
         }
-        if (method.getName().equals("hashCode")) {
+        if ("hashCode".equals(method.getName())) {
             return map.get("id");
         }
-        if (method.getName().equals("finalize")) {
+        if ("finalize".equals(method.getName())) {
             return null;
         }
-        if (method.getName().equals("toString")) {
-            StringBuffer className = new StringBuffer();
-            boolean needComma = false;
-            Set classes = DynamicUtil.decomposeClass(obj.getClass());
-            Iterator classIter = classes.iterator();
-            while (classIter.hasNext()) {
-                if (needComma) {
-                    className.append(",");
-                }
-                Class clazz = (Class) classIter.next();
-                className.append(TypeUtil.unqualifiedName(clazz.getName()));
-            }
-            StringBuffer retval = new StringBuffer(className.toString() + " [");
-            Map sortedMap = new TreeMap(map);
-            Iterator mapIter = sortedMap.entrySet().iterator();
-            needComma = false;
-            while (mapIter.hasNext()) {
-                Map.Entry mapEntry = (Map.Entry) mapIter.next();
-                String fieldName = (String) mapEntry.getKey();
-                Object fieldValue = mapEntry.getValue();
-                if (!(fieldValue instanceof Collection)) {
-                    if (needComma) {
-                        retval.append(", ");
-                    }
-                    needComma = true;
-                    if (fieldValue instanceof ProxyReference) {
-                        retval.append(fieldName + "=" + ((ProxyReference) fieldValue).getId());
-                    } else if (fieldValue instanceof InterMineObject) {
-                        retval.append(fieldName + "=" + ((InterMineObject) fieldValue).getId());
-                    } else {
-                        retval.append(fieldName + "=\"" + fieldValue + "\"");
-                    }
-                }
-            }
-            return retval.toString() + "]";
+        if ("toString".equals(method.getName())) {
+            return doToString(obj);
         }
         if ("getoBJECT".equals(method.getName()) && (args.length == 0)) {
             return NotXmlRenderer.render(obj);
@@ -151,7 +117,7 @@ public class DynamicBean implements MethodInterceptor
                 }
             }
             if (retval == null) {
-                Class fieldType = null;
+                Class<?> fieldType = null;
                 try {
                     String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
                     Method getMethod = obj.getClass().getMethod(methodName);
@@ -161,7 +127,7 @@ public class DynamicBean implements MethodInterceptor
                 }
 
                 if (Collection.class.isAssignableFrom(fieldType)) {
-                    retval = new HashSet();
+                    retval = new HashSet<Object>();
                     map.put(fieldName, retval);
                 }
                 if (fieldType.isPrimitive()) {
@@ -187,7 +153,7 @@ public class DynamicBean implements MethodInterceptor
             String fieldName = (String) args[0];
             Object retval = map.get(fieldName);
             if (retval == null) {
-                Class fieldType = null;
+                Class<?> fieldType = null;
                 try {
                     String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
                     Method getMethod = obj.getClass().getMethod(methodName);
@@ -197,7 +163,7 @@ public class DynamicBean implements MethodInterceptor
                 }
 
                 if (Collection.class.isAssignableFrom(fieldType)) {
-                    retval = new HashSet();
+                    retval = new HashSet<Object>();
                     map.put(fieldName, retval);
                 }
                 if (fieldType.isPrimitive()) {
@@ -228,9 +194,10 @@ public class DynamicBean implements MethodInterceptor
         if ("addCollectionElement".equals(method.getName()) && (args.length == 2)
                 && (method.getReturnType() == Void.TYPE)) {
             String fieldName = (String) args[0];
-            Collection col = (Collection) map.get(fieldName);
+            @SuppressWarnings("unchecked") Collection<Object> col = (Collection<Object>) map
+                .get(fieldName);
             if (col == null) {
-                col = new HashSet();
+                col = new HashSet<Object>();
                 map.put(fieldName, col);
             }
             col.add(args[1]);
@@ -247,7 +214,7 @@ public class DynamicBean implements MethodInterceptor
         }
         if ("getElementType".equals(method.getName()) && (args.length == 1)) {
             String methodName = "add" + StringUtil.reverseCapitalisation((String) args[0]);
-            Method methods[] = obj.getClass().getMethods();
+            Method[] methods = obj.getClass().getMethods();
             for (Method addMethod : methods) {
                 if (addMethod.getName().equals(methodName)) {
                     return addMethod.getParameterTypes()[0];
@@ -275,7 +242,7 @@ public class DynamicBean implements MethodInterceptor
                 }
             }
             if ((retval == null) && Collection.class.isAssignableFrom(method.getReturnType())) {
-                retval = new HashSet();
+                retval = new HashSet<Object>();
                 map.put(StringUtil.reverseCapitalisation(method.getName().substring(3)), retval);
             }
             return retval;
@@ -299,10 +266,10 @@ public class DynamicBean implements MethodInterceptor
         }
         if (method.getName().startsWith("add") && (args.length == 1)
                 && (method.getReturnType() == Void.TYPE)) {
-            Collection col = (Collection) map.get(StringUtil.reverseCapitalisation(
-                        method.getName().substring(3)));
+            @SuppressWarnings("unchecked") Collection<Object> col = (Collection<Object>) map
+                .get(StringUtil.reverseCapitalisation(method.getName().substring(3)));
             if (col == null) {
-                col = new HashSet();
+                col = new HashSet<Object>();
                 map.put(StringUtil.reverseCapitalisation(method.getName().substring(3)), col);
             }
             col.add(args[0]);
@@ -311,12 +278,46 @@ public class DynamicBean implements MethodInterceptor
         throw new IllegalArgumentException("No definition for method " + method);
     }
 
+    private String doToString(Object obj) {
+        StringBuffer className = new StringBuffer();
+        boolean needComma = false;
+        Set<Class<?>> classes = DynamicUtil.decomposeClass(obj.getClass());
+        for (Class<?> clazz : classes) {
+            if (needComma) {
+                className.append(",");
+            }
+            needComma = true;
+            className.append(TypeUtil.unqualifiedName(clazz.getName()));
+        }
+        StringBuffer retval = new StringBuffer(className.toString() + " [");
+        Map<String, Object> sortedMap = new TreeMap<String, Object>(map);
+        needComma = false;
+        for (Map.Entry<String, Object> mapEntry : sortedMap.entrySet()) {
+            String fieldName = mapEntry.getKey();
+            Object fieldValue = mapEntry.getValue();
+            if (!(fieldValue instanceof Collection<?>)) {
+                if (needComma) {
+                    retval.append(", ");
+                }
+                needComma = true;
+                if (fieldValue instanceof ProxyReference) {
+                    retval.append(fieldName + "=" + ((ProxyReference) fieldValue).getId());
+                } else if (fieldValue instanceof InterMineObject) {
+                    retval.append(fieldName + "=" + ((InterMineObject) fieldValue).getId());
+                } else {
+                    retval.append(fieldName + "=\"" + fieldValue + "\"");
+                }
+            }
+        }
+        return retval.toString() + "]";
+    }
+
     /**
      * Getter for the map, for testing purposes
      *
      * @return a map of data for this object
      */
-    public Map getMap() {
+    public Map<String, Object> getMap() {
         return map;
     }
 }

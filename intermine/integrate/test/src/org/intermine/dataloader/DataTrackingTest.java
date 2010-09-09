@@ -69,4 +69,18 @@ public class DataTrackingTest extends TestCase {
 
         assertEquals(source1.getName(), dt.getSource(new Integer(13), "name").getName());
     }
+    
+    // This is to investigate a possible bug where the version numbers are initialised from zero
+    // for each data source, instead of continuing.
+    public void testWrongOrderBug() throws Exception {
+        dt.setSource(new Integer(13), "name", source1);
+        dt.flush();
+        dt.setSource(new Integer(14), "name", source1);
+        dt.flush();
+        DataTracker dt2 = new DataTracker(DatabaseFactory.getDatabase("db.unittest"), 30, 10);
+        dt2.setSource(new Integer(14), "name", dt2.stringToSource("Source2"));
+        dt2.close();
+        dt2 = new DataTracker(DatabaseFactory.getDatabase("db.unittest"), 30, 10);
+        assertEquals(source2.getName(), dt2.getSource(new Integer(14), "name").getName());
+    }
 }

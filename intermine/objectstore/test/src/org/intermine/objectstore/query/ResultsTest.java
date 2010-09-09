@@ -107,7 +107,7 @@ public class ResultsTest extends TestCase
         q.addFrom(new QueryClass(Department.class));
         Results res = os.execute(q, 10, true, true, true);
         // Don't let res call the ObjectStore
-        res.os = null;
+        res.resultsBatches.os = null;
         try {
             ResultsRow row = (ResultsRow) res.range(5, 3);
             fail("Expected: IllegalArgumentException");
@@ -161,7 +161,7 @@ public class ResultsTest extends TestCase
         List rows = res.range(0,9);
         // Call this a second time - the rows should be in the cache
         // Invalidate the os - to check that no further calls can be made to it
-        res.os = null;
+        res.resultsBatches.os = null;
         rows = res.range(0,9);
         assertEquals(10, rows.size());
         for (int i = 0; i < 10; i++) {
@@ -192,7 +192,7 @@ public class ResultsTest extends TestCase
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
         Results res = os.execute(q, 10, true, true, true);
-        assertEquals(10, res.batchSize);
+        assertEquals(10, res.getBatchSize());
     }
 
     public void testGetBatchNoForRow() throws Exception {
@@ -214,15 +214,15 @@ public class ResultsTest extends TestCase
         Results res = os.execute(q, 7, true, true, true);
 
         // Fetch the first batch - will be a full batch
-        res.fetchBatchFromObjectStore(0);
+        res.resultsBatches.fetchBatchFromObjectStore(0, true, true);
         assertEquals(1, os.getExecuteCalls());
 
         // Fetch the second batch - will be partial, but will now know size
-        res.fetchBatchFromObjectStore(1);
-        assertEquals(10, res.maxSize);
+        res.resultsBatches.fetchBatchFromObjectStore(1, true, true);
+        assertEquals(10, res.resultsBatches.maxSize);
         assertEquals(2, os.getExecuteCalls());
 
-        List list = res.fetchBatchFromObjectStore(2);
+        List list = res.resultsBatches.fetchBatchFromObjectStore(2, true, true);
         assertEquals(0, list.size());
     }
 
@@ -254,7 +254,7 @@ public class ResultsTest extends TestCase
         while (iter.hasNext()) {
             count++;
             Object row = iter.next();
-            res.batches.clear();
+            res.resultsBatches.batches.clear();
         }
         assertEquals(5000, count);
     }
@@ -267,47 +267,9 @@ public class ResultsTest extends TestCase
 
         LOG.info("testSizeUsesFewBatchFetches starting");
         Results res = os2.execute(q, 1, true, true, true);
-        res.batches = Collections.synchronizedMap(new HashMap());
+        res.resultsBatches.batches = Collections.synchronizedMap(new HashMap());
         assertEquals(5000, res.size());
-        assertTrue("Expected size to fetch one batch, but fetched " + res.batches.size() + ".", res.batches.size() == 1);
-    }
-
-    public void testSizeUsesFewBatchFetches() throws Exception {
-        Query q = new Query();
-        q.addFrom(new QueryClass(Department.class));
-        ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
-        os2.setResultsSize(5000);
-
-        LOG.info("testSizeUsesFewBatchFetches starting");
-        Results res = os2.execute(q, 1, true, true, true);
-        res.get(3000);
-        try {
-            res.get(6002);
-        } catch (Exception e) {
-            // Expected.
-        }
-        res.batches = Collections.synchronizedMap(new HashMap());
-        assertEquals(5000, res.size());
-        assertTrue("Expected size to need exactly 12 tries to find size - took " + res.batches.size() + " tries.", res.batches.size() == 12);
-    }
-
-    public void testSizeUsesFewBatchFetches2() throws Exception {
-        Query q = new Query();
-        q.addFrom(new QueryClass(Department.class));
-        ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
-        os2.setResultsSize(5000);
-
-        LOG.info("testSizeUsesFewBatchFetches2 starting");
-        Results res = os2.execute(q, 30, true, true, true);
-        res.get(3000);
-        try {
-            res.get(6031);
-        } catch (Exception e) {
-            // Expected.
-        }
-        res.batches = Collections.synchronizedMap(new HashMap());
-        assertEquals(5000, res.size());
-        assertTrue("Expected size to need exactly 6 tries to find size - took " + res.batches.size() + " tries.", res.batches.size() == 6);
+        assertTrue("Expected size to fetch one batch, but fetched " + res.resultsBatches.batches.size() + ".", res.resultsBatches.batches.size() == 1);
     }
 
     public void testIteratorPropagatesObjectStoreException() throws Exception {

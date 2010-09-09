@@ -59,9 +59,9 @@ public class LogicExpression
             parser.expr();
             ast = parser.getAST();
             //new antlr.DumpASTVisitor().visit(ast);
-            if (ast.getText().toLowerCase().equals("or")) {
+            if ("or".equals(ast.getText().toLowerCase())) {
                 rootNode = new Or(ast);
-            } else if (ast.getText().toLowerCase().equals("and")) {
+            } else if ("and".equals(ast.getText().toLowerCase())) {
                 rootNode = new And(ast);
             } else {
                 rootNode = new Variable(ast.getText());
@@ -361,6 +361,7 @@ public class LogicExpression
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof LogicExpression) {
             return toString().equals(o.toString());
@@ -371,6 +372,7 @@ public class LogicExpression
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return toString().hashCode();
     }
@@ -394,9 +396,9 @@ public class LogicExpression
                 AST child = ast.getFirstChild();
                 while (child != null) {
                     Node childNode = null;
-                    if (child.getText().equals("or")) {
+                    if ("or".equals(child.getText())) {
                         childNode = new Or(child);
-                    } else if (child.getText().equals("and")) {
+                    } else if ("and".equals(child.getText())) {
                         childNode = new And(child);
                     } else {
                         childNode = new Variable(child.getText());
@@ -464,7 +466,7 @@ public class LogicExpression
     /**
      * An AND operator node.
      */
-    public class And extends Operator
+    public final class And extends Operator
     {
         private And(AST ast) {
             super(ast);
@@ -496,7 +498,7 @@ public class LogicExpression
     /**
      * An OR operator node.
      */
-    public class Or extends Operator
+    public final class Or extends Operator
     {
         private Or(AST ast) {
             super(ast);
@@ -528,7 +530,7 @@ public class LogicExpression
     /**
      * A variable node.
      */
-    public class Variable extends Node
+    public final class Variable extends Node
     {
         private String name;
 

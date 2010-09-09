@@ -20,8 +20,11 @@ import org.intermine.util.PropertiesUtil;
  *
  * @author Mark Woodbridge
  */
-public class ObjectStoreFactory
+public final class ObjectStoreFactory
 {
+    private ObjectStoreFactory() {
+    }
+
     /**
      * Return an ObjectStore configured using properties
      * @param alias the relevant prefix for the properties
@@ -32,7 +35,7 @@ public class ObjectStoreFactory
         if (alias == null) {
             throw new NullPointerException("ObjectStore alias cannot be null");
         }
-        if (alias.equals("")) {
+        if ("".equals(alias)) {
             throw new IllegalArgumentException("ObjectStore alias cannot be empty");
         }
         Properties props = PropertiesUtil.getPropertiesStartingWith(alias);
@@ -46,14 +49,14 @@ public class ObjectStoreFactory
             throw new ObjectStoreException(alias + " does not have an ObjectStore class specified"
                                            + " (check properties file)");
         }
-        Class cls = null;
+        Class<?> cls = null;
         try {
             cls = Class.forName(clsName);
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Cannot find specified ObjectStore class '" + clsName
                                            + "' for " + alias + " (check properties file)", e);
         }
-        Class[] parameterTypes = new Class[] {String.class, Properties.class};
+        Class<?>[] parameterTypes = new Class[] {String.class, Properties.class};
         Method m = cls.getDeclaredMethod("getInstance", parameterTypes);
         return (ObjectStore) m.invoke(null, new Object[] {alias, props});
     }

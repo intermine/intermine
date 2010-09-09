@@ -69,7 +69,7 @@ public class InterMineExceptionHandler extends ExceptionHandler
         // Put the stack trace on the request
         StringWriter sw = new StringWriter();
         ex.printStackTrace(new PrintWriter(sw));
-        request.setAttribute("stacktrace", sw.toString());
+        request.setAttribute("stacktrace", sw.toString().replace("\"", "&quot;"));
 
         LOG.error(sw.toString());
 

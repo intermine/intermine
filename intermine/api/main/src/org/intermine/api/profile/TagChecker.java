@@ -27,6 +27,5 @@ public interface TagChecker
      * @param userProfile the UserProfile to associate this tag with
      * @throws RuntimeException if the this parameters are inconsistent
      */
-    public void isValid(String tagName, String type, String objectIdentifier,
-                        UserProfile userProfile);
+    void isValid(String tagName, String type, String objectIdentifier, UserProfile userProfile);
 }

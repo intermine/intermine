@@ -90,10 +90,17 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
                       Map<String, List<FieldDescriptor>> classKeys,
                       Map<String, BagQueryResult> pathToBagQueryResult) {
         this.osResults = results;
-        this.flatResults = new ResultsFlatOuterJoinsImpl((List<ResultsRow>) osResults,
+        this.flatResults = new ResultsFlatOuterJoinsImpl((List<ResultsRow>) ((List) osResults),
                 osResults.getQuery());
         this.model = model;
-        this.columnPaths = pathQuery.getView();
+        this.columnPaths = new ArrayList<Path>();
+        try {
+            for (String pathString : pathQuery.getView()) {
+                this.columnPaths.add(pathQuery.makePath(pathString));
+            }
+        } catch (PathException e) {
+            throw new RuntimeException("Error creating WebResults because PathQuery is invalid", e);
+        }
         this.classKeys = classKeys;
         this.pathToQueryNode = pathToQueryNode;
         this.pathToBagQueryResult = pathToBagQueryResult;
@@ -178,7 +185,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
                                                    .getName());
             Class typeCls = columnPath.getLastClassDescriptor().getType();
 
-            String columnDescription = pathQuery.getPathDescription(columnPath.
+            String columnDescription = pathQuery.getGeneratedPathDescription(columnPath.
                     toStringNoConstraints());
             Column column;
 

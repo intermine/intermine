@@ -10,8 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.ArrayList;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,12 +29,10 @@ import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintLookup;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateBuildState;
-import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Action to create a new TemplateQuery from current query.
@@ -60,6 +56,7 @@ public class CreateTemplateAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
@@ -68,28 +65,69 @@ public class CreateTemplateAction extends InterMineAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
-        PathQuery query = SessionMethods.getQuery(session);
-        TemplateBuildState tbs = SessionMethods.getTemplateBuildState(session);
+        TemplateQuery template = (TemplateQuery) SessionMethods.getQuery(session);
         WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
 
         boolean seenProblem = false;
 
         // Check whether query has at least one constraint and at least one output
-        if (query.getView().size() == 0) {
+        if (template.getView().size() == 0) {
             recordError(new ActionMessage("errors.createtemplate.nooutputs"), request);
             seenProblem = true;
         }
-        if (query.getBagNames().size() != 0) {
+        if (template.getBagNames().size() != 0) {
             recordError(new ActionMessage("errors.createtemplate.templatewithlist"), request);
             seenProblem = true;
         }
 
+        // Check for a name clash with system templates
+        Profile superUser = im.getProfileManager().getSuperuserProfile();
+        if (!superUser.equals(profile)) {
+            if (superUser.getSavedTemplates().containsKey(template.getName())) {
+                recordError(new ActionMessage("errors.createtemplate.existing", template.getName()),
+                        request);
+                seenProblem = true;
+            }
+        }
+
+        // Check whether there is a template name clash
+        boolean isNewTemplate = (session.getAttribute(Constants.NEW_TEMPLATE) != null
+            && (Boolean) session.getAttribute(Constants.NEW_TEMPLATE)) ? true : false;
+        String prevTemplateName = (String) session.getAttribute(Constants.PREV_TEMPLATE_NAME);
+        if (profile.getSavedTemplates().containsKey(template.getName())
+                && (isNewTemplate
+                || (prevTemplateName != null && !prevTemplateName.equals(template.getName())))) {
+            recordError(new ActionMessage("errors.createtemplate.existing", template.getName()),
+                    request);
+            seenProblem = true;
+        }
+
+        if (StringUtils.isEmpty(template.getName())) {
+            recordError(new ActionMessage("errors.required", "Template name"), request);
+            seenProblem = true;
+        } else if (!NameUtil.isValidName(template.getName())) {
+            recordError(new ActionMessage("errors.badChars"), request);
+            seenProblem = true;
+        }
+
+        // Ensure that we can actually execute the query
+        if (!seenProblem) {
+            try {
+                if (webResultsExecutor.getQueryInfo(template) == null) {
+                    webResultsExecutor.setQueryInfo(template, webResultsExecutor.explain(template));
+                }
+            } catch (ObjectStoreException e) {
+                recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
+                seenProblem = true;
+            }
+        }
+
         boolean foundEditableConstraint = false;
         boolean foundNonEditableLookup = false;
-        for (Constraint c : query.getAllConstraints()) {
-            if (c.isEditable()) {
+        for (PathConstraint c : template.getConstraints().keySet()) {
+            if (template.isEditable(c)) {
                 foundEditableConstraint = true;
-            } else if (c.getOp().equals(ConstraintOp.LOOKUP)) {
+            } else if (c instanceof PathConstraintLookup) {
                 foundNonEditableLookup = true;
             }
         }
@@ -106,76 +144,36 @@ public class CreateTemplateAction extends InterMineAction
             seenProblem = true;
         }
 
-        // Check for a name clash with system templates
-        Profile superUser = im.getProfileManager().getSuperuserProfile();
-        if (!superUser.equals(profile)) {
-            if (superUser.getSavedTemplates().containsKey(tbs.getName())) {
-                recordError(new ActionMessage("errors.createtemplate.existing", tbs.getName()),
-                        request);
-                seenProblem = true;
-            }
-        }
-
-        // Check whether there is a template name clash
-        if (profile.getSavedTemplates().containsKey(tbs.getName())
-                && (tbs.getUpdatingTemplate() == null
-                    || !tbs.getUpdatingTemplate().getName().equals(tbs.getName()))) {
-            recordError(new ActionMessage("errors.createtemplate.existing", tbs.getName()),
-                    request);
-            seenProblem = true;
-        }
-
-        if (StringUtils.isEmpty(tbs.getName())) {
-            recordError(new ActionMessage("errors.required", "Template name"), request);
-            seenProblem = true;
-        } else if (!NameUtil.isValidName(tbs.getName())) {
-            recordError(new ActionMessage("errors.badChars"), request);
-            seenProblem = true;
-        }
-
-        // Ensure that we can actually execute the query
-        if (!seenProblem) {
-            try {
-                if (webResultsExecutor.getQueryInfo(query) == null) {
-                    webResultsExecutor.setQueryInfo(query, webResultsExecutor.explain(query));
-                }
-            } catch (ObjectStoreException e) {
-                recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
-                seenProblem = true;
-            }
-        }
-
         if (seenProblem) {
             return mapping.findForward("query");
         }
 
         // no problems!  TODO this should be updated somewhere else
-        query.setProblems(new ArrayList<Throwable>());
 
-        TemplateQuery template = TemplateHelper.buildTemplateQuery(tbs, query);
-        TemplateQuery editing = tbs.getUpdatingTemplate();
-
-        String key = (editing == null) ? "templateBuilder.templateCreated"
+        String key = (isNewTemplate) ? "templateBuilder.templateCreated"
                                        : "templateBuilder.templateUpdated";
 
         recordMessage(new ActionMessage(key, template.getName()), request);
 
         // Replace template if needed
-        if (editing != null) {
-            profile.deleteTemplate(editing.getName());
+        if (!isNewTemplate) {
+            String templateName = (prevTemplateName != null)
+                ? prevTemplateName : template.getName();
+            profile.deleteTemplate(templateName);
+            session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
         }
         profile.saveTemplate(template.getName(), template);
         // If superuser then rebuild shared templates
         if (SessionMethods.isSuperUser(session)) {
             ServletContext servletContext = session.getServletContext();
             SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);
-            if (editing != null) {
+            if (!isNewTemplate) {
                 tr.webSearchableUpdated(template, TagTypes.TEMPLATE);
             } else {
                 tr.webSearchableAdded(template, TagTypes.TEMPLATE);
             }
         }
-        SessionMethods.removeTemplateBuildState(session);
+        session.removeAttribute(Constants.NEW_TEMPLATE);
         return new ForwardParameters(mapping.findForward("mymine"))
             .addParameter("subtab", "templates").forward();
     }

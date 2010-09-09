@@ -52,75 +52,47 @@ public class PathQueryBindingTest extends TestCase
         Model model = Model.getInstanceByName("testmodel");
         // allCompanies
         PathQuery allCompanies = new PathQuery(model);
-        List<Path> view = new ArrayList();
-        view.add(PathQuery.makePath(model, allCompanies, "Company"));
-        allCompanies.setViewPaths(view);
+        allCompanies.addView("Company");
         expected.put("allCompanies", allCompanies);
 
-        view = new ArrayList();
         // employeesWithOldManagers
         PathQuery employeesWithOldManagers = new PathQuery(model);
-        view = new ArrayList();
-        view.add(PathQuery.makePath(model, employeesWithOldManagers, "Employee.name"));
-        view.add(PathQuery.makePath(model, employeesWithOldManagers, "Employee.age"));
-        view.add(PathQuery.makePath(model, employeesWithOldManagers, "Employee.department.name"));
-        view.add(PathQuery.makePath(model, employeesWithOldManagers,
-                                     "Employee.department.manager.age"));
-        employeesWithOldManagers.setViewPaths(view);
-        PathNode age = employeesWithOldManagers.addNode("Employee.department.manager.age");
-        age.getConstraints().add(new Constraint(ConstraintOp.GREATER_THAN, new Integer(10),
-                                                true, "age is greater than 10", null, "age_gt_10", null));
-        employeesWithOldManagers.addPathStringDescription("Employee.department",
-                                                          "Department of the Employee");
+        employeesWithOldManagers.addViews("Employee.name", "Employee.age", "Employee.department.name", "Employee.department.manager.age");
+        employeesWithOldManagers.addConstraint(new PathConstraintAttribute("Employee.department.manager.age", ConstraintOp.GREATER_THAN, "10"));
+        employeesWithOldManagers.setDescription("Employee.department",
+                "Department of the Employee");
         expected.put("employeesWithOldManagers", employeesWithOldManagers);
 
         // companyInBag
         PathQuery companyInBag = new PathQuery(model);
-        view = new ArrayList();
-        view.add(PathQuery.makePath(model, companyInBag, "Company"));
-        companyInBag.setViewPaths(view);
-        PathNode company = companyInBag.addNode("Company");
-        company.getConstraints().add(new Constraint(ConstraintOp.IN, "bag1"));
+        companyInBag.addView("Company");
+        companyInBag.addConstraint(new PathConstraintBag("Company", ConstraintOp.IN, "bag1"));
         expected.put("companyInBag", companyInBag);
         
         // queryWithConstraint
         PathQuery queryWithConstraint = new PathQuery(model);
-        view = new ArrayList();
-        queryWithConstraint.addNode("Company");
-        queryWithConstraint.addNode("Company.departments");
-        PathNode pathNode = queryWithConstraint.addNode("Company.departments.employees");
-        pathNode.setType("CEO");
-        view.add(PathQuery.makePath(model, queryWithConstraint, "Company.name"));
-        view.add(PathQuery.makePath(model, queryWithConstraint, "Company.departments.name"));
-        view.add(PathQuery.makePath(model, queryWithConstraint, "Company.departments.employees.name"));
-        view.add(PathQuery.makePath(model, queryWithConstraint, "Company.departments.employees.title"));
-
-        queryWithConstraint.setViewPaths(view);
+        queryWithConstraint.addViews("Company.name", "Company.departments.name", "Company.departments.employees.name", "Company.departments.employees.title");
+        queryWithConstraint.addConstraint(new PathConstraintSubclass("Company.departments.employees", "CEO"));
         expected.put("queryWithConstraint", queryWithConstraint);
 
         // employeesInBag
         PathQuery employeesInBag = new PathQuery(model);
-        view = new ArrayList();
-        view.add(PathQuery.makePath(model, employeesInBag, "Employee.name"));
-        employeesInBag.setViewPaths(view);
-        PathNode employeeEnd = employeesInBag.addNode("Employee.end");
-        employeeEnd.getConstraints().add(new Constraint(ConstraintOp.IN, "bag1"));
-        Exception e = new Exception("Invalid bag constraint - only objects can be"
-                                    + "constrained to be in bags.");
+        employeesInBag.addView("Employee.name");
+        employeesInBag.addConstraint(new PathConstraintBag("Employee.end", ConstraintOp.IN, "bag1"));
+        //Exception e = new Exception("Invalid bag constraint - only objects can be"
+        //                            + "constrained to be in bags.");
         //employeesInBag.problems.add(e);
-        List<Throwable> problems = new ArrayList<Throwable>(Arrays.asList(employeesInBag.getProblems()));
-        problems.add(e);
-        employeesInBag.setProblems(problems);
         expected.put("employeeEndInBag", employeesInBag);
 
         return expected;
     }
 
     public void testAllCompanies() throws Exception {
-        assertEquals(expected.get("allCompanies"), savedQueries.get("allCompanies"));
+        assertEquals(expected.get("allCompanies").toString(), savedQueries.get("allCompanies").toString());
     }
+
     public void testEmployeesWithOldManagers() throws Exception {
-        assertEquals(expected.get("employeesWithOldManagers"), savedQueries.get("employeesWithOldManagers"));
+        assertEquals(expected.get("employeesWithOldManagers").toString(), savedQueries.get("employeesWithOldManagers").toString());
     }
 
     // this will fail to validate - attributes cannot be in bags
@@ -128,38 +100,65 @@ public class PathQueryBindingTest extends TestCase
         //assertEquals(expected.get("vatNumberInBag"), savedQueries.get("vatNumberInBag"));
     }
 
-    public void companyNumberInBag() throws Exception {
-        assertEquals(expected.get("companyInBag"), savedQueries.get("companyInBag"));
+    public void testCompanyNumberInBag() throws Exception {
+        assertEquals(expected.get("companyInBag").toString(), savedQueries.get("companyInBag").toString());
+    }
+
+    public void testQueryWithConstraint() throws Exception {
+        assertEquals(expected.get("queryWithConstraint").toString(), savedQueries.get("queryWithConstraint").toString());
     }
 
     // this won't move bag constraint to parent, will not produce a valid query
     public void employeeEndInBag() throws Exception {
-        assertEquals(expected.get("employeeEndInBag"), savedQueries.get("employeeEndInBag"));
+        /*assertEquals(expected.get("employeeEndInBag"), savedQueries.get("employeeEndInBag"));
         System.out.println(((PathQuery) savedQueries.get("employeeEndInBag")));
-        List<Throwable> problems = Arrays.asList(((PathQuery) expected.get("employeeEndInBag")).getProblems());
+        List<Throwable> problems = Arrays.asList(((OldPathQuery) expected.get("employeeEndInBag")).getProblems());
         assertEquals(problems,
-                ((PathQuery) savedQueries.get("employeeEndInBag")));
+                ((OldPathQuery) savedQueries.get("employeeEndInBag")));*/
     }
 
     public void testMarshallings() throws Exception {
         // Test marshallings
-        String xml = PathQueryBinding.marshal((PathQuery) expected.get("employeesWithOldManagers"),
-                                              "employeesWithOldManagers", "testmodel", 1);
+        String xml = PathQueryBinding.marshal(expected.get("employeesWithOldManagers"),
+                "employeesWithOldManagers", "testmodel", 1);
         Map readFromXml = new LinkedHashMap();
         readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), 1);
         // checking can be removed maybe
         Map expectedQuery = new LinkedHashMap();
         expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
 
-        assertEquals(xml, expectedQuery, readFromXml);
+        assertEquals(xml, expectedQuery.toString(), readFromXml.toString());
 
-        xml = PathQueryBinding.marshal((PathQuery) expected.get("queryWithConstraint"),
-                                       "queryWithConstraint", "testmodel", 1);
+        xml = PathQueryBinding.marshal(expected.get("queryWithConstraint"),
+                "queryWithConstraint", "testmodel", 1);
         readFromXml = new LinkedHashMap();
         readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), 1);
         expectedQuery = new LinkedHashMap();
         expectedQuery.put("queryWithConstraint", expected.get("queryWithConstraint"));
 
-        assertEquals(xml, expectedQuery, readFromXml);
+        assertEquals(xml, expectedQuery.toString(), readFromXml.toString());
+    }
+
+    public void testNewPathQuery() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery q = new PathQuery(model);
+        q.addView("Employee.name");
+        q.addConstraint(new PathConstraintAttribute("Employee.age", ConstraintOp.LESS_THAN, "50"));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\"><constraint path=\"Employee.age\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+    }
+
+    public void testNewPathQuery2() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery q = new PathQuery(model);
+        q.addView("Employee.name");
+        q.addView("Employee.department.name");
+        q.addOrderBy("Employee.age", OrderDirection.ASC);
+        q.addConstraint(new PathConstraintAttribute("Employee.age", ConstraintOp.LESS_THAN, "50"));
+        q.addConstraint(new PathConstraintAttribute("Employee.department.name", ConstraintOp.EQUALS, "Fred"));
+        q.setConstraintLogic("A or B");
+        q.setOuterJoinStatus("Employee.department", OuterJoinStatus.INNER);
+        q.setDescription("Flibble");
+        q.setDescription("Employee.name", "Albert");
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name\" longDescription=\"Flibble\" sortOrder=\"Employee.age asc\" constraintLogic=\"A or B\"><join path=\"Employee.department\" style=\"INNER\"/><pathDescription pathString=\"Employee.name\" description=\"Albert\"/><constraint path=\"Employee.age\" op=\"&lt;\" value=\"50\" code=\"A\"/><constraint path=\"Employee.department.name\" op=\"=\" value=\"Fred\" code=\"B\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
     }
 }

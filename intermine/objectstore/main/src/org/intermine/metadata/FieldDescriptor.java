@@ -53,7 +53,7 @@ public abstract class FieldDescriptor
      * @throws IllegalArgumentException if name argument is null
      */
     public FieldDescriptor(String name) {
-        if (name == null || name.equals("")) {
+        if (name == null || "".equals(name)) {
             throw new IllegalArgumentException("name cannot be null or empty");
         }
         // Java only accepts names that start with a character, $ or _, some characters

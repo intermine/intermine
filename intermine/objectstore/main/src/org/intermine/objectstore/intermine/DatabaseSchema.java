@@ -77,9 +77,9 @@ public class DatabaseSchema
         this.version = version;
         this.hasBioSeg = hasBioSeg;
         for (int i = 0; i < truncated.size(); i++) {
-            Class cA = truncated.get(i).getType();
+            Class<?> cA = truncated.get(i).getType();
             for (int o = 0; o < i; o++) {
-                Class cB = truncated.get(o).getType();
+                Class<?> cB = truncated.get(o).getType();
                 if (cB.isAssignableFrom(cA)) {
                     throw new IllegalArgumentException("Truncated class " + cB.getName()
                             + " is completely overridden by truncated class " + cA.getName());
@@ -152,7 +152,7 @@ public class DatabaseSchema
      * @param c a Class
      * @return a boolean
      */
-    public boolean isFlatMode(Class c) {
+    public boolean isFlatMode(Class<?> c) {
         return flatMode || (!InterMineObject.class.isAssignableFrom(c));
     }
 
@@ -236,8 +236,7 @@ public class DatabaseSchema
                         // master being included.
                         for (FieldDescriptor field : subCld.getAllFieldDescriptors()) {
                             if (field instanceof AttributeDescriptor) {
-                                AttributeDescriptor origField = (AttributeDescriptor) attributeMap
-                                    .get(field.getName());
+                                AttributeDescriptor origField = attributeMap.get(field.getName());
                                 if (origField == null) {
                                     attributeMap.put(field.getName(), (AttributeDescriptor) field);
                                 } else if (origField != field) {
@@ -338,7 +337,7 @@ public class DatabaseSchema
      *
      * @author Matthew Wakeling
      */
-    public static class Fields
+    public static final class Fields
     {
         private Set<AttributeDescriptor> attributes;
         private Set<ReferenceDescriptor> references;

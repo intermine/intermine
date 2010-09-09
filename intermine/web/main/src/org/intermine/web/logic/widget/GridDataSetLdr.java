@@ -24,17 +24,17 @@ public interface GridDataSetLdr
      * Get the generated DataSet
      * @return the dataset
      */
-    public GridDataSet getGridDataSet();
+    GridDataSet getGridDataSet();
 
     /**
      * Get the Results object
      * @return the results Object
      */
-    public Results getResults();
+    Results getResults();
 
     /**
      * This method is used to calculate the 'not analysed' total displayed on each widget
      * @return the total number of objects analysed in this widget
      */
-    public int getWidgetTotal();
+    int getWidgetTotal();
 }

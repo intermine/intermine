@@ -21,6 +21,7 @@ import java.util.Stack;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -43,7 +44,7 @@ public class PriorityConfig
      * project.xml file
      */
     public static void verify(Model model, String sources) {
-        Set<String> allSources = new HashSet(Arrays.asList(sources.split(" ")));
+        Set<String> allSources = new HashSet<String>(Arrays.asList(sources.split(" ")));
         Set<String> seenSources = new HashSet<String>();
         Map<String, List<String>> descriptors = DataLoaderHelper.getDescriptors(model);
         for (List<String> descSources : descriptors.values()) {
@@ -90,7 +91,7 @@ public class PriorityConfig
                     throw new IllegalArgumentException("Class '" + key + "' not found in model, "
                             + "check priorities configuration file.");
                 }
-                Class clazz = cld.getType();
+                Class<? extends FastPathObject> clazz = cld.getType();
                 for (FieldDescriptor field : cld.getFieldDescriptors()) {
                     if (!field.isCollection()) {
                         getPriorities(clazz, field.getName());
@@ -105,7 +106,7 @@ public class PriorityConfig
                             + "model, check priorities configuration file - bad entry is "
                             + key + ".");
                 }
-                Class clazz = cld.getType();
+                Class<? extends FastPathObject> clazz = cld.getType();
                 FieldDescriptor field = cld.getFieldDescriptorByName(fieldName);
                 if ((field != null) && (!field.isCollection())) {
                     getPriorities(clazz, fieldName);
@@ -127,22 +128,23 @@ public class PriorityConfig
      * @return a List of data source names
      * @throws IllegalArgumentException if more than one priority config matches
      */
-    protected synchronized List<String> getPriorities(Class clazz, String fieldName) {
+    protected synchronized List<String> getPriorities(Class<? extends FastPathObject> clazz,
+            String fieldName) {
         ClassAndFieldName cafn = new ClassAndFieldName(clazz, fieldName);
         List<String> retval = cache.get(cafn);
         if (retval == null) {
             String firstHit = null;
-            Set<Class> done = new HashSet<Class>();
-            Stack<Class> todo = new Stack<Class>();
+            Set<Class<?>> done = new HashSet<Class<?>>();
+            Stack<Class<?>> todo = new Stack<Class<?>>();
             todo.push(clazz);
             while (!todo.empty()) {
-                Class next = todo.pop();
+                Class<?> next = todo.pop();
                 if (!done.contains(next)) {
                     String className = TypeUtil.unqualifiedName(next.getName());
                     if (next.getSuperclass() != null) {
                         todo.push(next.getSuperclass());
                     }
-                    for (Class inter : next.getInterfaces()) {
+                    for (Class<?> inter : next.getInterfaces()) {
                         todo.push(inter);
                     }
                     String thisHit = className + "." + fieldName;
@@ -171,18 +173,20 @@ public class PriorityConfig
 
     private static class ClassAndFieldName
     {
-        private Class clazz;
+        private Class<?> clazz;
         private String fieldName;
 
-        public ClassAndFieldName(Class clazz, String fieldName) {
+        public ClassAndFieldName(Class<?> clazz, String fieldName) {
             this.clazz = clazz;
             this.fieldName = fieldName;
         }
 
+        @Override
         public int hashCode() {
             return 3 * clazz.hashCode() + 5 * fieldName.hashCode();
         }
 
+        @Override
         public boolean equals(Object o) {
             if (o instanceof ClassAndFieldName) {
                 ClassAndFieldName c = (ClassAndFieldName) o;
@@ -191,6 +195,7 @@ public class PriorityConfig
             return false;
         }
 
+        @Override
         public String toString() {
             return clazz.getName() + "." + fieldName;
         }

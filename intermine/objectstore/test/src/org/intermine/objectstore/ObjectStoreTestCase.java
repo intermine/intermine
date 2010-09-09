@@ -655,6 +655,10 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                     Arrays.asList(data.get("EmployeeA2")),
                     Arrays.asList(data.get("EmployeeA3")),
                     Arrays.asList(data.get("EmployeeB2"))));
+        results.put("MultipleInBagConstraint1", Arrays.asList(
+                Arrays.asList(data.get("EmployeeA1")),
+                Arrays.asList(data.get("EmployeeA2")),
+                Arrays.asList(data.get("EmployeeB1"))));
     }
 
     /**

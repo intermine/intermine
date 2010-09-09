@@ -1,30 +1,18 @@
-
-
-package InterMine::Path::HelperObject;
-
-sub new {
-    
-    my $class = shift;
-    my $name  = shift;
-    my $self  = {name => $name};
-    return bless $self, $class;
-}
-
-sub name {
-    return $self->{name};
-}
-
-1;
-    
-
-
 package InterMine::Path;
 
 =head1 NAME
 
-InterMine::Path - an object representation of a path throw a model
+InterMine::Path - functions for finding problems with paths
 
 =head1 SYNOPSIS
+
+    use InterMine::Path qw(:validate);
+
+    my @errors;
+    push @errors, validate_path($model, $path_string);
+    push @errors, end_is_class($model, $path_string);
+    push @errors, b_is_subclass_of_a($model, $path_stringA, $path_stringB);
+    confess @errors if @errors;
 
 =head1 AUTHOR
 
@@ -52,7 +40,7 @@ L<http://www.flymine.org>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2009 FlyMine, all rights reserved.
+Copyright 2009,2010 FlyMine, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
@@ -61,215 +49,195 @@ under the same terms as Perl itself.
 
 =cut
 
+use Exporter 'import';
+
+our @EXPORT_OK = qw(validate_path end_is_class b_is_subclass_of_a root);
+our %EXPORT_TAGS = (validate => \@EXPORT_OK);
 use strict;
-use Carp qw/croak confess/;
+use InterMine::Model::Attribute;
+use Carp qw/confess/;
 
-=head2 new
+=head2 validate_path
 
- Usage   : my $path = new InterMine::Path($model, "Department.company.name");
- Function: create a new Path object
- Args    : $model - the InterMine::Model to use for validating paths
-           $path_string - the path in string format
-=cut
-sub new
-{
-  my $class = shift;
-
-  if ((@_ < 2) || (@_ > 3)) {
-    croak "wrong aguments to Path::new: InterMine::Model, \$path_string, \\%type_hash\n";
-  }
-
-  my $model       = shift;
-  my $path_string = shift;
-  my $type_hash   = shift;
-
-  my $self = {};
-
-  $self->{model} = $model;
-  $self->{string} = $path_string;
-
-  $self->{parts} = [_get_parts($model, $path_string, $type_hash)];
-
-  return bless $self, $class;
-}
-
-=head2 validate
-
- Usage   : InterMine::Path->validate($model, 'Department.name');
- Function: return true if and only if a path string is valid for the given model
+ Usage   : validate_path($model, 'Department.name');
+ Function: Return errors for this path, nothing if the path is valid
  Args    : $model - the InterMine::Model to use for validating
            $path_string - the path in string format
 
 =cut
-sub validate
-{
-  my $class = shift;
-  my $model = shift;
-  my $path_string = shift;
-  my $type_hash = shift;
 
-  return _get_parts($model, $path_string, $type_hash);
-}
+sub validate_path {
+    # Since errors returned should only relate to the path
+    # we will confess arg errors here
+    confess "Bad arguments: Too many" if ( @_ > 4 );
+    confess "Bad arguments: Too few"  if (@_ < 2);
+    confess "Bad arguments: No pathstring, or not a string"
+	if (ref $_[1] or not defined $_[1]);
+    confess "Bad arguments: Third arg is not a hash"
+	if (defined $_[2] and ref $_[2] ne 'HASH');
+    confess "Bad Arguments: No model as first arg"
+	if (not $_[0]->isa('InterMine::Model'));
 
-=head2 parts
-
- Usage   : my @parts = $path->parts();
- Function: Returns a list containing the ClassDescriptors and FieldDescriptors
-           that describe this Part.  The first item in the list will always be
-           a ClassDescriptor (eg. the "Department" descriptor for the path:
-           "Department.name").  The last item in the list will be a
-           Attribute object if the path ends in a field (eg. "Department.name")
-           otherwise will be a Collection or a Reference object.  Other parts
-           of the path are represented in the list as Collections or References.
- Example : the path "Department.company.name" has three parts, the "Department"
-           ClassDescriptor, the "Department.company" Reference object and the
-           "Company.name" Attribute object
-
-=cut
-sub parts
-{
-  my $self = shift;
-
-  return @{$self->{parts}};
-}
-
-=head2 to_string
-
- Usage   : my $txt = $path->to_string();
- Function: return a text version of this path
-
-=cut
-sub to_string
-{
-  my $self = shift;
-
-  $self->{string};
-}
-
-=head2 end
-
- Usage   : my $end_descriptor = $path->end();
- Function: return the field descriptor of the last part of the path, eg. for
-           "Department.company.name" return the Company.name Attribute object.
-           If the path consists only of a class (eg. "Department"), its
-           ClassDescriptor is returned.
-
-=cut
-sub end
-{
-  my $self = shift;
-  return @{$self->{parts}}[-1];
-}
-
-=head2 end_type
-
- Usage   : my $end_type = $path->end_type();
- Function: return the (Java) type of the last part of the path, eg. "String",
-           "Integer", "Gene"
-
-=cut
-sub end_type
-{
-  my $self = shift;
-
-  my $end = $self->end();
-  if (ref $end eq 'InterMine::Model::Reference' ||
-      ref $end eq 'InterMine::Model::Collection') {
-    return $end->referenced_type_name();
-  } else {
-    if (ref $end eq 'InterMine::Model::Attribute') {
-      return $end->attribute_type();
+    eval {_parse(@_)};
+    if ($@) {
+	return $@;
     } else {
-      return $end->name();
+	return undef;
     }
-  }
 }
 
-sub _get_parts
-{
-    my $model = shift;
-    my $path_string = shift;
-    my $type_hashref = shift;
+=head2 last_bit
 
-    my @parts = ();
+ Usage   : last_bit($model, 'Department.name');
+ Function: Returns the metaclass for the last part of the path-string
+ Args    : $model - the InterMine::Model to use for validating
+           $path_string - the path in string format
 
-    my @bits       = map {s/\s.*$//; $_} split /[\.:]/, $path_string; #split on joins, and remove trailing asc/desc
-    my @separators = split /\w+/,   $path_string;
+=cut
 
-# This cuts off the first part (eg Gene of Gene.name) and treats it
-# as the class. 
+sub last_bit {
+    my ($model, $path_string) = @_;
+    my @bits = _parse($model, $path_string);
+    return $bits[-1] || $bits[0];
+}
+
+=head2 end_is_class
+
+ Usage   : end_is_class($model, 'Department.name');
+ Function: Returns an error if the last bit does not evaluate to a class (ie. is an attribute)
+ Args    : $model - the InterMine::Model to use for validating
+           $path_string - the path in string format
+
+=cut
+
+sub end_is_class {
+    my $end = eval {last_bit(@_)};
+    if ($end) {
+	if (not class_of($end)) {
+	    return sprintf(
+		"%s: %s is a %s, not a class\n",
+		$_[1],
+		$end->name,
+		$end->attribute_type,
+	    );
+	} else {
+	    return undef;
+	}
+    } else {
+	return validate_path(@_);
+    }
+}
+
+
+
+=head2 b_is_subclass_of_a
+
+ Usage   : my $error = b_is_subclass_of_a($model, $pathA, $pathB);
+ Function: Returns an error if B is not a subclass of A.
+ Args    : $model - An InterMine::Model,
+           $pathA, $pathB - Path strings of the form "Path.string"
+
+=cut
+
+sub b_is_subclass_of_a {
+    my ($model, $path_stringA, $path_stringB) = @_;
+
+    my ($A, $B) = eval{map {class_of(last_bit($model, $_))}
+			   $path_stringA,
+			   $path_stringB;};
+    return undef unless ($A and $B);
+                  # invalid paths are not MY problem
+                  # - go see Mr. validate_path
+    if ($B->sub_class_of($A)) {
+	return undef;
+    } else {
+	return sprintf(
+	    "%s (which is a %s) is not a subclass of %s (which is a %s)\n",
+	    $path_stringB, $B->name,
+	    $path_stringA, $A->name,
+	);
+    }
+}
+
+sub root {
+    my ($root) = _parse(@_);
+    return $root;
+}
+
+sub _parse {
+    my ($model, $path_string, $type_hashref) = @_;
+    # split Path.string into 'Path', 'string'
+    my @bits  = split /\./, $path_string;
+    my @parts = (); # <-- the classdescriptors will go here
+
     my $top_class_name = shift @bits;
+    confess "model is not defined" unless (defined $model);
+    push @parts, $model->get_classdescriptor_by_name($top_class_name);
 
-    my $top_class = $model->get_classdescriptor_by_name($top_class_name);
-
-    if (defined $top_class) {
-	push @parts, $top_class;
-    } else {
-	croak qq[illegal path ($path_string), "$top_class_name" is not in the model];
-    }
-
-    my $current_class = $top_class;
+    my $current_class = $parts[-1];
     my $current_field = undef;
 
     for my $bit (@bits) {
-	if ($bit eq 'id' and $bit eq $bits[-1]) { # id is an internal attribute valid for all tables
-	    my $id = InterMine::Path::HelperObject->new($bit);
+
+	if ($bit eq 'id' and $bit eq $bits[-1]) {
+	    my $id = InterMine::Model::Attribute->new(
+		name	    => $bit,
+		type	    => 'Integer',
+		model	    => $model,
+		field_class => $current_class,
+	    );
 	    push @parts, $id;
 	}
 	else {
 	    $current_field = $current_class->get_field_by_name($bit);
-	    
 	    if (!defined $current_field) {
-		my $current_class_name = $current_class->name();
-		confess qq[illegal path ($path_string) can't find field "$bit" in class $current_class_name\n];
+		if (my $type = $type_hashref->{$current_class->name}) {
+		    my $type_class = $model->get_classdescriptor_by_name($type);
+		    $current_field = $type_class->get_field_by_name($bit);
+		}
+		if (!defined $current_field) {
+		    my $current_class_name = $current_class->name();
+		    confess qq[illegal path ($path_string) can't find field "$bit" in class $current_class_name\n];
+		}
 	    }
 	    push @parts, $current_field;
-
-	   # if ($current_field->field_type() eq 'attribute') {
-		# if this is not the last bit, it will caught next time around the loop
-		$current_class = undef;
-	   # } 
-	    unless ($current_field->field_type eq 'attribute') {
-		my $key = join('', zip(@separators[0 .. $#parts], map {$_->name} @parts));
-	
-		if (my $type = $type_hashref->{$key}) {  # if the type was given, respect it
-		    if ($type eq 'Relation') {
-			$current_class = $current_field->rev_referenced_classdescriptor();
-		    }
-		    else {
-			$current_class = $model->get_classdescriptor_by_name($type);
-		    }
-		} 
-		unless (defined $current_class) {
-		    if ( ($current_field->can('is_many_to_0')) && ($current_field->is_many_to_0) ){
-			$current_class = $current_field->rev_referenced_classdescriptor()
-			    ||
-			    $current_field->referenced_classdescriptor();
-		    }
-		    else { 
-			$current_class = $current_field->referenced_classdescriptor();
-		    }
-		}
-		use Data::Dumper;
-		confess "$path_string: current class not set at end of loop for ", 
-		      $current_field->name, Dumper($type_hashref)
-		    unless (UNIVERSAL::can($current_class, 'isa') 
-			    and $current_class->isa('InterMine::Model::ClassDescriptor'));
-	    }
+	    $current_class = _next_class($current_field, $model, $type_hashref, @parts);
 	}
     }
     return @parts;
 }
 
-
-# utility for zipping two arrays together
-# only works if both arrays are the same size!
-sub zip {
-    return @_ if (@_ == 1); # otherwise you get @_[0,0], ie. doubling.
-    my $p = @_ / 2;         # find the length of the first array (ie. half the total)
-    return @_[ map { $_, $_ + $p } 0 .. $p - 1 ]; # pair up the elements
+sub _next_class {
+    my ($current_field, $model, $typehash, @parts) = @_;
+    return undef if $current_field->isa('InterMine::Model::Attribute');
+    # if the type was given, respect it
+    my $next_class;
+    if (my $name = $typehash->{join('.', map {$_->name} @parts)}) {
+	$next_class = $model->get_classdescriptor_by_name($name);
+    } else {
+	$next_class = class_of($current_field);
+    }
+    confess "Could not find next class for " . $current_field->name
+	unless ($next_class);
+    return $next_class;
 }
 
-1;
+=head2 class_of
 
-    
+ Usage   : class_of($instance);
+ Function: Returns the meta-class that an object refers to.
+ Args    : an InterMine::Field or ClassDescriptor instance
+
+=cut
+
+sub class_of {
+    my $thing = shift;
+    if      ($thing->isa('InterMine::Model::Reference')) {
+	return $thing->referenced_classdescriptor();
+    } elsif ($thing->isa('InterMine::Model::ClassDescriptor')) {
+	return $thing;
+    } else {
+	return;
+    }
+}
+1;

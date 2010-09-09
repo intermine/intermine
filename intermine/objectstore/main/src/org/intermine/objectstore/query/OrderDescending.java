@@ -46,7 +46,7 @@ public class OrderDescending implements QueryOrderable
      *
      * @return class describing the type
      */
-    public Class getType() {
+    public Class<?> getType() {
         return qo.getType();
     }
 }

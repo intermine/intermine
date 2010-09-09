@@ -77,12 +77,12 @@ public class InterMineBagHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void startElement(@SuppressWarnings("unused") String uri,
-            @SuppressWarnings("unused") String localName,
-            String qName,
+            @SuppressWarnings("unused") String localName, String qName,
             Attributes attrs) throws SAXException {
         try {
-            if (qName.equals("bag")) {
+            if ("bag".equals(qName)) {
                 bagContents = new HashSet<Integer>();
                 bagName = attrs.getValue("name");
                 bagType = attrs.getValue("type");
@@ -104,14 +104,14 @@ public class InterMineBagHandler extends DefaultHandler
                 }
             }
 
-            if (qName.equals("bagElement") && bag != null) {
+            if ("bagElement".equals(qName) && bag != null) {
                 elementsInOldBag++;
                 Integer id = new Integer(attrs.getValue("id"));
 
                 if (idUpgrader.doUpgrade() && idToObjectMap.containsKey(id)) {
                     // try to find an equivalent object in the new database
 
-                    InterMineObject oldObject = (InterMineObject) idToObjectMap.get(id);
+                    InterMineObject oldObject = idToObjectMap.get(id);
 
                     Set<Integer> newIds = idUpgrader.getNewIds(oldObject, osw);
                     bagContents.addAll(newIds);
@@ -130,11 +130,12 @@ public class InterMineBagHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void endElement(@SuppressWarnings("unused") String uri,
             @SuppressWarnings("unused") String localName,
             String qName) throws SAXException {
         try {
-            if (qName.equals("bag")) {
+            if ("bag".equals(qName)) {
                 if (bag != null && !bagContents.isEmpty()) {
                     osw.addAllToBag(bag.getOsb(), bagContents);
                     bags.put(bagName, bag);

@@ -20,7 +20,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.SAXParser;
 import org.xml.sax.InputSource;
@@ -30,8 +33,11 @@ import org.xml.sax.InputSource;
  *
  * @author Mark Woodbridge
  */
-public class TemplateQueryBinding
+public class TemplateQueryBinding extends PathQueryBinding
 {
+    /** A single instance of this class */
+    public static final TemplateQueryBinding INSTANCE = new TemplateQueryBinding();
+
     /**
      * Convert a TemplateQuery to XML and write XML to given writer.
      *
@@ -40,6 +46,17 @@ public class TemplateQueryBinding
      * @param version the version number of the XML format
      */
     public static void marshal(TemplateQuery template, XMLStreamWriter writer, int version) {
+        INSTANCE.doMarshal(template, writer, version);
+    }
+
+    /**
+     * Convert a TemplateQuery to XML and write XML to given writer.
+     *
+     * @param template the TemplateQuery
+     * @param writer the XMLStreamWriter to write to
+     * @param version the version number of the XML format
+     */
+    public void doMarshal(TemplateQuery template, XMLStreamWriter writer, int version) {
         try {
             writer.writeStartElement("template");
             writer.writeAttribute("name", template.getName());
@@ -55,11 +72,35 @@ public class TemplateQueryBinding
                 writer.writeAttribute("comment", template.getComment());
             }
 
-            PathQueryBinding.marshal(template, template.getName(), template.getModel()
+            doMarshal(template, template.getName(), template.getModel()
                     .getName(), writer, version);
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doAdditionalConstraintStuff(PathQuery query, PathConstraint constraint,
+            XMLStreamWriter writer) throws XMLStreamException {
+        TemplateQuery template = (TemplateQuery) query;
+        if (template.isEditable(constraint)) {
+            writer.writeAttribute("editable", "true");
+        } else {
+            writer.writeAttribute("editable", "false");
+        }
+        String description = template.getConstraintDescription(constraint);
+        if (description != null) {
+            writer.writeAttribute("description", description);
+        }
+        SwitchOffAbility switchOffAbility = template.getSwitchOffAbility(constraint);
+        if (SwitchOffAbility.ON.equals(switchOffAbility)) {
+            writer.writeAttribute("switchable", "on");
+        } else if (SwitchOffAbility.OFF.equals(switchOffAbility)) {
+            writer.writeAttribute("switchable", "off");
         }
     }
 
@@ -70,7 +111,7 @@ public class TemplateQueryBinding
      * @return the corresponding XML String
      * @param version the version number of the XML format
      */
-    public String marshal(TemplateQuery template, int version) {
+    public static String marshal(TemplateQuery template, int version) {
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
@@ -91,9 +132,9 @@ public class TemplateQueryBinding
      * @param version the version of the xml format, an attribute of the ProfileManager
      * @return a Map from template name to TemplateQuery
      */
-    public Map<String, TemplateQuery> unmarshal(Reader reader,
+    public static Map<String, TemplateQuery> unmarshal(Reader reader,
             Map<String, InterMineBag> savedBags, int version) {
-        Map<String, TemplateQuery> templates = new LinkedHashMap();
+        Map<String, TemplateQuery> templates = new LinkedHashMap<String, TemplateQuery>();
 
         try {
             SAXParser.parse(new InputSource(reader), new TemplateQueryHandler(templates,

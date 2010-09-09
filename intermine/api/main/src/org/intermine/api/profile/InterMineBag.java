@@ -157,8 +157,8 @@ public class InterMineBag implements WebSearchable, Cloneable
         Query q = new Query();
         q.addToSelect(osb);
         q.setDistinct(false);
-        SingletonResults res = os.executeSingleton(q, 0, false, true, true);
-        return res;
+        SingletonResults res = os.executeSingleton(q, 1000, false, true, true);
+        return (List<Integer>) ((List) res);
     }
 
     /**
@@ -293,6 +293,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * Create copy of bag. Bag is saved to objectstore.
      * @return create bag
      */
+    @Override
     public Object clone() {
         InterMineBag ret = cloneShallowIntermineBag();
         cloneInternalObjectStoreBag(ret);

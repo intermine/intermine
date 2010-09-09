@@ -1,4 +1,4 @@
-<query name="" model="testmodel" view="Employee.name Employee.fullTime Employee.age Employee.end" sortOrder="Employee.name Employee.fullTime Employee.age Employee.end" constraintLogic="bad">
+<query name="" model="testmodel" view="Employee.name Employee.fullTime Employee.age Employee.end" sortOrder="Employee.name asc Employee.fullTime asc Employee.age asc Employee.end asc" constraintLogic="bad">
   <node path="Employee" type="Employee">
   </node>
   <node path="Employee.age" type="int">

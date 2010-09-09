@@ -38,7 +38,7 @@ public class ReferenceDescriptor extends FieldDescriptor
      */
     public ReferenceDescriptor(String name, String referencedType, String reverseRefName) {
         super(name);
-        if (referencedType == null || referencedType.equals("")) {
+        if (referencedType == null || "".equals(referencedType)) {
             throw new IllegalArgumentException("A value must be provided for "
                     + "the referenced type");
         }
@@ -106,7 +106,7 @@ public class ReferenceDescriptor extends FieldDescriptor
         }
 
         // find ReferenceDescriptor for the reverse reference
-        if (reverseRefName != null && !reverseRefName.equals("")) {
+        if (reverseRefName != null && !"".equals(reverseRefName)) {
             reverseRefDesc = referencedClassDesc
                 .getReferenceDescriptorByName(reverseRefName);
             if (reverseRefDesc == null) {
@@ -125,6 +125,7 @@ public class ReferenceDescriptor extends FieldDescriptor
     /**
      * {@inheritDoc}
      */
+    @Override
     public int relationType() {
         ReferenceDescriptor rd = getReverseReferenceDescriptor();
         if ((rd == null) || (rd instanceof CollectionDescriptor)) {
@@ -137,6 +138,7 @@ public class ReferenceDescriptor extends FieldDescriptor
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof ReferenceDescriptor) {
             ReferenceDescriptor ref = (ReferenceDescriptor) obj;
@@ -150,6 +152,7 @@ public class ReferenceDescriptor extends FieldDescriptor
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return 3 * name.hashCode()
             + 7 * referencedType.hashCode()
@@ -159,6 +162,7 @@ public class ReferenceDescriptor extends FieldDescriptor
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<reference name=\"" + name + "\" referenced-type=\""

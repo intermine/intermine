@@ -8,6 +8,8 @@ import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Manager;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
@@ -127,5 +129,16 @@ public class PathUtilTest extends TestCase {
         } catch (RuntimeException e) {
             // Fine
         }
+    }
+    
+    public void testCanAssignObjectToType() throws Exception {
+        Employee e = (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
+        assertTrue(PathUtil.canAssignObjectToType(Employee.class, e));
+        
+        Manager m = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
+        assertTrue(PathUtil.canAssignObjectToType(Employee.class, m));
+        
+        assertFalse(PathUtil.canAssignObjectToType(Manager.class, e));
+        assertFalse(PathUtil.canAssignObjectToType(Department.class, e));
     }
 }

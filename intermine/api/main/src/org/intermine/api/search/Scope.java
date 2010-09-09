@@ -19,15 +19,15 @@ public interface Scope
     /**
      * Global scope for public bags, templates, etc.
      */
-    public static final String GLOBAL = "global";
+    String GLOBAL = "global";
 
     /**
      * User scope for private bags, templates, etc.
      */
-    public static final String USER = "user";
+    String USER = "user";
 
     /**
      * User or global scope for bags, templates, etc.
      */
-    public static final String ALL = "all";
+    String ALL = "all";
 }

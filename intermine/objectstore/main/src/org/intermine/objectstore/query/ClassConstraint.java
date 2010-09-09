@@ -58,10 +58,10 @@ public class ClassConstraint extends Constraint
             throw new NullPointerException("qc2 cannot be null");
         }
 
-        Class c1 = qc1.getType();
-        Class c2 = qc2.getType();
-        Set cs1 = DynamicUtil.decomposeClass(c1);
-        Set cs2 = DynamicUtil.decomposeClass(c2);
+        Class<?> c1 = qc1.getType();
+        Class<?> c2 = qc2.getType();
+        Set<Class<?>> cs1 = DynamicUtil.decomposeClass(c1);
+        Set<Class<?>> cs2 = DynamicUtil.decomposeClass(c2);
         if ((cs1.size() == 1) && (cs2.size() == 1) && (!c1.isInterface()) && (!c2.isInterface())) {
             if (!(c1.isAssignableFrom(c2) || c2.isAssignableFrom(c1))) {
                 throw new IllegalArgumentException("Invalid constraint: "
@@ -141,6 +141,7 @@ public class ClassConstraint extends Constraint
      * @param o the object to compare with
      * @return true if objects are equal
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof ClassConstraint) {
             ClassConstraint cc = (ClassConstraint) o;
@@ -157,6 +158,7 @@ public class ClassConstraint extends Constraint
      *
      * @return the hashCode
      */
+    @Override
     public int hashCode() {
         return qc1.hashCode()
             + 3 * op.hashCode()
@@ -165,6 +167,6 @@ public class ClassConstraint extends Constraint
     }
 
     /** Valid operators for this constraint. */
-    public static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.EQUALS,
-        ConstraintOp.NOT_EQUALS});
+    public static final List<ConstraintOp> VALID_OPS = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.EQUALS, ConstraintOp.NOT_EQUALS});
 }

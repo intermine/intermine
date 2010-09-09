@@ -16,25 +16,31 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintBag;
+import org.intermine.pathquery.PathException;
 
 /**
  * Helper class providing methods for precomputing and summarising TemplateQuery objects.
  *
  * @author Richard Smith
  */
-public class TemplatePrecomputeHelper
+public final class TemplatePrecomputeHelper
 {
+    private TemplatePrecomputeHelper() {
+    }
 
     private static final Logger LOG = Logger.getLogger(TemplatePrecomputeHelper.class);
 
@@ -52,6 +58,10 @@ public class TemplatePrecomputeHelper
         return TemplatePrecomputeHelper.getPrecomputeQuery(template, indexes, null);
     }
 
+    public static Query getPrecomputeQuery(TemplateQuery template,
+            List<? super QueryNode> indexes, String groupBy) {
+        return getPrecomputeQuery(template, indexes, groupBy, null);
+    }
 
     /**
      * Get an ObjectStore query to precompute this template - remove editable constraints
@@ -61,63 +71,66 @@ public class TemplatePrecomputeHelper
      *
      * @param template to generate precompute query for
      * @param indexes any additional indexes to be created will be added to this list.
-     * @param groupByNode a PathNode to group by, for summary data, or null for a precompute query
+     * @param groupBy a path to group by, for summary data, or null for a precompute query
      * @return the query to precompute
      */
-    public static Query getPrecomputeQuery(TemplateQuery template, List indexes,
-            PathNode groupByNode) {
+    public static Query getPrecomputeQuery(TemplateQuery template,
+            List<? super QueryNode> indexes, String groupBy, InterMineAPI im) {
         // generate query with editable constraints removed
         TemplateQuery templateClone = template.cloneWithoutEditableConstraints();
 
-        if (template.getBagNames().size() != 0) {
-            throw new RuntimeException("Precomputed query can't be created "
-                    + "for a template with a list.");
+        List<String> problems = templateClone.verifyQuery();
+        if (!problems.isEmpty()) {
+            throw new RuntimeException("Template query " + template + " does not validate: "
+                    + problems);
+        }
+        for (PathConstraint constraint : templateClone.getConstraints().keySet()) {
+            if (constraint instanceof PathConstraintBag) {
+                throw new RuntimeException("Precomputed query can't be created "
+                        + "for a template with a list.");
+            }
         }
 
         List<String> indexPaths = new ArrayList<String>();
         // find nodes with editable constraints to index and possibly add to select list
-        Iterator niter = template.getEditableNodes().iterator();
-        while (niter.hasNext()) {
-            PathNode node = (PathNode) niter.next();
-            // look for editable constraints
-            List ecs = template.getEditableConstraints(node);
-            if (ecs != null && ecs.size() > 0) {
-                // NOTE: at one point this exhibited a bug where aliases were repeated
-                // in the generated query, seems to be fixed now though.
-                Iterator ecsIter = ecs.iterator();
-                // LOOKUP constraints already add the object (id) to the select list
-                // so we don't want to add it again here.while (ecsIter.hasNext()) {
-                Constraint c = (Constraint) ecsIter.next();
-                String path = node.getPathString();
-                if (!c.getOp().equals(ConstraintOp.LOOKUP)) {
-                    if (!templateClone.viewContains(path)) {
-                        templateClone.addView(path);
-                    }
-                    if (!indexPaths.contains(path)) {
-                        indexPaths.add(path);
-                    }
+        try {
+            for (PathConstraint con : template.getEditableConstraints()) {
+                Path conPath = templateClone.makePath(con.getPath());
+                String conPathString;
+                if (conPath.endIsAttribute()) {
+                    conPathString = con.getPath();
+                } else {
+                    conPathString = con.getPath() + ".id";
                 }
+                if (!templateClone.getView().contains(conPathString)) {
+                    templateClone.addView(conPathString);
+                }
+                indexPaths.add(conPathString);
             }
+        } catch (PathException e) {
+            // Should not happen if the query is valid
+            throw new Error(e);
         }
 
-        HashMap<String, QuerySelectable> pathToQueryNode = new HashMap();
+        HashMap<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Query query = null;
         try {
             // we can get away with not passing in a BagQueryRunner and conversion templates here,
             // we know that templates cannot contain non-editable lookup constraints.
-            query = MainHelper.makeQuery(templateClone, new HashMap(), pathToQueryNode, null,
-                                         null, false);
+            BagQueryRunner bagQueryRunner = (im != null) ? im.getBagQueryRunner() : null;
+            query = MainHelper.makeQuery(templateClone, new HashMap<String, InterMineBag>(),
+                    pathToQueryNode, bagQueryRunner, null);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Error getting precompute query for template "
                     + template.getName(), e);
         } catch (ObjectStoreException e) {
             // Not possible if last argument is null
-            throw new Error(e);
+            throw new Error("Error with template " + template, e);
         }
-        if (groupByNode != null) {
+        if (groupBy != null) {
             query.clearOrderBy();
             query.clearSelect();
-            QueryNode qn = (QueryNode) pathToQueryNode.get(groupByNode.getPathString());
+            QueryNode qn = (QueryNode) pathToQueryNode.get(groupBy);
             query.addToSelect(qn);
             // We don't actually need GROUP BY - just use DISTINCT instead.
             //query.addToGroupBy(qn);
@@ -128,7 +141,7 @@ public class TemplatePrecomputeHelper
             Iterator<String> indexIter = indexPaths.iterator();
             while (indexIter.hasNext()) {
                 String path = indexIter.next();
-                int lastIndex = Math.max(path.lastIndexOf("."), path.lastIndexOf(":"));
+                int lastIndex = path.lastIndexOf(".");
                 String parentPath = path;
                 while (lastIndex != -1) {
                     parentPath = parentPath.substring(0, lastIndex);
@@ -149,10 +162,12 @@ public class TemplatePrecomputeHelper
                         qcpe.addToSelect(pathToQueryNode.get(path));
                         break;
                     }
-                    lastIndex = Math.max(parentPath.lastIndexOf("."), parentPath.lastIndexOf(":"));
+                    lastIndex = parentPath.lastIndexOf(".");
                 }
                 if (lastIndex == -1) {
-                    query.addToSelect(pathToQueryNode.get(path));
+                    if (!query.getSelect().contains(pathToQueryNode.get(path))) {
+                        query.addToSelect(pathToQueryNode.get(path));
+                    }
                 }
             }
             for (QueryOrderable qo : query.getOrderBy()) {
@@ -162,7 +177,7 @@ public class TemplatePrecomputeHelper
             }
             for (QuerySelectable qs : query.getSelect()) {
                 if (qs instanceof QueryNode) {
-                    indexes.add(qs);
+                    indexes.add((QueryNode) qs);
                 }
             }
         }

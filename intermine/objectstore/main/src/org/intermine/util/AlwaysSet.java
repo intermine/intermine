@@ -16,13 +16,22 @@ import java.util.Collection;
  * A Set that always returns true for the contains method.
  *
  * @author Matthew Wakeling
+ * @param <E> The element type
  */
-public class AlwaysSet extends PseudoSet
+public final class AlwaysSet<E> extends PseudoSet<E>
 {
+    private static final AlwaysSet<Object> INSTANCE = new AlwaysSet<Object>();
+
     /**
-     * public instance
+     * Returns a new AlwaysSet with the correct type parameters.
+     *
+     * @return a Set that contains everything
+     * @param <T> The type of the Set
      */
-    public static final AlwaysSet INSTANCE = new AlwaysSet();
+    @SuppressWarnings("unchecked")
+    public static <T> AlwaysSet<T> getInstance() {
+        return (AlwaysSet<T>) INSTANCE;
+    }
 
     private AlwaysSet() {
     }
@@ -30,20 +39,22 @@ public class AlwaysSet extends PseudoSet
     /**
      * {@inheritDoc}
      */
-    public boolean contains(Object o) {
+    public boolean contains(@SuppressWarnings("unused") Object o) {
         return true;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean containsAll(Collection c) {
+    @Override
+    public boolean containsAll(@SuppressWarnings("unused") Collection<?> c) {
         return true;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "AlwaysSet";
     }

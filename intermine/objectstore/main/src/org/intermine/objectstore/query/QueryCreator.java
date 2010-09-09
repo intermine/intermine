@@ -11,9 +11,8 @@ package org.intermine.objectstore.query;
  */
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.Map;
-import java.util.Iterator;
+import java.util.Set;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -22,15 +21,17 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.TypeUtil;
 
 /**
  * Class that helps build queries or parts of queries for common situations.
  *
  * @author Andrew Varley
  */
-public class QueryCreator
+public final class QueryCreator
 {
+    private QueryCreator() {
+    }
+
     /**
      * Create a query that will retrieve an object from the objectstore, given an ID.
      *
@@ -38,7 +39,7 @@ public class QueryCreator
      * @param clazz a Class in the object
      * @return a Query
      */
-    public static Query createQueryForId(Integer id, Class clazz) {
+    public static Query createQueryForId(Integer id, Class<? extends InterMineObject> clazz) {
         Query q = new Query();
         QueryClass qc = new QueryClass(clazz);
         q.addFrom(qc);
@@ -55,7 +56,8 @@ public class QueryCreator
      * @param clazz a Class in the object
      * @return a Query
      */
-    public static Query createQueryForIds(Collection ids, Class clazz) {
+    public static Query createQueryForIds(Collection<Integer> ids,
+            Class<? extends InterMineObject> clazz) {
         Query q = new Query();
 
         q.setDistinct(false);
@@ -105,11 +107,11 @@ public class QueryCreator
         QueryNode qnNew;
         if (qn instanceof QueryClass) {
             // Add the equivalent QueryNode for the cloned query
-            String origAlias = (String) q.getAliases().get(qn);
+            String origAlias = q.getAliases().get(qn);
             qnNew = (QueryNode) ret.getReverseAliases().get(origAlias);
         } else if (qn instanceof QueryField) {
             QueryField qf = (QueryField) qn;
-            String origAlias = (String) q.getAliases().get(qf.getFromElement());
+            String origAlias = q.getAliases().get(qf.getFromElement());
             qnNew = new QueryField((QueryClass) ret.getReverseAliases().get(origAlias),
                                    qf.getFieldName());
         } else {
@@ -137,24 +139,22 @@ public class QueryCreator
      * @throws ObjectStoreException if something goes wrong
      */
     public static Query createQueryForExampleObject(Model model, InterMineObject obj,
-            Set fieldNames) throws ObjectStoreException {
+            Set<String> fieldNames) throws ObjectStoreException {
         Query q = new Query();
-        Class cls = obj.getClass();
-        Map fields = model.getFieldDescriptorsForClass(cls);
+        Class<? extends InterMineObject> cls = obj.getClass();
+        Map<String, FieldDescriptor> fields = model.getFieldDescriptorsForClass(cls);
         QueryClass qc = new QueryClass(cls);
         q.addFrom(qc);
         q.addToSelect(qc);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         try {
-            Iterator fieldIter = fieldNames.iterator();
-            while (fieldIter.hasNext()) {
-                String fieldName = (String) fieldIter.next();
-                FieldDescriptor fd = (FieldDescriptor) fields.get(fieldName);
+            for (String fieldName : fieldNames) {
+                FieldDescriptor fd = fields.get(fieldName);
                 if (fd instanceof AttributeDescriptor) {
                     QueryField qf = new QueryField(qc, fieldName);
                     cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.EQUALS,
-                                new QueryValue(TypeUtil.getFieldValue(obj, fieldName))));
+                                new QueryValue(obj.getFieldValue(fieldName))));
                 } else if (fd instanceof CollectionDescriptor) {
                     throw new IllegalArgumentException("Cannot include a collection in the example"
                             + " fields");
@@ -165,7 +165,7 @@ public class QueryCreator
                     QueryObjectReference qor = new QueryObjectReference(qc, fieldName);
                     cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS, subQc));
                     cs.addConstraint(new ClassConstraint(subQc, ConstraintOp.EQUALS,
-                                (InterMineObject) TypeUtil.getFieldValue(obj, fieldName)));
+                                (InterMineObject) obj.getFieldValue(fieldName)));
                 } else {
                     throw new IllegalArgumentException("Illegal field name for example: "
                             + fieldName);

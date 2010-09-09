@@ -32,6 +32,9 @@ import org.intermine.util.TypeUtil;
 
 public abstract class PrimaryKeyUtil
 {
+    private PrimaryKeyUtil() {
+    }
+
     protected static Map<String, Properties> modelKeys = new HashMap<String, Properties>();
     protected static Map<ClassDescriptor, Map<String, PrimaryKey>> primaryKeyCache =
         new IdentityHashMap<ClassDescriptor, Map<String, PrimaryKey>>();
@@ -76,7 +79,7 @@ public abstract class PrimaryKeyUtil
     public static Properties getKeyProperties(String modelName) {
         Properties keys = null;
         synchronized (modelKeys) {
-            keys = (Properties) modelKeys.get(modelName);
+            keys = modelKeys.get(modelName);
             if (keys == null) {
                 keys = MetadataManager.loadKeyDefinitions(modelName);
                 modelKeys.put(modelName, keys);

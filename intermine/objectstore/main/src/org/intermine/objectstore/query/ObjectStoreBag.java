@@ -44,7 +44,7 @@ public class ObjectStoreBag implements QuerySelectable
     /**
      * {@inheritDoc}
      */
-    public Class getType() {
+    public Class<?> getType() {
         return Integer.class;
     }
 
@@ -56,6 +56,7 @@ public class ObjectStoreBag implements QuerySelectable
      * @param o an Object
      * @return true if this equals o
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof ObjectStoreBag) {
             return bagId == ((ObjectStoreBag) o).bagId;
@@ -68,6 +69,7 @@ public class ObjectStoreBag implements QuerySelectable
      *
      * @return an int representing the contents
      */
+    @Override
     public int hashCode() {
         return bagId;
     }

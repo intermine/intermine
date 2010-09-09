@@ -58,7 +58,7 @@ import com.browseengine.bobo.api.FacetAccessible;
 public class KeywordSearchResultsController extends TilesAction
 {
     private static final Logger LOG = Logger.getLogger(KeywordSearchResultsController.class);
-    private static Logger LOG_SEARCHES = null;
+    private static Logger logSearches = null;
 
     /**
      * {@inheritDoc}
@@ -75,8 +75,8 @@ public class KeywordSearchResultsController extends TilesAction
 
         synchronized (this) { // if this decreases performance too much we might
             // have to change it
-            if (LOG_SEARCHES == null) {
-                LOG_SEARCHES =
+            if (logSearches == null) {
+                logSearches =
                         Logger.getLogger(KeywordSearchResultsController.class.getName()
                                 + ".searches");
 
@@ -91,7 +91,7 @@ public class KeywordSearchResultsController extends TilesAction
                 appender.setMaximumFileSize(102400); // 100kb
                 appender.setMaxBackupIndex(10);
 
-                LOG_SEARCHES.addAppender(appender);
+                logSearches.addAppender(appender);
                 LOG.info("Logging searches to: " + logFileName);
             }
         }
@@ -260,9 +260,8 @@ public class KeywordSearchResultsController extends TilesAction
                 time2 = System.currentTimeMillis();
 
                 for (KeywordSearchHit keywordSearchHit : searchHits) {
-                    Class<?> objectClass =
-                            DynamicUtil.decomposeClass(keywordSearchHit.getObject().getClass())
-                                    .iterator().next();
+                    Class<?> objectClass = DynamicUtil.getSimpleClass(keywordSearchHit.getObject()
+                            .getClass());
                     ClassDescriptor classDescriptor =
                             model.getClassDescriptorByName(objectClass.getName());
 
@@ -312,7 +311,7 @@ public class KeywordSearchResultsController extends TilesAction
 
             searchLogLine.append("bag=").append(searchBag).append(";");
 
-            LOG_SEARCHES.info(searchLogLine);
+            logSearches.info(searchLogLine);
         }
 
         LOG.debug("SEARCH RESULTS: " + searchResultsParsed.size());

@@ -22,8 +22,11 @@ import org.intermine.util.PropertiesUtil;
  * @author Mark Woodbridge
  */
 
-public class IntegrationWriterFactory
+public final class IntegrationWriterFactory
 {
+    private IntegrationWriterFactory() {
+    }
+
     /**
      * Return an IntegrationWriter configured using properties file
      * @param alias identifier for properties defining integration/writer parameters
@@ -36,7 +39,7 @@ public class IntegrationWriterFactory
         if (alias == null) {
             throw new NullPointerException("Integration alias cannot be null");
         }
-        if (alias.equals("")) {
+        if ("".equals(alias)) {
             throw new IllegalArgumentException("Integration alias cannot be empty");
         }
         Properties props = PropertiesUtil.getPropertiesStartingWith(alias);
@@ -56,8 +59,8 @@ public class IntegrationWriterFactory
         props.setProperty("alias", alias);
         IntegrationWriter iw = null;
         try {
-            Class integrationWriterClass = Class.forName(integrationWriterClassName);
-            Class[] parameterTypes = new Class[] {String.class, Properties.class};
+            Class<?> integrationWriterClass = Class.forName(integrationWriterClassName);
+            Class<?>[] parameterTypes = new Class[] {String.class, Properties.class};
             Method m = integrationWriterClass.getMethod("getInstance", parameterTypes);
             iw = (IntegrationWriter) m.invoke(null, new Object[] {alias, props});
         } catch (ClassNotFoundException e) {

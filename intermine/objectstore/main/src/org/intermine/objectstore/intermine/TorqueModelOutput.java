@@ -10,14 +10,22 @@ package org.intermine.objectstore.intermine;
  *
  */
 
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.BAGID_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.BAGVAL_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBID_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBPAGE_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBVAL_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOB_TABLE_NAME;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -26,16 +34,7 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStoreException;
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.BAGID_COLUMN;
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.BAGVAL_COLUMN;
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOB_TABLE_NAME;
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBID_COLUMN;
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBPAGE_COLUMN;
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBVAL_COLUMN;
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME;
 import org.intermine.sql.DatabaseUtil;
-
-import org.apache.log4j.Logger;
 
 /**
  * Map InterMine metadata to a Torque database schema in InterMine format
@@ -54,9 +53,8 @@ public class TorqueModelOutput
 
     protected DatabaseSchema schema;
     protected File file;
-    protected Set indirections = new HashSet();
+    protected Set<CollectionDescriptor> indirections = new HashSet<CollectionDescriptor>();
     protected String className = "";
-    protected Set columns = new HashSet();
 
     private static final String LONG_VAR_BINARY_TYPE = "LONGVARBINARY";
 
@@ -113,16 +111,12 @@ public class TorqueModelOutput
             //        + "http://jakarta.apache.org/turbine/dtd/database.dtd\">" + ENDL)
             .append("<database name=\"\">" + ENDL);
 
-        Iterator iter = schema.getModel().getClassDescriptors().iterator();
-        while (iter.hasNext()) {
-            ClassDescriptor cld = (ClassDescriptor) iter.next();
+        for (ClassDescriptor cld : schema.getModel().getClassDescriptors()) {
             ClassDescriptor tableMaster = schema.getTableMaster(cld);
             if (cld == tableMaster) {
                 sb.append(generate(cld));
             }
-            Iterator collectionIter = cld.getCollectionDescriptors().iterator();
-            while (collectionIter.hasNext()) {
-                CollectionDescriptor collection = (CollectionDescriptor) collectionIter.next();
+            for (CollectionDescriptor collection : cld.getCollectionDescriptors()) {
                 if (FieldDescriptor.M_N_RELATION == collection.relationType()) {
                     if (!indirections.contains(collection.getReverseReferenceDescriptor())) {
                         indirections.add(collection);
@@ -131,9 +125,8 @@ public class TorqueModelOutput
             }
         }
 
-        Iterator indirectionIter = indirections.iterator();
-        while (indirectionIter.hasNext()) {
-            sb.append(generateIndirectionTable((CollectionDescriptor) indirectionIter.next()));
+        for (CollectionDescriptor collection : indirections) {
+            sb.append(generateIndirectionTable(collection));
         }
 
         // create a metadata table, ensuring keys are unique
@@ -188,7 +181,6 @@ public class TorqueModelOutput
      */
     protected String generate(ClassDescriptor cld) throws ObjectStoreException {
         StringBuffer sb = new StringBuffer();
-        columns = new HashSet();
         className = DatabaseUtil.getTableName(cld);
         if (!schema.getMissingTables().contains(className.toLowerCase())) {
             // Every class and interface has a separate table
@@ -198,14 +190,10 @@ public class TorqueModelOutput
                 sb.append(generateColumn("OBJECT", "java.lang.String"));
             }
             DatabaseSchema.Fields fields = schema.getTableFields(cld);
-            Iterator fieldIter = fields.getAttributes().iterator();
-            while (fieldIter.hasNext()) {
-                AttributeDescriptor field = (AttributeDescriptor) fieldIter.next();
+            for (AttributeDescriptor field : fields.getAttributes()) {
                 sb.append(generateColumn(DatabaseUtil.getColumnName(field), field.getType()));
             }
-            fieldIter = fields.getReferences().iterator();
-            while (fieldIter.hasNext()) {
-                ReferenceDescriptor field = (ReferenceDescriptor) fieldIter.next();
+            for (ReferenceDescriptor field : fields.getReferences()) {
                 sb.append(generateColumn(DatabaseUtil.getColumnName(field), "java.lang.Integer"));
             }
             if (cld.getFieldDescriptorByName("id") != null) {
@@ -275,26 +263,28 @@ public class TorqueModelOutput
      * @return torque compatible name
      */
     public static String generateJdbcType(String type) {
-        if (type.equals("short") || type.equals("java.lang.Short")) {
+        if ("short".equals(type) || "java.lang.Short".equals(type)) {
             return "SMALLINT";
-        } else if (type.equals("int") || type.equals("java.lang.Integer")) {
+        } else if ("int".equals(type) || "java.lang.Integer".equals(type)) {
             return "INTEGER";
-        } else if (type.equals("long") || type.equals("java.lang.Long")) {
+        } else if ("long".equals(type) || "java.lang.Long".equals(type)) {
             return "BIGINT";
-        } else if (type.equals("java.lang.String")) {
+        } else if ("java.lang.String".equals(type)) {
             return "LONGVARCHAR";
-        } else if (type.equals("boolean") || type.equals("java.lang.Boolean")) {
+        } else if ("boolean".equals(type) || "java.lang.Boolean".equals(type)) {
             return "BIT";
-        } else if (type.equals("float") || type.equals("java.lang.Float")) {
+        } else if ("float".equals(type) || "java.lang.Float".equals(type)) {
             return "REAL";
-        } else if (type.equals("double") || type.equals("java.lang.Double")) {
+        } else if ("double".equals(type) || "java.lang.Double".equals(type)) {
             return "DOUBLE";
-        } else if (type.equals("java.util.Date")) {
+        } else if ("java.util.Date".equals(type)) {
             return "BIGINT";
-        } else if (type.equals("java.math.BigDecimal")) {
+        } else if ("java.math.BigDecimal".equals(type)) {
             return "NUMERIC";
+        } else if ("org.intermine.objectstore.query.ClobAccess".equals(type)) {
+            return "LONGVARCHAR";
         } else {
-            if (type.equals(LONG_VAR_BINARY_TYPE)) {
+            if (LONG_VAR_BINARY_TYPE.equals(type)) {
                 return LONG_VAR_BINARY_TYPE;
             }
         }

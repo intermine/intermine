@@ -115,13 +115,9 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
             exporter = new GFF3Exporter(writer,
                     indexes, getSoClassNames(servletContext), paths, sourceName, organisms);
             ExportResultsIterator iter = null;
-            boolean doGoFaster = false;
             try {
                 iter = getResultRows(pt, request);
-                if (!pt.getWebTable().isSingleBatch()) {
-                    doGoFaster = true;
-                    iter.goFaster();
-                }
+                iter.goFaster();
                 exporter.export(iter);
                 if (out instanceof GZIPOutputStream) {
                     try {
@@ -132,9 +128,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
                 }
             } finally {
                 if (iter != null) {
-                    if (doGoFaster) {
-                        iter.releaseGoFaster();
-                    }
+                    iter.releaseGoFaster();
                 }
             }
         } catch (Exception e) {
@@ -200,9 +194,6 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         return GFF3Exporter.canExportStatic(ExportHelper.getColumnClasses(pt));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public List<Path> getExportClassPaths(@SuppressWarnings("unused") PagedTable pt) {
         return new ArrayList<Path>();
     }

@@ -61,6 +61,7 @@ public class ModelOutputTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         if (this.destDir == null) {
             throw new BuildException("destDir attribute is not set");
@@ -73,7 +74,7 @@ public class ModelOutputTask extends Task
         }
 
         try {
-            if (type.equals("java")) {
+            if ("java".equals(type)) {
                 JavaModelOutput mo = new JavaModelOutput(model, destDir);
                 mo.process();
             } else {

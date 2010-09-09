@@ -38,10 +38,13 @@ public class Query implements FromElement, Queryable
     private Set<FromElement> queryClasses = new LinkedHashSet<FromElement>();
     private List<QuerySelectable> select = new ArrayList<QuerySelectable>();
     private List<QueryOrderable> orderBy = new ArrayList<QueryOrderable>();
-    private Set<QueryNode> groupBy = new LinkedHashSet<QueryNode>(); // @element-type QueryNode
+    private Set<QueryNode> groupBy = new LinkedHashSet<QueryNode>();
     private Map<Object, String> aliases = new IdentityHashMap<Object, String>();
     private Map<String, Object> reverseAliases = new HashMap<String, Object>();
     private int limit = Integer.MAX_VALUE;
+    // This object caches the current query's IQL, to improve performance. All methods that morph
+    // this must set this reference to null.
+    private IqlQuery iqlQuery;
 
     private int aliasNo = 1;
 
@@ -58,6 +61,7 @@ public class Query implements FromElement, Queryable
      * @param limit the new limit parameter - the results will be truncated to this many rows
      */
     public void setLimit(int limit) {
+        iqlQuery = null;
         this.limit = limit;
     }
 
@@ -80,6 +84,7 @@ public class Query implements FromElement, Queryable
         if (cls == null) {
             throw new NullPointerException("cls must not be null");
         }
+        iqlQuery = null;
         queryClasses.add(cls);
         alias(cls, null);
         return this;
@@ -96,6 +101,7 @@ public class Query implements FromElement, Queryable
         if (cls == null) {
             throw new NullPointerException("cls must not be null");
         }
+        iqlQuery = null;
         queryClasses.add(cls);
         alias(cls, alias);
         return this;
@@ -108,6 +114,7 @@ public class Query implements FromElement, Queryable
      * @return the updated Query
      */
     public Query deleteFrom(FromElement cls) {
+        iqlQuery = null;
         queryClasses.remove(cls);
         String alias = aliases.remove(cls);
         if (alias != null) {
@@ -131,6 +138,7 @@ public class Query implements FromElement, Queryable
        * @param constraint the constraint or constraint set
        */
     public void setConstraint(Constraint constraint) {
+        iqlQuery = null;
         this.constraint = constraint;
     }
 
@@ -150,6 +158,7 @@ public class Query implements FromElement, Queryable
      * @return the updated Query
      */
     public Query addToGroupBy(QueryNode node) {
+        iqlQuery = null;
         groupBy.add(node);
         return this;
     }
@@ -161,6 +170,7 @@ public class Query implements FromElement, Queryable
      * @return the updated Query
      */
     public Query deleteFromGroupBy(QueryNode node) {
+        iqlQuery = null;
         groupBy.remove(node);
         return this;
     }
@@ -181,6 +191,7 @@ public class Query implements FromElement, Queryable
      * @return the updated Query
      */
     public Query addToOrderBy(QueryOrderable node) {
+        iqlQuery = null;
         orderBy.add(node);
         return this;
     }
@@ -193,6 +204,7 @@ public class Query implements FromElement, Queryable
      * @return the updated Query
      */
     public Query addToOrderBy(QueryOrderable node, String direction) {
+        iqlQuery = null;
         if ("desc".equals(direction)) {
             OrderDescending o = new OrderDescending(node);
             orderBy.add(o);
@@ -211,6 +223,7 @@ public class Query implements FromElement, Queryable
      * @return the updated Query
      */
     public Query deleteFromOrderBy(QueryOrderable node) {
+        iqlQuery = null;
         orderBy.remove(node);
         return this;
     }
@@ -220,6 +233,7 @@ public class Query implements FromElement, Queryable
      *
      */
     public void clearOrderBy() {
+        iqlQuery = null;
         orderBy.clear();
     }
 
@@ -237,13 +251,13 @@ public class Query implements FromElement, Queryable
      *
      * @return a List of ORDER BY nodes
      */
-    public List getEffectiveOrderBy() {
-        Set seenQueryClasses = new HashSet();
-        List retval = new ArrayList();
-        List iterators = new ArrayList();
+    public List<Object> getEffectiveOrderBy() {
+        Set<Object> seenQueryClasses = new HashSet<Object>();
+        List<Object> retval = new ArrayList<Object>();
+        List<Iterator<? extends Object>> iterators = new ArrayList<Iterator<? extends Object>>();
         iterators.add(orderBy.iterator());
         iterators.add(select.iterator());
-        Iterator iter = new CombinedIterator(iterators);
+        Iterator<Object> iter = new CombinedIterator<Object>(iterators);
         while (iter.hasNext()) {
             Object node = iter.next();
             if (node instanceof QueryClass) {
@@ -281,6 +295,7 @@ public class Query implements FromElement, Queryable
      * @param node the QuerySelectable to add
      */
     public void addToSelect(QuerySelectable node) {
+        iqlQuery = null;
         select.add(node);
         if (node instanceof PathExpressionField) {
             alias(((PathExpressionField) node).getQope(), null);
@@ -296,6 +311,7 @@ public class Query implements FromElement, Queryable
      * @return the updated Query
      */
     public Query addToSelect(QuerySelectable node, String alias) {
+        iqlQuery = null;
         select.add(node);
         if (node instanceof PathExpressionField) {
             alias(((PathExpressionField) node).getQope(), null);
@@ -311,6 +327,7 @@ public class Query implements FromElement, Queryable
      * @return the updated Query
      */
     public Query deleteFromSelect(QuerySelectable node) {
+        iqlQuery = null;
         select.remove(node);
 
         if (!(node instanceof FromElement)) {
@@ -336,6 +353,7 @@ public class Query implements FromElement, Queryable
      *
      */
     public void clearSelect() {
+        iqlQuery = null;
         for (QuerySelectable qs : select) {
             if (!(qs instanceof FromElement)) {
                 String alias = aliases.remove(qs);
@@ -363,6 +381,7 @@ public class Query implements FromElement, Queryable
      * @param distinct the value of distinct
      */
     public void setDistinct(boolean distinct) {
+        iqlQuery = null;
         this.distinct = distinct;
     }
 
@@ -389,19 +408,31 @@ public class Query implements FromElement, Queryable
      *
      * @return a String representation
      */
+    @Override
     public String toString() {
-        IqlQuery fq = new IqlQuery(this);
-        return fq.toString();
+        return getIqlQuery().toString();
     }
 
     /**
-     * Set an alias for an element in the Query
+     * Returns an IqlQuery object representing this query, that may have been cached.
+     *
+     * @return an IqlQuery object
+     */
+    public IqlQuery getIqlQuery() {
+        if (iqlQuery == null) {
+            iqlQuery = new IqlQuery(this);
+        }
+        return iqlQuery;
+    }
+
+    /**
+     * Set an alias for an element in the Query.
      *
      * @param obj the element to alias
      * @param alias the alias to give
      */
     public void alias(Object obj, String alias) {
-
+        iqlQuery = null;
         if ((alias != null) && reverseAliases.containsKey(alias)
             && (!obj.equals(reverseAliases.get(alias)))) {
             throw new IllegalArgumentException("Alias " + alias + " is already in use. Adding to "

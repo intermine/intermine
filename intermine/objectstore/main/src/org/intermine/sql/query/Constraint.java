@@ -67,6 +67,7 @@ public class Constraint extends AbstractConstraint
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return getSQLString();
     }
@@ -77,8 +78,9 @@ public class Constraint extends AbstractConstraint
      *
      * @return the String representation
      */
+    @Override
     public String getSQLString() {
-        if (right.getSQLString().equals("null")) {
+        if ("null".equals(right.getSQLString())) {
             return left.getSQLString() + " IS NULL";
         } else if (operation == GORNULL) {
             return "(" + left.getSQLString() + " > " + right.getSQLString() + " OR "
@@ -95,6 +97,8 @@ public class Constraint extends AbstractConstraint
                 case LIKE:
                     op = " LIKE ";
                     break;
+                default:
+                    throw new Error("Unrecognised operation " + operation);
             }
 
             return left.getSQLString() + op + right.getSQLString();
@@ -107,7 +111,9 @@ public class Constraint extends AbstractConstraint
      *
      * {@inheritDoc}
      */
-    public int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
+    @Override
+    public int compare(AbstractConstraint obj, Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap) {
         if (obj instanceof Constraint) {
             Constraint objC = (Constraint) obj;
             switch (operation) {
@@ -151,6 +157,9 @@ public class Constraint extends AbstractConstraint
                             } else {
                                 return INDEPENDENT;
                             }
+                        default:
+                            // Fall through
+                            break;
                     }
                     break;
                 case LT:
@@ -223,6 +232,9 @@ public class Constraint extends AbstractConstraint
                                 }
                             }
                             break;
+                        default:
+                            // Fall through
+                            break;
                     }
                     break;
                 case LIKE:
@@ -245,6 +257,9 @@ public class Constraint extends AbstractConstraint
                         }
                     }
                     break;
+                default:
+                    // Fall through
+                    break;
             }
         } else if (obj instanceof NotConstraint) {
             NotConstraint objNC = (NotConstraint) obj;
@@ -261,6 +276,7 @@ public class Constraint extends AbstractConstraint
      *
      * @return an arbitrary integer based on the contents of the Constraint
      */
+    @Override
     public int hashCode() {
         return (3 * left.hashCode()) + (5 * operation)
             + ((operation == EQ ? 3 : 7) * right.hashCode());

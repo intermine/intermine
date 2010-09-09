@@ -46,6 +46,7 @@ public class Field extends AbstractValue
      *
      * @return the String representation
      */
+    @Override
     public String getSQLString() {
         return table.getAlias() + "." + name;
     }
@@ -56,6 +57,7 @@ public class Field extends AbstractValue
      * @param obj an Object to compare to
      * @return true if the object is of the same class, and with the same name
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof Field) {
             Field objField = (Field) obj;
@@ -70,6 +72,7 @@ public class Field extends AbstractValue
      *
      * @return an arbitrary integer based on the contents of the Field
      */
+    @Override
     public int hashCode() {
         return name.hashCode() + table.hashCode();
     }
@@ -112,11 +115,13 @@ public class Field extends AbstractValue
      *
      * {@inheritDoc}
      */
-    public int compare(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+    @Override
+    public int compare(AbstractValue obj, Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap) {
         if (obj instanceof Field) {
             Field objField = (Field) obj;
-            AbstractTable t = (AbstractTable) tableMap.get(table);
-            AbstractTable revT = (AbstractTable) reverseTableMap.get(objField.table);
+            AbstractTable t = tableMap.get(table);
+            AbstractTable revT = reverseTableMap.get(objField.table);
             if ((t == null) && (revT == null)) {
                 return EQUAL;
             } else if ((t == null) || (revT == null)) {
@@ -134,6 +139,7 @@ public class Field extends AbstractValue
      *
      * @return a boolean
      */
+    @Override
     public boolean isAggregate() {
         return false;
     }

@@ -53,4 +53,13 @@ public class QueryObjectReference extends QueryReference implements QueryOrderab
         this.fieldName = fieldName;
         this.type = field.getReturnType();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public Class<? extends InterMineObject> getType() {
+        return (Class) type;
+    }
 }

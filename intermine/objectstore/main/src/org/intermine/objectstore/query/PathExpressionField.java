@@ -56,13 +56,14 @@ public class PathExpressionField implements QueryPathExpression
     /**
      * {@inheritDoc}
      */
-    public Class getType() {
+    public Class<?> getType() {
         return qope.getSelect().get(fieldNumber).getType();
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof PathExpressionField) {
             PathExpressionField pef = (PathExpressionField) o;
@@ -74,6 +75,7 @@ public class PathExpressionField implements QueryPathExpression
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return qope.hashCode() + 3 * fieldNumber;
     }

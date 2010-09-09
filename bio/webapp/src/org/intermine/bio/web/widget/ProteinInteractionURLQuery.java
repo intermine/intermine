@@ -13,6 +13,7 @@ package org.intermine.bio.web.widget;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
@@ -43,22 +44,22 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
-        q.setView("Protein.primaryIdentifier, Protein.primaryAccession,"
-                  + "Protein.proteinInteractions.interactingProteins.primaryIdentifier,"
-                  + "Protein.proteinInteractions.interactingProteins.primaryAccession,"
-                  + "Protein.proteinInteractions.interactingProteins.name,"
-                  + "Protein.proteinInteractions.shortName,"
-                  + "Protein.proteinInteractions.proteinRole,"
-                  + "Protein.proteinInteractions.experiment.publication.pubMedId");
-        q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
+        q.addViews("Protein.primaryIdentifier, Protein.primaryAccession",
+                  "Protein.proteinInteractions.interactingProteins.primaryIdentifier",
+                  "Protein.proteinInteractions.interactingProteins.primaryAccession",
+                  "Protein.proteinInteractions.interactingProteins.name",
+                  "Protein.proteinInteractions.shortName",
+                  "Protein.proteinInteractions.proteinRole",
+                  "Protein.proteinInteractions.experiment.publication.pubMedId");
+        q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
-            q.addConstraint("Protein.proteinInteractions.interactingProteins",
-                            Constraints.lookup(key));
-            q.setConstraintLogic("A and B");
-            q.syncLogicExpression("and");
+            q.addConstraint(Constraints.lookup("Protein.proteinInteractions.interactingProteins",
+                            key, ""));
         }
-        q.setOrderBy("Protein.primaryIdentifier, Protein.primaryAccession,"
-                     + "Protein.proteinInteractions.interactingProteins.name");
+        q.addOrderBy("Protein.primaryIdentifier", OrderDirection.ASC);
+        q.addOrderBy("Protein.primaryAccession", OrderDirection.ASC);
+        q.addOrderBy("Protein.proteinInteractions.interactingProteins.name", OrderDirection.ASC);
+
         return q;
     }
 }

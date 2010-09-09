@@ -157,6 +157,8 @@ public class LimitOffsetQuery
                         state = FINISHED;
                     }
                     break;
+                default:
+                    throw new Error("Unrecognised state " + state);
             }
         }
         if (state == FINISHED) {

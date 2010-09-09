@@ -48,7 +48,7 @@ import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.autocompletion.AutoCompleter;
@@ -62,7 +62,6 @@ import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebState;
-import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.struts.LoadQueryAction;
 import org.intermine.web.struts.TemplateAction;
 
@@ -74,8 +73,11 @@ import org.intermine.web.struts.TemplateAction;
  *
  * @author  Thomas Riley
  */
-public class SessionMethods
+public final class SessionMethods
 {
+    private SessionMethods() {
+    }
+
     private interface CompletionCallBack
     {
         void complete();
@@ -134,8 +136,8 @@ public class SessionMethods
         } else {
             ios = null;
         }
-        Map queries = (Map) session.getAttribute(Constants.RUNNING_QUERIES);
-        QueryMonitor monitor = (QueryMonitor) queries.get(qid);
+        Map<String, QueryMonitor> queries = getRunningQueries(session);
+        QueryMonitor monitor = queries.get(qid);
         // A reference to this runnable is used as a token for registering
         // a cancelling the running query
 
@@ -233,33 +235,23 @@ public class SessionMethods
      * @param response the response
      */
     public static void loadQuery(PathQuery query, HttpSession session,
-            HttpServletResponse response) {
+            @SuppressWarnings("unused") HttpServletResponse response) {
         // Depending on the class, load PathQuery or TemplateQuery
         if (query instanceof TemplateQuery) {
             TemplateQuery template = (TemplateQuery) query;
-            session.setAttribute(Constants.QUERY, template.clone());
-            session.setAttribute(Constants.TEMPLATE_BUILD_STATE, new TemplateBuildState(template));
+            setQuery(session, template.clone());
         } else {
             // at the moment we can only load queries that have saved using the
             // webapp
             // this is because the webapp satisfies our (dumb) assumption that
             // the view list is not empty
-            session.setAttribute(Constants.QUERY, query.clone());
-            session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
+            SessionMethods.setQuery(session, query.clone());
         }
-
-        // TODO unclear why we need to put this path on the session
-        Path path = query.getView().iterator().next();
-        session.setAttribute("path", path.getStartClassDescriptor().getUnqualifiedName());
-
-        // it's possible to not have a sort order
-        if (query.getSortOrder() != null && !query.getSortOrder().isEmpty()) {
-            Path sortPath = query.getSortOrder().keySet().iterator().next();
-            String sortOrderString = sortPath.toStringNoConstraints();
-            if (sortOrderString.indexOf(".") != -1) {
-                sortOrderString  = sortOrderString.substring(0, sortOrderString.indexOf("."));
-            }
-            session.setAttribute("sortOrder", sortOrderString);
+        try {
+            String rootPath = query.getRootClass();
+            session.setAttribute("path", rootPath);
+        } catch (PathException e) {
+            throw new RuntimeException("Attempt to load invalid query: " + query, e);
         }
         session.removeAttribute("prefix");
 
@@ -272,25 +264,12 @@ public class SessionMethods
      * @param session current session
      * @return view list
      */
-    public static List<Path> getEditingView(HttpSession session) {
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+    public static List<String> getEditingView(HttpSession session) {
+        PathQuery query = getQuery(session);
         if (query == null) {
             throw new IllegalStateException("No query on session");
         }
         return query.getView();
-    }
-
-    /**
-     * Get the sort order for the query the user is currently editing
-     * @param session current session
-     * @return sort by list
-     */
-    public static Map<Path, String> getEditingSortOrder(HttpSession session) {
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        if (query == null) {
-            throw new IllegalStateException("No query on session");
-        }
-        return query.getSortOrder();
     }
 
     /**
@@ -367,7 +346,6 @@ public class SessionMethods
      *
      * @param session The Session object in which to store the message
      * @param message The message to store
-     * {@inheritDoc}
      */
     public static void recordMessage(String message, HttpSession session) {
         recordMessage(message, Constants.MESSAGES, session);
@@ -398,7 +376,7 @@ public class SessionMethods
      * @param message The message to store
      */
     private static void recordMessage(String message, String attrib, HttpSession session) {
-        Set<String> set = (Set<String>) session.getAttribute(attrib);
+        @SuppressWarnings("unchecked") Set<String> set = (Set<String>) session.getAttribute(attrib);
         if (set == null) {
             set = Collections.synchronizedSet(new LinkedHashSet<String>());
             session.setAttribute(attrib, set);
@@ -472,8 +450,8 @@ public class SessionMethods
         InterMineAPI im = getInterMineAPI(session);
         ProfileManager pm = im.getProfileManager();
         session.setAttribute(Constants.PROFILE, new Profile(pm, null, null, null,
-                    new HashMap(), new HashMap(), new HashMap()));
-        session.setAttribute(Constants.COLLAPSED, new HashMap());
+                    new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
+                    new HashMap<String, TemplateQuery>()));
         session.setAttribute(Constants.DISPLAY_OBJECT_CACHE, new DisplayObjectFactory(session));
         session.setAttribute(Constants.RESULTS_TABLE_SIZE, Constants.DEFAULT_TABLE_SIZE);
     }
@@ -497,7 +475,7 @@ public class SessionMethods
 
     /**
      * Start the current query running in the background, then return.  A new query id will be
-     * created and added to the RUNNING_QUERIES session attriute.  That attribute is a Map from
+     * created and added to the RUNNING_QUERIES session attribute.  That attribute is a Map from
      * query id to QueryMonitor.  A Thread will be created to update the QueryMonitor.
      * @param monitor the monitor for this query - controls cancelling and receives feedback
      *                about how the query concluded
@@ -514,7 +492,7 @@ public class SessionMethods
                                     final PathQuery pathQuery) {
         synchronized (session) {
 
-            Map queries = getRunningQueries(session);
+            Map<String, QueryMonitor> queries = getRunningQueries(session);
             final String qid = "" + topQueryId++;
             queries.put(qid, monitor);
 
@@ -563,7 +541,7 @@ public class SessionMethods
                                     im.getModel().getName(), 1), err);
                     } finally {
                         LOG.debug("unregisterRunningQuery qid " + qid);
-                        ((Map) session.getAttribute("RUNNING_QUERIES")).remove(qid);
+                        getRunningQueries(session).remove(qid);
                     }
                 }
             }).start();
@@ -574,7 +552,7 @@ public class SessionMethods
 
     /**
      * Start a query running in the background that will return the row count of the collection.
-     * A new query id will be created and added to the RUNNING_QUERIES session attriute.
+     * A new query id will be created and added to the RUNNING_QUERIES session attribute.
      * That attribute is a Map from query id to QueryMonitor.  A Thread will be created to
      * update the QueryMonitor.
      * @param monitor the monitor for this query - controls cancelling and receives feedback
@@ -587,7 +565,7 @@ public class SessionMethods
                                               final HttpSession session,
                                               final MessageResources messages) {
         synchronized (session) {
-            Map queries = getRunningQueries(session);
+            Map<String, QueryMonitor> queries = getRunningQueries(session);
             final String qid = "" + topQueryId++;
             queries.put(qid, monitor);
 
@@ -618,7 +596,7 @@ public class SessionMethods
                         LOG.error(sw.toString());
                     } finally {
                         LOG.debug("unregisterRunningQuery qid " + qid);
-                        ((Map) session.getAttribute("RUNNING_QUERIES")).remove(qid);
+                        getRunningQueries(session).remove(qid);
                     }
                 }
             }).start();
@@ -631,6 +609,7 @@ public class SessionMethods
     /**
      * Return the Map of currently running queries from the session.
      */
+    @SuppressWarnings("unchecked")
     private static Map<String, QueryMonitor> getRunningQueries(final HttpSession session) {
         Map queries = (Map) session.getAttribute(Constants.RUNNING_QUERIES);
         if (queries == null) {
@@ -643,7 +622,7 @@ public class SessionMethods
 
     /**
      * Start a query running in the background that will return the row count of the query argument.
-     * A new query id will be created and added to the RUNNING_QUERIES session attriute.
+     * A new query id will be created and added to the RUNNING_QUERIES session attribute.
      * That attribute is a Map from query id to QueryMonitor.  A Thread will be created to
      * update the QueryMonitor.
      * @param monitor the monitor for this query - controls cancelling and receives feedback
@@ -656,7 +635,7 @@ public class SessionMethods
                                          final HttpSession session,
                                          final MessageResources messages) {
         synchronized (session) {
-            Map queries = getRunningQueries(session);
+            Map<String, QueryMonitor> queries = getRunningQueries(session);
             final String qid = "" + topQueryId++;
             queries.put(qid, monitor);
 
@@ -691,7 +670,7 @@ public class SessionMethods
                         LOG.error(sw.toString());
                     } finally {
                         LOG.debug("unregisterRunningQuery qid " + qid);
-                        ((Map) session.getAttribute("RUNNING_QUERIES")).remove(qid);
+                        getRunningQueries(session).remove(qid);
                     }
                 }
             }).start();
@@ -709,8 +688,8 @@ public class SessionMethods
      */
     public static QueryMonitor getRunningQueryController(String qid, HttpSession session) {
         synchronized (session) {
-            Map queries = (Map) session.getAttribute("RUNNING_QUERIES");
-            QueryMonitor controller = (QueryMonitor) queries.get(qid);
+            Map<String, QueryMonitor> queries = getRunningQueries(session);
+            QueryMonitor controller = queries.get(qid);
             return controller;
         }
     }
@@ -723,7 +702,7 @@ public class SessionMethods
      * @return PagedTable identified by identifier
      */
     public static PagedTable getResultsTable(HttpSession session, String identifier) {
-        Map tables = (Map) session.getAttribute(Constants.TABLE_MAP);
+        Map<?, ?> tables = (Map<?, ?>) session.getAttribute(Constants.TABLE_MAP);
         if (tables != null) {
             return (PagedTable) tables.get(identifier);
         }
@@ -737,8 +716,9 @@ public class SessionMethods
      * @param identifier table identifier
      * @param table table to register
      */
+    @SuppressWarnings("unchecked")
     public static void setResultsTable(HttpSession session, String identifier, PagedTable table) {
-        Map tables = (Map) session.getAttribute(Constants.TABLE_MAP);
+        Map<String, PagedTable> tables = (Map) session.getAttribute(Constants.TABLE_MAP);
         if (tables == null) {
             tables = Collections.synchronizedMap(new LRUMap(100));
             session.setAttribute(Constants.TABLE_MAP, tables);
@@ -753,7 +733,7 @@ public class SessionMethods
      * @param name the bag name
      */
     public static void invalidateBagTable(HttpSession session, String name) {
-        Map tables = (Map) session.getAttribute(Constants.TABLE_MAP);
+        Map<?, ?> tables = (Map<?, ?>) session.getAttribute(Constants.TABLE_MAP);
         if (tables != null) {
             tables.remove("bag." + name);
         }
@@ -839,7 +819,7 @@ public class SessionMethods
         WebConfig webConfig = getWebConfig(request);
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, obj,
                         referencedClassName, field);
-        session.setAttribute(Constants.QUERY, pathQuery);
+        setQuery(session, pathQuery);
 
         WebResultsExecutor executor = im.getWebResultsExecutor(getProfile(session));
         WebResults webResults = executor.execute(pathQuery);
@@ -920,6 +900,7 @@ public class SessionMethods
      * @param servletContext a ServletContext object
      * @return a Map
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, Aspect> getAspects(ServletContext servletContext) {
         return (Map<String, Aspect>) servletContext.getAttribute(Constants.ASPECTS);
     }
@@ -1052,40 +1033,12 @@ public class SessionMethods
     }
 
     /**
-     * Get the TemplateBuildState from the session.
-     *
-     * @param session the session
-     * @return a TemplateBuildState object, or null if one is not on the session
-     */
-    public static TemplateBuildState getTemplateBuildState(HttpSession session) {
-        return (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
-    }
-
-    /**
-     * Remove the TemplateBuildState from the session.
-     *
-     * @param session the session
-     */
-    public static void removeTemplateBuildState(HttpSession session) {
-        session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
-    }
-
-    /**
-     * Sets the TemplateBuildState on the session.
-     *
-     * @param session the session
-     * @param tbs a TemplateBuildState object to put on the session
-     */
-    public static void setTemplateBuildState(HttpSession session, TemplateBuildState tbs) {
-        session.setAttribute(Constants.TEMPLATE_BUILD_STATE, tbs);
-    }
-
-    /**
      * Gets the aspect categories from the servlet context.
      *
      * @param servletContext the ServletContext
      * @return a Set of aspect names
      */
+    @SuppressWarnings("unchecked")
     public static Set<String> getCategories(ServletContext servletContext) {
         return (Set<String>) servletContext.getAttribute(Constants.CATEGORIES);
     }

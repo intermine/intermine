@@ -35,9 +35,9 @@ import org.intermine.bio.web.biojava.BioSequenceFactory.SequenceType;
 import org.intermine.bio.web.export.ResidueFieldExporter;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Sequence;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TypeUtil;
@@ -63,11 +63,9 @@ public class SequenceExportAction extends InterMineAction
      *  an exception
      */
     @Override
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws Exception {
+    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ObjectStore os = im.getObjectStore();
@@ -92,8 +90,7 @@ public class SequenceExportAction extends InterMineAction
     }
 
     private BioSequence createBioSequence(InterMineObject obj)
-        throws IllegalSymbolException, IllegalAccessException,
-            ChangeVetoException {
+        throws IllegalSymbolException, IllegalAccessException, ChangeVetoException {
         BioSequence bioSequence;
         BioEntity bioEntity = (BioEntity) obj;
         bioSequence = BioSequenceFactory.make(bioEntity, SequenceType.DNA);
@@ -109,7 +106,7 @@ public class SequenceExportAction extends InterMineAction
                 identifier = bioEntity.getName();
                 if (identifier == null) {
                     try {
-                        identifier = (String) TypeUtil.getFieldValue(bioEntity, "primaryAccession");
+                        identifier = (String) bioEntity.getFieldValue("primaryAccession");
                     } catch (RuntimeException e) {
                         // ignore
                     }
@@ -126,7 +123,7 @@ public class SequenceExportAction extends InterMineAction
     private InterMineObject getObject(ObjectStore os, Properties webProps,
             Integer objectId) throws ObjectStoreException {
         String classNames = webProps.getProperty("fasta.export.classes");
-        List <Class<?>> classList = new ArrayList<Class<?>>();
+        List<Class<?>> classList = new ArrayList<Class<?>>();
         if (classNames != null && classNames.length() != 0) {
             String [] classArray = classNames.split(",");
             for (int i = 0; i < classArray.length; i++) {

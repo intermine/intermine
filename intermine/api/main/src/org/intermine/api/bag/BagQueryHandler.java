@@ -34,11 +34,13 @@ public class BagQueryHandler extends DefaultHandler
     private List<BagQuery> queryList;
     private List<BagQuery> preDefaultQueryList;
 
-    private Map<String, List<BagQuery>> bagQueries = new HashMap();
+    private Map<String, List<BagQuery>> bagQueries = new HashMap<String, List<BagQuery>>();
 
-    private Map<String, List<BagQuery>> preDefaultBagQueries = new HashMap();
+    private Map<String, List<BagQuery>> preDefaultBagQueries
+        = new HashMap<String, List<BagQuery>>();
 
-    private Map<String, Map<String, String[]>> additionalConverters = new HashMap();
+    private Map<String, Map<String, String[]>> additionalConverters
+        = new HashMap<String, Map<String, String[]>>();
 
     private String type, message, queryString;
 
@@ -86,10 +88,11 @@ public class BagQueryHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void startElement(@SuppressWarnings("unused") String uri,
             @SuppressWarnings("unused") String localName, String qName, Attributes attrs)
         throws SAXException {
-        if (qName.equals("extra-bag-query-class")) {
+        if ("extra-bag-query-class".equals(qName)) {
             connectField = attrs.getValue("connect-field");
             className = attrs.getValue("class-name");
             constrainField = attrs.getValue("constrain-field");
@@ -97,7 +100,7 @@ public class BagQueryHandler extends DefaultHandler
             bagQueryConfig.setExtraConstraintClassName(className);
             bagQueryConfig.setConstrainField(constrainField);
         }
-        if (qName.equals("bag-type")) {
+        if ("bag-type".equals(qName)) {
             type = attrs.getValue("type");
             if (!model.hasClassDescriptor(pkg + "." + type)) {
                 throw new SAXException("Type was not found in model: " + type);
@@ -108,21 +111,21 @@ public class BagQueryHandler extends DefaultHandler
                 throw new SAXException("Duplicate query lists defined for type: " + type);
             }
         }
-        if (qName.equals("query")) {
+        if ("query".equals(qName)) {
             message = attrs.getValue("message");
             matchesAreIssues = Boolean.valueOf(attrs.getValue("matchesAreIssues"));
             runBeforeDefault = Boolean.valueOf(attrs.getValue("runBeforeDefault"));
             sb = new StringBuffer();
         }
-        if (qName.equals("additional-converter")) {
+        if ("additional-converter".equals(qName)) {
             String urlField = attrs.getValue("urlfield");
-            String className = attrs.getValue("class-name");
+            String lClassName = attrs.getValue("class-name");
             String classConstraint = attrs.getValue("classConstraint");
             String targetType = attrs.getValue("target-type");
             String [] array = new String[] {urlField, classConstraint, targetType};
 
-            Map<String, String[]> converterMap = new HashMap();
-            converterMap.put(className, array);
+            Map<String, String[]> converterMap = new HashMap<String, String[]>();
+            converterMap.put(lClassName, array);
 
             // add additional converter for this class and any subclasses
             ClassDescriptor typeCld = model.getClassDescriptorByName(targetType);
@@ -144,6 +147,7 @@ public class BagQueryHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void characters(char[] ch, int start, int length) {
         // DefaultHandler may call this method more than once for a single
         // attribute content -> hold text & create attribute in endElement
@@ -174,9 +178,10 @@ public class BagQueryHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void endElement(@SuppressWarnings("unused") String uri,
                            @SuppressWarnings("unused") String localName, String qName) {
-        if (qName.equals("query")) {
+        if ("query".equals(qName)) {
             queryString = sb.toString();
             if (queryString != null && message != null && matchesAreIssues != null) {
                 BagQuery bq = new BagQuery(bagQueryConfig, model, queryString, message, pkg,
@@ -194,9 +199,9 @@ public class BagQueryHandler extends DefaultHandler
         }
 
         // add bag query to map for specified class and all subclasses
-        if (qName.equals("bag-type")) {
+        if ("bag-type".equals(qName)) {
             ClassDescriptor cld = model.getClassDescriptorByName(pkg + "." + type);
-            List<ClassDescriptor> clds = new ArrayList(model.getAllSubs(cld));
+            List<ClassDescriptor> clds = new ArrayList<ClassDescriptor>(model.getAllSubs(cld));
             clds.add(cld);
             for (ClassDescriptor nextCld : clds) {
                 String clsName = TypeUtil.unqualifiedName(nextCld.getName());

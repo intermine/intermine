@@ -21,181 +21,184 @@ public interface Constants
     /**
      * ServletContext attribute used to store web.properties
      */
-    public static final String WEB_PROPERTIES = "WEB_PROPERTIES";
+    String WEB_PROPERTIES = "WEB_PROPERTIES";
 
     /**
      * ServletContext attribute, List of category names.
      */
-    public static final String CATEGORIES = "CATEGORIES";
+    String CATEGORIES = "CATEGORIES";
 
     /**
      * ServletContext attribute, autocompletion.
      */
-    public static final String AUTO_COMPLETER = "AUTO_COMPLETER";
+    String AUTO_COMPLETER = "AUTO_COMPLETER";
     /**
      * ServletContext attribute, Map from unqualified type name to list of subclass names.
      */
-    public static final String SUBCLASSES = "SUBCLASSES";
+    String SUBCLASSES = "SUBCLASSES";
 
     /**
      * Session attribute, name of tab selected on MyMine page.
      */
-    public static final String MYMINE_PAGE = "MYMINE_PAGE"; // serializes
+    String MYMINE_PAGE = "MYMINE_PAGE"; // serializes
 
     /**
      * ServletContext attribute used to store the WebConfig object for the Model.
      */
-    public static final String WEBCONFIG = "WEBCONFIG";
+    String WEBCONFIG = "WEBCONFIG";
 
     /**
      * Session attribute used to store the user's Profile
      */
-    public static final String PROFILE = "PROFILE"; // serialized as 'username'
+    String PROFILE = "PROFILE"; // serialized as 'username'
 
     /**
      * Session attribute used to store the current query
      */
-    public static final String QUERY = "QUERY";
+    String QUERY = "QUERY";
 
     /**
-     * Session attribute set of type TemplateBuildState present when query
-     * builder is in template building mode.
+     * Session attribute used to store the status new template
      */
-    public static final String TEMPLATE_BUILD_STATE = "TEMPLATE_BUILD_STATE";
+    String NEW_TEMPLATE = "NEW_TEMPLATE";
+
+    /**
+     * Session attribute used to store the status editing template
+     */
+    String EDITING_TEMPLATE = "EDITING_TEMPLATE";
+
+    /**
+     * Session attribute used to store the previous template name
+     */
+    String PREV_TEMPLATE_NAME = "PREV_TEMPLATE_NAME";
 
     /**
      * Servlet context attribute - map from aspect set name to Aspect object.
      */
-    public static final String ASPECTS = "ASPECTS";
+    String ASPECTS = "ASPECTS";
 
     /**
      * Session attribute equals Boolean.TRUE when logged in user is superuser.
      */
-    public static final String IS_SUPERUSER = "IS_SUPERUSER";
-
-    /**
-     * Session attribute containing Map containing 'collapsed' state of objectDetails.jsp
-     * UI elements.
-     */
-    public static final String COLLAPSED = "COLLAPSED";
+    String IS_SUPERUSER = "IS_SUPERUSER";
 
     /**
      * Session attribute that temporarily holds a Vector of messages that will be displayed by the
      * errorMessages.jsp on the next page viewed by the user and then removed (allows message
      * after redirect).
      */
-    public static final String MESSAGES = "MESSAGES";
+    String MESSAGES = "MESSAGES";
 
     /**
      * Session attribute that temporarily holds a Vector of errors that will be displayed by the
      * errorMessages.jsp on the next page viewed by the user and then removed (allows errors
      * after redirect).
      */
-    public static final String ERRORS = "ERRORS";
+    String ERRORS = "ERRORS";
 
     /**
      * Session attribute that temporarily holds messages from the Portal
      */
-    public static final String PORTAL_MSG = "PORTAL_MSG";
+    String PORTAL_MSG = "PORTAL_MSG";
 
     /**
      * Session attribute that holds message when a lookup constraint has been used
      */
-    public static final String LOOKUP_MSG = "LOOKUP_MSG";
+    String LOOKUP_MSG = "LOOKUP_MSG";
 
     /**
      * The name of the property to look up to find the maximum size of an inline table.
      */
-    public static final String INLINE_TABLE_SIZE = "inline.table.size";
+    String INLINE_TABLE_SIZE = "inline.table.size";
 
     /**
      * Session attribut containing the default operator name, either 'and' or 'or'.
      */
-    public static final String DEFAULT_OPERATOR = "DEFAULT_OPERATOR";
+    String DEFAULT_OPERATOR = "DEFAULT_OPERATOR";
 
     /**
      * Period of time to wait for client to poll a running query before cancelling the query.
      */
-    public static final int QUERY_TIMEOUT_SECONDS = 20;
+    int QUERY_TIMEOUT_SECONDS = 20;
 
     /**
      * Refresh period specified on query poll page.
      */
-    public static final int POLL_REFRESH_SECONDS = 2;
+    int POLL_REFRESH_SECONDS = 2;
 
     /**
      * The session attribute that holds the DisplayObjectCache object for the session.
      */
-    public static final String DISPLAY_OBJECT_CACHE = "DISPLAY_OBJECT_CACHE";
+    String DISPLAY_OBJECT_CACHE = "DISPLAY_OBJECT_CACHE";
 
     /**
      * Session attribute that holds cache of table identifiers to PagedTable objects.
      */
-    public static final String TABLE_MAP = "TABLE_MAP";
+    String TABLE_MAP = "TABLE_MAP";
 
     /**
      * Session attribute that holds a map from class name to map from field name to Boolean.TRUE.
      */
-    public static final String EMPTY_FIELD_MAP = "EMPTY_FIELD_MAP";
+    String EMPTY_FIELD_MAP = "EMPTY_FIELD_MAP";
 
     /**
      * Session attribute.  A Map from query id to QueryMonitor.
      */
-    public static final String RUNNING_QUERIES = "RUNNING_QUERIES";
+    String RUNNING_QUERIES = "RUNNING_QUERIES";
 
     /**
      * Servlet attribute. Map from class name to Set of leaf class descriptors.
      */
-    public static final String LEAF_DESCRIPTORS_MAP = "LEAF_DESCRIPTORS_MAP";
+    String LEAF_DESCRIPTORS_MAP = "LEAF_DESCRIPTORS_MAP";
 
     /**
      * Servlet attribute. Map from MultiKey(experiment, gene) id to temp file name.
      */
-    public static final String GRAPH_CACHE = "GRAPH_CACHE";
+    String GRAPH_CACHE = "GRAPH_CACHE";
 
     /**
      * Servlet attribute. The global webapp cache - a InterMineCache object.
      */
-    public static final String GLOBAL_CACHE = "GLOBAL_CACHE";
+    String GLOBAL_CACHE = "GLOBAL_CACHE";
 
     /**
      * Maximum size a bag should have if the user is not logged in (to save memory)
      */
-    public static final int MAX_NOT_LOGGED_BAG_SIZE = 500;
+    int MAX_NOT_LOGGED_BAG_SIZE = 500;
 
     /**
      * Servlet attribute.  Contains the SearchRepository for global/public WebSearchable objects.
      */
-    public static final String GLOBAL_SEARCH_REPOSITORY = "GLOBAL_SEARCH_REPOSITORY";
+    String GLOBAL_SEARCH_REPOSITORY = "GLOBAL_SEARCH_REPOSITORY";
 
     /**
      * Default size of table implemented by PagedTable.
      */
-    public static final int DEFAULT_TABLE_SIZE = 25;
+    int DEFAULT_TABLE_SIZE = 25;
 
     /**
      * Session attribute used to store the size of table with results.
      */
-    public static final String RESULTS_TABLE_SIZE = "RESULTS_TABLE_SIZE";
+    String RESULTS_TABLE_SIZE = "RESULTS_TABLE_SIZE";
 
     /**
      * Session attribute used to store WebState object.
      */
-    public static final String WEB_STATE = "WEB_STATE";
+    String WEB_STATE = "WEB_STATE";
 
     /**
      * Current version of InterMine. This constant must changed by every new InterMine release.
      */
-    public static final int WEB_SERVICE_VERSION = 1;
+    int WEB_SERVICE_VERSION = 2;
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have
      * any class keys.
      */
-    public static final String KEYLESS_CLASSES_MAP = "KEYLESS_CLASSES_MAP";
+    String KEYLESS_CLASSES_MAP = "KEYLESS_CLASSES_MAP";
 
     /**
      * Key for the InterMine API object
      */
-    public static final String INTERMINE_API = "INTERMINE_API";
+    String INTERMINE_API = "INTERMINE_API";
 }

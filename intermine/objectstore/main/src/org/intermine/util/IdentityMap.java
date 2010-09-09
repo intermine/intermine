@@ -19,13 +19,22 @@ import java.util.Set;
  * itself.
  *
  * @author Matthew Wakeling
+ * @param <E> The element type
  */
-public class IdentityMap implements Map
+public final class IdentityMap<E> implements Map<E, E>
 {
     /**
-     * A singleton instance of this class
+     * Obtain an instance of this class
+     *
+     * @param <T> The type of the map
+     * @return a singleton
      */
-    public static final IdentityMap INSTANCE = new IdentityMap();
+    @SuppressWarnings("unchecked")
+    public static <T> IdentityMap<T> getInstance() {
+        return (IdentityMap<T>) INSTANCE;
+    }
+
+    private static final IdentityMap<Object> INSTANCE = new IdentityMap<Object>();
 
     /**
      * Construct an IdentityMap.
@@ -43,29 +52,30 @@ public class IdentityMap implements Map
     /**
      * {@inheritDoc}
      */
-    public boolean containsKey(Object key) {
+    public boolean containsKey(@SuppressWarnings("unused") Object key) {
         return true;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean containsValue(Object value) {
+    public boolean containsValue(@SuppressWarnings("unused") Object value) {
         return true;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Set entrySet() {
+    public Set<Map.Entry<E, E>> entrySet() {
         throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
-        if (o instanceof IdentityMap) {
+        if (o instanceof IdentityMap<?>) {
             return true;
         }
         return false;
@@ -74,13 +84,15 @@ public class IdentityMap implements Map
     /**
      * {@inheritDoc}
      */
-    public Object get(Object key) {
-        return key;
+    @SuppressWarnings("unchecked")
+    public E get(Object key) {
+        return (E) key;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return 87623;
     }
@@ -95,28 +107,28 @@ public class IdentityMap implements Map
     /**
      * {@inheritDoc}
      */
-    public Set keySet() {
+    public Set<E> keySet() {
         throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object put(Object key, Object value) {
+    public E put(@SuppressWarnings("unused") E key, @SuppressWarnings("unused") E value) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
-    public void putAll(Map map) {
+    public void putAll(@SuppressWarnings("unused") Map<? extends E, ? extends E> map) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object remove(Object key) {
+    public E remove(@SuppressWarnings("unused") Object key) {
         throw new UnsupportedOperationException();
     }
 
@@ -130,7 +142,7 @@ public class IdentityMap implements Map
     /**
      * {@inheritDoc}
      */
-    public Collection values() {
+    public Collection<E> values() {
         throw new UnsupportedOperationException();
     }
 }

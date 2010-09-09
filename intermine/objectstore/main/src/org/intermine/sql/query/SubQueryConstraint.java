@@ -49,6 +49,7 @@ public class SubQueryConstraint extends AbstractConstraint
      *
      * @return the String representation
      */
+    @Override
     public String getSQLString() {
         if (right.getSelect().size() != 1) {
             throw (new IllegalStateException("Right must have one result column only"));
@@ -62,7 +63,9 @@ public class SubQueryConstraint extends AbstractConstraint
      *
      * {@inheritDoc}
      */
-    public int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
+    @Override
+    public int compare(AbstractConstraint obj, Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap) {
         if (obj instanceof SubQueryConstraint) {
             SubQueryConstraint objC = (SubQueryConstraint) obj;
             return (left.valueEquals(objC.left, tableMap, reverseTableMap)
@@ -82,6 +85,7 @@ public class SubQueryConstraint extends AbstractConstraint
      *
      * @return an arbitrary integer based on the contents of the Constraint
      */
+    @Override
     public int hashCode() {
         return (3 * left.hashCode()) + (5 * right.hashCode());
     }

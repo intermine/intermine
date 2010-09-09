@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,7 +53,7 @@ public class BagQuery
     private final BagQueryConfig bagQueryConfig;
     private final Model model;
     private boolean isDefaultQuery;
-    private Map classKeys;
+    private Map<String, List<FieldDescriptor>> classKeys;
     private String type;
 
     /**
@@ -89,7 +88,8 @@ public class BagQuery
      * @param classKeys map of class key fields
      * @param type the qualified class name of the type to build query for
      */
-    public BagQuery(BagQueryConfig bagQueryConfig, Model model, Map classKeys, String type) {
+    public BagQuery(BagQueryConfig bagQueryConfig, Model model,
+            Map<String, List<FieldDescriptor>> classKeys, String type) {
         if (bagQueryConfig == null) {
             throw new IllegalArgumentException("bagQueryConfig argument cannot be null");
         }
@@ -110,21 +110,12 @@ public class BagQuery
      * @return the Query
      * @throws ClassNotFoundException if class given by type not found
      */
-    public Query getQuery(Collection bag, String extraFieldValue) throws ClassNotFoundException {
-        List lowerCaseBag = new ArrayList();
-        for (Object o : bag) {
-            if (o instanceof String) {
-                o = ((String) o).toLowerCase();
-                lowerCaseBag.add(o);
-                //try {
-                //    lowerCaseBag.add(new Integer((String) o));
-                //} catch (NumberFormatException e) {
-                    //LOG.info("Couldn't parse string \"" + o + "\" into integer");
-                    // Wasn't a number
-                //}
-            } else {
-                lowerCaseBag.add(o);
-            }
+    public Query getQuery(Collection<String> bag, String extraFieldValue)
+        throws ClassNotFoundException {
+        List<String> lowerCaseBag = new ArrayList<String>();
+        for (String o : bag) {
+            o = o.toLowerCase();
+            lowerCaseBag.add(o);
         }
 
         // if this should be the default query using class key fields, create it now
@@ -134,7 +125,7 @@ public class BagQuery
             return addExtraConstraint(q, extraFieldValue);
         }
         IqlQuery q = new IqlQuery(queryString, packageName,
-                                  new ArrayList(Collections.singleton(lowerCaseBag)));
+                new ArrayList<Object>(Collections.singleton(lowerCaseBag)));
         return addExtraConstraint(q.toQuery(), extraFieldValue);
 
     }
@@ -149,7 +140,8 @@ public class BagQuery
      */
     public Query getQueryForWildcards(Collection<String> bag, String extraFieldValue)
         throws ClassNotFoundException {
-        Query q = QueryCloner.cloneQuery(getQuery(Collections.EMPTY_SET, extraFieldValue));
+        Set<String> empty = Collections.emptySet();
+        Query q = QueryCloner.cloneQuery(getQuery(empty, extraFieldValue));
         Map<QueryEvaluable, ConstraintSet> nodes = new HashMap<QueryEvaluable, ConstraintSet>();
         if (q.getConstraint() instanceof BagConstraint) {
             ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
@@ -189,7 +181,7 @@ public class BagQuery
     public void traverseConstraint(Constraint con, Map<QueryEvaluable, ConstraintSet> nodes) {
         if (con instanceof ConstraintSet) {
             ConstraintSet cs = (ConstraintSet) con;
-            Set<Constraint> constraints = new HashSet(cs.getConstraints());
+            Set<Constraint> constraints = new HashSet<Constraint>(cs.getConstraints());
             for (Constraint c : constraints) {
                 if (c instanceof BagConstraint) {
                     ((ConstraintSet) con).removeConstraint(c);
@@ -220,11 +212,8 @@ public class BagQuery
             return queryArg;
         }
         Query queryCopy = QueryCloner.cloneQuery(queryArg);
-        Set fromSet = new HashSet(queryCopy.getFrom());
         boolean doneExtraField = false;
-        Iterator fromIter = fromSet.iterator();
-        while (fromIter.hasNext()) {
-            FromElement fromElement = (FromElement) fromIter.next();
+        for (FromElement fromElement : new HashSet<FromElement>(queryCopy.getFrom())) {
             if (fromElement instanceof QueryClass) {
                 QueryClass queryClass = (QueryClass) fromElement;
                 ClassDescriptor cd = model.getClassDescriptorByName(queryClass.getType().getName());
@@ -238,7 +227,7 @@ public class BagQuery
                     // add a new QueryClass to the query and constrain the connect field of this
                     // class to be equal to the new QueryClass
                     if (fd instanceof ReferenceDescriptor) {
-                        Class extraClass;
+                        Class<?> extraClass;
                         try {
                             extraClass = Class.forName(extraClassName);
                         } catch (ClassNotFoundException e) {
@@ -298,6 +287,7 @@ public class BagQuery
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("query=" + queryString);

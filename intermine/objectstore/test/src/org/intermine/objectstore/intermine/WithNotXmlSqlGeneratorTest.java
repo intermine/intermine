@@ -257,6 +257,8 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("SelectWhereBackslash", Collections.singleton("Employee"));
         results.put("MultiColumnObjectInCollection", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("Company", "Department", "Contractor", "CompanysContractors")));
+        results.put("MultipleInBagConstraint1", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE (a1_.intermine_end IN ('1', '2', 'EmployeeA1', 'EmployeeB1') OR a1_.name IN ('1', '2', 'EmployeeA1', 'EmployeeB1')) ORDER BY a1_.id");
+        results2.put("MultipleInBagConstraint1", new HashSet(Arrays.asList("Employee")));
     }
 
     protected DatabaseSchema getSchema() throws Exception {

@@ -18,6 +18,9 @@ package org.intermine.objectstore.query;
  */
 public class Clob implements QuerySelectable
 {
+    /** Page size for clob data */
+    public static final int CLOB_PAGE_SIZE = 7000;
+
     private final int clobId;
 
     /**
@@ -44,8 +47,8 @@ public class Clob implements QuerySelectable
     /**
      * {@inheritDoc}
      */
-    public Class getType() {
-        return Integer.class;
+    public Class<String> getType() {
+        return String.class;
     }
 
     /**
@@ -56,6 +59,7 @@ public class Clob implements QuerySelectable
      * @param o an Object
      * @return true if this equals o
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof Clob) {
             return clobId == ((Clob) o).clobId;
@@ -68,6 +72,7 @@ public class Clob implements QuerySelectable
      *
      * @return an int representing the contents
      */
+    @Override
     public int hashCode() {
         return clobId;
     }

@@ -139,7 +139,7 @@ public class ReallyFlatIteratorTest extends ObjectStoreAbstractImplTestCase
             }
         } else {
             Results res = os.execute((Query)queries.get(type), 2, true, true, true);
-            Iterator resIter = new ReallyFlatIterator(new ResultsFlatOuterJoinsImpl((List<ResultsRow>) res, (Query) queries.get(type)).iterator());
+            Iterator resIter = new ReallyFlatIterator(new ResultsFlatOuterJoinsImpl((List<ResultsRow>) ((List) res), (Query) queries.get(type)).iterator());
             List newRes = new ArrayList();
             while (resIter.hasNext()) {
                 newRes.add(resIter.next());

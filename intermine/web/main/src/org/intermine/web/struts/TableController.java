@@ -35,7 +35,10 @@ import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -65,10 +68,8 @@ public class TableController extends TilesAction
      */
     @Override
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+            ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
+            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -93,10 +94,6 @@ public class TableController extends TilesAction
         }
 
         PathQuery query = pt.getWebTable().getPathQuery();
-        if (query != null) {
-            HashMap<String, String> sortOrderMap = setSortOrderMap(query);
-            request.setAttribute("sortOrderMap", sortOrderMap);
-        }
 
         request.setAttribute("resultsTable", pt);
         if ((request.getAttribute("lookupResults") != null)) {
@@ -108,13 +105,17 @@ public class TableController extends TilesAction
                 new ArrayList<DisplayLookupMessageHandler>();
             for (Map.Entry<String, BagQueryResult> entry : pathToBagQueryResult.entrySet()) {
                 String path = entry.getKey();
-                String type = query.getNode(path).getType();
-                String extraConstraint = (String) query.getNode(path).getConstraint(0)
-                    .getExtraValue();
+                String type = TypeUtil.unqualifiedName(query.makePath(path).getEndType().getName());
+                String extraValue = "";
+                for (PathConstraint con : query.getConstraints().keySet()) {
+                    if (con instanceof PathConstraintLookup && con.getPath().equals(path)) {
+                        extraValue = ((PathConstraintLookup) con).getExtraValue();
+                    }
+                }
                 BagQueryResult bqr = entry.getValue();
                 Properties properties = SessionMethods.getWebProperties(servletContext);
                 DisplayLookupMessageHandler.handleMessages(bqr, session, properties, type,
-                                                           extraConstraint);
+                                                           extraValue);
             }
             request.setAttribute("lookupResults", lookupResults);
         } else {
@@ -154,7 +155,7 @@ public class TableController extends TilesAction
             Column column = columns.get(columnIndex);
             Path columnPath = column.getPath();
             if (columnPath != null) {
-                Class columnEndType = columnPath.getLastClassDescriptor().getType();
+                Class<?> columnEndType = columnPath.getLastClassDescriptor().getType();
                 if (columnEndType != null) {
                     List<String> columnsToDisable = new ArrayList<String>();
                     // find columns that should be disabled if an object from this column is
@@ -168,7 +169,7 @@ public class TableController extends TilesAction
                         }
                         Path otherColumnPath = otherColumn.getPath();
                         if (otherColumnPath != null) {
-                            Class otherColumnEndType =
+                            Class<?> otherColumnEndType =
                                 otherColumnPath.getLastClassDescriptor().getType();
                             if (otherColumnEndType != null) {
                                 if (!columnEndType.equals(otherColumnEndType)) {
@@ -201,8 +202,8 @@ public class TableController extends TilesAction
                      otherColumnIndex++) {
                     Column otherColumn = columns.get(otherColumnIndex);
                     Path otherColumnPath = otherColumn.getPath();
-                    if (columnPath.getElements().size() > 0
-                        && otherColumnPath.getElements().size() > 0
+                    if (!columnPath.isRootPath()
+                        && !otherColumnPath.isRootPath()
                         && columnPath.getPrefix().equals(otherColumnPath.getPrefix())) {
                         columnsToHighlight.add("" + otherColumnIndex);
                     }
@@ -230,35 +231,5 @@ public class TableController extends TilesAction
         request.setAttribute("firstSelectedFields", pt.getFirstSelectedFields(os, classKeys));
 
         return null;
-    }
-
-    private HashMap<String, String> setSortOrderMap(PathQuery q) {
-        HashMap<String, String> mappy = new HashMap<String, String>();
-        String sortBy, direction = null;
-        Map<Path, String> sortOrderList = q.getSortOrder();
-        List<String> selectList = q.getViewStrings();
-        if (selectList.isEmpty()) {
-            return null;
-        }
-        if (sortOrderList.isEmpty()) {
-            // do something if nothing selected
-            sortBy = selectList.get(0);
-            direction = PathQuery.ASCENDING;
-        } else {
-            Path path = sortOrderList.keySet().iterator().next();
-            sortBy = path.toStringNoConstraints();
-            direction = sortOrderList.get(path);
-        }
-
-        // loop through query and populate map
-        for (String s:  selectList) {
-            if (s.equals(sortBy)) {
-                mappy.put(s, direction);
-            } else {
-                mappy.put(s, null);
-            }
-        }
-
-        return mappy;
     }
 }

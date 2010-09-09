@@ -89,10 +89,10 @@ public class BioUtil implements WidgetHelper
         q.addFrom(qcObject);
         q.addFrom(qcOrganism);
 
-        if (organismFieldName.equals("name")) {
+        if ("name".equals(organismFieldName)) {
             q.addToSelect(qfOrganismName);
             q.addToOrderBy(qfOrganismName);
-        } else if (organismFieldName.equals("taxonId") || organismFieldName.equals("shortName")) {
+        } else if ("taxonId".equals(organismFieldName) || "shortName".equals(organismFieldName)) {
             // will either be taxonId or shortname
             QueryField qfOrganism = new QueryField(qcOrganism, organismFieldName);
             q.addToSelect(qfOrganism);
@@ -112,7 +112,7 @@ public class BioUtil implements WidgetHelper
         q.setConstraint(cs);
 
         Results r = os.execute(q);
-        Iterator<ResultsRow> it = r.iterator();
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> it = (Iterator) r.iterator();
         Collection<String> orgs = new ArrayList();
 
         while (it.hasNext()) {

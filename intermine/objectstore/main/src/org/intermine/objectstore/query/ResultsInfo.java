@@ -202,6 +202,7 @@ public class ResultsInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof ResultsInfo) {
             ResultsInfo i = (ResultsInfo) o;
@@ -217,6 +218,7 @@ public class ResultsInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return  (int) (2 * start
             +  3 * complete
@@ -228,6 +230,7 @@ public class ResultsInfo
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "ResultsInfo(start=" + start + ", complete=" + complete + ", rows=" + rows
             + ", min=" + min + ", max=" + max + ")";

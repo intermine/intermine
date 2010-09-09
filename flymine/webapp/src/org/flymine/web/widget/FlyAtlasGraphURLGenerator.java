@@ -13,6 +13,7 @@ package org.flymine.web.widget;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
@@ -69,33 +70,32 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         PathQuery q = new PathQuery(os.getModel());
 
         // add columns to the output
-        q.setView("FlyAtlasResult.genes.secondaryIdentifier, "
-                  + "FlyAtlasResult.genes.primaryIdentifier,"
-                  + "FlyAtlasResult.genes.name,"
-                  + "FlyAtlasResult.genes.organism.name,"
-                  + "FlyAtlasResult.assays.name,"
-                  + "FlyAtlasResult.enrichment,"
-                  + "FlyAtlasResult.affyCall,FlyAtlasResult.mRNASignal,"
-                  + "FlyAtlasResult.mRNASignalSEM,FlyAtlasResult.presentCall");
+        q.addViews("FlyAtlasResult.genes.secondaryIdentifier",
+                  "FlyAtlasResult.genes.primaryIdentifier",
+                  "FlyAtlasResult.genes.name",
+                  "FlyAtlasResult.genes.organism.name",
+                  "FlyAtlasResult.assays.name",
+                  "FlyAtlasResult.enrichment",
+                  "FlyAtlasResult.affyCall",
+                  "FlyAtlasResult.mRNASignal",
+                  "FlyAtlasResult.mRNASignalSEM",
+                  "FlyAtlasResult.presentCall");
 
         // all results have to be in list
-        q.addConstraint("FlyAtlasResult.genes", Constraints.in(bag.getName()));
+        q.addConstraint(Constraints.in("FlyAtlasResult.genes", bag.getName()));
 
         // sort based on whether up or down regulated
-        String sortDirection = (category.equalsIgnoreCase("up") ? PathQuery.ASCENDING
-                                                               : PathQuery.DESCENDING);
+        OrderDirection sortOrder = (category.equalsIgnoreCase("up") ? OrderDirection.ASC
+                                                               : OrderDirection.DESC);
         // affyCall (up or down) value has to match what the user clicked on
-        q.addConstraint("FlyAtlasResult.affyCall", Constraints.eq(series));
+        q.addConstraint(Constraints.eq("FlyAtlasResult.affyCall", series));
 
         // assay (tissue) has to match what the user clicked on
-        q.addConstraint("FlyAtlasResult.assays.name", Constraints.eq(category));
+        q.addConstraint(Constraints.eq("FlyAtlasResult.assays.name", category));
 
-        q.setOrderBy("FlyAtlasResult.enrichment", sortDirection);
-        q.addOrderBy("FlyAtlasResult.genes.secondaryIdentifier");
+        q.addOrderBy("FlyAtlasResult.enrichment", sortOrder);
+        q.addOrderBy("FlyAtlasResult.genes.secondaryIdentifier", OrderDirection.ASC);
 
-        // set constraint logic
-        q.setConstraintLogic("A and B and C");
-        q.syncLogicExpression("and");
         return q;
     }
 }

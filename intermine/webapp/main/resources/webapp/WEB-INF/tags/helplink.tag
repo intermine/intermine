@@ -1,5 +1,5 @@
 <%@ tag body-content="empty" %>
-<%@ attribute name="text" required="false" %>
+<%@ attribute name="text" required="false" rtexprvalue="true"%>
 <%@ attribute name="key" required="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -11,4 +11,4 @@
   <fmt:message var="text" key="${key}"/>
 </c:if>
 
-<c:if test="${!empty text}"><sup><im:help text="${text}">?</im:help></sup></c:if>
+<c:if test="${!empty text}"><im:help text="${text}">?</im:help></c:if>

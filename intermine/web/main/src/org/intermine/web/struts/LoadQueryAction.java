@@ -22,8 +22,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.query.MainHelper;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.pathquery.PathQuery;
@@ -66,10 +67,17 @@ public class LoadQueryAction extends DispatchAction
         String exportFormat = request.getParameter("exportFormat");
 
 
-        Map<String, PathQuery> queries = PathQueryBinding.unmarshal(new StringReader(queryXml),
+        PathQuery query = PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml),
                 PathQuery.USERPROFILE_VERSION);
-        MainHelper.checkPathQueries(queries, profile.getSavedBags());
-        PathQuery query = (PathQuery) queries.values().iterator().next();
+        BagManager bagManager = im.getBagManager();
+
+        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+        for (String bagName : query.getBagNames()) {
+            if (!allBags.containsKey(bagName)) {
+                throw new RuntimeException("Saved bag (list) '" + bagName + "' not found for "
+                        + "profile: " + profile.getUsername() + ", referenced in query: " + query);
+            }
+        }
 
         if (exportFormat == null) {
             SessionMethods.loadQuery(query, session, response);

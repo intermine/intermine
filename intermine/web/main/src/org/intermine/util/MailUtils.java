@@ -30,6 +30,9 @@ import javax.mail.internet.MimeMessage;
  */
 public abstract class MailUtils
 {
+    private MailUtils() {
+    }
+
     /**
      * Send a welcoming email to an email address
      *
@@ -64,7 +67,7 @@ public abstract class MailUtils
         }
 
         Session session;
-        if (authFlag != null && (authFlag.equals("true") || authFlag.equals("t"))) {
+        if (authFlag != null && ("true".equals(authFlag) || "t".equals(authFlag))) {
             Authenticator authenticator = new Authenticator() {
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
@@ -121,7 +124,7 @@ public abstract class MailUtils
         }
 
         Session session;
-        if (authFlag != null && (authFlag.equals("true") || authFlag.equals("t"))) {
+        if (authFlag != null && ("true".equals(authFlag) || "t".equals(authFlag))) {
             Authenticator authenticator = new Authenticator() {
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
@@ -176,7 +179,7 @@ public abstract class MailUtils
             properties.put("mail.smtp.auth", authFlag);
         }
         Session session;
-        if (authFlag != null && (authFlag.equals("true") || authFlag.equals("t"))) {
+        if (authFlag != null && ("true".equals(authFlag) || "t".equals(authFlag))) {
             Authenticator authenticator = new Authenticator() {
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {

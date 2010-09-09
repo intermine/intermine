@@ -23,16 +23,16 @@ import org.intermine.api.results.ResultElement;
 public interface Exporter
 {
     /** Windows line separator  CR+LF **/
-    public static final String WINDOWS_SEPARATOR = "\r\n";
+    String WINDOWS_SEPARATOR = "\r\n";
 
     /** Windows line separator  only LF **/
-    public static final String UNIX_SEPARATOR = "\n";
+    String UNIX_SEPARATOR = "\n";
 
     /**
      * Do export.
      * @param it iterator over stuff to be exported
      */
-    public void export(Iterator<? extends List<ResultElement>> it);
+    void export(Iterator<? extends List<ResultElement>> it);
 
     /**
      * This method finds out if result row composed from instances of these
@@ -40,10 +40,10 @@ public interface Exporter
      * @param clazzes classes in row
      * @return true if result row can be exported or false
      */
-    public boolean canExport(List<Class> clazzes);
+    boolean canExport(List<Class<?>> clazzes);
 
     /**
      * @return count of written results
      */
-    public int getWrittenResultsCount();
+    int getWrittenResultsCount();
 }

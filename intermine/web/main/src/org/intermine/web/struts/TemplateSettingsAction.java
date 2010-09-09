@@ -19,7 +19,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
-import org.intermine.web.logic.template.TemplateBuildState;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -48,12 +49,12 @@ public class TemplateSettingsAction extends InterMineAction
         ActionErrors errors = tsf.validate(mapping, request);
         saveErrors(request, (ActionMessages) errors);
 
-        TemplateBuildState tbs = SessionMethods.getTemplateBuildState(session);
-
-        tbs.setDescription(tsf.getDescription());
-        tbs.setName(tsf.getName());
-        tbs.setTitle(tsf.getTitle());
-        tbs.setComment(tsf.getComment());
+        TemplateQuery template = (TemplateQuery)SessionMethods.getQuery(session);
+        template.setDescription(tsf.getDescription());
+        session.setAttribute(Constants.PREV_TEMPLATE_NAME, template.getName());
+        template.setName(tsf.getName());
+        template.setTitle(tsf.getTitle());
+        template.setComment(tsf.getComment());
 
         return new ForwardParameters(mapping.findForward("query")).forward();
     }

@@ -159,8 +159,10 @@ public class BagManager
         Set<String> classAndSubs = new HashSet<String>();
         classAndSubs.add(type);
 
-        String qualifiedType = model.getPackageName() + "." + type;
-        ClassDescriptor bagTypeCld = model.getClassDescriptorByName(qualifiedType);
+        ClassDescriptor bagTypeCld = model.getClassDescriptorByName(type);
+        if (bagTypeCld == null) {
+            throw new NullPointerException("Could not find ClassDescriptor for name " + type);
+        }
         for (ClassDescriptor cld : model.getAllSubs(bagTypeCld)) {
             classAndSubs.add(cld.getUnqualifiedName());
         }
@@ -227,7 +229,7 @@ public class BagManager
 
         // this should return all bags with that object
         Results res = osProduction.executeSingleton(q);
-        Iterator resIter = res.iterator();
+        Iterator<Object> resIter = res.iterator();
         while (resIter.hasNext()) {
             Integer osBagId = (Integer) resIter.next();
             bagsContainingId.add(osBagIdToInterMineBag.get(osBagId));

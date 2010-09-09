@@ -36,6 +36,7 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.ParallelPrecomputer;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
 
 /**
  * A Task that reads a list of queries from a properties file (eg. testmodel_precompute.properties)
@@ -61,7 +62,7 @@ public class PrecomputeTemplatesTask extends Task
     protected String userProfileAlias;
     protected String username;
     protected String ignore = "";
-    protected Set ignoreNames = new HashSet();
+    protected Set<String> ignoreNames = new HashSet<String>();
     protected boolean doSummarise = true;
 
     /**
@@ -121,6 +122,7 @@ public class PrecomputeTemplatesTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         if (alias == null) {
             throw new BuildException("alias attribute is not set");
@@ -178,15 +180,14 @@ public class PrecomputeTemplatesTask extends Task
             // if the template isn't valid according to the current model, log it and move on
             if (!template.isValid()) {
                 LOG.warn("template does not validate against the model: " + template.getName());
-                for (int i = 0; i < template.getProblems().length; i++) {
-                    Throwable t = template.getProblems()[i];
-                    t.fillInStackTrace();
-                    LOG.warn("problem with " + template.getName() + ": " + t);
+                List<String> problems = template.verifyQuery();
+                for (String problem : problems) {
+                    LOG.warn("Problem with " + template.getName() + ": " + problem);
                 }
                 continue;
             }
 
-            List indexes = new ArrayList();
+            List<QueryNode> indexes = new ArrayList<QueryNode>();
             Query q = TemplatePrecomputeHelper.getPrecomputeQuery(template, indexes, null);
 
             if (q.getConstraint() == null) {
@@ -238,7 +239,8 @@ public class PrecomputeTemplatesTask extends Task
      * is thrown
      * @throws BuildException if the query cannot be precomputed.
      */
-    protected void precompute(ObjectStore os, Query query, Collection indexes, String name) {
+    protected void precompute(ObjectStore os, Query query, Collection<QueryNode> indexes,
+            String name) {
         long start = System.currentTimeMillis();
 
         try {

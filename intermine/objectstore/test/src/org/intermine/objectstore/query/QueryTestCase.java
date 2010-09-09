@@ -313,6 +313,16 @@ public class QueryTestCase extends OneTimeTestCase
             checkQueryNodes(msg + ": right start is not equal", oc1.getRight().getStart(), oc2.getRight().getStart(), q1, q2);
             checkQueryNodes(msg + ": right end is not equal", oc1.getRight().getEnd(), oc2.getRight().getEnd(), q1, q2);
             checkQueryReferences(msg + ": right parent is not equal", oc1.getRight().getParent(), oc2.getRight().getParent(), q1, q2);
+        } else if (c1 instanceof MultipleInBagConstraint) {
+            MultipleInBagConstraint bc1 = (MultipleInBagConstraint) c1;
+            MultipleInBagConstraint bc2 = (MultipleInBagConstraint) c2;
+            assertEquals(msg + ": evaluable list sizes are not the same", bc1.getEvaluables().size(), bc2.getEvaluables().size());
+            Iterator<? extends QueryEvaluable> iter1 = bc1.getEvaluables().iterator();
+            Iterator<? extends QueryEvaluable> iter2 = bc2.getEvaluables().iterator();
+            while (iter1.hasNext()) {
+                checkQueryNodes(msg + ": evaluable is not the same", iter1.next(), iter2.next(), q1, q2);
+            }
+            assertEquals(msg + ": bags are not equal", bc1.getBag(), bc2.getBag());
         } else {
             fail(msg + ": non-supported object in Query");
         }
@@ -329,8 +339,8 @@ public class QueryTestCase extends OneTimeTestCase
     }
 
     protected void checkToString(String msg, Query q1, Query q2) {
-        IqlQuery fq1 = new IqlQuery(q1);
-        IqlQuery fq2 = new IqlQuery(q2);
+        IqlQuery fq1 = q1.getIqlQuery();
+        IqlQuery fq2 = q2.getIqlQuery();
         assertEquals(msg, fq1.getQueryString(), fq2.getQueryString());
         assertEquals(msg, fq1.getParameters(), fq2.getParameters());
     }

@@ -11,14 +11,15 @@ package org.intermine.util;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 /**
  * Useful utilities to do with mappings.
@@ -26,18 +27,17 @@ import java.util.Stack;
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public class MappingUtil
+public final class MappingUtil
 {
-    private static final int TAKE_FROM_SET = 1;
-    private static final int LOOK_IN_LIST = 2;
-    private static final int TAKE_FROM_STACK = 4;
-    private static final int FINISHED = 5;
+    private MappingUtil() {
+    }
 
-    private static final MappingUtilChecker DEFAULT_CHECKER = new MappingUtilChecker() {
-        public boolean check(Map map) {
-            return true;
-        }
-    };
+    private static final MappingUtilChecker<Object> DEFAULT_CHECKER
+        = new MappingUtilChecker<Object>() {
+            public boolean check(@SuppressWarnings("unused") Map<Object, Object> map) {
+                return true;
+            }
+        };
 
     /**
      * Produces a Set of possible mappings from items in the firstSet onto items in the secondSet,
@@ -56,10 +56,14 @@ public class MappingUtil
      * @param secondSet the set of items to map to
      * @param comparator a comparator for the items in the two sets that returns 0 for the required
      * equivalence operation
+     * @param <T> The element type of the sets
      * @return a Set of Maps from items in the firstSet onto items in the secondSet
      */
-    public static Set findCombinations(Set firstSet, Set secondSet, Comparator comparator) {
-        return findCombinations(firstSet, secondSet, comparator, DEFAULT_CHECKER);
+    @SuppressWarnings("unchecked")
+    public static <T> Set<Map<T, T>> findCombinations(Set<T> firstSet, Set<T> secondSet,
+            Comparator<? super T> comparator) {
+        return findCombinations(firstSet, secondSet, comparator,
+                (MappingUtilChecker<T>) DEFAULT_CHECKER);
     }
 
      /**
@@ -80,93 +84,44 @@ public class MappingUtil
      * @param comparator a comparator for the items in the two sets that returns 0 for the required
      * equivalence operation
      * @param checker an object that can check a partial mapping for validity
+     * @param <T> The element type of the sets
      * @return a Set of Maps from items in the firstSet onto items in the secondSet
      */
-    public static Set findCombinations(Set firstSet, Set secondSet, Comparator comparator,
-            MappingUtilChecker checker) {
-        List array = new ArrayList(secondSet);
-        int arraySize = array.size();
-        boolean covered[] = new boolean[arraySize];
-        for (int i = 0; i < arraySize; i++) {
-            covered[i] = false;
-        }
-        Set set = new LinkedHashSet(firstSet);
-        Stack stack = new Stack();
-        int state = TAKE_FROM_SET;
-        Set resultSet = new LinkedHashSet();
-        int currentIndex = 0;
-        Object obj = null;
+    public static <T> Set<Map<T, T>> findCombinations(Set<T> firstSet, Set<T> secondSet,
+            Comparator<? super T> comparator, MappingUtilChecker<T> checker) {
+        List<T> firstList = new ArrayList<T>(firstSet);
+        List<T> secondList = new ArrayList<T>(secondSet);
+        Set<Integer> takenSeconds = Collections.emptySet();
+        Map<T, T> soFar = Collections.emptyMap();
+        Set<Map<T, T>> retval = new LinkedHashSet<Map<T, T>>();
+        findCombinations(retval, firstList, secondList, comparator, checker, soFar, 0,
+                takenSeconds);
+        return retval;
+    }
 
-        do {
-            switch(state) {
-                case TAKE_FROM_SET:
-                    // First step - take a table out of the Set.
-                    if (set.isEmpty()) {
-                        // A possible combination is the contents of the stack.
-                        Iterator stackIter = stack.iterator();
-                        Map result = new LinkedHashMap();
-                        while (stackIter.hasNext()) {
-                            int indexOfArray = ((Integer) stackIter.next()).intValue();
-                            Object objFromSet = stackIter.next();
-                            result.put(objFromSet, array.get(indexOfArray));
-                        }
-                        resultSet.add(result);
-                        state = TAKE_FROM_STACK;
-                    } else {
-                        obj = set.iterator().next();
-                        set.remove(obj);
-                        currentIndex = 0;
-                        state = LOOK_IN_LIST;
-                    }
-                    break;
-                case LOOK_IN_LIST:
-                    // Second step - look for it in the List.
-                    while ((currentIndex < arraySize)
-                            && ((comparator.compare(array.get(currentIndex), obj) != 0)
-                                || covered[currentIndex])) {
-                        currentIndex++;
-                    }
-                    if (currentIndex == arraySize) {
-                        set.add(obj);
-                        state = TAKE_FROM_STACK;
-                    } else {
-                        // At this point we want to check whether this is a valid partial
-                        // combination. So first, create the map:
-                        Iterator stackIter = stack.iterator();
-                        Map result = new LinkedHashMap();
-                        while (stackIter.hasNext()) {
-                            int indexOfArray = ((Integer) stackIter.next()).intValue();
-                            Object objFromSet = stackIter.next();
-                            result.put(objFromSet, array.get(indexOfArray));
-                        }
-                        result.put(obj, array.get(currentIndex));
-                        // Now, if it is valid, then record it. Otherwise, go back to the beginning
-                        // of LOOK_IN_LIST.
-                        if (checker.check(result)) {
-                            stack.push(new Integer(currentIndex));
-                            stack.push(obj);
-                            covered[currentIndex] = true;
-                            state = TAKE_FROM_SET;
-                        } else {
-                            currentIndex++;
+    private static <T> void findCombinations(Set<Map<T, T>> retval, List<T> firstList,
+            List<T> secondList, Comparator<? super T> comparator, MappingUtilChecker<T> checker,
+            Map<T, T> soFar, int firstIndex, Set<Integer> takenSeconds) {
+        if (firstIndex >= firstList.size()) {
+            retval.add(soFar);
+        } else {
+            T firstElement = firstList.get(firstIndex);
+            for (int i = 0; i < secondList.size(); i++) {
+                if (!takenSeconds.contains(new Integer(i))) {
+                    T secondElement = secondList.get(i);
+                    if (comparator.compare(firstElement, secondElement) == 0) {
+                        Set<Integer> newTakenSeconds = new HashSet<Integer>(takenSeconds);
+                        Map<T, T> newSoFar = new LinkedHashMap<T, T>(soFar);
+                        newTakenSeconds.add(new Integer(i));
+                        newSoFar.put(firstElement, secondElement);
+                        if (checker.check(newSoFar)) {
+                            findCombinations(retval, firstList, secondList, comparator, checker,
+                                    newSoFar, firstIndex + 1, newTakenSeconds);
                         }
                     }
-                    break;
-                case TAKE_FROM_STACK:
-                    if (stack.isEmpty()) {
-                        state = FINISHED;
-                    } else {
-                        obj = stack.pop();
-                        currentIndex = ((Integer) stack.pop()).intValue();
-                        covered[currentIndex] = false;
-                        currentIndex++;
-                        state = LOOK_IN_LIST;
-                    }
-                    break;
+                }
             }
-        } while (state != FINISHED);
-
-        return resultSet;
+        }
     }
 
     /**
@@ -182,45 +137,42 @@ public class MappingUtil
      *
      * @param combinations a Set of Maps, each of which is a mapping from one set of items onto
      * another set of items
+     * @param <T> The element type
      * @return a Set of Sets of Maps, where each Set of Maps is a set of mappings that have all
      * items being mapped onto disjoint
      */
-    public static Set findMultipleCombinations(Set combinations) {
-        Set retval = new LinkedHashSet(); // the result we will return.
-        Set newCombinations = new LinkedHashSet(combinations); // clone, so we don't alter.
-                                                         // Actually, we don't need to do this as
-                                                         // long as there isn't multi-threaded
-                                                         // access, since we restore the Set in the
-                                                         // end.
-        Set combinationsSoFar = new LinkedHashSet(); // An empty set.
+    public static <T> Set<Set<Map<T, T>>> findMultipleCombinations(Set<Map<T, T>> combinations) {
+        Set<Set<Map<T, T>>> retval = new LinkedHashSet<Set<Map<T, T>>>(); // the result we will
+                                                                          // return.
+        Set<Map<T, T>> newCombinations = new LinkedHashSet<Map<T, T>>(combinations);
+                        // clone, so we don't alter.
+                        // Actually, we don't need to do this as long as there isn't multi-threaded
+                        // access, since we restore the Set in the end.
+        Set<Map<T, T>> combinationsSoFar = new LinkedHashSet<Map<T, T>>(); // An empty set.
         recurseFindMultipleCombinations(retval, newCombinations, combinationsSoFar);
         return retval;
     }
 
-    private static void recurseFindMultipleCombinations(Set retval, Set combinations,
-            Set combinationsSoFar) {
+    private static <T> void recurseFindMultipleCombinations(Set<Set<Map<T, T>>> retval,
+            Set<Map<T, T>> combinations, Set<Map<T, T>> combinationsSoFar) {
         if (!combinations.isEmpty()) {
-            Map currentCombination = (Map) combinations.iterator().next();
+            Map<T, T> currentCombination = combinations.iterator().next();
             combinations.remove(currentCombination);
 
             // Now, we must check to see if any of the values in currentCombination clashes with
             // any value in combinationsSoFar.
             // First, put all values from currentCombination into a Set:
-            Iterator valueIter = currentCombination.entrySet().iterator();
-            Set currentValues = new LinkedHashSet();
-            while (valueIter.hasNext()) {
-                Map.Entry valueEntry = (Map.Entry) valueIter.next();
-                Object value = valueEntry.getValue();
+            Set<T> currentValues = new LinkedHashSet<T>();
+            for (Map.Entry<T, T> valueEntry : currentCombination.entrySet()) {
+                T value = valueEntry.getValue();
                 currentValues.add(value);
             }
 
             boolean clashes = false;
-            Iterator mapIter = combinationsSoFar.iterator();
-            while ((!clashes) && mapIter.hasNext()) {
-                Map map = (Map) mapIter.next();
-                Iterator mapValueIter = map.entrySet().iterator();
+            for (Map<T, T> map : combinationsSoFar) {
+                Iterator<Map.Entry<T, T>> mapValueIter = map.entrySet().iterator();
                 while ((!clashes) && mapValueIter.hasNext()) {
-                    Map.Entry mapValueEntry = (Map.Entry) mapValueIter.next();
+                    Map.Entry<T, T> mapValueEntry = mapValueIter.next();
                     Object mapValue = mapValueEntry.getValue();
                     clashes = currentValues.contains(mapValue);
                 }
@@ -229,7 +181,7 @@ public class MappingUtil
                 // In that case, we can add the currentCombination into combinationsSoFar, record
                 // the combination as possible, and recurse.
                 combinationsSoFar.add(currentCombination);
-                retval.add(new LinkedHashSet(combinationsSoFar));
+                retval.add(new LinkedHashSet<Map<T, T>>(combinationsSoFar));
                 recurseFindMultipleCombinations(retval, combinations, combinationsSoFar);
                 // And then set combinationsSoFar back to how it was before.
                 combinationsSoFar.remove(currentCombination);
@@ -241,5 +193,3 @@ public class MappingUtil
         }
     }
 }
-
-

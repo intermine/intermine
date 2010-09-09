@@ -31,6 +31,7 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
@@ -39,31 +40,37 @@ import org.intermine.util.TypeUtil;
  *
  * @author Richard Smith
  */
-public class PostProcessUtil
+public final class PostProcessUtil
 {
+    private PostProcessUtil() {
+    }
 
     /**
      * Create a clone of given InterMineObject including the id.  This is designed for
      * altering and storing again (to avoid cache problems) so doesn't copy collections.
+     *
      * @param obj object to clone
+     * @param <O> The object type
      * @return the cloned object
      * @throws IllegalAccessException if problems with reflection
      */
-    public static InterMineObject cloneInterMineObject(InterMineObject obj)
-        throws IllegalAccessException {
+    public static <O extends InterMineObject> O cloneInterMineObject(O obj)
+    throws IllegalAccessException {
         return PostProcessUtil.cloneInterMineObject(obj, false);
     }
 
 
     /**
      * Create a copy of given InterMineObject with *no* id set and copies of collections
+     *
      * @param obj object to copy
+     * @param <O> The object type
      * @return the copied object
      * @throws IllegalAccessException if problems with reflection
      */
-    public static InterMineObject copyInterMineObject(InterMineObject obj)
+    public static <O extends InterMineObject> O copyInterMineObject(O obj)
         throws IllegalAccessException {
-        InterMineObject newObj = cloneInterMineObject(obj, true);
+        O newObj = cloneInterMineObject(obj, true);
         newObj.setId(null);
         return newObj;
     }
@@ -71,13 +78,13 @@ public class PostProcessUtil
 
     private static <O extends InterMineObject> O cloneInterMineObject(O obj,
             boolean copyCollections) throws IllegalAccessException {
-        Class<O> clazz = (Class<O>) obj.getClass();
+        @SuppressWarnings("unchecked") Class<O> clazz = (Class<O>) obj.getClass();
         O newObj = DynamicUtil.createObject(clazz);
 
         for (String fieldName : TypeUtil.getFieldInfos(obj.getClass()).keySet()) {
             Object value = obj.getFieldProxy(fieldName);
-            if (copyCollections && (value instanceof Collection)) {
-                newObj.setFieldValue(fieldName, new HashSet((Collection) value));
+            if (copyCollections && (value instanceof Collection<?>)) {
+                newObj.setFieldValue(fieldName, new HashSet<Object>((Collection<?>) value));
             } else {
                 newObj.setFieldValue(fieldName, value);
             }
@@ -107,11 +114,10 @@ public class PostProcessUtil
      * @throws IllegalAccessException if one of the field names doesn't exist in the corresponding
      * class.
      */
-    public static Iterator<?> findConnectingClasses(ObjectStore os,
-                                                 Class<?> sourceClass, String sourceClassFieldName,
-                                                 Class<?> connectingClass,
-                                                 String connectingClassFieldName,
-                                                 Class<?> destinationClass, boolean orderBySource)
+    public static Iterator<ResultsRow<InterMineObject>> findConnectingClasses(ObjectStore os,
+            Class<? extends InterMineObject> sourceClass, String sourceClassFieldName,
+            Class<? extends InterMineObject> connectingClass, String connectingClassFieldName,
+            Class<? extends InterMineObject> destinationClass, boolean orderBySource)
         throws ObjectStoreException, IllegalAccessException {
 
         Query q = new Query();
@@ -140,9 +146,9 @@ public class PostProcessUtil
         cs.addConstraint(cc1);
         QueryReference ref2;
 
-        Map<String, FieldDescriptor> descriptorMap
-            = os.getModel().getFieldDescriptorsForClass(connectingClass);
-        FieldDescriptor fd = (FieldDescriptor) descriptorMap.get(connectingClassFieldName);
+        Map<String, FieldDescriptor> descriptorMap = os.getModel()
+            .getFieldDescriptorsForClass(connectingClass);
+        FieldDescriptor fd = descriptorMap.get(connectingClassFieldName);
 
         if (fd == null) {
             throw new IllegalAccessException("cannot find field \"" + connectingClassFieldName
@@ -162,7 +168,9 @@ public class PostProcessUtil
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q, 5000, true, true, true);
 
-        return res.iterator();
+        @SuppressWarnings("unchecked") Iterator<ResultsRow<InterMineObject>> retval = (Iterator) res
+            .iterator();
+        return retval;
     }
 
 }

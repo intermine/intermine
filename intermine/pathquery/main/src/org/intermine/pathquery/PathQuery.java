@@ -10,1547 +10,2124 @@ package org.intermine.pathquery;
  *
  */
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.util.CollectionUtil;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
 
 /**
  * Class to represent a path-based query.
  *
- * @author Mark Woodbridge
- * @author Thomas Riley
+ * @author Matthew Wakeling
  */
-public class PathQuery
+public class PathQuery implements Cloneable
 {
-    private static final Logger LOG = Logger.getLogger(PathQuery.class);
+    /** A Pattern that finds spaces in a String. */
+    protected static final Pattern SPACE_SPLITTER = Pattern.compile(" ", Pattern.LITERAL);
+    /** Version number for the userprofile and PathQuery XML format. */
+    public static final int USERPROFILE_VERSION = 2;
+
     private Model model;
-    protected LinkedHashMap<String, PathNode> nodes = new LinkedHashMap<String, PathNode>();
-    private List<Path> view = new ArrayList<Path>();
-    private Map<Path, String> sortOrder = new LinkedHashMap<Path, String>();
-    private List<Throwable> problems = new ArrayList<Throwable>();
-    protected LogicExpression constraintLogic = null;
-    private Map<Path, String> pathDescriptions = new HashMap<Path, String>();
-    protected String description;
-    private static final String MSG = "Invalid path - path cannot be a null or empty string";
+    private List<String> view = new ArrayList<String>();
+    private List<OrderElement> orderBy = new ArrayList<OrderElement>();
+    private Map<PathConstraint, String> constraints = new LinkedHashMap<PathConstraint, String>();
+    private LogicExpression logic = null;
+    private Map<String, OuterJoinStatus> outerJoinStatus
+        = new LinkedHashMap<String, OuterJoinStatus>();
+    private Map<String, String> descriptions = new LinkedHashMap<String, String>();
+    private String description = null;
+
+    // Verification variables:
+    private boolean isVerified = false;
+    /** The root path of this query */
+    private String rootClass = null;
+    /** A Map from path to class name for all PathConstraintSubclass objects in the query. */
+    private Map<String, String> subclasses = null;
+    /** A Map from path to outer join group for all main paths in the query. */
+    private Map<String, String> outerJoinGroups = null;
+    /** A Map from outer join group to the set of constraint codes in that group. */
+    private Map<String, Set<String>> constraintGroups = null;
+    /** A Set of Strings describing all the loop constraints in the query, in order to check for
+     * uniqueness */
+    private Set<String> existingLoops = null;
+    /** A boolean that determines if the constraints are broken enough to not bother validating the
+     * constraint logic */
+    private boolean doNotVerifyLogic = false;
+
+
+    // See http://intrac.flymine.org/wiki/PathQueryRefactor
 
     /**
-     * Version number for the userprofile and PathQuery XML format
-     */
-    public static final int USERPROFILE_VERSION = 1;
-
-    /**
-     * Ascending sort order.
-     */
-    public static final String ASCENDING = "asc";
-
-    /**
-     * Descending sort order.
-     */
-    public static final String DESCENDING = "desc";
-
-    /**
-     * Construct a new instance of PathQuery.
-     * @param model the Model on which to base this query
+     * Constructor. Takes a Model object, to enable verification later.
+     *
+     * @param model a Model object
      */
     public PathQuery(Model model) {
         this.model = model;
     }
 
     /**
-     * Construct a new instance of PathQuery from an existing
-     * instance.
-     * @param query the existing query
-     */
-    public PathQuery(PathQuery query) {
-        this.model = query.model;
-        this.nodes = new LinkedHashMap<String, PathNode>(query.nodes);
-        this.view = new ArrayList<Path>(query.view);
-        this.sortOrder = new HashMap<Path, String>(query.sortOrder);
-        this.problems = new ArrayList<Throwable>(query.problems);
-        this.constraintLogic = query.constraintLogic;
-        this.pathDescriptions = new HashMap<Path, String>(query.pathDescriptions);
-    }
-
-
-    /*****************************************************************************************/
-
-
-    private void validateView(List<Path> viewList) {
-        Iterator it = viewList.iterator();
-        while (it.hasNext()) {
-            Path path = (Path) it.next();
-            if (path == null || path.equals("")) {
-                it.remove();
-            }
-        }
-    }
-
-    private List<Path> makePaths(List<String> viewStrings) {
-        List<Path> viewPaths = new ArrayList<Path>();
-        Iterator it = viewStrings.iterator();
-        while (it.hasNext()) {
-            String pathString = (String) it.next();
-            if (pathString == null || pathString.trim().equals("")) {
-                logPathException(MSG);
-                continue;
-            }
-            Path path = null;
-            try {
-                path = makePath(model, this, pathString.trim());
-            } catch (PathException e) {
-                logPathException(e);
-            }
-            if (path != null) {
-                viewPaths.add(path);
-            }
-        }
-        return viewPaths;
-    }
-
-    /**
-     * Sets the select list of the query to the list of paths given.  Paths can be a single path
-     * or a comma or space delimited list of paths.  To append a path to the list instead use
-     * addView.
-     * @param paths a list of paths to be the view list
-     */
-    public void setView(String paths) {
-        if (paths == null || paths.equals("")) {
-            logPathException(MSG);
-            return;
-        }
-        String [] pathStrings = paths.split("[, ]+");
-        setView(new ArrayList<String>(Arrays.asList(pathStrings)));
-        validateSortOrder();
-    }
-
-    /**
-     * Clears the view list and sets the value of view to the list of strings given
-     * @param viewStrings a list of strings.
-     */
-    public void setView(List<String> viewStrings) {
-        if (viewStrings.isEmpty()) {
-            logPathException(MSG);
-            return;
-        }
-        setViewPaths(makePaths(viewStrings));
-        validateSortOrder();
-    }
-
-    /**
-     * Sets the value of view
-     * @param view a List of Paths
-     */
-    public void setViewPaths(List<Path> view) {
-        validateView(view);
-        this.view = view;
-        // sets subclasses nodes
-        for (Path path : view) {
-            for (Map.Entry<String, String> entry
-                            : path.getSubClassConstraintPaths().entrySet()) {
-                String stringPath = entry.getKey();
-                PathNode node = addNode(getCorrectJoinStyle(stringPath));
-                node.setType(entry.getValue());
-            }
-        }
-        validateSortOrder();
-    }
-
-    /**
-     * Change the join style of a path in the query. All children will also be updated.
-     * The path must not end by an attribute.
+     * Constructor. Takes an existing PathQuery object, and copies all the data. Similar to the
+     * clone method.
      *
-     * @param path a path with the old join style
-     * @return the path, flipped
+     * @param o a PathQuery to copy
      */
-    public String flipJoinStyle(String path) {
-        int lastDotIndex = path.lastIndexOf('.');
-        int lastColonIndex = path.lastIndexOf(':');
-        if (lastDotIndex > lastColonIndex) {
-            return updateJoinStyle(path, true);
-        } else {
-            return updateJoinStyle(path, false);
+    public PathQuery(PathQuery o) {
+        model = o.model;
+        view = new ArrayList<String>(o.view);
+        orderBy = new ArrayList<OrderElement>(o.orderBy);
+        constraints = new LinkedHashMap<PathConstraint, String>(o.constraints);
+        if (o.logic != null) {
+            logic = new LogicExpression(o.logic.toString());
         }
+        outerJoinStatus = new LinkedHashMap<String, OuterJoinStatus>(o.outerJoinStatus);
+        descriptions = new LinkedHashMap<String, String>(o.descriptions);
+        description = o.description;
     }
 
     /**
-     * Change the join style of a path in the query. All children will also be updated.
-     * The path must not end by an attribute.
+     * Returns the Model object stored in this object.
      *
-     * @param path a path with the old join style
-     * @param outer whether the update should result in an outter join
-     * @return the path, flipped
-     */
-    public String updateJoinStyle(String path, boolean outer) {
-        String oldPath = getCorrectJoinStyle(path);
-        if (!oldPath.equals(path)) {
-            throw new IllegalArgumentException("Path not found in query: " + path);
-        }
-
-        String newPathString;
-        int lastDotIndex = path.lastIndexOf('.');
-        int lastColonIndex = path.lastIndexOf(':');
-        int lastIndex = (lastDotIndex > lastColonIndex ? lastDotIndex : lastColonIndex);
-        if (outer) {
-            newPathString = path.substring(0, lastIndex) + ':'
-                + path.substring(lastIndex + 1);
-        } else {
-            newPathString = path.substring(0, lastIndex) + '.'
-                + path.substring(lastIndex + 1);
-        }
-
-        Pattern p = Pattern.compile(path.replaceAll("\\.", "\\\\.") + "((\\.|:)\\w+)*");
-        List<Path> newView = new ArrayList<Path>();
-        for (Path viewPath : view) {
-            String viewPathString = viewPath.toStringNoConstraints();
-            Matcher m = p.matcher(viewPathString);
-            if (m.matches()) {
-                viewPathString = newPathString + viewPathString.substring(path.length());
-            }
-            try {
-                newView.add(new Path(model, viewPathString, viewPath.getSubClassConstraintPaths()));
-            } catch (PathException e) {
-                // Should never happen, but we should raise hell if it does.
-                throw new Error("There must be a bug", e);
-            }
-        }
-        view = newView;
-
-        Map<Path, String> newPathDescriptions = new HashMap<Path, String>();
-        for (Map.Entry<Path, String> entry : pathDescriptions.entrySet()) {
-            String descPathString = entry.getKey().toStringNoConstraints();
-            Matcher m = p.matcher(descPathString);
-            if (m.matches()) {
-                descPathString = newPathString + descPathString.substring(path.length());
-            }
-            Path newPath;
-            try {
-                newPath = new Path(model, descPathString, entry.getKey()
-                        .getSubClassConstraintPaths());
-            } catch (PathException e) {
-                // Should never happen, but we should raise hell if it does.
-                throw new Error("There must be a bug", e);
-            }
-            newPathDescriptions.put(newPath, entry.getValue());
-        }
-        pathDescriptions = newPathDescriptions;
-
-        PathNode node = getNode(path);
-        if (node != null) {
-            node.setOuterJoin(outer);
-        }
-
-        Map<String, PathNode> origNodes = getNodes();
-        List<PathNode> nodes = new ArrayList(origNodes.values());
-        origNodes.clear();
-        for (PathNode transferNode : nodes) {
-            origNodes.put(transferNode.getPathString(), transferNode);
-        }
-
-        // Fix up any loop constraints
-        for (PathNode loopNode : getNodes().values()) {
-            if (!loopNode.isAttribute()) {
-                for (Constraint con : loopNode.getConstraints()) {
-                    if ((!BagConstraint.VALID_OPS.contains(con.getOp()))
-                            && (!con.getOp().equals(ConstraintOp.LOOKUP))) {
-                        // We have found a loop constraint.
-                        String toPath = (String) con.getValue();
-                        toPath = getCorrectJoinStyle(toPath);
-                        con.setValue(toPath);
-                    }
-                }
-            }
-        }
-
-        // remove any invalid paths from sort order - outer join paths aren't valid for sorting
-        validateSortOrder();
-        syncLogicExpression("and");
-
-        return newPathString;
-    }
-
-    private void validateSortOrder() {
-        Iterator<Path> iter = sortOrder.keySet().iterator();
-        while (iter.hasNext()) {
-            if (!isValidOrderPath(iter.next().toStringNoConstraints())) {
-                iter.remove();
-            }
-        }
-    }
-
-
-    /**
-     * Set the joins style of an entire given path to outer/normal.  This changes all joins in the
-     * path, updating all the relevant nodes and view elements.
-     * e.g. call with (Company:departments.manager, false) -&gt; Company.departments.manager
-     * @param path the path to set the join style for
-     * @param outer if true change the join style to outer, otherwise to normal
-     * @return the updated path
-     */
-    public String setJoinStyleForPath(String path, boolean outer) {
-        String oldPath = getCorrectJoinStyle(path);
-        if (!oldPath.equals(path)) {
-            throw new IllegalArgumentException("Path not found in query: " + path);
-        }
-
-        // iterate over view and set join style
-        List<Path> newView = new ArrayList<Path>();
-        for (Path viewPath : view) {
-            String prefix = viewPath.toStringNoConstraints();
-            String lastElement = "";
-            if (viewPath.endIsAttribute()) {
-                prefix = viewPath.getPrefix().toStringNoConstraints();
-                lastElement = "." + viewPath.getLastElement();
-            }
-            String newPathStr = viewPath.toStringNoConstraints();
-            if (path.startsWith(prefix)) {
-                if (outer) {
-                    newPathStr = prefix.replace('.', ':') + lastElement;
-                } else {
-                    newPathStr = prefix.replace(':', '.') + lastElement;
-                }
-            } else if (prefix.startsWith(path)) {
-                if (outer) {
-                    newPathStr = path.replace('.', ':') + prefix.substring(path.length())
-                        + lastElement;
-                } else {
-                    newPathStr = path.replace(':', '.') + prefix.substring(path.length())
-                        + lastElement;
-                }
-            }
-            try {
-                newView.add(new Path(model, newPathStr, viewPath.getSubClassConstraintPaths()));
-            } catch (PathException e) {
-                // Shouldn't ever happen
-                throw new Error("There must be a bug", e);
-            }
-        }
-        view = newView;
-
-        // This is a really round-about way to update the join style of each node.  Nodes are stored
-        // in a map by their path so they need to be removed and re-added to the map.  This has to
-        // be done at the end because updating a parent node alters the path of its children.
-        PathNode node = getNode(path);
-        List<PathNode> newNodes = new ArrayList<PathNode>();
-        PathNode parent = node;
-        while ((parent.getParent()) != null) {
-            nodes.remove(parent.getPathString());
-            parent.setOuterJoin(outer);
-            newNodes.add(parent);
-            parent = (PathNode) parent.getParent();
-        }
-        // Also, all the other nodes need to be transferred in the Nodes map, because their paths
-        // may have changed.
-        for (PathNode nextNode : nodes.values()) {
-            newNodes.add(nextNode);
-        }
-        // now all paths are set can add to nodes map again
-        for (PathNode nextNode : newNodes) {
-            nodes.put(nextNode.getPathString(), nextNode);
-        }
-        syncLogicExpression("and");
-        return node.getPathString();
-    }
-
-    /**
-     * Appends the paths to the end of the select list. Paths can be a single path
-     * or a comma delimited list of paths.
-     * @param paths a list of paths to be appended to the end of the view list
-     */
-    public void addView(String paths) {
-        if (paths == null || paths.equals("")) {
-            logPathException(MSG);
-            return;
-        }
-        String [] pathStrings = paths.split(",");
-        addView(new ArrayList<String>(Arrays.asList(pathStrings)));
-    }
-
-    /**
-     * Appends the paths to the end of the select list, ignores any bad paths.
-     *
-     * @param pathStrs a list of paths to be appended to the end of the view list
-     */
-    public void addView(List<String> pathStrs) {
-        List<Path> paths = makePaths(pathStrs);
-        addViewPaths(paths);
-    }
-
-
-    /**
-     * Appends the paths to the end of the select list.
-     * @param paths a list of paths to be appended to the end of the view list
-     */
-    public void addViewPaths(List<Path> paths) {
-        validateView(paths);
-        if (paths.isEmpty()) {
-            logPathException(MSG);
-            return;
-        }
-
-        for (Path p : paths) {
-            String path = p.toStringNoConstraints();
-            if (!getCorrectJoinStyle(path).equals(path)) {
-                throw new IllegalArgumentException("Adding two join types for same path: "
-                        + path + " and " + getCorrectJoinStyle(path));
-            }
-            view.add(p);
-        }
-    }
-
-    /**
-     * Convert a path and prefix to a path.
-     *
-     * @param prefix the prefix (eg null or Department.company)
-     * @param path the path (eg Company, Company.departments)
-     * @return the new path
-     * @throws PathException if the given path is invalid
-     */
-    public String toPathDefaultJoinStyle(String prefix, String path) throws PathException {
-        if (prefix != null && prefix.length() > 0) {
-            if (path.indexOf(".") == -1) {
-                path = prefix;
-            } else {
-                path = prefix + "." + path.substring(path.indexOf(".") + 1);
-            }
-        }
-        return toPathDefaultJoinStyle(path);
-    }
-
-    /**
-     * Given a path through the model set each join to outer/normal according to the defaults:
-     *  - collections and references are outer joins.
-     * e.g. Company.departments.name -&gt; Company:departments.name
-     *
-     * @param path the path to resolve
-     * @return the new path
-     * @throws PathException if the given path is invalid
-     */
-    public String toPathDefaultJoinStyle(String path) throws PathException {
-
-        // this will validate the path so we don't have to here
-        Path dummyPath = makePath(model, this, path);
-
-        String parts[] = dummyPath.toString().split("[.:]");
-
-        StringBuffer currentPath = new StringBuffer();
-        currentPath.append(parts[0]);
-        String clsName = model.getPackageName() + "." + parts[0];
-
-
-        for (int i = 1; i < parts.length; i++) {
-            String thisPart = parts[i];
-
-            ClassDescriptor cld = model.getClassDescriptorByName(clsName);
-
-            // cope with sub types specified by [type] in the path, extract the subType and use
-            // this to check for fields in the model
-            String subType = null;
-
-            if (thisPart.indexOf("[") >= 0) {
-                String tmp = thisPart;
-                thisPart = tmp.substring(0, tmp.indexOf("["));
-                subType = tmp.substring(tmp.indexOf("[") + 1, tmp.indexOf("]"));
-            }
-
-            FieldDescriptor fld = cld.getFieldDescriptorByName(thisPart);
-//            if (fld.isCollection()
-//                || fld.isReference()
-//                && (getNode(dummyPath.getPrefix().toStringNoConstraints()) == null
-//                    || ((getNode(dummyPath.getPrefix().toStringNoConstraints()).getConstraints()
-//                            == null)
-//                        || (getNode(dummyPath.getPrefix().toStringNoConstraints())
-//            .getConstraints()
-//                            .size() <= 0)))) {
-//                currentPath.append(":");
-//            } else {
-            // default to inner join
-            currentPath.append(".");
-//            }
-
-            currentPath.append(thisPart);
-            // if an attribute this will be the end of the path, otherwise get the class of this
-            // path element
-            if (!fld.isAttribute()) {
-                if (subType != null) {
-                    // subclass, so find actual class
-                    clsName = model.getClassDescriptorByName(subType).getName();
-                } else {
-                    ReferenceDescriptor rfd = (ReferenceDescriptor) fld;
-                    clsName = rfd.getReferencedClassName();
-                }
-            }
-        }
-        return currentPath.toString();
-    }
-
-    /**
-     * Add a path to the view
-     * @param viewString the String version of the path to add - should not include any class
-     * constraints (ie. use "Departement.employee.name" not "Departement.employee[Contractor].name")
-     */
-    @Deprecated public void addPathStringToView(String viewString) {
-        try {
-            if (!getCorrectJoinStyle(viewString).equals(viewString)) {
-                throw new IllegalArgumentException("Adding two join types for same path: "
-                        + viewString + " and " + getCorrectJoinStyle(viewString));
-            }
-            view.add(PathQuery.makePath(model, this, viewString));
-        } catch (PathException e) {
-            logPathException(e);
-        }
-    }
-
-    /**
-     * Gets the value of view.
-     *
-     * @return a List of paths
-     */
-    public List<Path> getView() {
-        return Collections.unmodifiableList(view);
-    }
-
-    /**
-     * Return the view as a List of Strings.
-     *
-     * @return the view as Strings
-     */
-    public List<String> getViewStrings() {
-        List<String> retList = new ArrayList<String>();
-        for (Path path: view) {
-            retList.add(path.toStringNoConstraints());
-        }
-        return retList;
-    }
-
-    /**
-     * Returns the view as a List of Strings, but with dots instead of colons.
-     *
-     * @return a List of Strings
-     */
-    public List<String> getDottedViewStrings() {
-        List<String> retval = new ArrayList<String>();
-        for (Path path : view) {
-            retval.add(path.toStringNoConstraints().replace(':', '.'));
-        }
-        return retval;
-    }
-
-    /**
-     * Remove the Path with the given String representation from the view.  If the pathString
-     * refers to a path that appears in a PathException in the problems collection, remove that
-     * problem.
-     *
-     * @param pathString the path to remove
-     */
-    public void removeFromView(String pathString) {
-        Iterator<Path> iter = view.iterator();
-        while (iter.hasNext()) {
-            Path viewPath = iter.next();
-            if (viewPath.toStringNoConstraints().startsWith(pathString)
-                            || viewPath.toString().equals(pathString)) {
-                iter.remove();
-            }
-        }
-        Iterator<Throwable> throwIter = problems.iterator();
-        while (throwIter.hasNext()) {
-            Throwable thr = throwIter.next();
-            if (thr instanceof PathException) {
-                PathException pe = (PathException) thr;
-                if (pe.getPathString().equals(pathString)) {
-                    throwIter.remove();
-                }
-            }
-        }
-        removeOrderBy(pathString);
-        validateSortOrder();
-    }
-
-    /**
-     * Return true if and only if the view contains a Path that has pathString as its String
-     * representation.
-     * @param pathString the path to test
-     * @return true if found
-     */
-    public boolean viewContains(String pathString) {
-        for (Path viewPath: getView()) {
-            if (viewPath.toStringNoConstraints().equals(pathString)
-                            || viewPath.toString().equals(pathString)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    /*****************************************************************************************/
-
-
-    /**
-     * Add a constraint to the query, allow code to be automatically assigned - eg A
-     * @param constraint constraint to add to the query
-     * @param path path to constrain, eg Employee.firstName
-     * @return label of constraint
-     */
-    public String addConstraint(String path, Constraint constraint) {
-        String code = getUnusedConstraintCode();
-        constraint.code = code;
-        return addConstraint(path, constraint, code);
-    }
-
-    /**
-     * Add a constraint to the query and specify the code
-     * @param constraint constraint to add to the query
-     * @param code code for constraint
-     * @param path path to constrain, eg Employee.firstName
-     * @return label of constraint
-     */
-    public String addConstraint(String path, Constraint constraint, String code) {
-        PathNode node = addNode(path);
-        constraint.code = code;
-        node.getConstraints().add(constraint);
-        return code;
-    }
-
-    /**
-     * Add a constraint to the query, assign a subclass
-     * @param constraint constraint to add to the query
-     * @param code code for constraint
-     * @param path path to constrain, eg Employee.firstName
-     * @param subclass type of node
-     * @return label of constraint
-     */
-    public String addConstraint(String path, Constraint constraint, String code, String subclass) {
-        PathNode node = addNode(path);
-        constraint.code = code;
-        node.setType(subclass);
-        node.getConstraints().add(constraint);
-        return code;
-    }
-
-    /**
-     * Set the constraint logic expression. This expresses the AND and OR
-     * relation between constraints.
-     * @param constraintLogic the constraint logic expression
-     */
-    public void setConstraintLogic(String constraintLogic) {
-        if (constraintLogic == null) {
-            this.constraintLogic = null;
-            return;
-        }
-        try {
-            this.constraintLogic = new LogicExpression(constraintLogic);
-        } catch (IllegalArgumentException err) {
-            LOG.error("Failed to parse constraintLogic: " + constraintLogic, err);
-        }
-    }
-
-    /**
-     * Get the constraint logic expression as a string.  Will return null of there are < 2
-     * constraints
-     * @return the constraint logic expression as a string
-     */
-    public String getConstraintLogic() {
-        if (constraintLogic == null) {
-            return null;
-        }
-        return constraintLogic.toString();
-    }
-
-    /**
-     * Get the LogicExpression. If there are one or zero constraints then
-     * this method will return null.
-     * @return the current LogicExpression or null
-     */
-    public LogicExpression getLogic() {
-        return constraintLogic;
-    }
-
-    /**
-     * Make sure that the logic expression is valid for the current query. Remove
-     * any unknown constraint codes and add any constraints that aren't included
-     * (using the default operator).
-     * @param defaultOperator the default logical operator
-     */
-    public void syncLogicExpression(String defaultOperator) {
-        if (getAllConstraints().size() <= 1) {
-            setConstraintLogic(null);
-        } else {
-            Set<String> codes = getConstraintCodes();
-            if (constraintLogic != null) {
-                // limit to the actual variables
-                try {
-                    constraintLogic.removeAllVariablesExcept(getConstraintCodes());
-                } catch (IllegalArgumentException e) {
-                    // The constraint logic is now empty
-                    constraintLogic = null;
-                }
-            }
-            if (constraintLogic != null) {
-                // add anything that isn't there
-                codes.removeAll(constraintLogic.getVariableNames());
-            }
-            addCodesToLogic(codes, defaultOperator);
-            if (constraintLogic != null) {
-                constraintLogic = constraintLogic.validateForGroups(getGroupedCodes());
-            }
-        }
-    }
-
-    /**
-     * Get all constraint codes.
-     * @return all present constraint codes
-     */
-    private Set<String> getConstraintCodes() {
-        Set<String> codes = new HashSet<String>();
-        for (Constraint c : getAllConstraints()) {
-            codes.add(c.getCode());
-        }
-        return codes;
-    }
-
-    /**
-     * Returns a List of Collections of constraint codes, according to the different outer join
-     * sections of the query.
-     *
-     * @return a List of Collections of Strings
-     */
-    private List<Collection<String>> getGroupedCodes() {
-        List<Collection<String>> retval = new ArrayList<Collection<String>>();
-        Map<String, Collection<String>> joinToCodes = new HashMap<String, Collection<String>>();
-        for (Map.Entry<String, PathNode> entry : getNodes().entrySet()) {
-            int lastColon = entry.getKey().lastIndexOf(':');
-            String join = lastColon == -1 ? "" : entry.getKey().substring(0, lastColon);
-            Collection<String> codesForJoin = joinToCodes.get(join);
-            if (codesForJoin == null) {
-                codesForJoin = new HashSet<String>();
-                joinToCodes.put(join, codesForJoin);
-            }
-            for (Constraint c : entry.getValue().getConstraints()) {
-                codesForJoin.add(c.getCode());
-            }
-        }
-        for (Map.Entry<String, Collection<String>> entry : joinToCodes.entrySet()) {
-            if (!entry.getValue().isEmpty()) {
-                retval.add(entry.getValue());
-            }
-        }
-        return retval;
-    }
-
-    /**
-     * Returns a List of logic Strings according to the different outer join sections of the
-     * query.
-     *
-     * @return a List of String
-     */
-    public List<String> getGroupedConstraintLogic() {
-        if (constraintLogic == null) {
-            return Collections.EMPTY_LIST;
-        }
-        List<LogicExpression> groups = constraintLogic.split(getGroupedCodes());
-        List<String> retval = new ArrayList<String>();
-        for (LogicExpression group : groups) {
-            retval.add(group.toString());
-        }
-        return retval;
-    }
-
-    /**
-     * Get a constraint code that hasn't been used yet.
-     * @return a constraint code that hasn't been used yet
-     */
-    public String getUnusedConstraintCode() {
-        char c = 'A';
-        while (getConstraintByCode("" + c) != null) {
-            c++;
-        }
-        return "" + c;
-    }
-
-    /**
-     * Get a Constraint involved in this query by code. Returns null if no
-     * constraint with the given code was found.
-     * @param string the constraint code
-     * @return the Constraint with matching code or null
-     */
-    public Constraint getConstraintByCode(String string) {
-        Iterator<Constraint> iter = getAllConstraints().iterator();
-        while (iter.hasNext()) {
-            Constraint c = iter.next();
-            if (string.equals(c.getCode())) {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Add a set of codes to the logical expression using the given operator.
-     * @param codes Set of codes (Strings)
-     * @param operator operator to add with
-     */
-    protected void addCodesToLogic(Set<String> codes, String operator) {
-        String logic = getConstraintLogic();
-        if (logic == null) {
-            logic = "";
-        } else {
-            logic = "(" + logic + ")";
-        }
-        for (Iterator<String> iter = codes.iterator(); iter.hasNext(); ) {
-            if (StringUtils.isNotEmpty(logic)) {
-                logic += " " + operator + " ";
-            }
-            logic += iter.next();
-        }
-        setConstraintLogic(logic);
-    }
-
-    /**
-     * Get all constraints.
-     * @return all constraints
-     */
-    public List<Constraint> getAllConstraints() {
-        List<Constraint> list = new ArrayList<Constraint>();
-        for (Iterator<PathNode> iter = nodes.values().iterator(); iter.hasNext(); ) {
-            PathNode node = iter.next();
-            list.addAll(node.getConstraints());
-        }
-        return list;
-    }
-
-
-    /*****************************************************************************************/
-
-    /**
-     * Returns whether the given path can be used in the Order By list of this query.
-     * Outer joined paths cannot be used.
-     *
-     * @param path a String path to check
-     * @return true if the path can be used
-     */
-    public boolean isValidOrderPath(String path) {
-        path = getCorrectJoinStyle(path);
-        if (path.indexOf(':') == -1) {
-            for (Path viewPath : view) {
-                if (viewPath.toStringNoConstraints().equals(path)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Sets the order by list to the list of paths given.  Paths can be a single path or a comma
-     * delimited list of paths.  To append a path to the list instead use addOrderBy.
-     * @param paths paths to create the order by list
-     */
-    public void setOrderBy(String paths) {
-        setOrderBy(paths, ASCENDING);
-    }
-
-    /**
-     * Sets the order by list of the query to the list of paths given.  Paths can be a single path
-     * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
-     * @param paths paths to create the order by list
-     * @param direction the sort direction
-     */
-    public void setOrderBy(String paths, String direction) {
-        if (paths == null || paths.equals("")) {
-            logPathException(MSG);
-            return;
-        }
-        Map<Path, String> orderBy = new LinkedHashMap<Path, String>();
-        try {
-            for (String path : paths.split("[, ]+")) {
-                if (isValidOrderPath(path)) {
-                    if (direction.equals("desc")) {
-                        orderBy.put(makePath(model, this, path), DESCENDING);
-                    } else if (direction.equals("asc")) {
-                        orderBy.put(makePath(model, this, path), ASCENDING);
-                    }
-                } else {
-                    logPathException("Cannot order by path " + path);
-                }
-            }
-        } catch (PathException e) {
-            logPathException(e);
-        }
-        sortOrder = orderBy;
-    }
-
-    /**
-     * Sets the order by list of the query to the list of paths given.  Paths can be a single path
-     * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
-     *
-     * @param paths paths to create the order by list
-     */
-    public void setOrderBy(List<String> paths) {
-        setOrderBy(paths, ASCENDING);
-    }
-
-    /**
-     * Sets the order by list of the query to the list of paths given.  Paths can be a single path
-     * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
-     * @param paths paths to create the order by list
-     * @param direction the sort direction
-     */
-    public void setOrderBy(List<String> paths, String direction) {
-        if (paths == null || paths.isEmpty()) {
-            logPathException(MSG);
-            return;
-        }
-        Map<Path, String> orderBy = new LinkedHashMap<Path, String>();
-        for (String path : paths) {
-            if (path != null && !path.equals("")) {
-                try {
-                    if (isValidOrderPath(path)) {
-                        orderBy.put(makePath(model, this, path), direction);
-                    } else {
-                        logPathException("Cannot order by path " + path);
-                    }
-                } catch (PathException e) {
-                    logPathException(e);
-                }
-            } else {
-                logPathException(MSG);
-            }
-        }
-        if (!orderBy.isEmpty()) {
-            sortOrder = orderBy;
-        }
-    }
-
-    /**
-     * Sets the order by list of the query to the list of paths given.  Paths can be a single path
-     * or a comma delimited list of paths.  To append a path to the list instead use addOrderBy.
-     * assumes paths are valid
-     * @param paths paths to create the order by list
-     */
-    public void setOrderByList(Map<Path, String> paths) {
-        if (paths.isEmpty()) {
-            logPathException(MSG);
-            return;
-        }
-        Map<Path, String> orderByList = new LinkedHashMap<Path, String>();
-        for (Path path : paths.keySet()) {
-            if (path != null) {
-                orderByList.put(path, paths.get(path));
-            } else {
-                logPathException(MSG);
-            }
-        }
-        if (!orderByList.isEmpty()) {
-            sortOrder = orderByList;
-        }
-    }
-
-    /**
-     * Appends the paths to the end of the order by list.  Paths can be a single path
-     * or a comma delimited list of paths.
-     * @param paths a list of paths to be appended to the end of the order by list
-     */
-    public void addOrderBy(String paths) {
-        addOrderBy(paths, ASCENDING);
-    }
-
-    /**
-     * Appends the paths to the end of the order by list.  Paths can be a single path
-     * or a comma delimited list of paths.
-     * @param paths a list of paths to be appended to the end of the order by list
-     * @param direction the sort direction
-     */
-    public void addOrderBy(String paths, String direction) {
-        if (paths.equals("")) {
-            logPathException(MSG);
-            return;
-        }
-        Map<Path, String> orderBy = new LinkedHashMap<Path, String>();
-        for (String path : paths.split("[, ]")) {
-            if (path != null && !path.equals("")) {
-                try {
-                    if (isValidOrderPath(path)) {
-                        orderBy.put(makePath(model, this, path), direction);
-                    } else {
-                        logPathException("Cannot order by path " + path);
-                    }
-                } catch (PathException e) {
-                    logPathException(e);
-                }
-            } else {
-                logPathException(MSG);
-            }
-        }
-        sortOrder.putAll(orderBy);
-    }
-
-    /**
-     * Appends the paths to the end of the order by list.
-     * @param paths a list of paths to be appended to the end of the order by list
-     */
-    public void addOrderBy(List<String> paths) {
-        addOrderBy(paths, ASCENDING);
-    }
-
-    /**
-     * Appends the paths to the end of the order by list.
-     * @param paths a list of paths to be appended to the end of the order by list
-     * @param direction the sort direction
-     */
-    public void addOrderBy(List<String> paths, String direction) {
-        if (paths.size() == 0) {
-            logPathException(MSG);
-            return;
-        }
-        Map<Path, String> orderBy = new LinkedHashMap<Path, String>();
-        try {
-            for (String path : paths) {
-                if (path != null && !path.equals("")) {
-                    if (isValidOrderPath(path)) {
-                        orderBy.put(makePath(model, this, path), direction);
-                    } else {
-                        logPathException("Cannot order by path " + path);
-                    }
-                } else {
-                    logPathException(MSG);
-                }
-            }
-        } catch (PathException e) {
-            logPathException(e);
-        }
-        if (!orderBy.isEmpty()) {
-            sortOrder.putAll(orderBy);
-        }
-    }
-
-    /**
-     * Gets the sort order
-     * @return a List of paths
-     */
-    public Map<Path, String> getSortOrder() {
-        return sortOrder;
-    }
-
-    /**
-     * Set a new sort order
-     * @param newSortOrder the new sort order.
-     */
-    public void setSortOrder(Map<Path, String> newSortOrder) {
-        sortOrder = newSortOrder;
-    }
-
-    /**
-     * Return the sort order as a List of Strings.
-     * @return the sort order as Strings
-     */
-    public List<String> getSortOrderStrings() {
-        List<String> retList = new ArrayList<String>();
-        for (Path path: sortOrder.keySet()) {
-            retList.add(path.toStringNoConstraints() + " " + sortOrder.get(path));
-        }
-        return retList;
-    }
-
-    /**
-     * Remove a path from the sort order.  If on the order by list, replace with first item
-     * on select list.  Used by the querybuilder only, as the querybuilder only ever has one
-     * path in the order by clause.
-     * @param viewString The string being removed from the view list
-     */
-    private void removeOrderBy(String pathString) {
-        for (Path path : sortOrder.keySet()) {
-            if (path.toStringNoConstraints().equals(pathString)) {
-                sortOrder.remove(path);
-            }
-        }
-    }
-
-    /**
-     * Removes everything from the order by list and adds the first path in the view list
-     */
-    public void resetOrderBy() {
-        sortOrder = new LinkedHashMap<Path, String >();
-    }
-
-
-    /*****************************************************************************/
-
-
-    /**
-     * Gets the value of nodes
-     * @return the value of nodes
-     */
-    public Map<String, PathNode> getNodes() {
-        return nodes;
-    }
-
-    /**
-     * Gets a Map from String path with dots instead of colons to String path with actual join
-     * types.
-     *
-     * @return a Map from String to String
-     */
-    public Map<String, String> getPathsFromDots() {
-        Map<String, String> retval = new LinkedHashMap<String, String>();
-        for (Map.Entry<String, PathNode> entry : nodes.entrySet()) {
-            retval.put(entry.getKey().replace(':', '.'), entry.getValue().getPathString());
-        }
-        for (Path p : view) {
-            String path = p.toStringNoConstraints();
-            int lastIndex;
-            do {
-                String answerSoFar = retval.get(path.replace(':', '.'));
-                if (answerSoFar == null) {
-                    retval.put(path.replace(':', '.'), path);
-                } else if (!answerSoFar.equals(path)) {
-                    throw new IllegalArgumentException("Two join types exist for the same path: "
-                            + path + " and " + answerSoFar);
-                }
-                lastIndex = Math.max(path.lastIndexOf(':'), path.lastIndexOf('.'));
-                if (lastIndex != -1) {
-                    path = path.substring(0, lastIndex);
-                }
-            } while (lastIndex != -1);
-        }
-        return Collections.unmodifiableMap(retval);
-    }
-
-    /**
-     * Returns a String path with the correct join style, for a given path find and replace the join
-     * style according to paths already added to the the query, e.g. if adding
-     * Company.departments.name and Company:departments is already part of the query then return
-     * Company:departments.name
-     *
-     * @param path a path string
-     * @return the path string, with colons instead of dots in the correct places.
-     */
-    public String getCorrectJoinStyle(String path) {
-        String dotPath = path.replace(':', '.');
-        Map<String, String> dots = getPathsFromDots();
-        String bestReplacement = null;
-        for (String dot : dots.keySet()) {
-            if ((dotPath.startsWith(dot + ".") || dotPath.startsWith(dot + ":")
-                        || dotPath.equals(dot))
-                && (bestReplacement == null || dots.get(dot).startsWith(bestReplacement + ".")
-                    || dots.get(dot).startsWith(bestReplacement + ":"))) {
-                String temp = dot;
-                bestReplacement = dots.get(temp);
-            }
-        }
-        if (bestReplacement != null) {
-            return bestReplacement + path.substring(bestReplacement.length());
-        } else {
-            return path;
-        }
-    }
-
-    /**
-     * Get a PathNode by path.
-     *
-     * @param path a path
-     * @return the PathNode for path path
-     */
-    public PathNode getNode(String path) {
-        return nodes.get(path);
-    }
-
-    /**
-     * Get a PathNode by path, independantly of join style.
-     *
-     * @param path the PathNode for path path
-     * @return the PathNode for path path
-     */
-    public PathNode getNodeWhateverJoin(String path) {
-        for (String existingPath : getNodes().keySet()) {
-            if (path.replaceAll(":", "\\.").equals(existingPath.replaceAll(":", "\\."))) {
-                return getNodes().get(existingPath);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Add a node to the query using a path, adding parent nodes if necessary.
-     *
-     * @param path the path for the new Node
-     * @return the PathNode that was added to the nodes Map
-     */
-    public PathNode addNode(String path) {
-        if (getNodeWhateverJoin(path) != null) {
-            return getNodeWhateverJoin(path);
-        }
-        if (!getCorrectJoinStyle(path).equals(path)) {
-            throw new IllegalArgumentException("Adding two join types for same path: "
-                    + path + " and " + getCorrectJoinStyle(path));
-        }
-
-        PathNode node;
-
-        if (nodes.get(path) != null) {
-            return nodes.get(path);
-        }
-
-        // the new node will be inserted after this one or at the end if null
-        String previousNodePath = null;
-        int lastIndex = Math.max(path.lastIndexOf("."), path.lastIndexOf(":"));
-
-        if (lastIndex == -1) {
-            node = new PathNode(path);
-            if (model.isGeneratedClassesAvailable()) {
-                if (!model.isGeneratedClassAvailable(path)) {
-                    logPathException(new ClassNotFoundException("Class "
-                            + path + " is not available."));
-                }
-            }
-        } else {
-            String prefix = path.substring(0, lastIndex);
-            if (nodes.containsKey(prefix)) {
-                Iterator<String> pathsIter = nodes.keySet().iterator();
-
-                while (pathsIter.hasNext()) {
-                    String pathFromMap = pathsIter.next();
-                    if (pathFromMap.startsWith(prefix)) {
-                        previousNodePath = pathFromMap;
-                    }
-                }
-
-                String prefixWithoutConstraints = prefix.replaceAll("\\[[^]]*\\]", "");
-                PathNode parent = nodes.get(prefixWithoutConstraints);
-                String fieldName = path.substring(lastIndex + 1);
-                String fieldNameWithoutConstraints = fieldName.replaceAll("\\[[^]]*\\]", "");
-                node = new PathNode(parent, fieldNameWithoutConstraints,
-                        path.charAt(lastIndex) == ':');
-                try {
-                    node.setModel(model);
-                } catch (Exception err) {
-                    logPathException(err);
-                }
-            } else {
-                addNode(prefix);
-                return addNode(path);
-            }
-        }
-
-        nodes = CollectionUtil.linkedHashMapAdd(nodes, previousNodePath, path, node);
-
-        return node;
-    }
-
-    /**
-     * Clone this PathQuery
-     * @return a PathQuery
-     */
-    public PathQuery clone() {
-        PathQuery query = new PathQuery(model);
-        IdentityHashMap<PathNode, PathNode> newNodes = new IdentityHashMap();
-        for (Iterator<Entry<String, PathNode>> i = nodes.entrySet().iterator(); i.hasNext();) {
-            Entry<String, PathNode> entry = i.next();
-            query.getNodes().put(entry.getKey(), cloneNode(query, entry.getValue(), newNodes,
-                                                           model));
-        }
-        query.view.addAll(view);
-        query.getSortOrder().putAll(sortOrder);
-        if (problems != null) {
-            query.problems = new ArrayList<Throwable>(problems);
-        }
-        query.description = description;
-        query.pathDescriptions = new HashMap<Path, String>(pathDescriptions);
-        query.setConstraintLogic(getConstraintLogic());
-        return query;
-    }
-
-    /**
-     * Clone a PathNode.
-     *
-     * @param query PathQuery containing cloned PathNode
-     * @param node a PathNode
-     * @param newNodes a Map from old PathNodes to new PathNodes, to link up parents properly
-     * @param model the Model
-     * @return a copy of the PathNode
-     */
-    protected static PathNode cloneNode(PathQuery query, PathNode node,
-                                        IdentityHashMap<PathNode, PathNode> newNodes, Model model) {
-        if (newNodes.containsKey(node)) {
-            return newNodes.get(node);
-        }
-        PathNode newNode;
-        PathNode parent = (PathNode) node.getParent();
-        if (parent == null) {
-            newNode = new PathNode(node.getType());
-        } else {
-            parent = cloneNode(query, parent, newNodes, model);
-            newNode = new PathNode(parent, node.getFieldName(), node.isOuterJoin());
-            try {
-                newNode.setModel(model);
-            } catch (IllegalArgumentException err) {
-                query.addProblem(err);
-            } catch (ClassNotFoundException e) {
-                query.addProblem(e);
-            }
-            newNode.setType(node.getType());
-        }
-        for (Iterator i = node.getConstraints().iterator(); i.hasNext();) {
-            Constraint constraint = (Constraint) i.next();
-            newNode.getConstraints().add(new Constraint(constraint.getOp(),
-                                                        constraint.getValue(),
-                                                        constraint.isEditable(),
-                                                        constraint.getDescription(),
-                                                        constraint.getCode(),
-                                                        constraint.getIdentifier(),
-                                                        constraint.getExtraValue()));
-        }
-        newNodes.put(node, newNode);
-        return newNode;
-    }
-
-    /**
-     * Gets the value of model
-     * @return the value of model
+     * @return a Model
      */
     public Model getModel() {
         return model;
     }
 
+    // ------------- View control methods ---------------
+
     /**
-     * Return the map from Path objects (from the view) to their descriptions.
-     * @return the path descriptions map
+     * Add a single element to the view list. The element should be a normal path expression, with
+     * dots separating the parts. Do not use colons to represent outer joins, and do not use
+     * square brackets to represent subclass constraints. The path will not be verified until the
+     * verifyQuery() method is called, but will be merely checked for format.
+     *
+     * @param viewPath the new path String to add to the view list
+     * @throws NullPointerException if viewPath is null
+     * @throws IllegalArgumentException if the viewPath contains colons or square brackets, or is
+     * otherwise in a bad format
      */
-    public Map<Path, String> getPathDescriptions() {
-        return pathDescriptions;
+    public synchronized void addView(String viewPath) {
+        deVerify();
+        checkPathFormat(viewPath);
+        view.add(viewPath);
     }
 
     /**
-     * Set a description for this query.
-     * @param description a description of the query
+     * Removes a single element from the view list. The element should be a normal path expression,
+     * with dots separating the parts. Do not use colons to represent outer joins, and do not use
+     * square brackets to represent subclass constraints. If there are multiple copies of the path
+     * on the view list (which is an invalid query), then this method will remove all of them.
+     *
+     * @param viewPath the path String to remove from the view list
+     * @throws NullPointerException if the viewPath is null
+     * @throws NoSuchElementException if the viewPath is not already on the view list
      */
-    public void setDescription(String description) {
+    public synchronized void removeView(String viewPath) {
+        deVerify();
+        checkPathFormat(viewPath);
+        if (!view.contains(viewPath)) {
+            throw new NoSuchElementException("Path \"" + viewPath + "\" is not in the view list: \""
+                    + view + "\" - cannot remove it");
+        }
+        view.removeAll(Collections.singleton(viewPath));
+    }
+
+    /**
+     * Clears the entire view list.
+     */
+    public synchronized void clearView() {
+        deVerify();
+        view.clear();
+    }
+
+    /**
+     * Adds a group of elements to the view list. The elements should be normal path expressions,
+     * with dots separating the parts. Do not use colons to represent outer joins, and do not use
+     * square brackets to represent subclass constraints. The paths will not be verified until the
+     * verifyQuery() method is called, but will merely be checked for format. The paths will be
+     * added in the order of the iterator of the collection. If there is an error with any of the
+     * elements of the collection, then none of the elements will be added and the query will be
+     * unchanged.
+     *
+     * @param viewPaths a Collection of String paths to add to the view list
+     * @throws NullPointerException if viewPaths is null or contains a null element
+     * @throws IllegalArgumentException if a view path contains colons or square brackets, or is
+     * otherwise in a bad format
+     */
+    public synchronized void addViews(Collection<String> viewPaths) {
+        deVerify();
+        try {
+            for (String viewPath : viewPaths) {
+                checkPathFormat(viewPath);
+            }
+            for (String viewPath : viewPaths) {
+                addView(viewPath);
+            }
+        } catch (NullPointerException e) {
+            NullPointerException e2 = new NullPointerException("While adding list to view: "
+                    + viewPaths);
+            e2.initCause(e);
+            throw e2;
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("While adding list to view: " + viewPaths, e);
+        }
+    }
+
+    /**
+     * Adds a group of elements to the view list. The elements should be normal path expressions,
+     * with dots separating the parts. Do not use colons to represent outer joins, and do not use
+     * square brackets to represent subclass constraints. The paths will not be verified until the
+     * verifyQuery() method is called, but will merely be checked for format. The paths will be
+     * added in the order of the arguments (varargs or array). If there is an error with any of the
+     * elements of the array/varargs, then none of the elements will be added and the query will be
+     * unchanged.
+     *
+     * @param viewPaths String paths to add to the view list
+     * @throws NullPointerException if viewPaths is null or contains a null element
+     * @throws IllegalArgumentException if a view path contains colons or square brackets, or is
+     * otherwise in a bad format
+     */
+    public synchronized void addViews(String ... viewPaths) {
+        deVerify();
+        try {
+            for (String viewPath : viewPaths) {
+                checkPathFormat(viewPath);
+            }
+            for (String viewPath : viewPaths) {
+                addView(viewPath);
+            }
+        } catch (NullPointerException e) {
+            NullPointerException e2 = new NullPointerException("While adding array to view: "
+                    + viewPaths);
+            e2.initCause(e);
+            throw e2;
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("While adding array to view: " + viewPaths, e);
+        }
+    }
+
+    /**
+     * Adds a group of elements to the view list, given a space-separated list. The elements should
+     * be normal path expressions, with dots separating the parts. Do not use colons to represent
+     * outer joins, and do not use square brackets to represent subclass constraints. The paths
+     * will not be verified until the verifyQuery() method is called, but will merely be checked
+     * for format. The paths will be added preserving the order in the argument. The paths should be
+     * separated by spaces in the argument, but not commas. If there is an error with any of the
+     * elements in the argument, then none of the elements will be added and the query will be
+     * unchanged.
+     *
+     * @param viewPaths String paths to add to the view list
+     * @throws NullPointerException if viewPaths is null or contains a null element
+     * @throws IllegalArgumentException if a view path contains colons or square brackets, or is
+     * otherwise in a bad format
+     */
+    public synchronized void addViewSpaceSeparated(String viewPaths) {
+        deVerify();
+        try {
+            String[] viewPathArray = SPACE_SPLITTER.split(viewPaths.trim());
+            for (String viewPath : viewPathArray) {
+                if (!"".equals(viewPath)) {
+                    checkPathFormat(viewPath);
+                }
+            }
+            for (String viewPath : viewPathArray) {
+                if (!"".equals(viewPath)) {
+                    addView(viewPath);
+                }
+            }
+        } catch (NullPointerException e) {
+            NullPointerException e2 = new NullPointerException("While adding space-separated list "
+                    + "to view: \"" + viewPaths + "\"");
+            e2.initCause(e);
+            throw e2;
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("While adding space-separated list to view: \""
+                    + viewPaths + "\"", e);
+        }
+    }
+
+    /**
+     * Returns the current view list. This is an unmodifiable copy of the view list as it is at the
+     * point of execution of this method. Changes in this query are not reflected in the result of
+     * this method. The paths listed are normal path expressions without colons or square brackets.
+     * The paths may not have been verified.
+     *
+     * @return a List of String paths
+     */
+    public synchronized List<String> getView() {
+        return Collections.unmodifiableList(new ArrayList<String>(view));
+    }
+
+    // ---------------- Order By List Control -----------------
+
+    /**
+     * Adds an element to the order by list of this query. The element should be a normal path
+     * expression, with dots separating the parts. Do not use colons to represent outer joins, and
+     * do not use square brackets to represent subclass constraints. The path will not be verified
+     * until the verifyQuery() method is called, but will merely be checked for format.
+     *
+     * @param orderPath the path expression to add to the order by list
+     * @param direction the sort order
+     * @throws NullPointerException if orderPath or direction is null
+     * @throws IllegalArgumentException if the orderPath contains colons or square brackets, or is
+     * otherwise in a bad format
+     */
+    public synchronized void addOrderBy(String orderPath, OrderDirection direction) {
+        deVerify();
+        addOrderBy(new OrderElement(orderPath, direction));
+    }
+
+    /**
+     * Removes an element from the order by list of this query. The element should be a normal path
+     * expression, with dots separating the parts. Do not use colons to represent outer joins, and
+     * do not use square brackets to represent subclass constraints. If there are multiple copies
+     * of the path on the order by list (which is an invalid query), then this method will remove
+     * all of them.
+     *
+     * @param orderPath the path String to remove from the order by list
+     * @throws NullPointerException if the orderPath is null
+     * @throws NoSuchElementException if the orderPath is not already in the order by list
+     */
+    public synchronized void removeOrderBy(String orderPath) {
+        deVerify();
+        checkPathFormat(orderPath);
+        boolean found = false;
+        int i = 0;
+        while (i < orderBy.size()) {
+            if (orderPath.equals(orderBy.get(i).getOrderPath())) {
+                orderBy.remove(i);
+                found = true;
+            } else {
+                i++;
+            }
+        }
+        if (!found) {
+            throw new NoSuchElementException("Path \"" + orderPath + "\" is not in the order by "
+                    + "list: \"" + orderBy + "\" - cannot remove it");
+        }
+    }
+
+    /**
+     * Clears the entire order by list.
+     */
+    public synchronized void clearOrderBy() {
+        deVerify();
+        orderBy.clear();
+    }
+
+    /**
+     * Adds an element to the order by list of this query. The OrderElement will have already
+     * checked the path for format, and the path will not be verified until the verifyQuery()
+     * method is called.
+     *
+     * @param orderElement an OrderElement to add to the order by list
+     * @throws NullPointerException if orderElement is null
+     */
+    public synchronized void addOrderBy(OrderElement orderElement) {
+        deVerify();
+        if (orderElement == null) {
+            throw new NullPointerException("Cannot add a null OrderElement to the order by list");
+        }
+        orderBy.add(orderElement);
+    }
+
+    /**
+     * Adds a group of elements to the order by list of this query. The elements will have already
+     * checked the paths for format, but the paths will not be verified until the verifyQuery()
+     * method is called. If there is an error with any of the elements of the collection, then none
+     * of the elements will be added and the query will be unchanged.
+     *
+     * @param orderElements a Collection of OrderElement objects to add to the view list
+     * @throws NullPointerException if orderElements is null or contains a null element
+     */
+    public synchronized void addOrderBys(Collection<OrderElement> orderElements) {
+        deVerify();
+        if (orderElements == null) {
+            throw new NullPointerException("Cannot add null collection of OrderElements to order by"
+                    + " list");
+        }
+        for (OrderElement orderElement : orderElements) {
+            if (orderElement == null) {
+                throw new NullPointerException("Cannot add null OrderElement (from collection \""
+                        + orderElements + "\") to the order by list");
+            }
+        }
+        for (OrderElement orderElement : orderElements) {
+            addOrderBy(orderElement);
+        }
+    }
+
+    /**
+     * Adds a group of elements to the order by list of this query. The elements will have already
+     * checked the paths for format, but the paths will not be verified until the verifyQuery()
+     * method is called. If there is an error with any of the elements in this array/varargs, then
+     * none of the elements will be added and the query will be unchanged.
+     *
+     * @param orderElements an array/varargs of OrderElement objects to add to the view list
+     * @throws NullPointerException if orderElements is null or contains a null element
+     */
+    public synchronized void addOrderBys(OrderElement ... orderElements) {
+        deVerify();
+        if (orderElements == null) {
+            throw new NullPointerException("Cannot add null array of OrderElements to order by "
+                    + "list");
+        }
+        for (OrderElement orderElement : orderElements) {
+            if (orderElement == null) {
+                throw new NullPointerException("Cannot add null OrderElement (from array \""
+                        + orderElements + "\") to the order by list");
+            }
+        }
+        for (OrderElement orderElement : orderElements) {
+            addOrderBy(orderElement);
+        }
+    }
+
+    /**
+     * Adds a group of elements to the order by list, given a space-separated list. The elements
+     * should be normal path expressions, with dots separating the parts. Do not use colons to
+     * represent outer joins, and do not use square brackets to represent subclass constraints. The
+     * paths will not be verified until the verifyQuery() method is called, but will merely be
+     * checked for format. The paths will be added preserving the order in the argument. Each
+     * element should be a path expression followed by a space and then either "asc" or "desc" to
+     * describe the direction of sorting, and the elements should be separated by spaces. If there
+     * is an error with any of the elements in the argument, then none of the elements will be
+     * added and the query will be unchanged.
+     *
+     * @param orderString the order elements in space-separated string form
+     * @throws NullPointerException if orderString is null
+     * @throws IllegalArgumentException if a path expression contains colons or square brackets, or
+     * is otherwise in a bad format, or if there is not an even number of space-separated elements,
+     * or if any even-numbered element is not either "asc" or "desc".
+     */
+    public synchronized void addOrderBySpaceSeparated(String orderString) {
+        deVerify();
+        try {
+            String[] orderPathArray = SPACE_SPLITTER.split(orderString.trim());
+            if (orderPathArray.length % 2 != 0) {
+                throw new IllegalArgumentException("Order String must contain alternating paths and"
+                        + " directions, so must have an even number of space-separated elements.");
+            }
+            List<OrderElement> toAdd = new ArrayList<OrderElement>();
+            for (int i = 0; i < orderPathArray.length - 1; i += 2) {
+                if ("asc".equals(orderPathArray[i + 1].toLowerCase())) {
+                    toAdd.add(new OrderElement(orderPathArray[i], OrderDirection.ASC));
+                } else if ("desc".equals(orderPathArray[i + 1].toLowerCase())) {
+                    toAdd.add(new OrderElement(orderPathArray[i], OrderDirection.DESC));
+                } else {
+                    throw new IllegalArgumentException("Order direction \"" + orderPathArray[i + 1]
+                            + "\" must be either \"asc\" or \"desc\"");
+                }
+            }
+            addOrderBys(toAdd);
+        } catch (NullPointerException e) {
+            NullPointerException e2 = new NullPointerException("While adding space-separated list "
+                    + "to order by: \"" + orderString + "\"");
+            e2.initCause(e);
+            throw e2;
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("While adding space-separated list to order by: \""
+                    + orderString + "\"");
+        }
+    }
+
+    /**
+     * Returns the current order by list. This is an unmodifiable copy of the order by list as it is
+     * at the point of execution of this method. Changes in this query are not reflected in the
+     * result of this method. The returned value is a List containing OrderElement objects, which
+     * contain a String path expression without colons or square brackets, and an OrderDirection.
+     * The paths may not have been verified.
+     *
+     * @return a List of OrderElement objects
+     */
+    public synchronized List<OrderElement> getOrderBy() {
+        return Collections.unmodifiableList(new ArrayList<OrderElement>(orderBy));
+    }
+
+    // ------------------ Constraint Control ------------------
+
+    /**
+     * Adds a PathConstraint to this query. The PathConstraint will be attached to the path in the
+     * constraint, which will have already been checked for format (no colons or square brackets),
+     * but will not be verified until the verifyQuery() method is called. This method returns a
+     * String code which is a single character that can be used in the constraint logic to logically
+     * combine constraints. The constraint will be added to the existing constraint logic with the
+     * AND operator - for any other arrangement, set the logic after calling this method. If the
+     * constraint is already present in the query, then this method will do nothing.
+     *
+     * @param constraint the PathConstraint to add to this query
+     * @return a String constraint code for use in the constraint logic
+     * @throws NullPointerException if the constraint is null
+     */
+    public synchronized String addConstraint(PathConstraint constraint) {
+        deVerify();
+        if (constraint == null) {
+            throw new NullPointerException("Cannot add a null constraint to this query");
+        }
+        if (constraints.containsKey(constraint)) {
+            return constraints.get(constraint);
+        }
+        if (constraint instanceof PathConstraintSubclass) {
+            // Subclass constraints don't get a code
+            constraints.put(constraint, null);
+            return null;
+        }
+        Set<String> usedCodes = new HashSet<String>(constraints.values());
+        char charCode = 'A';
+        String code = "A";
+        while (usedCodes.contains(code)) {
+            charCode++;
+            code = "" + charCode;
+        }
+        if (logic == null) {
+            logic = new LogicExpression(code);
+        } else {
+            logic = new LogicExpression("(" + logic.toString() + ") AND " + code);
+        }
+        constraints.put(constraint, code);
+        return code;
+    }
+
+    /**
+     * Adds a PathConstraints to this query, associated with a given constraint code. The
+     * PathConstraint will be attached to the path in the constraint, which will have already been
+     * checked for format (no colons or square brackets), but will not be verified until the
+     * verifyQuery() method is called. If the given code is already in use by a different
+     * constraint, or if the constraint already has a different code, then an exception is thrown.
+     * The new constraint will be added to the existing constraint logic with the AND operator -
+     * for any other arrangement, set the logic after calling this method. If the constraint is
+     * already present in the query with the same constraint code, then this method will do nothing.
+     *
+     * @param constraint the PathConstraint to add to this query
+     * @param code the constraint code to associate with this constraint
+     * @throws NullPointerException if the constraint or the code is null
+     * @throws IllegalStateException if the constraint is already associated with a different code,
+     * or the code is already associated with a different constraint
+     * @throws IllegalArgumentException if the code is in an inappropriate format - that is, if it
+     * is not a single uppercase character
+     */
+    public synchronized void addConstraint(PathConstraint constraint, String code) {
+        deVerify();
+        if (constraint == null) {
+            throw new NullPointerException("Cannot add a null constraint to this query");
+        }
+        if (constraint instanceof PathConstraintSubclass) {
+            throw new IllegalArgumentException("Cannot associate a code with a subclass constraint."
+                    + " Use the addConstraint(PathConstraint) method instead");
+        }
+        if (code == null) {
+            throw new NullPointerException("Cannot use a null code for a constraint in this query");
+        }
+        if ((code.length() != 1) || (code.charAt(0) > 'Z') || (code.charAt(0) < 'A')) {
+            throw new IllegalArgumentException("The constraint code must be a single plain latin "
+                    + "uppercase character");
+        }
+        if (constraints.containsKey(constraint)) {
+            if (code.equals(constraints.get(constraint))) {
+                return;
+            } else {
+                throw new IllegalStateException("Given constraint is already associated with code "
+                        + constraints.get(constraint) + " - cannot associate with code " + code);
+            }
+        }
+        Set<String> usedCodes = new HashSet<String>(constraints.values());
+        if (usedCodes.contains(code)) {
+            throw new IllegalStateException("Given code " + code + " conflicts with an existing "
+                    + "constraint");
+        }
+        if (logic == null) {
+            logic = new LogicExpression(code);
+        } else {
+            logic = new LogicExpression("(" + logic.toString() + ") AND " + code);
+        }
+        constraints.put(constraint, code);
+    }
+
+    /**
+     * Removes a constraint from this query. The PathConstraint should be a constraint that already
+     * exists in this query. The constraint will also be removed from the constraint logic.
+     *
+     * @param constraint the PathConstraint to remove from this query
+     * @throws NullPointerException if the constraint is null
+     * @throws NoSuchElementException if the constraint is not present in the query
+     */
+    public synchronized void removeConstraint(PathConstraint constraint) {
+        deVerify();
+        if (constraint == null) {
+            throw new NullPointerException("Cannot remove null constraint from this query");
+        }
+        if (constraints.containsKey(constraint)) {
+            String code = constraints.remove(constraint);
+            if (code != null) {
+                if (logic.getVariableNames().size() > 1) {
+                    logic.removeVariable(code);
+                } else {
+                    logic = null;
+                }
+            }
+        } else {
+            throw new NoSuchElementException("Constraint to remove is not present in query");
+        }
+    }
+
+    /**
+     * Replaces a constraint in the query with a different, carrying over the constraint code, and
+     * preserving the constraint logic. The new PathConstraint will be attached to the path in the
+     * constraint, which will have already been checked for format (no colons or square brackets),
+     * but will not be verified until the verifyQuery() method is called. This method preserves the
+     * order of constraints - that is, the replacement will be swapped in where the old constraint
+     * was.
+     *
+     * @param old the old PathConstraint object
+     * @param replacement the new PathConstraint object to replace it
+     * @throws NullPointerException if old or replacement are null
+     * @throws NoSuchElementException if the old PathConstraint is not already in the query
+     * @throws IllegalArgumentException if the code from the old constraint is not appropriate to
+     * the replacement constraint
+     * @throws IllegalStateException if the replacement is already in the query
+     */
+    public synchronized void replaceConstraint(PathConstraint old, PathConstraint replacement) {
+        deVerify();
+        if (old == null) {
+            throw new NullPointerException("Cannot replace a null constraint");
+        }
+        if (replacement == null) {
+            throw new NullPointerException("Cannot replace a constraint with null");
+        }
+        if (!constraints.containsKey(old)) {
+            throw new NoSuchElementException("Old constraint is not in the query");
+        }
+        if (constraints.containsKey(replacement)) {
+            throw new IllegalStateException("Replacement constraint is already in the query");
+        }
+        String code = constraints.get(old);
+        // Read the next line very carefully!
+        if ((replacement instanceof PathConstraintSubclass) != (code == null)) {
+            throw new IllegalArgumentException("Cannot replace a "
+                    + old.getClass().getSimpleName() + " with a "
+                    + replacement.getClass().getSimpleName());
+        }
+        Map<PathConstraint, String> temp = new LinkedHashMap<PathConstraint, String>(constraints);
+        constraints.clear();
+        for (Map.Entry<PathConstraint, String> entry : temp.entrySet()) {
+            if (old.equals(entry.getKey())) {
+                constraints.put(replacement, code);
+            } else {
+                constraints.put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    /**
+     * Clears the entire set of constraints from this query, and resets the constraint logic.
+     */
+    public synchronized void clearConstraints() {
+        deVerify();
+        constraints.clear();
+        logic = null;
+    }
+
+    /**
+     * Adds a collection of constraints to this query. The PathConstraints will be attached to the
+     * paths in the constraints, which will have already been checked for format (no colons or
+     * square brackets), but will not be verified until the verifyQuery() method is called. The
+     * constraints will all be given codes, and added to the constraint logic with the default AND
+     * operator. To discover the codes, use the getConstraints() method. If there is an error with
+     * any of the elements in the collection, then none of the elements will be added and the
+     * query will be unchanged.
+     *
+     * @param constraints the PathConstraint objects to add to this query
+     * @throws NullPointerException if constraints is null, or if it contains a null element
+     */
+    public synchronized void addConstraints(Collection<PathConstraint> constraints) {
+        deVerify();
+        if (constraints == null) {
+            throw new NullPointerException("Cannot add null collection of PathConstraints to this "
+                    + "query");
+        }
+        for (PathConstraint constraint : constraints) {
+            if (constraint == null) {
+                throw new NullPointerException("Cannot add null PathConstraint (from collection \""
+                        + constraints + "\" to this query");
+            }
+        }
+        for (PathConstraint constraint : constraints) {
+            addConstraint(constraint);
+        }
+    }
+
+    /**
+     * Adds a group of constraints to this query. The PathConstraints will be attached to the paths
+     * in the constraints, which will have already been checked for format (no colons or square
+     * brackets), but will not be verified until the verifyQuery() method is called. The constraints
+     * will all be given codes, and added to the constraint logic with the default AND operator. To
+     * discover the codes, use the getConstraints() method. If there is an error with any of the
+     * elements in the array/varargs, then none of the elements will be added and the query will be
+     * unchanged.
+     *
+     * @param constraints the PathConstraint objects to add to this query
+     * @throws NullPointerException if constraints is null, or if it contains a null element
+     */
+    public synchronized void addConstraints(PathConstraint ... constraints) {
+        deVerify();
+        if (constraints == null) {
+            throw new NullPointerException("Cannot add null array of PathConstraints to this "
+                    + "query");
+        }
+        for (PathConstraint constraint : constraints) {
+            if (constraint == null) {
+                throw new NullPointerException("Cannot add null PathConstraint (from array \""
+                        + constraints + "\" to this query");
+            }
+        }
+        for (PathConstraint constraint : constraints) {
+            addConstraint(constraint);
+        }
+    }
+
+    /**
+     * Returns a Map of all the constraints in this query, from PathConstraint to the constraint
+     * code used in the constraint logic. This returns an unmodifiable copy of the data in the
+     * query at the moment this method is executed, so further changes to the query are not
+     * reflected in the returned value.
+     *
+     * @return a Map from PathConstraint to String constraint code (a single character)
+     */
+    public synchronized Map<PathConstraint, String> getConstraints() {
+        Map<PathConstraint, String> retval = new LinkedHashMap<PathConstraint, String>(constraints);
+        return retval;
+    }
+
+    /**
+     * Returns the PathConstraint associated with a given code.
+     *
+     * @param code a single uppercase character
+     * @return a PathConstraint object
+     * @throws NullPointerException if code is null
+     * @throws NoSuchElementException if there is no PathConstraint for that code
+     */
+    public synchronized PathConstraint getConstraintForCode(String code) {
+        for (Map.Entry<PathConstraint, String> entry : constraints.entrySet()) {
+            if (code.equals(entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        throw new NoSuchElementException("No constraint is associated with code " + code
+                + ", valid codes are " + constraints.values());
+    }
+
+    /**
+     * Returns a list of PathConstraints applied to a given path or an empty list.
+     *
+     * @param path the path to fetch constraints for
+     * @return a List of PathConstraints or an empty list
+     */
+    public synchronized List<PathConstraint> getConstraintsForPath(String path) {
+        List<PathConstraint> retval = new ArrayList<PathConstraint>();
+        for (PathConstraint con : constraints.keySet()) {
+            if (con.getPath().equals(path)) {
+                retval.add(con);
+            }
+        }
+        return Collections.unmodifiableList(retval);
+    }
+
+    /**
+     * Return the constraint codes used in the query, some constraint types (subclasses) don't
+     * get assigned a code, these are not included.  This method returns all of the codes that
+     * should be involved in the logic expression of the query.
+     * @return the constraint codes used in this query
+     */
+    public synchronized Set<String> getConstraintCodes() {
+        Set<String> codes = new HashSet<String>();
+        for (String code : constraints.values()) {
+            if (code != null) {
+                codes.add(code);
+            }
+        }
+        return codes;
+    }
+
+    // ------------------- Constraint Logic Control -------------------
+
+    /**
+     * Returns the current constraint logic. The logic is returned in groups, according to the outer
+     * join layout of the query. Two codes in separate groups can only be combined with an AND
+     * operation, not an OR operation.
+     *
+     * @return the current constraint logic
+     */
+    public synchronized String getConstraintLogic() {
+        return (logic == null ? "" : logic.toString());
+    }
+
+    /**
+     * Sets the current constraint logic.
+     *
+     * @param logic the constraint logic
+     */
+    public synchronized void setConstraintLogic(String logic) {
+        deVerify();
+        if (constraints.isEmpty()) {
+            this.logic = null;
+        } else {
+            this.logic = new LogicExpression(logic);
+            for (String code : constraints.values()) {
+                if (!this.logic.getVariableNames().contains(code)) {
+                    this.logic = new LogicExpression("(" + this.logic.toString() + ") and " + code);
+                }
+            }
+            this.logic.removeAllVariablesExcept(constraints.values());
+        }
+    }
+
+    // --------------------- Outer Joined-ness Control --------------------
+
+    /**
+     * Returns the outer join status of the last part of a given path in this query. The given path
+     * expression should not contain any colons to represent outer joins, and should not contain
+     * any square brackets to represent subclass constraints.
+     *
+     * @param path a String path to check
+     * @return an OuterJoinStatus object, or null if no information is held
+     * @throws NullPointerException if path is null
+     * @throws IllegalArgumentException if the path String contains colons or square brackets, or is
+     * otherwise in a bad format
+     */
+    public synchronized OuterJoinStatus getOuterJoinStatus(String path) {
+        checkPathFormat(path);
+        return outerJoinStatus.get(path);
+    }
+
+    /**
+     * Sets the outer join status of the last part of a given path in this query. The given path
+     * expression should not contain any colons to represent outer joins, and should not contain
+     * any square brackets to represent subclass constraints. To remove outer join status from a
+     * path, call this method with a null status.
+     *
+     * @param path a String path to set
+     * @param status an OuterJoinStatus object
+     * @throws NullPointerException if path is null
+     * @throws IllegalArgumentException if the path String contains colons or square brackets, or is
+     * otherwise in a bad format
+     */
+    public synchronized void setOuterJoinStatus(String path, OuterJoinStatus status) {
+        deVerify();
+        checkPathFormat(path);
+        if (status == null) {
+            outerJoinStatus.remove(path);
+        } else {
+            outerJoinStatus.put(path, status);
+        }
+    }
+
+    /**
+     * Returns an unmodifiable Map which is a copy of the current outer join status of this query at
+     * the time of execution of this method. Further changes to this object will not be reflected in
+     * the object that was returned from this method.
+     *
+     * @return a Map from String path to OuterJoinStatus
+     */
+    public synchronized Map<String, OuterJoinStatus> getOuterJoinStatus() {
+        return Collections.unmodifiableMap(
+                new LinkedHashMap<String, OuterJoinStatus>(outerJoinStatus));
+    }
+
+    /**
+     * Clears all outer join status data from this query.
+     */
+    public synchronized void clearOuterJoinStatus() {
+        deVerify();
+        outerJoinStatus.clear();
+    }
+
+    /**
+     * Returns a Map from path to TRUE for all paths that are outer joined. That is, if the path is
+     * an outer join (not referring to its parents - use isCompletelyInner() for that), then it is
+     * present in this map mapped onto the value TRUE.
+     *
+     * @return a Map from String to Boolean TRUE
+     */
+    public synchronized Map<String, Boolean> getOuterMap() {
+        Map<String, Boolean> retval = new HashMap<String, Boolean>();
+        for (Map.Entry<String, OuterJoinStatus> stat : outerJoinStatus.entrySet()) {
+            if (OuterJoinStatus.OUTER.equals(stat.getValue())) {
+                retval.put(stat.getKey(), Boolean.TRUE);
+            }
+        }
+        return retval;
+    }
+
+    // -------------------- Path Description Control --------------------
+
+    /**
+     * Returns the description for a given path, or null if no description is registered. The given
+     * path expression should not contain any colons to represent outer joins, and should not
+     * contain any square brackets to represent subclass constraints.
+     *
+     * @param path a String path to check
+     * @return a String description
+     * @throws NullPointerException if path is null
+     * @throws IllegalArgumentException if the path String contains colons or square brackets, or is
+     * otherwise in a bad format
+     */
+    public synchronized String getDescription(String path) {
+        checkPathFormat(path);
+        return descriptions.get(path);
+    }
+
+    /**
+     * Sets the description for a given path. The given path expression should not contain any
+     * colons to represent outer joins, and should not contain any square brackets to represent
+     * subclass constraints. To clear the description on a path, call this method with a null
+     * description.
+     *
+     * @param path the String path to set
+     * @param description a String description or null
+     * @throws NullPointerException if path is null
+     * @throws IllegalArgumentException if the path String contains colons or square brackets, or is
+     * otherwise in a bad format
+     */
+    public synchronized void setDescription(String path, String description) {
+        deVerify();
+        checkPathFormat(path);
+        if (description == null) {
+            descriptions.remove(path);
+        } else {
+            descriptions.put(path, description);
+        }
+    }
+
+    /**
+     * Returns an unmodifiable Map which is a copy of the current set of path descriptions of this
+     * query at the time of execution of this method. Further changes to this object will not
+     * be reflected in the object that was returned from this method.
+     *
+     * @return a Map from String path to description
+     */
+    public synchronized Map<String, String> getDescriptions() {
+        return Collections.unmodifiableMap(new LinkedHashMap<String, String>(descriptions));
+    }
+
+    /**
+     * Removes all path descriptions from this query.
+     */
+    public synchronized void clearDescriptions() {
+        deVerify();
+        descriptions.clear();
+    }
+
+    /**
+     * Returns the path description for the given path. The description is computed from the set
+     * descriptions of parent classes.
+     *
+     * @param path a String path with no square brackets or colons
+     * @return a String description
+     * @throws NullPointerException is path is null
+     * @throws IllegalArgumentException if the path String contains colons or square brackets, or is
+     * otherwise in a bad format
+     */
+    public synchronized String getGeneratedPathDescription(String path) {
+        checkPathFormat(path);
+        String retval = descriptions.get(path);
+        if (retval == null) {
+            int lastDot = path.lastIndexOf('.');
+            if (lastDot == -1) {
+                return path;
+            } else {
+                return getGeneratedPathDescription(path.substring(0, lastDot)) + " > "
+                    + path.substring(lastDot + 1);
+            }
+        } else {
+            return retval;
+        }
+    }
+
+    // -------------------- Query description control --------------------
+
+    /**
+     * Sets the description for this PathQuery.
+     *
+     * @param description the new description, or null for none
+     */
+    public synchronized void setDescription(String description) {
+        deVerify();
         this.description = description;
     }
 
     /**
-     * Returns the  path description for given path. Path description is computed according to the
-     * known paths and corresponding path descriptions.
-     * @param pathNoConstraints path without constraints
-     * @return computed description or original path
+     * Gets the description for this PathQuery.
+     *
+     * @return description
      */
-    public String getPathDescription(String pathNoConstraints) {
-        String path = pathNoConstraints;
-        String longestPrefix = "";
-        String longestPrefixAlias = "";
-        // in pathDescription object are saved prefixes and corresponding aliases
-        // (path descriptions). The longest known prefix is searched in path for and corresponding
-        // alias replaces the prefix.
-        for (Map.Entry<Path, String> entry: pathDescriptions.entrySet()) {
-            // can be a bad path
-            if (entry.getKey().toStringNoConstraints() != null) {
-                String prefix = entry.getKey().toStringNoConstraints();
-                if (path.startsWith(prefix) && prefix.length() > longestPrefix.length()) {
-                    longestPrefix = prefix;
-                    longestPrefixAlias = entry.getValue();
+    public synchronized String getDescription() {
+        return description;
+    }
+
+    // -------------------- Removals --------------------
+
+    /**
+     * Removes everything under a given path from the query, such that if the query was valid
+     * before, it will be valid after this method.
+     *
+     * @param path everything under this path will be removed from the query
+     * @throws NullPointerException is path is null
+     * @throws IllegalArgumentException if the path String contains colons or square brackets, or is
+     * otherwise in a bad format
+     */
+    public synchronized void removeAllUnder(String path) {
+        checkPathFormat(path);
+        deVerify();
+        for (String v : getView()) {
+            if (isPathUnder(path, v)) {
+                removeView(v);
+            }
+        }
+        for (OrderElement order : getOrderBy()) {
+            if (isPathUnder(path, order.getOrderPath())) {
+                removeOrderBy(order.getOrderPath());
+            }
+        }
+        for (PathConstraint con : getConstraints().keySet()) {
+            if (isPathUnder(path, con.getPath())) {
+                removeConstraint(con);
+            }
+        }
+        for (String join : getOuterJoinStatus().keySet()) {
+            if (isPathUnder(path, join)) {
+                setOuterJoinStatus(join, null);
+            }
+        }
+        for (String desc : getDescriptions().keySet()) {
+            if (isPathUnder(path, desc)) {
+                setDescription(desc, null);
+            }
+        }
+    }
+
+    private static boolean isPathUnder(String parent, String child) {
+        if (parent.equals(child)) {
+            return true;
+        }
+        return child.startsWith(parent + ".");
+    }
+
+    /**
+     * Removes everything from this query that is irrelevant, and therefore making the query
+     * invalid. If the query is invalid for other reasons, then this method will either throw an
+     * exception or ignore that part of the query, depending on the error, however the query is
+     * unlikely to be made valid.
+     *
+     * @throws PathException if the query is invalid for a reason other than irrelevance
+     */
+    public synchronized void removeAllIrrelevant() throws PathException {
+        deVerify();
+        List<String> problems = new ArrayList<String>();
+        // Validate subclass constraints and build subclass constraint map
+        buildSubclassMap(problems);
+        rootClass = null;
+        Set<String> validMainPaths = new LinkedHashSet<String>();
+        // Validate view paths
+        validateView(problems, validMainPaths);
+        // Validate constraints
+        validateConstraints(problems, validMainPaths);
+        // Now the validMainPaths set contains all the main (ie class) paths that are permitted in
+        // this query.
+        if (!problems.isEmpty()) {
+            throw new PathException(problems.toString(), null);
+        }
+        for (OrderElement order : getOrderBy()) {
+            Path path = new Path(model, order.getOrderPath(), subclasses);
+            if (path.endIsAttribute()) {
+                path = path.getPrefix();
+            }
+            if (!validMainPaths.contains(path.getNoConstraintsString())) {
+                removeOrderBy(order.getOrderPath());
+            }
+        }
+        for (String join : getOuterJoinStatus().keySet()) {
+            Path path = new Path(model, join, subclasses);
+            if (path.endIsAttribute()) {
+                path = path.getPrefix();
+            }
+            if (!validMainPaths.contains(path.getNoConstraintsString())) {
+                setOuterJoinStatus(join, null);
+            }
+        }
+        for (String desc : getDescriptions().keySet()) {
+            Path path = new Path(model, desc, subclasses);
+            if (path.endIsAttribute()) {
+                path = path.getPrefix();
+            }
+            if (!validMainPaths.contains(path.getNoConstraintsString())) {
+                setDescription(desc, null);
+            }
+        }
+    }
+
+    /**
+     * Fixes up the order by list and the constraint logic, given the arrangement of outer joins in
+     * the query.
+     *
+     * @return a List of messages about the changes that this method has made to the query
+     * @throws PathException if the query is invalid in any way other than that which this method
+     * will fix.
+     */
+    public synchronized List<String> fixUpForJoinStyle() throws PathException {
+        deVerify();
+        List<String> problems = new ArrayList<String>();
+        // Validate subclass constraints and build subclass constraint map
+        buildSubclassMap(problems);
+        rootClass = null;
+        Set<String> validMainPaths = new LinkedHashSet<String>();
+        // Validate view paths
+        validateView(problems, validMainPaths);
+        // Validate constraints
+        validateConstraints(problems, validMainPaths);
+        // Now the validMainPaths set contains all the main (ie class) paths that are permitted in
+        // this query.
+        validateOuterJoins(problems, validMainPaths);
+        calculateConstraintGroups(problems);
+        if (!problems.isEmpty()) {
+            throw new PathException(problems.toString(), null);
+        }
+        List<String> messages = new ArrayList<String>();
+        for (OrderElement order : getOrderBy()) {
+            // We cannot rely on the query being valid, as we are trying to make it valid!
+            String orderString = order.getOrderPath();
+            boolean outer = false;
+            while (orderString.contains(".")) {
+                if (OuterJoinStatus.OUTER.equals(outerJoinStatus.get(orderString))) {
+                    outer = true;
+                    break;
+                }
+                orderString = orderString.substring(0, orderString.lastIndexOf('.'));
+            }
+            if (outer) {
+                removeOrderBy(order.getOrderPath());
+                messages.add("Removed path " + order.getOrderPath() + " from ORDER BY because of "
+                        + "outer joins");
+            }
+        }
+        if (logic != null) {
+            List<Set<String>> groups = new ArrayList<Set<String>>(constraintGroups.values());
+            try {
+                logic.split(groups);
+            } catch (IllegalArgumentException e) {
+                // The logic is invalid - we need to straighten it up.
+                String oldLogic = logic.toString();
+                logic = logic.validateForGroups(groups);
+                messages.add("Changed constraint logic from " + oldLogic + " to " + logic.toString()
+                        + " because of outer joins");
+            }
+        }
+        return messages;
+    }
+
+    /**
+     * Removes a subclass from the query, and removes any parts of the query that relied on it.
+     * Returns a list of messages related to the extra things that had to be removed.
+     *
+     * @param path the path of the subclass constraint to remove
+     * @return a list of messages
+     * @throws PathException if the query is already invalid
+     * @throws NullPointerException is path is null
+     * @throws IllegalArgumentException if the path String contains colons or square brackets, or is
+     * otherwise in a bad format
+     */
+    public synchronized List<String> removeSubclassAndFixUp(String path) throws PathException {
+        checkPathFormat(path);
+        List<String> problems = verifyQuery();
+        if (!problems.isEmpty()) {
+            throw new PathException("Query does not verify: " + problems, null);
+        }
+        deVerify();
+        List<String> messages = new ArrayList<String>();
+        PathConstraint toRemove = null;
+        for (PathConstraint con : getConstraints().keySet()) {
+            if (con instanceof PathConstraintSubclass) {
+                if (con.getPath().equals(path)) {
+                    toRemove = con;
+                    break;
                 }
             }
         }
-        if (!longestPrefix.equals("")) {
-            String restOfPath = path.substring(longestPrefix.length());
-            restOfPath = restOfPath.replaceAll("[:.](?!\\s)", " > ");
-            return longestPrefixAlias + restOfPath;
+        if (toRemove == null) {
+            return messages;
         }
-        return path.replaceAll("[:.](?!\\s)", " > ");
-    }
-
-    /**
-     * Return the description for the given path from the view.
-     * @return the description Map
-     */
-    public Map<String, String> getPathStringDescriptions() {
-        Map<String, String> retMap = new HashMap<String, String>();
-        for (Map.Entry<Path, String> entry: pathDescriptions.entrySet()) {
-            retMap.put(entry.getKey().toString(), entry.getValue());
-            retMap.put(entry.getKey().toStringNoConstraints(), entry.getValue());
+        removeConstraint(toRemove);
+        buildSubclassMap(problems);
+        // Remove things from view
+        for (String viewPath : getView()) {
+            try {
+                @SuppressWarnings("unused")
+                Path viewPathObj = new Path(model, viewPath, subclasses);
+            } catch (PathException e) {
+                // This one is now invalid. Remove
+                removeView(viewPath);
+                messages.add("Removed path " + viewPath + " from view, because you removed the "
+                        + "subclass constraint that it depended on.");
+            }
         }
-        return retMap;
-    }
-
-    /**
-     * Add a description to a path in the view.  If the viewString isn't a valid view path, add an
-     * exception to the problems list.
-     * @param viewString the string form of a path in the view
-     * @param description the description
-     */
-    public void addPathStringDescription(String viewString, String description) {
-        try {
-            Path path = makePath(model, this, viewString);
-            pathDescriptions.put(path, description);
-        } catch (PathException e) {
-            logPathException(e);
-        }
-    }
-
-    /**
-     * Provide a list of the names of bags mentioned in the query
-     * @return the list of bag names
-     */
-    public List<Object> getBagNames() {
-        List<Object> bagNames = new ArrayList<Object>();
-        for (Iterator<PathNode> i = nodes.values().iterator(); i.hasNext();) {
-            PathNode node = i.next();
-            for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
-                Constraint c = (Constraint) j.next();
-                if (BagConstraint.VALID_OPS.contains(c.getOp())) {
-                    bagNames.add(c.getValue());
+        for (PathConstraint con : getConstraints().keySet()) {
+            try {
+                @SuppressWarnings("unused")
+                Path constraintPath = new Path(model, con.getPath(), subclasses);
+                if (con instanceof PathConstraintLoop) {
+                    try {
+                        @SuppressWarnings("unused")
+                        Path loopPath = new Path(model, ((PathConstraintLoop) con).getLoopPath(),
+                                subclasses);
+                    } catch (PathException e) {
+                        removeConstraint(con);
+                        messages.add("Removed constraint " + con + " because you removed the "
+                                + "subclass constraint it depended on.");
+                    }
                 }
+            } catch (PathException e) {
+                removeConstraint(con);
+                messages.add("Removed constraint " + con + " because you removed the "
+                        + "subclass constraint it depended on.");
+            }
+        }
+        for (OrderElement order : getOrderBy()) {
+            try {
+                @SuppressWarnings("unused")
+                Path orderPath = new Path(model, order.getOrderPath(), subclasses);
+            } catch (PathException e) {
+                removeOrderBy(order.getOrderPath());
+                messages.add("Removed path " + order.getOrderPath() + " from ORDER BY, because you "
+                        + "removed the subclass constraint it depended on.");
+            }
+        }
+        for (String join : getOuterJoinStatus().keySet()) {
+            try {
+                @SuppressWarnings("unused")
+                Path joinPath = new Path(model, join, subclasses);
+            } catch (PathException e) {
+                setOuterJoinStatus(join, null);
+            }
+        }
+        for (String desc : getDescriptions().keySet()) {
+            try {
+                @SuppressWarnings("unused")
+                Path descPath = new Path(model, desc, subclasses);
+            } catch (PathException e) {
+                setDescription(desc, null);
+                messages.add("Removed description on path " + desc + ", because you removed the "
+                        + "subclass constraint it depended on.");
+            }
+        }
+        removeAllIrrelevant();
+
+        return messages;
+    }
+
+    // -------------------- Other assorted stuff --------------------
+
+    /**
+     * Returns a deep copy of this object. The resulting object may be modified without impacting
+     * this object.
+     *
+     * @return a PathQuery
+     */
+    @Override public PathQuery clone() {
+        try {
+            PathQuery retval = (PathQuery) super.clone();
+            retval.view = new ArrayList<String>(retval.view);
+            retval.orderBy = new ArrayList<OrderElement>(retval.orderBy);
+            retval.constraints = new LinkedHashMap<PathConstraint, String>(retval.constraints);
+            if (retval.logic != null) {
+                retval.logic = new LogicExpression(retval.logic.toString());
+            }
+            retval.outerJoinStatus = new LinkedHashMap<String, OuterJoinStatus>(retval
+                    .outerJoinStatus);
+            retval.descriptions = new LinkedHashMap<String, String>(retval.descriptions);
+            return retval;
+        } catch (CloneNotSupportedException e) {
+            throw new Error("Should never happen", e);
+        }
+    }
+
+    /**
+     * Produces a Path object from the given path String, using subclass information from the query.
+     * Note that this method does not verify the query, but merely attempts to extract as much sane
+     * subclass information as possible to construct the Path.
+     *
+     * @param path the String path
+     * @return a Path object
+     * @throws PathException if something goes wrong, or if the path is in an invalid format
+     */
+    public synchronized Path makePath(String path) throws PathException {
+        Map<String, String> lSubclasses = new HashMap<String, String>();
+        for (PathConstraint subclass : constraints.keySet()) {
+            if (subclass instanceof PathConstraintSubclass) {
+                lSubclasses.put(subclass.getPath(), ((PathConstraintSubclass) subclass).getType());
+            }
+        }
+        return new Path(model, path, lSubclasses);
+    }
+
+    private synchronized void deVerify() {
+        isVerified = false;
+    }
+
+    /**
+     * Returns true if the query verifies correctly.
+     *
+     * @return a boolean
+     */
+    public boolean isValid() {
+        return verifyQuery().isEmpty();
+    }
+
+    /**
+     * Verifies the contents of this query against the model, and for internal integrity. Returns
+     * a list of String problems that would need to be rectified for this query to pass validation
+     * and be executed. If the return value is an empty List, then the query is valid.
+     * <BR>
+     * This method validates a few important characteristics about the query:
+     * <UL><LI>All subclass constraints must be subclasses of the class they would otherwise be</LI>
+     *     <LI>All paths must validate against the model</LI>
+     *     <LI>All paths need to extend from the same root class</LI>
+     *     <LI>Paths in the order by list, the outer join status, and the descriptions, must all be
+     * attached to classes already defined by the view list and the constraints. Otherwise, it would
+     * be possible to change the number of rows by changing the order</LI>
+     *     <LI>All elements of the view list and the order by list must be attributes, and all
+     * paths for outer join status and subclass constraints must not be attributes</LI>
+     *     <LI>Subclass constraints cannot be on the root class of the query</LI>
+     *     <LI>Loop constraints cannot cross an outer join</LI>
+     *     <LI>Check constraint values against their types in the model and specific
+     * characteristics</LI>
+     *     <LI>Check constraint logic for sanity and that it can be split into separate ANDed outer
+     * join sections</LI>
+     * </UL>
+     *
+     * @return a List of problems
+     */
+    public synchronized List<String> verifyQuery() {
+        List<String> problems = new ArrayList<String>();
+        if (isVerified) {
+            // Query is already verified correctly. Return no problems
+            return problems;
+        }
+        // Validate subclass constraints and build subclass constraint map
+        buildSubclassMap(problems);
+        rootClass = null;
+        Set<String> validMainPaths = new LinkedHashSet<String>();
+        // Validate view paths
+        validateView(problems, validMainPaths);
+        // Validate constraints
+        validateConstraints(problems, validMainPaths);
+        // Now the validMainPaths set contains all the main (ie class) paths that are permitted in
+        // this query.
+
+        // Validate subclass constraints against validMainPaths
+        for (PathConstraint constraint : constraints.keySet()) {
+            if (constraint instanceof PathConstraintSubclass) {
+                try {
+                    Path path = new Path(model, constraint.getPath(), subclasses);
+                    if (path.endIsAttribute()) {
+                        // Should have already caught this problem above. Ignore and suppress
+                        continue;
+                    }
+                } catch (PathException e) {
+                    // Should have already been caught above. Ignore, and suppress further checking
+                    continue;
+                }
+                if (!validMainPaths.contains(constraint.getPath())) {
+                    problems.add("Subclass constraint on path " + constraint.getPath()
+                            + " is not relevant to the query");
+                }
+            }
+        }
+
+        // Validate outer join paths
+        validateOuterJoins(problems, validMainPaths);
+
+        // Validate description paths
+        for (String descPath : descriptions.keySet()) {
+            try {
+                Path path = new Path(model, descPath, subclasses);
+                if (path.endIsAttribute()) {
+                    path = path.getPrefix();
+                }
+                if (!validMainPaths.contains(path.getNoConstraintsString())) {
+                    problems.add("Description on path " + descPath
+                            + " is not relevant to the query");
+                    continue;
+                }
+            } catch (PathException e) {
+                problems.add("Path " + descPath + " for description is not in the model");
+                continue;
+            }
+        }
+
+        // Validate order by paths
+        for (OrderElement orderPath : orderBy) {
+            try {
+                Path path = new Path(model, orderPath.getOrderPath(), subclasses);
+                if (!path.endIsAttribute()) {
+                    problems.add("Path " + orderPath.getOrderPath() + " in order by list must be "
+                            + "an attribute");
+                    continue;
+                }
+                if (!validMainPaths.contains(path.getPrefix().toStringNoConstraints())) {
+                    problems.add("Order by element for path " + orderPath.getOrderPath()
+                            + " is not relevant to the query");
+                    continue;
+                }
+                if (!rootClass.equals(outerJoinGroups.get(path.getPrefix()
+                        .getNoConstraintsString()))) {
+                    problems.add("Order by element " + orderPath
+                            + " is not in the root outer join group");
+                }
+            } catch (PathException e) {
+                problems.add("Path " + orderPath.getOrderPath()
+                        + " in order by list is not in the model");
+                continue;
+            }
+        }
+
+        calculateConstraintGroups(problems);
+
+        if (logic != null) {
+            if (!doNotVerifyLogic) {
+                try {
+                    logic.split(new ArrayList<Set<String>>(constraintGroups.values()));
+                } catch (IllegalArgumentException e) {
+                    problems.add("Logic expression is not compatible with outer join status: "
+                            + e.getMessage());
+                }
+            }
+        }
+
+        if (problems.isEmpty()) {
+            isVerified = true;
+        }
+        return problems;
+    }
+
+    private void calculateConstraintGroups(List<String> problems) {
+        doNotVerifyLogic = false;
+        // Put all constraints into groups
+        constraintGroups = new LinkedHashMap<String, Set<String>>();
+        for (Map.Entry<PathConstraint, String> constraintEntry : constraints.entrySet()) {
+            if (constraintEntry.getValue() != null) {
+                try {
+                    Path path = new Path(model, constraintEntry.getKey().getPath(), subclasses);
+                    if (path.getStartClassDescriptor().getUnqualifiedName().equals(rootClass)) {
+                        if (path.endIsAttribute()) {
+                            path = path.getPrefix();
+                        }
+                        String groupPath = outerJoinGroups.get(path.getNoConstraintsString());
+                        if (groupPath != null) {
+                            Set<String> group = constraintGroups.get(groupPath);
+                            if (group == null) {
+                                group = new HashSet<String>();
+                                constraintGroups.put(groupPath, group);
+                            }
+                            group.add(constraintEntry.getValue());
+                        }
+                    } else {
+                        doNotVerifyLogic = true;
+                    }
+                } catch (PathException e) {
+                    // If this happens, then we have already noted the problem. Ignore.
+                    doNotVerifyLogic = true;
+                }
+            }
+            if (constraintEntry.getKey() instanceof PathConstraintLoop) {
+                PathConstraintLoop loop = (PathConstraintLoop) constraintEntry.getKey();
+                String aGroup = outerJoinGroups.get(loop.getPath());
+                String bGroup = outerJoinGroups.get(loop.getLoopPath());
+                // If one of these is null, then we must have recorded a problem above. Ignore.
+                if ((aGroup != null) && (bGroup != null)) {
+                    if (!aGroup.equals(bGroup)) {
+                        problems.add("Loop constraint " + loop + " crosses an outer join");
+                        continue;
+                    }
+                }
+            }
+        }
+        for (String group : new HashSet<String>(outerJoinGroups.values())) {
+            if (!constraintGroups.containsKey(group)) {
+                constraintGroups.put(group, new HashSet<String>());
+            }
+        }
+    }
+
+    private void validateOuterJoins(List<String> problems, Set<String> validMainPaths) {
+        for (String joinPath : outerJoinStatus.keySet()) {
+            try {
+                Path path = new Path(model, joinPath, subclasses);
+                if (path.endIsAttribute()) {
+                    problems.add("Outer join status on path " + joinPath
+                            + " must not be on an attribute");
+                    continue;
+                }
+                if (path.isRootPath()) {
+                    problems.add("Outer join status cannot be set on root path " + joinPath);
+                    continue;
+                }
+            } catch (PathException e) {
+                problems.add("Path " + joinPath + " for outer join status is not in the model");
+                continue;
+            }
+            if (!validMainPaths.contains(joinPath)) {
+                problems.add("Outer join status path " + joinPath + " is not relevant to the "
+                        + "query");
+            }
+        }
+        // Calculate outer join groups from the validMainPaths list of paths
+        outerJoinGroups = new LinkedHashMap<String, String>();
+        for (String validPath : validMainPaths) {
+            try {
+                Path path = new Path(model, validPath, subclasses);
+                while (isInner(path)) {
+                    path = path.getPrefix();
+                }
+                outerJoinGroups.put(validPath, path.getNoConstraintsString());
+            } catch (PathException e) {
+                // Should never happen, as we have already checked in validateOuterJoins
+                throw new Error(e);
+            }
+        }
+    }
+
+    private void validateConstraints(List<String> problems,
+            Set<String> validMainPaths) {
+        existingLoops = new HashSet<String>();
+        // Validate constraint paths
+        for (PathConstraint constraint : constraints.keySet()) {
+            try {
+                Path path = new Path(model, constraint.getPath(), subclasses);
+                if (rootClass == null) {
+                    rootClass = path.getStartClassDescriptor().getUnqualifiedName();
+                } else {
+                    String newRootClass = path.getStartClassDescriptor().getUnqualifiedName();
+                    if (!rootClass.equals(newRootClass)) {
+                        problems.add("Multiple root classes in query: " + rootClass + " and "
+                                + newRootClass);
+                        continue;
+                    }
+                }
+                if (path.endIsAttribute()) {
+                    addValidPaths(validMainPaths, path.getPrefix());
+                } else {
+                    addValidPaths(validMainPaths, path);
+                }
+                if (constraint instanceof PathConstraintAttribute) {
+                    if (!path.endIsAttribute()) {
+                        problems.add("Constraint " + constraint + " must be on an attribute");
+                        continue;
+                    }
+                    Class<?> valueType = path.getEndType();
+                    try {
+                        TypeUtil.stringToObject(valueType,
+                                ((PathConstraintAttribute) constraint).getValue());
+                    } catch (Exception e) {
+                        problems.add("Value in constraint " + constraint + " is not in correct "
+                                + "format for type of "
+                                + DynamicUtil.getFriendlyName(valueType));
+                        continue;
+                    }
+                } else if (constraint instanceof PathConstraintNull) {
+                    if (path.isRootPath()) {
+                        problems.add("Constraint " + constraint
+                                + " cannot be applied to the root path");
+                        continue;
+                    }
+                    if (constraint.getOp().equals(ConstraintOp.IS_NULL)) {
+                        if (!path.endIsAttribute()) {
+                            problems.add("Constraint " + constraint
+                                    + " is invalid - can only set IS NULL on an attribute");
+                            continue;
+                        }
+                    }
+                } else if (constraint instanceof PathConstraintBag) {
+                    // We do not check that the bag exists here. Call getBagNames() and check
+                    // elsewhere.
+                    if (path.endIsAttribute()) {
+                        problems.add("Constraint " + constraint
+                                + " must not be on an attribute");
+                        continue;
+                    }
+                } else if (constraint instanceof PathConstraintIds) {
+                    if (path.endIsAttribute()) {
+                        problems.add("Constraint " + constraint
+                                + " must not be on an attribute");
+                        continue;
+                    }
+                } else if (constraint instanceof PathConstraintMultiValue) {
+                    if (!path.endIsAttribute()) {
+                        problems.add("Constraint " + constraint + " must be on an attribute");
+                        continue;
+                    }
+                    Class<?> valueType = path.getEndType();
+                    for (String value : ((PathConstraintMultiValue) constraint).getValues()) {
+                        try {
+                            TypeUtil.stringToObject(valueType, value);
+                        } catch (Exception e) {
+                            problems.add("Value (" + value + ") in list in constraint "
+                                    + constraint + " is not in correct format for type of "
+                                    + DynamicUtil.getFriendlyName(valueType));
+                            continue;
+                        }
+                    }
+                } else if (constraint instanceof PathConstraintLoop) {
+                    if (path.endIsAttribute()) {
+                        problems.add("Constraint " + constraint
+                                + " must not be on an attribute");
+                        continue;
+                    }
+                    String loopPathString = ((PathConstraintLoop) constraint).getLoopPath();
+                    try {
+                        Path loopPath = new Path(model, loopPathString, subclasses);
+                        if (loopPath.endIsAttribute()) {
+                            problems.add("Loop path in constraint " + constraint
+                                    + " must not be an attribute");
+                            continue;
+                        }
+                        String newRootClass = loopPath.getStartClassDescriptor()
+                            .getUnqualifiedName();
+                        if (!rootClass.equals(newRootClass)) {
+                            problems.add("Multiple root classes in query: " + rootClass
+                                    + " and " + newRootClass);
+                            continue;
+                        }
+                        addValidPaths(validMainPaths, loopPath);
+                        if (constraint.getPath().equals(loopPathString)) {
+                            problems.add("Path " + constraint.getPath()
+                                    + " may not be looped back on itself");
+                            continue;
+                        }
+                        Class<?> aClass = path.getEndType();
+                        Class<?> bClass = loopPath.getEndType();
+                        if (!(aClass.isAssignableFrom(bClass)
+                                || bClass.isAssignableFrom(aClass))) {
+                            problems.add("Loop constraint " + constraint
+                                    + " must loop between similar types");
+                            continue;
+                        }
+                        String loop = ((PathConstraintLoop) constraint).getDescriptiveString();
+                        if (existingLoops.contains(loop)) {
+                            problems.add("Cannot have two loop constraints between paths "
+                                    + constraint.getPath() + " and " + loopPathString);
+                            continue;
+                        }
+                        existingLoops.add(loop);
+                    } catch (PathException e) {
+                        problems.add("Path " + loopPathString + " in loop constraint from "
+                                + constraint.getPath() + " is not in the model");
+                        continue;
+                    }
+                } else if (constraint instanceof PathConstraintLookup) {
+                    if (path.endIsAttribute()) {
+                        problems.add("Constraint " + constraint
+                                + " must not be on an attribute");
+                    }
+                } else if (constraint instanceof PathConstraintSubclass) {
+                    // Do nothing
+                } else {
+                    problems.add("Unrecognised constraint type "
+                            + constraint.getClass().getName());
+                    continue;
+                }
+            } catch (PathException e) {
+                if (!(constraint instanceof PathConstraintSubclass)) {
+                    problems.add("Path " + constraint.getPath()
+                            + " in constraint is not in the model");
+                }
+            }
+        }
+    }
+
+    private Set<String> validateView(List<String> problems, Set<String> validMainPaths) {
+        for (String viewPath : view) {
+            try {
+                Path path = new Path(model, viewPath, subclasses);
+                if (!path.endIsAttribute()) {
+                    problems.add("Path " + viewPath + " in view list must be an attribute");
+                    continue;
+                }
+                if (rootClass == null) {
+                    rootClass = path.getStartClassDescriptor().getUnqualifiedName();
+                } else {
+                    String newRootClass = path.getStartClassDescriptor().getUnqualifiedName();
+                    if (!rootClass.equals(newRootClass)) {
+                        problems.add("Multiple root classes in query: " + rootClass + " and "
+                                + newRootClass);
+                        continue;
+                    }
+                }
+                addValidPaths(validMainPaths, path.getPrefix());
+            } catch (PathException e) {
+                problems.add("Path " + viewPath + " in view list is not in the model");
+            }
+        }
+        return validMainPaths;
+    }
+
+    private void buildSubclassMap(List<String> problems) {
+        List<PathConstraintSubclass> subclassConstraints = new ArrayList<PathConstraintSubclass>();
+        for (PathConstraint constraint : constraints.keySet()) {
+            if (constraint instanceof PathConstraintSubclass) {
+                subclassConstraints.add((PathConstraintSubclass) constraint);
+            }
+        }
+        PathConstraintSubclass[] subclassConstraintArray = subclassConstraints.toArray(new
+                PathConstraintSubclass[0]);
+        Arrays.sort(subclassConstraintArray, new Comparator<PathConstraintSubclass>() {
+                public int compare(PathConstraintSubclass o1, PathConstraintSubclass o2) {
+                    return o1.getPath().length() - o2.getPath().length();
+                }
+            });
+        // subclassConstraintArray should now be in order of increasing length of path string, so it
+        // should be fine to just build the subclass constraints map
+        subclasses = new LinkedHashMap<String, String>();
+        for (PathConstraintSubclass subclass : subclassConstraintArray) {
+            if (subclasses.containsKey(subclass.getPath())) {
+                problems.add("Cannot have multiple subclass constraints on path "
+                        + subclass.getPath());
+                continue;
+            }
+            Path subclassPath = null;
+            try {
+                subclassPath = new Path(model, subclass.getPath(), subclasses);
+            } catch (PathException e) {
+                problems.add("Path " + subclass.getPath() + " (from subclass constraint) is not in"
+                        + " the model");
+                continue;
+            }
+            if (subclassPath.isRootPath()) {
+                problems.add("Root node " + subclass.getPath()
+                        + " may not have a subclass constraint");
+                continue;
+            }
+            if (subclassPath.endIsAttribute()) {
+                problems.add("Path " + subclass.getPath() + " (from subclass constraint) must not "
+                        + "be an attribute");
+                continue;
+            }
+            Class<?> parentClassType = subclassPath.getEndClassDescriptor().getType();
+            ClassDescriptor subclassDesc = model.getClassDescriptorByName(subclass.getType());
+            Class<?> subclassType = (subclassDesc == null ? null : subclassDesc.getType());
+            if (subclassType == null) {
+                problems.add("Subclass " + subclass.getType() + " (for path " + subclass.getPath()
+                        + ") is not in the model");
+                continue;
+            }
+            if (!parentClassType.isAssignableFrom(subclassType)) {
+                problems.add("Subclass constraint on path " + subclass.getPath() + " (type "
+                        + DynamicUtil.getFriendlyName(parentClassType) + ") restricting to type "
+                        + DynamicUtil.getFriendlyName(subclassType) + " is not possible, as it is "
+                        + "not a subclass");
+                continue;
+            }
+            subclasses.put(subclass.getPath(), subclass.getType());
+        }
+    }
+
+    /**
+     * Returns the root path for this query, if the query verifies correctly.
+     *
+     * @return a String path which is the root class
+     * @throws PathException if the query does not verify
+     */
+    public synchronized String getRootClass() throws PathException {
+        List<String> problems = verifyQuery();
+        if (problems.isEmpty()) {
+            return rootClass;
+        }
+        throw new PathException("Query does not verify: " + problems, null);
+    }
+
+    /**
+     * Returns the subclass Map for this query, if the query verifies correctly.
+     *
+     * @return a Map from path String to subclass name, for all PathConstraintSubclass objects
+     * @throws PathException if the query does not verify
+     */
+    public synchronized Map<String, String> getSubclasses() throws PathException {
+        List<String> problems = verifyQuery();
+        if (problems.isEmpty()) {
+            return Collections.unmodifiableMap(new LinkedHashMap<String, String>(subclasses));
+        }
+        throw new PathException("Query does not verify: " + problems, null);
+    }
+
+    /**
+     * Returns all bag names used in constraints on this query.
+     *
+     * @return the bag names used in this query or an empty set
+     */
+    public synchronized Set<String> getBagNames() {
+        Set<String> bagNames = new HashSet<String>();
+        for (PathConstraint constraint : constraints.keySet()) {
+            if (constraint instanceof PathConstraintBag) {
+                bagNames.add(((PathConstraintBag) constraint).getBag());
             }
         }
         return bagNames;
     }
 
     /**
-     * Given the string version of a path (eg. "Department.employees.seniority"), and a PathQuery,
-     * create a Path object.  The PathQuery is needed to find the class constraints that affect the
-     * path.
+     * Returns the outer join groups map for this query, if the query verifies correctly. This is a
+     * Map from all the class paths in the query to the outer join group, represented by the path of
+     * the root of the group.
      *
-     * @param model the Model to pass to the Path constructor
-     * @param query the PathQuery
-     * @param fullPathName the full path as a string
-     * @return a new Path object
-     * @throws PathException if the path is not valid
+     * @return a Map from path String to the outer join group it is in
+     * @throws PathException if the query does not verify
      */
-    public static Path makePath(Model model, PathQuery query,
-            String fullPathName) throws PathException {
-        Path path = null;
-        if (fullPathName.indexOf("[") >= 0) {
-            path = new Path(model, fullPathName);
-        } else {
-            Map<String, String> subClassConstraintMap = new HashMap<String, String>();
-            Iterator viewPathNameIter = query.getNodes().keySet().iterator();
-            while (viewPathNameIter.hasNext()) {
-                String viewPathName = (String) viewPathNameIter.next();
-                PathNode pathNode = query.getNode(viewPathName);
-                subClassConstraintMap.put(viewPathName.replace(":", "."), pathNode.getType());
-            }
-            path = new Path(model, fullPathName, subClassConstraintMap);
+    public synchronized Map<String, String> getOuterJoinGroups() throws PathException {
+        List<String> problems = verifyQuery();
+        if (problems.isEmpty()) {
+            return Collections.unmodifiableMap(new LinkedHashMap<String, String>(outerJoinGroups));
         }
-        return path;
+        throw new PathException("Query does not verify: " + problems, null);
     }
 
     /**
-     * Get the exceptions generated while deserialising this path query.
-     * @return exceptions relating to this path query
+     * Returns the set of loop constraint descriptive strings, for the purpose of checking for
+     * uniqueness.
+     *
+     * @return a Set of Strings
+     * @throws PathException if the query does not verify
      */
-    public Throwable[] getProblems() {
-        return problems.toArray(new Throwable[0]);
+    public synchronized Set<String> getExistingLoops() throws PathException {
+        List<String> problems = verifyQuery();
+        if (problems.isEmpty()) {
+            return Collections.unmodifiableSet(new HashSet<String>(existingLoops));
+        }
+        throw new PathException("Query does not verify: " + problems, null);
     }
 
     /**
-     * Sets problems.
-     * @param problems problems
+     * Returns the outer join group that the given path is in.
+     *
+     * @param stringPath a pathString
+     * @return a String representing the outer join group that the path is in
+     * @throws NullPointerException if pathString is null
+     * @throws PathException if the query is invalid or the path is invalid
+     * @throws NoSuchElementException is the path is not in the query
      */
-    public void setProblems(List<Throwable> problems) {
-        this.problems = (problems != null ?  problems : new ArrayList<Throwable>());
+    public String getOuterJoinGroup(String stringPath) throws PathException {
+        if (stringPath == null) {
+            throw new NullPointerException("stringPath is null");
+        }
+        Map<String, String> groups = getOuterJoinGroups();
+        Path path = makePath(stringPath);
+        if (path.endIsAttribute()) {
+            path = path.getPrefix();
+        }
+        if (!groups.containsKey(path.getNoConstraintsString())) {
+            throw new NoSuchElementException("Path " + stringPath + " is not in the query");
+        }
+        return groups.get(path.getNoConstraintsString());
     }
 
     /**
-     * Find out whether the path query is valid against the current model.
-     * @return true if query is valid, false if not
+     * Returns true if a path string is in the root outer join group of this query.
+     *
+     * @param stringPath a path String
+     * @return true if the given path is in the root outer join group, false if it contains outer
+     * joins
+     * @throws NullPointerException if pathString is null
+     * @throws PathException if the query is invalid or the path is invalid
+     * @throws NoSuchElementException if the path is not in the query
      */
-    public boolean isValid() {
-        return (problems.size() == 0);
+    public boolean isPathCompletelyInner(String stringPath) throws PathException {
+        String root = getRootClass();
+        return root.equals(getOuterJoinGroup(stringPath));
     }
 
     /**
-     * Adds problem to path query.
-     * @param err problem
+     * Returns the set of paths that could feasibly be loop constrained onto the given path, given
+     * the current outer join situation. A candidate path must be a class path, of the same type,
+     * and in the same outer join group. It must also not be already looped onto this path.
+     *
+     * @param stringPath a path String
+     * @return a Set of path strings that could be looped onto the given path
+     * @throws NullPointerException if stringPath is null
+     * @throws IllegalArgumentException if stringPath refers to an attribute
+     * @throws PathException if the query is invalid or stringPath is invalid
      */
-    public void addProblem(Throwable err) {
-        problems.add(err);
+    public synchronized Set<String> getCandidateLoops(String stringPath) throws PathException {
+        if (stringPath == null) {
+            throw new NullPointerException("stringPath is null");
+        }
+        Path path = makePath(stringPath);
+        if (path.endIsAttribute()) {
+            throw new IllegalArgumentException("stringPath \"" + stringPath
+                    + "\" is an attribute, not a class");
+        }
+        String lRootClass = getRootClass();
+        String rootOfStringPath = path.getStartClassDescriptor().getUnqualifiedName();
+        if ((lRootClass != null) && (!lRootClass.equals(rootOfStringPath))) {
+            throw new NoSuchElementException("Path " + stringPath + " is not in the query");
+        }
+        if (lRootClass == null) {
+            outerJoinGroups.put(rootOfStringPath, rootOfStringPath);
+        }
+        Map<String, String> groups = new HashMap<String, String>(getOuterJoinGroups());
+        Path groupPath = path;
+        Set<String> toAdd = new HashSet<String>();
+        while (!(groups.containsKey(groupPath.getNoConstraintsString()))) {
+            toAdd.add(groupPath.toStringNoConstraints());
+            groupPath = groupPath.getPrefix();
+        }
+        String group = groups.get(groupPath.getNoConstraintsString());
+        for (String toAddElement : toAdd) {
+            groups.put(toAddElement, group);
+        }
+        Class<?> type = path.getEndType();
+        Set<String> lExistingLoops = getExistingLoops();
+        Set<String> retval = new HashSet<String>();
+        for (Map.Entry<String, String> entry : groups.entrySet()) {
+            if (!entry.getKey().equals(stringPath)) {
+                Path entryPath = makePath(entry.getKey());
+                if (type.isAssignableFrom(entryPath.getEndType())
+                    || entryPath.getEndType().isAssignableFrom(type)) {
+                    if (group.equals(entry.getValue())) {
+                        String desc = stringPath.compareTo(entry.getKey()) > 0
+                                ? entry.getKey() + " -- " + stringPath
+                                : stringPath + " -- " + entry.getKey();
+                        if (!lExistingLoops.contains(desc)) {
+                            retval.add(entry.getKey());
+                        }
+                    }
+                }
+            }
+        }
+        return retval;
     }
 
     /**
-     * Serialise this query in XML format.
-     * @param name query name to put in xml
-     * @param version the version number of the XML format
-     * @return PathQuery in XML format
+     * Returns the outer join constraint codes groups map for this query, if the query verifies
+     * correctly.
+     *
+     * @return a Map from outer join group to the Set of constraint codes in the group
+     * @throws PathException if the query does not verify
      */
-    public String toXml(String name, int version) {
-        return PathQueryBinding.marshal(this, name, model.getName(), version);
+    public synchronized Map<String, Set<String>> getConstraintGroups() throws PathException {
+        List<String> problems = verifyQuery();
+        if (problems.isEmpty()) {
+            return Collections.unmodifiableMap(new LinkedHashMap<String, Set<String>>(
+                        constraintGroups));
+        }
+        throw new PathException("Query does not verify: " + problems, null);
     }
 
     /**
-     * Serialise to XML with no name.
+     * Returns a List of logic Strings according to the different outer join sections of the query.
+     *
+     * @return a List of String
+     * @throws PathException if the query does not verify
+     */
+    public synchronized List<String> getGroupedConstraintLogic() throws PathException {
+        if (logic == null) {
+            return Collections.emptyList();
+        }
+        Map<String, Set<String>> groups = getConstraintGroups();
+        List<LogicExpression> grouped = logic.split(new ArrayList<Set<String>>(groups.values()));
+        List<String> retval = new ArrayList<String>();
+        for (LogicExpression group : grouped) {
+            if (group != null) {
+                retval.add(group.toString());
+            }
+        }
+        return retval;
+    }
+
+    /**
+     * Returns the constraint logic for the given outer join group, if the query verifies correctly.
+     *
+     * @param group an outer join group
+     * @return the constraint logic for the constraints in that outer join group
+     * @throws PathException if the query does not verify
+     * @throws IllegalArgumentException if the group is not present in this query
+     */
+    public synchronized LogicExpression getConstraintLogicForGroup(String group)
+        throws PathException {
+        List<String> problems = verifyQuery();
+        if (problems.isEmpty()) {
+            if (logic == null) {
+                return null;
+            } else {
+                Set<String> codes = constraintGroups.get(group);
+                if (codes == null) {
+                    throw new IllegalArgumentException("Outer join group " + group
+                            + " does not seem to be in this query. Valid inputs are "
+                            + constraintGroups.keySet());
+                }
+                if (codes.isEmpty()) {
+                    return null;
+                } else {
+                    return logic.getSection(codes);
+                }
+            }
+        }
+        throw new PathException("Query does not verify: " + problems, null);
+    }
+
+    /**
+     * Adds all the parts of a Path to a Set. Call this with only a non-attribute Path.
+     *
+     * @param validMainPaths a Set of Strings to add to
+     * @param path a Path object
+     */
+    private static void addValidPaths(Set<String> validMainPaths, Path path) {
+        while (!path.isRootPath()) {
+            validMainPaths.add(path.toStringNoConstraints());
+            path = path.getPrefix();
+        }
+        validMainPaths.add(path.toStringNoConstraints());
+    }
+
+    /**
+     * Returns true if the given Path object represents a path that is inner-joined onto the parent
+     * path in this query. This will return false for the root class. Do not call this method with
+     * a Path that is an attribute.
+     *
+     * @param path a Path object
+     * @return true if the join is inner, not outer and not the root
+     * @throws IllegalArgumentException if the path is an attribute
+     */
+    private boolean isInner(Path path) {
+        if (path.isRootPath()) {
+            return false;
+        }
+        if (path.endIsAttribute()) {
+            throw new IllegalArgumentException("Cannot call isInner() with a path that is an "
+                    + "attribute");
+        }
+        OuterJoinStatus status = getOuterJoinStatus(path.getNoConstraintsString());
+        if (OuterJoinStatus.INNER.equals(status)) {
+            return true;
+        } else if (OuterJoinStatus.OUTER.equals(status)) {
+            return false;
+        }
+        // Fall back on defaults
+        return true;
+    }
+
+    private static final Pattern PATH_MATCHER = Pattern.compile("([a-zA-Z0-9]+\\.)*[a-zA-Z0-9]+");
+
+    /**
+     * Verifies the format of a path for a query. Paths must fully match the regular expression
+     * "([a-zA-Z0-9]+\.)*[a-zA-Z0-9]+"
+     *
+     * @param path a String path
+     * @throws NullPointerException if path is null
+     * @throws IllegalArgumentException if path contains colons or square brackets, or is otherwise
+     * in a bad format
+     */
+    public static void checkPathFormat(String path) {
+        if (path == null) {
+            throw new NullPointerException("Path must not be null");
+        }
+        if (!PATH_MATCHER.matcher(path).matches()) {
+            throw new IllegalArgumentException("Path \"" + path + "\" does not match regular "
+                    + "expression \"([a-zA-Z0-9]+\\.)*[a-zA-Z0-9]+\"");
+        }
+    }
+
+    /**
+     * Get the PathQuery that should be executed.  This should be called by code creating an
+     * ObjectStore query from a PathQuery.  For PathQuery the method returns this, subclasses can
+     * override.  TemplateQuery removes optional constraints that have been switched off in the
+     * returned query.
+     * @return a version of the query to execute
+     */
+    public PathQuery getQueryToExecute() {
+        return this;
+    }
+
+    /**
+     * A method to sort constraints by a given lists, provided to allow TemplateQuery to set a
+     * specific sort order that will be preserved in a round-trip to XML.  A list of constraints
+     * is provided, the constraints map is updated to reflect that order.  The list does not need
+     * to contain all constraints in the query - TemplateQuery only needs to order the editable
+     * constraints.
+     * @param listToSortBy a list to define the new constraint order
+     */
+    protected synchronized void sortConstraints(List<PathConstraint> listToSortBy) {
+        ConstraintComparator comparator = new ConstraintComparator(listToSortBy);
+        TreeMap<PathConstraint, String> orderedConstraints = 
+            new TreeMap<PathConstraint, String>(comparator);
+        orderedConstraints.putAll(constraints);
+        constraints = new LinkedHashMap<PathConstraint, String>(orderedConstraints);
+    }
+    
+    
+    private class ConstraintComparator implements Comparator<PathConstraint> {
+        private List<PathConstraint> listToSortBy;
+        
+        public ConstraintComparator (List<PathConstraint> listToSortBy) {
+            this.listToSortBy = listToSortBy;
+        }
+        
+        @Override
+        public int compare(PathConstraint c1, PathConstraint c2) {
+            if (listToSortBy.contains(c1) && listToSortBy.contains(c2)) {
+                return listToSortBy.indexOf(c1) - listToSortBy.indexOf(c2);
+            }
+            return 0;
+        }
+    }
+    
+    /**
+     * Converts this object into a rudimentary String format, containing all the data.
+     *
+     * {@inheritDoc}
+     */
+    @Override public synchronized String toString() {
+        return "PathQuery( view: " + view + ", orderBy: " + orderBy + ", constraints: "
+            + constraints + ", logic: " + logic + ", outerJoinStatus: " + outerJoinStatus
+            + ", descriptions: " + descriptions + ", description: " + description + ")";
+    }
+
+    /**
+     * Convert a PathQuery to XML.
      *
      * @param version the version number of the XML format
-     * @return the XML
+     * @return this template query as XML.
      */
-    public String toXml(int version) {
-        return PathQueryBinding.marshal(this, "", model.getName(), version);
-    }
+    public synchronized String toXml(int version) {
+        StringWriter sw = new StringWriter();
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
-    /**
-     * This equals method is expensive - avoid using it, or putting PathQuery objects in Sets or as
-     * keys in Maps.
-     *
-     * {@inheritDoc}
-     */
-    public boolean equals(Object o) {
-        return (o instanceof PathQuery) && model.equals(((PathQuery) o).model)
-            && nodes.equals(((PathQuery) o).nodes) && view.equals(((PathQuery) o).view)
-            && sortOrder.equals(((PathQuery) o).sortOrder)
-            && pathDescriptions.equals(((PathQuery) o).pathDescriptions);
-    }
+        try {
+            XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
+            PathQueryBinding.marshal(this, "query", model.getName(), writer, version);
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    public int hashCode() {
-        return 2 * model.hashCode() + 3 * nodes.hashCode() + 5 * view.hashCode()
-            + 7 * sortOrder.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String toString() {
-        return "{PathQuery: model=" + model.getName() + ", nodes=" + nodes + ", view=" + view
-            + ", sortOrder=" + sortOrder + ", pathDescriptions=" + pathDescriptions + "}";
-    }
-
-    private void logPathException(String msg) {
-        logPathException(new PathException(msg, null));
-    }
-
-    private void logPathException(Throwable e) {
-        LOG.error("Path error", e);
-        addProblem(e);
-    }
-
-    /**
-     * Get the template description.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
+        return sw.toString();
     }
 }

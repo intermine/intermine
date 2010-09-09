@@ -40,7 +40,6 @@ import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
-import org.intermine.api.query.MainHelper;
 import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
@@ -99,6 +98,9 @@ public class InitialiserPlugin implements PlugIn
     public void init(ActionServlet servlet,
                      @SuppressWarnings("unused") ModuleConfig config) throws ServletException {
 
+        // NOTE throwing exceptions other than a ServletException from this class causes the
+        // webapp to fail to deploy with no error message.
+
         final ServletContext servletContext = servlet.getServletContext();
 
         System.setProperty("java.awt.headless", "true");
@@ -112,7 +114,7 @@ public class InitialiserPlugin implements PlugIn
 
         final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
         final ObjectStoreSummary oss = summariseObjectStore(servletContext, os);
-        final Map <String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
+        final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
 
         final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
@@ -337,10 +339,10 @@ public class InitialiserPlugin implements PlugIn
 
     private void setupClassSummaryInformation(ServletContext servletContext, ObjectStoreSummary oss,
             final Model model) throws ServletException {
-        Map classes = new LinkedHashMap();
-        Map classCounts = new LinkedHashMap();
-        for (Iterator i = new TreeSet(model.getClassNames()).iterator(); i.hasNext();) {
-            String className = (String) i.next();
+        Map<String, String> classes = new LinkedHashMap<String, String>();
+        Map<String, Integer> classCounts = new LinkedHashMap<String, Integer>();
+
+        for (String className : new TreeSet<String>(model.getClassNames())) {
             if (!className.equals(InterMineObject.class.getName())) {
                 classes.put(className, TypeUtil.unqualifiedName(className));
             }
@@ -353,24 +355,15 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute("classes", classes);
         servletContext.setAttribute("classCounts", classCounts);
         // Build subclass lists for JSPs
-        Map subclassesMap = new LinkedHashMap();
-        for (Iterator i = new TreeSet(model.getClassNames()).iterator(); i.hasNext();) {
-            String className = TypeUtil.unqualifiedName((String) i.next());
-            ClassDescriptor cld;
-            try {
-                cld = MainHelper.getClassDescriptor(className, model);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("unexpected exception", e);
-            }
-            ArrayList subclasses = new ArrayList();
-            Iterator iter = new TreeSet(getChildren(cld)).iterator();
-            while (iter.hasNext()) {
-                String thisClassName = (String) iter.next();
+        Map<String, List<String>> subclassesMap = new LinkedHashMap<String, List<String>>();
+        for (ClassDescriptor cld : model.getClassDescriptors()) {
+            ArrayList<String> subclasses = new ArrayList<String>();
+            for (String thisClassName : new TreeSet<String>(getChildren(cld))) {
                 if (((Integer) classCounts.get(thisClassName)).intValue() > 0) {
                     subclasses.add(TypeUtil.unqualifiedName(thisClassName));
                 }
             }
-            subclassesMap.put(className, subclasses);
+            subclassesMap.put(TypeUtil.unqualifiedName(cld.getName()), subclasses);
         }
         servletContext.setAttribute(Constants.SUBCLASSES, subclassesMap);
         // Map from class name to Map from reference name to Boolean.TRUE if empty ref/collection
@@ -453,8 +446,8 @@ public class InitialiserPlugin implements PlugIn
      * @param cld the ClassDescriptor
      * @return a Set of class names
      */
-    protected static Set getChildren(ClassDescriptor cld) {
-        Set children = new HashSet();
+    protected static Set<String> getChildren(ClassDescriptor cld) {
+        Set<String> children = new HashSet<String>();
         getChildren(cld, children);
         return children;
     }
@@ -464,9 +457,8 @@ public class InitialiserPlugin implements PlugIn
      * @param cld the ClassDescriptor
      * @param children the Set of child names
      */
-    protected static void getChildren(ClassDescriptor cld, Set children) {
-        for (Iterator i = cld.getSubDescriptors().iterator(); i.hasNext();) {
-            ClassDescriptor child = (ClassDescriptor) i.next();
+    protected static void getChildren(ClassDescriptor cld, Set<String> children) {
+        for (ClassDescriptor child : cld.getSubDescriptors()) {
             children.add(child.getName());
             getChildren(child, children);
         }

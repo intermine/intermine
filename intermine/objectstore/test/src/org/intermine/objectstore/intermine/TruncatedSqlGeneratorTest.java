@@ -324,6 +324,8 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("Range1", new HashSet(Arrays.asList("InterMineObject")));
         results.put("ConstrainClass1", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.InterMineObject' AND a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
         results.put("ConstrainClass2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.InterMineObject' AND a1_.class IN ('org.intermine.model.testmodel.Company', 'org.intermine.model.testmodel.Employee') ORDER BY a1_.id");
+        results.put("MultipleInBagConstraint1", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND (a1_.intermine_end IN ('1', '2', 'EmployeeA1', 'EmployeeB1') OR a1_.name IN ('1', '2', 'EmployeeA1', 'EmployeeB1')) ORDER BY a1_.id");
+        results2.put("MultipleInBagConstraint1", new HashSet(Arrays.asList("InterMineObject")));
     }
 
     protected DatabaseSchema getSchema() throws Exception {

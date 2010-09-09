@@ -10,6 +10,7 @@ package org.intermine.objectstore.proxy;
  *
  */
 
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -26,7 +27,7 @@ public class ProxyReference implements InterMineObject, Lazy
 {
     private ObjectStore os;
     private Integer id;
-    private Class clazz;
+    private Class<? extends InterMineObject> clazz;
 
     /**
      * Construct a ProxyReference object.
@@ -35,7 +36,7 @@ public class ProxyReference implements InterMineObject, Lazy
      * @param id the internal id of the real object
      * @param clazz a hint of the class that this object is - use InterMineObject if unsure
      */
-    public ProxyReference(ObjectStore os, Integer id, Class clazz) {
+    public ProxyReference(ObjectStore os, Integer id, Class<? extends InterMineObject> clazz) {
         this.os = os;
         this.id = id;
         this.clazz = clazz;
@@ -81,7 +82,7 @@ public class ProxyReference implements InterMineObject, Lazy
      *
      * @param id the id
      */
-    public void setId(Integer id) {
+    public void setId(@SuppressWarnings("unused") Integer id) {
         throw new IllegalArgumentException("Cannot change the id of a ProxyReference");
     }
 
@@ -97,6 +98,7 @@ public class ProxyReference implements InterMineObject, Lazy
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "<ProxyReference os: " + os + ", id: " + id + ", proxied class: " + clazz + ">";
     }
@@ -111,14 +113,16 @@ public class ProxyReference implements InterMineObject, Lazy
     /**
      * {@inheritDoc}
      */
-    public void setoBJECT(String notXml, ObjectStore os) {
+    public void setoBJECT(@SuppressWarnings("unused") String notXml,
+            @SuppressWarnings("unused") ObjectStore os) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setoBJECT(String[] notXml, ObjectStore os) {
+    public void setoBJECT(@SuppressWarnings("unused") String[] notXml,
+            @SuppressWarnings("unused") ObjectStore os) {
         throw new UnsupportedOperationException();
     }
 
@@ -156,7 +160,7 @@ public class ProxyReference implements InterMineObject, Lazy
     /**
      * {@inheritDoc}
      */
-    public Class getFieldType(String fieldName) {
+    public Class<?> getFieldType(String fieldName) {
         if ("id".equals(fieldName)) {
             return Integer.class;
         }
@@ -167,7 +171,7 @@ public class ProxyReference implements InterMineObject, Lazy
     /**
      * {@inheritDoc}
      */
-    public Class getElementType(String fieldName) {
+    public Class<? extends FastPathObject> getElementType(String fieldName) {
         throw new UnsupportedOperationException("Tried to get element type for field " + fieldName
                 + " from proxy");
     }

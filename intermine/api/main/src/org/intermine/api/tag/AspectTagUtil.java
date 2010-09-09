@@ -16,8 +16,10 @@ package org.intermine.api.tag;
  *
  * @author Jakub Kulaviak
  */
-public class AspectTagUtil
+public final class AspectTagUtil
 {
+    private AspectTagUtil() {
+    }
 
     /**
      * Extracts aspect from tag name. For instance for aspect:Miscellaneous returns Miscellaneous

@@ -20,6 +20,7 @@ import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.webservice.client.core.ContentType;
 import org.intermine.webservice.client.core.RequestImpl;
 import org.intermine.webservice.client.core.Service;
+import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.core.TabTableResult;
 import org.intermine.webservice.client.core.Request.RequestType;
 import org.intermine.webservice.client.exceptions.ServiceException;
@@ -27,17 +28,17 @@ import org.intermine.webservice.client.util.HttpConnection;
 
 /**
  * The QueryService is service that provides some methods for flexible querying InterMine data.
- *  
+ *
  * <p>
- * The basic tool for querying data in InterMine is PathQuery object. See examples to see how 
- * to construct PathQuery.  
- * </p> 
- * 
+ * The basic tool for querying data in InterMine is PathQuery object. See examples to see how
+ * to construct PathQuery.
+ * </p>
+ *
  * @author Jakub Kulaviak
  **/
 public class QueryService extends Service
 {
-    
+
     private static final String SERVICE_RELATIVE_URL = "query/results";
 
     /**
@@ -54,7 +55,7 @@ public class QueryService extends Service
      *
      * @author Jakub Kulaviak
      */
-    protected static class QueryRequest extends RequestImpl 
+    protected static class QueryRequest extends RequestImpl
     {
         /**
          * Constructor.
@@ -66,7 +67,7 @@ public class QueryService extends Service
         public QueryRequest(RequestType type, String serviceUrl, ContentType contentType) {
             super(type, serviceUrl, contentType);
         }
-        
+
         /**
          * Sets the maximum number of rows returned.
          *
@@ -85,13 +86,13 @@ public class QueryService extends Service
             setParameter("query", xml);
         }
     }
-    
-    
+
+
     /**
      * Constructs PathQuery from its XML representation. You can use this method
      * for creating PathQuery, modifying it a bit and executing afterwards.
      * @param queryXml PathQuery represented as a XML string
-     * @return created PathQuery    
+     * @return created PathQuery
      */
     public PathQuery createPathQuery(String queryXml) {
         ModelService modelService = new ModelService(getRootUrl(), getApplicationName());
@@ -126,9 +127,9 @@ public class QueryService extends Service
         try {
             return Integer.parseInt(body);
         }  catch (NumberFormatException e) {
-            throw new ServiceException("Service returned invalid result. It is not number: " 
+            throw new ServiceException("Service returned invalid result. It is not number: "
                     + body, e);
-        }        
+        }
     }
 
     /**
@@ -143,7 +144,7 @@ public class QueryService extends Service
     }
 
     /**
-     * Returns results of specified PathQuery. If you expect a lot of results 
+     * Returns results of specified PathQuery. If you expect a lot of results
      * use getResultIterator() method.
      * @param query query
      * @param maxCount maximum number of returned results
@@ -154,8 +155,8 @@ public class QueryService extends Service
     }
 
     /**
-     * Returns results of specified PathQuery as iterator. Use this method if you expects a lot 
-     * of results and you would run out of memory. 
+     * Returns results of specified PathQuery as iterator. Use this method if you expects a lot
+     * of results and you would run out of memory.
      * @param query query
      * @param maxCount maximum number of returned results
      * @return results of specified PathQuery
@@ -164,31 +165,31 @@ public class QueryService extends Service
         return getResultInternal(query.toXml(PathQuery.USERPROFILE_VERSION), maxCount)
             .getIterator();
     }
- 
+
     /**
-     * Returns results of specified PathQuery. If you expect a lot of results 
+     * Returns results of specified PathQuery. If you expect a lot of results
      * use getResultIterator() method.
      * @param queryXml PathQuery represented as a XML string
      * @param maxCount maximum number of returned results
      * @return results of specified PathQuery
-     */    
+     */
     public List<List<String>> getResult(String queryXml, int maxCount) {
         return getResultInternal(queryXml, maxCount).getData();
     }
 
     /**
-     * Returns results of specified PathQuery. Use this method if you expects a lot 
-     * of results and you would run out of memory. 
+     * Returns results of specified PathQuery. Use this method if you expects a lot
+     * of results and you would run out of memory.
      * @param queryXml PathQuery represented as a XML string
      * @param maxCount maximum number of returned results
      * @return results of specified PathQuery
-     */    
+     */
     public Iterator<List<String>> getResultIterator(String queryXml, int maxCount) {
         return getResultInternal(queryXml, maxCount).getIterator();
     }
-    
+
     private TabTableResult getResultInternal(String queryXml, int maxCount) {
-        QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), 
+        QueryRequest request = new QueryRequest(RequestType.POST, getUrl(),
                 ContentType.TEXT_TAB);
         request.setMaxCount(maxCount);
         request.setQueryXml(queryXml);

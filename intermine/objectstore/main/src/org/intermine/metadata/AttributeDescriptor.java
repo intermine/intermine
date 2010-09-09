@@ -27,11 +27,11 @@ public class AttributeDescriptor extends FieldDescriptor
     /**
      * This is a list of the valid type strings.
      */
-    public static final Set<String> VALID_TYPES = new LinkedHashSet(Arrays.asList("short", "int",
-                "long", "float", "double", "boolean", "java.lang.Short", "java.lang.Integer",
-                "java.lang.Long", "java.lang.Float", "java.lang.Double", "java.lang.Boolean",
-                "java.lang.String", "java.util.Date", "java.math.BigDecimal",
-                "java.lang.Character"));
+    public static final Set<String> VALID_TYPES = new LinkedHashSet<String>(Arrays.asList("short",
+            "int", "long", "float", "double", "boolean", "java.lang.Short", "java.lang.Integer",
+            "java.lang.Long", "java.lang.Float", "java.lang.Double", "java.lang.Boolean",
+            "java.lang.String", "java.util.Date", "java.math.BigDecimal",
+            "org.intermine.objectstore.query.ClobAccess"));
 
     /**
      * Construct, name and type cannot be null.
@@ -41,7 +41,7 @@ public class AttributeDescriptor extends FieldDescriptor
      */
     public AttributeDescriptor(String name, String type) {
         super(name);
-        if (type == null || type.equals("")) {
+        if (type == null || "".equals(type)) {
             throw new IllegalArgumentException("Type cannot be null or empty");
         }
         if (!VALID_TYPES.contains(type)) {
@@ -63,6 +63,7 @@ public class AttributeDescriptor extends FieldDescriptor
     /**
      * {@inheritDoc}
      */
+    @Override
     public int relationType() {
         return NOT_RELATION;
     }
@@ -70,6 +71,7 @@ public class AttributeDescriptor extends FieldDescriptor
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof AttributeDescriptor) {
             AttributeDescriptor attr = (AttributeDescriptor) obj;
@@ -82,6 +84,7 @@ public class AttributeDescriptor extends FieldDescriptor
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return 3 * name.hashCode()
             + 7 * type.hashCode();
@@ -90,6 +93,7 @@ public class AttributeDescriptor extends FieldDescriptor
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "<attribute name=\"" + name + "\" type=\"" + type + "\"/>";
     }

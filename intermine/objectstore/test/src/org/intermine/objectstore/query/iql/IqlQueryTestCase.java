@@ -302,5 +302,8 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.InterMineObject AS a1_ WHERE a1_.class IN ?", null);
         fq.setParameters(Arrays.asList(Arrays.asList(Employee.class, Company.class)));
         results.put("ConstrainClass2", fq);
+        fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.end, a1_.name) IN ?", null);
+        fq.setParameters(Arrays.asList(Arrays.asList("1", "2", "EmployeeA1", "EmployeeB1")));
+        results.put("MultipleInBagConstraint1", fq);
     }
 }

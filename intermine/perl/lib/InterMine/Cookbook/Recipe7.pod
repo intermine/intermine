@@ -1,0 +1,183 @@
+=pod
+
+=head1 NAME
+
+InterMine::Cookbook::Recipe7 - Extending InterMine
+
+=head1 SYNOPSIS
+
+  package WriteOutYaml;
+
+  use Moose::Role;
+  use YAML::Syck;
+
+  requires qw(results);
+
+  sub dump_yaml_to_file {
+      my $self = shift;
+      my %args = @_;
+      my $file = $args{file} or confess "dump_to_file needs a file";
+      delete $args{file};
+      my $results = $self->results(%args);
+      DumpFile($file, $results);
+  }
+
+  1;
+
+  # Later, in a nearby script
+
+  use InterMine ('www.flymine.org');
+
+  my $query = InterMine->new_query(with => ['WriteOutYaml']);
+
+  # Specifying a name and a description is purely optional
+  $query->name('Tutorial 7 Query');
+  $query->description('All genes involved in biosynthetic processes');
+
+  $query->add_view(qw/
+      Gene.name
+      Gene.primaryIdentifier
+      Gene.goAnnotation.ontologyTerm.name
+  /);
+
+  $query->add_constraint(
+     path  => 'Gene.goAnnotation.ontologyTerm.name',
+     op    => 'CONTAINS',
+     value => 'biosynthetic process',
+  );
+
+  $query->dump_yaml_to_file(file => $filename, as => 'hashrefs');
+
+=head1 DESCRIPTION
+
+Since scripted queries represent an attempt to automate commonly repeated
+workflows, it is sensible to provide the opportunity to further eliminate
+any repetitive code you may end up writing. You may find that your personal
+use of queries and their results follows a predictable pattern, and you end
+up writing your code in an almost cookie-cutter style. When that happens, it
+is time to refactor out the commonalities into reusable chunks of code,
+ie. as modules.
+
+InterMine is designed to incorporate any additions you may want to write in
+as simply as possible. Being object orientated, it is possible to subclass and
+reimplement the entire InterMine suite. However, a simpler approach is to use
+roles(1). The InterMine modules are written using the Moose MOP system, and
+you can specify additional roles to be composed into the query or result
+iterator objects from the constructors.
+
+In the example above we imagine that a user frequently uses YAML(2) to serialise
+the results data to files. Rather than repeating the same chunk of code in
+each script, that functionality has been packaged up in a 'role',
+and then passed to the query constructor:
+
+  my $query = InterMine->new_query(with => [$role]);
+
+  # note that we can pass a list of roles
+  my $query = InterMine->new_query(with => [$role1, $role2]);
+
+
+Now the query has all the extra functionality that the role provides, so here
+the query knows automatically how to serialise itself to a file in the YAML format.
+
+  $query->dump_yaml_to_file($file, as => $format);
+
+Note that the result format is passed along to the results method, so we have
+exactly the same behaviour here as the default results method - this is simply
+a wrapper for the frequently repeated chunk of code.
+
+This can also be done with ResultIterators:
+
+  package HTMLTableRow;
+
+  use Moose::Role;
+
+  requires qw(arrayref);
+
+  sub html_row {
+      my $self = shift;
+      my $row  = $self->arrayref;
+      return unless (defined $row);
+      my $output = '<tr>';
+      for (@$row) {
+          $output .= "<td>$_</td>";
+      }
+      $output .= '</tr>';
+      return $output;
+  }
+
+  1;
+
+  # Later, in a nearby script:
+
+  my $ri = $query->results_iterator(with => ['HTMLTableRow']);
+
+  die $ri->status_line unless $ri->is_success;
+
+  print '<table>';
+  while (my $row = $ri->html_row) {
+      print $row;
+  print '</table>';
+
+This shows how we can provide a completely new method to ResultIterators to
+make the production of HTML tables from query results trivial. It also
+illustrates another advantage of having low level access to the iterator
+itself, as it allows you to define in great detail how you want your results
+returned to you.
+
+Combining these two kinds of roles can produce some radically new behaviour:
+
+  package HTMLTable;
+
+  use Moose::Role;
+
+  requires qw(results_iterator views);
+
+  sub results_as_html_table {
+      my $self = shift;
+      my $ri   = $self->results_iterator(with => ['HTMLTableRow']);
+      die $ri->status_line unless $ri->is_success;
+      my $table_string = '<table>';
+      $table_string .=
+	    "<tr>".
+	    join('', map {"<td>$_</td>"} $self->view).
+	    "</tr>";
+      while (my $row = $ri->html_row) {
+          $table_string .= $row;
+      }
+      $table_string .= '</table>';
+      return $table_string;
+  }
+
+  1;
+
+  # Later, in a nearby script
+
+  my $query = InterMine->new_query(with => ['HTMLTable']);
+
+  # ... define the query here
+
+  print $query->results_as_html_table;
+
+=head1 CONCLUSION
+
+The Perl API can be dynamically extended using Moose::Roles, with two of the
+main objects, the query, and the result iterator, allowing roles to be composed
+onto them when constructed. This can increase code reuse, and thus maintainability
+and flexibility.
+
+=head1 FURTHER READING
+
+L<Moose::Role>
+
+see examples of roles that can be applied to queries in InterMine/Query/Roles/Extra/
+
+=head1 FOOTNOTES
+
+(1) Roles are a key feature of the Moose Object Orientated Framework (L<Moose>).
+Essentially they are composable units of behaviour that make up a class or object,
+similar to Ruby's mixins, scala's traits, or Java's interfaces (except they
+have code too). For a discussion of roles in Perl see:
+L<http://www.modernperlbooks.com/mt/2009/04/the-why-of-perl-roles.html> and
+L<http://perlbuzz.com/2010/07/why-roles-in-perl-are-awesome.html>.
+
+=cut

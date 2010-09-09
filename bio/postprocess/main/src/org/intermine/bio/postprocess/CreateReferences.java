@@ -120,10 +120,10 @@ public class CreateReferences
      * collection to create/set
      * @throws Exception if anything goes wrong
      */
-    protected void insertReferenceField(Class<?> sourceClass, String sourceClassFieldName,
-                                        Class<?> connectingClass, String connectingClassFieldName,
-                                        Class<?> destinationClass, String createFieldName)
-        throws Exception {
+    protected void insertReferenceField(Class<? extends InterMineObject> sourceClass,
+            String sourceClassFieldName, Class<? extends InterMineObject> connectingClass,
+            String connectingClassFieldName, Class<? extends InterMineObject> destinationClass,
+            String createFieldName) throws Exception {
         LOG.info("Beginning insertReferences("
                  + sourceClass.getName() + ", "
                  + sourceClassFieldName + ", "
@@ -133,11 +133,9 @@ public class CreateReferences
                  + createFieldName + ")");
         long startTime = System.currentTimeMillis();
 
-        Iterator<?> resIter =
-            PostProcessUtil.findConnectingClasses(osw.getObjectStore(),
-                                          sourceClass, sourceClassFieldName,
-                                          connectingClass, connectingClassFieldName,
-                                          destinationClass, true);
+        Iterator<ResultsRow<InterMineObject>> resIter = PostProcessUtil.findConnectingClasses(
+                osw.getObjectStore(), sourceClass, sourceClassFieldName, connectingClass,
+                connectingClassFieldName, destinationClass, true);
 
         // results will be sourceClass ; destClass (ordered by sourceClass)
         osw.beginTransaction();
@@ -145,9 +143,9 @@ public class CreateReferences
         int count = 0;
 
         while (resIter.hasNext()) {
-            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
-            InterMineObject thisSourceObject = (InterMineObject) rr.get(0);
-            InterMineObject thisDestObject = (InterMineObject) rr.get(1);
+            ResultsRow<InterMineObject> rr = resIter.next();
+            InterMineObject thisSourceObject = rr.get(0);
+            InterMineObject thisDestObject = rr.get(1);
 
             try {
                 // clone so we don't change the ObjectStore cache
@@ -203,11 +201,10 @@ public class CreateReferences
      * create in secondClass
      * @throws Exception if anything goes wrong
      */
-    protected void insertCollectionField(Class<?> firstClass, String firstClassFieldName,
-                                         Class<?> connectingClass, String connectingClassFieldName,
-                                         Class<?> secondClass, String createFieldName,
-                                         boolean createInFirstClass)
-        throws Exception {
+    protected void insertCollectionField(Class<? extends InterMineObject> firstClass,
+            String firstClassFieldName, Class<? extends InterMineObject> connectingClass,
+            String connectingClassFieldName, Class<? extends InterMineObject> secondClass,
+            String createFieldName, boolean createInFirstClass) throws Exception {
         InterMineObject lastDestObject = null;
         Set<InterMineObject> newCollection = new HashSet<InterMineObject>();
 
@@ -243,27 +240,26 @@ public class CreateReferences
             manyToMany = true;
         }
 
-        Iterator<?> resIter =
-            PostProcessUtil.findConnectingClasses(osw.getObjectStore(),
-                                          firstClass, firstClassFieldName,
-                                          connectingClass, connectingClassFieldName,
-                                          secondClass, createInFirstClass);
+        Iterator<ResultsRow<InterMineObject>> resIter = PostProcessUtil.findConnectingClasses(
+                osw.getObjectStore(), firstClass, firstClassFieldName, connectingClass,
+                connectingClassFieldName, secondClass, createInFirstClass);
 
         // results will be firstClass ; destClass (ordered by firstClass)
         osw.beginTransaction();
         int count = 0;
 
         while (resIter.hasNext()) {
-            ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
+            ResultsRow<InterMineObject> rr = resIter.next();
+
             InterMineObject thisSourceObject;
             InterMineObject thisDestObject;
 
             if (createInFirstClass) {
-                thisDestObject = (InterMineObject) rr.get(0);
-                thisSourceObject = (InterMineObject) rr.get(1);
+                thisDestObject = rr.get(0);
+                thisSourceObject = rr.get(1);
             } else {
-                thisDestObject = (InterMineObject) rr.get(1);
-                thisSourceObject = (InterMineObject) rr.get(0);
+                thisDestObject = rr.get(1);
+                thisSourceObject = rr.get(0);
             }
 
             if (!manyToMany && (lastDestObject == null

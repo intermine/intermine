@@ -10,37 +10,35 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.SingletonResults;
-
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-
-import org.intermine.model.bio.Protein;
-import org.intermine.model.bio.Sequence;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.Protein;
+import org.intermine.model.bio.Sequence;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.ClobAccess;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.PendingClob;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SingletonResults;
 
 /**
  * Tests for {@link NCBIFastaLoaderTask}
@@ -52,6 +50,7 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
     private static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTaskTest.class);
     private String dataSetTitle = "cds test title";
 
+    @Override
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         osw.getObjectStore().flushObjectById();
@@ -68,7 +67,7 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
         for (Object rr: r) {
             Protein protein = (Protein) ((ResultsRow) rr).get(0);
             assertNotNull(protein.getPrimaryIdentifier());
-            actMap.put(protein.getPrimaryIdentifier(), protein.getSequence().getResidues());
+            actMap.put(protein.getPrimaryIdentifier(), protein.getSequence().getResidues().toString());
         }
 
         Map<String, String> expMap = new HashMap<String, String>();
@@ -164,6 +163,7 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
         return r;
     }
 
+    @Override
     public void tearDown() throws Exception {
         LOG.info("in tear down");
         if (osw.isInTransaction()) {

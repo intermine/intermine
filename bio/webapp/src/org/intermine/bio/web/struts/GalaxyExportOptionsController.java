@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +29,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.Column;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Path;
@@ -125,8 +125,8 @@ public class GalaxyExportOptionsController extends TilesAction
         for (int index = 0; index < columns.size(); index++) {
             Path prefix = columns.get(index).getPath().getPrefix();
             ClassDescriptor prefixCD = prefix.getLastClassDescriptor();
-            Set<Class> prefixClasses = DynamicUtil.decomposeClass(prefixCD.getType());
-            Class<?> prefixClass = prefixClasses.iterator().next();
+            Class<? extends FastPathObject> prefixClass = DynamicUtil.getSimpleClass(prefixCD
+                    .getType());
             // Chromosome is treated as a sequence feature in the model
             if (SequenceFeature.class.isAssignableFrom(prefixClass)
                     && !Chromosome.class.isAssignableFrom(prefixClass)) {

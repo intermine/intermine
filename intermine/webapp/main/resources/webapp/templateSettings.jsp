@@ -9,13 +9,13 @@
 
 <html:xhtml/>
 
-<c:if test="${TEMPLATE_BUILD_STATE != null}">
+<c:if test="${EDITING_TEMPLATE != null || NEW_TEMPLATE != null}">
 
   <div class="listHeading">
   <c:choose>
-    <c:when test="${TEMPLATE_BUILD_STATE.updatingTemplate != null}">
+    <c:when test="${EDITING_TEMPLATE != null}">
       <fmt:message key="templateBuilder.editingTemplate">
-        <fmt:param value="${TEMPLATE_BUILD_STATE.updatingTemplate.name}"/>
+        <fmt:param value="${QUERY.name}"/>
       </fmt:message>
     </c:when>
     <c:otherwise>      
@@ -34,7 +34,7 @@
     <table border="0" width="10%">
       <tr>
         <td width="1%" align="right" valign="top" nowrap><fmt:message key="templateBuilder.shortName"/>
-          <c:if test="${empty TEMPLATE_BUILD_STATE.name}">
+          <c:if test="${empty QUERY.name}">
             <span class="errors"> (Required)</span>
           </c:if>        
         </td>
@@ -46,7 +46,7 @@
       </tr>
       <tr>
         <td align="right" valign="top"><fmt:message key="templateBuilder.templateTitle"/>
-          <c:if test="${empty TEMPLATE_BUILD_STATE.title}">
+          <c:if test="${empty QUERY.title}">
             <span class="errors">(Required)</span>
           </c:if>
         </td>

@@ -70,6 +70,7 @@ public class EnrichmentWidget extends Widget
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process() {
         try {
             Class<?> clazz = TypeUtil.instantiate(config.getDataSetLoader());
@@ -219,11 +220,11 @@ public class EnrichmentWidget extends Widget
                         + "\" id=\"selected_" + id + "\" type=\"checkbox\">"});
 
                 String label = labelToId.get(id);
-                if (config.getExternalLink() != null && !config.getExternalLink().equals("")) {
+                if (config.getExternalLink() != null && !"".equals(config.getExternalLink())) {
                     label += " <a href=\"" + config.getExternalLink() + id
                              + "\" target=\"_new\" class=\"extlink\">[";
                     if (config.getExternalLinkLabel() != null
-                        && !config.getExternalLinkLabel().equals("")) {
+                        && !"".equals(config.getExternalLinkLabel())) {
                         label += config.getExternalLinkLabel();
                     }
                     label += id + "]</a>";

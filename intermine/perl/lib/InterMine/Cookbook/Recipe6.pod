@@ -1,0 +1,108 @@
+=pod
+
+=head1 NAME
+
+InterMine::Cookbook::Recipe6 - Advanced Results Management
+
+=head1 SYNOPSIS
+
+  # Get a list of Blast Matches, either 500 of them,
+  # or ones with E-values over 8.0, whichever is the larger set
+
+  use InterMine ('www.flymine.org');
+
+  my $query = InterMine->new_query;
+
+  # Specifying a name and a description is purely optional
+  $query->name('Tutorial 6 Query');
+
+  my ($subj, $obj, $evalue) = (qw/
+      BlastMatch.subject.primaryIdentifier
+      BlastMatch.object.primaryIdentifier
+      BlastMatch.EValue
+  /);
+
+  $query->add_view($subj, $obj, $evalue);
+
+  $query->sort_order($evalue => 'desc');
+
+  my $ri = $query->results_iterator;
+
+  # We need to check for errors here ourselves
+  die $ri->status_line unless $ri->is_success;
+
+  my @goodmatches;
+  while (my $row = $ri->hashref) {
+      if($row->{$evalue} >= 8 or @rows < 500) {
+          push @goodmatches, [@{$row}{$subj, $obj}];
+      }
+  }
+
+  $ri->close; # good hygiene, as the iterator represents an open connection
+
+=head1 DESCRIPTION
+
+There are some limitations on the results you get back that are difficult
+to write as constraints, and can be more easily processed on the client
+side. The above example shows one of them - if we constrainted the e-value
+to be greater than 8, we might not get back 500 results, and if we specified
+500 results as the result size, we might not get all the good matches.
+
+But making sure we get all e-values over 8, or at least 500 results, is simple
+on the client side, and by using iteration you can apply filters of this
+sort to the stream of results, without having to keep all the results rows
+in memory or on file (you can simple throw away, or never even look at,
+results you don't want to keep). The example above is fairly simple, but
+you can perform any arbitrary logic on the result row to decide what you
+want to do with it.
+
+For example, instead of just throwing away the bad matches, you could divide up
+the results into different result sets:
+
+  while (my $row = $ri->hashref) {
+      if ($row->{$evalue} >= 8) {
+          push @good_matches, $row;
+      }
+      elsif ($row->{$evalue} >= 5) {
+          push @dubious_matches, $row;
+      else {
+          push @bad_matches, $row;
+      }
+  }
+
+or perform calculations on the data:
+
+  my ($sum, $total);
+  while (my $row = $ri->hashref) {
+      $sum += $row->{$evalue};
+      $total++;
+  }
+  my $average_evalue = $sum / $total;
+
+obviously the possibilities depend on what you want the data for. Just like
+the C<results> method, the C<ResultIterator> object can return rows in one
+of three formats: C<string>, C<arrayref> and C<hashref>.
+
+There is no default - you must call one of these methods for each row you
+want back (you could even call different methods for different rows).
+
+Whereas to unpack the results returned by the C<results> operator we used the
+C<for> operator, here we want to use the C<while> operator with assignment
+in the brackets:
+
+  while (my $row = $ri->$method) {
+      # do something with the row...
+  }
+
+If you use InterMine queries a lot, you may find yourself doing the same thing over
+and over in your code - this may be a sign that you can refactor out some
+of that repetition, instead of copy and pasting it between scripts. In the next recipe we
+examine ways to extend InterMine to make it do what you want it to do.
+
+=head1 CONCLUSION
+
+As well as using the results method, you can get back the ResultsIterator directly
+to have fine-grained control over the results you get back, and what you
+want to do with them.
+
+=cut

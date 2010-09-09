@@ -34,6 +34,7 @@ import org.intermine.api.template.TemplateSummariser;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.SessionMethods;
@@ -66,7 +67,7 @@ public class MyMineController extends TilesAction
         /* if the user is on a restricted page and they are not logged in, send them to the bags
          * page.  query history is not a restricted page.
          */
-        if (page != null && !page.equals("history") && !profile.isLoggedIn()) {
+        if (page != null && !"history".equals(page) && !profile.isLoggedIn()) {
             page = "lists";
         }
 
@@ -75,7 +76,7 @@ public class MyMineController extends TilesAction
         }
 
         if (page != null) {
-            if (page.equals("templates")) {
+            if ("templates".equals(page)) {
                 // prime the tags cache so that the templates tags will be quick to access
                 String userName = profile.getUsername();
                 if (userName != null) {
@@ -87,10 +88,9 @@ public class MyMineController extends TilesAction
 
         WebState webState = SessionMethods.getWebState(request.getSession());
         // get the precomputed and summarised info
-        if ((request.getParameter("subtab") != null && request.getParameter("subtab").equals(
-                        "templates"))
-            || (webState.getSubtab("subtabmymine") != null
-                    && webState.getSubtab("subtabmymine").equals("templates"))) {
+        if ((request.getParameter("subtab") != null && "templates".equals(request
+                .getParameter("subtab"))) || (webState.getSubtab("subtabmymine") != null
+                        && "templates".equals(webState.getSubtab("subtabmymine")))) {
             getPrecomputedSummarisedInfo(profile, session, request);
         }
         return null;
@@ -118,18 +118,18 @@ public class MyMineController extends TilesAction
         for (TemplateQuery template : templates.values()) {
             if (template.isValid()) {
                 if ((session.getAttribute("precomputing_" + template.getName()) != null)
-                        && session.getAttribute("precomputing_" + template.getName())
-                            .equals("true")) {
+                        && "true".equals(session.getAttribute("precomputing_" + template
+                                .getName()))) {
                     precomputedTemplateMap.put(template.getName(), "precomputing");
                 } else {
                     Query query = TemplatePrecomputeHelper
-                        .getPrecomputeQuery(template, new ArrayList(), null);
+                        .getPrecomputeQuery(template, new ArrayList<QuerySelectable>(), null);
                     precomputedTemplateMap.put(template.getName(), Boolean.toString(os
                                 .isPrecomputed(query, "template")));
                 }
                 if ((session.getAttribute("summarising_" + template.getName()) != null)
-                        && session.getAttribute("summarising_" + template.getName())
-                            .equals("true")) {
+                        && "true".equals(session.getAttribute("summarising_" + template
+                                .getName()))) {
                     summarisedTemplateMap.put(template.getName(), "summarising");
                 } else {
                     summarisedTemplateMap.put(template.getName(), Boolean.toString(summariser

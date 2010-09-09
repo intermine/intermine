@@ -208,7 +208,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
             Object obj = null;
             if (qn instanceof QueryClass) {
                 try {
-                    Class cls = ((QueryClass) qn).getType();
+                    Class<?> cls = ((QueryClass) qn).getType();
                     if (cls.isInterface()) {
                         obj = DynamicUtil.createObject(Collections.singleton(cls));
                     } else {

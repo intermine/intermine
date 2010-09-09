@@ -10,11 +10,9 @@ package org.intermine.objectstore.query;
  *
  */
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
+import org.intermine.model.FastPathObject;
 import org.intermine.util.DynamicUtil;
 
 /**
@@ -29,14 +27,14 @@ import org.intermine.util.DynamicUtil;
  */
 public class QueryClass implements QueryNode, FromElement
 {
-    private Class type;
+    private Class<? extends FastPathObject> type;
 
     /**
      * Constructs a QueryClass representing the specified Java class
      *
      * @param type the Java class
      */
-    public QueryClass(Class type) {
+    public QueryClass(Class<? extends FastPathObject> type) {
         this.type = type;
     }
 
@@ -45,12 +43,8 @@ public class QueryClass implements QueryNode, FromElement
      *
      * @param types the Set of classes
      */
-    public QueryClass(Set types) {
-        if (types.size() == 1) {
-            this.type = (Class) types.iterator().next();
-        } else {
-            this.type = DynamicUtil.composeClass(types);
-        }
+    public QueryClass(Set<Class<?>> types) {
+        this(types.toArray(new Class[0]));
     }
 
     /**
@@ -58,8 +52,8 @@ public class QueryClass implements QueryNode, FromElement
      *
      * @param types the array of classes
      */
-    public QueryClass(Class... types) {
-        this(new HashSet(Arrays.asList(types)));
+    public QueryClass(Class<?>... types) {
+        this.type = DynamicUtil.composeDescriptiveClass(types);
     }
 
     /**
@@ -67,7 +61,7 @@ public class QueryClass implements QueryNode, FromElement
      *
      * @return the Class
      */
-    public Class getType() {
+    public Class<? extends FastPathObject> getType() {
         return type;
     }
 
@@ -76,19 +70,18 @@ public class QueryClass implements QueryNode, FromElement
      *
      * @return a String representation
      */
+    @Override
     public String toString() {
-        Set classes = DynamicUtil.decomposeClass(type);
+        Set<Class<?>> classes = DynamicUtil.decomposeClass(type);
         if (classes.size() == 1) {
             return type.getName();
         } else {
             boolean needComma = false;
             StringBuffer retval = new StringBuffer();
-            Iterator classIter = classes.iterator();
-            while (classIter.hasNext()) {
+            for (Class<?> clazz : classes) {
                 retval.append(needComma ? ", " : "(");
                 needComma = true;
-                Class cls = (Class) classIter.next();
-                retval.append(cls.getName());
+                retval.append(clazz.getName());
             }
             return retval.toString() + ")";
         }

@@ -17,9 +17,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.util.NameUtil;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateBuildState;
 
 /**
  * Form used when building a template.
@@ -102,11 +102,11 @@ public class TemplateSettingsForm extends ActionForm
      */
     public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       HttpServletRequest request) {
-        TemplateBuildState tbs = SessionMethods.getTemplateBuildState(request.getSession());
-        setName(tbs.getName());
-        setTitle(tbs.getTitle());
-        setDescription(tbs.getDescription());
-        setComment(tbs.getComment());
+        TemplateQuery template = (TemplateQuery) SessionMethods.getQuery(request.getSession());
+        setName(template.getName());
+        setTitle(template.getTitle());
+        setDescription(template.getDescription());
+        setComment(template.getComment());
     }
 
     /**

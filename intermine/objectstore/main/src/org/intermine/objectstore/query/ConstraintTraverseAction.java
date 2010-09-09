@@ -24,5 +24,5 @@ public interface ConstraintTraverseAction
      * and sub-Constraint.
      * @param c the Constraint that was found
      */
-    public void apply(Constraint c);
+    void apply(Constraint c);
 }

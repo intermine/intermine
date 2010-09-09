@@ -12,8 +12,6 @@ intact
 intermine-items-xml-file
 intermine-items-large-xml-file
 interpro
-kegg-example
-kegg-identifiers
 kegg-orthologues
 kegg-pathway
 malaria-gff

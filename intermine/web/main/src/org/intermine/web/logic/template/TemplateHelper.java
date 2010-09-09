@@ -22,7 +22,6 @@ import javax.xml.stream.XMLStreamWriter;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.xml.TemplateQueryBinding;
-import org.intermine.pathquery.PathQuery;
 
 /**
  * Static helper routines related to templates.
@@ -73,18 +72,5 @@ public class TemplateHelper
             Map<String, InterMineBag> savedBags, int version) throws Exception {
         Reader templateQueriesReader = new StringReader(xml);
         return new TemplateQueryBinding().unmarshal(templateQueriesReader, savedBags, version);
-    }
-
-    /**
-     * Build a template query given a TemplateBuildState and a PathQuery
-     *
-     * @param tbs the template build state
-     * @param query the path query
-     * @return a template query
-     */
-    public static TemplateQuery buildTemplateQuery(TemplateBuildState tbs, PathQuery query) {
-        TemplateQuery template = new TemplateQuery(tbs.getName(), tbs.getTitle(),
-                tbs.getDescription(), tbs.getComment(), query.clone());
-        return template;
     }
 }

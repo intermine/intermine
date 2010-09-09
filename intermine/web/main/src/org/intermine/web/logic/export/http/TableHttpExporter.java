@@ -35,7 +35,7 @@ public interface TableHttpExporter
      * @param response The HTTP response we are creating
      * @param form the form containing the columns paths to export
      */
-    public void export(PagedTable pt, HttpServletRequest request,
+    void export(PagedTable pt, HttpServletRequest request,
                        HttpServletResponse response, TableExportForm form);
 
     /**
@@ -43,7 +43,7 @@ public interface TableHttpExporter
      * @param pt the PagedTable
      * @return true if and only if this TableExporter can export the argument PagedTable
      */
-    public boolean canExport(PagedTable pt);
+    boolean canExport(PagedTable pt);
 
     /**
      * Return a list of the Paths to show the user as initial export columns or header contents.
@@ -53,5 +53,5 @@ public interface TableHttpExporter
      * @return the Paths
      * @throws PathException if bad path encountered
      */
-    public List<Path> getInitialExportPaths(PagedTable pt) throws PathException;
+    List<Path> getInitialExportPaths(PagedTable pt) throws PathException;
 }

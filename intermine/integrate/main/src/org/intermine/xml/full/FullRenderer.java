@@ -11,24 +11,24 @@ package org.intermine.xml.full;
  */
 
 import java.io.StringWriter;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.TreeSet;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.TreeSet;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 
 /**
  * Render an object in InterMine Full XML format
  *
  * @author Andrew Varley
  */
-public class FullRenderer
+public final class FullRenderer
 {
     protected static final String ENDL = System.getProperty("line.separator");
 
@@ -45,7 +45,7 @@ public class FullRenderer
      * @param model the parent model
      * @return the XML for the list of objects
      */
-    public static String render(Collection objects, Model model) {
+    public static String render(Collection<FastPathObject> objects, Model model) {
         return render(toItems(objects, model));
     }
 
@@ -55,7 +55,7 @@ public class FullRenderer
      * @param model the parent model
      * @return the XML for object
      */
-    public static String render(Object obj, Model model) {
+    public static String render(FastPathObject obj, Model model) {
         return render(new ItemFactory(model).makeItem(obj));
     }
 
@@ -65,12 +65,10 @@ public class FullRenderer
      * @param model the parent model
      * @return a list of Full Data Items
      */
-    public static List toItems(Collection objects, Model model) {
-        List items = new ArrayList();
+    public static List<Item> toItems(Collection<FastPathObject> objects, Model model) {
+        List<Item> items = new ArrayList<Item>();
 
-        Iterator objIter = objects.iterator();
-        while (objIter.hasNext()) {
-            Object obj = (Object) objIter.next();
+        for (FastPathObject obj : objects) {
             items.add(new ItemFactory(model).makeItem(obj));
         }
         return items;
@@ -85,9 +83,8 @@ public class FullRenderer
     public static String render(Collection<Item> items) {
         StringBuffer sb = new StringBuffer();
         sb.append(getHeader()).append(ENDL);
-        Iterator iter = items.iterator();
-        while (iter.hasNext()) {
-            sb.append(render((Item) iter.next()));
+        for (Item item : items) {
+            sb.append(render(item));
         }
         sb.append(getFooter()).append(ENDL);
 
@@ -116,15 +113,14 @@ public class FullRenderer
             }
             writer.writeAttribute("class", item.getClassName() == null ? "" : item.getClassName());
 
-            if (item.getImplementations() != null && !item.getImplementations().equals("")) {
+            if (item.getImplementations() != null && !"".equals(item.getImplementations())) {
                 writer.writeAttribute("implements", item.getImplementations());
             }
             writer.writeCharacters(ENDL);
-            TreeSet attrs = new TreeSet(new RendererComparator());
+            TreeSet<Attribute> attrs = new TreeSet<Attribute>(new RendererComparator());
             attrs.addAll(item.getAttributes());
-            for (Iterator i = attrs.iterator(); i.hasNext();) {
-                Attribute attr = (Attribute) i.next();
-                if (!attr.getValue().equals("")) {
+            for (Attribute attr : attrs) {
+                if (!"".equals(attr.getValue())) {
                     writer.writeEmptyElement("attribute");
                     writer.writeAttribute("name", attr.getName());
                     writer.writeAttribute("value", attr.getValue());
@@ -132,26 +128,24 @@ public class FullRenderer
                 }
             }
 
-            TreeSet refs = new TreeSet(new RendererComparator());
+            TreeSet<Reference> refs = new TreeSet<Reference>(new RendererComparator());
             refs.addAll(item.getReferences());
-            for (Iterator i = refs.iterator(); i.hasNext();) {
-                Reference ref = (Reference) i.next();
+            for (Reference ref : refs) {
                 writer.writeEmptyElement("reference");
                 writer.writeAttribute("name", ref.getName());
                 writer.writeAttribute("ref_id", ref.getRefId());
                 writer.writeCharacters(ENDL);
             }
 
-            TreeSet cols = new TreeSet(new RendererComparator());
+            TreeSet<ReferenceList> cols = new TreeSet<ReferenceList>(new RendererComparator());
             cols.addAll(item.getCollections());
-            for (Iterator i = cols.iterator(); i.hasNext();) {
-                ReferenceList refList = (ReferenceList) i.next();
+            for (ReferenceList refList : cols) {
                 writer.writeStartElement("collection");
                 writer.writeAttribute("name", refList.getName());
 
-                for (Iterator j = refList.getRefIds().iterator(); j.hasNext();) {
+                for (String ref : refList.getRefIds()) {
                     writer.writeEmptyElement("reference");
-                    writer.writeAttribute("ref_id", (String) j.next());
+                    writer.writeAttribute("ref_id", ref);
                 }
                 writer.writeEndElement();
                 writer.writeCharacters(ENDL);

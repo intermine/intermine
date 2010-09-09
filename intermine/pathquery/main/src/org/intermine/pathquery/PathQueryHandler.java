@@ -11,41 +11,48 @@ package org.intermine.pathquery;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.Util;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Extension of DefaultHandler to handle parsing PathQuery objects
+ *
  * @author Mark Woodbridge
  * @author Kim Rutherford
  * @author Thomas Riley
+ * @author Matthew Wakeling
  */
 public class PathQueryHandler extends DefaultHandler
 {
     private Map<String, PathQuery> queries;
     private String queryName;
-    private String queryDescription = null;
-    private char gencode;
-    private PathNode node;
     protected PathQuery query;
+    protected String constraintLogic = null;
+    protected String currentNodePath = null;
     private Model model = null;
-    private List<String> viewStrings = new ArrayList();
-    private Map<String, String> pathStringDescriptions = new HashMap<String, String>();
-    private Map<String, String> sortOrder = new LinkedHashMap();
     protected int version;
+    private List<PathConstraintSubclass> questionableSubclasses;
+    /** This is a list of String type descriptions that are attribute types */
+    public static final Set<String> ATTRIBUTE_TYPES = new HashSet<String>(Arrays.asList("boolean",
+                "float", "double", "short", "int", "long", "Boolean", "Float", "Double", "Short",
+                "Integer", "Long", "BigDecimal", "Date", "String"));
+    private StringBuilder valueBuffer = null;
+    protected String constraintPath = null;
+    protected Map<String, String> constraintAttributes = null;
+    protected Collection<String> constraintValues = null;
+    protected String constraintCode = null;
 
     /**
      * Constructor
@@ -60,12 +67,18 @@ public class PathQueryHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    public void startElement(@SuppressWarnings("unused") String uri,
+    @Override public void startElement(@SuppressWarnings("unused") String uri,
             @SuppressWarnings("unused") String localName, String qName, Attributes attrs)
         throws SAXException {
-        if (qName.equals("query")) {
-            // reset things
-            gencode = 'A';
+        if (valueBuffer != null) {
+            throw new SAXException("Cannot have any tags inside a value tag");
+        }
+        if ((constraintPath != null) && (!"value".equals(qName))) {
+            throw new SAXException("Cannot have anything other than value tag inside a constraint");
+        }
+        if ("query-list".equals(qName)) {
+            // Do nothing
+        } else if ("query".equals(qName)) {
             queryName = validateName(attrs.getValue("name"));
             try {
                 model = Model.getInstanceByName(attrs.getValue("model"));
@@ -75,135 +88,233 @@ public class PathQueryHandler extends DefaultHandler
             query = new PathQuery(model);
 
             if (attrs.getValue("longDescription") != null) {
-                queryDescription = attrs.getValue("longDescription");
+                query.setDescription(attrs.getValue("longDescription"));
             }
             if (attrs.getValue("view") != null) {
-                viewStrings = StringUtil.tokenize(attrs.getValue("view"));
-            }
-
-            if (attrs.getValue("sortOrder") != null) {
-                String[] s = (attrs.getValue("sortOrder")).split(" ");
-                for (int i = 0; i < s.length; i++) {
-                    String sortDirection = null;
-                    String orderByString = s[i];
-                    // check if next string bit is a direction string
-                    if ((s.length > i + 1) && (s[i + 1].equalsIgnoreCase("desc")
-                                || s[i + 1].equalsIgnoreCase("asc"))) {
-                        if (s[i + 1].equalsIgnoreCase("desc")) {
-                            sortDirection = PathQuery.DESCENDING;
-                        } else {
-                            sortDirection = PathQuery.ASCENDING;
+                String view = attrs.getValue("view");
+                if (view.contains(":")) {
+                    // This is an old style query, and we need to convert the colons into outer
+                    // joins
+                    String[] viewPathArray = PathQuery.SPACE_SPLITTER.split(view.trim());
+                    for (String viewPath : viewPathArray) {
+                        int from = 0;
+                        while (viewPath.indexOf(':', from) != -1) {
+                            int colonPos = viewPath.indexOf(':', from);
+                            int nextDot = viewPath.replace(':', '.').indexOf('.', colonPos + 1);
+                            String outerJoin = nextDot == -1 ? viewPath
+                                : viewPath.substring(0, nextDot);
+                            query.setOuterJoinStatus(outerJoin.replace(':', '.'),
+                                    OuterJoinStatus.OUTER);
+                            from = colonPos + 1;
                         }
-                        i++;
-                    } else {
-                        sortDirection = PathQuery.ASCENDING;
                     }
-                    sortOrder.put(orderByString, sortDirection);
+                    view = view.replace(':', '.');
                 }
+                query.addViewSpaceSeparated(view);
             }
-            if (attrs.getValue("constraintLogic") != null) {
-                query.setConstraintLogic(attrs.getValue("constraintLogic"));
+            if (attrs.getValue("sortOrder") != null) {
+                query.addOrderBySpaceSeparated(attrs.getValue("sortOrder"));
             }
-        }
-        if (qName.equals("node")) {
-            node = query.addNode(attrs.getValue("path"));
-            if (attrs.getValue("type") != null) {
-                node.setType(attrs.getValue("type"));
+            constraintLogic = attrs.getValue("constraintLogic");
+            questionableSubclasses = new ArrayList<PathConstraintSubclass>();
+        } else if ("node".equals(qName)) {
+            // There's a node tag, so all constraints inside must inherit this path. Set it in a
+            // variable, and reset the variable to null when we see the end tag.
+            currentNodePath = attrs.getValue("path");
+            String type = attrs.getValue("type");
+            if ((type != null) && (!ATTRIBUTE_TYPES.contains(type))
+                    && (currentNodePath.contains(".") || currentNodePath.contains(":"))) {
+                PathConstraintSubclass subclass = new PathConstraintSubclass(currentNodePath, type);
+                query.addConstraint(subclass);
+                questionableSubclasses.add(subclass);
             }
-        }
-        if (qName.equals("constraint")) {
-            int opIndex = toStrings(ConstraintOp.getValues()).indexOf(attrs.getValue("op"));
-            ConstraintOp constraintOp = ConstraintOp.getOpForIndex(new Integer(opIndex));
-            Object constraintValue = null;
-            // If we know that the query is not valid, don't resolve the type of
-            // the node as it may not resolve correctly
-            if (node.isReference() || !query.isValid()) {
-                constraintValue = attrs.getValue("value");
-            } else if (BagConstraint.VALID_OPS.contains(constraintOp)) {
-                constraintValue = attrs.getValue("value");
-                // bag constraints are now only valid on classes.  If this bag
-                // constraint is on another field:
-                // a) if a key field move it to parent
-                // b) otherwise throw an exception to disable query
-                if (node.isAttribute()) {
-                    Exception e = new Exception("Invalid bag constraint - only objects can be"
-                            + "constrained to be in bags.");
-                    query.addProblem(e);
+        } else if ("constraint".equals(qName)) {
+            String path = attrs.getValue("path");
+            if (currentNodePath != null) {
+                if (path != null) {
+                    throw new SAXException("Cannot set path in a constraint inside a node");
                 }
-            } else {
-                Class c = null;
-                if (model != null && !node.getType().startsWith(model.getPackageName())) {
-                    String type = model.getPackageName() + "." + node.getType();
-                    try {
-                        c = TypeUtil.getClass(type);
-                    } catch (RuntimeException e) {
-                        // ignore - probably a String/BigDecimal etc.
-                    }
-                }
-                if (c == null) {
-                    c = TypeUtil.getClass(node.getType());
-                }
-                if (constraintOp != ConstraintOp.IS_NULL
-                        && constraintOp != ConstraintOp.IS_NOT_NULL) {
-                    String stringValue = attrs.getValue("value");
-                    if ((version < 1) && (stringValue != null)) {
-                        stringValue = Util.wildcardSqlToUser(stringValue);
-                    }
-                    constraintValue = TypeUtil.stringToObject(c, stringValue);
-                }
+                path = currentNodePath;
             }
-            String editable = attrs.getValue("editable");
-            boolean editableFlag = false;
-            if (editable != null && editable.equals("true")) {
-                editableFlag = true;
-            }
-            String description = attrs.getValue("description");
-            String identifier = attrs.getValue("identifier");
             String code = attrs.getValue("code");
-            if (code == null) {
-                code = "" + gencode;
-                gencode++;
+            String type = attrs.getValue("type");
+            if (type != null) {
+                query.addConstraint(new PathConstraintSubclass(path, type));
+            } else {
+                path = path.replace(':', '.');
+                constraintPath = path;
+                constraintAttributes = new HashMap<String, String>();
+                for (int i = 0; i < attrs.getLength(); i++) {
+                    constraintAttributes.put(attrs.getQName(i), attrs.getValue(i));
+                }
+                constraintValues = new LinkedHashSet<String>();
+                constraintCode = code;
             }
-            String extraValue = attrs.getValue("extraValue");
-            node.getConstraints().add(new Constraint(constraintOp, constraintValue,
-                    editableFlag, description, code, identifier, extraValue));
-        }
-        if (qName.equals("pathDescription")) {
+        } else if ("pathDescription".equals(qName)) {
             String pathString = attrs.getValue("pathString");
             String description = attrs.getValue("description");
-            pathStringDescriptions.put(pathString, description);
+
+            // Descriptions should only refer to classes that appear in the view, which we have
+            // already read.  This check makes sure the description is for a class that has
+            // attributes on the view list before adding it.  We ignore invalid descriptions to
+            // cope with legacy bad validation of qyery XML.
+            if (pathString.endsWith(".")) {
+                throw new SAXException("Invalid path '" + pathString + "' for description: "
+                        + description);
+            }
+            String pathToCheck = pathString + ".";
+            for (String viewString : query.getView()) {
+                if (viewString.startsWith(pathToCheck)) {
+                    query.setDescription(pathString, description);
+                    break;
+                }
+            }
+        } else if ("join".equals(qName)) {
+            String pathString = attrs.getValue("path");
+            String type = attrs.getValue("style");
+            if ("INNER".equals(type.toUpperCase())) {
+                query.setOuterJoinStatus(pathString, OuterJoinStatus.INNER);
+            } else if ("OUTER".equals(type.toUpperCase())) {
+                query.setOuterJoinStatus(pathString, OuterJoinStatus.OUTER);
+            } else {
+                throw new SAXException("Unknown join style " + type + " for path " + pathString);
+            }
+        } else if ("value".equals(qName)) {
+            valueBuffer = new StringBuilder();
         }
     }
 
+    /**
+     * Process a constraint from the xml attributes.
+     *
+     * @param query the PathQuery, to enable creating Path objects
+     * @param path the path of the constraint to create
+     * @param attrs the XML attributes
+     * @param values the enclosed values
+     * @return a PathConstraint object
+     * @throws SAXException if something is wrong
+     */
+    public PathConstraint processConstraint(PathQuery query, String path,
+            Map<String, String> attrs, Collection<String> values) throws SAXException {
+        ConstraintOp constraintOp = ConstraintOp.getConstraintOp(attrs.get("op"));
+        if (ConstraintOp.CONTAINS.equals(constraintOp)) {
+            constraintOp = ConstraintOp.MATCHES;
+        }
+        if (PathConstraintAttribute.VALID_OPS.contains(constraintOp)) {
+            boolean isLoop = false;
+            if (PathConstraintLoop.VALID_OPS.contains(constraintOp)) {
+                try {
+                    Path constraintPath2 = query.makePath(path);
+                    if (!constraintPath2.endIsAttribute()) {
+                        isLoop = true;
+                    }
+                } catch (PathException e) {
+                    throw new SAXException("Cannot recognise path in constraint: " + path,
+                            e);
+                }
+            }
+            if (isLoop) {
+                String loopPath = attrs.get("loopPath");
+                if (loopPath == null) {
+                    loopPath = attrs.get("value");
+                }
+                loopPath = loopPath.replace(':', '.');
+                return new PathConstraintLoop(path, constraintOp, loopPath);
+            } else {
+                String constraintValue = attrs.get("value");
+                return new PathConstraintAttribute(path, constraintOp, constraintValue);
+            }
+        } else if (PathConstraintNull.VALID_OPS.contains(constraintOp)) {
+            return new PathConstraintNull(path, constraintOp);
+        } else if (PathConstraintBag.VALID_OPS.contains(constraintOp)) {
+            String bag = attrs.get("value");
+            String ids = attrs.get("ids");
+            if (bag != null) {
+                return new PathConstraintBag(path, constraintOp, bag);
+            } else if (ids != null) {
+                String[] idArray = ids.split(",");
+                Collection<Integer> idsCollection = new LinkedHashSet<Integer>();
+                for (String id : idArray) {
+                    try {
+                        idsCollection.add(Integer.valueOf(id.trim()));
+                    } catch (NumberFormatException e) {
+                        throw new SAXException("List of IDs contains invalid integer: " + id, e);
+                    }
+                }
+                return new PathConstraintIds(path, constraintOp, idsCollection);
+            } else {
+                Collection<String> valuesCollection = new LinkedHashSet<String>();
+                for (String value : values) {
+                    valuesCollection.add(value.trim());
+                }
+                return new PathConstraintMultiValue(path, constraintOp, valuesCollection);
+            }
+        } else if (ConstraintOp.LOOKUP.equals(constraintOp)) {
+            String lookup = attrs.get("value");
+            String extraValue = attrs.get("extraValue");
+            return new PathConstraintLookup(path, lookup, extraValue);
+        } else {
+            throw new SAXException("Invalid operation type: " + constraintOp
+                    + " (from text \"" + attrs.get("op") + "\", attributes: " + attrs + ")");
+        }
+    }
 
     /**
      * {@inheritDoc}
      */
-    public void endElement(@SuppressWarnings("unused") String uri,
-                           @SuppressWarnings("unused") String localName, String qName) {
-        if (qName.equals("query")) {
-            query.syncLogicExpression("and"); // always and for old queries
-            query.addView(viewStrings);
-            if (query.getView().size() == 0) {
-                // query has no valid view paths, which we can't handle at the moment
-                PathException e = new PathException("setView() was passed null or empty string",
-                        null);
-                query.addProblem(e);
-                return;
+    @Override public void endElement(@SuppressWarnings("unused") String uri,
+            @SuppressWarnings("unused") String localName, String qName) throws SAXException {
+        if ("query".equals(qName)) {
+            if (constraintLogic != null) {
+                query.setConstraintLogic(constraintLogic);
             }
-            if (queryDescription != null) {
-                query.setDescription(queryDescription);
-            }
-            setSortOrder();
 
-            for (Map.Entry<String, String> entry: pathStringDescriptions.entrySet()) {
-                query.addPathStringDescription(entry.getKey(), entry.getValue());
+            if (query.isValid()) {
+                try {
+                    Map<String, String> subClasses = query.getSubclasses();
+                    for (PathConstraintSubclass subclass : questionableSubclasses) {
+                        Map<String, String> trimmedSubclasses =
+                            new HashMap<String, String>(subClasses);
+                        trimmedSubclasses.remove(subclass.getPath());
+                        Path path = new Path(model, subclass.getPath(), trimmedSubclasses);
+                        if (path.getEndClassDescriptor().getUnqualifiedName().equals(subclass
+                                .getType())) {
+                            query.removeConstraint(subclass);
+                        }
+                    }
+                } catch (PathException e) {
+                    // Shouldn't ever happen, as the query is valid
+                    throw new Error("Error", e);
+                }
             }
             queries.put(queryName, query);
-            viewStrings = new ArrayList<String>();
-            sortOrder = new LinkedHashMap();
-            pathStringDescriptions = new HashMap<String, String>();
-            queryDescription = null;
+        } else if ("node".equals(qName)) {
+            currentNodePath = null;
+        } else if ("constraint".equals(qName) && (constraintPath != null)) {
+            PathConstraint constraint = processConstraint(query, constraintPath,
+                    constraintAttributes, constraintValues);
+            if (constraintCode == null) {
+                query.addConstraint(constraint);
+            } else {
+                query.addConstraint(constraint, constraintCode);
+            }
+            constraintPath = null;
+        } else if ("value".equals(qName)) {
+            if (valueBuffer == null) {
+                throw new NullPointerException("valueBuffer is null while closing value tag");
+            }
+            constraintValues.add(valueBuffer.toString());
+            valueBuffer = null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void characters(char[] ch, int start, int length) {
+        if (valueBuffer != null) {
+            valueBuffer.append(ch, start, length);
         }
     }
 
@@ -212,10 +323,10 @@ public class PathQueryHandler extends DefaultHandler
      * @param list the Object List
      * @return the String list
      */
-    protected List<String> toStrings(List list) {
+    protected List<String> toStrings(List<Object> list) {
         List<String> strings = new ArrayList<String>();
-        for (Iterator i = list.iterator(); i.hasNext();) {
-            strings.add(i.next().toString());
+        for (Object o : list) {
+            strings.add(o.toString());
         }
         return strings;
     }
@@ -242,15 +353,5 @@ public class PathQueryHandler extends DefaultHandler
             }
         }
         return validatedName;
-    }
-
-    private void setSortOrder() {
-        Iterator it = sortOrder.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry) it.next();
-            String pathString = (String) entry.getKey();
-            String direction = (String) entry.getValue();
-            query.addOrderBy(pathString, direction);
-        }
     }
 }

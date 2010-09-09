@@ -28,6 +28,7 @@ import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.PrimaryKey;
 import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -98,6 +99,7 @@ public class BatchingFetcher extends HintingFetcher
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close(Source source) {
         LOG.info("Batching equivalent object query summary for source " + source + " :"
                 + getSummary(source).toString() + "\nFetched " + batchQueried
@@ -107,10 +109,11 @@ public class BatchingFetcher extends HintingFetcher
     /**
      * {@inheritDoc}
      */
-    public Set queryEquivalentObjects(InterMineObject obj,
+    @Override
+    public Set<InterMineObject> queryEquivalentObjects(InterMineObject obj,
             Source source) throws ObjectStoreException {
         if (source == this.source) {
-            Set retval = equivalents.get(obj);
+            Set<InterMineObject> retval = equivalents.get(obj);
             if (retval != null) {
                 //Set expected = super.queryEquivalentObjects(obj, source);
                 //if (!retval.equals(expected)) {
@@ -134,7 +137,7 @@ public class BatchingFetcher extends HintingFetcher
      * @param batch the objects
      * @throws ObjectStoreException if something goes wrong
      */
-    protected void getEquivalentsFor(List<ResultsRow> batch) throws ObjectStoreException {
+    protected void getEquivalentsFor(List<ResultsRow<Object>> batch) throws ObjectStoreException {
         long time = System.currentTimeMillis();
         long time1 = time;
         boolean databaseEmpty = hints.databaseEmpty();
@@ -149,7 +152,7 @@ public class BatchingFetcher extends HintingFetcher
         // We can make use of the ObjectStoreFastCollectionsForTranslatorImpl's ability to work this
         // all out for us.
         Set<InterMineObject> objects = new HashSet<InterMineObject>();
-        for (ResultsRow row : batch) {
+        for (ResultsRow<Object> row : batch) {
             for (Object object : row) {
                 if (object instanceof InterMineObject) {
                     InterMineObject imo = (InterMineObject) object;
@@ -165,8 +168,8 @@ public class BatchingFetcher extends HintingFetcher
                             if ((fieldValue instanceof InterMineObject)
                                     && (!(fieldValue instanceof ProxyReference))) {
                                 objects.add((InterMineObject) fieldValue);
-                            } else if (fieldValue instanceof Collection) {
-                                for (Object collectionElement : ((Collection) fieldValue)) {
+                            } else if (fieldValue instanceof Collection<?>) {
+                                for (Object collectionElement : ((Collection<?>) fieldValue)) {
                                     if ((collectionElement instanceof InterMineObject)
                                             && (!(collectionElement instanceof ProxyReference))) {
                                         objects.add((InterMineObject) collectionElement);
@@ -190,9 +193,10 @@ public class BatchingFetcher extends HintingFetcher
             = new IdentityHashMap<PrimaryKey, ClassDescriptor>();
         Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld
             = new IdentityHashMap<ClassDescriptor, List<InterMineObject>>();
-        Map<Class, List<InterMineObject>> categorised = CollectionUtil.groupByClass(objects, false);
+        Map<Class<?>, List<InterMineObject>> categorised = CollectionUtil.groupByClass(objects,
+                false);
         Map<ClassDescriptor, Boolean> cldsDone = new IdentityHashMap<ClassDescriptor, Boolean>();
-        for (Class c : categorised.keySet()) {
+        for (Class<?> c : categorised.keySet()) {
             Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(c);
             for (ClassDescriptor cld : classDescriptors) {
                 if (!cldsDone.containsKey(cld)) {
@@ -214,7 +218,7 @@ public class BatchingFetcher extends HintingFetcher
                         if (!classNotExists) {
                             //LOG.error("Inspecting class " + className);
                             List<InterMineObject> objectsForCld = new ArrayList<InterMineObject>();
-                            for (Map.Entry<Class, List<InterMineObject>> category
+                            for (Map.Entry<Class<?>, List<InterMineObject>> category
                                     : categorised.entrySet()) {
                                 if (cld.getType().isAssignableFrom(category.getKey())) {
                                     objectsForCld.addAll(category.getValue());
@@ -251,7 +255,7 @@ public class BatchingFetcher extends HintingFetcher
             Map<InterMineObject, Set<InterMineObject>> results,
             Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld,
             long time1) throws ObjectStoreException {
-        Set<Integer> fetchedObjectIds = Collections.synchronizedSet(new HashSet());
+        Set<Integer> fetchedObjectIds = Collections.synchronizedSet(new HashSet<Integer>());
         Map<PrimaryKey, ClassDescriptor> pksNotDone
             = new IdentityHashMap<PrimaryKey, ClassDescriptor>(pksToDo);
         while (!pksToDo.isEmpty()) {
@@ -300,7 +304,7 @@ public class BatchingFetcher extends HintingFetcher
                 Iterator<ClassDescriptor> otherCldIter = pksNotDone.values().iterator();
                 while (otherCldIter.hasNext() && canDoPkNow) {
                     ClassDescriptor otherCld = otherCldIter.next();
-                    Class fieldClass = ((ReferenceDescriptor) fd)
+                    Class<? extends FastPathObject> fieldClass = ((ReferenceDescriptor) fd)
                         .getReferencedClassDescriptor().getType();
                     if (otherCld.getType().isAssignableFrom(fieldClass)
                             || fieldClass.isAssignableFrom(otherCld.getType())) {
@@ -336,52 +340,53 @@ public class BatchingFetcher extends HintingFetcher
             q.addToSelect(qc);
             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
             q.setConstraint(cs);
-            Map<String, Set> fieldNameToValues = new HashMap<String, Set>();
+            Map<String, Set<Object>> fieldNameToValues = new HashMap<String, Set<Object>>();
             for (String fieldName : pk.getFieldNames()) {
                 try {
                     QueryField qf = new QueryField(qc, fieldName);
                     q.addToSelect(qf);
-                    Set values = new HashSet();
+                    Set<Object> values = new HashSet<Object>();
                     fieldNameToValues.put(fieldName, values);
                     cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, values));
                 } catch (IllegalArgumentException e) {
                     QueryForeignKey qf = new QueryForeignKey(qc, fieldName);
                     q.addToSelect(qf);
-                    Set values = new HashSet();
+                    Set<Object> values = new HashSet<Object>();
                     fieldNameToValues.put(fieldName, values);
                     cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, values));
                 }
             }
             // Now make a map from the primary key values to source objects
-            Map<List, InterMineObject> keysToSourceObjects = new HashMap<List, InterMineObject>();
+            Map<List<Object>, InterMineObject> keysToSourceObjects =
+                new HashMap<List<Object>, InterMineObject>();
             while (objectsForCldIter.hasNext() && (objCount < 500)) {
                 InterMineObject object = objectsForCldIter.next();
                 origObjCount++;
                 try {
                     if (DataLoaderHelper.objectPrimaryKeyNotNull(model, object, cld, pk, source,
                                 idMap)) {
-                        List<Collection<Object>> values = new ArrayList();
+                        List<Collection<Object>> values = new ArrayList<Collection<Object>>();
                         boolean skipObject = false;
-                        Map<String, Set> fieldsValues = new HashMap();
+                        Map<String, Set<Object>> fieldsValues = new HashMap<String, Set<Object>>();
                         for (String fieldName : pk.getFieldNames()) {
                             try {
-                                Object value = object.getFieldValue(fieldName);
-                                Set fieldValues;
+                                Object value = object.getFieldProxy(fieldName);
+                                Set<Object> fieldValues;
                                 if (value instanceof InterMineObject) {
                                     Integer id = idMap.get(((InterMineObject) value).getId());
                                     if (id == null) {
-                                        Set<InterMineObject> eqs = results.get((InterMineObject)
-                                                value);
+                                        Set<InterMineObject> eqs = results.get(value);
                                         if (eqs == null) {
+                                            value = object.getFieldValue(fieldName);
                                             eqs = queryEquivalentObjects((InterMineObject) value,
                                                     source);
                                         }
-                                        fieldValues = new HashSet();
+                                        fieldValues = new HashSet<Object>();
                                         for (InterMineObject obj : eqs) {
                                             fieldValues.add(obj.getId());
                                         }
                                     } else {
-                                        fieldValues = Collections.singleton(id);
+                                        fieldValues = Collections.singleton((Object) id);
                                     }
                                 } else {
                                     fieldValues = Collections.singleton(value);
@@ -413,7 +418,8 @@ public class BatchingFetcher extends HintingFetcher
                                 fieldNameToValues.get(fieldName).addAll(fieldsValues
                                         .get(fieldName));
                             }
-                            for (List valueSet : CollectionUtil.fanOutCombinations(values)) {
+                            for (List<Object> valueSet : CollectionUtil
+                                    .fanOutCombinations(values)) {
                                 if (keysToSourceObjects.containsKey(valueSet)) {
                                     throw new ObjectStoreException("Duplicate objects found for pk "
                                             + cld.getName() + "." + pk.getName() + ": " + object);
@@ -444,11 +450,12 @@ public class BatchingFetcher extends HintingFetcher
             //}
             if (objCount > 0) {
                 // Iterate through query, and add objects to results
-                long time = System.currentTimeMillis();
+                //long time = System.currentTimeMillis();
                 int matches = 0;
                 Results res = lookupOs.execute(q, 2000, false, false, false);
-                for (ResultsRow row : ((List<ResultsRow>) res)) {
-                    List values = new ArrayList();
+                @SuppressWarnings("unchecked") List<ResultsRow<Object>> tmpRes = (List) res;
+                for (ResultsRow<Object> row : tmpRes) {
+                    List<Object> values = new ArrayList<Object>();
                     for (int i = 1; i <= pk.getFieldNames().size(); i++) {
                         values.add(row.get(i));
                     }
@@ -485,6 +492,7 @@ public class BatchingFetcher extends HintingFetcher
         /**
          * {@inheritDoc}
          */
+        @Override
         public Results execute(Query q) {
             return new Results(q, this, getSequence(getComponentsForQuery(q)));
         }
@@ -492,6 +500,7 @@ public class BatchingFetcher extends HintingFetcher
         /**
          * {@inheritDoc}
          */
+        @Override
         public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
                 boolean prefetch) {
             Results retval = new Results(q, this, getSequence(getComponentsForQuery(q)));
@@ -514,6 +523,7 @@ public class BatchingFetcher extends HintingFetcher
         /**
          * {@inheritDoc}
          */
+        @Override
         public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
                 boolean explain, boolean prefetch) {
             SingletonResults retval = new SingletonResults(q, this,
@@ -537,14 +547,17 @@ public class BatchingFetcher extends HintingFetcher
         /**
          * {@inheritDoc}
          */
+        @Override
         public SingletonResults executeSingleton(Query q) {
             return new SingletonResults(q, this, getSequence(getComponentsForQuery(q)));
         }
 
-        public List<ResultsRow> execute(Query q, int start, int limit, boolean optimise,
+        @Override
+        public List<ResultsRow<Object>> execute(Query q, int start, int limit, boolean optimise,
                 boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException {
             long time = System.currentTimeMillis();
-            List<ResultsRow> retval = os.execute(q, start, limit, optimise, explain, sequence);
+            List<ResultsRow<Object>> retval = os.execute(q, start, limit, optimise, explain,
+                    sequence);
             timeSpentExecute += System.currentTimeMillis() - time;
             getEquivalentsFor(retval);
             return retval;

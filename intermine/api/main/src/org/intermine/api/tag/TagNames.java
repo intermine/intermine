@@ -19,56 +19,55 @@ public interface TagNames
     /**
      * Tag for pubic things (bags, templates).
      */
-    public static final String IM_PUBLIC = "im:public";
+    String IM_PUBLIC = "im:public";
 
     /**
      * String used to tag converter templates in the webapp.
      */
-    public static final String IM_CONVERTER = "im:converter";
+    String IM_CONVERTER = "im:converter";
 
     /**
-     * String used to tag templates that should not appear on report pages.
+     * String used to tag templates that should appear on report pages.
      */
-    public static final String IM_NO_REPORT = "im:noreport";
+    String IM_REPORT = "im:report";
 
     /**
      * Prefix common for all InterMine internal tags
      */
-    public static final String IM_PREFIX = "im:";
+    String IM_PREFIX = "im:";
 
     /**
      * String used to tag favourite objects
      */
-    public static final String IM_FAVOURITE = "im:favourite";
+    String IM_FAVOURITE = "im:favourite";
 
     /**
      * String used to tag objects that should be hidden at jsp page
      */
-    public static final String IM_HIDDEN = "im:hidden";
+    String IM_HIDDEN = "im:hidden";
 
     /**
      * String used to tag objects by some aspect
      */
-    public static final String IM_ASPECT_PREFIX = "im:aspect:";
+    String IM_ASPECT_PREFIX = "im:aspect:";
 
     /**
      * String used to tag objects by Miscellaneous aspect
      */
-    public static final String IM_ASPECT_MISC = "im:aspect:Miscellaneous";
+    String IM_ASPECT_MISC = "im:aspect:Miscellaneous";
 
     /**
      * String used to tag objects to appear in the summary section of the report page
      */
-    public static final String IM_SUMMARY = "im:summary";
-    
+    String IM_SUMMARY = "im:summary";
+
     /**
      * templates to be displayed on search results page
      */
-    public static final String IM_SEARCH_RESULTS = "im:searchresults";
+    String IM_SEARCH_RESULTS = "im:searchresults";
 
     /**
      * Tag separator.
      */
-    public static final String SEPARATOR = ":";
-    
+    String SEPARATOR = ":";
 }

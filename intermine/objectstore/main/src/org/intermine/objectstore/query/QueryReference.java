@@ -10,6 +10,8 @@ package org.intermine.objectstore.query;
  *
  */
 
+import org.intermine.model.FastPathObject;
+
 /**
  * Represents a field of a QueryClass that is a non-primitive type.
  *
@@ -20,7 +22,7 @@ public abstract class QueryReference
 {
     protected QueryClass qc = null;
     protected String fieldName;
-    protected Class type;
+    protected Class<?> type;
 
     /**
      * Gets the QueryClass of which this reference is an member.
@@ -36,7 +38,7 @@ public abstract class QueryReference
      *
      * @return the class name
      */
-    public Class getType() {
+    public Class<?> getType() {
         return type;
     }
 
@@ -54,7 +56,7 @@ public abstract class QueryReference
      *
      * @return a Class
      */
-    public Class getQcType() {
+    public Class<? extends FastPathObject> getQcType() {
         return qc.getType();
     }
 }

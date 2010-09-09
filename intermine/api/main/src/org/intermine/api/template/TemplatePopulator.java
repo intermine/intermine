@@ -11,7 +11,7 @@ package org.intermine.api.template;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -19,27 +19,28 @@ import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.ConstraintValueParser;
-import org.intermine.pathquery.ParseValueException;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintAttribute;
+import org.intermine.pathquery.PathConstraintBag;
+import org.intermine.pathquery.PathConstraintLookup;
+import org.intermine.pathquery.PathConstraintMultiValue;
+import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.pathquery.PathException;
-import org.intermine.pathquery.PathNode;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 
 /**
  * Configures original template. Old constraints are replaced with the similar
  * new constraints, that have different values.
- * @author Jakub Kulaviak
+ * @author Richard Smith
  **/
-public class TemplatePopulator
+public final class TemplatePopulator
 {
+    private TemplatePopulator() {
+    }
 
     /**
      * Given a template and a map of values for editable constraints on each editable node create
@@ -50,50 +51,51 @@ public class TemplatePopulator
      * @param newConstraints a map from editable node to a list of values for each editable
      *  constraint
      * @return a copy of the template with values filled in
-     * @throws PathException if the template is invalid
+     * @throws TemplatePopulatorException if something goes wrong
      */
     public static TemplateQuery getPopulatedTemplate(TemplateQuery origTemplate,
-            Map<String, List<TemplateValue>> newConstraints) throws PathException {
-        TemplateQuery template = (TemplateQuery) origTemplate.clone();
+            Map<String, List<TemplateValue>> newConstraints) {
+        TemplateQuery template = origTemplate.clone();
         template.setEdited(true);
 
-        checkPaths(origTemplate.getModel(), newConstraints.values(), template);
-
-        for (PathNode node : template.getEditableNodes()) {
-            List<Constraint> constraints = template.getEditableConstraints(node);
-            List<TemplateValue> values = newConstraints.get(node.getPathString());
+        for (String editablePath : template.getEditablePaths()) {
+            List<PathConstraint> constraints = template.getEditableConstraints(editablePath);
+            List<TemplateValue> values = newConstraints.get(editablePath);
 
             if (values == null) {
                 throw new TemplatePopulatorException("There are no specified constraint values "
-                        + "for path " + node.getPathString());
+                        + "for path " + editablePath);
             }
-            if (constraints.size() > values.size()) {
-                throw new TemplatePopulatorException("Values were not provided for all editable "
-                        + "constraints on path " + node.getPathString());
+            if (values.size() == 0) {
+                for (PathConstraint con : constraints) {
+                    template.removeConstraint(con);
+                }
+                continue;
             }
             if (constraints.size() < values.size()) {
                 throw new TemplatePopulatorException("There were more values provided than "
-                        + "  there are editable constraints on the path " + node.getPathString());
+                        + "  there are editable constraints on the path " + editablePath);
             }
 
-            for (Constraint con : constraints) {
+            for (PathConstraint con : constraints) {
                 boolean found = false;
                 for (TemplateValue templateValue : values) {
-                    // TODO do we need test for null?
-                    if (templateValue != null && con.getCode().equals(templateValue.getCode())) {
-                        setConstraint(template, node, con, templateValue);
+                    if (con.equals(templateValue.getConstraint())) {
+                        try {
+                            setConstraint(template, templateValue);
+                        } catch (PathException e) {
+                            throw new TemplatePopulatorException("Invalid path found when "
+                                    + "populating template.", e);
+                        }
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
-                    throw new TemplatePopulatorException("Did not find a value for constraint "
-                            + " with code '" + con.getCode() + "' on path "
-                            + node.getPathString());
+                    template.removeConstraint(con);
                 }
             }
         }
-
         return template;
     }
 
@@ -113,28 +115,25 @@ public class TemplatePopulator
         Map<String, List<TemplateValue>> templateValues =
             new HashMap<String, List<TemplateValue>>();
 
-        if (template.getAllEditableConstraints().size() != 1) {
+        if (template.getEditableConstraints().size() != 1) {
             throw new TemplatePopulatorException("Template must have exactly one editable "
                     + "constraint to be configured with an object.");
         }
 
-        PathNode node = template.getEditableNodes().get(0);
-        String nodeType = node.getType();
-        if (node.isAttribute()) {
-            nodeType = node.getParentType();
-        }
+        PathConstraint constraint = template.getEditableConstraints().get(0);
 
-        if (!PathUtil.canAssignObjectToType(template.getModel(), nodeType, obj)) {
-            throw new TemplatePopulatorException("The constraint of type " + nodeType
-                    + " can't be set to object if type "
+        Path path = getPathOfClass(template, constraint.getPath());
+        if (!PathUtil.canAssignObjectToType(path.getEndType(), obj)) {
+            throw new TemplatePopulatorException("The constraint of type " + path.getEndType()
+                    + " can't be set to object of type "
                     + DynamicUtil.getFriendlyName(obj.getClass())
                     + " in template query " + template.getName() + ".");
         }
 
-        Constraint constraint = template.getEditableConstraints(node).get(0);
-        TemplateValue templateValue = new TemplateValue(node.getPathString(), ConstraintOp.EQUALS,
-                obj, TemplateValue.ValueType.OBJECT_VALUE, constraint.getCode());
-        templateValues.put(node.getPathString(),
+        TemplateValue templateValue = new TemplateValue(constraint,
+                ConstraintOp.EQUALS, obj.getId().toString(), TemplateValue.ValueType.OBJECT_VALUE,
+                SwitchOffAbility.ON);
+        templateValues.put(constraint.getPath(),
                 new ArrayList<TemplateValue>(Collections.singleton(templateValue)));
 
         return TemplatePopulator.getPopulatedTemplate(template, templateValues);
@@ -155,31 +154,37 @@ public class TemplatePopulator
         Map<String, List<TemplateValue>> templateValues =
             new HashMap<String, List<TemplateValue>>();
 
-        if (template.getAllEditableConstraints().size() != 1) {
+        if (template.getEditableConstraints().size() != 1) {
             throw new TemplatePopulatorException("Template must have exactly one editable "
                     + "constraint to be configured with a bag.");
         }
 
-        PathNode node = template.getEditableNodes().get(0);
-        String nodeType = node.getType();
-        if (node.isAttribute()) {
-            nodeType = node.getParentType();
-        }
-        if (!bag.isOfType(nodeType)) {
-            throw new TemplatePopulatorException("The constraint of type " + nodeType
+        PathConstraint constraint = template.getEditableConstraints().get(0);
+        Path path = getPathOfClass(template, constraint.getPath());
+        if (!bag.isOfType(path.getNoConstraintsString())) {
+            throw new TemplatePopulatorException("The constraint of type "
+                    + path.getNoConstraintsString()
                     + " can't be set to a bag (list) of type " + bag.getType()
                     + " in template query " + template.getName() + ".");
         }
 
-        Constraint constraint = template.getEditableConstraints(node).get(0);
-        TemplateValue templateValue = new TemplateValue(node.getPathString(), ConstraintOp.IN,
-                bag.getName(), TemplateValue.ValueType.BAG_VALUE, constraint.getCode());
-        templateValues.put(node.getPathString(),
+        TemplateValue templateValue = new TemplateValue(constraint, ConstraintOp.IN,
+                bag.getName(), TemplateValue.ValueType.BAG_VALUE, SwitchOffAbility.ON);
+        templateValues.put(constraint.getPath(),
                 new ArrayList<TemplateValue>(Collections.singleton(templateValue)));
 
         return TemplatePopulator.getPopulatedTemplate(template, templateValues);
     }
 
+
+    private static Path getPathOfClass(TemplateQuery template, String pathStr)
+        throws PathException {
+        Path path = template.makePath(pathStr);
+        if (path.endIsAttribute()) {
+            path = path.getPrefix();
+        }
+        return path;
+    }
 
     /**
      * Populate a TemplateQuery that has a single editable constraint with the given value.  This
@@ -191,122 +196,102 @@ public class TemplatePopulator
      * @throws PathException if the template is invalid
      */
     public static TemplateQuery populateTemplateOneConstraint(
-            TemplateQuery template, ConstraintOp op, Object value) throws PathException {
+            TemplateQuery template, ConstraintOp op, String value) throws PathException {
         Map<String, List<TemplateValue>> templateValues =
             new HashMap<String, List<TemplateValue>>();
 
-        if (template.getAllEditableConstraints().size() != 1) {
+        if (template.getEditableConstraints().size() != 1) {
             throw new RuntimeException("Template must have exactly one editable constraint to be "
                     + " configured with a single value.");
         }
-        PathNode node = template.getEditableNodes().get(0);
-        Constraint constraint = template.getEditableConstraints(node).get(0);
-        TemplateValue templateValue = new TemplateValue(node.getPathString(), op, value,
-                TemplateValue.ValueType.SIMPLE_VALUE, constraint.getCode());
-        templateValues.put(node.getPathString(),
+
+        String editablePath = template.getEditablePaths().get(0);
+        Path path = template.makePath(editablePath);
+        if (path.endIsAttribute()) {
+            path = path.getPrefix();
+        }
+        PathConstraint constraint = template.getEditableConstraints(editablePath).get(0);
+
+        TemplateValue templateValue = new TemplateValue(constraint, op, value,
+                TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.ON);
+        templateValues.put(constraint.getPath(),
                 new ArrayList<TemplateValue>(Collections.singleton(templateValue)));
 
         return TemplatePopulator.getPopulatedTemplate(template, templateValues);
     }
 
 
-    private static void checkPaths(Model model, Collection<List<TemplateValue>> collection,
-            TemplateQuery templateQuery) throws PathException {
-        for (List<TemplateValue> col : collection) {
-            for (TemplateValue value : col) {
-                PathQuery.makePath(model, templateQuery, value.getPath());
-            }
-        }
-    }
-
     /**
-     * Set the value for a constraint in the template query with the given TempalteValue.  This may
+     * Set the value for a constraint in the template query with the given TemplateValue.  This may
      * move a constraint from an attribute to the parent class if the constraint is object or bag.
      * @param template the template to constrain
-     * @param node the node the constraint is on
-     * @param c the constraint to set the value
      * @param templateValue container for the value to set constraint to
+     * @throws PathException if a TemplateValue contains an invalid path
      */
-    protected static void setConstraint(TemplateQuery template, PathNode node, Constraint c,
-            TemplateValue templateValue) {
-        int constraintIndex = node.getConstraints().indexOf(c);
+    protected static void setConstraint(TemplateQuery template, TemplateValue templateValue)
+        throws PathException {
 
-        Object extraValue = getExtraValue(c, templateValue, node);
-        Object value = getValue(c, templateValue, node);
-        Constraint newConstraint = new Constraint(templateValue.getOperation(), value,
-                true, c.getDescription(), c.getCode(), c.getIdentifier(), extraValue);
+        PathConstraint originalConstraint = templateValue.getConstraint();
+        Path constraintPath = template.makePath(templateValue.getConstraint().getPath());
 
         if (templateValue.isBagConstraint()) {
-            if (!BagConstraint.VALID_OPS.contains(templateValue.getOperation())) {
-                throw new TemplatePopulatorException("A bag (list) constraint on path "
-                        + node.getPathString() + " with value " + c.getValue() + " does not have a "
-                        + "valid constraint type, must be one of: " + BagConstraint.VALID_OPS);
+            if (constraintPath.endIsAttribute()) {
+                constraintPath = constraintPath.getPrefix();
             }
-        }
-
-        // if this is a bag constraint we may need to switch to the parent node
-        if (templateValue.isBagConstraint() && node.isAttribute()) {
-            PathNode parentNode = template.addNode(node.getParent().getPathString());
-            parentNode.getConstraints().add(newConstraint);
-            node.removeConstraint(c);
+            PathConstraint newConstraint =
+                new PathConstraintBag(constraintPath.getNoConstraintsString(),
+                        templateValue.getOperation(), templateValue.getValue());
+            template.replaceConstraint(originalConstraint, newConstraint);
+            template.setSwitchOffAbility(newConstraint, templateValue.getSwitchOffAbility());
         } else if (templateValue.isObjectConstraint()) {
-            String basePath = node.getPathString();
-            if (node.isAttribute())  {
-                basePath = node.getParent().getPathString();
+            if (constraintPath.endIsAttribute()) {
+                constraintPath = constraintPath.getPrefix();
             }
-            String idPath = basePath + ".id";
-            PathNode idNode = template.addNode(idPath);
-            Integer idValue = ((InterMineObject) value).getId();
-            Constraint idConstraint = new Constraint(ConstraintOp.EQUALS, idValue,
-                    true, c.getDescription(), c.getCode(), c.getIdentifier(), null);
-            idNode.getConstraints().add(idConstraint);
-
-            node.removeConstraint(c);
+            String idPath = constraintPath.getNoConstraintsString() + ".id";
+            PathConstraint newConstraint =
+                new PathConstraintAttribute(idPath, templateValue.getOperation(),
+                        templateValue.getValue());
+            template.replaceConstraint(originalConstraint, newConstraint);
+            template.setSwitchOffAbility(newConstraint, templateValue.getSwitchOffAbility());
         } else {
-            node.getConstraints().set(constraintIndex, newConstraint);
-        }
-    }
-
-    private static Object getValue(Constraint c, TemplateValue templateValue, PathNode node) {
-        Object ret = templateValue.getValue();
-        if (ret instanceof String) {
-            try {
-                ret = ConstraintValueParser.parse((String) ret, getType(node),
-                        templateValue.getOperation());
-            } catch (ParseValueException ex) {
-                throw new RuntimeException("invalid value: " + templateValue.getValue() + ". "
-                        + ex.getMessage());
+            // this is one of the valid constraint types for templates
+            PathConstraint newConstraint = null;
+            if (originalConstraint instanceof PathConstraintAttribute) {
+                // if the op has been changed to IN or NOT_IN this becomes a multi value constraint
+                if (PathConstraintMultiValue.VALID_OPS.contains(templateValue.getOperation())) {
+                    newConstraint =
+                        new PathConstraintMultiValue(constraintPath.getNoConstraintsString(),
+                                templateValue.getOperation(),
+                                Arrays.asList(templateValue.getValue().split(",")));
+                } else {
+                    newConstraint =
+                        new PathConstraintAttribute(constraintPath.getNoConstraintsString(),
+                                templateValue.getOperation(), templateValue.getValue());
+                }
+            } else if (originalConstraint instanceof PathConstraintLookup) {
+                newConstraint =
+                    new PathConstraintLookup(constraintPath.getNoConstraintsString(),
+                            templateValue.getValue(), templateValue.getExtraValue());
+            } else if (originalConstraint instanceof PathConstraintNull) {
+                newConstraint =
+                    new PathConstraintNull(constraintPath.getNoConstraintsString(),
+                            templateValue.getOperation());
+            } else if (originalConstraint instanceof PathConstraintMultiValue) {
+                // if op has been changed to something other than IN or NOT_IN make this becomes
+                // a regular attribute constraint
+                if (!PathConstraintMultiValue.VALID_OPS.contains(templateValue.getOperation())) {
+                    newConstraint =
+                        new PathConstraintAttribute(constraintPath.getNoConstraintsString(),
+                                templateValue.getOperation(), templateValue.getValue());
+                } else {
+                    newConstraint =
+                        new PathConstraintMultiValue(constraintPath.getNoConstraintsString(),
+                                templateValue.getOperation(),
+                                Arrays.asList(templateValue.getValue().split(",")));
+                }
             }
+            template.replaceConstraint(originalConstraint, newConstraint);
+            template.setSwitchOffAbility(newConstraint, templateValue.getSwitchOffAbility());
         }
-        return ret;
-    }
-
-    private static Object getExtraValue(Constraint c, TemplateValue templateValue, PathNode node) {
-        Object extraValue = templateValue.getExtraValue();
-        if (extraValue instanceof String) {
-            if (templateValue.getExtraValue() == null
-                    || ((String) extraValue).trim().length() == 0) {
-                return c.getExtraValue();
-            }
-            try {
-                extraValue = ConstraintValueParser.parse((String) extraValue, getType(node),
-                        templateValue.getOperation());
-            } catch (ParseValueException ex) {
-                throw new RuntimeException("invalid value: " + templateValue.getExtraValue() + ". "
-                        + ex.getMessage());
-            }
-        }
-        return extraValue;
-    }
-
-    private static Class getType(PathNode node) {
-        Class fieldClass;
-        if (node.isAttribute()) {
-            fieldClass = TypeUtil.getClass(node.getType());
-        } else {
-            fieldClass = String.class;
-        }
-        return fieldClass;
     }
 }
-

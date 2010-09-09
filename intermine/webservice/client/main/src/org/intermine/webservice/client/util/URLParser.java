@@ -19,8 +19,8 @@ import java.util.Map;
 
 
 /**
- * The URLParse class is util class for parsing URL. 
- * 
+ * The URLParse class is util class for parsing URL.
+ *
  * @author Jakub Kulaviak
  **/
 public class URLParser
@@ -40,7 +40,7 @@ public class URLParser
         } else {
             port = "";
         }
-        return webUrl.getProtocol() + "://" + webUrl.getHost() + port + webUrl.getPath(); 
+        return webUrl.getProtocol() + "://" + webUrl.getHost() + port + webUrl.getPath();
     }
 
     /**
@@ -50,15 +50,15 @@ public class URLParser
      * @return parameter map
      * @throws MalformedURLException when URL is invalid
      */
-    public static Map<String, List<String>> parseParameterMap(String url) 
+    public static Map<String, List<String>> parseParameterMap(String url)
         throws MalformedURLException {
         Map<String, List<String>> map = new HashMap<String, List<String>>();
-        String query = new URL(url).getQuery(); 
+        String query = new URL(url).getQuery();
         if (query != null) {
             String[] parts = query.split("&");
             for (String part : parts) {
                 if (parseParameterName(part) != null) {
-                    addParameter(map, parseParameterName(part), parseParameterValue(part));    
+                    addParameter(map, parseParameterName(part), parseParameterValue(part));
                 }
             }
         }

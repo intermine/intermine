@@ -18,8 +18,10 @@ import java.util.Map;
  * General-purpose methods for manipulating URIs and XML schema types
  * @author Mark Woodbridge
  */
-public class XmlUtil
+public final class XmlUtil
 {
+    private XmlUtil() {
+    }
 
     /**
      * Return the fragment portion of a URI string (i.e. everything after a #).
@@ -46,7 +48,7 @@ public class XmlUtil
     public static String indentXmlSimple(String xmlString) {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         int indent = 0;
-        char bytes[] = xmlString.toCharArray();
+        char[] bytes = xmlString.toCharArray();
         int i = 0;
         while (i < bytes.length) {
             if (bytes[i] == '<' && bytes[i + 1] == '/') {

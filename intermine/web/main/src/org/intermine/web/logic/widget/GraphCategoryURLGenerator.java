@@ -22,7 +22,6 @@ import org.jfree.data.category.CategoryDataset;
  */
 public interface GraphCategoryURLGenerator extends CategoryURLGenerator
 {
-
     /**
      * builds the url used by the graph widgets.  Simply concatenates the variables to create
      * a URL.
@@ -32,7 +31,7 @@ public interface GraphCategoryURLGenerator extends CategoryURLGenerator
      * @return url that sends the user to the results page containing data represented by
      * the bar on the graph they clicked on
      */
-    public String generateURL(CategoryDataset dataset, int series, int category);
+    String generateURL(CategoryDataset dataset, int series, int category);
 
     /**
      * generates the path query
@@ -42,11 +41,5 @@ public interface GraphCategoryURLGenerator extends CategoryURLGenerator
      * @param category category to constrain the query
      * @return PathQuery
      */
-    public PathQuery generatePathQuery(ObjectStore os,
-                                       InterMineBag bag,
-                                       String category,
-                                       String series);
-
-
-
+    PathQuery generatePathQuery(ObjectStore os, InterMineBag bag, String category, String series);
 }

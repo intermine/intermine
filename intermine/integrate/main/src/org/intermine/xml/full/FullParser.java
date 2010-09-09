@@ -21,6 +21,8 @@ import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.query.ClobAccess;
+import org.intermine.objectstore.query.PendingClob;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.SAXParser;
 import org.intermine.util.TypeUtil;
@@ -32,8 +34,11 @@ import org.xml.sax.InputSource;
  * @author Andrew Varley
  * @author Richard Smith
  */
-public class FullParser
+public final class FullParser
 {
+    private FullParser() {
+    }
+
     private static final Logger LOG = Logger.getLogger(FullParser.class);
 
     /**
@@ -66,7 +71,7 @@ public class FullParser
      * @return a collection of realised business objects
      * @throws ClassNotFoundException if one of the items has a class that isn't in the model
      */
-    public static List<InterMineObject> realiseObjects(Collection<Item> items, Model model,
+    public static List<FastPathObject> realiseObjects(Collection<Item> items, Model model,
                                                        boolean useIdentifier)
         throws ClassNotFoundException {
         return realiseObjects(items, model, useIdentifier, true);
@@ -82,12 +87,12 @@ public class FullParser
      * @return a collection of realised business objects
      * @throws ClassNotFoundException if one of the items has a class that isn't in the model
      */
-    public static List<InterMineObject> realiseObjects(Collection<Item> items, Model model,
+    public static List<FastPathObject> realiseObjects(Collection<Item> items, Model model,
             boolean useIdentifier, boolean abortOnError) throws ClassNotFoundException {
         // map from id to outline object
         Map<String, FastPathObject> objMap = new LinkedHashMap<String, FastPathObject>();
 
-        List result = new ArrayList();
+        List<FastPathObject> result = new ArrayList<FastPathObject>();
         for (Item item : items) {
             if (item.getIdentifier() != null) {
                 try {
@@ -146,26 +151,32 @@ public class FullParser
      * @param obj the object
      * @return a populated object
      */
-    protected static Object populateObject(Item item, Map<String, FastPathObject> objMap,
+    protected static FastPathObject populateObject(Item item, Map<String, FastPathObject> objMap,
             boolean useIdentifier, boolean abortOnError, FastPathObject obj) {
         try {
             // Set the data for every given attribute except id
             for (Attribute attr : item.getAttributes()) {
-                TypeUtil.FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), attr.getName());
-                if (info == null) {
-                    String message = "Field " + attr.getName()
-                        + " not found in " + DynamicUtil.decomposeClass(obj.getClass());
-                    if (abortOnError) {
-                        throw new IllegalArgumentException(message);
-                    } else {
-                        LOG.warn(message);
-                        continue;
+                String attrName = attr.getName();
+                if (!("id".equals(attrName))) {
+                    Class<?> attrClass;
+                    try {
+                        attrClass = obj.getFieldType(attrName);
+                    } catch (IllegalArgumentException e) {
+                        String message = "Field " + attr.getName() + " not found in "
+                            + DynamicUtil.getFriendlyName(obj.getClass());
+                        if (abortOnError) {
+                            throw new IllegalArgumentException(message);
+                        } else {
+                            LOG.warn(message);
+                            continue;
+                        }
                     }
-                }
-                Class attrClass = info.getType();
-                if (!attr.getName().equalsIgnoreCase("id")) {
-                    obj.setFieldValue(attr.getName(),
-                            TypeUtil.stringToObject(attrClass, attr.getValue()));
+                    if (ClobAccess.class.equals(attrClass)) {
+                        obj.setFieldValue(attr.getName(), new PendingClob(attr.getValue()));
+                    } else {
+                        obj.setFieldValue(attr.getName(),
+                                TypeUtil.stringToObject(attrClass, attr.getValue()));
+                    }
                 }
             }
 
@@ -177,14 +188,26 @@ public class FullParser
             // Set the data for every given reference
             for (Reference ref : item.getReferences()) {
                 Object refObj = objMap.get(ref.getRefId());
-                TypeUtil.FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), ref.getName());
-                if (info == null) {
+                String refName = ref.getName();
+                Class<?> refClass;
+                try {
+                    refClass = obj.getFieldType(refName);
+                } catch (IllegalArgumentException e) {
                     String message = "Field " + ref.getName() + " not found in "
-                        + DynamicUtil.decomposeClass(obj.getClass());
+                        + DynamicUtil.getFriendlyName(obj.getClass());
                     if (abortOnError) {
                         throw new IllegalArgumentException(message);
                     } else {
                         LOG.warn(message);
+                        continue;
+                    }
+                }
+                if (!InterMineObject.class.isAssignableFrom(refClass)) {
+                    if (abortOnError) {
+                        throw new IllegalArgumentException("Looking for a reference, but found a "
+                                + refClass.getName());
+                    } else {
+                        LOG.warn("Looking for a reference, but found a " + refClass.getName());
                         continue;
                     }
                 }
@@ -205,7 +228,8 @@ public class FullParser
 
             // Set objects for every collection
             for (ReferenceList refList : item.getCollections()) {
-                Collection<Object> col = (Collection<Object>) obj.getFieldValue(refList.getName());
+                @SuppressWarnings("unchecked") Collection<Object> col
+                    = (Collection<Object>) obj.getFieldValue(refList.getName());
                 for (String refId : refList.getRefIds()) {
                     col.add(objMap.get(refId));
                 }

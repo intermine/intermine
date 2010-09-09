@@ -15,9 +15,9 @@ import java.net.HttpURLConnection;
 import org.intermine.webservice.client.util.HttpConnection;
 
 /**
- * The BadRequestException is thrown by service when there is a problem with the request. 
- * Connected service exists but the service has problems with the parameters of request and 
- * client should change 
+ * The BadRequestException is thrown by service when there is a problem with the request.
+ * Connected service exists but the service has problems with the parameters of request and
+ * client should change
  *  the request.
  * @author Jakub Kulaviak
  *

@@ -22,6 +22,11 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -35,15 +40,8 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SubqueryExistsConstraint;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.util.CombinedIterator;
 import org.intermine.util.StringUtil;
-
-import org.apache.commons.collections.IteratorUtils;
-import org.apache.log4j.Logger;
 
 /**
  * A summary of the data in an ObjectStore
@@ -123,15 +121,15 @@ public class ObjectStoreSummary
         }
     }
 
-    private Set<String> getIgnoreFields(String config) {
-        Set<String> ignoreFields = new HashSet<String>();
+    private static Set<String> getIgnoreFields(String config) {
+        Set<String> retval = new HashSet<String>();
         if (config != null) {
             config = config.trim();
             for (String field :config.split(" ")) {
-                ignoreFields.add(field);
+                retval.add(field);
             }
         }
-        return ignoreFields;
+        return retval;
     }
 
     /**
@@ -265,7 +263,7 @@ public class ObjectStoreSummary
             }
             List<Object> fieldValues = new ArrayList<Object>();
             for (Object resRow: results) {
-                Object fieldValue = ((ResultsRow) resRow).get(0);
+                Object fieldValue = ((ResultsRow<?>) resRow).get(0);
                 fieldValues.add(fieldValue == null ? null : fieldValue.toString());
             }
             fieldValuesMap.put(cld.getName() + "." + fieldName, fieldValues);
@@ -307,10 +305,13 @@ public class ObjectStoreSummary
             Set<String> nonNullFieldNames, ObjectStore os) throws ClassNotFoundException {
         long startTime = System.currentTimeMillis();
         int skipped = 0;
-        Iterator iter = IteratorUtils.chainedIterator(cld.getAllCollectionDescriptors().iterator(),
-                cld.getAllReferenceDescriptors().iterator());
+        List<Iterator<? extends ReferenceDescriptor>> its
+            = new ArrayList<Iterator<? extends ReferenceDescriptor>>();
+        its.add(cld.getAllCollectionDescriptors().iterator());
+        its.add(cld.getAllReferenceDescriptors().iterator());
+        Iterator<ReferenceDescriptor> iter = new CombinedIterator<ReferenceDescriptor>(its);
         while (iter.hasNext()) {
-            ReferenceDescriptor desc = (ReferenceDescriptor) iter.next();
+            ReferenceDescriptor desc = iter.next();
 
             if (nonNullFieldNames.contains(desc.getName())) {
                 skipped++;

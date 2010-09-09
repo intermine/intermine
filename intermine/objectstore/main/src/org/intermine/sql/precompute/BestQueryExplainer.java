@@ -31,7 +31,7 @@ public class BestQueryExplainer extends BestQuery
     protected static final int ALWAYS_EXPLAIN_TABLES = 3;
     protected static final int NEVER_EXPLAIN_TABLES = 8;
 
-    protected List candidates = new ArrayList();
+    protected List<Candidate> candidates = new ArrayList<Candidate>();
     protected int candidateTables = Integer.MAX_VALUE;
     protected Candidate bestCandidate;
     protected Connection con;
@@ -217,7 +217,7 @@ public class BestQueryExplainer extends BestQuery
      * @throws SQLException if an error occurs in the underlying database
      */
     protected Candidate getBest() throws SQLException {
-        Iterator iter = candidates.iterator();
+        Iterator<Candidate> iter = candidates.iterator();
         while (iter.hasNext()) {
             if (bestCandidate != null) {
                 long elapsed = System.currentTimeMillis() - start.getTime();
@@ -232,7 +232,7 @@ public class BestQueryExplainer extends BestQuery
                     return bestCandidate;
                 }
             }
-            Candidate c = (Candidate) iter.next();
+            Candidate c = iter.next();
             iter.remove();
             if (c.betterThan(bestCandidate)) {
                 bestCandidate = c;

@@ -262,4 +262,15 @@ public class SimpleConstraint extends Constraint
             return ALL_OPS;
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override public String toString() {
+        if (ConstraintOp.IS_NULL.equals(op) || ConstraintOp.IS_NOT_NULL.equals(op)) {
+            return "SimpleConstraint(" + qe1 + " " + op + ")";
+        } else {
+            return "SimpleConstraint(" + qe1 + " " + op + " " + qe2 + ")";
+        }
+    }
 }

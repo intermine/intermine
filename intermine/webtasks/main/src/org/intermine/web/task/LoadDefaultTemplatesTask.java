@@ -21,8 +21,10 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
 import org.intermine.api.template.TemplateQuery;
@@ -100,6 +102,7 @@ public class LoadDefaultTemplatesTask extends Task
      * Load templates from an xml file into a userprofile account.
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         log("Loading default templates and tags into profile " + username);
 
@@ -126,20 +129,22 @@ public class LoadDefaultTemplatesTask extends Task
                 }
                 LOG.info("Creating profile for " + username);
                 profileDest = new Profile(pm, username, null, password,
-                                      new HashMap(), new HashMap(), new HashMap());
+                        new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
+                        new HashMap<String, TemplateQuery>());
                 profileDest.disableSaving();
                 pm.createProfile(profileDest);
             } else {
                 LOG.info("Profile for " + username + ", clearing template queries");
                 profileDest = pm.getProfile(username, pm.getPassword(username));
-                Map<String, TemplateQuery> tmpls = new HashMap(profileDest.getSavedTemplates());
+                Map<String, TemplateQuery> tmpls
+                    = new HashMap<String, TemplateQuery>(profileDest.getSavedTemplates());
                 for (String templateName : tmpls.keySet()) {
                     profileDest.deleteTemplate(templateName);
                 }
             }
 
             // Unmarshal
-            Set<Tag> tags = new HashSet();
+            Set<Tag> tags = new HashSet<Tag>();
             osw = os.getNewWriter();
             Profile profileSrc = ProfileBinding.unmarshal(reader, pm, profileDest.getUsername(),
                     profileDest.getPassword(), tags, osw, PathQuery.USERPROFILE_VERSION);

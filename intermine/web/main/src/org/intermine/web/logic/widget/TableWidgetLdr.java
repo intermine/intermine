@@ -84,7 +84,6 @@ public class TableWidgetLdr
      * @param os the objectstore
      * @throws UnsupportedEncodingException if can't encode url
      */
-    @SuppressWarnings("unchecked")
     public TableWidgetLdr(WidgetConfig widgetConfig, InterMineBag bag, ObjectStore os)
         throws UnsupportedEncodingException {
         this.os = os;
@@ -182,7 +181,7 @@ public class TableWidgetLdr
                             }
                             link = "objectDetails.do?id=" + o.getId() + "&amp;trail=|bag."
                                 + bag.getName() + "|" + o.getId();
-                        } else if (externalLink != null && !externalLink.equals("")) {
+                        } else if (externalLink != null && !"".equals(externalLink)) {
                             val = val + " <a href=\"" + externalLink + key
                                 + "\" target=\"_new\" class=\"extlink\">["
                                 + config.getExternalLinkLabel() + "]</a>";
@@ -312,7 +311,7 @@ public class TableWidgetLdr
                     throw new IllegalArgumentException("Class '" + cldEnd.getType() + "' has no '"
                                                        + constraintName + "' field");
                 }
-                if (!attFld.getType().equals("java.lang.String")) {
+                if (!"java.lang.String".equals(attFld.getType())) {
                     throw new IllegalArgumentException("Constraints can only be on String fields '"
                                                        + constraintName
                                                        + "' is a " + attFld.getType());

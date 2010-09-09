@@ -25,7 +25,7 @@ public interface FastPathObject
      * @return the value of the field
      * @throws IllegalAccessException when something goes wrong
      */
-    public Object getFieldValue(String fieldName) throws IllegalAccessException;
+    Object getFieldValue(String fieldName) throws IllegalAccessException;
 
     /**
      * Returns the value of a field without dereferencing any ProxyReference objects.
@@ -34,7 +34,7 @@ public interface FastPathObject
      * @return the value of the field, or a ProxyReference representing it
      * @throws IllegalAccessException when something goes wrong
      */
-    public Object getFieldProxy(String fieldName) throws IllegalAccessException;
+    Object getFieldProxy(String fieldName) throws IllegalAccessException;
 
     /**
      * Sets the value of a field by name.
@@ -42,7 +42,7 @@ public interface FastPathObject
      * @param fieldName the name of the field
      * @param value the value of the field, or a ProxyReference representing it
      */
-    public void setFieldValue(String fieldName, Object value);
+    void setFieldValue(String fieldName, Object value);
 
     /**
      * Returns the type of a field by name.
@@ -50,5 +50,5 @@ public interface FastPathObject
      * @param fieldName the name of the field
      * @return the type of the field
      */
-    public Class getFieldType(String fieldName);
+    Class<?> getFieldType(String fieldName);
 }

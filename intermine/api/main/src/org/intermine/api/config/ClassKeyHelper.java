@@ -31,8 +31,11 @@ import org.intermine.util.TypeUtil;
  * @author rns
  *
  */
-public class ClassKeyHelper
+public final class ClassKeyHelper
 {
+    private ClassKeyHelper() {
+    }
+
     private static final Logger LOG = Logger.getLogger(ClassKeyHelper.class);
 
     /**

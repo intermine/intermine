@@ -18,7 +18,7 @@ import java.util.Comparator;
  * @author Kim Rutherford
  */
 
-public class RendererComparator implements Comparator
+public class RendererComparator implements Comparator<Object>
 {
     /**
      * Compare two Class objects by name.
@@ -27,8 +27,8 @@ public class RendererComparator implements Comparator
      * @return integer result of comparason
      */
     public int compare(Object a, Object b) {
-        if (a instanceof Class && b instanceof Class) {
-            return compare((Class) a, (Class) b);
+        if (a instanceof Class<?> && b instanceof Class<?>) {
+            return compare((Class<?>) a, (Class<?>) b);
         } else if (a instanceof Item && b instanceof Item) {
             return compare((Item) a, (Item) b);
         } else if (a instanceof Attribute && b instanceof Attribute) {
@@ -43,7 +43,7 @@ public class RendererComparator implements Comparator
         }
     }
 
-    private int compare(Class a, Class b) {
+    private int compare(Class<?> a, Class<?> b) {
         return a.getName().compareTo(b.getName());
     }
 

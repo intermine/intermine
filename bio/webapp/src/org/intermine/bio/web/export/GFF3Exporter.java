@@ -384,7 +384,7 @@ public class GFF3Exporter implements Exporter
     /**
      * {@inheritDoc}
      */
-    public boolean canExport(List<Class> clazzes) {
+    public boolean canExport(List<Class<?>> clazzes) {
         return canExportStatic(clazzes);
     }
 
@@ -394,7 +394,7 @@ public class GFF3Exporter implements Exporter
      * @param clazzes classes of result row
      * @return true if this exporter can export result composed of specified classes
      */
-    public static boolean canExportStatic(List<Class> clazzes) {
+    public static boolean canExportStatic(List<Class<?>> clazzes) {
         return ExportHelper.getClassIndex(clazzes, SequenceFeature.class) >= 0;
     }
 

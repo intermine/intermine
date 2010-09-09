@@ -10,9 +10,8 @@ package org.intermine.objectstore.query;
  *
  */
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Static methods to assist with query generation from front end.
@@ -21,6 +20,9 @@ import java.util.ArrayList;
  */
 public abstract class QueryHelper
 {
+    private QueryHelper() {
+    }
+
     /**
      * Add a constraint to be ANDed with those present in a Query.  If the Query currently
      * has no constraints just add the newConstraint.  If q.getConstraint()
@@ -48,9 +50,8 @@ public abstract class QueryHelper
             // add all constraints, avoid nesting ConstraintSets
             if (constraint instanceof ConstraintSet
                 && constraint.getOp().equals(ConstraintOp.AND)) {
-                Iterator iter = ((ConstraintSet) constraint).getConstraints().iterator();
-                while (iter.hasNext()) {
-                    ((ConstraintSet) queryConstraint).addConstraint((Constraint) iter.next());
+                for (Constraint subC : ((ConstraintSet) constraint).getConstraints()) {
+                    ((ConstraintSet) queryConstraint).addConstraint(subC);
                 }
             } else {
                 ((ConstraintSet) queryConstraint).addConstraint(constraint);
@@ -60,9 +61,8 @@ public abstract class QueryHelper
             constraints.addConstraint(queryConstraint);
             if (constraint instanceof ConstraintSet
                 && constraint.getOp().equals(ConstraintOp.AND)) {
-                Iterator iter = ((ConstraintSet) constraint).getConstraints().iterator();
-                while (iter.hasNext()) {
-                    constraints.addConstraint((Constraint) iter.next());
+                for (Constraint subC : ((ConstraintSet) constraint).getConstraints()) {
+                    constraints.addConstraint(subC);
                 }
             } else {
                 constraints.addConstraint(constraint);
@@ -72,19 +72,16 @@ public abstract class QueryHelper
         }
     }
 
-
     /**
      * Returns a list of aliases, where each alias corresponds to each element of the SELECT list
      * of the Query object. This is effectively a list of column headings for the results object.
      * @param query the Query object
      * @return a List of Strings, each of which is the alias of the column
      */
-    public static List getColumnAliases(Query query) {
-        List columnAliases = new ArrayList();
-        Iterator selectIter = query.getSelect().iterator();
-        while (selectIter.hasNext()) {
-            QuerySelectable node = (QuerySelectable) selectIter.next();
-            String alias = (String) query.getAliases().get(node);
+    public static List<String> getColumnAliases(Query query) {
+        List<String> columnAliases = new ArrayList<String>();
+        for (QuerySelectable node : query.getSelect()) {
+            String alias = query.getAliases().get(node);
             columnAliases.add(alias);
         }
         return columnAliases;
@@ -97,12 +94,10 @@ public abstract class QueryHelper
      * @param query the Query object
      * @return a List of Class objects
      */
-    public static List getColumnTypes(Query query) {
-        List columnTypes = new ArrayList();
-        Iterator selectIter = query.getSelect().iterator();
-        while (selectIter.hasNext()) {
-            QuerySelectable node = (QuerySelectable) selectIter.next();
-            Class type = node.getType();
+    public static List<Class<?>> getColumnTypes(Query query) {
+        List<Class<?>> columnTypes = new ArrayList<Class<?>>();
+        for (QuerySelectable node : query.getSelect()) {
+            Class<?> type = node.getType();
             columnTypes.add(type);
         }
         return columnTypes;

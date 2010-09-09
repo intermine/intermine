@@ -17,8 +17,8 @@ import org.intermine.webservice.client.util.HttpConnection;
 /**
  * The ServiceForbiddenException is thrown by a service when an
  * attempt is made to service that is disabled.
- * 
- * @author Jakub Kulaviak 
+ *
+ * @author Jakub Kulaviak
  */
 public class ServiceForbiddenException extends ServiceException
 {

@@ -24,5 +24,5 @@ public interface Lazy
      *
      * @return an ObjectStore
      */
-    public ObjectStore getObjectStore();
+    ObjectStore getObjectStore();
 }

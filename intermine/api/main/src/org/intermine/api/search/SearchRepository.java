@@ -95,7 +95,7 @@ public class SearchRepository
      * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
      */
     private void populateWebSearchables(String type) {
-        Map <String, ? extends WebSearchable> wsMap = null;
+        Map<String, ? extends WebSearchable> wsMap = null;
         if (type.equals(TagTypes.TEMPLATE)) {
             wsMap = profile.getSavedTemplates();
         } else if (type.equals(TagTypes.BAG)) {
@@ -268,7 +268,7 @@ public class SearchRepository
      * @param scope webSearchable type (see TemplateHelper)
      * @return a RAMDirectory containing the index
      */
-    private RAMDirectory indexWebSearchables(Map <String, ? extends WebSearchable> webSearchableMap,
+    private RAMDirectory indexWebSearchables(Map<String, ? extends WebSearchable> webSearchableMap,
             String type) {
         long time = System.currentTimeMillis();
         LOG.info("Indexing webSearchable queries");
@@ -276,9 +276,10 @@ public class SearchRepository
         RAMDirectory ram = new RAMDirectory();
         IndexWriter writer;
         try {
-            SnowballAnalyzer snowballAnalyzer =
-                new SnowballAnalyzer(Version.LUCENE_30, "English", StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-            writer = new IndexWriter(ram, snowballAnalyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
+            SnowballAnalyzer snowballAnalyzer = new SnowballAnalyzer(Version.LUCENE_30, "English",
+                    StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+            writer = new IndexWriter(ram, snowballAnalyzer, true,
+                    IndexWriter.MaxFieldLength.UNLIMITED);
         } catch (IOException err) {
             throw new RuntimeException("Failed to create lucene IndexWriter", err);
         }
@@ -482,7 +483,7 @@ public class SearchRepository
                     highlightedTitleMap.put(webSearchable,
                                        highlighter.getBestFragment(tokenStream, highlightString));
                 }
-    
+
                 if (highlightedDescMap != null) {
                     String highlightString = webSearchable.getDescription();
                     if (highlightString == null) {
@@ -491,14 +492,14 @@ public class SearchRepository
                     TokenStream tokenStream =
                         analyzer.tokenStream("", new StringReader(highlightString));
                     highlighter.setTextFragmenter(new NullFragmenter());
-                    highlightedDescMap.put(webSearchable,
-                                           highlighter.getBestFragment(tokenStream, highlightString));
+                    highlightedDescMap.put(webSearchable, highlighter.getBestFragment(tokenStream,
+                            highlightString));
                 }
-            } catch(InvalidTokenOffsetsException e) {
+            } catch (InvalidTokenOffsetsException e) {
                 LOG.warn("Highlighter exception", e);
             }
         }
-        
+
         return time;
     }
 }

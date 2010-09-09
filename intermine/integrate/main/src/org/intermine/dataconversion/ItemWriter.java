@@ -36,7 +36,7 @@ public interface ItemWriter
      * later time
      * @return the database id of the Item - created when storing
      */
-    public Integer store(Item item) throws ObjectStoreException;
+    Integer store(Item item) throws ObjectStoreException;
 
     /**
      * Stores the given ReferenceList after setting its item id.
@@ -44,7 +44,7 @@ public interface ItemWriter
      * @param itemId the ID of the Item that contains the ReferenceList
      * @throws ObjectStoreException if something goes wrong
      */
-    public void store(ReferenceList refList, Integer itemId) throws ObjectStoreException;
+    void store(ReferenceList refList, Integer itemId) throws ObjectStoreException;
 
     /**
      * Stores the given Reference after setting its item id.
@@ -52,7 +52,7 @@ public interface ItemWriter
      * @param itemId the ID of the Item that contains the Reference
      * @throws ObjectStoreException if something goes wrong
      */
-    public void store(Reference ref, Integer itemId) throws ObjectStoreException;
+    void store(Reference ref, Integer itemId) throws ObjectStoreException;
 
     /**
      * Stores the given Attribute after setting its item id.
@@ -60,7 +60,7 @@ public interface ItemWriter
      * @param itemId the ID of the Item that contains the Attribute
      * @throws ObjectStoreException if something goes wrong
      */
-    public void store(Attribute att, Integer itemId) throws ObjectStoreException;
+    void store(Attribute att, Integer itemId) throws ObjectStoreException;
 
     /**
      * Stores the given Collection of Items and all their associated attributes, references, and
@@ -72,7 +72,7 @@ public interface ItemWriter
      * terminates, therefore a problem could result in an ObjectStoreException being thrown at a
      * later time
      */
-    public void storeAll(Collection<Item> items) throws ObjectStoreException;
+    void storeAll(Collection<Item> items) throws ObjectStoreException;
 
     /**
      * Flushes any store queue, closes transactions, and generally makes sure that every Item passed
@@ -82,6 +82,6 @@ public interface ItemWriter
      * the previously store()ed Items that has not already caused an ObjectStoreException to be
      * thrown, then this method MUST throw an ObjectStoreException
      */
-    public void close() throws ObjectStoreException;
+    void close() throws ObjectStoreException;
 }
 

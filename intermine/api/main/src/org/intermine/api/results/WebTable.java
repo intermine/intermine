@@ -33,32 +33,32 @@ public interface WebTable extends List<MultiRow<ResultsRow<MultiRowValue<ResultE
      *
      * @return a boolean
      */
-    public boolean isSingleBatch();
+    boolean isSingleBatch();
 
     /**
      * Return a List containing a ResultElement object for each element given in the given row.
      * @param index the row of the results to fetch
      * @return the results row
      */
-    public MultiRow<ResultsRow<MultiRowValue<ResultElement>>> getResultElements(int index);
+    MultiRow<ResultsRow<MultiRowValue<ResultElement>>> getResultElements(int index);
 
     /**
      * Returns the Column objects for this table.
      * @return the columns
      */
-    public List<Column> getColumns();
+    List<Column> getColumns();
 
     /**
      * Check whether the result of getEstimatedSize() is an estimate
      * @return true if the size is an estimate
      */
-    public boolean isSizeEstimate();
+    boolean isSizeEstimate();
 
     /**
      * Get the estimated number of rows of this table
      * @return the number of rows
      */
-    public int getEstimatedSize();
+    int getEstimatedSize();
 
     /**
      * Return the maximum retrievable index for this PagedTable.  This will only ever return less
@@ -66,26 +66,26 @@ public interface WebTable extends List<MultiRow<ResultsRow<MultiRowValue<ResultE
      * that can be retrieved.
      * @return the maximum retrieved index
      */
-    public int getMaxRetrievableIndex();
+    int getMaxRetrievableIndex();
 
     /**
      * Returns the pathToBagQueryResult Map.
      *
      * @return a Map
      */
-    public Map<String, BagQueryResult> getPathToBagQueryResult();
+    Map<String, BagQueryResult> getPathToBagQueryResult();
 
     /**
      * Get the PathQuery associated with this WebTable
      * @return the PathQuery
      */
-    public PathQuery getPathQuery();
+    PathQuery getPathQuery();
 
     /**
      * Gets the underlying results object info
      * @return the ResultsInfo
      * @throws ObjectStoreException exception
      */
-    public ResultsInfo getInfo() throws ObjectStoreException;
+    ResultsInfo getInfo() throws ObjectStoreException;
 
 }

@@ -19,7 +19,7 @@ import org.intermine.webservice.client.util.HttpConnection;
  * The ResourceNotFoundException is thrown by a service provider when an
  * attempt is made to perform an operation upon a resource that
  * cannot be found.
- * 
+ *
  * @author Jakub Kulaviak
  */
 public class ResourceNotFoundException extends ServiceException

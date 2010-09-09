@@ -15,7 +15,8 @@ import junit.framework.TestCase;
 import org.intermine.TestUtil;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.PathConstraintAttribute;
+import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.WebServiceConstants;
 
@@ -31,17 +32,15 @@ public class TemplateResultLinkGeneratorTest extends TestCase
     public void testExtraValueLink() {
         TemplateQuery tmpl = getTemplate(getExtraValueQuery());
         String link = new TemplateResultLinkGenerator().getHtmlLink("http://localhost:8080/query", tmpl);
-        assertEquals(prefix + "/template/results?" +
-        		"name=template1&constraint1=Gene.name&op1=LOOKUP&value1=zen&" +
-        		"extra1=Drosophila_melanogaster&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging", link);
+        assertEquals(link, prefix + "/template/results?"
+                + "name=template1&constraint1=Gene.name&op1=LOOKUP&value1=zen&"
+                + "extra1=Drosophila_melanogaster&size="
+        		+ TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging", link);
     }
 
     private PathQuery getExtraValueQuery() {
         PathQuery ret = new PathQuery(TestUtil.getModel());
-        ret.addNode("Gene.name");
-        Constraint c = new Constraint(ConstraintOp.LOOKUP, "zen", true, 
-                "description", "code", "identifier", "Drosophila_melanogaster");        
-        ret.getNode("Gene.name").getConstraints().add(c);
+        ret.addConstraint(new PathConstraintLookup("Gene.name", "zen", "Drosophila_melanogaster"));
         return ret;
     }
     
@@ -59,21 +58,14 @@ public class TemplateResultLinkGeneratorTest extends TestCase
 
     private PathQuery getMultipleConstraintQuery() {
         PathQuery ret = new PathQuery(TestUtil.getModel());
-        ret.addNode("Gene.name");
-        Constraint c1 = new Constraint(ConstraintOp.CONTAINS, "zen", true, 
-                "description", "code", "identifier", null);        
-        ret.getNode("Gene.name").getConstraints().add(c1);
-        ret.addNode("Gene.length");
-        Constraint c2 = new Constraint(ConstraintOp.LESS_THAN, "100", true, 
-                "description", "code", "identifier", null);        
-        ret.getNode("Gene.length").getConstraints().add(c2);
+        ret.addConstraint(new PathConstraintAttribute("Gene.name", ConstraintOp.MATCHES, "zen"));
+        ret.addConstraint(new PathConstraintAttribute("Gene.length", ConstraintOp.LESS_THAN, "100"));
         return ret;        
     }
     
     private TemplateQuery getTemplate(PathQuery pathQuery) {
         TemplateQuery tmpl = new TemplateQuery("template1", "title", 
-                "description", "comments", pathQuery);
-        tmpl.addNode("");
+                "comments", pathQuery);
         return tmpl;
     }
     

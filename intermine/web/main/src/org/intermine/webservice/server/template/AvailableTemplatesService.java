@@ -31,7 +31,8 @@ import org.intermine.webservice.server.exceptions.InternalErrorException;
  * Fetch the names of public template queries for use with the Templates web service.
  * @author Richard Smith
  */
-public class AvailableTemplatesService extends WebService {
+public class AvailableTemplatesService extends WebService
+{
 
     private static final String ENDL = System.getProperty("line.separator");
 
@@ -46,10 +47,10 @@ public class AvailableTemplatesService extends WebService {
 
         String pathFromUrl = request.getPathInfo();
         pathFromUrl = StringUtil.trimSlashes(pathFromUrl);
-        
+
         TemplateManager templateManager = im.getTemplateManager();
         Map<String, TemplateQuery> templates = templateManager.getGlobalTemplates();
-        
+
         try {
             if (pathFromUrl != null && pathFromUrl.equalsIgnoreCase("xml")) {
                 response.getWriter().append(TemplateHelper.templateMapToXml(templates,

@@ -13,6 +13,8 @@ package org.intermine.bio.web.widget;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
@@ -44,23 +46,23 @@ public class HomologueURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
-        String paths = "Gene.primaryIdentifier,Gene.symbol,Gene.organism.name,"
-                + "Gene.homologues.homologue.primaryIdentifier,Gene.homologues.homologue.symbol,"
-                + "Gene.homologues.homologue.organism.name,Gene.homologues.type";
-        q.setView(paths);
-        q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
+        q.addViews("Gene.primaryIdentifier", "Gene.symbol", "Gene.organism.name",
+                "Gene.homologues.homologue.primaryIdentifier",
+                "Gene.homologues.homologue.symbol",
+                "Gene.homologues.homologue.organism.name",
+                "Gene.homologues.type");
+        q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
+        q.addConstraint(Constraints.eq("Gene.homologues.type", "orthologue"));
         if (!showAll) {
-            q.addConstraint("Gene.homologues.homologue.organism", Constraints.lookup(key));
-            q.setConstraintLogic("A and B and C");
-        } else {
-            q.setConstraintLogic("A and B");
+            q.addConstraint(Constraints.lookup("Gene.homologues.homologue.organism", key, ""));
         }
+        q.addOrderBy(new OrderElement("Gene.organism.name", OrderDirection.ASC));
+        q.addOrderBy(new OrderElement("Gene.primaryIdentifier", OrderDirection.ASC));
+        q.addOrderBy(new OrderElement("Gene.homologues.homologue.organism.name",
+                OrderDirection.ASC));
+        q.addOrderBy(new OrderElement("Gene.homologues.homologue.primaryIdentifier",
+                OrderDirection.ASC));
 
-        q.syncLogicExpression("and");
-        String orderby = "Gene.organism.name,Gene.primaryIdentifier,"
-            + "Gene.homologues.homologue.organism.name,Gene.homologues.homologue.primaryIdentifier";
-        q.setOrderBy(orderby);
         return q;
     }
 }

@@ -37,8 +37,11 @@ import org.intermine.util.TypeUtil;
  * Utility methods for paths.
  * @author Kim Rutherford
  */
-public class QueryGenUtil
+public final class QueryGenUtil
 {
+    private QueryGenUtil() {
+    }
+
     /**
      * Given a String, perform a one of a set of expansions and return a Set of unqualified class
      * names. Firstly, if the argument contains commas, it will be split up in the obvious way, and
@@ -64,8 +67,8 @@ public class QueryGenUtil
             if (part.indexOf('.') != -1) {
                 QueryAndClass qac = createClassFindingQuery(os.getModel(), part);
                 for (Object cls : os.executeSingleton(qac.getQuery(), 1000, false, false, false)) {
-                    Class clazz = (Class) cls;
-                    for (Class classPart : DynamicUtil.decomposeClass(clazz)) {
+                    Class<?> clazz = (Class<?>) cls;
+                    for (Class<?> classPart : DynamicUtil.decomposeClass(clazz)) {
                         if (qac.getClazz().isAssignableFrom(classPart)) {
                             clsNames.add(TypeUtil.unqualifiedName(classPart.getName()));
                         }
@@ -108,7 +111,7 @@ public class QueryGenUtil
      */
     protected static QueryAndClass createClassFindingQuery(Model model, String part) {
         try {
-            String paths[] = part.split("\\.");
+            String[] paths = part.split("\\.");
             Query q = new Query();
             QueryClass qc = new QueryClass(Class.forName(model.getPackageName() + "."
                         + paths[0]));
@@ -159,9 +162,7 @@ public class QueryGenUtil
      */
     public static void validatePath(String path, Model model) {
         int posOfOrder = path.indexOf(" ORDER BY ");
-        String order = null;
         if (posOfOrder != -1) {
-            order = path.substring(posOfOrder + 10);
             path = path.substring(0, posOfOrder);
         }
         // must be more than one element and odd number
@@ -390,7 +391,7 @@ public class QueryGenUtil
     protected static class QueryAndClass
     {
         private Query query;
-        private Class clazz;
+        private Class<?> clazz;
 
         /**
          * Constructor.
@@ -398,7 +399,7 @@ public class QueryGenUtil
          * @param query a Query
          * @param clazz a Class
          */
-        public QueryAndClass(Query query, Class clazz) {
+        public QueryAndClass(Query query, Class<?> clazz) {
             this.query = query;
             this.clazz = clazz;
         }
@@ -417,7 +418,7 @@ public class QueryGenUtil
          *
          * @return a Class
          */
-        public Class getClazz() {
+        public Class<?> getClazz() {
             return clazz;
         }
     }

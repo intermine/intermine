@@ -20,12 +20,12 @@ public interface Table
     /**
      * Clears the batch.
      */
-    public void clear();
+    void clear();
 
     /**
      * Returns the current amount of data, in bytes, held in this object.
      *
      * @return an int
      */
-    public int getSize();
+    int getSize();
 }

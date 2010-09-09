@@ -13,7 +13,8 @@ package org.intermine.dataconversion;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.intermine.model.InterMineObject;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.model.fulldata.Attribute;
 import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Reference;
@@ -21,9 +22,6 @@ import org.intermine.model.fulldata.ReferenceList;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.ProxyReference;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * Stores Items in an objectstore.
@@ -54,16 +52,16 @@ public class ObjectStoreItemWriter implements ItemWriter
      * {@inheritDoc}
      */
     public Integer store(Item item) throws ObjectStoreException {
-        for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
-            osw.store((InterMineObject) i.next());
+        for (Attribute a : item.getAttributes()) {
+            osw.store(a);
             transactionCounter++;
         }
-        for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
-            osw.store((InterMineObject) i.next());
+        for (Reference r : item.getReferences()) {
+            osw.store(r);
             transactionCounter++;
         }
-        for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
-            osw.store((InterMineObject) i.next());
+        for (ReferenceList r : item.getCollections()) {
+            osw.store(r);
             transactionCounter++;
         }
         if (StringUtils.isEmpty(item.getClassName())

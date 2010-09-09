@@ -13,7 +13,6 @@ package org.intermine.task;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +73,7 @@ public class PrecomputeTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         if (alias == null) {
             throw new BuildException("alias attribute is not set");
@@ -111,22 +111,16 @@ public class PrecomputeTask extends Task
     public void precompute(boolean createAllOrders, ObjectStore os, int minRows) {
         Properties properties = readProperties(os.getModel().getName());
 
-        Map pq = getPrecomputeQueries(createAllOrders, os, properties);
+        Map<String, List<Query>> pq = getPrecomputeQueries(createAllOrders, os, properties);
         LOG.info("pq.size(): " + pq.size());
         List<ParallelPrecomputer.Job> jobs = new ArrayList<ParallelPrecomputer.Job>();
-        Iterator iter = pq.entrySet().iterator();
-
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            String key = (String) entry.getKey();
+        for (Map.Entry<String, List<Query>> entry : pq.entrySet()) {
+            String key = entry.getKey();
             String value = properties.getProperty(key);
 
-            List queries = (List) entry.getValue();
+            List<Query> queries = entry.getValue();
             LOG.debug("queries: " + queries.size());
-            Iterator queriesIter = queries.iterator();
-            while (queriesIter.hasNext()) {
-                Query query = (Query) queriesIter.next();
-
+            for (Query query : queries) {
                 LOG.info("key: " + key);
 
                 jobs.add(new ParallelPrecomputer.Job(key, query, null,
@@ -135,6 +129,7 @@ public class PrecomputeTask extends Task
         }
 
         ParallelPrecomputer pp = getPrecomputer((ObjectStoreInterMineImpl) os);
+        pp.setMinRows(minRows);
 
         try {
             pp.precompute(jobs);
@@ -172,10 +167,8 @@ public class PrecomputeTask extends Task
 
         // TODO - property to not create empty tables
 
-        Iterator iter = new TreeSet(precomputeProperties.keySet()).iterator();
-
-        while (iter.hasNext()) {
-            String precomputeKey = (String) iter.next();
+        for (Object precomputeKeyObj : new TreeSet<Object>(precomputeProperties.keySet())) {
+            String precomputeKey = (String) precomputeKeyObj;
 
             String value = (String) precomputeProperties.get(precomputeKey);
 
@@ -247,14 +240,12 @@ public class PrecomputeTask extends Task
     private static List<Query> getOrderedQueries(Query q) {
         List<Query> queryList = new ArrayList<Query>();
 
-        Set permutations = permutations(q.getEffectiveOrderBy().size());
-        Iterator iter = permutations.iterator();
-        while (iter.hasNext()) {
+        Set<int[]> permutations = permutations(q.getEffectiveOrderBy().size());
+        for (int[] order : permutations) {
             Query newQuery = QueryCloner.cloneQuery(q);
-            List orderBy = new ArrayList(newQuery.getEffectiveOrderBy());
+            List<Object> orderBy = new ArrayList<Object>(newQuery.getEffectiveOrderBy());
             newQuery.clearOrderBy();
 
-            int[] order = (int[]) iter.next();
             for (int i = 0; i < order.length; i++) {
                 newQuery.addToOrderBy((QueryClass) orderBy.get(order[i]));
             }
@@ -326,11 +317,12 @@ public class PrecomputeTask extends Task
     /**
      * Given an integer number, n, return a Set of int arrays with all permutations
      * of numbers 0 to n.
+     *
      * @param n number of entities in ordered arrays
      * @return a set of int arrays
      */
-    private static Set permutations(int n) {
-        Set result = new LinkedHashSet();
+    private static Set<int[]> permutations(int n) {
+        Set<int[]> result = new LinkedHashSet<int[]>();
         int[] array = new int[n];
 
         for (int i = 0; i < n; i++) {
@@ -346,7 +338,7 @@ public class PrecomputeTask extends Task
         array[j] = tmp;
     }
 
-    private static void enumerate(Set result, int[] array, int n) {
+    private static void enumerate(Set<int[]> result, int[] array, int n) {
         if (n == 1) {
             int[] copy = new int[array.length];
             System.arraycopy(array, 0, copy, 0, array.length);

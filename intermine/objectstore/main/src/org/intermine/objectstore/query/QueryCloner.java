@@ -14,18 +14,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.intermine.model.InterMineObject;
 
 /**
  * This is a static class that provides a method to clone a Query object.
  *
  * @author Matthew Wakeling
  */
-public class QueryCloner
+public final class QueryCloner
 {
+    private QueryCloner() {
+    }
+
     /**
      * Clones a query object.
      *
@@ -35,51 +39,47 @@ public class QueryCloner
     public static Query cloneQuery(Query query) {
         Query newQuery = new Query();
         try {
-            Map aliases = query.getAliases();
-            Map fromElementMap = new HashMap();
-            Iterator fromIter = query.getFrom().iterator();
-            while (fromIter.hasNext()) {
-                FromElement origFrom = (FromElement) fromIter.next();
+            Map<Object, String> aliases = query.getAliases();
+            Map<FromElement, FromElement> fromElementMap = new HashMap<FromElement, FromElement>();
+            Map<QueryObjectPathExpression, QueryObjectPathExpression> qopeMap =
+                new HashMap<QueryObjectPathExpression, QueryObjectPathExpression>();
+            for (FromElement origFrom : query.getFrom()) {
                 FromElement newFrom = null;
                 if (origFrom instanceof QueryClass) {
                     newFrom = origFrom;
                 } else if (origFrom instanceof Query) {
                     newFrom = cloneQuery((Query) origFrom);
                 } else if (origFrom instanceof QueryClassBag) {
-                    Collection bag = ((QueryClassBag) origFrom).getBag();
-                    Class type = ((QueryClassBag) origFrom).getType();
+                    Collection<?> bag = ((QueryClassBag) origFrom).getBag();
+                    Class<? extends InterMineObject> type = ((QueryClassBag) origFrom).getType();
                     if (bag == null) {
                         newFrom = new QueryClassBag(type, ((QueryClassBag) origFrom).getOsb());
                     } else {
-                        newFrom = new QueryClassBag(type,
-                                (Collection) cloneThing(((QueryClassBag) origFrom).getBag(), null));
+                        newFrom = new QueryClassBag(type, (Collection<?>)
+                                cloneThing(((QueryClassBag) origFrom).getBag(), null, null));
                     }
                 } else {
                     throw new IllegalArgumentException("Unknown type of FromElement " + origFrom);
                 }
-                newQuery.addFrom(newFrom, (String) aliases.get(origFrom));
+                newQuery.addFrom(newFrom, aliases.get(origFrom));
                 fromElementMap.put(origFrom, newFrom);
             }
-            Iterator selectIter = query.getSelect().iterator();
-            while (selectIter.hasNext()) {
-                QuerySelectable origSelect = (QuerySelectable) selectIter.next();
+            for (QuerySelectable origSelect : query.getSelect()) {
                 QuerySelectable newSelect = (QuerySelectable) cloneThing(origSelect,
-                        fromElementMap);
-                newQuery.addToSelect(newSelect, (String) aliases.get(origSelect));
+                        fromElementMap, qopeMap);
+                newQuery.addToSelect(newSelect, aliases.get(origSelect));
             }
-            Iterator orderIter = query.getOrderBy().iterator();
-            while (orderIter.hasNext()) {
-                QueryOrderable origOrder = (QueryOrderable) orderIter.next();
-                QueryOrderable newOrder = (QueryOrderable) cloneThing(origOrder, fromElementMap);
+            for (QueryOrderable origOrder : query.getOrderBy()) {
+                QueryOrderable newOrder = (QueryOrderable) cloneThing(origOrder, fromElementMap,
+                        qopeMap);
                 newQuery.addToOrderBy(newOrder);
             }
-            Iterator groupIter = query.getGroupBy().iterator();
-            while (groupIter.hasNext()) {
-                QueryNode origGroup = (QueryNode) groupIter.next();
-                QueryNode newGroup = (QueryNode) cloneThing(origGroup, fromElementMap);
+            for (QueryNode origGroup : query.getGroupBy()) {
+                QueryNode newGroup = (QueryNode) cloneThing(origGroup, fromElementMap, qopeMap);
                 newQuery.addToGroupBy(newGroup);
             }
-            newQuery.setConstraint((Constraint) cloneThing(query.getConstraint(), fromElementMap));
+            newQuery.setConstraint((Constraint) cloneThing(query.getConstraint(), fromElementMap,
+                    qopeMap));
             newQuery.setDistinct(query.isDistinct());
             newQuery.setLimit(query.getLimit());
         } catch (NoSuchFieldException e) {
@@ -88,14 +88,16 @@ public class QueryCloner
         return newQuery;
     }
 
-    private static Object cloneThing(Object orig, Map fromElementMap) throws NoSuchFieldException {
+    private static Object cloneThing(Object orig, Map<FromElement, FromElement> fromElementMap,
+            Map<QueryObjectPathExpression, QueryObjectPathExpression> qopeMap)
+        throws NoSuchFieldException {
         if (orig == null) {
             return null;
         } else if (orig instanceof FromElement) {
             return fromElementMap.get(orig);
         } else if (orig instanceof QueryField) {
             QueryField origF = (QueryField) orig;
-            return new QueryField((FromElement) fromElementMap.get(origF.getFromElement()),
+            return new QueryField(fromElementMap.get(origF.getFromElement()),
                     origF.getFieldName(), origF.getSecondFieldName(), origF.getType());
         } else if (orig instanceof QueryObjectReference) {
             QueryObjectReference origR = (QueryObjectReference) orig;
@@ -123,52 +125,54 @@ public class QueryCloner
             if (origF.getOperation() == QueryFunction.COUNT) {
                 return orig;
             } else if (origF.getParam() instanceof QueryField) {
-                return new QueryFunction((QueryField) cloneThing(origF.getParam(), fromElementMap),
-                        origF.getOperation());
+                return new QueryFunction((QueryField) cloneThing(origF.getParam(), fromElementMap,
+                        qopeMap), origF.getOperation());
             } else {
                 return new QueryFunction((QueryExpression) cloneThing(origF.getParam(),
-                            fromElementMap), origF.getOperation());
+                            fromElementMap, qopeMap), origF.getOperation());
             }
         } else if (orig instanceof QueryExpression) {
             QueryExpression origE = (QueryExpression) orig;
             if ((origE.getOperation() == QueryExpression.SUBSTRING) && (origE.getArg3() != null)) {
                 return new QueryExpression((QueryEvaluable)
-                        cloneThing(origE.getArg1(), fromElementMap),
-                        (QueryEvaluable) cloneThing(origE.getArg2(), fromElementMap),
-                        (QueryEvaluable) cloneThing(origE.getArg3(), fromElementMap));
+                        cloneThing(origE.getArg1(), fromElementMap, qopeMap),
+                        (QueryEvaluable) cloneThing(origE.getArg2(), fromElementMap, qopeMap),
+                        (QueryEvaluable) cloneThing(origE.getArg3(), fromElementMap, qopeMap));
             } else if ((origE.getOperation() == QueryExpression.LOWER) || (origE.getOperation()
                     == QueryExpression.UPPER)) {
                 return new QueryExpression(origE.getOperation(),
-                        (QueryEvaluable) cloneThing(origE.getArg1(), fromElementMap));
+                        (QueryEvaluable) cloneThing(origE.getArg1(), fromElementMap, qopeMap));
             } else {
                 return new QueryExpression((QueryEvaluable)
-                        cloneThing(origE.getArg1(), fromElementMap),
+                        cloneThing(origE.getArg1(), fromElementMap, qopeMap),
                         origE.getOperation(),
-                        (QueryEvaluable) cloneThing(origE.getArg2(), fromElementMap));
+                        (QueryEvaluable) cloneThing(origE.getArg2(), fromElementMap, qopeMap));
             }
         } else if (orig instanceof QueryCast) {
             return new QueryCast((QueryEvaluable) cloneThing(((QueryCast) orig).getValue(),
-                        fromElementMap), ((QueryCast) orig).getType());
+                        fromElementMap, qopeMap), ((QueryCast) orig).getType());
         } else if (orig instanceof PathExpressionField) {
             PathExpressionField origP = (PathExpressionField) orig;
             QueryObjectPathExpression origQope = origP.getQope();
-            QueryObjectPathExpression newQope = (QueryObjectPathExpression) fromElementMap
-                .get(origQope);
+            QueryObjectPathExpression newQope = qopeMap.get(origQope);
             if (newQope == null) {
-                newQope = (QueryObjectPathExpression) cloneThing(origQope, fromElementMap);
-                fromElementMap.put(origQope, newQope);
+                newQope = (QueryObjectPathExpression) cloneThing(origQope, fromElementMap, qopeMap);
+                qopeMap.put(origQope, newQope);
             }
             return new PathExpressionField(newQope, origP.getFieldNumber());
         } else if (orig instanceof QueryObjectPathExpression) {
             QueryObjectPathExpression origC = (QueryObjectPathExpression) orig;
             QueryObjectPathExpression retval = new QueryObjectPathExpression((QueryClass)
                     fromElementMap.get(origC.getQueryClass()), origC.getFieldName());
-            Map subFromElementMap = new HashMap();
+            Map<FromElement, FromElement> subFromElementMap =
+                new HashMap<FromElement, FromElement>();
             subFromElementMap.put(origC.getDefaultClass(), retval.getDefaultClass());
             for (QuerySelectable selectable : origC.getSelect()) {
-                retval.addToSelect((QuerySelectable) cloneThing(selectable, subFromElementMap));
+                retval.addToSelect((QuerySelectable) cloneThing(selectable, subFromElementMap,
+                        qopeMap));
             }
-            retval.setConstraint((Constraint) cloneThing(origC.getConstraint(), subFromElementMap));
+            retval.setConstraint((Constraint) cloneThing(origC.getConstraint(), subFromElementMap,
+                    qopeMap));
             return retval;
         } else if (orig instanceof QueryCollectionPathExpression) {
             QueryCollectionPathExpression origC = (QueryCollectionPathExpression) orig;
@@ -186,7 +190,8 @@ public class QueryCloner
                         + ", fromElementMap: " + fromElementMap);
             }
             retval.setSingleton(origC.isSingleton());
-            Map subFromElementMap = new HashMap();
+            Map<FromElement, FromElement> subFromElementMap =
+                new HashMap<FromElement, FromElement>();
             for (FromElement origFrom : origC.getFrom()) {
                 FromElement newFrom = null;
                 if (origFrom instanceof QueryClass) {
@@ -194,13 +199,14 @@ public class QueryCloner
                 } else if (origFrom instanceof Query) {
                     newFrom = cloneQuery((Query) origFrom);
                 } else if (origFrom instanceof QueryClassBag) {
-                    Collection bag = ((QueryClassBag) origFrom).getBag();
-                    Class type = ((QueryClassBag) origFrom).getType();
+                    Collection<?> bag = ((QueryClassBag) origFrom).getBag();
+                    Class<? extends InterMineObject> type = ((QueryClassBag) origFrom).getType();
                     if (bag == null) {
                         newFrom = new QueryClassBag(type, ((QueryClassBag) origFrom).getOsb());
                     } else {
-                        newFrom = new QueryClassBag(type, (Collection) cloneThing(((QueryClassBag)
-                                        origFrom).getBag(), null));
+                        newFrom = new QueryClassBag(type,
+                                (Collection<?>) cloneThing(((QueryClassBag) origFrom).getBag(),
+                                        null, qopeMap));
                     }
                 } else {
                     throw new IllegalArgumentException("Unknown type of FromElement " + origFrom);
@@ -210,42 +216,82 @@ public class QueryCloner
             }
             subFromElementMap.put(origC.getDefaultClass(), retval.getDefaultClass());
             for (QuerySelectable selectable : origC.getSelect()) {
-                retval.addToSelect((QuerySelectable) cloneThing(selectable, subFromElementMap));
+                retval.addToSelect((QuerySelectable) cloneThing(selectable, subFromElementMap,
+                        qopeMap));
             }
-            retval.setConstraint((Constraint) cloneThing(origC.getConstraint(), subFromElementMap));
+            retval.setConstraint((Constraint) cloneThing(origC.getConstraint(), subFromElementMap,
+                    qopeMap));
             return retval;
-        } else if (orig instanceof SimpleConstraint) {
+        } else if (orig instanceof Constraint) {
+            return cloneConstraint((Constraint) orig, fromElementMap, qopeMap);
+        } else if (orig instanceof OverlapRange) {
+            OverlapRange or = (OverlapRange) orig;
+            return new OverlapRange((QueryEvaluable) cloneThing(or.getStart(), fromElementMap,
+                    qopeMap), (QueryEvaluable) cloneThing(or.getEnd(), fromElementMap, qopeMap),
+                    (QueryObjectReference) cloneThing(or.getParent(), fromElementMap, qopeMap));
+        } else if (orig instanceof Set<?>) {
+            return new HashSet<Object>((Set<?>) orig);
+        } else if (orig instanceof List<?>) {
+            return new ArrayList<Object>((List<?>) orig);
+        } else if (orig instanceof ObjectStoreBag) {
+            // Immutable
+            return orig;
+        } else if (orig instanceof ObjectStoreBagCombination) {
+            ObjectStoreBagCombination origO = (ObjectStoreBagCombination) orig;
+            ObjectStoreBagCombination retval = new ObjectStoreBagCombination(origO.getOp());
+            retval.getBags().addAll(origO.getBags());
+            return retval;
+        } else if (orig instanceof ObjectStoreBagsForObject) {
+            ObjectStoreBagsForObject origO = (ObjectStoreBagsForObject) orig;
+            if (origO.getBags() == null) {
+                return new ObjectStoreBagsForObject(origO.getValue());
+            } else {
+                return new ObjectStoreBagsForObject(origO.getValue(),
+                        origO.getBags());
+            }
+        } else if (orig instanceof OrderDescending) {
+            return new OrderDescending((QueryOrderable) cloneThing(((OrderDescending) orig)
+                        .getQueryOrderable(), fromElementMap, qopeMap));
+        }
+        throw new IllegalArgumentException("Unknown object type: " + orig);
+    }
+
+    private static Constraint cloneConstraint(Constraint orig,
+            Map<FromElement, FromElement> fromElementMap,
+            Map<QueryObjectPathExpression, QueryObjectPathExpression> qopeMap)
+        throws NoSuchFieldException {
+
+        if (orig instanceof SimpleConstraint) {
             SimpleConstraint origC = (SimpleConstraint) orig;
             if ((origC.getOp() == ConstraintOp.IS_NULL)
                     || (origC.getOp() == ConstraintOp.IS_NOT_NULL)) {
                 return new SimpleConstraint((QueryEvaluable) cloneThing(origC.getArg1(),
-                            fromElementMap), origC.getOp());
+                        fromElementMap, qopeMap), origC.getOp());
             } else {
                 return new SimpleConstraint((QueryEvaluable) cloneThing(origC.getArg1(),
-                            fromElementMap), origC.getOp(),
-                        (QueryEvaluable) cloneThing(origC.getArg2(), fromElementMap));
+                        fromElementMap, qopeMap), origC.getOp(),
+                        (QueryEvaluable) cloneThing(origC.getArg2(), fromElementMap, qopeMap));
             }
         } else if (orig instanceof ConstraintSet) {
             ConstraintSet origC = (ConstraintSet) orig;
             ConstraintSet newC = new ConstraintSet(origC.getOp());
-            Iterator conIter = origC.getConstraints().iterator();
-            while (conIter.hasNext()) {
-                newC.addConstraint((Constraint) cloneThing(conIter.next(), fromElementMap));
+            for (Constraint con : origC.getConstraints()) {
+                newC.addConstraint((Constraint) cloneThing(con, fromElementMap, qopeMap));
             }
             return newC;
         } else if (orig instanceof ContainsConstraint) {
             ContainsConstraint origC = (ContainsConstraint) orig;
             if (origC.getOp().equals(ConstraintOp.IS_NULL) || origC.getOp().equals(
-                        ConstraintOp.IS_NOT_NULL)) {
+                    ConstraintOp.IS_NOT_NULL)) {
                 return new ContainsConstraint((QueryObjectReference) cloneThing(
-                            origC.getReference(), fromElementMap), origC.getOp());
+                        origC.getReference(), fromElementMap, qopeMap), origC.getOp());
             } else if (origC.getQueryClass() == null) {
                 return new ContainsConstraint((QueryReference) cloneThing(origC.getReference(),
-                            fromElementMap), origC.getOp(), origC.getObject());
+                        fromElementMap, qopeMap), origC.getOp(), origC.getObject());
             } else {
                 return new ContainsConstraint((QueryReference) cloneThing(origC.getReference(),
-                            fromElementMap), origC.getOp(),
-                        (QueryClass) cloneThing(origC.getQueryClass(), fromElementMap));
+                        fromElementMap, qopeMap), origC.getOp(),
+                        (QueryClass) cloneThing(origC.getQueryClass(), fromElementMap, qopeMap));
             }
         } else if (orig instanceof ClassConstraint) {
             ClassConstraint origC = (ClassConstraint) orig;
@@ -265,60 +311,46 @@ public class QueryCloner
                         cloneQuery(origC.getQuery()));
             } else {
                 return new SubqueryConstraint(
-                        (QueryEvaluable) cloneThing(origC.getQueryEvaluable(), fromElementMap),
-                        origC.getOp(), cloneQuery(origC.getQuery()));
+                        (QueryEvaluable) cloneThing(origC.getQueryEvaluable(), fromElementMap,
+                                qopeMap), origC.getOp(), cloneQuery(origC.getQuery()));
             }
         } else if (orig instanceof BagConstraint) {
             BagConstraint origC = (BagConstraint) orig;
-            Collection bag = origC.getBag();
-            if (bag instanceof Set) {
-                bag = new HashSet(bag);
-            } else if (bag instanceof List) {
-                bag = new ArrayList(bag);
+            Collection<?> bag = origC.getBag();
+            if (bag instanceof Set<?>) {
+                bag = new HashSet<Object>(bag);
+            } else if (bag instanceof List<?>) {
+                bag = new ArrayList<Object>(bag);
             }
             if (bag == null) {
                 return new BagConstraint((QueryNode) cloneThing(origC.getQueryNode(),
-                            fromElementMap), origC.getOp(), origC.getOsb());
+                        fromElementMap, qopeMap), origC.getOp(), origC.getOsb());
             } else {
                 return new BagConstraint((QueryNode) cloneThing(origC.getQueryNode(),
-                            fromElementMap), origC.getOp(), bag);
+                        fromElementMap, qopeMap), origC.getOp(), bag);
             }
+        } else if (orig instanceof MultipleInBagConstraint) {
+            MultipleInBagConstraint origC = (MultipleInBagConstraint) orig;
+            Collection<?> bag = origC.getBag();
+            if (bag instanceof Set<?>) {
+                bag = new HashSet<Object>(bag);
+            } else if (bag instanceof List<?>) {
+                bag = new ArrayList<Object>(bag);
+            }
+            @SuppressWarnings("unchecked") List<QueryEvaluable> evaluables = (List) cloneThing(origC
+                    .getEvaluables(), fromElementMap, qopeMap);
+            return new MultipleInBagConstraint(bag, evaluables);
         } else if (orig instanceof SubqueryExistsConstraint) {
             SubqueryExistsConstraint origC = (SubqueryExistsConstraint) orig;
             return new SubqueryExistsConstraint(origC.getOp(), cloneQuery(origC.getQuery()));
         } else if (orig instanceof OverlapConstraint) {
             OverlapConstraint oc = (OverlapConstraint) orig;
-            return new OverlapConstraint((OverlapRange) cloneThing(oc.getLeft(), fromElementMap),
-                    oc.getOp(), (OverlapRange) cloneThing(oc.getRight(), fromElementMap));
-        } else if (orig instanceof OverlapRange) {
-            OverlapRange or = (OverlapRange) orig;
-            return new OverlapRange((QueryEvaluable) cloneThing(or.getStart(), fromElementMap),
-                    (QueryEvaluable) cloneThing(or.getEnd(), fromElementMap),
-                    (QueryObjectReference) cloneThing(or.getParent(), fromElementMap));
-        } else if (orig instanceof Set) {
-            return new HashSet((Set) orig);
-        } else if (orig instanceof List) {
-            return new ArrayList((List) orig);
-        } else if (orig instanceof ObjectStoreBag) {
-            // Immutable
-            return orig;
-        } else if (orig instanceof ObjectStoreBagCombination) {
-            ObjectStoreBagCombination origO = (ObjectStoreBagCombination) orig;
-            ObjectStoreBagCombination retval = new ObjectStoreBagCombination(origO.getOp());
-            retval.getBags().addAll(origO.getBags());
-            return retval;
-        } else if (orig instanceof ObjectStoreBagsForObject) {
-            ObjectStoreBagsForObject origO = (ObjectStoreBagsForObject) orig;
-            if (origO.getBags() == null) {
-                return new ObjectStoreBagsForObject(origO.getValue());
-            } else {
-                return new ObjectStoreBagsForObject(origO.getValue(),
-                        origO.getBags());
-            }
-        } else if (orig instanceof OrderDescending) {
-            return new OrderDescending((QueryOrderable) cloneThing(((OrderDescending) orig)
-                        .getQueryOrderable(), fromElementMap));
+            return new OverlapConstraint((OverlapRange) cloneThing(oc.getLeft(), fromElementMap,
+                    qopeMap), oc.getOp(), (OverlapRange) cloneThing(oc.getRight(), fromElementMap,
+                            qopeMap));
+        } else {
+            throw new IllegalArgumentException("Unknown constraint type "
+                    + orig.getClass().getName());
         }
-        throw new IllegalArgumentException("Unknown object type: " + orig);
     }
 }

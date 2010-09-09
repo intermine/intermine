@@ -13,6 +13,7 @@ package org.intermine.bio.web.widget;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
@@ -43,17 +44,17 @@ public class PublicationURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
-        q.setView("Gene.secondaryIdentifier,Gene.primaryIdentifier,Gene.name,Gene.organism.name,"
-                      + "Gene.publications.title,Gene.publications.firstAuthor,"
-                      + "Gene.publications.journal,Gene.publications.year,"
-                      + "Gene.publications.pubMedId");
-        q.setOrderBy("Gene.publications.pubMedId, Gene.primaryIdentifier");
-        q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
+        q.addViews("Gene.secondaryIdentifier", "Gene.primaryIdentifier", "Gene.name",
+                "Gene.organism.name", "Gene.publications.title", "Gene.publications.firstAuthor",
+                "Gene.publications.journal", "Gene.publications.year",
+                "Gene.publications.pubMedId");
+        q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
-            q.addConstraint("Gene.publications", Constraints.lookup(key));
-            q.setConstraintLogic("A and B");
-            q.syncLogicExpression("and");
+            q.addConstraint(Constraints.lookup("Gene.publications", key, ""));
         }
+        q.addOrderBy("Gene.publications.pubMedId", OrderDirection.ASC);
+        q.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
+
         return q;
     }
 }

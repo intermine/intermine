@@ -10,7 +10,6 @@ package org.intermine.api.bag;
  *
  */
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,8 +21,10 @@ import java.util.Map;
 import junit.framework.Test;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.api.xml.TemplateQueryBinding;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
@@ -40,7 +41,9 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
-import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathQuery;
 
 /**
@@ -52,6 +55,7 @@ public class TypeConverterTest extends StoreDataTestCase
     List<TemplateQuery> conversionTemplates;
     ObjectStoreWriter uosw;
     ObjectStore os;
+    Profile profile;
     
     public TypeConverterTest(String arg1) {
         super(arg1);
@@ -60,28 +64,24 @@ public class TypeConverterTest extends StoreDataTestCase
     public void setUp() throws Exception {
         super.setUp();
         os = ObjectStoreFactory.getObjectStore("os.unittest");
-
-        String template = "<template name=\"convertEmployeesToAddresses\" title=\"Convert employees to addresses\" longDescription=\"\" comment=\"\"\n" + 
-                "      <query name=\"convertEmployeesToAddresses\" model=\"testmodel\" view=\"Employee.id Employee.address.id\">\n" + 
-                "        <node path=\"Employee\" type=\"Employee\"/>\n" + 
-                "        <node path=\"Employee.id\" type=\"Integer\">\n" + 
-                "          <constraint op=\"=\" value=\"0\" description=\"id\" identifier=\"\" editable=\"true\" code=\"A\"/>\n" + 
-                "        </node>\n" + 
-                "        <node path=\"Employee.address.id\" type=\"Integer\"/>\n" + 
-                "      </query>\n" + 
-                "    </template>";
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
-        TemplateQueryBinding tqb = new TemplateQueryBinding();
-        Map tqs = tqb.unmarshal(new StringReader(template), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery tq = (TemplateQuery) tqs.get("convertEmployeesToAddresses");
-        conversionTemplates = new ArrayList(Collections.singleton(tq));
-        uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
+        ProfileManager pm = new ProfileManager(os, uosw);
+        profile = new Profile(pm, "test", null, "test", null, null, null);
+        pm.createProfile(profile);
+        
+        TemplateQuery template = new TemplateQuery("convertEmployeesToAddresses", "", "", new PathQuery(os.getModel()));
+        template.addViews("Employee.id", "Employee.address.id");
+        PathConstraint employeeId = Constraints.eq("Employee.id", "0");
+        template.addConstraint(employeeId);
+        template.setEditable(employeeId, true);
+        conversionTemplates = new ArrayList<TemplateQuery>(Collections.singleton(template));
     }
     
     public void executeTest(String type) {
     }
 
     public void testQueries() throws Throwable {
+        // We don't want to run the standard queries, just load the test data
     }
     
     public static void oneTimeSetUp() throws Exception {
@@ -103,13 +103,13 @@ public class TypeConverterTest extends StoreDataTestCase
         expected.put(((List) r.get(0)).get(0), Collections.singletonList(((List) r.get(0)).get(1)));
         expected.put(((List) r.get(1)).get(0), Collections.singletonList(((List) r.get(1)).get(1)));
 
-        Map got = TypeConverter.getConvertedObjectMap(conversionTemplates, Employee.class, Address.class, imb, os);
+        Map<InterMineObject, List<InterMineObject>> got = TypeConverter.getConvertedObjectMap(conversionTemplates, Employee.class, Address.class, imb, os);
 
         assertEquals(expected, got);
     }
     
     private Results getEmployeesAndAddresses() throws Exception {
-        List names = Arrays.asList(new String[] {"EmployeeA3", "EmployeeB2"});
+        List<String> names = Arrays.asList(new String[] {"EmployeeA3", "EmployeeB2"});
         Query q = new Query();
         QueryClass qc1 = new QueryClass(Employee.class);
         QueryClass qc2 = new QueryClass(Address.class);
@@ -126,20 +126,26 @@ public class TypeConverterTest extends StoreDataTestCase
     }
     
     public void testGetConversionMapQuery() throws Exception {
-        String bag = "bag";
-        PathQuery pq = TypeConverter.getConversionMapQuery(conversionTemplates, Employee.class, Address.class, bag);
-        assertEquals(1, pq.getAllConstraints().size());
-        Constraint expected = new Constraint(ConstraintOp.IN, bag, false, "", "A", null, null);
-        assertEquals(expected, pq.getAllConstraints().get(0));
+        InterMineBag bag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
+        PathQuery resQuery = TypeConverter.getConversionMapQuery(conversionTemplates, Employee.class, Address.class, bag);
+        assertEquals(1, resQuery.getConstraints().size());
+        PathConstraintBag resCon = (PathConstraintBag) resQuery.getConstraints().keySet().iterator().next();
+        assertNotNull(resCon);
+        assertEquals("Employee", resCon.getPath());
+        assertEquals(ConstraintOp.IN, resCon.getOp());
+        assertEquals(bag.getName(), resCon.getBag());
     }
     
     public void testGetConversionQuery() throws Exception {
-        String bag = "bag";
-        PathQuery pq = TypeConverter.getConversionQuery(conversionTemplates, Employee.class, Address.class, bag);
-        assertEquals(1, pq.getAllConstraints().size());
-        Constraint expected = new Constraint(ConstraintOp.IN, bag, false, "", "A", null, null);
-        assertEquals(expected, pq.getAllConstraints().get(0));
-        List expectedView = new ArrayList(Collections.singleton("Employee.address.id"));
-        assertEquals(expectedView, pq.getViewStrings());
+        InterMineBag bag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
+        PathQuery resQuery = TypeConverter.getConversionQuery(conversionTemplates, Employee.class, Address.class, bag);
+        assertEquals(1, resQuery.getConstraints().size());
+        PathConstraintBag resCon = (PathConstraintBag) resQuery.getConstraints().keySet().iterator().next();
+        assertNotNull(resCon);
+        assertEquals("Employee", resCon.getPath());
+        assertEquals(ConstraintOp.IN, resCon.getOp());
+        assertEquals(bag.getName(), resCon.getBag());
+        List<String> expectedView = new ArrayList<String>(Collections.singleton("Employee.address.id"));
+        assertEquals(expectedView, resQuery.getView());
     }
 }

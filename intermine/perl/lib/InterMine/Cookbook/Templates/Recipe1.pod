@@ -1,0 +1,144 @@
+=pod
+
+=head1 NAME
+
+InterMine::Cookbook::Templates::Recipe1 - Accessing Templates
+
+=head1 SYNOPSIS
+
+  use InterMine 'www.flymine.org/query/service';
+
+  my $template = InterMine->template('All_Genes_In_Organism_To_Publications);
+      or die "Could not find template";
+
+  my $results  = $template->results_with(
+      opA    => 'CONTAINS',
+      valueA => 'Drosophila'
+  );
+
+=head1 DESCRIPTION
+
+Templates are exactly like queries (they are a subclass of them) and so can do
+pretty much what a normal query can do, plus a little bit more.
+
+The whole point of a template is to save you time, and avoid duplication of
+effort. Rather than needing to construct the perfect query every time, you
+can run a predefined one, with the values that you want. Since these are
+simply another form of query, everything in the Cookbook about using queries
+holds true for them as well - you can change them by adding constraints, and you
+can call C<results> and C<results_iterator>, and the result format is the same.
+You can even extent them with roles in exactly the same way:
+
+  my $template = InterMine->template(
+      $name,
+      with => [@roles],
+  );
+
+=head2 results_with
+
+The extra behaviour relies on the fact that templates have predefined
+constraints. As well as the C<results> method, there is a C<results_with>
+method, which lets you define values for the template's constraints without
+permanently altering it. If you call C<< $template->show_constraints >> to
+examine its composition, you would get the following results:
+
+  A) Gene.organism.name = "Saccharomyces cerevisiae" (locked)
+
+Showing that it has one constraint, with the code 'A', which should be used
+in the call to C<results_with>. After calling
+C<< $template->results_with(valueA => $value) >> it will still have the same
+default value, even though I queried with a different one.
+
+A template can have multiple constraints, and these can be specified in
+the same call:
+
+  $template->results_with(
+      opA    => '=',
+      valueA => $foo,
+      opB    => 'CONTAINS',
+      valueB => $bar,
+  );
+
+Note that only the operators and the values for the constraints can be specified - 
+the path of the constraint is not editable. If you are happy with the default 
+value or the default operator for any of the constraints, you simply do not 
+need to include it in the list:
+
+  $template->results_with(
+      valueA => $foo,
+      opB    => 'CONTAINS',
+  );
+
+=head2 Constraint attributes
+
+If I call
+
+  my $name = 'GeneOrganism1_OrthologueOrganism2';
+  print InterMine->template($name)->show_constraints;
+
+I get back:
+
+  'A) Homologue.gene.organism.name = "Drosophila melanogaster" (locked)
+  B) Homologue.homologue.organism.name = "Caenorhabditis elegans" (locked)'
+
+If you examine the GeneOrganism1_OrthologueOrganism2 template in more detail you will find
+it actually has three constraints, but the third (C<< Homologue.type = "orthologue" >>)
+does not appear in the list. The reason for this is that it is not editable, and
+so we cannot specify its value when we call C<results_with>. Non-editable
+constraints can thus be ignored when using a template.
+
+As well as being I<editable> or not, constraints on templates are also marked as
+being optional or not. If a constraint is optional (or 'I<switchable>' in
+our terminology) it can be in either an active ('switched on') or inactive
+('switched off') state. If it is not switchable, then it is 'locked'
+(as in the above examples) Although you can supply values for inactive
+constraints to C<results_with> when running a template, they will be ignored in its
+execution. To switch a constraint off:
+
+  $template->get_constraint('A')->switch_off;
+
+And obviously, call C<switch_on> for the converse action.
+This will throw an exception if the constraint is not switchable.
+
+Generally it is assumed if you are using a template you are familiar with what
+it does (possibly because you wrote it yourself - see Templates::Recipe2),
+and so you should know which constraints are editable/switchable or not.
+If you would like to find out however, there are several ways to interrogate
+the template for the information:
+
+=over
+
+=item $template->show_constraints;
+
+this will return a string with a list of editable constraints in human-readable
+format, as seen above.
+
+=item $template->editable_constraints;
+
+This will return list of all the constraint objects which represent
+editable constraints.
+
+=item $constraint->editable;
+
+This will return true if the constraint is editable
+
+=item $constraint->switchable;
+
+This will return true if the constraint is switchable
+
+=item $constraint->switched_on;
+
+This will return true if the constraint is active (locked constraints
+are always active - switchable constraints can be either active or not).
+
+=back
+
+=head1 CONCLUSION
+
+Templates are a way of automating commonly used queries, which in tandem
+with scripting can mean extremely efficient workflows. If you find that you are
+using some of your own queries heavily as scripts, you can make them
+more widely accessible by uploading them as templates, a process
+which we will look at in the next recipe.
+
+=cut

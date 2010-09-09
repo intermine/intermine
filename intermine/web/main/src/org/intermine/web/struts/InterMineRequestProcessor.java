@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,7 +37,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.ServletMethods;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -55,7 +56,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
      */
     // TODO note that 'experiment' and 'features' are modMine specific.  We should make this
     // configurable by properties
-    public static final List START_PATHS =
+    public static final List<String> START_PATHS =
         Arrays.asList(LOGON_PATH, LOGON_INIT_PATH, "/classChooser", "/bagBuild", "/objectDetails",
                 "/examples", "/browseAction", "/collectionDetails", "/iqlQuery", "/login",
                 "/contact", "/portal", "/templates", "/templateSearch", "/template", "/aspect",
@@ -118,14 +119,27 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 if (queryXml != null) {
                     BagManager bagManager = im.getBagManager();
                     Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-                    PathQuery pq = ServletMethods.fromXml(queryXml, allBags,
-                            PathQuery.USERPROFILE_VERSION);
-                    if (pq.isValid()) {
-                        SessionMethods.setQuery(session, ServletMethods.fromXml(queryXml,
-                                    profile.getSavedBags(), PathQuery.USERPROFILE_VERSION));
-                    } else {
-                        LOG.warn("PathQuery XML in saved session invalid! " + queryXml);
+                    PathQuery pq =
+                        PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml),
+                                PathQuery.USERPROFILE_VERSION);
+
+                    // check bags used by this query exist
+                    Set<String> missingBags = new HashSet<String>();
+                    for (String bagName : pq.getBagNames()) {
+                        if (!allBags.containsKey(bagName)) {
+                            missingBags.add(bagName);
+                        }
                     }
+
+                    if (!pq.isValid()) {
+                        LOG.warn("PathQuery XML in saved session invalid! " + queryXml);
+                    } else if (!missingBags.isEmpty()) {
+                        LOG.warn("PathQuery XML in saved session references bags that don't exist: "
+                                + missingBags + " query: " + queryXml);
+                    } else {
+                        SessionMethods.setQuery(session, pq);
+                    }
+
                     session.removeAttribute("ser-query");
                 }
             }

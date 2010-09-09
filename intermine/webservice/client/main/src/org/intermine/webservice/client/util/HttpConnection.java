@@ -36,21 +36,21 @@ import org.intermine.webservice.client.exceptions.ServiceUnavailableException;
 
 /**
  * The HttpConnection is class wrapping implementation details of http connection and the
- * implementation can change easily.  
- * 
+ * implementation can change easily.
+ *
  * @author Jakub Kulaviak
  **/
 public class HttpConnection
 {
-    
+
     private Request request;
-    
+
     HttpMethodBase executedMethod;
 
     private int timeout;
-    
+
     private boolean opened = false;
-    
+
     /**
      * @param request client request
      */
@@ -69,7 +69,7 @@ public class HttpConnection
             throw new RuntimeException("Fatal transport error.", e);
         }
     }
-    
+
     /**
      * Opens connection.
      */
@@ -102,7 +102,7 @@ public class HttpConnection
             opened = false;
         }
     }
-    
+
     private void executeMethod() {
         HttpClient client = new HttpClient();
         client.getParams().setConnectionManagerTimeout(timeout);
@@ -120,7 +120,7 @@ public class HttpConnection
         executedMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
                 new DefaultHttpMethodRetryHandler(3, false));
         for (String name : request.getHeaders().keySet()) {
-            executedMethod.setRequestHeader(name, request.getHeader(name));    
+            executedMethod.setRequestHeader(name, request.getHeader(name));
         }
         try {
             // Execute the method.
@@ -132,7 +132,7 @@ public class HttpConnection
             throw new RuntimeException("Fatal transport error connecting to " + url, e);
         }
     }
-    
+
     private void setPostMethodParameters(PostMethod postMethod,
             Map<String, List<String>> parameterMap) {
         for (String name : parameterMap.keySet()) {
@@ -149,7 +149,7 @@ public class HttpConnection
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
-    
+
     /**
      * @return response code.
      */
@@ -159,69 +159,68 @@ public class HttpConnection
         }
         return executedMethod.getStatusCode();
     }
-        
+
     /**
-     * 
+     *
      * @return true if connection is opened else false
      */
     public boolean isOpened() {
         return opened;
     }
-    
+
     /**
-     * Called to check the response and generate an appropriate exception (on failure). 
+     * Called to check the response and generate an appropriate exception (on failure).
      * If the connection is not opened then it is opened and response checked.
      *
      * @param url a URL to quote in any error messages
      * @throws ServiceException when an error happens
      */
-    protected void checkResponse(String url) throws ServiceException {
-      if (executedMethod.getStatusCode() >= 300) {
-        try {
-            handleErrorResponse();
-        } catch (ServiceException e) {
-            throw new ServiceException("Error while accessing " + url, e);
-        } catch (IOException e) {
-            throw new ServiceException("Error while accessing " + url, e);
+    protected void checkResponse(String url) {
+        if (executedMethod.getStatusCode() >= 300) {
+            try {
+                handleErrorResponse();
+            } catch (ServiceException e) {
+                throw new ServiceException("Error while accessing " + url, e);
+            } catch (IOException e) {
+                throw new ServiceException("Error while accessing " + url, e);
+            }
         }
-      }
     }
 
-    
     /**
      * Handles an error response received while executing a service request.
      * Throws a {@link ServiceException} or one of its subclasses, depending on
      * the failure conditions.
-     * 
+     *
      * @throws ServiceException exception describing the failure.
-     * @throws IOException error reading the error response from the 
+     * @throws IOException error reading the error response from the
      *         service.
      */
-    protected void handleErrorResponse() throws ServiceException, IOException {
+    protected void handleErrorResponse() throws IOException {
 
-      switch (executedMethod.getStatusCode()) {
+        switch (executedMethod.getStatusCode()) {
 
-        case HttpURLConnection.HTTP_NOT_FOUND:
-          throw new ResourceNotFoundException(this);
+            case HttpURLConnection.HTTP_NOT_FOUND:
+                throw new ResourceNotFoundException(this);
 
-        case HttpURLConnection.HTTP_BAD_REQUEST:
-          throw new BadRequestException(this);
+            case HttpURLConnection.HTTP_BAD_REQUEST:
+                throw new BadRequestException(this);
 
-        case HttpURLConnection.HTTP_FORBIDDEN:
-          throw new ServiceForbiddenException(this);
-          
-        case HttpURLConnection.HTTP_NOT_IMPLEMENTED:
-          throw new NotImplementedException(this);
+            case HttpURLConnection.HTTP_FORBIDDEN:
+                throw new ServiceForbiddenException(this);
 
-        case HttpURLConnection.HTTP_INTERNAL_ERROR:
-            throw new InternalErrorException(this);
+            case HttpURLConnection.HTTP_NOT_IMPLEMENTED:
+                throw new NotImplementedException(this);
 
-        case HttpURLConnection.HTTP_UNAVAILABLE:
-            throw new ServiceUnavailableException(this);
+            case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                throw new InternalErrorException(this);
 
-        default:
-          throw new ServiceException(this);
-      }
+            case HttpURLConnection.HTTP_UNAVAILABLE:
+                throw new ServiceUnavailableException(this);
+
+            default:
+                throw new ServiceException(this);
+        }
     }
 
     /**

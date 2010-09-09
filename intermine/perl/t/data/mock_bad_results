@@ -1,0 +1,8 @@
+HTTP/1.1 400 <error><message>There is a problem on the client side (in the browser). Bad request. </message><message>invalid query parameter (empty or missing)</message></error>
+Date: Tue, 17 Aug 2010 10:48:31 GMT
+Set-Cookie: JSESSIONID=D75062D6078E244CAC8A8BB54C12BCB5; Path=/
+Pragma: no-cache
+Cache-Control: must-revalidate, max-age=0
+Content-Disposition: inline; filename="result.tsv"
+Content-Type: text/tab-separated-values;charset=ISO-8859-1
+Connection: close

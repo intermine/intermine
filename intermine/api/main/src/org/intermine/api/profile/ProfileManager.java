@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.api.query.MainHelper;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.xml.SavedQueryBinding;
 import org.intermine.api.xml.TemplateQueryBinding;
@@ -64,7 +63,6 @@ public class ProfileManager
 
     protected ObjectStore os;
     protected ObjectStoreWriter uosw;
-    protected TemplateQueryBinding templateBinding = new TemplateQueryBinding();
     protected CacheMap<String, Profile> profileCache = new CacheMap<String, Profile>();
     private String superuser = null;
     /** Number determining format of queries in the database */
@@ -245,7 +243,7 @@ public class ProfileManager
                         UserProfile.class)));
         try {
             // TODO ig
-            Results bags = uosw.execute(q, 0, false, false, true);
+            Results bags = uosw.execute(q, 1000, false, false, true);
             for (Iterator i = bags.iterator(); i.hasNext();) {
                 ResultsRow row = (ResultsRow) i.next();
                 Integer bagId = (Integer) row.get(0);
@@ -270,7 +268,6 @@ public class ProfileManager
                 if (queries.size() == 0) {
                     queries = PathQueryBinding.unmarshal(new StringReader(query.getQuery()),
                             version);
-                    MainHelper.checkPathQueries(queries, savedBags);
                     if (queries.size() == 1) {
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
                         String name = (String) entry.getKey();
@@ -291,8 +288,8 @@ public class ProfileManager
         for (SavedTemplateQuery template : userProfile.getSavedTemplateQuerys()) {
             try {
                 StringReader sr = new StringReader(template.getTemplateQuery());
-                Map<String, TemplateQuery> templateMap = templateBinding.unmarshal(sr, savedBags,
-                        version);
+                Map<String, TemplateQuery> templateMap = TemplateQueryBinding.unmarshal(sr,
+                        savedBags, version);
                 String templateName = templateMap.keySet().iterator().next();
                 TemplateQuery templateQuery = (TemplateQuery) templateMap.get(templateName);
                 templateQuery.setSavedTemplateQuery(template);
@@ -369,7 +366,7 @@ public class ProfileManager
                     if (savedTemplate == null) {
                         savedTemplate = new SavedTemplateQuery();
                     }
-                    savedTemplate.setTemplateQuery(templateBinding.marshal(template, version));
+                    savedTemplate.setTemplateQuery(TemplateQueryBinding.marshal(template, version));
                     savedTemplate.setUserProfile(userProfile);
                     uosw.store(savedTemplate);
                     template.setSavedTemplateQuery(savedTemplate);
@@ -499,7 +496,7 @@ public class ProfileManager
         if (hasProfile(username)) {
             Date expiry = new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000);
             Random random = new Random();
-            char tokenArray[] = new char[10];
+            char[] tokenArray = new char[10];
             for (int i = 0; i < 10; i++) {
                 tokenArray[i] = (char) (random.nextInt(26) + 'a');
             }

@@ -20,9 +20,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.intermine.metadata.*;
 import static org.intermine.objectstore.intermine.NotXmlParser.DELIM;
 import static org.intermine.objectstore.intermine.NotXmlParser.ENCODED_DELIM;
+
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
@@ -56,16 +62,14 @@ public class JavaModelOutput
      * Perform the mapping.
      */
     public void process() {
-        Iterator iter = model.getClassDescriptors().iterator();
-        while (iter.hasNext()) {
-            ClassDescriptor cld = (ClassDescriptor) iter.next();
+        for (ClassDescriptor cld : model.getClassDescriptors()) {
             String cldName = cld.getName();
             if (!"org.intermine.model.InterMineObject".equals(cldName)) {
                 String pkg = TypeUtil.packageName(cldName);
                 String cls = TypeUtil.unqualifiedName(cld.getName());
                 String separator = File.separator;
                 // Escape windows path seperator
-                if (separator.equals("\\")) {
+                if ("\\".equals(separator)) {
                     separator = "\\\\";
                 }
                 File dir = new File(file, pkg.replaceAll("[.]", separator));
@@ -108,17 +112,30 @@ public class JavaModelOutput
                 .append(";" + ENDL + ENDL);
         }
         if ((!cld.isInterface()) || shadow) {
+            boolean hasCollections = false;
+            boolean hasReferences = false;
+            for (FieldDescriptor fd : cld.getAllFieldDescriptors()) {
+                if (fd instanceof CollectionDescriptor) {
+                    hasCollections = true;
+                } else if (fd instanceof ReferenceDescriptor) {
+                    hasReferences = true;
+                }
+            }
             sb.append("import org.intermine.objectstore.ObjectStore;" + ENDL);
             sb.append("import org.intermine.objectstore.intermine.NotXmlParser;" + ENDL);
             sb.append("import org.intermine.objectstore.intermine.NotXmlRenderer;" + ENDL);
-            sb.append("import org.intermine.objectstore.proxy.ProxyCollection;" + ENDL);
-            sb.append("import org.intermine.objectstore.proxy.ProxyReference;" + ENDL);
+            if (hasCollections) {
+                sb.append("import org.intermine.objectstore.proxy.ProxyCollection;" + ENDL);
+            }
+            if (hasReferences) {
+                sb.append("import org.intermine.objectstore.proxy.ProxyReference;" + ENDL);
+            }
             sb.append("import org.intermine.util.StringConstructor;" + ENDL);
-            sb.append("import org.intermine.util.StringUtil;" + ENDL);
             sb.append("import org.intermine.util.TypeUtil;" + ENDL);
             if (shadow) {
                 sb.append("import org.intermine.model.ShadowClass;" + ENDL);
             }
+            sb.append(ENDL);
         }
         sb.append("public ")
             .append((cld.isInterface() && (!shadow)) ? "interface " : "class ")
@@ -128,7 +145,7 @@ public class JavaModelOutput
         if (shadow) {
             sb.append(" implements ")
                 .append(TypeUtil.unqualifiedName(cld.getName()))
-                .append(", org.intermine.model.ShadowClass");
+                .append(", ShadowClass");
         } else {
             if (!cld.isInterface()) {
                 if (cld.getSuperclassDescriptor() != null) {
@@ -140,9 +157,7 @@ public class JavaModelOutput
             boolean firstTime = true;
 
             if (cld.getSuperDescriptors().size() > 0) {
-                Iterator iter = cld.getSuperDescriptors().iterator();
-                while (iter.hasNext()) {
-                    ClassDescriptor superCld = (ClassDescriptor) iter.next();
+                for (ClassDescriptor superCld : cld.getSuperDescriptors()) {
                     if (superCld.isInterface()) {
                         if (firstTime) {
                             sb.append(cld.isInterface() ? " extends " : " implements ");
@@ -163,7 +178,9 @@ public class JavaModelOutput
 
         if (shadow) {
             sb.append(INDENT)
-                .append("public static final Class shadowOf = ")
+                .append("public static final Class<")
+                .append(TypeUtil.unqualifiedName(cld.getName()))
+                .append("> shadowOf = ")
                 .append(TypeUtil.unqualifiedName(cld.getName()))
                 .append(".class;" + ENDL);
         }
@@ -200,19 +217,19 @@ public class JavaModelOutput
      * @return the generated String
      */
     protected String generateFieldDescriptors(ClassDescriptor cld, boolean supers) {
-        Set superclassFields = Collections.EMPTY_SET;
+        Set<FieldDescriptor> superclassFields = Collections.emptySet();
         if (supers && (cld.getSuperclassDescriptor() != null)) {
             superclassFields = cld.getSuperclassDescriptor().getAllFieldDescriptors();
         }
         StringBuffer sb = new StringBuffer();
-        Iterator iter;
+        Iterator<FieldDescriptor> iter;
         if (supers) {
             iter = cld.getAllFieldDescriptors().iterator();
         } else {
             iter = cld.getFieldDescriptors().iterator();
         }
         while (iter.hasNext()) {
-            FieldDescriptor fd = (FieldDescriptor) iter.next();
+            FieldDescriptor fd = iter.next();
             if (!superclassFields.contains(fd)) {
                 if (fd instanceof AttributeDescriptor) {
                     sb.append(generate((AttributeDescriptor) fd, supers));
@@ -227,7 +244,12 @@ public class JavaModelOutput
     }
 
     /**
-     * {@inheritDoc}
+     * Generates code for a single attribute.
+     *
+     * @param attr the AttributeDescriptor
+     * @param field true if the class should have the associated field, or false if the field is in
+     * the superclass
+     * @return java code
      */
     protected String generate(AttributeDescriptor attr, boolean field) {
         StringBuffer sb = new StringBuffer();
@@ -246,7 +268,12 @@ public class JavaModelOutput
     }
 
     /**
-     * {@inheritDoc}
+     * Generates code for a single reference.
+     *
+     * @param ref the ReferenceDescriptor
+     * @param field true if the class should have the associated field, or false if the field is in
+     * the superclass
+     * @return java code
      */
     protected String generate(ReferenceDescriptor ref, boolean field) {
         StringBuffer sb = new StringBuffer();
@@ -264,11 +291,16 @@ public class JavaModelOutput
     }
 
     /**
-     * {@inheritDoc}
+     * Generates code for a single collection.
+     *
+     * @param col the CollectionDescriptor
+     * @param field true if the class should have the associated field, or false if the field is in
+     * the superclass
+     * @return java code
      */
     protected String generate(CollectionDescriptor col, boolean field) {
         String type = "java.util.Set<" + col.getReferencedClassName() + ">";
-        String impl = "java.util.HashSet";
+        String impl = "java.util.HashSet<" + col.getReferencedClassName() + ">";
 
         StringBuffer sb = new StringBuffer();
         if (field) {
@@ -416,7 +448,7 @@ public class JavaModelOutput
 
             StringBuffer sb = new StringBuffer();
             sb.append(INDENT)
-                .append("public boolean equals(Object o) { return (o instanceof ")
+                .append("@Override public boolean equals(Object o) { return (o instanceof ")
                 .append(unqualifiedName)
                 .append(" && id != null) ? id.equals(((")
                 .append(unqualifiedName)
@@ -436,7 +468,7 @@ public class JavaModelOutput
         if (cld.getFieldDescriptorByName("id") != null) {
             StringBuffer sb = new StringBuffer();
             sb.append(INDENT)
-                .append("public int hashCode() { ")
+                .append("@Override public int hashCode() { ")
                 .append("return (id != null) ? id.hashCode() : super.hashCode(); ")
                 .append("}" + ENDL);
             return sb.toString();
@@ -453,25 +485,21 @@ public class JavaModelOutput
     protected String generateToString(ClassDescriptor cld) {
         String unqualifiedName = TypeUtil.unqualifiedName(cld.getName());
 
-        StringBuffer sb = new StringBuffer();
-        Set keyFields = cld.getAllFieldDescriptors();
+        StringBuilder sb = new StringBuilder();
+        Set<FieldDescriptor> keyFields = cld.getAllFieldDescriptors();
         if (keyFields.size() > 0) {
             sb.append(INDENT)
-                .append("public String toString() { ")
+                .append("@Override public String toString() { ")
                 .append("return \"")
                 .append(unqualifiedName)
                 .append(" [");
-            TreeMap sortedMap = new TreeMap();
-            Iterator iter = keyFields.iterator();
-            while (iter.hasNext()) {
-                FieldDescriptor field = (FieldDescriptor) iter.next();
+            TreeMap<String, FieldDescriptor> sortedMap = new TreeMap<String, FieldDescriptor>();
+            for (FieldDescriptor field : keyFields) {
                 sortedMap.put(field.getName(), field);
             }
-            iter = sortedMap.entrySet().iterator();
             boolean needComma = false;
-            while (iter.hasNext()) {
-                Map.Entry entry = (Map.Entry) iter.next();
-                FieldDescriptor field = (FieldDescriptor) entry.getValue();
+            for (Map.Entry<String, FieldDescriptor> entry : sortedMap.entrySet()) {
+                FieldDescriptor field = entry.getValue();
                 if (!(field instanceof CollectionDescriptor)) {
                     if (needComma) {
                         sb.append(", ");
@@ -520,7 +548,8 @@ public class JavaModelOutput
         sb.append(INDENT)
             .append("public StringConstructor getoBJECT() {\n")
             .append(INDENT + INDENT)
-            .append("if (!" + cld.getName() + ".class.equals(getClass())) {\n")
+            .append("if (!" + cld.getName() + (cld.isInterface() ? "Shadow" : "")
+                    + ".class.equals(getClass())) {\n")
             .append(INDENT + INDENT + INDENT)
             .append("return NotXmlRenderer.render(this);\n")
             .append(INDENT + INDENT)
@@ -570,6 +599,15 @@ public class JavaModelOutput
                     }
                     sb.append(INDENT + INDENT)
                         .append("}\n");
+                } else if ("org.intermine.objectstore.query.ClobAccess".equals(attribute
+                        .getType())) {
+                    sb.append(INDENT + INDENT)
+                        .append("if (" + attribute.getName() + " != null) {\n")
+                        .append(INDENT + INDENT + INDENT)
+                        .append("sb.append(\"" + DELIM + "a" + field.getName() + DELIM + "\" + ")
+                        .append(attribute.getName() + ".getDbDescription());\n")
+                        .append(INDENT + INDENT)
+                        .append("}\n");
                 } else {
                     sb.append(INDENT).append(INDENT)
                         .append("sb.append(\"" + DELIM + "a" + field.getName() + DELIM + "\")")
@@ -609,7 +647,8 @@ public class JavaModelOutput
             .append(INDENT)
             .append("public void setoBJECT(final String[] notXml, final ObjectStore os) {\n")
             .append(INDENT + INDENT)
-            .append("if (!" + cld.getName() + ".class.equals(getClass())) {\n")
+            .append("if (!" + cld.getName() + (cld.isInterface() ? "Shadow" : "")
+                    + ".class.equals(getClass())) {\n")
             .append(INDENT + INDENT + INDENT)
             .append("throw new IllegalStateException(\"Class \" + getClass().getName() + \""
                     + " does not match code (" + cld.getName() + ")\");\n")
@@ -663,6 +702,10 @@ public class JavaModelOutput
                             + " = new java.util.Date(Long.parseLong(notXml[i]));\n");
                 } else if ("java.math.BigDecimal".equals(attribute.getType())) {
                     sb.append(fieldName + " = new java.math.BigDecimal(notXml[i]);\n");
+                } else if ("org.intermine.objectstore.query.ClobAccess".equals(attribute
+                        .getType())) {
+                    sb.append(fieldName + " = org.intermine.objectstore.query.ClobAccess"
+                            + ".decodeDbDescription(os, notXml[i]);\n");
                 } else if ("java.lang.String".equals(attribute.getType())) {
                     sb.append("StringBuilder string = null;\n")
                         .append(INDENT + INDENT + INDENT + INDENT)
@@ -721,8 +764,9 @@ public class JavaModelOutput
             if (field instanceof CollectionDescriptor) {
                 CollectionDescriptor coll = (CollectionDescriptor) field;
                 sb.append(INDENT + INDENT)
-                    .append(fieldName + " = new ProxyCollection(os, this, \"" + fieldName
-                            + "\", " + coll.getReferencedClassName() + ".class);\n");
+                    .append(fieldName + " = new ProxyCollection<" + coll.getReferencedClassName()
+                            + ">(os, this, \"" + fieldName + "\", " + coll.getReferencedClassName()
+                            + ".class);\n");
             }
         }
         sb.append(INDENT)
@@ -936,7 +980,7 @@ public class JavaModelOutput
     public String generateGetFieldType(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
         sb.append(INDENT)
-            .append("public Class getFieldType(final String fieldName) {\n");
+            .append("public Class<?> getFieldType(final String fieldName) {\n");
         for (FieldDescriptor field : cld.getAllFieldDescriptors()) {
             sb.append(INDENT + INDENT)
                 .append("if (\"" + field.getName() + "\".equals(fieldName)) {\n")
@@ -989,7 +1033,7 @@ public class JavaModelOutput
     public String generateGetElementType(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
         sb.append(INDENT)
-            .append("public Class getElementType(final String fieldName) {\n");
+            .append("public Class<?> getElementType(final String fieldName) {\n");
         for (FieldDescriptor field : cld.getAllFieldDescriptors()) {
             if (field.isCollection()) {
                 sb.append(INDENT + INDENT)

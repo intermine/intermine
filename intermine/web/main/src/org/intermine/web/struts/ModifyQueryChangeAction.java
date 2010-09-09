@@ -55,7 +55,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
 
         SavedQuery sq;
 
-        if (request.getParameter("type").equals("history")) {
+        if ("history".equals(request.getParameter("type"))) {
             sq = profile.getHistory().get(queryName);
         } else {
             sq = profile.getSavedQueries().get(queryName);
@@ -82,7 +82,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
      *  an exception
      */
     public ActionForward run(ActionMapping mapping,
-                             ActionForm form,
+                             @SuppressWarnings("unused") ActionForm form,
                              HttpServletRequest request,
                              HttpServletResponse response)
         throws Exception {
@@ -92,7 +92,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         String trail = request.getParameter("trail");
         SavedQuery sq;
 
-        if (request.getParameter("type").equals("history")) {
+        if ("history".equals(request.getParameter("type"))) {
             sq = profile.getHistory().get(queryName);
         } else {
             sq = profile.getSavedQueries().get(queryName);

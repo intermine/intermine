@@ -42,6 +42,7 @@ public class DummyExplainResult extends ExplainResult
      *
      * @return estimate of time in milliseconds
      */
+    @Override
     public long getTime() {
         return time;
     }

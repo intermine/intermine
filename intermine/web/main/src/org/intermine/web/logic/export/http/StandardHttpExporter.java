@@ -47,7 +47,7 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
      * @param pt PagedTable
      * @return true if given PagedTable can be exported with this exporter
      */
-    public boolean canExport(PagedTable pt) {
+    public boolean canExport(@SuppressWarnings("unused") PagedTable pt) {
         return true;
     }
 
@@ -83,13 +83,9 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
         }
         Exporter exporter = getExporter(out, separator, headers);
         ExportResultsIterator iter = null;
-        boolean doGoFaster = false;
         try {
             iter = getResultRows(pt, request);
-            if (!pt.getWebTable().isSingleBatch()) {
-                doGoFaster = true;
-                iter.goFaster();
-            }
+            iter.goFaster();
             exporter.export(iter);
             if (out instanceof GZIPOutputStream) {
                 try {
@@ -100,9 +96,7 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
             }
         } finally {
             if (iter != null) {
-                if (doGoFaster) {
-                    iter.releaseGoFaster();
-                }
+                iter.releaseGoFaster();
             }
         }
         if (exporter.getWrittenResultsCount() == 0) {

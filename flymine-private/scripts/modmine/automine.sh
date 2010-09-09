@@ -392,7 +392,7 @@ cd $MINEDIR
 echo "Building modMine $REL"
 echo
 # new build. static, metadata
-../bio/scripts/project_build -a $SOURCES -V $REL $V -b localhost /tmp/mod-meta\
+../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 cd postprocess
 ant -v -Daction=set-missing-chromosome-locations -Drelease=$REL\
@@ -879,19 +879,19 @@ elif [ $RESTART = "y" ]
 then
 # restart build after failure
 echo; echo "Restarting build using last available back-up db.."
-../bio/scripts/project_build -V $REL $V -l localhost /tmp/mod-all\
+../bio/scripts/project_build -V $REL $V -l -t localhost /tmp/mod-all\
 || { printf "%b" "\n modMine build (restart) FAILED.\n" ; exit 1 ; }
 elif [ $QRESTART = "y" ]
 then
 # restart build without recovering last dumped db
 echo; echo "Quick restart of the build (using current db).."
-../bio/scripts/project_build -V $REL $V -r localhost /tmp/mod-all\
+../bio/scripts/project_build -V $REL $V -r -t localhost /tmp/mod-all\
 || { printf "%b" "\n modMine build (restart) FAILED.\n" ; exit 1 ; }
 elif [ $META = "y" ]
 then
 # new build. static, metadata, organism
 echo "SOURCES: $SOURCES"
-../bio/scripts/project_build -a $SOURCES -V $REL $V -b localhost /tmp/mod-meta\
+../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
 || { printf "%b" "\n modMine build (only metadata) FAILED.\n" ; exit 1 ; }
 cd postprocess
 ant -v -Daction=set-missing-chromosome-locations -Drelease=$REL\
@@ -906,7 +906,7 @@ cd ../bio/scripts
 fi
 # .. and build modmine
 cd $MINEDIR
-../bio/scripts/project_build -V $REL $V -b localhost /tmp/mod-all\
+../bio/scripts/project_build -V $REL $V -b -t localhost /tmp/mod-all\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 fi
 

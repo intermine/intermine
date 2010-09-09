@@ -49,6 +49,7 @@ public class QueryClassSelectAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
@@ -67,8 +68,9 @@ public class QueryClassSelectAction extends InterMineAction
     }
 
     /**
-     * Add a new query, based on the specified class, to the session
-     * @param className the class name
+     * Add a new query, based on the specified class, to the session.
+     *
+     * @param className the name of the starting class
      * @param session the session
      */
     public static void newQuery(String className, HttpSession session) {
@@ -77,8 +79,7 @@ public class QueryClassSelectAction extends InterMineAction
 
         PathQuery query = new PathQuery(model);
         SessionMethods.setQuery(session, query);
-        session.setAttribute("path", TypeUtil.unqualifiedName(className));
         session.setAttribute("prefix", TypeUtil.unqualifiedName(className));
-        SessionMethods.removeTemplateBuildState(session);
+        session.setAttribute("path", TypeUtil.unqualifiedName(className));
     }
 }

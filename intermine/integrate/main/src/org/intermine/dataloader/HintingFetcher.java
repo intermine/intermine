@@ -27,6 +27,7 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.query.Query;
 import org.intermine.util.DynamicUtil;
 
 import org.apache.log4j.Logger;
@@ -44,9 +45,11 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
     EquivalentObjectHints hints;
     int savedDatabaseEmpty = 0;
     long savedDatabaseEmptyFetch = -1;
-    protected Map<String, Long> savedTimes = new TreeMap<String, Long>();
-    protected Map<String, Integer> savedCounts = new TreeMap<String, Integer>();
-    protected Map<Class, Boolean> allPkClassesEmptyForClass = new HashMap<Class, Boolean>();
+    protected Map<String, Long> savedTimes = Collections.synchronizedMap(
+            new TreeMap<String, Long>());
+    protected Map<String, Integer> savedCounts = Collections.synchronizedMap(
+            new TreeMap<String, Integer>());
+    protected Map<Class<?>, Boolean> allPkClassesEmptyForClass = new HashMap<Class<?>, Boolean>();
 
     /**
      * Constructor
@@ -64,6 +67,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close(Source source) {
         LOG.info("Hinting equivalent object query summary for source " + source + " :"
                 + getSummary(source).toString());
@@ -72,6 +76,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
     /**
      * {@inheritDoc}
      */
+    @Override
     protected StringBuffer getSummary(Source source) {
         StringBuffer retval = super.getSummary(source);
         if (savedDatabaseEmpty > 0) {
@@ -95,8 +100,8 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
                 retval.append("\nSaved " + savedCount + " queries for " + summaryName
                         + ", hints took " + savedTime + " ms to fetch");
             }
-            Set queried = hints.getQueried(summaryName);
-            Set values = hints.getValues(summaryName);
+            Set<Object> queried = hints.getQueried(summaryName);
+            Set<Object> values = hints.getValues(summaryName);
             if (queried != null) {
                 retval.append(". Queried values " + queried + " in database values " + values);
             }
@@ -110,9 +115,10 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
     /**
      * {@inheritDoc}
      */
-    public Set queryEquivalentObjects(InterMineObject obj, Source source)
+    @Override
+    public Set<InterMineObject> queryEquivalentObjects(InterMineObject obj, Source source)
         throws ObjectStoreException {
-        Class summaryName = obj.getClass();
+        Class<? extends InterMineObject> summaryName = obj.getClass();
         Integer soFarCallCount = summaryCallCounts.get(summaryName);
         if (soFarCallCount == null) {
             soFarCallCount = new Integer(0);
@@ -127,7 +133,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
             if (savedDatabaseEmptyFetch == -1) {
                 savedDatabaseEmptyFetch = System.currentTimeMillis() - time;
             }
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         if (savedDatabaseEmptyFetch == -1) {
             savedDatabaseEmptyFetch = System.currentTimeMillis() - time;
@@ -140,7 +146,8 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
             Iterator<ClassDescriptor> cldIter = classDescriptors.iterator();
             while (cldIter.hasNext() && allPkClassesEmpty.booleanValue()) {
                 ClassDescriptor cld = cldIter.next();
-                Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source, lookupOs);
+                Set<PrimaryKey> primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source,
+                        lookupOs);
                 if (!primaryKeys.isEmpty()) {
                     time = System.currentTimeMillis();
                     boolean classNotExists = hints.classNotExists(cld.getType());
@@ -157,7 +164,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
         }
         if (allPkClassesEmpty.booleanValue()) {
             summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         return super.queryEquivalentObjects(obj, source);
     }
@@ -165,10 +172,11 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
     /**
      * {@inheritDoc}
      */
-    public Set createPKQueriesForClass(InterMineObject obj, Source source, boolean queryNulls,
-            ClassDescriptor cld) throws MetaDataException {
+    @Override
+    public Set<Query> createPKQueriesForClass(InterMineObject obj, Source source,
+            boolean queryNulls, ClassDescriptor cld) throws MetaDataException {
         if (hints.classNotExists(cld.getType())) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         return super.createPKQueriesForClass(obj, source, queryNulls, cld);
     }
@@ -176,8 +184,9 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
     /**
      * {@inheritDoc}
      */
+    @Override
     public void createPKQueryForPK(InterMineObject obj, boolean queryNulls, ClassDescriptor cld,
-            PrimaryKey pk, Source source, Set returnSet) throws MetaDataException {
+            PrimaryKey pk, Source source, Set<Query> returnSet) throws MetaDataException {
         for (String fieldName : pk.getFieldNames()) {
             FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
             if (fd instanceof AttributeDescriptor) {

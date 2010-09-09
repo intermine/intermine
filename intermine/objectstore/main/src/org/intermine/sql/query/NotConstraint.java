@@ -36,10 +36,11 @@ public class NotConstraint extends AbstractConstraint
      *
      * @return the String representation
      */
+    @Override
     public String getSQLString() {
         if (con instanceof Constraint) {
             Constraint conC = (Constraint) con;
-            if (conC.right.getSQLString().equals("null")) {
+            if ("null".equals(conC.right.getSQLString())) {
                 return conC.getLeft().getSQLString() + " IS NOT NULL";
             } else {
                 String op = null;
@@ -53,6 +54,8 @@ public class NotConstraint extends AbstractConstraint
                     case Constraint.LIKE:
                         op = " NOT LIKE ";
                         break;
+                    default:
+                        throw new Error("Unrecognised operation " + conC.operation);
                 }
                 return conC.left.getSQLString() + op + conC.right.getSQLString();
             }
@@ -72,7 +75,9 @@ public class NotConstraint extends AbstractConstraint
      *
      * {@inheritDoc}
      */
-    public int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
+    @Override
+    public int compare(AbstractConstraint obj, Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap) {
         return alterComparisonNotThis(con.compare(obj, tableMap, reverseTableMap));
     }
 
@@ -81,6 +86,7 @@ public class NotConstraint extends AbstractConstraint
      *
      * @return an arbitrary integer based on the contents of the NotConstraint
      */
+    @Override
     public int hashCode() {
         return -con.hashCode();
     }

@@ -43,7 +43,7 @@ public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<
 
     private List<ResultsRow> orig;
     private Query query;
-    private int columnWidth[];
+    private int[] columnWidth;
     private List columnTypes;
     private int columnCount = 0;
 
@@ -94,8 +94,8 @@ public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<
      * {@inheritDoc}
      */
     public Iterator<MultiRow<ResultsRow<MultiRowValue>>> iteratorFrom(int index) {
-        if (orig instanceof Results) {
-            return new Iter((Iterator<ResultsRow>) ((Results) orig).iteratorFrom(index));
+        if (((List) orig) instanceof Results) {
+            return new Iter((Iterator) ((Results) ((List) orig)).iteratorFrom(index));
         } else {
             return new Iter(orig.subList(index, orig.size()).iterator());
         }
@@ -125,9 +125,9 @@ public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<
     private MultiRow<ResultsRow<MultiRowValue>> translateRow(ResultsRow origRow) {
         int columns = origRow.size();
         int lcm = 1;
-        int collectionSizes[] = new int[columns];
-        int rowPosition[] = new int[columns];
-        Collection<MultiRowLaterValue> multiRowLaterValue[]
+        int[] collectionSizes = new int[columns];
+        int[] rowPosition = new int[columns];
+        Collection<MultiRowLaterValue>[] multiRowLaterValue
             = new Collection[columns];
         for (int column = 0; column < columns; column++) {
             Object o = origRow.get(column);

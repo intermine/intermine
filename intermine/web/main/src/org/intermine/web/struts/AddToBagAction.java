@@ -44,6 +44,7 @@ public class AddToBagAction extends InterMineAction
      * @return an ActionForward object defining where control goes next
      */
 
+    @Override
     public ActionForward execute(ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) {

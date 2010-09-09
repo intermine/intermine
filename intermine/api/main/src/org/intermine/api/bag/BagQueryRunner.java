@@ -13,13 +13,13 @@ package org.intermine.api.bag;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
@@ -29,9 +29,9 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsBatches;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.CollectionUtil;
-import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -42,7 +42,7 @@ import org.intermine.util.TypeUtil;
  */
 public class BagQueryRunner
 {
-    //private static final Logger LOG = Logger.getLogger(BagQueryRunner.class);
+    private static final Logger LOG = Logger.getLogger(BagQueryRunner.class);
     private ObjectStore os;
 
     private Model model;
@@ -97,7 +97,7 @@ public class BagQueryRunner
         List<String> wildcardInput = new ArrayList<String>();
         Map<String, Pattern> patterns = new HashMap<String, Pattern>();
         for (String inputString : input) {
-            if (!(inputString == null) && !(inputString.equals(""))) {
+            if (!(inputString == null) && !("".equals(inputString))) {
                 if (inputString.indexOf('*') == -1 || (!doWildcards)) {
                     if (!lowerCaseInput.containsKey(inputString.toLowerCase())) {
                         cleanInput.add(inputString);
@@ -117,7 +117,7 @@ public class BagQueryRunner
         // to null (if not found) or a set of objects.
         // or just leave as a list of identifiers and objects of the qrong type
         // CollectionUtil.groupByClass will sort out the strings and types
-        Class typeCls = Class.forName(model.getPackageName() + "." + type);
+        Class<?> typeCls = Class.forName(model.getPackageName() + "." + type);
         List<BagQuery> queries =
             getBagQueriesForType(bagQueryConfig, typeCls.getName());
         Set<String> unresolved = new LinkedHashSet<String>(cleanInput);
@@ -131,9 +131,8 @@ public class BagQueryRunner
                 try {
                     q = bq.getQuery(unresolved, extraFieldValue);
                     Results res = os.execute(q, 10000, true, true, false);
-                    Iterator resIter = res.iterator();
-                    while (resIter.hasNext()) {
-                        ResultsRow row = (ResultsRow) resIter.next();
+                    for (Object rowObj : res) {
+                        ResultsRow<?> row = (ResultsRow<?>) rowObj;
                         Integer id = (Integer) row.get(0);
                         for (int i = 1; i < row.size(); i++) {
                             Object fieldObject = row.get(i);
@@ -170,8 +169,10 @@ public class BagQueryRunner
                 try {
                     Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
                     Query q = bq.getQueryForWildcards(wildcardInput, extraFieldValue);
-                    Results res = os.execute(q, 0, true, true, false);
-                    for (ResultsRow row : (List<ResultsRow>) res) {
+                    Results res = os.execute(q, ResultsBatches.DEFAULT_BATCH_SIZE, true, true,
+                            false);
+                    for (Object rowObj : res) {
+                        ResultsRow<?> row = (ResultsRow<?>) rowObj;
                         Integer id = (Integer) row.get(0);
                         for (int i = 1; i < row.size(); i++) {
                             String field = "" + row.get(i);
@@ -194,17 +195,18 @@ public class BagQueryRunner
                     for (Map.Entry<String, Set<Integer>> entry : resMap.entrySet()) {
                         // This is a dummy issue just to give a message when running queries
                         bqr.addIssue(BagQueryResult.WILDCARD, bq.getMessage(),
-                                entry.getKey(), new ArrayList(entry.getValue()));
+                                entry.getKey(), new ArrayList<Object>(entry.getValue()));
                         addResults(resMap, wildcardUnresolved, bqr, bq, typeCls, true);
                     }
                 } catch (IllegalArgumentException e) {
+                    LOG.error("Error running bag query lookup: ", e);
                     // Query couldn't handle extra value
                 }
             }
         }
 
         unresolved.addAll(wildcardUnresolved);
-        Map<String, ?> unresolvedMap = new HashMap();
+        Map<String, ?> unresolvedMap = new HashMap<String, Object>();
         for (String unresolvedStr : unresolved) {
             unresolvedMap.put(unresolvedStr, null);
         }
@@ -269,14 +271,12 @@ public class BagQueryRunner
                 // we have a list of objects that result from some query, divide into any that
                 // match the type of the bag to be created and candidates for conversion
                 for (Integer objectId : ids) {
-                    Object obj = fetchedObjects.get(objectId);
+                    InterMineObject obj = fetchedObjects.get(objectId);
                     if (obj == null) {
                         throw new NullPointerException("Could not find object with ID " + objectId);
                     }
 
-                    // TODO this won't cope with dynamic classes
-                    Class c = DynamicUtil.decomposeClass(obj.getClass()).iterator().next();
-                    if (type.isAssignableFrom(c)) {
+                    if (type.isInstance(obj)) {
                         objs.add(obj);
                     } else {
                         localObjsOfWrongType.add(obj);
@@ -317,8 +317,8 @@ public class BagQueryRunner
         throws InterMineException {
         if (!objsOfWrongType.isEmpty()) {
             // group objects by class
-            Map<InterMineObject, Set<String> > objectToInput =
-                new HashMap<InterMineObject, Set<String> >();
+            Map<InterMineObject, Set<String>> objectToInput =
+                new HashMap<InterMineObject, Set<String>>();
             for (Map.Entry<String, Set<Object>> entry : objsOfWrongType.entrySet()) {
                 String input = entry.getKey();
                 for (Object o : entry.getValue()) {
@@ -332,30 +332,29 @@ public class BagQueryRunner
                 }
             }
 
-            Map objTypes = CollectionUtil.groupByClass(objectToInput.keySet(), true);
+            Map<Class<?>, List<InterMineObject>> objTypes =
+                CollectionUtil.groupByClass(objectToInput.keySet(), true);
 
-            Iterator objTypeIter = objTypes.keySet().iterator();
-            while (objTypeIter.hasNext() && !objsOfWrongType.isEmpty()) {
-                Class fromClass = (Class) objTypeIter.next();
-                List candidateObjs = (List) objTypes.get(fromClass);
+            for (Class<?> fromClass : objTypes.keySet()) {
+                List<InterMineObject> candidateObjs = objTypes.get(fromClass);
 
                 // we may have already converted some of these types, remove any that have been.
-                List<Object> objs = new ArrayList<Object>();
-                for (Object candidate : candidateObjs) {
+                List<Integer> idsToConvert = new ArrayList<Integer>();
+                for (InterMineObject candidate : candidateObjs) {
                     if (objectToInput.containsKey(candidate)) {
-                        objs.add(candidate);
+                        idsToConvert.add(candidate.getId());
                     }
                 }
 
                 // there was nothing to convert for this class
-                if (objs.isEmpty()) {
+                if (idsToConvert.isEmpty()) {
                     continue;
                 }
 
                 // try to convert objects to target type
                 Map<InterMineObject, List<InterMineObject>> convertedObjsMap =
                     TypeConverter.getConvertedObjectMap(conversionTemplates, fromClass,
-                            type, objs, os);
+                            type, idsToConvert, os);
                 if (convertedObjsMap == null) {
                     // no conversion found
                     continue;

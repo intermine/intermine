@@ -73,7 +73,7 @@ public class QueryFunction implements QueryEvaluable
     /**
        * {@inheritDoc}
        */
-    public Class getType() {
+    public Class<?> getType() {
         if (op == COUNT) {
             return Long.class;
         }
@@ -113,7 +113,7 @@ public class QueryFunction implements QueryEvaluable
     /**
      * {@inheritDoc}
      */
-    public void youAreType(Class cls) {
+    public void youAreType(Class<?> cls) {
         if (obj.getType().equals(UnknownTypeValue.class)) {
             obj.youAreType(cls);
         } else {

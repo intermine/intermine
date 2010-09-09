@@ -30,7 +30,7 @@ public class IntPresentSet
     private static final int PAGE_SIZE = 0x2000; // Number of words per page
     private static final int PAGE_MASK = PAGE_SIZE - 1;
 
-    private Map pages = new HashMap();
+    private Map<Integer, int[]> pages = new HashMap<Integer, int[]>();
     private int size = 0;
 
     /**
@@ -50,7 +50,7 @@ public class IntPresentSet
         i /= WORD_SIZE;
         int wordNo = i & PAGE_MASK;
         Integer pageNo = new Integer(i / PAGE_SIZE);
-        int[] page = (int[]) pages.get(pageNo);
+        int[] page = pages.get(pageNo);
         if (page == null) {
             page = new int[PAGE_SIZE + 1];
             for (int o = 0; o <= PAGE_SIZE; o++) {
@@ -89,7 +89,7 @@ public class IntPresentSet
         i /= WORD_SIZE;
         int wordNo = i & PAGE_MASK;
         Integer pageNo = new Integer(i / PAGE_SIZE);
-        int[] page = (int[]) pages.get(pageNo);
+        int[] page = pages.get(pageNo);
         if (page == null) {
             return false;
         }
@@ -145,15 +145,16 @@ public class IntPresentSet
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         StringBuffer retval = new StringBuffer("[");
         boolean needComma = false;
-        TreeSet sortedKeys = new TreeSet(pages.keySet());
-        Iterator keyIter = sortedKeys.iterator();
+        TreeSet<Integer> sortedKeys = new TreeSet<Integer>(pages.keySet());
+        Iterator<Integer> keyIter = sortedKeys.iterator();
         while (keyIter.hasNext()) {
-            Integer pageNo = (Integer) keyIter.next();
+            Integer pageNo = keyIter.next();
             int pageNoInt = pageNo.intValue();
-            int[] page = (int[]) pages.get(pageNo);
+            int[] page = pages.get(pageNo);
             for (int wordNo = 0; wordNo < PAGE_SIZE; wordNo++) {
                 int word = page[wordNo];
                 if (word != 0) {

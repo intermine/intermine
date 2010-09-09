@@ -15,21 +15,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrTokenizer;
@@ -42,16 +38,13 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
+import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -63,7 +56,6 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
@@ -72,21 +64,28 @@ import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryPathExpression;
-import org.intermine.objectstore.query.QueryReference;
+import org.intermine.objectstore.query.QueryPathExpressionWithSelect;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Queryable;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.LogicExpression;
-import org.intermine.pathquery.MetadataNode;
+import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintAttribute;
+import org.intermine.pathquery.PathConstraintBag;
+import org.intermine.pathquery.PathConstraintIds;
+import org.intermine.pathquery.PathConstraintLookup;
+import org.intermine.pathquery.PathConstraintLoop;
+import org.intermine.pathquery.PathConstraintMultiValue;
+import org.intermine.pathquery.PathConstraintNull;
+import org.intermine.pathquery.PathConstraintSubclass;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
 
@@ -96,375 +95,333 @@ import org.intermine.util.Util;
  * @author Thomas Riley
  * @author Matthew Wakeling
  */
-public class MainHelper
+public final class MainHelper
 {
+    private MainHelper() {
+    }
+
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(MainHelper.class);
 
     /**
-     * Given a path, render a set of metadata Nodes to the relevant depth
-     * @param path of form Gene.organism.name
-     * @param model the model used to resolve class names
-     * @param isSuperUser true if the user is the superuser
-     * @return an ordered Set of nodes
-     */
-    public static Collection<MetadataNode> makeNodes(String path, Model model,
-                                                     boolean isSuperUser) {
-        String className, subPath;
-        if (path.indexOf(".") == -1) {
-            className = path;
-            subPath = "";
-        } else {
-            className = path.substring(0, path.indexOf("."));
-            subPath = path.substring(path.indexOf(".") + 1);
-        }
-        Map<String, MetadataNode> nodes = new LinkedHashMap<String, MetadataNode>();
-        nodes.put(className, new MetadataNode(className));
-        try {
-            makeNodes(getClassDescriptor(className, model), subPath, className, nodes, isSuperUser);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("class not found in the model", e);
-        }
-        return nodes.values();
-    }
-
-    /**
-     * Recursive method used to add nodes to a set representing a path from a given ClassDescriptor
-     * @param cld the root ClassDescriptor
-     * @param path current path prefix (eg Gene)
-     * @param currentPath current path suffix (eg organism.name)
-     * @param nodes the current Node set
-     * @param isSuperUser true if the user is the superuser
-     * @throws ClassNotFoundException if a class name isn't in the model
-     */
-    protected static void makeNodes(ClassDescriptor cld, String path, String currentPath,
-                                    Map<String, MetadataNode> nodes, boolean isSuperUser)
-        throws ClassNotFoundException {
-        List<FieldDescriptor> sortedNodes = new ArrayList<FieldDescriptor>();
-
-        // compare FieldDescriptors by name
-        Comparator<FieldDescriptor> comparator = new Comparator<FieldDescriptor>() {
-            public int compare(FieldDescriptor o1, FieldDescriptor o2) {
-                String fieldName1 = o1.getName().toLowerCase();
-                String fieldName2 = o2.getName().toLowerCase();
-                return fieldName1.compareTo(fieldName2);
-            }
-        };
-
-        Set<FieldDescriptor> attributeNodes = new TreeSet<FieldDescriptor>(comparator);
-        Set<FieldDescriptor> referenceAndCollectionNodes = new TreeSet<FieldDescriptor>(comparator);
-        for (Iterator<FieldDescriptor> i = cld.getAllFieldDescriptors().iterator(); i.hasNext();) {
-            FieldDescriptor fd = i.next();
-            if (!fd.isReference() && !fd.isCollection()) {
-                attributeNodes.add(fd);
-            } else {
-                referenceAndCollectionNodes.add(fd);
-            }
-        }
-
-        sortedNodes.addAll(attributeNodes);
-        sortedNodes.addAll(referenceAndCollectionNodes);
-
-        for (Iterator<FieldDescriptor> i = sortedNodes.iterator(); i.hasNext();) {
-            FieldDescriptor fd = i.next();
-            String fieldName = fd.getName();
-
-            if (fieldName.equals("id") && !isSuperUser) {
-                continue;
-            }
-
-            String head, tail;
-            if (path.indexOf(".") != -1) {
-                head = path.substring(0, path.indexOf("."));
-                tail = path.substring(path.indexOf(".") + 1);
-            } else {
-                head = path;
-                tail = "";
-            }
-
-            String button;
-            if (fieldName.equals(head)) {
-                button = "-";
-            } else if (fd.isReference() || fd.isCollection()) {
-                button = "+";
-            } else {
-                button = " ";
-            }
-
-            MetadataNode parent = nodes.get(currentPath);
-            MetadataNode node = new MetadataNode(parent, fieldName, button);
-            node.setModel(cld.getModel());
-
-            nodes.put(node.getPathString(), node);
-            if (fieldName.equals(head)) {
-                ClassDescriptor refCld = ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
-                makeNodes(refCld, tail, currentPath + "." + head, nodes, isSuperUser);
-            }
-        }
-    }
-
-
-    /**
-     * Validates path query. Any error message is set to path query.
-     * @param pathQuery path query
-     * @param savedBags saved bags
-     */
-    public static void checkPathQuery(PathQuery pathQuery, Map<String, InterMineBag> savedBags) {
-        try {
-            makeQuery(pathQuery, savedBags, null, null, null, true);
-        } catch (Exception e) {
-            pathQuery.addProblem(e);
-        }
-    }
-
-    /**
-     * Validates path queries. Any error message is set to path query.
-     * @param queries path queries
-     * @param savedBags saved bags
-     */
-    public static void checkPathQueries(Map<String, PathQuery> queries,
-            Map<String, InterMineBag> savedBags) {
-        for (PathQuery pathQuery : queries.values()) {
-            checkPathQuery(pathQuery, savedBags);
-        }
-    }
-
-
-    /**
-     * Other version of makeQuery.
-     * @param pathQueryOrig the PathQuery
-     * @param savedBags the current saved bags map
-     * @param pathToQueryNode optional parameter in which path to QueryNode map can be returned
+     * Converts a PathQuery object into an ObjectStore Query object, and optionally populates a Map
+     * from String path in the PathQuery to the object in the Query that represents it.
+     *
+     * @param pathQuery the PathQuery
+     * @param savedBags the current saved bags map (a Map from bag name to InterMineBag)
+     * @param pathToQueryNode optional parameter which will be populated with entries, mapping from
+     * String path in the pathQuery to objects in the result Query
+     * @param bagQueryRunner a BagQueryRunner to use to perform LOOKUPs
      * @param returnBagQueryResults optional parameter in which any BagQueryResult objects can be
-     * @param checkOnly we're only checking the validity of the query, optimised to take less time
      * returned
-     * @param bagQueryRunner bag query runner
-     * @return an InterMine Query
+     * @return an ObjectStore Query object
      * @throws ObjectStoreException if something goes wrong
      */
-    public static Query makeQuery(PathQuery pathQueryOrig, Map<String, InterMineBag> savedBags,
+    public static Query makeQuery(PathQuery pathQuery, Map<String, InterMineBag> savedBags,
             Map<String, QuerySelectable> pathToQueryNode, BagQueryRunner bagQueryRunner,
-            Map returnBagQueryResults, boolean checkOnly) throws ObjectStoreException {
-        PathQuery pathQuery = pathQueryOrig.clone();
-
-        //first merge the query and the view
-        Map qNodes = pathQuery.getNodes();
-        for (Path p : pathQuery.getView()) {
-            String path = p.toStringNoConstraints();
-            if (!qNodes.containsKey(path)) {
-                pathQuery.addNode(path);
+            Map<String, BagQueryResult> returnBagQueryResults) throws ObjectStoreException {
+        synchronized (pathQuery) {
+            List<String> problems = pathQuery.verifyQuery();
+            if (!problems.isEmpty()) {
+                throw new ObjectStoreException("PathQuery is invalid: " + problems);
             }
+            Query q = new Query();
+            try {
+                makeQuery(q, pathQuery.getRootClass(), pathQuery, savedBags, pathToQueryNode,
+                        bagQueryRunner, returnBagQueryResults);
+            } catch (PathException e) {
+                throw new Error("PathQuery is invalid, but was valid earlier", e);
+            }
+            return q;
         }
-
-        //create the real query
-        Query q = new Query();
-
-        recursiveMakeQuery(q, pathQuery, null, savedBags, pathToQueryNode, bagQueryRunner,
-                returnBagQueryResults, checkOnly);
-        return q;
     }
 
-    private static void recursiveMakeQuery(Queryable q, PathQuery pathQuery, PathNode root,
+    /**
+     * Converts a PathQuery object into an ObjectStore Query object, and optionally populates a Map
+     * from String path in the PathQuery to the object in the Query that represents it. This is the
+     * recursive private method that performs the algorithm.
+     *
+     * @param q a Query, QueryObjectPathExpression, or QueryCollectionPathExpression, depending on
+     * the level of recursion reached so far
+     * @param root the path representing the level of recursion - we will process this outer join
+     * group
+     * @param pathQuery the PathQuery
+     * @param savedBags the current saved bags map (a Map from bag name to InterMineBag)
+     * @param pathToQueryNode optional parameter which will be populated with entries, mapping from
+     * String path in the pathQuery to objects in the result Query
+     * @param bagQueryRunner a BagQueryRunner to use to perform LOOKUPs
+     * @param returnBagQueryResults optional parameter in which any BagQueryResult objects can be
+     * returned
+     * @throws ObjectStoreException if something goes wrong
+     */
+    private static void makeQuery(Queryable q, String root, PathQuery pathQuery,
             Map<String, InterMineBag> savedBags, Map<String, QuerySelectable> pathToQueryNode,
-            BagQueryRunner bagQueryRunner, Map returnBagQueryResults,
-            boolean checkOnly) throws ObjectStoreException {
+            BagQueryRunner bagQueryRunner,
+            Map<String, BagQueryResult> returnBagQueryResults) throws ObjectStoreException {
         Model model = pathQuery.getModel();
-        Map<String, ConstraintSet> codeToCS = new HashMap<String, ConstraintSet>();
-        List<CsTreeStructure> csTreeStructure = new ArrayList<CsTreeStructure>();
-        ConstraintSet rootcs = null;
-        ConstraintSet andcs = new ConstraintSet(ConstraintOp.AND);
 
-        // Work out which bits of the query are not outer joins - we construct the query with only
-        // those nodes to begin with.
+        // We need to call getQueryToExecute() first.  For template queries this gets a query that
+        // excludes any optional constraints that have been switched off.  A normal PathQuery is
+        // unchanged.
+        pathQuery = pathQuery.getQueryToExecute();
+        try {
+            // This is the root constraint set that will be set in the query
+            ConstraintSet andCs = new ConstraintSet(ConstraintOp.AND);
 
-        Set<PathNode> nonOuterNodes = findNonOuterNodes(pathQuery.getNodes(), root);
-        Set<String> relevantCodes = findRelevantCodes(nonOuterNodes);
-        LogicExpression logic = pathQuery.getLogic();
-        logic = logic == null ? null : logic.getSection(relevantCodes);
-
-        if (relevantCodes.size() == 1) {
-            codeToCS.put(relevantCodes.iterator().next(), andcs);
-        } else if (relevantCodes.size() > 1) {
-            if (logic == null) {
-                throw new IllegalArgumentException("Query with multiple constraints contains no "
-                        + "constraint logic. Query: " + PathQueryBinding.marshal(pathQuery,
-                            "", "", PathQuery.USERPROFILE_VERSION));
+            // This is the Map that stores what we will put in pathToQueryNode. Because we can't
+            // trust what is in there already, we use a separate variable and copy across afterwards
+            Map<String, QuerySelectable> queryBits = new HashMap<String, QuerySelectable>();
+            // If we have recursed, and are operating on a PathExpression, then we need to extract
+            // the default class which was set up in the parent group and add it to the queryBits
+            if (q instanceof QueryObjectPathExpression) {
+                queryBits.put(root, ((QueryObjectPathExpression) q).getDefaultClass());
+            } else if (q instanceof QueryCollectionPathExpression) {
+                queryBits.put(root, ((QueryCollectionPathExpression) q).getDefaultClass());
             }
-            rootcs = makeConstraintSets(logic, codeToCS, andcs, csTreeStructure);
-        }
-        if ((rootcs != null) && (rootcs != andcs)) {
-            andcs.addConstraint(rootcs);
-        }
 
-        Map<String, String> loops = makeLoopsMap(pathQuery, codeToCS, andcs, true, nonOuterNodes,
-                root);
+            // This is a Map from main path to outer join group of all classes in the query
+            Map<String, String> outerJoinGroups = pathQuery.getOuterJoinGroups();
+            // This is the subclass map from the query, for creating Path objects
+            Map<String, String> subclasses = pathQuery.getSubclasses();
 
-        Map<String, QuerySelectable> queryBits = new HashMap();
-        if (q instanceof QueryObjectPathExpression) {
-            queryBits.put(root.getPathString(), ((QueryObjectPathExpression) q).getDefaultClass());
-        } else if (q instanceof QueryCollectionPathExpression) {
-            queryBits.put(root.getPathString(), ((QueryCollectionPathExpression) q)
-                    .getDefaultClass());
-        }
-        LinkedList<PathNode> queue = new LinkedList();
+            // Get the logic expression for the relevant outer join group, and the list of
+            // relevant constraint codes
+            Set<String> relevantCodes = pathQuery.getConstraintGroups().get(root);
+            LogicExpression logic = pathQuery.getConstraintLogicForGroup(root);
 
-        //build the FROM and WHERE clauses
-        for (PathNode node : pathQuery.getNodes().values()) {
-            queue.addLast(node);
-        }
+            // This is the set of loop constraints that participate in the class collapsing
+            // mechanism. All others must have a ClassConstraint generated for them.
+            Set<PathConstraintLoop> participatingLoops = findParticipatingLoops(logic, pathQuery
+                    .getConstraints());
+            // This is the map of EQUALS loop constraints, from the path that should be omitted
+            // from the Query to the path that represents both paths.
+            Map<String, String> loops = makeLoopsMap(participatingLoops);
 
-        Map<PathNode, String> deferralReasons = new HashMap<PathNode, String>();
-        int queueDeferred = 0;
-        while (!queue.isEmpty()) {
-            if (queueDeferred > queue.size() + 10) {
-                throw new IllegalArgumentException("Cannot handle entries in queue: " + queue
-                        + ", reasons: " + deferralReasons);
+            // Set up queue system. We don't know what order we want to process these entries in,
+            // so a queue allows us to put one we can't process yet to the back of the queue to
+            // process later
+            LinkedList<String> queue = new LinkedList<String>();
+            for (String path : outerJoinGroups.keySet()) {
+                queue.addLast(path);
             }
-            PathNode node = queue.removeFirst();
-            String path = node.getPathString();
-            if (nonOuterNodes.contains(node) && (!(node.equals(root)))) {
-                QueryReference qr = null;
-                String finalPath = loops.get(path);
 
-                if (finalPath == null) {
-                    if ((path.indexOf(".") == -1) && (path.indexOf(":") == -1)) {
-                        QueryClass qc;
-                        try {
-                            qc = new QueryClass(TypeUtil.getClass(node.getType(), model));
-                        } catch (ClassNotFoundException e) {
-                            throw new IllegalArgumentException("class not found in the model: "
-                                                               + node.getType(), e);
-                        }
-                        if (!(q instanceof Query)) {
-                            LOG.error("q is not a Query. path = " + path + ", nonOuterNodes = "
-                                    + nonOuterNodes);
-                        }
+            Map<String, String> deferralReasons = new HashMap<String, String>();
+            int queueDeferred = 0;
+            // This is a Map of PathExpression objects that have been created. They will be added to
+            // the SELECT list later on, when we can determine the correct order in the SELECT list.
+            Map<String, QueryPathExpressionWithSelect> pathExpressions
+                = new HashMap<String, QueryPathExpressionWithSelect>();
+            while (!queue.isEmpty()) {
+                if (queueDeferred > queue.size() + 2) {
+                    throw new IllegalArgumentException("Cannot handle entries in queue: " + queue
+                            + ", reasons: " + deferralReasons + ", root = " + root);
+                }
+                String stringPath = queue.removeFirst();
+                deferralReasons.remove(stringPath);
+                Path path = new Path(model, stringPath, subclasses);
+                String outerJoinGroup = outerJoinGroups.get(stringPath);
+                if (path.isRootPath()) {
+                    // This is the root path. Just add the QueryClass, no further action.
+                    if (root.equals(outerJoinGroup)) {
+                        // This class is relevant to this outer join group
+                        QueryClass qc = new QueryClass(path.getEndType());
                         ((Query) q).addFrom(qc);
-                        queryBits.put(path, qc);
-                    } else {
-                        String fieldName = node.getFieldName();
-                        QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
-                        if (parentQc == null) {
-                            // We cannot process this QueryField yet. It depends on a parent
-                            // QueryClass that we have not yet processed. Put it to the back of the
-                            // queue.
-                            deferralReasons.put(node, "Could not process QueryField " + node
-                                    + " because its parent has not been processed");
-                            queue.addLast(node);
+                        queryBits.put(stringPath, qc);
+                    }
+                } else if (stringPath.equals(root)) {
+                    // We are on the root of an outer join. No action required
+                } else {
+                    String parent = path.getPrefix().getNoConstraintsString();
+                    QueryClass parentQc = (QueryClass) ((queryBits.get(parent)
+                                instanceof QueryClass) ? queryBits.get(parent) : null);
+                    if (parentQc == null) {
+                        if (root.equals(outerJoinGroups.get(parent))) {
+                            // We cannot process this path yet. It depends on a parent that hasn't
+                            // been processed yet. Put it to the back of the queue.
+                            deferralReasons.put(stringPath, "Could not process path " + stringPath
+                                    + " because its parent has not yet been processed");
+                            queue.addLast(stringPath);
                             queueDeferred++;
                             continue;
                         }
-
-                        if (node.isAttribute()) {
-                            QueryField qf = new QueryField(parentQc, fieldName);
-                            queryBits.put(path, qf);
-                        } else {
-                            if (node.isReference()) {
-                                qr = new QueryObjectReference(parentQc, fieldName);
-                            } else {
-                                qr = new QueryCollectionReference(parentQc, fieldName);
-                            }
+                    } else {
+                        if (root.equals(outerJoinGroup)) {
+                            // This class is relevant to this outer join group
                             QueryClass qc;
-                            try {
-                                qc = new QueryClass(TypeUtil.getClass(node.getType(), model));
-                            } catch (ClassNotFoundException e) {
-                                throw new IllegalArgumentException("class not found in the model: "
-                                                                   + node.getType(), e);
-                            }
-                            andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS,
-                                        qc));
-                            if (q instanceof Query) {
-                                ((Query) q).addFrom(qc);
+                            if (loops.containsKey(stringPath)) {
+                                // This path is looped on another path
+                                qc = (QueryClass) queryBits.get(loops.get(stringPath));
+                                if (qc == null) {
+                                    deferralReasons.put(stringPath, "Could not process path "
+                                            + stringPath + " because it is looped onto a class ("
+                                            + loops.get(stringPath) + ") that has not been "
+                                            + "processed yet");
+                                    queue.addLast(stringPath);
+                                    queueDeferred++;
+                                    continue;
+                                }
                             } else {
-                                ((QueryCollectionPathExpression) q).addFrom(qc);
+                                qc = new QueryClass(path.getEndType());
+                                if (q instanceof Query) {
+                                    ((Query) q).addFrom(qc);
+                                } else {
+                                    ((QueryCollectionPathExpression) q).addFrom(qc);
+                                }
                             }
-                            queryBits.put(path, qc);
-                        }
-                    }
-                    finalPath = path;
-                } else {
-                    if (queryBits.get(finalPath) == null
-                            || queryBits.get(node.getPrefix()) == null) {
-                        // We cannot process this node yet. It is looped onto another node that has
-                        // not been processed yet or the parent of this node hasn't yet been
-                        // processed. Put it to the back of the queue.
-                        deferralReasons.put(node, "Could not process node " + node + " because it"
-                                + " is looped onto " + finalPath
-                                + " which has not been processed yet or it's parent has not been"
-                                + " processed.");
-                        queue.addLast(node);
-                        queueDeferred++;
-                        continue;
-                    }
-                    // TODO: Why? if (finalPath.indexOf(".") != -1) {
-                    String fieldName = node.getFieldName();
-                    QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
-                    if (!node.isAttribute()) {
-                        if (node.isReference()) {
-                            qr = new QueryObjectReference(parentQc, fieldName);
+                            if (path.endIsReference()) {
+                                andCs.addConstraint(new ContainsConstraint(
+                                            new QueryObjectReference(parentQc,
+                                                path.getLastElement()), ConstraintOp.CONTAINS,
+                                            qc));
+                            } else {
+                                andCs.addConstraint(new ContainsConstraint(
+                                            new QueryCollectionReference(parentQc,
+                                                path.getLastElement()), ConstraintOp.CONTAINS,
+                                            qc));
+                            }
+                            queryBits.put(stringPath, qc);
                         } else {
-                            qr = new QueryCollectionReference(parentQc, fieldName);
+                            // This is a path from another outer join group. We only need to act if
+                            // the parent path is from this outer join group - in that case, we
+                            // make a PathExpression and recurse
+                            if (root.equals(outerJoinGroups.get(parent))) {
+                                // We need to act. However, first we need to know whether to use a
+                                // collection or reference path expression
+                                boolean isCollection = path.endIsCollection();
+                                // Even if this is false, we may still need to upgrade to collection
+                                // if there are multiple paths in the outer join group
+                                if (!isCollection) {
+                                    int groupSize = 0;
+                                    for (Map.Entry<String, String> entry
+                                            : outerJoinGroups.entrySet()) {
+                                        if (outerJoinGroup.equals(entry.getValue())) {
+                                            groupSize++;
+                                        }
+                                    }
+                                    if (groupSize > 1) {
+                                        isCollection = true;
+                                    }
+                                }
+                                if (isCollection) {
+                                    QueryCollectionPathExpression qn
+                                        = new QueryCollectionPathExpression(parentQc,
+                                                path.getLastElement(), path.getEndType());
+                                    makeQuery(qn, stringPath, pathQuery, savedBags,
+                                            pathToQueryNode, bagQueryRunner, returnBagQueryResults);
+                                    queryBits.put(stringPath, qn);
+                                    pathExpressions.put(stringPath, qn);
+                                } else {
+                                    QueryObjectPathExpression qn
+                                        = new QueryObjectPathExpression(parentQc,
+                                                path.getLastElement(), path.getEndType());
+                                    makeQuery(qn, stringPath, pathQuery, savedBags, pathToQueryNode,
+                                            bagQueryRunner, returnBagQueryResults);
+                                    queryBits.put(stringPath, qn);
+                                    pathExpressions.put(stringPath, qn);
+                                }
+                            }
                         }
-                        QueryClass qc = (QueryClass) queryBits.get(finalPath);
-                        andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS,
-                                    qc));
                     }
-                    //}
-                    queryBits.put(path, queryBits.get(finalPath));
                 }
+                deferralReasons.remove(stringPath);
+                queueDeferred = 0;
+            }
 
-                QueryNode qn = (QueryNode) queryBits.get(finalPath);
-                for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
-                    Constraint c = (Constraint) j.next();
-                    String code = c.getCode();
-                    ConstraintSet cs = codeToCS.get(code);
-                    if (BagConstraint.VALID_OPS.contains(c.getOp())) {
-                        QueryField qf = new QueryField((QueryClass) qn, "id");
-                        if (c.getValue() instanceof InterMineBag) {
-                            cs.addConstraint(new BagConstraint(qf, c.getOp(),
-                                        ((InterMineBag) c.getValue()).getOsb()));
-                        } else if (c.getValue() instanceof Collection) {
-                            Collection idBag = new LinkedHashSet();
-                            for (InterMineObject imo : ((Iterable<InterMineObject>) c.getValue())) {
-                                idBag.add(imo.getId());
-                            }
-                            cs.addConstraint(new BagConstraint(qf, c.getOp(), idBag));
+            // For each of the relevant codes, produce a Constraint object, and put it in a Map.
+            // Constraints that do not have a code (namely loop NOT EQUALS) can be put straight into
+            // the andCs.
+            Map<String, Constraint> codeToConstraint = new HashMap<String, Constraint>();
+            for (Map.Entry<PathConstraint, String> entry : pathQuery.getConstraints().entrySet()) {
+                String code = entry.getValue();
+                if (relevantCodes.contains(code)) {
+                    PathConstraint constraint = entry.getKey();
+                    String stringPath = constraint.getPath();
+                    Path path = new Path(model, stringPath, subclasses);
+                    QuerySelectable field = queryBits.get(constraint.getPath());
+                    if (field == null) {
+                        // This must be a constraint on an attribute, as all the classes will
+                        // already be in querybits
+                        QueryClass qc = (QueryClass) queryBits.get(path.getPrefix()
+                                .getNoConstraintsString());
+                        field = new QueryField(qc, path.getLastElement());
+                        queryBits.put(stringPath, field);
+                    }
+                    if (constraint instanceof PathConstraintAttribute) {
+                        PathConstraintAttribute pca = (PathConstraintAttribute) constraint;
+                        Class<?> fieldType = path.getEndType();
+                        if (String.class.equals(fieldType)) {
+                            codeToConstraint.put(code, makeQueryStringConstraint(
+                                        (QueryField) field, pca));
+                        } else if (Date.class.equals(fieldType)) {
+                            codeToConstraint.put(code, makeQueryDateConstraint(
+                                        (QueryField) field, pca));
                         } else {
-                            InterMineBag bag = savedBags.get(c.getValue());
-                            if (bag == null) {
-                                throw new RuntimeException("a bag (" + c.getValue()
-                                        + ") used by this query no longer exists");
+                            codeToConstraint.put(code, new SimpleConstraint((QueryField) field,
+                                        pca.getOp(), new QueryValue(TypeUtil.stringToObject(
+                                                fieldType, pca.getValue()))));
+                        }
+                    } else if (constraint instanceof PathConstraintNull) {
+                        // This is a null constraint. If it is on a class, then we need do nothing,
+                        // as the mere presence of the constraint has caused the class to make it
+                        // into the FROM list above.
+                        if (path.endIsAttribute()) {
+                            codeToConstraint.put(code, new SimpleConstraint((QueryField) field,
+                                        constraint.getOp()));
+                        }
+                    } else if (constraint instanceof PathConstraintLoop) {
+                        // We need to act if this is not a participating constraint - otherwise
+                        // this has been taken care of above.
+                        if (!participatingLoops.contains(constraint)) {
+                            PathConstraintLoop pcl = (PathConstraintLoop) constraint;
+                            if (pcl.getPath().length() > pcl.getLoopPath().length()) {
+                                codeToConstraint.put(code, new ClassConstraint((QueryClass)
+                                            queryBits.get(pcl.getLoopPath()), constraint.getOp(),
+                                            (QueryClass) field));
+                            } else {
+                                codeToConstraint.put(code, new ClassConstraint((QueryClass) field,
+                                            constraint.getOp(), (QueryClass) queryBits
+                                            .get(((PathConstraintLoop) constraint).getLoopPath())));
                             }
-                            cs.addConstraint(new BagConstraint(qf, c.getOp(), bag.getOsb()));
                         }
-                    } else if (node.isAttribute()) { //assume, for now, that it's a SimpleConstraint
-                        if (c.getOp() == ConstraintOp.LOOKUP) {
-                            throw new IllegalArgumentException("LOOKUP constraints cannot be "
-                                    + "placed on attributes (" + finalPath + ") - place it on the "
-                                    + "surrounding class (" + finalPath.substring(0, finalPath
-                                            .lastIndexOf("."))  + ") instead.");
+                    } else if (constraint instanceof PathConstraintSubclass) {
+                        // No action needed.
+                    } else if (constraint instanceof PathConstraintBag) {
+                        PathConstraintBag pcb = (PathConstraintBag) constraint;
+                        InterMineBag bag = savedBags.get(pcb.getBag());
+                        if (bag == null) {
+                            throw new ObjectStoreException("A bag (" + pcb.getBag()
+                                    + ") used by this query does not exist");
                         }
-                        cs.addConstraint(makeAttributeConstraint(qn, c));
-                    } else if (node.isReference() && (c.getOp() == ConstraintOp.IS_NOT_NULL
-                                || c.getOp() == ConstraintOp.IS_NULL)) {
-                        cs.addConstraint(new ContainsConstraint((QueryObjectReference) qr,
-                                    c.getOp()));
-                    } else if (c.getOp() == ConstraintOp.LOOKUP) {
-                        QueryClass qc = (QueryClass) qn;
-                        if (checkOnly) {
-                            try {
-                                Class.forName(qc.getType().getName());
-                            } catch (ClassNotFoundException e) {
-                                throw new RuntimeException(e);
+                        codeToConstraint.put(code, new BagConstraint((QueryNode) field, pcb.getOp(),
+                                    bag.getOsb()));
+                    } else if (constraint instanceof PathConstraintIds) {
+                        codeToConstraint.put(code, new BagConstraint(new QueryField(
+                                        (QueryClass) field, "id"), constraint.getOp(),
+                                    ((PathConstraintIds) constraint).getIds()));
+                    } else if (constraint instanceof PathConstraintMultiValue) {
+                        Class<?> fieldType = path.getEndType();
+                        if (String.class.equals(fieldType)) {
+                            codeToConstraint.put(code, new BagConstraint((QueryField) field,
+                                    constraint.getOp(), ((PathConstraintMultiValue) constraint)
+                                    .getValues()));
+                        } else {
+                            Collection<Object> objects = new ArrayList<Object>();
+                            for (String s : ((PathConstraintMultiValue) constraint).getValues()) {
+                                objects.add(TypeUtil.stringToObject(fieldType, s));
                             }
-                            continue;
+                            codeToConstraint.put(code, new BagConstraint((QueryField) field,
+                                    constraint.getOp(), objects));
                         }
+                    } else if (constraint instanceof PathConstraintLookup) {
+                        QueryClass qc = (QueryClass) field;
+                        PathConstraintLookup pcl = (PathConstraintLookup) constraint;
                         if (bagQueryRunner == null) {
-                            throw new IllegalArgumentException("Attempted to create a query with"
-                                    + " a LOOKUP constraint without providing a BagQueryRunner.");
+                            throw new NullPointerException("Cannot convert this PathQuery to an "
+                                    + "ObjectStore Query without a BagQueryRunner");
                         }
-                        String identifiers = (String) c.getValue();
+                        String identifiers = pcl.getValue();
                         BagQueryResult bagQueryResult;
-                        List identifierList = new ArrayList();
+                        List<String> identifierList = new ArrayList<String>();
                         StrTokenizer st = new StrTokenizer(identifiers,
                                 StrMatcher.charSetMatcher("\n\t,"),
                                 StrMatcher.doubleQuoteMatcher());
@@ -473,285 +430,275 @@ public class MainHelper
                             identifierList.add(token.trim());
                         }
                         try {
-                            //LOG.info("Running bag query, with extra value " + c.getExtraValue());
-                            bagQueryResult = bagQueryRunner.searchForBag(node.getType(),
-                                identifierList, (String) c.getExtraValue(), true);
+                            bagQueryResult = bagQueryRunner.searchForBag(qc.getType()
+                                    .getSimpleName(), identifierList, pcl.getExtraValue(), true);
                         } catch (ClassNotFoundException e) {
                             throw new ObjectStoreException(e);
                         } catch (InterMineException e) {
                             throw new ObjectStoreException(e);
                         }
-                        if (qc == null) {
-                            LOG.error("qc is null. queryBits = " + queryBits + ", finalPath = "
-                                    + finalPath + ", pathQuery: " + pathQuery);
-                        }
-                        if (bagQueryResult == null) {
-                            LOG.error("bagQueryResult is null. queryBits = " + queryBits
-                                    + ", finalPath = " + finalPath + ", pathQuery: "
-                                    + pathQuery);
-                        }
-                        if (cs == null) {
-                            LOG.error("cs is null. codeToCS = " + codeToCS + ", code = " + code
-                                    + ", pathQuery: " + pathQuery);
-                        }
-                        cs.addConstraint(new BagConstraint(new QueryField(qc, "id"),
+                        codeToConstraint.put(code, new BagConstraint(new QueryField(qc, "id"),
                                     ConstraintOp.IN, bagQueryResult.getMatchAndIssueIds()));
-                        // TODO: The code that
-                        // does a lookup for ifs should be moved out of this method. See #1284.
                         if (returnBagQueryResults != null) {
-                            returnBagQueryResults.put(node.getPathString(), bagQueryResult);
-                        }
-                    }
-                }
-                deferralReasons.remove(node);
-                queueDeferred = 0;
-            }
-        }
-
-        // Now process loop constraints. The constraint parameter refers backwards and
-        // forwards in the query so we can't process these in the above loop.
-        makeQueryProcessLoopsHelper(pathQuery, codeToCS, loops, queryBits);
-
-        // build the SELECT list
-        HashSet<PathNode> done = new HashSet<PathNode>();
-        List<QuerySelectable> added = new ArrayList<QuerySelectable>();
-        for (Path p : pathQuery.getView()) {
-            PathNode pn = pathQuery.getNodes().get(p.toStringNoConstraints());
-            if (nonOuterNodes.contains(pn)) {
-                QueryNode qn = null;
-                if (pn.isAttribute()) {
-                    QueryClass qc = ((QueryClass) queryBits.get(pn.getPrefix()));
-                    QueryField qf = new QueryField(qc, pn.getFieldName());
-                    queryBits.put(pn.getPathString(), qf);
-                    qn = qc;
-                } else {
-                    qn = (QueryNode) queryBits.get(pn.getPathString());
-                }
-                if (!added.contains(qn)) {
-                    added.add(qn);
-                }
-            } else {
-                while (pn != null && (!nonOuterNodes.contains(pn.getParent()))
-                        && (!Util.equals(root, pn.getParent()))) {
-                    pn = (PathNode) pn.getParent();
-                }
-                if (pn != null && (!done.contains(pn))) {
-                    done.add(pn);
-                    if (pn.isReference()) {
-                        QueryClass qc = (QueryClass) queryBits.get(pn.getParent().getPathString());
-                        if (qc == null) {
-                            throw new NullPointerException("Failed to get path "
-                                    + pn.getParent().getPathString() + " from " + queryBits);
-                        }
-                        Class subclass;
-                        try {
-                            subclass = TypeUtil.getClass(pn.getType(), model);
-                        } catch (ClassNotFoundException e) {
-                            throw new IllegalArgumentException("Class not found in the model: "
-                                    + pn.getType(), e);
-                        }
-                        try {
-                            QueryObjectPathExpression qn = new QueryObjectPathExpression(qc,
-                                    pn.getFieldName(), subclass);
-                            recursiveMakeQuery(qn, pathQuery, pn, savedBags, pathToQueryNode,
-                                    bagQueryRunner, returnBagQueryResults, checkOnly);
-                            if (!added.contains(qc)) {
-                                added.add(qc);
-                            }
-                            if (!added.contains(qn)) {
-                                queryBits.put(pn.getPathString(), qn);
-                                added.add(qn);
-                            }
-                        } catch (ClassCastException e) {
-                            QueryCollectionPathExpression qn = new QueryCollectionPathExpression(qc,
-                                    pn.getFieldName(), subclass);
-                            recursiveMakeQuery(qn, pathQuery, pn, savedBags, pathToQueryNode,
-                                    bagQueryRunner, returnBagQueryResults, checkOnly);
-                            if (!added.contains(qc)) {
-                                added.add(qc);
-                            }
-                            if (!added.contains(qn)) {
-                                queryBits.put(pn.getPathString(), qn);
-                                added.add(qn);
-                            }
-                        }
-                    } else if (pn.isCollection()) {
-                        QueryClass qc = (QueryClass) queryBits.get(pn.getParent().getPathString());
-                        if (qc == null) {
-                            throw new NullPointerException("Failed to get path "
-                                    + pn.getParent().getPathString() + " from " + queryBits);
-                        }
-                        Class subclass;
-                        try {
-                            subclass = TypeUtil.getClass(pn.getType(), model);
-                        } catch (ClassNotFoundException e) {
-                            throw new IllegalArgumentException("class not found in the model: "
-                                    + pn.getType(), e);
-                        }
-                        QueryCollectionPathExpression qn = new QueryCollectionPathExpression(qc,
-                                pn.getFieldName(), subclass);
-                        recursiveMakeQuery(qn, pathQuery, pn, savedBags, pathToQueryNode,
-                                bagQueryRunner, returnBagQueryResults, checkOnly);
-                        if (!added.contains(qc)) {
-                            added.add(qc);
-                        }
-                        if (!added.contains(qn)) {
-                            queryBits.put(pn.getPathString(), qn);
-                            added.add(qn);
-                        }
-                    }
-                }
-            }
-        }
-        QueryClass defaultClass = null;
-        if (q instanceof QueryObjectPathExpression) {
-            defaultClass = ((QueryObjectPathExpression) q).getDefaultClass();
-        }
-        if ((added.size() == 1) && added.get(0).equals(defaultClass)) {
-            // Don't add anything to SELECT list - default is fine
-        } else {
-            for (QuerySelectable qs : added) {
-                if (qs instanceof QueryObjectPathExpression) {
-                    QueryObjectPathExpression qope = (QueryObjectPathExpression) qs;
-                    if (qope.getSelect().size() > 1) {
-                        for (int i = 1; i <= qope.getSelect().size(); i++) {
-                            q.addToSelect(new PathExpressionField(qope, i - 1));
+                            returnBagQueryResults.put(stringPath, bagQueryResult);
                         }
                     } else {
-                        q.addToSelect(qope);
+                        throw new ObjectStoreException("Unknown constraint type "
+                                + constraint.getClass().getName());
+                    }
+                }
+            }
+
+            // Use the constraint logic to create a ConstraintSet structure with the constraints
+            // inserted into it
+            createConstraintStructure(logic, andCs, codeToConstraint);
+            if (!andCs.getConstraints().isEmpty()) {
+                Constraint c = andCs;
+                while ((c instanceof ConstraintSet)
+                        && (((ConstraintSet) c).getConstraints().size() == 1)) {
+                    c = ((ConstraintSet) c).getConstraints().iterator().next();
+                }
+                q.setConstraint(c);
+            }
+
+            // Generate the SELECT list
+            HashSet<String> pathExpressionsDone = new HashSet<String>();
+            List<QuerySelectable> select = new ArrayList<QuerySelectable>();
+            for (String view : pathQuery.getView()) {
+                Path path = new Path(model, view, subclasses);
+                String parentPath = path.getPrefix().getNoConstraintsString();
+                String outerJoinGroup = outerJoinGroups.get(parentPath);
+                if (root.equals(outerJoinGroup)) {
+                    QueryClass qc = (QueryClass) queryBits.get(parentPath);
+                    QueryField qf = new QueryField(qc, path.getLastElement());
+                    queryBits.put(view, qf);
+                    if (!select.contains(qc)) {
+                        select.add(qc);
                     }
                 } else {
-                    q.addToSelect(qs);
-                }
-            }
-        }
-
-        // build ORDER BY list
-        if (q instanceof Query) {
-            for (Path path : pathQuery.getSortOrder().keySet()) {
-                PathNode pn = pathQuery.getNodes().get(path.toStringNoConstraints());
-                if (nonOuterNodes.contains(pn)) {
-                    QueryNode qn = (QueryNode) queryBits.get(pn.getPathString());
-
-                    if (!((Query) q).getOrderBy().contains(qn)) {
-                        ((Query) q).addToOrderBy(qn, pathQuery.getSortOrder().get(path));
+                    while ((!path.isRootPath())
+                            && (!root.equals(outerJoinGroups.get(path.getPrefix()
+                                        .getNoConstraintsString())))) {
+                        path = path.getPrefix();
+                    }
+                    if (!path.isRootPath()) {
+                        // We have found a path in the view that is a path expression we want to
+                        // use
+                        view = path.getNoConstraintsString();
+                        if (!pathExpressionsDone.contains(view)) {
+                            QueryPathExpressionWithSelect pe = pathExpressions.get(view);
+                            QueryClass qc = pe.getQueryClass();
+                            if (!select.contains(qc)) {
+                                select.add(qc);
+                            }
+                            if (!select.contains(pe)) {
+                                select.add(pe);
+                            }
+                        }
                     }
                 }
             }
 
-            // put rest of select list in order by
-            for (Path p : pathQuery.getView()) {
-                String ps = p.toStringNoConstraints();
-                PathNode pn = pathQuery.getNodes().get(ps);
-                if (nonOuterNodes.contains(pn)) {
-                    QueryNode selectNode = (QueryNode) queryBits.get(pn.getPathString());
-                    if (!((Query) q).getOrderBy().contains(selectNode)) {
-                        ((Query) q).addToOrderBy(selectNode);
-                    }
-                }
+            // Copy select list into query:
+            QueryClass defaultClass = null;
+            if (q instanceof QueryObjectPathExpression) {
+                defaultClass = ((QueryObjectPathExpression) q).getDefaultClass();
             }
-        }
-
-        // caller might want path to query node map (e.g. PrecomputeTask)
-        if (pathToQueryNode != null) {
-            pathToQueryNode.putAll(queryBits);
-        }
-
-        // Construct the constraintSet tree structure
-        Map<ConstraintSet, ConstraintSet> csTreeStructureMap = new LinkedHashMap<ConstraintSet,
-            ConstraintSet>();
-        for (CsTreeStructure csts : csTreeStructure) {
-            csTreeStructureMap.put(csts.getChild(), csts.getParent());
-        }
-        while (!csTreeStructureMap.isEmpty()) {
-            Iterator<Map.Entry<ConstraintSet, ConstraintSet>> iter = csTreeStructureMap.entrySet()
-                .iterator();
-            while (iter.hasNext()) {
-                Map.Entry<ConstraintSet, ConstraintSet> entry = iter.next();
-                if (!csTreeStructureMap.containsValue(entry.getKey())) {
-                    iter.remove();
-                    entry.getValue().addConstraint(entry.getKey());
-                }
-            }
-        }
-        if (andcs.getConstraints().isEmpty()) {
-            q.setConstraint(null);
-        } else if (andcs.getConstraints().size() == 1) {
-            q.setConstraint((andcs.getConstraints().iterator().next()));
-        } else {
-            q.setConstraint(andcs);
-        }
-    }
-
-    private static org.intermine.objectstore.query.Constraint
-    makeAttributeConstraint(QueryNode qn, Constraint c) {
-        if (c.getOp() == ConstraintOp.IS_NOT_NULL
-            || c.getOp() == ConstraintOp.IS_NULL) {
-            return new SimpleConstraint((QueryEvaluable) qn, c.getOp());
-        } else if (qn.getType().equals(String.class)) {
-            return makeQueryStringConstraint(qn, c);
-        } else if (qn.getType().equals(Date.class)) {
-            return makeQueryDateConstraint(qn, c);
-        } else {
-            return new SimpleConstraint((QueryField) qn, c.getOp(),
-                    new QueryValue(c.getValue()));
-        }
-    }
-
-    private static Set<PathNode> findNonOuterNodes(Map<String, PathNode> nodes, PathNode root) {
-        Set<PathNode> retval = new LinkedHashSet();
-        Set<PathNode> done = new LinkedHashSet();
-        LinkedList<PathNode> queue = new LinkedList();
-        for (PathNode node : nodes.values()) {
-            queue.addLast(node);
-        }
-        Map<PathNode, String> deferralReasons = new HashMap<PathNode, String>();
-        int queueDeferred = 0;
-        while (!queue.isEmpty()) {
-            if (queueDeferred > queue.size() + 10) {
-                throw new IllegalArgumentException("Cannot handle entries in queue: " + queue
-                        + ", reasons: " + deferralReasons + ", original node list: "
-                        + nodes.values() + ", done = " + done);
-            }
-            PathNode node = queue.removeFirst();
-            PathNode parent = (PathNode) node.getParent();
-            if ((parent != null) && (!done.contains(parent))) {
-                deferralReasons.put(node, "Parent \"" + parent + "\" not processed");
-                queue.addLast(node);
-                queueDeferred++;
+            if ((select.size() == 1) && select.get(0).equals(defaultClass)) {
+                // Don't add anything to the SELECT list - default is fine
             } else {
-                if ((Util.equals(root, parent) || retval.contains(parent))
-                            && (!node.isOuterJoin())) {
-                    retval.add(node);
-                } else if (Util.equals(root, node)) {
-                    retval.add(node);
+                for (QuerySelectable qs : select) {
+                    if (qs instanceof QueryObjectPathExpression) {
+                        QueryObjectPathExpression qope = (QueryObjectPathExpression) qs;
+                        if (qope.getSelect().size() > 1) {
+                            for (int i = 0; i < qope.getSelect().size(); i++) {
+                                q.addToSelect(new PathExpressionField(qope, i));
+                            }
+                        } else {
+                            q.addToSelect(qope);
+                        }
+                    } else {
+                        q.addToSelect(qs);
+                    }
                 }
-                done.add(node);
-                deferralReasons.remove(node);
-                queueDeferred = 0;
+            }
+
+            // Generate the ORDER BY list
+            if (q instanceof Query) {
+                Query qu = (Query) q;
+                for (OrderElement order : pathQuery.getOrderBy()) {
+                    QueryField qf = (QueryField) queryBits.get(order.getOrderPath());
+                    if (qf == null) {
+                        Path path = new Path(model, order.getOrderPath(), subclasses);
+                        QueryClass qc = (QueryClass) queryBits.get(path.getPrefix()
+                                .getNoConstraintsString());
+                        qf = new QueryField(qc, path.getLastElement());
+                        queryBits.put(order.getOrderPath(), qf);
+                    }
+                    if ((!qu.getOrderBy().contains(qf)) && (!qu.getOrderBy()
+                                .contains(new OrderDescending(qf)))) {
+                        if (order.getDirection().equals(OrderDirection.DESC)) {
+                            qu.addToOrderBy(new OrderDescending(qf));
+                        } else {
+                            qu.addToOrderBy(qf);
+                        }
+                    }
+                }
+                for (String view : pathQuery.getView()) {
+                    QueryField qf = (QueryField) queryBits.get(view);
+                    if (qf != null) {
+                        // If qf IS null, that means it is in another outer join group, as we have
+                        // populated queryBits earlier with all view objects
+                        if ((!qu.getOrderBy().contains(qf)) && (!qu.getOrderBy()
+                                    .contains(new OrderDescending(qf)))) {
+                            qu.addToOrderBy(qf);
+                        }
+                    }
+                }
+            }
+            if (pathToQueryNode != null) {
+                pathToQueryNode.putAll(queryBits);
+            }
+        } catch (PathException e) {
+            throw new ObjectStoreException("PathException while converting PathQuery to ObjectStore"
+                    + " Query", e);
+        }
+    }
+
+    private static Map<String, String> makeLoopsMap(Collection<PathConstraintLoop> constraints) {
+        // A PathConstraintLoop should participate in this mechanism if it is an EQUALS constraint,
+        // and its code is not inside an OR in the constraint logic.
+
+        // Let's look at this from an equivalence groups point of view. We need to cope with the
+        // situation where a = a.b.c and a.d = a.b.c, putting all three into an equivalence group.
+        // The group name should be the shortest path in the group, or the lowest compareTo() for
+        // a tie-break.
+        Map<String, String> membership = new HashMap<String, String>();
+        Map<String, Set<String>> groups = new HashMap<String, Set<String>>();
+        for (PathConstraintLoop loop : constraints) {
+            if (ConstraintOp.EQUALS.equals(loop.getOp())) {
+                String path1 = loop.getPath();
+                String path2 = loop.getLoopPath();
+                if (membership.containsKey(path1)) {
+                    if (membership.containsKey(path2)) {
+                        String existingGroup1 = membership.get(path1);
+                        String existingGroup2 = membership.get(path2);
+                        if (!existingGroup1.equals(existingGroup2)) {
+                            Set<String> members1 = groups.remove(existingGroup1);
+                            Set<String> members2 = groups.remove(existingGroup2);
+                            members1.addAll(members2);
+                            String shorter = shorterPath(existingGroup1, existingGroup2);
+                            for (String toAdd : members1) {
+                                membership.put(toAdd, shorter);
+                            }
+                            groups.put(shorter, members1);
+                        }
+                    } else {
+                        String existingGroup = membership.get(path1);
+                        Set<String> members = groups.remove(existingGroup);
+                        members.add(path2);
+                        String shorter = shorterPath(path2, existingGroup);
+                        for (String toAdd : members) {
+                            membership.put(toAdd, shorter);
+                        }
+                        groups.put(shorter, members);
+                    }
+                } else {
+                    if (membership.containsKey(path2)) {
+                        String existingGroup = membership.get(path2);
+                        Set<String> members = groups.remove(existingGroup);
+                        members.add(path1);
+                        String shorter = shorterPath(path1, existingGroup);
+                        for (String toAdd : members) {
+                            membership.put(toAdd, shorter);
+                        }
+                        groups.put(shorter, members);
+                    } else {
+                        String shorter = shorterPath(path1, path2);
+                        membership.put(path2, shorter);
+                        membership.put(path1, shorter);
+                        groups.put(shorter, new HashSet<String>(Arrays.asList(path1, path2)));
+                    }
+                }
+            }
+        }
+        Map<String, String> retval = new HashMap<String, String>();
+        for (Map.Entry<String, String> entry : membership.entrySet()) {
+            if (!entry.getKey().equals(entry.getValue())) {
+                retval.put(entry.getKey(), entry.getValue());
             }
         }
         return retval;
     }
 
-    private static Set<String> findRelevantCodes(Set<PathNode> nonOuterNodes) {
-        Set<String> retval = new HashSet<String>();
-        for (PathNode node : nonOuterNodes) {
-            for (Constraint c : node.getConstraints()) {
-                retval.add(c.getCode());
-            }
+    private static String shorterPath(String path1, String path2) {
+        if (path1.length() > path2.length()) {
+            return path2;
+        } else if (path2.length() > path1.length()) {
+            return path1;
+        } else if (path1.compareTo(path2) > 0) {
+            return path2;
+        } else if (path1.compareTo(path2) < 0) {
+            return path1;
+        } else {
+            throw new IllegalArgumentException("Two paths are identical: " + path1);
         }
-        return retval;
     }
 
     /**
-     * Make a SimpleConstraint for the given Constraint object.  The Constraint will be
-     * case-insensitive.  If the Constraint value contains a wildcard and the operation is "=" or
+     * Returns the Set of PathConstraintLoop objects that will participate in the QueryClass
+     * collapsing mechanism.
+     *
+     * @param logic the constraint logic
+     * @param constraints a Map from PathConstraint to code
+     * @return a Set of PathConstraintLoop objects
+     */
+    protected static Set<PathConstraintLoop> findParticipatingLoops(LogicExpression logic,
+            Map<PathConstraint, String> constraints) {
+        if (logic != null) {
+            LogicExpression.Node node = logic.getRootNode();
+            Set<String> codes = new HashSet<String>();
+            findAndCodes(codes, node);
+            Set<PathConstraintLoop> retval = new HashSet<PathConstraintLoop>();
+            for (Map.Entry<PathConstraint, String> entry : constraints.entrySet()) {
+                if (codes.contains(entry.getValue())) {
+                    if (entry.getKey() instanceof PathConstraintLoop) {
+                        if (ConstraintOp.EQUALS.equals(entry.getKey().getOp())) {
+                            retval.add((PathConstraintLoop) entry.getKey());
+                        }
+                    }
+                }
+            }
+            return retval;
+        }
+        return Collections.emptySet();
+    }
+
+    /**
+     * Finds all the codes in a constraint logic that are ANDed in the given constraint logic.
+     *
+     * @param codes codes are added to this
+     * @param node a node to traverse
+     */
+    protected static void findAndCodes(Set<String> codes, LogicExpression.Node node) {
+        if (node instanceof LogicExpression.Variable) {
+            codes.add(((LogicExpression.Variable) node).getName());
+        } else if (node instanceof LogicExpression.And) {
+            for (LogicExpression.Node child : ((LogicExpression.And) node).getChildren()) {
+                findAndCodes(codes, child);
+            }
+        }
+    }
+
+    /**
+     * Make a SimpleConstraint for the given constraint.  The Constraint will be
+     * case-insensitive.  If the constraint value contains a wildcard and the operation is "=" or
      * "&lt;&gt;" then the operation will be changed to "LIKE" or "NOT_LIKE" as appropriate.
      */
-    private static SimpleConstraint makeQueryStringConstraint(QueryNode qn, Constraint c) {
-        QueryExpression qf = new QueryExpression(QueryExpression.LOWER, (QueryField) qn);
-        String lowerCaseValue = Util.wildcardUserToSql(((String) c.getValue()).toLowerCase());
+    private static SimpleConstraint makeQueryStringConstraint(QueryField qf,
+            PathConstraintAttribute c) {
+        QueryExpression qe = new QueryExpression(QueryExpression.LOWER, qf);
+        String lowerCaseValue = Util.wildcardUserToSql(c.getValue().toLowerCase());
 
         // notes:
         //   - we always turn EQUALS into a MATCHES(LIKE) constraint and rely on Postgres
@@ -760,16 +707,16 @@ public class MainHelper
         //     normal equals.  for example 'Dpse\GA10108' needs to be 'Dpse\\GA10108' for equals
         //     but 'Dpse\\\\GA10108' (and hence "Dpse\\\\\\\\GA10108" as a Java string because
         //     backslash must be quoted with a backslash)
-        if (c.getOp().equals(ConstraintOp.EQUALS)) {
-            return new SimpleConstraint(qf, ConstraintOp.MATCHES, new QueryValue(lowerCaseValue));
-        } else if (c.getOp().equals(ConstraintOp.NOT_EQUALS)) {
-            return new SimpleConstraint(qf, ConstraintOp.DOES_NOT_MATCH,
+        if (ConstraintOp.EQUALS.equals(c.getOp())) {
+            return new SimpleConstraint(qe, ConstraintOp.MATCHES, new QueryValue(lowerCaseValue));
+        } else if (ConstraintOp.NOT_EQUALS.equals(c.getOp())) {
+            return new SimpleConstraint(qe, ConstraintOp.DOES_NOT_MATCH,
                     new QueryValue(lowerCaseValue));
-        } else if (c.getOp().equals(ConstraintOp.CONTAINS)) {
-            return new SimpleConstraint(qf, ConstraintOp.MATCHES,
+        } else if (ConstraintOp.CONTAINS.equals(c.getOp())) {
+            return new SimpleConstraint(qe, ConstraintOp.MATCHES,
                     new QueryValue("%" + lowerCaseValue + "%"));
         } else {
-            return new SimpleConstraint(qf, c.getOp(), new QueryValue(lowerCaseValue));
+            return new SimpleConstraint(qe, c.getOp(), new QueryValue(lowerCaseValue));
         }
     }
 
@@ -780,14 +727,14 @@ public class MainHelper
      * "&lt;= 2008-01-02"  --&gt;  "&gt;= 2008-01-02 23:59:59"
      * " &gt; 2008-01-02"  --&gt;  " &lt; 2008-01-02 00:00:00"
      * " &gt; 2008-01-02"  --&gt;   "&gt; 2008-01-02 23:59:59"
-     * "&gt;= 2008-01-02"  --&gt;   "&gt; 2008-01-02 00:00:00"
-     * @param qn the QueryNode in the new query
+     * "&gt;= 2008-01-02"  --&gt;   "&gt; 2008-01-02 00:00:00".
+     *
+     * @param qf the QueryNode in the new query
      * @param c the webapp constraint
      * @return a new object store constraint
      */
-    protected static org.intermine.objectstore.query.Constraint
-    makeQueryDateConstraint(QueryNode qn, Constraint c) {
-        Date dateValue = (Date) c.getValue();
+    protected static Constraint makeQueryDateConstraint(QueryField qf, PathConstraintAttribute c) {
+        Date dateValue = (Date) TypeUtil.stringToObject(Date.class, c.getValue());
 
         Calendar startOfDay = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
         startOfDay.setTime(dateValue);
@@ -797,452 +744,92 @@ public class MainHelper
         startOfDay.set(Calendar.MILLISECOND, 0);
         QueryValue startOfDayQV = new QueryValue(startOfDay.getTime());
 
-        Calendar endOfDay = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
-        endOfDay.setTime(dateValue);
-        endOfDay.set(Calendar.HOUR_OF_DAY, 23);
-        endOfDay.set(Calendar.MINUTE, 59);
-        endOfDay.set(Calendar.SECOND, 59);
-        endOfDay.set(Calendar.MILLISECOND, 999);
+        Calendar endOfDay = (Calendar) startOfDay.clone();
+        endOfDay.add(Calendar.DATE, 1);
         QueryValue endOfDayQV = new QueryValue(endOfDay.getTime());
 
-        if (c.getOp().equals(ConstraintOp.EQUALS)
-            || c.getOp().equals(ConstraintOp.NOT_EQUALS)) {
-            SimpleConstraint startConstraint;
-            SimpleConstraint endConstraint;
-            ConstraintOp op;
-            if (c.getOp().equals(ConstraintOp.EQUALS)) {
-                startConstraint =
-                    new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.GREATER_THAN_EQUALS,
-                                         startOfDayQV);
-                endConstraint =
-                    new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.LESS_THAN_EQUALS,
-                                         endOfDayQV);
-                op = ConstraintOp.AND;
-            } else {
-                // NOT_EQUALS
-                startConstraint =
-                    new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.LESS_THAN,
-                                         startOfDayQV);
-                endConstraint =
-                    new SimpleConstraint((QueryEvaluable) qn, ConstraintOp.GREATER_THAN,
-                                         endOfDayQV);
-                op = ConstraintOp.OR;
-            }
-            ConstraintSet cs = new ConstraintSet(op);
-            cs.addConstraint(startConstraint);
-            cs.addConstraint(endConstraint);
+        if (ConstraintOp.EQUALS.equals(c.getOp())) {
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+            cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.GREATER_THAN_EQUALS,
+                        startOfDayQV));
+            cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.LESS_THAN, endOfDayQV));
             return cs;
+        } else if (ConstraintOp.NOT_EQUALS.equals(c.getOp())) {
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+            cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.LESS_THAN, startOfDayQV));
+            cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.GREATER_THAN_EQUALS,
+                        endOfDayQV));
+            return cs;
+        } else if (ConstraintOp.LESS_THAN_EQUALS.equals(c.getOp())) {
+            return new SimpleConstraint(qf, ConstraintOp.LESS_THAN, endOfDayQV);
+        } else if (ConstraintOp.LESS_THAN.equals(c.getOp())) {
+            return new SimpleConstraint(qf, ConstraintOp.LESS_THAN, startOfDayQV);
+        } else if (ConstraintOp.GREATER_THAN.equals(c.getOp())) {
+            return new SimpleConstraint(qf, ConstraintOp.GREATER_THAN_EQUALS, endOfDayQV);
+        } else if (ConstraintOp.GREATER_THAN_EQUALS.equals(c.getOp())) {
+            return new SimpleConstraint(qf, ConstraintOp.GREATER_THAN_EQUALS, startOfDayQV);
         } else {
-            if (c.getOp().equals(ConstraintOp.LESS_THAN_EQUALS)) {
-                return new SimpleConstraint((QueryEvaluable) qn, c.getOp(), endOfDayQV);
-            } else {
-                if (c.getOp().equals(ConstraintOp.LESS_THAN)) {
-                    return new SimpleConstraint((QueryEvaluable) qn, c.getOp(), startOfDayQV);
+            throw new RuntimeException("Unknown ConstraintOp: " + c);
+        }
+    }
+
+    /**
+     * Given a LogicExpression, a Map from codes to Constraint objects, and a ConstraintSet to put
+     * it all in, construct a tree of ConstraintSets that reflects the expression.
+     *
+     * @param logic the LogicExpression object
+     * @param cs the ConstraintSet to put the constraints in
+     * @param codeToConstraint a Map from constraint code to Constraint object
+     */
+    protected static void createConstraintStructure(LogicExpression logic, ConstraintSet cs,
+            Map<String, Constraint> codeToConstraint) {
+        if (logic != null) {
+            LogicExpression.Node node = logic.getRootNode();
+            createConstraintStructure(node, cs, codeToConstraint);
+        }
+    }
+
+    /**
+     * Given a LogicExpression.Node, a Map from codes to Constraint objects, and a ConstraintSet to
+     * put it all in, construct a tree of ConstraintSets that reflects the expression.
+     *
+     * @param node the LogicExpression.Node object
+     * @param cs the ConstraintSet to put the constraints in
+     * @param codeToConstraint a Map from constraint code to Constraint object
+     */
+    protected static void createConstraintStructure(LogicExpression.Node node, ConstraintSet cs,
+            Map<String, Constraint> codeToConstraint) {
+        if (node instanceof LogicExpression.Variable) {
+            Constraint con = codeToConstraint.get(((LogicExpression.Variable) node).getName());
+            if (con != null) {
+                // If it is null, then it is probably a Loop constraint that participated in
+                // QueryClass collapsing.
+                cs.addConstraint(con);
+            }
+        } else {
+            LogicExpression.Operator op = (LogicExpression.Operator) node;
+            ConstraintSet set = null;
+            if (op instanceof LogicExpression.And) {
+                if (ConstraintOp.AND.equals(cs.getOp())) {
+                    set = cs;
                 } else {
-                    if (c.getOp().equals(ConstraintOp.GREATER_THAN)) {
-                        return new SimpleConstraint((QueryEvaluable) qn, c.getOp(), endOfDayQV);
-                    } else {
-                        if (c.getOp().equals(ConstraintOp.GREATER_THAN_EQUALS)) {
-                            return new SimpleConstraint((QueryEvaluable) qn, c.getOp(), endOfDayQV);
-                        } else {
-                            throw new RuntimeException("Unknown ConstraintOp: " + c);
-                        }
-                    }
+                    set = new ConstraintSet(ConstraintOp.AND);
                 }
-            }
-        }
-    }
-
-    /**
-     * Process loop constraints. The constraint parameter refers backwards and
-     * forwards in the query so we can't process these in the main makeQuery loop
-     */
-    private static void makeQueryProcessLoopsHelper(PathQuery pathQuery,
-            Map<String, ConstraintSet> codeToCS, Map<String, String> loops,
-            Map<String, QuerySelectable> queryBits) {
-        for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
-            PathNode node = (PathNode) i.next();
-            if (node.isReference() || node.isCollection()) {
-                String path = node.getPathString();
-                QueryNode qn = (QueryNode) queryBits.get(path);
-
-                for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
-                    Constraint c = (Constraint) j.next();
-                    ConstraintSet cs = codeToCS.get(c.getCode());
-                    if ((c.getOp() == ConstraintOp.NOT_EQUALS)
-                        || ((c.getOp() == ConstraintOp.EQUALS)
-                            && (!loops.containsKey(path))
-                            && (!loops.containsKey(c.getValue())))) {
-                        QueryClass refQc = (QueryClass) queryBits.get(c.getValue());
-                        if (refQc != null) {
-                            if (cs == null) {
-                                throw new NullPointerException("Code " + c.getCode()
-                                        + " not in codeToCS " + codeToCS);
-                            }
-                            cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(),
-                                        refQc));
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /*
-     * Build a map to collapse nodes in loop queries
-     */
-    private static Map<String, String> makeLoopsMap(PathQuery pathQuery,
-            Map<String, ConstraintSet> codeToCS, ConstraintSet andcs, boolean onlyEquals,
-            Set<PathNode> nonOuterNodes, PathNode root) {
-        if (root != null) {
-            nonOuterNodes = new HashSet(nonOuterNodes);
-            nonOuterNodes.add(root);
-        }
-        Map<String, String> loops = new HashMap<String, String>();
-        for (PathNode node : pathQuery.getNodes().values()) {
-            if (nonOuterNodes.contains(node)) {
-                String path = node.getPathString();
-                for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
-                    Constraint c = (Constraint) j.next();
-                    if (c.getValue() instanceof InterMineBag) {
-                        continue;
-                    }
-                    if ((node.isReference() || node.isCollection() || node.equals(root)
-                                || (node.getParent() == null))
-                            && ((c.getOp() == ConstraintOp.EQUALS)
-                                || (c.getOp() == ConstraintOp.NOT_EQUALS))) {
-                        String dest = (String) c.getValue();
-                        boolean okay = false;
-                        for (PathNode nonOuterNode : nonOuterNodes) {
-                            if (nonOuterNode.getPathString().equals(dest)) {
-                                okay = true;
-                            }
-                        }
-                        if (!okay) {
-                            throw new IllegalArgumentException("Error - loop constraint spans path"
-                                    + " expression from " + path + " to " + dest);
-                        }
-                        if ((!onlyEquals) || ((c.getOp() == ConstraintOp.EQUALS)
-                                    && (codeToCS.get(c.getCode()) == andcs))) {
-                            String source;
-                            if (dest.startsWith(path)) {
-                                source = dest;
-                                dest = path;
-                            } else {
-                                source = path;
-                            }
-                            String finalDest = loops.get(dest);
-                            if (finalDest == null) {
-                                finalDest = dest;
-                            }
-                            Map<String, String> newLoops = new HashMap<String, String>();
-                            newLoops.put(source, finalDest);
-                            for (Iterator<Entry<String, String>> k = loops.entrySet().iterator();
-                                 k.hasNext();) {
-                                Entry<String, String> entry = k.next();
-                                String entryDest = entry.getValue();
-                                if (entryDest.equals(source)) {
-                                    entryDest = finalDest;
-                                }
-                                newLoops.put(entry.getKey(), entryDest);
-                            }
-                            loops = newLoops;
-                        }
-                    }
-                }
-            }
-        }
-        return loops;
-    }
-
-    /*
-     ** currently unused
-    private static Collection lowerCaseBag(Collection bag) {
-        List retList = new ArrayList();
-        Iterator iter = bag.iterator();
-        while (iter.hasNext()) {
-            Object obj = iter.next();
-            if (obj instanceof String) {
-                retList.add(((String) obj).toLowerCase());
             } else {
-                retList.add(obj);
-            }
-        }
-        return retList;
-    }
-     */
-
-    /**
-     * Given a LogicExpression, generate a tree of ConstraintSets that reflects the
-     * expression and add entries to the codeToConstraintSet Map from map from
-     * constraint code to ConstraintSet.
-     *
-     * @param logic the parsed logic expression
-     * @param codeToConstraintSet output mapping from constraint code to ConstraintSet object
-     * @param andcs an AND ConstraintSet that could be used as the root
-     * @param csTreeStructure a List detailing which ConstraintSets should be inside which other
-     * ConstraintSets. This is needed so that the tree structure can be assembled after the
-     * ConstraintSets are populated with Constraints, so they don't change their hashcode when they
-     * are in a HashSet.
-     * @return root ConstraintSet
-     */
-    protected static ConstraintSet makeConstraintSets(LogicExpression logic,
-            Map<String, ConstraintSet> codeToConstraintSet, ConstraintSet andcs,
-            List<CsTreeStructure> csTreeStructure) {
-        LogicExpression.Node node = logic.getRootNode();
-        ConstraintSet root;
-        if (node instanceof LogicExpression.And) {
-            root = andcs;
-            makeConstraintSets((LogicExpression.And) node, root, codeToConstraintSet,
-                    csTreeStructure);
-        } else if (node instanceof LogicExpression.Or) {
-            root = new ConstraintSet(ConstraintOp.OR);
-            makeConstraintSets((LogicExpression.Or) node, root, codeToConstraintSet,
-                    csTreeStructure);
-        } else {
-            throw new IllegalArgumentException("logic expression must contain a root operator");
-        }
-
-        return root;
-    }
-
-    /**
-     * Given a Node in the expression logic and set of constraints, generate a tree of
-     * ConstraintSets that reflects the expression and add entries to the codeToConstraintSet Map
-     * from map from constraint code to ConstraintSet.
-     *
-     * @param node a Node in the expression
-     * @param set the constraints under this node
-     * @param codeToConstraintSet output mapping from constraint code to ConstraintSet object
-     * @param csTreeStructure a List detailing which ConstraintSets should be inside which other
-     * ConstraintSets. This is needed so that the tree structure can be assembled after the
-     * ConstraintSets are populated with Constraints, so they don't change their hashcode when they
-     * are in a HashSet.
-     */
-    public static void makeConstraintSets(LogicExpression.Operator node, ConstraintSet set,
-            Map<String, ConstraintSet> codeToConstraintSet,
-            List<CsTreeStructure> csTreeStructure) {
-        Iterator iter = node.getChildren().iterator();
-        while (iter.hasNext()) {
-            LogicExpression.Node child = (LogicExpression.Node) iter.next();
-            if (child instanceof LogicExpression.And) {
-                if (set.getOp() == ConstraintOp.AND) {
-                    makeConstraintSets((LogicExpression.And) child, set, codeToConstraintSet,
-                            csTreeStructure);
+                if (ConstraintOp.OR.equals(cs.getOp())) {
+                    set = cs;
                 } else {
-                    ConstraintSet childSet = new ConstraintSet(ConstraintOp.AND);
-                    csTreeStructure.add(new CsTreeStructure(set, childSet));
-                    makeConstraintSets((LogicExpression.And) child, childSet, codeToConstraintSet,
-                            csTreeStructure);
+                    set = new ConstraintSet(ConstraintOp.OR);
                 }
-            } else if (child instanceof LogicExpression.Or) {
-                if (set.getOp() == ConstraintOp.OR) {
-                    makeConstraintSets((LogicExpression.Or) child, set, codeToConstraintSet,
-                            csTreeStructure);
-                } else {
-                    ConstraintSet childSet = new ConstraintSet(ConstraintOp.OR);
-                    csTreeStructure.add(new CsTreeStructure(set, childSet));
-                    makeConstraintSets((LogicExpression.Or) child, childSet, codeToConstraintSet,
-                            csTreeStructure);
-                }
-            } else {
-                // variable
-                codeToConstraintSet.put(((LogicExpression.Variable) child).getName(), set);
+            }
+            for (LogicExpression.Node child : op.getChildren()) {
+                createConstraintStructure(child, set, codeToConstraint);
+            }
+            if (set != cs) {
+                cs.addConstraint(set);
             }
         }
     }
-
-    /**
-     * Get the metadata for a class by unqualified name
-     * The name is looked up in the provided model
-     * @param className the name of the class
-     * @param model the Model used to resolve class names
-     * @return the relevant ClassDescriptor
-     * @throws ClassNotFoundException if the class name is not in the model
-     */
-    public static ClassDescriptor getClassDescriptor(String className, Model model)
-        throws ClassNotFoundException {
-        return model.getClassDescriptorByName(TypeUtil.getClass(className, model).getName());
-    }
-
-    /**
-     * Take a Collection of ConstraintOps and builds a map from ConstraintOp.getIndex() to
-     * ConstraintOp.toString() for each
-     * @param ops a Collection of ConstraintOps
-     * @return the Map from index to string
-     */
-    public static Map<Integer, String> mapOps(Collection ops) {
-        Map<Integer, String> opString = new LinkedHashMap<Integer, String>();
-        for (Iterator iter = ops.iterator(); iter.hasNext();) {
-            ConstraintOp op = (ConstraintOp) iter.next();
-            opString.put(op.getIndex(), op.toString());
-        }
-        return opString;
-    }
-
-    /**
-     * Create constraint values for display. Returns a Map from Constraint to String
-     * for each Constraint in the path query.
-     *
-     * @param pathquery  the PathQuery to look at
-     * @return           Map from Constraint to displat value
-     */
-    public static Map<Constraint, String> makeConstraintDisplayMap(PathQuery pathquery) {
-        Map<Constraint, String> map = new HashMap<Constraint, String>();
-        Iterator iter = pathquery.getNodes().values().iterator();
-        while (iter.hasNext()) {
-            PathNode node = (PathNode) iter.next();
-            Iterator citer = node.getConstraints().iterator();
-            while (citer.hasNext()) {
-                Constraint con = (Constraint) citer.next();
-                map.put(con, con.getReallyDisplayValue());
-            }
-        }
-        return map;
-    }
-
-    /**
-     * Given a path, find out whether it represents an attribute or a reference/collection.
-     *
-     * @param path the path
-     * @param pathQuery the path query
-     * @return true if path ends with an attribute, false if not
-     * @deprecated
-     */
-    public static boolean isPathAttribute(String path, PathQuery pathQuery) {
-        String classname = getTypeForPath(path, pathQuery);
-        return !(classname.startsWith(pathQuery.getModel().getPackageName())
-                || classname.endsWith("InterMineObject"));
-    }
-
-    /**
-     * Return the fully qualified type of the last node in the given path.
-     * @param path the path
-     * @param pathQuery the PathQuery that contains the given path
-     * @return the fully qualified type name
-     * @throws IllegalArgumentException if the path isn't valid for the PathQuery or if any
-     * arguments are null
-     * @deprecated
-     */
-    public static String getTypeForPath(String path, PathQuery pathQuery) {
-        // find the longest path that has a type stored in the pathQuery, then use the model to find
-        // the type of the last node
-
-        if (path == null) {
-            throw new IllegalArgumentException("path argument cannot be null");
-        }
-
-        if (pathQuery == null) {
-            throw new IllegalArgumentException("pathQuery argument cannot be null");
-        }
-
-        Model model = pathQuery.getModel();
-
-        PathNode testPathNode = pathQuery.getNodes().get(path);
-        if (testPathNode != null) {
-            try {
-                return model.getQualifiedTypeName(testPathNode.getType());
-            } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException("class \"" + testPathNode.getType()
-                                                   + "\" not found");
-            }
-        }
-
-        String[] bits = path.split("[.:]");
-
-        List<String> bitsList = new ArrayList<String>(Arrays.asList(bits));
-
-        String prefix = null;
-
-        while (bitsList.size() > 0) {
-            prefix = StringUtil.join(bitsList, ".");
-            if (pathQuery.getNodes().get(prefix) != null) {
-                break;
-            }
-
-            bitsList.remove(bitsList.size() - 1);
-        }
-
-        // the longest path prefix that has an entry in the PathQuery
-        String longestPrefix = prefix;
-
-        ClassDescriptor cld;
-
-        if (bitsList.size() == 0) {
-            try {
-                cld = model.getClassDescriptorByName(model.getQualifiedTypeName(bits[0]));
-            } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException("class \"" + bits[0] + "\" not found");
-            }
-        } else {
-            PathNode pn = pathQuery.getNodes().get(longestPrefix);
-            try {
-                cld = getClassDescriptor(pn.getType(), model);
-            } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException("class not found in the model: " + pn.getType(),
-                                                   e);
-            }
-        }
-
-        int startIndex = bitsList.size();
-
-        if (startIndex < 1) {
-            startIndex = 1;
-        }
-
-        for (int i = startIndex; i < bits.length; i++) {
-            FieldDescriptor fd = cld.getFieldDescriptorByName(bits[i]);
-            if (fd == null) {
-                throw new IllegalArgumentException("could not find descriptor for: " + bits[i]
-                                                   + " in " + cld.getName());
-            }
-            if (fd.isAttribute()) {
-                return ((AttributeDescriptor) fd).getType();
-            } else {
-                cld = ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
-            }
-        }
-
-        return cld.getName();
-    }
-
-    /**
-     * Return the indexOf the last join in a path denoted by '.' or ':', return -1 if neither
-     * join type exists in the path
-     * @param path the path string to operate on
-     * @return indexOf the last ':' or '.' in the path string or -1 if none present
-     */
-    public static int getLastJoinIndex(String path) {
-        return (Math.max(path.indexOf("."), path.indexOf(":")));
-    }
-
-    /**
-     * Return the indexOf the first join in a path denoted by '.' or ':', return -1 if neither
-     * join type exists in the path
-     * @param path the path string to operate on
-     * @return indexOf the first ':' or '.' in the path string or -1 if none present
-     */
-    public static int getFirstJoinIndex(String path) {
-        if (path.indexOf('.') < 0) {
-            return path.indexOf(':');
-        } else if (path.indexOf(":") < 0) {
-            return path.indexOf('.');
-        } else {
-            return Math.min(path.indexOf('.'), path.indexOf(':'));
-        }
-    }
-
-
-    /**
-     * Return true if the given path string contains a join - denoted by '.' or ':' for normal
-     * or outer join respectively.
-     * @param path the path string to check
-     * @return true if path contains a join
-     */
-    public static boolean containsJoin(String path) {
-        return (path.indexOf(".") >= 0) || (path.indexOf(":") >= 0);
-    }
-
 
     /**
      * Generate a query from a PathQuery, to summarise a particular column of results.
@@ -1256,15 +843,12 @@ public class MainHelper
      * @param bagQueryConfig a BagQueryConfig object
      * @param pm the ProfileManager to fetch the superuser profile from
      * @return the generated summary query
+     * @throws ObjectStoreException if there is a problem creating the query
      */
-    public static Query makeSummaryQuery(PathQuery pathQuery,
-            Map<String, InterMineBag> savedBags,
-            Map<String, QuerySelectable> pathToQueryNode,
-            String summaryPath,
-            ObjectStore os,
-            Map<String, List<FieldDescriptor>> classKeys,
-            BagQueryConfig bagQueryConfig,
-            ProfileManager pm) {
+    public static Query makeSummaryQuery(PathQuery pathQuery, Map<String, InterMineBag> savedBags,
+            Map<String, QuerySelectable> pathToQueryNode, String summaryPath, ObjectStore os,
+            Map<String, List<FieldDescriptor>> classKeys, BagQueryConfig bagQueryConfig,
+            ProfileManager pm) throws ObjectStoreException {
         TemplateManager templateManager = new TemplateManager(pm.getSuperuserProfile(),
                 os.getModel());
         List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
@@ -1285,22 +869,17 @@ public class MainHelper
      * @param pathToQueryNode Map, into which columns to display will be placed
      * @param bagQueryRunner a BagQueryRunner to execute bag queries
      * @return the generated summary query
+     * @throws ObjectStoreException if there is a problem creating the query
      */
     public static Query makeSummaryQuery(PathQuery pathQuery, String summaryPath,
             Map<String, InterMineBag> savedBags, Map<String, QuerySelectable> pathToQueryNode,
-            BagQueryRunner bagQueryRunner) {
-        Map<String, QuerySelectable> origPathToQueryNode = new HashMap();
+            BagQueryRunner bagQueryRunner) throws ObjectStoreException {
+        Map<String, QuerySelectable> origPathToQueryNode = new HashMap<String, QuerySelectable>();
         Query subQ = null;
-        try {
-            subQ = MainHelper.makeQuery(pathQuery, savedBags, origPathToQueryNode, bagQueryRunner,
-                    null, false);
-        } catch (ObjectStoreException e) {
-            // Not possible if second-last argument is null
-            throw new IllegalArgumentException("Should not ever happen", e);
-        }
+        subQ = makeQuery(pathQuery, savedBags, origPathToQueryNode, bagQueryRunner, null);
         subQ.clearOrderBy();
-        Map<String, QuerySelectable> newSelect = new LinkedHashMap();
-        Set<QuerySelectable> oldSelect = new HashSet();
+        Map<String, QuerySelectable> newSelect = new LinkedHashMap<String, QuerySelectable>();
+        Set<QuerySelectable> oldSelect = new HashSet<QuerySelectable>();
         for (QuerySelectable qs : subQ.getSelect()) {
             oldSelect.add(qs);
             if (qs instanceof QueryClass) {
@@ -1451,7 +1030,7 @@ public class MainHelper
         q.addFrom(subQ);
         subQ.addToSelect(qf);
         qf = new QueryField(subQ, qf);
-        Class summaryType = qf.getType();
+        Class<?> summaryType = qf.getType();
 
         QueryField origQf = (QueryField) origPathToQueryNode.get(summaryPath);
         String fieldName = origQf.getFieldName();
@@ -1495,53 +1074,16 @@ public class MainHelper
     }
 
     /**
-     * Class holding a tree structure relationship for a ConstraintSet that should be inside
-     * another ConstraintSet.
-     *
-     * @author Matthew Wakeling
-     */
-    protected static class CsTreeStructure
-    {
-        private ConstraintSet parent, child;
-
-        /**
-         * Constructor.
-         *
-         * @param parent the parent ConstraintSet
-         * @param child the ConstraintSet that should be placed inside the parent
-         */
-        public CsTreeStructure(ConstraintSet parent, ConstraintSet child) {
-            this.parent = parent;
-            this.child = child;
-        }
-
-        /**
-         * Returns the parent ConstraintSet.
-         *
-         * @return a ConstraintSet
-         */
-        public ConstraintSet getParent() {
-            return parent;
-        }
-
-        /**
-         * Returns the child ConstraintSet.
-         *
-         * @return a ConstraintSet
-         */
-        public ConstraintSet getChild() {
-            return child;
-        }
-    }
-
-    /**
      * Controls access to configuration information on which fields should be summarised as a count
      * of occurrences.
      *
      * @author Matthew Wakeling
      */
-    protected static class SummaryConfig
+    protected static final class SummaryConfig
     {
+        private SummaryConfig() {
+        }
+
         private static Set<String> config;
 
         static {
@@ -1549,7 +1091,7 @@ public class MainHelper
             String stringConfig = PropertiesUtil.getProperties()
                 .getProperty("querySummary.summariseAsOccurrences");
             if (stringConfig != null) {
-                String stringConfigs[] = stringConfig.split(",");
+                String[] stringConfigs = stringConfig.split(",");
                 for (String configEntry : stringConfigs) {
                     configEntry = configEntry.trim();
                     if (configEntry.contains(" ")) {

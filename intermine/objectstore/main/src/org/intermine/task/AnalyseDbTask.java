@@ -70,6 +70,7 @@ public class AnalyseDbTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         if (database == null) {
             throw new BuildException("database attribute is not set");
@@ -78,7 +79,7 @@ public class AnalyseDbTask extends Task
         try {
             Database db = DatabaseFactory.getDatabase(database);
 
-            if (clsName != null && !clsName.equals("")) {
+            if (clsName != null && !"".equals(clsName)) {
                 if (model == null) {
                     throw new BuildException("model attribute is not set");
                 }

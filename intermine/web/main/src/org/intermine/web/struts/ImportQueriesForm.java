@@ -24,7 +24,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.query.MainHelper;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.session.SessionMethods;
@@ -65,7 +64,6 @@ public class ImportQueriesForm extends ValidatorForm
             // TODO: Assumes we are loading the latest version format.
             map = PathQueryBinding.unmarshal(new StringReader(xml),
                     PathQuery.USERPROFILE_VERSION);
-            MainHelper.checkPathQueries(map, savedBags);
         }
         return map;
     }

@@ -27,10 +27,14 @@ public class TemplateForm extends ActionForm
 {
     private Map<String, Object> attributeOps;
     private Map<String, Object> attributeValues;
+    private Map<String, String[]> multiValues;
+    private Map<String, String> multiValueAttribute;
     private Map<String, Boolean> useBagConstraint;
     private Map<String, Object> extraValues, selectedBags;
+    private Map<String, Object> nullConstraint;
     private Map<String, String> bagOps;
-    private String type, name, view;
+    private Map<String, String> switchOff;
+    private String scope, name, view;
 
     /**
      * Constructor
@@ -75,6 +79,40 @@ public class TemplateForm extends ActionForm
     }
 
     /**
+     * Set the nullConstraint
+     * @param nullConstraint the nullConstraint
+     */
+    public void setNullConstraint(Map<String, Object> nullConstraint) {
+        this.nullConstraint = nullConstraint;
+    }
+
+    /**
+     * Get the nullConstraint
+     * @return the nullConstraint
+     */
+    public Map<String, Object> getNullConstraint() {
+        return nullConstraint;
+    }
+
+    /**
+     * Set a nullConstraint
+     * @param key the key
+     * @param value the value
+     */
+    public void setNullConstraint(String key, String value) {
+        nullConstraint.put(key, value);
+    }
+
+    /**
+     * Get a nullConstraint
+     * @param key the key
+     * @return the value
+     */
+    public Object getNullConstraint(String key)  {
+        return nullConstraint.get(key);
+    }
+
+    /**
      * Set the attribute values
      * @param attributeValues the attribute values
      */
@@ -106,6 +144,45 @@ public class TemplateForm extends ActionForm
      */
     public Object getAttributeValues(String key)  {
         return attributeValues.get(key);
+    }
+
+    public void setMultiValues(Map<String, String[]> multiValues) {
+        this.multiValues = multiValues;
+    }
+
+    public Map<String, String[]> getMultiValues() {
+    	return this.multiValues;
+    }
+
+    public String[] getMultiValues(String key) {
+    	return multiValues.get(key);
+    }
+
+    public void setMultiValues(String key, String[] values) {
+        multiValues.put(key, values);
+        String multiValueAttribute = "";
+        for (String value : values) {
+        	if (!multiValueAttribute.equals(""))
+        		multiValueAttribute += ",";
+        	multiValueAttribute += value;
+        }
+        setMultiValueAttribute(key, multiValueAttribute);
+    }
+
+    public void setMultiValueAttribute(Map<String, String> multiValueAttribute) {
+        this.multiValueAttribute = multiValueAttribute;
+    }
+
+    public Map<String, String> getMultiValueAttribute() {
+        return this.multiValueAttribute;
+    }
+
+    public String getMultiValueAttribute(String key) {
+        return multiValueAttribute.get(key);
+    }
+
+    public void setMultiValueAttribute(String key, String value) {
+        multiValueAttribute.put(key, value);
     }
 
     /**
@@ -229,24 +306,41 @@ public class TemplateForm extends ActionForm
     }
 
     /**
-     * Get the template type.
-     * @return the template type
+     * Get the template scope.
+     * @return the template scope
      */
-    public String getType() {
-        return type;
+    public String getScope() {
+        return scope;
     }
 
     /**
-     * Set the template type.
-     * @param templateType the template type
+     * Set the template scope.
+     * @param scope the template scope
      */
-    public void setType(String templateType) {
-        this.type = templateType;
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    /**
+     * Get the SwitchOff ability.
+     * @param key the key
+     * @return the SwitchOff
+     */
+    public String getSwitchOff(String key) {
+        return switchOff.get(key);
+    }
+
+    /**
+     * Set the SwitchOff ability.
+     * @param key the key
+     * @param switchOffAbility the switchOffAbility
+     */
+    public void setSwitchOff(String key, String switchOffAbility) {
+        this.switchOff.put(key, switchOffAbility);
     }
 
     /**
      * {@inheritDoc}
-
      */
     public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
@@ -259,12 +353,16 @@ public class TemplateForm extends ActionForm
     protected void reset() {
         attributeOps = new HashMap<String, Object>();
         attributeValues = new HashMap<String, Object>();
+        multiValues = new HashMap<String, String[]>();
+        multiValueAttribute = new HashMap<String, String>();
         useBagConstraint = new HashMap<String, Boolean>();
         selectedBags = new HashMap<String, Object>();
         bagOps = new HashMap<String, String>();
         extraValues = new HashMap<String, Object>();
+        nullConstraint = new HashMap<String, Object>();
+        switchOff = new HashMap<String, String>();
         name = null;
-        type = null;
+        scope = null;
         view = "";
     }
 }

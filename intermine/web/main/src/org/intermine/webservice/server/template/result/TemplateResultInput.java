@@ -23,7 +23,7 @@ public class TemplateResultInput extends WebServiceInput
 {
     private String name;
 
-    private Map<String, List<ConstraintLoad>> constraints;
+    private Map<String, List<ConstraintInput>> constraints;
 
     private String layout;
 
@@ -61,7 +61,7 @@ public class TemplateResultInput extends WebServiceInput
      * Sets constraints.
      * @param constraints constraints
      */
-    public void setConstraints(Map<String, List<ConstraintLoad>> constraints) {
+    public void setConstraints(Map<String, List<ConstraintInput>> constraints) {
         this.constraints = constraints;
     }
 
@@ -69,7 +69,7 @@ public class TemplateResultInput extends WebServiceInput
      * Returns constraints.
      * @return constraints
      */
-    public Map<String, List<ConstraintLoad>> getConstraints() {
+    public Map<String, List<ConstraintInput>> getConstraints() {
         return constraints;
     }
 }

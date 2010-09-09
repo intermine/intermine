@@ -23,6 +23,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
@@ -98,6 +100,10 @@ public class BagDetailsController extends TilesAction
         }
 
         if (imBag == null) {
+        	ActionMessages actionMessages = getErrors(request);
+            actionMessages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.bag.missing", bagName));
+            saveErrors(request, actionMessages);
+            request.setAttribute("bag", imBag);
             return null;
         }
 

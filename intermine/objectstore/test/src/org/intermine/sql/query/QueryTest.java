@@ -315,8 +315,9 @@ public class QueryTest extends TestCase
         assertEquals(AbstractConstraint.INDEPENDENT, aC.compare(bA));
         assertEquals(AbstractConstraint.INDEPENDENT, aC.compare(bB));
         assertEquals(AbstractConstraint.EQUAL, aC.compare(bC));
-        assertEquals(AbstractConstraint.IMPLIES, a.internalCompare(b, IdentityMap.INSTANCE, IdentityMap.INSTANCE));
-        assertEquals(AbstractConstraint.IMPLIES, b.internalCompare(a, IdentityMap.INSTANCE, IdentityMap.INSTANCE));
+        IdentityMap<AbstractTable> id = IdentityMap.getInstance(); 
+        assertEquals(AbstractConstraint.IMPLIES, a.internalCompare(b, id, id));
+        assertEquals(AbstractConstraint.IMPLIES, b.internalCompare(a, id, id));
         assertEquals(AbstractConstraint.EQUAL, a.compare(b));
         assertEquals(lq1.getSQLString(), lq2.getSQLString());
         assertEquals(lq1, lq2);

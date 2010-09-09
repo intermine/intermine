@@ -53,12 +53,11 @@ public class HtmlHeadController extends TilesAction
      *
      * @exception Exception if an error occurs
      */
+    @Override
     public ActionForward execute(ComponentContext context,
-                                 ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws Exception {
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -73,21 +72,21 @@ public class HtmlHeadController extends TilesAction
         String scope = (String) context.getAttribute("scope");
 
         /* aspect */
-        if (name != null && pageName.equals("aspect")) {
+        if (name != null && "aspect".equals(pageName)) {
 
             htmlPageTitle = htmlPageTitle + ":  " + name;
 
         /* bag */
-        } else if (pageName.equals("bagDetails")) {
+        } else if ("bagDetails".equals(pageName)) {
 
-            if (bagName != null && !bagName.equals("")) {
+            if (bagName != null && !"".equals(bagName)) {
                 htmlPageTitle = htmlPageTitle + ":  " + bagName;
             } else {
                 htmlPageTitle = htmlPageTitle + ":  " + name;
             }
 
         /* template */
-        } else if (pageName.equals("template")) {
+        } else if ("template".equals(pageName)) {
 
             String templateTitle = "";
             TemplateQuery template = null;
@@ -108,7 +107,7 @@ public class HtmlHeadController extends TilesAction
             htmlPageTitle = htmlPageTitle + templateTitle;
 
         /* object */
-        } else if (pageName.equals("objectDetails") && objectId != null) {
+        } else if ("objectDetails".equals(pageName) && objectId != null) {
 
             Integer id = new Integer(Integer.parseInt(objectId));
             InterMineObject object = os.getObjectById(id);

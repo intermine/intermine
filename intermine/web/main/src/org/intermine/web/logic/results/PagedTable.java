@@ -410,7 +410,7 @@ public class PagedTable
             for (ResultsRow<MultiRowValue<ResultElement>> rv : mr) {
                 for (MultiRowValue<ResultElement> mrv : rv) {
                     // We don't need to check other MultiRowValues are we've already seen them
-                    if (mrv instanceof MultiRowFirstValue) {
+                    if (mrv instanceof MultiRowFirstValue<?>) {
                         ResultElement resultElement = mrv.getValue();
                         if ((resultElement != null) && (resultElement.getId().equals(id))
                             && (resultElement.isKeyField())) {
@@ -487,7 +487,7 @@ public class PagedTable
             String objectClassName = DynamicUtil.getFriendlyName(object.getClass());
             List<FieldDescriptor> classKeyFds = classKeysMap.get(objectClassName);
             for (FieldDescriptor fd: classKeyFds) {
-                Object value = TypeUtil.getFieldValue(object, fd.getName());
+                Object value = object.getFieldValue(fd.getName());
                 if (value != null) {
                     return value.toString();
                 }
@@ -517,7 +517,7 @@ public class PagedTable
                 for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow : getRows()) {
                     for (ResultsRow<MultiRowValue<ResultElement>> resultsRow : multiRow) {
                         for (MultiRowValue<ResultElement> multiRowValue : resultsRow) {
-                            if (multiRowValue instanceof MultiRowFirstValue) {
+                            if (multiRowValue instanceof MultiRowFirstValue<?>) {
                                 ResultElement resElt = multiRowValue.getValue();
                                 if (resElt != null) {
                                     if (selectionIds.containsKey(resElt.getId())) {
@@ -533,7 +533,7 @@ public class PagedTable
             for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow : getRows()) {
                 for (ResultsRow<MultiRowValue<ResultElement>> resultsRow : multiRow) {
                     MultiRowValue<ResultElement> multiRowValue = resultsRow.get(allSelected);
-                    if (multiRowValue instanceof MultiRowFirstValue) {
+                    if (multiRowValue instanceof MultiRowFirstValue<?>) {
                         ResultElement resElt = multiRowValue.getValue();
                         if (resElt != null) {
                             if (!selectionIds.containsKey(resElt.getId())) {
@@ -607,7 +607,7 @@ public class PagedTable
                                 = multiRow.get(multiRowIndex);
                             multiRowIndex++;
                             MultiRowValue<ResultElement> value = row.get(allSelected);
-                            if (value instanceof MultiRowFirstValue) {
+                            if (value instanceof MultiRowFirstValue<?>) {
                                 ResultElement element = value.getValue();
                                 if (element != null) {
                                     Integer elementId = element.getId();
@@ -833,7 +833,7 @@ public class PagedTable
         for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow : getAllRows()) {
             for (ResultsRow<MultiRowValue<ResultElement>> subRow : multiRow) {
                 MultiRowValue<ResultElement> value = subRow.get(allSelected);
-                if (value instanceof MultiRowFirstValue) {
+                if (value instanceof MultiRowFirstValue<?>) {
                     ResultElement element = value.getValue();
                     if (element != null) {
                         Integer elementId = element.getId();

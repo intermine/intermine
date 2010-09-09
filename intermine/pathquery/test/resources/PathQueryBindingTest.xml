@@ -3,31 +3,16 @@
   </query>
   <query name="employeesWithOldManagers" model="testmodel" view="Employee.name Employee.age Employee.department.name Employee.department.manager.age">
     <pathDescription pathString="Employee.department" description="Department of the Employee"/>
-    <node path="Employee.department.manager.age">
-      <constraint op=">" value="10" editable="true" 
-                  description="age is greater than 10" identifier="age_gt_10"/>
-    </node>
+    <constraint path="Employee.department.manager.age" op=">" value="10"/>
   </query>
   <query name="companyInBag" model="testmodel" view="Company">
-    <node path="Company">
-      <constraint op="IN" value="bag1"/>
-    </node>
+    <constraint path="Company" op="IN" value="bag1"/>
   </query>
   <query name="queryWithConstraint" model="testmodel"
   		 view="Company.name Company.departments.name Company.departments.employees.name Company.departments.employees.title">
-    <node path="Company" type="Company">
-    </node>
-    <node path="Company.departments" type="Department">
-    </node>
-    <node path="Company.departments.employees" type="CEO">
-    </node>
+    <constraint path="Company.departments.employees" type="CEO"/>
   </query>
   <query name="employeeEndInBag" model="testmodel" view="Employee.name">
-    <node path="Employee" type="Employee">
-    </node>
-    <node path="Employee.end" type="String">
-      <constraint op="IN" value="e1" description="" identifier="" code="A">
-      </constraint>
-    </node>
+    <constraint path="Employee.end" op="IN" value="e1" code="A"/>
   </query>
 </query-list>

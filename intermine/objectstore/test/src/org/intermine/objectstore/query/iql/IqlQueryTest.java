@@ -42,7 +42,7 @@ public class IqlQueryTest extends IqlQueryTestCase
     public void executeTest(String type) throws Exception {
         Query orig = ((Query) queries.get(type));
         Object res = results.get(type);
-        IqlQuery fqGenerated = new IqlQuery(orig);
+        IqlQuery fqGenerated = orig.getIqlQuery();
         if (res instanceof IqlQuery) {
             IqlQuery fq = (IqlQuery) res;
 

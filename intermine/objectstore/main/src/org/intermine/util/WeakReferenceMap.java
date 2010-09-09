@@ -13,8 +13,6 @@ package org.intermine.util;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
-import org.apache.log4j.Logger;
-
 /**
  * This is a Map implementation designed specifically for people intending to create a cache.
  * The keys are held strongly, but the values are held weakly, so the values can be
@@ -31,8 +29,6 @@ import org.apache.log4j.Logger;
  */
 public abstract class WeakReferenceMap<K, V> extends ReferenceMap<K, V>
 {
-    private static final Logger LOG = Logger.getLogger(WeakReferenceMap.class);
-
     /**
      * Returns a new WeakReferenceWithKey object for the given objects.
      *
@@ -41,8 +37,9 @@ public abstract class WeakReferenceMap<K, V> extends ReferenceMap<K, V>
      * @param key an Object
      * @return a WeakReferenceWithKey object
      */
+    @Override
     protected WeakReferenceWithKey<K> newRef(Object value, ReferenceQueue<Object> queue, K key) {
-        return new WeakReferenceWithKey(value, queue, key);
+        return new WeakReferenceWithKey<K>(value, queue, key);
     }
 
     private static class WeakReferenceWithKey<K> extends WeakReference<Object>

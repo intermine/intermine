@@ -139,7 +139,7 @@
   <class name="SOTerm" extends="OntologyTerm" is-interface="true"/>
 
   <class name="Sequence" is-interface="true">
-    <attribute name="residues" type="java.lang.String"/>
+    <attribute name="residues" type="org.intermine.objectstore.query.ClobAccess"/>
     <attribute name="length" type="int"/>
     <attribute name="md5checksum" type="java.lang.String"/>
   </class>

@@ -12,29 +12,29 @@ package org.intermine.sql;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
+import org.apache.log4j.Logger;
 import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.sql.writebatch.FlushJob;
 import org.intermine.sql.writebatch.TableBatch;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
-
-import org.apache.log4j.Logger;
 
 /**
  * Collection of commonly used Database utilities
@@ -42,11 +42,11 @@ import org.apache.log4j.Logger;
  * @author Andrew Varley
  * @author Matthew Wakeling
  */
-public class DatabaseUtil
+public final class DatabaseUtil
 {
     private static final Logger LOG = Logger.getLogger(DatabaseUtil.class);
-    private static final String[] RESERVED_WORDS = new String[] {
-        "ABS",
+    private static final Set<String> RESERVED_WORDS = new HashSet<String>(Arrays.asList(
+            "ABS",
         "ABSOLUTE",
         "ACTION",
         "ADD",
@@ -448,13 +448,7 @@ public class DatabaseUtil
         "WORK",
         "WRITE",
         "YEAR",
-        "ZONE"};
-    private static Set reservedWords = new HashSet();
-    static {
-        for (int i = 0; i < RESERVED_WORDS.length; i++) {
-            reservedWords.add(RESERVED_WORDS[i]);
-        }
-    }
+        "ZONE"));
 
     private DatabaseUtil() {
         // empty
@@ -492,16 +486,14 @@ public class DatabaseUtil
      */
     public static void removeAllTables(Connection con) throws SQLException {
         ResultSet res = con.getMetaData().getTables(null, null, "%", null);
-        Set tablenames = new HashSet();
+        Set<String> tablenames = new HashSet<String>();
         while (res.next()) {
             String tablename = res.getString(3);
             if ("TABLE".equals(res.getString(4))) {
                 tablenames.add(tablename);
             }
         }
-        Iterator tablenameIter = tablenames.iterator();
-        while (tablenameIter.hasNext()) {
-            String tablename = (String) tablenameIter.next();
+        for (String tablename : tablenames) {
             LOG.info("Dropping table " + tablename);
             con.createStatement().execute("DROP TABLE " + tablename);
         }
@@ -614,7 +606,7 @@ public class DatabaseUtil
      */
     public static String generateSqlCompatibleName(String n) {
         String upper = n.toUpperCase();
-        if (upper.startsWith("INTERMINE_") || reservedWords.contains(upper)) {
+        if (upper.startsWith("INTERMINE_") || RESERVED_WORDS.contains(upper)) {
             return "intermine_" + n;
         } else {
             return n;
@@ -688,7 +680,7 @@ public class DatabaseUtil
      * @throws SQLException if db problem
      */
     public static void analyse(Database db, ClassDescriptor cld, boolean full) throws SQLException {
-        Set tables = new HashSet();
+        Set<String> tables = new HashSet<String>();
         tables.add(getTableName(cld));
         tables.addAll(getIndirectionTableNames(cld));
 
@@ -697,14 +689,13 @@ public class DatabaseUtil
         try {
             conn.setAutoCommit(true);
             Statement s = conn.createStatement();
-            Iterator tablesIter = tables.iterator();
-            while (tablesIter.hasNext()) {
+            for (String table : tables) {
                 if (full) {
-                    String sql = "VACUUM FULL ANALYSE " + (String) tablesIter.next();
+                    String sql = "VACUUM FULL ANALYSE " + table;
                     LOG.info(sql);
                     s.execute(sql);
                 } else {
-                    String sql = "ANALYSE " + (String) tablesIter.next();
+                    String sql = "ANALYSE " + table;
                     LOG.info(sql);
                     s.execute(sql);
                 }
@@ -722,11 +713,9 @@ public class DatabaseUtil
      * @param cld class to find tables for
      * @return a set of all indirection table names
      */
-    public static Set getIndirectionTableNames(ClassDescriptor cld) {
-        Set tables = new HashSet();
-        Iterator iter = cld.getAllCollectionDescriptors().iterator();
-        while (iter.hasNext()) {
-            CollectionDescriptor col = (CollectionDescriptor) iter.next();
+    public static Set<String> getIndirectionTableNames(ClassDescriptor cld) {
+        Set<String> tables = new HashSet<String>();
+        for (CollectionDescriptor col : cld.getAllCollectionDescriptors()) {
             if (FieldDescriptor.M_N_RELATION == col.relationType()) {
                 tables.add(getIndirectionTableName(col));
             }
@@ -769,15 +758,16 @@ public class DatabaseUtil
      * only the Integers from the bag.  A Class of InterMineObject is handled specially: the new
      * table will contain the IDs of the objects, not the objects themselves.  The table will have
      * one column ("value").
+     *
      * @param db the Database to access
      * @param con the Connection to use
      * @param tableName the name to use for the new table
      * @param bag the Collection to create a table for
-     * @param c the type of objects to put int he new table
+     * @param c the type of objects to put in the new table
      * @throws SQLException if there is a database problem
      */
-    public static void createBagTable(Database db, Connection con,
-                                      String tableName, Collection bag, Class c)
+    public static void createBagTable(Database db, Connection con, String tableName,
+            Collection<?> bag, Class<?> c)
         throws SQLException {
 
         String typeString;
@@ -798,14 +788,12 @@ public class DatabaseUtil
         Statement s = con.createStatement();
         s.execute(tableCreateSql);
 
-        Iterator bagIter = bag.iterator();
         TableBatch tableBatch = new TableBatch();
-        String colNames[] = new String[] {"value"};
+        String[] colNames = new String[] {"value"};
 
-        while (bagIter.hasNext()) {
-            Object o = bagIter.next();
-
-            if (c.isInstance(o)) {
+        for (Object o : bag) {
+            if (c.isInstance(o) || (InterMineObject.class.isAssignableFrom(c)
+                    && ProxyReference.class.isInstance(o))) {
                 if (o instanceof InterMineObject) {
                     o = ((InterMineObject) o).getId();
                 } else if (o instanceof Date) {
@@ -814,11 +802,9 @@ public class DatabaseUtil
                 tableBatch.addRow(o, colNames, new Object[] {o});
             }
         }
-        List flushJobs = (new BatchWriterPostgresCopyImpl()).write(con, Collections
+        List<FlushJob> flushJobs = (new BatchWriterPostgresCopyImpl()).write(con, Collections
              .singletonMap(tableName, tableBatch), null);
-        Iterator flushJobIter = flushJobs.iterator();
-        while (flushJobIter.hasNext()) {
-            FlushJob fj = (FlushJob) flushJobIter.next();
+        for (FlushJob fj : flushJobs) {
             fj.flush();
         }
 

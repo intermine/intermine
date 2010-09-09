@@ -46,7 +46,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.SAXParser;
-import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
@@ -58,12 +57,14 @@ import org.xml.sax.InputSource;
  * @author Kim Rutherford
  * @author Richard Smith
  */
-
-public class ProfileBinding
+public final class ProfileBinding
 {
+    private ProfileBinding() {
+    }
+
     private static final Logger LOG = Logger.getLogger(ProfileBinding.class);
-    private static HashMap<Class, Set<FieldDescriptor>> primaryKeyFieldsCache =
-        new HashMap<Class, Set<FieldDescriptor>>();
+    private static HashMap<Class<?>, Set<FieldDescriptor>> primaryKeyFieldsCache =
+        new HashMap<Class<?>, Set<FieldDescriptor>>();
 
     /**
      * Convert a Profile to XML and write XML to given writer.
@@ -243,8 +244,7 @@ public class ProfileBinding
                 String fieldName = fd.getName();
                 InterMineObject referencedObject;
                 try {
-                    referencedObject =
-                        (InterMineObject) TypeUtil.getFieldValue(object, fieldName);
+                    referencedObject = (InterMineObject) object.getFieldValue(fieldName);
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException("Unable to access field " + fieldName
                             + " in object: " + object);
@@ -260,7 +260,7 @@ public class ProfileBinding
 
 
     private static Set<FieldDescriptor> getPrimaryKeyFieldDescriptorsForClass(Model model,
-            Class lookupClass) {
+            Class<?> lookupClass) {
         Set<FieldDescriptor> primaryKeyFields = primaryKeyFieldsCache.get(lookupClass);
         if (primaryKeyFields == null) {
             primaryKeyFields = new HashSet<FieldDescriptor>();
@@ -277,7 +277,7 @@ public class ProfileBinding
         return primaryKeyFields;
     }
 
-    private static Set<String> getPrimaryKeyFieldnamesForClass(Model model, Class lookupClass) {
+    private static Set<String> getPrimaryKeyFieldnamesForClass(Model model, Class<?> lookupClass) {
         Set<String> primaryKeyFieldNames = new HashSet<String>();
         for (FieldDescriptor fd : getPrimaryKeyFieldDescriptorsForClass(model, lookupClass)) {
             primaryKeyFieldNames.add(fd.getName());

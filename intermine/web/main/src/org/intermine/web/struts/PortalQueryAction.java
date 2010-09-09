@@ -42,7 +42,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
@@ -82,11 +81,9 @@ public class PortalQueryAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws Exception {
+    @Override
+    public ActionForward execute(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ServletContext servletContext = session.getServletContext();
@@ -132,21 +129,23 @@ public class PortalQueryAction extends InterMineAction
             return goToNoResults(mapping, session);
         }
 
-        PathQuery pathQuery = new PathQuery(model);
-        List<Path> view = PathQueryResultHelper.getDefaultView(className, model, webConfig, null,
-                true);
-        pathQuery.setViewPaths(view);
-        pathQuery.addConstraint(className, Constraints.lookup(StringUtils.replace(extId, ",",
-                        "\t")));
+        // TODO why are we replacing commas with tabs?
+        String lookupStr = StringUtils.replace(extId, ",", "\t");
 
-        Map<String, BagQueryResult> returnBagQueryResults = new HashMap();
+        PathQuery pathQuery = new PathQuery(model);
+        pathQuery.addViews(PathQueryResultHelper.getDefaultViewForClass(className, model,
+                webConfig, null));
+        pathQuery.addConstraint(Constraints.lookup(className, lookupStr, null));
+
+
+        Map<String, BagQueryResult> returnBagQueryResults = new HashMap<String, BagQueryResult>();
         Profile profile = SessionMethods.getProfile(session);
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         WebResults webResults = executor.execute(pathQuery, returnBagQueryResults);
 
         String bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), "link");
         InterMineBag imBag = profile.createBag(bagName, className, "");
-        List<Integer> bagList = new ArrayList();
+        List<Integer> bagList = new ArrayList<Integer>();
 
         // There's only one node, get the first value
         BagQueryResult bagQueryResult = returnBagQueryResults.values().iterator().next();

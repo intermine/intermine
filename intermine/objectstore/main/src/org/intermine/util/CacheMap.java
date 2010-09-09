@@ -14,8 +14,6 @@ import java.lang.ref.Reference;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 /**
  * This is a Map implementation designed specifically for people intending to create a cache.
  * The keys are held strongly, but the values are held softly, so the values can be
@@ -31,8 +29,6 @@ import org.apache.log4j.Logger;
  */
 public class CacheMap<K, V> extends SoftReferenceMap<K, V>
 {
-    private static final Logger LOG = Logger.getLogger(CacheMap.class);
-
     /**
      * Constructs a new, empty <tt>CacheMap</tt> with the given initial
      * capacity and the given load factor.

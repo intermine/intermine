@@ -24,5 +24,5 @@ public interface FlushJob
      *
      * @throws SQLException if there is a problem performing the flush
      */
-    public void flush() throws SQLException;
+    void flush() throws SQLException;
 }

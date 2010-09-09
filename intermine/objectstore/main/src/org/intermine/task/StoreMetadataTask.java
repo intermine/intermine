@@ -53,6 +53,7 @@ public class StoreMetadataTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         if (modelName == null) {
             throw new BuildException("modelName attribute is not set");
@@ -75,7 +76,7 @@ public class StoreMetadataTask extends Task
                                   PropertiesUtil.serialize(keys));
 
             /*Properties classKeys =
-                MetadataManager.loadClassKeyDefinitions(MetadataManager.CLASS_KEYS);
+                MetadataManager.loadClassKeyDefinitions();
             MetadataManager.store(db, MetadataManager.CLASS_KEYS,
                                   PropertiesUtil.serialize(classKeys));*/
 

@@ -103,7 +103,7 @@ public class ExporterImpl implements Exporter
      * Universal exporter.
      * @return always true
      */
-    public boolean canExport(List<Class> clazzes) {
+    public boolean canExport(@SuppressWarnings("unused") List<Class<?>> clazzes) {
         return true;
     }
 }

@@ -11,7 +11,9 @@ package org.intermine.objectstore.query;
  */
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.TypeUtil;
 
@@ -96,13 +98,22 @@ public class QueryCollectionReference extends QueryReference
             throw new IllegalArgumentException("Field " + fieldName + " not found in "
                     + qcObj.getClass());
         }
-        if (!java.util.Collection.class.isAssignableFrom(field.getReturnType())) {
+        if (!Collection.class.isAssignableFrom(field.getReturnType())) {
             throw new IllegalArgumentException("Field " + fieldName + " in " + qcObj.getClass()
                     + " is not a collection type");
         }
         this.qcObj = qcObj;
         this.fieldName = fieldName;
         this.type = field.getReturnType();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public Class<? extends Collection<?>> getType() {
+        return (Class) type;
     }
 
     /**
@@ -126,7 +137,8 @@ public class QueryCollectionReference extends QueryReference
     /**
      * {@inheritDoc}
      */
-    public Class getQcType() {
+    @Override
+    public Class<? extends FastPathObject> getQcType() {
         if (qc != null) {
             return qc.getType();
         } else if (qcObj != null) {

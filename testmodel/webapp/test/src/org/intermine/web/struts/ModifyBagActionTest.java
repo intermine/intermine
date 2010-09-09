@@ -31,7 +31,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.OldPathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -41,7 +41,7 @@ import servletunit.struts.MockStrutsTestCase;
 
 public class ModifyBagActionTest extends MockStrutsTestCase
 {
-    PathQuery query, queryBag;
+    OldPathQuery query, queryBag;
     SavedQuery sq, sqBag, hist, hist2;
     Date date = new Date();
     InterMineBag bag2;
@@ -82,20 +82,20 @@ public class ModifyBagActionTest extends MockStrutsTestCase
             session.setAttribute(Constants.PROFILE, profile);
 
             Model model = Model.getInstanceByName("testmodel");
-            query = new PathQuery(model);
-            query.getView().add(PathQuery.makePath(model, query, "Employee"));
-            query.getView().add(PathQuery.makePath(model, query, "Employee.name"));
-            queryBag = new PathQuery(model);
+            query = new OldPathQuery(model);
+            query.getView().add(OldPathQuery.makePath(model, query, "Employee"));
+            query.getView().add(OldPathQuery.makePath(model, query, "Employee.name"));
+            queryBag = new OldPathQuery(model);
 
-            queryBag.getView().add(PathQuery.makePath(model, query, "Employee"));
-            queryBag.getView().add(PathQuery.makePath(model, query, "Employee.name"));
+            queryBag.getView().add(OldPathQuery.makePath(model, query, "Employee"));
+            queryBag.getView().add(OldPathQuery.makePath(model, query, "Employee.name"));
             queryBag.addNode("Employee.name").getConstraints().add(new Constraint(ConstraintOp.IN, "bag2"));
             sq = new SavedQuery("query1", date, query);
             sqBag = new SavedQuery("query3", date, queryBag);
-            hist = new SavedQuery("query2", date, (PathQuery) query.clone());
-            hist2 = new SavedQuery("query1", date, (PathQuery) query.clone());
+            hist = new SavedQuery("query2", date, (OldPathQuery) query.clone());
+            hist2 = new SavedQuery("query1", date, (OldPathQuery) query.clone());
             template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                    new PathQuery(model));
+                    new OldPathQuery(model));
 
             //Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);
             profile.saveQuery(sq.getName(), sq);

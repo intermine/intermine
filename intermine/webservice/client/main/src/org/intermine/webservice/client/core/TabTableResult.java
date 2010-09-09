@@ -27,12 +27,12 @@ import org.intermine.webservice.client.util.HttpConnection;
  * Utility class for parsing tab separated result.
  * @author Jakub Kulaviak
  **/
-public class TabTableResult 
+public class TabTableResult
 {
-    
+
     private HttpConnection connection = null;
     private String stringResults = null;
-    
+
     /**
      * Constructor.
      * @param connection source of data

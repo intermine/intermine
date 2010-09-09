@@ -12,6 +12,7 @@ package org.intermine.objectstore;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Collections;
@@ -276,6 +278,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("Range1", range1());
         queries.put("ConstrainClass1", constrainClass1());
         queries.put("ConstrainClass2", constrainClass2());
+        queries.put("MultipleInBagConstraint1", multipleInBagConstraint1());
     }
 
     /*
@@ -2237,6 +2240,20 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addToSelect(qc1);
         QueryField qf = new QueryField(qc1, "class");
         q.setConstraint(new BagConstraint(qf, ConstraintOp.IN, Arrays.asList(Employee.class, Company.class)));
+        q.setDistinct(false);
+        return q;
+    }
+    
+    public static Query multipleInBagConstraint1() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Employee.class);
+        q.addFrom(qc1);
+        q.addToSelect(qc1);
+        List<QueryField> fields = new ArrayList<QueryField>();
+        fields.add(new QueryField(qc1, "end"));
+        fields.add(new QueryField(qc1, "name"));
+        Collection<String> bag = Arrays.asList("1", "2", "EmployeeA1", "EmployeeB1");
+        q.setConstraint(new MultipleInBagConstraint(bag, fields));
         q.setDistinct(false);
         return q;
     }

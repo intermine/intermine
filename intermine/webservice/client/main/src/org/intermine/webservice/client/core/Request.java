@@ -16,17 +16,17 @@ import java.util.Set;
 
 /**
  * Client request interface. Client creates the request using following
- * methods and sends it to the server.  
+ * methods and sends it to the server.
  * @author Jakub Kulaviak
  */
-public interface Request 
+public interface Request
 {
 
     public enum RequestType {
         /**
          * GET type.
          */
-        GET, 
+        GET,
         /**
          * POST type.
          */
@@ -48,7 +48,7 @@ public interface Request
 
     /**
      * Use only if you are sure, that the parameter has
-     * only one value else use getParameterValues method. 
+     * only one value else use getParameterValues method.
      * @param name parameter name
      * @return parameter value
      */
@@ -65,7 +65,7 @@ public interface Request
      * @param value parameter value
      */
     public void setParameter(String name, String value);
-    
+
     /**
      * @return request type
      * @see RequestType

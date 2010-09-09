@@ -14,7 +14,6 @@ package org.flymine.web.widget;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
@@ -46,19 +45,20 @@ public class TiffinURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
-        PathNode node = q.addNode("Gene.upstreamIntergenicRegion.overlappingFeatures");
-        node.setType("TFBindingSite");
-        String path = "Gene.upstreamIntergenicRegion.overlappingFeatures.motif.primaryIdentifier";
-        q.setView("Gene.secondaryIdentifier," + path);
-        q.addConstraint("TFBindingSite.dataSets.name", Constraints.eq(DATASET));
-        q.addConstraint(bag.getType(),  Constraints.in(bag.getName()));
+
+        String motifPath =
+            "Gene.upstreamIntergenicRegion.overlappingFeatures.motif.primaryIdentifier";
+        q.addViews("Gene.secondaryIdentifier", motifPath);
+
+        q.addConstraints(Constraints.type("Gene.upstreamIntergenicRegion.overlappingFeatures",
+            "TFBindingSite"));
+
+        q.addConstraint(Constraints.eq("TFBindingSite.dataSets.name", DATASET));
+        q.addConstraint(Constraints.in(bag.getType(),  bag.getName()));
+
         if (!showAll) {
-            q.addConstraint(path, Constraints.eq (key));
-            q.setConstraintLogic("A and B and C");
-        } else {
-            q.setConstraintLogic("A and B");
+            q.addConstraint(Constraints.eq (motifPath, key));
         }
-        q.syncLogicExpression("and");
         return q;
     }
 }

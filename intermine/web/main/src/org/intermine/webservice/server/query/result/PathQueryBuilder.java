@@ -10,13 +10,15 @@ package org.intermine.webservice.server.query.result;
  *
  */
 
+import java.io.StringReader;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryUtil;
-import org.intermine.web.logic.ServletMethods;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 
@@ -45,18 +47,24 @@ public class PathQueryBuilder
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
         if (validator.getErrorsAndWarnings().size() == 0) {
-            try {
-                pathQuery = ServletMethods.fromXml(xml, savedBags,
-                        PathQuery.USERPROFILE_VERSION);
-            } catch (Exception ex) {
-                String msg = "XML is well formatted but contains invalid model data. "
-                        + "Check that your constraints are correct "
-                        + "and query corresponds to model. Cause:" + ex.getMessage();
-                throw new BadRequestException(msg, ex);
-            }
+            pathQuery = PathQueryBinding.unmarshalPathQuery(new StringReader(xml),
+                    PathQuery.USERPROFILE_VERSION);
+
             if (!pathQuery.isValid()) {
-                throw new BadRequestException(PathQueryUtil.getProblemsSummary(pathQuery.
-                        getProblems()));
+                throw new BadRequestException("XML is well formatted but query contains errors: "
+                        + formatMessage(pathQuery.verifyQuery()));
+            }
+
+            // check bags used by this query exist
+            Set<String> missingBags = new HashSet<String>();
+            for (String bagName : pathQuery.getBagNames()) {
+                if (!savedBags.containsKey(bagName)) {
+                    missingBags.add(bagName);
+                }
+            }
+            if (!missingBags.isEmpty()) {
+                throw new BadRequestException("XML is well formatted but saved Lists (bags) used "
+                        + "by this query don't exist: " + missingBags + " query: " + xml);
             }
         } else {
             throw new BadRequestException(formatMessage(validator.getErrorsAndWarnings()));

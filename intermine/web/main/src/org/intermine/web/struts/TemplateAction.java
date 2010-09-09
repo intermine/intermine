@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -27,14 +28,22 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
+import org.intermine.api.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateValue;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathNode;
-import org.intermine.pathquery.PathQueryUtil;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintAttribute;
+import org.intermine.pathquery.PathConstraintBag;
+import org.intermine.pathquery.PathConstraintLookup;
+import org.intermine.pathquery.PathConstraintLoop;
+import org.intermine.pathquery.PathConstraintMultiValue;
+import org.intermine.pathquery.PathConstraintNull;
+import org.intermine.pathquery.PathConstraintSubclass;
+import org.intermine.util.StringUtil;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.template.result.TemplateResultLinkGenerator;
@@ -84,6 +93,7 @@ public class TemplateAction extends InterMineAction
      * @exception Exception
      *                if the application business logic throws an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws Exception {
@@ -92,28 +102,42 @@ public class TemplateAction extends InterMineAction
 
         TemplateForm tf = (TemplateForm) form;
         String templateName = tf.getName();
-        String templateType = tf.getType();
         boolean saveQuery = (request.getParameter("noSaveQuery") == null);
         boolean skipBuilder = (request.getParameter(SKIP_BUILDER_PARAMETER) != null);
         boolean editTemplate = (request.getParameter("editTemplate") != null);
         boolean editQuery = (request.getParameter("editQuery") != null);
 
-        SessionMethods.logTemplateQueryUse(session, templateType, templateName);
+        // Note this is a workaround and will fail if a user has a template with the same name as
+        // a public template but has executed the public one.  TemplateManager always give
+        // precedence to user templates when there is a naming clash.
+        String scope = tf.getScope();
+        if (StringUtils.isBlank(scope)) {
+            scope = Scope.ALL;
+        }
+
+        SessionMethods.logTemplateQueryUse(session, scope, templateName);
 
         Profile profile = SessionMethods.getProfile(session);
         TemplateManager templateManager = im.getTemplateManager();
 
-        TemplateQuery template = templateManager.getTemplate(profile, templateName, templateType);
+        TemplateQuery template = templateManager.getTemplate(profile, templateName, scope);
+
+        TemplateQuery populatedTemplate = TemplatePopulator.getPopulatedTemplate(
+                template, templateFormToTemplateValues(tf, template));
+
+        if (!populatedTemplate.isValid()) {
+            recordError(new ActionError("errors.template.badtemplate",
+                    StringUtil.prettyList(populatedTemplate.verifyQuery())), request);
+            return mapping.findForward("template");
+        }
+
 
         if (!editQuery && !skipBuilder && !editTemplate && forwardToLinksPage(request)) {
-            TemplateQuery configuredTmpl = TemplatePopulator
-                    .getPopulatedTemplate(template, templateFormToTemplateValues(tf, template));
-
             TemplateResultLinkGenerator gen = new TemplateResultLinkGenerator();
             String htmlLink = gen.getHtmlLink(new URLGenerator(request)
-                    .getPermanentBaseURL(), configuredTmpl);
+                    .getPermanentBaseURL(), populatedTemplate);
             String tabLink = gen.getTabLink(new URLGenerator(request)
-                    .getPermanentBaseURL(), configuredTmpl);
+                    .getPermanentBaseURL(), populatedTemplate);
             if (gen.getError() != null) {
                 recordError(new ActionMessage("errors.linkGenerationFailed",
                         gen.getError()), request);
@@ -123,13 +147,13 @@ public class TemplateAction extends InterMineAction
             session.setAttribute("tabLink", tabLink);
             String url = new URLGenerator(request).getPermanentBaseURL();
             session.setAttribute("highlightedLink", gen.getHighlightedLink(url,
-                    configuredTmpl));
-            String title = configuredTmpl.getTitle();
+                    populatedTemplate));
+            String title = populatedTemplate.getTitle();
             title = title.replace("-->",
                     "&nbsp;<img src=\"images/tmpl_arrow.png\" "
                             + "style=\"vertical-align:middle\">&nbsp;");
             session.setAttribute("pageTitle", title);
-            session.setAttribute("pageDescription", configuredTmpl
+            session.setAttribute("pageDescription", populatedTemplate
                     .getDescription());
             return mapping.findForward("serviceLink");
 
@@ -137,19 +161,17 @@ public class TemplateAction extends InterMineAction
 
         // We're editing the query: load as a PathQuery
         if (!skipBuilder && !editTemplate) {
-            TemplateQuery queryCopy = TemplatePopulator.getPopulatedTemplate(
-                    template, templateFormToTemplateValues(tf, template));
-
-            SessionMethods.loadQuery(queryCopy.getPathQuery(), request
-                    .getSession(), response);
-            SessionMethods.removeTemplateBuildState(session);
+            SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
+            session.removeAttribute(Constants.NEW_TEMPLATE);
+            session.removeAttribute(Constants.EDITING_TEMPLATE);
             form.reset(mapping, request);
             return mapping.findForward("query");
         } else if (editTemplate) {
             // We want to edit the template: Load the query as a TemplateQuery
             // Don't care about the form
             // Reload the initial template
-
+            session.removeAttribute(Constants.NEW_TEMPLATE);
+            session.setAttribute(Constants.EDITING_TEMPLATE, Boolean.TRUE);
             template = templateManager.getTemplate(profile, templateName,
                     Scope.ALL);
 
@@ -161,8 +183,7 @@ public class TemplateAction extends InterMineAction
             SessionMethods.loadQuery(template, request.getSession(), response);
             if (!template.isValid()) {
                 recordError(new ActionError("errors.template.badtemplate",
-                        PathQueryUtil
-                                .getProblemsSummary(template.getProblems())),
+                        StringUtil.prettyList(template.verifyQuery())),
                         request);
             }
 
@@ -170,21 +191,12 @@ public class TemplateAction extends InterMineAction
         }
 
         // Otherwise show the results: load the modified query from the template
-        TemplateQuery queryCopy = TemplatePopulator.getPopulatedTemplate(
-                template, templateFormToTemplateValues(tf, template));
-
-        if (!queryCopy.isValid()) {
-            recordError(new ActionError("errors.template.badtemplate",
-                    PathQueryUtil.getProblemsSummary(template.getProblems())),
-                    request);
-            return mapping.findForward("template");
-        }
         if (saveQuery) {
-            SessionMethods.loadQuery(queryCopy, request.getSession(), response);
+            SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
         }
         form.reset(mapping, request);
 
-        String qid = SessionMethods.startQueryWithTimeout(request, saveQuery, queryCopy);
+        String qid = SessionMethods.startQueryWithTimeout(request, saveQuery, populatedTemplate);
         Thread.sleep(200);
 
         String trail = "";
@@ -216,40 +228,112 @@ public class TemplateAction extends InterMineAction
         return "links".equalsIgnoreCase(request.getParameter("actionType"));
     }
 
-    private Map<String, List<TemplateValue>> templateFormToTemplateValues(
-            TemplateForm tf, TemplateQuery template) {
+    private Map<String, List<TemplateValue>> templateFormToTemplateValues(TemplateForm tf,
+            TemplateQuery template) {
         Map<String, List<TemplateValue>> templateValues =
             new HashMap<String, List<TemplateValue>>();
-        int j = 0;
-        for (PathNode node : template.getEditableNodes()) {
+        for (String node : template.getEditablePaths()) {
             List<TemplateValue> nodeValues = new ArrayList<TemplateValue>();
-            templateValues.put(node.getPathString(), nodeValues);
-            for (Constraint c : template.getEditableConstraints(node)) {
-                j++;
-                String key = "" + j;
-
+            templateValues.put(node, nodeValues);
+            for (PathConstraint c : template.getEditableConstraints(node)) {
+                String key = Integer.toString(template.getEditableConstraints().indexOf(c) + 1);
                 TemplateValue value;
+
+                SwitchOffAbility switchOffAbility = template.getSwitchOffAbility(c);
+                if (tf.getSwitchOff(key) != null) {
+                    switchOffAbility = parseSwitchOffAbility(tf.getSwitchOff(key));
+                }
+
                 if (tf.getUseBagConstraint(key)) {
                     ConstraintOp constraintOp = ConstraintOp
                             .getOpForIndex(Integer.valueOf(tf.getBagOp(key)));
-                    Object constraintValue = tf.getBag(key);
-                    value = new TemplateValue(node.getPathString(),
-                            constraintOp, constraintValue, TemplateValue.ValueType.BAG_VALUE,
-                            c.getCode());
+                    String constraintValue = (String) tf.getBag(key);
+                    value = new TemplateValue(c, constraintOp, constraintValue,
+                            TemplateValue.ValueType.BAG_VALUE, switchOffAbility);
                 } else {
-                    String op = (String) tf.getAttributeOps(key);
-                    ConstraintOp constraintOp = ConstraintOp
+                    if (tf.getSwitchOff(key) != null
+                        && tf.getSwitchOff(key).equalsIgnoreCase(SwitchOffAbility.OFF.toString())) {
+                        String constraintValue = constraintStringValue(c);
+                        value = new TemplateValue(c, c.getOp(), constraintValue,
+                                TemplateValue.ValueType.SIMPLE_VALUE, switchOffAbility);
+                    } else {
+                        String op = (String) tf.getAttributeOps(key);
+                        if (op == null) {
+                            if (c instanceof PathConstraintLookup) {
+                                value = new TemplateValue(c, ConstraintOp.LOOKUP,
+                                        (String) tf.getAttributeValues(key),
+                                        TemplateValue.ValueType.SIMPLE_VALUE,
+                                        extraValueToString(tf.getExtraValues(key)),
+                                        switchOffAbility);
+                            } else if (tf.getNullConstraint(key) != null) {
+                                if (ConstraintOp.IS_NULL.toString()
+                                    .equals(tf.getNullConstraint(key))) {
+                                    value = new TemplateValue(c, ConstraintOp.IS_NULL,
+                                            ConstraintOp.IS_NULL.toString(),
+                                        TemplateValue.ValueType.SIMPLE_VALUE, switchOffAbility);
+                                } else {
+                                    value = new TemplateValue(c, ConstraintOp.IS_NOT_NULL,
+                                            ConstraintOp.IS_NOT_NULL.toString(),
+                                            TemplateValue.ValueType.SIMPLE_VALUE, switchOffAbility);
+                                }
+                            } else {
+                                continue;
+                            }
+                        } else {
+                            ConstraintOp constraintOp = ConstraintOp
                             .getOpForIndex(Integer.valueOf(op));
-                    Object constraintValue = tf.getAttributeValues(key);
-                    Object extraValue = tf.getExtraValues(key);
-                    value = new TemplateValue(node.getPathString(),
-                            constraintOp, constraintValue, TemplateValue.ValueType.SIMPLE_VALUE,
-                            c.getCode(),
-                            extraValue);
+                            String constraintValue = "";
+                            String multiValueAttribute = tf.getMultiValueAttribute(key);
+                            if (multiValueAttribute != null && !("".equals(multiValueAttribute))) {
+                                constraintValue = tf.getMultiValueAttribute(key);
+                            } else {
+                                constraintValue = (String) tf.getAttributeValues(key);
+                            }
+                            String extraValue = (String) tf.getExtraValues(key);
+                            value = new TemplateValue(c, constraintOp, constraintValue,
+                                TemplateValue.ValueType.SIMPLE_VALUE, extraValue, switchOffAbility);
+                        }
+                    }
                 }
                 nodeValues.add(value);
             }
         }
         return templateValues;
+    }
+
+    private String constraintStringValue(PathConstraint con) {
+        if (con instanceof PathConstraintAttribute) {
+            return ((PathConstraintAttribute) con).getValue();
+        } else if (con instanceof PathConstraintBag) {
+            return ((PathConstraintBag) con).getBag();
+        } else if (con instanceof PathConstraintLookup) {
+            return ((PathConstraintLookup) con).getValue();
+        } else if (con instanceof PathConstraintSubclass) {
+            return ((PathConstraintSubclass) con).getType();
+        } else if (con instanceof PathConstraintLoop) {
+            return ((PathConstraintLoop) con).getLoopPath();
+        } else if (con instanceof PathConstraintNull) {
+            return ((PathConstraintNull) con).getOp().toString();
+        } else if (con instanceof PathConstraintMultiValue) {
+            return ((PathConstraintMultiValue) con).getOp().toString();
+        }
+        return null;
+    }
+
+    private String extraValueToString(Object extraValue) {
+        if (extraValue == null) {
+            return null;
+        }
+        return extraValue.toString();
+    }
+
+    private SwitchOffAbility parseSwitchOffAbility(String value) {
+        for (SwitchOffAbility switchOffAbility : SwitchOffAbility.values()) {
+            if (switchOffAbility.toString().equalsIgnoreCase(value)) {
+                return switchOffAbility;
+            }
+        }
+        throw new IllegalArgumentException("Invalid value specified for constraint" +
+                " switchOffAbility '" + value + "', if this happens there is a bug. ");
     }
 }

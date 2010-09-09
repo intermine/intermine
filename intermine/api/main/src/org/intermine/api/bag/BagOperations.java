@@ -24,8 +24,11 @@ import org.intermine.objectstore.query.Query;
  * Perform logical operations on bags - combine bags to create new InterMineBags
  * @author Richard Smith
  */
-public class BagOperations
+public final class BagOperations
 {
+    private BagOperations() {
+    }
+
     /**
      * Constant representing logical union.
      */

@@ -79,6 +79,7 @@ public class DumpDefaultTemplatesTask extends Task
      * Write templates and tags to a file.
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         if (fileName == null) {
             throw new BuildException("fileName parameter not set");

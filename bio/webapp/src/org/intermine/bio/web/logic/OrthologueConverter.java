@@ -25,10 +25,8 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.WebResults;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagConverter;
@@ -56,11 +54,11 @@ public class OrthologueConverter extends BagConverter
         PathQuery q = new PathQuery(model);
 
         // organism
-        q.addConstraint("Gene.homologues.homologue.organism.shortName",
-                Constraints.eq(organismName));
+        q.addConstraint(Constraints.eq("Gene.homologues.homologue.organism.shortName",
+                organismName));
 
         // homologue.type = "orthologue"
-        q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
+        q.addConstraint(Constraints.eq("Gene.homologues.type", "orthologue"));
 
         return q;
     }
@@ -79,10 +77,9 @@ public class OrthologueConverter extends BagConverter
         StringBuffer orthologues = new StringBuffer();
         String geneIdentifier = "Gene.homologues.homologue.primaryIdentifier";
         PathQuery pathQuery = constructPathQuery(organismName);
-        pathQuery.addConstraint(bagType, Constraints.in(bagName));
-        pathQuery.addConstraint(geneIdentifier, Constraints.isNotNull());
-        pathQuery.setView(geneIdentifier);
-        pathQuery.syncLogicExpression("and");
+        pathQuery.addConstraint(Constraints.eq(bagType, bagName));
+        pathQuery.addConstraint(Constraints.isNull(geneIdentifier));
+        pathQuery.addView(geneIdentifier);
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
         ExportResultsIterator it = executor.execute(pathQuery);
 
@@ -112,19 +109,11 @@ public class OrthologueConverter extends BagConverter
     public List<Integer> getConvertedObjectIds(Profile profile, String bagType,
             List<Integer> bagList, String organismName) {
         PathQuery pathQuery = constructPathQuery(organismName);
-        List<InterMineObject> objectList = null;
-        try {
-            objectList = im.getObjectStore().getObjectsByIds(bagList);
-        } catch (ObjectStoreException e) {
-            e.printStackTrace();
-            return null;
-        }
-        pathQuery.addConstraint(bagType, Constraints.in(objectList));
-        pathQuery.setView("Gene.homologues.homologue.id");
-        pathQuery.syncLogicExpression("and");
+        pathQuery.addConstraint(Constraints.inIds(bagType, bagList));
+        pathQuery.addView("Gene.homologues.homologue.id");
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
         ExportResultsIterator it = executor.execute(pathQuery);
-        List<Integer> ids = new ArrayList();
+        List<Integer> ids = new ArrayList<Integer>();
         while (it.hasNext()) {
             List<ResultElement> row = it.next();
             ids.add((Integer) row.get(0).getField());
@@ -144,34 +133,33 @@ public class OrthologueConverter extends BagConverter
         PathQuery q = new PathQuery(model);
 
         // add columns to the output
-        q.setView("Gene.primaryIdentifier, "
-                + "Gene.organism.shortName,"
-                + "Gene.homologues.homologue.primaryIdentifier,"
-                + "Gene.homologues.homologue.organism.shortName,"
-                + "Gene.homologues.type,"
+        q.addViewSpaceSeparated("Gene.primaryIdentifier "
+                + "Gene.organism.shortName "
+                + "Gene.homologues.homologue.primaryIdentifier "
+                + "Gene.homologues.homologue.organism.shortName "
+                + "Gene.homologues.type "
                 + "Gene.homologues.dataSets.name");
 
         // homologue.type = "orthologue"
-        q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
+        q.addConstraint(Constraints.eq("Gene.homologues.type", "orthologue"));
 
         // organism
-        q.addConstraint("Gene.organism", Constraints.lookup(parameter));
+        q.addConstraint(Constraints.lookup("Gene.organism", parameter, ""));
 
         // if the XML is too long, the link generates "HTTP Error 414 - Request URI too long"
         if (externalids.length() < 4000) {
-            q.addConstraint("Gene.homologues.homologue", Constraints.lookup(externalids));
+            q.addConstraint(Constraints.lookup("Gene.homologues.homologue", externalids, ""));
         }
-
-        q.syncLogicExpression("and");
 
         String query = q.toXml(PathQuery.USERPROFILE_VERSION);
         String encodedurl = URLEncoder.encode(query, "UTF-8");
 
-        String[] values = new String[]
-        {
-                String.valueOf(convertedSize), parameter,
-                String.valueOf(externalids.split(",").length), type, encodedurl
-        };
+        String[] values = new String[] {
+            String.valueOf(convertedSize),
+            parameter,
+            String.valueOf(externalids.split(",").length),
+            type,
+            encodedurl };
         ActionMessage am = new ActionMessage("portal.orthologues", values);
         return am;
     }
@@ -181,47 +169,21 @@ public class OrthologueConverter extends BagConverter
             String parameters) throws ObjectStoreException, PathException {
 
         PathQuery q = new PathQuery(model);
-        List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
-                "Gene.homologues.homologue", false);
-        view = getFixedView(view);
-        q.setViewPaths(view);
-
-        List<InterMineObject> objectList = im.getObjectStore().getObjectsByIds(fromList);
+        List<String> view = PathQueryResultHelper.getDefaultViewForClass(type, model, webConfig,
+                "Gene.homologues.homologue");
+        q.addViews(view);
 
         // gene
-        q.addConstraint("Gene", Constraints.in(objectList));
+        q.addConstraint(Constraints.inIds("Gene", fromList));
 
         // organism
-        q.addConstraint("Gene.homologues.homologue.organism", Constraints.lookup(parameters));
+        q.addConstraint(Constraints.lookup("Gene.homologues.homologue.organism", parameters, ""));
 
         // homologue.type = "orthologue"
-        q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
+        q.addConstraint(Constraints.eq("Gene.homologues.type", "orthologue"));
 
-        q.setConstraintLogic("A and B and C");
-        q.syncLogicExpression("and");
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
 
         return executor.execute(q);
-    }
-
-    /**
-     *If view contains joined organism, this will make sure, that
-     * organism is joined as a inner join. Else constraint on organism doesn't work.
-     * @param pathQuery
-     * @param joinPath
-     * @throws PathException
-     * */
-    private List<Path> getFixedView(List<Path> view) throws PathException {
-        String invalidPath = "Gene.homologues.homologue:organism";
-        String validPath = "Gene.homologues.homologue.organism";
-        List<Path> ret = new ArrayList<Path>();
-        for (Path path : view) {
-            if (path.toString().contains(invalidPath)) {
-                String newPathString = path.toString().replace(invalidPath, validPath);
-                path = new Path(path.getModel(), newPathString);
-            }
-            ret.add(path);
-        }
-        return ret;
     }
 }

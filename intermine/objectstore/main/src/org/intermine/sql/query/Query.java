@@ -22,8 +22,16 @@ package org.intermine.sql.query;
 //              the parser rejects this.
 //       Handle "WHERE x in ('value1', 'value2')" - translate to an OR_CONSTRAINT_SET
 
-import java.util.*;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import antlr.Token;
 import antlr.collections.AST;
@@ -40,37 +48,37 @@ import org.intermine.util.ConsistentSet;
  */
 public class Query implements SQLStringable
 {
-    protected List select;
-    protected Set from;
-    protected Set where;
-    protected Set groupBy;
-    protected Set having;
-    protected List orderBy;
+    protected List<SelectValue> select;
+    protected Set<AbstractTable> from;
+    protected Set<AbstractConstraint> where;
+    protected Set<AbstractValue> groupBy;
+    protected Set<AbstractConstraint> having;
+    protected List<AbstractValue> orderBy;
     protected int limit;
     protected int offset;
     protected boolean explain;
     protected boolean distinct;
-    protected List queriesInUnion;
+    protected List<Query> queriesInUnion;
 
-    private Map aliasToTable;
-    private Map originalAliasToTable;
+    private Map<String, AbstractTable> aliasToTable;
+    private Map<String, AbstractTable> originalAliasToTable;
     private AbstractTable onlyTable;
 
     /**
      * Construct a new Query.
      */
     public Query() {
-        select = new ArrayList();
-        from = new ConsistentSet();
-        where = new ConsistentSet();
-        groupBy = new ConsistentSet();
-        having = new ConsistentSet();
-        orderBy = new ArrayList();
+        select = new ArrayList<SelectValue>();
+        from = new ConsistentSet<AbstractTable>();
+        where = new ConsistentSet<AbstractConstraint>();
+        groupBy = new ConsistentSet<AbstractValue>();
+        having = new ConsistentSet<AbstractConstraint>();
+        orderBy = new ArrayList<AbstractValue>();
         limit = 0;
         offset = 0;
         explain = false;
         distinct = false;
-        queriesInUnion = new ArrayList();
+        queriesInUnion = new ArrayList<Query>();
         queriesInUnion.add(this);
         onlyTable = null;
         this.aliasToTable = null;
@@ -83,10 +91,10 @@ public class Query implements SQLStringable
      * @param aliasToTable a map of tables in a surrounding query, which are in the scope of this
      * query.
      */
-    public Query(Map aliasToTable) {
+    public Query(Map<String, AbstractTable> aliasToTable) {
         this();
 
-        this.aliasToTable = new HashMap();
+        this.aliasToTable = new HashMap<String, AbstractTable>();
         this.aliasToTable.putAll(aliasToTable);
         this.originalAliasToTable = aliasToTable;
     }
@@ -99,11 +107,10 @@ public class Query implements SQLStringable
      * @param queriesInUnion a List of Queries which are in the currently-being-created UNION of
      * queries, to which this constructor should add this
      */
-    public Query(Map aliasToTable, List queriesInUnion) {
+    public Query(Map<String, AbstractTable> aliasToTable, List<Query> queriesInUnion) {
         this();
 
-        this.aliasToTable = new HashMap();
-        this.aliasToTable.putAll(aliasToTable);
+        this.aliasToTable = new HashMap<String, AbstractTable>(aliasToTable);
         this.originalAliasToTable = aliasToTable;
 
         queriesInUnion.add(this);
@@ -130,8 +137,8 @@ public class Query implements SQLStringable
     public Query(String sql, boolean treeParse) {
         this();
 
-        aliasToTable = new HashMap();
-        originalAliasToTable = new HashMap();
+        aliasToTable = new HashMap<String, AbstractTable>();
+        originalAliasToTable = new HashMap<String, AbstractTable>();
         try {
             InputStream is = new ByteArrayInputStream(sql.getBytes());
 
@@ -226,7 +233,7 @@ public class Query implements SQLStringable
      *
      * @return a List of SelectValue objects representing the select list of the query
      */
-    public List getSelect() {
+    public List<SelectValue> getSelect() {
         return select;
     }
 
@@ -245,7 +252,7 @@ public class Query implements SQLStringable
      *
      * @return a Set of AbstractTable objects representing the from list of the query
      */
-    public Set getFrom() {
+    public Set<AbstractTable> getFrom() {
         return from;
     }
 
@@ -267,7 +274,7 @@ public class Query implements SQLStringable
      *
      * @return a Set of AbstractConstraint objects which, ANDed together form the where clause
      */
-    public Set getWhere() {
+    public Set<AbstractConstraint> getWhere() {
         return where;
     }
 
@@ -287,7 +294,7 @@ public class Query implements SQLStringable
      *
      * @return a Set of AbstractValue objects representing the GROUP BY clause
      */
-    public Set getGroupBy() {
+    public Set<AbstractValue> getGroupBy() {
         return groupBy;
     }
 
@@ -305,7 +312,7 @@ public class Query implements SQLStringable
      *
      * @return a Set of AbstractConstraints representing the HAVING clause
      */
-    public Set getHaving() {
+    public Set<AbstractConstraint> getHaving() {
         return having;
     }
 
@@ -323,7 +330,7 @@ public class Query implements SQLStringable
      *
      * @return a List of AbstractValues representing the ORDER BY clause
      */
-    public List getOrderBy() {
+    public List<AbstractValue> getOrderBy() {
         return orderBy;
     }
 
@@ -380,7 +387,7 @@ public class Query implements SQLStringable
      *
      * @return a List of Query objects
      */
-    public List getUnion() {
+    public List<Query> getUnion() {
         return queriesInUnion;
     }
 
@@ -392,9 +399,7 @@ public class Query implements SQLStringable
     public String getSQLString() {
         boolean needComma = false;
         String retval = "";
-        Iterator queryIter = queriesInUnion.iterator();
-        while (queryIter.hasNext()) {
-            Query q = (Query) queryIter.next();
+        for (Query q : queriesInUnion) {
             if (needComma) {
                 retval += " UNION ";
             }
@@ -429,10 +434,8 @@ public class Query implements SQLStringable
      * @return this Query in String form
      */
     public String getSQLStringForPrecomputedTable(String extraSelect) {
-        List augmentedSelect = new ArrayList(select);
-        augmentedSelect.add(extraSelect);
         return (explain ? "EXPLAIN " : "") + "SELECT " + (distinct ? "DISTINCT " : "")
-            + collectionToSQLString(augmentedSelect, ", ")
+            + collectionToSQLString(select, Collections.singleton(extraSelect), ", ")
             + (from.isEmpty() ? "" : " FROM " + collectionToSQLString(from, ", "))
             + (where.isEmpty() ? "" : " WHERE " + collectionToSQLString(where, " AND "))
             + (groupBy.isEmpty() ? "" : " GROUP BY " + collectionToSQLString(groupBy, ", ")
@@ -446,27 +449,45 @@ public class Query implements SQLStringable
      * Converts a collection of objects that implement the getSQLString method into a String,
      * with the given comma string between each element.
      *
-     * @param c the Collection on objects
+     * @param c the Collection of SQLStringable objects
      * @param comma the String to use as a separator between elements
      * @return a String representation
      */
-    protected static String collectionToSQLString(Collection c, String comma) {
-        String retval = "";
+    protected static String collectionToSQLString(Collection<? extends SQLStringable> c,
+            String comma) {
+        return collectionToSQLString(c, null, comma);
+    }
+
+    /**
+     * Converts a collection of objects that implement the getSQLString method into a String,
+     * with the given comma string between each element.
+     *
+     * @param c the Collection of SQLStringable objects
+     * @param extraValues a Collection of extra values which are Strings to add
+     * @param comma the String to use as a separator between elements
+     * @return a String representation
+     */
+    protected static String collectionToSQLString(Collection<? extends SQLStringable> c,
+            Collection<String> extraValues, String comma) {
+        StringBuilder sb = new StringBuilder();
         boolean needComma = false;
-        Iterator iter = c.iterator();
-        while (iter.hasNext()) {
+        for (SQLStringable o : c) {
             if (needComma) {
-                retval += comma;
+                sb.append(comma);
             }
             needComma = true;
-            Object o = iter.next();
-            if (o instanceof SQLStringable) {
-                retval += ((SQLStringable) o).getSQLString();
-            } else {
-                retval += (String) o;
+            sb.append(o.getSQLString());
+        }
+        if (extraValues != null) {
+            for (String o : extraValues) {
+                if (needComma) {
+                    sb.append(comma);
+                }
+                needComma = true;
+                sb.append(o);
             }
         }
-        return retval;
+        return sb.toString();
     }
 
     /**
@@ -475,6 +496,7 @@ public class Query implements SQLStringable
      * @param obj an Object to compare to
      * @return true if the object is equivalent
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof Query) {
             Query q = (Query) obj;
@@ -483,15 +505,15 @@ public class Query implements SQLStringable
             if (queriesInUnion.size() != q.queriesInUnion.size()) {
                 return false;
             }
-            boolean used[] = new boolean[queriesInUnion.size()];
+            boolean[] used = new boolean[queriesInUnion.size()];
             for (int i = 0; i < queriesInUnion.size(); i++) {
                 used[i] = false;
             }
             for (int i = 0; i < queriesInUnion.size(); i++) {
-                Query thisQ = (Query) queriesInUnion.get(i);
+                Query thisQ = queriesInUnion.get(i);
                 boolean notFound = true;
                 for (int o = 0; (o < queriesInUnion.size()) && notFound; o++) {
-                    Query thatQ = (Query) q.queriesInUnion.get(o);
+                    Query thatQ = q.queriesInUnion.get(o);
                     if (thisQ.equalsNoUnion(thatQ) && (!used[o])) {
                         notFound = false;
                         used[o] = true;
@@ -528,10 +550,11 @@ public class Query implements SQLStringable
      *
      * @return an arbitrary integer created from the contents of the Query
      */
+    @Override
     public int hashCode() {
         int retval = 0;
         for (int i = 0; i < queriesInUnion.size(); i++) {
-            retval += ((Query) queriesInUnion.get(i)).hashCodeNoUnion();
+            retval += queriesInUnion.get(i).hashCodeNoUnion();
         }
         return retval;
     }
@@ -553,6 +576,7 @@ public class Query implements SQLStringable
      *
      * @return a String representation of this Query
      */
+    @Override
     public String toString() {
         return getSQLString();
     }
@@ -828,7 +852,7 @@ public class Query implements SQLStringable
         if (table == null) {
             t = onlyTable;
         } else {
-            t = (AbstractTable) aliasToTable.get(table);
+            t = aliasToTable.get(table);
         }
         return new Field(field, t);
     }
@@ -1232,7 +1256,7 @@ public class Query implements SQLStringable
      * @param args command-line arguments
      * @throws Exception anytime
      */
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
         java.util.Date startTime = new java.util.Date();
         PrintStream out = System.out;
 
@@ -1265,7 +1289,7 @@ public class Query implements SQLStringable
         if (ast.getType() != SqlTokenTypes.SQL_STATEMENT) {
             throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
         }
-        Query q = new Query(new HashMap());
+        Query q = new Query(new HashMap<String, AbstractTable>());
         q.processSqlStatementAST(ast);
 
         out.println("\n" + q.getSQLString());

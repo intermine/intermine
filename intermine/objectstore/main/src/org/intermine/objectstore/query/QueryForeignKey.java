@@ -68,7 +68,7 @@ public class QueryForeignKey implements QueryEvaluable
      *
      * @return the class name
      */
-    public Class getType() {
+    public Class<?> getType() {
         return Integer.class;
     }
 
@@ -84,7 +84,7 @@ public class QueryForeignKey implements QueryEvaluable
     /**
      * {@inheritDoc}
      */
-    public void youAreType(Class cls) {
+    public void youAreType(@SuppressWarnings("unused") Class<?> cls) {
         throw new ClassCastException("youAreType called on Foreign Key");
     }
 

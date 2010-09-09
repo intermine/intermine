@@ -20,25 +20,25 @@ public interface TagTypes
     /**
      * Collection.
      */
-    public static final String COLLECTION = "collection";
+    String COLLECTION = "collection";
 
     /**
      * Reference.
      */
-    public static final String REFERENCE = "reference";
+    String REFERENCE = "reference";
 
     /**
      * Template.
      */
-    public static final String TEMPLATE = "template";
+    String TEMPLATE = "template";
 
     /**
      * Bag.
      */
-    public static final String BAG = "bag";
+    String BAG = "bag";
 
     /**
      * A Class/ClassDescriptor.
      */
-    public static final String CLASS = "class";
+    String CLASS = "class";
 }

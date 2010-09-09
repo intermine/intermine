@@ -27,6 +27,7 @@ import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
@@ -110,22 +111,19 @@ public class ExportResultsIteratorTest extends TestCase
         os.addRow(row);
 
         PathQuery pq = new PathQuery(model);
-        final Path p1 = new Path(model, "Company.name");
-        final Path p2 = new Path(model, "Company.vatNumber");
-        final Path p3 = new Path(model, "Company:departments.name");
-        final Path p4 = new Path(model, "Company:departments:employees.name");
-        List view = new ArrayList() {{
-            add(p1);
-            add(p2);
-            add(p3);
-            add(p4);
-        }};
-        pq.setViewPaths(view);
+        pq.addViews("Company.name", "Company.vatNumber", "Company.departments.name", "Company.departments.employees.name");
+        pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
+        pq.setOuterJoinStatus("Company.departments.employees", OuterJoinStatus.OUTER);
+
         ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
         List got = new ArrayList();
         for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
             got.add(gotRow);
         }
+        Path p1 = pq.makePath("Company.name");
+        Path p2 = pq.makePath("Company.vatNumber");
+        Path p3 = pq.makePath("Company.departments.name");
+        Path p4 = pq.makePath("Company.departments.employees.name");
         List expected = Arrays.asList(Arrays.asList(new ResultElement(company1, p1, false), new ResultElement(company1, p2, false), new ResultElement(department1, p3, false), new ResultElement(employee1, p4, false)),
                 Arrays.asList(new ResultElement(company1, p1, false), new ResultElement(company1, p2, false), new ResultElement(department1, p3, false), new ResultElement(employee2, p4, false)),
                 Arrays.asList(new ResultElement(company1, p1, false), new ResultElement(company1, p2, false), new ResultElement(department2, p3, false), new ResultElement(employee3, p4, false)),
@@ -184,17 +182,14 @@ public class ExportResultsIteratorTest extends TestCase
         os.addRow(row);
 
         PathQuery pq = new PathQuery(model);
-        final Path p1 = new Path(model, "Company.name");
-        final Path p2 = new Path(model, "Company.vatNumber");
-        final Path p3 = new Path(model, "Company:departments.name");
-        final Path p4 = new Path(model, "Company:contractors.name");
-        List view = new ArrayList() {{
-            add(p1);
-            add(p2);
-            add(p3);
-            add(p4);
-        }};
-        pq.setViewPaths(view);
+        pq.addViews("Company.name", "Company.vatNumber", "Company.departments.name", "Company.contractors.name");
+        pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
+        pq.setOuterJoinStatus("Company.contractors", OuterJoinStatus.OUTER);
+        Path p1 = pq.makePath("Company.name");
+        Path p2 = pq.makePath("Company.vatNumber");
+        Path p3 = pq.makePath("Company.departments.name");
+        Path p4 = pq.makePath("Company.contractors.name");
+
         ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
         List got = new ArrayList();
         for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
@@ -235,10 +230,11 @@ public class ExportResultsIteratorTest extends TestCase
         os.addRow(row);
 
         PathQuery pq = new PathQuery(model);
-        final Path p1 = new Path(model, "Department.name");
-        final Path p2 = new Path(model, "Department:company.name");
-        List view = Arrays.asList(p1, p2);
-        pq.setViewPaths(view);
+        pq.addViews("Department.name", "Department.company.name");
+        pq.setOuterJoinStatus("Department.company", OuterJoinStatus.OUTER);
+        Path p1 = pq.makePath("Department.name");
+        Path p2 = pq.makePath("Department.company.name");
+
         ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
         List got = new ArrayList();
         for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
@@ -285,11 +281,13 @@ public class ExportResultsIteratorTest extends TestCase
         os.addRow(row);
 
         PathQuery pq = new PathQuery(model);
-        final Path p1 = new Path(model, "Employee.name");
-        final Path p2 = new Path(model, "Employee:department.name");
-        final Path p3 = new Path(model, "Employee:department:company.name");
-        List view = Arrays.asList(p1, p2, p3);
-        pq.setViewPaths(view);
+        pq.addViews("Employee.name", "Employee.department.name", "Employee.department.company.name");
+        pq.setOuterJoinStatus("Employee.department", OuterJoinStatus.OUTER);
+        pq.setOuterJoinStatus("Employee.department.company", OuterJoinStatus.OUTER);
+        Path p1 = pq.makePath("Employee.name");
+        Path p2 = pq.makePath("Employee.department.name");
+        Path p3 = pq.makePath("Employee.department.company.name");
+
         ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
         System.out.println("Columns: " + iter.getColumns());
         List got = new ArrayList();
@@ -333,14 +331,13 @@ public class ExportResultsIteratorTest extends TestCase
         os.addRow(row);
 
         PathQuery pq = new PathQuery(model);
-        final Path p1 = new Path(model, "Company.name");
-        final Path p2 = new Path(model, "Company:departments.name");
-        final Path p3 = new Path(model, "Company:contractors.name");
-        List view = new ArrayList();
-        view.add(p1);
-        view.add(p2);
-        view.add(p3);
-        pq.setViewPaths(view);
+        pq.addViews("Company.name", "Company.departments.name", "Company.contractors.name");
+        pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
+        pq.setOuterJoinStatus("Company.contractors", OuterJoinStatus.OUTER);
+        Path p1 = pq.makePath("Company.name");
+        Path p2 = pq.makePath("Company.departments.name");
+        Path p3 = pq.makePath("Company.contractors.name");
+
         ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
         List got = new ArrayList();
         for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {

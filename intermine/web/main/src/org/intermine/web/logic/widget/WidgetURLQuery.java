@@ -29,5 +29,5 @@ public interface WidgetURLQuery
      * @return the query generated based on which records the user clicked on in the widget
      * @throws PathException
      */
-    public PathQuery generatePathQuery(boolean showAll) throws PathException;
+    PathQuery generatePathQuery(boolean showAll) throws PathException;
 }

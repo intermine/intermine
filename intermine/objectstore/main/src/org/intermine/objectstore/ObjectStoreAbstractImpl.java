@@ -24,6 +24,7 @@ import java.util.WeakHashMap;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCreator;
@@ -53,7 +54,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     protected int maxOffset = Integer.MAX_VALUE;
     protected int maxLimit = Integer.MAX_VALUE;
     protected long maxTime = Long.MAX_VALUE;
-    protected CacheMap cache;
+    protected CacheMap<Integer, InterMineObject> cache;
 
     protected int getObjectOps = 0;
     protected int getObjectHits = 0;
@@ -82,8 +83,8 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         maxTime = Long.parseLong((String) props.get("max-time"));
         LOG.info("Creating new " + getClass().getName() + " with sequence = " + sequenceNumber
                 + ", model = \"" + model.getName() + "\"");
-        cache = new CacheMap(getClass().getName() + " with sequence = " + sequenceNumber
-                + ", model = \"" + model.getName() + "\" getObjectById cache");
+        cache = new CacheMap<Integer, InterMineObject>(getClass().getName() + " with sequence = "
+                + sequenceNumber + ", model = \"" + model.getName() + "\" getObjectById cache");
     }
 
     /**
@@ -108,9 +109,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
             boolean prefetch) {
         Results retval = new Results(q, this, getSequence(getComponentsForQuery(q)));
-        if (batchSize != 0) {
-            retval.setBatchSize(batchSize);
-        }
+        retval.setBatchSize(batchSize);
         if (!optimise) {
             retval.setNoOptimise();
         }
@@ -141,9 +140,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
             boolean explain, boolean prefetch) {
         SingletonResults retval = new SingletonResults(q, this, getSequence(getComponentsForQuery(
                         q)));
-        if (batchSize != 0) {
-            retval.setBatchSize(batchSize);
-        }
+        retval.setBatchSize(batchSize);
         if (!optimise) {
             retval.setNoOptimise();
         }
@@ -172,7 +169,8 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
-    public InterMineObject getObjectById(Integer id, Class clazz) throws ObjectStoreException {
+    public InterMineObject getObjectById(Integer id, Class<? extends InterMineObject> clazz)
+        throws ObjectStoreException {
         getObjectOps++;
         if (getObjectOps % 10000 == 0) {
             LOG.info("getObjectById called " + getObjectOps + " times. Cache hits: "
@@ -181,7 +179,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         boolean contains = true;
         InterMineObject cached = null;
         synchronized (cache) {
-            cached = (InterMineObject) cache.get(id);
+            cached = cache.get(id);
             if (cached == null) {
                 contains = cache.containsKey(id);
             }
@@ -192,7 +190,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         }
         InterMineObject fromDb = internalGetObjectById(id, clazz);
         synchronized (cache) {
-            cached = (InterMineObject) cache.get(id);
+            cached = cache.get(id);
             if (cached == null) {
                 contains = cache.containsKey(id);
             }
@@ -214,7 +212,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
     protected InterMineObject internalGetObjectById(Integer id,
-            Class clazz) throws ObjectStoreException {
+            Class<? extends InterMineObject> clazz) throws ObjectStoreException {
         Results results = new Results(QueryCreator.createQueryForId(id, clazz), this,
                 SEQUENCE_IGNORE);
         results.setBatchSize(2);
@@ -227,7 +225,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
                                                + "this primary key");
         }
         if (results.size() == 1) {
-            InterMineObject o = (InterMineObject) ((ResultsRow) results.get(0)).get(0);
+            InterMineObject o = (InterMineObject) ((ResultsRow<?>) results.get(0)).get(0);
             return o;
         }
         return null;
@@ -236,11 +234,13 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
-    public List<InterMineObject> getObjectsByIds(Collection ids) throws ObjectStoreException {
+    @SuppressWarnings({ "cast", "unchecked" })
+    public List<InterMineObject> getObjectsByIds(Collection<Integer> ids)
+        throws ObjectStoreException {
         Results results = executeSingleton(QueryCreator.createQueryForIds(ids,
-                        InterMineObject.class), 0, false, false, false);
+                        InterMineObject.class), 1000, false, false, false);
 
-        return (List<InterMineObject>) results;
+        return (List<InterMineObject>) ((List) results);
     }
 
     /**
@@ -310,7 +310,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      */
     public InterMineObject pilferObjectById(Integer id) {
         synchronized (cache) {
-            return (InterMineObject) cache.get(id);
+            return cache.get(id);
         }
     }
 
@@ -349,17 +349,17 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
-    public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
+    public InterMineObject getObjectByExample(InterMineObject o, Set<String> fieldNames)
         throws ObjectStoreException {
         Query query = QueryCreator.createQueryForExampleObject(model, o, fieldNames);
-        List results = execute(query, 0, 2, false, false, SEQUENCE_IGNORE);
+        List<ResultsRow<Object>> results = execute(query, 0, 2, false, false, SEQUENCE_IGNORE);
 
         if (results.size() > 1) {
             throw new IllegalArgumentException("More than one object in the database has "
                     + "this primary key (" + results.size() + "): " + query.toString());
         }
         if (results.size() == 1) {
-            InterMineObject j = (InterMineObject) ((ResultsRow) results.get(0)).get(0);
+            InterMineObject j = (InterMineObject) results.get(0).get(0);
             return j;
         }
         return null;
@@ -409,7 +409,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
                     s = new Integer(rand.nextInt());
                 }
                 sequenceNumber.put(key, s);
-                sequenceKeys.put(key, new WeakReference(key));
+                sequenceKeys.put(key, new WeakReference<Object>(key));
             }
             retval.put(key, s);
         }
@@ -421,9 +421,9 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      *
      * @param tables a Set of objects representing independent components of the database
      */
-    public synchronized void changeSequence(Set tables) {
+    public synchronized void changeSequence(Set<Object> tables) {
         for (Object key : tables) {
-            WeakReference keyRef = sequenceKeys.get(key);
+            WeakReference<Object> keyRef = sequenceKeys.get(key);
             if (keyRef != null) {
                 Object realKey = keyRef.get();
                 Integer value = sequenceNumber.get(key);
@@ -463,5 +463,15 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      */
     public ObjectStoreBag createObjectStoreBag() throws ObjectStoreException {
         return new ObjectStoreBag(getSerial().intValue());
+    }
+
+    /**
+     * Creates a new empty Clob that is valid for this ObjectStore.
+     *
+     * @return a Clob
+     * @throws ObjectStoreException if an error occurs fetching a new ID
+     */
+    public Clob createClob() throws ObjectStoreException {
+        return new Clob(getSerial().intValue());
     }
 }

@@ -16,13 +16,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -43,8 +43,6 @@ import org.intermine.util.PropertiesUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
-import org.apache.log4j.Logger;
-
 /**
  * Class providing utility methods to help with primary key and data source priority configuration
  *
@@ -53,8 +51,11 @@ import org.apache.log4j.Logger;
  * @author Richard Smith
  * @author Matthew Wakeling
  */
-public class DataLoaderHelper
+public final class DataLoaderHelper
 {
+    private DataLoaderHelper() {
+    }
+
     private static final Logger LOG = Logger.getLogger(DataLoaderHelper.class);
 
     protected static Map<Source, Properties> sourceKeys = new HashMap<Source, Properties>();
@@ -80,11 +81,10 @@ public class DataLoaderHelper
                     throw new RuntimeException("Could not load priorities config file "
                             + model.getName() + "_priorities.properties");
                 }
-                for (Iterator i = priorities.entrySet().iterator(); i.hasNext();) {
-                    Map.Entry entry = (Map.Entry) i.next();
+                for (Map.Entry<Object, Object> entry : priorities.entrySet()) {
                     String descriptorName = (String) entry.getKey();
                     String sourceNames = (String) entry.getValue();
-                    List sources = new ArrayList();
+                    List<String> sources = new ArrayList<String>();
                     String[] tokens = sourceNames.split(",");
                     for (int o = 0; o < tokens.length; o++) {
                         String token = tokens[o].trim();
@@ -131,14 +131,15 @@ public class DataLoaderHelper
                                 .lastIndexOf('.') + 1);
                         LOG.info("Verifying primary key config for source " + source
                                 + ", packageName = " + packageNameWithDot);
-                        for (Map.Entry entry : keys.entrySet()) {
+                        for (Map.Entry<Object, Object> entry : keys.entrySet()) {
                             String cldName = (String) entry.getKey();
                             String keyList = (String) entry.getValue();
                             if (!cldName.contains(".")) {
                                 ClassDescriptor iCld = cld.getModel().getClassDescriptorByName(
                                         packageNameWithDot + cldName);
                                 if  (iCld != null) {
-                                    Map map = PrimaryKeyUtil.getPrimaryKeys(iCld);
+                                    Map<String, PrimaryKey> map = PrimaryKeyUtil
+                                        .getPrimaryKeys(iCld);
 
                                     String[] tokens = keyList.split(",");
                                     for (int i = 0; i < tokens.length; i++) {
@@ -180,7 +181,7 @@ public class DataLoaderHelper
                             }
                         }
                     }
-                    for (Map.Entry entry : keys.entrySet()) {
+                    for (Map.Entry<Object, Object> entry : keys.entrySet()) {
                         String propKey = (String) entry.getKey();
                         String fieldList = (String) entry.getValue();
                         int posOfDot = propKey.indexOf('.');
@@ -283,10 +284,7 @@ public class DataLoaderHelper
     public static boolean objectPrimaryKeyNotNull(Model model, InterMineObject obj,
             ClassDescriptor cld, PrimaryKey pk, Source source,
             IntToIntMap idMap) throws MetaDataException {
-        Iterator pkFieldIter = pk.getFieldNames().iterator();
-    PK:
-        while (pkFieldIter.hasNext()) {
-            String fieldName = (String) pkFieldIter.next();
+        for (String fieldName : pk.getFieldNames()) {
             FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
             if (fd instanceof AttributeDescriptor) {
                 Object value;
@@ -328,27 +326,21 @@ public class DataLoaderHelper
 
                 boolean foundNonNullKey = false;
                 boolean foundKey = false;
-                Set classDescriptors = model.getClassDescriptorsForClass(refObj.getClass());
-                Iterator cldIter = classDescriptors.iterator();
+                Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(refObj
+                        .getClass());
 
             CLDS:
-                while (cldIter.hasNext()) {
-                    ClassDescriptor refCld = (ClassDescriptor) cldIter.next();
-
-                    Set primaryKeys;
+                for (ClassDescriptor refCld : classDescriptors) {
+                    Set<PrimaryKey> primaryKeys;
 
                     if (source == null) {
-                        primaryKeys =
-                            new LinkedHashSet(PrimaryKeyUtil.getPrimaryKeys(refCld).values());
+                        primaryKeys = new LinkedHashSet<PrimaryKey>(PrimaryKeyUtil
+                                .getPrimaryKeys(refCld).values());
                     } else {
                         primaryKeys = DataLoaderHelper.getPrimaryKeys(refCld, source, null);
                     }
 
-                    Iterator pkSetIter = primaryKeys.iterator();
-
-
-                    while (pkSetIter.hasNext()) {
-                        PrimaryKey refPK = (PrimaryKey) pkSetIter.next();
+                    for (PrimaryKey refPK : primaryKeys) {
                         foundKey = true;
 
                         if (objectPrimaryKeyNotNull(model, refObj, refCld, refPK, source, idMap)) {
@@ -384,7 +376,7 @@ public class DataLoaderHelper
      * @param source the Source that the keys belong to
      * @return true if the field is a primary key
      */
-    public static boolean fieldIsPrimaryKey(Model model, Class clazz, String fieldName,
+    public static boolean fieldIsPrimaryKey(Model model, Class<?> clazz, String fieldName,
             Source source) {
         Map<PrimaryKeyCacheKey, Set<String>> cache = primaryKeyCache.get();
         PrimaryKeyCacheKey key = new PrimaryKeyCacheKey(model, clazz, source);
@@ -404,19 +396,21 @@ public class DataLoaderHelper
     private static class PrimaryKeyCacheKey
     {
         private Model model;
-        private Class clazz;
+        private Class<?> clazz;
         private Source source;
 
-        public PrimaryKeyCacheKey(Model model, Class clazz, Source source) {
+        public PrimaryKeyCacheKey(Model model, Class<?> clazz, Source source) {
             this.model = model;
             this.clazz = clazz;
             this.source = source;
         }
 
+        @Override
         public int hashCode() {
             return clazz.hashCode();
         }
 
+        @Override
         public boolean equals(Object o) {
             if (o instanceof PrimaryKeyCacheKey) {
                 PrimaryKeyCacheKey pkck = (PrimaryKeyCacheKey) o;
@@ -437,10 +431,12 @@ public class DataLoaderHelper
             this.source = source;
         }
 
+        @Override
         public int hashCode() {
             return cld.getName().hashCode();
         }
 
+        @Override
         public boolean equals(Object o) {
             if (o instanceof GetPrimaryKeyCacheKey) {
                 GetPrimaryKeyCacheKey key = (GetPrimaryKeyCacheKey) o;

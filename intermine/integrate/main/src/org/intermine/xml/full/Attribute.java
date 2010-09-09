@@ -78,6 +78,7 @@ public class Attribute
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof Attribute) {
             Attribute a = (Attribute) o;
@@ -89,6 +90,7 @@ public class Attribute
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return name.hashCode() + 3 * value.hashCode();
     }

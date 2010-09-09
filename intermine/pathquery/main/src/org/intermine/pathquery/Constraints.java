@@ -10,180 +10,204 @@ package org.intermine.pathquery;
  *
  */
 
-
-import java.util.List;
+import java.util.Collection;
 
 import org.intermine.objectstore.query.ConstraintOp;
 
 /**
- * Builds constraints for the PathQuery
- * @author julie
+ * Builds constraints for the PathQuery.
+ *
+ * @author Matthew Wakeling
  */
-
-public class Constraints
+public final class Constraints
 {
-
-    /**
-     * Creates constraint with the logical expression AND
-     * @param constraint1 first constraint
-     * @param constraint2 second constraint
-     * @return the constraint
-     */
-//    public static Constraint and(Constraint constraint1, Constraint constraint2) {
-//        return null;
-//    }
-
-
-    /**
-     * Creates constraint with the logical expression OR
-     * @param constraint1 first constraint
-     * @param constraint2 second constraint
-     * @return the constraint
-     */
-//    public static Constraint or(Constraint constraint1, Constraint constraint2) {
-//        return null;
-//    }
-
-
-    /**
-     * Creates constraint with the operator EQUALS
-
-     * @param value value to constrain field to
-     * @return the EQUALS constraint
-     */
-    public static Constraint eq(Object value) {
-        return new Constraint(ConstraintOp.EQUALS, value);
+    private Constraints() {
     }
 
     /**
-     * Creates constraint with the operator NOT_EQUALS
-
-     * @param value value to constrain field to
-     * @return the NOT_EQUALS constraint
+     * Creates a constraint for a path to be equal to a value.
+     *
+     * @param path the path to apply the constraint to
+     * @param value the value to constrain to
+     * @return a new PathConstraint object
      */
-    public static Constraint neq(Object value) {
-        return new Constraint(ConstraintOp.NOT_EQUALS, value);
+    public static PathConstraintAttribute eq(String path, String value) {
+        return new PathConstraintAttribute(path, ConstraintOp.EQUALS, value);
     }
 
     /**
-     * Creates constraint with the operator LIKE
-     * @param value value of field
-     * @return the LIKE constraint
+     * Creates a constraint for a path to be not equal to a value.
+     *
+     * @param path the path to apply the constraint to
+     * @param value the value to constrain to
+     * @return a new PathConstraint object
      */
-    public static Constraint like(String value) {
-        return new Constraint(ConstraintOp.CONTAINS, value);
+    public static PathConstraintAttribute neq(String path, String value) {
+        return new PathConstraintAttribute(path, ConstraintOp.NOT_EQUALS, value);
     }
 
     /**
-     * Creates constraint with the operator CONTAINS
-     * @param value value of field
-     * @return the CONTAINS constraint
+     * Creates a constraint for a path to be LIKE a value.
+     *
+     * @param path the path to apply the constraint to
+     * @param value the value to constrain to
+     * @return a new PathConstraint object
      */
-    public static Constraint contains(String value) {
-        return new Constraint(ConstraintOp.CONTAINS, value);
+    public static PathConstraintAttribute like(String path, String value) {
+        return new PathConstraintAttribute(path, ConstraintOp.MATCHES, value);
     }
 
     /**
-     * (I wasn't clear on whether or not we were going to make these available to the API or not)
-     * Creates constraint with the operator LOOKUP
-     * @param value value of field
-     * @return the LOOKUP constraint
+     * Creates a constraint for a path with the LOOKUP operator.
+     *
+     * @param path the path to apply the constraint to
+     * @param value the value to constrain to
+     * @param extraValue the extra value
+     * @return a new PathConstraint object
      */
-    public static Constraint lookup(String value) {
-        return new Constraint(ConstraintOp.LOOKUP, value);
+    public static PathConstraintLookup lookup(String path, String value, String extraValue) {
+        return new PathConstraintLookup(path, value, extraValue);
     }
 
     /**
-     * Creates constraint with the operator IN
-     * @param bag name of bag
-     * @return the IN constraint
+     * Creates a constraint for a path to be IN a named bag.
+     *
+     * @param path the path to apply the constraint to
+     * @param bag the bag name to constrain to
+     * @return a new PathConstraint object
      */
-    public static Constraint in(String bag) {
-        return new Constraint(ConstraintOp.IN, bag);
+    public static PathConstraintBag in(String path, String bag) {
+        return new PathConstraintBag(path, ConstraintOp.IN, bag);
     }
 
-
     /**
-     * Creates constraint with the operator IN.  validate that list is the same type as the
-     * attribute in the model
-     * @param values list of values
-     * @return the IN constraint
+     * Creates a constraint for a path to be NOT IN a named bag.
+     *
+     * @param path the path to apply the constraint to
+     * @param bag the bag name to constrain to
+     * @return a new PathConstraint object
      */
-    public static Constraint in(List<?> values) {
-        return new Constraint(ConstraintOp.IN, values);
+    public static PathConstraintBag notIn(String path, String bag) {
+        return new PathConstraintBag(path, ConstraintOp.NOT_IN, bag);
     }
 
+    /**
+     * Creates a constraint for a path to be IN a collection of ids.
+     *
+     * @param path the path to apply the constraint to
+     * @param ids the Collection of ids to constrain to
+     * @return a new PathConstraint object
+     */
+    public static PathConstraintIds inIds(String path, Collection<Integer> ids) {
+        return new PathConstraintIds(path, ConstraintOp.IN, ids);
+    }
 
     /**
-     * Creates constraint with the operator NOT_IN
-     * @param bag name of bag
-     * @return the NOT_IN constraint
+     * Creates a constraint for a path to be NOT IN a collection of ids.
+     *
+     * @param path the path to apply the constraint to
+     * @param ids the Collection of ids to constrain to
+     * @return a new PathConstraint object
      */
-    public static Constraint notIn(String bag) {
-        return new Constraint(ConstraintOp.NOT_IN, bag);
+    public static PathConstraintIds notInIds(String path, Collection<Integer> ids) {
+        return new PathConstraintIds(path, ConstraintOp.NOT_IN, ids);
     }
 
 
     /**
-     * Creates constraint with the operator NOT_IN
-     * @param values list of values
-     * @return the NOT_IN constraint
+     * Creates a constraint for a path to be IN a collection of values.
+     *
+     * @param path the path to apply the constraint to
+     * @param values the Collection of values to constrain to
+     * @return a new PathConstraint object
      */
-    public static Constraint notIn(List<?> values) {
-        return new Constraint(ConstraintOp.NOT_IN, values);
+    public static PathConstraintMultiValue inValues(String path, Collection<String> values) {
+        return new PathConstraintMultiValue(path, ConstraintOp.IN, values);
     }
 
     /**
-     * @return the NULL constraint
+     * Creates a constraint for a path to be NOT IN a collection of values.
+     *
+     * @param path the path to apply the constraint to
+     * @param values the Collection of values to constrain to
+     * @return a new PathConstraint object
      */
-    public static Constraint isNull() {
-        return new Constraint(ConstraintOp.IS_NULL);
+    public static PathConstraintMultiValue notInValues(String path, Collection<String> values) {
+        return new PathConstraintMultiValue(path, ConstraintOp.NOT_IN, values);
     }
 
     /**
-     * @return the NOT_NULL constraint
+     * Creates a constraint for a path to be null.
+     *
+     * @param path the path to apply the constraint to
+     * @return a new PathConstraint object
      */
-    public static Constraint isNotNull() {
-        return new Constraint(ConstraintOp.IS_NOT_NULL);
+    public static PathConstraintNull isNull(String path) {
+        return new PathConstraintNull(path, ConstraintOp.IS_NULL);
     }
 
     /**
-     * Creates constraint with the logical expression >
-
-     * @param value value to constrain field to
-     * @return the constraint
+     * Creates a constraint for a path to be not null.
+     *
+     * @param path the path to apply the constraint to
+     * @return a new PathConstraint object
      */
-    public static Constraint greaterThan(Object value) {
-        return new Constraint(ConstraintOp.GREATER_THAN, value);
+    public static PathConstraintNull isNotNull(String path) {
+        return new PathConstraintNull(path, ConstraintOp.IS_NOT_NULL);
     }
 
     /**
-     * Creates constraint with the logical expression >=
-
-     * @param value value to constrain field to
-     * @return the constraint
+     * Creates a constraint for a path to be less than a value.
+     *
+     * @param path the path to apply the constraint to
+     * @param value the value to constrain to
+     * @return a new PathConstraint object
      */
-    public static Constraint greaterThanEqualTo(Object value) {
-        return new Constraint(ConstraintOp.GREATER_THAN_EQUALS, value);
+    public static PathConstraintAttribute lessThan(String path, String value) {
+        return new PathConstraintAttribute(path, ConstraintOp.LESS_THAN, value);
     }
 
     /**
-     * Creates constraint with the logical expression <
-
-     * @param value value to constrain field to
-     * @return the constraint
+     * Creates a constraint for a path to be less than or equal to a value.
+     *
+     * @param path the path to apply the constraint to
+     * @param value the value to constrain to
+     * @return a new PathConstraint object
      */
-    public static Constraint lessThan(Object value) {
-        return new Constraint(ConstraintOp.LESS_THAN, value);
+    public static PathConstraintAttribute lessThanEqualTo(String path, String value) {
+        return new PathConstraintAttribute(path, ConstraintOp.LESS_THAN_EQUALS, value);
     }
 
     /**
-     * Creates constraint with the logical expression <=
-
-     * @param value value to constrain field to
-     * @return the constraint
+     * Creates a constraint for a path to be greater than a value.
+     *
+     * @param path the path to apply the constraint to
+     * @param value the value to constrain to
+     * @return a new PathConstraint object
      */
-    public static Constraint lessThanEqualTo(Object value) {
-        return new Constraint(ConstraintOp.LESS_THAN_EQUALS, value);
+    public static PathConstraintAttribute greaterThan(String path, String value) {
+        return new PathConstraintAttribute(path, ConstraintOp.GREATER_THAN, value);
+    }
+
+    /**
+     * Creates a constraint for a path to be greater than or equal to a value.
+     *
+     * @param path the path to apply the constraint to
+     * @param value the value to constrain to
+     * @return a new PathConstraint object
+     */
+    public static PathConstraintAttribute greaterThanEqualTo(String path, String value) {
+        return new PathConstraintAttribute(path, ConstraintOp.GREATER_THAN_EQUALS, value);
+    }
+
+    /**
+     * Creates a constraint for a path to be a particular subclass (type).  The type should be
+     * an unqualified class name that is a valid subclass of the end element of the path.
+     * @param path the path to apply the constraint to
+     * @param type an unqualified class name of the subclass
+     * @return a new PathConstraint object
+     */
+    public static PathConstraintSubclass type(String path, String type) {
+        return new PathConstraintSubclass(path, type);
     }
 }

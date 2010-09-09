@@ -119,11 +119,7 @@ public class ObjectDetailsController extends InterMineAction
 
         request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
 
-        Set<Class> cls = DynamicUtil.decomposeClass(object.getClass());
-        String type = null;
-        for (Class<?> class1 : cls) {
-            type = class1.getCanonicalName();
-        }
+        String type = DynamicUtil.getSimpleClass(object.getClass()).getCanonicalName();
         request.setAttribute("objectType", type);
 
         return null;

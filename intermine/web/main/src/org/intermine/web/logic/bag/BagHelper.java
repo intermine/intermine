@@ -30,6 +30,8 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 
@@ -38,8 +40,11 @@ import org.intermine.util.StringUtil;
  *
  * @author Kim Rutherford
  */
-public class BagHelper
+public final class BagHelper
 {
+    private BagHelper() {
+    }
+
     /** When generating new bag names, this is used as a prefix. */
     public static final String BAG_NAME_PREFIX = "bag";
 
@@ -65,12 +70,19 @@ public class BagHelper
             throw new RuntimeException("Can only create bags from a PathQuery that selects just "
                     + "id");
         }
-        if (!pathQuery.getView().get(0).getLastElement().equals("id")) {
-            throw new RuntimeException("Can only create bags from a PathQuery that selects just "
-                    + "id");
+        try {
+            Path idPath = pathQuery.makePath(pathQuery.getView().get(0));
+            if (!"id".equals(idPath.getLastElement())) {
+                throw new RuntimeException("Can only create bags from a PathQuery that selects"
+                        + " just id");
+            }
+        } catch (PathException e) {
+            throw new RuntimeException("Bag creation query has invalid path in view: "
+                    + pathQuery.getView(), e);
         }
+
         ObjectStoreWriterInterMineImpl osw = ((ObjectStoreInterMineImpl) os).getNewWriter();
-        Query q = MainHelper.makeQuery(pathQuery, null, null, bagQueryRunner, null, false);
+        Query q = MainHelper.makeQuery(pathQuery, null, null, bagQueryRunner, null);
 
         InterMineBag bag = new InterMineBag(bagName, bagType, bagDescription, new Date(), os,
                 profile.getUserId(), profile.getProfileManager().getProfileObjectStoreWriter());

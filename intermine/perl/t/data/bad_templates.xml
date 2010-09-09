@@ -35,7 +35,7 @@
     </template>
 
     <template name="MalFormedXML" description="View all the employees that work within a certain department of the specified company" >
-      <query  model="testmodel" view="Employee.name Employee.age" constraintLogic="A and B">
+      <query name="MalFormedXML" model="testmodel" view="Employee.name Employee.age" constraintLogic="A and B">
         <node path="Employee" type="Employee">
         </node><malformed xml
         <node path="Employee.department" type="Department">
@@ -77,7 +77,7 @@
     </template>
 
     <template name="SortOrderNotInView" title="Convert employees to addresses" longDescription="" comment="" >
-      <query  model="testmodel" view="Employee.name Employee.age" sortOrder="Employee.department.name">
+      <query name="SortOrderNotInView" model="testmodel" view="Employee.name Employee.age" sortOrder="Employee.department.name">
         <node path="Employee" type="Employee"/>
         <node path="Employee.id" type="Integer">
           <constraint op="=" value="0" description="id" identifier="" editable="true" code="A"/>
@@ -95,12 +95,12 @@
   </query>
 </template>
 
-<template name="" title="Inner join inside an outer join" longDescription="Inner inside outer" comment="">
-  <query name="NoName" model="testmodel" view="Company.name Company:departments.name Company:departments.manager.name">
+<template name="" title="No Name" longDescription="No Name" comment="">
+  <query model="testmodel" view="Company.name Company.departments.name Company.departments.manager.name">
     <node path="Company.name" type="String">
       <constraint op="=" value="flibble" description="something" identifier="flibble" editable="true" code="A"/>
     </node>
-    <node path="Company:departments.manager.name" type="String">
+    <node path="Company.departments.manager.name" type="String">
       <constraint op="=" value="flobble" description="simething" identifier="flobble" editable="true" code="B"/>
     </node>
   </query>
@@ -108,18 +108,18 @@
 
 
 <template name="NamesDiffer" title="Inner join inside an outer join" longDescription="Inner inside outer" comment="">
-  <query name="NamenUnterscheidenSich" model="testmodel" view="Company.name Company:departments.name Company:departments.manager.name">
+  <query name="NamenUnterscheidenSich" model="testmodel" view="Company.name Company.departments.name Company.departments.manager.name">
     <node path="Company.name" type="String">
       <constraint op="=" value="flibble" description="something" identifier="flibble" editable="true" code="A"/>
     </node>
-    <node path="Company:departments.manager.name" type="String">
+    <node path="Company.departments.manager.name" type="String">
       <constraint op="=" value="flobble" description="simething" identifier="flobble" editable="true" code="B"/>
     </node>
   </query>
 </template>
 
  <template name="BadLogic" title="Convert employees to addresses" longDescription="" comment="" >
-      <query  model="testmodel" view="Employee.name Employee.age" sortOrder="Employee.age" constraintLogic="A and B">
+      <query name="BadLogic" model="testmodel" view="Employee.name Employee.age" sortOrder="Employee.age" constraintLogic="A and B">
         <node path="Employee" type="Employee"/>
         <node path="Employee.id" type="Integer">
           <constraint op="=" value="0" description="id" identifier="" editable="true" code="A"/>
@@ -127,3 +127,16 @@
         <node path="Employee.address.id" type="Integer"/>
       </query>
     </template>
+
+<template name="Inconsistent" title="Inconsistent paths" description="" comment="">
+  <query name="Inconsistent" model="testmodel" view="Manager.name Manager.title">
+    <constraint path="Employee.name" op="LOOKUP" value="Mr." description="" identifier="" editable="true" code="A" />
+  </query>
+</template>
+
+<template name="BadEditableFlags" title="Bad Editable Flags" description="" comment="">
+  <query name="BadEditableFlags" model="testmodel" view="Manager.name Manager.title">
+    <constraint path="Manager.title" op="LOOKUP" value="Mr." description="" identifier="" editable="false" code="A" switchable="on"/>
+    <constraint path="Manger.name" op="CONTAINS" value="Brian" />
+  </query>
+</template>

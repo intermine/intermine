@@ -1,4 +1,3 @@
-package InterMine::Model::Collection;
 
 =head1 NAME
 
@@ -54,11 +53,11 @@ This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 =cut
+package InterMine::Model::Collection;
 
-use strict;
-use vars qw(@ISA);
-use InterMine::Model::Field;
+use Moose;
+extends 'InterMine::Model::Reference';
 
-@ISA = qw(InterMine::Model::Reference);
-
+__PACKAGE__->meta->make_immutable;
+no Moose;
 1;

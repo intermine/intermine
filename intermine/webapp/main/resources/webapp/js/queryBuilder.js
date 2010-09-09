@@ -1,42 +1,121 @@
+function initConstraint(selectedConstraint) {
+      if(selectedConstraint != null) {
+          if(selectedConstraint.value == "bag")
+              document.getElementById("checkBoxBag").checked = true;
+          swapInputs(selectedConstraint.value);
+      }
+  }
+
+  function onChangeAttributeOp() { 
+	    //attribute5 operator
+	    //attribute6 attribute value 
+	    //attribute7 options
+	    //LIKE or NOT LIKE or LOOKUP
+	    if (document.getElementById("attribute5")) {
+	    	if (document.getElementById("attribute5").value == '6'
+	            || document.getElementById("attribute5").value == '7'
+	            || document.getElementById("attribute5").value == '18') {
+	    		document.getElementById("attribute6").style.display = 'inline';
+	            if (document.getElementById("attribute7")) 
+	            	document.getElementById("attribute7").style.display = 'none';
+	            if (document.getElementById("multiValue")) 
+	            	document.getElementById("multiValue").style.display = 'none';
+	          } // IN or NOT IN
+	        else if (document.getElementById("attribute5").value == '12'
+	            || document.getElementById("attribute5").value == '13') {
+	            if (document.getElementById("multiValue")) 
+	            	document.getElementById("multiValue").style.display = 'inline';
+	            if(document.getElementById("attribute6"))
+	                document.getElementById("attribute6").style.display = 'none';
+	            if (document.getElementById("attribute7")) 
+	                  document.getElementById("attribute7").style.display = 'none';
+	          } else {
+	            if (document.getElementById("attribute7")) {
+	                document.getElementById("attribute7").style.display = 'inline';
+	                if (document.getElementById("attribute6").style != undefined)
+	                    document.getElementById("attribute6").style.display = 'none';
+	                if (document.getElementById("attribute7") != undefined)
+	                    document.getElementById("attribute6").value = document.getElementById("attribute7").value;
+	            } else {
+	            	if (document.getElementById("attribute6").style != undefined)
+	                    document.getElementById("attribute6").style.display = 'inline';
+	            }
+	             if (document.getElementById("multiValue")) 
+	               document.getElementById("multiValue").style.display = 'none';
+	          } 
+	    }
+	}
+  
+  function updateMValueAttribute() {
+        var multiValueAttribute = document.getElementById("multiValueAttribute");
+        var selectedString = '';
+        var multiValuesOptions = document.getElementById("multiValue");
+        if (multiValuesOptions) {
+            var i;
+            var count = 0;
+            for (i = 0; i < multiValuesOptions.options.length; i++) {
+                if (multiValuesOptions.options[i].selected) {
+                    var selectedMultiValue = multiValuesOptions.options[i].value;
+                    if (selectedString != '') {
+                        selectedString += ',';  
+                    }
+                    selectedString += selectedMultiValue;
+                }   
+            }  
+            document.getElementById("multiValueAttribute").value = selectedString;
+        }
+    }   
 // ***********************************************************
 // * Disables form fields based on user toggle
 // ***********************************************************
 
 function swapInputs(open) {
-
     // different constraints available to the user
-    var constraints = new Array("attribute","subclass","loopQuery","bag","empty","bagUpload");
+    var constraints = new Array("attribute","subclass","loopQuery","bag","empty");
     // field names, different fields will be visible for different constraints
     for (var i = 0; i < constraints.length; i++) {
        // enable if this is what the user just selected
-        if (constraints[i] == open) {
-            document.getElementById(constraints[i] + 'Submit').disabled = false;
-            document.getElementById(constraints[i] + 'Toggle').src = 'images/disclosed.gif';
-            // loop through other fields that may exist
-            for (var k = 1; ; k++) {
-                if(document.getElementById(constraints[i] + k) != null) {
-                    document.getElementById(constraints[i] + k).disabled = false;
-                } else {
-                    break;
-                }
-            }
-        // disable everything else
-        } else {
-            if (document.getElementById(constraints[i] + 'Submit') != null) {
-                document.getElementById(constraints[i] + 'Submit').disabled = true;
-            }
-            if (document.getElementById(constraints[i] + 'Toggle') != null) {
-                document.getElementById(constraints[i] + 'Toggle').src = 'images/undisclosed.gif';
-            }
-            for (var k = 1; ; k++) {
-                if(document.getElementById(constraints[i] + k) != null) {
-                    document.getElementById(constraints[i] + k).disabled = true;
-                } else {
-                    break;
-                }
-            }
-        }
+    	if(open != "bag" || document.getElementById("checkBoxBag").checked) {
+	        if (constraints[i] == open) {
+	        	if (document.getElementById(constraints[i] + 'Submit') != null) {
+	        		document.getElementById(constraints[i] + 'Submit').disabled = false;
+	        	}
+	            // loop through other fields that may exist
+	            for (var k = 1; k < 10; k++) {
+	                if(document.getElementById(constraints[i] + k) != null) {
+	                    document.getElementById(constraints[i] + k).disabled = false;
+	                } 
+	            }
+	        // disable everything else
+	        } else {
+	            if (document.getElementById(constraints[i] + 'Submit') != null) {
+	                document.getElementById(constraints[i] + 'Submit').disabled = true;
+	            }
+	            for (var k = 1; k < 10; k++) {
+	                if(document.getElementById(constraints[i] + k) != null) {
+	                    document.getElementById(constraints[i] + k).disabled = true;
+	                } 
+	            }
+	        }
+    	}
+    	else { //open == bag and checkBoxBag not checked
+    		document.getElementById('attributeSubmit').name = "attribute";
+    		return swapInputs('attribute');
+    	}
     }
+    if(open == "bag") {
+    	//we use the same button for attribute/lookup and bag
+    	if(document.getElementById('attributeSubmit') != null) {
+    	 document.getElementById('attributeSubmit').name = "bag";
+    	 document.getElementById('attributeSubmit').disabled = false;
+    	}
+    } else {
+    	if(document.getElementById("checkBoxBag") != null) {
+            document.getElementById("checkBoxBag").checked = false;
+        	document.getElementById("checkBoxBag").disabled = false;
+        } 
+    } 
+    
     // If we've got a loop query, disable the join type selection
     if(open == 'loopQuery') {
         jQuery('#inner').attr("checked", true);
@@ -51,70 +130,21 @@ function swapInputs(open) {
     }
 }
 
-
-
-      /***********************************************************
-       * Called when user chooses a constraint operator. If the
-       * user picks an operator contained in fixedOptionsOps then
-       * the input box is hidden and the user can only choose
-       **********************************************************/
-      function updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement, fixedOps)
-      {
-        if (attrOptsElement == null)
-          return;
-
-        for (var i=0 ; i<fixedOps[index].length ; i++)
-        {
-          if (attrOpElement.value == fixedOps[index][i])
-          {
-            document.getElementById("operandEditSpan" + index).style.display = "none";
-            attrValElement.value = attrOptsElement.value; // constrain value
-            return;
-          }
+function toggleConstraintDetails(isEditable) {
+    if (isEditable) {
+        document.getElementById("editableConstraintOptions").setAttribute("class", "");
+        document.getElementById('templateLabel').disabled = false;
+        radios = document.getElementsByName('switchable');
+        for (i = 0; i < radios.length; i++) {
+            radios[i].disabled = false;
         }
-
-        if (document.getElementById("operandEditSpan" + index)) {
-            document.getElementById("operandEditSpan" + index).style.display = "";
+    } else {
+        document.getElementById("editableConstraintOptions").setAttribute("class", "constraintEditableOptionsDisabled");
+        document.getElementById('templateLabel').disabled = true;;
+        radios = document.getElementsByName('switchable');
+        for (i = 0; i < radios.length; i++) {
+            radios[i].disabled = true;
         }
-      }
-
-      /***********************************************************
-       * Init attribute value with selected item and hide input box if
-       * required
-       **********************************************************/
-function initConstraintForm(index, attrOpElement, attrOptsElement, attrValElement, fixedOps) {
-    if (attrOptsElement == null)
-          return;
-
-        var init = attrValElement.value;
-        attrValElement.value = (init != '') ? init : attrOptsElement.value;
-
-        updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement, fixedOps);
-      }
-
-      //Copied and modified from template.jsp because there is no clever way to reuse it
-      function filterByTag(tag) {
-          if (tag != "") {
-              if (origSelectValues == null) {
-                   saveOriginalSelect();
-              }
-              var callBack = function(filteredList) {
-                  setSelectElement('bag2', '', filteredList);
-              }
-              AjaxServices.filterByTag('bag', tag, callBack);
-          } else {
-              restoreOriginalSelect();
-          }
-      }
-
-      var origSelectValues = null;
-
-      function saveOriginalSelect() {
-          origSelectValues = getSelectValues('bag2');
-      }
-
-      function restoreOriginalSelect() {
-           if (origSelectValues != null) {
-               setSelectElement('bag2', '', origSelectValues);
-           }
-      }
+    }
+}
+     

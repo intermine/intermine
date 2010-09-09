@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
  *
  * @author Matthew Wakeling
  */
-public class ShutdownHook extends Thread
+public final class ShutdownHook extends Thread
 {
     private static final Logger LOG = Logger.getLogger(ShutdownHook.class);
     private static Stack<Object> objects = new Stack<Object>();
@@ -63,8 +63,8 @@ public class ShutdownHook extends Thread
         while (!objects.empty()) {
             Object o = objects.pop();
             try {
-                if (o instanceof WeakReference) {
-                    o = ((WeakReference) o).get();
+                if (o instanceof WeakReference<?>) {
+                    o = ((WeakReference<?>) o).get();
                 }
                 if (o instanceof Writer) {
                     ((Writer) o).flush();

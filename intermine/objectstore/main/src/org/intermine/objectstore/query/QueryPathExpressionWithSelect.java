@@ -23,5 +23,12 @@ public interface QueryPathExpressionWithSelect extends QueryPathExpression
      *
      * @param selectable a QuerySelectable
      */
-    public void addToSelect(QuerySelectable selectable);
+    void addToSelect(QuerySelectable selectable);
+
+    /**
+     * Returns the QueryClass of which the field is a member.
+     *
+     * @return a QueryClass
+     */
+    QueryClass getQueryClass();
 }

@@ -24,7 +24,7 @@ import org.intermine.objectstore.ObjectStoreException;
  * @author Richard Smith
  * @author Matthew Wakeling
  */
-public class SingletonResults extends Results implements Set
+public class SingletonResults extends Results implements Set<Object>
 {
     /**
      * Constructor for a SingletonResults object
@@ -45,12 +45,26 @@ public class SingletonResults extends Results implements Set
     }
 
     /**
+     * Constructor for a SingletonResults object, given a ResultsBatches object.
+     *
+     * @param batches a ResultsBatches object that will back this new object
+     * @param optimise true if queries should be optimised
+     * @param explain true if queries should be explained
+     * @param prefetch true to switch on the PrefetchManager
+     */
+    public SingletonResults(ResultsBatches batches, boolean optimise, boolean explain,
+            boolean prefetch) {
+        super(batches, optimise, explain, prefetch);
+    }
+
+    /**
      * {@inheritDoc}
      */
-    public List range(int start, int end) throws ObjectStoreException {
-        List rows = super.range(start, end);
+    @Override
+    public List<Object> range(int start, int end) throws ObjectStoreException {
+        List<Object> rows = super.range(start, end);
         for (int i = 0; i < rows.size(); i++) {
-            rows.set(i, ((List) rows.get(i)).get(0));
+            rows.set(i, ((List<?>) rows.get(i)).get(0));
         }
         return rows;
     }

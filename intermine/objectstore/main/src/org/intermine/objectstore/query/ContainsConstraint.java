@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.Util;
@@ -57,10 +58,10 @@ public class ContainsConstraint extends Constraint
             throw new NullPointerException("cls cannot be null");
         }
 
-        Class c1 = ref.getType();
-        Class c2 = cls.getType();
-        Set cs1 = DynamicUtil.decomposeClass(c1);
-        Set cs2 = DynamicUtil.decomposeClass(c2);
+        Class<?> c1 = ref.getType();
+        Class<? extends FastPathObject> c2 = cls.getType();
+        Set<Class<?>> cs1 = DynamicUtil.decomposeClass(c1);
+        Set<Class<?>> cs2 = DynamicUtil.decomposeClass(c2);
         if ((cs1.size() == 1) && (cs2.size() == 1) && (!c1.isInterface()) && (!c2.isInterface())) {
             if (!(c1.isAssignableFrom(c2) || c2.isAssignableFrom(c1))) {
                 throw new IllegalArgumentException("Invalid constraint: "
@@ -159,6 +160,7 @@ public class ContainsConstraint extends Constraint
      * @param obj1 the object to compare with
      * @return true if objects are equal
      */
+    @Override
     public boolean equals(Object obj1) {
         if (obj1 instanceof ContainsConstraint) {
             ContainsConstraint cc = (ContainsConstraint) obj1;
@@ -175,6 +177,7 @@ public class ContainsConstraint extends Constraint
      *
      * @return the hashCode
      */
+    @Override
     public int hashCode() {
         return ref.hashCode()
             + 3 * op.hashCode()
@@ -183,9 +186,9 @@ public class ContainsConstraint extends Constraint
     }
 
     /** List of possible operations */
-    public static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.CONTAINS,
-        ConstraintOp.DOES_NOT_CONTAIN});
+    public static final List<ConstraintOp> VALID_OPS = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.CONTAINS, ConstraintOp.DOES_NOT_CONTAIN});
     /** List of possible null operations */
-    public static final List VALID_OPS_NULL = Arrays.asList(new ConstraintOp[] {
+    public static final List<ConstraintOp> VALID_OPS_NULL = Arrays.asList(new ConstraintOp[] {
         ConstraintOp.IS_NULL, ConstraintOp.IS_NOT_NULL});
 }

@@ -19,7 +19,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -45,8 +44,11 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
     /**
      * {@inheritDoc}
      */
-    protected int doInserts(String name, TableBatch table, List batches) throws SQLException {
-        String colNames[] = table.getColNames();
+    @SuppressWarnings("unchecked")
+    @Override
+    protected int doInserts(String name, TableBatch table, List<FlushJob> batches)
+        throws SQLException {
+        String[] colNames = table.getColNames();
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             try {
                 CopyManager copyManager = null;
@@ -67,20 +69,17 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                     dos.writeByte(0); // Signature done
                     dos.writeInt(0); // Flags - we aren't supplying OIDS
                     dos.writeInt(0); // Length of header extension
-                    Iterator insertIter = table.getIdsToInsert().entrySet().iterator();
-                    while (insertIter.hasNext()) {
-                        Map.Entry insertEntry = (Map.Entry) insertIter.next();
+                    for (Map.Entry<Object, Object> insertEntry : table.getIdsToInsert()
+                            .entrySet()) {
                         Object inserts = insertEntry.getValue();
                         if (inserts instanceof Object[]) {
-                            Object values[] = (Object[]) inserts;
+                            Object[] values = (Object[]) inserts;
                             dos.writeShort(colNames.length);
                             for (int i = 0; i < colNames.length; i++) {
                                 writeObject(dos, values[i]);
                             }
                         } else {
-                            Iterator iter = ((List) inserts).iterator();
-                            while (iter.hasNext()) {
-                                Object values[] = (Object[]) iter.next();
+                            for (Object[] values : ((List<Object[]>) inserts)) {
                                 dos.writeShort(colNames.length);
                                 for (int i = 0; i < colNames.length; i++) {
                                     writeObject(dos, values[i]);
@@ -144,25 +143,25 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
             int scale = ((BigDecimal) o).scale();
             int nBaseScale = (scale + 3) / 4;
             int nBaseScaleRemainder = scale % 4;
-            List digits = new ArrayList();
+            List<Integer> digits = new ArrayList<Integer>();
             if (nBaseScaleRemainder == 1) {
-                BigInteger res[] = unscaledValue.divideAndRemainder(TEN);
+                BigInteger[] res = unscaledValue.divideAndRemainder(TEN);
                 int digit = res[1].intValue() * 1000;
                 digits.add(new Integer(digit));
                 unscaledValue = res[0];
             } else if (nBaseScaleRemainder == 2) {
-                BigInteger res[] = unscaledValue.divideAndRemainder(HUNDRED);
+                BigInteger[] res = unscaledValue.divideAndRemainder(HUNDRED);
                 int digit = res[1].intValue() * 100;
                 digits.add(new Integer(digit));
                 unscaledValue = res[0];
             } else if (nBaseScaleRemainder == 3) {
-                BigInteger res[] = unscaledValue.divideAndRemainder(THOUSAND);
+                BigInteger[] res = unscaledValue.divideAndRemainder(THOUSAND);
                 int digit = res[1].intValue() * 10;
                 digits.add(new Integer(digit));
                 unscaledValue = res[0];
             }
             while (!unscaledValue.equals(BigInteger.ZERO)) {
-                BigInteger res[] = unscaledValue.divideAndRemainder(TEN_THOUSAND);
+                BigInteger[] res = unscaledValue.divideAndRemainder(TEN_THOUSAND);
                 digits.add(new Integer(res[1].intValue()));
                 unscaledValue = res[0];
             }
@@ -183,7 +182,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
             //    .append(Integer.toString(scale))
             //    .append(")");
             for (int i = digits.size() - 1; i >= 0; i--) {
-                int digit = ((Integer) digits.get(i)).intValue();
+                int digit = digits.get(i).intValue();
                 dos.writeShort(digit);
             //    log.append(" " + digit);
             }
@@ -196,8 +195,9 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
     /**
      * {@inheritDoc}
      */
+    @Override
     protected int doIndirectionInserts(String name,
-            IndirectionTableBatch table, List batches) throws SQLException {
+            IndirectionTableBatch table, List<FlushJob> batches) throws SQLException {
         if (!table.getRowsToInsert().isEmpty()) {
             try {
                 CopyManager copyManager = null;
@@ -217,9 +217,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                     dos.writeByte(0); // Signature done
                     dos.writeInt(0); // Flags - we aren't supplying OIDS
                     dos.writeInt(0); // Length of header extension
-                    Iterator insertIter = table.getRowsToInsert().iterator();
-                    while (insertIter.hasNext()) {
-                        Row row = (Row) insertIter.next();
+                    for (Row row : table.getRowsToInsert()) {
                         dos.writeShort(2);
                         dos.writeInt(4);
                         dos.writeInt(row.getLeft());
@@ -243,6 +241,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
     /**
      * {@inheritDoc}
      */
+    @Override
     protected int getTableSize(String name, Connection conn) throws SQLException {
         Statement s = conn.createStatement();
         ResultSet r = s.executeQuery("SELECT reltuples FROM pg_class WHERE relname = '"
@@ -258,4 +257,3 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
         }
     }
 }
-

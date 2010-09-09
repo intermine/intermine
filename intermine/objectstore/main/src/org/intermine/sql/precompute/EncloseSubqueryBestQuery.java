@@ -45,6 +45,7 @@ public class EncloseSubqueryBestQuery extends BestQuery
      * @throws BestQueryException when adding should stop
      * @throws SQLException if error occurs in the underlying database
      */
+    @Override
     public void add(Query q) throws BestQueryException, SQLException {
         bestQuery.add(beginning + q.getSQLString() + end);
     }
@@ -56,6 +57,7 @@ public class EncloseSubqueryBestQuery extends BestQuery
      * @throws BestQueryException when adding should stop
      * @throws SQLException if error occurs in the underlying database
      */
+    @Override
     public void add(String q) throws BestQueryException, SQLException {
         bestQuery.add(beginning + q + end);
     }
@@ -66,6 +68,7 @@ public class EncloseSubqueryBestQuery extends BestQuery
      * @return the best Query, or null if no Queries added to this object
      * @throws SQLException if error occurs in the underlying database
      */
+    @Override
     public Query getBestQuery() throws SQLException {
         return bestQuery.getBestQuery();
     }
@@ -76,6 +79,7 @@ public class EncloseSubqueryBestQuery extends BestQuery
      * @return the best Query, or null if no Queries added to this object
      * @throws SQLException if error occurs in the underlying database
      */
+    @Override
     public String getBestQueryString() throws SQLException {
         return bestQuery.getBestQueryString();
     }

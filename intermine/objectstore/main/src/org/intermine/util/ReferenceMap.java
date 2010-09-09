@@ -45,6 +45,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
      * Note that the garbage collector has very nicely and thoughtfully placed all such value
      * References into the queue for us to pick up.
      */
+    @SuppressWarnings("unchecked")
     private void expungeStaleEntries() {
         int oldSize = subMap.size();
         ReferenceWithKey<K> r;
@@ -95,9 +96,10 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public V get(Object key) {
         expungeStaleEntries();
-        Reference ref = subMap.get(key);
+        Reference<Object> ref = subMap.get(key);
         if (ref != null) {
             Object value = ref.get();
             if (value instanceof NullValue) {
@@ -133,6 +135,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public V put(K key, V value) {
         expungeStaleEntries();
         Object v = value;
@@ -175,6 +178,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public V remove(Object key) {
         expungeStaleEntries();
         Reference<Object> ref = subMap.remove(key);
@@ -191,34 +195,36 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
-    public boolean containsValue(Object value) {
+    public boolean containsValue(@SuppressWarnings("unused") Object value) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
-    public Set entrySet() {
+    public Set<Map.Entry<K, V>> entrySet() {
         throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
-    public Collection values() {
+    public Collection<V> values() {
         throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean equals(Object o) {
+    @Override
+    public boolean equals(@SuppressWarnings("unused") Object o) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         throw new UnsupportedOperationException();
     }
@@ -226,6 +232,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return subMap.toString();
     }
@@ -240,7 +247,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
          *
          * @return an Object
          */
-        public K getKey();
+        K getKey();
     }
 
     private static class NullValue

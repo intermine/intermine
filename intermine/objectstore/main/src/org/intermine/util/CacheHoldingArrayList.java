@@ -24,10 +24,11 @@ import java.util.Collection;
  * being flushed out of the cache until the DataTranslator has finished with the batch.
  *
  * @author Matthew Wakeling
+ * @param <E> The element type
  */
-public class CacheHoldingArrayList extends ArrayList
+public class CacheHoldingArrayList<E> extends ArrayList<E>
 {
-    private ArrayList holder = new ArrayList();
+    private ArrayList<Object> holder = new ArrayList<Object>();
 
     /**
      * Empty constructor
@@ -41,7 +42,7 @@ public class CacheHoldingArrayList extends ArrayList
      *
      * @param col a Collection
      */
-    public CacheHoldingArrayList(Collection col) {
+    public CacheHoldingArrayList(Collection<E> col) {
         super(col);
     }
 

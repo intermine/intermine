@@ -44,22 +44,17 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
         String bagType = bag.getType();
-        String prefix = (bagType.equals("Protein") ? "Protein" : "Gene.proteins");
-        String paths = "";
-        if (bagType.equals("Gene")) {
-            paths += "Gene.primaryIdentifier,Gene.secondaryIdentifier,";
+        String prefix = ("Protein".equals(bagType) ? "Protein" : "Gene.proteins");
+        if ("Gene".equals(bagType)) {
+            q.addViews("Gene.primaryIdentifier", "Gene.secondaryIdentifier");
         }
-        paths += prefix + ".primaryIdentifier,"
-                + prefix + ".organism.name,"
-                + prefix + ".proteinDomains.primaryIdentifier,"
-                + prefix + ".proteinDomains.name";
-        q.setView(paths);
-        q.setOrderBy(paths);
-        q.addConstraint(bagType,  Constraints.in(bag.getName()));
+        q.addViews(prefix + ".primaryIdentifier",
+                prefix + ".organism.name",
+                prefix + ".proteinDomains.primaryIdentifier",
+                prefix + ".proteinDomains.name");
+        q.addConstraint(Constraints.in(bagType,  bag.getName()));
         if (!showAll) {
-            q.addConstraint(prefix + ".proteinDomains",  Constraints.lookup(key));
-            q.setConstraintLogic("A and B");
-            q.syncLogicExpression("and");
+            q.addConstraint(Constraints.lookup(prefix + ".proteinDomains",  key, ""));
         }
         return q;
     }

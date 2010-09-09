@@ -84,12 +84,7 @@ public class AddColumnAction extends InterMineAction
         query.addView(columnToAdd);
     }
 
-    private boolean columnAlreadyAdded(String columnToAdd, List<Path> displayedPaths) {
-        for (Path path : displayedPaths) {
-            if (path.toStringNoConstraints().equals(columnToAdd)) {
-                return true;
-            }
-        }
-        return false;
+    private boolean columnAlreadyAdded(String columnToAdd, List<String> displayedPaths) {
+        return displayedPaths.contains(columnToAdd);
     }
 }

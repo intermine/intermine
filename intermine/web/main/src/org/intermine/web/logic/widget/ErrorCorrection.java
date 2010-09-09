@@ -22,10 +22,10 @@ public interface ErrorCorrection
     /**
      * @param maxValue maximum value to display
      */
-    public void calculate(Double maxValue);
+    void calculate(Double maxValue);
 
     /**
      * @return adjusted map
      */
-    public HashMap<String, BigDecimal> getAdjustedMap();
+    HashMap<String, BigDecimal> getAdjustedMap();
 }

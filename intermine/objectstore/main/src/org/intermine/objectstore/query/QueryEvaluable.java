@@ -26,7 +26,7 @@ public interface QueryEvaluable extends QueryNode
      *
      * @param cls the Class of the type to be imposed on this object
      */
-    public void youAreType(Class cls);
+    void youAreType(Class<?> cls);
 
     /**
      * Returns an integer representing the approximate type of this QueryEvaluable, in the case
@@ -34,5 +34,5 @@ public interface QueryEvaluable extends QueryNode
      *
      * @return an int, as described in UnknownTypeValue
      */
-    public int getApproximateType();
+    int getApproximateType();
 }

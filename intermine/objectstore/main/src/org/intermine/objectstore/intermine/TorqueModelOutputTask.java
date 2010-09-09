@@ -62,9 +62,9 @@ public class TorqueModelOutputTask extends Task
             Model osModel;
             String modelName = props.getProperty("model");
             osModel = Model.getInstanceByName(modelName);
-            List truncatedClasses = new ArrayList();
+            List<ClassDescriptor> truncatedClasses = new ArrayList<ClassDescriptor>();
             if (truncatedClassesString != null) {
-                String classes[] = truncatedClassesString.split(",");
+                String[] classes = truncatedClassesString.split(",");
                 for (int i = 0; i < classes.length; i++) {
                     ClassDescriptor truncatedClassDescriptor =
                         osModel.getClassDescriptorByName(classes[i]);
@@ -84,9 +84,9 @@ public class TorqueModelOutputTask extends Task
                 throw new ObjectStoreException("Invalid value for property noNotXml: "
                         + noNotXmlString);
             }
-            HashSet missingTables = new HashSet();
+            HashSet<String> missingTables = new HashSet<String>();
             if (missingTablesString != null) {
-                String tables[] = missingTablesString.split(",");
+                String[] tables = missingTablesString.split(",");
                 for (int i = 0; i < tables.length; i++) {
                     missingTables.add(tables[i].toLowerCase());
                 }
@@ -109,6 +109,7 @@ public class TorqueModelOutputTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         if (this.destFile == null) {
             throw new BuildException("destFile attribute is not set");

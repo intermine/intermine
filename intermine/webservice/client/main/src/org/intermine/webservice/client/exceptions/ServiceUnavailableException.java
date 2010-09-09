@@ -15,9 +15,9 @@ import java.net.HttpURLConnection;
 import org.intermine.webservice.client.util.HttpConnection;
 
 /**
- * The ServiceUnavailableException is thrown when an exception occurs that 
- * is temporary, the user should try it again. 
- * 
+ * The ServiceUnavailableException is thrown when an exception occurs that
+ * is temporary, the user should try it again.
+ *
  * @author Jakub Kulaviak
  */
 public class ServiceUnavailableException extends ServiceException
@@ -43,7 +43,7 @@ public class ServiceUnavailableException extends ServiceException
     }
 
     /**
-     * 
+     *
      * @param cause cause
      */
     public ServiceUnavailableException(Throwable cause) {

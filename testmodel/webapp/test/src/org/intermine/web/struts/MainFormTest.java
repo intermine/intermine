@@ -13,10 +13,6 @@ package org.intermine.web.struts;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Locale;
-
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.web.struts.QueryBuilderForm;
 
 import junit.framework.TestCase;
 
@@ -35,21 +31,21 @@ public class MainFormTest extends TestCase
 
     public void testEmptyValues() throws Exception {
         ActionErrors errors = new ActionErrors ();
-        QueryBuilderForm.parseValue("", Integer.TYPE, ConstraintOp.EQUALS, Locale.getDefault(), errors);
+        QueryBuilderForm.parseValue("", Integer.TYPE, errors);
         assertTrue(errors.size() > 0);
 
         errors = new ActionErrors ();
-        QueryBuilderForm.parseValue("", Float.TYPE, ConstraintOp.EQUALS, Locale.getDefault(), errors);
+        QueryBuilderForm.parseValue("", Float.TYPE, errors);
         assertTrue(errors.size() > 0);
     }
 
     public void testFloats() throws Exception {
         ActionErrors errors = new ActionErrors ();
-        QueryBuilderForm.parseValue("1.1.1", Float.TYPE, ConstraintOp.EQUALS, Locale.getDefault(), errors);
+        QueryBuilderForm.parseValue("1.1.1", Float.TYPE, errors);
         assertTrue("no error on bad float format", errors.size() > 0);
 
         errors = new ActionErrors ();
-        Object value = QueryBuilderForm.parseValue("1.1", Float.TYPE, ConstraintOp.EQUALS, Locale.getDefault(), errors);
+        Object value = QueryBuilderForm.parseValue("1.1", Float.TYPE, errors);
         assertNotNull(value);
         assertEquals(Float.class, value.getClass());
         assertTrue(1.1f == ((Float)value).floatValue());
@@ -57,7 +53,7 @@ public class MainFormTest extends TestCase
 
     public void testDateUK() throws Exception {
         ActionErrors errors = new ActionErrors ();
-        Object value = QueryBuilderForm.parseValue("25/09/04", Date.class, ConstraintOp.EQUALS, Locale.UK, errors);
+        Object value = QueryBuilderForm.parseValue("25/09/04", Date.class, errors);
         assertNotNull("good UK date didn't parse", value);
 
         Calendar calendar = new GregorianCalendar(2004,8,25);
@@ -66,7 +62,7 @@ public class MainFormTest extends TestCase
 
     public void testBadDateUK() throws Exception {
         ActionErrors errors = new ActionErrors ();
-        Object value = QueryBuilderForm.parseValue("asdfsdfsdf", Date.class, ConstraintOp.EQUALS, Locale.UK, errors);
+        Object value = QueryBuilderForm.parseValue("asdfsdfsdf", Date.class, errors);
         assertNull("baddly formatted date parsed to non-null value", value);
         assertTrue("bad date format should give error", errors.size() > 0);
     }
@@ -74,28 +70,27 @@ public class MainFormTest extends TestCase
     public void testWildcards() throws Exception {
         ActionErrors errors = new ActionErrors ();
         // empty like/not-like value
-        Object value = QueryBuilderForm.parseValue("", String.class, ConstraintOp.MATCHES, Locale.UK, errors);
+        Object value = QueryBuilderForm.parseValue("", String.class, errors);
         assertTrue("empty string in like/not-like should give error", errors.size() > 0);
 
         errors = new ActionErrors ();
-        value = QueryBuilderForm.parseValue("a", String.class, ConstraintOp.MATCHES, Locale.UK, errors);
+        value = QueryBuilderForm.parseValue("a", String.class, errors);
         assertTrue(errors.isEmpty());
         assertEquals("a", value);
 
         errors = new ActionErrors ();
-        value = QueryBuilderForm.parseValue("a*", String.class, ConstraintOp.MATCHES, Locale.UK, errors);
+        value = QueryBuilderForm.parseValue("a*", String.class, errors);
         assertTrue(errors.isEmpty());
         assertEquals("a%", value);
 
         errors = new ActionErrors ();
-        value = QueryBuilderForm.parseValue("*a", String.class, ConstraintOp.MATCHES, Locale.UK, errors);
+        value = QueryBuilderForm.parseValue("*a", String.class, errors);
         assertTrue(errors.isEmpty());
         assertEquals("%a", value);
 
         errors = new ActionErrors ();
-        value = QueryBuilderForm.parseValue("*a*", String.class, ConstraintOp.MATCHES, Locale.UK, errors);
+        value = QueryBuilderForm.parseValue("*a*", String.class, errors);
         assertTrue(errors.isEmpty());
         assertEquals("%a%", value);
     }
-
 }

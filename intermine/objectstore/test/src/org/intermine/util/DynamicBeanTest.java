@@ -24,7 +24,7 @@ public class DynamicBeanTest extends TestCase
 
     public void testCreateObjectInterfaceAsClass() {
         try {
-            DynamicBean.create(List.class, null);
+            DynamicBean.create(Company.class, null);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }

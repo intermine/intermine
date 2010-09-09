@@ -17,10 +17,12 @@ import java.util.Set;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 
 /**
@@ -82,8 +84,8 @@ public class ObjectStorePassthruImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
-    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            Map<Object, Integer> sequence) throws ObjectStoreException {
+    public List<ResultsRow<Object>> execute(Query q, int start, int limit, boolean optimise,
+            boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException {
         return os.execute(q, start, limit, optimise, explain, sequence);
     }
 
@@ -97,14 +99,16 @@ public class ObjectStorePassthruImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
-    public InterMineObject getObjectById(Integer id, Class clazz) throws ObjectStoreException {
+    public InterMineObject getObjectById(Integer id, Class<? extends InterMineObject> clazz)
+        throws ObjectStoreException {
         return os.getObjectById(id, clazz);
     }
 
     /**
      * {@inheritDoc}
      */
-    public List<InterMineObject> getObjectsByIds(Collection ids) throws ObjectStoreException {
+    public List<InterMineObject> getObjectsByIds(Collection<Integer> ids)
+        throws ObjectStoreException {
         return os.getObjectsByIds(ids);
     }
 
@@ -168,7 +172,7 @@ public class ObjectStorePassthruImpl implements ObjectStore
      * {@inheritDoc}
      */
     public InterMineObject getObjectByExample(InterMineObject o,
-            Set fieldNames) throws ObjectStoreException {
+            Set<String> fieldNames) throws ObjectStoreException {
         return os.getObjectByExample(o, fieldNames);
     }
 
@@ -226,5 +230,12 @@ public class ObjectStorePassthruImpl implements ObjectStore
      */
     public ObjectStoreBag createObjectStoreBag() throws ObjectStoreException {
         return os.createObjectStoreBag();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Clob createClob() throws ObjectStoreException {
+        return os.createClob();
     }
 }

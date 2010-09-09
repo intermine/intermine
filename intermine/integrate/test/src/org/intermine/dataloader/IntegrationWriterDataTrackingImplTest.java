@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import junit.framework.Test;
@@ -27,15 +26,15 @@ import org.intermine.model.testmodel.Bank;
 import org.intermine.model.testmodel.Broke;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.CompanyShadow;
 import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.SetupDataTestCase;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
@@ -46,7 +45,6 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.IntToIntMap;
 
 public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 {
@@ -64,6 +62,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         return OneTimeTestCase.buildSuite(IntegrationWriterDataTrackingImplTest.class);
     }
 
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         strictTestQueries = false;
@@ -77,6 +76,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         //iw.setEof(new HintingFetcher(iw.getObjectStoreWriter().getObjectStore(), iw));
     }
 
+    @Override
     public void tearDown() throws Exception {
         super.tearDown();
         iw.commitTransaction();
@@ -88,7 +88,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     public static void oneTimeSetUp() throws Exception {
         SetupDataTestCase.oneTimeSetUp();
         iw = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
-        writer = (ObjectStoreWriterInterMineImpl) iw.getObjectStoreWriter();
+        writer = iw.getObjectStoreWriter();
         os = iw.getObjectStore();
     }
 
@@ -110,10 +110,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             Source skelSource = iw.getSkeletonSource("storedata", "storedata");
 
             //DataTracking.precacheObjects(new HashSet(data.values()), iw.getDataTracker());
-            Iterator iter = data.entrySet().iterator();
-            while (iter.hasNext()) {
-                Object o = ((Map.Entry) iter.next())
-                    .getValue();
+            for (Object o : data.values()) {
                 iw.store((FastPathObject) o, source, skelSource);
             }
             //DataTracking.releasePrecached(iw.getDataTracker());
@@ -143,8 +140,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             QueryClass qc = new QueryClass(InterMineObject.class);
             q.addFrom(qc);
             q.addToSelect(qc);
-            Set dataToRemove = writer.getObjectStore().executeSingleton(q);
-            Iterator iter = dataToRemove.iterator();
+            SingletonResults dataToRemove = writer.getObjectStore().executeSingleton(q);
+            Iterator<Object> iter = dataToRemove.iterator();
             while (iter.hasNext()) {
                 InterMineObject toDelete = (InterMineObject) iter.next();
                 writer.delete(toDelete);
@@ -161,7 +158,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
 
     // Not doing the Query tests here
-    public void executeTest(String type) throws Exception {
+    @Override
+    public void executeTest(@SuppressWarnings("unused") String type) throws Exception {
     }
 
     public void testStoreObject() throws Exception {
@@ -728,12 +726,14 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         // Make sure there are currently multiple copies of CompanyA and ContractorA.
         try {
+            @SuppressWarnings("unused")
             Company rca = (Company) iw.getObjectByExample(companyA, Collections.singleton("name"));
             fail("Expected an exception, because there are multiple objects matching this pattern");
         } catch (IllegalArgumentException e) {
         }
 
         try {
+            @SuppressWarnings("unused")
             Contractor rconA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
             fail("Expected an exception, because there are multiple objects matching this pattern");
         } catch (IllegalArgumentException e) {
@@ -764,10 +764,10 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertTrue(rconD.getCompanys().contains(rca));
         assertTrue(rconZ.getCompanys().contains(rca));
 
-        conA.setCompanys(new HashSet());
+        conA.setCompanys(new HashSet<Company>());
         //Contractor sConA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
         Query equivQuery = iw.beof.createPKQuery(conA, source2, false);
-        Set equiv = iw.getEquivalentObjects(conA, source2);
+        Set<InterMineObject> equiv = iw.getEquivalentObjects(conA, source2);
         assertEquals(equiv.getClass().getName() + ": " + equiv + ", " + equivQuery, 2, equiv.size());
         iw.store(conA, source2, skelSource2);
         Contractor rconA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
@@ -777,7 +777,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     }
 
     public void testAddClass() throws Exception {
-        Employee e = (Employee) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Employee.class, Broke.class})));
+        Employee e = (Employee) DynamicUtil.createObject(new HashSet<Class<? extends InterMineObject>>(Arrays.asList(Employee.class, Broke.class)));
         e.setName("EmployeeA1");
         ((Broke) e).setDebt(8762);
 
@@ -956,8 +956,9 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         b.setName("bank1");
 
         Source source = iw.getMainSource("testsource", "testsource");
+        @SuppressWarnings("unused")
         Source skelSource = iw.getSkeletonSource("testsource", "testsource");
-        Set objects = iw.getEquivalentObjects(b, source);
+        Set<InterMineObject> objects = iw.getEquivalentObjects(b, source);
         System.out.println(objects);
         assertTrue(objects.isEmpty());
     }
@@ -986,7 +987,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         }
 
         IntegrationWriterDataTrackingImpl iw2 = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
-        ObjectStoreWriter writer2 = (ObjectStoreWriterInterMineImpl) iw2.getObjectStoreWriter();
+        ObjectStoreWriter writer2 = iw2.getObjectStoreWriter();
         Source source = iw2.getMainSource("testsource", "testsource");
         Source skelSource = iw2.getSkeletonSource("testsource", "testsource");
 
@@ -1000,7 +1001,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         } finally {
             iw2 = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
             try {
-                writer2 = (ObjectStoreWriterInterMineImpl) iw2.getObjectStoreWriter();
+                writer2 = iw2.getObjectStoreWriter();
                 removeDataFromStore(writer2);
             } finally {
                 iw2.close();
@@ -1103,5 +1104,62 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("CompanyA")));
         SingletonResults r = iw.executeSingleton(q);
         assertEquals(2, r.size());
+    }
+    
+    // Investigate problem with merging, described in ticket #341
+    public void testMergeBug() throws Exception {
+        Employee e = new Employee();
+        e.setName("abc");
+        Address a = new Address();
+        a.setAddress("abc");
+        
+        if (doIds) {
+            e.setId(new Integer(1));
+            a.setId(new Integer(2));
+        }
+        
+        Source source = iw.getMainSource("testsource", "testsource");
+        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
+        
+        iw.store(e, source, skelSource);
+        iw.store(a, source, skelSource);
+        iw.commitTransaction();
+        iw.reset();
+        iw.beginTransaction();
+        
+        source = iw.getMainSource("nokeys", "nokeys");
+        skelSource = iw.getSkeletonSource("nokeys", "nokeys");
+        
+        iw.store(e, source, skelSource);
+        iw.store(a, source, skelSource);
+        iw.commitTransaction();
+        iw.reset();
+        iw.beginTransaction();
+
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("abc")));
+        SingletonResults r = iw.executeSingleton(q);
+        assertEquals(2, r.size());
+        Query q2 = new Query();
+        QueryClass qc2 = new QueryClass(Address.class);
+        q2.addFrom(qc2);
+        q2.addToSelect(qc2);
+        q2.setConstraint(new SimpleConstraint(new QueryField(qc2, "address"), ConstraintOp.EQUALS, new QueryValue("abc")));
+        SingletonResults r2 = iw.executeSingleton(q2);
+        assertEquals(2, r2.size());
+        
+        source = iw.getMainSource("testsource2", "testsource2");
+        skelSource = iw.getSkeletonSource("testsource2", "testsource2");
+        
+        iw.store(e, source, skelSource);
+        iw.store(a, source, skelSource);
+        
+        r = iw.executeSingleton(q);
+        assertEquals(1, r.size());
+        r2 = iw.executeSingleton(q2);
+        assertEquals(1, r2.size());
     }
 }

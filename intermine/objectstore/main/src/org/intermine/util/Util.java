@@ -26,8 +26,11 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
  *
  * @author Matthew Wakeling
  */
-public class Util
+public final class Util
 {
+    private Util() {
+    }
+
     /**
      * Compare two objects, using their .equals method, but comparing null to null as equal.
      *
@@ -66,7 +69,7 @@ public class Util
         boolean needComma = false;
         StringWriter message = new StringWriter();
         PrintWriter pMessage = new PrintWriter(message);
-        Class c = e.getClass();
+        Class<? extends Exception> c = e.getClass();
         while (e != null) {
             if (needComma) {
                 pMessage.println("\n---------------NEXT EXCEPTION");
@@ -80,8 +83,8 @@ public class Util
             }
         }
         try {
-            Constructor cons = c.getConstructor(new Class[] {String.class});
-            Exception toThrow = (Exception) cons.newInstance(new Object[] {message.toString()});
+            Constructor<? extends Exception> cons = c.getConstructor(new Class[] {String.class});
+            Exception toThrow = cons.newInstance(new Object[] {message.toString()});
             return toThrow;
         } catch (NoSuchMethodException e2) {
             throw new RuntimeException("NoSuchMethodException thrown while handling " + c.getName()
@@ -239,24 +242,24 @@ public class Util
      * @return a Class
      * @throws IllegalArgumentException if the String is an invalid name
      */
-    public static Class getClassFromString(String type) {
-        if (type.equals("short") || type.equals("java.lang.Short")) {
+    public static Class<?> getClassFromString(String type) {
+        if ("short".equals(type) || "java.lang.Short".equals(type)) {
             return Short.class;
-        } else if (type.equals("int") || type.equals("java.lang.Integer")) {
+        } else if ("int".equals(type) || "java.lang.Integer".equals(type)) {
             return Integer.class;
-        } else if (type.equals("long") || type.equals("java.lang.Long")) {
+        } else if ("long".equals(type) || "java.lang.Long".equals(type)) {
             return Long.class;
-        } else if (type.equals("java.lang.String")) {
+        } else if ("java.lang.String".equals(type)) {
             return String.class;
-        } else if (type.equals("boolean") || type.equals("java.lang.Boolean")) {
+        } else if ("boolean".equals(type) || "java.lang.Boolean".equals(type)) {
             return Boolean.class;
-        } else if (type.equals("float") || type.equals("java.lang.Float")) {
+        } else if ("float".equals(type) || "java.lang.Float".equals(type)) {
             return Float.class;
-        } else if (type.equals("double") || type.equals("java.lang.Double")) {
+        } else if ("double".equals(type) || "java.lang.Double".equals(type)) {
             return Double.class;
-        } else if (type.equals("java.util.Date")) {
+        } else if ("java.util.Date".equals(type)) {
             return java.util.Date.class;
-        } else if (type.equals("java.math.BigDecimal")) {
+        } else if ("java.math.BigDecimal".equals(type)) {
             return java.math.BigDecimal.class;
         } else {
             throw new IllegalArgumentException("Unknown type \"" + type + "\"");

@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.FieldExporter;
 
@@ -39,8 +38,9 @@ public class CommaFieldExporter implements FieldExporter
      * @param response The HTTP response we are creating - used to get the OutputStream to write to
      * @throws ExportException if the application business logic throws an exception
      */
-    public void exportField(InterMineObject o, String fieldName, ObjectStore os,
-                            HttpServletResponse response) throws ExportException {
+    public void exportField(InterMineObject o, String fieldName,
+            @SuppressWarnings("unused") ObjectStore os,
+            HttpServletResponse response) throws ExportException {
         try {
             response.setContentType("text/plain");
             response.setHeader("Content-Disposition ", "inline; filename=" + fieldName + ".txt");
@@ -49,7 +49,7 @@ public class CommaFieldExporter implements FieldExporter
 
             PrintStream printStream = new PrintStream(outputStream);
 
-            String fieldValue = (String) TypeUtil.getFieldValue(o, fieldName);
+            String fieldValue = (String) o.getFieldValue(fieldName);
 
             int commaPos = fieldValue.indexOf(",");
 

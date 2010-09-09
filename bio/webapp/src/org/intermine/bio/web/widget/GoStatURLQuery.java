@@ -45,40 +45,32 @@ public class GoStatURLQuery implements WidgetURLQuery
 
         PathQuery q = new PathQuery(os.getModel());
         String bagType = bag.getType();
-        String pathStrings = "";
 
-        String prefix = (bagType.equals("Protein") ? "Protein.genes" : "Gene");
+        String prefix = ("Protein".equals(bagType) ? "Protein.genes" : "Gene");
 
-        if (bagType.equals("Protein")) {
-            pathStrings = "Protein.primaryAccession,";
+        if ("Protein".equals(bagType)) {
+            q.addViews("Protein.primaryAccession");
         }
 
-        pathStrings += prefix + ".primaryIdentifier,"
-            + prefix + ".symbol,"
-            + prefix + ".organism.name,"
-            + prefix + ".goAnnotation.ontologyTerm.identifier,"
-            + prefix + ".goAnnotation.ontologyTerm.name,"
-            + prefix + ".goAnnotation.ontologyTerm.parents.identifier,"
-            + prefix + ".goAnnotation.ontologyTerm.parents.name";
+        q.addViews(prefix + ".primaryIdentifier",
+                prefix + ".symbol",
+                prefix + ".organism.name",
+                prefix + ".goAnnotation.ontologyTerm.identifier",
+                prefix + ".goAnnotation.ontologyTerm.name",
+                prefix + ".goAnnotation.ontologyTerm.parents.identifier",
+                prefix + ".goAnnotation.ontologyTerm.parents.name");
 
-        q.setView(pathStrings);
-        q.setOrderBy(pathStrings);
+        // ORDER: default is to order by all paths in view
 
-        q.addConstraint(bagType, Constraints.in(bag.getName()));
-
+        q.addConstraint(Constraints.in(bagType, bag.getName()));
         // can't be a NOT relationship!
-        String pathString = prefix + ".goAnnotation.qualifier";
-        q.addConstraint(pathString, Constraints.isNull());
+        q.addConstraint(Constraints.isNull(prefix + ".goAnnotation.qualifier"));
 
         if (!showAll) {
             //  go term
-            pathString = prefix + ".goAnnotation.ontologyTerm.parents";
-            q.addConstraint(pathString, Constraints.lookup(key), "C", "GOTerm");
-            q.setConstraintLogic("A and B and C");
-        } else {
-            q.setConstraintLogic("A and B");
+            q.addConstraint(Constraints.lookup(prefix + ".goAnnotation.ontologyTerm.parents",
+                    key, "GOTerm"));
         }
-        q.syncLogicExpression("and");
         return q;
     }
 }

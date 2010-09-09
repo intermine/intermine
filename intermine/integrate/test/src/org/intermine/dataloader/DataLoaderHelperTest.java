@@ -176,13 +176,13 @@ public class DataLoaderHelperTest extends QueryTestCase
         Map expected = new HashMap();
         expected.put("Department", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource3"}));
         expected.put("Company", Arrays.asList(new Object[] {"testsource4", "testsource2", "testsource", "storedata", "testsource3"}));
-        expected.put("Address", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource4"}));
+        expected.put("Address", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource4", "nokeys"}));
         expected.put("Secretary", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("Bank", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("Types", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
-        expected.put("Employee.age", Arrays.asList(new Object[] {"testsource3", "storedata", "testsource2", "testsource"}));
-        expected.put("Employee", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource3"}));
-        expected.put("Employee.address", Arrays.asList("testsource4", "testsource2", "testsource", "storedata", "testsource3"));
+        expected.put("Employee.age", Arrays.asList(new Object[] {"testsource3", "storedata", "testsource2", "testsource", "nokeys"}));
+        expected.put("Employee", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource3", "nokeys"}));
+        expected.put("Employee.address", Arrays.asList("testsource4", "testsource2", "testsource", "storedata", "testsource3", "nokeys"));
         expected.put("Contractor", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         assertEquals(expected, DataLoaderHelper.getDescriptors(model));
     }

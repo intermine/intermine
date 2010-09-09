@@ -10,24 +10,6 @@ package org.intermine.util;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TimeZone;
-import java.util.TreeMap;
-
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.proxy.ProxyReference;
-
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -37,6 +19,24 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TimeZone;
+import java.util.TreeMap;
+
+import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.ClobAccess;
 
 /**
  * Provides utility methods for working with Java types and reflection
@@ -45,14 +45,14 @@ import java.text.SimpleDateFormat;
  * @author Richard Smith
  * @author Matthew Wakeling
  */
-public class TypeUtil
+public final class TypeUtil
 {
     private TypeUtil() {
         // empty
     }
 
-    private static Map<Class, Map<String, FieldInfo>> classToFieldnameToFieldInfo
-        = new HashMap<Class, Map<String, FieldInfo>>();
+    private static Map<Class<?>, Map<String, FieldInfo>> classToFieldnameToFieldInfo
+        = new HashMap<Class<?>, Map<String, FieldInfo>>();
 
     /**
      * Returns the package name from a fully qualified class name
@@ -163,7 +163,7 @@ public class TypeUtil
                 // ignore
             }
             IllegalArgumentException e2 = new IllegalArgumentException("Couldn't set field \""
-                    + DynamicUtil.decomposeClass(o.getClass()) + "." + fieldName + "\""
+                    + DynamicUtil.getFriendlyName(o.getClass()) + "." + fieldName + "\""
                     + (type == null ? "" : " (a " + type + ")")
                     + " to \"" + fieldValue + "\" (a " + fieldValue.getClass().getName() + ")");
             e2.initCause(e);
@@ -208,7 +208,7 @@ public class TypeUtil
      * @param fieldName the name of the relevant field
      * @return the Getter, or null if the field is not found
      */
-    public static Method getGetter(Class c, String fieldName) {
+    public static Method getGetter(Class<?> c, String fieldName) {
         FieldInfo info = getFieldInfo(c, fieldName);
         if (info != null) {
             return info.getGetter();
@@ -223,7 +223,7 @@ public class TypeUtil
      * @param fieldName the name of the relevant field
      * @return the setter, or null if the field is not found
      */
-    public static Method getSetter(Class c, String fieldName) {
+    public static Method getSetter(Class<?> c, String fieldName) {
         FieldInfo info = getFieldInfo(c, fieldName);
         if (info != null) {
             return info.getSetter();
@@ -238,7 +238,7 @@ public class TypeUtil
      * @param fieldName the name of the relevant field
      * @return the proxySetter, or null if it is not present or the field is not found
      */
-    public static Method getProxySetter(Class c, String fieldName) {
+    public static Method getProxySetter(Class<?> c, String fieldName) {
         FieldInfo info = getFieldInfo(c, fieldName);
         if (info != null) {
             return info.getProxySetter();
@@ -253,7 +253,7 @@ public class TypeUtil
      * @param fieldName the name of the relevant field
      * @return the proxyGetter, or null if it is not present or the field is not found
      */
-    public static Method getProxyGetter(Class c, String fieldName) {
+    public static Method getProxyGetter(Class<?> c, String fieldName) {
         FieldInfo info = getFieldInfo(c, fieldName);
         if (info != null) {
             return info.getProxyGetter();
@@ -268,7 +268,7 @@ public class TypeUtil
      * @param fieldName the name of the relevant collection
      * @return the adder, or null if it is not present or if the field is not found
      */
-    public static Method getAdder(Class c, String fieldName) {
+    public static Method getAdder(Class<?> c, String fieldName) {
         FieldInfo info = getFieldInfo(c, fieldName);
         if (info != null) {
             return info.getAdder();
@@ -283,7 +283,7 @@ public class TypeUtil
      * @param fieldName the name of the relevant field
      * @return the class of the field, or null if the field is not found
      */
-    public static Class getFieldType(Class c, String fieldName) {
+    public static Class<?> getFieldType(Class<?> c, String fieldName) {
         FieldInfo info = getFieldInfo(c, fieldName);
         if (info != null) {
             return info.getType();
@@ -299,7 +299,7 @@ public class TypeUtil
      * @return the class of the field, or null if the field is not found
      * @throws IllegalArgumentException if the field is not a collection
      */
-    public static Class getElementType(Class c, String fieldName) {
+    public static Class<? extends FastPathObject> getElementType(Class<?> c, String fieldName) {
         FieldInfo info = getFieldInfo(c, fieldName);
         if (info != null) {
             try {
@@ -308,6 +308,8 @@ public class TypeUtil
                 IllegalArgumentException e2 = new IllegalArgumentException("Field "
                         + DynamicUtil.getFriendlyName(c) + "." + fieldName
                         + " is not a collection");
+                e2.initCause(e);
+                throw e2;
             }
         }
         return null;
@@ -320,7 +322,7 @@ public class TypeUtil
      * @param c the Class
      * @return a Map from field name to FieldInfo object
      */
-    public static Map<String, FieldInfo> getFieldInfos(Class c) {
+    public static Map<String, FieldInfo> getFieldInfos(Class<?> c) {
         Map<String, FieldInfo> infos = null;
         synchronized (classToFieldnameToFieldInfo) {
             infos = classToFieldnameToFieldInfo.get(c);
@@ -329,7 +331,8 @@ public class TypeUtil
                 infos = new TreeMap<String, FieldInfo>();
 
                 Map<String, Method> methods = new HashMap<String, Method>();
-                Method methodArray[] = c.getMethods();
+                Method[] methodArray = c.getMethods();
+
                 for (int i = 0; i < methodArray.length; i++) {
                     String methodName = methodArray[i].getName();
                     methods.put(methodName, methodArray[i]);
@@ -351,13 +354,14 @@ public class TypeUtil
                             fieldName = StringUtil.reverseCapitalisation(fieldName).intern();
 
                             // cglib Factory interface has getCallBack() and getCallBacks() methods
-                            if (!getter.getName().equals("getClass")
-                                && !getter.getName().startsWith("getCallback")
-                                && !getter.getName().equals("getoBJECT")
-                                && !getter.getName().equals("getFieldValue")
-                                && !getter.getName().equals("getFieldProxy")
-                                && !getter.getName().equals("getFieldType")
-                                && !getter.getName().equals("getElementType")) {
+                            if ((!"getClass".equals(getter.getName()))
+                                    && (!"getCallback".equals(getter.getName()))
+                                    && (!"getCallbacks".equals(getter.getName()))
+                                    && (!"getoBJECT".equals(getter.getName()))
+                                    && (!"getFieldValue".equals(getter.getName()))
+                                    && (!"getFieldProxy".equals(getter.getName()))
+                                    && (!"getFieldType".equals(getter.getName()))
+                                    && (!"getElementType".equals(getter.getName()))) {
                                 FieldInfo info = new FieldInfo(fieldName, getter, setter,
                                         proxySetter, proxyGetter, adder);
                                 infos.put(fieldName, info);
@@ -379,7 +383,7 @@ public class TypeUtil
      * @param fieldname the fieldname
      * @return a FieldInfo object, or null if the fieldname is not found
      */
-    public static FieldInfo getFieldInfo(Class c, String fieldname) {
+    public static FieldInfo getFieldInfo(Class<?> c, String fieldname) {
         return getFieldInfos(c).get(fieldname);
     }
 
@@ -390,22 +394,23 @@ public class TypeUtil
      * @return an array of the getter methods
      * @throws IntrospectionException if an error occurs
      */
-    public static Method[] getGetters(Class c) throws IntrospectionException {
+    public static Method[] getGetters(Class<?> c) throws IntrospectionException {
         PropertyDescriptor[] pd = Introspector.getBeanInfo(c).getPropertyDescriptors();
         Collection<Method> getters = new HashSet<Method>();
         for (int i = 0; i < pd.length; i++) {
             Method getter = pd[i].getReadMethod();
-            if ((!getter.getName().equals("getClass"))
-                    && (!getter.getName().equals("getoBJECT"))
-                    && (!getter.getName().equals("getCallback"))
-                    && (!getter.getName().equals("getFieldValue"))
-                    && (!getter.getName().equals("getFieldProxy"))
-                    && (!getter.getName().equals("getFieldType"))
-                    && (!getter.getName().equals("getElementType"))) {
+            if ((!"getClass".equals(getter.getName()))
+                    && (!"getoBJECT".equals(getter.getName()))
+                    && (!"getCallback".equals(getter.getName()))
+                    && (!"getCallbacks".equals(getter.getName()))
+                    && (!"getFieldValue".equals(getter.getName()))
+                    && (!"getFieldProxy".equals(getter.getName()))
+                    && (!"getFieldType".equals(getter.getName()))
+                    && (!"getElementType".equals(getter.getName()))) {
                 getters.add(getter);
             }
         }
-        return (Method[]) getters.toArray(new Method[] {});
+        return getters.toArray(new Method[] {});
     }
 
     /**
@@ -415,18 +420,17 @@ public class TypeUtil
      * @return a set of objects
      * @throws Exception if a problem occurred during flattening
      */
-    public static List flatten(Object obj) throws Exception {
-        Collection c;
-        if (obj instanceof Collection) {
-            c = (Collection) obj;
+    public static List<Object> flatten(Object obj) throws Exception {
+        Collection<?> c;
+        if (obj instanceof Collection<?>) {
+            c = (Collection<?>) obj;
         } else {
             c = Arrays.asList(new Object[] {obj});
         }
         try {
-            List toStore = new ArrayList();
-            Iterator i = c.iterator();
-            while (i.hasNext()) {
-                flatten(i.next(), toStore);
+            List<Object> toStore = new ArrayList<Object>();
+            for (Object i : c) {
+                flatten(i, toStore);
             }
             return toStore;
         } catch (Exception e) {
@@ -434,7 +438,7 @@ public class TypeUtil
         }
     }
 
-    private static void flatten(Object o, Collection c) throws Exception {
+    private static void flatten(Object o, Collection<Object> c) throws Exception {
         if (o == null || c.contains(o)) {
             return;
         }
@@ -442,11 +446,10 @@ public class TypeUtil
         Method[] getters = TypeUtil.getGetters(o.getClass());
         for (int i = 0; i < getters.length; i++) {
             Method getter = getters[i];
-            Class returnType = getter.getReturnType();
+            Class<?> returnType = getter.getReturnType();
             if (Collection.class.isAssignableFrom(returnType)) {
-                Iterator iter = ((Collection) getter.invoke(o, new Object[] {})).iterator();
-                while (iter.hasNext()) {
-                    flatten(iter.next(), c);
+                for (Object obj : (Collection<?>) getter.invoke(o, new Object[] {})) {
+                    flatten(obj, c);
                 }
             } else if (!returnType.isPrimitive() && !returnType.getName().startsWith("java")) {
                 flatten(getter.invoke(o, new Object[] {}), c);
@@ -460,7 +463,7 @@ public class TypeUtil
      * @param type a classname
      * @return the corresponding Class
      */
-    public static Class instantiate(String type) {
+    public static Class<?> instantiate(String type) {
         if (type.equals(Integer.TYPE.toString())) {
             return Integer.class;
         }
@@ -485,7 +488,7 @@ public class TypeUtil
         if (type.equals(Character.TYPE.toString())) {
             return Character.class;
         }
-        Class cls = null;
+        Class<?> cls = null;
         try {
             cls = Class.forName(type);
         } catch (Exception e) {
@@ -511,31 +514,31 @@ public class TypeUtil
      * @param value the value to convert
      * @return the corresponding Class
      */
-    public static Object stringToObject(Class clazz, String value) {
+    public static Object stringToObject(Class<?> clazz, String value) {
         if (clazz.equals(Integer.class) || clazz.equals(Integer.TYPE)) {
-            return Integer.valueOf(value);
+            return Integer.valueOf(value.replace(",", ""));
         }
         if (clazz.equals(Boolean.class) || clazz.equals(Boolean.TYPE)) {
-            if (value.equals("NULL")) {
+            if ("NULL".equals(value)) {
                 return "NULL";
             } else {
                 return Boolean.valueOf(value);
             }
         }
         if (clazz.equals(Double.class) || clazz.equals(Double.TYPE)) {
-            return Double.valueOf(value);
+            return Double.valueOf(value.replace(",", ""));
         }
         if (clazz.equals(Float.class) || clazz.equals(Float.TYPE)) {
-            return Float.valueOf(value);
+            return Float.valueOf(value.replace(",", ""));
         }
         if (clazz.equals(Long.class)  || clazz.equals(Long.TYPE)) {
-            return Long.valueOf(value);
+            return Long.valueOf(value.replace(",", ""));
         }
         if (clazz.equals(Short.class) || clazz.equals(Short.TYPE)) {
-            return Short.valueOf(value);
+            return Short.valueOf(value.replace(",", ""));
         }
         if (clazz.equals(Byte.class) || clazz.equals(Byte.TYPE)) {
-            return Byte.valueOf(value);
+            return Byte.valueOf(value.replace(",", ""));
         }
         if (clazz.equals(Character.class) || clazz.equals(Character.TYPE)) {
             return new Character(value.charAt(0));
@@ -557,7 +560,7 @@ public class TypeUtil
             }
         }
         if (clazz.equals(BigDecimal.class)) {
-            return new BigDecimal(value);
+            return new BigDecimal(value.replace(",", ""));
         }
         if (clazz.equals(String.class)) {
             return value;
@@ -568,6 +571,16 @@ public class TypeUtil
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
+        }
+        if (clazz.equals(ClobAccess.class)) {
+        //    String[] parts = value.split(",");
+        //    if (parts.length == 1) {
+        //        return new ClobAccess(os, new Clob(Integer.parseInt(parts[0])));
+        //    } else {
+        //        return new ClobAccess(os, new Clob(Integer.parseInt(parts[0])))
+        //            .subSequence(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+        //    }
+            throw new IllegalStateException("Cannot convert - we need an ObjectStore");
         }
         return value;
     }
@@ -581,6 +594,8 @@ public class TypeUtil
     public static String objectToString(Object value) {
         if (value instanceof Date) {
             return "" + ((Date) value).getTime();
+        } else if (value instanceof ClobAccess) {
+            return ((ClobAccess) value).getDbDescription();
         } else {
             return value.toString();
         }
@@ -622,9 +637,9 @@ public class TypeUtil
      */
     public static boolean isInstanceOf(InterMineObject object, String className)
         throws ClassNotFoundException {
-        Set<Class> classes = DynamicUtil.decomposeClass(object.getClass());
-        for (Class objectClass: classes) {
-            Class testClass = Class.forName(className);
+        Set<Class<?>> classes = DynamicUtil.decomposeClass(object.getClass());
+        Class<?> testClass = Class.forName(className);
+        for (Class<?> objectClass: classes) {
             if (testClass.isAssignableFrom(objectClass)) {
                 return true;
             }
@@ -727,7 +742,7 @@ public class TypeUtil
          *
          * @return a Class object
          */
-        public Class getType() {
+        public Class<?> getType() {
             return getter.getReturnType();
         }
 
@@ -736,8 +751,10 @@ public class TypeUtil
          *
          * @return a Class
          */
-        public Class getElementType() {
-            return adder.getParameterTypes()[0];
+        public Class<? extends FastPathObject> getElementType() {
+            @SuppressWarnings("unchecked") Class<? extends FastPathObject> retval =
+                (Class) adder.getParameterTypes()[0];
+            return retval;
         }
     }
 
@@ -748,7 +765,7 @@ public class TypeUtil
      * @return the relevant Class
      */
     public static Class<?> getClass(String className) {
-        Class cls = instantiate(className);
+        Class<?> cls = instantiate(className);
         if (cls == null) {
             if ("Date".equals(className)) {
                 cls = Date.class;
@@ -775,7 +792,7 @@ public class TypeUtil
      * @return the relevant Class
      * @throws ClassNotFoundException if the class name is not in the model
      */
-    public static Class getClass(String className, Model model)
+    public static Class<?> getClass(String className, Model model)
         throws ClassNotFoundException {
         if ("InterMineObject".equals(className)) {
             className = "org.intermine.model.InterMineObject";

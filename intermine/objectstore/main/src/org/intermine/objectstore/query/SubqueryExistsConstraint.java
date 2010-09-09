@@ -61,6 +61,7 @@ public class SubqueryExistsConstraint extends Constraint
      * @param obj the object to compare with
      * @return true if objects are equal
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof SubqueryConstraint) {
             SubqueryConstraint sc = (SubqueryConstraint) obj;
@@ -75,6 +76,7 @@ public class SubqueryExistsConstraint extends Constraint
      *
      * @return the hashCode
      */
+    @Override
     public int hashCode() {
         return subquery.hashCode()
             + 3 * op.hashCode();
@@ -82,6 +84,6 @@ public class SubqueryExistsConstraint extends Constraint
 
     //-------------------------------------------------------------------------
 
-    protected static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.EXISTS,
-        ConstraintOp.DOES_NOT_EXIST});
+    protected static final List<ConstraintOp> VALID_OPS = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.EXISTS, ConstraintOp.DOES_NOT_EXIST});
 }

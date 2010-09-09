@@ -226,6 +226,7 @@ public class StringUtilTest extends TestCase
         assertEquals("test", StringUtil.trimSlashes("/test/"));
         assertEquals("test", StringUtil.trimSlashes("/test"));
         assertEquals("test", StringUtil.trimSlashes("test"));
+        assertEquals("test", StringUtil.trimSlashes("//test//"));
         assertEquals("", StringUtil.trimSlashes(""));
         assertNull(StringUtil.trimSlashes(null));
     }

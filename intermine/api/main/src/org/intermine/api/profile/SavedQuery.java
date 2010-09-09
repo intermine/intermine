@@ -74,7 +74,7 @@ public class SavedQuery
         SavedQuery sq = (SavedQuery) obj;
         return (sq.name.equals(name)
                 && sq.dateCreated.equals(dateCreated)
-                && sq.query.equals(query));
+                && sq.query.toString().equals(query.toString()));
     }
 
     /**
@@ -82,7 +82,7 @@ public class SavedQuery
      * {@inheritDoc}
      */
     public int hashCode() {
-        return (name.hashCode() + 3 * dateCreated.hashCode() + 5 * query.hashCode());
+        return (name.hashCode() + 3 * dateCreated.hashCode() + 5 * query.toString().hashCode());
     }
 
 

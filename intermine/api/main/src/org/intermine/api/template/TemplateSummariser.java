@@ -31,7 +31,8 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 
 /**
  * This class manages summaries of possible values for editable constraints for template queries.
@@ -43,8 +44,8 @@ public class TemplateSummariser
     private static final Logger LOG = Logger.getLogger(TemplateSummariser.class);
     protected ObjectStore os;
     protected ObjectStoreWriter osw;
-    protected Map<TemplateQuery, HashMap<String, List>> possibleValues
-        = new IdentityHashMap<TemplateQuery, HashMap<String, List>>();
+    protected Map<TemplateQuery, HashMap<String, List<Object>>> possibleValues
+        = new IdentityHashMap<TemplateQuery, HashMap<String, List<Object>>>();
 
     /**
      * Construct a TemplateSummariser.
@@ -64,26 +65,32 @@ public class TemplateSummariser
      * @throws ObjectStoreException if something goes wrong
      */
     public void summarise(TemplateQuery templateQuery) throws ObjectStoreException {
-        HashMap<String, List> templatePossibleValues = possibleValues.get(templateQuery);
+        HashMap<String, List<Object>> templatePossibleValues = possibleValues.get(templateQuery);
         if (templatePossibleValues == null) {
-            templatePossibleValues = new HashMap<String, List>();
+            templatePossibleValues = new HashMap<String, List<Object>>();
             possibleValues.put(templateQuery, templatePossibleValues);
         }
-        for (PathNode node : templateQuery.getEditableNodes()) {
+        for (String node : templateQuery.getEditablePaths()) {
+            Path path;
+            try {
+                path = templateQuery.makePath(node);
+            } catch (PathException e) {
+                throw new ObjectStoreException(e);
+            }
             Query q = TemplatePrecomputeHelper.getPrecomputeQuery(templateQuery, null, node);
             LOG.info("Summarising template " + templateQuery.getName() + " by running query: " + q);
-            List<ResultsRow> results = os.execute(q, 0, 20, true, false,
+            List<ResultsRow<Object>> results = os.execute(q, 0, 20, true, false,
                     ObjectStore.SEQUENCE_IGNORE);
             if (results.size() < 20) {
-                if (node.isAttribute() || results.isEmpty()) {
-                    List values = new ArrayList();
-                    for (ResultsRow row : results) {
+                if (path.endIsAttribute() || results.isEmpty()) {
+                    List<Object> values = new ArrayList<Object>();
+                    for (ResultsRow<Object> row : results) {
                         values.add(row.get(0));
                     }
-                    templatePossibleValues.put(node.getPathString(), values);
+                    templatePossibleValues.put(node, values);
                 } else {
-                    LOG.warn("Editable node " + node.getPathString() + " in template "
-                            + templateQuery.getName() + " cannot be summarised as it is a LOOKUP "
+                    LOG.warn("Editable node " + node + " in template " + templateQuery.getName()
+                            + " cannot be summarised as it is a LOOKUP "
                             + "constraint, although it has only " + results.size()
                             + " possible values. Consider changing the node that the constraint is "
                             + "attached to");
@@ -150,10 +157,10 @@ public class TemplateSummariser
      * @param node the editable node
      * @return a List of possible values
      */
-    public List getPossibleValues(TemplateQuery templateQuery, PathNode node) {
-        Map<String, List> templatePossibleValues = getPossibleValues(templateQuery);
+    public List<Object> getPossibleValues(TemplateQuery templateQuery, String node) {
+        Map<String, List<Object>> templatePossibleValues = getPossibleValues(templateQuery);
         if (templatePossibleValues != null) {
-            return templatePossibleValues.get(node.getPathString());
+            return templatePossibleValues.get(node);
         }
         return null;
     }
@@ -164,16 +171,16 @@ public class TemplateSummariser
      * @param templateQuery a TemplateQuery
      * @return a Map from String path to List
      */
-    public Map<String, List> getPossibleValues(TemplateQuery templateQuery) {
-        HashMap<String, List> templatePossibleValues = possibleValues.get(templateQuery);
+    public Map<String, List<Object>> getPossibleValues(TemplateQuery templateQuery) {
+        HashMap<String, List<Object>> templatePossibleValues = possibleValues.get(templateQuery);
         if (templatePossibleValues == null) {
             SavedTemplateQuery template = templateQuery.getSavedTemplateQuery();
             if (template != null) {
                 try {
-                    Iterator summaryIter = template.getSummaries().iterator();
+                    Iterator<TemplateSummary> summaryIter = template.getSummaries().iterator();
                     if (summaryIter.hasNext()) {
-                        TemplateSummary summary = (TemplateSummary) summaryIter.next();
-                        templatePossibleValues = (HashMap<String, List>) Base64
+                        TemplateSummary summary = summaryIter.next();
+                        templatePossibleValues = (HashMap<String, List<Object>>) Base64
                             .decodeToObject(summary.getSummary());
                     }
                 } catch (Exception err) {

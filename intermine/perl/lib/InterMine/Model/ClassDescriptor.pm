@@ -9,7 +9,7 @@ InterMine::Model::ClassDescriptor - represents a class in an InterMine model
  use InterMine::Model::ClassDescriptor;
 
  ...
- my $cd = 
+ my $cd =
    new InterMine::Model::ClassDescriptor(model => $model,
                                          name => "Gene", extends => ["BioEntity"]);
 
@@ -54,249 +54,202 @@ under the same terms as Perl itself.
 
 =cut
 
-use strict;
-use Carp qw/confess/;
+use Moose;
+with 'InterMine::Roles::CommonAttributes' => {
+    -excludes => [qw/description/],
+};
+
+use InterMine::TypeLibrary qw(
+    FieldList FieldHash ClassDescriptorList
+);
+use MooseX::Types::Moose qw(ArrayRef Str);
 
 =head2 new
 
  Usage   : my $cd = new InterMine::Model::ClassDescriptor(model => $model,
-                             name => "Gene", extends => ["BioEntity"]);
+                             name => "Gene", parents => ["BioEntity"]);
 
  Function: create a new ClassDescriptor object
- Args    : model - the InterMine::Model that this class is a part of
-           name - the class name
-           extends - a list of the classes and interfaces that this classes
+ Args    : model   - the InterMine::Model that this class is a part of
+           name    - the class name
+           parents - a list of the classes and interfaces that this classes
                      extends
 
 =cut
-sub new
-{
-  my $class = shift;
-  my %opts = @_;
-  my $self = {%opts};
-  $self->{fields} = [];
-  $self->{field_hash} = {};
 
-  $self->{extends} = $opts{extends};
+has '+name' => (required => 1);
 
-  if (!exists $opts{name}) {
-    confess "no name given to class constructor\n";
-  }
-  if (!exists $opts{model}) {
-    confess "no model given to class constructor\n";
-  }
+has own_fields => (
+    traits => ['Array'],
+    is	    => 'ro',
+    isa	    => FieldList,
+    default => sub { [] },
+    handles => {
+	add_own_field  => 'push',
+	get_own_fields => 'elements',
+    },
+);
+has fieldhash => (
+    traits  => [qw/Hash/],
+    is	    => 'ro',
+    isa	    => FieldHash,
+    default => sub { {} },
+    handles => {
+	set_field	  => 'set',
+	get_field_by_name => 'get',
+	fields		  => 'values',
+	valid_field       => 'defined',
+    },
+);
 
-  $self->{attributes}  = [];
-  $self->{fields}      = [];
-  $self->{references}  = [];
-  $self->{collections} = [];
-  $self->{own_fields}  = [];
+has parents => (
+    is	       => 'ro',
+    isa	       => ArrayRef[Str],
+    auto_deref => 1,
+);
 
-  bless $self, $class;
-  return $self;
-}
 
 =head2 add_field
- 
- Usage   : $cd->add_field($field); 
+
+ Usage   : $cd->add_field($field);
  Function: add a Field to this class
  Args    : $field - a sub class of InterMine::Model::Field
 
 =cut
-sub add_field
-{
-  # see also: Model->_fix_class_descriptors()
 
-  my $self  = shift;
-  my $field = shift;
-  my $own   = shift;
+# see also: Model->_fix_class_descriptors()
+sub add_field {
+  my ($self, $field, $own)  = @_;
 
-  return if defined $self->get_field_by_name($field->field_name());
-  
-  push @{$self->{fields}},     $field;
-  push @{$self->{own_fields}}, $field if $own;
+  return if defined $self->get_field_by_name($field->name);
 
-  if (!exists $self->{field_hash}{$field->field_name}) {
-    $self->{field_hash}{$field->field_name()} = $field;
-  }
-
-  if ($field->isa('InterMine::Model::Attribute')) {
-    push @{$self->{attributes}}, $field;
-  } 
-  elsif ($field->isa('InterMine::Model::Collection')) {
-      push @{$self->{collections}}, $field;
-  } 
-  elsif ($field->isa('InterMine::Model::Reference')) {
-      push @{$self->{references}}, $field;
-  } 
-  else {
-      confess "unknown reference: ", $field, "\n";
-  }
+  $self->set_field($field->name, $field);
+  $self->add_own_field($field) if $own;
 }
 
-sub get_own_fields {
-    my $self = shift;
-    return @{$self->{own_fields}};
-}
-
-sub get_parents {
-    my $self = shift;
-    my @inheritance_path = ($self,);
-    my @classes = $self->extends_class_descriptors();
-    for my $class (@classes) {
-	push @inheritance_path, get_parents($class);
-    }
-    return @inheritance_path;
-}
+has ancestors => (
+    reader     => 'get_ancestors',
+    isa	       => ClassDescriptorList,
+    lazy       => 1,
+    auto_deref => 1,
+    default => sub {
+	my $self = shift;
+	my @inheritance_path = ($self,);
+	my @classes = $self->parental_class_descriptors();
+	for my $class (@classes) {
+	    push @inheritance_path, $class->get_ancestors;
+	}
+	return \@inheritance_path;
+    },
+);
 
 
 =head2 name
- 
+
  Usage   : $name = $cd->name();
  Function: Return the name of this class, eg. "Gene"
  Args    : none
 
-=cut
-sub name
-{
-  my $self = shift;
-  return $self->{name};
-}
 
-=head2 extends
- 
- Usage   : @parent_class_names = $cd->extends();
+=head2 parents
+
+ Usage   : @parent_class_names = $cd->parents();
  Function: return a list of the names of the classes/interfaces that this class
            directly extends
  Args    : none
 
-=cut
-sub extends
-{
-  my $self = shift;
-  return @{$self->{extends}};
-}
+=head2 parental_class_descriptors
 
-=head2 extends_class_descriptors
- 
- Usage   : @parent_cds = $cd->extends_class_descriptors();
+ Usage   : @parent_cds = $cd->parental_class_descriptors();
  Function: return a list of the ClassDescriptor objects for the
            classes/interfaces that this class directly extends
  Args    : none
 
 =cut
-sub extends_class_descriptors
-{
-  my $self = shift;
 
-  if (!defined $self->{extends_class_descriptors}) {
-    $self->{extends_class_descriptors} = [];
-    for my $extendee (@{$self->{extends}}) {
-      my $extendee_cd = $self->{model}->get_classdescriptor_by_name($extendee);
+has parental_class_descriptors => (
+    is	       => 'ro',
+    isa	       => ClassDescriptorList,
+    lazy       => 1,
+    auto_deref => 1,
+    default => sub {
+	my $self = shift;
+	return [map {$self->model->get_classdescriptor_by_name($_)}
+		    $self->parents];
+    },
+);
 
-      if (defined $extendee_cd) {
-        push @{$self->{extends_class_descriptors}}, $extendee_cd;
-      } else {
-        confess "can't find $extendee in the model\n"
-      }
-    }
-  }
-  return @{$self->{extends_class_descriptors}};
-}
-
-=head2 get_field_by_name
- 
- Usage   : $field = $cd->get_field_by_name('company');
- Function: Return a Field object describing the given field, not undef if the
-           field isn't a field in this class 
- Args    : $field_name - the name of the field to find
-
-=cut
-sub get_field_by_name
-{
-  # see also: Model->_fix_class_descriptors()
-
-  my $self = shift;
-  my $field_name = shift;
-
-  return $self->{field_hash}{$field_name};
-}
-
-=head2 valid_field
- 
- Usage   : if ($cd->valid_field('company')) { ... }
- Function: Return true if and only if the named field is a field in this class
- Args    : $field_name - the name of the field to find
-
-=cut
-sub valid_field
-{
-  my $self = shift;
-  my $field = shift;
-  return defined $self->get_field_by_name($field);
-}
-
-=head2 attributes
- 
- Usage   : @fields = $cd->attributes();
- Function: Return the Attribute objects for the attributes of this class
- Args    : none
-
-=cut
-sub attributes
-{
-  my $self = shift;
-  return @{$self->{attributes}}
-}
+# see FieldHash above
 
 =head2 fields
- 
+
  Usage   : @fields = $cd->fields();
  Function: Return the Attribute, Reference and Collection objects for all the
            fields of this class
  Args    : none
 
+=head2 get_field_by_name
+
+ Usage   : $field = $cd->get_field_by_name('company');
+ Function: Return a Field object describing the given field, not undef if the
+           field isn't a field in this class
+ Args    : $field_name - the name of the field to find
+
+=head2 valid_field
+
+ Usage   : if ($cd->valid_field('company')) { ... }
+ Function: Return true if and only if the named field is a field in this class
+ Args    : $field_name - the name of the field to find
+
+
+=head2 attributes
+
+ Usage   : @fields = $cd->attributes();
+ Function: Return the Attribute objects for the attributes of this class
+ Args    : none
+
 =cut
-sub fields
-{
-  my $self = shift;
-  return @{$self->{fields}}
+
+sub attributes {
+    my $self = shift;
+    return grep {$_->isa('InterMine::Model::Attribute')} $self->fields;
 }
 
 =head2 references
- 
+
  Usage   : @fields = $cd->references();
  Function: Return the Reference objects for the references of this class
  Args    : none
 
 =cut
-sub references
-{
-  my $self = shift;
-  return @{$self->{references}}
+
+sub references {
+    my $self = shift;
+    return grep {$_->isa('InterMine::Model::Reference')} $self->fields;
 }
 
 =head2 collections
- 
+
  Usage   : @fields = $cd->collections();
  Function: Return the Collection objects for the collections of this class
  Args    : none
 
 =cut
-sub collections
-{
-  my $self = shift;
-  return @{$self->{collections}}
+
+sub collections {
+    my $self = shift;
+    return grep {$_->isa('InterMine::Model::Collection')} $self->fields;
 }
 
 =head2 sub_class_of
- 
+
  Usage   : if ($class_desc->sub_class_of($other_class_desc)) { ... }
  Function: Returns true if and only if this class is a sub-class of the given
            class or is the same class
  Args    : $other_class_desc - a ClassDescriptor
 
 =cut
+
 sub sub_class_of
 {
   my $self = shift;
@@ -305,13 +258,12 @@ sub sub_class_of
   if ($self == $other_class_desc) {
     return 1;
   } else {
-    for my $extendee_class_desc ($self->extends_class_descriptors()) {
-      if ($extendee_class_desc->sub_class_of($other_class_desc)) {
+    for my $parent ($self->parental_class_descriptors()) {
+      if ($parent->sub_class_of($other_class_desc)) {
         return 1;
       }
     }
   }
-
   return 0;
 }
 

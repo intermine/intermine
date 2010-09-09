@@ -108,7 +108,7 @@ public class TSVFileReaderTaskTest extends TestCase
         Results r = os.execute(q);
 
         if (r.size() != 3) {
-            for (List<Object> rr: (List<List<Object>>) r) {
+            for (List<Object> rr: (List<List<Object>>) ((List) r)) {
                 System.err.print("row: ");
                 for (Object obj: rr) {
                     System.err.print("{" + obj + "} ");
@@ -140,7 +140,7 @@ public class TSVFileReaderTaskTest extends TestCase
 
         SingletonResults r = osw.getObjectStore().executeSingleton(q);
 
-        for (InterMineObject o: (Collection<InterMineObject>) r) {
+        for (InterMineObject o: (List<InterMineObject>) ((List) r)) {
             osw.delete(o);
         }
     }

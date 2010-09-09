@@ -16,10 +16,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.biojava.bio.seq.DNATools;
 import org.biojava.bio.symbol.IllegalAlphabetException;
 import org.biojava.bio.symbol.IllegalSymbolException;
-import org.biojava.bio.symbol.SymbolList;
+import org.intermine.bio.util.ClobAccessReverseComplement;
 import org.intermine.bio.util.Constants;
 import org.intermine.model.bio.CDS;
 import org.intermine.model.bio.Chromosome;
@@ -35,9 +34,11 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.PendingClob;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
@@ -72,7 +73,8 @@ public class TransferSequences
     }
 
 
-    private void storeNewSequence(SequenceFeature feature, String sequenceString)
+
+    private void storeNewSequence(SequenceFeature feature, ClobAccess sequenceString)
         throws ObjectStoreException {
         Sequence sequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
@@ -89,7 +91,8 @@ public class TransferSequences
      * Use the Location relations to copy the sequence from the Chromosomes to every
      * SequenceFeature that is located on a Chromosome and which doesn't already have a
      * sequence (ie. don't copy to Assembly).  Uses the ObjectStoreWriter that was passed to the
-     * constructor
+     * constructor.
+     *
      * @throws Exception if there are problems with the transfer
      */
     public void transferToLocatedSequenceFeatures()
@@ -177,7 +180,7 @@ public class TransferSequences
             Constants.PRECOMPUTE_CATEGORY);
         Results results = os.execute(q, 1000, true, true, true);
 
-        Iterator<ResultsRow<?>> resIter = results.iterator();
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> resIter = (Iterator) results.iterator();
 
         long start = System.currentTimeMillis();
         int i = 0;
@@ -210,7 +213,7 @@ public class TransferSequences
                     }
                 }
 
-                String featureSeq = getSubSequence(chr.getSequence(), locationOnChr);
+                ClobAccess featureSeq = getSubSequence(chr.getSequence(), locationOnChr);
 
                 if (featureSeq == null) {
                     // probably the locationOnChr is out of range
@@ -252,11 +255,11 @@ public class TransferSequences
                 + (System.currentTimeMillis() - startTime) + " ms.");
     }
 
-    private String getSubSequence(Sequence chromosomeSequence, Location locationOnChr)
+    private ClobAccess getSubSequence(Sequence chromosomeSequence, Location locationOnChr)
         throws IllegalSymbolException, IllegalAlphabetException {
         int charsToCopy =
             locationOnChr.getEnd().intValue() - locationOnChr.getStart().intValue() + 1;
-        String chromosomeSequenceString = chromosomeSequence.getResidues();
+        ClobAccess chromosomeSequenceString = chromosomeSequence.getResidues();
 
         if (charsToCopy > chromosomeSequenceString.length()) {
             LOG.warn("SequenceFeature too long, ignoring - Location: "
@@ -295,20 +298,16 @@ public class TransferSequences
             return null;
         }
 
-        String subSeqString;
+        ClobAccess subSeqString;
 
         if (startPos < endPos) {
-            subSeqString = new String(chromosomeSequenceString.substring(startPos, endPos));
+            subSeqString = chromosomeSequenceString.subSequence(startPos, endPos);
         } else {
-            subSeqString = new String(chromosomeSequenceString.substring(endPos, startPos));
+            subSeqString = chromosomeSequenceString.subSequence(endPos, startPos);
         }
 
-        if (locationOnChr.getStrand().equals("-1")) {
-            SymbolList symbolList = DNATools.createDNA(subSeqString);
-
-            symbolList = DNATools.reverseComplement(symbolList);
-
-            subSeqString = symbolList.seqString();
+        if ("-1".equals(locationOnChr.getStrand())) {
+            subSeqString = new ClobAccessReverseComplement(subSeqString);
         }
 
         return subSeqString;
@@ -398,7 +397,7 @@ public class TransferSequences
             if (currentTranscript == null || !transcript.equals(currentTranscript)) {
                 if (currentTranscript != null) {
                     storeNewSequence(currentTranscript,
-                            currentTranscriptBases.toString());
+                            new PendingClob(currentTranscriptBases.toString()));
                     i++;
                     if (i % 100 == 0) {
                         long now = System.currentTimeMillis();
@@ -413,7 +412,7 @@ public class TransferSequences
             Sequence exonSequence = (Sequence) rr.get(2);
             Location  location = (Location) rr.get(3);
 
-            if (location.getStrand() != null && location.getStrand().equals("-1")) {
+            if (location.getStrand() != null && "-1".equals(location.getStrand())) {
                 currentTranscriptBases.insert(0, exonSequence.getResidues());
             } else {
                 currentTranscriptBases.append(exonSequence.getResidues());
@@ -422,7 +421,7 @@ public class TransferSequences
         if (currentTranscript == null) {
             LOG.error("in transferToTranscripts(): no Transcripts found");
         } else {
-            storeNewSequence(currentTranscript, currentTranscriptBases.toString());
+            storeNewSequence(currentTranscript, new PendingClob(currentTranscriptBases.toString()));
         }
 
         LOG.info("Finished setting " + i + " Trascript sequences - took "

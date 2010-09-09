@@ -70,7 +70,7 @@ public class SaveBagAction extends InterMineAction
     public ActionForward saveBag(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response) {
+                                 @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         Profile profile = SessionMethods.getProfile(session);
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
@@ -81,7 +81,7 @@ public class SaveBagAction extends InterMineAction
 
         if (request.getParameter("saveNewBag") != null
                         || (sbf.getOperationButton() != null
-                        && sbf.getOperationButton().equals("saveNewBag"))) {
+                        && "saveNewBag".equals(sbf.getOperationButton()))) {
             bagName = sbf.getNewBagName();
             operation = "saveNewBag";
         } else {
@@ -121,7 +121,7 @@ public class SaveBagAction extends InterMineAction
             return mapping.findForward("results");
         }
 
-        if (operation.equals("saveNewBag")) {
+        if ("saveNewBag".equals(operation)) {
             return new ForwardParameters(mapping.findForward("bag")).addParameter("bagName",
                 bag.getName()).forward();
         }

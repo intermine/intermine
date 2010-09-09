@@ -10,28 +10,29 @@ package org.intermine.objectstore.intermine;
  *
  */
 
+import static org.intermine.objectstore.intermine.NotXmlParser.DELIM;
+import static org.intermine.objectstore.intermine.NotXmlParser.ENCODED_DELIM;
+
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.intermine.model.InterMineObject;
-import static org.intermine.objectstore.intermine.NotXmlParser.DELIM;
-import static org.intermine.objectstore.intermine.NotXmlParser.ENCODED_DELIM;
+import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringConstructor;
 import org.intermine.util.TypeUtil;
-
-import org.apache.log4j.Logger;
+import org.intermine.util.TypeUtil.FieldInfo;
 
 /**
  * Render on object into a String suitable for storing in the OBJECT field of database tables.
  *
  * @author Matthew Wakeling
  */
-public class NotXmlRenderer
+public final class NotXmlRenderer
 {
-    private static final Logger LOG = Logger.getLogger(NotXmlRenderer.class);
+    private NotXmlRenderer() {
+    }
 
     /**
      * Render the given object as NotXml.
@@ -44,24 +45,20 @@ public class NotXmlRenderer
             StringConstructor sb = new StringConstructor();
             sb.append(DELIM);
             boolean needComma = false;
-            Iterator classIter = DynamicUtil.decomposeClass(obj.getClass()).iterator();
-            while (classIter.hasNext()) {
+            for (Class<?> clazz : DynamicUtil.decomposeClass(obj.getClass())) {
                 if (needComma) {
                     sb.append(" ");
                 }
                 needComma = true;
-                Class clazz = (Class) classIter.next();
                 sb.append(clazz.getName());
             }
 
-            Map infos = TypeUtil.getFieldInfos(obj.getClass());
-            Iterator fieldIter = infos.keySet().iterator();
-            while (fieldIter.hasNext()) {
+            Map<String, FieldInfo> infos = TypeUtil.getFieldInfos(obj.getClass());
+            for (String fieldName : infos.keySet()) {
                 // If reference, value is id of referred-to object
                 // If field, value is field value
                 // If collection, no element output
                 // Element is not output if the value is null
-                String fieldName = (String) fieldIter.next();
                 Object value = TypeUtil.getFieldProxy(obj, fieldName);
 
                 if ((value != null) && (!Collection.class.isAssignableFrom(value.getClass()))) {
@@ -97,6 +94,8 @@ public class NotXmlRenderer
                                     string = string.substring(delimPosition + 3);
                                 }
                             }
+                        } else if (value instanceof ClobAccess) {
+                            sb.append(((ClobAccess) value).getDbDescription());
                         } else {
                             sb.append(value.toString());
                         }

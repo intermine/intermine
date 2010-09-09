@@ -112,14 +112,6 @@
             </xsd:annotation>
         </xsd:attribute>
         
-        <xsd:attribute name="extension" type="xsd:string" use="optional" >
-            <xsd:annotation>
-                <xsd:documentation>
-                    The extension to use to filter files against in a chooser
-                </xsd:documentation>
-            </xsd:annotation>
-        </xsd:attribute>
-
         <xsd:attribute name="hidden" type="xsd:boolean" use="optional" default="false">
             <xsd:annotation>
                 <xsd:documentation>

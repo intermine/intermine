@@ -24,26 +24,26 @@ public interface Queryable
      *
      * @param selectable a QuerySelectable
      */
-    public void addToSelect(QuerySelectable selectable);
+    void addToSelect(QuerySelectable selectable);
 
     /**
      * Returns the SELECT list.
      *
      * @return a List
      */
-    public List<QuerySelectable> getSelect();
+    List<QuerySelectable> getSelect();
 
     /**
      * Sets the additional constraint.
      *
      * @param c a Constraint
      */
-    public void setConstraint(Constraint c);
+    void setConstraint(Constraint c);
 
     /**
      * Returns the additional constraint.
      *
      * @return a Constraint
      */
-    public Constraint getConstraint();
+    Constraint getConstraint();
 }

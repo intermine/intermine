@@ -23,8 +23,11 @@ import org.apache.commons.lang.StringUtils;
  * Utility methods for naming queries and lists.
  * @author Julie Sullivan
  */
-public class NameUtil
+public final class NameUtil
 {
+    private NameUtil() {
+    }
+
     private static final String QUERY_NAME_PREFIX = "query_";
     private static final Map<String, String> SPEC_CHAR_TO_TEXT = new HashMap<String, String>();
     // A-Z, a-z, 0-9, underscores and dashes.  And spaces.  And dots.

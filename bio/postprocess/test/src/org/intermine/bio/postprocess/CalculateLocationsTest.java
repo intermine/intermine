@@ -463,7 +463,7 @@ public class CalculateLocationsTest extends TestCase
 
 
     private Location createLocation(BioEntity object, BioEntity subject, String strand,
-                                    int start, int end, Class locationClass) {
+                                    int start, int end, Class<?> locationClass) {
         Location loc = (Location) DynamicUtil.createObject(Collections.singleton(locationClass));
         loc.setLocatedOn(object);
         loc.setFeature(subject);

@@ -54,7 +54,7 @@ public abstract class FileDirectDataLoaderTask extends DirectDataLoaderTask
             StringBuffer sb = new StringBuffer();
             String lookedIn = null;
             for (FileSet fileSet : fileSets) {
-                sb.append(System.getProperty("line.separator") + "\t" 
+                sb.append(System.getProperty("line.separator") + "\t"
                         + fileSet.getDir(getProject()).getAbsolutePath());
             }
             if (sb.length() == 0) {
@@ -62,8 +62,8 @@ public abstract class FileDirectDataLoaderTask extends DirectDataLoaderTask
             } else {
                 lookedIn = sb.toString();
             }
-            
-            throw new RuntimeException("Failed to find any files to process for source: " 
+
+            throw new RuntimeException("Failed to find any files to process for source: "
                     + sourceName + " looked in: " + lookedIn);
         }
     }

@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class FlushJobUpdateStatistics implements FlushJob
 {
-    Map activity;
+    Map<String, Integer> activity;
     BatchWriter batchWriter;
     Connection con;
 
@@ -32,7 +32,8 @@ public class FlushJobUpdateStatistics implements FlushJob
      * @param batchWriter a BatchWriter to use to update the statistics
      * @param con a Connection with which to perform the updates
      */
-    public FlushJobUpdateStatistics(Map activity, BatchWriter batchWriter, Connection con) {
+    public FlushJobUpdateStatistics(Map<String, Integer> activity, BatchWriter batchWriter,
+            Connection con) {
         this.activity = activity;
         this.batchWriter = batchWriter;
         this.con = con;

@@ -90,6 +90,7 @@ public class GraphWidget extends Widget
     /**
      * {@inheritDoc}
      */
+    @Override
     public List getElementInList() {
         return new Vector();
     }
@@ -97,6 +98,7 @@ public class GraphWidget extends Widget
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process() {
 
         String dataSetLoader = config.getDataSetLoader();
@@ -122,7 +124,7 @@ public class GraphWidget extends Widget
         String graphType = ((GraphWidgetConfig) config).getGraphType();
         ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
 
-        if (StringUtils.isNotEmpty(graphType) && graphType.equals("XYLineChart")) {
+        if (StringUtils.isNotEmpty(graphType) && "XYLineChart".equals(graphType)) {
 
             chart = ChartFactory.createXYLineChart(config.getTitle(),
                     ((GraphWidgetConfig) config).getDomainLabel(),
@@ -147,7 +149,7 @@ public class GraphWidget extends Widget
             NumberAxis axis = (NumberAxis) plot.getRangeAxis();
             axis.setNumberFormatOverride(formatter);
 
-        } else if (StringUtils.isNotEmpty(graphType) && graphType.equals("StackedBarChart")) {
+        } else if (StringUtils.isNotEmpty(graphType) && "StackedBarChart".equals(graphType)) {
             chart = ChartFactory.createStackedBarChart(config.getTitle(), // chart title
                     ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
                     ((GraphWidgetConfig) config).getRangeLabel(), // range axis label
@@ -290,6 +292,7 @@ public class GraphWidget extends Widget
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<List<String>> getExportResults(@SuppressWarnings("unused") String[] selected)
         throws Exception {
         // TODO Auto-generated method stub
@@ -299,6 +302,7 @@ public class GraphWidget extends Widget
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<List<String[]>> getFlattenedResults() {
         // TODO Auto-generated method stub
         return null;
@@ -307,6 +311,7 @@ public class GraphWidget extends Widget
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean getHasResults() {
         return (dataSetLdr != null
                 && dataSetLdr.getResults() != null
@@ -316,6 +321,7 @@ public class GraphWidget extends Widget
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setNotAnalysed(int notAnalysed) {
         this.notAnalysed = notAnalysed;
     }
@@ -323,6 +329,7 @@ public class GraphWidget extends Widget
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getNotAnalysed() {
         return notAnalysed;
     }
@@ -364,6 +371,7 @@ public class GraphWidget extends Widget
          * @param fieldPosition the field position
          * @return the format
          */
+        @Override
         public StringBuffer format(double number, StringBuffer result, FieldPosition fieldPosition)
         {
             return super.format(number * magnitude, result, fieldPosition);
@@ -375,6 +383,7 @@ public class GraphWidget extends Widget
          * @param fieldPosition the field position
          * @return the format
          */
+        @Override
         public StringBuffer format(long number, StringBuffer result, FieldPosition fieldPosition) {
             return super.format(number * magnitude, result, fieldPosition);
         }

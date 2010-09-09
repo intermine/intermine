@@ -14,10 +14,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.api.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintAttribute;
+import org.intermine.pathquery.PathConstraintBag;
+import org.intermine.pathquery.PathConstraintLookup;
+import org.intermine.pathquery.PathConstraintMultiValue;
+import org.intermine.util.StringUtil;
 import org.intermine.webservice.server.CodeTranslator;
 import org.intermine.webservice.server.LinkGeneratorBase;
 import org.intermine.webservice.server.WebServiceConstants;
@@ -99,11 +104,15 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
         if (highlighted) {
             ret += "<br />";
         }
-        Map<String, List<Constraint>> consMap = getConstraints(template);
+        Map<String, List<PathConstraint>> consMap = getConstraints(template);
         int i = 0;
         for (String path : consMap.keySet()) {
-            List<Constraint> constraints = consMap.get(path);
-            for (Constraint cons : constraints) {
+            List<PathConstraint> constraints = consMap.get(path);
+            for (PathConstraint con : constraints) {
+                // We don't want to include optional constraints that are switched off
+                if (SwitchOffAbility.OFF.equals(template.getSwitchOffAbility(con))) {
+                    continue;
+                }
                 if (i != 0) {
                     ret += "&";
                 }
@@ -111,12 +120,14 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
                 ret += pathToString(path, index);
                 // if there are more constraints with the some path, codes must be added
                 if (constraints.size() > 1) {
-                    ret += "&" + codeToString(cons.getCode(), index);
+                    String code = template.getConstraints().get(con);
+                    ret += "&" + codeToString(code, index);
                 }
-                ret += "&" + operationToString(cons.getOp(), index , highlighted);
-                ret += "&" + valueToString(cons.getValue(), index, highlighted);
-                if (cons.getOp().equals(ConstraintOp.LOOKUP)) {
-                    ret += "&" + extraToString(cons.getExtraValue(), index, highlighted);
+                ret += "&" + operationToString(con.getOp(), index , highlighted);
+                ret += "&" + valueToString(getConstraintValue(con), index, highlighted);
+                if (con instanceof PathConstraintLookup) {
+                    PathConstraintLookup conLookup = (PathConstraintLookup) con;
+                    ret += "&" + extraToString(conLookup.getExtraValue(), index, highlighted);
                 }
                 if (highlighted) {
                     ret += "<br />";
@@ -175,10 +186,10 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
      * @param template
      * @return editable constraints
      */
-    private Map<String, List<Constraint>> getConstraints(TemplateQuery template) {
-        Map<String, List<Constraint>> ret = new HashMap<String, List<Constraint>>();
-        for (PathNode node : template.getEditableNodes()) {
-            ret.put(node.getPathString(), template.getEditableConstraints(node));
+    private Map<String, List<PathConstraint>> getConstraints(TemplateQuery template) {
+        Map<String, List<PathConstraint>> ret = new HashMap<String, List<PathConstraint>>();
+        for (String editablePath : template.getEditablePaths()) {
+            ret.put(editablePath, template.getEditableConstraints(editablePath));
         }
         return ret;
     }
@@ -199,4 +210,20 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
         return error;
     }
 
+    private String getConstraintValue(PathConstraint con) {
+        if (con instanceof PathConstraintAttribute) {
+            return ((PathConstraintAttribute) con).getValue();
+        } else if (con instanceof PathConstraintLookup) {
+            return ((PathConstraintLookup) con).getValue();
+        } else if (con instanceof PathConstraintBag) {
+            return ((PathConstraintBag) con).getBag();
+        } else if (con instanceof PathConstraintMultiValue) {
+            return StringUtil.join(((PathConstraintMultiValue) con).getValues(), ",");
+        } else {
+            throw new IllegalArgumentException("Constraints of type '" + con.getClass()
+                    + "' are not yet supported template queries.");
+
+        }
+
+    }
 }

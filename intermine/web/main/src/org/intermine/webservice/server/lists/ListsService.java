@@ -26,9 +26,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.WebService;
@@ -115,11 +113,9 @@ public class ListsService extends WebService
         }
 
         PathQuery pathQuery = new PathQuery(model);
-        PathNode node = new PathNode(input.getType());
-        Constraint constraint = new Constraint(ConstraintOp.LOOKUP, input.getPublicId());
-        node.getConstraints().add(constraint);
-        pathQuery.getNodes().put(input.getType(), node);
-        pathQuery.setView(getViewAccordingClasskeys(request, input.getType()));
+        pathQuery.addConstraint(Constraints.lookup(input.getType(), input.getPublicId(), null));
+        pathQuery.addViews(getViewAccordingClasskeys(request, input.getType()));
+
         Profile profile = SessionMethods.getProfile(request.getSession());
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
         Iterator<? extends List<ResultElement>> it = executor.execute(pathQuery);
@@ -129,7 +125,7 @@ public class ListsService extends WebService
                 throw new BadRequestException("Multiple objects of type " + input.getType()
                         + " with public id " + input.getPublicId() + " were found.");
             }
-            return ((ResultElement) row.get(0)).getId();
+            return row.get(0).getId();
         } else {
             throw new ResourceNotFoundException("No objects of type " + input.getType()
                     + " with public id " + input.getPublicId() + " were found.");

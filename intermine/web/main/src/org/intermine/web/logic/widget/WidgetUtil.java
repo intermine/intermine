@@ -29,8 +29,11 @@ import org.intermine.web.logic.SortableMap;
  * Helper class for widgets.  It's where the math is done for enrichment widgets
  * @author julie
   */
-public class WidgetUtil
+public final class WidgetUtil
 {
+    private WidgetUtil() {
+    }
+
     private static Map<String, List> statsCalcCache = new HashMap<String, List>();
 
     /**
@@ -134,7 +137,7 @@ public class WidgetUtil
 
             Map<String, BigDecimal> adjustedResultsMap = new HashMap<String, BigDecimal>();
 
-            if (!errorCorrection.equals("None")) {
+            if (!"None".equals(errorCorrection)) {
                 adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
             } else {
                 // TODO move this to the ErrorCorrection class
@@ -180,7 +183,7 @@ public class WidgetUtil
                                                  Double maxValue,
                                                  HashMap<String, BigDecimal> resultsMap) {
         ErrorCorrection e = null;
-        if (errorCorrection != null && errorCorrection.equals("Bonferroni")) {
+        if ("Bonferroni".equals(errorCorrection)) {
             e = new Bonferroni(resultsMap);
         } else {
             e = new BenjaminiHochberg(resultsMap);

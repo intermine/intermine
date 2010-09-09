@@ -18,8 +18,9 @@
 <div class="body modelBrowser">
   <c:forEach var="node" items="${nodes}">
     <div>
-      <c:forEach begin="0" end="${node.indentation}">
-        &nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <c:forEach var="structure" items="${node.structure}">
+        <img src="images/tree_${structure}.png" align="top"/>
       </c:forEach>
       <c:choose>
         <c:when test="${node.leaf}">

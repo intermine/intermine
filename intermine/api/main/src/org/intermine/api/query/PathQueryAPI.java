@@ -37,8 +37,11 @@ import org.intermine.util.PropertiesUtil;
  *
  * @author Matthew Wakeling
  */
-public class PathQueryAPI
+public final class PathQueryAPI
 {
+    private PathQueryAPI() {
+    }
+
     /**
      * Returns a PathQueryExecutor, using properties.
      *

@@ -106,9 +106,8 @@ public class TemplatesImportAction extends InterMineAction
     private TemplateQuery renameTemplate(String newName, TemplateQuery template) {
 
         TemplateQuery newTemplate = new TemplateQuery(newName, template.getTitle(),
-                                                      template.getDescription(),
                                                       template.getComment(),
-                                                      template.getPathQuery());
+                                                      template);
 
         return newTemplate;
     }

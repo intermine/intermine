@@ -70,7 +70,7 @@ public class PostgresDataOutputStream extends DataOutputStream
      */
     protected int writeLargeUTF(Collection<String> strs) throws IOException {
         int utflen = 0;
-        int c, count = 0;
+        int c;
 
         for (String str : strs) {
             int strlen = str.length();

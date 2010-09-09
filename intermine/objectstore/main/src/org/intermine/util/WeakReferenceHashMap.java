@@ -14,8 +14,6 @@ import java.lang.ref.Reference;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 /**
  * This is a Map implementation designed specifically for people intending to create a cache.
  * The keys are held strongly, but the values are held weakly, so the values can be
@@ -31,8 +29,6 @@ import org.apache.log4j.Logger;
  */
 public class WeakReferenceHashMap<K, V> extends WeakReferenceMap<K, V>
 {
-    private static final Logger LOG = Logger.getLogger(WeakReferenceHashMap.class);
-
     /**
      * Constructs a new, empty <tt>WeakReferenceHashMap</tt> with the given initial
      * capacity and the given load factor.
@@ -88,7 +84,7 @@ public class WeakReferenceHashMap<K, V> extends WeakReferenceMap<K, V>
      * @param   t the map whose mappings are to be placed in this map.
      * @throws  NullPointerException if the specified map is null.
      */
-    public WeakReferenceHashMap(Map t) {
+    public WeakReferenceHashMap(Map<K, V> t) {
         subMap = new HashMap<K, Reference<Object>>();
         this.name = "unknown";
         putAll(t);

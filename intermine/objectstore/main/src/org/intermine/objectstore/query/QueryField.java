@@ -30,7 +30,7 @@ public class QueryField implements QueryEvaluable
     private FromElement qc;
     private String fieldName;
     private String secondFieldName;
-    private Class type;
+    private Class<?> type;
 
     /**
      * Constructs a QueryField representing the specified field of a QueryClass
@@ -69,7 +69,7 @@ public class QueryField implements QueryEvaluable
             this.qc = qc;
             this.fieldName = fieldName;
             secondFieldName = null;
-            Class fieldType = field.getReturnType();
+            Class<?> fieldType = field.getReturnType();
             type = fieldType.isPrimitive() ? TypeUtil.instantiate(fieldType.toString()) : fieldType;
         }
     }
@@ -106,7 +106,7 @@ public class QueryField implements QueryEvaluable
         this.qc = q;
         this.fieldName = q.getAliases().get(qc);
         secondFieldName = fieldName;
-        Class fieldType = field.getReturnType();
+        Class<?> fieldType = field.getReturnType();
         type = fieldType.isPrimitive() ? TypeUtil.instantiate(fieldType.toString()) : fieldType;
     }
 
@@ -154,7 +154,7 @@ public class QueryField implements QueryEvaluable
      * @param secondFieldName the second field name
      * @param type the Class of the value
      */
-    protected QueryField(FromElement qc, String fieldName, String secondFieldName, Class type) {
+    protected QueryField(FromElement qc, String fieldName, String secondFieldName, Class<?> type) {
         this.qc = qc;
         this.fieldName = fieldName;
         this.secondFieldName = secondFieldName;
@@ -173,7 +173,7 @@ public class QueryField implements QueryEvaluable
     /**
      * {@inheritDoc}
      */
-    public Class getType() {
+    public Class<?> getType() {
         return type;
     }
 
@@ -200,6 +200,7 @@ public class QueryField implements QueryEvaluable
      *
      * @return a String representation
      */
+    @Override
     public String toString() {
         return "QueryField(" + qc + ", " + fieldName + (secondFieldName == null ? "" : ", "
                     + secondFieldName) + ")";
@@ -208,7 +209,7 @@ public class QueryField implements QueryEvaluable
     /**
      * {@inheritDoc}
      */
-    public void youAreType(@SuppressWarnings("unused") Class cls) {
+    public void youAreType(@SuppressWarnings("unused") Class<?> cls) {
         throw new ClassCastException("youAreType called on a QueryField");
     }
 
@@ -225,6 +226,7 @@ public class QueryField implements QueryEvaluable
      * @param o the object
      * @return a boolean
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof QueryField) {
             QueryField qf = (QueryField) o;
@@ -239,6 +241,7 @@ public class QueryField implements QueryEvaluable
      *
      * @return an int
      */
+    @Override
     public int hashCode() {
         return 3 * qc.hashCode() + 5 * fieldName.hashCode() + (secondFieldName == null ? 0
                 : 7 * secondFieldName.hashCode());

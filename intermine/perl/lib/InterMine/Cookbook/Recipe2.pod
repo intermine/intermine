@@ -1,0 +1,170 @@
+=pod
+
+=head1 NAME
+
+InterMine::Cookbook::Recipe2 - Adding Constraints
+
+=head1 SYNOPSIS
+
+  # Get a list of the drosophilids in the database
+
+  use InterMine ('www.flymine.org');
+
+  my $query = InterMine->new_query;
+
+  # Specifying a name and a description is purely optional
+  $query->name('Tutorial 2 Query');
+  $query->description('A list of all the drosophilids in the database');
+  $query->add_view(qw/Organism.name Organism.taxonId/);
+
+  $query->add_constraint(
+     path  => 'Organism.name',
+     op    => 'CONTAINS',
+     value => 'Drosophila'
+  );
+
+  my $results = $query->results(as => 'string');
+  print $results;
+
+  # Get the authors, titles and PubMed IDs of all publications on drosophilid
+  # genes between 2004 and 2010
+
+  my $query2 = InterMine->new_query;
+
+  $query2->add_view(qw/
+      Gene.publications.firstAuthor
+      Gene.publications.pubMedId
+      Gene.publications.title
+  /);
+
+  $query2->add_constraint(
+      path  => 'Gene.organism.name',
+      op    => 'CONTAINS',
+      value => 'Drosophila',
+  );
+  $query2->add_constraint(
+      path  => 'Gene.publications.year',
+      op    => '>=',
+      value => 2004,
+  );
+  $query2->add_constraint(
+      path  => 'Gene.publications.year',
+      op    => '<=',
+      value => 2010,
+  );
+
+  my $publications_results = $query2->results(as => 'string');
+  print $publications_results;
+
+=head1 DESCRIPTION
+
+Querying is understandably more powerful with constraints on the
+results returned. The mechanism for adding constraints to a query
+is in some ways similar to what we have seen with the C<add_view>
+command - here instead we have C<add_constraint>. Whereas C<add_view> just
+takes a list of paths, C<add_constraint> takes a wider, and more variable,
+list of arguments.
+
+=over
+
+=item
+
+C<path>  - the path representing the attribute to be constrained
+
+=item
+
+C<op>    - the 'operator', which defines how to constrain the path
+
+=item
+
+C<value> - the value to be applied to the operator
+
+=back
+
+In the example above we have three different operators: C<CONTAINS>, C<< >= >>,
+and C<< <= >>, all of which take a value and use it to constrain their path.
+
+For the simpler constraints, it is also possible to add constraints using the
+following pattern:
+
+  $query->add_constraint('Gene.organism.name = "Drosophila Yakuba"');
+
+Note the quoting: the constraint here is a single string, which is parsed for
+the path, operator and value.
+
+In the examples above the constraints are all cumulative, meaning we only get
+results back if an item satisfies I<all> of their requirements. We say that the
+logic for $query2 is "A and B and C". It is possible however to 'or' your constraints
+together as well - see below:
+
+  # Get the authors, titles and PubMed IDs of all publications
+  # since 2004 on genes in D. Yakuba or D. Melanogaster
+
+  my $query3 = InterMine->new_query;
+
+  $query3->add_view(qw/
+      Gene.publications.firstAuthor
+      Gene.publications.pubMedId
+      Gene.publications.title
+  /);
+
+  my $con1 = $query3->add_constraint(
+      path  => 'Gene.organism.name',
+      op    => '=',
+      value => 'Drosophila Yakuba',
+  );
+  my $con2 = $query3->add_constraint(
+      path  => 'Gene.organism.name',
+      op    => '=',
+      value => 'Drosophila Melanogaster',
+  );
+  my $con3 = $query3->add_constraint(
+      path  => 'Gene.publications.year',
+      op    => '>=',
+      value => 2004,
+  );
+
+  $query3->logic(($con1 | $con2) & $con3);
+
+  my $publications_results = $query2->results(as => 'string');
+  print $publications_results;
+
+Note that here we keep the constraint objects returned by C<add_constraint>,
+which we would normally just ignore. Then these are combined to create
+the logic for the query using the C<|> and C<&> operators. You can always
+inspect the logic for a query by calling C<< $query->logic->code >>, which here
+would return "(A or B) and C". It is also possible to use string parsing to
+define the logic:
+
+  $query3->logic('(A or B) and C');
+
+The letters used here are the 'codes' associated with each constraint - to find
+a constraint's code you can always call C<< $con->code >>, and to find out what
+it does you can call C<< $con->to_string >>, which for constraint A would return:
+
+  'Gene.organism.name = "Drosophila Yakuba"'
+
+Normally the constraint codes are simply a series that increments for each
+constraint that is added, but if you really want to rely on a specific constraint
+having a specific code you can call:
+
+  $query->add_constraint(
+      path  => 'Organism.name',
+      op    => '=',
+      value => 'Drosophila Melanogaster',
+      code  => 'Q',
+  );
+
+and then you know that this constraint has code 'Q'. Generally however, you shoudln't
+need to directly handle these codes yourself, as they will be generated
+automatically for you.
+
+
+=head1 CONCLUSION
+
+A query can be made very powerful with a few basic constraints and some
+simple logic. There are several different kinds of constraints as well, which
+are detailed in Recipe3.
+
+=cut
+
