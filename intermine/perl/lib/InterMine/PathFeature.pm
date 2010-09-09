@@ -25,6 +25,15 @@ has path =>
      required => 1,
     );
 
+has element_name => (
+    is         => 'ro',
+    lazy_build => 1,
+    init_arg   => undef,
+);
+
+sub _build_element_name {
+    confess "You are not meant to have instantiated a PathFeature";
+}
 
 sub to_string {
     my $self = shift;
