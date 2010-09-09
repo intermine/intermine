@@ -139,7 +139,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                   <c:set var="possibleValuesDisplay" value="display:inline;"/>
                 </c:if>
                 <html:select property="attributeOptions" styleId="attribute7" 
-                    style="${possibleValuesDisplay}"
+                    style="${possibleValuesDisplay}; padding-right: 10px"
                     onchange="this.form.attributeValue.value=this.value;"> 
                   <c:forEach items="${dec.possibleValues}" var="option">
                     <option value="${option}" <c:if test="${dec.selectedValue == option}">selected</c:if>>
@@ -154,7 +154,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                   <c:set var="multiValuesDisplay" value="display:inline;"/>
                 </c:if>
                 <select id="multiValue" multiple size="4" onchange="updateMValueAttribute();" 
-                style="${multiValuesDisplay}">
+                style="${multiValuesDisplay};padding-right: 10px;">
                   <c:forEach items="${dec.possibleValues}" var="multiValue">
                     <option value="${multiValue}"
                       <c:if test="${fn:contains(dec.multiValuesAsString,multiValue)}">selected</c:if>>
@@ -201,7 +201,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
           <c:when test="${dec.lookup && dec.extraConstraint}">
             <p style="text-align: left;"><fmt:message key="bagBuild.extraConstraint">
               <fmt:param value="${dec.extraConstraintClassName}" />
-            </fmt:message> <html:select property="extraValue" value="${dec.selectedExtraValue}">
+            </fmt:message> <html:select property="extraValue" styleId="extraValue1" value="${dec.selectedExtraValue}">
               <html:option value="">Any</html:option>
               <!-- this should set to extraValue if editing existing constraint -->
               <c:forEach items="${dec.extraConstraintValues}" var="value">
