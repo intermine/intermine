@@ -7,11 +7,10 @@ use InterMine::TemplateConstraintFactory;
 extends 'InterMine::Query::Core';
 with (
     'InterMine::Query::Roles::Templated',
-    'InterMine::Query::Roles::Runnable' => {
-	excludes => 'url',
-    },
+    'InterMine::Query::Roles::Runnable',
     'InterMine::Query::Roles::Serviced',
     'InterMine::Query::Roles::ReadInAble',
+    'InterMine::Query::Roles::WriteOutAble',
     'InterMine::Query::Roles::ExtendedQuery' => {
 	type => 'template',
     },
