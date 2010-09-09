@@ -1,75 +1,70 @@
 package InterMine::Query::Roles::WriteOutLegacy;
 
 use Moose::Role;
-requires (qw/name view sort_order logic joins
-             path_descriptions model_name type_dict
-             constraints coded_constraints/);
-use XML::Smart;
+requires (qw/to_DOM joins model type_dict/);
+
 use List::MoreUtils qw(uniq);
 use InterMine::Path qw(type_of);
+use XML::DOM;
 
-sub to_xml {
+sub to_legacy_xml {
     my $self = shift;
+    my $query =  $self->to_DOM;
+    my $doc = $query->getOwnerDocument;
+    my @constraints = $query->getElementsByTagName('constraint');
+    for ($query->getElementsByTagName('join'), @constraints) {
+	$query->removeChild($_);
+    }
+    for (qw/view sortOrder/) {
+	my $attr = $query->getAttribute($_);
+	$query->setAttribute($_ => $self->put_joins_in($attr));
+    }
+    for ($query->getElementsByTagName('pathDescription')) {
+	my $path = $_->getAttribute('pathString');
+	$_->setAttribute(pathString => $self->put_joins_in($path));
+    }
+    my @paths     = sort uniq map {$_->getAttribute('path')} @constraints;
+    my $type_dict = $self->type_dict;
+    for my $p (@paths) {
+	my $type = $type_dict->{$p} || type_of($self->model, $p);
+	my $node = $doc->createElement('node');
+	$node->setAttribute(path => $self->put_joins_in($p));
+	$node->setAttribute(type => $type);
+	my @cons_for_this_node =
+	    sort {$a->getAttribute('code') cmp $b->getAttribute('code')}
+		grep {$_->getAttribute('path') eq $p}
+		    grep {$_->getAttribute('code')}
+			@constraints;
+	for (@cons_for_this_node) {
+	    $_->removeAttribute('path');
+	    $node->appendChild($_);
+	}
+	$query->appendChild($node);
+    }
+    return $query->toString;
+}
 
+sub put_joins_in {
+    my $self   = shift;
+    my $string = shift;
+    my %joins  = $self->join_dict;
+    while (my ($p, $j) = each %joins) {
+	$string =~ s/$p/$j/g;
+    }
+    return $string;
+}
+
+sub join_dict {
+    my $self = shift;
     my %joins;
     for my $join ($self->joins) {
 	my $joined_path = $join->path;
 	if ($join->style eq 'OUTER') {
-	    $joined_path =~ s/(.*)\./:/;
+	    $joined_path =~ s/(.*)\./$1:/;
 	}
 	$joins{$join->path} = $joined_path;
     }
-
-    sub put_joins_in {
-	my $string = shift;
-	while (my ($p, $j) = each %joins) {
-	    $string =~ s/$p/$j/g;
-	}
-	return $string;
-    }
-
-    my $XML   = XML::Smart->new;
-
-    my %query = (
-	name            => $self->name,
-	view            => put_joins_in($self->joined_view(' ')),
-	sortOrder       => put_joins_in($self->sort_order),
-	model		=> $self->model_name,
-    );
-
-    $query{longDescription} = $self->description if $self->description;
-    $query{constraintLogic} = $self->logic->code
-	if ($self->coded_constraints > 1);
-
-    push @{$XML->{query}}, \%query;
-    for my $pd   ($self->path_descriptions) {
-	my %hash = $pd->to_hash;
-	$hash{path} = put_joins_in($hash{path});
-	push @{$XML->{query}{pathDescription}}, \%hash;
-    }
-
-    my @paths     = sort uniq(map {$_->path} $self->all_constraints);
-    my $type_dict = $self->type_dict;
-    for (@paths) {
-	my $type = $type_dict->{$_} || type_of($self->model, $_);
-	my %elem = {
-	    path => put_joins_in($_),
-	    type => $type,
-	};
-	my @cons_for_this_node =
-	    sort {$a->code cmp $b->code}
-		grep {$_->path eq $_} $self->coded_constraints;
-	$elem->{constraint} = [] if @cons_for_this_node;
-	for my $c (@cons_for_this_node) {
-	    my %hash = $c->to_hash;
-	    delete $hash{path};
-	    push @{$elem->{constraint}}, \%hash;
-	}
-	push @{$XML->{query}{node}}, $elem;
-    }
-
-    my $xml =$XML->{query}('<xml>');
-    return $xml;
+    return %joins;
 }
 
 1;

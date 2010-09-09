@@ -4,11 +4,10 @@ use Moose::Role;
 requires (qw/name view sort_order logic joins
              path_descriptions model_name
              constraints coded_constraints/);
-use XML::Smart;
+use XML::DOM;
 
-sub to_xml {
+sub query_attributes {
     my $self = shift;
-    my $XML = XML::Smart->new;
     my %query = (
 	name            => $self->name,
 	view            => $self->joined_view(' '),
@@ -18,19 +17,45 @@ sub to_xml {
     $query{longDescription} = $self->description if $self->description;
     $query{constraintLogic} = $self->logic->code
 	if ($self->coded_constraints > 1);
-
-    push @{$XML->{query}}, \%query;
-    for my $pd   ($self->path_descriptions) {
-	push @{$XML->{query}{pathDescription}}, {$pd->to_hash};
-    }
-    for my $join ($self->joins) {
-	push @{$XML->{query}{join}}, {$join->to_hash};
-    }
-    for my $con ($self->all_constraints) {
-	push @{$XML->{query}{constraint}}, {$con->to_hash};
-    }
-    my $xml =$XML->{query}('<xml>');
-    return $xml;
+    return %query;
 }
+
+sub apply_attributes_to_element {
+    my $self = shift;
+    my $element = shift;
+    my %attrs   = @_;
+    while (my ($tag, $value) = each %attrs) {
+	$element->setAttribute($tag => $value);
+    }
+}
+
+sub to_xml {
+    my $self = shift;
+    return $self->to_DOM->toString;
+}
+
+sub to_DOM {
+    my $self = shift;
+
+    my $doc   = new XML::DOM::Document;
+    my $query = $doc->createElement('query');
+
+    $self->apply_attributes_to_element($query, $self->query_attributes);
+
+    my @elements = qw(
+	path_descriptions
+	joins
+	all_constraints
+    );
+
+    for my $meth (@elements) {
+	for my $e ($self->$meth) {
+	    my $elem = $doc->createElement($e->element_name);
+	    $self->apply_attributes_to_element($elem, $e->to_hash);
+	    $query->appendChild($elem);
+	}
+    }
+    return $query;
+ }
 
 1;
