@@ -1,12 +1,11 @@
 use strict;
 use warnings;
 
-use Test::More tests => 30;
+use Test::More tests => 33;
 use Test::Exception;
 my $module = 'InterMine';
 
 my $url = 'localhost:8080/intermine-test/service';
-#my $url = 'web2:8080/new-pathquery/service';
 my @view = ('Employee.name', 'Employee.age', 'Employee.fullTime',
 	    'Employee.address.address', 'Employee.department.name',
 	    'Employee.department.company.name',
@@ -140,7 +139,45 @@ lives_ok(
     "Runs results with ok",
 ) or diag($t->url);
 
-is($res->[1][3], "Chédin S", "With the right fields")
+my $exp_res = [
+    [
+    'EmployeeA2',
+    '20'
+  ],
+  [
+    'EmployeeA3',
+    '30'
+  ],
+  [
+    'EmployeeB1',
+    '40'
+  ],
+  [
+    'EmployeeB2',
+    '50'
+  ],
+  [
+    'EmployeeB3',
+    '60'
+  ]
+];
+
+is_deeply($res, $exp_res, "With the right fields")
     or diag($t->url, explain $res), diag $t->show_constraints;
 
-#is($t->results->[1][3],  "Chédin S", "And ditto for results") or diag($t->url, explain $res);
+$exp_res = [
+    [
+	'EmployeeB1',
+	'40'
+    ],
+    [
+	'EmployeeB2',
+	'50'
+    ],
+    [
+	'EmployeeB3',
+	'60'
+    ]
+];
+
+is_deeply($t->results,  $exp_res, "And ditto for results") or diag($t->url, explain $res);
