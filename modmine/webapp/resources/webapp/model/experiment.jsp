@@ -11,6 +11,84 @@
 
 <!-- experiment.jsp -->
 
+<style type="text/css">
+input.submit {
+  color:#050;
+  font: bold 84% 'trebuchet ms',helvetica,sans-serif;
+  background-color:#fed;
+  border:1px solid;
+  border-color: #696 #363 #363 #696;
+}
+</style>
+
+<script>
+
+  jQuery(document).ready(function(){
+    // Unckeck all checkboxes everything the page is (re)loaded
+    initCheck();
+
+    // Do before the form submitted
+    jQuery("#saveFromIdsToBagForm").submit(function() {
+        var ids = new Array();
+        jQuery(".aSub").each(function() {
+          if (this.checked) {ids.push(this.value);}
+       });
+
+        if (ids.length < 1)
+        { alert("Please select some submissions...");
+          return false;
+        } else {
+          jQuery("#ids").val(ids);
+          return true;
+          }
+    });
+  });
+
+     function initCheck()
+     {
+       jQuery('#allSub').removeAttr('checked');
+       jQuery(".aSub").removeAttr('checked');
+     }
+
+     // (un)Check all ids checkboxes
+     function checkAll()
+     {
+         jQuery(".aSub").attr('checked', jQuery('#allSub').is(':checked'));
+         jQuery('#allSub').css("opacity", 1);
+     }
+
+     function updateCheckStatus(status)
+     {
+         var statTag;
+         if (!status) { //unchecked
+           jQuery(".aSub").each(function() {
+             if (this.checked) {statTag=true;}
+           });
+
+           if (statTag) {
+            jQuery("#allSub").attr('checked', true);
+            jQuery("#allSub").css("opacity", 0.5); }
+           else {
+            jQuery("#allSub").removeAttr('checked');
+            jQuery("#allSub").css("opacity", 1);}
+         }
+         else { //checked
+           jQuery(".aSub").each(function() {
+             if (!this.checked) {statTag=true;}
+         });
+
+         if (statTag) {
+           jQuery("#allSub").attr('checked', true);
+           jQuery("#allSub").css("opacity", 0.5); }
+         else {
+           jQuery("#allSub").attr('checked', true);
+           jQuery("#allSub").css("opacity", 1);}
+         }
+     }
+
+</script>
+
+
 <html:xhtml />
 <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
 <script type="text/javascript" src="js/tablesort.js"></script>
@@ -425,8 +503,16 @@ All GBrowse tracks generated for this experiment:
   </c:choose>
   </em>
 
+<form action="/${WEB_PROPERTIES['webapp.path']}/saveFromIdsToBag.do" id="saveFromIdsToBagForm" method="POST">
+  <input type="hidden" id="type" name="type" value="Submission"/>
+  <input type="hidden" id="ids" name="ids" value=""/>
+  <input type="hidden" name="source" value="experiment"/>
+  <input type="hidden" name="newBagName" value="${exp.piSurname}_submission_list"/>
+  <div style="padding:10px;"><input type="submit" class="submit" value="CREATE LIST"/></div>
+</form>
 <table cellpadding="0" cellspacing="0" border="0" class="sortable-onload-2 rowstyle-alt no-arrow submission_table">
 <tr>
+    <th><input type="checkbox" id="allSub" onclick="checkAll()"/></th>
     <th class="sortable">DCC id</th>
     <th class="sortable">Name</th>
 
@@ -450,6 +536,7 @@ All GBrowse tracks generated for this experiment:
 <c:forEach items="${exp.submissionsAndFeatureCounts}" var="subCounts">
   <c:set var="sub" value="${subCounts.key}"></c:set>
     <tr>
+      <td class="sorting"><input type="checkbox" class="aSub" value="${subCounts.key.id}" onclick="updateCheckStatus(this.checked)"/></td>
       <td class="sorting">
       <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}">
       <c:out value="${sub.dCCid}"></c:out></html:link>
