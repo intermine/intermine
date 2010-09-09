@@ -117,7 +117,9 @@ by adding constraints and a view to.
 sub new_query {
     my $self = shift;
     my %args = @_;
-    my $roles = $args{with} if (exists $args{with});
+
+    my $roles = $args{with};
+
     my $query = InterMine::Query->new(
 	service => $self,
 	model   => $self->model,
@@ -231,6 +233,7 @@ sub apply_roles {
     my $instance = shift;
     my $roles = shift;
     for (@$roles) {
+	next unless (defined $_);
 	# eval'ed to deal with the bareword rule
 	eval "require $_";
 	$_->meta->apply($instance);
