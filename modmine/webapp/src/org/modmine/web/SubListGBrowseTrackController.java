@@ -11,12 +11,10 @@ package org.modmine.web;
  */
 
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,12 +28,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.bio.logic.Mine;
-import org.intermine.bio.logic.OrthologueLinkManager;
-import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.model.bio.Submission;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.session.SessionMethods;
 import org.modmine.web.GBrowseParser.GBrowseTrack;
 import org.modmine.web.logic.ModMineUtil;
