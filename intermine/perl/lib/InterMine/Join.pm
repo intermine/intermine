@@ -36,3 +36,7 @@ override to_hash => sub {
     my $self = shift;
     return (super, style => $self->style);
 };
+
+sub _build_element_name {
+    return 'join';
+}
