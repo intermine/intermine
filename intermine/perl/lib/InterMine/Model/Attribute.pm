@@ -67,10 +67,18 @@ use MooseX::Types::Moose qw(Str);
 =cut
 
 has type => (
-    reader   => 'attribute_type',
+    reader   => '_type',
     isa	     => Str,
     required => 1,
 );
+
+sub attribute_type {
+    my $self = shift;
+    my $value = $self->_type;
+    $value =~ s/.*\.//;
+    return $value;
+}
+
 __PACKAGE__->meta->make_immutable;
 no Moose;
 1;
