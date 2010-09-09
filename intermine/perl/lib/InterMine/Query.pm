@@ -4,10 +4,12 @@ use Moose;
 use InterMine::ConstraintFactory;
 
 extends 'InterMine::Query::Core';
-with qw(
-	   InterMine::Query::Roles::Runnable
-	   InterMine::Query::Roles::WriteOutAble
-	   InterMine::Query::Roles::Serviced
+with (
+	   'InterMine::Query::Roles::Runnable',
+	   'InterMine::Query::Roles::QueryUrl',
+	   'InterMine::Query::Roles::WriteOutAble',
+	   'InterMine::Query::Roles::WriteOutLegacy',
+	   'InterMine::Query::Roles::Serviced',
       );
 
 __PACKAGE__->meta->make_immutable;
