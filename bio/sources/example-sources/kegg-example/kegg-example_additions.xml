@@ -2,7 +2,6 @@
 <classes>
 <class name="Pathway" is-interface="true" >
   <attribute name="identifier" type="java.lang.String"/>
-  <attribute name="name" type="java.lang.String"/>
   <collection name="genes" referenced-type="Gene" reverse-reference="pathways"/>
 </class>
 <class name="Gene" is-interface="true">

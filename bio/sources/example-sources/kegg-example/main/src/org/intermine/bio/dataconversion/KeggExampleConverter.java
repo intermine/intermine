@@ -79,12 +79,10 @@ public class KeggExampleConverter extends BioFileConverter
         // gene id | pathway ids (space separated)
 
         Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
-
         while (lineIter.hasNext()) {
             // line is a string array with the one element for each tab separated value
             // on the next line of the file
             String[] line = (String[]) lineIter.next();
-
             String geneId = line[0];
 
             // create a gene with this id as primaryIdentifier
@@ -112,13 +110,16 @@ public class KeggExampleConverter extends BioFileConverter
      *
      * @param pathwayId the id of a KEGG pathway to look up
      * @return an Item representing the pathway
+     * @throws ObjectStoreException
      */
-    private Item getPathway(String pathwayId) {
+    private Item getPathway(String pathwayId)
+        throws ObjectStoreException {
         Item pathway = pathwayMap.get(pathwayId);
         if (pathway == null) {
             pathway = createItem("Pathway");
             pathway.setAttribute("identifier", pathwayId);
             pathwayMap.put(pathwayId, pathway);
+            store(pathway);
         }
         return pathway;
     }
