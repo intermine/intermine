@@ -39,6 +39,7 @@ public class SensibleByteArrayOutputStream extends ByteArrayOutputStream
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void write(int b) {
         assureSize(count + 1);
         super.write(b);
@@ -47,7 +48,8 @@ public class SensibleByteArrayOutputStream extends ByteArrayOutputStream
     /**
      * {@inheritDoc}
      */
-    public synchronized void write(byte b[], int off, int len) {
+    @Override
+    public synchronized void write(byte[] b, int off, int len) {
         assureSize(count + len);
         super.write(b, off, len);
     }
@@ -59,7 +61,7 @@ public class SensibleByteArrayOutputStream extends ByteArrayOutputStream
      */
     public void assureSize(int newSize) {
         if (newSize > buf.length) {
-            byte newBuf[] = new byte[Math.max(buf.length << 1, newSize + (newSize / 10))];
+            byte[] newBuf = new byte[Math.max(buf.length << 1, newSize + (newSize / 10))];
             System.arraycopy(buf, 0, newBuf, 0, count);
             buf = newBuf;
         }

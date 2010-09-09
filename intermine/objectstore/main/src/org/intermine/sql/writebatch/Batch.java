@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,17 +38,17 @@ public class Batch
     private static final int OPP_BATCH_SIZE = 10000000;
     private static final int MAX_BATCH_SIZE = 100000000;
 
-    private Map tables = new HashMap();
+    private Map<String, Table> tables = new HashMap<String, Table>();
     private BatchWriter batchWriter;
     private int batchSize = 0;
     private int lastCheckBatchSize = 0;
 
-    private List flushJobs = Collections.EMPTY_LIST;
+    private List<FlushJob> flushJobs = Collections.emptyList();
     private SQLException problem = null;
 
     private volatile int lastDutyCycle = 100;
     private boolean closed = false;
-    private static final List CLOSE_DOWN_COMMAND = new ArrayList();
+    private static final List<FlushJob> CLOSE_DOWN_COMMAND = new ArrayList<FlushJob>();
 
     /**
      * Constructs an empty Batch, with no tables.
@@ -82,8 +81,8 @@ public class Batch
      * @param values an array of Objects to be put in the row, in the same order as colNames
      * @throws SQLException if a flush occurs, and an error occurs while flushing
      */
-    public void addRow(Connection con, String name, Object idValue, String colNames[],
-            Object values[]) throws SQLException {
+    public void addRow(Connection con, String name, Object idValue, String[] colNames,
+            Object[] values) throws SQLException {
         if (closed) {
             throw new SQLException("Batch is closed");
         }
@@ -208,12 +207,13 @@ public class Batch
      * @param filter a Set of table names to write, or null to write all of them
      * @throws SQLException if an error occurs while flushing
      */
-    public void flush(Connection con, Set filter) throws SQLException {
+    public void flush(Connection con, Set<String> filter) throws SQLException {
         //Exception e = new Exception();
         //e.fillInStackTrace();
         //LOG.error("Flushed", e);
         backgroundFlush(con, filter);
-        putFlushJobs(Collections.EMPTY_LIST);
+        List<FlushJob> empty = Collections.emptyList();
+        putFlushJobs(empty);
     }
 
     /**
@@ -241,7 +241,7 @@ public class Batch
      * @param filter a Set of the table names to write, or null to write all of them
      * @throws SQLException if an error occurs while flushing
      */
-    public void backgroundFlush(Connection con, Set filter) throws SQLException {
+    public void backgroundFlush(Connection con, Set<String> filter) throws SQLException {
         backgroundFlush(con, filter, false);
     }
 
@@ -256,19 +256,17 @@ public class Batch
      * @param needBatchCommit true to add a FlushJobBatchCommit at the end
      * @throws SQLException if an error occurs while flushing
      */
-    public void backgroundFlush(Connection con, Set filter,
+    public void backgroundFlush(Connection con, Set<String> filter,
             boolean needBatchCommit) throws SQLException {
         if (closed) {
             throw new SQLException("Batch is closed");
         }
         //long start = System.currentTimeMillis();
-        List jobs = batchWriter.write(con, tables, filter);
+        List<FlushJob> jobs = batchWriter.write(con, tables, filter);
         int oldBatchSize = batchSize;
         batchSize = 0;
-        Iterator tableIter = tables.entrySet().iterator();
-        while (tableIter.hasNext()) {
-            Map.Entry tableEntry = (Map.Entry) tableIter.next();
-            Table table = (Table) tableEntry.getValue();
+        for (Map.Entry<String, Table> tableEntry : tables.entrySet()) {
+            Table table = tableEntry.getValue();
             batchSize += table.getSize();
         }
         lastCheckBatchSize = batchSize;
@@ -323,10 +321,8 @@ public class Batch
         if (closed) {
             throw new IllegalStateException("Batch is closed");
         }
-        Iterator iter = tables.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            Table table = (Table) entry.getValue();
+        for (Map.Entry<String, Table> entry : tables.entrySet()) {
+            Table table = entry.getValue();
             table.clear();
         }
         batchSize = 0;
@@ -354,7 +350,7 @@ public class Batch
      *
      * @return a List
      */
-    private synchronized List getFlushJobs() {
+    private synchronized List<FlushJob> getFlushJobs() {
         flushJobs = null;
         notifyAll();
         while (flushJobs == null) {
@@ -397,7 +393,7 @@ public class Batch
      * operation will go ahead anyway (although it is likely to throw another exception of its own,
      * because the transaction will be invalid).
      */
-    private synchronized void putFlushJobs(List jobs) throws SQLException {
+    private synchronized void putFlushJobs(List<FlushJob> jobs) throws SQLException {
         long startTime = System.currentTimeMillis();
         while (flushJobs != null) {
             try {
@@ -445,14 +441,12 @@ public class Batch
             long totalSpent = 0;
             long timeAtLastMessage = flusherStart;
             long spentAtLastMessage = totalSpent;
-            List jobs = null;
+            List<FlushJob> jobs = null;
             while (jobs != CLOSE_DOWN_COMMAND) {
                 try {
                     jobs = getFlushJobs();
                     long start = System.currentTimeMillis();
-                    Iterator jobIter = jobs.iterator();
-                    while (jobIter.hasNext()) {
-                        FlushJob job = (FlushJob) jobIter.next();
+                    for (FlushJob job : jobs) {
                         job.flush();
                     }
                     long end = System.currentTimeMillis();

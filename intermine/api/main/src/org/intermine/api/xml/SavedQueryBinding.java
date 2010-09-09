@@ -29,8 +29,11 @@ import org.xml.sax.InputSource;
  *
  * @author Thomas Riley
  */
-public class SavedQueryBinding
+public final class SavedQueryBinding
 {
+    private SavedQueryBinding() {
+    }
+
     /**
      * Convert a SavedQuery to XML and write XML to given writer.
      *

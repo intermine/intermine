@@ -17,7 +17,9 @@ import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.XmlHelper;
 
@@ -130,7 +132,7 @@ public class ItemFactory
      * @param obj object to convert
      * @return a new Full Data Item
      */
-    public Item makeItem(Object obj) {
+    public Item makeItem(FastPathObject obj) {
         return makeItemImpl(obj, TypeUtil.getFieldInfos(obj.getClass()).keySet());
     }
 
@@ -141,7 +143,7 @@ public class ItemFactory
      * @param includeFields the field names to write
      * @return a new Full Data Item
      */
-    public Item makeItemImpl(Object obj, Set<String> includeFields) {
+    public Item makeItemImpl(FastPathObject obj, Set<String> includeFields) {
         if ((obj instanceof InterMineObject) && (((InterMineObject) obj).getId() == null)) {
             throw new IllegalArgumentException("Id of object was null (" + obj.toString() + ")");
         }
@@ -150,7 +152,7 @@ public class ItemFactory
 
         Item item = makeItem(obj instanceof InterMineObject ? ((InterMineObject) obj).getId()
                 .toString() : null);
-        item.setClassName(className.equals("") ? ""
+        item.setClassName("".equals(className) ? ""
                 : TypeUtil.unqualifiedName(className));
         item.setImplementations(getImplements(obj, model));
 
@@ -162,17 +164,17 @@ public class ItemFactory
 
                 // Element is not output if the value is null
 
-                Object value = TypeUtil.getFieldValue(obj, fieldname);
+                Object value = obj.getFieldValue(fieldname);
 
                 if (value == null) {
                     continue;
                 }
                 // Collection
                 if (Collection.class.isAssignableFrom(value.getClass())) {
-                    Collection col = (Collection) value;
+                    Collection<?> col = (Collection<?>) value;
                     if (col.size() > 0) {
                         ReferenceList refList = new ReferenceList(fieldname);
-                        for (Iterator j = col.iterator(); j.hasNext();) {
+                        for (Iterator<?> j = col.iterator(); j.hasNext();) {
                             InterMineObject tempobj = (InterMineObject) j.next();
                             refList.addRefId((tempobj).getId().toString());
                         }
@@ -182,7 +184,11 @@ public class ItemFactory
                     item.setReference(fieldname, ((InterMineObject) value).getId().toString());
                 } else {
                     if (!fieldname.equalsIgnoreCase("id")) {
-                        item.setAttribute(fieldname, TypeUtil.objectToString(value));
+                        if (value instanceof ClobAccess) {
+                            item.setAttribute(fieldname, ((ClobAccess) value).toString());
+                        } else {
+                            item.setAttribute(fieldname, TypeUtil.objectToString(value));
+                        }
                     }
                 }
             }
@@ -202,13 +208,13 @@ public class ItemFactory
     protected static String getImplements(Object obj, Model model) {
         StringBuffer sb = new StringBuffer();
 
-        Class [] interfaces = obj.getClass().getInterfaces();
+        Class<?>[] interfaces = obj.getClass().getInterfaces();
         Arrays.sort(interfaces, new RendererComparator());
 
         for (int i = 0; i < interfaces.length; i++) {
             ClassDescriptor cld = model.getClassDescriptorByName(interfaces[i].getName());
             if (cld != null && cld.isInterface()
-                && !cld.getName().equals("org.intermine.model.InterMineObject")) {
+                && !"org.intermine.model.InterMineObject".equals(cld.getName())) {
                 sb.append(TypeUtil.unqualifiedName(interfaces[i].getName())).append(" ");
             }
         }

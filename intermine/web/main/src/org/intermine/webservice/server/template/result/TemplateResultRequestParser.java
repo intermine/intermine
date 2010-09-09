@@ -74,10 +74,10 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
         input.setLayout(request.getParameter(QueryResultRequestParser.LAYOUT_PARAMETER));
     }
 
-    private Map<String, List<ConstraintLoad>> parseConstraints(HttpServletRequest request) {
+    private Map<String, List<ConstraintInput>> parseConstraints(HttpServletRequest request) {
         // Maximum of constraints is 50, it should be enough
         logger.debug("request: " + request.getQueryString());
-        Map<String, List<ConstraintLoad>> ret = new HashMap<String, List<ConstraintLoad>>();
+        Map<String, List<ConstraintInput>> ret = new HashMap<String, List<ConstraintInput>>();
         for (int i = 0; i < 50; i++) {
 
             String idParameter = ID_PARAMETER + i;
@@ -116,10 +116,10 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
                     throw new BadRequestException("There is no value provided for constraint " + i
                             + ".Missing parameter " + valueParameter + ".");
                 }
-                ConstraintLoad load = new ConstraintLoad(idParameter, id, code, op, value,
+                ConstraintInput load = new ConstraintInput(idParameter, id, code, op, value,
                         extraValue);
                 if (ret.get(id) == null) {
-                    ret.put(id, new ArrayList<ConstraintLoad>());
+                    ret.put(id, new ArrayList<ConstraintInput>());
                 }
                 ret.get(id).add(load);
             }
@@ -146,7 +146,7 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
 
     private String getRequiredStringParameter(String name) {
         String param = request.getParameter(name);
-        if (param == null || param.equals("")) {
+        if (param == null || "".equals(param)) {
             throw new BadRequestException("Missing required parameter: " + name);
         } else {
             return param;

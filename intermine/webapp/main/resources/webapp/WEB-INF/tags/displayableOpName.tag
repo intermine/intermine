@@ -1,6 +1,6 @@
 <%@ tag body-content="empty" %>
-<%@ attribute name="opName" required="true" %>
-<%@ attribute name="valueType" required="true" %>
+<%@ attribute name="opName" required="true" rtexprvalue="true" %>
+<%@ attribute name="valueType" required="true" rtexprvalue="true" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>

@@ -1,0 +1,65 @@
+=pod
+
+=head1 NAME
+
+InterMine::Cookbook::Recipe8 - Saving Queries
+
+=head1 NOT IMPLEMENTED YET
+
+The features this section describes have B<not yet been implemented>. Please
+check back regularly at L<http://www.intermine.org> to hear news of when
+we release web-service user authentication.
+
+=head1 SYNOPSIS
+
+  use InterMine ('www.flymine.org/query/service', $user, $pass);
+
+  my $query = InterMine->new_query;
+
+  # define query here;
+
+  $query->save(
+      name  => 'My First Saved Query',
+  );
+
+  # Later, at another computer
+
+  use InterMine ('www.flymine.org/query/service', $user, $pass);
+
+  my $query = InterMine->saved_query('My First Saved Query');
+
+  my $results  = $template->results;
+
+=head1 DESCRIPTION
+
+Any query that you describe in the API can be saved to your userprofile
+at the webservice you are using as a template or saved query (see
+L<InterMine::Cookbook::Templates::Recipe2>). As long as you have provided your login
+information to the service, you will be able to access your saved
+queries, upload new ones, and make changes to the ones you already have.
+
+The procedure for saving a query is to call C<save>
+on it:
+
+  $query->save;
+
+If there are errors saving, an exception will be thrown,
+describing the problem. One potential problem is the name - queries do not
+need one but saved queries do - if you do not pass one to C<save>
+the query will attempt to use its own name, and throw an exception if
+it does not have one.
+
+Any changes you make to the query locally must be updated on the webservice
+by calling C<save> on the query. Again, this will throw an exception if there
+are any issues saving the query.
+
+Once saved, the query can be accessed through the webapp, and used like any
+other query.
+
+=head1 CONCLUSION
+
+Queriess can be uploaded to the web-service, if you have provided your
+login information. This means that these queries will be available
+anywhere that the webservice is.
+
+=cut

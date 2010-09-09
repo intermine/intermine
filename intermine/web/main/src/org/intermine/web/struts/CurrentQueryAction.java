@@ -10,8 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Iterator;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,6 +21,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -44,6 +43,7 @@ public class CurrentQueryAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
             HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
@@ -58,20 +58,26 @@ public class CurrentQueryAction extends InterMineAction
 
         if (query instanceof TemplateQuery && showTemplate) {
             TemplateQuery template = (TemplateQuery) query;
-            if (template.isEdited()) {
-                Profile profile = SessionMethods.getProfile(session);
-                SavedQuery sq = null;
-                for (Iterator iter = profile.getHistory().values().iterator(); iter.hasNext();) {
-                    sq = (SavedQuery) iter.next();
-                    if (sq.getPathQuery().equals(template)) {
-                        return new ForwardParameters(mapping.findForward("template"))
-                            .addParameter("loadModifiedTemplate", "true")
-                            .addParameter("name", sq.getName()).forward();
-                    }
+            Profile profile = SessionMethods.getProfile(session);
+            String temporaryName = null;
+            for (SavedQuery sq : profile.getHistory().values()) {
+                if (sq.getPathQuery() instanceof TemplateQuery
+                    && ((TemplateQuery) sq.getPathQuery()).getName().equals(template.getName())) {
+                    temporaryName = sq.getName();
                 }
+            }
+            if (temporaryName != null) {
+                return new ForwardParameters(mapping.findForward("template"))
+                    .addParameter("loadModifiedTemplate", "true")
+                    .addParameter("name", template.getName())
+                    .addParameter("savedQueryName", temporaryName).forward();
             }
             return new ForwardParameters(mapping.findForward("template"))
                 .addParameter("name", template.getName()).forward();
+        }
+        if (!(query instanceof TemplateQuery)) {
+            session.removeAttribute(Constants.EDITING_TEMPLATE);
+            session.removeAttribute(Constants.NEW_TEMPLATE);
         }
         return mapping.findForward("query");
     }

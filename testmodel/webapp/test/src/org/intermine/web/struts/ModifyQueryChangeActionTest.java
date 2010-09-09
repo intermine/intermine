@@ -8,7 +8,7 @@ import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.OldPathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -16,7 +16,7 @@ import servletunit.struts.MockStrutsTestCase;
 
 public class ModifyQueryChangeActionTest extends MockStrutsTestCase
 {
-    PathQuery query;
+    OldPathQuery query;
     SavedQuery sq, hist, hist2;
     Date date = new Date();
     InterMineBag bag;
@@ -33,15 +33,15 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
 
         userprofileOS.setModel(Model.getInstanceByName("userprofile"));
         Model testmodel = Model.getInstanceByName("testmodel");
-        query = new PathQuery(testmodel);
+        query = new OldPathQuery(testmodel);
 
-        query.getView().add(PathQuery.makePath(testmodel, query, "Employee"));
-        query.getView().add(PathQuery.makePath(testmodel, query, "Employee.name"));
+        query.getView().add(OldPathQuery.makePath(testmodel, query, "Employee"));
+        query.getView().add(OldPathQuery.makePath(testmodel, query, "Employee.name"));
         sq = new SavedQuery("query1", date, query);
-        hist = new SavedQuery("query2", date, (PathQuery) query.clone());
-        hist2 = new SavedQuery("query1", date, (PathQuery) query.clone());
+        hist = new SavedQuery("query2", date, (OldPathQuery) query.clone());
+        hist2 = new SavedQuery("query1", date, (OldPathQuery) query.clone());
         template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                new PathQuery(testmodel));
+                new OldPathQuery(testmodel));
 
         SessionMethods.initSession(this.getSession());
         Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);
@@ -59,7 +59,7 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
         actionPerform();
         verifyNoActionErrors();
         verifyForward("query");
-        assertEquals(query, getSession().getAttribute(Constants.QUERY));
+        assertEquals(query, SessionMethods.getQuery(getSession()));
     }
 
     public void testLoadHistory() {
@@ -70,7 +70,7 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
         actionPerform();
         verifyNoActionErrors();
         verifyForward("query");
-        assertEquals(query, getSession().getAttribute(Constants.QUERY));
+        assertEquals(query, SessionMethods.getQuery(getSession()));
     }
 
     public void testSave() {

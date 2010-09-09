@@ -23,8 +23,8 @@ public class TextTable
     /** An object representing a horizontal line separating two rows - treated as a row. */
     public static final String[] ROW_SEPARATOR = new String[0];
 
-    private ArrayList rows = new ArrayList();
-    private ArrayList columnWidths = new ArrayList();
+    private ArrayList<String[]> rows = new ArrayList<String[]>();
+    private ArrayList<Integer> columnWidths = new ArrayList<Integer>();
     private boolean leftBound;
     private boolean columnSeparators;
     private boolean rightBound;
@@ -53,7 +53,7 @@ public class TextTable
             if (i >= columnWidths.size()) {
                 columnWidths.add(i, new Integer(width));
             } else {
-                int previousWidth = ((Integer) columnWidths.get(i)).intValue();
+                int previousWidth = columnWidths.get(i).intValue();
                 if (width > previousWidth) {
                     columnWidths.set(i, new Integer(width));
                 }
@@ -67,12 +67,13 @@ public class TextTable
      *
      * @return a String, either empty or with a trailing newline
      */
+    @Override
     public String toString() {
         StringBuffer retval = new StringBuffer();
-        Iterator rowIter = rows.iterator();
         boolean firstRow = true;
+        Iterator<String[]> rowIter = rows.iterator();
         while (rowIter.hasNext()) {
-            String row[] = (String []) rowIter.next();
+            String[] row = rowIter.next();
             if (row == ROW_SEPARATOR) {
                 if (leftBound) {
                     if (firstRow) {
@@ -88,7 +89,7 @@ public class TextTable
                     }
                 }
                 for (int i = 0; i < columnWidths.size(); i++) {
-                    int width = ((Integer) columnWidths.get(i)).intValue();
+                    int width = columnWidths.get(i).intValue();
                     for (int o = 0; o < width; o++) {
                         retval.append('-');
                     }
@@ -122,7 +123,7 @@ public class TextTable
                     retval.append("| ");
                 }
                 for (int i = 0; i < columnWidths.size(); i++) {
-                    int width = ((Integer) columnWidths.get(i)).intValue();
+                    int width = columnWidths.get(i).intValue();
                     int textLength;
                     if (i >= row.length) {
                         textLength = 0;

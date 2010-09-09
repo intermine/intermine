@@ -158,7 +158,7 @@ public class FindInListAction extends InterMineAction
 
             String attType = attDesc.getType();
 
-            if (attType.equals("java.lang.Integer")) {
+            if ("java.lang.Integer".equals(attType)) {
                 try {
                     Integer intSearchTerm = Integer.valueOf(searchTerm);
                     queryValue = new QueryValue(intSearchTerm);
@@ -167,7 +167,7 @@ public class FindInListAction extends InterMineAction
                     continue;
                 }
             } else {
-                if (attType.equals("java.lang.Long")) {
+                if ("java.lang.Long".equals(attType)) {
 
                     try {
                         Long longSearchTerm = Long.valueOf(searchTerm);
@@ -177,7 +177,7 @@ public class FindInListAction extends InterMineAction
                         continue;
                     }
                 } else {
-                    if (attType.equals("java.lang.String")) {
+                    if ("java.lang.String".equals(attType)) {
                         queryValue = new QueryValue(searchTerm);
                     } else {
                         continue;

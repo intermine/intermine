@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -49,7 +50,7 @@ public class LoadQueryActionTest extends MockStrutsTestCase
         actionPerform();
         verifyNoActionErrors();
         verifyForward("query");
-        assertNotNull(getSession().getAttribute(Constants.QUERY));
+        assertNotNull(SessionMethods.getQuery(getSession()));
     }
 
     public void testLoadXmlSkipBuilder() {
@@ -68,6 +69,6 @@ public class LoadQueryActionTest extends MockStrutsTestCase
         verifyNoActionErrors();
 
         //assertEquals("/pollQuery.do?qid=0", getActualForward());
-        assertNotNull(getSession().getAttribute(Constants.QUERY));
+        assertNotNull(SessionMethods.getQuery(getSession()));
     }
 }

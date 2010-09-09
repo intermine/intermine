@@ -16,12 +16,46 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.query.*;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ClassConstraint;
+import org.intermine.objectstore.query.Clob;
+import org.intermine.objectstore.query.Constraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.FromElement;
+import org.intermine.objectstore.query.MultipleInBagConstraint;
+import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.ObjectStoreBagCombination;
+import org.intermine.objectstore.query.ObjectStoreBagsForObject;
+import org.intermine.objectstore.query.OrderDescending;
+import org.intermine.objectstore.query.OverlapConstraint;
+import org.intermine.objectstore.query.PathExpressionField;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryCast;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryClassBag;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryEvaluable;
+import org.intermine.objectstore.query.QueryExpression;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryForeignKey;
+import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryOrderable;
+import org.intermine.objectstore.query.QueryReference;
+import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SubqueryConstraint;
+import org.intermine.objectstore.query.SubqueryExistsConstraint;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.Util;
 
@@ -35,7 +69,7 @@ public class IqlQuery
 {
     private String queryString;
     private String packageName;
-    private List parameters = new ArrayList();
+    private List<?> parameters;
 
     /**
      * No-arg constructor (for deserialization)
@@ -53,7 +87,7 @@ public class IqlQuery
      * @param parameters values  to substitute for '?' in query text
      * @throws NullPointerException if queryString is null
      */
-    public IqlQuery(String queryString, String packageName, List parameters) {
+    public IqlQuery(String queryString, String packageName, List<?> parameters) {
         if (queryString == null) {
             throw new NullPointerException("queryString should not be null");
         }
@@ -67,6 +101,8 @@ public class IqlQuery
         this.packageName = packageName;
         if (parameters != null) {
             this.parameters = parameters;
+        } else {
+            this.parameters = new ArrayList<Object>();
         }
     }
 
@@ -90,6 +126,7 @@ public class IqlQuery
      * @throws NullPointerException if query is null
      */
     public IqlQuery(Query q) {
+        List<Object> newParameters = new ArrayList<Object>();
         if (q == null) {
             throw new NullPointerException("query should not be null");
         }
@@ -97,28 +134,25 @@ public class IqlQuery
         boolean needComma = false;
         StringBuffer retval = new StringBuffer(q.isDistinct() ? "SELECT DISTINCT " : "SELECT ");
         Set<QueryObjectPathExpression> pathList = new HashSet<QueryObjectPathExpression>();
-        Iterator selectIter = q.getSelect().iterator();
-        while (selectIter.hasNext()) {
-            QuerySelectable qn = (QuerySelectable) selectIter.next();
+        for (QuerySelectable qn : q.getSelect()) {
             if (needComma) {
                 retval.append(", ");
             }
             needComma = true;
-            String nodeAlias = (String) q.getAliases().get(qn);
+            String nodeAlias = q.getAliases().get(qn);
             if ((qn instanceof QueryClass) || (qn instanceof ObjectStoreBag)
                     || (qn instanceof ObjectStoreBagCombination)
-                    || (qn instanceof ObjectStoreBagsForObject)) {
-                retval.append(nodeToString(q, qn, parameters, null));
+                    || (qn instanceof ObjectStoreBagsForObject)
+                    || (qn instanceof Clob)) {
+                retval.append(nodeToString(q, qn, newParameters, null));
             } else {
-                retval.append(nodeToString(q, qn, parameters, pathList))
+                retval.append(nodeToString(q, qn, newParameters, pathList))
                     .append(nodeAlias == null ? "" : " AS " + escapeReservedWord(nodeAlias));
             }
         }
         needComma = false;
-        Iterator qcIter = q.getFrom().iterator();
-        while (qcIter.hasNext()) {
-            FromElement fe = (FromElement) qcIter.next();
-            String classAlias = escapeReservedWord((String) q.getAliases().get(fe));
+        for (FromElement fe : q.getFrom()) {
+            String classAlias = escapeReservedWord(q.getAliases().get(fe));
             retval.append(needComma ? ", " : " FROM ");
             needComma = true;
             if (fe instanceof QueryClass) {
@@ -127,9 +161,9 @@ public class IqlQuery
             } else if (fe instanceof QueryClassBag) {
                 retval.append(fe.toString())
                     .append(classAlias == null ? "" : " AS " + classAlias);
-                Collection coll = ((QueryClassBag) fe).getBag();
+                Collection<?> coll = ((QueryClassBag) fe).getBag();
                 if (coll != null) {
-                    parameters.add(coll);
+                    newParameters.add(coll);
                 }
             } else {
                 retval.append("(")
@@ -140,23 +174,19 @@ public class IqlQuery
         }
         if (q.getConstraint() != null) {
             retval.append(" WHERE ")
-                .append(constraintToString(q, q.getConstraint(), parameters));
+                .append(constraintToString(q, q.getConstraint(), newParameters));
         }
-        Iterator groupIter = q.getGroupBy().iterator();
         needComma = false;
-        while (groupIter.hasNext()) {
-            QueryNode qn = (QueryNode) groupIter.next();
+        for (QueryNode qn : q.getGroupBy()) {
             retval.append(needComma ? ", " : " GROUP BY ");
             needComma = true;
-            retval.append(nodeToString(q, qn, parameters, null));
+            retval.append(nodeToString(q, qn, newParameters, null));
         }
-        Iterator orderIter = q.getOrderBy().iterator();
         needComma = false;
-        while (orderIter.hasNext()) {
-            QueryOrderable qn = (QueryOrderable) orderIter.next();
+        for (QueryOrderable qn : q.getOrderBy()) {
             retval.append(needComma ? ", " : " ORDER BY ");
             needComma = true;
-            retval.append(nodeToString(q, qn, parameters, null));
+            retval.append(nodeToString(q, qn, newParameters, null));
         }
         if (q.getLimit() != Integer.MAX_VALUE) {
             retval.append(" LIMIT " + q.getLimit());
@@ -165,10 +195,11 @@ public class IqlQuery
         for (QueryObjectPathExpression qope : pathList) {
             retval.append(needComma ? ", " : " PATH ");
             needComma = true;
-            retval.append(nodeToString(q, qope, parameters, null))
+            retval.append(nodeToString(q, qope, newParameters, null))
                 .append(" AS ")
                 .append(q.getAliases().get(qope));
         }
+        parameters = newParameters;
         queryString = retval.toString();
     }
 
@@ -183,14 +214,14 @@ public class IqlQuery
      * objects in the SELECT list
      * @return a String
      */
-    public static String nodeToString(Query q, Object qn, List parameters,
+    public static String nodeToString(Query q, Object qn, List<Object> parameters,
             Set<QueryObjectPathExpression> pathList) {
         if (qn instanceof QueryClass) {
-            String nodeAlias = (String) q.getAliases().get(qn);
+            String nodeAlias = q.getAliases().get(qn);
             return escapeReservedWord(nodeAlias);
         } else if (qn instanceof QueryField) {
             QueryField qf = (QueryField) qn;
-            return escapeReservedWord((String) q.getAliases().get(qf.getFromElement())) + "."
+            return escapeReservedWord(q.getAliases().get(qf.getFromElement())) + "."
                 + escapeReservedWord(qf.getFieldName()) + (qf.getSecondFieldName() == null ? ""
                         : "." + escapeReservedWord(qf.getSecondFieldName()));
         } else if (qn instanceof QueryValue) {
@@ -206,41 +237,7 @@ public class IqlQuery
                 return obj.toString();
             }
         } else if (qn instanceof QueryExpression) {
-            QueryExpression qe = (QueryExpression) qn;
-            if (qe.getOperation() == QueryExpression.SUBSTRING) {
-                return "SUBSTR(" + nodeToString(q, qe.getArg1(), parameters, null) + ", "
-                    + nodeToString(q, qe.getArg2(), parameters, null)
-                    + (qe.getArg3() == null ? "" : ", "
-                            + nodeToString(q, qe.getArg3(), parameters, null)) + ")";
-            } else if (qe.getOperation() == QueryExpression.INDEX_OF) {
-                return "INDEXOF(" + nodeToString(q, qe.getArg1(), parameters, null) + ", "
-                    + nodeToString(q, qe.getArg2(), parameters, null) + ")";
-            } else if (qe.getOperation() == QueryExpression.UPPER) {
-                return "UPPER(" + nodeToString(q, qe.getArg1(), parameters, null) + ")";
-            } else if (qe.getOperation() == QueryExpression.LOWER) {
-                return "LOWER(" + nodeToString(q, qe.getArg1(), parameters, null) + ")";
-            } else {
-                String retval = nodeToString(q, qe.getArg1(), parameters, null);
-                switch (qe.getOperation()) {
-                    case QueryExpression.ADD:
-                        retval += " + ";
-                        break;
-                    case QueryExpression.SUBTRACT:
-                        retval += " - ";
-                        break;
-                    case QueryExpression.MULTIPLY:
-                        retval += " * ";
-                        break;
-                    case QueryExpression.DIVIDE:
-                        retval += " / ";
-                        break;
-                    default:
-                        throw (new IllegalArgumentException("Invalid QueryExpression operation: "
-                                    + qe.getOperation()));
-                }
-                retval += nodeToString(q, qe.getArg2(), parameters, null);
-                return retval;
-            }
+            return queryExpressionToString(q, (QueryExpression) qn, parameters);
         } else if (qn instanceof QueryFunction) {
             QueryFunction qf = (QueryFunction) qn;
             if (qf.getOperation() == QueryFunction.COUNT) {
@@ -282,154 +279,10 @@ public class IqlQuery
             QueryForeignKey key = (QueryForeignKey) qn;
             return q.getAliases().get(key.getQueryClass()) + "." + key.getFieldName() + ".id";
         } else if (qn instanceof QueryObjectPathExpression) {
-            QueryObjectPathExpression ref = (QueryObjectPathExpression) qn;
-            StringBuffer retval = new StringBuffer();
-            retval.append(q.getAliases().get(ref.getQueryClass()))
-                .append(".")
-                .append(ref.getFieldName());
-            if (ref.getSubclass() != null) {
-                Class subclass = ref.getSubclass();
-                Collection<Class> subclasses = DynamicUtil.decomposeClass(subclass);
-                if (subclasses.size() == 1) {
-                    retval.append("::")
-                        .append(subclasses.iterator().next().getName());
-                } else {
-                    boolean needComma = false;
-                    for (Class subclas : subclasses) {
-                        retval.append(needComma ? ", " : "::(");
-                        needComma = true;
-                        retval.append(subclas.getName());
-                    }
-                    retval.append(")");
-                }
-            }
-            if ((!ref.getSelect().isEmpty()) || (ref.getConstraint() != null)) {
-                Set<Integer> empty = Collections.emptySet();
-                Query subQ = ref.getQuery(empty, true);
-                retval.append("(");
-                boolean needSpace = false;
-                Set<QueryObjectPathExpression> subPathList
-                    = new HashSet<QueryObjectPathExpression>();
-                if (!ref.getSelect().isEmpty()) {
-                    retval.append("SELECT ");
-                    boolean needComma = false;
-                    for (QuerySelectable selectable : ref.getSelect()) {
-                        if (needComma) {
-                            retval.append(", ");
-                        }
-                        needComma = true;
-                        retval.append(nodeToString(subQ, selectable, parameters, subPathList));
-                    }
-                    needSpace = true;
-                }
-                if (ref.getConstraint() != null) {
-                    if (needSpace) {
-                        retval.append(" ");
-                    }
-                    retval.append("WHERE ")
-                        .append(constraintToString(subQ, ref.getConstraint(), parameters));
-                }
-                boolean needComma = false;
-                for (QueryObjectPathExpression qope : subPathList) {
-                    retval.append(needComma ? ", " : " PATH ");
-                    needComma = true;
-                    retval.append(nodeToString(subQ, qope, parameters, null))
-                        .append(" AS ")
-                        .append(subQ.getAliases().get(qope));
-                }
-                retval.append(")");
-            }
-            return retval.toString();
+            return queryObjectPathExpressionToString(q, parameters, (QueryObjectPathExpression) qn);
         } else if (qn instanceof QueryCollectionPathExpression) {
-            QueryCollectionPathExpression col = (QueryCollectionPathExpression) qn;
-            StringBuffer retval = new StringBuffer();
-            retval.append(q.getAliases().get(col.getQueryClass()))
-                .append(".")
-                .append(col.getFieldName());
-            if (col.getSubclass() != null) {
-                Class subclass = col.getSubclass();
-                Collection<Class> subclasses = DynamicUtil.decomposeClass(subclass);
-                if (subclasses.size() == 1) {
-                    retval.append("::")
-                        .append(subclasses.iterator().next().getName());
-                } else {
-                    boolean needComma = false;
-                    for (Class subclas : subclasses) {
-                        retval.append(needComma ? ", " : "::(");
-                        needComma = true;
-                        retval.append(subclas.getName());
-                    }
-                    retval.append(")");
-                }
-            }
-            if ((!col.getSelect().isEmpty()) || (!col.getFrom().isEmpty())
-                    || (col.getConstraint() != null)) {
-                Set<InterMineObject> empty = Collections.emptySet();
-                Query subQ = col.getQuery(empty);
-                retval.append("(");
-                boolean needSpace = false;
-                Set<QueryObjectPathExpression> pathList2 = new HashSet<QueryObjectPathExpression>();
-                if (!col.getSelect().isEmpty()) {
-                    retval.append("SELECT ");
-                    if (col.isSingleton()) {
-                        retval.append("SINGLETON ");
-                    }
-                    boolean needComma = false;
-                    for (QuerySelectable selectable : col.getSelect()) {
-                        if (needComma) {
-                            retval.append(", ");
-                        }
-                        needComma = true;
-                        retval.append(nodeToString(subQ, selectable, parameters, pathList2));
-                    }
-                    needSpace = true;
-                }
-                if (!col.getFrom().isEmpty()) {
-                    if (needSpace) {
-                        retval.append(" ");
-                    }
-                    retval.append("FROM ");
-                    boolean needComma = false;
-                    for (FromElement node : col.getFrom()) {
-                        if (needComma) {
-                            retval.append(", ");
-                        }
-                        needComma = true;
-                        String classAlias = escapeReservedWord((String) subQ.getAliases()
-                                .get(node));
-                        if (node instanceof QueryClass) {
-                            retval.append(node.toString())
-                                .append(classAlias == null ? "" : " AS " + classAlias);
-                        } else if (node instanceof QueryClassBag) {
-                            retval.append(node.toString())
-                                .append(classAlias == null ? "" : " AS " + classAlias);
-                        } else {
-                            retval.append("(")
-                                .append(node.toString())
-                                .append(")")
-                                .append(classAlias == null ? "" : " AS " + classAlias);
-                        }
-                    }
-                    needSpace = true;
-                }
-                if (col.getConstraint() != null) {
-                    if (needSpace) {
-                        retval.append(" ");
-                    }
-                    retval.append("WHERE ")
-                        .append(constraintToString(subQ, col.getConstraint(), parameters));
-                }
-                boolean needComma = false;
-                for (QueryObjectPathExpression qope : pathList2) {
-                    retval.append(needComma ? ", " : " PATH ");
-                    needComma = true;
-                    retval.append(nodeToString(subQ, qope, parameters, null))
-                        .append(" AS ")
-                        .append(subQ.getAliases().get(qope));
-                }
-                retval.append(")");
-            }
-            return retval.toString();
+            return queryCollectionPathExpressionToString(q, parameters,
+                    (QueryCollectionPathExpression) qn);
         } else if (qn instanceof PathExpressionField) {
             QueryObjectPathExpression qope = ((PathExpressionField) qn).getQope();
             pathList.add(qope);
@@ -472,11 +325,230 @@ public class IqlQuery
                 parameters.add(bags);
             }
             return retval.toString();
+        } else if (qn instanceof Clob) {
+            return "CLOB(" + ((Clob) qn).getClobId() + ")";
         } else if (qn instanceof OrderDescending) {
             return nodeToString(q, ((OrderDescending) qn).getQueryOrderable(), parameters, null)
                 + " DESC";
         } else {
-            throw new IllegalArgumentException("Invalid Object for nodeToString: " + qn.toString());
+            throw new IllegalArgumentException("Invalid Object for nodeToString: " + qn);
+        }
+    }
+
+    /**
+     * Converts a QueryObjectPathExpression into a String.
+     *
+     * @param q a Query, to provide aliases
+     * @param parameters a List, in which this method will place objects corresponding to the
+     * question marks in the resulting String
+     * @param col an Object to convert
+     * @return a String
+     */
+    public static String queryCollectionPathExpressionToString(Query q, List<Object> parameters,
+            QueryCollectionPathExpression col) {
+        StringBuffer retval = new StringBuffer();
+        retval.append(q.getAliases().get(col.getQueryClass()))
+            .append(".")
+            .append(col.getFieldName());
+        if (col.getSubclass() != null) {
+            Class<?> subclass = col.getSubclass();
+            Collection<Class<?>> subclasses = DynamicUtil.decomposeClass(subclass);
+            if (subclasses.size() == 1) {
+                retval.append("::")
+                    .append(subclasses.iterator().next().getName());
+            } else {
+                boolean needComma = false;
+                for (Class<?> subclas : subclasses) {
+                    retval.append(needComma ? ", " : "::(");
+                    needComma = true;
+                    retval.append(subclas.getName());
+                }
+                retval.append(")");
+            }
+        }
+        if ((!col.getSelect().isEmpty()) || (!col.getFrom().isEmpty())
+                || (col.getConstraint() != null)) {
+            Set<InterMineObject> empty = Collections.emptySet();
+            Query subQ = col.getQuery(empty);
+            retval.append("(");
+            boolean needSpace = false;
+            Set<QueryObjectPathExpression> pathList2 = new HashSet<QueryObjectPathExpression>();
+            if (!col.getSelect().isEmpty()) {
+                retval.append("SELECT ");
+                if (col.isSingleton()) {
+                    retval.append("SINGLETON ");
+                }
+                boolean needComma = false;
+                for (QuerySelectable selectable : col.getSelect()) {
+                    if (needComma) {
+                        retval.append(", ");
+                    }
+                    needComma = true;
+                    retval.append(nodeToString(subQ, selectable, parameters, pathList2));
+                }
+                needSpace = true;
+            }
+            if (!col.getFrom().isEmpty()) {
+                if (needSpace) {
+                    retval.append(" ");
+                }
+                retval.append("FROM ");
+                boolean needComma = false;
+                for (FromElement node : col.getFrom()) {
+                    if (needComma) {
+                        retval.append(", ");
+                    }
+                    needComma = true;
+                    String classAlias = escapeReservedWord(subQ.getAliases().get(node));
+                    if (node instanceof QueryClass) {
+                        retval.append(node.toString())
+                            .append(classAlias == null ? "" : " AS " + classAlias);
+                    } else if (node instanceof QueryClassBag) {
+                        retval.append(node.toString())
+                            .append(classAlias == null ? "" : " AS " + classAlias);
+                    } else {
+                        retval.append("(")
+                            .append(node.toString())
+                            .append(")")
+                            .append(classAlias == null ? "" : " AS " + classAlias);
+                    }
+                }
+                needSpace = true;
+            }
+            if (col.getConstraint() != null) {
+                if (needSpace) {
+                    retval.append(" ");
+                }
+                retval.append("WHERE ")
+                    .append(constraintToString(subQ, col.getConstraint(), parameters));
+            }
+            boolean needComma = false;
+            for (QueryObjectPathExpression qope : pathList2) {
+                retval.append(needComma ? ", " : " PATH ");
+                needComma = true;
+                retval.append(nodeToString(subQ, qope, parameters, null))
+                    .append(" AS ")
+                    .append(subQ.getAliases().get(qope));
+            }
+            retval.append(")");
+        }
+        return retval.toString();
+    }
+
+    /**
+     * Converts a QueryObjectPathExpression into a String.
+     *
+     * @param q a Query, to provide aliases
+     * @param parameters a List, in which this method will place objects corresponding to the
+     * question marks in the resulting String
+     * @param ref an Object to convert
+     * @return a String
+     */
+    public static String queryObjectPathExpressionToString(Query q, List<Object> parameters,
+            QueryObjectPathExpression ref) {
+        StringBuffer retval = new StringBuffer();
+        retval.append(q.getAliases().get(ref.getQueryClass()))
+            .append(".")
+            .append(ref.getFieldName());
+        if (ref.getSubclass() != null) {
+            Class<?> subclass = ref.getSubclass();
+            Collection<Class<?>> subclasses = DynamicUtil.decomposeClass(subclass);
+            if (subclasses.size() == 1) {
+                retval.append("::")
+                    .append(subclasses.iterator().next().getName());
+            } else {
+                boolean needComma = false;
+                for (Class<?> subclas : subclasses) {
+                    retval.append(needComma ? ", " : "::(");
+                    needComma = true;
+                    retval.append(subclas.getName());
+                }
+                retval.append(")");
+            }
+        }
+        if ((!ref.getSelect().isEmpty()) || (ref.getConstraint() != null)) {
+            Set<Integer> empty = Collections.emptySet();
+            Query subQ = ref.getQuery(empty, true);
+            retval.append("(");
+            boolean needSpace = false;
+            Set<QueryObjectPathExpression> subPathList
+                = new HashSet<QueryObjectPathExpression>();
+            if (!ref.getSelect().isEmpty()) {
+                retval.append("SELECT ");
+                boolean needComma = false;
+                for (QuerySelectable selectable : ref.getSelect()) {
+                    if (needComma) {
+                        retval.append(", ");
+                    }
+                    needComma = true;
+                    retval.append(nodeToString(subQ, selectable, parameters, subPathList));
+                }
+                needSpace = true;
+            }
+            if (ref.getConstraint() != null) {
+                if (needSpace) {
+                    retval.append(" ");
+                }
+                retval.append("WHERE ")
+                    .append(constraintToString(subQ, ref.getConstraint(), parameters));
+            }
+            boolean needComma = false;
+            for (QueryObjectPathExpression qope : subPathList) {
+                retval.append(needComma ? ", " : " PATH ");
+                needComma = true;
+                retval.append(nodeToString(subQ, qope, parameters, null))
+                    .append(" AS ")
+                    .append(subQ.getAliases().get(qope));
+            }
+            retval.append(")");
+        }
+        return retval.toString();
+    }
+
+    /**
+     * Converts a QueryExpression into a String.
+     *
+     * @param q a Query, to provide aliases
+     * @param qe an Object to convert
+     * @param parameters a List, in which this method will place objects corresponding to the
+     * question marks in the resulting String
+     * @return a String
+     */
+    public static String queryExpressionToString(Query q, QueryExpression qe,
+            List<Object> parameters) {
+        if (qe.getOperation() == QueryExpression.SUBSTRING) {
+            return "SUBSTR(" + nodeToString(q, qe.getArg1(), parameters, null) + ", "
+                + nodeToString(q, qe.getArg2(), parameters, null)
+                + (qe.getArg3() == null ? "" : ", "
+                        + nodeToString(q, qe.getArg3(), parameters, null)) + ")";
+        } else if (qe.getOperation() == QueryExpression.INDEX_OF) {
+            return "INDEXOF(" + nodeToString(q, qe.getArg1(), parameters, null) + ", "
+                + nodeToString(q, qe.getArg2(), parameters, null) + ")";
+        } else if (qe.getOperation() == QueryExpression.UPPER) {
+            return "UPPER(" + nodeToString(q, qe.getArg1(), parameters, null) + ")";
+        } else if (qe.getOperation() == QueryExpression.LOWER) {
+            return "LOWER(" + nodeToString(q, qe.getArg1(), parameters, null) + ")";
+        } else {
+            String retval = nodeToString(q, qe.getArg1(), parameters, null);
+            switch (qe.getOperation()) {
+                case QueryExpression.ADD:
+                    retval += " + ";
+                    break;
+                case QueryExpression.SUBTRACT:
+                    retval += " - ";
+                    break;
+                case QueryExpression.MULTIPLY:
+                    retval += " * ";
+                    break;
+                case QueryExpression.DIVIDE:
+                    retval += " / ";
+                    break;
+                default:
+                    throw (new IllegalArgumentException("Invalid QueryExpression operation: "
+                                + qe.getOperation()));
+            }
+            retval += nodeToString(q, qe.getArg2(), parameters, null);
+            return retval;
         }
     }
 
@@ -489,7 +561,7 @@ public class IqlQuery
      * question marks in the resulting String
      * @return a String
      */
-    public static String constraintToString(Query q, Constraint cc, List parameters) {
+    public static String constraintToString(Query q, Constraint cc, List<Object> parameters) {
         if (cc instanceof SimpleConstraint) {
             SimpleConstraint c = (SimpleConstraint) cc;
             if (c.getArg2() == null) {
@@ -500,7 +572,7 @@ public class IqlQuery
             }
         } else if (cc instanceof SubqueryConstraint) {
             SubqueryConstraint c = (SubqueryConstraint) cc;
-            IqlQuery subquery = new IqlQuery(c.getQuery());
+            IqlQuery subquery = c.getQuery().getIqlQuery();
             // Add the parameters of the subquery to this query
             parameters.addAll(subquery.getParameters());
             return (c.getQueryEvaluable() == null ? nodeToString(q, c.getQueryClass(), parameters,
@@ -541,9 +613,7 @@ public class IqlQuery
             if (!c.getConstraints().isEmpty()) {
                 boolean needComma = false;
                 String retval = (negate ? "( NOT (" : "(");
-                Iterator conIter = c.getConstraints().iterator();
-                while (conIter.hasNext()) {
-                    Constraint subC = (Constraint) conIter.next();
+                for (Constraint subC : c.getConstraints()) {
                     if (needComma) {
                         retval += (disjunctive ? " OR " : " AND ");
                     }
@@ -555,7 +625,7 @@ public class IqlQuery
             return (disjunctive == negate ? "true" : "false");
         } else if (cc instanceof BagConstraint) {
             BagConstraint c = (BagConstraint) cc;
-            Collection coll = c.getBag();
+            Collection<?> coll = c.getBag();
             if (coll == null) {
                 return nodeToString(q, c.getQueryNode(), parameters, null) + " "
                     + c.getOp().toString() + " BAG(" + c.getOsb().getBagId() + ")";
@@ -563,8 +633,23 @@ public class IqlQuery
             parameters.add(coll);
             return nodeToString(q, c.getQueryNode(), parameters, null) + " " + c.getOp().toString()
                 + " ?";
+        } else if (cc instanceof MultipleInBagConstraint) {
+            MultipleInBagConstraint c = (MultipleInBagConstraint) cc;
+            Collection<?> coll = c.getBag();
+            parameters.add(coll);
+            StringBuilder retval = new StringBuilder("(");
+            boolean needComma = false;
+            for (QueryEvaluable qe : c.getEvaluables()) {
+                if (needComma) {
+                    retval.append(", ");
+                }
+                needComma = true;
+                retval.append(nodeToString(q, qe, parameters, null));
+            }
+            retval.append(") IN ?");
+            return retval.toString();
         } else if (cc instanceof SubqueryExistsConstraint) {
-            IqlQuery subquery = new IqlQuery(((SubqueryExistsConstraint) cc).getQuery());
+            IqlQuery subquery = ((SubqueryExistsConstraint) cc).getQuery().getIqlQuery();
             parameters.addAll(subquery.getParameters());
             return (cc.getOp().equals(ConstraintOp.EXISTS) ? "EXISTS (" : "DOES NOT EXIST (")
                 + subquery.getQueryString() + ")";
@@ -589,11 +674,12 @@ public class IqlQuery
      * @param parameters a List to which parameters will be added
      * @return a String
      */
-    public static String queryReferenceToString(Query q, QueryReference ref, List parameters) {
+    public static String queryReferenceToString(Query q, QueryReference ref,
+            List<Object> parameters) {
         if (ref.getQueryClass() != null) {
-            return (String) q.getAliases().get(ref.getQueryClass());
+            return q.getAliases().get(ref.getQueryClass());
         } else if (((QueryCollectionReference) ref).getQcb() != null) {
-            return (String) q.getAliases().get(((QueryCollectionReference) ref).getQcb());
+            return q.getAliases().get(((QueryCollectionReference) ref).getQcb());
         } else {
             Object param = ((QueryCollectionReference) ref).getQcObject();
             if (param == null) {
@@ -657,7 +743,7 @@ public class IqlQuery
      *
      * @return the parameters
      */
-    public List getParameters() {
+    public List<?> getParameters() {
         return parameters;
     }
 
@@ -666,7 +752,7 @@ public class IqlQuery
      *
      * @param parameters the parameters
      */
-    public void setParameters(List parameters) {
+    public void setParameters(List<?> parameters) {
         this.parameters = parameters;
     }
 
@@ -679,13 +765,12 @@ public class IqlQuery
     public String toString() {
         StringBuffer ret = new StringBuffer();
         ret.append(queryString);
-        Iterator iter = parameters.iterator();
         int i = 0;
-        while (iter.hasNext()) {
+        for (Object o : parameters) {
             ret.append(" ")
                 .append(++i)
                 .append(": ")
-                .append(iter.next().toString());
+                .append(o.toString());
         }
         return ret.toString();
     }
@@ -693,6 +778,7 @@ public class IqlQuery
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof IqlQuery)) {
             return false;
@@ -706,6 +792,7 @@ public class IqlQuery
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return 2 * queryString.hashCode()
             + 3 * Util.hashCode(packageName)
@@ -741,7 +828,7 @@ public class IqlQuery
         "AVG",
         "SUBSTR",
         "INDEXOF"};
-    private static Set reservedWords = new HashSet();
+    private static Set<String> reservedWords = new HashSet<String>();
     static {
         for (int i = 0; i < RESERVED_WORDS.length; i++) {
             reservedWords.add(RESERVED_WORDS[i]);

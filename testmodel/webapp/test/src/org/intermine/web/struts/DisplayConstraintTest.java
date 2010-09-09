@@ -17,7 +17,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.pathquery.PathNode;
-import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.OldPathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.DisplayConstraint;
 import org.intermine.web.logic.session.SessionMethods;
@@ -35,7 +35,7 @@ public class DisplayConstraintTest extends MockStrutsTestCase
     public void setUp() throws Exception {
         super.setUp();
 
-        PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
+        OldPathQuery query = new OldPathQuery(Model.getInstanceByName("testmodel"));
         PathNode node = query.addNode("Employee.name");
 
         InterMineAPI im = SessionMethods.getInterMineAPI(getActionServlet().getServletContext());

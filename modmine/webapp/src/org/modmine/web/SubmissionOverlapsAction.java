@@ -20,7 +20,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathNode;
-import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.OldPathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.ForwardParameters;
 import org.intermine.web.struts.InterMineAction;
@@ -59,7 +59,7 @@ public class SubmissionOverlapsAction extends InterMineAction
         String submissionTitle = submissionOverlapsForm.getSubmissionTitle();
         String submissionId = submissionOverlapsForm.getSubmissionId();
 
-        PathQuery q = new PathQuery(os.getModel());
+        OldPathQuery q = new OldPathQuery(os.getModel());
 
         if (request.getParameter("overlaps") != null) {
             String featureType = submissionOverlapsForm.getOverlapFeatureType();

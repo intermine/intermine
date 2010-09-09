@@ -19,8 +19,11 @@ import org.intermine.metadata.ClassDescriptor;
  * @author Andrew Varley
  * @author Richard Smith
  */
-public class XmlHelper
+public final class XmlHelper
 {
+    private XmlHelper() {
+    }
+
     /**
      * Get the class name if object represents a material class in model.
      *
@@ -30,14 +33,14 @@ public class XmlHelper
      */
     public static String getClassName(Object obj, Model model) {
         String clsName = getClassName(obj.getClass(), model);
-        if (clsName.equals("")) {
+        if ("".equals(clsName)) {
             clsName = getClassName(obj.getClass().getSuperclass(), model);
         }
         return clsName;
     }
 
 
-    private static String getClassName(Class cls, Model model) {
+    private static String getClassName(Class<?> cls, Model model) {
         if (cls != null) {
             ClassDescriptor cld = model.getClassDescriptorByName(cls.getName());
             if (cld != null && !cld.isInterface()) {

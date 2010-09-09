@@ -10,36 +10,37 @@ package org.intermine.api.bag;
  *
  */
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.MultipleInBagConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
-
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.util.DynamicUtil;
 import org.intermine.util.SAXParser;
-import org.intermine.api.config.ClassKeyHelper;
-
-import java.io.InputStream;
-
+import org.intermine.util.TypeUtil;
 import org.xml.sax.InputSource;
 
 /**
  * @author Richard Smith
  *
  */
-public class BagQueryHelper
+public final class BagQueryHelper
 {
+    private BagQueryHelper() {
+    }
 
     /**
      * Message associated with default bag query.
@@ -58,69 +59,85 @@ public class BagQueryHelper
      * key fields match any of the input identifiers
      * @throws ClassNotFoundException if the type isn't in the model
      */
-    public static Query createDefaultBagQuery(String type, BagQueryConfig bagQueryConfig,
-                                                 Model model, Map classKeys, Collection input)
-        throws ClassNotFoundException {
+    public static Query createDefaultBagQuery(String type,
+            @SuppressWarnings("unused") BagQueryConfig bagQueryConfig,
+            @SuppressWarnings("unused") Model model, Map<String, List<FieldDescriptor>> classKeys,
+            Collection<String> input) throws ClassNotFoundException {
 
-        Class cls = Class.forName(type);
+        Class<?> cls = Class.forName(type);
         if (!ClassKeyHelper.hasKeyFields(classKeys, type)) {
             throw new IllegalArgumentException("Internal error - no key fields found for type: "
                                                + type + ".");
         }
 
-        List lowerCaseInput = new ArrayList();
-        for (Object o : input) {
-            if (o instanceof String) {
-                o = ((String) o).toLowerCase();
-                try {
-                    lowerCaseInput.add(new Integer((String) o));
-                } catch (NumberFormatException e) {
-                    // Not a number
-                }
-            }
-            lowerCaseInput.add(o);
-        }
+        Map<Class<?>, Collection<Object>> bags = new HashMap<Class<?>, Collection<Object>>();
+        Map<Class<?>, List<QueryEvaluable>> evaluables =
+            new HashMap<Class<?>, List<QueryEvaluable>>();
 
         Query q = new Query();
         QueryClass qc = new QueryClass(cls);
         q.addFrom(qc);
         q.addToSelect(new QueryField(qc, "id"));
 
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
-        q.setConstraint(cs);
-
-        Collection<FieldDescriptor> keyFields = ClassKeyHelper.getKeyFields(classKeys, type);
-
-        Iterator keyFieldIter = keyFields.iterator();
-        while (keyFieldIter.hasNext()) {
-            FieldDescriptor fld = (FieldDescriptor) keyFieldIter.next();
-
+        for (FieldDescriptor fld : ClassKeyHelper.getKeyFields(classKeys, type)) {
             if (!fld.isAttribute()) {
                 continue;
             }
-
-            QueryField qf = new QueryField(qc, fld.getName());
-            List filteredBag = new ArrayList();
-            for (Object o : lowerCaseInput) {
-                if (DynamicUtil.isInstance(o, qf.getType())) {
-                    filteredBag.add(o);
+            QueryEvaluable field = new QueryField(qc, fld.getName());
+            Class<?> attType = field.getType();
+            List<QueryEvaluable> qes = evaluables.get(attType);
+            Collection<Object> bag = bags.get(attType);
+            if (qes == null) {
+                qes = new ArrayList<QueryEvaluable>();
+                bag = new ArrayList<Object>();
+                if (String.class.equals(attType)) {
+                    for (String o : input) {
+                        bag.add(o.toLowerCase());
+                    }
+                } else {
+                    for (String o : input) {
+                        try {
+                            bag.add(TypeUtil.stringToObject(attType, o));
+                        } catch (Exception e) {
+                            // Ignore - this value does not parse to this type
+                        }
+                    }
                 }
+                evaluables.put(attType, qes);
+                bags.put(attType, bag);
             }
-            if (qf.getType().equals(String.class)) {
-                QueryExpression qe = new QueryExpression(QueryExpression.LOWER, qf);
-                // constrain field to be in a bag
-                cs.addConstraint(new BagConstraint(qe, ConstraintOp.IN, filteredBag));
-            } else {
-                cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, filteredBag));
+            q.addToSelect(field);
+            if (String.class.equals(attType)) {
+                field = new QueryExpression(QueryExpression.LOWER, field);
             }
-
-            q.addToSelect(qf);
+            qes.add(field);
         }
 
-        if (cs.getConstraints().size() == 0) {
-            String message =
-                "Internal error - could not find any usable key fields for type: " + type + ".";
-            throw new IllegalArgumentException(message);
+        if (evaluables.size() > 1) {
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+            for (Class<?> attType : evaluables.keySet()) {
+                List<QueryEvaluable> qes = evaluables.get(attType);
+                Collection<Object> bag = bags.get(attType);
+                if (qes.size() > 1) {
+                    cs.addConstraint(new MultipleInBagConstraint(bag, qes));
+                } else {
+                    cs.addConstraint(new BagConstraint(qes.get(0), ConstraintOp.IN, bag));
+                }
+            }
+            q.setConstraint(cs);
+        } else if (evaluables.isEmpty()) {
+            throw new IllegalArgumentException("Internal Error - could not find any usable key "
+                    + "fields for type " + type + ".");
+        } else {
+            for (Class<?> attType : evaluables.keySet()) {
+                List<QueryEvaluable> qes = evaluables.get(attType);
+                Collection<Object> bag = bags.get(attType);
+                if (qes.size() > 1) {
+                    q.setConstraint(new MultipleInBagConstraint(bag, qes));
+                } else {
+                    q.setConstraint(new BagConstraint(qes.get(0), ConstraintOp.IN, bag));
+                }
+            }
         }
         return q;
     }

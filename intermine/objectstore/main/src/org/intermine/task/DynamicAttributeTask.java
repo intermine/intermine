@@ -46,13 +46,13 @@ public class DynamicAttributeTask extends Task
      */
     protected void configureDynamicAttributes(Object bean) {
         Project antProject = getProject();
-        Hashtable projectProps = antProject.getProperties();
+        Hashtable<?, ?> projectProps = antProject.getProperties();
         PropertyDescriptor[] props =  PropertyUtils.getPropertyDescriptors(bean);
         for (int i = 0; i < props.length; i++) {
             PropertyDescriptor desc = props[i];
             Method setter = desc.getWriteMethod();
             if (setter != null) {
-                Class propType = desc.getPropertyType();
+                Class<?> propType = desc.getPropertyType();
                 String propName = setter.getName().substring(3).toLowerCase();
                 Object propValue = projectProps.get(propName);
 

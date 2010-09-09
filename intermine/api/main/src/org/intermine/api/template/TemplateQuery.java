@@ -14,9 +14,9 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -26,8 +26,7 @@ import org.apache.log4j.Logger;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.model.userprofile.SavedTemplateQuery;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 
 /**
@@ -39,6 +38,7 @@ import org.intermine.pathquery.PathQuery;
  */
 public class TemplateQuery extends PathQuery implements WebSearchable
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(TemplateQuery.class);
 
     /** Template query name. */
@@ -47,65 +47,323 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     protected String title;
     /** The private comment for this query. */
     protected String comment;
-    /** Map from node to editable constraint list. */
-    protected Map constraints = new HashMap();
-    /** Edited version of another template. */
+    /** Whether this is an edited version of another template. */
     protected boolean edited = false;
     /** SavedTemplateQuery object in the UserProfile database, so we can update summaries. */
     protected SavedTemplateQuery savedTemplateQuery = null;
+    /** List of those Constraints that are editable */
+    List<PathConstraint> editableConstraints = new ArrayList<PathConstraint>();
+    /** Descriptions of constraints */
+    Map<PathConstraint, String> constraintDescriptions = new HashMap<PathConstraint, String>();
+    /** Configuration for switch-off-ability of constraints */
+    Map<PathConstraint, SwitchOffAbility> constraintSwitchOffAbility =
+        new HashMap<PathConstraint, SwitchOffAbility>();
 
     /**
      * Construct a new instance of TemplateQuery.
      *
      * @param name the name of the template
      * @param title the short title of this template for showing in list
-     * @param description the full template description for showing on the template form
      * @param comment an optional private comment for this template
      * @param query the query itself
      */
-    public TemplateQuery(String name, String title, String description, String comment,
-                         PathQuery query) {
-        super(query.clone());
-        if (description != null) {
-            this.description = description;
-        }
-        if (name != null) {
-            this.name = name;
-        }
+    public TemplateQuery(String name, String title, String comment, PathQuery query) {
+        super(query);
+        this.name = name;
         this.title = title;
         this.comment = comment;
     }
 
     /**
-     * For a PathNode with editable constraints, get all the editable
-     * constraints as a List.
+     * Clone this TemplateQuery.
      *
-     * @param node  a PathNode with editable constraints
-     * @return      List of Constraints for Node
+     * @return a TemplateQuery
      */
-    public List<Constraint> getEditableConstraints(PathNode node) {
-        return getEditableConstraints(node.getPathString());
+    @Override
+    public synchronized TemplateQuery clone() {
+        TemplateQuery t = (TemplateQuery) super.clone();
+        t.name = name;
+        t.title = title;
+        t.comment = comment;
+        t.edited = edited;
+        t.editableConstraints = new ArrayList<PathConstraint>(editableConstraints);
+        t.constraintDescriptions = new HashMap<PathConstraint, String>(constraintDescriptions);
+        t.constraintSwitchOffAbility =
+            new HashMap<PathConstraint, SwitchOffAbility>(constraintSwitchOffAbility);
+        t.savedTemplateQuery = null;
+        return t;
     }
 
     /**
-     * Return all constraints for a given node or an empty list if none.
-     * For a Path with editable constraints, get all the editable
-     * constraints as a List.
-     *
-     * @param path a String of a path with editable constraints
-     * @return List of Constraints for the path
+     * Fetch the PathQuery to execute for this template.  The returned query excludes any optional
+     * constraints that have been switched off before the template is executed.
+     * @return the PathQuery that should be executed for this query
      */
-    public List<Constraint> getEditableConstraints(String path) {
-        if (nodes.get(path) == null) {
-            return Collections.EMPTY_LIST;
+    @Override
+    public PathQuery getQueryToExecute() {
+        TemplateQuery queryToExecute = this.clone();
+        for (PathConstraint con : queryToExecute.getEditableConstraints()) {
+            if (SwitchOffAbility.OFF.equals(getSwitchOffAbility(con))) {
+                queryToExecute.removeConstraint(con);
+            }
         }
-        List<Constraint> ecs = new ArrayList<Constraint>();
-        for (Constraint c : nodes.get(path).getConstraints()) {
-            if (c.isEditable()) {
-                ecs.add(c);
+        return queryToExecute;
+    }
+
+    /**
+     * Sets a constraint to be editable or not. If setting a constraint to be editable, and it is
+     * not already editable, then the constraint will be added to the end of the editable
+     * constraints list.
+     *
+     * @param constraint the PathConstraint to mark
+     * @param editable whether the constraint should be editable
+     * @throws NullPointerException if constraint is null
+     * @throws NoSuchElementException if the constraint is not in the query
+     */
+    public synchronized void setEditable(PathConstraint constraint, boolean editable) {
+        if (constraint == null) {
+            throw new NullPointerException("Cannot set null constraint to be editable");
+        }
+        if (!getConstraints().containsKey(constraint)) {
+            throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
+        }
+        if (editable) {
+            if (!editableConstraints.contains(constraint)) {
+                editableConstraints.add(constraint);
+            }
+        } else {
+            editableConstraints.remove(constraint);
+        }
+    }
+
+    /**
+     * Returns whether a constraint is editable.
+     *
+     * @param constraint the PathConstraint to check
+     * @return true if the constraint is editable
+     * @throws NullPointerException if constraint is null
+     * @throws NoSuchElementException if constraint is not in the query at all
+     */
+    public synchronized boolean isEditable(PathConstraint constraint) {
+        if (constraint == null) {
+            throw new NullPointerException("Cannot fetch editable status of null constraint");
+        }
+        if (!getConstraints().containsKey(constraint)) {
+            throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
+        }
+        return editableConstraints.contains(constraint);
+    }
+
+    /**
+     * Sets the list of editable constraints to exactly that provided, in the given order.
+     * Previously-editable constraints are discarded.
+     *
+     * @param editable a List of editable constraints to replace the existing list
+     * @throws NoSuchElementException if the argument contains a constraint that is not in the query
+     */
+    public synchronized void setEditableConstraints(List<PathConstraint> editable) {
+        for (PathConstraint constraint : editable) {
+            if (!getConstraints().containsKey(constraint)) {
+                throw new NoSuchElementException("Constraint " + constraint
+                        + " is not in the query");
+            }
+        }
+        sortConstraints(editable);
+        editableConstraints = new ArrayList<PathConstraint>(editable);
+    }
+
+    /**
+     * For a path with editable constraints, get all the editable constraints as a List, or the
+     * empty list if there are no editable constraints on that path.
+     *
+     * @param path a String of a path
+     * @return List of editable constraints for the path
+     */
+    public synchronized List<PathConstraint> getEditableConstraints(String path) {
+        List<PathConstraint> ecs = new ArrayList<PathConstraint>();
+        for (PathConstraint constraint : editableConstraints) {
+            if (path.equals(constraint.getPath())) {
+                ecs.add(constraint);
             }
         }
         return ecs;
+    }
+
+    /**
+     * Returns the constraint SwitchOffAbility for this query. The return value of this method is an
+     * unmodifiable copy of the data in this query, so it will not change to reflect changes in this
+     * query.
+     *
+     * @return a Map of constraintSwitchOffAbility
+     */
+    public synchronized Map<PathConstraint, SwitchOffAbility> getConstraintSwitchOffAbility() {
+        return Collections.unmodifiableMap(new HashMap<PathConstraint, SwitchOffAbility>(
+                constraintSwitchOffAbility));
+    }
+
+    /**
+     * Sets the description for a constraint. To remove a description, call this method with
+     * a null description.
+     *
+     * @param constraint the constraint to attach the description to
+     * @param description a String
+     * @throws NullPointerException if the constraint is null
+     * @throws NoSuchElementException if the constraint is not in the query
+     */
+    public synchronized void setConstraintDescription(PathConstraint constraint,
+            String description) {
+        if (constraint == null) {
+            throw new NullPointerException("Cannot set description on null constraint");
+        }
+        if (!getConstraints().containsKey(constraint)) {
+            throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
+        }
+        if (description == null) {
+            constraintDescriptions.remove(constraint);
+        } else {
+            constraintDescriptions.put(constraint, description);
+        }
+    }
+
+    /**
+     * Returns the description attached to the given constraint. Returns null if no description is
+     * present.
+     *
+     * @param constraint the constraint to fetch the description of
+     * @return a String description
+     * @throws NullPointerException is the constraint is null
+     * @throws NoSuchElementException if the constraint is not in the query
+     */
+    public synchronized String getConstraintDescription(PathConstraint constraint) {
+        if (constraint == null) {
+            throw new NullPointerException("Cannot set description on null constraint");
+        }
+        if (!getConstraints().containsKey(constraint)) {
+            throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
+        }
+        return constraintDescriptions.get(constraint);
+    }
+
+    /**
+     * Returns the constraint descriptions for this query. The return value of this method is an
+     * unmodifiable copy of the data in this query, so it will not change to reflect changes in this
+     * query.
+     *
+     * @return a Map from PathConstraint to String description
+     */
+    public synchronized Map<PathConstraint, String> getConstraintDescriptions() {
+        return Collections.unmodifiableMap(new HashMap<PathConstraint, String>(
+                    constraintDescriptions));
+    }
+
+    /**
+     * Sets the switch-off-ability of a constraint.
+     *
+     * @param constraint the constraint to set the switch-off-ability on
+     * @param switchOffAbility a SwitchOffAbility instance
+     * @throws NullPointerException if the constraint or switchOffAbility is null
+     * @throws NoSuchElementException if the constraint is not in the query
+     */
+    public synchronized void setSwitchOffAbility(PathConstraint constraint,
+            SwitchOffAbility switchOffAbility) {
+        if (constraint == null) {
+            throw new NullPointerException("Cannot set switch-off-ability on null constraint");
+        }
+        if (switchOffAbility == null) {
+            throw new NullPointerException("Cannot set null switch-off-ability on constraint "
+                    + constraint);
+        }
+        if (!getConstraints().containsKey(constraint)) {
+            throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
+        }
+        constraintSwitchOffAbility.put(constraint, switchOffAbility);
+    }
+
+    /**
+     * Gets the switch-off-ability of a constraint.
+     *
+     * @param constraint the constraint to get the switch-off-ability for
+     * @return a SwitchOffAbility instance
+     * @throws NullPointerException is the constraint is null
+     * @throws NoSuchElementException if the constraint is not in the query
+     */
+    public synchronized SwitchOffAbility getSwitchOffAbility(PathConstraint constraint) {
+        if (constraint == null) {
+            throw new NullPointerException("Cannot set switch-off-ability on null constraint");
+        }
+        if (!getConstraints().containsKey(constraint)) {
+            throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
+        }
+        SwitchOffAbility switchOffAbility = constraintSwitchOffAbility.get(constraint);
+        if (switchOffAbility == null) {
+            return SwitchOffAbility.LOCKED;
+        }
+        return switchOffAbility;
+    }
+
+    /**
+     * Returns the list of all editable constraints. The return value of this method is an
+     * unmodifiable copy of the data in this query, so it will not change to reflect changes in this
+     * query.
+     *
+     * @return a List of PathConstraint
+     */
+    public synchronized List<PathConstraint> getEditableConstraints() {
+        return Collections.unmodifiableList(new ArrayList<PathConstraint>(editableConstraints));
+    }
+
+    /**
+     * Returns the list of all editable constraints. The return value of this method is a
+     * copy of the data in this query, so it will not change to reflect changes in this
+     * query. Please only use this method if you are going to resubmit the list to the
+     * setEditableConstraints() method, as any changes made in this list will not be otherwise
+     * copied to this TemplateQuery object. For other uses, use the getEditableConstraints() method,
+     * which will prevent modification, which could catch a bug or two.
+     *
+     * @return a List of PathConstraint
+     */
+    public synchronized List<PathConstraint> getModifiableEditableConstraints() {
+        return new ArrayList<PathConstraint>(editableConstraints);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void replaceConstraint(PathConstraint old, PathConstraint replacement) {
+        super.replaceConstraint(old, replacement);
+        if (editableConstraints.contains(old)) {
+            editableConstraints.set(editableConstraints.indexOf(old), replacement);
+        }
+        String description = constraintDescriptions.remove(old);
+        if (description != null) {
+            constraintDescriptions.put(replacement, description);
+        }
+        SwitchOffAbility switchOffAbility = constraintSwitchOffAbility.remove(old);
+        if (switchOffAbility != null) {
+            constraintSwitchOffAbility.put(replacement, switchOffAbility);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void removeConstraint(PathConstraint constraint) {
+        super.removeConstraint(constraint);
+        editableConstraints.remove(constraint);
+        constraintDescriptions.remove(constraint);
+        constraintSwitchOffAbility.remove(constraint);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void clearConstraints() {
+        editableConstraints.clear();
+        constraintDescriptions.clear();
+        constraintSwitchOffAbility.clear();
     }
 
     /**
@@ -116,44 +374,13 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      * @return a clone of the original tempate without editable constraints.
      */
     public TemplateQuery cloneWithoutEditableConstraints() {
-        TemplateQuery clone = (TemplateQuery) this.clone();
+        TemplateQuery clone = clone();
 
-        // Find the editable constraints in the query.
-        Iterator iter = clone.getNodes().entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            PathNode node = (PathNode) entry.getValue();
-            Iterator citer = node.getConstraints().iterator();
-            while (citer.hasNext()) {
-                Constraint c = (Constraint) citer.next();
-                if (c.isEditable()) {
-                    if (clone.constraintLogic != null) {
-                        try {
-                            clone.constraintLogic.removeVariable(c.getCode());
-                        } catch (IllegalArgumentException e) {
-                            // Logic expression is now empty
-                            clone.constraintLogic = null;
-                        }
-                    }
-                    citer.remove();
-                }
-            }
+        List<PathConstraint> editable = new ArrayList<PathConstraint>(clone.editableConstraints);
+        for (PathConstraint constraint : editable) {
+            clone.removeConstraint(constraint);
         }
         return clone;
-    }
-
-
-    /**
-     * Return a List of all the Constraints of fields in this template query.
-     *
-     * @return a List of all the Constraints of fields in this template query
-     */
-    public List<Constraint> getAllEditableConstraints() {
-        List<Constraint> ecs = new ArrayList<Constraint>();
-        for (String path : nodes.keySet()) {
-            ecs.addAll(getEditableConstraints(path));
-        }
-        return ecs;
     }
 
     /**
@@ -167,27 +394,25 @@ public class TemplateQuery extends PathQuery implements WebSearchable
 
     /**
      * Get the private comment for this template.
-     * @return the description
+     * @return the comment
      */
     public String getComment() {
         return comment;
     }
 
     /**
-     * Get the nodes from the description, in order (eg. {Company.name}).
+     * Get the paths of all editable constraints in this template.
      *
      * @return the nodes
      */
-    public List<PathNode> getEditableNodes() {
-        List<PathNode> newEditableNodes = new ArrayList();
-        Iterator nodeIter = nodes.values().iterator();
-        while (nodeIter.hasNext()) {
-            PathNode node = (PathNode) nodeIter.next();
-            if (!(getEditableConstraints(node).isEmpty())) {
-                newEditableNodes.add(node);
+    public synchronized List<String> getEditablePaths() {
+        List<String> editablePaths = new ArrayList<String>();
+        for (PathConstraint constraint : editableConstraints) {
+            if (!editablePaths.contains(constraint.getPath())) {
+                editablePaths.add(constraint.getPath());
             }
         }
-        return newEditableNodes;
+        return editablePaths;
     }
 
     /**
@@ -197,6 +422,24 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Sets the query short name.
+     *
+     * @param name the template name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Sets the template title.
+     *
+     * @param title the title
+     */
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     /**
@@ -219,12 +462,21 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     }
 
     /**
+     * Set the private comment for this template.
+     * @param comment the comment
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    /**
      * Convert a template query to XML.
      *
      * @param version the version number of the XML format
      * @return this template query as XML.
      */
-    public String toXml(int version) {
+    @Override
+    public synchronized String toXml(int version) {
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
@@ -236,27 +488,6 @@ public class TemplateQuery extends PathQuery implements WebSearchable
         }
 
         return sw.toString();
-    }
-
-    /**
-     * Clone this TemplateQuery.
-     *
-     * @return a TemplateQuery
-     */
-    public PathQuery clone() {
-        TemplateQuery templateQuery = new TemplateQuery(name, title, description, comment,
-                                                        super.clone());
-        templateQuery.edited = edited;
-        return templateQuery;
-    }
-
-    /**
-     * Return the PathQuery part of the TemplateQuery.
-     *
-     * @return a PathQuery
-     */
-    public PathQuery getPathQuery() {
-        return super.clone();
     }
 
     /**
@@ -276,28 +507,5 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      */
     public void setEdited(boolean edited) {
         this.edited = edited;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean equals(Object o) {
-        return (o instanceof TemplateQuery)
-            && super.equals(o)
-            && ((TemplateQuery) o).getName().equals(getName())
-            && ((PathQuery) o).getDescription().equals(getDescription())
-            && ((TemplateQuery) o).getTitle().equals(getTitle())
-            && ((TemplateQuery) o).getComment().equals(getComment());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int hashCode() {
-        return 13 * super.hashCode()
-            + 3 * name.hashCode()
-            + 5 * title.hashCode()
-            + 7 * description.hashCode()
-            + 11 * comment.hashCode();
     }
 }

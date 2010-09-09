@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +27,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.util.NameUtil;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryUtil;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -61,7 +60,7 @@ public class ImportQueriesAction extends InterMineAction
             PathQuery pathQuery = queries.values().iterator().next();
             if (!pathQuery.isValid()) {
                 recordError(new ActionMessage("errors.importFailed",
-                        PathQueryUtil.getProblemsSummary(pathQuery.getProblems())), request);
+                        StringUtil.prettyList(pathQuery.verifyQuery())), request);
             }
             SessionMethods.loadQuery(pathQuery, session, response);
             return mapping.findForward("query");
@@ -75,10 +74,8 @@ public class ImportQueriesAction extends InterMineAction
         }
         try {
             profile.disableSaving();
-            Iterator iter = queries.keySet().iterator();
             StringBuffer sb = new StringBuffer();
-            while (iter.hasNext()) {
-                String queryName = (String) iter.next();
+            for (String queryName : queries.keySet()) {
                 PathQuery query = queries.get(queryName);
                 queryName = NameUtil.validateName(queries.keySet(), queryName);
                 SessionMethods.saveQuery(session, queryName, query);
@@ -90,11 +87,8 @@ public class ImportQueriesAction extends InterMineAction
             recordMessage(new ActionMessage("query.imported", sb.toString()), request);
             return new ForwardParameters(mapping.findForward("mymine"))
                 .addParameter("subtab", "saved").forward();
-
         } finally {
             profile.enableSaving();
         }
     }
-
-
 }

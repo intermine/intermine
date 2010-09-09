@@ -21,5 +21,5 @@ public interface Shutdownable
      * Shuts down an instance. It is expected that this method will be called on JVM exit. To make
      * this happen, register the instance with ShutdownHook.
      */
-    public void shutdown();
+    void shutdown();
 }

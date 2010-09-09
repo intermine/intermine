@@ -49,6 +49,7 @@ public class ExportQueryAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
+    @Override
     public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -76,7 +77,7 @@ public class ExportQueryAction extends InterMineAction
             return null;
         }
 
-        if (query.getViewStrings().size() == 0) {
+        if (query.getView().size() == 0) {
             response.getWriter().write("Invalid query. No fields selected for output.");
             return null;
         }
@@ -90,16 +91,16 @@ public class ExportQueryAction extends InterMineAction
         } else {
             format = "xml";
         }
-        if (format.equals("xml")) {
+        if ("xml".equals(format)) {
             String xml = getQueryXML(name, query);
             xml = XmlUtil.indentXmlSimple(xml);
             response.getWriter().write(xml);
-        } else if (format.equals("iql")) {
+        } else if ("iql".equals(format)) {
             Query osQuery = webResultsExecutor.makeQuery(query);
             response.getWriter().println(osQuery.toString());
-        } else if (format.equals("sql")) {
+        } else if ("sql".equals(format)) {
             response.getWriter().println(webResultsExecutor.makeSql(query));
-        }  else if (format.equals("link")) {
+        }  else if ("link".equals(format)) {
             String serviceFormat;
             if (request.getParameter("serviceFormat") != null) {
                 serviceFormat = request.getParameter("serviceFormat");

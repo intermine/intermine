@@ -114,13 +114,9 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
 
         SequenceExporter exporter = new SequenceExporter(os, outputStream, realFeatureIndex);
         ExportResultsIterator iter = null;
-        boolean doGoFaster = false;
         try {
             iter = getResultRows(pt, request);
-            if (!pt.getWebTable().isSingleBatch()) {
-                doGoFaster = true;
-                iter.goFaster();
-            }
+            iter.goFaster();
             exporter.export(iter);
             if (outputStream instanceof GZIPOutputStream) {
                 try {
@@ -131,9 +127,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
             }
         } finally {
             if (iter != null) {
-                if (doGoFaster) {
-                    iter.releaseGoFaster();
-                }
+                iter.releaseGoFaster();
             }
         }
 

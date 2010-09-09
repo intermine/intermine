@@ -33,6 +33,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -197,7 +198,7 @@ public class WebResultsExecutor
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
 
         Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bqr,
-                pathToBagQueryResult, false);
+                pathToBagQueryResult);
         return q;
     }
 
@@ -242,7 +243,7 @@ public class WebResultsExecutor
      * @throws ObjectStoreException if there is a problem precomputing
      */
     public boolean precomputeTemplate(TemplateQuery t) throws ObjectStoreException {
-        List<String> indexes = new ArrayList<String>();
+        List<QueryNode> indexes = new ArrayList<QueryNode>();
         Query q = TemplatePrecomputeHelper.getPrecomputeQuery(t, indexes);
         ObjectStoreInterMineImpl osimi = (ObjectStoreInterMineImpl) os;
         if (!osimi.isPrecomputed(q, "template")) {

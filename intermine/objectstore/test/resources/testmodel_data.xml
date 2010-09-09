@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <items>
-  <item id="1" class="" implements="Broke Company">
-    <attribute name="debt" value="876324"/>
+  <item id="1" class="" implements="Company">
     <attribute name="name" value="CompanyA"/>
     <attribute name="vatNumber" value="1234"/>
     <reference name="address" ref_id="23"/>
@@ -125,9 +124,8 @@
     <reference name="address" ref_id="24"/>
     <reference name="department" ref_id="5"/>
   </item>
-  <item id="11" class="CEO" implements="Broke">
+  <item id="11" class="CEO">
     <attribute name="age" value="40"/>
-    <attribute name="debt" value="340"/>
     <attribute name="end" value="4"/>
     <attribute name="fullTime" value="true"/>
     <attribute name="name" value="EmployeeB1"/>
@@ -205,6 +203,7 @@
     <attribute name="shortObjType" value="1982"/>
     <attribute name="shortType" value="675"/>
     <attribute name="stringObjType" value="A test String"/>
+    <attribute name="clobObjType" value="Another test String"/>
   </item>
   <item class="SimpleObject">
     <attribute name="name" value="Fred"/>

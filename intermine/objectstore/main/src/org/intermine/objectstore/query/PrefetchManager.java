@@ -22,14 +22,17 @@ import org.intermine.objectstore.ObjectStoreException;
  *
  * @author Matthew Wakeling
  */
-public class PrefetchManager
+public final class PrefetchManager
 {
+    private PrefetchManager() {
+    }
+
     private static final Logger LOG = Logger.getLogger(PrefetchManager.class);
     /** Pending set of requests - always accessed inside a synchronise on sync. */
-    protected static Set pending = new HashSet();
+    protected static Set<Request> pending = new HashSet<Request>();
     /** Set of requests currently being serviced. This Set is not accessed inside a block
      * synchronised on any global object, so it must be able to handle concurrent access. */
-    protected static Set serviced = Collections.synchronizedSet(new HashSet());
+    protected static Set<Request> serviced = Collections.synchronizedSet(new HashSet<Request>());
     protected static int serviceThreads = 0;
     private static Object sync = new Object();
 
@@ -80,11 +83,14 @@ public class PrefetchManager
     /**
      * Adds a request to the Set of pending requests, and wakes up a Thread to handle it.
      *
-     * @param result a Results object that is making the request
+     * @param result a ResultsBatches object that is making the request
      * @param batchNo the batch number to be fetched
+     * @param optimise true if queries should be optimised
+     * @param explain true if this method should explain each query first
      */
-    public static void addRequest(Results result, int batchNo) {
-        Request request = new Request(result, batchNo);
+    public static void addRequest(ResultsBatches result, int batchNo, boolean optimise,
+            boolean explain) {
+        Request request = new Request(result, batchNo, optimise, explain);
         synchronized (sync) {
             synchronized (result) {
                 // Synchronise on BOTH locks, so we can muck about with anything.
@@ -126,14 +132,17 @@ public class PrefetchManager
      * Returns when the given request is completed. If the given request is not already being
      * serviced, then this method will start servicing the request in the current thread.
      *
-     * @param result a Results object that is making the request
+     * @param result a ResultsBatches object that is making the request
      * @param batchNo the batch number to be fetched
      * @return a List containing the contents of the batch
+     * @param optimise true if queries should be optimised
+     * @param explain true if this method should explain each query first
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      * @throws IndexOutOfBoundsException if the batch is off the end of the results
      */
-    public static List doRequest(Results result, int batchNo) throws ObjectStoreException {
-        return doRequest(new Request(result, batchNo));
+    public static List<Object> doRequest(ResultsBatches result, int batchNo, boolean optimise,
+            boolean explain) throws ObjectStoreException {
+        return doRequest(new Request(result, batchNo, optimise, explain));
     }
 
     /**
@@ -145,9 +154,9 @@ public class PrefetchManager
      * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
      * @throws IndexOutOfBoundsException if the batch is off the end of the results
      */
-    protected static List doRequest(Request request) throws ObjectStoreException {
+    protected static List<Object> doRequest(Request request) throws ObjectStoreException {
         boolean needToWait = false;
-        List retval = null;
+        List<Object> retval = null;
 
         synchronized (sync) {
             synchronized (request.result) {
@@ -158,7 +167,7 @@ public class PrefetchManager
                 // We need both locks, because we need to exclude the possibility that someone
                 // finishes a request between us checking to see if it is already fetched, and
                 // checking if we need to wait for someone to finish fetching it.
-                retval = (List) request.result.batches.get(new Integer(request.batchNo));
+                retval = request.result.batches.get(new Integer(request.batchNo));
                 if (retval != null) {
                     // The batch has already been fetched.
                     //LOG.debug("doRequest - the request has already been done:        " + request);
@@ -228,7 +237,8 @@ public class PrefetchManager
             try {
                 //LOG.debug("doRequest - servicing request:                        " + request);
                 // Now, we can service this request in a normal manner, outside all locks.
-                retval = request.result.fetchBatchFromObjectStore(request.batchNo);
+                retval = request.result.fetchBatchFromObjectStore(request.batchNo, request.optimise,
+                        request.explain);
             } finally {
                 // And then report that it is finished, inside a lock, even if we did get an
                 // exception.
@@ -272,7 +282,7 @@ public class PrefetchManager
             // Get a request from the pending set. We know there is something in there, because we
             // just got false from pending.isEmpty, and we have the lock on sync, and nothing
             // touches pending unless they have that lock.
-            retval = (Request) pending.iterator().next();
+            retval = pending.iterator().next();
             //LOG.debug("getRequest - got request:                             " + retval);
             // Now we have a request, we could synchronise by its result - other things look
             // for the request in serviced - namely:
@@ -302,22 +312,29 @@ public class PrefetchManager
 
     private static class Request
     {
-        private Results result;
+        private ResultsBatches result;
         private int batchNo;
+        private boolean optimise;
+        private boolean explain;
 
-        public Request(Results result, int batchNo) {
+        public Request(ResultsBatches result, int batchNo, boolean optimise, boolean explain) {
             this.result = result;
             this.batchNo = batchNo;
+            this.optimise = optimise;
+            this.explain = explain;
         }
 
+        @Override
         public int hashCode() {
             return 2 * result.query.hashCode() + 3 * batchNo;
         }
 
+        @Override
         public boolean equals(Object obj) {
             return (result == ((Request) obj).result) && (((Request) obj).batchNo == batchNo);
         }
 
+        @Override
         public String toString() {
             return "Result " + result.query.hashCode() + ", batch " + batchNo;
         }
@@ -325,6 +342,7 @@ public class PrefetchManager
 
     private static class ServiceThread extends Thread
     {
+        @Override
         public void run() {
             try {
                 while (true) {
@@ -332,7 +350,9 @@ public class PrefetchManager
                     //LOG.debug("ServiceThread.run - servicing request                 " + request);
                     try {
                         // Now, we can service this request in a normal manner, outside all locks.
-                        List batch = request.result.fetchBatchFromObjectStore(request.batchNo);
+                        @SuppressWarnings("unused")
+                        List<Object> batch = request.result.fetchBatchFromObjectStore(request
+                                .batchNo, request.optimise, request.explain);
                     } catch (Exception e) {
                         LOG.warn("ServiceThread.run - Received exception                " + request
                                 + " " + e);

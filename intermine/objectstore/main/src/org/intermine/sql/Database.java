@@ -18,7 +18,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -53,7 +52,7 @@ public class Database implements Shutdownable
     // Store all the properties this Database was configured with
     protected Properties settings;
 
-    protected Map createSituations = new HashMap();
+    // protected Map createSituations = new HashMap();
 
     /**
      * No argument constructor for testing purposes
@@ -78,7 +77,7 @@ public class Database implements Shutdownable
             LOG.info("Creating new invalid Database with ClassLoader "
                     + getClass().getClassLoader(), e);
         }
-        ShutdownHook.registerObject(new WeakReference(this));
+        ShutdownHook.registerObject(new WeakReference<Database>(this));
     }
 
     /**
@@ -98,6 +97,9 @@ public class Database implements Shutdownable
      */
     public Connection getConnection() throws SQLException {
         Connection retval;
+        if (datasource == null) {
+            throw new NullPointerException("Datasource is null. Properties are: " + settings);
+        }
         try {
             retval = datasource.getConnection();
         } catch (PSQLException e) {
@@ -157,6 +159,7 @@ public class Database implements Shutdownable
     /**
      * {@inheritDoc}
      */
+    @Override
     public void finalize() throws Throwable {
         super.finalize();
         if (datasource instanceof org.postgresql.ds.PGPoolingDataSource) {
@@ -258,10 +261,9 @@ public class Database implements Shutdownable
 
         Properties subProps = new Properties();
 
-        Enumeration propsEnum = props.keys();
-        while (propsEnum.hasMoreElements()) {
-            String propertyName = (String) propsEnum.nextElement();
-            Object propertyValue = props.get(propertyName);
+        for (Map.Entry<Object, Object> entry : props.entrySet()) {
+            String propertyName = (String) entry.getKey();
+            String propertyValue = (String) entry.getValue();
             Field field = null;
 
             // Get the first part of the string - this is the attribute we are taking about
@@ -276,16 +278,15 @@ public class Database implements Shutdownable
             try {
                 field = Database.class.getDeclaredField(attribute);
             } catch (Exception e) {
+                LOG.warn("Ignoring field for Database: " + attribute);
                 // Ignore this property - no such field
                 continue;
             }
 
-            if (subAttribute.equals("class")) {
+            if ("class".equals(subAttribute)) {
                 // make a new instance of this class for this attribute
-                Class clazz;
+                Class<?> clazz = Class.forName(propertyValue.toString());
                 Object obj;
-
-                clazz = Class.forName(propertyValue.toString());
                 try {
                     obj = clazz.newInstance();
                 } catch (Exception e) {
@@ -298,7 +299,7 @@ public class Database implements Shutdownable
                 } catch (Exception e) {
                     continue;
                 }
-            } else if (subAttribute.equals("")) {
+            } else if ("".equals(subAttribute)) {
                 // Set this attribute directly
                 try {
                     field.set(this, propertyValue);
@@ -317,7 +318,7 @@ public class Database implements Shutdownable
                         subProps.put(propertyName, propertyValue);
                         continue;
                     }
-                    Class clazz = o.getClass();
+                    Class<?> clazz = o.getClass();
                     m = clazz.getMethod("set" + StringUtil.capitalise(subAttribute),
                                         new Class[] {String.class});
                     if (m != null) {
@@ -348,7 +349,8 @@ public class Database implements Shutdownable
 
     }
 
-    private static final Map POSTGRESQL_TYPE_STRING_MAP = new HashMap();
+    private static final Map<Class<?>, String> POSTGRESQL_TYPE_STRING_MAP
+        = new HashMap<Class<?>, String>();
 
     static {
         POSTGRESQL_TYPE_STRING_MAP.put(Boolean.class, "boolean");
@@ -368,13 +370,14 @@ public class Database implements Shutdownable
      * @param c the Class representing the java type
      * @return the SQL type
      */
-    public String getColumnTypeString(Class c) {
-        return (String) POSTGRESQL_TYPE_STRING_MAP.get(c);
+    public String getColumnTypeString(Class<?> c) {
+        return POSTGRESQL_TYPE_STRING_MAP.get(c);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "" + settings + " " + driver + " " + platform;
     }

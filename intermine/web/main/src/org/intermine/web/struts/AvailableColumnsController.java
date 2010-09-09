@@ -22,12 +22,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.results.PagedTable;
@@ -40,6 +42,8 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class AvailableColumnsController extends InterMineAction
 {
+
+    private static final Logger LOG = Logger.getLogger(AvailableColumnsController.class);
 
     /**
      * {@inheritDoc}
@@ -61,7 +65,7 @@ public class AvailableColumnsController extends InterMineAction
         List<String> availPaths = getPathsThatCanBeAdded(pt);
         for (String availPath : availPaths) {
             ret.put(availPath, WebUtil.formatColumnName(
-                    query.getPathDescription(availPath)));
+                    query.getGeneratedPathDescription(availPath)));
         }
         return ret;
     }
@@ -77,14 +81,24 @@ public class AvailableColumnsController extends InterMineAction
      * @return columns that can be added
      */
     private List<String> getPathsThatCanBeAdded(PagedTable pt) {
-        List<Path> paths = pt.getWebTable().getPathQuery().getView();
+        PathQuery pathQuery = pt.getWebTable().getPathQuery();
         List<String> ret = new ArrayList<String>();
 
-        ret.addAll(getAllLastFieldsPaths(paths));
-        return getWithoutOriginalPaths(ret, paths);
+        ret.addAll(getAllLastFieldsPaths(pathQuery));
+        return getWithoutOriginalPaths(ret, pathQuery.getView());
     }
 
-    private List<String> getAllLastFieldsPaths(List<Path> paths) {
+    private List<String> getAllLastFieldsPaths(PathQuery pathQuery) {
+        List<Path> paths = new ArrayList<Path>();
+        for (String pathString : pathQuery.getView()) {
+            try {
+                paths.add(pathQuery.makePath(pathString));
+            } catch (PathException e) {
+                LOG.warn("Invalid path '" + pathString + " finding available columns for query:"
+                        + pathQuery);
+            }
+        }
+
         Set<String> processed = new HashSet<String>();
         List<String> ret = new ArrayList<String>();
         for (Path path : paths) {
@@ -98,11 +112,11 @@ public class AvailableColumnsController extends InterMineAction
         return ret;
     }
 
-    private List<String> getWithoutOriginalPaths(List<String> output, List<Path> paths) {
+    private List<String> getWithoutOriginalPaths(List<String> output, List<String> paths) {
         List<String> ret = new ArrayList<String>();
         Set<String> filterOut = new TreeSet<String>();
-        for (Path path : paths) {
-            filterOut.add(path.toStringNoConstraints());
+        for (String path : paths) {
+            filterOut.add(path);
         }
         for (String o : output) {
             if (!filterOut.contains(o)) {

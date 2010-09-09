@@ -52,19 +52,20 @@ public class FullHandler extends DefaultHandler
      * {@inheritDoc}
      */
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attrs) {
+    public void startElement(@SuppressWarnings("unused") String uri,
+            @SuppressWarnings("unused") String localName, String qName, Attributes attrs) {
 
-        if (qName.equals("item")) {
+        if ("item".equals(qName)) {
             currentItem = itemFactory.makeItem(attrs.getValue("id"));
             currentItem.setClassName(attrs.getValue("class"));
             if (attrs.getValue("implements") != null) {
                 currentItem.setImplementations(attrs.getValue("implements"));
             }
         }
-        if (qName.equals("attribute")) {
+        if ("attribute".equals(qName)) {
             currentItem.setAttribute(attrs.getValue("name"), attrs.getValue("value"));
         }
-        if (qName.equals("reference")) {
+        if ("reference".equals(qName)) {
             String value = attrs.getValue("ref_id");
             if (currentCollectionName == null) {
                 if (attrs.getValue("name") == null) {
@@ -76,7 +77,7 @@ public class FullHandler extends DefaultHandler
                 currentItem.addToCollection(currentCollectionName, value);
             }
         }
-        if (qName.equals("collection")) {
+        if ("collection".equals(qName)) {
             currentCollectionName = attrs.getValue("name");
         }
     }
@@ -84,12 +85,14 @@ public class FullHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-        if (qName.equals("item")) {
+    @Override
+    public void endElement(@SuppressWarnings("unused") String uri,
+            @SuppressWarnings("unused") String localName, String qName) throws SAXException {
+        if ("item".equals(qName)) {
             finishedItem(currentItem);
             currentItem = null;
         }
-        if (qName.equals("collection")) {
+        if ("collection".equals(qName)) {
             currentCollectionName = null;
         }
     }

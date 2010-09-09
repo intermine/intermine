@@ -25,9 +25,9 @@ import org.intermine.api.results.WebResults;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.WebConfig;
@@ -64,18 +64,21 @@ public class BagConversionHelper
         if (pq == null) {
             return null;
         }
-        Path configuredPath = pq.getView().get(0);
+
+        String convertFrom;
+        try {
+            Path convertFromPath = pq.makePath(pq.getView().get(0));
+            convertFrom = convertFromPath.getPrefix().getNoConstraintsString();
+        } catch (PathException e) {
+            throw new RuntimeException("Invalid path in bag conversion query: "
+                    + pq.getView().get(0), e);
+        }
         WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
         Model model = im.getModel();
-        pq.setViewPaths(PathQueryResultHelper
-                .getDefaultView(TypeUtil.unqualifiedName(typeB.getName()), model,
-                    webConfig, configuredPath.getPrefix().toStringNoConstraints(), false));
-        String label = null, id = null, code = pq.getUnusedConstraintCode();
-        Constraint c = new Constraint(ConstraintOp.IN, imBag.getName(), false,
-            label, code, id, null);
-        pq.addNode(imBag.getType()).getConstraints().add(c);
-        pq.syncLogicExpression("and");
-        pq.setConstraintLogic("A and B");
+        String typeBStr = TypeUtil.unqualifiedName(typeB.getName());
+        pq.addViews(PathQueryResultHelper.getDefaultViewForClass(typeBStr, model, webConfig,
+                convertFrom));
+        pq.addConstraint(Constraints.in(convertFrom, imBag.getName()));
 
         Profile profile = SessionMethods.getProfile(session);
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);

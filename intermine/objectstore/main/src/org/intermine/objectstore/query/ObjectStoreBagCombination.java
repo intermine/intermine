@@ -73,13 +73,14 @@ public class ObjectStoreBagCombination implements QuerySelectable
     /**
      * {@inheritDoc}
      */
-    public Class getType() {
+    public Class<?> getType() {
         return Integer.class;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof ObjectStoreBagCombination) {
             return bags.equals(((ObjectStoreBagCombination) o).bags)
@@ -91,6 +92,7 @@ public class ObjectStoreBagCombination implements QuerySelectable
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return bags.hashCode() + op;
     }

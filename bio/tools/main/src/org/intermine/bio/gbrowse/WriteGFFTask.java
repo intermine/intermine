@@ -48,6 +48,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyCollection;
+import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -132,7 +133,7 @@ public class WriteGFFTask extends Task
             BioQueries.findLocationAndObjects(os, Chromosome.class,
                     LOCATED_SEQUENCE_FEATURE_CLASS, false, true, false, 2000);
 
-        Iterator<ResultsRow<?>> resIter = results.iterator();
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> resIter = (Iterator) results.iterator();
 
         PrintWriter gffWriter = null;
 
@@ -165,7 +166,7 @@ public class WriteGFFTask extends Task
                 if (TypeUtil.isInstanceOf(feature,
                                           "org.intermine.model.bio.ChromosomalDeletion")) {
                     try {
-                        if (TypeUtil.getFieldValue(feature, "available") != Boolean.TRUE) {
+                        if (feature.getFieldValue("available") != Boolean.TRUE) {
                             // write only the available deletions because there are too many
                             // ChromosomalDeletions for GBrowse to work well
                             continue;
@@ -287,19 +288,15 @@ public class WriteGFFTask extends Task
 
     private String getFeatureName(SequenceFeature feature) {
         Class<?> bioEntityClass = feature.getClass();
-        Set<Class> classes = DynamicUtil.decomposeClass(bioEntityClass);
+        Set<Class<?>> classes = DynamicUtil.decomposeClass(bioEntityClass);
 
         StringBuffer nameBuffer = new StringBuffer();
 
-        Iterator<Class> iter = classes.iterator();
-
-        while (iter.hasNext()) {
-            Class<?> thisClass = iter.next();
+        for (Class<?> thisClass : classes) {
             if (nameBuffer.length() > 0) {
                 nameBuffer.append("_");
-            } else {
-                nameBuffer.append(TypeUtil.unqualifiedName(thisClass.getName()));
             }
+            nameBuffer.append(TypeUtil.unqualifiedName(thisClass.getName()));
         }
 
         return nameBuffer.toString();
@@ -353,7 +350,7 @@ public class WriteGFFTask extends Task
 
             Collection<Exon> exons = transcript.getExons();
 
-            ProxyCollection exonsResults = (ProxyCollection) exons;
+            ProxyCollection<Exon> exonsResults = (ProxyCollection<Exon>) exons;
 
             // exon collections are small enough that optimisation just slows things down
             exonsResults.setNoOptimise();
@@ -424,10 +421,10 @@ public class WriteGFFTask extends Task
         if (chromosomeLocation == null) {
             lineBuffer.append(".");
         } else {
-            if (chromosomeLocation.getStrand().equals("1")) {
+            if ("1".equals(chromosomeLocation.getStrand())) {
                 lineBuffer.append("+");
             } else {
-                if (chromosomeLocation.getStrand().equals("-1")) {
+                if ("-1".equals(chromosomeLocation.getStrand())) {
                     lineBuffer.append("-");
                 } else {
                     lineBuffer.append(".");
@@ -480,7 +477,7 @@ public class WriteGFFTask extends Task
             if (TypeUtil.isInstanceOf(bioEntity, "org.intermine.model.bio.PCRProduct")) {
                 Boolean fieldValue;
                 try {
-                    fieldValue = (Boolean) TypeUtil.getFieldValue(bioEntity, "promoter");
+                    fieldValue = (Boolean) bioEntity.getFieldValue("promoter");
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException("can't access 'promoter' field in: " + bioEntity);
                 }
@@ -545,8 +542,7 @@ public class WriteGFFTask extends Task
      * @return a Map from id to synonym List
      * @throws ObjectStoreException
      */
-    private Map<Integer, List<String>> makeSynonymMap(ObjectStore os,
-                                                      Integer chromosomeId)
+    private Map<Integer, List<String>> makeSynonymMap(ObjectStore os, Integer chromosomeId)
         throws ObjectStoreException {
         Query q = new Query();
         q.setDistinct(true);
@@ -595,7 +591,7 @@ public class WriteGFFTask extends Task
                                                    Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q, 50000, true, true, true);
 
-        Iterator<ResultsRow<?>> resIter = res.iterator();
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> resIter = (Iterator) res.iterator();
 
         Map<Integer, List<String>> returnMap = new HashMap<Integer, List<String>>();
 
@@ -617,15 +613,13 @@ public class WriteGFFTask extends Task
         return returnMap;
     }
 
-    private void writeChromosomeFasta(Chromosome chr)
-        throws IOException {
-
+    private void writeChromosomeFasta(Chromosome chr) throws IOException {
         Sequence chromosomeSequence = chr.getSequence();
 
         if (chromosomeSequence == null) {
             LOG.warn("cannot find any sequence for chromosome " + chr.getPrimaryIdentifier());
         } else {
-            String residues = chromosomeSequence.getResidues();
+            ClobAccess residues = chromosomeSequence.getResidues();
 
             if (residues == null) {
                 LOG.warn("cannot find any sequence residues for chromosome "
@@ -641,7 +635,7 @@ public class WriteGFFTask extends Task
                 int length = residues.length();
                 for (int pos = 0; pos < length; pos += 60) {
                     int end = Math.min(pos + 60, length);
-                    printStream.println(residues.substring(pos, end));
+                    printStream.println(residues.subSequence(pos, end).toString());
                 }
 
                 printStream.close();

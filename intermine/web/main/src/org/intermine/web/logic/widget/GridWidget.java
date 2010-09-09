@@ -71,6 +71,7 @@ public class GridWidget extends Widget
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process() {
         try {
             String dataSetLoader = config.getDataSetLoader();
@@ -123,12 +124,12 @@ public class GridWidget extends Widget
                         double p = calcRValue(values.size(), values2.size(), intersectionCount,
                                 bag.size());
 
-                        if (numberOpt.equals("number")) {
+                        if ("number".equals(numberOpt)) {
                             tmp[0] = String.valueOf(intersectionCount);
                         } else {
                             String pR = String.valueOf(p * 100);
                             if (pR.length() > 4) {
-                                if  (pR.equals("100.0")) {
+                                if  ("100.0".equals(pR)) {
                                     pR = "100";
                                 } else {
                                     pR = pR.substring(0, 4);
@@ -141,7 +142,7 @@ public class GridWidget extends Widget
                             + "&key=" + URLEncoder.encode(columns.get(i)
                                     + "_" + columns2.get(j), "UTF-8");
                         tmp[2] = calcRGB(p);
-                        if (numberOpt.equals("number")) {
+                        if ("number".equals(numberOpt)) {
                             tmp[3] = String.valueOf(p * 100) + "%";
                         } else {
                             tmp[3] = String.valueOf(intersectionCount) + " intersections";
@@ -176,12 +177,12 @@ public class GridWidget extends Widget
                                               intersectionCountDown,
                                               bag.size());
 
-                        if (numberOpt.equals("number")) {
+                        if ("number".equals(numberOpt)) {
                             tmp[0] = String.valueOf(intersectionCountDown);
                         } else {
                             String pR = String.valueOf(p * 100);
                             if (pR.length() > 4) {
-                                if  (pR.equals("100.0")) {
+                                if  ("100.0".equals(pR)) {
                                     pR = "100";
                                 } else {
                                     pR = pR.substring(0, 4);
@@ -194,7 +195,7 @@ public class GridWidget extends Widget
                             + "&key=" + URLEncoder.encode(columns.get(i)
                                     + "_" + columns2.get(j), "UTF-8");
                         tmp[2] = calcRGB(p);
-                        if (numberOpt.equals("number")) {
+                        if ("number".equals(numberOpt)) {
                             tmp[3] = String.valueOf(p * 100) + "%";
                         } else {
                             tmp[3] = String.valueOf(intersectionCountDown) + " intersections";
@@ -204,7 +205,7 @@ public class GridWidget extends Widget
                     }
                     if (interBefor == intersectionList.size()) {
                         String[] tmp = new String[5];
-                        if (numberOpt.equals("number")) {
+                        if ("number".equals(numberOpt)) {
                             tmp[0] = "0";
                         } else {
                             tmp[0] = "0%";
@@ -214,7 +215,7 @@ public class GridWidget extends Widget
                             + "&key=" + URLEncoder.encode(columns.get(i)
                                     + "_" + columns2.get(j), "UTF-8");
                         tmp[2] = "00FF50";
-                        if (numberOpt.equals("number")) {
+                        if ("number".equals(numberOpt)) {
                             tmp[3] = "0%";
                         } else {
                             tmp[3] = "0 intersections";
@@ -224,7 +225,7 @@ public class GridWidget extends Widget
                     }
                     if (interBeforDown == intersectionListDown.size()) {
                         String[] tmp = new String[5];
-                        if (numberOpt.equals("number")) {
+                        if ("number".equals(numberOpt)) {
                             tmp[0] = "0";
                         } else {
                             tmp[0] = "0%";
@@ -234,7 +235,7 @@ public class GridWidget extends Widget
                             + "&key=" + URLEncoder.encode(columns.get(i)
                                     + "_" + columns2.get(j), "UTF-8");
                         tmp[2] = "00FF50";
-                        if (numberOpt.equals("number")) {
+                        if ("number".equals(numberOpt)) {
                             tmp[3] = "0%";
                         } else {
                             tmp[3] = "0 intersections";
@@ -295,10 +296,10 @@ public class GridWidget extends Widget
 
         double p = 0;
 
-        if (highlight.equals("cell type to cell type")) {
+        if ("cell type to cell type".equals(highlight)) {
             p = 1 - (termA / termB);
         }
-        else if (highlight.equals("cell type in the list")) {
+        else if ("cell type in the list".equals(highlight)) {
             p = ((double) intersectionCount) / ((double) bagSize);
         }
         return p;

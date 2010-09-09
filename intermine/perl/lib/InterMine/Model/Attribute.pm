@@ -53,24 +53,24 @@ under the same terms as Perl itself.
 =head1 FUNCTIONS
 
 =cut
+use Moose;
+with 'InterMine::Model::Role::Field';
 
-use strict;
-use vars qw(@ISA);
-use InterMine::Model::Field;
+use MooseX::Types::Moose qw(Str);
 
-@ISA = qw(InterMine::Model::Field);
-
-=head2 attribute_type
+=head2 type
 
  Usage   : my $type = $field->attribute_type();
  Function: return the (Java) type of this attribute, eg. "String", "Integer",
            "Date", "Boolean"
 
 =cut
-sub attribute_type
-{
-  my $self = shift;
-  return $self->{type};
-}
 
+has type => (
+    reader   => 'attribute_type',
+    isa	     => Str,
+    required => 1,
+);
+__PACKAGE__->meta->make_immutable;
+no Moose;
 1;

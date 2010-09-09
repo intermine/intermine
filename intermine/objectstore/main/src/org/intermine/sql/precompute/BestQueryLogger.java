@@ -53,6 +53,7 @@ public class BestQueryLogger extends BestQuery
      *
      * @param q a query String to be added to the tracker
      */
+    @Override
     public void add(String q) {
         if (q == null) {
             throw new NullPointerException("Cannot add null queries to a BestQueryStorer");
@@ -68,6 +69,7 @@ public class BestQueryLogger extends BestQuery
      *
      * @return the best Query, or null if no Queries added to this object
      */
+    @Override
     public Query getBestQuery() {
         throw new RuntimeException("Unsupported Operation");
     }
@@ -77,6 +79,7 @@ public class BestQueryLogger extends BestQuery
      *
      * @return the best Query, or null if no Queries added to this object
      */
+    @Override
     public String getBestQueryString() {
         return bestQueryString;
     }

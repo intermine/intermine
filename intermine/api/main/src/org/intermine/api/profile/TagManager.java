@@ -232,8 +232,8 @@ public class TagManager
 
         ObjectStore userprofileOS = osWriter.getObjectStore();
         SingletonResults results = userprofileOS.executeSingleton(q);
-        addToCache(cache, key, results);
-        return results;
+        addToCache(cache, key, (List<Tag>) ((List) results));
+        return (List<Tag>) ((List) results);
     }
 
     private MultiKey makeKey(String tagName, String objectIdentifier, String type,

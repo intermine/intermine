@@ -10,8 +10,6 @@ package org.intermine.dataloader;
  *
  */
 
-import org.intermine.dataconversion.DataConverterStoreHook;
-
 /**
  * Loads information from a data source into the InterMine database.
  * This class defines a member variable referencing an IntegrationWriter, which all DataLoaders
@@ -23,24 +21,6 @@ import org.intermine.dataconversion.DataConverterStoreHook;
 public abstract class DataLoader
 {
     private IntegrationWriter iw;
-    private DataConverterStoreHook storeHook;
-
-    /**
-     * No-arg constructor for testing purposes
-     */
-    private DataLoader() {
-        // empty
-    }
-
-    /**
-     * Set a hook for this converter that will be called just before each Item is stored.
-     * The processItem() method in DataConverterStoreHook will be passed the Item, which
-     * it can modify.
-     * @param dataConverterStoreHook the hook
-     */
-    public void setStoreHook(DataConverterStoreHook dataConverterStoreHook) {
-        this.storeHook = dataConverterStoreHook;
-    }
 
     /**
      * Construct a DataLoader

@@ -62,6 +62,7 @@ public class Table extends AbstractTable
      *
      * @return the String representation
      */
+    @Override
     public String getSQLString() {
         return ((alias == null) || (alias.equals(name)) ? name : name + " AS " + alias);
     }
@@ -72,6 +73,7 @@ public class Table extends AbstractTable
      * @param obj an Object to compare to
      * @return true if the object is of the same class, and with the same name
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof Table) {
             Table objTable = (Table) obj;
@@ -87,6 +89,7 @@ public class Table extends AbstractTable
      *
      * @return an arbitrary integer based on the name of the Table
      */
+    @Override
     public int hashCode() {
         return name.hashCode() + (alias == null ? 0 : alias.hashCode());
     }
@@ -97,6 +100,7 @@ public class Table extends AbstractTable
      * @param obj an AbstractTable to compare to
      * @return true if the object is of the same class, and with the same value
      */
+    @Override
     public boolean equalsIgnoreAlias(AbstractTable obj) {
         if (obj instanceof Table) {
             return name.equals(((Table) obj).name);
@@ -109,6 +113,7 @@ public class Table extends AbstractTable
      *
      * @return a String representation of the object
      */
+    @Override
     public String toString() {
         return getSQLString();
     }

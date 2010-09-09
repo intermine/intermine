@@ -43,17 +43,14 @@ public class EmployeeURLQuery implements WidgetURLQuery
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
         // add columns to be displayed in the results
-        q.setView("Employee.name,Employee.department.name,Employee.department.company.name");
+        q.addView("Employee.name,Employee.department.name,Employee.department.company.name");
         // restrict results to objects in list
-        q.addConstraint(bag.getType(),  Constraints.in(bag.getName()));
+        q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         // only display objects selected
         if (!showAll) {
-            q.addConstraint("Employee.department",  Constraints.eq(key));
-            // set contraintsa
-            q.setConstraintLogic("A and B");
-            q.syncLogicExpression("and");
+            q.addConstraint(Constraints.eq("Employee.department", key));
         }
-        
+
         return q;
     }
 }

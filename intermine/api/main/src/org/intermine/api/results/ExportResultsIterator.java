@@ -30,7 +30,9 @@ import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsBatches;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 
 /**
@@ -49,25 +51,7 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
     private List columns;
     private int columnCount;
     private Results results;
-
-    /**
-     * Constructor for ExportResultsIterator. This creates a new instance from the given
-     * ObjectStore, PathQuery, and other necessary objects.
-     *
-     * @param os an ObjectStore that the query will be run on
-     * @param pq a PathQuery to run
-     * @param savedBags a Map of the bags that the query may have used
-     * @param bagQueryRunner a BagQueryRunner for any LOOKUP constraints
-     * @param batchSize the batch size for the results
-     * @param matching true to switch off prefetch, used to match an existing Results object in the
-     * cache
-     * @throws ObjectStoreException if something goes wrong executing the query
-     */
-    public ExportResultsIterator(ObjectStore os, PathQuery pq, Map savedBags,
-            BagQueryRunner bagQueryRunner, int batchSize, boolean matching)
-        throws ObjectStoreException {
-        init(os, pq, savedBags, bagQueryRunner, batchSize, matching);
-    }
+    private boolean isGoingFaster = false;
 
      /**
      * Constructor for ExportResultsIterator. This creates a new instance from the given
@@ -81,7 +65,7 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
      */
     public ExportResultsIterator(ObjectStore os, PathQuery pq, Map savedBags,
             BagQueryRunner bagQueryRunner) throws ObjectStoreException {
-        init(os, pq, savedBags, bagQueryRunner, 0, false);
+        init(os, pq, savedBags, bagQueryRunner, ResultsBatches.DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -97,18 +81,18 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
      */
     public ExportResultsIterator(ObjectStore os, PathQuery pq, Map savedBags,
             BagQueryRunner bagQueryRunner, int batchSize) throws ObjectStoreException {
-        init(os, pq, savedBags, bagQueryRunner, batchSize, false);
+        init(os, pq, savedBags, bagQueryRunner, batchSize);
     }
 
     private void init(ObjectStore os, PathQuery pq, Map savedBags,
-            BagQueryRunner bagQueryRunner, int batchSize, boolean matching)
+            BagQueryRunner bagQueryRunner, int batchSize)
         throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Map returnBagQueryResults = new HashMap();
         Query q = MainHelper.makeQuery(pq, savedBags, pathToQueryNode, bagQueryRunner,
-                returnBagQueryResults, false);
-        results = os.execute(q, batchSize, true, true, !matching);
-        osIter = results.iterator();
+                returnBagQueryResults);
+        results = os.execute(q, batchSize, true, true, true);
+        osIter = ((List) results).iterator();
         List<List<ResultElement>> empty = Collections.emptyList();
         subIter = empty.iterator();
         columns = convertColumnTypes(q.getSelect(), pq, pathToQueryNode);
@@ -150,7 +134,10 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
      */
     public void goFaster()  {
         try {
-            ((ObjectStoreInterMineImpl) results.getObjectStore()).goFaster(results.getQuery());
+            if ((!results.isSingleBatch()) && (!isGoingFaster)) {
+                ((ObjectStoreInterMineImpl) results.getObjectStore()).goFaster(results.getQuery());
+                isGoingFaster = true;
+            }
         } catch (ObjectStoreException ex) {
             LOG.warn("Error happened during executing goFaster method.", ex);
         }
@@ -163,8 +150,10 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
      */
     public void releaseGoFaster() {
         try {
-            ((ObjectStoreInterMineImpl) results.getObjectStore()).releaseGoFaster(results
-                    .getQuery());
+            if (isGoingFaster) {
+                ((ObjectStoreInterMineImpl) results.getObjectStore()).releaseGoFaster(results
+                        .getQuery());
+            }
         } catch (ObjectStoreException ex) {
             LOG.warn("Error happened during executing releaseGoFaster method.", ex);
         }
@@ -212,7 +201,13 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
             } else {
                 Map<Path, Integer> fieldToColumnNumber = new HashMap<Path, Integer>();
                 int columnNo = 0;
-                for (Path path : pq.getView()) {
+                for (String pathString : pq.getView()) {
+                    Path path;
+                    try {
+                        path = pq.makePath(pathString);
+                    } catch (PathException e) {
+                        throw new RuntimeException("Path in view of PathQuery is invalid", e);
+                    }
                     Path parent = path.getPrefix();
                     QuerySelectable selectableForPath = pathToQueryNode.get(
                             parent.toStringNoConstraints());

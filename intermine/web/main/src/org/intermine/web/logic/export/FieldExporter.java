@@ -32,6 +32,6 @@ public interface FieldExporter
      * @param response The HTTP response we are creating - used to get the OutputStream to write to
      * @throws ExportException if the application business logic throws an exception
      */
-    public void exportField(InterMineObject o, String fieldName, ObjectStore os,
+    void exportField(InterMineObject o, String fieldName, ObjectStore os,
             HttpServletResponse response);
 }

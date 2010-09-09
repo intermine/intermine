@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
@@ -35,7 +36,7 @@ public interface ObjectStore
     /**
      * Object representing no fail-fast concurrency checks required.
      */
-    public static final Map<Object, Integer> SEQUENCE_IGNORE = Collections.emptyMap();
+    Map<Object, Integer> SEQUENCE_IGNORE = Collections.emptyMap();
 
     /**
      * Create an ObjectStoreWriter that writes into this ObjectStore. Note that the given object
@@ -46,7 +47,7 @@ public interface ObjectStore
      * @throws ObjectStoreException if an error occurs
      * @throws UnsupportedOperationException if no writer is available for this ObjectStore
      */
-    public ObjectStoreWriter getNewWriter() throws ObjectStoreException;
+    ObjectStoreWriter getNewWriter() throws ObjectStoreException;
 
     /**
      * Execute a Query on this ObjectStore
@@ -54,7 +55,7 @@ public interface ObjectStore
      * @param q the Query to execute
      * @return the results of the Query
      */
-    public Results execute(Query q);
+    Results execute(Query q);
 
     /**
      * Execute a Query on this ObjectStore
@@ -66,29 +67,28 @@ public interface ObjectStore
      * @param prefetch whether to use the PrefetchManager
      * @return the results of the Query
      */
-    public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
+    Results execute(Query q, int batchSize, boolean optimise, boolean explain, boolean prefetch);
+
+    /**
+     * Execute a Query on this ObjectStore, returning a SingletonResults
+     *
+     * @param q the Query to execute
+     * @return the results of the Query
+     */
+    SingletonResults executeSingleton(Query q);
+
+    /**
+     * Execute a Query on this ObjectStore, returning a SingletonResults
+     *
+     * @param q the Query to execute
+     * @param batchSize the batch size to initialise the Results object with
+     * @param optimise whether to optimise queries
+     * @param explain whether to explain queries
+     * @param prefetch whether to use the PrefetchManager
+     * @return the results of the Query
+     */
+    SingletonResults executeSingleton(Query q, int batchSize, boolean optimise, boolean explain,
             boolean prefetch);
-
-    /**
-     * Execute a Query on this ObjectStore, returning a SingletonResults
-     *
-     * @param q the Query to execute
-     * @return the results of the Query
-     */
-    public SingletonResults executeSingleton(Query q);
-
-    /**
-     * Execute a Query on this ObjectStore, returning a SingletonResults
-     *
-     * @param q the Query to execute
-     * @param batchSize the batch size to initialise the Results object with
-     * @param optimise whether to optimise queries
-     * @param explain whether to explain queries
-     * @param prefetch whether to use the PrefetchManager
-     * @return the results of the Query
-     */
-    public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
-            boolean explain, boolean prefetch);
 
     /**
      * Execute a Query on this ObjectStore, asking for a certain range of rows to be returned.
@@ -107,7 +107,7 @@ public interface ObjectStore
      * @return a List of ResultRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    public List<ResultsRow> execute(Query q, int start, int limit, boolean optimise,
+    List<ResultsRow<Object>> execute(Query q, int start, int limit, boolean optimise,
             boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException;
 
     /**
@@ -117,7 +117,7 @@ public interface ObjectStore
      * @return the object from the ObjectStore or cache, or null if none exists
      * @throws ObjectStoreException if an error occurs during retrieval of the object
      */
-    public InterMineObject getObjectById(Integer id) throws ObjectStoreException;
+    InterMineObject getObjectById(Integer id) throws ObjectStoreException;
 
     /**
      * Get an object from the ObjectStore by giving an ID and a hint of the Class of the object.
@@ -130,7 +130,8 @@ public interface ObjectStore
      * @return the object from the ObjectStore or the cache, or null if none exists
      * @throws ObjectStoreException if an error occurs during the retrieval of the object
      */
-    public InterMineObject getObjectById(Integer id, Class clazz) throws ObjectStoreException;
+    InterMineObject getObjectById(Integer id, Class<? extends InterMineObject> clazz)
+        throws ObjectStoreException;
 
     /**
      * Get an objects from the ObjectStore that have the IDs in the ids colection
@@ -139,7 +140,8 @@ public interface ObjectStore
      * @return the objects from the ObjectStore or cache
      * @throws ObjectStoreException if an error occurs during retrieval of the object
      */
-    public List<InterMineObject> getObjectsByIds(Collection ids) throws ObjectStoreException;
+    List<InterMineObject> getObjectsByIds(Collection<Integer> ids)
+        throws ObjectStoreException;
 
     /**
      * Prefetches an object into the objectstore getObjectById cache. This method doesn't
@@ -153,7 +155,7 @@ public interface ObjectStore
      *
      * @param id the ID of the object to prefetch
      */
-    public void prefetchObjectById(Integer id);
+    void prefetchObjectById(Integer id);
 
     /**
      * Removes an entry from the objectstore getObjectById cache. The objectstore must
@@ -163,7 +165,7 @@ public interface ObjectStore
      *
      * @param id the ID of the object to invalidate
      */
-    public void invalidateObjectById(Integer id);
+    void invalidateObjectById(Integer id);
 
     /**
      * Places an entry into the objectstore getObjectById cache. This method (like prefetch) is
@@ -178,13 +180,13 @@ public interface ObjectStore
      * for the purpose of ensuring the entry does not expire from the cache. To endure this, the
      * caller merely needs to keep a strong reference to this returned value.
      */
-    public Object cacheObjectById(Integer id, InterMineObject obj);
+    Object cacheObjectById(Integer id, InterMineObject obj);
 
     /**
      * Completely empties the getObjectById cache. The objectstore must guarantee that the
      * next time any object is mentioned, it must not be taken from the cache.
      */
-    public void flushObjectById();
+    void flushObjectById();
 
     /**
      * Gets a object from the cache if it is present. If the object is not in the cache, then no
@@ -194,7 +196,7 @@ public interface ObjectStore
      * @param id the ID of the object
      * @return the object, or null
      */
-    public InterMineObject pilferObjectById(Integer id);
+    InterMineObject pilferObjectById(Integer id);
 
     /**
      * Explain a Query (give estimate for execution time and number of rows).
@@ -203,7 +205,7 @@ public interface ObjectStore
      * @return parsed results of EXPLAIN
      * @throws ObjectStoreException if an error occurs explaining the query
      */
-    public ResultsInfo estimate(Query q) throws ObjectStoreException;
+    ResultsInfo estimate(Query q) throws ObjectStoreException;
 
     /**
      * Counts the number of rows the query will produce
@@ -216,14 +218,14 @@ public interface ObjectStore
      * @return the number of rows that will be produced by query
      * @throws ObjectStoreException if an error occurs counting the query
      */
-    public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException;
+    int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException;
 
     /**
      * Return the metadata associated with this ObjectStore
      *
      * @return the Model
      */
-    public Model getModel();
+    Model getModel();
 
     /**
      * Return an object from the objectstore that has the fields mentioned in the list set to the
@@ -236,7 +238,7 @@ public interface ObjectStore
      * @return a InterMineObject from the objectstore, or null if none fits
      * @throws ObjectStoreException if an underlying error occurs
      */
-    public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
+    InterMineObject getObjectByExample(InterMineObject o, Set<String> fieldNames)
         throws ObjectStoreException;
 
     /**
@@ -247,7 +249,7 @@ public interface ObjectStore
      *
      * @return true if one should do multiple simultaneous operations
      */
-    public boolean isMultiConnection();
+    boolean isMultiConnection();
 
     /**
      * Returns a Set of independent components that affect the results of the given Query.
@@ -255,7 +257,7 @@ public interface ObjectStore
      * @param q a Query
      * @return a Set of objects
      */
-    public Set<Object> getComponentsForQuery(Query q);
+    Set<Object> getComponentsForQuery(Query q);
 
     /**
      * Return the sequence number representing the state of the ObjectStore. This number is
@@ -264,27 +266,27 @@ public interface ObjectStore
      * @param tables a Set of independent database components to get data for
      * @return an object representing the current database state
      */
-    public Map<Object, Integer> getSequence(Set<Object> tables);
+    Map<Object, Integer> getSequence(Set<Object> tables);
 
     /**
      * Get the maximum LIMIT that can be used in an SQL query without throwing an
      * ObjectStoreLimitReachedException
      * @return the maximum limit
      */
-    public int getMaxLimit();
+    int getMaxLimit();
 
     /**
      * Get the maximum range start index a that can be accessed in a Results object without throwing
      * an ObjectStoreLimitReachedException
      * @return the maximum offset
      */
-    public int getMaxOffset();
+    int getMaxOffset();
 
     /**
      * Get the maximum time a query may take before throwing an ObjectStoreQueryDurationException
      * @return the maximum query time
      */
-    public long getMaxTime();
+    long getMaxTime();
 
     /**
      * Gets an ID number which is unique in the database.
@@ -292,7 +294,7 @@ public interface ObjectStore
      * @return an Integer
      * @throws ObjectStoreException if a problem occurs
      */
-    public Integer getSerial() throws ObjectStoreException;
+    Integer getSerial() throws ObjectStoreException;
 
     /**
      * Returns a new empty ObjectStoreBag object that is valid for this ObjectStore.
@@ -300,5 +302,13 @@ public interface ObjectStore
      * @return an ObjectStoreBag
      * @throws ObjectStoreException if an error occurs fetching a new ID
      */
-    public ObjectStoreBag createObjectStoreBag() throws ObjectStoreException;
+    ObjectStoreBag createObjectStoreBag() throws ObjectStoreException;
+
+    /**
+     * Creates a new empty Clob that is valid for this ObjectStore.
+     *
+     * @return a Clob
+     * @throws ObjectStoreException if an error occurs fetching a new ID
+     */
+    Clob createClob() throws ObjectStoreException;
 }

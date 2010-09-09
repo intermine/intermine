@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import net.sf.cglib.proxy.*;
+import net.sf.cglib.proxy.Factory;
 
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -30,12 +30,14 @@ import org.intermine.model.InterMineObject;
  *
  * @author Andrew Varley
  */
-public class DynamicUtil
+public final class DynamicUtil
 {
-    private static Map<Set<Class>, Class> classMap = new HashMap<Set<Class>, Class>();
-    private static HashMap<Class, Set<Class>> decomposeMap = new HashMap<Class, Set<Class>>();
-    private static Map<Class, String> friendlyNameMap = new HashMap<Class, String>();
-    private static Map<Class, String> simpleNameMap = new HashMap<Class, String>();
+    private static Map<Set<? extends Class<?>>, Class<? extends FastPathObject>> classMap
+        = new HashMap<Set<? extends Class<?>>, Class<? extends FastPathObject>>();
+    private static HashMap<Class<?>, Set<Class<?>>> decomposeMap = new HashMap<Class<?>,
+        Set<Class<?>>>();
+    private static Map<Class<?>, String> friendlyNameMap = new HashMap<Class<?>, String>();
+    private static Map<Class<?>, String> simpleNameMap = new HashMap<Class<?>, String>();
 
     /**
      * Cannot construct
@@ -51,16 +53,15 @@ public class DynamicUtil
      * @throws IllegalArgumentException if there is more than one Class, or if fields are not
      * compatible.
      */
-    public static synchronized FastPathObject createObject(Set classes) {
-        Class requiredClass = (Class) classMap.get(classes);
+    @SuppressWarnings("unchecked")
+    public static synchronized FastPathObject createObject(Set<? extends Class<?>> classes) {
+        Class<? extends FastPathObject> requiredClass = classMap.get(classes);
         if (requiredClass != null) {
             return createObject(requiredClass);
         } else {
-            Iterator<Class> classIter = classes.iterator();
-            Class clazz = null;
-            Set<Class> interfaces = new HashSet<Class>();
-            while (classIter.hasNext()) {
-                Class cls = classIter.next();
+            Class<?> clazz = null;
+            Set<Class<?>> interfaces = new HashSet<Class<?>>();
+            for (Class<?> cls : classes) {
                 if (cls.isInterface()) {
                     interfaces.add(cls);
                 } else if ((clazz == null) || clazz.isAssignableFrom(cls)) {
@@ -70,17 +71,22 @@ public class DynamicUtil
                             + " classes: " + classes);
                 }
             }
-            if (clazz != null) {
+            if ((clazz != null) && (!FastPathObject.class.isAssignableFrom(clazz))) {
+                throw new ClassCastException("Expected to create a FastPathObject, but was "
+                        + clazz.getName());
+            }
+            Class<? extends FastPathObject> fpclazz = (Class<? extends FastPathObject>) clazz;
+            if (fpclazz != null) {
                 interfaces.removeAll(Arrays.asList(clazz.getInterfaces()));
             }
             if (interfaces.isEmpty()) {
-                if (clazz == null) {
+                if (fpclazz == null) {
                     throw new IllegalArgumentException("Cannot create an object without a class "
                                                        + "for: " + classes);
                 } else {
                     try {
-                        classMap.put(classes, clazz);
-                        return (FastPathObject) clazz.newInstance();
+                        classMap.put(classes, fpclazz);
+                        return fpclazz.newInstance();
                     } catch (InstantiationException e) {
                         IllegalArgumentException e2 = new IllegalArgumentException("Problem running"
                                 + " constructor");
@@ -94,24 +100,40 @@ public class DynamicUtil
                     }
                 }
             }
-            if ((clazz == null) && (interfaces.size() == 1)) {
+            if ((fpclazz == null) && (interfaces.size() == 1)) {
                 try {
-                    Class retval = Class.forName(interfaces.iterator().next().getName() + "Shadow");
+                    Class<FastPathObject> retval = (Class<FastPathObject>) Class.forName(interfaces
+                            .iterator().next().getName() + "Shadow");
                     classMap.put(classes, retval);
                     return createObject(retval);
                 } catch (ClassNotFoundException e) {
                     // No problem - falling back on dynamic
                 }
             }
-            FastPathObject retval = DynamicBean.create(clazz, interfaces.toArray(new Class[] {}));
+            FastPathObject retval = DynamicBean.create(fpclazz, interfaces.toArray(new Class[] {}));
             classMap.put(classes, retval.getClass());
             return retval;
         }
     }
 
     /**
+     * Create a new object given a class, which may be an interface. This method is equivalent to
+     * calling createObject(Collections.singleton(clazz)), except that it is genericised.
+     *
+     * @param clazz the class of the object to instantiate
+     * @param <C> The type of the object that is expected
+     * @return the object
+     * @throws IllegalArgumentException if an error occurs
+     */
+    @SuppressWarnings("unchecked")
+    public static <C extends FastPathObject> C simpleCreateObject(Class<C> clazz) {
+        FastPathObject retval = createObject(Collections.singleton(clazz));
+        return (C) retval;
+    }
+
+    /**
      * Create a new object given a class (not an interface).  To create an object from interfaces
-     * use createObject(Set classes).
+     * use createObject(Set classes) or simpleCreateObject(Class).
      *
      * @param clazz the class of the object to instantiate
      * @param <C> The type of the object that is expected
@@ -144,11 +166,15 @@ public class DynamicUtil
      * @throws IllegalArgumentException if there is more than one Class, or if the fields are not
      * compatible.
      */
-    public static Class composeDescriptiveClass(Class... classes) {
+    @SuppressWarnings("unchecked")
+    public static Class<? extends FastPathObject> composeDescriptiveClass(Class<?>... classes) {
         if (classes.length == 1) {
-            return classes[0];
+            if (!FastPathObject.class.isAssignableFrom(classes[0])) {
+                throw new ClassCastException("Expected a FastPathObject class");
+            }
+            return (Class<? extends FastPathObject>) classes[0];
         }
-        return composeClass(new HashSet(Arrays.asList(classes)));
+        return composeClass(new HashSet<Class<?>>(Arrays.asList(classes)));
     }
 
     /**
@@ -159,8 +185,8 @@ public class DynamicUtil
      * @throws IllegalArgumentException is there is more than one Class, or if the fields are not
      * compatible.
      */
-    public static Class composeClass(Class... classes) {
-        return composeClass(new HashSet(Arrays.asList(classes)));
+    public static Class<? extends FastPathObject> composeClass(Class<?>... classes) {
+        return composeClass(new HashSet<Class<?>>(Arrays.asList(classes)));
     }
 
     /**
@@ -173,8 +199,8 @@ public class DynamicUtil
      * @throws IllegalArgumentException if there is more than one Class, or if the fields are not
      * compatible.
      */
-    public static synchronized Class composeClass(Set<Class> classes) {
-        Class retval = classMap.get(classes);
+    public static synchronized Class<? extends FastPathObject> composeClass(Set<Class<?>> classes) {
+        Class<? extends FastPathObject> retval = classMap.get(classes);
         if (retval == null) {
             retval = createObject(classes).getClass();
         }
@@ -188,8 +214,9 @@ public class DynamicUtil
      * @return set of Class objects
      * @throws ClassNotFoundException if class cannot be found
      */
-    protected static Set<Class> convertToClasses(Set<String> names) throws ClassNotFoundException {
-        Set<Class> classes = new HashSet<Class>();
+    protected static Set<Class<?>> convertToClasses(Set<String> names)
+        throws ClassNotFoundException {
+        Set<Class<?>> classes = new HashSet<Class<?>>();
         Iterator<String> iter = names.iterator();
         while (iter.hasNext()) {
             classes.add(Class.forName(iter.next()));
@@ -204,21 +231,21 @@ public class DynamicUtil
      * @param clazz the Class to decompose
      * @return a Set of Class objects
      */
-    public static synchronized Set<Class> decomposeClass(Class clazz) {
-        Set<Class> retval = decomposeMap.get(clazz);
+    public static synchronized Set<Class<?>> decomposeClass(Class<?> clazz) {
+        Set<Class<?>> retval = decomposeMap.get(clazz);
         if (retval == null) {
             if (net.sf.cglib.proxy.Factory.class.isAssignableFrom(clazz)) {
                 // Decompose
-                retval = new TreeSet<Class>(new ClassNameComparator());
+                retval = new TreeSet<Class<?>>(new ClassNameComparator());
                 retval.add(clazz.getSuperclass());
-                Class interfs[] = clazz.getInterfaces();
+                Class<?>[] interfs = clazz.getInterfaces();
                 for (int i = 0; i < interfs.length; i++) {
-                    Class inter = interfs[i];
+                    Class<?> inter = interfs[i];
                     if (net.sf.cglib.proxy.Factory.class != inter) {
                         boolean notIn = true;
-                        Iterator<Class> inIter = retval.iterator();
+                        Iterator<Class<?>> inIter = retval.iterator();
                         while (inIter.hasNext() && notIn) {
-                            Class in = inIter.next();
+                            Class<?> in = inIter.next();
                             if (in.isAssignableFrom(inter)) {
                                 // That means that the one already in the return value is more
                                 // general than the one we are about to put in, so we can get rid
@@ -238,7 +265,8 @@ public class DynamicUtil
                 }
             } else if (org.intermine.model.ShadowClass.class.isAssignableFrom(clazz)) {
                 try {
-                    retval = Collections.singleton((Class) clazz.getField("shadowOf").get(null));
+                    retval = new TreeSet<Class<?>>(new ClassNameComparator());
+                    retval.add((Class<?>) clazz.getField("shadowOf").get(null));
                 } catch (NoSuchFieldException e) {
                     throw new RuntimeException("ShadowClass " + clazz.getName() + " has no "
                             + "shadowOf method", e);
@@ -248,7 +276,8 @@ public class DynamicUtil
                 }
             } else {
                 // Normal class - return it.
-                retval = Collections.singleton(clazz);
+                retval = new TreeSet<Class<?>>(new ClassNameComparator());
+                retval.add(clazz);
             }
             decomposeMap.put(clazz, retval);
         }
@@ -289,14 +318,14 @@ public class DynamicUtil
      * @param clazz the class
      * @return a String describing the class, without package names
      */
-    public static synchronized String getFriendlyName(Class clazz) {
+    public static synchronized String getFriendlyName(Class<?> clazz) {
         String retval = friendlyNameMap.get(clazz);
         if (retval == null) {
             retval = "";
-            Iterator<Class> iter = decomposeClass(clazz).iterator();
+            Iterator<Class<?>> iter = decomposeClass(clazz).iterator();
             boolean needComma = false;
             while (iter.hasNext()) {
-                Class constit = iter.next();
+                Class<?> constit = iter.next();
                 retval += needComma ? "," : "";
                 needComma = true;
                 retval += constit.getName().substring(constit.getName().lastIndexOf('.') + 1);
@@ -326,10 +355,10 @@ public class DynamicUtil
      * @param clazz the class
      * @return the simple class name
      */
-    public static synchronized String getSimpleClassName(Class clazz) {
+    public static synchronized String getSimpleClassName(Class<?> clazz) {
         String retval = simpleNameMap.get(clazz);
         if (retval == null) {
-            Set<Class> decomposedClass = decomposeClass(clazz);
+            Set<Class<?>> decomposedClass = decomposeClass(clazz);
             if (decomposedClass.size() > 1) {
                 throw new IllegalArgumentException("No simple name for class: "
                                                    + getFriendlyName(clazz));
@@ -350,9 +379,9 @@ public class DynamicUtil
      * @param sub the supposed subclass
      * @return a boolean
      */
-    public static boolean isAssignableFrom(Class sup, Class sub) {
-        Set<Class> classes = decomposeClass(sup);
-        for (Class clazz : classes) {
+    public static boolean isAssignableFrom(Class<?> sup, Class<?> sub) {
+        Set<Class<?>> classes = decomposeClass(sup);
+        for (Class<?> clazz : classes) {
             if (!clazz.isAssignableFrom(sub)) {
                 return false;
             }
@@ -367,14 +396,31 @@ public class DynamicUtil
      * @param clazz the Class
      * @return a boolean
      */
-    public static boolean isInstance(Object obj, Class clazz) {
+    public static boolean isInstance(Object obj, Class<?> clazz) {
         return isAssignableFrom(clazz, obj.getClass());
     }
 
-    private static class ClassNameComparator implements Comparator<Class>
+    private static class ClassNameComparator implements Comparator<Class<?>>
     {
-        public int compare(Class a, Class b) {
+        public int compare(Class<?> a, Class<?> b) {
             return a.getName().compareTo(b.getName());
         }
+    }
+
+    /**
+     * Returns the result of decomposeClass if that is a single class, or throws an exception if
+     * there are more than one.
+     *
+     * @param clazz the class
+     * @return the corresponding non-dynamic class
+     */
+    @SuppressWarnings("unchecked")
+    public static Class<? extends FastPathObject> getSimpleClass(
+            Class<? extends FastPathObject> clazz) {
+        Set<Class<?>> decomposed = decomposeClass(clazz);
+        if (decomposed.size() > 1) {
+            throw new IllegalArgumentException("No simple class for " + getFriendlyName(clazz));
+        }
+        return (Class) decomposed.iterator().next();
     }
 }

@@ -25,7 +25,7 @@ public class FlushJobPostgresCopyImpl implements FlushJob
 {
     private CopyManager copyManager;
     private String sql;
-    private byte data[];
+    private byte[] data;
     private int size;
 
     /**
@@ -36,7 +36,7 @@ public class FlushJobPostgresCopyImpl implements FlushJob
      * @param data a byte array of COPY data
      * @param size the size of data
      */
-    public FlushJobPostgresCopyImpl(CopyManager copyManager, String sql, byte data[], int size) {
+    public FlushJobPostgresCopyImpl(CopyManager copyManager, String sql, byte[] data, int size) {
         this.copyManager = copyManager;
         this.sql = sql;
         this.data = data;

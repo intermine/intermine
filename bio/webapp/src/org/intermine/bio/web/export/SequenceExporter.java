@@ -235,7 +235,7 @@ public class SequenceExporter implements Exporter
     /**
      * {@inheritDoc}
      */
-    public boolean canExport(List<Class> clazzes) {
+    public boolean canExport(List<Class<?>> clazzes) {
         return canExportStatic(clazzes);
     }
 
@@ -249,7 +249,7 @@ public class SequenceExporter implements Exporter
      * @return true if this exporter can export result composed of specified
      *         classes
      */
-    public static boolean canExportStatic(List<Class> clazzes) {
+    public static boolean canExportStatic(List<Class<?>> clazzes) {
         return (ExportHelper.getClassIndex(clazzes,
                 SequenceFeature.class) >= 0
                 || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0 || ExportHelper

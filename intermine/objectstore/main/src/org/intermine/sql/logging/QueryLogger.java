@@ -20,8 +20,10 @@ import java.util.Date;
  *
  * @author Andrew Varley
  */
-public class QueryLogger
+public final class QueryLogger
 {
+    private QueryLogger() {
+    }
 
     protected static Object lock = new Object();
 

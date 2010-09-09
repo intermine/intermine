@@ -38,6 +38,7 @@ public class BestQueryExplainerVerbose extends BestQueryExplainer
     /**
      * {@inheritDoc}
      */
+    @Override
     protected ExplainResult getExplainResult(Query q) throws SQLException {
         if (unexplained != 0) {
             System.out .println("Did not explain " + unexplained + " queries");
@@ -56,6 +57,7 @@ public class BestQueryExplainerVerbose extends BestQueryExplainer
     /**
      * {@inheritDoc}
      */
+    @Override
     protected ExplainResult getExplainResult(String q) throws SQLException {
         if (unexplained != 0) {
             System.out .println("Did not explain " + unexplained + " queries");
@@ -71,7 +73,8 @@ public class BestQueryExplainerVerbose extends BestQueryExplainer
     /**
      * {@inheritDoc}
      */
-    protected void didNotExplain(Candidate c) {
+    @Override
+    protected void didNotExplain(@SuppressWarnings("unused") Candidate c) {
         //if (c.getQuery() == null) {
         //    System.out .println("Optimiser: Not explaining query " + c.getQueryString());
         //} else {
@@ -84,6 +87,7 @@ public class BestQueryExplainerVerbose extends BestQueryExplainer
     /**
      * {@inheritDoc}
      */
+    @Override
     public void throwBestQueryException(String message) throws BestQueryException {
         System.out .println(message);
         super.throwBestQueryException(message);

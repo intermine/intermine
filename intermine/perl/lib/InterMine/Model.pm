@@ -1,7 +1,6 @@
 package InterMine::Model::Handler;
 
 use Carp qw/confess/;
-use vars qw{ $AUTOLOAD };
 use Scalar::Util qw(weaken);
 
 use InterMine::Model::Attribute;
@@ -17,88 +16,80 @@ sub new
   return bless $self, $class;
 }
 
-sub start_element
-{
-  my $self = shift;
-  my $args = shift;
+sub start_element {
+    my $self = shift;
+    my $args = shift;
 
-  $self->{current_element} = $args->{Name};
+    $self->{current_element} = $args->{Name};
 
-  my $nameattr = $args->{Attributes}{name};
+    my $nameattr = $args->{Attributes}{name};
 
-  if ($args->{Name} eq "model") {
-    $self->{model}{model_name} = $nameattr;
-    my $package_name = $args->{Attributes}{'package'};
-    $self->{model}{package_name} = $package_name;
-  } 
-  else {
-      my $model = $self->{model};
-      if ($args->{Name} eq "class") {
-	  my @extends = ();
-	  if (exists $args->{Attributes}{extends}) {
-	      @extends = split /\s+/, $args->{Attributes}{extends};
-	      @extends = grep { $_ ne 'java.lang.Object' } @extends;
-	      map { s/.*\.(.*)/$1/ } @extends;
-	  }
-	  $self->{current_class} =
-	      new InterMine::Model::ClassDescriptor(model => $model,
-						    name => $nameattr, 
-						    extends => [@extends]); 
-	  weaken($self->{current_class}->{model});
-      }
-      else {
-	  my $field;
-	  if ($args->{Name} eq "attribute") {
-	      my $type = $args->{Attributes}{type};
-	      $field = InterMine::Model::Attribute->new(name => $nameattr,
-							type => $type,
-							model => $model);
-	  } 
-	  else {
-	      my $referenced_type = $args->{Attributes}{'referenced-type'};
-	      my $reverse_reference = $args->{Attributes}{'reverse-reference'};
-	      if ($args->{Name} eq "reference") {
-		  $field = InterMine::Model::Reference->new(name => $nameattr,
-							    referenced_type_name =>
-							    $referenced_type,
-							    reverse_reference_name =>
-							    $reverse_reference,
-							    model => $model);
-	    } 
-	      else {
-		if ($args->{Name} eq "collection") {
-		    $field = InterMine::Model::Collection->new(name => $nameattr,
-							       referenced_type_name =>
-							       $referenced_type,
-							       reverse_reference_name =>
-							       $reverse_reference,
-							       model => $model);
-		    #FIXME Circular reference here
+    if ($args->{Name} eq "model") {
+	$self->{model}{model_name} = $nameattr;
+	my $package_name = $args->{Attributes}{'package'};
+	$self->{model}{package_name} = $package_name;
+    }
+    else {
+	my $model = $self->{model};
+	if ($args->{Name} eq "class") {
+	    my @parents = ();
+	    if (exists $args->{Attributes}{extends}) {
+		@parents = split /\s+/, $args->{Attributes}{extends};
+		@parents = grep { $_ ne 'java.lang.Object' } @parents;
+		 # strip off any preceding class path (eg. "org.intermine.")
+		map { s/.*\.(.*)/$1/ } @parents;
+	    }
+	    $self->{current_class} =
+		new InterMine::Model::ClassDescriptor(
+		    model   => $model,
+		    name    => $nameattr,
+		    parents => [@parents]
+		);
+	    weaken($self->{current_class}->{model});
+	}
+	else {
+	    my $field;
+	    if ($args->{Name} eq "attribute") {
+		my $type = $args->{Attributes}{type};
+		$field = InterMine::Model::Attribute->new(
+		    name  => $nameattr,
+		    type  => $type,
+		    model => $model
+		);
+	    }
+	    else {
+		my $referenced_type = $args->{Attributes}{'referenced-type'};
+		my $reverse_reference = $args->{Attributes}{'reverse-reference'};
+
+		my %args = (
+		    name		 => $nameattr,
+		    referenced_type_name => $referenced_type,
+		    model		 => $model
+		);
+		$args{reverse_reference_name} = $reverse_reference
+		    if $reverse_reference;
+
+		if ($args->{Name} eq "reference") {
+		    $field = InterMine::Model::Reference->new(%args);
+		} elsif ($args->{Name} eq "collection") {
+		    $field = InterMine::Model::Collection->new(%args);
 		} else {
 		    confess "unexpected element: ", $args->{Name}, "\n";
 		}
-	    }
-	}
-	weaken($field->{model});
 
-	$field->field_class($self->{current_class});
-	weaken($field->{field_class});
-	# FIXME: Circular reference here
-	$self->{current_class}->add_field($field, 'own');
-#	weaken($self->{current_class}->{fields}[-1]);
-	
-	
+	    }
+	    $field->field_class($self->{current_class});
+	    $self->{current_class}->add_field($field, 'own');
+	}
     }
-  }
 }
+
 
 sub end_element {
   my $self = shift;
   my $args = shift;
-  #  print "end_element: ", $args->{Name}, "\n";
   if ($args->{Name} eq 'class') {
     push @{$self->{classes}}, $self->{current_class};
-#    weaken($self->{classes}[-1]);
     $self->{current_class} = undef;
   }
 }
@@ -130,7 +121,7 @@ get_classdescriptor_by_name() method will return an
 InterMine::Model::ClassDescriptor object for the class with the given
 name.
 
-For an example model see: 
+For an example model see:
 http://trac.flymine.org/browser/trunk/intermine/objectstore/model/testmodel/testmodel_model.xml
 
 =head1 AUTHOR
@@ -225,9 +216,9 @@ sub _process
   my $source;
 
   if ($source_is_string) {
-    $source = {String => $source_arg}; 
+    $source = {String => $source_arg};
   } else {
-    $source = {SystemId => $source_arg}; 
+    $source = {SystemId => $source_arg};
   }
 
   $parser->parse(Source => $source);
@@ -262,16 +253,12 @@ sub _get_fields
   my @fields = ();
 
   for my $field ($cd->fields()) {
-    my $field_name = $field->field_name();
+    my $field_name = $field->name();
     push @fields, $field;
   }
 
-  my @extends = $cd->extends();
-
-  for my $extendee_name (@extends) {
-    my $extendee = $self->get_classdescriptor_by_name($extendee_name);
-
-    push @fields, $self->_get_fields($extendee);
+  for my $parent ($cd->parental_class_descriptors) {
+    push @fields, $self->_get_fields($parent);
   }
 
   return @fields;
@@ -286,21 +273,28 @@ sub _get_fields
  Args    : the classname
 
 =cut
-sub get_classdescriptor_by_name
-{
-  my $self = shift;
-  my $classname = shift;
 
-  if (!defined $classname) {
-    confess "no classname passed to get_classdescriptor_by_name()\n";
-  }
+sub get_classdescriptor_by_name {
+    my $self = shift;
+    my $classname = shift;
+    if (!defined $classname) {
+	confess "no classname passed to get_classdescriptor_by_name()\n";
+    }
 
-  if (exists $self->{class_hash}{$classname}) {
-    return $self->{class_hash}{$classname};
-  } else {
-    my $full_classname = $self->{package_name} . '.' . $classname;
-    return $self->{class_hash}{$full_classname};
-  }
+    # These are always valid
+    if ($classname eq 'Integer') {
+	return InterMine::Model::ClassDescriptor->new(
+	    model => $self,
+	    name  => $classname,
+	    extends => ['id'],
+	);
+    }
+
+    my $class =
+	$self->{class_hash}{$classname} ||
+	    $self->{class_hash}{$self->{package_name} . $classname};
+    confess "$classname not in the model" unless $class;
+    return $class;
 }
 
 =head2 get_all_classdescriptors
@@ -324,12 +318,13 @@ sub get_referenced_classdescriptor {
     for my $cd ($self->get_all_classdescriptors) {
 	for my $ref ($cd->references) {
 	    if ($ref->has_reverse_reference) {
-		if ($ref->reverse_reference->field_name eq $reference) {
+		if ($ref->reverse_reference->name eq $reference) {
 		    return $cd;
 		}
 	    }
 	}
     }
+    return undef;
 }
 
 sub find_classes_declaring_field {
@@ -338,7 +333,7 @@ sub find_classes_declaring_field {
     my @returners;
     for my $cd ($self->get_all_classdescriptors) {
 	for my $field ($cd->get_own_fields) {
-	    push @returners, $cd if ($field->field_name eq $field_name); 
+	    push @returners, $cd if ($field->name eq $field_name);
 	}
     }
     return @returners;
@@ -353,6 +348,7 @@ sub find_classes_declaring_field {
  Args    : none
 
 =cut
+
 sub package_name
 {
   my $self = shift;
@@ -367,6 +363,7 @@ sub package_name
  Args    : none
 
 =cut
+
 sub model_name
 {
   my $self = shift;

@@ -222,22 +222,25 @@
     <module name="SuperFinalize"/>
     <module name="PackageDeclaration"/>
     <module name="DefaultComesLast"/>
-    <!--<module name="AnnotationUseStyle"/>
+    <module name="AnnotationUseStyle"/>
     <module name="MissingDeprecated"/>
-    <module name="MissingOverride"/>
+    <!-- Not this rule, as it forces us towards Java 6, which we are not ready for. See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5008260
+    <module name="MissingOverride"/>-->
     <module name="FinalClass"/>
     <module name="InterfaceIsType"/>
     <module name="HideUtilityClassConstructor"/>
     <module name="MutableException"/>
     <module name="EmptyStatement"/>
-    <module name="HiddenField"/>
+    <module name="HiddenField">
+      <property name="tokens" value="VARIABLE_DEF"/>
+    </module>
     <module name="MissingSwitchDefault"/>
-    <module name="ModifiedControlVariable"/>
+    <!--<module name="ModifiedControlVariable"/>-->
     <module name="SuperClone"/>
     <module name="ArrayTypeStyle"/>
     <module name="RedundantModifier"/>
     <module name="EqualsAvoidNull"/>
-    <module name="GenericWhitespace"/>-->
+    <module name="GenericWhitespace"/>
   </module>
 
   <!-- enforce package documentation -->
@@ -248,11 +251,13 @@
     <property name="headerFile" value="${checkstyle.header.file}"/>
   </module>
 
-  <module name="FileLength">
+  <!--<module name="FileLength">
     <property name="max" value="2200"/>
-  </module>
+  </module>-->
 
-  <module name="FileTabCharacter"/>
+  <module name="FileTabCharacter">
+    <property name="eachLine" value="true"/>
+  </module>
 
   <!-- Do not allow LogMe -->
   <module name="RegexpSingleline">
@@ -266,5 +271,6 @@
     <property name="format" value=" $"/>
     <property name="message" value="Spaces at the end of the line"/>
   </module>
-  <!--<module name="NewlineAtEndOfFile"/>-->
+  <module name="NewlineAtEndOfFile">
+  </module>
 </module>

@@ -25,6 +25,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.ResultsBatches;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.SingletonResults;
 
@@ -34,19 +35,20 @@ import org.apache.log4j.Logger;
  * Class which holds a reference to a collection in the database
  *
  * @author Matthew Wakeling
+ * @param <E> The element type
  */
-public class ProxyCollection extends AbstractSet implements LazyCollection
+public class ProxyCollection<E> extends AbstractSet<E> implements LazyCollection<E>
 {
     private static final Logger LOG = Logger.getLogger(ProxyCollection.class);
 
     private ObjectStore os;
     private InterMineObject o;
     private String fieldName;
-    private Class clazz;
+    private Class<?> clazz;
     private boolean noOptimise;
     private boolean noExplain;
-    private SoftReference collectionRef = null;
-    private int batchSize = 0;
+    private SoftReference<Collection<E>> collectionRef = null;
+    private int batchSize = ResultsBatches.DEFAULT_BATCH_SIZE;
 
     private static int createdCount = 0;
     private static int usedCount = 0;
@@ -60,7 +62,8 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
      * @param fieldName the name of the collection
      * @param clazz the Class of the objects in the collection
      */
-    public ProxyCollection(ObjectStore os, InterMineObject o, String fieldName, Class clazz) {
+    public ProxyCollection(ObjectStore os, InterMineObject o, String fieldName,
+            Class<? extends E> clazz) {
         this.os = os;
         this.o = o;
         this.fieldName = fieldName;
@@ -85,6 +88,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
      *
      * @return the number of elements
      */
+    @Override
     public int size() {
         return getCollection().size();
     }
@@ -92,7 +96,8 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
     /**
      * {@inheritDoc}
      */
-    public Iterator iterator() {
+    @Override
+    public Iterator<E> iterator() {
         return getCollection().iterator();
     }
 
@@ -111,7 +116,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
      * {@inheritDoc}
      */
     public ResultsInfo getInfo() throws ObjectStoreException {
-        Collection coll = getCollection();
+        Collection<E> coll = getCollection();
         try {
             return ((SingletonResults) coll).getInfo();
         } catch (ClassCastException e) {
@@ -125,7 +130,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
     public synchronized void setNoOptimise() {
         noOptimise = true;
         if (collectionRef != null) {
-            Collection collection = (Collection) collectionRef.get();
+            Collection<E> collection = collectionRef.get();
             if ((collection != null) && (collection instanceof SingletonResults)) {
                 ((SingletonResults) collection).setNoOptimise();
             }
@@ -138,7 +143,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
     public synchronized void setNoExplain() {
         noExplain = true;
         if (collectionRef != null) {
-            Collection collection = (Collection) collectionRef.get();
+            Collection<E> collection = collectionRef.get();
             if ((collection != null) && (collection instanceof SingletonResults)) {
                 ((SingletonResults) collection).setNoExplain();
             }
@@ -150,7 +155,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
      */
     public void setBatchSize(int size) {
         batchSize = size;
-        collectionRef = new SoftReference(null);
+        collectionRef = new SoftReference<Collection<E>>(null);
     }
 
     /**
@@ -158,15 +163,16 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
      *
      * @return a SingletonResults object
      */
-    private synchronized Collection getCollection() {
-        Collection collection = null;
+    private synchronized Collection<E> getCollection() {
+        Collection<E> collection = null;
         if (collectionRef == null) {
             usedCount++;
             maybeLog();
         }
-        // WARNING - read this following line very carefully.
-        if ((collectionRef == null)
-                || ((collection = ((Collection) collectionRef.get())) == null)) {
+        if (collectionRef != null) {
+            collection = collectionRef.get();
+        }
+        if (collection == null) {
             evaluateCount++;
             maybeLog();
             // Now build a query - SELECT that FROM this, that WHERE this.coll CONTAINS that
@@ -174,21 +180,26 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
             // Or if we have a one-to-many collection, then:
             //    SELECT that FROM that WHERE that.reverseColl CONTAINS <this>
             Query q = internalGetQuery();
-            collection = os.executeSingleton(q, batchSize, !noOptimise, !noExplain, true);
-            collectionRef = new SoftReference(collection);
+            collection = executeCollection(q);
+            collectionRef = new SoftReference<Collection<E>>(collection);
         }
         return collection;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Collection<E> executeCollection(Query q) {
+        return (Collection) os.executeSingleton(q, batchSize, !noOptimise, !noExplain, true);
     }
 
     /**
      * {@inheritDoc}
      */
-    public List asList() {
-        Collection collection = getCollection();
-        if (collection instanceof List) {
-            return (List) collection;
+    public List<E> asList() {
+        Collection<E> collection = getCollection();
+        if (collection instanceof List<?>) {
+            return (List<E>) collection;
         } else {
-            return new ArrayList(collection);
+            return new ArrayList<E>(collection);
         }
     }
 
@@ -197,9 +208,9 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
      *
      * @return a Collection
      */
-    public synchronized Collection getMaterialisedCollection() {
+    public synchronized Collection<E> getMaterialisedCollection() {
         if (collectionRef != null) {
-            Collection collection = (Collection) collectionRef.get();
+            Collection<E> collection = collectionRef.get();
             if ((collection != null) && (!(collection instanceof SingletonResults))) {
                 return collection;
             }
@@ -212,8 +223,8 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
      *
      * @param coll the new Collection
      */
-    public synchronized void setMaterialisedCollection(Collection coll) {
-        collectionRef = new SoftReference(coll);
+    public synchronized void setMaterialisedCollection(Collection<E> coll) {
+        collectionRef = new SoftReference<Collection<E>>(coll);
     }
 
     private Query internalGetQuery() {
@@ -239,6 +250,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
      *
      * We override this here in order to prevent possible infinite recursion.
      */
+    @Override
     public String toString() {
         return "ProxyCollection";
     }

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -28,6 +29,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryForeignKey;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SubqueryExistsConstraint;
 import org.intermine.util.AlwaysSet;
 import org.intermine.util.DynamicUtil;
@@ -47,11 +49,11 @@ public class EquivalentObjectHints
 
     private boolean databaseEmptyChecked = false;
     private boolean databaseEmpty = false;
-    private Map<Class, Boolean> classStatus = new HashMap<Class, Boolean>();
-    private Map<ClassAndFieldName, Set> classAndFieldNameValues
-        = new HashMap<ClassAndFieldName, Set>();
-    private Map<ClassAndFieldName, Set> classAndFieldNameQueried
-        = new HashMap<ClassAndFieldName, Set>();
+    private Map<Class<?>, Boolean> classStatus = new HashMap<Class<?>, Boolean>();
+    private Map<ClassAndFieldName, Set<Object>> classAndFieldNameValues
+        = new HashMap<ClassAndFieldName, Set<Object>>();
+    private Map<ClassAndFieldName, Set<Object>> classAndFieldNameQueried
+        = new HashMap<ClassAndFieldName, Set<Object>>();
     private Map<String, ClassAndFieldName> summaryToCafn = new HashMap<String, ClassAndFieldName>();
 
     private ObjectStore os;
@@ -83,7 +85,7 @@ public class EquivalentObjectHints
             subQ.addToSelect(new QueryField(qc, "id"));
             q.addToSelect(new QueryValue(new Integer(1)));
             q.setConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, subQ));
-            List results = os.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
+            List<?> results = os.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
             if (results.isEmpty()) {
                 databaseEmpty = true;
             }
@@ -103,7 +105,7 @@ public class EquivalentObjectHints
      * @param clazz the class, must be in the model
      * @return a boolean
      */
-    public boolean classNotExists(Class clazz) {
+    public boolean classNotExists(Class<? extends FastPathObject> clazz) {
         if (databaseEmpty) {
             return true;
         }
@@ -117,7 +119,7 @@ public class EquivalentObjectHints
                 subQ.addToSelect(new QueryField(qc, "id"));
                 q.addToSelect(new QueryValue(new Integer(1)));
                 q.setConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, subQ));
-                List results = os.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
+                List<?> results = os.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
                 if (results.isEmpty()) {
                     status = Boolean.TRUE;
                 } else {
@@ -141,13 +143,14 @@ public class EquivalentObjectHints
      * @param value the value
      * @return a boolean
      */
-    public boolean pkQueryFruitless(Class clazz, String fieldName, Object value) {
+    public boolean pkQueryFruitless(Class<? extends FastPathObject> clazz, String fieldName,
+            Object value) {
         if (classNotExists(clazz)) {
             return true;
         }
         ClassAndFieldName cafn = new ClassAndFieldName(clazz, fieldName);
         String summaryName = DynamicUtil.getFriendlyName(clazz) + "." + fieldName;
-        Set values = classAndFieldNameValues.get(cafn);
+        Set<Object> values = classAndFieldNameValues.get(cafn);
         if (values == null) {
             try {
                 Query testQuery = new Query();
@@ -166,8 +169,8 @@ public class EquivalentObjectHints
                 testQuery.addToSelect(new QueryField(q, qs));
                 testQuery.setDistinct(true);
                 q.setLimit(SUMMARY_SIZE * 10);
-                List<? extends List> results = os.execute(testQuery, 0, SUMMARY_SIZE, false, false,
-                        ObjectStore.SEQUENCE_IGNORE);
+                List<ResultsRow<Object>> results = os.execute(testQuery, 0, SUMMARY_SIZE, false,
+                        false, ObjectStore.SEQUENCE_IGNORE);
                 if (results.size() < SUMMARY_SIZE) {
                     q = QueryCloner.cloneQuery(q);
                     q.setLimit(Integer.MAX_VALUE);
@@ -182,29 +185,29 @@ public class EquivalentObjectHints
                         q.addToSelect(new QueryFunction(qs, QueryFunction.MIN));
                         q.addToSelect(new QueryFunction(qs, QueryFunction.MAX));
                         q.setDistinct(false);
-                        List<? extends List> results2 = os.execute(q, 0, 2, false, false,
+                        List<ResultsRow<Object>> results2 = os.execute(q, 0, 2, false, false,
                                 ObjectStore.SEQUENCE_IGNORE);
                         values = new IntegerRangeSet(((Integer) results2.get(0).get(0)).intValue(),
                                 ((Integer) results2.get(0).get(1)).intValue());
                     } else {
-                        values = AlwaysSet.INSTANCE;
+                        values = AlwaysSet.getInstance();
                     }
                 } else {
-                    values = new HashSet();
-                    for (List row : results) {
+                    values = new HashSet<Object>();
+                    for (ResultsRow<Object> row : results) {
                         values.add(row.get(0));
                     }
                 }
                 classAndFieldNameValues.put(cafn, values);
-                classAndFieldNameQueried.put(cafn, new HashSet());
+                classAndFieldNameQueried.put(cafn, new HashSet<Object>());
                 summaryToCafn.put(summaryName, cafn);
             } catch (ObjectStoreException e) {
                 LOG.warn("Error checking database for " + clazz.getName() + "." + fieldName, e);
                 return false;
             }
         }
-        Set queried = classAndFieldNameQueried.get(cafn);
-        if (queried instanceof HashSet) {
+        Set<Object> queried = classAndFieldNameQueried.get(cafn);
+        if (queried instanceof HashSet<?>) {
             queried.add(value);
             if (queried.size() >= SUMMARY_SIZE) {
                 if (value instanceof Integer) {
@@ -214,7 +217,7 @@ public class EquivalentObjectHints
                     }
                     classAndFieldNameQueried.put(cafn, newQueried);
                 } else {
-                    classAndFieldNameQueried.put(cafn, AlwaysSet.INSTANCE);
+                    classAndFieldNameQueried.put(cafn, AlwaysSet.getInstance());
                 }
             }
         } else if (queried instanceof IntegerRangeSet) {
@@ -229,7 +232,7 @@ public class EquivalentObjectHints
      * @param summaryName a String
      * @return a Set of values, or an AlwaysSet if too many values were tested
      */
-    public Set getQueried(String summaryName) {
+    public Set<Object> getQueried(String summaryName) {
         return classAndFieldNameQueried.get(summaryToCafn.get(summaryName));
     }
 
@@ -239,24 +242,26 @@ public class EquivalentObjectHints
      * @param summaryName a String
      * @return a Set of values, or an AlwaysSet if too many values were tested
      */
-    public Set getValues(String summaryName) {
+    public Set<Object> getValues(String summaryName) {
         return classAndFieldNameValues.get(summaryToCafn.get(summaryName));
     }
 
     private static class ClassAndFieldName
     {
-        private Class clazz;
+        private Class<? extends FastPathObject> clazz;
         private String fieldName;
 
-        public ClassAndFieldName(Class clazz, String fieldName) {
+        public ClassAndFieldName(Class<? extends FastPathObject> clazz, String fieldName) {
             this.clazz = clazz;
             this.fieldName = fieldName;
         }
 
+        @Override
         public int hashCode() {
             return clazz.hashCode() + 3 * fieldName.hashCode();
         }
 
+        @Override
         public boolean equals(Object o) {
             if (o instanceof ClassAndFieldName) {
                 ClassAndFieldName c = (ClassAndFieldName) o;
@@ -266,7 +271,7 @@ public class EquivalentObjectHints
         }
     }
 
-    private static class IntegerRangeSet extends PseudoSet
+    private static class IntegerRangeSet extends PseudoSet<Object>
     {
         private int low, high;
 
@@ -285,6 +290,7 @@ public class EquivalentObjectHints
             return (i >= low) && (i <= high);
         }
 
+        @Override
         public boolean add(Object o) {
             int i = ((Integer) o).intValue();
             low = Math.min(low, i);
@@ -292,6 +298,7 @@ public class EquivalentObjectHints
             return false;
         }
 
+        @Override
         public String toString() {
             return "IntegerRangeSet(" + low + " - " + high + ")";
         }

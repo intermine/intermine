@@ -94,7 +94,7 @@ public class ExcelExporter implements Exporter
      * {@inheritDoc}}
      * @return always true
      */
-    public boolean canExport(List<Class> clazzes) {
+    public boolean canExport(@SuppressWarnings("unused") List<Class<?>> clazzes) {
         return true;
     }
 

@@ -12,24 +12,12 @@ package org.intermine.dataloader;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.objectstore.query.SubqueryConstraint;
-
+import org.apache.log4j.Logger;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -43,10 +31,19 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntToIntMap;
-
-import org.apache.log4j.Logger;
 
 /**
  * Class providing methods to look up equivalent objects by primary key in a production
@@ -61,9 +58,12 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
     protected Model model;
     protected IntToIntMap idMap;
     protected ObjectStore lookupOs;
-    protected Map<Class, Long> summaryTimes = new HashMap<Class, Long>();
-    protected Map<Class, Integer> summaryCounts = new HashMap<Class, Integer>();
-    protected Map<Class, Integer> summaryCallCounts = new HashMap<Class, Integer>();
+    protected Map<Class<? extends InterMineObject>, Long> summaryTimes =
+        new HashMap<Class<? extends InterMineObject>, Long>();
+    protected Map<Class<? extends InterMineObject>, Integer> summaryCounts =
+        new HashMap<Class<? extends InterMineObject>, Integer>();
+    protected Map<Class<? extends InterMineObject>, Integer> summaryCallCounts =
+        new HashMap<Class<? extends InterMineObject>, Integer>();
 
     /**
      * Constructor for this EquivalentObjectFetcher.
@@ -123,15 +123,16 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
      */
     protected StringBuffer getSummary(Source source) {
         StringBuffer retval = new StringBuffer();
-        TreeMap<String, Class> summaryNames = new TreeMap<String, Class>();
-        for (Class c : summaryTimes.keySet()) {
+        TreeMap<String, Class<? extends InterMineObject>> summaryNames =
+            new TreeMap<String, Class<? extends InterMineObject>>();
+        for (Class<? extends InterMineObject> c : summaryTimes.keySet()) {
             summaryNames.put(DynamicUtil.getFriendlyName(c), c);
         }
         int totalObjects = 0;
         int totalNoPk = 0;
         int totalQueried = 0;
         for (String summaryName : summaryNames.keySet()) {
-            Class summaryClass = summaryNames.get(summaryName);
+            Class<? extends InterMineObject> summaryClass = summaryNames.get(summaryName);
             Long summaryTime = summaryTimes.get(summaryClass);
             Integer summaryCount = summaryCounts.get(summaryClass);
             Integer summaryCallCount = summaryCallCounts.get(summaryClass);
@@ -175,9 +176,9 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
     /**
      * {@inheritDoc}
      */
-    public Set queryEquivalentObjects(InterMineObject obj,
+    public Set<InterMineObject> queryEquivalentObjects(InterMineObject obj,
             Source source) throws ObjectStoreException {
-        Class summaryName = obj.getClass();
+        Class<? extends InterMineObject> summaryName = obj.getClass();
         Long soFar = summaryTimes.get(summaryName);
         Integer soFarCount = summaryCounts.get(summaryName);
         Integer soFarCallCount = summaryCallCounts.get(summaryName);
@@ -196,7 +197,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
             throw new ObjectStoreException(e);
         }
         if (q != null) {
-            SingletonResults result = lookupOs.executeSingleton(q, 0, false, false, true);
+            SingletonResults result = lookupOs.executeSingleton(q, 1000, false, false, true);
             long before = System.currentTimeMillis();
             try {
                 result.get(0);
@@ -207,10 +208,11 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
             summaryTimes.put(summaryName, new Long(time + soFar.longValue()));
             summaryCounts.put(summaryName, new Integer(soFarCount.intValue() + 1));
             summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
-            return result;
+            @SuppressWarnings("unchecked") Set<InterMineObject> retval = (Set) result;
+            return retval;
         } else {
             summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
     }
 
@@ -226,23 +228,18 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
         q.addFrom(qcIMO);
         q.addToSelect(qcIMO);
         ConstraintSet where = new ConstraintSet(ConstraintOp.OR);
-        Query subQ = null;
+        Query onlyQ = null;
 
-        Set classDescriptors = model.getClassDescriptorsForClass(obj.getClass());
+        Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(obj.getClass());
         boolean valid = classDescriptors.isEmpty();
         boolean invalid = false;
 
-        Iterator cldIter = classDescriptors.iterator();
-        while (cldIter.hasNext()) {
-            ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-            Set classQueries =
-                createPKQueriesForClass(obj, source, queryNulls, cld);
+        for (ClassDescriptor cld : classDescriptors) {
+            Set<Query> classQueries = createPKQueriesForClass(obj, source, queryNulls, cld);
 
             if (classQueries != null) {
-                Iterator classQueriesIter = classQueries.iterator();
-
-                while (classQueriesIter.hasNext()) {
-                    subQ = (Query) classQueriesIter.next();
+                for (Query subQ : classQueries) {
+                    onlyQ = subQ;
                     valid = true;
                     where.addConstraint(new SubqueryConstraint(qcIMO, ConstraintOp.IN, subQ));
                     subCount++;
@@ -257,7 +254,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
         q.setConstraint(where);
         switch (subCount) {
             case 1:
-                return subQ;
+                return onlyQ;
             case 0:
                 if (!valid) {
                     // Whether to throw an exception here or just log a message is a business
@@ -278,23 +275,22 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
     /**
      * {@inheritDoc}
      */
-    public Set createPKQueriesForClass(InterMineObject obj, Source source, boolean queryNulls,
-            ClassDescriptor cld) throws MetaDataException {
-        Set primaryKeys;
+    public Set<Query> createPKQueriesForClass(InterMineObject obj, Source source,
+            boolean queryNulls, ClassDescriptor cld) throws MetaDataException {
+        Set<PrimaryKey> primaryKeys;
         if (source == null) {
-            primaryKeys = new LinkedHashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
+            primaryKeys = new LinkedHashSet<PrimaryKey>(PrimaryKeyUtil.getPrimaryKeys(cld)
+                    .values());
         } else {
             primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source, lookupOs);
         }
 
         LOG.debug("primary keys for class " + cld.getName() + " = " + primaryKeys);
 
-        Set returnSet = new LinkedHashSet();
+        Set<Query> returnSet = new LinkedHashSet<Query>();
         int pkCount = primaryKeys.size();
 
-        Iterator pkSetIter = primaryKeys.iterator();
-        while (pkSetIter.hasNext()) {
-            PrimaryKey pk = (PrimaryKey) pkSetIter.next();
+        for (PrimaryKey pk : primaryKeys) {
             try {
                 createPKQueryForPK(obj, queryNulls, cld, pk, source, returnSet);
             } catch (IllegalArgumentException e) {
@@ -323,7 +319,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
      * @throws MetaDataException if something goes wrong
      */
     public void createPKQueryForPK(InterMineObject obj, boolean queryNulls, ClassDescriptor cld,
-            PrimaryKey pk, Source source, Set returnSet) throws MetaDataException {
+            PrimaryKey pk, Source source, Set<Query> returnSet) throws MetaDataException {
         if (!queryNulls && !DataLoaderHelper.objectPrimaryKeyNotNull(model, obj, cld, pk,
                     source, idMap)) {
             //LOG.warn("Null values found for key (" + pk + ") for object: " + obj);
@@ -336,9 +332,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
         query.addFrom(qc);
         query.addToSelect(qc);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        Iterator pkIter = pk.getFieldNames().iterator();
-        while (pkIter.hasNext()) {
-            String fieldName = (String) pkIter.next();
+        for (String fieldName : pk.getFieldNames()) {
             FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
             if (fd instanceof AttributeDescriptor) {
                 Object value;
@@ -416,8 +410,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
                             DynamicUtil.createObject(Collections.singleton(InterMineObject.class));
                         destObj.setId(destId);
                         cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc,
-                                                                                         fieldName),
-                                                                ConstraintOp.CONTAINS, destObj));
+                                fieldName), ConstraintOp.CONTAINS, destObj));
                     }
                 }
             }

@@ -11,7 +11,6 @@ package org.intermine.api.results;
  */
 
 import java.io.Serializable;
-import java.util.Set;
 
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -90,9 +89,8 @@ public class ResultElement implements Serializable
         if (imObj == null) {
             return null;
         }
-        Set classes = DynamicUtil.decomposeClass(imObj.getClass());
-        Class cls = (Class) classes.iterator().next();
-        return TypeUtil.unqualifiedName(cls.getName());
+        String cls = DynamicUtil.getSimpleClassName(imObj.getClass());
+        return TypeUtil.unqualifiedName(cls);
     }
 
     /**

@@ -16,7 +16,7 @@ import org.intermine.webservice.client.util.HttpConnection;
 
 /**
  * The InternalErrorException is thrown by service when an error occurred at the server.
- *   
+ *
  * @author Jakub Kulaviak
  */
 public class InternalErrorException extends ServiceException

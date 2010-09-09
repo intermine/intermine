@@ -65,6 +65,7 @@ public class RetrieveMetadataTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         if (destDir == null) {
             throw new BuildException("destDir attribute is not set");

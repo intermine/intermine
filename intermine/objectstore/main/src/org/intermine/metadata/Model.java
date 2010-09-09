@@ -25,6 +25,7 @@ import java.util.TreeSet;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.MetadataManager;
+import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -43,12 +44,12 @@ public class Model
             ClassDescriptor>();
     private final Map<ClassDescriptor, Set<ClassDescriptor>> subMap
         = new LinkedHashMap<ClassDescriptor, Set<ClassDescriptor>>();
-    private final Map<Class, Set<ClassDescriptor>> classToClassDescriptorSet
-        = new HashMap<Class, Set<ClassDescriptor>>();
-    private final Map<Class, Map<String, FieldDescriptor>> classToFieldDescriptorMap
-        = new HashMap<Class, Map<String, FieldDescriptor>>();
-    private final Map<Class, Map<String, Class>> classToCollectionsMap
-        = new HashMap<Class, Map<String, Class>>();
+    private final Map<Class<?>, Set<ClassDescriptor>> classToClassDescriptorSet
+        = new HashMap<Class<?>, Set<ClassDescriptor>>();
+    private final Map<Class<?>, Map<String, FieldDescriptor>> classToFieldDescriptorMap
+        = new HashMap<Class<?>, Map<String, FieldDescriptor>>();
+    private final Map<Class<?>, Map<String, Class<?>>> classToCollectionsMap
+        = new HashMap<Class<?>, Map<String, Class<?>>>();
 
     private boolean generatedClassesAvailable = true;
 
@@ -90,7 +91,7 @@ public class Model
         if (name == null) {
             throw new NullPointerException("Model name cannot be null");
         }
-        if (name.equals("")) {
+        if ("".equals(name)) {
             throw new IllegalArgumentException("Model name cannot be empty");
         }
         if (packageName == null) {
@@ -120,8 +121,8 @@ public class Model
             String cldPackage = (lastDotPos == -1 ? "" : cldName.substring(0, lastDotPos));
             if ((!"org.intermine.model.InterMineObject".equals(cldName))
                     && (!packageName.equals(cldPackage))) {
-                throw new IllegalArgumentException("Class `" + cldName + "` is not in model "
-                        + "package `" + packageName + "`");
+                throw new IllegalArgumentException("Class \"" + cldName + "\" is not in model "
+                        + "package \"" + packageName + "\"");
             }
             cldMap.put(cld.getName(), cld);
 
@@ -237,6 +238,7 @@ public class Model
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof Model) {
             Model model = (Model) obj;
@@ -249,6 +251,7 @@ public class Model
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return 3 * modelName.hashCode()
             + 5 * cldMap.hashCode();
@@ -257,6 +260,7 @@ public class Model
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<model name=\"" + modelName + "\" package=\"" + packageName + "\">" + ENDL);
@@ -293,27 +297,27 @@ public class Model
      * @param c a Class
      * @return a Set of ClassDescriptor objects
      */
-    public Set<ClassDescriptor> getClassDescriptorsForClass(Class c) {
+    public Set<ClassDescriptor> getClassDescriptorsForClass(Class<?> c) {
         synchronized (classToClassDescriptorSet) {
             Set<ClassDescriptor> retval = classToClassDescriptorSet.get(c);
             if (retval == null) {
                 retval = new LinkedHashSet<ClassDescriptor>();
-                Stack<Class> todo = new Stack<Class>();
-                Set<Class> done = new HashSet<Class>();
+                Stack<Class<?>> todo = new Stack<Class<?>>();
+                Set<Class<?>> done = new HashSet<Class<?>>();
                 todo.push(c);
                 while (!todo.empty()) {
-                    Class toAdd = todo.pop();
+                    Class<?> toAdd = todo.pop();
                     if (!done.contains(toAdd)) {
                         ClassDescriptor cld = getClassDescriptorByName(toAdd.getName());
                         if (cld != null) {
                             retval.add(cld);
                         }
-                        Class superClass = toAdd.getSuperclass();
+                        Class<?> superClass = toAdd.getSuperclass();
                         if ((superClass != null)
                                 && (InterMineObject.class.isAssignableFrom(superClass))) {
                             todo.push(superClass);
                         }
-                        Class[] interfaces = toAdd.getInterfaces();
+                        Class<?>[] interfaces = toAdd.getInterfaces();
                         for (int i = 0; i < interfaces.length; i++) {
                             if (InterMineObject.class.isAssignableFrom(interfaces[i])) {
                                 todo.push(interfaces[i]);
@@ -336,7 +340,7 @@ public class Model
      * @param c a Class
      * @return a Map of FieldDescriptor objects
      */
-    public Map<String, FieldDescriptor> getFieldDescriptorsForClass(Class c) {
+    public Map<String, FieldDescriptor> getFieldDescriptorsForClass(Class<?> c) {
         synchronized (classToFieldDescriptorMap) {
             Map<String, FieldDescriptor> retval = classToFieldDescriptorMap.get(c);
             if (retval == null) {
@@ -360,11 +364,11 @@ public class Model
      * @param c a Class
      * @return a Map from String collection name to Class element type
      */
-    public Map<String, Class> getCollectionsForClass(Class c) {
+    public Map<String, Class<?>> getCollectionsForClass(Class<?> c) {
         synchronized (classToCollectionsMap) {
-            Map<String, Class> retval = classToCollectionsMap.get(c);
+            Map<String, Class<?>> retval = classToCollectionsMap.get(c);
             if (retval == null) {
-                retval = new LinkedHashMap<String, Class>();
+                retval = new LinkedHashMap<String, Class<?>>();
                 for (FieldDescriptor fd : getFieldDescriptorsForClass(c).values()) {
                     if (fd instanceof CollectionDescriptor) {
                         CollectionDescriptor cd = (CollectionDescriptor) fd;
@@ -379,7 +383,9 @@ public class Model
 
     /**
      * Return the qualified name of the given unqualified class name.  The className must be in the
-     * given model or in the java.lang package or one of java.util.Date or java.math.BigDecimal.
+     * given model or in the java.lang package or one of java.util.Date, java.math.BigDecimal,
+     * or org.intermine.objectstore.query.ClobAccess.
+     *
      * @param className the name of the class
      * @return the fully qualified name of the class
      * @throws ClassNotFoundException if the class can't be found
@@ -392,7 +398,7 @@ public class Model
         }
 
         if (TypeUtil.instantiate(className) != null) {
-            // a primative type
+            // a primitive type
             return className;
         } else {
             if ("InterMineObject".equals(className)) {
@@ -411,6 +417,10 @@ public class Model
 
             if ("BigDecimal".equals(className)) {
                 return BigDecimal.class.getName();
+            }
+
+            if ("ClobAccess".equals(className)) {
+                return ClobAccess.class.getName();
             }
 
             return Class.forName("java.lang." + className).getName();

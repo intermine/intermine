@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,6 +54,7 @@ public class ObjectTrailController extends TilesAction
      *
      * @exception Exception if an error occurs
      */
+    @Override
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
@@ -66,7 +66,7 @@ public class ObjectTrailController extends TilesAction
         ObjectStore os = im.getObjectStore();
         String trail = request.getParameter("trail");
 
-        String ids[] = (!StringUtils.isEmpty(trail)) ? StringUtils.split(trail.substring(1), '|')
+        String[] ids = (!StringUtils.isEmpty(trail)) ? StringUtils.split(trail.substring(1), '|')
                 : new String[0];
         ArrayList<TrailElement> elements = new ArrayList<TrailElement>();
         String elementTrail = "";
@@ -77,9 +77,9 @@ public class ObjectTrailController extends TilesAction
             // split this param pair again with . delimiter
             // will be something like bag.baggieName or results.col0 or itt.template.id
             String urlParam = ids[i];
-            String breadcrumbs[] = StringUtils.split(urlParam, '.');
+            String[] breadcrumbs = StringUtils.split(urlParam, '.');
 
-            if (breadcrumbs[0].equals("results")) {
+            if ("results".equals(breadcrumbs[0])) {
                             //&& SessionMethods.getResultsTable(session, ids[i]) != null) {
                 /* breadcrumbs[1] is the results table id
                  *  can be:
@@ -120,10 +120,10 @@ public class ObjectTrailController extends TilesAction
                     elements.add(new TrailElement(prepend + tableId, elementTrail, "results"));
                 }
 
-            } else if (breadcrumbs[0].equals("bag")) {
+            } else if ("bag".equals(breadcrumbs[0])) {
                 // breadcrumbs[1] is the bag name
                 elements.add(new TrailElement(breadcrumbs[1], elementTrail, "bag"));
-            } else if (breadcrumbs[0].equals("query")) {
+            } else if ("query".equals(breadcrumbs[0])) {
                 elements.add(new TrailElement("query", elementTrail, "query"));
             } else {
                 InterMineObject o = null;
@@ -152,10 +152,9 @@ public class ObjectTrailController extends TilesAction
      * @return label for TrailElement
      */
     protected static String createTrailLabel(InterMineObject object, Model model) {
-        Iterator iter = DisplayObject.getLeafClds(object.getClass(), model).iterator();
         String label = "";
-        while (iter.hasNext()) {
-            label += ((ClassDescriptor) iter.next()).getUnqualifiedName() + " ";
+        for (ClassDescriptor cld : DisplayObject.getLeafClds(object.getClass(), model)) {
+            label += cld.getUnqualifiedName() + " ";
         }
         return StringUtils.trim(label);
     }
@@ -163,7 +162,7 @@ public class ObjectTrailController extends TilesAction
     /**
      * Bean passed to JSP to represent an element in the trail.
      */
-    public static class TrailElement
+    public static final class TrailElement
     {
         private String label;
         private String trail;
@@ -240,6 +239,7 @@ public class ObjectTrailController extends TilesAction
         /**
          * {@inheritDoc}
          */
+        @Override
         public String toString() {
             return new ToStringBuilder(this)
                 .append("type", type)

@@ -76,6 +76,7 @@ public class FullXmlConverterTask extends ConverterTask
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         if (getOsName() == null) {
             throw new BuildException("osName must be specified");
@@ -105,7 +106,7 @@ public class FullXmlConverterTask extends ConverterTask
                 }
                 converter.process(new InputStreamReader(is));
             } else {
-                if (file != null && !file.equals("")) {
+                if (file != null && !"".equals(file)) {
                     files = new ArrayList<File>(Collections.singleton(new File(file)));
                 } else {
                     DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());

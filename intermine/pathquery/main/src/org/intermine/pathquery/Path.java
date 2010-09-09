@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -36,6 +37,7 @@ import org.intermine.util.Util;
  */
 public class Path
 {
+    protected static final Logger LOG = Logger.getLogger(Path.class);
     private ClassDescriptor startCld;
     private List<String> elements;
     private FieldDescriptor endFld;
@@ -71,8 +73,8 @@ public class Path
 
         Pattern p = Pattern.compile("([^\\[\\]]+)\\[(.*)\\]");
 
-        List<String> newPathBits = new ArrayList();
-        List<Boolean> newPathOuters = new ArrayList();
+        List<String> newPathBits = new ArrayList<String>();
+        List<Boolean> newPathOuters = new ArrayList<Boolean>();
         StringTokenizer bits = new StringTokenizer(". " + path, ".:", true);
         boolean notFirst = false;
         while (bits.hasMoreTokens()) {
@@ -116,6 +118,13 @@ public class Path
     public Path(Model model, String stringPath, Map<String, String> constraintMap)
         throws PathException {
         this.model = model;
+        if (stringPath == null) {
+            throw new IllegalArgumentException("path argument is null");
+        }
+
+        if (StringUtils.isBlank(stringPath)) {
+            throw new IllegalArgumentException("path argument is blank");
+        }
         this.path = stringPath;
         this.subClassConstraintPaths = new HashMap<String, String>(constraintMap);
 //        validatePath(constraintMap, stringPath);
@@ -131,8 +140,8 @@ public class Path
                                                + " contains illegal character '['");
         }
 
-        List<String> newPathBits = new ArrayList();
-        List<Boolean> newPathOuters = new ArrayList();
+        List<String> newPathBits = new ArrayList<String>();
+        List<Boolean> newPathOuters = new ArrayList<Boolean>();
         StringTokenizer bits = new StringTokenizer(". " + path, ".:", true);
         boolean notFirst = false;
         while (bits.hasMoreTokens()) {
@@ -177,9 +186,9 @@ public class Path
 //    }
 
     private void initialise() throws PathException {
-        elements = new ArrayList();
+        elements = new ArrayList<String>();
         elementClassDescriptors = new ArrayList<ClassDescriptor>();
-        String parts[] = path.split("[.]");
+        String[] parts = path.split("[.]");
         String clsName = parts[0];
         ClassDescriptor cld = null;
         if (!("".equals(clsName))) {
@@ -190,6 +199,8 @@ public class Path
             }
             this.startCld = cld;
             elementClassDescriptors.add(cld);
+        } else {
+            LOG.error("First part is empty. Path is \"" + path + "\"");
         }
 
         StringBuffer currentPath = new StringBuffer(parts[0]);
@@ -352,12 +363,12 @@ public class Path
 
     /**
      * Return a Path object that represents the prefix of this path, ie this Path without the
-     * last element.  If the Path contains only one element, an exception is thrown.
+     * last element.  If the Path contains only the root class, an exception is thrown.
      *
      * @return the prefix Path
      */
     public Path getPrefix() {
-        if (getElements().size() == 0) {
+        if (isRootPath()) {
             throw new RuntimeException("path (" + this + ") has only one element");
         }
         String pathString = toString();
@@ -390,8 +401,8 @@ public class Path
      * or a class.
      * @return the Class of the last element
      */
-    public Class getEndType() {
-        Class retval = null;
+    public Class<?> getEndType() {
+        Class<?> retval = null;
         if (endFld != null && endFld.isAttribute()) {
             retval = Util.getClassFromString(((AttributeDescriptor) endFld).getType());
         } else {
@@ -432,18 +443,28 @@ public class Path
      * @return the last string element of the path
      */
     public String getLastElement() {
-        if (getElements().size() == 0) {
+        if (isRootPath()) {
             throw new RuntimeException("path (" + this + ") has only one element");
         }
-
         return elements.get(elements.size() - 1);
     }
 
+    /**
+     * Return true if this path represents just the starting class, e.g. 'Department'.  Returns
+     * false of there are further elements, e.g. 'Department.manager'
+     * @return true if this is a root path
+     */
+    public boolean isRootPath() {
+        if (getElements().size() == 0) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * {@inheritDoc}
      */
-    public boolean equals(Object o) {
+    @Override public boolean equals(Object o) {
         if (o instanceof Path) {
             Path p = (Path) o;
             return (p.startCld.equals(this.startCld)
@@ -457,7 +478,7 @@ public class Path
      * "Department.employees[Manager].seniority"
      * {@inheritDoc}
      */
-    public String toString() {
+    @Override public String toString() {
         String cdUnqualifiedName = getStartClassDescriptor().getUnqualifiedName();
         StringBuffer returnStringBuffer = new StringBuffer(cdUnqualifiedName);
         // the path without class constraints
@@ -498,14 +519,15 @@ public class Path
     /**
      * {@inheritDoc}
      */
-    public int hashCode() {
+    @Override public int hashCode() {
         return 0;
     }
 
     /**
-     * Return a list of FieldDescriptors, one per path element (except for the first, which is a
-     * class).
-     * @return the FieldDescriptor
+     * Return a list of field names, one per path element (except for the first, which is a
+     * class). To clarify, this does not include the root class of the path.
+     *
+     * @return a list of field names
      */
     public List<String> getElements() {
         return elements;

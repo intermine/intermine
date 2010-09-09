@@ -47,6 +47,7 @@ public class FastaLoaderTaskTest extends TestCase {
     private static final Logger LOG = Logger.getLogger(FastaLoaderTaskTest.class);
     private String dataSetTitle = "fasta test title";
 
+    @Override
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         osw.getObjectStore().flushObjectById();
@@ -157,11 +158,12 @@ public class FastaLoaderTaskTest extends TestCase {
 
         assertEquals("MNRVNDMSPVEGDLGLQLSSEADKKFDAYMKRHGLFEPGNLSNNDKERNLEDQFNSMKLS"
                      + "PVASSKENYPDNHMHSKHISKLPIASPIPRGLDRSGELSYKDNNHWSDRSSTGSPRWENG"
-                     + "SMNLSVEEMEKVVQPKVKRMATICQM", protein.getSequence().getResidues());
+                     + "SMNLSVEEMEKVVQPKVKRMATICQM", protein.getSequence().getResidues().toString());
         // TODO FIXME XXX - uncomment when Protein has a length field
         //        assertEquals(new Integer(146), protein.getLength());
     }
 
+    @Override
     public void tearDown() throws Exception {
         LOG.info("in tear down");
         if (osw.isInTransaction()) {

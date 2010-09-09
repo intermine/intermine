@@ -57,6 +57,7 @@ public abstract class AbstractValue implements SQLStringable
      * @param obj an Object to compare to
      * @return true if obj is equal
      */
+    @Override
     public abstract boolean equals(Object obj);
 
     /**
@@ -64,6 +65,7 @@ public abstract class AbstractValue implements SQLStringable
      *
      * @return an arbitrary integer based on the contents of the object
      */
+    @Override
     public abstract int hashCode();
 
     /**
@@ -74,7 +76,8 @@ public abstract class AbstractValue implements SQLStringable
      * @param reverseTableMap a reverse of tableMap
      * @return EQUAL, LESS, GREATER, NOT_EQUAL, or INCOMPARABLE
      */
-    public abstract int compare(AbstractValue obj, Map tableMap, Map reverseTableMap);
+    public abstract int compare(AbstractValue obj, Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap);
 
     /**
      * Compare the value of this AbstractValue with another to see if it is less. This only really
@@ -86,7 +89,8 @@ public abstract class AbstractValue implements SQLStringable
      * @param reverseTableMap a reverse of tableMap
      * @return true if this is less than obj
      */
-    public boolean lessThan(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+    public boolean lessThan(AbstractValue obj, Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap) {
         return (compare(obj, tableMap, reverseTableMap) == LESS);
     }
 
@@ -100,7 +104,8 @@ public abstract class AbstractValue implements SQLStringable
      * @param reverseTableMap a reverse of tableMap
      * @return true if this is more than obj
      */
-    public boolean greaterThan(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+    public boolean greaterThan(AbstractValue obj, Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap) {
         return (compare(obj, tableMap, reverseTableMap) == GREATER);
     }
 
@@ -114,7 +119,8 @@ public abstract class AbstractValue implements SQLStringable
      * @param reverseTableMap a reverse of tableMap
      * @return true if this is definitely not equal to obj
      */
-    public boolean notEqualTo(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+    public boolean notEqualTo(AbstractValue obj, Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap) {
         int compareVal = compare(obj, tableMap, reverseTableMap);
         return (compareVal == NOT_EQUAL) || (compareVal == LESS) || (compareVal == GREATER);
     }
@@ -130,7 +136,8 @@ public abstract class AbstractValue implements SQLStringable
      * @param reverseTableMap a reverse of tableMap
      * @return true if this is more than obj
      */
-    public boolean greaterOrEqual(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+    public boolean greaterOrEqual(AbstractValue obj, Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap) {
         int compareVal = compare(obj, tableMap, reverseTableMap);
         return (compareVal == GREATER) || (compareVal == EQUAL);
     }
@@ -146,7 +153,8 @@ public abstract class AbstractValue implements SQLStringable
      * @param reverseTableMap a reverse of tableMap
      * @return true if this is less than obj
      */
-    public boolean lessOrEqual(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+    public boolean lessOrEqual(AbstractValue obj, Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap) {
         int compareVal = compare(obj, tableMap, reverseTableMap);
         return (compareVal == LESS) || (compareVal == EQUAL);
     }
@@ -160,7 +168,8 @@ public abstract class AbstractValue implements SQLStringable
      * @param reverseTableMap a reverse of tableMap
      * @return true if this is equal to obj
      */
-    public boolean valueEquals(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+    public boolean valueEquals(AbstractValue obj, Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap) {
         int compareVal = compare(obj, tableMap, reverseTableMap);
         return (compareVal == EQUAL);
     }

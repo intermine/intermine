@@ -53,6 +53,7 @@ public class IqlQueryParserTest extends IqlQueryTestCase
         results.put("MultiColumnObjectInCollection", NO_RESULT);
         results.put("CollectionPathExpression7", NO_RESULT);
         results.put("CollectionPathExpression6", NO_RESULT);
+        results.put("MultipleInBagConstraint1", NO_RESULT);
     }
 
     public void executeTest(String type) throws Exception {
@@ -63,7 +64,7 @@ public class IqlQueryParserTest extends IqlQueryTestCase
             if (type.equals("SubQuery") || type.equals("OrderByAnomaly")) {
                 // These two queries CANNOT be generated properly by IQL (as they contain 5 in the SELECT list).
                 // Therefore, we must merely check that they are regenerated back into IQL.
-                IqlQuery fqNew = new IqlQuery(parsed);
+                IqlQuery fqNew = parsed.getIqlQuery();
                 assertEquals(type + " has failed", fq, fqNew);
             } else {
                 assertEquals(type + " has failed", (Query) queries.get(type), parsed);

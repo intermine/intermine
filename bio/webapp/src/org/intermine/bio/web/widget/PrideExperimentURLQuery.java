@@ -13,6 +13,7 @@ package org.intermine.bio.web.widget;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
@@ -43,16 +44,15 @@ public class PrideExperimentURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
-        q.setView("Protein.proteinIdentifications.prideExperiment.title,Protein.primaryIdentifier,"
-                  + "Protein.primaryAccession,Protein.name");
-        q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
+        q.addViews("Protein.proteinIdentifications.prideExperiment.title",
+                "Protein.primaryIdentifier", "Protein.primaryAccession", "Protein.name");
+        q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
-            q.addConstraint("Protein.proteinIdentifications.prideExperiment.title",
-                        Constraints.eq(key));
-            q.setConstraintLogic("A and B");
-            q.syncLogicExpression("and");
+            q.addConstraint(Constraints.eq("Protein.proteinIdentifications.prideExperiment.title",
+                        key));
         }
-        q.setOrderBy("Protein.proteinIdentifications.prideExperiment.title");
+        q.addOrderBy("Protein.proteinIdentifications.prideExperiment.title", OrderDirection.ASC);
+
         return q;
     }
 }

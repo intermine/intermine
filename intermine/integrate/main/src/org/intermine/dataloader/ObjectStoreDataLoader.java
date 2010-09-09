@@ -10,9 +10,10 @@ package org.intermine.dataloader;
  *
  */
 
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemToObjectTranslator;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -26,8 +27,6 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.PropertiesUtil;
 
-import org.apache.log4j.Logger;
-
 /**
  * Loads information from an ObjectStore into the InterMine database.
  *
@@ -37,7 +36,7 @@ public class ObjectStoreDataLoader extends DataLoader
 {
     private static final Logger LOG = Logger.getLogger(ObjectStoreDataLoader.class);
     private static final int ITEM_READ_BATCH_SIZE = 5000;
-    
+
     /**
      * Construct an ObjectStoreDataLoader
      *
@@ -73,8 +72,8 @@ public class ObjectStoreDataLoader extends DataLoader
      * @param queryClass the class to load data for
      * @throws ObjectStoreException if an error occurs on either the source or the destination
      */
-    public void process(ObjectStore os, Source source, Source skelSource, Class queryClass)
-        throws ObjectStoreException {
+    public void process(ObjectStore os, Source source, Source skelSource,
+            Class<? extends FastPathObject> queryClass) throws ObjectStoreException {
         int errorCount = 0;
         ObjectStore origOs = os;
         try {
@@ -111,7 +110,7 @@ public class ObjectStoreDataLoader extends DataLoader
             Properties props = PropertiesUtil.getPropertiesStartingWith("dataLoader");
             boolean allowMultipleErrors = "true".equals(props.getProperty(
                             "dataLoader.allowMultipleErrors"));
-            long times[] = new long[20];
+            long[] times = new long[20];
             for (int i = 0; i < 20; i++) {
                 times[i] = -1;
             }
@@ -129,13 +128,12 @@ public class ObjectStoreDataLoader extends DataLoader
             long timeSpentLoop = 0;
             getIntegrationWriter().beginTransaction();
             SingletonResults res = os.executeSingleton(q, ITEM_READ_BATCH_SIZE, false, false, true);
-            Iterator iter = res.iterator();
             long time4 = System.currentTimeMillis();
             long time1, time2, time3;
-            while (iter.hasNext()) {
+            @SuppressWarnings("unchecked") Collection<FastPathObject> tmpRes = (Collection) res;
+            for (FastPathObject obj : tmpRes) {
                 time1 = System.currentTimeMillis();
                 timeSpentLoop += time1 - time4;
-                FastPathObject obj = (FastPathObject) iter.next();
                 time2 = System.currentTimeMillis();
                 timeSpentRead += time2 - time1;
                 //if (obj.getClass().getName().equals("org.intermine.model.chado.feature")) {

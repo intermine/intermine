@@ -40,6 +40,7 @@ public class NonOverrideableProperties extends Properties
      *
      * {@inheritDoc}
      */
+    @Override
     public Object put(Object key, Object value) {
         Object old = get(key);
         if ((old != null) && (!old.equals(value))) {

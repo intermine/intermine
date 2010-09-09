@@ -22,12 +22,12 @@
 </script>
 <script type="text/javascript" src="<html:rewrite page='/js/inlinetemplate.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/widget.js'/>"></script>
-
+<div class="body">
+<c:choose>
+<c:when test="${!empty bag}">
 <div class="heading">
      <fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">for <b>${bag.name}</b> (${bag.size} ${bag.type}s)</span>
 </div>
-
-<div class="body">
 
 <table cellspacing="0" width="100%">
 <tr>
@@ -302,7 +302,15 @@
 
 </div>  <!-- templates body -->
 
-</div>  <!-- whole page body -->
-
 <!-- /templates -->
+</c:when>
+<c:otherwise>
+<!--  No list found with this name -->
+<div class="bigmessage">
+ <br />
+ <html:link action="/bag?subtab=view">View all lists</html:link>
+</div>
+</c:otherwise>
+</c:choose>
+</div>  <!-- whole page body -->
 <!-- /bagDetails.jsp -->

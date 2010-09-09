@@ -13,6 +13,7 @@ package org.intermine.bio.web.widget;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
@@ -63,28 +64,25 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         PathQuery q = new PathQuery(os.getModel());
         String bagType = imBag.getType();
 
-        q.setView(bagType + ".secondaryIdentifier,"
-                  + bagType + ".primaryIdentifier, "
-                  + bagType + ".organism.name, "
-                  + bagType + ".chromosome.primaryIdentifier,"
-                  + bagType + ".chromosomeLocation.start,"
-                  + bagType + ".chromosomeLocation.end,"
-                  + bagType + ".chromosomeLocation.strand");
+        q.addViews(bagType + ".secondaryIdentifier",
+                  bagType + ".primaryIdentifier",
+                  bagType + ".organism.name",
+                  bagType + ".chromosome.primaryIdentifier",
+                  bagType + ".chromosomeLocation.start",
+                  bagType + ".chromosomeLocation.end",
+                  bagType + ".chromosomeLocation.strand");
 
-        q.addConstraint(bagType,  Constraints.in(imBag.getName()));
-        q.addConstraint(bagType + ".chromosome.primaryIdentifier",  Constraints.eq(category));
+        q.addConstraint(Constraints.in(bagType,  imBag.getName()));
+        q.addConstraint(Constraints.eq(bagType + ".chromosome.primaryIdentifier", category));
         if (organism != null) {
-            q.addConstraint(bagType + ".organism.name",  Constraints.eq(organism));
-            q.setConstraintLogic("A and B and C");
-        } else {
-            q.setConstraintLogic("A and B");
+            q.addConstraint(Constraints.eq(bagType + ".organism.name", organism));
         }
-        q.syncLogicExpression("and");
-        q.setOrderBy(bagType + ".chromosomeLocation.start,"
-                     + bagType + ".secondaryIdentifier,"
-                     + bagType + ".primaryIdentifier,"
-                     + bagType + ".organism.name, "
-                     + bagType + ".chromosome.primaryIdentifier");
+        q.addOrderBy(bagType + ".chromosomeLocation.start", OrderDirection.ASC);
+        q.addOrderBy(bagType + ".secondaryIdentifier", OrderDirection.ASC);
+        q.addOrderBy(bagType + ".primaryIdentifier", OrderDirection.ASC);
+        q.addOrderBy(bagType + ".organism.name", OrderDirection.ASC);
+        q.addOrderBy(bagType + ".chromosome.primaryIdentifier", OrderDirection.ASC);
+
         return q;
     }
 }

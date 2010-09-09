@@ -60,9 +60,10 @@ public class TagHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
-        if (qName.equals("tag")) {
+        if ("tag".equals(qName)) {
             tagName = attrs.getValue("name");
             tagName = translateTagName(tagName);
             tagObjectIdentifier = attrs.getValue("objectIdentifier");
@@ -74,10 +75,11 @@ public class TagHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void endElement(String uri, String localName, String qName)
         throws SAXException {
         super.endElement(uri, localName, qName);
-        if (qName.equals("tag")) {
+        if ("tag".equals(qName)) {
             Tag tag = new Tag();
             tag.setTagName(tagName);
             tag.setObjectIdentifier(tagObjectIdentifier);

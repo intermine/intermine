@@ -1,6 +1,0 @@
-<query name="" model="testmodel" view="Employee.name Employee.fullTime Employee.age Employee.end">
-  <node path="Employee" type="Employee">
-  </node>
-  <node path="Employee.bad" type="int">
-  </node>
-</query>

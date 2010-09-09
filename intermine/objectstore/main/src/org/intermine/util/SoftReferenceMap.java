@@ -13,8 +13,6 @@ package org.intermine.util;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 
-import org.apache.log4j.Logger;
-
 /**
  * This is a Map implementation designed specifically for people intending to create a cache.
  * The keys are held strongly, but the values are held softly, so the values can be
@@ -31,8 +29,6 @@ import org.apache.log4j.Logger;
  */
 public abstract class SoftReferenceMap<K, V> extends ReferenceMap<K, V>
 {
-    private static final Logger LOG = Logger.getLogger(SoftReferenceMap.class);
-
     /**
      * Returns a new SoftReferenceWithKey object for the given objects.
      *
@@ -41,6 +37,7 @@ public abstract class SoftReferenceMap<K, V> extends ReferenceMap<K, V>
      * @param key an Object
      * @return a SoftReferenceWithKey object
      */
+    @Override
     protected SoftReferenceWithKey<K> newRef(Object value, ReferenceQueue<Object> queue, K key) {
         return new SoftReferenceWithKey<K>(value, queue, key);
     }

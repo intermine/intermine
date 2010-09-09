@@ -64,16 +64,17 @@ public class WidgetAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         WidgetForm widgetForm = (WidgetForm) form;
         String key = request.getParameter("key");
         String action = widgetForm.getAction();
         // user clicked on a count on a widget OR checked some boxes and clicked 'display'
-        if ((!StringUtils.isEmpty(key) && (action == null || !action.equals("displayAll")))
-                || (action.equals("display"))) {
+        if ((!StringUtils.isEmpty(key) && (action == null || !"displayAll".equals(action)))
+                || "display".equals(action)) {
             return display(mapping, form, request, response);
-        } else if (widgetForm.getAction().equals("displayAll")) {
+        } else if ("displayAll".equals(widgetForm.getAction())) {
             return displayAll(mapping, form, request, response);
         } else {
             return export(mapping, form, request, response);
@@ -92,10 +93,9 @@ public class WidgetAction extends InterMineAction
      *  an exception
      * @deprecated the 'not analysed' number will eventually be a link when I get time
      */
-    public ActionForward notAnalysed(ActionMapping mapping,
-                                ActionForm form,
-                                HttpServletRequest request,
-                                HttpServletResponse response) throws Exception {
+    @Deprecated
+    public ActionForward notAnalysed(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -254,7 +254,7 @@ public class WidgetAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward export(ActionMapping mapping, ActionForm form,
+    public ActionForward export(@SuppressWarnings("unused") ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -273,7 +273,7 @@ public class WidgetAction extends InterMineAction
                 StringTableExporter stringExporter;
                 PrintWriter writer = HttpExportUtil.
                     getPrintWriterForClient(request, response.getOutputStream());
-                if (widgetForm.getExporttype().equals("csv")) {
+                if ("csv".equals(widgetForm.getExporttype())) {
                     stringExporter = new StringTableExporter(writer, new CSVRowFormatter());
                     ResponseUtil.setCSVHeader(response, "widget" + widgetForm.getWidgetid()
                                                         + ".csv");

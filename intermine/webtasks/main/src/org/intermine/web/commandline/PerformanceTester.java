@@ -24,6 +24,7 @@ import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManagerFactory;
@@ -33,6 +34,7 @@ import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -40,6 +42,7 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.SqlGenerator;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.SynchronisedIterator;
 
@@ -71,7 +74,8 @@ public class PerformanceTester
         BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(productionOs.getModel(),
                 PerformanceTester.class.getClassLoader()
                 .getResourceAsStream("webapp/WEB-INF/bag-queries.xml"));
-        Map classKeys = ClassKeyHelper.readKeys(productionOs.getModel(), classKeyProps);
+        Map<String, List<FieldDescriptor>> classKeys = ClassKeyHelper.readKeys(productionOs
+                .getModel(), classKeyProps);
 
         pm = new ProfileManager(productionOs, userProfileOs);
         Profile p = pm.getProfile(superuser);
@@ -92,12 +96,14 @@ public class PerformanceTester
         doRun(productionOs, classKeys, bagQueryConfig, templates, i);
     }
 
-    private static void doRun(ObjectStore productionOs, Map classKeys,
-            BagQueryConfig bagQueryConfig, Map<String, TemplateQuery> templates, int threadCount) {
+    private static void doRun(ObjectStore productionOs,
+            Map<String, List<FieldDescriptor>> classKeys, BagQueryConfig bagQueryConfig,
+            Map<String, TemplateQuery> templates, int threadCount) {
         long startTime = System.currentTimeMillis();
-        Iterator<Map.Entry<String, TemplateQuery>> iter = new SynchronisedIterator(templates
-                .entrySet().iterator());
-        Set<Integer> threads = new HashSet();
+        Iterator<Map.Entry<String, TemplateQuery>> iter
+            = new SynchronisedIterator<Map.Entry<String, TemplateQuery>>(templates.entrySet()
+                    .iterator());
+        Set<Integer> threads = new HashSet<Integer>();
 
         synchronized (threads) {
             for (int i = 1; i < threadCount; i++) {
@@ -133,9 +139,9 @@ public class PerformanceTester
     }
 
 
-    private static void doQuery(ObjectStore productionOs, Map classKeys,
-            BagQueryConfig bagQueryConfig, String templateName, TemplateQuery templateQuery,
-            int threadNo) {
+    private static void doQuery(ObjectStore productionOs,
+            Map<String, List<FieldDescriptor>> classKeys, BagQueryConfig bagQueryConfig,
+            String templateName, TemplateQuery templateQuery, int threadNo) {
         try {
             //Query q = TemplateHelper.getPrecomputeQuery(entry.getValue(), new ArrayList(), null);
             long queryStartTime = System.currentTimeMillis();
@@ -145,14 +151,15 @@ public class PerformanceTester
             List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
             BagQueryRunner bqr = new BagQueryRunner(productionOs, classKeys, bagQueryConfig,
                     conversionTemplates);
-            Query q = MainHelper.makeQuery(templateQuery, new HashMap(), new HashMap(), bqr, null,
-                    false);
+            Query q = MainHelper.makeQuery(templateQuery, new HashMap<String, InterMineBag>(),
+                    new HashMap<String, QuerySelectable>(), bqr, null);
             String sqlString = SqlGenerator.generate(q, 0, Integer.MAX_VALUE,
                     ((ObjectStoreInterMineImpl) productionOs).getSchema(),
-                    ((ObjectStoreInterMineImpl) productionOs).getDatabase(), (Map) null);
+                    ((ObjectStoreInterMineImpl) productionOs).getDatabase(),
+                    (Map<Object, String>) null);
             System .out.println("Thread " + threadNo + ": executing template " + templateName
                     + " with query " + q + ", SQL: " + sqlString);
-            List results = productionOs.execute(q, 0, 1000, false, false,
+            List<?> results = productionOs.execute(q, 0, 1000, false, false,
                     ObjectStore.SEQUENCE_IGNORE);
             long queryEndTime = System.currentTimeMillis();
             System .out.println("Thread " + threadNo + ": template " + templateName + " took "
@@ -184,9 +191,9 @@ public class PerformanceTester
     private static class Worker implements Runnable
     {
         private ObjectStore productionOs;
-        private Map classKeys;
+        private Map<String, List<FieldDescriptor>> classKeys;
         private BagQueryConfig bagQueryConfig;
-        private Set threads;
+        private Set<Integer> threads;
         private Iterator<Map.Entry<String, TemplateQuery>> iter;
         private int threadNo;
 
@@ -199,8 +206,9 @@ public class PerformanceTester
          * @param iter
          * @param threadNo
          */
-        public Worker(ObjectStore productionOs, Map classKeys, BagQueryConfig bagQueryConfig,
-                Set threads, Iterator<Map.Entry<String, TemplateQuery>> iter, int threadNo) {
+        public Worker(ObjectStore productionOs, Map<String, List<FieldDescriptor>> classKeys,
+                BagQueryConfig bagQueryConfig, Set<Integer> threads,
+                Iterator<Map.Entry<String, TemplateQuery>> iter, int threadNo) {
             this.productionOs = productionOs;
             this.classKeys = classKeys;
             this.bagQueryConfig = bagQueryConfig;

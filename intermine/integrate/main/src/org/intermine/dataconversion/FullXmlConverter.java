@@ -31,7 +31,8 @@ public class FullXmlConverter extends DataConverter
     private static final Logger LOG = Logger.getLogger(FullXmlConverter.class);
 
     protected long count = 0;
-    protected long start, time, times[];
+    protected long start, time;
+    protected long[] times;
 
     /**
      * Constructor.
@@ -74,6 +75,7 @@ public class FullXmlConverter extends DataConverter
          * Do something useful with the Item.
          * @param item the Item
          */
+        @Override
         public void finishedItem(Item item) {
             try {
                 store(item);

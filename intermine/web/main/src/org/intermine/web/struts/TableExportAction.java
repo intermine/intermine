@@ -13,7 +13,7 @@ package org.intermine.web.struts;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -109,8 +109,13 @@ public class TableExportAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         PathQuery newPathQuery = new PathQuery(pt.getWebTable().getPathQuery());
-        newPathQuery.setView(new LinkedList<String>(StringUtil
-                .serializedSortOrderToMap(pathsString).keySet()));
+        newPathQuery.clearView();
+        try {
+            newPathQuery.addViews(new ArrayList<String>(StringUtil
+                    .serializedSortOrderToMap(pathsString).keySet()));
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error while converting " + pathsString, e);
+        }
         Profile profile = SessionMethods.getProfile(session);
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         return new PagedTable(executor.execute(newPathQuery));

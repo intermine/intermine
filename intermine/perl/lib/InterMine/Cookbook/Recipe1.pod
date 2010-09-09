@@ -1,0 +1,141 @@
+=pod
+
+=head1 NAME
+
+InterMine::Cookbook::Recipe1 - The Bare Basics
+
+=head1 SYNOPSIS
+
+  # Get a list of the organisms in the database
+
+  use InterMine ('www.flymine.org/query/service');
+
+  my $query = InterMine->new_query;
+
+  # Specifying a name and a description is purely optional
+  $query->name('Tutorial 1 Query');
+  $query->description('A list of all the organisms in the database');
+  $query->add_view('Organism.name');
+
+  my $results = $query->results(as => 'string');
+  print $results;
+
+  # Also get the taxon-id associated with the organism, and sort by id
+
+  $query->add_view('Organism.taxonId');
+
+  $query->sort_order('Organism.taxonId' => 'desc');
+
+  my $results = $query->results(as => 'string');
+  print $results;
+
+
+=head1 DESCRIPTION
+
+At its heart a query is just a description of what you want to get out
+of the database - and the first part of that is the view, which specifies
+the fields for each row of results you get back.
+
+The view is a list of strings which represent 'paths' in InterMine terminology.
+C<Organism.name> is such a path, which says you want to know the name
+of each organism. The dotted notation resembles object notation on purpose, as
+in the background the database is populated by objects with fields, which
+themselves may have further fields. An example of this is
+C<Organism.chromosomes.name> which refers to the name of a chromosome in an
+organism, or C<Organism.genes.name> or C<Organism.chromosomes.genes.name>,
+or C<Chromosome.organism.name>, and so on.
+
+Fields can be either attributes, like C<name> in the above examples, which
+represent data fields, or references, like C<chromosomes>, C<genes>, or
+C<organism>, which represent links to other objects in the database. Generally
+you will want to only have attributes in the view list.
+
+The view list can be specified in a couple of ways, either as a list of paths,
+as in:
+
+=over 4
+
+$query->add_view('Organism.name', 'Organism.taxonId');
+
+=back
+
+or as a space or comma delimited string, as in:
+
+=over 4
+
+$query->add_view('Organism.name Organism.taxonId');
+
+=back
+
+or any mixture of the two. C<add_view> can also be called multiple times,
+with each call appending the view(s) onto the list.
+
+By default the results returned to you will be sorted by the values in the first
+column (the first item in the view list), and in an ascending direction. You can
+override this default by specifying any of the view columns to sort by. You do
+not have to specify a direction - C<asc> will be the default if none is provided.
+The following are all(1) valid ways of defining the sort order, and would all have
+the same result:
+
+  $query->sort_order('Organism.taxonId');
+
+or
+
+  $query->sort_order('Organism.taxonId', 'asc');
+
+or
+
+  $query->sort_order('Organism.taxonId' => 'asc');
+
+or
+
+  $query->sort_order(
+      path => 'Organism.taxonId',
+      direction => 'asc',
+  );
+
+The two valid directions are 'asc' or 'desc' (case is irrelevant), and you must
+specify the view before you select the sort order.
+
+Once we have a defined view, we have a valid query, which can be run and will
+return results. Without constraints these queries will just return I<every>
+item of the specified type from the database, so these queries will list I<all>
+organisms that the www.flymine.org database has data on. Obviously it is more useful to
+be able to specify I<which> items you want, and for this we need constraints,
+which we deal with in the next recipe.
+
+=head1 CONCLUSION
+
+A query is at heart just a view list with (optionally) some constraints on
+the items you want back. This recipe demonstrates the mimimum you need to
+set up a valid query.
+
+
+=head1 FOOTNOTES
+
+1) Perl is famous for its philosophy of TIMTOWTDI (There is more than one way to
+do it) - and that is in evidence here as well: there are generally serveral ways
+to call the methods in the Perl API, and none is categorically I<right> or
+I<wrong>. In the above example with C<sort_order>, you can see a progression from
+terser to more declarative styles; it is perhaps good practice to use declarative
+styles if you want your code to be robust and readable, and thus more
+maintainable.
+
+=head1 SEE ALSO
+
+L<http://www.intermine.org/perlapi>
+
+=head1 AUTHOR
+
+Alex Kalderimis <perldev@flymine.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2004-2010 by InterMine
+
+L<http://www.intermine.org>
+
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+=cut
+

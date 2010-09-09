@@ -35,6 +35,7 @@ public class Node
     public Node(String type) {
         this.type = type;
         parent = null;
+        fieldName = null;
     }
 
     /**
@@ -55,9 +56,8 @@ public class Node
      *
      * @param model model to attach
      * @throws IllegalArgumentException if class or field are not found in the model
-     * @throws ClassNotFoundException if the class name is not in the model
      */
-    public void setModel(Model model) throws ClassNotFoundException {
+    public void setModel(Model model) {
         // Following line commented out and replaced because it requires that class
         // is searched in classpath, but the code is used by webservice client as well
         // and there isn't.
@@ -253,6 +253,7 @@ public class Node
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return getPathString() + ":" + type;
     }
@@ -260,6 +261,7 @@ public class Node
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         return (o instanceof Node)
             && Util.equals(type, ((Node) o).type)
@@ -270,6 +272,7 @@ public class Node
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return (type == null ? 0 : 3 * type.hashCode())
             + (parent == null ? 0 : 5 * parent.hashCode())

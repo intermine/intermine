@@ -34,12 +34,12 @@ import org.intermine.util.StringUtil;
  *
  * @author Thomas Riley
  */
-public class ModelMerger
+public final class ModelMerger
 {
     private static final Logger LOG = Logger.getLogger(ModelMerger.class);
 
     /**
-     * Creates a new instance of ModelMerger.
+     * Forbid instantiation
      */
     private ModelMerger() {
        // empty
@@ -196,7 +196,7 @@ public class ModelMerger
 
     private static String toSupersString(Set<String> supers) {
         String supersStr = StringUtil.join(supers, " ");
-        if (supersStr != null && supersStr.equals("")) {
+        if (supersStr != null && "".equals(supersStr)) {
             supersStr = null;
         }
         return supersStr;
@@ -277,7 +277,7 @@ public class ModelMerger
         }
         // supers can't be an empty string
         String supersStr = StringUtil.join(supers, " ");
-        if (supersStr != null && supersStr.equals("")) {
+        if (supersStr != null && "".equals(supersStr)) {
             supersStr = null;
         }
         return new ClassDescriptor(original.getName(), supersStr,
@@ -499,7 +499,7 @@ public class ModelMerger
     protected static ClassDescriptor cloneClassDescriptor(ClassDescriptor cld) {
         // supers can't be an empty string
         String supers = StringUtil.join(cld.getSuperclassNames(), " ");
-        if (supers != null && supers.equals("")) {
+        if (supers != null && "".equals(supers)) {
             supers = null;
         }
         return new ClassDescriptor(cld.getName(), supers, cld.isInterface(),

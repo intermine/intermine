@@ -365,7 +365,7 @@ public class PropertyComponentCreator
             super(Messages.getMessage("browse"));
             this.textField = textField;
             boolean directory = descriptor.getType() == PropertyType.DIRECTORY;
-
+            
             fileChooser = new JFileChooser();
             fileChooser.setMultiSelectionEnabled(false);
             fileChooser.setAcceptAllFileFilterUsed(!directory);
@@ -374,14 +374,8 @@ public class PropertyComponentCreator
                 fileChooser.addChoosableFileFilter(filter);
                 fileChooser.setFileFilter(filter);
                 fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            } else {
-                String extension = descriptor.getExtension();
-                if (extension != null) {
-                    FileFilter filter = new FileExtensionFilter(extension);
-                    fileChooser.addChoosableFileFilter(filter);
-                    fileChooser.setFileFilter(filter);
-                }
             }
+            
             if (initialFile != null) {
                 fileChooser.setSelectedFile(initialFile);
             }
@@ -433,6 +427,7 @@ public class PropertyComponentCreator
             return Messages.getMessage("filefilter.directory");
         }
     }
+
     /**
      * A file filter for files with an extension in a JFileChooser.
      */

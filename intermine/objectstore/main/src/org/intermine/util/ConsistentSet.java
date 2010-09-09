@@ -26,17 +26,18 @@ import java.util.List;
  * behaviour is unspecified.
  *
  * @author Andrew Varley
+ * @param <E> The element type
  */
-public class ConsistentSet extends AbstractSet
+public class ConsistentSet<E> extends AbstractSet<E>
 {
-    private List list;
+    private List<E> list;
 
     /**
      * Constructor.
      */
     public ConsistentSet() {
         super();
-        list = new ArrayList();
+        list = new ArrayList<E>();
     }
 
 
@@ -49,7 +50,7 @@ public class ConsistentSet extends AbstractSet
      * @see Set#add
      */
     @Override
-    public boolean add(Object obj) {
+    public boolean add(E obj) {
         int index = list.indexOf(obj);
         if (index != -1) {
             //list.set(index, obj);
@@ -66,12 +67,10 @@ public class ConsistentSet extends AbstractSet
      * @see Set#addAll
      */
     @Override
-    public boolean addAll(Collection col) {
+    public boolean addAll(Collection<? extends E> col) {
         boolean retval = false;
-        HashSet set = new HashSet(list);
-        Iterator iter = col.iterator();
-        while (iter.hasNext()) {
-            Object obj = iter.next();
+        HashSet<E> set = new HashSet<E>(list);
+        for (E obj : col) {
             if (!set.contains(obj)) {
                 set.add(obj);
                 list.add(obj);
@@ -97,10 +96,7 @@ public class ConsistentSet extends AbstractSet
      * @return an iterator
      */
     @Override
-    public Iterator iterator() {
+    public Iterator<E> iterator() {
         return list.iterator();
     }
-
-
-
 }

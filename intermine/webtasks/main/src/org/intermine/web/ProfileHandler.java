@@ -29,6 +29,7 @@ import org.intermine.api.xml.SavedQueryHandler;
 import org.intermine.api.xml.TagHandler;
 import org.intermine.api.xml.TemplateQueryHandler;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -199,15 +200,17 @@ class ProfileHandler extends DefaultHandler
                 }
             }
             Model model = profileManager.getProductionObjectStore().getModel();
-            List<InterMineObject> objects;
+            List<FastPathObject> objects;
             try {
                 objects = FullParser.realiseObjects(items, model, true, abortOnError);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("unexpected exception", e);
             }
 
-            for (InterMineObject object: objects) {
-                idObjectMap.put(object.getId(), object);
+            for (FastPathObject object: objects) {
+                if (object instanceof InterMineObject) {
+                    idObjectMap.put(((InterMineObject) object).getId(), (InterMineObject) object);
+                }
             }
         }
         if (qName.equals("bags") || qName.equals("template-queries")

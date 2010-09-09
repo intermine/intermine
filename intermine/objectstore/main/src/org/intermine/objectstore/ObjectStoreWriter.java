@@ -12,6 +12,7 @@ package org.intermine.objectstore;
 
 import java.util.Collection;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
@@ -31,7 +32,7 @@ public interface ObjectStoreWriter extends ObjectStore
      *
      * @return the ObjectStore
      */
-    public ObjectStore getObjectStore();
+    ObjectStore getObjectStore();
 
     /**
      * Store an object in this ObjectStore.
@@ -59,7 +60,7 @@ public interface ObjectStoreWriter extends ObjectStore
      * @param o the object to store
      * @throws ObjectStoreException if an error occurs during storage of the object
      */
-    public void store(Object o) throws ObjectStoreException;
+    void store(Object o) throws ObjectStoreException;
 
     /**
      * Delete an object from this ObjectStore
@@ -67,7 +68,7 @@ public interface ObjectStoreWriter extends ObjectStore
      * @param o the object to delete
      * @throws ObjectStoreException if an error occurs during deletion of the object
      */
-    public void delete(InterMineObject o) throws ObjectStoreException;
+    void delete(InterMineObject o) throws ObjectStoreException;
 
     /**
      * Deletes a set of objects from this ObjectStore.
@@ -77,7 +78,7 @@ public interface ObjectStoreWriter extends ObjectStore
      * delete all objects
      * @throws ObjectStoreException if an error occurs while deleting the objects
      */
-    public void delete(QueryClass qc, Constraint c) throws ObjectStoreException;
+    void delete(QueryClass qc, Constraint c) throws ObjectStoreException;
 
     /**
      * Place an object in a many-to-many collection of another object.
@@ -91,7 +92,7 @@ public interface ObjectStoreWriter extends ObjectStore
      * @param hadId the ID of the object to place in the collection
      * @throws ObjectStoreException if a problem occurs
      */
-    public void addToCollection(Integer hasId, Class clazz, String fieldName, Integer hadId)
+    void addToCollection(Integer hasId, Class<?> clazz, String fieldName, Integer hadId)
         throws ObjectStoreException;
 
     /**
@@ -101,7 +102,7 @@ public interface ObjectStoreWriter extends ObjectStore
      * @param element an Integer to add to the bag
      * @throws ObjectStoreException if an error occurs
      */
-    public void addToBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException;
+    void addToBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException;
 
     /**
      * Adds a collection of elements to an ObjectStoreBag.
@@ -110,7 +111,7 @@ public interface ObjectStoreWriter extends ObjectStore
      * @param coll a Collection of Integers
      * @throws ObjectStoreException if an error occurs
      */
-    public void addAllToBag(ObjectStoreBag osb,
+    void addAllToBag(ObjectStoreBag osb,
             Collection<Integer> coll) throws ObjectStoreException;
 
     /**
@@ -120,7 +121,7 @@ public interface ObjectStoreWriter extends ObjectStore
      * @param element an Integer to add to the bag
      * @throws ObjectStoreException if an error occurs
      */
-    public void removeFromBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException;
+    void removeFromBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException;
 
     /**
      * Removes a collection of elements from an ObjectStoreBag.
@@ -129,8 +130,7 @@ public interface ObjectStoreWriter extends ObjectStore
      * @param coll a Collection of Integers
      * @throws ObjectStoreException if an error occurs
      */
-    public void removeAllFromBag(ObjectStoreBag osb,
-            Collection<Integer> coll) throws ObjectStoreException;
+    void removeAllFromBag(ObjectStoreBag osb, Collection<Integer> coll) throws ObjectStoreException;
 
     /**
      * Adds elements to an ObjectStoreBag from the results of a Query. The data may not be loaded
@@ -142,7 +142,16 @@ public interface ObjectStoreWriter extends ObjectStore
      * type for insertion into the given bag
      * @throws ObjectStoreException if something goes wrong
      */
-    public void addToBagFromQuery(ObjectStoreBag osb, Query q) throws ObjectStoreException;
+    void addToBagFromQuery(ObjectStoreBag osb, Query q) throws ObjectStoreException;
+
+    /**
+     * Replaces the contents of the given Clob with the given String.
+     *
+     * @param clob the Clob to write to
+     * @param text the text to write to the Clob
+     * @throws ObjectStoreException if something goes wrong
+     */
+    void replaceClob(Clob clob, String text) throws ObjectStoreException;
 
     /**
      * Check whether the ObjectStoreWriter is performing a transaction
@@ -150,28 +159,28 @@ public interface ObjectStoreWriter extends ObjectStore
      * @return true if in a transaction, false otherwise
      * @throws ObjectStoreException if an error occurs
      */
-    public boolean isInTransaction() throws ObjectStoreException;
+    boolean isInTransaction() throws ObjectStoreException;
 
     /**
      * Request that the ObjectStoreWriter begins a transaction
      *
      * @throws ObjectStoreException if a transaction is in progress, or is aborted
      */
-    public void beginTransaction() throws ObjectStoreException;
+    void beginTransaction() throws ObjectStoreException;
 
     /**
      * Request that the ObjectStoreWriter commits and closes the transaction
      *
      * @throws ObjectStoreException if a transaction is not in progress, or is aborted
      */
-    public void commitTransaction() throws ObjectStoreException;
+    void commitTransaction() throws ObjectStoreException;
 
     /**
      * Request that the ObjectStoreWriter aborts and closes the transaction
      *
      * @throws ObjectStoreException if a transaction is not in progress
      */
-    public void abortTransaction() throws ObjectStoreException;
+    void abortTransaction() throws ObjectStoreException;
 
     /**
      * Request that the ObjectStoreWriter commits and closes the transaction and then opens a new
@@ -181,12 +190,12 @@ public interface ObjectStoreWriter extends ObjectStore
      *
      * @throws ObjectStoreException if an error occurs
      */
-    public void batchCommitTransaction() throws ObjectStoreException;
+    void batchCommitTransaction() throws ObjectStoreException;
 
     /**
      * Closes the connection associated with this ObjectStoreWriter
      *
      * @throws ObjectStoreException if something goes wrong
      */
-    public void close() throws ObjectStoreException;
+    void close() throws ObjectStoreException;
 }

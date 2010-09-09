@@ -49,12 +49,14 @@ public class ChangeTableAction extends InterMineDispatchAction
     }
 
     /**
-     * Hide a column
+     * Hide a column.
+     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
+     * @deprecated as we don't hide columns any more
      */
     @Deprecated public ActionForward hideColumn(ActionMapping mapping,
                                     @SuppressWarnings("unused") ActionForm form,
@@ -75,6 +77,7 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
+     * @deprecated as we don't hide columns any more
      */
     @Deprecated public ActionForward showColumn(ActionMapping mapping,
                                     @SuppressWarnings("unused") ActionForm form,
@@ -95,6 +98,7 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
+     * @deprecated as we don't move columns any more
      */
     @Deprecated public ActionForward moveColumnLeft(ActionMapping mapping,
                                         @SuppressWarnings("unused") ActionForm form,
@@ -115,6 +119,7 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
+     * @deprecated as we don't move columns any more
      */
     @Deprecated public ActionForward moveColumnRight(ActionMapping mapping,
                                          @SuppressWarnings("unused") ActionForm form,
@@ -133,6 +138,7 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
+     * @deprecated as we don't move columns any more
      */
     @Deprecated public ActionForward swapColumns(ActionMapping mapping,
                                      @SuppressWarnings("unused") ActionForm form,
@@ -148,10 +154,10 @@ public class ChangeTableAction extends InterMineDispatchAction
     private PagedTable getPagedTable(HttpServletRequest request) {
         String forwardName = request.getParameter("currentPage");
         PagedTable pt = null;
-        if (forwardName.equals("results")) {
+        if ("results".equals(forwardName)) {
             pt = SessionMethods.getResultsTable(request.getSession(), request
                             .getParameter("table"));
-        } else if (forwardName.equals("bagDetails")) {
+        } else if ("bagDetails".equals(forwardName)) {
             pt = SessionMethods.getResultsTable(request.getSession(),
                                 "bag." + request.getParameter("bagName"));
         }
@@ -169,7 +175,7 @@ public class ChangeTableAction extends InterMineDispatchAction
     protected ActionForward makeForward(ActionMapping mapping, HttpServletRequest request,
             PagedTable pt) {
         String forwardName = request.getParameter("currentPage");
-        if (forwardName.equals("results")) {
+        if ("results".equals(forwardName)) {
             ForwardParameters forward = new ForwardParameters(mapping.findForward(forwardName))
                 .addParameter("table", request.getParameter("table")).addParameter(
                         "page", "" + pt.getPage());
@@ -178,7 +184,7 @@ public class ChangeTableAction extends InterMineDispatchAction
             }
             return forward.forward();
         } else {
-            if (forwardName.equals("bagDetails")) {
+            if ("bagDetails".equals(forwardName)) {
                 ForwardParameters forward = new ForwardParameters(mapping.findForward(forwardName))
                     .addParameter("bagName", request.getParameter("bagName"))
                     .addParameter("page", "" + pt.getPage());

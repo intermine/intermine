@@ -20,17 +20,19 @@ import java.util.Set;
  * certain object.
  *
  * @author Matthew Wakeling
+ * @param <K> The key type
+ * @param <V> The value type
  */
-public class AlwaysMap implements Map
+public class AlwaysMap<K, V> implements Map<K, V>
 {
-    Object toReturn;
+    V toReturn;
 
     /**
      * Construct an AlwaysMap.
      *
      * @param toReturn the object to return every time
      */
-    public AlwaysMap(Object toReturn) {
+    public AlwaysMap(V toReturn) {
         this.toReturn = toReturn;
     }
 
@@ -44,7 +46,7 @@ public class AlwaysMap implements Map
     /**
      * {@inheritDoc}
      */
-    public boolean containsKey(Object key) {
+    public boolean containsKey(@SuppressWarnings("unused") Object key) {
         return true;
     }
 
@@ -58,16 +60,17 @@ public class AlwaysMap implements Map
     /**
      * {@inheritDoc}
      */
-    public Set entrySet() {
+    public Set<Map.Entry<K, V>> entrySet() {
         throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
-        if (o instanceof AlwaysMap) {
-            return ((AlwaysMap) o).toReturn.equals(toReturn);
+        if (o instanceof AlwaysMap<?, ?>) {
+            return ((AlwaysMap<?, ?>) o).toReturn.equals(toReturn);
         }
         return false;
     }
@@ -75,13 +78,14 @@ public class AlwaysMap implements Map
     /**
      * {@inheritDoc}
      */
-    public Object get(Object key) {
+    public V get(@SuppressWarnings("unused") Object key) {
         return toReturn;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return toReturn.hashCode();
     }
@@ -96,28 +100,28 @@ public class AlwaysMap implements Map
     /**
      * {@inheritDoc}
      */
-    public Set keySet() {
+    public Set<K> keySet() {
         throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object put(Object key, Object value) {
+    public V put(@SuppressWarnings("unused") K key, @SuppressWarnings("unused") V value) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
-    public void putAll(Map map) {
+    public void putAll(@SuppressWarnings("unused") Map<? extends K, ? extends V> map) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object remove(Object key) {
+    public V remove(@SuppressWarnings("unused") Object key) {
         throw new UnsupportedOperationException();
     }
 
@@ -131,7 +135,7 @@ public class AlwaysMap implements Map
     /**
      * {@inheritDoc}
      */
-    public Collection values() {
+    public Collection<V> values() {
         return Collections.singleton(toReturn);
     }
 }

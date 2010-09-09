@@ -67,7 +67,6 @@ public class SaveQueryAction extends InterMineAction
         String queryName = ((SaveQueryForm) form).getQueryName();
         WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
 
-        // TODO just add default fields to select list?
         if (query.getView().isEmpty()) {
             recordError(new ActionMessage("errors.query.badquery"), request);
             return mapping.findForward("query");

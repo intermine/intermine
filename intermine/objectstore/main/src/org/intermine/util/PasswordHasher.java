@@ -21,7 +21,7 @@ import net.sourceforge.iharder.Base64;
  *
  * @author Matthew Wakeling
  */
-public class PasswordHasher
+public final class PasswordHasher
 {
     private PasswordHasher() {
         // TODO do we need this?
@@ -39,13 +39,13 @@ public class PasswordHasher
             return password;
         }
         try {
-            byte salt[] = new byte[32];
+            byte[] salt = new byte[32];
             SecureRandom sr = new SecureRandom();
             sr.nextBytes(salt);
             String saltString = Base64.encodeBytes(salt);
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update((saltString + password).getBytes());
-            byte digest[] = md.digest();
+            byte[] digest = md.digest();
             String hashString = Base64.encodeBytes(digest);
             return saltString + hashString;
         } catch (NoSuchAlgorithmException e) {
@@ -66,7 +66,7 @@ public class PasswordHasher
                 String saltString = hash.substring(0, 44);
                 MessageDigest md = MessageDigest.getInstance("SHA-256");
                 md.update((saltString + password).getBytes());
-                byte digest[] = md.digest();
+                byte[] digest = md.digest();
                 String hashString = Base64.encodeBytes(digest);
                 if (hashString.equals(hash.substring(44))) {
                     return true;

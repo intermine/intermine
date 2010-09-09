@@ -11,6 +11,7 @@ package org.intermine.api.template;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,10 +19,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
@@ -29,13 +28,12 @@ import org.intermine.api.search.Scope;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathNode;
-
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathException;
 
 /**
  * A TemplateManager provides access to all global and/or user templates and methods to fetch them
@@ -138,10 +136,11 @@ public class TemplateManager
 
         List<TemplateQuery> aspectTemplates = getAspectTemplates(aspect);
 
-        ClassDescriptor thisCld = model.getClassDescriptorByName(type);
-        Set<String> allClasses = new HashSet<String>();
-        for (ClassDescriptor cld : model.getClassDescriptorsForClass(thisCld.getType())) {
-            allClasses.add(cld.getUnqualifiedName());
+        Set<String> allClasses;
+        if (type.contains(",")) {
+            allClasses = new HashSet<String>(Arrays.asList(type.split(",")));
+        } else {
+            allClasses = Collections.singleton(type);
         }
 
         for (TemplateQuery template : aspectTemplates) {
@@ -165,99 +164,41 @@ public class TemplateManager
     private boolean isValidReportTemplate(TemplateQuery template, Collection<String> classes) {
 
         // is this template tagged to be hidden on report pages
-        List<Tag> noReportTags = tagManager.getTags(TagNames.IM_NO_REPORT, template.getName(),
+        List<Tag> noReportTags = tagManager.getTags(TagNames.IM_REPORT, template.getName(),
                 TagTypes.TEMPLATE, superProfile.getUsername());
-        if (noReportTags.size() > 0) {
+        if (noReportTags.size() < 1) {
             return false;
         }
 
         // we can only provide a value for one editable constraint
-        if (template.getAllEditableConstraints().size() != 1) {
+        if (template.getEditableConstraints().size() != 1) {
             return false;
         }
+        PathConstraint constraint = template.getEditableConstraints().get(0);
 
-        return hasSingleEditableConstraintForClass(template, classes);
-    }
-
-    private boolean hasSingleEditableConstraintForClass(TemplateQuery template,
-            Collection<String> classes) {
-        // there is only one editable constraint but need to loop to get pathNode
-        for (Map.Entry<String, PathNode> entry : template.getNodes().entrySet()) {
-            PathNode pathNode = entry.getValue();
-            for (Constraint c : pathNode.getConstraints()) {
-                if (!c.isEditable()) {
-                    continue;
-                }
-
-                if (c.getOp().equals(ConstraintOp.LOOKUP)) {
-                    if (!classes.contains(pathNode.getType())) {
-                        return false;
-                    }
-                } else {
-                    // TODO do we still want restriction on constraint identifier?
-                    // buggy because if a LOOKUP used the constraint identifier isn't checked
-                    String constraintIdentifier = c.getIdentifier();
-                    if (constraintIdentifier == null) {
-                        // if this template doesn't have an identifier, then the superuser
-                        // likely doesn't want it displayed on the object details page
-                        return false;
-                    }
-                    String[] bits = constraintIdentifier.split("\\.");
-
-                    if (bits.length != 2) {
-                        // we can't handle anything like "Department.company.name" yet so ignore
-                        // this template
-                        return false;
-                    }
-
-                    if (!classes.contains(pathNode.getPathString())) { //FIXME bits[0]?
-                        return false;
-                    }
-                }
+        if (constraint.getOp().equals(ConstraintOp.LOOKUP)) {
+            if (!classes.contains(constraint.getPath())) {
+                return false;
+            }
+        } else {
+            Path path = null;
+            try {
+                path = template.makePath(constraint.getPath());
+            } catch (PathException e) {
+                // not a valid path
+                return false;
+            }
+            // if this a root path can only be a LOOKUP constraint
+            if (path.isRootPath()) {
+                return false;
+            }
+            String parentPath = path.getPrefix().getNoConstraintsString();
+            if (!classes.contains(parentPath)) {
+                return false;
             }
         }
-
         return true;
     }
-
-//    private Set<String> getEditableConstraintClasses(TemplateQuery template) {
-//        Set<String> classes = new HashSet<String>();
-//
-//        // there is only one editable constraint but need to loop to get pathNode
-//        for (Map.Entry<String, PathNode> entry : template.getNodes().entrySet()) {
-//            PathNode pathNode = entry.getValue();
-//            for (Constraint c : pathNode.getConstraints()) {
-//                if (!c.isEditable()) {
-//                    continue;
-//                }
-//
-//                if (c.getOp().equals(ConstraintOp.LOOKUP)) {
-//                    classes.add(pathNode.getType());
-//                } else {
-//                    // TODO do we still want restriction on constraint identifier?
-//                    // buggy because if a LOOKUP used the constraint identifier isn't checked
-//                    String constraintIdentifier = c.getIdentifier();
-//                    if (constraintIdentifier == null) {
-//                        // if this template doesn't have an identifier, then the superuser
-//                        // likely doesn't want it displayed on the object details page
-//                        continue;
-//                    }
-//
-//                    String[] bits = constraintIdentifier.split("\\.");
-//
-//                    if (bits.length != 2) {
-//                        // we can't handle anything like "Department.company.name" yet so ignore
-//                        // this template
-//                        continue;
-//                    }
-//
-//                    classes.add(bits[0]);
-//                }
-//            }
-//        }
-//
-//        return classes;
-//    }
 
 
     /**
@@ -352,45 +293,4 @@ public class TemplateManager
         return templatesWithTag;
     }
 
-//    @SuppressWarnings("unchecked")
-//    public Map<ClassDescriptor, Map<String, TemplateQuery>> getTemplateClassMapWithTag(Profile profile, String tag) {
-//        Map<ClassDescriptor, Map<String, TemplateQuery>> result = new HashMap<ClassDescriptor, Map<String,TemplateQuery>>();
-//        
-//        Map<String, TemplateQuery> templatesWithTag = getTemplatesWithTag(profile, tag);
-//        for (Entry<String, TemplateQuery> templateEntry : templatesWithTag.entrySet()) {
-//            Set<String> editableClasses = getEditableConstraintClasses(templateEntry.getValue());
-//            
-//            for (String className : editableClasses) {
-//                ClassDescriptor cld = model.getClassDescriptorByName(className);
-//                if (cld != null) {                
-//                    Map<String, TemplateQuery> resultValue = result.get(cld);
-//                    if (resultValue == null) {
-//                        resultValue = new HashMap<String, TemplateQuery>();
-//                        result.put(cld, resultValue);
-//                    }
-//                    
-//                    resultValue.put(templateEntry.getKey(), templateEntry.getValue());
-//                    if(cld.getSubDescriptors() != null) {
-//                        for (ClassDescriptor cldSub : cld.getSubDescriptors()) {
-//                            if (cld.getType().isAssignableFrom(cldSub.getType())) {
-//                                Map<String, TemplateQuery> resultSubValue = result.get(cldSub);
-//                                if (resultSubValue == null) {
-//                                    resultSubValue = new HashMap<String, TemplateQuery>();
-//                                    result.put(cld, resultSubValue);
-//                                }
-//                                
-//                                resultSubValue.put(templateEntry.getKey(), templateEntry.getValue());
-//                            }
-//                        }
-//                    }
-//                } else {
-//                    Logger.getLogger(TemplateManager.class).error("Could not find cld for class: "
-//                            + className);
-//                }
-//            }
-//            
-//        }
-//        
-//        return result;
-//    }
 }

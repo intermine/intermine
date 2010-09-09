@@ -11,6 +11,7 @@ package org.intermine.api.template;
  */
 
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.PathConstraint;
 
 
 /**
@@ -22,13 +23,13 @@ import org.intermine.objectstore.query.ConstraintOp;
 public class TemplateValue
 {
     private ConstraintOp op;
-    private Object value;
-    private Object extraValue;
-    private String path;
-    private String code;
+    private PathConstraint constraint;
+    private String value;
+    private String extraValue;
     private boolean bagConstraint = false;
     private boolean objectConstraint = false;
     private ValueType valueType;
+    private SwitchOffAbility switchOffAbility;
 
     /**
      * Possible values for TemplateValue type.
@@ -39,58 +40,45 @@ public class TemplateValue
      * Construct with the details of what we are constraining and the value.  The value may be a
      * user entered text, a bag name or an InterMineObject.  The extraValue is only included for
      * some constraint types.
-     * @param path the path that this is constraining
+     *
+     * @param constraint the constraint
      * @param op constraint operation
      * @param value value of the constraint
-     * @param code the constraint code - needed as there may be more than one constraint on a path
      * @param valueType the type of this constraint: simple value, bag or object
+     * @param switchOffAbility the required/optional status of the constraint
      */
-    public TemplateValue(String path, ConstraintOp op, Object value, ValueType valueType,
-            String code) {
-        this(path, op, value, valueType, code, null);
+    public TemplateValue(PathConstraint constraint, ConstraintOp op, String value,
+            ValueType valueType, SwitchOffAbility switchOffAbility) {
+        this(constraint, op, value, valueType, null, switchOffAbility);
     }
 
     /**
      * Construct with the details of what we are constraining and the value.  The value may be a
      * user entered text, a bag name or an InterMineObject.  The extraValue is only included for
      * some constraint types.
-     * @param path the path that this is constraining
+     *
+     * @param constraint the constraint
      * @param op constraint operation
      * @param value value of the constraint
-     * @param code the constraint code - needed as there may be more than one constraint on a path
      * @param valueType the type of this constraint: simple value, bag or object
      * @param extraValue extra value
+     * @param switchOffAbility the required/optional status of the constraint
      */
-    public TemplateValue(String path, ConstraintOp op, Object value, ValueType valueType,
-            String code, Object extraValue) {
-        this.path = path;
+    public TemplateValue(PathConstraint constraint, ConstraintOp op, String value,
+            ValueType valueType, String extraValue, SwitchOffAbility switchOffAbility) {
+        this.constraint = constraint;
         this.op = op;
         this.value = value;
-        this.code = code;
         this.valueType = valueType;
         this.extraValue = extraValue;
+        this.switchOffAbility = switchOffAbility;
     }
 
-    /**
-     * Return the code of this constraint in the query.
-     * @return the code
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * Get the path being constrained in the query.
-     * @return the path
-     */
-    public String getPath() {
-        return path;
-    }
 
     /**
      * @return extra value
      */
-    public Object getExtraValue() {
+    public String getExtraValue() {
         return extraValue;
     }
 
@@ -105,7 +93,7 @@ public class TemplateValue
      * Returns value.
      * @return value
      */
-    public Object getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -126,11 +114,30 @@ public class TemplateValue
     }
 
     /**
+     * Returns the constraint that this object was constructed with.
+     *
+     * @return a PathConstraint object
+     */
+    public PathConstraint getConstraint() {
+        return this.constraint;
+    }
+
+    /**
+     * Returns the SwitchOffAbility.
+     *
+     * @return the SwitchOffAbility
+     */
+    public SwitchOffAbility getSwitchOffAbility() {
+        return switchOffAbility;
+    }
+
+    /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
-        return code + " - " + path + " " + op + " " + value + " (" + extraValue + ", "
-            + objectConstraint + ", " + bagConstraint + ")";
+        return constraint.getPath() + " " + op + " " + value + " (" + extraValue + ", "
+            + objectConstraint + ", " + bagConstraint + ") - " + switchOffAbility;
     }
 
 }

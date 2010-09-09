@@ -10,9 +10,8 @@ package org.intermine.metadata;
  *
  */
 
-import java.util.Set;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Class representing a primary key as a list of field names
@@ -78,6 +77,7 @@ public class PrimaryKey
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof PrimaryKey) {
             return fieldNames.equals(((PrimaryKey) o).fieldNames)
@@ -89,6 +89,7 @@ public class PrimaryKey
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return fieldNames.hashCode() + cld.hashCode();
     }
@@ -96,14 +97,16 @@ public class PrimaryKey
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<fields=\"");
-        for (Iterator iter = getFieldNames().iterator(); iter.hasNext();) {
-            sb.append(iter.next());
-            if (iter.hasNext()) {
+        boolean needComma = false;
+        for (String fieldName : getFieldNames()) {
+            if (needComma) {
                 sb.append(",");
             }
+            sb.append(fieldName);
         }
         sb.append("\">");
 

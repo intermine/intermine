@@ -30,6 +30,7 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
@@ -89,10 +90,10 @@ public class DisplayObject
         clds = getLeafClds(object.getClass(), model);
     }
 
-    private static ThreadLocal<Map<Model, Map<Class, Set<ClassDescriptor>>>> getLeafCldsCache
-        = new ThreadLocal<Map<Model, Map<Class, Set<ClassDescriptor>>>>() {
-            @Override protected Map<Model, Map<Class, Set<ClassDescriptor>>> initialValue() {
-                return new IdentityHashMap<Model, Map<Class, Set<ClassDescriptor>>>();
+    private static ThreadLocal<Map<Model, Map<Class<?>, Set<ClassDescriptor>>>> getLeafCldsCache
+        = new ThreadLocal<Map<Model, Map<Class<?>, Set<ClassDescriptor>>>>() {
+            @Override protected Map<Model, Map<Class<?>, Set<ClassDescriptor>>> initialValue() {
+                return new IdentityHashMap<Model, Map<Class<?>, Set<ClassDescriptor>>>();
             }
         };
 
@@ -104,18 +105,16 @@ public class DisplayObject
      * @return Set of ClassDescriptor objects
      */
     public static Set<ClassDescriptor> getLeafClds(Class<?> clazz, Model model) {
-        Map<Model, Map<Class, Set<ClassDescriptor>>> cache = getLeafCldsCache.get();
-        Map<Class, Set<ClassDescriptor>> classCache = cache.get(model);
+        Map<Model, Map<Class<?>, Set<ClassDescriptor>>> cache = getLeafCldsCache.get();
+        Map<Class<?>, Set<ClassDescriptor>> classCache = cache.get(model);
         if (classCache == null) {
-            classCache = new HashMap<Class, Set<ClassDescriptor>>();
+            classCache = new HashMap<Class<?>, Set<ClassDescriptor>>();
             cache.put(model, classCache);
         }
         Set<ClassDescriptor> leafClds = classCache.get(clazz);
         if (leafClds == null) {
             leafClds = new LinkedHashSet<ClassDescriptor>();
-            for (Iterator j = DynamicUtil.decomposeClass(clazz).iterator();
-                j.hasNext();) {
-                Class c = (Class) j.next();
+            for (Class<?> c : DynamicUtil.decomposeClass(clazz)) {
                 ClassDescriptor cld = model.getClassDescriptorByName(c.getName());
                 if (cld != null) {
                     leafClds.add(cld);
@@ -305,9 +304,17 @@ public class DisplayObject
         try {
             for (ClassDescriptor cld : clds) {
                 for (FieldDescriptor fd : cld.getAllFieldDescriptors()) {
-                    if (fd.isAttribute() && !fd.getName().equals("id")) {
-                        Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
+                    if (fd.isAttribute() && !"id".equals(fd.getName())) {
+                        Object fieldValue = object.getFieldValue(fd.getName());
                         if (fieldValue != null) {
+                            if (fieldValue instanceof ClobAccess) {
+                                ClobAccess fieldClob = (ClobAccess) fieldValue;
+                                if (fieldClob.length() > 200) {
+                                    fieldValue = fieldClob.subSequence(0, 200).toString();
+                                } else {
+                                    fieldValue = fieldClob.toString();
+                                }
+                            }
                             attributes.put(fd.getName(), fieldValue);
                             attributeDescriptors.put(fd.getName(), fd);
                             if (fieldValue instanceof String) {
@@ -327,12 +334,12 @@ public class DisplayObject
                         ReferenceDescriptor ref = (ReferenceDescriptor) fd;
                         //check whether reference is null without dereferencing
                         ProxyReference proxy =
-                            (ProxyReference) TypeUtil.getFieldProxy(object, ref.getName());
+                            (ProxyReference) object.getFieldProxy(ref.getName());
                         DisplayReference newReference = new DisplayReference(proxy, ref, webConfig,
                                 webProperties, classKeys);
                         references.put(fd.getName(), newReference);
                     } else if (fd.isCollection()) {
-                        Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
+                        Object fieldValue = object.getFieldValue(fd.getName());
                         DisplayCollection newCollection =
                             new DisplayCollection((Collection) fieldValue,
                                     (CollectionDescriptor) fd, webConfig, webProperties, classKeys);
@@ -360,14 +367,7 @@ public class DisplayObject
             fieldValues = new HashMap<String, Object>();
             for (Iterator<String> i = fieldExprs.iterator(); i.hasNext();) {
                 String expr = i.next();
-                Set<Class> classes = DynamicUtil.decomposeClass(object.getClass());
-                String className = "";
-                for (Class c : classes) {
-                    if (!className.equals("")) {
-                        className += ".";
-                    }
-                    className += c.getName();
-                }
+                String className = DynamicUtil.getSimpleClassName(object.getClass());
                 if (className.indexOf('.') != -1) {
                     className = TypeUtil.unqualifiedName(className);
                 }

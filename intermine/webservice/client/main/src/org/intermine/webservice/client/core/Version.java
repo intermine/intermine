@@ -25,26 +25,27 @@ public class Version
     public Version(String version) {
         this.version = version;
     }
-    
+
     /**
      * @return version
      */
     String getVersion() {
         return version;
     }
-    
+
     /**
      * @param version version
      */
     void setVersion(String version) {
         this.version = version;
     }
-    
+
     /**
      * Returns string representation of Version that is send with
      * request.
      * @return a string representation of the version.
      */
+    @Override
     public String toString() {
         return getVersion();
     }

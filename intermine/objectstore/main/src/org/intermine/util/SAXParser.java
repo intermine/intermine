@@ -15,7 +15,6 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -25,10 +24,10 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Mark Woodbridge
  */
-public class SAXParser
+public final class SAXParser
 {
-
-    private static Logger LOG = Logger.getLogger(SAXParser.class);
+    private SAXParser() {
+    }
 
     /**
      * Parse the an xml file

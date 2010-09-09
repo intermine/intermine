@@ -10,6 +10,9 @@ package org.intermine.task;
  *
  */
 
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOB_TABLE_NAME;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBVAL_COLUMN;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.Target;
@@ -85,6 +88,7 @@ public class BuildDbTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         if (tempDir == null) {
             throw new BuildException("tempDir attribute is not set");
@@ -202,12 +206,30 @@ public class BuildDbTask extends Task
         }
 
         c = null;
-
         try {
             c = database.getConnection();
             c.setAutoCommit(true);
             c.createStatement().execute("CREATE SEQUENCE "
                                         + ObjectStoreInterMineImpl.UNIQUE_INTEGER_SEQUENCE_NAME);
+        } catch (SQLException e) {
+            // probably happens because the SEQUENCE already exists
+            LOG.info("Failed to create SEQUENCE: " + e);
+        } finally {
+            if (c != null) {
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    // ignore
+                }
+            }
+        }
+
+        c = null;
+        try {
+            c = database.getConnection();
+            c.setAutoCommit(true);
+            c.createStatement().execute("ALTER TABLE " + CLOB_TABLE_NAME + " ALTER COLUMN "
+                    + CLOBVAL_COLUMN + " SET STORAGE PLAIN");
         } catch (SQLException e) {
             // probably happens because the SEQUENCE already exists
             LOG.info("Failed to create SEQUENCE: " + e);
@@ -236,10 +258,11 @@ class SQL extends TorqueSQLTask
      * Default constructor
      */
     public SQL() {
-        project = new Project();
-        project.init();
-        target = new Target();
-        taskName = "torque-sql";
+        Project proj = new Project();
+        proj.init();
+        setProject(proj);
+        setOwningTarget(new Target());
+        setTaskName("torque-sql");
     }
 }
 
@@ -254,9 +277,10 @@ class InsertSQL extends TorqueSQLExec
      * Default constructor
      */
     public InsertSQL() {
-        project = new Project();
-        project.init();
-        target = new Target();
-        taskName = "torque-insert-sql";
+        Project proj = new Project();
+        proj.init();
+        setProject(proj);
+        setOwningTarget(new Target());
+        setTaskName("torque-insert-sql");
     }
 }

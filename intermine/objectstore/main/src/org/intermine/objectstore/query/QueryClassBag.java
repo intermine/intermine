@@ -12,7 +12,6 @@ package org.intermine.objectstore.query;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.intermine.model.InterMineObject;
@@ -25,9 +24,9 @@ import org.intermine.util.DynamicUtil;
  */
 public class QueryClassBag implements FromElement
 {
-    private Class type;
-    private Set ids;
-    private Collection bag;
+    private Class<? extends InterMineObject> type;
+    private Set<Integer> ids;
+    private Collection<?> bag;
     private ObjectStoreBag osb;
 
     /**
@@ -36,7 +35,7 @@ public class QueryClassBag implements FromElement
      * @param type the Java class
      * @param bag the Collection of objects
      */
-    public QueryClassBag(Class type, Collection bag) {
+    public QueryClassBag(Class<? extends InterMineObject> type, Collection<?> bag) {
         this.type = type;
         this.bag = bag;
         ids = convertToIds(bag, this.type);
@@ -49,12 +48,20 @@ public class QueryClassBag implements FromElement
      * @param types the Set of classes
      * @param bag the Collection of objects
      */
-    public QueryClassBag(Set types, Collection bag) {
+    public QueryClassBag(Set<Class<?>> types, Collection<?> bag) {
+        Class<?> clazz;
         if (types.size() == 1) {
-            this.type = (Class) types.iterator().next();
+            clazz = types.iterator().next();
         } else {
-            this.type = DynamicUtil.composeClass(types);
+            clazz = DynamicUtil.composeClass(types);
         }
+        if (!InterMineObject.class.isAssignableFrom(clazz)) {
+            throw new IllegalArgumentException("Cannot create a QueryClassBag with a class that"
+                    + " is not a subclass of InterMineObject: " + DynamicUtil.getFriendlyName(
+                            clazz));
+        }
+        @SuppressWarnings("unchecked") Class<? extends InterMineObject> thisType = (Class) clazz;
+        this.type = thisType;
         this.bag = bag;
         ids = convertToIds(bag, this.type);
         this.osb = null;
@@ -66,7 +73,7 @@ public class QueryClassBag implements FromElement
      * @param type the Java class
      * @param osb the ObjectStoreBag
      */
-    public QueryClassBag(Class type, ObjectStoreBag osb) {
+    public QueryClassBag(Class<? extends InterMineObject> type, ObjectStoreBag osb) {
         this.type = type;
         this.osb = osb;
         this.ids = null;
@@ -79,25 +86,32 @@ public class QueryClassBag implements FromElement
      * @param types the Set of classes
      * @param osb the ObjectStoreBag
      */
-    public QueryClassBag(Set types, ObjectStoreBag osb) {
+    public QueryClassBag(Set<Class<?>> types, ObjectStoreBag osb) {
+        Class<?> clazz;
         if (types.size() == 1) {
-            this.type = (Class) types.iterator().next();
+            clazz = types.iterator().next();
         } else {
-            this.type = DynamicUtil.composeClass(types);
+            clazz = DynamicUtil.composeClass(types);
         }
+        if (!InterMineObject.class.isAssignableFrom(clazz)) {
+            throw new IllegalArgumentException("Cannot create a QueryClassBag with a class that"
+                    + " is not a subclass of InterMineObject: " + DynamicUtil.getFriendlyName(
+                            clazz));
+        }
+        @SuppressWarnings("unchecked") Class<? extends InterMineObject> thisType = (Class) clazz;
+        this.type = thisType;
         this.osb = osb;
         this.ids = null;
         this.bag = null;
     }
 
-    private static Set convertToIds(Collection bag, Class type) {
+    private static Set<Integer> convertToIds(Collection<?> bag,
+            Class<? extends InterMineObject> type) {
         if (bag == null) {
             return null;
         }
-        Set ids = new HashSet();
-        Iterator iter = bag.iterator();
-        while (iter.hasNext()) {
-            Object o = iter.next();
+        Set<Integer> ids = new HashSet<Integer>();
+        for (Object o : bag) {
             if (type.isInstance(o)) {
                 ids.add(((InterMineObject) o).getId());
             }
@@ -110,7 +124,7 @@ public class QueryClassBag implements FromElement
      *
      * @return the Class
      */
-    public Class getType() {
+    public Class<? extends InterMineObject> getType() {
         return type;
     }
 
@@ -119,7 +133,7 @@ public class QueryClassBag implements FromElement
      *
      * @return a Collection
      */
-    public Collection getBag() {
+    public Collection<?> getBag() {
         return bag;
     }
 
@@ -137,7 +151,7 @@ public class QueryClassBag implements FromElement
      *
      * @return a Set of Integers
      */
-    public Set getIds() {
+    public Set<Integer> getIds() {
         return ids;
     }
 
@@ -147,8 +161,9 @@ public class QueryClassBag implements FromElement
      *
      * @return a String
      */
+    @Override
     public String toString() {
-        Set classes = DynamicUtil.decomposeClass(type);
+        Set<Class<?>> classes = DynamicUtil.decomposeClass(type);
         StringBuffer retval = new StringBuffer();
         if (osb != null) {
             retval.append("BAG(" + osb.getBagId() + ")::");
@@ -161,11 +176,10 @@ public class QueryClassBag implements FromElement
             retval.append(type.getName());
         } else {
             boolean needComma = false;
-            Iterator classIter = classes.iterator();
-            while (classIter.hasNext()) {
+            for (Class<?> clazz : classes) {
                 retval.append(needComma ? ", " : "(");
                 needComma = true;
-                retval.append(((Class) classIter.next()).getName());
+                retval.append(clazz.getName());
             }
             retval.append(")");
         }

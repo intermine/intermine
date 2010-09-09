@@ -37,7 +37,7 @@ public class ConstraintSet extends Constraint
             throw new NullPointerException("op cannot be null");
         }
         this.op = op;
-        this.constraints = new LinkedHashSet();
+        this.constraints = new LinkedHashSet<Constraint>();
     }
 
     /**
@@ -84,6 +84,7 @@ public class ConstraintSet extends Constraint
      * @param obj the object to compare with
      * @return true if objects are equal
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof ConstraintSet) {
             ConstraintSet cs = (ConstraintSet) obj;
@@ -97,6 +98,7 @@ public class ConstraintSet extends Constraint
      *
      * @return the hashCode
      */
+    @Override
     public int hashCode() {
         return constraints.hashCode() + 3 * op.hashCode();
     }
@@ -104,11 +106,12 @@ public class ConstraintSet extends Constraint
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "ConstraintSet@" + Integer.toHexString(System.identityHashCode(this)) + "(" + op
                 + ", " + constraints + ")";
     }
 
-    protected static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.AND,
-        ConstraintOp.OR, ConstraintOp.NAND, ConstraintOp.NOR});
+    protected static final List<ConstraintOp> VALID_OPS = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.AND, ConstraintOp.OR, ConstraintOp.NAND, ConstraintOp.NOR});
 }

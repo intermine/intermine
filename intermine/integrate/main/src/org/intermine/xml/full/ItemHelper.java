@@ -19,8 +19,11 @@ import org.intermine.util.XmlUtil;
 * @author Mark Woodbridge
 * @author Richard Smith
 */
-public class ItemHelper
+public final class ItemHelper
 {
+    private ItemHelper() {
+    }
+
     /**
      * Convert an XML item to a data model one
      * @param item the XML item

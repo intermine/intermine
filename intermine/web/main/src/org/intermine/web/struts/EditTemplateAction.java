@@ -24,9 +24,9 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryUtil;
+import org.intermine.util.StringUtil;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateBuildState;
 
 /**
  * Action to edit a user template query. The action expect a <code>name</code>
@@ -64,14 +64,12 @@ public class EditTemplateAction extends InterMineAction
         TemplateManager templateManager = im.getTemplateManager();
         TemplateQuery template = templateManager.getUserOrGlobalTemplate(profile, queryName);
 
-        PathQuery queryClone = template.clone();
-        SessionMethods.loadQuery(queryClone, session, response);
-        SessionMethods.setTemplateBuildState(session, new TemplateBuildState(template));
-
+        SessionMethods.loadQuery(template, session, response);
+        session.setAttribute(Constants.EDITING_TEMPLATE, Boolean.TRUE);
         PathQuery sessionQuery = SessionMethods.getQuery(session);
         if (!sessionQuery.isValid()) {
             recordError(new ActionError("errors.template.badtemplate",
-                    PathQueryUtil.getProblemsSummary(sessionQuery.getProblems())), request);
+                    StringUtil.prettyList(sessionQuery.verifyQuery())), request);
         }
 
         return mapping.findForward("query");

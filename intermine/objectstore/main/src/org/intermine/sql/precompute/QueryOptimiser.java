@@ -11,6 +11,8 @@ package org.intermine.sql.precompute;
  */
 
 import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,15 +26,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
-
 import org.intermine.sql.Database;
-import org.intermine.sql.query.Query;
-import org.intermine.sql.query.AbstractTable;
 import org.intermine.sql.query.AbstractConstraint;
+import org.intermine.sql.query.AbstractTable;
 import org.intermine.sql.query.AbstractValue;
 import org.intermine.sql.query.Constant;
 import org.intermine.sql.query.Constraint;
@@ -42,6 +40,7 @@ import org.intermine.sql.query.Function;
 import org.intermine.sql.query.InListConstraint;
 import org.intermine.sql.query.NotConstraint;
 import org.intermine.sql.query.OrderDescending;
+import org.intermine.sql.query.Query;
 import org.intermine.sql.query.SelectValue;
 import org.intermine.sql.query.SubQuery;
 import org.intermine.sql.query.SubQueryConstraint;
@@ -58,8 +57,11 @@ import org.intermine.util.StringUtil;
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public class QueryOptimiser
+public final class QueryOptimiser
 {
+    private QueryOptimiser() {
+    }
+
     private static final Logger LOG = Logger.getLogger(QueryOptimiser.class);
     private static final int REPORT_INTERVAL = 10000;
 
@@ -154,7 +156,7 @@ public class QueryOptimiser
             }
             return new BestQueryFallback(null, query);
         }
-        Set precomputedTables = ptm.getPrecomputedTables();
+        Set<PrecomputedTable> precomputedTables = ptm.getPrecomputedTables();
         OptimiserCache cache = OptimiserCache.getInstance(database);
         return optimiseWith(query, originalQuery, database, explainConnection, context,
                             precomputedTables, cache);
@@ -175,8 +177,8 @@ public class QueryOptimiser
      * @throws SQLException if a database error occurs
      */
     public static BestQuery optimiseWith(String query, Query originalQuery, Database database,
-            Connection explainConnection, QueryOptimiserContext context, Set precomputedTables,
-            OptimiserCache cache) throws SQLException {
+            Connection explainConnection, QueryOptimiserContext context,
+            Set<PrecomputedTable> precomputedTables, OptimiserCache cache) throws SQLException {
         callCount++;
         if (callCount % REPORT_INTERVAL == 0) {
             LOG.info("Optimiser called " + callCount + " times");
@@ -189,8 +191,7 @@ public class QueryOptimiser
                 + limitOffsetQuery.getLimit() + ", " + limitOffsetQuery.getOffset());
         String cachedQuery = null;
         if (!context.isVerbose()) {
-            cachedQuery = cache.lookup(limitOffsetQuery.getQuery(), limitOffsetQuery.getLimit(),
-                    limitOffsetQuery.getOffset());
+            cachedQuery = cache.lookup(limitOffsetQuery.getQuery(), limitOffsetQuery.getLimit());
         }
         // TODO: fix so that the OptimiserCache is updated when precomputed tables are deleted
         if (cachedQuery != null) {
@@ -216,7 +217,6 @@ public class QueryOptimiser
                 bestQuery = new BestQueryExplainer(explainConnection, context.getTimeLimit());
             }
             String optimisedQuery = null;
-            int expectedRows = 0;
             int expectedTime = 0;
             try {
                 // First, add the original string to the BestQuery object, so it has an opportunity
@@ -247,15 +247,11 @@ public class QueryOptimiser
                 }
             }
             optimisedQuery = bestQuery.getBestQueryString();
-            //expectedRows = (int) bestQuery.getBestExplainResult().getEstimatedRows();
-            // HACKHACKHACK this following line turns the cache into a really dumb one:
-            expectedRows = Integer.MAX_VALUE;
             // Add optimised query to the cache here.
             LimitOffsetQuery limitOffsetOptimisedQuery = new LimitOffsetQuery(optimisedQuery);
-            LOG.debug("New cache line produced - expectedRows = " + expectedRows + ", limit = "
-                    + limitOffsetQuery.getLimit());
+            LOG.debug("New cache line produced - limit = " + limitOffsetQuery.getLimit());
             cache.addCacheLine(limitOffsetQuery.getQuery(), limitOffsetOptimisedQuery.getQuery(),
-                    limitOffsetQuery.getLimit(), limitOffsetQuery.getOffset(), expectedRows);
+                    limitOffsetQuery.getLimit());
             LOG.debug("Optimising " + (expectedTime == 0 ? "" : expectedTime + " ms ")
                     + "query took " + ((new Date()).getTime() - start)
                     + (parseTime == 0 ? " ms without parsing " : " ms including "
@@ -282,9 +278,7 @@ public class QueryOptimiser
      * @param query the query to remap
      */
     protected static void remapAliasesToAvoidPrecomputePrefix(Query query) {
-        Iterator tableIter = query.getFrom().iterator();
-        while (tableIter.hasNext()) {
-            AbstractTable table = (AbstractTable) tableIter.next();
+        for (AbstractTable table : query.getFrom()) {
             if (table.getAlias().startsWith(ALIAS_PREFIX)) {
                 table.setAlias(ALIAS_PREFIX + StringUtil.uniqueString());
             }
@@ -302,10 +296,10 @@ public class QueryOptimiser
      * @throws BestQueryException if the BestQuery decides to cut short the search
      * @throws SQLException if a database error occurs
      */
-    public static void recursiveOptimiseCheckSubquery(Set precomputedTables, Query query,
-            BestQuery bestQuery) throws BestQueryException, SQLException {
+    public static void recursiveOptimiseCheckSubquery(Set<PrecomputedTable> precomputedTables,
+            Query query, BestQuery bestQuery) throws BestQueryException, SQLException {
         if (query.getFrom().size() == 1) {
-            AbstractTable at = (AbstractTable) query.getFrom().iterator().next();
+            AbstractTable at = query.getFrom().iterator().next();
             if (at instanceof SubQuery) {
                 Query subQuery = ((SubQuery) at).getQuery();
                 String originalQuery = query.getSQLString();
@@ -341,23 +335,20 @@ public class QueryOptimiser
      * @throws BestQueryException if the BestQuery decides to cut short the search
      * @throws SQLException if a database error occurs
      */
-    public static void recursiveOptimise(Set precomputedTables, Query query,
+    public static void recursiveOptimise(Set<PrecomputedTable> precomputedTables, Query query,
             BestQuery bestQuery, Query originalQuery) throws BestQueryException, SQLException {
         // This line creates a Map from PrecomputedTable objects to Sets of optimised Query objects.
-        SortedMap map = mergeMultiple(precomputedTables, query, originalQuery);
+        SortedMap<PrecomputedTable, Set<Query>> map = mergeMultiple(precomputedTables,
+                query, originalQuery);
         // Now we want to iterate through every optimised Query in the Map of Sets.
-        Iterator mapIter = map.entrySet().iterator();
-        while (mapIter.hasNext()) {
-            Map.Entry mapEntry = (Map.Entry) mapIter.next();
-            PrecomputedTable p = (PrecomputedTable) mapEntry.getKey();
-            Set queries = (Set) mapEntry.getValue();
+        for (Map.Entry<PrecomputedTable, Set<Query>> mapEntry : map.entrySet()) {
+            PrecomputedTable p = mapEntry.getKey();
+            Set<Query> queries = mapEntry.getValue();
             // We should prepare a Set of PrecomputedTable objects to reoptimise the Queries in this
             // Set.
-            Set newPrecomputedTables = map.headMap(p).keySet();
+            Set<PrecomputedTable> newPrecomputedTables = map.headMap(p).keySet();
             // Now we want to iterate through every optimised Query in this Set.
-            Iterator queryIter = queries.iterator();
-            while (queryIter.hasNext()) {
-                Query optimisedQuery = (Query) queryIter.next();
+            for (Query optimisedQuery : queries) {
                 // First, update BestQuery with this Query.
                 bestQuery.add(optimisedQuery);
                 // Now we want to call recursiveOptimise on each one.
@@ -377,20 +368,20 @@ public class QueryOptimiser
      * @return a Map from all PrecomputedTable objects that produced a non-empty Set, to the Set
      * that was produced by merge
      */
-    protected static SortedMap mergeMultiple(Set precomputedTables, Query query,
-            Query originalQuery) {
-        SortedMap result = new TreeMap();
+    protected static SortedMap<PrecomputedTable, Set<Query>> mergeMultiple(
+            Set<PrecomputedTable> precomputedTables, Query query, Query originalQuery) {
+        SortedMap<PrecomputedTable, Set<Query>> result
+            = new TreeMap<PrecomputedTable, Set<Query>>();
         // Do precomputed tables is decreasing order of number of constituent tables
-        Object sorted[] = precomputedTables.toArray();
-        Arrays.sort(sorted, new Comparator() {
-            public int compare(Object a, Object b) {
-                return ((PrecomputedTable) b).getQuery().getFrom().size()
-                        - ((PrecomputedTable) a).getQuery().getFrom().size();
+        PrecomputedTable[] sorted = precomputedTables.toArray(new PrecomputedTable[] {});
+        Arrays.sort(sorted, new Comparator<PrecomputedTable>() {
+            public int compare(PrecomputedTable a, PrecomputedTable b) {
+                return b.getQuery().getFrom().size() - a.getQuery().getFrom().size();
             }
         });
         for (int i = 0; i < sorted.length; i++) {
-            PrecomputedTable p = (PrecomputedTable) sorted[i];
-            Set mergeResult = merge(p, query, originalQuery);
+            PrecomputedTable p = sorted[i];
+            Set<Query> mergeResult = merge(p, query, originalQuery);
             if (!mergeResult.isEmpty()) {
                 result.put(p, mergeResult);
             }
@@ -434,7 +425,7 @@ public class QueryOptimiser
      * @return a Set of Query objects, one for each combination of the PrecomputedTable in the
      * query
      */
-    protected static Set merge(PrecomputedTable precomputedTable, Query query,
+    protected static Set<Query> merge(PrecomputedTable precomputedTable, Query query,
             Query originalQuery) {
         Query precompQuery = precomputedTable.getQuery();
         if (!precompQuery.getGroupBy().isEmpty()) {
@@ -442,36 +433,37 @@ public class QueryOptimiser
         }
         // If the PrecomputedTable is distinct, then the Query has to be.
         if (precompQuery.isDistinct() && (!query.isDistinct())) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         // If the Query is distinct, but has an aggregate function, then it isn't really.
         if (precompQuery.isDistinct() && query.isDistinct()) {
             boolean hasAggregate = !query.getGroupBy().isEmpty();
             if (!hasAggregate) {
                 // May still have an aggregate function.
-                Iterator iter = query.getSelect().iterator();
+                Iterator<SelectValue> iter = query.getSelect().iterator();
                 while (iter.hasNext() && (!hasAggregate)) {
-                    SelectValue sv = (SelectValue) iter.next();
+                    SelectValue sv = iter.next();
                     AbstractValue av = sv.getValue();
                     hasAggregate = hasAggregate || av.isAggregate();
                 }
             }
             if (hasAggregate) {
-                return Collections.EMPTY_SET;
+                return Collections.emptySet();
             }
         }
-        Set retval = new LinkedHashSet();
+        Set<Query> retval = new LinkedHashSet<Query>();
 
         // Find the possible mappings from tables in the
         // PrecomputedTable query to tables in the Query
-        Set mappings = new ConsistentSet();
-        Collection c = MappingUtil.findCombinations(precompQuery.getFrom(),
-                query.getFrom(), new AbstractTableComparator(),
+        Set<Map<AbstractTable, AbstractTable>> mappings
+            = new ConsistentSet<Map<AbstractTable, AbstractTable>>();
+        Collection<Map<AbstractTable, AbstractTable>> c = MappingUtil.findCombinations(precompQuery
+                .getFrom(), query.getFrom(), new AbstractTableComparator(),
                 new OptimiserMappingChecker(precompQuery.getWhere(), query.getWhere()));
         mappings.addAll(c);
 
         // Create a map from AbstractValue to SelectValue for the PrecomputedTable
-        Map valueMap = precomputedTable.getValueMap();
+        Map<AbstractValue, SelectValue> valueMap = precomputedTable.getValueMap();
 
         // These are Maps where we can store away those structures we have built while checking the
         // precomputed table mapping.
@@ -479,9 +471,9 @@ public class QueryOptimiser
 
         // Iterate through the mappings and compare combinations. Note that each mapping is a case
         // where the precomputed table has the same set of tables as the Query.
-        Iterator mappingsIter = mappings.iterator();
+        Iterator<Map<AbstractTable, AbstractTable>> mappingsIter = mappings.iterator();
         while (mappingsIter.hasNext()) {
-            Map mapping = (Map) mappingsIter.next();
+            Map<AbstractTable, AbstractTable> mapping = mappingsIter.next();
 
             // Remap the aliases
             // TODO: query.getFrom() is really the wrong thing to use. To be extra-specially
@@ -490,7 +482,8 @@ public class QueryOptimiser
             remapAliases(mapping, originalQuery.getFrom());
 
             // Compare the WHERE constraints.
-            Set whereConstraintEqualsSet = new LinkedHashSet();
+            Set<AbstractConstraint> whereConstraintEqualsSet
+                = new LinkedHashSet<AbstractConstraint>();
             // NOTE: this if line has a side-effect... Careful.
             if (!compareConstraints(precompQuery.getWhere(), query.getWhere(),
                         whereConstraintEqualsSet)) {
@@ -503,17 +496,13 @@ public class QueryOptimiser
 
         // Now, we can pass the trimmed mappings Set into MappingUtil.findMultipleCombinations. For
         // each multiple combination, produce a new Query.
-        Set multipleMappings = MappingUtil.findMultipleCombinations(mappings);
+        Set<Set<Map<AbstractTable, AbstractTable>>> multipleMappings = MappingUtil
+            .findMultipleCombinations(mappings);
 
-        Iterator multipleMappingsIter = multipleMappings.iterator();
-        while (multipleMappingsIter.hasNext()) {
-            Set multipleMapping = (Set) multipleMappingsIter.next();
+        for (Set<Map<AbstractTable, AbstractTable>> multipleMapping : multipleMappings) {
             Query currentQuery = query;
             try {
-                mappingsIter = multipleMapping.iterator();
-                while (mappingsIter.hasNext()) {
-                    Map mapping = (Map) mappingsIter.next();
-
+                for (Map<AbstractTable, AbstractTable> mapping : multipleMapping) {
                     // Remap the aliases
                     // TODO: currentQuery.getFrom() is really the wrong thing to use. To be
                     // extra-specially paranoid about realiasing things so they clash, this should
@@ -524,7 +513,8 @@ public class QueryOptimiser
                     remapAliases(mapping, originalQuery.getFrom());
 
                     // Compare the WHERE constraints.
-                    Set whereConstraintEqualsSet = new LinkedHashSet();
+                    Set<AbstractConstraint> whereConstraintEqualsSet
+                        = new LinkedHashSet<AbstractConstraint>();
                     // NOTE: this if line has a side-effect... Careful.
                     compareConstraints(precompQuery.getWhere(), currentQuery.getWhere(),
                                 whereConstraintEqualsSet);
@@ -549,23 +539,24 @@ public class QueryOptimiser
 
                     // Populate the HAVING clause of newQuery with the contents of the HAVING clause
                     // of currentQuery.
+                    Set<AbstractConstraint> empty = Collections.emptySet();
                     reconstructAbstractConstraints(currentQuery.getHaving(), precomputedSqlTable,
-                            valueMap, precompQuery.getFrom(), false, newQuery.getHaving(),
-                            Collections.EMPTY_SET, null, 0, null, false, false);
+                            valueMap, precompQuery.getFrom(), false, newQuery.getHaving(), empty,
+                            null, 0, null, false, false);
 
                     // Now populate the ORDER BY clause of newQuery from the contents of the ORDER
                     // BY clause of currentQuery.
                     Field orderByField = null;
-                    List precompOrderBy = precompQuery.getOrderBy();
+                    List<AbstractValue> precompOrderBy = precompQuery.getOrderBy();
                     if ((precomputedTable.getOrderByField() == null) || (!query.getGroupBy()
                                 .isEmpty())) {
                         reconstructAbstractValues(currentQuery.getOrderBy(), precomputedSqlTable,
                                 valueMap, precompQuery.getFrom(), false, newQuery.getOrderBy());
                     } else {
-                        List tempOrderBy = new ArrayList();
+                        List<AbstractValue> tempOrderBy = new ArrayList<AbstractValue>();
                         reconstructAbstractValues(currentQuery.getOrderBy(), precomputedSqlTable,
                                 valueMap, precompQuery.getFrom(), false, tempOrderBy);
-                        List newOrderBy = newQuery.getOrderBy();
+                        List<AbstractValue> newOrderBy = newQuery.getOrderBy();
 
                         // Now, we have a chance to improve the performance of the query by
                         // substituting the orderby_field instead of certain elements of the order
@@ -573,27 +564,26 @@ public class QueryOptimiser
                         // the precomputed table exactly matches the start of the order by clause
                         // of the original query.
 
-                        Iterator orderByIter = tempOrderBy.iterator();
+                        Iterator<AbstractValue> orderByIter = tempOrderBy.iterator();
                         if (orderByIter.hasNext()) {
                             boolean matches = true;
                             boolean matchesDesc = true;
                             int i;
                             for (i = 0; (i < precompOrderBy.size()) && (matches || matchesDesc)
                                     && orderByIter.hasNext(); i++) {
-                                AbstractValue precompOrderByField = (AbstractValue) precompOrderBy
-                                    .get(i);
+                                AbstractValue precompOrderByField = precompOrderBy.get(i);
                                 AbstractValue nextPrecompOrderBy;
                                 if (precompOrderByField instanceof OrderDescending) {
                                     nextPrecompOrderBy = new OrderDescending(new Field(
-                                                ((SelectValue) valueMap.get(((OrderDescending)
-                                                        precompOrderByField).getValue()))
+                                                valueMap.get(((OrderDescending)
+                                                        precompOrderByField).getValue())
                                                 .getAlias(), precomputedSqlTable));
                                 } else {
-                                    nextPrecompOrderBy = new Field(((SelectValue) valueMap
-                                            .get(precompOrderByField)).getAlias(),
+                                    nextPrecompOrderBy = new Field(valueMap
+                                            .get(precompOrderByField).getAlias(),
                                         precomputedSqlTable);
                                 }
-                                AbstractValue origValue = (AbstractValue) orderByIter.next();
+                                AbstractValue origValue = orderByIter.next();
                                 matches = matches && origValue.equals(nextPrecompOrderBy);
                                 if (origValue instanceof OrderDescending) {
                                     matchesDesc = matchesDesc && ((OrderDescending) origValue)
@@ -606,25 +596,22 @@ public class QueryOptimiser
                                 }
                             }
                             if ((matches || matchesDesc) && currentQuery.isDistinct()) {
-                                Set newS = new LinkedHashSet();
-                                Iterator newSelectSVs = newQuery.getSelect().iterator();
-                                while (newSelectSVs.hasNext()) {
-                                    SelectValue newSelectSV = (SelectValue) newSelectSVs.next();
+                                Set<AbstractValue> newS = new LinkedHashSet<AbstractValue>();
+                                for (SelectValue newSelectSV : newQuery.getSelect()) {
                                     newS.add(newSelectSV.getValue());
                                 }
                                 for (; (i < precompOrderBy.size())
                                         && (matches || matchesDesc); i++) {
-                                    AbstractValue precompOrderByField = (AbstractValue)
-                                        precompOrderBy.get(i);
+                                    AbstractValue precompOrderByField = precompOrderBy.get(i);
                                     Field nextPrecompOrderBy;
                                     if (precompOrderByField instanceof OrderDescending) {
-                                        nextPrecompOrderBy = new Field(((SelectValue) valueMap.get(
+                                        nextPrecompOrderBy = new Field(valueMap.get(
                                                         ((OrderDescending) precompOrderByField)
-                                                        .getValue())).getAlias(),
+                                                        .getValue()).getAlias(),
                                                 precomputedSqlTable);
                                     } else {
-                                        nextPrecompOrderBy = new Field(((SelectValue) valueMap
-                                                .get(precompOrderByField)).getAlias(),
+                                        nextPrecompOrderBy = new Field(valueMap
+                                                .get(precompOrderByField).getAlias(),
                                             precomputedSqlTable);
                                     }
                                     matches = matches && newS.contains(nextPrecompOrderBy);
@@ -661,14 +648,14 @@ public class QueryOptimiser
                                 valueMap, precompQuery.getFrom(), false, newQuery.getWhere(),
                                 whereConstraintEqualsSet, null, 0, null, false, false);
                     } else {
-                        AbstractValue maybeDesc = (AbstractValue) precompOrderBy.get(0);
+                        AbstractValue maybeDesc = precompOrderBy.get(0);
                         boolean reverse = false;
                         if (maybeDesc instanceof OrderDescending) {
                             maybeDesc = ((OrderDescending) maybeDesc).getValue();
                             reverse = true;
                         }
-                        Field firstPrecompOrderBy = new Field(((SelectValue) valueMap.get(
-                                        maybeDesc)).getAlias(), precomputedSqlTable);
+                        Field firstPrecompOrderBy = new Field(valueMap.get(
+                                        maybeDesc).getAlias(), precomputedSqlTable);
                         reconstructAbstractConstraints(currentQuery.getWhere(), precomputedSqlTable,
                                 valueMap, precompQuery.getFrom(), false, newQuery.getWhere(),
                                 whereConstraintEqualsSet, firstPrecompOrderBy,
@@ -724,10 +711,10 @@ public class QueryOptimiser
      * @param originalQuery the original query object
      * @return a Set containing maybe a new Query object with the PrecomputedTable inserted
      */
-    protected static Set mergeGroupBy(PrecomputedTable precomputedTable, Query query,
+    protected static Set<Query> mergeGroupBy(PrecomputedTable precomputedTable, Query query,
             Query originalQuery) {
         Query precompQuery = precomputedTable.getQuery();
-        Set retval = new LinkedHashSet();
+        Set<Query> retval = new LinkedHashSet<Query>();
         if (precompQuery.getGroupBy().size() != query.getGroupBy().size()) {
             // GROUP BY clauses are unequal in size.
             return retval;
@@ -739,19 +726,15 @@ public class QueryOptimiser
 
         // Find the possible mappings from tables in the
         // PrecomputedTable query to tables in the Query
-        Set mappings = MappingUtil.findCombinations(precompQuery.getFrom(),
-                                                    query.getFrom(),
-                                                    new AbstractTableComparator());
+        Set<Map<AbstractTable, AbstractTable>> mappings = MappingUtil.findCombinations(precompQuery
+                .getFrom(), query.getFrom(), new AbstractTableComparator());
 
         // Create a map from AbstractValue to SelectValue for the PrecomputedTable
-        Map valueMap = precomputedTable.getValueMap();
+        Map<AbstractValue, SelectValue> valueMap = precomputedTable.getValueMap();
 
         // Iterate through the mappings and compare combinations. Note that each mapping is a case
         // where the precomputed table has the same set of tables as the Query.
-        Iterator mappingsIter = mappings.iterator();
-        while (mappingsIter.hasNext()) {
-            Map mapping = (Map) mappingsIter.next();
-
+        for (Map<AbstractTable, AbstractTable> mapping : mappings) {
             // Remap the aliases
             // TODO: query.getFrom() is really the wrong thing to use. To be extra-specially
             // paranoid about realiasing things so they clash, this should be the getFrom() of the
@@ -779,7 +762,7 @@ public class QueryOptimiser
 
             // Also, we must compare the HAVING clauses - each constraint in the PrecomputedTable
             // must EQUAL or IMPLIES some constraint in the Query.
-            Set constraintEqualsSet = new LinkedHashSet();
+            Set<AbstractConstraint> constraintEqualsSet = new LinkedHashSet<AbstractConstraint>();
             // NOTE: this if line has a side-effect... Careful.
             if (!compareConstraints(precompQuery.getHaving(), query.getHaving(),
                         constraintEqualsSet)) {
@@ -842,9 +825,10 @@ public class QueryOptimiser
      * @return true if every element of set1 is equal or less restrictive
      * than some element in set2
      */
-    protected static boolean compareConstraints(Set set1, Set set2, Set equalsSet) {
-        return compareConstraints(set1, set2, equalsSet, IdentityMap.INSTANCE,
-                IdentityMap.INSTANCE);
+    protected static boolean compareConstraints(Set<AbstractConstraint> set1,
+            Set<AbstractConstraint> set2, Set<AbstractConstraint> equalsSet) {
+        IdentityMap<AbstractTable> identity = IdentityMap.getInstance();
+        return compareConstraints(set1, set2, equalsSet, identity, identity);
     }
 
     /**
@@ -860,15 +844,13 @@ public class QueryOptimiser
      * @return true if every element of set1 is equal or less restrictive
      * than some element in set2
      */
-    protected static boolean compareConstraints(Set set1, Set set2, Set equalsSet, Map tableMap,
-            Map reverseTableMap) {
-        Iterator set1Iter = set1.iterator();
-        while (set1Iter.hasNext()) {
-            AbstractConstraint constraint1 = (AbstractConstraint) set1Iter.next();
+    protected static boolean compareConstraints(Set<AbstractConstraint> set1,
+            Set<AbstractConstraint> set2, Set<AbstractConstraint> equalsSet,
+            Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap) {
+        for (AbstractConstraint constraint1 : set1) {
             boolean match = false;
-            Iterator set2Iter = set2.iterator();
-            while (set2Iter.hasNext()) {
-                AbstractConstraint constraint2 = (AbstractConstraint) set2Iter.next();
+            for (AbstractConstraint constraint2 : set2) {
                 int compareResult = constraint2.compare(constraint1, reverseTableMap, tableMap);
                 if (AbstractConstraint.checkComparisonImplies(compareResult)) {
                     match = true;
@@ -894,16 +876,12 @@ public class QueryOptimiser
      * @return true if every item in list1 is present in list2, ignoring SelectValue aliases
      * TODO: take this function out - we don't need it.
      */
-    protected static boolean compareSelectLists(List list1, List list2) {
-        Set allValues = new LinkedHashSet();
-        Iterator list2Iter = list2.iterator();
-        while (list2Iter.hasNext()) {
-            SelectValue selectValue = (SelectValue) list2Iter.next();
+    protected static boolean compareSelectLists(List<SelectValue> list1, List<SelectValue> list2) {
+        Set<AbstractValue> allValues = new LinkedHashSet<AbstractValue>();
+        for (SelectValue selectValue : list2) {
             allValues.add(selectValue.getValue());
         }
-        Iterator list1Iter = list1.iterator();
-        while (list1Iter.hasNext()) {
-            SelectValue selectValue = (SelectValue) list1Iter.next();
+        for (SelectValue selectValue : list1) {
             if (!allValues.contains(selectValue.getValue())) {
                 return false;
             }
@@ -923,18 +901,15 @@ public class QueryOptimiser
      * method to check that none of the tables that it is about to change the alias of will clash
      * with any pre-existing table aliases. Pre-existing table aliases will be renamed as necessary.
      */
-    protected static void remapAliases(Map map, Set tables) {
-        Iterator mapIter = map.entrySet().iterator();
-        while (mapIter.hasNext()) {
-            Map.Entry mapEntry = (Map.Entry) mapIter.next();
-            AbstractTable firstTable = (AbstractTable) mapEntry.getKey();
-            AbstractTable secondTable = (AbstractTable) mapEntry.getValue();
+    protected static void remapAliases(Map<AbstractTable, AbstractTable> map,
+            Set<AbstractTable> tables) {
+        for (Map.Entry<AbstractTable, AbstractTable> mapEntry : map.entrySet()) {
+            AbstractTable firstTable = mapEntry.getKey();
+            AbstractTable secondTable = mapEntry.getValue();
             String firstAlias = firstTable.getAlias();
             // First, find if there's a table already with that alias.
             AbstractTable matchingTable = findTableForAlias(firstAlias, tables);
             if ((matchingTable != null) && (!matchingTable.equals(secondTable))) {
-                // There is a table already with that alias. We must find another alias for it.
-                boolean used = true;
                 String alternativeName = null;
                 do {
                     alternativeName = ALIAS_PREFIX + StringUtil.uniqueString();
@@ -952,22 +927,19 @@ public class QueryOptimiser
      * @param set the Set to look in
      * @return an AbstractTable that has the alias or null if there isn't one
      */
-    protected static AbstractTable findTableForAlias(String alias, Set set) {
-        AbstractTable matchingTable = null;
-        Iterator tableIter = set.iterator();
-        while (tableIter.hasNext() && (matchingTable == null)) {
-            matchingTable = (AbstractTable) tableIter.next();
-            if (!matchingTable.getAlias().equals(alias)) {
-                matchingTable = null;
+    protected static AbstractTable findTableForAlias(String alias, Set<AbstractTable> set) {
+        for (AbstractTable matchingTable : set) {
+            if (matchingTable.getAlias().equals(alias)) {
+                return matchingTable;
             }
         }
-        return matchingTable;
+        return null;
     }
 
     /**
      * Compares two AbstractTables using their equalsIgnoreAlias() method.
      */
-    protected static class AbstractTableComparator implements Comparator
+    protected static class AbstractTableComparator implements Comparator<AbstractTable>
     {
         /**
          * Constructor.
@@ -981,8 +953,8 @@ public class QueryOptimiser
          * @param b the second AbstractTable
          * @return zero if the two AbstractTables are equal
          */
-        public int compare(Object a, Object b) {
-            return (((AbstractTable) a).equalsIgnoreAlias((AbstractTable) b) ? 0 : -1);
+        public int compare(AbstractTable a, AbstractTable b) {
+            return (a.equalsIgnoreAlias(b) ? 0 : -1);
         }
     }
 
@@ -1005,9 +977,9 @@ public class QueryOptimiser
      * because it is not present in the PrecomputedTable
      */
     protected static AbstractValue reconstructAbstractValue(AbstractValue original,
-            Table precomputedSqlTable, Map valueMap, Set tableSet, boolean groupBy) throws
-                QueryOptimiserException {
-        SelectValue precompSelectValue = (SelectValue) valueMap.get(original);
+            Table precomputedSqlTable, Map<AbstractValue, SelectValue> valueMap,
+            Set<AbstractTable> tableSet, boolean groupBy) throws QueryOptimiserException {
+        SelectValue precompSelectValue = valueMap.get(original);
         if (precompSelectValue != null) {
             String precompAlias = precompSelectValue.getAlias();
             return new Field(precompAlias, precomputedSqlTable);
@@ -1029,8 +1001,11 @@ public class QueryOptimiser
                     if (originalFunction.getOperation() == Function.COUNT) {
                         return original;
                     } else {
-                        Iterator operandIter = originalFunction.getOperands().iterator();
-                        AbstractValue value = (AbstractValue) operandIter.next();
+                        // We only need to copy the first operand, because no aggregate function has
+                        // more than one.
+                        Iterator<AbstractValue> operandIter = originalFunction.getOperands()
+                            .iterator();
+                        AbstractValue value = operandIter.next();
                         value = reconstructAbstractValue(value, precomputedSqlTable, valueMap,
                                 tableSet, groupBy);
                         Function newFunction = new Function(originalFunction.getOperation());
@@ -1040,9 +1015,7 @@ public class QueryOptimiser
                 }
             } else {
                 Function newFunction = new Function(originalFunction.getOperation());
-                Iterator operandIter = originalFunction.getOperands().iterator();
-                while (operandIter.hasNext()) {
-                    AbstractValue value = (AbstractValue) operandIter.next();
+                for (AbstractValue value : originalFunction.getOperands()) {
                     value = reconstructAbstractValue(value, precomputedSqlTable, valueMap,
                             tableSet, groupBy);
                     newFunction.add(value);
@@ -1073,12 +1046,11 @@ public class QueryOptimiser
      * @throws QueryOptimiserException if reconstructAbstractValue finds an AbstractValue that
      * cannot be constructed, given the PrecomputedTable
      */
-    protected static void reconstructSelectValues(List oldSelect, Table precomputedSqlTable,
-            Map valueMap, Set tableSet, boolean groupBy, Query newQuery) throws
-                QueryOptimiserException {
-        Iterator valueIter = oldSelect.iterator();
-        while (valueIter.hasNext()) {
-            SelectValue selectValue = (SelectValue) valueIter.next();
+    protected static void reconstructSelectValues(List<SelectValue> oldSelect,
+            Table precomputedSqlTable, Map<AbstractValue, SelectValue> valueMap,
+            Set<AbstractTable> tableSet, boolean groupBy, Query newQuery)
+        throws QueryOptimiserException {
+        for (SelectValue selectValue : oldSelect) {
             AbstractValue value = selectValue.getValue();
             AbstractValue newValue = reconstructAbstractValue(value, precomputedSqlTable, valueMap,
                     tableSet, groupBy);
@@ -1111,14 +1083,13 @@ public class QueryOptimiser
      * @throws QueryOptimiserException if reconstructAbstractValue finds an AbstractValue that
      * cannot be constructed, given the PrecomputedTable
      */
-    protected static void reconstructAbstractConstraints(Set oldConstraints,
-            Table precomputedSqlTable, Map valueMap, Set tableSet, boolean groupBy,
-            Set newConstraints, Set constraintEqualsSet, Field firstPrecompOrderBy,
+    protected static void reconstructAbstractConstraints(Set<AbstractConstraint> oldConstraints,
+            Table precomputedSqlTable, Map<AbstractValue, SelectValue> valueMap,
+            Set<AbstractTable> tableSet, boolean groupBy, Set<AbstractConstraint> newConstraints,
+            Set<AbstractConstraint> constraintEqualsSet, Field firstPrecompOrderBy,
             int precompOrderBySize, Field orderByField, boolean firstPrecompOrderByHasNoNulls,
             boolean reverseOrderBy) throws QueryOptimiserException {
-        Iterator constraintIter = oldConstraints.iterator();
-        while (constraintIter.hasNext()) {
-            AbstractConstraint old = (AbstractConstraint) constraintIter.next();
+        for (AbstractConstraint old : oldConstraints) {
             if (!constraintEqualsSet.contains(old)) {
                 AbstractConstraint newConstraint = reconstructAbstractConstraint(old,
                         precomputedSqlTable, valueMap, tableSet, groupBy, firstPrecompOrderBy,
@@ -1152,9 +1123,10 @@ public class QueryOptimiser
      * cannot be constructed, given the PrecomputedTable
      */
     protected static AbstractConstraint reconstructAbstractConstraint(
-            AbstractConstraint oldConstraint, Table precomputedSqlTable, Map valueMap,
-            Set tableSet, boolean groupBy, Field firstPrecompOrderBy, int precompOrderBySize,
-            Field orderByField, boolean firstPrecompOrderByHasNoNulls, boolean reverseOrderBy)
+            AbstractConstraint oldConstraint, Table precomputedSqlTable,
+            Map<AbstractValue, SelectValue> valueMap, Set<AbstractTable> tableSet, boolean groupBy,
+            Field firstPrecompOrderBy, int precompOrderBySize, Field orderByField,
+            boolean firstPrecompOrderByHasNoNulls, boolean reverseOrderBy)
         throws QueryOptimiserException {
         if (oldConstraint instanceof Constraint) {
             AbstractValue left = ((Constraint) oldConstraint).getLeft();
@@ -1213,11 +1185,9 @@ public class QueryOptimiser
                     firstPrecompOrderByHasNoNulls, reverseOrderBy);
             return new NotConstraint(inner);
         } else if (oldConstraint instanceof ConstraintSet) {
-            Set cons = ((ConstraintSet) oldConstraint).getConstraints();
+            Set<AbstractConstraint> cons = ((ConstraintSet) oldConstraint).getConstraints();
             ConstraintSet retval = new ConstraintSet();
-            Iterator consIter = cons.iterator();
-            while (consIter.hasNext()) {
-                AbstractConstraint con = (AbstractConstraint) consIter.next();
+            for (AbstractConstraint con : cons) {
                 con = reconstructAbstractConstraint(con, precomputedSqlTable, valueMap, tableSet,
                         groupBy, firstPrecompOrderBy, precompOrderBySize, orderByField,
                         firstPrecompOrderByHasNoNulls, reverseOrderBy);
@@ -1229,7 +1199,7 @@ public class QueryOptimiser
             throw (new UnsupportedOperationException("Need to think about SubQueryConstraints."));
         } else if (oldConstraint instanceof InListConstraint) {
             AbstractValue left = ((InListConstraint) oldConstraint).getLeft();
-            Set right = ((InListConstraint) oldConstraint).getRight();
+            Set<Constant> right = ((InListConstraint) oldConstraint).getRight();
             left = reconstructAbstractValue(left, precomputedSqlTable, valueMap, tableSet, groupBy);
             InListConstraint retval = new InListConstraint(left);
             retval.addAll(right);
@@ -1254,12 +1224,11 @@ public class QueryOptimiser
      * @throws QueryOptimiserException if reconstructAbstractValue finds an AbstractValue that
      * cannot be constructed, given the PrecomputedTable
      */
-    public static void reconstructAbstractValues(Collection oldValues, Table precomputedSqlTable,
-            Map valueMap, Set tableSet, boolean groupBy, Collection newValues) throws
-                QueryOptimiserException {
-        Iterator valueIter = oldValues.iterator();
-        while (valueIter.hasNext()) {
-            AbstractValue value = (AbstractValue) valueIter.next();
+    public static void reconstructAbstractValues(Collection<AbstractValue> oldValues,
+            Table precomputedSqlTable, Map<AbstractValue, SelectValue> valueMap,
+            Set<AbstractTable> tableSet, boolean groupBy, Collection<AbstractValue> newValues)
+        throws QueryOptimiserException {
+        for (AbstractValue value : oldValues) {
             value = reconstructAbstractValue(value, precomputedSqlTable, valueMap, tableSet,
                     groupBy);
             newValues.add(value);
@@ -1273,11 +1242,10 @@ public class QueryOptimiser
      * @param input a Set of items to be added to the output
      * @param subtract a Set of items to miss out
      * @param output a destination Set to add items to
+     * @param <T> The element type
      */
-    public static void addNonCoveredFrom(Set input, Set subtract, Set output) {
-        Iterator inputIter = input.iterator();
-        while (inputIter.hasNext()) {
-            Object inObj = inputIter.next();
+    public static <T> void addNonCoveredFrom(Set<T> input, Set<T> subtract, Set<T> output) {
+        for (T inObj : input) {
             if (!subtract.contains(inObj)) {
                 output.add(inObj);
             }

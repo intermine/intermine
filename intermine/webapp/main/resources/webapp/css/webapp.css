@@ -251,6 +251,9 @@ ul#submenulist li {
   font-size: 14px; font-weight:bold;
 }
 
+.constraintDesc {
+  font-size: 11px; font-style: italic; color: #333;}
+
 div.templateLine {
   margin-bottom: 5px; margin-top: 5px;}
 
@@ -349,6 +352,11 @@ div#navtrail a:link, div#navtrail a:visited{
 .smallnote {
   line-height:2em;
   font-size: 11px;}
+
+.bigmessage {
+  font-size: 1.4em;
+  text-align: center;
+}
 
 .tag {
   white-space: nowrap; color: #444;}

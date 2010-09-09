@@ -42,6 +42,7 @@ public class Constant extends AbstractValue
      *
      * @return the String representation
      */
+    @Override
     public String getSQLString() {
         return value;
     }
@@ -52,6 +53,7 @@ public class Constant extends AbstractValue
      * @param obj an Object to compare to
      * @return true if the object is of the same class, and with the same value
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof Constant) {
             Constant objConstant = (Constant) obj;
@@ -65,6 +67,7 @@ public class Constant extends AbstractValue
      *
      * @return an arbitrary integer based on the value of the Constant
      */
+    @Override
     public int hashCode() {
         return value.hashCode();
     }
@@ -76,7 +79,10 @@ public class Constant extends AbstractValue
      *
      * {@inheritDoc}
      */
-    public int compare(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+    @Override
+    public int compare(AbstractValue obj,
+            @SuppressWarnings("unused") Map<AbstractTable, AbstractTable> tableMap,
+            @SuppressWarnings("unused") Map<AbstractTable, AbstractTable> reverseTableMap) {
         if (obj instanceof Constant) {
             Constant objC = (Constant) obj;
             if (value.equals(objC.value)) {
@@ -149,6 +155,7 @@ public class Constant extends AbstractValue
      *
      * @return a boolean
      */
+    @Override
     public boolean isAggregate() {
         return false;
     }
@@ -156,6 +163,7 @@ public class Constant extends AbstractValue
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return value;
     }

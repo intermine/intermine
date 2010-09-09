@@ -33,7 +33,8 @@ public interface BatchWriter
      * @return a List of jobs to run to actually do the flushing
      * @throws SQLException if there is an underlying DB problem
      */
-    public List write(Connection con, Map tables, Set filter) throws SQLException;
+    List<FlushJob> write(Connection con, Map<String, ? extends Table> tables,
+            Set<String> filter) throws SQLException;
 
     /**
      * Updates the per-table statistics held in this object, and may tell the SQL database to
@@ -43,5 +44,5 @@ public interface BatchWriter
      * @param con a Connection, over which to talk to the database
      * @throws SQLException if there is an underlying DB problem
      */
-    public void updateStatistics(Map activity, Connection con) throws SQLException;
+    void updateStatistics(Map<String, Integer> activity, Connection con) throws SQLException;
 }

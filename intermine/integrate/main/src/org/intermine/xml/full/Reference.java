@@ -76,6 +76,7 @@ public class Reference
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof Reference) {
             Reference r = (Reference) o;
@@ -87,6 +88,7 @@ public class Reference
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return name.hashCode() + 3 * refId.hashCode();
     }

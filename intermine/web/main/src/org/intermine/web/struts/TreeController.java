@@ -11,8 +11,10 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +46,7 @@ public class TreeController extends TilesAction
     /**
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(ComponentContext context,
             @SuppressWarnings("unused") ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
@@ -51,7 +54,8 @@ public class TreeController extends TilesAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
-        Set<String> openClasses = (Set<String>) session.getAttribute("openClasses");
+        @SuppressWarnings("unchecked") Set<String> openClasses =
+            (Set<String>) session.getAttribute("openClasses");
         if (openClasses == null) {
             openClasses = new HashSet<String>();
             openClasses.add("org.intermine.model.InterMineObject");
@@ -75,11 +79,14 @@ public class TreeController extends TilesAction
                 }
             }
         }
-        Map classCounts = (Map) servletContext.getAttribute("classCounts");
+        Map<?, ?> classCounts = (Map<?, ?>) servletContext.getAttribute("classCounts");
 
-        List nodes = new ArrayList();
-        for (ClassDescriptor cld : rootClasses) {
-            nodes.addAll(makeNodes(cld, openClasses, 0, classCounts));
+        List<TreeNode> nodes = new ArrayList<TreeNode>();
+        List<String> empty = Collections.emptyList();
+        Iterator<ClassDescriptor> cldIter = rootClasses.iterator();
+        while (cldIter.hasNext()) {
+            ClassDescriptor cld = cldIter.next();
+            nodes.addAll(makeNodes(cld, openClasses, 0, classCounts, empty, !cldIter.hasNext()));
         }
 
         context.putAttribute("nodes", nodes);
@@ -94,15 +101,29 @@ public class TreeController extends TilesAction
      * @param openClasses the Set of open classes
      * @param depth the current depth from the root
      * @param classCounts the classCounts attribute from the ServletContext
+     * @param structure a list of Strings - for definition see TreeNode.getStructure
+     * @param last true if this is the last sibling
      * @return a List of nodes
      */
-    protected List<TreeNode> makeNodes(ClassDescriptor parent, Set openClasses, int depth,
-                             Map classCounts) {
+    protected List<TreeNode> makeNodes(ClassDescriptor parent, Set<String> openClasses, int depth,
+            Map<?, ?> classCounts, List<String> structure, boolean last) {
+        List<String> newStructure = new ArrayList<String>(structure);
+        if (last) {
+            newStructure.add("ell");
+        } else {
+            newStructure.add("tee");
+        }
+        newStructure.remove(0);
         List<TreeNode> nodes = new ArrayList<TreeNode>();
         nodes.add(new TreeNode(parent, classCounts.get(parent.getName()).toString(),
-                               depth, false,
-                               parent.getSubDescriptors().size() == 0,
-                               openClasses.contains(parent.getName())));
+                depth, false, parent.getSubDescriptors().size() == 0,
+                openClasses.contains(parent.getName()), newStructure));
+        newStructure = new ArrayList<String>(structure);
+        if (last) {
+            newStructure.add("blank");
+        } else {
+            newStructure.add("straight");
+        }
         if (openClasses.contains(parent.getName())) {
             Set<ClassDescriptor> sortedClds = new TreeSet<ClassDescriptor>(
                     new Comparator<ClassDescriptor>() {
@@ -111,8 +132,11 @@ public class TreeController extends TilesAction
                         }
                     });
             sortedClds.addAll(parent.getSubDescriptors());
-            for (ClassDescriptor cld : sortedClds) {
-                nodes.addAll(makeNodes(cld, openClasses, depth + 1, classCounts));
+            Iterator<ClassDescriptor> cldIter = sortedClds.iterator();
+            while (cldIter.hasNext()) {
+                ClassDescriptor cld = cldIter.next();
+                nodes.addAll(makeNodes(cld, openClasses, depth + 1, classCounts, newStructure,
+                        !cldIter.hasNext()));
             }
         }
         return nodes;

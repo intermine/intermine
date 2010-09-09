@@ -23,6 +23,7 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.util.SynchronisedIterator;
 
@@ -144,7 +145,7 @@ public class ParallelPrecomputer
     {
         private String key;
         private Query query;
-        private List indexes;
+        private Collection<? extends QueryNode> indexes;
         private boolean allFields;
         private String category;
         private ResultsInfo info;
@@ -160,7 +161,8 @@ public class ParallelPrecomputer
          * indexes will be created for every field as well
          * @param category a String describing the category of the precomputed tables
          */
-        public Job(String key, Query query, List indexes, boolean allFields, String category) {
+        public Job(String key, Query query, Collection<? extends QueryNode> indexes,
+                boolean allFields, String category) {
             this.key = key;
             this.query = query;
             this.indexes = indexes;
@@ -285,14 +287,14 @@ public class ParallelPrecomputer
      * @param threadNo the thread number, for logging
      * @throws ObjectStoreException if the query cannot be precomputed.
      */
-    protected void precomputeQuery(String key, Query query, List indexes, boolean allFields,
-            String category, int threadNo) throws ObjectStoreException {
+    protected void precomputeQuery(String key, Query query, Collection<? extends QueryNode> indexes,
+            boolean allFields, String category, int threadNo) throws ObjectStoreException {
         LOG.info("Thread " + threadNo + " precomputing " + key + " - " + query + " with indexes "
                 + indexes);
         long start = System.currentTimeMillis();
 
         try {
-            ((ObjectStoreInterMineImpl) os).precompute(query, indexes, allFields, category);
+            os.precompute(query, indexes, allFields, category);
         } catch (ObjectStoreException e) {
             LOG.error("Precompute failed for " + key, e);
             throw e;
@@ -301,4 +303,3 @@ public class ParallelPrecomputer
         LOG.info("Precompute took " + (System.currentTimeMillis() - start) + " ms for: " + key);
     }
 }
-

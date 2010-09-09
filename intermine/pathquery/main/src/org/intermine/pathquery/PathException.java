@@ -16,6 +16,7 @@ package org.intermine.pathquery;
  */
 public class PathException extends Exception
 {
+    private static final long serialVersionUID = 17668934838206563L;
     private final String pathString;
 
     /**

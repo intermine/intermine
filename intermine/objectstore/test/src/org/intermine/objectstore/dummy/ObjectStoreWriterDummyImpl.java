@@ -5,6 +5,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
@@ -282,5 +283,13 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
 
     public void addToBagFromQuery(ObjectStoreBag osb, Query query) throws ObjectStoreException {
         throw new UnsupportedOperationException();
+    }
+    
+    public Clob createClob() {
+        throw new RuntimeException("Not implemented");
+    }
+    
+    public void replaceClob(Clob clob, String text) {
+        throw new RuntimeException("Not implemented");
     }
 }

@@ -13,26 +13,24 @@ package org.intermine.objectstore.translating;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import org.intermine.metadata.Model;
+import org.apache.log4j.Logger;
 import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreAbstractImpl;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreAbstractImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.DynamicUtil;
-
-import org.apache.log4j.Logger;
 
 /**
  * ObjectStore that transparently translates incoming queries and outgoing objects
@@ -44,7 +42,8 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     private static final Logger LOG = Logger.getLogger(ObjectStoreTranslatingImpl.class);
     private ObjectStore os;
     private Translator translator;
-    private Map queryCache = Collections.synchronizedMap(new WeakHashMap());
+    private Map<Query, Query> queryCache = Collections.synchronizedMap(
+            new WeakHashMap<Query, Query>());
 
     /**
      * Constructor
@@ -95,8 +94,8 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         }
         Translator t;
         try {
-            Class c = Class.forName(translatorClass);
-            Constructor con = c.getConstructor(new Class[] {Model.class, ObjectStore.class});
+            Class<?> c = Class.forName(translatorClass);
+            Constructor<?> con = c.getConstructor(new Class[] {Model.class, ObjectStore.class});
             t = (Translator) con.newInstance(new Object[] {classpathModel, sub});
         } catch (Exception e) {
             // preserve ObjectStoreExceptions for more useful message
@@ -132,8 +131,8 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
-    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            Map<Object, Integer> sequence) throws ObjectStoreException {
+    public List<ResultsRow<Object>> execute(Query q, int start, int limit, boolean optimise,
+            boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException {
         //if (start == 0) {
         //    LOG.error("Fetching batch 0 for query " + q.toString());
         //}
@@ -142,19 +141,18 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         //LOG.error("Translated query " + q + " to " + q2);
         long time2 = System.currentTimeMillis();
         timeSpentQuery += time2 - time1;
-        List results = new ArrayList();
-        Iterator resIter = os.execute(q2, start, limit, optimise, explain, sequence).iterator();
+        List<ResultsRow<Object>> results = new ArrayList<ResultsRow<Object>>();
+        List<ResultsRow<Object>> origResults = os.execute(q2, start, limit, optimise, explain,
+                sequence);
         time1 = System.currentTimeMillis();
         timeSpentExecute += time1 - time2;
 
         try {
-            while (resIter.hasNext()) {
-                ResultsRow row = new ResultsRow();
-                Iterator rowIter = ((ResultsRow) resIter.next()).iterator();
-                while (rowIter.hasNext()) {
-                    Object o = rowIter.next();
+            for (ResultsRow<Object> origRow : origResults) {
+                ResultsRow<Object> row = new ResultsRow<Object>();
+                for (Object o : origRow) {
                     if (o instanceof InterMineObject) {
-                        Object imo = translator.translateFromDbObject((InterMineObject) o);
+                        Object imo = translator.translateFromDbObject(o);
                         row.add(imo);
                         if (imo instanceof InterMineObject) {
                             cacheObjectById(((InterMineObject) imo).getId(), (InterMineObject) imo);
@@ -196,7 +194,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     }
 
     private Query translateQuery(Query q) throws ObjectStoreException {
-        Query retval = (Query) queryCache.get(q);
+        Query retval = queryCache.get(q);
         if (retval == null) {
             retval = translator.translateQuery(q);
             queryCache.put(q, retval);
@@ -207,7 +205,9 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
-    public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
+    @Override
+    public InterMineObject getObjectByExample(@SuppressWarnings("unused") InterMineObject o,
+            @SuppressWarnings("unused") Set<String> fieldNames)
         throws ObjectStoreException {
         throw new UnsupportedOperationException("getObjectByExample not supported by"
                 + "ObjectStoreTranslatingImpl");
@@ -223,7 +223,8 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
-    public Set<Object> getComponentsForQuery(Query q) {
+    @Override
+    public Set<Object> getComponentsForQuery(@SuppressWarnings("unused") Query q) {
         return Collections.emptySet();
     }
 
@@ -231,8 +232,9 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public InterMineObject internalGetObjectById(Integer id,
-            Class clazz) throws ObjectStoreException {
+            Class<? extends InterMineObject> clazz) throws ObjectStoreException {
         InterMineObject retval = super.internalGetObjectById(id, clazz);
         //Exception e = new Exception("internalGetObjectById called for "
         //        + retval.getClass().toString() + " with id " + id);

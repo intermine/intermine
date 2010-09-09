@@ -41,9 +41,9 @@
       <im:prefixSubstring str="${column.name}" outVar="columnPathPrefix" delimiter="."/>
       <c:choose>
         <c:when test="${!empty QUERY
-                      && !empty QUERY.pathStringDescriptions[columnPathPrefix] && empty notUseQuery}">
+                      && !empty QUERY.descriptions[columnPathPrefix] && empty notUseQuery}">
           <c:set var="columnDisplayName"
-                 value="<span class='viewPathDescription' title='${displayPath}'>${QUERY.pathStringDescriptions[columnPathPrefix]}</span> &gt; ${pathEnd}"/>
+                 value="<span class='viewPathDescription' title='${displayPath}'>${QUERY.descriptions[columnPathPrefix]}</span> &gt; ${pathEnd}"/>
         </c:when>
         <c:otherwise>
           <c:set var="columnDisplayName" value="${displayPath}"/>

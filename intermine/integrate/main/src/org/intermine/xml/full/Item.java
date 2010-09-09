@@ -29,7 +29,7 @@ import org.intermine.util.XmlUtil;
  * @author Andrew Varley
  * @author Kim Rutherford
  */
-public class Item implements Comparable
+public class Item implements Comparable<Item>
 {
     private String identifier = "";
     private String className = "";
@@ -176,7 +176,7 @@ public class Item implements Comparable
             throw new RuntimeException("value cannot be null for attribute "
                                        + className + "."  + name);
         }
-        if (attribute.getValue().equals("")) {
+        if ("".equals(attribute.getValue())) {
             throw new RuntimeException("value cannot be an empty string for attribute "
                                        + className + "."  + name);
         }
@@ -353,7 +353,7 @@ public class Item implements Comparable
             throw new RuntimeException("value cannot be null for attribute "
                                        + className + "."  + name);
         }
-        if (value.equals("")) {
+        if ("".equals(value)) {
             throw new RuntimeException("value cannot be an empty string for attribute "
                                        + className + "."  + name);
         }
@@ -376,7 +376,7 @@ public class Item implements Comparable
      * @param refId the value of the attribute
      */
     public void setReference(String name, String refId) {
-        if (refId.equals("")) {
+        if ("".equals(refId)) {
             throw new RuntimeException("empty string used as ref_id for: " + name);
         }
         addReference(new Reference(name, refId));
@@ -530,7 +530,7 @@ public class Item implements Comparable
             return null;
         }
 
-        if (className.equals("")) {
+        if ("".equals(className)) {
             return null;
         }
 
@@ -554,7 +554,7 @@ public class Item implements Comparable
      * @param className the class name
      */
     protected void setClassDescriptor(String className) {
-        if (model != null && !className.equals("")) {
+        if (model != null && !"".equals(className)) {
             String fullClassName =
                 model.getPackageName() + "." + XmlUtil.getFragmentFromURI(className);
             classDescriptor = getClassDescriptorByName(fullClassName);
@@ -626,6 +626,7 @@ public class Item implements Comparable
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof Item) {
             Item i = (Item) o;
@@ -642,13 +643,7 @@ public class Item implements Comparable
      *
      * {@inheritDoc}
      */
-    public int compareTo(Object o) {
-        if (!(o instanceof Item)) {
-            throw new RuntimeException("Attempt to compare an item to a " + o.getClass() + " ("
-                                       + o.toString() + ")");
-        }
-
-        Item i = (Item) o;
+    public int compareTo(Item i) {
         int compValue = this.getClassName().compareTo(i.getClassName());
         if (compValue == 0) {
             compValue = this.getIdentifier().compareTo(i.getIdentifier());
@@ -659,6 +654,7 @@ public class Item implements Comparable
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return identifier.hashCode() + 3 * className.hashCode() + 5 * implementations.hashCode()
             + 7 * attributes.hashCode() + 11 * references.hashCode() + 13 * collections.hashCode();
@@ -667,6 +663,7 @@ public class Item implements Comparable
     /**
     * {@inheritDoc}
     */
+    @Override
     public String toString() {
         return XmlUtil.indentXmlSimple(FullRenderer.render(this));
     }

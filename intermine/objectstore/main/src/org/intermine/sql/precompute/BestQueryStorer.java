@@ -21,7 +21,7 @@ import org.intermine.util.ConsistentSet;
  */
 public class BestQueryStorer extends BestQuery
 {
-    protected Set queries = new ConsistentSet();
+    protected Set<Query> queries = new ConsistentSet<Query>();
 
     /**
      * Constructs a BestQueryStorer
@@ -62,7 +62,7 @@ public class BestQueryStorer extends BestQuery
      *
      * @return the set of queries
      */
-    public Set getQueries() {
+    public Set<Query> getQueries() {
         return queries;
     }
 

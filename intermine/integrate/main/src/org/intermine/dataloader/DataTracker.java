@@ -56,17 +56,18 @@ public class DataTracker
      */
     private int maxSize;
     private int commitSize;
-    private LinkedHashMap cache;
-    private HashMap writeBack = new HashMap();
-    private HashMap nameToSource = new HashMap();
-    private HashMap sourceToName = new HashMap();
+    private LinkedHashMap<Integer, ObjectDescription> cache;
+    private HashMap<Integer, ObjectDescription> writeBack =
+        new HashMap<Integer, ObjectDescription>();
+    private HashMap<String, Source> nameToSource = new HashMap<String, Source>();
+    private HashMap<Source, String> sourceToName = new HashMap<Source, String>();
     private Connection conn;
     private Connection storeConn;
     protected Exception broken = null;
     private CacheStorer cacheStorer;
     private int version = 0;
     // This reference is here so that the Database doesn't get garbage collected.
-    @SuppressWarnings("unused") private Database db;
+    private Database db;
 
     private int ops = 0;
     private int misses = 0;
@@ -85,7 +86,7 @@ public class DataTracker
         this.maxSize = maxSize;
         this.commitSize = commitSize;
         this.db = db;
-        cache = new LinkedHashMap(maxSize * 14 / 10, 0.75F, true);
+        cache = new LinkedHashMap<Integer, ObjectDescription>(maxSize * 14 / 10, 0.75F, true);
         try {
             conn = db.getConnection();
             conn.setAutoCommit(true);
@@ -139,7 +140,7 @@ public class DataTracker
             prefetchConn.setAutoCommit(true);
             prefetchConn.createStatement().execute("SET enable_seqscan = off;");
             long startTime = System.currentTimeMillis();
-            Set<Integer> toFetch = new HashSet();
+            Set<Integer> toFetch = new HashSet<Integer>();
             synchronized (this) {
                 if (broken != null) {
                     IllegalArgumentException e = new IllegalArgumentException();
@@ -147,9 +148,9 @@ public class DataTracker
                     throw e;
                 }
                 for (Integer id : ids) {
-                    ObjectDescription desc = (ObjectDescription) cache.get(id);
+                    ObjectDescription desc = cache.get(id);
                     if (desc == null) {
-                        desc = (ObjectDescription) writeBack.get(id);
+                        desc = writeBack.get(id);
                         cache.put(id, desc);
                     }
                     if (desc == null) {
@@ -157,7 +158,8 @@ public class DataTracker
                     }
                 }
             }
-            Map<Integer, ObjectDescription> idsFetched = new HashMap();
+            Map<Integer, ObjectDescription> idsFetched = new HashMap<Integer, ObjectDescription>();
+            int highestVersionSeen = Integer.MIN_VALUE;
             if (!toFetch.isEmpty()) {
                 int count = 0;
                 StringBuffer sql = new StringBuffer();
@@ -179,7 +181,7 @@ public class DataTracker
                         sql.append(") ORDER BY version");
                         try {
                             Statement s = prefetchConn.createStatement();
-                            long beforeExecute = System.currentTimeMillis();
+                            //long beforeExecute = System.currentTimeMillis();
                             ResultSet r = s.executeQuery(sql.toString());
                             //LOG.info("Prefetching " + (((count + 499) % 500) + 1)
                             //        + " tracks took " + (System.currentTimeMillis()
@@ -187,6 +189,7 @@ public class DataTracker
                             while (r.next()) {
                                 ObjectDescription objectDescription =
                                     idsFetched.get(new Integer(r.getInt(1)));
+                                highestVersionSeen = Math.max(highestVersionSeen, r.getInt(4));
                                 objectDescription.putClean(r.getString(2).intern(),
                                                            stringToSource(r.getString(3)));
                             }
@@ -202,6 +205,9 @@ public class DataTracker
                 }
             }
             synchronized (this) {
+                if (version <= highestVersionSeen) {
+                    version = highestVersionSeen + 1;
+                }
                 cache.putAll(idsFetched);
                 maybePoke();
                 batched += idsFetched.size();
@@ -252,9 +258,9 @@ public class DataTracker
      */
     private ObjectDescription getDesc(Integer id, boolean forWrite) {
         long startTime = System.currentTimeMillis();
-        ObjectDescription desc = (ObjectDescription) cache.get(id);
+        ObjectDescription desc = cache.get(id);
         if (desc == null) {
-            desc = (ObjectDescription) writeBack.get(id);
+            desc = writeBack.get(id);
             if (forWrite && (desc != null)) {
                 desc = new ObjectDescription(desc);
             }
@@ -269,6 +275,10 @@ public class DataTracker
                         + " where objectid = " + id + " ORDER BY version");
                 while (r.next()) {
                     desc.putClean(r.getString(1).intern(), stringToSource(r.getString(2)));
+                    int rowVersion = r.getInt(3);
+                    if (version <= rowVersion) {
+                        version = rowVersion + 1;
+                    }
                 }
                 long now = System.currentTimeMillis();
                 //LOG.debug("Fetched entry from DB (time = " + (now - start) + " ms)");
@@ -328,7 +338,8 @@ public class DataTracker
     /**
      * Clears the cache for a particular object, in preparation for writing all the data for that
      * object. This allows the data tracker to cache the writes that are about to happen. This
-     * method should only be called with Ids that this DataTracker has never seen before.
+     * method should only be called with Ids that this DataTracker has never seen before, otherwise
+     * it will get the data wrong.
      *
      * @param id the ID of the object
      */
@@ -356,7 +367,7 @@ public class DataTracker
         }
         synchronized (writeBack) {
             int cacheSize = cache.size();
-            Map writeBatch = getWriteBatch();
+            Map<Integer, ObjectDescription> writeBatch = getWriteBatch();
             if (writeBatch != null) {
                 LOG.info("Writing cache batch - batch size: " + writeBatch.size()
                         + ", cache size: " + cacheSize + "->" + cache.size());
@@ -438,15 +449,15 @@ public class DataTracker
      *
      * @return a Map from Integer to ObjectDescription
      */
-    private synchronized Map getWriteBatch() {
+    private synchronized Map<Integer, ObjectDescription> getWriteBatch() {
         if (cache.size() > maxSize) {
-            Map retval = new HashMap();
+            Map<Integer, ObjectDescription> retval = new HashMap<Integer, ObjectDescription>();
             int count = 0;
-            Iterator iter = cache.entrySet().iterator();
+            Iterator<Map.Entry<Integer, ObjectDescription>> iter = cache.entrySet().iterator();
             while ((count < commitSize) && iter.hasNext()) {
-                Map.Entry iterEntry = (Map.Entry) iter.next();
-                Integer id = (Integer) iterEntry.getKey();
-                ObjectDescription desc = (ObjectDescription) iterEntry.getValue();
+                Map.Entry<Integer, ObjectDescription> iterEntry = iter.next();
+                Integer id = iterEntry.getKey();
+                ObjectDescription desc = iterEntry.getValue();
                 if (desc.isDirty()) {
                     retval.put(id, desc);
                     writeBack.put(id, desc);
@@ -479,7 +490,7 @@ public class DataTracker
      * false if the given Map is going to be thrown away.
      * @throws SQLException on any error with the backing database
      */
-    private void writeMap(Map map, boolean clean) throws SQLException {
+    private void writeMap(Map<Integer, ObjectDescription> map, boolean clean) throws SQLException {
         long start = System.currentTimeMillis();
         try {
             org.postgresql.copy.CopyManager copyManager = null;
@@ -501,19 +512,15 @@ public class DataTracker
                 s = storeConn.createStatement();
                 LOG.warn("Using slow portable writing method");
             }
-            Iterator iter = map.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry entry = (Map.Entry) iter.next();
-                Integer id = (Integer) entry.getKey();
-                ObjectDescription desc = (ObjectDescription) entry.getValue();
+            for (Map.Entry<Integer, ObjectDescription> entry : map.entrySet()) {
+                Integer id = entry.getKey();
+                ObjectDescription desc = entry.getValue();
                 if (desc.isDirty()) {
-                    Map orig = desc.getOrig();
-                    Map newData = desc.getNewData();
-                    Iterator fieldIter = newData.entrySet().iterator();
-                    while (fieldIter.hasNext()) {
-                        Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
-                        String field = (String) fieldEntry.getKey();
-                        Source source = (Source) fieldEntry.getValue();
+                    Map<String, Source> orig = desc.getOrig();
+                    Map<String, Source> newData = desc.getNewData();
+                    for (Map.Entry<String, Source> fieldEntry : newData.entrySet()) {
+                        String field = fieldEntry.getKey();
+                        Source source = fieldEntry.getValue();
                         if (!orig.containsKey(field) || (!orig.get(field).equals(source))) {
                             // Insert required
                             if (s == null) {
@@ -583,7 +590,7 @@ public class DataTracker
      * @return a Source
      */
     public synchronized Source stringToSource(String name, String type) {
-        Source retval = (Source) nameToSource.get(name);
+        Source retval = nameToSource.get(name);
         if (retval == null) {
             if (name.startsWith("skel_")) {
                 retval = new Source(name.substring(5), type, true);
@@ -603,7 +610,7 @@ public class DataTracker
      * @return the name
      */
     public synchronized String sourceToString(Source source) {
-        String retval = (String) sourceToName.get(source);
+        String retval = sourceToName.get(source);
         if (retval == null) {
             throw new NullPointerException("Could not find given source in tracker");
         }

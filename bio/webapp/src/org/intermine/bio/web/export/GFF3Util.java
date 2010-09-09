@@ -28,9 +28,12 @@ import org.intermine.util.TypeUtil;
  * Utility methods for GFF3.
  * @author Kim Rutherford
  */
-public abstract class GFF3Util
+public final class GFF3Util
 {
     private static final Logger LOG = Logger.getLogger(GFF3Util.class);
+
+    private GFF3Util() {
+    }
 
     /**
      * Create a GFF3Record from a SequenceFeature.
@@ -44,7 +47,7 @@ public abstract class GFF3Util
     public static GFF3Record makeGFF3Record(SequenceFeature lsf,
             Map<String, String> soClassNameMap, String sourceName,
             Map<String, List<String>> extraAttributes) {
-        Set<Class> classes = DynamicUtil.decomposeClass(lsf.getClass());
+        Set<Class<?>> classes = DynamicUtil.decomposeClass(lsf.getClass());
 
         String type = null;
         String sequenceID = null;
@@ -69,7 +72,7 @@ public abstract class GFF3Util
             sequenceID = chr.getPrimaryIdentifier();
 //            LOG.info("mGFFseq: " + sequenceID + "|len: " + lsf.getLength());
 
-            for (Class c : classes) {
+            for (Class<?> c : classes) {
                 if (SequenceFeature.class.isAssignableFrom(c)) {
                     String className = TypeUtil.unqualifiedName(c.getName());
 //                     LOG.info("mGFF: " + className + "|" + lsf.getPrimaryIdentifier());
@@ -92,9 +95,9 @@ public abstract class GFF3Util
             start = chrLocation.getStart().intValue();
             end = chrLocation.getEnd().intValue();
             if (chrLocation.getStrand() != null) {
-                if (chrLocation.getStrand().equals("1")) {
+                if ("1".equals(chrLocation.getStrand())) {
                     strand = "+";
-                } else if (chrLocation.getStrand().equals("-1")) {
+                } else if ("-1".equals(chrLocation.getStrand())) {
                     strand = "-";
                 }
             }
@@ -115,7 +118,7 @@ public abstract class GFF3Util
         try {
             for (Class c : DynamicUtil.decomposeClass(lsf.getClass())) {
                 if (TypeUtil.getFieldInfo(c, "score") != null) {
-                    score = (Double) TypeUtil.getFieldValue(lsf, "score");
+                    score = (Double) lsf.getFieldValue("score");
                 }
             }
         } catch (IllegalAccessException e) {

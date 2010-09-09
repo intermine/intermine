@@ -31,8 +31,11 @@ import java.util.Stack;
  * @author Matthew Wakeling
  */
 
-public class CollectionUtil
+public final class CollectionUtil
 {
+    private CollectionUtil() {
+    }
+
     /**
      * Return a copy of the given map with the object inserted at the given index.
      *
@@ -41,13 +44,15 @@ public class CollectionUtil
      * newKey,newValue pair is added first
      * @param newKey the new key
      * @param newValue the new value
+     * @param <K> The key type
+     * @param <V> The value type
      * @return the copied LinkedHashMap with newKey and newValue added
      */
-    public static LinkedHashMap linkedHashMapAdd(LinkedHashMap map, Object prevKey,
-                                                 Object newKey, Object newValue) {
+    public static <K, V> LinkedHashMap<K, V> linkedHashMapAdd(LinkedHashMap<K, V> map, K prevKey,
+            K newKey, V newValue) {
 
         if (prevKey == null) {
-            LinkedHashMap newMap = new LinkedHashMap();
+            LinkedHashMap<K, V> newMap = new LinkedHashMap<K, V>();
 
             newMap.put(newKey, newValue);
 
@@ -60,15 +65,15 @@ public class CollectionUtil
             throw new IllegalArgumentException("LinkedHashMap does not contain: " + prevKey);
         }
 
-        LinkedHashMap newMap = new LinkedHashMap();
+        LinkedHashMap<K, V> newMap = new LinkedHashMap<K, V>();
 
-        Iterator iter = map.entrySet().iterator();
+        Iterator<Map.Entry<K, V>> iter = map.entrySet().iterator();
 
         while (iter.hasNext()) {
-            Map.Entry mapEntry = (Map.Entry) iter.next();
+            Map.Entry<K, V> mapEntry = iter.next();
 
-            Object key = mapEntry.getKey();
-            Object value = mapEntry.getValue();
+            K key = mapEntry.getKey();
+            V value = mapEntry.getValue();
 
             newMap.put(key, value);
 
@@ -88,14 +93,15 @@ public class CollectionUtil
      * Object - the original Collection can be used in that case
      * @return a Map from Class to List of objects in that class
      */
-    public static <E> Map<Class, List<E>> groupByClass(Collection<E> objects, boolean inherit) {
-        Map<Class, List<E>> retval = new HashMap<Class, List<E>>();
+    public static <E> Map<Class<?>, List<E>> groupByClass(Collection<E> objects,
+            boolean inherit) {
+        Map<Class<?>, List<E>> retval = new HashMap<Class<?>, List<E>>();
         for (E o : objects) {
-            Class c = o.getClass();
+            Class<?> c = o.getClass();
             if (inherit) {
-                Set<Class> done = new HashSet<Class>();
+                Set<Class<?>> done = new HashSet<Class<?>>();
                 done.add(Object.class);
-                Stack<Class> todo = new Stack<Class>();
+                Stack<Class<?>> todo = new Stack<Class<?>>();
                 todo.push(c);
                 while (!todo.empty()) {
                     c = todo.pop();
@@ -108,7 +114,7 @@ public class CollectionUtil
                         }
                         l.add(o);
                         todo.push(c.getSuperclass());
-                        Class classes[] = c.getInterfaces();
+                        Class<?>[] classes = c.getInterfaces();
                         for (int i = 0; i < classes.length; i++) {
                             todo.push(classes[i]);
                         }
@@ -134,8 +140,9 @@ public class CollectionUtil
      * combinations of the values in the collections, in their respective indexes in the List.
      */
     public static <E> Collection<List<E>> fanOutCombinations(List<Collection<E>> values) {
-        Collection<List<E>> retval = new ArrayList();
-        fanOutCombinations(values, retval, Collections.EMPTY_LIST, 0);
+        Collection<List<E>> retval = new ArrayList<List<E>>();
+        List<E> soFar = Collections.emptyList();
+        fanOutCombinations(values, retval, soFar, 0);
         return retval;
     }
 
@@ -143,13 +150,13 @@ public class CollectionUtil
             Collection<List<E>> retval, List<E> soFar, int index) {
         if (index == values.size() - 1) {
             for (E value : values.get(index)) {
-                List<E> solution = new ArrayList(soFar);
+                List<E> solution = new ArrayList<E>(soFar);
                 solution.add(value);
                 retval.add(solution);
             }
         } else {
             for (E value : values.get(index)) {
-                List<E> solution = new ArrayList(soFar);
+                List<E> solution = new ArrayList<E>(soFar);
                 solution.add(value);
                 fanOutCombinations(values, retval, solution, index + 1);
             }
@@ -163,20 +170,20 @@ public class CollectionUtil
      * @return a Collection of Classes that are superclasses of all the argument classes, without
      * any that are superclasses of classes in this return Collection
      */
-    public static Set<Class> findCommonSuperclasses(Collection<Class> classes) {
-        Set<Class> all = new HashSet();
-        for (Class c : classes) {
-            Stack<Class> stack = new Stack();
+    public static Set<Class<?>> findCommonSuperclasses(Collection<Class<?>> classes) {
+        Set<Class<?>> all = new HashSet<Class<?>>();
+        for (Class<?> c : classes) {
+            Stack<Class<?>> stack = new Stack<Class<?>>();
             stack.push(c);
             while (!stack.empty()) {
-                Class d = stack.pop();
+                Class<?> d = stack.pop();
                 if ((!Factory.class.equals(d)) && (!all.contains(d))) {
                     all.add(d);
-                    Class superClass = d.getSuperclass();
+                    Class<?> superClass = d.getSuperclass();
                     if (superClass != null) {
                         stack.push(superClass);
                     }
-                    for (Class e : d.getInterfaces()) {
+                    for (Class<?> e : d.getInterfaces()) {
                         stack.push(e);
                     }
                 }
@@ -184,10 +191,10 @@ public class CollectionUtil
         }
         // Now "all" contains all the classes and all superclasses and interfaces. So filter them.
         // Unfortunately this is an O(n^2) operation.
-        Iterator<Class> iter = all.iterator();
+        Iterator<Class<?>> iter = all.iterator();
         while (iter.hasNext()) {
-            Class c = iter.next();
-            for (Class d : classes) {
+            Class<?> c = iter.next();
+            for (Class<?> d : classes) {
                 if (!c.isAssignableFrom(d)) {
                     iter.remove();
                     break;
@@ -196,10 +203,10 @@ public class CollectionUtil
         }
         // Now "all" contains all the classes that are superclasses or interfaces of ALL classes
         // in the argument. Remove redundant elements.
-        Set<Class> retval = new HashSet();
-        for (Class c : all) {
+        Set<Class<?>> retval = new HashSet<Class<?>>();
+        for (Class<?> c : all) {
             boolean needed = true;
-            for (Class d : all) {
+            for (Class<?> d : all) {
                 if (c.isAssignableFrom(d) && (!c.equals(d))) {
                     needed = false;
                     break;
@@ -234,7 +241,7 @@ public class CollectionUtil
      * @param classes a Collection of Classes
      * @return a Class that is a common superclass or superinterface
      */
-    public static Class findCommonSuperclass(Collection<Class> classes) {
+    public static Class<?> findCommonSuperclass(Collection<Class<?>> classes) {
         return findCommonSuperclasses(classes).iterator().next();
     }
 }

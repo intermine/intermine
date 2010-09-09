@@ -12,7 +12,6 @@ package org.intermine.dataloader;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -23,8 +22,8 @@ import java.util.Map;
 public class ObjectDescription
 {
     private boolean dirty = false;
-    private Map orig = null;
-    private Map newData = null;
+    private Map<String, Source> orig = null;
+    private Map<String, Source> newData = null;
 
     /**
      * Constructs a new ObjectDescription.
@@ -41,10 +40,10 @@ public class ObjectDescription
     public ObjectDescription(ObjectDescription desc) {
         dirty = desc.dirty;
         if (desc.orig != null) {
-            orig = new HashMap(desc.orig);
+            orig = new HashMap<String, Source>(desc.orig);
         }
         if (desc.newData != null) {
-            newData = new HashMap(desc.newData);
+            newData = new HashMap<String, Source>(desc.newData);
         }
     }
 
@@ -60,7 +59,7 @@ public class ObjectDescription
             throw new IllegalStateException("Can't putClean() on a dirty ObjectDescription");
         }
         if (orig == null) {
-            orig = new HashMap();
+            orig = new HashMap<String, Source>();
         }
         orig.put(fieldName, source);
     }
@@ -75,7 +74,7 @@ public class ObjectDescription
     public void put(String fieldName, Source source) {
         if (!dirty) {
             dirty = true;
-            newData = new HashMap();
+            newData = new HashMap<String, Source>();
         }
         newData.put(fieldName, source);
     }
@@ -88,13 +87,13 @@ public class ObjectDescription
      */
     public Source getSource(String fieldName) {
         if (newData != null) {
-            Source retval = (Source) newData.get(fieldName);
+            Source retval = newData.get(fieldName);
             if (retval != null) {
                 return retval;
             }
         }
         if (orig != null) {
-            return (Source) orig.get(fieldName);
+            return orig.get(fieldName);
         }
         return null;
     }
@@ -116,11 +115,9 @@ public class ObjectDescription
         if (dirty) {
             dirty = false;
             if (orig == null) {
-                orig = new HashMap();
+                orig = new HashMap<String, Source>();
             }
-            Iterator iter = newData.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry entry = (Map.Entry) iter.next();
+            for (Map.Entry<String, Source> entry : newData.entrySet()) {
                 orig.put(entry.getKey(), entry.getValue());
             }
             newData = null;
@@ -132,9 +129,9 @@ public class ObjectDescription
      *
      * @return a Map
      */
-    protected Map getOrig() {
+    protected Map<String, Source> getOrig() {
         if (orig == null) {
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
         return orig;
     }
@@ -144,7 +141,7 @@ public class ObjectDescription
      *
      * @return a Map
      */
-    protected Map getNewData() {
+    protected Map<String, Source> getNewData() {
         return newData;
     }
 }

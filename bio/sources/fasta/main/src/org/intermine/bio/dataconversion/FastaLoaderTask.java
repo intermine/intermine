@@ -26,16 +26,17 @@ import org.biojava.bio.BioException;
 import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.SequenceIterator;
 import org.biojava.bio.seq.io.SeqIOTools;
+import org.intermine.bio.util.OrganismData;
+import org.intermine.bio.util.OrganismRepository;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Synonym;
-import org.intermine.bio.util.OrganismData;
-import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.PendingClob;
 import org.intermine.task.FileDirectDataLoaderTask;
-import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
 
 /**
@@ -86,7 +87,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @param sequenceType the sequence type
      */
     public void setSequenceType(String sequenceType) {
-        if (sequenceType.equals("${fasta.sequenceType}")) {
+        if ("${fasta.sequenceType}".equals(sequenceType)) {
             this.sequenceType = "dna";
         } else {
             this.sequenceType = sequenceType;
@@ -197,6 +198,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
     /**
      * Handles each fasta file. Factored out so we can supply files for testing.
+     *
      * @param file the File to process.
      * @throws BuildException if the is a problem
      */
@@ -245,7 +247,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      */
     protected Organism getOrganism(Sequence bioJavaSequence) throws ObjectStoreException {
         if (org == null) {
-            org = (Organism) getDirectDataLoader().createObject(Organism.class);
+            org = getDirectDataLoader().createObject(Organism.class);
             org.setTaxonId(new Integer(fastaTaxonId));
             getDirectDataLoader().store(org);
         }
@@ -266,23 +268,29 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         if (organism == null) {
             return;
         }
-        Class<?> sequenceClass = org.intermine.model.bio.Sequence.class;
-        org.intermine.model.bio.Sequence flymineSequence =
-            (org.intermine.model.bio.Sequence) getDirectDataLoader().createObject(sequenceClass);
+        org.intermine.model.bio.Sequence flymineSequence = getDirectDataLoader().createObject(
+                org.intermine.model.bio.Sequence.class);
 
         String sequence = bioJavaSequence.seqString();
         String md5checksum = Util.getMd5checksum(sequence);
-        flymineSequence.setResidues(sequence);
+        flymineSequence.setResidues(new PendingClob(sequence));
         flymineSequence.setLength(bioJavaSequence.length());
         flymineSequence.setMd5checksum(md5checksum);
+        Class<? extends InterMineObject> imClass;
         Class<?> c;
         try {
             c = Class.forName(className);
+            if (InterMineObject.class.isAssignableFrom(c)) {
+                imClass = (Class<? extends InterMineObject>) c;
+            } else {
+                throw new RuntimeException("Feature className must be a valid class in the model"
+                        + " that inherits from InterMineObject, but was: " + className);
+            }
         } catch (ClassNotFoundException e1) {
             throw new RuntimeException("unknown class: " + className
                                        + " while creating new Sequence object");
         }
-        BioEntity imo = (BioEntity) getDirectDataLoader().createObject(c);
+        BioEntity imo = (BioEntity) getDirectDataLoader().createObject(imClass);
 
         String attributeValue = getIdentifier(bioJavaSequence);
 
@@ -307,21 +315,17 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
                     + flymineSequence.getLength() + ". Does the attribute exist?");
         }
 
-        if (TypeUtil.getSetter(c, "md5checksum") != null) {
-            try {
-                imo.setFieldValue("md5checksum", md5checksum);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Error setting: " + className
-                                                   + ".md5checksum to: "
-                                                   + md5checksum + ". Does the attribute exist?");
-            }
+        try {
+            imo.setFieldValue("md5checksum", md5checksum);
+        } catch (Exception e) {
+            // Ignore - we don't care if the field doesn't exist.
         }
 
         extraProcessing(bioJavaSequence, flymineSequence, imo, organism, getDataSet());
 
         Synonym synonym = null;
         if (dataSource != null) {
-            synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
+            synonym = getDirectDataLoader().createObject(Synonym.class);
             synonym.setValue(attributeValue);
             synonym.setSubject(imo);
         }
@@ -358,7 +362,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         if (dataSets.containsKey(dataSetTitle)) {
             return dataSets.get(dataSetTitle);
         }
-        DataSet dataSet = (DataSet) getDirectDataLoader().createObject(DataSet.class);
+        DataSet dataSet = getDirectDataLoader().createObject(DataSet.class);
         dataSet.setName(dataSetTitle);
         if (dataSource != null) {
             dataSet.setDataSource(getDataSource());
@@ -379,11 +383,11 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @param dataSet the DataSet object
      * @throws ObjectStoreException if a store() fails during processing
      */
-    protected void  extraProcessing(Sequence bioJavaSequence,
-                                   org.intermine.model.bio.Sequence flymineSequence,
-                                   BioEntity interMineObject, Organism organism,
-                                   DataSet dataSet)
-        throws ObjectStoreException {
+    protected void  extraProcessing(@SuppressWarnings("unused") Sequence bioJavaSequence,
+            @SuppressWarnings("unused") org.intermine.model.bio.Sequence flymineSequence,
+            @SuppressWarnings("unused") BioEntity interMineObject,
+            @SuppressWarnings("unused") Organism organism,
+            @SuppressWarnings("unused") DataSet dataSet) throws ObjectStoreException {
         // default - no extra processing
     }
 
@@ -412,7 +416,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             throw new RuntimeException("dataSourceName not set");
         }
         if (dataSource == null) {
-            dataSource = (DataSource) getDirectDataLoader().createObject(DataSource.class);
+            dataSource = getDirectDataLoader().createObject(DataSource.class);
             dataSource.setName(dataSourceName);
             getDirectDataLoader().store(dataSource);
             storeCount += 1;

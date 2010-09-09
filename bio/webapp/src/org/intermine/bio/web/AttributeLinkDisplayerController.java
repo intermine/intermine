@@ -107,7 +107,7 @@ public class AttributeLinkDisplayerController extends TilesAction
 
         if (imo != null) {
             try {
-                organismReference = (Organism) TypeUtil.getFieldValue(imo, "organism");
+                organismReference = (Organism) imo.getFieldValue("organism");
             } catch (IllegalAccessException e) {
                 // no organism field
             }
@@ -172,7 +172,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                 } else {
                     try {
                         if (imo != null) {
-                            attrValue = TypeUtil.getFieldValue(imo, attrName);
+                            attrValue = imo.getFieldValue(attrName);
                         } else { //it's a bag!
                             attrValue = BagHelper.getIdList(bag, os, dbName, attrName);
                             if (!taxId.equalsIgnoreCase("*")) {

@@ -10,7 +10,8 @@ package org.intermine.sql.query;
  *
  */
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 import org.intermine.util.ConsistentSet;
 
@@ -22,14 +23,14 @@ import org.intermine.util.ConsistentSet;
 public class ConstraintSet extends AbstractConstraint
 {
     // TODO: Should this be a list or a set?
-    protected Set cons;
+    protected Set<AbstractConstraint> cons;
 
     /**
      * Constructor for a ConstraintSet object.
      * Add AbstractConstraint objects to this object with the add method.
      */
     public ConstraintSet() {
-        cons = new ConsistentSet();
+        cons = new ConsistentSet<AbstractConstraint>();
     }
 
     /**
@@ -59,13 +60,12 @@ public class ConstraintSet extends AbstractConstraint
      *
      * @return the String representation
      */
+    @Override
     public String getSQLString() {
         boolean needOR = false;
         boolean needParentheses = false;
         String retval = "";
-        Iterator consIter = cons.iterator();
-        while (consIter.hasNext()) {
-            AbstractConstraint con = (AbstractConstraint) consIter.next();
+        for (AbstractConstraint con : cons) {
             if (needOR) {
                 retval += " OR ";
                 needParentheses = true;
@@ -82,7 +82,9 @@ public class ConstraintSet extends AbstractConstraint
      *
      * {@inheritDoc}
      */
-    public int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
+    @Override
+    public int compare(AbstractConstraint obj, Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap) {
         if (obj instanceof ConstraintSet) {
             return alterComparisonAnd(internalCompare(obj, tableMap, reverseTableMap),
                     alterComparisonSwitch(((ConstraintSet) obj).internalCompare(this,
@@ -115,14 +117,14 @@ public class ConstraintSet extends AbstractConstraint
      * @return INDEPENDENT, IMPLIED_BY, IMPLIES, EQUAL, OPPOSITE, EXCLUDES, or OR, depending on the
      * constraints.
      */
-    protected int internalCompare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
+    protected int internalCompare(AbstractConstraint obj,
+            Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap) {
         int currentComp = 3; // This is a "A is false, but we don't know about B" comparison.
                              // We use it because it is the identity, with the
                              // AbstractConstraint.alterComparisonAORB operator. It happens to be
                              // a subset of "A IMPLIES B".
-        Iterator consIter = cons.iterator();
-        while (consIter.hasNext()) {
-            AbstractConstraint con = (AbstractConstraint) consIter.next();
+        for (AbstractConstraint con : cons) {
             currentComp = alterComparisonSwitch(alterComparisonAORB(
                         alterComparisonSwitch(currentComp),
                         alterComparisonSwitch(con.compare(obj, tableMap, reverseTableMap))));
@@ -135,11 +137,10 @@ public class ConstraintSet extends AbstractConstraint
      *
      * @return an arbitrary integer based on the contents of the Constraint
      */
+    @Override
     public int hashCode() {
         int retval = 0;
-        Iterator consIter = cons.iterator();
-        while (consIter.hasNext()) {
-            AbstractConstraint con = (AbstractConstraint) consIter.next();
+        for (AbstractConstraint con : cons) {
             retval += con.hashCode();
         }
         return retval;
@@ -150,7 +151,7 @@ public class ConstraintSet extends AbstractConstraint
      *
      * @return the Set of Constraints
      */
-    public Set getConstraints() {
+    public Set<AbstractConstraint> getConstraints() {
         return cons;
     }
 }

@@ -41,9 +41,9 @@ public class BatchWriterSimpleImpl implements BatchWriter
     protected Connection con;
 
     protected Statement preDeleteBatch;
-    protected List deleteBatches;
+    protected List<FlushJob> deleteBatches;
     protected Statement postDeleteBatch;
-    protected List addBatches;
+    protected List<FlushJob> addBatches;
     protected Statement lastBatch;
 
     /**
@@ -58,22 +58,21 @@ public class BatchWriterSimpleImpl implements BatchWriter
     /**
      * {@inheritDoc}
      */
-    public List write(Connection con, Map tables, Set filter) throws SQLException {
+    public List<FlushJob> write(Connection con, Map<String, ? extends Table> tables,
+            Set<String> filter) throws SQLException {
         this.con = con;
         // Initialise object for action. Note this code is NOT re-entrant.
         preDeleteBatch = null;
-        deleteBatches = new ArrayList();
+        deleteBatches = new ArrayList<FlushJob>();
         postDeleteBatch = null;
-        addBatches = new ArrayList();
+        addBatches = new ArrayList<FlushJob>();
         lastBatch = null;
-        Map activityMap = new HashMap();
-        Iterator tableIter = tables.entrySet().iterator();
-        while (tableIter.hasNext()) {
-            Map.Entry tableEntry = (Map.Entry) tableIter.next();
-            String name = (String) tableEntry.getKey();
+        Map<String, Integer> activityMap = new HashMap<String, Integer>();
+        for (Map.Entry<String, ? extends Table> tableEntry : tables.entrySet()) {
+            String name = tableEntry.getKey();
             if ((filter == null) || filter.contains(name)) {
                 int activity = 0;
-                Table table = (Table) tableEntry.getValue();
+                Table table = tableEntry.getValue();
                 if (table instanceof TableBatch) {
                     activity += 2 * doDeletes(name, (TableBatch) table);
                     activity += doInserts(name, (TableBatch) table, addBatches);
@@ -88,7 +87,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 }
             }
         }
-        List retval = new ArrayList();
+        List<FlushJob> retval = new ArrayList<FlushJob>();
         if (preDeleteBatch != null) {
             retval.add(new FlushJobStatementBatchImpl(preDeleteBatch));
         }
@@ -121,8 +120,10 @@ public class BatchWriterSimpleImpl implements BatchWriter
      * @return the number of rows inserted
      * @throws SQLException if an error occurs
      */
-    protected int doInserts(String name, TableBatch table, List batches) throws SQLException {
-        String colNames[] = table.getColNames();
+    @SuppressWarnings("unchecked")
+    protected int doInserts(String name, TableBatch table,
+            @SuppressWarnings("unused") List<FlushJob> batches) throws SQLException {
+        String[] colNames = table.getColNames();
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             StringBuffer preambleBuffer = new StringBuffer("INSERT INTO ").append(name)
                 .append(" (");
@@ -134,16 +135,12 @@ public class BatchWriterSimpleImpl implements BatchWriter
             }
             preambleBuffer.append(") VALUES (");
             String preamble = preambleBuffer.toString();
-            Iterator insertIter = table.getIdsToInsert().entrySet().iterator();
-            while (insertIter.hasNext()) {
-                Map.Entry insertEntry = (Map.Entry) insertIter.next();
+            for (Map.Entry<Object, Object> insertEntry : table.getIdsToInsert().entrySet()) {
                 Object inserts = insertEntry.getValue();
                 if (inserts instanceof Object[]) {
                     addToLastBatch(insertString(preamble, colNames.length, (Object[]) inserts));
                 } else {
-                    Iterator iter = ((List) inserts).iterator();
-                    while (iter.hasNext()) {
-                        Object values[] = (Object[]) iter.next();
+                    for (Object[] values : ((List<Object[]>) inserts)) {
                         addToLastBatch(insertString(preamble, colNames.length, values));
                     }
                 }
@@ -153,7 +150,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
         return 0;
     }
 
-    private static String insertString(String preamble, int colCount, Object values[]) {
+    private static String insertString(String preamble, int colCount, Object[] values) {
         StringBuffer sqlBuffer = new StringBuffer((int) (TableBatch.sizeOfArray(values)
                     * 1.01 + 1000)).append(preamble);
         for (int i = 0; i < colCount; i++) {
@@ -181,10 +178,9 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 String tempTableName = "deletes_from_" + name;
                 addToPreDeleteBatch("CREATE TABLE " + tempTableName + " (value integer)");
                 TableBatch tableBatch = new TableBatch();
-                String colNames[] = new String[] {"value"};
-                Iterator iter = table.getIdsToDelete().iterator();
-                while (iter.hasNext()) {
-                    tableBatch.addRow(null, colNames, new Object[] {iter.next()});
+                String[] colNames = new String[] {"value"};
+                for (Object id : table.getIdsToDelete()) {
+                    tableBatch.addRow(null, colNames, new Object[] {id});
                 }
                 doInserts(tempTableName, tableBatch, deleteBatches);
                 addToPostDeleteBatch("DELETE FROM " + name + " WHERE " + idField
@@ -195,9 +191,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
                     .append(" WHERE ").append(idField).append(" IN (");
                 boolean needComma = false;
                 int statementSize = 0;
-                Iterator iter = table.getIdsToDelete().iterator();
-                while (iter.hasNext()) {
-                    Object idValue = iter.next();
+                for (Object idValue : table.getIdsToDelete()) {
                     if (needComma) {
                         sqlBuffer.append(", ");
                     }
@@ -233,7 +227,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
      */
     protected int doIndirectionDeletes(String name,
             IndirectionTableBatch table) throws SQLException {
-        Set rows = new CombinedSet(table.getRowsToDelete(), table.getRowsToInsert());
+        Set<Row> rows = new CombinedSet<Row>(table.getRowsToDelete(), table.getRowsToInsert());
         if (!rows.isEmpty()) {
             if (rows.size() > deleteTempTableSize) {
                 String tempTableName = "deletes_from_" + name;
@@ -248,9 +242,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 StringBuffer sql = new StringBuffer("DELETE FROM ").append(name).append(" WHERE (");
                 boolean needComma = false;
                 int statementSize = 0;
-                Iterator dIter = rows.iterator();
-                while (dIter.hasNext()) {
-                    Row row = (Row) dIter.next();
+                for (Row row : rows) {
                     if (needComma) {
                         sql.append(" OR ");
                     }
@@ -286,13 +278,12 @@ public class BatchWriterSimpleImpl implements BatchWriter
      * @throws SQLException if an error occurs
      */
     protected int doIndirectionInserts(String name,
-            IndirectionTableBatch table, List batches) throws SQLException {
+            IndirectionTableBatch table, @SuppressWarnings("unused") List<FlushJob> batches)
+        throws SQLException {
         if (!table.getRowsToInsert().isEmpty()) {
             String preamble = "INSERT INTO " + name + " (" + table.getLeftColName() + ", "
                 + table.getRightColName() + ") VALUES (";
-            Iterator insertIter = table.getRowsToInsert().iterator();
-            while (insertIter.hasNext()) {
-                Row row = (Row) insertIter.next();
+            for (Row row : table.getRowsToInsert()) {
                 StringBuffer sql = new StringBuffer(preamble).append(row.getLeft()).append(", ")
                     .append(row.getRight()).append(")");
                 addToLastBatch(sql.toString());
@@ -321,7 +312,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
      * @throws SQLException if an error occurs
      */
     protected void addToPostDeleteBatch(String sql) throws SQLException {
-        // Note that this is a fudge - in subclasses you wil almost certainly want to override this
+        // Note that this is a fudge - in subclasses you will almost certainly want to override this
         // method to make it actually do what the prototype says. The fudge exists in order to speed
         // up the SimpleImpl by using only one Statement batch.
         addToPreDeleteBatch(sql);
@@ -334,33 +325,35 @@ public class BatchWriterSimpleImpl implements BatchWriter
      * @throws SQLException if an error occurs
      */
     protected void addToLastBatch(String sql) throws SQLException {
-        // Note that this is a fudge - in subclasses you wil almost certainly want to override this
+        // Note that this is a fudge - in subclasses you will almost certainly want to override this
         // method to make it actually do what the prototype says. The fudge exists in order to speed
         // up the SimpleImpl by using only one Statement batch.
         addToPreDeleteBatch(sql);
     }
 
-    private static class CombinedSet extends AbstractSet
+    private static class CombinedSet<T> extends AbstractSet<T>
     {
-        private Set setA, setB;
+        private Set<T> setA, setB;
 
-        public CombinedSet(Set setA, Set setB) {
+        public CombinedSet(Set<T> setA, Set<T> setB) {
             this.setA = setA;
             this.setB = setB;
         }
 
+        @Override
         public int size() {
             return setA.size() + setB.size();
         }
 
-        public Iterator iterator() {
+        @Override
+        public Iterator<T> iterator() {
             return new CombinedIterator();
         }
 
-        private class CombinedIterator implements Iterator
+        private class CombinedIterator implements Iterator<T>
         {
             private boolean state = true;
-            private Iterator iter = setA.iterator();
+            private Iterator<T> iter = setA.iterator();
 
             public boolean hasNext() {
                 if (state) {
@@ -376,7 +369,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 }
             }
 
-            public Object next() {
+            public T next() {
                 if (state && (!iter.hasNext())) {
                     iter = setB.iterator();
                 }
@@ -395,18 +388,17 @@ public class BatchWriterSimpleImpl implements BatchWriter
      * They do not access any common instance variables, so they need no synchronisation.
      */
 
-    protected Map stats = new HashMap();
+    protected Map<String, Statistic> stats = new HashMap<String, Statistic>();
 
     /**
      * {@inheritDoc}
      */
-    public void updateStatistics(Map activity, Connection conn) throws SQLException {
-        Iterator iter = activity.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            String name = (String) entry.getKey();
-            int amount = ((Integer) entry.getValue()).intValue();
-            Statistic stat = (Statistic) stats.get(name);
+    public void updateStatistics(Map<String, Integer> activity, Connection conn)
+        throws SQLException {
+        for (Map.Entry<String, Integer> entry : activity.entrySet()) {
+            String name = entry.getKey();
+            int amount = entry.getValue().intValue();
+            Statistic stat = stats.get(name);
             if (stat == null) {
                 stat = new Statistic(name, getTableSize(name, conn), amount);
                 stats.put(name, stat);

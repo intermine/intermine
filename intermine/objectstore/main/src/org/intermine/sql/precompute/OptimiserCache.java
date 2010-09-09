@@ -10,15 +10,13 @@ package org.intermine.sql.precompute;
  *
  */
 
-import org.apache.log4j.Logger;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
+
 import org.intermine.sql.Database;
+import org.intermine.util.CacheMap;
 
 /**
  * A class that provides an implementation of a cache for String-based SQL query optimisation.
@@ -27,8 +25,6 @@ import org.intermine.sql.Database;
  */
 public class OptimiserCache
 {
-    private static final Logger LOG = Logger.getLogger(OptimiserCache.class);
-
     /** Maximum number of cache linesets in the cache. */
     public static final int MAX_LINESETS = 1000;
     /** Number of events to happen before an expiration run. */
@@ -36,7 +32,7 @@ public class OptimiserCache
 
     // Caches need to be per-database, so we will provide a static method to retrieve a cache object
     // given a database. We need to be careful about synchronisation in this whole class.
-    private static Map caches = new HashMap();
+    private static Map<Database, OptimiserCache> caches = new HashMap<Database, OptimiserCache>();
 
     /**
      * Returns an OptimiserCache object relevant to the database given.
@@ -48,7 +44,7 @@ public class OptimiserCache
         if (!caches.containsKey(db)) {
             caches.put(db, new OptimiserCache());
         }
-        return ((OptimiserCache) caches.get(db));
+        return caches.get(db);
     }
 
 
@@ -56,17 +52,13 @@ public class OptimiserCache
      * A Map that holds a mapping from unoptimised query string (with LIMIT and OFFSET stripped off)
      * to a Set of OptimiserCacheLine objects.
      */
-    protected Map cacheLines;
-    protected TreeMap evictionQueue;
-    protected int sequence = 0;
-    protected int untilNextExpiration = EXPIRE_INTERVAL;
+    protected Map<String, Set<OptimiserCacheLine>> cacheLines;
 
     /**
      * Constructor for this object.
      */
     public OptimiserCache() {
-        cacheLines = new HashMap();
-        evictionQueue = new TreeMap();
+        cacheLines = new CacheMap<String, Set<OptimiserCacheLine>>();
     }
 
     /**
@@ -74,8 +66,6 @@ public class OptimiserCache
      */
     public synchronized void flush() {
         cacheLines.clear();
-        evictionQueue.clear();
-        untilNextExpiration = EXPIRE_INTERVAL;
     }
 
     /**
@@ -84,29 +74,23 @@ public class OptimiserCache
      * @param original the original SQL string (stripped of LIMIT and OFFSET)
      * @param optimised the optimised SQL string (stripped of LIMIT and OFFSET)
      * @param limit the limit that was used during the optimisation
-     * @param offset the offset that was used during the optimisation
-     * @param expectedRows the expected number of rows in the query results
      */
-    public synchronized void addCacheLine(String original, String optimised, int limit,
-            int offset, int expectedRows) {
-        expire();
+    public synchronized void addCacheLine(String original, String optimised, int limit) {
         if (original.toUpperCase().startsWith("EXPLAIN ")) {
             original = original.substring(8);
         }
         if (optimised.toUpperCase().startsWith("EXPLAIN ")) {
             optimised = optimised.substring(8);
         }
-        if (!cacheLines.containsKey(original)) {
-            cacheLines.put(original, new HashSet());
+        Set<OptimiserCacheLine> lines = cacheLines.get(original);
+        if (lines == null) {
+            lines = new HashSet<OptimiserCacheLine>();
+            cacheLines.put(original, lines);
         }
 
-        Set lines = (Set) cacheLines.get(original);
-        OptimiserCacheLine line = new OptimiserCacheLine(optimised, limit, offset, expectedRows,
-                lines, original);
-        DateAndSequence d = new DateAndSequence(line.getExpiry(), sequence++);
+        OptimiserCacheLine line = new OptimiserCacheLine(optimised, limit, original);
 
         lines.add(line);
-        evictionQueue.put(d, line);
     }
 
     /**
@@ -114,11 +98,9 @@ public class OptimiserCache
      *
      * @param original the original SQL string (minus LIMIT and OFFSET)
      * @param limit the limit required
-     * @param offset the offset required
      * @return a possible optimised SQL string (minus LIMIT and OFFSET)
      */
-    public synchronized String lookup(String original, int limit, int offset) {
-        expire();
+    public synchronized String lookup(String original, int limit) {
         //LOG.debug("Looking up query \"" + original + "\" with limit " + limit
         //        + " and offset " + offset + " - ");
         boolean originalWasExplain = false;
@@ -126,7 +108,7 @@ public class OptimiserCache
             original = original.substring(8);
             originalWasExplain = true;
         }
-        Set lines = (Set) cacheLines.get(original);
+        Set<OptimiserCacheLine> lines = cacheLines.get(original);
         if (lines == null) {
             // Couldn't find anything.
             //LOG.debug("Complete cache miss");
@@ -134,10 +116,8 @@ public class OptimiserCache
         }
         double bestScore = Double.POSITIVE_INFINITY;
         OptimiserCacheLine bestLine = null;
-        Iterator lineIter = lines.iterator();
-        while (lineIter.hasNext()) {
-            OptimiserCacheLine line = (OptimiserCacheLine) lineIter.next();
-            double score = line.score(limit, offset);
+        for (OptimiserCacheLine line : lines) {
+            double score = line.score(limit);
             if (score < bestScore) {
                 bestScore = score;
                 bestLine = line;
@@ -149,96 +129,5 @@ public class OptimiserCache
         }
         //LOG.debug("Cache hit");
         return (originalWasExplain ? "EXPLAIN " : "") + bestLine.getOptimised();
-    }
-
-    /**
-     * Removes expired entries from the OptimiserCache, by looking at the evictionQueue.
-     */
-    protected void expire() {
-        if ((--untilNextExpiration) <= 0) {
-            untilNextExpiration = EXPIRE_INTERVAL;
-            while (cacheLines.size() > MAX_LINESETS) {
-                //LOG.debug("cacheLines.size = " + cacheLines.size() + ", evictionQueue.size = "
-                //        + evictionQueue.size());
-                DateAndSequence d = (DateAndSequence) evictionQueue.firstKey();
-                OptimiserCacheLine line = (OptimiserCacheLine) evictionQueue.remove(d);
-                expire(line);
-            }
-            Date now = new Date();
-            DateAndSequence nextD = (evictionQueue.isEmpty() ? null
-                    : (DateAndSequence) evictionQueue.firstKey());
-            while ((nextD != null) && nextD.getDate().before(now)) {
-                OptimiserCacheLine line = (OptimiserCacheLine) evictionQueue.remove(nextD);
-                expire(line);
-                nextD = (evictionQueue.isEmpty() ? null
-                        : (DateAndSequence) evictionQueue.firstKey());
-            }
-        }
-    }
-
-    /**
-     * Removes a particular cache line.
-     *
-     * @param line the cache line to remove
-     */
-    private void expire(OptimiserCacheLine line) {
-        if (line != null) {
-            Set lines = line.getLineSet();
-            String original = line.getOriginal();
-            lines.remove(line);
-            //LOG.debug("Expired cache line for original query " + original);
-            if (lines.isEmpty()) {
-                cacheLines.remove(original);
-                //LOG.debug("Expired entire cache lineset for original query " + original);
-            }
-        } else {
-            LOG.error("Expire called on null OptimiserCacheLine");
-            throw new NullPointerException("Expire called on null OptimiserCacheLine");
-        }
-    }
-
-    /**
-     * Class representing a date, but with the added advantage that no two of these should compare
-     * equals if one is careful with the sequence.
-     */
-    protected static class DateAndSequence implements Comparable
-    {
-        private Date date;
-        private int sequence;
-
-        /**
-         * Create a new instance.
-         *
-         * @param date a Date
-         * @param sequence an integer
-         */
-        public DateAndSequence(Date date, int sequence) {
-            this.date = date;
-            this.sequence = sequence;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public int compareTo(Object o) {
-            if (o instanceof DateAndSequence) {
-                DateAndSequence d = (DateAndSequence) o;
-                int retval = date.compareTo(d.date);
-                if (retval == 0) {
-                    retval = sequence - d.sequence;
-                }
-                return retval;
-            }
-            throw new ClassCastException("Object is not an OptimiserCache.DateAndSequence");
-        }
-
-        /**
-         * Getter for date.
-         *
-         * @return date
-         */
-        public Date getDate() {
-            return date;
-        }
     }
 }

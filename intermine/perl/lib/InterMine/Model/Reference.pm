@@ -1,5 +1,3 @@
-package InterMine::Model::Reference;
-
 =head1 NAME
 
 InterMine::Model::Reference - represents a reference in an InterMine class
@@ -56,11 +54,6 @@ under the same terms as Perl itself.
 
 =cut
 
-use strict;
-use vars qw(@ISA);
-use InterMine::Model::Field;
-
-@ISA = qw(InterMine::Model::Field);
 
 =head2 referenced_type_name
 
@@ -69,11 +62,21 @@ use InterMine::Model::Field;
  Args    : none
 
 =cut
-sub referenced_type_name
-{
-  my $name = shift->{referenced_type_name};
-  return $name;
-}
+
+package InterMine::Model::Reference;
+use Moose;
+with 'InterMine::Model::Role::Field';
+
+use MooseX::Types::Moose qw(Str Maybe);
+use InterMine::TypeLibrary qw(
+    ClassDescriptor MaybeClassDescriptor MaybeField
+);
+
+has referenced_type_name => (
+    is	     => 'ro',
+    isa	     => Str,
+    required => 1,
+);
 
 =head2 referenced_classdescriptor
 
@@ -82,54 +85,42 @@ sub referenced_type_name
  Args    : none
 
 =cut
-sub referenced_classdescriptor
-{
-  my $self = shift;
-  my $type_name = $self->referenced_type_name();
-  return $self->{model}->get_classdescriptor_by_name($type_name);
-}
 
-=head2 referenced_classdescriptor
+has referenced_classdescriptor => (
+    is => 'ro',
+    isa => ClassDescriptor,
+    lazy => 1,
+    default => sub {
+	my $self      = shift;
+	my $type_name = $self->referenced_type_name();
+	return $self->model->get_classdescriptor_by_name($type_name);
+    },
+);
+
+=head2 rev_referenced_classdescriptor
 
  Usage   : $cd = $ref->rev_referenced_classdescriptor();
  Function: Returns the ClassDescriptor of the other end of this reference
  Args    : none
 
 =cut
-sub rev_referenced_classdescriptor {
-    my $self       = shift;
-    my $field_name = $self->field_name();
-    return $self->{model}->get_referenced_classdescriptor($field_name);
-}
 
-=head2 reverse_reference_name
-
- Usage   : $name = $ref->reverse_reference_name();
- Function: Return the name of the reverse reference - ie. the name of the field
-           in the referenced class that references this class
- Args    : none
-
-=cut
-sub reverse_reference_name
-{
-  return shift->{reverse_reference_name};
-}
+has rev_referenced_classdescriptor => (
+    is => 'ro',
+    isa => MaybeClassDescriptor,
+    lazy => 1,
+    default => sub {
+	my $self = shift;
+	my $name = $self->name();
+	return $self->model->get_referenced_classdescriptor($name);
+    },
+);
 
 =head2 reverse_reference
 
  Usage   : $ref = $ref->reverse_reference();
  Function: Return the Reference object of the reverse reference
  Args    : none
-
-=cut
-sub reverse_reference
-{
-  my $self = shift;
-  my $referenced_cd = $self->referenced_classdescriptor();
-  my $reverse_reference_name = $self->reverse_reference_name();
-  return undef unless defined $reverse_reference_name;
-  return $referenced_cd->get_field_by_name($reverse_reference_name);
-}
 
 =head2 has_reverse_reference
 
@@ -139,11 +130,37 @@ sub reverse_reference
  Args    : none
 
 =cut
-sub has_reverse_reference
-{
-  my $self = shift;
-  return defined $self->reverse_reference();
-}
+
+has reverse_reference => (
+    is	      => 'ro',
+    isa	      => MaybeField,
+    lazy      => 1,
+    default   => sub {
+	my $self		   = shift;
+	return undef unless $self->has_reverse_reference;
+	my $referenced_cd	   = $self->referenced_classdescriptor();
+	my $reverse_reference_name = $self->reverse_reference_name();
+	return $referenced_cd->get_field_by_name($reverse_reference_name);
+    },
+);
+
+
+
+=head2 reverse_reference_name
+
+ Usage   : $name = $ref->reverse_reference_name();
+ Function: Return the name of the reverse reference - ie. the name of the field
+           in the referenced class that references this class
+ Args    : none
+
+=cut
+
+has reverse_reference_name => (
+    is	      => 'ro',
+    isa	      => Maybe[Str],
+    predicate => 'has_reverse_reference',
+);
+
 
 =head2 is_many_to_many
 
@@ -152,15 +169,14 @@ sub has_reverse_reference
  Args    : none
 
 =cut
-sub is_many_to_many
-{
-  my $self = shift;
-  use Carp;
-  carp if !defined $self;
 
-  return ($self->field_type() eq 'collection' &&
-          $self->has_reverse_reference() &&
-          $self->reverse_reference()->field_type() eq 'collection');
+sub is_many_to_many {
+  my $self = shift;
+  return (
+      $self->isa('InterMine::Model::Collection')
+      and $self->has_reverse_reference
+      and $self->reverse_reference->isa('InterMine::Model::Collection')
+  );
 }
 
 =head2 is_many_to_one
@@ -170,12 +186,14 @@ sub is_many_to_many
  Args    : none
 
 =cut
-sub is_many_to_one
-{
+
+sub is_many_to_one {
   my $self = shift;
-  return ($self->field_type() eq 'reference' &&
-          defined $self->reverse_reference() &&
-          $self->reverse_reference()->field_type() eq 'collection');
+  return (
+      not $self->isa('InterMine::Model::Collection')
+      and $self->has_reverse_reference()
+      and $self->reverse_reference()->isa('InterMine::Model::Collection')
+  );
 }
 
 =head2 is_many_to_0
@@ -184,11 +202,13 @@ sub is_many_to_one
  Args    : none
 
 =cut
-sub is_many_to_0
-{
+
+sub is_many_to_0 {
   my $self = shift;
-  return ($self->field_type() eq 'collection' &&
-          !defined $self->reverse_reference());
+  return (
+      $self->isa( 'InterMine::Model::Collection' )
+      and not $self->has_reverse_reference
+  );
 }
 
 =head2 is_one_to_many
@@ -198,22 +218,30 @@ sub is_many_to_0
  Args    : none
 
 =cut
-sub is_one_to_many
-{
+
+sub is_one_to_many {
   my $self = shift;
-  return ($self->field_type() eq 'collection' &&
-          defined $self->reverse_reference() &&
-          $self->reverse_reference()->field_type() eq 'reference');
+  return (
+      $self->isa('InterMine::Model::Collection')
+      and $self->has_reverse_reference
+      and not $self->reverse_reference->isa('InterMine::Model::Collection')
+  );
 }
 
 =head2 is_one_to_0
 
- Function: Return true if this is a reference and the is no reverse reference
+ Function: Return true if this is a reference and there is no reverse reference
 
 =cut
-sub is_one_to_0
-{
+
+sub is_one_to_0 {
   my $self = shift;
-  return ($self->field_type() eq 'reference' &&
-          !defined $self->reverse_reference());
+  return (
+      not $self->isa('InterMine::Model::Collection')
+      and not $self->has_reverse_reference);
 }
+
+__PACKAGE__->meta->make_immutable;
+no Moose;
+
+1;

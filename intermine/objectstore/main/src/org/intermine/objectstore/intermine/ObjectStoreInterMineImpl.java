@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.apache.log4j.Logger;
-
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
@@ -47,13 +46,15 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintHelper;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ConstraintTraverseAction;
+import org.intermine.objectstore.query.ConstraintWithBag;
 import org.intermine.objectstore.query.FromElement;
-import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.MultipleInBagConstraint;
 import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -66,10 +67,11 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsBatches;
+import static org.intermine.objectstore.query.ResultsBatches.DEFAULT_BATCH_SIZE;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.DatabaseUtil;
@@ -103,9 +105,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     private static final Logger SQLLOGGER = Logger.getLogger("sqllogger");
 
     protected static final int CACHE_LARGEST_OBJECT = 5000000;
-    protected static Map instances = new HashMap();
+    protected static Map<String, ObjectStoreInterMineImpl> instances
+        = new HashMap<String, ObjectStoreInterMineImpl>();
     protected Database db;
-    protected Set writers = new HashSet();
+    protected Set<ObjectStoreWriterInterMineImpl> writers
+        = new HashSet<ObjectStoreWriterInterMineImpl>();
     protected Writer log = null;
     protected DatabaseSchema schema;
     protected Connection logTableConnection = null;
@@ -131,17 +135,20 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected int minBagTableSize = -1;
     protected Map<Object, String> bagConstraintTables = Collections.synchronizedMap(
             new WeakHashMap<Object, String>());
-    protected Set bagTablesInDatabase = Collections.synchronizedSet(new HashSet());
+    protected Set<BagTableToRemove> bagTablesInDatabase = Collections.synchronizedSet(
+            new HashSet<BagTableToRemove>());
     protected Map<Query, Set<PrecomputedTable>> goFasterMap = Collections.synchronizedMap(
             new IdentityHashMap<Query, Set<PrecomputedTable>>());
     protected Map<Query, OptimiserCache> goFasterCacheMap = Collections.synchronizedMap(
             new IdentityHashMap<Query, OptimiserCache>());
     protected Map<Query, Integer> goFasterCountMap = new IdentityHashMap<Query, Integer>();
-    protected ReferenceQueue bagTablesToRemove = new ReferenceQueue();
+    protected ReferenceQueue<String> bagTablesToRemove = new ReferenceQueue<String>();
     protected String description;
     protected Map<String, Results> resultsCache = new CacheMap<String, Results>();
     protected Map<String, SingletonResults> singletonResultsCache
         = new CacheMap<String, SingletonResults>();
+    protected Map<String, Map<Integer, ResultsBatches>> batchesCache
+        = new CacheMap<String, Map<Integer, ResultsBatches>>();
 
     private static final String[] LOG_TABLE_COLUMNS = new String[] {"timestamp", "optimise",
         "estimated", "execute", "permitted", "convert", "iql", "sql"};
@@ -189,7 +196,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         super(schema.getModel());
         this.db = db;
         this.schema = schema;
-        ShutdownHook.registerObject(new WeakReference(this));
+        ShutdownHook.registerObject(new WeakReference<Object>(this));
         limitedContext = new QueryOptimiserContext();
         limitedContext.setTimeLimit(getMaxTime() / 10);
         description = "ObjectStoreInterMineImpl(" + db + ")";
@@ -198,6 +205,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     /**
      * {@inheritDoc}
      */
+    @Override
     public ObjectStoreWriterInterMineImpl getNewWriter() throws ObjectStoreException {
         return new ObjectStoreWriterInterMineImpl(this);
     }
@@ -302,7 +310,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String disableResultsCacheString = props.getProperty("disableResultsCache");
 
         synchronized (instances) {
-            ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances.get(osAlias);
+            ObjectStoreInterMineImpl os = instances.get(osAlias);
             if (os == null) {
                 Database database;
                 try {
@@ -363,7 +371,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 }
                 List<ClassDescriptor> truncatedClasses = new ArrayList<ClassDescriptor>();
                 if (truncatedClassesString != null) {
-                    String classes[] = truncatedClassesString.split(",");
+                    String[] classes = truncatedClassesString.split(",");
                     for (int i = 0; i < classes.length; i++) {
                         ClassDescriptor truncatedClassDescriptor =
                             osModel.getClassDescriptorByName(classes[i]);
@@ -383,9 +391,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     throw new ObjectStoreException("Invalid value for property noNotXml: "
                             + noNotXmlString);
                 }
-                HashSet missingTables = new HashSet();
+                HashSet<String> missingTables = new HashSet<String>();
                 if (missingTablesString != null) {
-                    String tables[] = missingTablesString.split(",");
+                    String[] tables = missingTablesString.split(",");
                     for (int i = 0; i < tables.length; i++) {
                         missingTables.add(tables[i].toLowerCase());
                     }
@@ -664,13 +672,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     /**
      * {@inheritDoc}
      */
+    @Override
     public Results execute(Query q) {
-        return execute(q, 0, true, true, true);
+        return execute(q, DEFAULT_BATCH_SIZE, true, true, true);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
             boolean prefetch) {
         String cacheKey = "Batchsize: " + batchSize + ", optimise: " + optimise + ", explain: "
@@ -685,8 +695,22 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 }
             }
             if (retval == null) {
-                retval = super.execute(q, batchSize, optimise, explain, prefetch);
-                resultsCache.put(cacheKey, retval);
+                String batchesKey = q.toString();
+                synchronized (batchesCache) {
+                    Map<Integer, ResultsBatches> batches = batchesCache.get(batchesKey);
+                    if (batches == null) {
+                        batches = new CacheMap<Integer, ResultsBatches>();
+                        batchesCache.put(batchesKey, batches);
+                    }
+                    ResultsBatches batch = getResultsBatches(batches, batchSize);
+                    if (batch != null) {
+                        retval = new Results(batch, optimise, explain, prefetch);
+                    } else {
+                        retval = super.execute(q, batchSize, optimise, explain, prefetch);
+                        batches.put(new Integer(batchSize), retval.getResultsBatches());
+                    }
+                    resultsCache.put(cacheKey, retval);
+                }
                 //LOG.error("Results cache miss for " + q);
             //} else {
                 //LOG.error("Results cache hit for " + q);
@@ -698,13 +722,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     /**
      * {@inheritDoc}
      */
+    @Override
     public SingletonResults executeSingleton(Query q) {
-        return executeSingleton(q, 0, true, true, true);
+        return executeSingleton(q, DEFAULT_BATCH_SIZE, true, true, true);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
             boolean explain, boolean prefetch) {
         String cacheKey = "Batchsize: " + batchSize + ", optimise: " + optimise + ", explain: "
@@ -719,14 +745,71 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 }
             }
             if (retval == null) {
-                retval = super.executeSingleton(q, batchSize, optimise, explain, prefetch);
-                singletonResultsCache.put(cacheKey, retval);
+                String batchesKey = q.toString();
+                synchronized (batchesCache) {
+                    Map<Integer, ResultsBatches> batches = batchesCache.get(batchesKey);
+                    if (batches == null) {
+                        batches = new CacheMap<Integer, ResultsBatches>();
+                        batchesCache.put(batchesKey, batches);
+                    }
+                    ResultsBatches batch = getResultsBatches(batches, batchSize);
+                    if (batch != null) {
+                        retval = new SingletonResults(batch, optimise, explain, prefetch);
+                    } else {
+                        retval = super.executeSingleton(q, batchSize, optimise, explain, prefetch);
+                        batches.put(new Integer(batchSize), retval.getResultsBatches());
+                    }
+                    singletonResultsCache.put(cacheKey, retval);
+                }
                 //LOG.error("Results cache miss for " + q);
             //} else {
                 //LOG.error("Results cache hit for " + q);
             }
             return retval;
         }
+    }
+
+    private ResultsBatches getResultsBatches(Map<Integer, ResultsBatches> batches, int batchSize) {
+        ResultsBatches batch = batches.get(new Integer(batchSize));
+        if (batch != null) {
+            try {
+                checkSequence(batch.getSequence(), null, null);
+            } catch (DataChangedException e) {
+                batch = null;
+            }
+        }
+        if (batch == null) {
+            int largestSize = 0;
+            // This holds the first batch in memory to prevent it being garbage collected until
+            // makeWithDifferentBatchSize is completed.
+            List<Object> firstBatch = null;
+            for (Integer candidateSizeObj : batches.keySet()) {
+                ResultsBatches candidateBatch = batches.get(candidateSizeObj);
+                if (candidateBatch != null) {
+                    try {
+                        checkSequence(candidateBatch.getSequence(), null, null);
+                    } catch (DataChangedException e) {
+                        candidateBatch = null;
+                    }
+                }
+                if (candidateBatch != null) {
+                    int candidateSize = candidateBatch.getBatchSize();
+                    firstBatch = candidateBatch.getBatchFromCache(0);
+                    if (firstBatch != null) {
+                        candidateSize += 10000000;
+                    }
+                    if (largestSize < candidateSize) {
+                        batch = candidateBatch;
+                        largestSize = candidateSize;
+                    }
+                }
+            }
+            if (batch != null) {
+                batch = batch.makeWithDifferentBatchSize(batchSize);
+                batches.put(new Integer(batchSize), batch);
+            }
+        }
+        return batch;
     }
 
     /*
@@ -757,7 +840,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * are supplied with a request id. Therefore requests without IDs cannot be cancelled.
      */
 
-    private ThreadLocal requestId = new ThreadLocal();
+    private ThreadLocal<Object> requestId = new ThreadLocal<Object>();
 
     /**
      * This method registers a Thread with a request ID.
@@ -785,7 +868,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         requestId.set(null);
     }
 
-    private WeakHashMap cancelRegistry = new WeakHashMap();
+    private WeakHashMap<Object, Object> cancelRegistry = new WeakHashMap<Object, Object>();
     private static final String BLACKLISTED = "Blacklisted";
 
     /**
@@ -858,7 +941,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     /**
      * {@inheritDoc}
      */
-    public List<ResultsRow> execute(Query q, int start, int limit, boolean optimise,
+    public List<ResultsRow<Object>> execute(Query q, int start, int limit, boolean optimise,
             boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException {
         Constraint where = q.getConstraint();
         if (where instanceof ConstraintSet) {
@@ -882,8 +965,19 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
     /**
      * Overrides Object.finalize - release the DB log connection.
+     *
+     * @throws Throwable never
      */
-    protected synchronized void finalize() {
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        doFinalise();
+    }
+
+    /**
+     * Finalise this object.
+     */
+    protected synchronized void doFinalise() {
         LOG.error("Garbage collecting ObjectStoreInterMineImpl with sequence = " + sequenceNumber
                 + " and Database " + getDatabase().getURL());
         try {
@@ -910,9 +1004,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         try {
             c = getConnection();
             LOG.info("Temporary tables to drop: " + bagTablesInDatabase);
-            Iterator iter = bagTablesInDatabase.iterator();
+            Iterator<BagTableToRemove> iter = bagTablesInDatabase.iterator();
             while (iter.hasNext()) {
-                BagTableToRemove bttr = (BagTableToRemove) iter.next();
+                BagTableToRemove bttr = iter.next();
                 try {
                     c.createStatement().execute(bttr.getDropSql());
                     LOG.info("Closing objectstore - dropped temporary table: " + bttr.getDropSql());
@@ -959,8 +1053,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @return a List of ResultRow objects
      * @throws ObjectStoreException sometimes
      */
-    protected List<ResultsRow> executeWithConnection(Connection c, Query q, int start, int limit,
-            boolean optimise, boolean explain, Map<Object, Integer> sequence)
+    protected List<ResultsRow<Object>> executeWithConnection(Connection c, Query q, int start,
+            int limit, boolean optimise, boolean explain, Map<Object, Integer> sequence)
         throws ObjectStoreException {
         return executeWithConnection(c, q, start, limit, optimise, explain, sequence, null, null);
     }
@@ -980,8 +1074,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @return a List of ResultRow objects
      * @throws ObjectStoreException sometimes
      */
-    protected List<ResultsRow> executeWithConnection(Connection c, Query q, int start, int limit,
-            boolean optimise, boolean explain, Map<Object, Integer> sequence,
+    protected List<ResultsRow<Object>> executeWithConnection(Connection c, Query q, int start,
+            int limit, boolean optimise, boolean explain, Map<Object, Integer> sequence,
             Set<PrecomputedTable> goFasterTables, OptimiserCache goFasterCache)
         throws ObjectStoreException {
         if (explain) {
@@ -1067,7 +1161,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             }
             long postExecute = System.currentTimeMillis();
             ExtraQueryTime extra = new ExtraQueryTime();
-            List<ResultsRow>  objResults = ResultsConverter.convert(sqlResults, q, this, c,
+            List<ResultsRow<Object>>  objResults = ResultsConverter.convert(sqlResults, q, this, c,
                     sequence, optimise, extra, goFasterTables, goFasterCache);
             long postConvert = System.currentTimeMillis();
             long permittedTime = (objResults.size() * 2) + start + (150 * q.getFrom().size())
@@ -1147,11 +1241,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 if (q.getSelect().contains(firstOrderBy) && (objResults.size() > 1)) {
                     int colNo = q.getSelect().indexOf(firstOrderBy);
                     int rowNo = objResults.size() - 1;
-                    Object lastObj = ((List) objResults.get(rowNo)).get(colNo);
+                    Object lastObj = objResults.get(rowNo).get(colNo);
                     rowNo--;
                     boolean done = false;
                     while ((!done) && (rowNo >= 0)) {
-                        Object thisObj = ((List) objResults.get(rowNo)).get(colNo);
+                        Object thisObj = objResults.get(rowNo).get(colNo);
                         if ((lastObj != null) && (thisObj != null) && !lastObj.equals(thisObj)) {
                             done = true;
                             Object value = (thisObj instanceof InterMineObject
@@ -1232,7 +1326,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected void createTempBagTables(Connection c, Query q)
         throws ObjectStoreException {
 
-        final List bagConstraints = new ArrayList();
+        final List<ConstraintWithBag> bagConstraints = new ArrayList<ConstraintWithBag>();
 
         ConstraintHelper.traverseConstraints(q.getConstraint(), new ConstraintTraverseAction() {
             public void apply(Constraint constraint) {
@@ -1241,11 +1335,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     if (bagConstraint.getBag() != null) {
                         bagConstraints.add(bagConstraint);
                     }
+                } else if (constraint instanceof MultipleInBagConstraint) {
+                    bagConstraints.add((ConstraintWithBag) constraint);
                 }
             }
         });
 
-        Iterator bagConstraintIterator = bagConstraints.iterator();
 
         boolean wasNotInTransaction = false;
 
@@ -1256,14 +1351,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             }
             String queryString = null;
 
-            while (bagConstraintIterator.hasNext()) {
-                BagConstraint bagConstraint = (BagConstraint) bagConstraintIterator.next();
+            for (ConstraintWithBag bagConstraint : bagConstraints) {
                 if (!bagConstraintTables.containsKey(bagConstraint)) {
-                    Collection bag = bagConstraint.getBag();
+                    @SuppressWarnings("unchecked") Collection bag = bagConstraint.getBag();
 
                     if (bag.size() >= getMinBagTableSize()) {
                         if (queryString == null) {
-                            queryString = new IqlQuery(q).getQueryString();
+                            queryString = q.getIqlQuery().getQueryString();
                         }
                         createTempBagTable(c, bagConstraint, true, queryString);
                     }
@@ -1273,10 +1367,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 if (fe instanceof QueryClassBag) {
                     QueryClassBag qcb = (QueryClassBag) fe;
                     if (!bagConstraintTables.containsKey(qcb)) {
-                        Collection bag = qcb.getIds();
+                        @SuppressWarnings("unchecked") Collection bag = qcb.getIds();
                         if ((bag != null) && (bag.size() >= getMinBagTableSize())) {
                             if (queryString == null) {
-                                queryString = new IqlQuery(q).getQueryString();
+                                queryString = q.getIqlQuery().getQueryString();
                             }
                             createTempBagTable(c, qcb, true, queryString);
                         }
@@ -1307,7 +1401,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @param bagConstraint a BagConstraint
      * @throws ObjectStoreException if an error occurs
      */
-    public void createTempBagTable(BagConstraint bagConstraint) throws ObjectStoreException {
+    public void createTempBagTable(ConstraintWithBag bagConstraint) throws ObjectStoreException {
         Connection c = null;
         try {
             c = getConnection();
@@ -1329,9 +1423,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @return a BagTableToRemove object
      * @throws SQLException if an error occurs
      */
-    protected BagTableToRemove createTempBagTable(Connection c, BagConstraint bagConstraint,
+    protected BagTableToRemove createTempBagTable(Connection c, ConstraintWithBag bagConstraint,
             boolean log, String text) throws SQLException {
-        Class type = bagConstraint.getQueryNode().getType();
+        Class<?> type;
+        if (bagConstraint instanceof BagConstraint) {
+            type = ((BagConstraint) bagConstraint).getQueryNode().getType();
+        } else {
+            type = ((MultipleInBagConstraint) bagConstraint).getEvaluables().iterator().next()
+                .getType();
+        }
         String tableName =
             TypeUtil.unqualifiedName(type.getName()) + "_bag_" + getUniqueInteger(c);
         if (log) {
@@ -1486,12 +1586,19 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
         String sql = null;
         try {
-            sql = generateSql(c, q, 0, Integer.MAX_VALUE);
-            if (everOptimise()) {
-                sql = QueryOptimiser.optimise(sql, null, db, c, QueryOptimiserContext.DEFAULT)
-                    .getBestQueryString();
+            if ((q.getSelect().size() == 1) && (q.getSelect().get(0) instanceof Clob)) {
+                // Special case - we can get the answer out of the index quicker than counting
+                Clob clob = (Clob) q.getSelect().get(0);
+                sql = "SELECT MAX(" + CLOBPAGE_COLUMN + ") + 1 AS a1_ FROM " + CLOB_TABLE_NAME
+                    + " WHERE " + CLOBID_COLUMN + " = " + clob.getClobId();
+            } else {
+                sql = generateSql(c, q, 0, Integer.MAX_VALUE);
+                if (everOptimise()) {
+                    sql = QueryOptimiser.optimise(sql, null, db, c, QueryOptimiserContext.DEFAULT)
+                        .getBestQueryString();
+                }
+                sql = "SELECT COUNT(*) FROM (" + sql + ") as fake_table";
             }
-            sql = "SELECT COUNT(*) FROM (" + sql + ") as fake_table";
             //long time = (new Date()).getTime();
             ResultSet sqlResults;
             Statement s = c.createStatement();
@@ -1521,13 +1628,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      *
      * @param tablesAltered a Set of table names that may have been altered
      */
-    public void databaseAltered(Set tablesAltered) {
+    public void databaseAltered(Set<Object> tablesAltered) {
         if (tablesAltered.size() > 0) {
             changeSequence(tablesAltered);
-            for (Iterator iter = tablesAltered.iterator(); iter.hasNext();) {
-                Object o = iter.next();
-                if (o instanceof ObjectStoreBag) {
-                    iter.remove();
+            Set<String> tableNames = new HashSet<String>();
+            for (Object o : tablesAltered) {
+                if (o instanceof String) {
+                    tableNames.add((String) o);
                 }
             }
             // We have just removed the ObjectStoreBags from the Set of altered things. This means
@@ -1539,7 +1646,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             }
             try {
                 PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
-                ptm.dropAffected(tablesAltered);
+                ptm.dropAffected(tableNames);
             } catch (SQLException e) {
                 throw new Error("Problem with precomputed tables", e);
             }
@@ -1549,11 +1656,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     /**
      * {@inheritDoc}
      */
+    @Override
     public void flushObjectById() {
         super.flushObjectById();
-        Iterator writerIter = writers.iterator();
-        while (writerIter.hasNext()) {
-            ObjectStoreWriter writer = (ObjectStoreWriter) writerIter.next();
+        for (ObjectStoreWriter writer : writers) {
             if (writer != this) {
                 writer.flushObjectById();
             }
@@ -1566,8 +1672,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * This method is overridden in order to improve the performance of the operation - this
      * implementation does not bother with the EXPLAIN call to the underlying SQL database.
      */
+    @Override
     protected InterMineObject internalGetObjectById(Integer id,
-            Class clazz) throws ObjectStoreException {
+            Class<? extends InterMineObject> clazz) throws ObjectStoreException {
         if (schema.isFlatMode(clazz)) {
             return super.internalGetObjectById(id, clazz);
         }
@@ -1592,7 +1699,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @throws ObjectStoreException if an error occurs
      */
     protected InterMineObject internalGetObjectByIdWithConnection(Connection c,
-            Integer id, Class clazz) throws ObjectStoreException {
+            Integer id, Class<?> clazz) throws ObjectStoreException {
         String sql = SqlGenerator.generateQueryForId(id, clazz, schema);
         String currentColumn = null;
         try {
@@ -1674,12 +1781,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * Creates precomputed tables for the given query.
      *
      * @param q the Query for which to create the precomputed tables
-     * @param indexes a Collection of QueryOrderables for which to create indexes
+     * @param indexes a Collection of QueryNode for which to create indexes
      * @return the names of the new precomputed tables
      * @param category a String describing the category of the precomputed tables
      * @throws ObjectStoreException if anything goes wrong
      */
-    public List<String> precompute(Query q, Collection indexes,
+    public List<String> precompute(Query q, Collection<? extends QueryNode> indexes,
             String category) throws ObjectStoreException {
         return precompute(q, indexes, false, category);
     }
@@ -1688,7 +1795,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * Creates precomputed tables for the given query.
      *
      * @param q the Query for which to create the precomputed tables
-     * @param indexes a Collection of QueryOrderables for which to create indexes
+     * @param indexes a Collection of QueryNodes for which to create indexes
      * @param allFields true if all fields of QueryClasses in the SELECT list should be included in
      * the precomputed table's SELECT list. If the indexes parameter is null, then indexes will
      * be created for every field as well
@@ -1696,7 +1803,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @return the names of the new precomputed tables
      * @throws ObjectStoreException if anything goes wrong
      */
-    public List<String> precompute(Query q, Collection indexes,
+    public List<String> precompute(Query q, Collection<? extends QueryNode> indexes,
             boolean allFields, String category) throws ObjectStoreException {
         Connection c = null;
         try {
@@ -1723,8 +1830,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @return the names of the new precomputed tables
      * @throws ObjectStoreException if anything goes wrong
      */
-    public List<String> precomputeWithConnection(Connection c, Query q, Collection indexes,
-            boolean allFields, String category) throws ObjectStoreException {
+    public List<String> precomputeWithConnection(Connection c, Query q,
+            Collection<? extends QueryNode> indexes, boolean allFields,
+            String category) throws ObjectStoreException {
         QueryOrderable qn = null;
         String sql = null;
         try {
@@ -1733,12 +1841,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 createTempBagTables(c, q);
                 flushOldTempBagTables(c);
             }
+            Map<Object, String> empty = Collections.emptyMap();
             if (allFields) {
                 sql = SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_PRECOMP,
-                        Collections.EMPTY_MAP);
+                        empty);
             } else {
                 sql = SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_GOFASTER,
-                        Collections.EMPTY_MAP);
+                        empty);
             }
             PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
                     sql, "precomp_" + tableNumber, category, c);
@@ -1746,10 +1855,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             Map<Object, String> aliases = q.getAliases();
             if (indexes != null && !indexes.isEmpty()) {
                 String all = null;
-                Iterator indexIter = indexes.iterator();
                 try {
-                    while (indexIter.hasNext()) {
-                        qn = (QueryNode) indexIter.next();
+                    for (QueryNode qNode : indexes) {
+                        qn = qNode;
                         String alias = DatabaseUtil.generateSqlCompatibleName(aliases.get(qn));
                         if (qn instanceof QueryClass) {
                             alias += "id";
@@ -1784,7 +1892,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                 .getType());
                         for (FieldDescriptor field : fields) {
                             String fieldName = field.getName();
-                            Class fieldType = fieldInfos.get(fieldName).getType();
+                            Class<?> fieldType = fieldInfos.get(fieldName).getType();
                             if (InterMineObject.class.isAssignableFrom(fieldType)) {
                                 String fieldAlias = DatabaseUtil.getColumnName(field).toLowerCase();
                                 stringIndexes.add(alias + fieldAlias);
@@ -1851,13 +1959,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 if (qs instanceof QueryCollectionPathExpression) {
                     Query subQ = ((QueryCollectionPathExpression) qs).getQuery(null);
                     retval.addAll(precomputeWithConnection(c, subQ,
-                                Collections.singleton(subQ.getSelect().get(0)),
+                                Collections.singleton((QueryNode) (subQ.getSelect().get(0))),
                                 allFields, category));
                 } else if (qs instanceof QueryObjectPathExpression) {
                     Query subQ = ((QueryObjectPathExpression) qs).getQuery(null,
                             getSchema().isMissingNotXml());
                     retval.addAll(precomputeWithConnection(c, subQ,
-                                Collections.singleton(subQ.getSelect().get(0)),
+                                Collections.singleton((QueryNode) (subQ.getSelect().get(0))),
                                 allFields, category));
                 }
             }
@@ -1966,7 +2074,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     if (pt == null) {
                         pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql), sql,
                                 "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
-                        ptm.addTableToDatabase(pt, new HashSet(), false);
+                        ptm.addTableToDatabase(pt, new HashSet<String>(), false);
                         tablesToDrop.add(pt.getName());
                     }
                     Set<PrecomputedTable> pts = new HashSet<PrecomputedTable>();
@@ -1986,7 +2094,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                             new org.intermine.sql.query.Query(sql), sql,
                                             "temporary_precomp_" + getUniqueInteger(c), "goFaster",
                                             c);
-                                    ptm.addTableToDatabase(subPt, new HashSet(), false);
+                                    ptm.addTableToDatabase(subPt, new HashSet<String>(), false);
                                     tablesToDrop.add(subPt.getName());
                                 }
                                 pts.add(subPt);
@@ -2006,7 +2114,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                             new org.intermine.sql.query.Query(sql), sql,
                                             "temporary_precomp_" + getUniqueInteger(c), "goFaster",
                                             c);
-                                    ptm.addTableToDatabase(subPt, new HashSet(), false);
+                                    ptm.addTableToDatabase(subPt, new HashSet<String>(), false);
                                     tablesToDrop.add(subPt.getName());
                                 }
                                 pts.add(subPt);
@@ -2100,11 +2208,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      *
      * @author Matthew Wakeling
      */
-    protected class BagTableToRemove extends WeakReference
+    protected final class BagTableToRemove extends WeakReference<String>
     {
         String dropSql;
 
-        private BagTableToRemove(String tableName, ReferenceQueue refQueue) {
+        private BagTableToRemove(String tableName, ReferenceQueue<String> refQueue) {
             super(tableName, refQueue);
             dropSql = "DROP TABLE " + tableName;
         }
@@ -2118,6 +2226,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
          *
          * @return a String
          */
+        @Override
         public String toString() {
             return dropSql;
         }
@@ -2172,6 +2281,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     /**
      * {@inheritDoc}
      */
+    @Override
     public Set<Object> getComponentsForQuery(Query q) {
         try {
             Set<Object> retval = SqlGenerator.findTableNames(q, getSchema(), true);
@@ -2184,6 +2294,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return description;
     }

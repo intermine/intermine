@@ -106,6 +106,7 @@ public class XmlDataLoaderTask extends Task
      * {@inheritDoc}
      * @throws BuildException
      */
+    @Override
     public void execute() {
         if (integrationWriter == null) {
             throw new BuildException("integrationWriter attribute is not set");
@@ -137,7 +138,7 @@ public class XmlDataLoaderTask extends Task
                 loader.close();
             } else {
 
-                if (file != null && !file.equals("")) {
+                if (file != null && !"".equals(file)) {
                     files = new ArrayList<File>(Collections.singleton(new File(file)));
                 } else {
                     DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());

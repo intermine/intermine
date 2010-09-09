@@ -38,6 +38,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 
@@ -134,13 +135,8 @@ public class WebResultsTest extends TestCase
 
     // create a query with MainHelper.makeQuery() that contains both QueryClasses and QueryFields
      public void testGetPathToIndex() throws Exception {
-         List<Path> view = new ArrayList<Path>() {{ // see: http://www.c2.com/cgi/wiki?DoubleBraceInitialization
-             add(new Path(model, "Department.name"));
-             add(new Path(model, "Department.manager.name"));
-             add(new Path(model, "Department.employees.name"));
-         }};
          PathQuery pathQuery = new PathQuery(model);
-         pathQuery.setViewPaths(view);
+         pathQuery.addViews("Department.name", "Department.manager.name", "Department.employees.name");
          QueryClass dept1 = new QueryClass(Department.class);
          QueryField depName = new QueryField(dept1, "name");
 
@@ -159,7 +155,7 @@ public class WebResultsTest extends TestCase
          pathToQueryNode.put("Department.employees", emp1);
          pathToQueryNode.put("Department.employees.name", empName);
 
-         Query query = MainHelper.makeQuery(pathQuery , new HashMap(), pathToQueryNode, null, null, true);
+         Query query = MainHelper.makeQuery(pathQuery , new HashMap(), pathToQueryNode, null, null);
          WebResults webResults = new WebResults(pathQuery, os.execute(query), os.getModel(), pathToQueryNode, new HashMap(), null);
          LinkedHashMap<String, Integer> actual = webResults.pathToIndex;
          LinkedHashMap<String, Integer> expected = new LinkedHashMap<String, Integer>();
@@ -177,46 +173,31 @@ public class WebResultsTest extends TestCase
     //   - select fields that are/aren't class keys
     public void testSetColumns() throws Exception {
         PathQuery pq = new PathQuery(model);
-        List view = new ArrayList() {{ // see: http://www.c2.com/cgi/wiki?DoubleBraceInitialization
-            add(new Path(model, "Company.name"));
-            add(new Path(model, "Company.vatNumber"));
-            add(new Path(model, "Company.CEO.name"));
-            add(new Path(model, "Employee.name"));
-        }};
-        pq.addPathStringDescription("Company", "description 1");
-        pq.setViewPaths(view);
+        pq.addViews("Company.name", "Company.vatNumber", "Company.CEO.name");
+        pq.setDescription("Company", "description 1");
         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
-        Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null, true);
+        Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null);
         Results results = os.execute(query);
         WebResults webResults = new WebResults(pq, results, model, pathToQueryNode, classKeys, null);
         List<Column> expectedColumns = new ArrayList<Column>();
-        Path path = new Path(model, "Company.CEO.name");
         Column col1 = new Column("description 1 > name",0 ,Company.class);
         Column col2 = new Column("description 1 > vatNumber",1 ,Company.class);
         Column col3 = new Column("description 1 > CEO > name",2 ,CEO.class);
-        Column col4 = new Column("Employee > name",3 ,Employee.class);
         expectedColumns.add(col1);
         expectedColumns.add(col2);
         expectedColumns.add(col3);
-        expectedColumns.add(col4);
         assertEquals(expectedColumns.get(0), webResults.getColumns().get(0));
         assertEquals(expectedColumns.get(1), webResults.getColumns().get(1));
         assertEquals(expectedColumns.get(2), webResults.getColumns().get(2));
-        assertEquals(expectedColumns.get(3), webResults.getColumns().get(3));
     }
 
     // Test with a PathQuery and some dummy results, call method with a made up row,
     // create expected ResultElements.  Doesn't need too much testing as Path.resolve() is tested.
     public void testTranslateRow() throws Exception {
         PathQuery pq = new PathQuery(model);
-        List view = new ArrayList() {{ // see: http://www.c2.com/cgi/wiki?DoubleBraceInitialization
-            add(new Path(model, "Department.name"));
-            add(new Path(model, "Department.company.name"));
-            add(new Path(model, "Department.manager.name"));
-        }};
-        pq.setViewPaths(view);
+        pq.addViews("Department.name", "Department.company.name", "Department.manager.name");
         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
-        Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null, true);
+        Query query = MainHelper.makeQuery(pq , new HashMap(), pathToQueryNode, null, null);
         Results results = os.execute(query);
         WebResults webResults = new WebResults(pq, results, model, pathToQueryNode, classKeys, null);
         List row1 = webResults.getResultElements(0);
@@ -255,14 +236,10 @@ public class WebResultsTest extends TestCase
         Query query = fq.toQuery();
         Results results = os.execute(query);
 
-        List view = new ArrayList() {{ // see: http://www.c2.com/cgi/wiki?DoubleBraceInitialization
-            add(new Path(model, "Department.name"));
-            add(new Path(model, "Department.manager[CEO].company.name"));
-            add(new Path(model, "Department.manager[CEO].company.vatNumber"));
-            add(new Path(model, "Department.employees[Manager].seniority"));
-        }};
         PathQuery pathQuery = new PathQuery(model);
-        pathQuery.setViewPaths(view);
+        pathQuery.addViews("Department.name", "Department.manager.company.name", "Department.manager.company.vatNumber", "Department.employees.seniority");
+        pathQuery.addConstraint(new PathConstraintSubclass("Department.manager", "CEO"));
+        pathQuery.addConstraint(new PathConstraintSubclass("Department.employees", "Manager"));
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         QueryClass deptQC = (QueryClass) query.getSelect().get(0);
         pathToQueryNode.put("Department", deptQC);

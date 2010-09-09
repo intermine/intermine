@@ -10,9 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Iterator;
-import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -33,7 +30,6 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplatePopulatorException;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -126,6 +122,7 @@ public class ModifyDetails extends DispatchAction
      * @exception Exception if the application business logic throws an exception
      * @deprecated ajaxVerbosify is used instead
      */
+    @Deprecated
     public ActionForward verbosify(ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
@@ -155,6 +152,7 @@ public class ModifyDetails extends DispatchAction
      * @exception Exception if the application business logic throws an exception
      * @deprecated ajaxVerbosify is used instead
      */
+    @Deprecated
     public ActionForward unverbosify(ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
@@ -228,7 +226,7 @@ public class ModifyDetails extends DispatchAction
 
         ComponentContext cc = new ComponentContext();
 
-        if (detailsType.equals("object")) {
+        if ("object".equals(detailsType)) {
             InterMineObject o = os.getObjectById(new Integer(id));
             DisplayObjectFactory displayObjects = SessionMethods.getDisplayObjects(session);
             DisplayObject obj = displayObjects.get(o);
@@ -250,23 +248,6 @@ public class ModifyDetails extends DispatchAction
         new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
         request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
         return mapping.findForward("objectDetailsTemplateTable");
-    }
-
-    /**
-     * For a dynamic class, find the class descriptor from which a field is derived
-     *
-     * @param clds the class descriptors for the dynamic class
-     * @param fieldName the field name
-     * @return the relevant class descriptor
-     */
-    protected ClassDescriptor cldContainingField(Set clds, String fieldName) {
-        for (Iterator i = clds.iterator(); i.hasNext();) {
-            ClassDescriptor cld = (ClassDescriptor) i.next();
-            if (cld.getFieldDescriptorByName(fieldName) != null) {
-                return cld;
-            }
-        }
-        return null;
     }
 
     /**

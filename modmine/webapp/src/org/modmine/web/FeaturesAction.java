@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -36,7 +35,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.bag.BagHelper;
@@ -99,7 +98,7 @@ public class FeaturesAction extends InterMineAction
 
         boolean hasPrimer = false;
 
-        if (type.equals("experiment")) {
+        if ("experiment".equals(type)) {
             experimentName = (String) request.getParameter("experiment");
             DisplayExperiment exp = MetadataCache.getExperimentByName(os, experimentName);
 
@@ -117,8 +116,8 @@ public class FeaturesAction extends InterMineAction
                     q.addView(f + ".score");
                 }
 
-                q.addConstraint(rootChoice + ".submissions.experiment.name",
-                        Constraints.eq(experimentName));
+                q.addConstraint(Constraints.eq(rootChoice + ".submissions.experiment.name",
+                        experimentName));
             } else {
 
                 List<String> expSubsIds = exp.getSubmissionsDccId();
@@ -144,12 +143,12 @@ public class FeaturesAction extends InterMineAction
 
                 q.addView(featureType + ".primaryIdentifier");
                 q.addView(featureType + ".score");
-                if (action.equals("results")) {
+                if ("results".equals(action)) {
                     // we don't want this field on exports
                     q.addView(featureType + ":scoreProtocol.name");
                 }
-                q.addConstraint(featureType + ".submissions.experiment.name",
-                        Constraints.eq(experimentName));
+                q.addConstraint(Constraints.eq(featureType + ".submissions.experiment.name",
+                        experimentName));
 
                 if (allUnlocated.contains(featureType)) {
                     q.addView(featureType + ".submissions.DCCid");
@@ -161,7 +160,7 @@ public class FeaturesAction extends InterMineAction
             }
         }
 
-        else if (type.equals("submission")) {
+        else if ("submission".equals(type)) {
             dccId = (String) request.getParameter("submission");
             Submission sub = MetadataCache.getSubmissionByDccId(os, new Integer(dccId));
             List<String>  unlocFeatures =
@@ -180,8 +179,7 @@ public class FeaturesAction extends InterMineAction
                     q.addView(f + ".score");
                 }
 
-                q.addConstraint(rootChoice + ".submissions.DCCid",
-                        Constraints.eq(new Integer(dccId)));
+                q.addConstraint(Constraints.eq(rootChoice + ".submissions.DCCid", dccId));
             } else {
 
                 // to build the query description
@@ -209,11 +207,10 @@ public class FeaturesAction extends InterMineAction
 
                 q.addView(featureType + ".primaryIdentifier");
                 q.addView(featureType + ".score");
-                if (action.equals("results")) {
+                if ("results".equals(action)) {
                     q.addView(featureType + ":scoreProtocol.name");
                 }
-                q.addConstraint(featureType + ".submissions.DCCid",
-                        Constraints.eq(new Integer(dccId)));
+                q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
 
                 if (unlocFeatures == null || !unlocFeatures.contains(featureType)) {
                     addLocationToQuery(q, featureType);
@@ -228,12 +225,11 @@ public class FeaturesAction extends InterMineAction
         }
 
         // For the expression levels
-        else if (type.equals("subEL")) {
+        else if ("subEL".equals(type)) {
             dccId = (String) request.getParameter("submission");
-            PathNode node = q.addNode("Submission.features");
-            node.setType(featureType);
-            String path = "Submission.features.expressionLevels";
+            q.addConstraint(Constraints.type("Submission.features", featureType));
 
+            String path = "Submission.features.expressionLevels";
             q.addView(path + ".name");
             q.addView(path + ".value");
             q.addView(path + ".readCount");
@@ -242,16 +238,14 @@ public class FeaturesAction extends InterMineAction
             q.addView(path + ".transcribed");
             q.addView(path + ".predictionStatus");
 
-            q.addConstraint("Submission.DCCid",
-                    Constraints.eq(new Integer(dccId)));
+            q.addConstraint(Constraints.eq("Submission.DCCid", dccId));
         }
-        else if (type.equals("expEL")) {
+        else if ("expEL".equals(type)) {
             String eName = (String) request.getParameter("experiment");
 
-            PathNode node = q.addNode("Experiment.submissions.features");
-            node.setType(featureType);
-            String path = "Experiment.submissions.features.expressionLevels";
+            q.addConstraint(Constraints.type("Experiment.submissions.features", featureType));
 
+            String path = "Experiment.submissions.features.expressionLevels";
             q.addView(path + ".name");
             q.addView(path + ".value");
             q.addView(path + ".readCount");
@@ -260,18 +254,17 @@ public class FeaturesAction extends InterMineAction
             q.addView(path + ".transcribed");
             q.addView(path + ".predictionStatus");
 
-            q.addConstraint("Experiment.name",
-                    Constraints.eq(eName));
+            q.addConstraint(Constraints.eq("Experiment.name", eName));
         }
 
-        if (action.equals("results")) {
+        if ("results".equals(action)) {
             String qid = SessionMethods.startQueryWithTimeout(request, false, q);
             Thread.sleep(200);
 
             return new ForwardParameters(mapping.findForward("waiting"))
                 .addParameter("qid", qid)
                 .forward();
-        } else if (action.equals("export")) {
+        } else if ("export".equals(action)) {
             String format = request.getParameter("format");
 
             Profile profile = SessionMethods.getProfile(session);
@@ -292,7 +285,7 @@ public class FeaturesAction extends InterMineAction
             }
 
             TableExportForm exportForm = null;
-            if (format.equals("gff3")) {
+            if ("gff3".equals(format)) {
                 exportForm = new GFF3ExportForm();
                 exportForm.setDoGzip(doGzip);
                 ((GFF3ExportForm) exportForm).setOrganisms(taxIds);
@@ -304,9 +297,9 @@ public class FeaturesAction extends InterMineAction
             // will get only required export data
             return null;
 
-        } else if (action.equals("list")) {
+        } else if ("list".equals(action)) {
             // need to select just id of featureType to create list
-            q.setView(featureType + ".id");
+            q.addView(featureType + ".id");
 
             Profile profile = SessionMethods.getProfile(session);
 
@@ -401,8 +394,8 @@ public class FeaturesAction extends InterMineAction
         q.addView(featureType + ".chromosomeLocation.strand");
         q.addView(featureType + ".submissions.DCCid");
 
-        q.addOrderBy(featureType + ".chromosome.primaryIdentifier");
-        q.addOrderBy(featureType + ".chromosomeLocation.start");
+        q.addOrderBy(featureType + ".chromosome.primaryIdentifier", OrderDirection.ASC);
+        q.addOrderBy(featureType + ".chromosomeLocation.start", OrderDirection.ASC);
     }
 
     private String getFactors(DisplayExperiment exp) {
@@ -430,8 +423,5 @@ public class FeaturesAction extends InterMineAction
         }
         return taxIds;
     }
-
-
-
 }
 

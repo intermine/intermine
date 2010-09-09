@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.api.results.ResultElement;
-import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.webservice.server.output.Output;
 
 /**
@@ -60,7 +60,7 @@ public class ResultProcessor
         for (ResultElement el : row) {
             if (el != null && el.getField() != null) {
                 if (el.getField() instanceof Date) {
-                    value = Constraint.ISO_DATE_FORMAT.format(el.getField());
+                    value = ConstraintValueParser.ISO_DATE_FORMAT.format(el.getField());
                 } else {
                     value = el.getField().toString();
                 }

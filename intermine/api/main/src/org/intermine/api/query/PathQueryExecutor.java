@@ -42,7 +42,6 @@ public class PathQueryExecutor
     private ObjectStore os;
     private Profile profile;
     private int batchSize = DEFAULT_BATCH_SIZE;
-    private boolean matchingExistingResults = false;
 
     /**
      * Sets batch size.
@@ -51,17 +50,6 @@ public class PathQueryExecutor
      */
     public void setBatchSize(int size) {
         this.batchSize = size;
-    }
-
-    /**
-     * Sets whether we are matching an existing Results object from the webapp. The consequence of
-     * setting this to true is that prefetch will be switched off. This means that the execute
-     * method will fetch an existing Results object from the cache instead of creating a new one.
-     *
-     * @param matching true to switch off prefetch
-     */
-    public void setMatchingExistingResults(boolean matching) {
-        this.matchingExistingResults = matching;
     }
 
     /**
@@ -95,8 +83,7 @@ public class PathQueryExecutor
     public ExportResultsIterator execute(PathQuery pathQuery) {
         try {
             Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-            return new ExportResultsIterator(os, pathQuery, allBags, runner, batchSize,
-                    matchingExistingResults);
+            return new ExportResultsIterator(os, pathQuery, allBags, runner, batchSize);
         } catch (ObjectStoreException e) {
             throw new RuntimeException("Creating export results iterator failed", e);
         }
@@ -116,8 +103,7 @@ public class PathQueryExecutor
             final int limit) {
         try {
             Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-            return new ResultIterator(os, pathQuery, allBags, runner, batchSize, start, limit,
-                    matchingExistingResults);
+            return new ResultIterator(os, pathQuery, allBags, runner, batchSize, start, limit);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(
                     "Creating export results iterator failed", e);
@@ -151,13 +137,12 @@ class ResultIterator extends ExportResultsIterator
      * @param batchSize the batch size for the results
      * @param start start index from which retrieve results
      * @param limit maximum number retrieved results
-     * @param matching true to switch off prefetch
      * @throws ObjectStoreException if something goes wrong executing the query
      */
     public ResultIterator(ObjectStore os, PathQuery pq, Map savedBags,
             BagQueryRunner bagQueryRunner, int batchSize, int start,
-            int limit, boolean matching) throws ObjectStoreException {
-        super(os, pq, savedBags, bagQueryRunner, batchSize, matching);
+            int limit) throws ObjectStoreException {
+        super(os, pq, savedBags, bagQueryRunner, batchSize);
         this.limit = limit;
         this.start = start;
     }
@@ -165,6 +150,7 @@ class ResultIterator extends ExportResultsIterator
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasNext() {
         // throw away results before start index
         while (counter < start) {
@@ -185,8 +171,9 @@ class ResultIterator extends ExportResultsIterator
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<ResultElement> next() {
-        List<ResultElement> ret = (List<ResultElement>) super.next();
+        List<ResultElement> ret = super.next();
         counter++;
         return ret;
     }

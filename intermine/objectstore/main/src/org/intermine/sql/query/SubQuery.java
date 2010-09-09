@@ -52,6 +52,7 @@ public class SubQuery extends AbstractTable
      *
      * @return the String representation
      */
+    @Override
     public String getSQLString() {
         return "(" + query.getSQLString() + ") AS " + alias;
     }
@@ -62,6 +63,7 @@ public class SubQuery extends AbstractTable
      * @param obj an Object to compare to
      * @return true if the object is of the same class, and with an equal query and alias
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof SubQuery) {
             SubQuery objSubQuery = (SubQuery) obj;
@@ -75,6 +77,7 @@ public class SubQuery extends AbstractTable
      *
      * @return an arbitrary integer created from the contents of the SubQuery
      */
+    @Override
     public int hashCode() {
         return (3 * query.hashCode()) + (5 * alias.hashCode());
     }
@@ -85,6 +88,7 @@ public class SubQuery extends AbstractTable
      * @param obj an AbstractTable to compare to
      * @return true if the object is of the same class, and with an equal query
      */
+    @Override
     public boolean equalsIgnoreAlias(AbstractTable obj) {
         if (obj instanceof SubQuery) {
             return query.equals(((SubQuery) obj).query);

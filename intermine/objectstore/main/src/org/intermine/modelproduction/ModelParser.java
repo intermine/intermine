@@ -28,6 +28,5 @@ public interface ModelParser
      * @return the InterMine Model created
      * @throws Exception if Model not created successfully
      */
-    public Model process(Reader reader) throws Exception;
-
+    Model process(Reader reader) throws Exception;
 }

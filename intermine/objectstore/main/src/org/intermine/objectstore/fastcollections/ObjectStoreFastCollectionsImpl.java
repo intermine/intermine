@@ -15,12 +15,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
@@ -45,9 +45,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.CacheHoldingArrayList;
-import org.intermine.util.TypeUtil;
-
-import org.apache.log4j.Logger;
 
 /**
  * Provides an implementation of an objectstore that explicitly materialises all the collections
@@ -60,7 +57,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
     private static final Logger LOG = Logger.getLogger(ObjectStoreFastCollectionsImpl.class);
 
     private boolean fetchAllFields = true;
-    private Set fieldExceptions = Collections.EMPTY_SET;
+    private Set<FieldDescriptor> fieldExceptions = Collections.emptySet();
 
     /**
      * Creates an instance, from another ObjectStore instance.
@@ -80,7 +77,8 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
      * @throws IllegalArgumentException if props are invalid
      * @throws ObjectStoreException if there is a problem with the instance
      */
-    public static ObjectStoreFastCollectionsImpl getInstance(String osAlias, Properties props)
+    public static ObjectStoreFastCollectionsImpl getInstance(
+            @SuppressWarnings("unused") String osAlias, Properties props)
         throws ObjectStoreException {
         String underlyingOsAlias = props.getProperty("os");
         if (underlyingOsAlias == null) {
@@ -106,7 +104,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
      * @param fetchAllFields a boolean
      * @param fieldExceptions a Set of FieldDescriptors
      */
-    public void setFetchFields(boolean fetchAllFields, Set fieldExceptions) {
+    public void setFetchFields(boolean fetchAllFields, Set<FieldDescriptor> fieldExceptions) {
         this.fetchAllFields = fetchAllFields;
         this.fieldExceptions = fieldExceptions;
     }
@@ -118,6 +116,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public Results execute(Query q) {
         return new Results(q, this, SEQUENCE_IGNORE);
     }
@@ -125,6 +124,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
             boolean prefetch) {
         Results retval = new Results(q, this, getSequence(getComponentsForQuery(q)));
@@ -147,6 +147,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public SingletonResults executeSingleton(Query q) {
         return new SingletonResults(q, this, SEQUENCE_IGNORE);
     }
@@ -154,6 +155,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
             boolean explain, boolean prefetch) {
         SingletonResults retval = new SingletonResults(q, this,
@@ -185,63 +187,64 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
-    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            Map<Object, Integer> sequence) throws ObjectStoreException {
+    @Override
+    public List<ResultsRow<Object>> execute(Query q, int start, int limit, boolean optimise,
+            boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException {
         try {
             long time1 = System.currentTimeMillis();
-            List results = os.execute(q, start, limit, optimise, explain, sequence);
-            CacheHoldingArrayList retval;
-            if (results instanceof CacheHoldingArrayList) {
-                retval = (CacheHoldingArrayList) results;
+            List<ResultsRow<Object>> results = os.execute(q, start, limit, optimise, explain,
+                    sequence);
+            CacheHoldingArrayList<ResultsRow<Object>> retval;
+            if (results instanceof CacheHoldingArrayList<?>) {
+                retval = (CacheHoldingArrayList<ResultsRow<Object>>) results;
             } else {
-                retval = new CacheHoldingArrayList(results);
+                retval = new CacheHoldingArrayList<ResultsRow<Object>>(results);
             }
             long time2 = System.currentTimeMillis();
             timeSpentExecute += time2 - time1;
             if (retval.size() > 1) {
-                QuerySelectable node = (QuerySelectable) q.getSelect().get(0);
+                QuerySelectable node = q.getSelect().get(0);
                 if (node instanceof QueryClass) {
-                    Map bagMap = new HashMap();
+                    Map<Integer, InterMineObject> bagMap = new HashMap<Integer, InterMineObject>();
                     int lowestId = Integer.MAX_VALUE;
                     int highestId = Integer.MIN_VALUE;
-                    Iterator rowIter = retval.iterator();
-                    while (rowIter.hasNext()) {
-                        InterMineObject o = (InterMineObject) ((ResultsRow) rowIter.next()).get(0);
+                    for (ResultsRow<Object> row : retval) {
+                        InterMineObject o = (InterMineObject) row.get(0);
                         bagMap.put(o.getId(), o);
-                        int id = ((InterMineObject) o).getId().intValue();
+                        int id = o.getId().intValue();
                         lowestId = (lowestId < id ? lowestId : id);
                         highestId = (highestId > id ? highestId : id);
                     }
-                    Class clazz = ((QueryClass) node).getType();
-                    Map fieldDescriptors = getModel().getFieldDescriptorsForClass(clazz);
+                    Class<?> clazz = ((QueryClass) node).getType();
+                    Map<String, FieldDescriptor> fieldDescriptors = getModel()
+                        .getFieldDescriptorsForClass(clazz);
                     time1 = System.currentTimeMillis();
                     timeSpentInspect += time1 - time2;
-                    Iterator fieldIter = fieldDescriptors.entrySet().iterator();
-                    while (fieldIter.hasNext()) {
-                        Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
-                        String fieldName = (String) fieldEntry.getKey();
-                        FieldDescriptor field = (FieldDescriptor) fieldEntry.getValue();
-                        Map collections = new HashMap();
+                    for (Map.Entry<String, FieldDescriptor> fieldEntry : fieldDescriptors
+                            .entrySet()) {
+                        String fieldName = fieldEntry.getKey();
+                        FieldDescriptor field = fieldEntry.getValue();
+                        Map<Integer, Collection<Object>> collections
+                            = new HashMap<Integer, Collection<Object>>();
                         if (doThisField(field) && (field instanceof CollectionDescriptor)) {
                             CollectionDescriptor coll = (CollectionDescriptor) field;
                             time1 = System.currentTimeMillis();
-                            Iterator bagIter = bagMap.entrySet().iterator();
-                            while (bagIter.hasNext()) {
-                                Map.Entry entry = (Map.Entry) bagIter.next();
-                                Integer id = (Integer) entry.getKey();
-                                InterMineObject o = (InterMineObject) entry.getValue();
-                                ProxyCollection pc = (ProxyCollection) TypeUtil
-                                    .getFieldValue(o, fieldName);
-                                Collection materialisedCollection = pc.getMaterialisedCollection();
-                                if (!(materialisedCollection instanceof HashSet)) {
-                                    materialisedCollection = new HashSet();
+                            for (Map.Entry<Integer, InterMineObject> entry : bagMap.entrySet()) {
+                                Integer id = entry.getKey();
+                                InterMineObject o = entry.getValue();
+                                @SuppressWarnings("unchecked") ProxyCollection<Object> pc
+                                    = (ProxyCollection<Object>) o.getFieldValue(fieldName);
+                                Collection<Object> materialisedCollection = pc
+                                    .getMaterialisedCollection();
+                                if (!(materialisedCollection instanceof HashSet<?>)) {
+                                    materialisedCollection = new HashSet<Object>();
                                     collections.put(id, materialisedCollection);
                                 }
                                 retval.addToHolder(materialisedCollection);
                             }
                             time2 = System.currentTimeMillis();
                             timeSpentPrepare += time2 - time1;
-                            Set bag = collections.keySet();
+                            Set<Integer> bag = collections.keySet();
                             if ((q.getConstraint() == null) && q.getOrderBy().isEmpty()
                                     && q.getGroupBy().isEmpty()) {
                                 // This is a shortcut query. We know that the original query is
@@ -308,11 +311,11 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                 l.setBatchSize(limit * 20);
                                 time1 = System.currentTimeMillis();
                                 timeSpentQuery += time1 - time2;
-                                insertResults(collections, l, fieldName);
+                                insertResults(collections, l);
                                 time2 = System.currentTimeMillis();
                                 timeSpentSubExecute += time2 - time1;
                             } else {
-                                List bagList = new ArrayList(bag);
+                                List<Integer> bagList = new ArrayList<Integer>(bag);
                                 for (int i = 0; i < bagList.size(); i += 1000) {
                                     Query subQ = new Query();
                                     subQ.setDistinct(false);
@@ -344,19 +347,18 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                     l.setBatchSize(limit * 20);
                                     time1 = System.currentTimeMillis();
                                     timeSpentQuery += time1 - time2;
-                                    insertResults(collections, l, fieldName);
+                                    insertResults(collections, l);
                                     time2 = System.currentTimeMillis();
                                     timeSpentSubExecute += time2 - time1;
                                 }
                             }
-                            Iterator iter = collections.entrySet().iterator();
-                            while (iter.hasNext()) {
-                                Map.Entry entry = (Map.Entry) iter.next();
-                                Integer id = (Integer) entry.getKey();
-                                Collection materialisedCollection = (Collection) entry.getValue();
-                                InterMineObject fromObj = (InterMineObject) bagMap.get(id);;
-                                ProxyCollection pc = (ProxyCollection) TypeUtil
-                                    .getFieldValue(fromObj, fieldName);
+                            for (Map.Entry<Integer, Collection<Object>> entry : collections
+                                    .entrySet()) {
+                                Integer id = entry.getKey();
+                                Collection<Object> materialisedCollection = entry.getValue();
+                                InterMineObject fromObj = bagMap.get(id);
+                                @SuppressWarnings("unchecked") ProxyCollection<Object> pc
+                                    = (ProxyCollection<Object>) fromObj.getFieldValue(fieldName);
                                 pc.setMaterialisedCollection(materialisedCollection);
                             }
                             time1 = System.currentTimeMillis();
@@ -378,12 +380,11 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
         }
     }
 
-    private void insertResults(Map collections, List l, String fieldName)
+    private void insertResults(Map<Integer, Collection<Object>> collections, Results l)
         throws IllegalAccessException {
-        Iterator lIter = l.iterator();
-        while (lIter.hasNext()) {
-            ResultsRow row = (ResultsRow) lIter.next();
-            Collection fromCollection = (Collection) collections.get(row.get(0));
+        @SuppressWarnings("unchecked") Collection<ResultsRow<Object>> res = (Collection) l;
+        for (ResultsRow<Object> row : res) {
+            Collection<Object> fromCollection = collections.get(row.get(0));
             if (fromCollection != null) {
                 Object toObj = row.get(1);
                 fromCollection.add(toObj);
@@ -394,6 +395,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "FastCollections(" + os + ")";
     }

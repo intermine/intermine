@@ -57,6 +57,7 @@ public class ResidueFieldExporter implements FieldExporter
 
     /**
      * Export a field containing residues in FASTA format.
+     *
      * @param object the object of interest
      * @param fieldName the field of the object to output - should be sequence
      * @param os the ObjectStore that contains the object
@@ -64,8 +65,7 @@ public class ResidueFieldExporter implements FieldExporter
      * @throws ExportException if the application business logic throws an exception
      */
     public void exportField(InterMineObject object, String fieldName, ObjectStore os,
-                            HttpServletResponse response)
-    throws ExportException {
+            HttpServletResponse response) {
         if (!(object instanceof Sequence)) {
             throw new IllegalArgumentException("ResidueFieldExporter can only export "
                                                + "Sequence.residues fields");
@@ -93,7 +93,8 @@ public class ResidueFieldExporter implements FieldExporter
                           + sequence.getId());
                 OutputStream outputStream = response.getOutputStream();
                 PrintStream printStream = new PrintStream(outputStream);
-                printStream.println (sequence.getResidues());
+                sequence.getResidues().drainToPrintStream(printStream);
+                printStream.println("");
                 printStream.close();
                 outputStream.close();
                 return;

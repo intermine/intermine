@@ -222,4 +222,15 @@ public class QueryTest extends TestCase
 
         assertEquals(expected, q.getEffectiveOrderBy());
     }
+    
+    public void testToString() {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setDistinct(true);
+        assertEquals("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_", q.toString());
+        q.setDistinct(false);
+        assertEquals("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_", q.toString());
+    }
 }

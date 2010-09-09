@@ -61,7 +61,7 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
     public void testRetrieveNew() throws Exception {
         os = new ObjectStoreDummyImpl();
         Query q = new Query();
-        q.addToSelect(new QueryClass(String.class));
+        q.addToSelect(new QueryClass(Employee.class));
         q.addToSelect(new QueryClass(Department.class));
 
         os.setResultsSize(1);
@@ -70,14 +70,14 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
         assertEquals(1, rows.size());
         ResultsRow newRow = (ResultsRow) rows.get(0);
         assertEquals(2, newRow.size());
-        assertTrue(newRow.get(0) instanceof String);
+        assertTrue(newRow.get(0) instanceof Employee);
         assertTrue(newRow.get(1) instanceof Department);
     }
 
     public void testRetrieveNewAfterAdd() throws Exception {
         os = new ObjectStoreDummyImpl();
         Query q = new Query();
-        q.addToSelect(new QueryClass(String.class));
+        q.addToSelect(new QueryClass(Employee.class));
         q.addToSelect(new QueryClass(Department.class));
 
         ResultsRow row = new ResultsRow();
@@ -97,7 +97,7 @@ public class ObjectStoreDummyImplTest extends OneTimeTestCase
         assertEquals("test2", (String) newRow.get(1));
         newRow = (ResultsRow) rows.get(1);
         assertEquals(2, newRow.size());
-        assertTrue(newRow.get(0) instanceof String);
+        assertTrue(newRow.get(0) instanceof Employee);
         assertTrue(newRow.get(1) instanceof Department);
     }
 

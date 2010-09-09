@@ -21,7 +21,6 @@ import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
@@ -105,7 +104,7 @@ public class KeywordSearchResult
             int dot = expression.indexOf('.');
             if (dot > -1) {
                 String subExpression = expression.substring(dot + 1);
-                Object reference = TypeUtil.getFieldValue(object, expression.substring(0, dot));
+                Object reference = object.getFieldValue(expression.substring(0, dot));
                 LOG.debug("Reference=" + reference);
 
                 // recurse into next object
@@ -118,7 +117,7 @@ public class KeywordSearchResult
                     }
                 }
             } else {
-                value = TypeUtil.getFieldValue(object, expression);
+                value = object.getFieldValue(expression);
             }
         } catch (IllegalAccessException e) {
             Log.warn(null, e);

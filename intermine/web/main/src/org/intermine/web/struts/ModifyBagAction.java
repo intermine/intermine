@@ -63,6 +63,7 @@ public class ModifyBagAction extends InterMineAction
      * @exception Exception
      *                if the application business logic throws an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, @SuppressWarnings("unused")
             HttpServletResponse response) throws Exception {
@@ -76,24 +77,19 @@ public class ModifyBagAction extends InterMineAction
         }
 
         if (request.getParameter("union") != null
-                || (mbf.getListsButton() != null && mbf.getListsButton()
-                        .equals("union"))) {
+                || (mbf.getListsButton() != null && "union".equals(mbf.getListsButton()))) {
             combine(form, request, BagOperations.UNION);
         } else if (request.getParameter("intersect") != null
-                || (mbf.getListsButton() != null && mbf.getListsButton()
-                        .equals("intersect"))) {
+                || (mbf.getListsButton() != null && "intersect".equals(mbf.getListsButton()))) {
             combine(form, request, BagOperations.INTERSECT);
         } else if (request.getParameter("subtract") != null
-                || (mbf.getListsButton() != null && mbf.getListsButton()
-                        .equals("subtract"))) {
+                || (mbf.getListsButton() != null && "subtract".equals(mbf.getListsButton()))) {
             combine(form, request, BagOperations.SUBTRACT);
         } else if (request.getParameter("delete") != null
-                || (mbf.getListsButton() != null && mbf.getListsButton()
-                        .equals("delete"))) {
+                || (mbf.getListsButton() != null && "delete".equals(mbf.getListsButton()))) {
             delete(form, request);
         } else if (request.getParameter("copy") != null
-                || (mbf.getListsButton() != null && mbf.getListsButton()
-                        .equals("copy"))) {
+                || (mbf.getListsButton() != null && "copy".equals(mbf.getListsButton()))) {
             copy(form, request);
         }
 
@@ -263,7 +259,7 @@ public class ModifyBagAction extends InterMineAction
     }
 
     private ActionForward getReturn(String pageName, ActionMapping mapping) {
-        if (pageName != null && pageName.equals("MyMine")) {
+        if (pageName != null && "MyMine".equals(pageName)) {
             return new ForwardParameters(mapping.findForward("mymine"))
                     .addParameter("subtab", "lists").forward();
         }

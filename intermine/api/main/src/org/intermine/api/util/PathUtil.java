@@ -10,7 +10,6 @@ package org.intermine.api.util;
  *
  */
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
@@ -26,8 +25,10 @@ import org.intermine.util.TypeUtil;
  * @author Richard Smith
  *
  */
-public class PathUtil
+public final class PathUtil
 {
+    private PathUtil() {
+    }
 
     /**
      * Return the object at the end of a given path, starting from the given object.
@@ -40,7 +41,7 @@ public class PathUtil
     public static Object resolvePath(Path path, Object o) throws PathException {
         Model model = path.getModel();
         if (path.getStartClassDescriptor() != null) {
-            Set clds = model.getClassDescriptorsForClass(o.getClass());
+            Set<ClassDescriptor> clds = model.getClassDescriptorsForClass(o.getClass());
             if (!clds.contains(path.getStartClassDescriptor())) {
                 throw new PathException("ClassDescriptor from the start of path: " + path
                         + " is not a superclass of the class: "
@@ -49,18 +50,15 @@ public class PathUtil
             }
         }
 
-        Iterator<String> iter = path.getElements().iterator();
-
         Object current = o;
 
-        while (iter.hasNext()) {
-            String fieldName = iter.next();
+        for (String fieldName : path.getElements()) {
             try {
                 if (current == null) {
                     return null;
                 }
                 current = TypeUtil.getFieldValue(current, fieldName);
-                if (current instanceof Collection) {
+                if (current instanceof Collection<?>) {
                     throw new RuntimeException("Attempt to to get value of "
                             + "field \"" + fieldName + "\" for collection: " + o
                             + "It must be simple object. This operation is not allowed for "
@@ -81,20 +79,14 @@ public class PathUtil
      * if the class or any superclass of the InterMineObject are the type.  Type can be a qualified
      * or unqualified class name.
      *
-     * @param model the data model
-     * @param type type that will be assigned to
+     * @param cls the class in the model that will be assigned to
      * @param obj the InterMineObject to check
      * @return a boolean
      */
-    public static boolean canAssignObjectToType(Model model, String type, InterMineObject obj) {
-        type = TypeUtil.unqualifiedName(type);
-
-        for (Class c : DynamicUtil.decomposeClass(obj.getClass())) {
-            for (ClassDescriptor cld : model.getClassDescriptorsForClass(c)) {
-                String className = cld.getName();
-                if (TypeUtil.unqualifiedName(className).equals(type)) {
-                    return true;
-                }
+    public static boolean canAssignObjectToType(Class<?> cls, InterMineObject obj) {
+        for (Class<?> c : DynamicUtil.decomposeClass(obj.getClass())) {
+            if (cls.isAssignableFrom(c)) {
+                return true;
             }
         }
         return false;

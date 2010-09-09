@@ -11,10 +11,9 @@ package org.intermine.objectstore.query;
  */
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 /**
  * Static methods to create Lists of Constraint objects in a query and
@@ -35,16 +34,19 @@ import java.util.HashSet;
  * @author Matthew Wakeling
  * @author Richard Smith
  */
-public class ConstraintHelper
+public final class ConstraintHelper
 {
+    private ConstraintHelper() {
+    }
+
     /**
      * Converts a constraint from a query into a List of Constraint objects.
      *
      * @param query a Query object to list Constraints for
      * @return a List of Constraint objects
      */
-    public static List createList(Query query) {
-        List retval = new ArrayList();
+    public static List<Constraint> createList(Query query) {
+        List<Constraint> retval = new ArrayList<Constraint>();
         if (query != null) {
             addToList(retval, query.getConstraint());
         }
@@ -59,7 +61,7 @@ public class ConstraintHelper
      * @param fromElement a FromElement that returned constraints relate to
      * @return a List of Constraint objects
      */
-    public static List createList(Query query, FromElement fromElement) {
+    public static List<Constraint> createList(Query query, FromElement fromElement) {
         return filter(createList(query), fromElement, false);
     }
 
@@ -73,9 +75,7 @@ public class ConstraintHelper
     public static void traverseConstraints(Constraint c, ConstraintTraverseAction ca) {
         ca.apply(c);
         if (c instanceof ConstraintSet) {
-            Iterator iter = ((ConstraintSet) c).getConstraints().iterator();
-            while (iter.hasNext()) {
-                Constraint childConstraint = (Constraint) iter.next();
+            for (Constraint childConstraint : ((ConstraintSet) c).getConstraints()) {
                 traverseConstraints(childConstraint, ca);
             }
         }
@@ -88,7 +88,7 @@ public class ConstraintHelper
      * @param fromElement a FromElement that returned constraints relate to
      * @return a List of Constraint objects
      */
-    public static List listRelatedConstraints(Query query, FromElement fromElement) {
+    public static List<Constraint> listRelatedConstraints(Query query, FromElement fromElement) {
         return filter(createList(query), fromElement, true);
     }
 
@@ -102,12 +102,11 @@ public class ConstraintHelper
      * @param related if tru list all releted constraints, otherwise just associated
      * @return a List of Constraint objects
      */
-    public static List filter(List list, FromElement fromElement, boolean related) {
-        List filtered = new ArrayList();
-        Iterator iter = list.iterator();
+    public static List<Constraint> filter(List<Constraint> list, FromElement fromElement,
+            boolean related) {
+        List<Constraint> filtered = new ArrayList<Constraint>();
         if (related) {
-            while (iter.hasNext()) {
-                Constraint c = (Constraint) iter.next();
+            for (Constraint c : list) {
                 if (fromElement != null) {
                     if (isRelatedTo(c, fromElement)) {
                         filtered.add(c);
@@ -117,8 +116,7 @@ public class ConstraintHelper
                 }
             }
         } else {
-            while (iter.hasNext()) {
-                Constraint c = (Constraint) iter.next();
+            for (Constraint c : list) {
                 if (fromElement != null) {
                     if (isAssociatedWith(c, fromElement)) {
                         filtered.add(c);
@@ -138,14 +136,13 @@ public class ConstraintHelper
      * @param list a List of Constraints, to which to add more entries
      * @param constraint a Constraint to pick apart
      */
-    public static void addToList(List list, Constraint constraint) {
+    public static void addToList(List<Constraint> list, Constraint constraint) {
         if (constraint != null) {
             if (constraint instanceof ConstraintSet) {
                 if (((ConstraintSet) constraint).getOp() == ConstraintOp.AND) {
-                    Set constraints = ((ConstraintSet) constraint).getConstraints();
-                    Iterator conIter = constraints.iterator();
-                    while (conIter.hasNext()) {
-                        addToList(list, (Constraint) conIter.next());
+                    Set<Constraint> constraints = ((ConstraintSet) constraint).getConstraints();
+                    for (Constraint con : constraints) {
+                        addToList(list, con);
                     }
                 } else {
                     list.add(constraint);
@@ -177,12 +174,10 @@ public class ConstraintHelper
             // not a cross-reference -> at most one QueryClass.  find it.
             QueryClass qc = null;  // TODO test for a bug here? left not assoc by right is
             if (getQueryFields((QueryEvaluable) left).iterator().hasNext()) {
-                QueryField qf = (QueryField) getQueryFields((QueryEvaluable) left)
-                    .iterator().next();
+                QueryField qf = getQueryFields((QueryEvaluable) left).iterator().next();
                 qc = (QueryClass) qf.getFromElement();
             } else if (getQueryFields((QueryEvaluable) right).iterator().hasNext()) {
-                QueryField qf = (QueryField) getQueryFields((QueryEvaluable) right)
-                    .iterator().next();
+                QueryField qf = getQueryFields((QueryEvaluable) right).iterator().next();
                 qc = (QueryClass) qf.getFromElement();
             } else {
                 return false;   // does not relate to any QueryClass
@@ -240,7 +235,7 @@ public class ConstraintHelper
         }
 
         // also want to find out if this is referred to in a Contains or Subquery
-        // constratint that is associated with another fromElement.
+        // constraint that is associated with another fromElement.
 
         if (constraint instanceof ContainsConstraint) {
             if (fromElement == ((ContainsConstraint) constraint).getQueryClass()) {
@@ -252,11 +247,10 @@ public class ConstraintHelper
             }
         } else if (constraint instanceof SimpleConstraint) {
             SimpleConstraint sc = (SimpleConstraint) constraint;
-            Set qFields = (getQueryFields(sc.getArg1()));
+            Set<QueryField> qFields = getQueryFields(sc.getArg1());
             qFields.addAll(getQueryFields(sc.getArg2()));
-            Iterator iter = qFields.iterator();
-            while (iter.hasNext()) {
-                if (fromElement == ((QueryField) iter.next()).getFromElement()) {
+            for (QueryField qf : qFields) {
+                if (fromElement == qf.getFromElement()) {
                     return true;
                 }
             }
@@ -275,7 +269,7 @@ public class ConstraintHelper
     public static boolean isRelatedToNothing(Constraint c) {
         if (c instanceof SimpleConstraint) {
             SimpleConstraint sc = (SimpleConstraint) c;
-            Set fields = getQueryFields(sc.getArg1());
+            Set<QueryField> fields = getQueryFields(sc.getArg1());
             fields.addAll(getQueryFields(sc.getArg2()));
             if (fields.size() == 0) {
                 return true;
@@ -297,16 +291,12 @@ public class ConstraintHelper
         if (constraint instanceof SimpleConstraint) {
             // if QueryField exposed part of a subquery QueryField.getFromElement()
             // returns a query, does not cause any problem.
-            Set qcs = new HashSet();
-            Iterator leftIter = getQueryFields(((SimpleConstraint) constraint).getArg1())
-                .iterator();
-            while (leftIter.hasNext()) {
-                qcs.add(((QueryField) leftIter.next()).getFromElement());
+            Set<FromElement> qcs = new HashSet<FromElement>();
+            for (QueryField qf : getQueryFields(((SimpleConstraint) constraint).getArg1())) {
+                qcs.add(qf.getFromElement());
             }
-            Iterator rightIter = getQueryFields(((SimpleConstraint) constraint).getArg2())
-                .iterator();
-            while (rightIter.hasNext()) {
-                qcs.add(((QueryField) rightIter.next()).getFromElement());
+            for (QueryField qf : getQueryFields(((SimpleConstraint) constraint).getArg2())) {
+                qcs.add(qf.getFromElement());
             }
             if (qcs.size() > 1) {
                 return true;
@@ -323,8 +313,8 @@ public class ConstraintHelper
      * @param qe a QueryEvalubale to find QueryFields for
      * @return a set of QueryFields
      */
-    protected static Set getQueryFields(QueryEvaluable qe) {
-        Set fields = new HashSet();
+    protected static Set<QueryField> getQueryFields(QueryEvaluable qe) {
+        Set<QueryField> fields = new HashSet<QueryField>();
 
         if (qe instanceof QueryField) {
             fields.add((QueryField) qe);
@@ -342,7 +332,8 @@ public class ConstraintHelper
 
     /**
      * Get the left argument of the given constraint, will return null
-     * if passed a ConstraintSet.
+     * if passed a ConstraintSet or a MultipleInBagConstraint.
+     *
      * @param constraint a constraint
      * @return the left argument of given constraint
      */
@@ -363,6 +354,8 @@ public class ConstraintHelper
             if (left == null) {
                 left = ((SubqueryConstraint) constraint).getQueryClass();
             }
+        } else if (constraint instanceof MultipleInBagConstraint) {
+            return null;
         } else {
             throw new IllegalArgumentException("Unknown Constraint type: "
                                                + constraint.getClass().getName());
@@ -373,7 +366,8 @@ public class ConstraintHelper
 
     /**
      * Get the right argument of the given constraint, will return null
-     * if passed a ConstraintSet.
+     * if passed a ConstraintSet or a MultipleInBagConstraint.
+     *
      * @param constraint a constraint
      * @return the right argument of given constraint
      */
@@ -397,6 +391,8 @@ public class ConstraintHelper
             if (right == null) {
                 right = ((BagConstraint) constraint).getOsb();
             }
+        } else if (constraint instanceof MultipleInBagConstraint) {
+            return null;
         } else {
             throw new IllegalArgumentException("Unknown Constraint type: "
                                                + constraint.getClass().getName());

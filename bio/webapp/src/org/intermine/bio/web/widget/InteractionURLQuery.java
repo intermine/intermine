@@ -13,6 +13,7 @@ package org.intermine.bio.web.widget;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
@@ -44,19 +45,19 @@ public class InteractionURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
-        q.setView("Gene.primaryIdentifier,Gene.symbol,Gene.organism.shortName,"
-                  + "Gene.interactions.shortName,Gene.interactions.type.name,"
-                  + "Gene.interactions.role,"
-                  + "Gene.interactions.interactingGenes.primaryIdentifier,"
-                  + "Gene.interactions.experiment.name");
-        q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
+        q.addViews("Gene.primaryIdentifier", "Gene.symbol", "Gene.organism.shortName",
+                  "Gene.interactions.shortName", "Gene.interactions.type.name",
+                  "Gene.interactions.role",
+                  "Gene.interactions.interactingGenes.primaryIdentifier",
+                  "Gene.interactions.experiment.name");
+        q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
-            q.addConstraint("Gene.interactions.interactingGenes", Constraints.lookup(key));
-            q.setConstraintLogic("A and B");
-            q.syncLogicExpression("and");
+            q.addConstraint(Constraints.lookup("Gene.interactions.interactingGenes", key, ""));
         }
-        q.setOrderBy("Gene.organism.shortName,Gene.primaryIdentifier,"
-                  + "Gene.interactions.shortName,Gene.interactions.type");
+        q.addOrderBy("Gene.organism.shortName", OrderDirection.ASC);
+        q.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
+        q.addOrderBy("Gene.interactions.shortName", OrderDirection.ASC);
+        q.addOrderBy("Gene.interactions.type", OrderDirection.ASC);
         return q;
     }
 }

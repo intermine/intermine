@@ -12,11 +12,8 @@ package org.intermine.sql.writebatch;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 /**
  * An implementation of the BatchWriter interface that uses JDBC PreparedStatement addBatch() and
@@ -26,13 +23,14 @@ import org.apache.log4j.Logger;
  */
 public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
 {
-    private static final Logger LOG = Logger.getLogger(BatchWriterPreparedStatementImpl.class);
-
     /**
      * {@inheritDoc}
      */
-    protected int doInserts(String name, TableBatch table, List batches) throws SQLException {
-        String colNames[] = table.getColNames();
+    @SuppressWarnings("unchecked")
+    @Override
+    protected int doInserts(String name, TableBatch table, List<FlushJob> batches)
+        throws SQLException {
+        String[] colNames = table.getColNames();
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             StringBuffer sqlBuffer = new StringBuffer("INSERT INTO ").append(name).append(" (");
             for (int i = 0; i < colNames.length; i++) {
@@ -51,12 +49,10 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
             sqlBuffer.append(")");
             String sql = sqlBuffer.toString();
             PreparedStatement prepS = con.prepareStatement(sql);
-            Iterator insertIter = table.getIdsToInsert().entrySet().iterator();
-            while (insertIter.hasNext()) {
-                Map.Entry insertEntry = (Map.Entry) insertIter.next();
+            for (Map.Entry<Object, Object> insertEntry : table.getIdsToInsert().entrySet()) {
                 Object inserts = insertEntry.getValue();
                 if (inserts instanceof Object[]) {
-                    Object values[] = (Object[]) inserts;
+                    Object[] values = (Object[]) inserts;
                     for (int i = 0; i < colNames.length; i++) {
                         Object value = values[i];
                         if (value instanceof CharSequence) {
@@ -66,9 +62,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
                     }
                     prepS.addBatch();
                 } else {
-                    Iterator iter = ((List) inserts).iterator();
-                    while (iter.hasNext()) {
-                        Object values[] = (Object[]) iter.next();
+                    for (Object[] values : ((List<Object[]>) inserts)) {
                         for (int i = 0; i < colNames.length; i++) {
                             Object value = values[i];
                             if (value instanceof CharSequence) {
@@ -89,15 +83,14 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     protected int doIndirectionInserts(String name,
-            IndirectionTableBatch table, List batches) throws SQLException {
+            IndirectionTableBatch table, List<FlushJob> batches) throws SQLException {
         if (!table.getRowsToInsert().isEmpty()) {
             String sql = "INSERT INTO " + name + " (" + table.getLeftColName() + ", "
                 + table.getRightColName() + ") VALUES (?, ?)";
             PreparedStatement prepS = con.prepareStatement(sql);
-            Iterator insertIter = table.getRowsToInsert().iterator();
-            while (insertIter.hasNext()) {
-                Row row = (Row) insertIter.next();
+            for (Row row : table.getRowsToInsert()) {
                 prepS.setInt(1, row.getLeft());
                 prepS.setInt(2, row.getRight());
                 prepS.addBatch();
@@ -113,6 +106,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
      * @param sql the statement
      * @throws SQLException if an error occurs
      */
+    @Override
     protected void addToPostDeleteBatch(String sql) throws SQLException {
         if (postDeleteBatch == null) {
             postDeleteBatch = con.createStatement();
@@ -126,6 +120,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
      * @param sql the statement
      * @throws SQLException if an error occurs
      */
+    @Override
     protected void addToLastBatch(String sql) throws SQLException {
         if (lastBatch == null) {
             lastBatch = con.createStatement();

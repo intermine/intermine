@@ -10,15 +10,15 @@ package org.intermine.sql.logging;
  *
  */
 
-import java.io.Writer;
 import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.StringTokenizer;
+import java.io.Writer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import org.intermine.util.StringUtil;
 
 /**
@@ -66,13 +66,14 @@ public class DatabaseWriter extends Writer
      * @param len the number of characters to write
      * @throws IOException if an error occurs when writing to the underlying database
      */
+    @Override
     public void write(char[] cbuff, int off, int len) throws IOException {
         if (cbuff == null) {
             return;
         }
         sb.append(cbuff, off, len);
 
-        List rows = new ArrayList();
+        List<String> rows = new ArrayList<String>();
         int index = -1;
 
         while ((index = sb.indexOf(System.getProperty("line.separator"))) != -1) {
@@ -87,12 +88,14 @@ public class DatabaseWriter extends Writer
     /**
      * Flush completed rows to the database
      */
+    @Override
     public void flush() {
     }
 
     /**
      * Close this Writer
      */
+    @Override
     public void close() {
     }
 
@@ -134,8 +137,8 @@ public class DatabaseWriter extends Writer
      * @param rows a List of rows to write
      * @throws IOException if an error occurs within the database
      */
-    private void writeRows(List rows) throws IOException {
-        boolean autoCommit = false;;
+    private void writeRows(List<String> rows) throws IOException {
+        boolean autoCommit = false;
         PreparedStatement pstmt;
 
         if (rows.size() == 0) {
@@ -143,15 +146,10 @@ public class DatabaseWriter extends Writer
         }
 
         try {
-
-            String row = (String) rows.get(0);
-
             autoCommit = con.getAutoCommit();
-            pstmt = con.prepareStatement(createSQLStatement(table, (String) rows.get(0)));
+            pstmt = con.prepareStatement(createSQLStatement(table, rows.get(0)));
 
-            Iterator i = rows.iterator();
-            while (i.hasNext()) {
-                row = (String) i.next();
+            for (String row : rows) {
                 StringTokenizer st = new StringTokenizer(row, "\t", false);
                 int j = 1;
                 while (st.hasMoreTokens()) {
@@ -164,7 +162,7 @@ public class DatabaseWriter extends Writer
                 pstmt.addBatch();
             }
 
-            int [] updateCounts = pstmt.executeBatch();
+            pstmt.executeBatch();
             con.commit();
         } catch (SQLException e) {
             throw new IOException(e.getMessage());

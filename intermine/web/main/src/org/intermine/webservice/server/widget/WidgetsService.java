@@ -28,9 +28,7 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.Path;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
@@ -127,13 +125,6 @@ public class WidgetsService extends WebService
             number++;
         }
 
-        PathQuery pathQuery = new PathQuery(model);
-
-        List<Path> view = PathQueryResultHelper.getDefaultView(className, model, webConfig,
-                                                               null, true);
-
-        pathQuery.setViewPaths(view);
-        String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
         StringBuffer sb = new StringBuffer();
         for (String ident : ids) {
             if (sb.length() > 0) {
@@ -141,13 +132,13 @@ public class WidgetsService extends WebService
             }
             sb.append(ident);
         }
-        Constraint c = new Constraint(ConstraintOp.LOOKUP, sb.toString(),
-                                      false, label, code, id, null);
-        pathQuery.addNode(className).getConstraints().add(c);
-        pathQuery.setConstraintLogic("A and B and C");
-        pathQuery.syncLogicExpression("and");
 
-        Map<String, BagQueryResult> returnBagQueryResults = new HashMap();
+        PathQuery pathQuery = new PathQuery(model);
+        pathQuery.addViews(PathQueryResultHelper.getDefaultViewForClass(className, model, webConfig,
+                null));
+        pathQuery.addConstraint(Constraints.lookup(className, sb.toString(), ""));
+
+        Map<String, BagQueryResult> returnBagQueryResults = new HashMap<String, BagQueryResult>();
         WebResultsExecutor executor = this.im.getWebResultsExecutor(profile);
 
         // execute query, we just need the bag query results
@@ -155,7 +146,7 @@ public class WidgetsService extends WebService
 
         // There's only one node, get the first value
         BagQueryResult bagQueryResult = returnBagQueryResults.values().iterator().next();
-        List<Integer> bagList = new ArrayList();
+        List<Integer> bagList = new ArrayList<Integer>();
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
 
         InterMineBag imBag = profile.createBag(bagName, className, "");

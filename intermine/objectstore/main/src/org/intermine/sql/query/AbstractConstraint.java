@@ -121,7 +121,8 @@ public abstract class AbstractConstraint implements SQLStringable
      * constraints.
      */
     public int compare(AbstractConstraint obj) {
-        return compare(obj, IdentityMap.INSTANCE, IdentityMap.INSTANCE);
+        IdentityMap<AbstractTable> id = IdentityMap.getInstance();
+        return compare(obj, id, id);
     }
 
     /**
@@ -133,7 +134,8 @@ public abstract class AbstractConstraint implements SQLStringable
      * @return INDEPENDENT, IMPLIED_BY, IMPLIES, EQUAL, OPPOSITE, EXCLUDES, or OR, depending on the
      * constraints.
      */
-    public abstract int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap);
+    public abstract int compare(AbstractConstraint obj, Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap);
 
     /**
      * Overrides Object.equals();

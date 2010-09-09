@@ -128,7 +128,7 @@ public class GalaxyExportAction extends InterMineAction
         newView.add(prefix + ".primaryIdentifier");
         newView.add(prefix + ".score");
         newView.add(prefix + ".chromosomeLocation.strand");
-        query.setView(newView);
+        query.addViews(newView);
         // <<<<<
 
         // Build Webservice URL

@@ -10,28 +10,35 @@ package org.intermine.dataconversion;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.intermine.metadata.Model;
+import org.apache.log4j.Logger;
 import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Attribute;
+import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Reference;
 import org.intermine.model.fulldata.ReferenceList;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ClobAccess;
+import org.intermine.objectstore.query.Constraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.FromElement;
+import org.intermine.objectstore.query.PendingClob;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCast;
 import org.intermine.objectstore.query.QueryClass;
@@ -39,22 +46,17 @@ import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.translating.Translator;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.util.TypeUtil.FieldInfo;
 import org.intermine.xml.full.ItemHelper;
-
-import org.apache.log4j.Logger;
 
 /**
  * Translator that translates fulldata Items to business objects
@@ -66,8 +68,8 @@ public class ItemToObjectTranslator extends Translator
     private static final Logger LOG = Logger.getLogger(ItemToObjectTranslator.class);
 
     protected Model model;
-    protected SortedMap idToNamespace = new TreeMap();
-    protected Map<String, Integer> namespaceToId = new HashMap();
+    protected SortedMap<Integer, String> idToNamespace = new TreeMap<Integer, String>();
+    protected Map<String, Integer> namespaceToId = new HashMap<String, Integer>();
 
     /**
      * Constructor
@@ -100,11 +102,11 @@ public class ItemToObjectTranslator extends Translator
         q.setDistinct(false);
         try {
             if (os != null) {
-                Results res = os.execute(q, 0, false, false, false);
+                Results res = os.execute(q, 1000, false, false, false);
                 int offset = 0;
-                Iterator iter = res.iterator();
-                while (iter.hasNext()) {
-                    ResultsRow row = (ResultsRow) iter.next();
+                @SuppressWarnings("unchecked") Collection<ResultsRow<Object>> tmpRes =
+                    (Collection) res;
+                for (ResultsRow<Object> row : tmpRes) {
                     String namespace = (String) row.get(0);
                     idToNamespace.put(new Integer(offset), namespace);
                     namespaceToId.put(namespace, new Integer(offset));
@@ -127,12 +129,12 @@ public class ItemToObjectTranslator extends Translator
         if (id == null) {
             return null;
         }
-        String namespace = (String) idToNamespace.get(id);
+        String namespace = idToNamespace.get(id);
         if (namespace != null) {
             return namespace + "_0";
         } else {
-            Integer baseInteger = (Integer) idToNamespace.headMap(id).lastKey();
-            namespace = (String) idToNamespace.get(baseInteger);
+            Integer baseInteger = idToNamespace.headMap(id).lastKey();
+            namespace = idToNamespace.get(baseInteger);
             int base = baseInteger.intValue();
             return namespace + "_" + (id.intValue() - base);
         }
@@ -141,6 +143,7 @@ public class ItemToObjectTranslator extends Translator
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object translateIdToIdentifier(Integer id) {
         return idToIdentifier(id);
     }
@@ -171,13 +174,14 @@ public class ItemToObjectTranslator extends Translator
     /**
      * {@inheritDoc}
      */
+    @Override
     public Query translateQuery(Query query) throws ObjectStoreException {
         if (query.getOrderBy().size() > 0 || query.getGroupBy().size() > 0) {
             throw new ObjectStoreException("Query cannot be translated: " + query);
         }
 
-        List select = query.getSelect();
-        Set from = query.getFrom();
+        List<QuerySelectable> select = query.getSelect();
+        Set<FromElement> from = query.getFrom();
         QueryNode qn = (QueryNode) select.get(0);
         if (!(select.size() == 1
               && from.size() == 1
@@ -198,12 +202,12 @@ public class ItemToObjectTranslator extends Translator
                 && constraint.getOp() == ConstraintOp.IN
                 && ((BagConstraint) constraint).getQueryNode() instanceof QueryField
                 && ((QueryField) ((BagConstraint) constraint).getQueryNode()).getFromElement() == qn
-                && ((QueryField) ((BagConstraint) constraint).getQueryNode())
-                .getFieldName().equals("id")) {
-                BagConstraint bc =
-                    new BagConstraint(new QueryField(qc, "identifier"),
-                                      ConstraintOp.IN,
-                                      toStrings(((BagConstraint) constraint).getBag()));
+                && "id".equals(((QueryField) ((BagConstraint) constraint).getQueryNode())
+                        .getFieldName())) {
+                @SuppressWarnings("unchecked") Collection<Integer> bag =
+                    (Collection) ((BagConstraint) constraint).getBag();
+                BagConstraint bc = new BagConstraint(new QueryField(qc, "identifier"),
+                        ConstraintOp.IN, toStrings(bag));
                 q.setConstraint(bc);
             } else if (constraint instanceof SimpleConstraint
                        && constraint.getOp() == ConstraintOp.EQUALS
@@ -211,8 +215,8 @@ public class ItemToObjectTranslator extends Translator
                        && ((SimpleConstraint) constraint).getArg2() instanceof QueryValue
                        && ((QueryField) ((SimpleConstraint) constraint).getArg1())
                            .getFromElement() == qn
-                       && ((QueryField) ((SimpleConstraint) constraint).getArg1())
-                       .getFieldName().equals("id")) {
+                       && "id".equals(((QueryField) ((SimpleConstraint) constraint).getArg1())
+                               .getFieldName())) {
                 SimpleConstraint sc =
                     new SimpleConstraint(new QueryField(qc, "identifier"),
                             ConstraintOp.EQUALS,
@@ -248,6 +252,7 @@ public class ItemToObjectTranslator extends Translator
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object translateToDbObject(Object o) {
         return o;
     }
@@ -260,6 +265,7 @@ public class ItemToObjectTranslator extends Translator
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object translateFromDbObject(Object o) throws MetaDataException {
         long time1 = System.currentTimeMillis();
         if (!(o instanceof Item)) {
@@ -268,18 +274,16 @@ public class ItemToObjectTranslator extends Translator
 
         Item item = (Item) o;
         int itemSize = 100;
-        Iterator iter = item.getAttributes().iterator();
-        while (iter.hasNext()) {
-            String value = ((Attribute) iter.next()).getValue();
+        for (Attribute a : item.getAttributes()) {
+            String value = a.getValue();
             if (value != null) {
                 itemSize += value.length() + 50;
             } else {
                 itemSize += 50;
             }
         }
-        iter = item.getCollections().iterator();
-        while (iter.hasNext()) {
-            itemSize += ((ReferenceList) iter.next()).getRefIds().length() + 50;
+        for (ReferenceList r : item.getCollections()) {
+            itemSize += r.getRefIds().length() + 50;
         }
         itemSize += item.getReferences().size() * 50;
         if (itemSize > 1000000) {
@@ -308,8 +312,7 @@ public class ItemToObjectTranslator extends Translator
         timeSpentCreate += time1 - time2;
 
         try {
-            for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
-                Attribute attr = (Attribute) i.next();
+            for (Attribute attr : item.getAttributes()) {
                 FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), attr.getName());
                 if (info == null) {
                     String message = "Attribute not found in class: "
@@ -319,9 +322,16 @@ public class ItemToObjectTranslator extends Translator
                     LOG.error(message);
                     throw new MetaDataException(message);
                 }
-                Class attrClass = info.getType();
+                Class<?> attrClass = info.getType();
                 if (!attr.getName().equalsIgnoreCase("id")) {
-                    Object value = TypeUtil.stringToObject(attrClass, attr.getValue());
+                    Object value = null;
+                    if (ClobAccess.class.equals(attrClass)) {
+                        if (attr.getValue() != null) {
+                            value = new PendingClob(attr.getValue());
+                        }
+                    } else {
+                        value = TypeUtil.stringToObject(attrClass, attr.getValue());
+                    }
                     if (value == null) {
                         throw new IllegalArgumentException("An attribute (name " + attr.getName()
                                 + ") for item with id " + item.getIdentifier() + " was null");
@@ -330,8 +340,7 @@ public class ItemToObjectTranslator extends Translator
                 }
             }
 
-            for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
-                Reference ref = (Reference) i.next();
+            for (Reference ref : item.getReferences()) {
                 Integer identifier;
                 try {
                     identifier = identifierToId(ref.getRefId());
@@ -345,7 +354,7 @@ public class ItemToObjectTranslator extends Translator
                     throw new RuntimeException("Item with identifier " + item.getIdentifier()
                             + " has a reference with ID " + ref.getId() + " with a null name");
                 }
-                if (refName.equals("")) {
+                if ("".equals(refName)) {
                     throw new RuntimeException("Item with identifier " + item.getIdentifier()
                             + " has a reference with ID " + ref.getId() + " with an empty name");
                 }
@@ -358,20 +367,19 @@ public class ItemToObjectTranslator extends Translator
                 } else {
                     String message = "Reference not found in class: "
                         + DynamicUtil.getFriendlyName(obj.getClass()) + "." + ref.getName()
-                          + " while translating Item with identifier " + item.getIdentifier();;
+                          + " while translating Item with identifier " + item.getIdentifier();
                     LOG.error(message);
                     throw new MetaDataException(message);
                 }
             }
 
-            for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
-                ReferenceList refs = (ReferenceList) i.next();
+            for (ReferenceList refs : item.getCollections()) {
                 QueryClass qc = new QueryClass(InterMineObject.class);
                 QueryField qf = new QueryField(qc, "id");
                 BagConstraint bc;
                 try {
                     bc = new BagConstraint(qf, ConstraintOp.IN,
-                        toIntegers(new HashSet(StringUtil.tokenize(refs.getRefIds()))));
+                        toIntegers(new HashSet<String>(StringUtil.tokenize(refs.getRefIds()))));
                 } catch (Exception e) {
                     throw new RuntimeException("failed to find some referenced Items from "
                             + "identifiers " + refs.getRefIds() + " in object store from Item "
@@ -392,18 +400,18 @@ public class ItemToObjectTranslator extends Translator
                     obj.setFieldValue(refsName, os.executeSingleton(q));
                 } else {
                     String message = "Collection not found in class: "
-                        + DynamicUtil.decomposeClass(obj.getClass()) + "." + refsName
+                        + DynamicUtil.getFriendlyName(obj.getClass()) + "." + refsName
                           + " while translating Item with identifier " + item.getIdentifier();
                     LOG.error(message);
                     throw new MetaDataException(message);
                 }
             }
         } catch (MetaDataException e) {
-            LOG.error("Broken with: " + DynamicUtil.decomposeClass(obj.getClass())
+            LOG.error("Broken with: " + DynamicUtil.getFriendlyName(obj.getClass())
                       + item.getIdentifier(), e);
             throw e;
         } catch (Exception e) {
-            LOG.error("Broken with: " + DynamicUtil.decomposeClass(obj.getClass())
+            LOG.error("Broken with: " + DynamicUtil.getFriendlyName(obj.getClass())
                       + item.getIdentifier(), e);
             throw new RuntimeException(e);
         }
@@ -423,10 +431,10 @@ public class ItemToObjectTranslator extends Translator
      * @param integers a set of Integers
      * @return the corresponding set of Strings
      */
-    protected Collection toStrings(Collection integers) {
-        Collection strings = new ArrayList();
-        for (Iterator i = integers.iterator(); i.hasNext();) {
-            strings.add(idToIdentifier((Integer) i.next()));
+    protected Collection<String> toStrings(Collection<Integer> integers) {
+        Collection<String> strings = new ArrayList<String>();
+        for (Integer i : integers) {
+            strings.add(idToIdentifier(i));
         }
         return strings;
     }
@@ -436,10 +444,10 @@ public class ItemToObjectTranslator extends Translator
      * @param strings a set of Strings
      * @return the corresponding set of Integers
      */
-    protected Collection toIntegers(Collection strings) {
-        Collection integers = new ArrayList();
-        for (Iterator i = strings.iterator(); i.hasNext();) {
-            integers.add(identifierToId((String) i.next()));
+    protected Collection<Integer> toIntegers(Collection<String> strings) {
+        Collection<Integer> integers = new ArrayList<Integer>();
+        for (String s : strings) {
+            integers.add(identifierToId(s));
         }
         return integers;
     }

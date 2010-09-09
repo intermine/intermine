@@ -11,208 +11,818 @@ package org.intermine.web.logic.query;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.query.MainHelper;
-import org.intermine.metadata.Model;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.template.SwitchOffAbility;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.pathquery.PathNode;
-import org.intermine.util.TypeUtil;
+import org.intermine.pathquery.ConstraintValueParser;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintAttribute;
+import org.intermine.pathquery.PathConstraintBag;
+import org.intermine.pathquery.PathConstraintLookup;
+import org.intermine.pathquery.PathConstraintLoop;
+import org.intermine.pathquery.PathConstraintMultiValue;
+import org.intermine.pathquery.PathConstraintNull;
+import org.intermine.pathquery.PathConstraintSubclass;
+import org.intermine.pathquery.PathException;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.util.StringUtil;
+import org.intermine.web.autocompletion.AutoCompleter;
+import org.intermine.web.logic.querybuilder.DisplayPath;
+
+
 
 /**
- * When an constraint is being applied to an attribute, an instance of this class is used
- * to present extra, editor-related information to the JSP such valid operators,
- * enumerations etc.
+ * Representation of a PathQuery constraint for use by JSP pages.  This object provides methods
+ * needed to populate constraint editing boxes and dropdowns, find available bag names, etc.  Can
+ * either represent a new constraint to be added with no values set or an existing constraint that
+ * is being edited.
  *
- * @author Thomas Riley
+ * Get methods return null if no values are available
+ *
+ * @author Richard Smith
  */
 public class DisplayConstraint
 {
-    /** . */
-    protected PathNode node;
-    /** The related model. */
-    protected Model model;
-    /** The list of valid operators. */
-    private Map<Integer, String> validOps;
-    /** List of fixed operator indices. */
-    private List<Integer> fixedOps;
-    /** List of possible attribute values. */
-    private List optionsList;
-    /** The object store summary. */
-    protected ObjectStoreSummary oss;
-    /** The classKeys Map. */
-    protected Map classKeys;
-
-    private String name;
+    private Path path;
+    private List<DisplayConstraintOption> validOps;
+    private AutoCompleter ac;
+    private ObjectStoreSummary oss;
+    private String endCls;
+    private String fieldName;
+    private BagQueryConfig bagQueryConfig;
+    private Map<String, List<FieldDescriptor>> classKeys;
+    private BagManager bagManager;
+    private Profile profile;
+    private String constraintLabel;
+    private List<DisplayConstraintOption> fixedOps;
+    private PathConstraint con;
+    private PathQuery query;
+    private String code;
+    private boolean editableInTemplate;
+    private SwitchOffAbility switchOffAbility;
+    private boolean isBagSelected;
+    private String selectedBagValue;
+    private ConstraintOp selectedBagOp;
 
     /**
-     * Creates a new instance of DisplayConstraint.
-     *
-     * @param node the node representing a class attribute
-     * @param model the associated model
-     * @param oss the object store summary
-     * @param optionsList a List of possible values, or null (to fall back to oss)
-     * @param classKeys the ClassKeys Map
+     * Construct for a new constraint that is being added to a query.
+     * @param path The path that is being constrained
+     * @param profile user editing the query, used to fetch available bags
+     * @param query the PathQuery, in order to provide information on candidate loops
+     * @param ac auto completer
+     * @param oss summary data for the ObjectStore contents
+     * @param bagQueryConfig addition details for needed for LOOKUP constraints
+     * @param classKeys identifier field config, needed for LOOKUP constraints
+     * @param bagManager provides access to saved bags
      */
-    public DisplayConstraint(PathNode node, Model model, ObjectStoreSummary oss, List optionsList,
-                             Map classKeys) {
-        this.node = node;
-        this.model = model;
-        this.oss = oss;
-        this.optionsList = optionsList;
-        this.classKeys = classKeys;
-        this.name = setName(node);
+    protected DisplayConstraint(Path path, Profile profile, PathQuery query, AutoCompleter ac,
+            ObjectStoreSummary oss, BagQueryConfig bagQueryConfig,
+            Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager) {
+        init(path, profile, query, ac, oss, bagQueryConfig, classKeys, bagManager);
     }
 
     /**
-     * Get a map of valid operators for the constraint. Maps an operator index Integer to
-     * an operator name. Creates the map lazily.
-     *
-     * @return Map from index integer to name of valid operator for the constraint
+     * Construct for an existing constraint that is being edited.
+     * @param path The path that is being constrained
+     * @param con the constraint being edited
+     * @param label text associated with this constraint, if a template query
+     * @param code the code of this constraint in the query
+     * @param editableInTemplate true if this is a template query and this constraint is editable
+     * @param switchOffAbility if the contraint is on, off, locked
+     * @param profile user editing the query, used to fetch available bags
+     * @param query the PathQuery, in order to provide information on candidate loops
+     * @param ac auto completer
+     * @param oss summary data for the ObjectStore contents
+     * @param bagQueryConfig addition details for needed for LOOKUP constraints
+     * @param classKeys identifier field config, needed for LOOKUP constraints
+     * @param bagManager provides access to saved bags
      */
-    public Map getValidOps() {
+    protected DisplayConstraint(Path path, PathConstraint con, String label, String code,
+            boolean editableInTemplate, SwitchOffAbility switchOffAbility, Profile profile,
+            PathQuery query, AutoCompleter ac,
+            ObjectStoreSummary oss, BagQueryConfig bagQueryConfig,
+            Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager) {
+        init(path, profile, query, ac, oss, bagQueryConfig, classKeys, bagManager);
+        this.con = con;
+        this.constraintLabel = label;
+        this.code = code;
+        this.editableInTemplate = editableInTemplate;
+        this.switchOffAbility = switchOffAbility;
+    }
+
+    private void init(Path path, Profile profile, PathQuery query, AutoCompleter ac,
+            ObjectStoreSummary oss, BagQueryConfig bagQueryConfig,
+            Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager) {
+        this.path = path;
+        this.ac = ac;
+        this.oss = oss;
+        this.endCls = getEndClass(path);
+        this.fieldName = getFieldName(path);
+        this.bagQueryConfig = bagQueryConfig;
+        this.classKeys = classKeys;
+        this.profile = profile;
+        this.query = query;
+        this.bagManager = bagManager;
+        this.isBagSelected = false;
+    }
+
+    private String getEndClass(Path path) {
+        if (path.isRootPath()) {
+            return path.getStartClassDescriptor().getType().getSimpleName();
+        } else {
+            return path.getLastClassDescriptor().getType().getSimpleName();
+        }
+    }
+
+    private String getFieldName(Path path) {
+        if (!path.isRootPath()) {
+            return path.getLastElement();
+        }
+        return null;
+    }
+
+    // TODO this should be in some common code
+    private String constraintStringValue(PathConstraint con) {
+        if (con instanceof PathConstraintAttribute) {
+            return ((PathConstraintAttribute) con).getValue();
+        } else if (con instanceof PathConstraintBag) {
+            return ((PathConstraintBag) con).getBag();
+        } else if (con instanceof PathConstraintLookup) {
+            return ((PathConstraintLookup) con).getValue();
+        } else if (con instanceof PathConstraintSubclass) {
+            return ((PathConstraintSubclass) con).getType();
+        } else if (con instanceof PathConstraintLoop) {
+            return ((PathConstraintLoop) con).getLoopPath();
+        } else if (con instanceof PathConstraintNull) {
+            return ((PathConstraintNull) con).getOp().toString();
+        }
+        return null;
+    }
+
+    /**
+     * If editing an existing constraint get the code for this constraint in the query, return null
+     * if creating a new constraint.
+     * @return the constraint code or null
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * Return true if editing an existing template constraint and that constraint is editable.
+     * @return true if an editable template constraint, or null
+     */
+    public boolean isEditableInTemplate() {
+        return editableInTemplate;
+    }
+
+    /**
+     * Get a representation of the path that is being constraint.  DisplayPath provides convenience
+     * methods for use in JSP.
+     * @return the path being constrained
+     */
+    public DisplayPath getPath() {
+        return new DisplayPath(path);
+    }
+
+    /**
+     * If editing an existing constraint, return the selected value.  Otherwise return null.  If
+     * an attribute constraint this will be the user entered.  If a bag constraint, the selected
+     * bag name, etc. If an attribute constraint, but the use bag is setted, this will be the
+     * selectedBagValue setted
+     * @return the selected value or null
+     */
+    public String getSelectedValue() {
+        if (isBagSelected) {
+            return selectedBagValue;
+        }
+        if (con != null) {
+            return constraintStringValue(con);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the value collection if the constraint is a multivalue, otherwise return null.
+     *
+     * @return a Collection of Strings
+     */
+    public Collection<String> getMultiValues() {
+        if (isMultiValueSelected()) {
+            return ((PathConstraintMultiValue) con).getValues();
+        }
+        return null;
+    }
+
+    /**
+     * If the constraint is a multivalue, returns the value collection
+     * represented as string separated by ',', otherwise return an empty String.
+     *
+     * @return a String representing the multivalues of constraint
+     */
+    public String getMultiValuesAsString() {
+        String multiValuesAsString = "";
+        if (getMultiValues() != null) {
+            for (String value : getMultiValues()) {
+                multiValuesAsString += value + ",";
+            }
+        }
+        return multiValuesAsString;
+    }
+
+    /**
+     * Return true if editing an existing constraint and a bag has been selected.
+     * @return true if a bag has been selected
+     */
+    public boolean isBagSelected() {
+        if (isBagSelected) {
+            return isBagSelected;
+        } else {
+            return (con != null && con instanceof PathConstraintBag);
+        }
+    }
+
+    /**
+     * Set if the bag is selected, used by the method isBagSelected that returns true,
+     * even if the constraint is an attribute constraint
+     * @param isBagSelected true if a bag has been selected
+     */
+    public void setBagSelected(boolean isBagSelected) {
+        this.isBagSelected = isBagSelected;
+    }
+
+    /**
+     * Return true if editing an existing constraint and 'has a value' or 'has no value' has been
+     * selected.
+     * @return true if a null constraint was selected
+     */
+    public boolean isNullSelected() {
+        return (con != null && con instanceof PathConstraintNull);
+    }
+
+    /**
+     * Return true if editing an existing constraint and an attribute value or LOOKUP constraint
+     * was selected.
+     * @return true if an attribute/LOOKUP constraint was selected
+     */
+    public boolean isValueSelected() {
+        if (con != null) {
+            return !(isBagSelected() || isNullSelected() || isLoopSelected());
+        }
+        return false;
+    }
+
+    /**
+     * Return true if editing an existing constraint and a loop value has been
+     * selected.
+     * @return true if a loop constraint was selected
+     */
+    public boolean isLoopSelected() {
+        return (con != null && con instanceof PathConstraintLoop);
+    }
+
+    /**
+     * Return true if editing an existing constraint and a multivalue has been
+     * selected.
+     * @return true if a multivalue constraint was selected
+     */
+    public boolean isMultiValueSelected() {
+        return (con != null && con instanceof PathConstraintMultiValue);
+    }
+
+    /**
+     * Return the last class in the path and fieldname as the title for the constraint.
+     * @return the title of this constraint
+     */
+    public String getTitle() {
+        return endCls + (fieldName == null ? "" : " " + fieldName);
+    }
+
+    /**
+     * Return the label associated with a constraint if editing a template query constraint.
+     * @return the constraint label
+     */
+    public String getDescription() {
+        return constraintLabel;
+    }
+
+    /**
+     * Return a help message to display alongside the constraint, this will examine the constraint
+     * type and generate and appropriate message, e.g. list the key fields for LOOKUP constraints
+     * and explain the use of wildcards.  Returns null when there is no appropriate help.
+     * @return the help message or null
+     */
+    public String getHelpMessage() {
+        return DisplayConstraintHelpMessages.getHelpMessage(this);
+    }
+
+    /**
+     * If the bag is selected, return the value setted with the method setSelectedBagOp
+     * If editing an existing constraint return the operation used.
+     * Otherwise return null.
+     * @return the selected constraint op or null
+     */
+    public DisplayConstraintOption getSelectedOp() {
+        if (isBagSelected) {
+            return new DisplayConstraintOption(selectedBagOp.toString(),
+                                               selectedBagOp.getIndex());
+        }
+        if (con != null) {
+            ConstraintOp selectedOp = con.getOp();
+            if (selectedOp != null) {
+                return new DisplayConstraintOption(selectedOp.toString(), selectedOp.getIndex());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Set the seletedBagOp
+     * @param selectedBagOp the constraint op returned by the method getSelectedOp()
+     * if the bag is selected
+     */
+    public void setSelectedBagOp(ConstraintOp selectedBagOp) {
+        this.selectedBagOp = selectedBagOp;
+    }
+
+    /**
+     * Set the seletedBagValue returned bye the getSelectedValue if the bag is selected
+     * @param selectedBagValue string to set the selectedBagValue
+     */
+    public void setSelectedBagValue(String selectedBagValue) {
+        this.selectedBagValue = selectedBagValue;
+    }
+
+    /**
+     * If editing an existing LOOKUP constraint return the value selected for the extra constraint
+     * field.  Otherwise return null
+     * @return the LOOKUP constraint extra value or null
+     */
+    public String getSelectedExtraValue() {
+        if (con instanceof PathConstraintLookup) {
+            return ((PathConstraintLookup) con).getExtraValue();
+        }
+        return null;
+    }
+
+    /**
+     * Given the path being constrained return the valid constraint operations.  If constraining an
+     * attribute the valid ops depend on the type being constraint - String, Integer, Boolean, etc.
+     * @return the valid constraint operations
+     */
+    public List<DisplayConstraintOption> getValidOps() {
         if (validOps != null) {
             return validOps;
         }
-
-        if (node.isAttribute()) {
-            Class nodeType = TypeUtil.getClass(node.getType());
-            List<ConstraintOp> allOps = SimpleConstraint.validOps(nodeType);
-
-            List<ConstraintOp> simpleConstraintOps = new ArrayList<ConstraintOp>(allOps);
-            if (String.class.equals(nodeType)) {
-                simpleConstraintOps.remove(ConstraintOp.MATCHES);
-                simpleConstraintOps.remove(ConstraintOp.DOES_NOT_MATCH);
-                // We're slightly abusing "CONTAINS" here because in the object store it only
-                // means "contained in a bag".  Here we're using it to mean "contained as a
-                // substring"
-                int notEqualsIndex = simpleConstraintOps.indexOf(ConstraintOp.NOT_EQUALS);
-                simpleConstraintOps.add(notEqualsIndex + 1, ConstraintOp.CONTAINS);
+        validOps = new ArrayList<DisplayConstraintOption>();
+        if (con instanceof PathConstraintBag) {
+            for  (ConstraintOp op : PathConstraintBag.VALID_OPS) {
+                validOps.add(new DisplayConstraintOption(op.toString(), op.getIndex()));
             }
-            validOps = MainHelper.mapOps(simpleConstraintOps);
-        } else {
-            validOps = Collections.singletonMap(new Integer(18), ConstraintOp.LOOKUP.toString());
+        } else if (con  instanceof PathConstraintSubclass) {
+            return validOps;
+        } else if (con  instanceof PathConstraintLoop) {
+            List<DisplayConstraintOption> loopQueryOps = getLoopQueryOps();
+            for  (DisplayConstraintOption dco : loopQueryOps) {
+                validOps.add(dco);
+            }
+        } else if (path.endIsAttribute()) {
+            List<ConstraintOp> allOps = SimpleConstraint.validOps(path.getEndType());
+            // TODO This was in the constraint jsp:
+            // <c:if test="${!(editingNode.type == 'String' && (op.value == '<='
+                                                             //|| op.value == '>='))}">
+            // TODO this should show different options if a dropdown is to be used
+            boolean existPossibleValues =
+                (getPossibleValues() != null && getPossibleValues().size() > 0) ? true : false;
+            for (ConstraintOp op : allOps) {
+                if (!existPossibleValues && (op.getIndex() == 6 || op.getIndex() == 7)) {
+                    continue;
+                }
+                validOps.add(new DisplayConstraintOption(op.toString(), op.getIndex()));
+            }
+            if (existPossibleValues) {
+                for (ConstraintOp op : PathConstraintMultiValue.VALID_OPS) {
+                    validOps.add(new DisplayConstraintOption(op.toString(),
+                        op.getIndex()));
+                }
+            }
+        } else if (isLookup()) {
+            // this must be a LOOKUP constraint
+            ConstraintOp lookup = ConstraintOp.LOOKUP;
+            validOps.add(new DisplayConstraintOption(lookup.toString(), lookup.getIndex()));
         }
 
         return validOps;
+
     }
 
     /**
-     * Get a List of simple constraint operator indices that can only apply to an
-     * argument selected from a fixed list of values, the values being provided by
-     * <code>getOptionsList</code>.
+     * Returns the set of operators valid for loop constraints.
      *
-     * @return  indices of operators that should only be applied to values in the options list
+     * @return a List of DisplayConstraintOption objects
      */
-    public List<Integer> getFixedOpIndices() {
+    public List<DisplayConstraintOption> getLoopQueryOps() {
+        return Arrays.asList(new DisplayConstraintOption(ConstraintOp.EQUALS.toString(),
+                    ConstraintOp.EQUALS.getIndex()),
+                new DisplayConstraintOption(ConstraintOp.NOT_EQUALS.toString(),
+                    ConstraintOp.NOT_EQUALS.getIndex()));
+    }
+
+    /**
+     * Return true if this constraint should be a LOOKUP, true if constraining a class (ref/col)
+     * instead of an attribute and that class has class keys defined.
+     * @return true if this constraint should be a LOOKUP
+     */
+    public boolean isLookup() {
+        return !path.endIsAttribute() && ClassKeyHelper.hasKeyFields(classKeys, endCls);
+    }
+
+    /**
+     * Return the LOOKUP constraint op.
+     * @return the LOOKUP constraint op
+     */
+    // TOOO do we need this?  validOps should contain correct value
+    public DisplayConstraintOption getLookupOp() {
+        ConstraintOp lookup = ConstraintOp.LOOKUP;
+        return new DisplayConstraintOption(lookup.toString(), lookup.getIndex());
+    }
+
+    /**
+     * Return the autocompleter for this path if one is available.  Otherwise return null.
+     * @return an autocompleter for this path or null
+     */
+    public AutoCompleter getAutoCompleter() {
+        if (ac != null && ac.hasAutocompleter(endCls, fieldName)) {
+            return ac;
+        }
+        return null;
+    }
+
+
+    /**
+     * Values to populate a dropdown for the path if possible values are available.
+     * @return possible values to populate a dropdown
+     */
+    public List<Object> getPossibleValues() {
+        String className = "";
+        if (path.isRootPath()) {
+            className = path.getStartClassDescriptor().getType().getCanonicalName();
+        } else {
+            className = path.getLastClassDescriptor().getType().getCanonicalName();
+        }
+        List<Object> fieldValues = oss.getFieldValues(className, fieldName);
+
+        if (path.endIsAttribute()) {
+            Class<?> type = path.getEndType();
+            if (Date.class.equals(type)) {
+                List<Object> fieldValueFormatted = new ArrayList<Object>();
+                for (Object obj : fieldValues) {
+                    fieldValueFormatted.add(ConstraintValueParser.format((String) obj));
+                }
+                return fieldValueFormatted;
+            }
+        }
+        return fieldValues;
+    }
+
+    /**
+     * If a dropdown is available for a constraint fewer operations are possible, return the list
+     * of operations.
+     * @return  the constraint ops available when selecting values from a dropdown
+     */
+    // TODO Do we need this, could getValildOps return the correct ops if a dropdown is available
+    public List<DisplayConstraintOption> getFixedOps() {
         if (fixedOps != null) {
             return fixedOps;
         }
 
-        fixedOps = new ArrayList<Integer>();
-        List newOptionsList = new ArrayList();
-
-        String parentType = node.getParentType();
-        if ((parentType != null) || (!node.isAttribute())) {
-            Class parentClass;
-            String fieldName;
-            try {
-                if (node.isAttribute()) {
-                    parentClass = TypeUtil.getClass(parentType, model);
-                    fieldName = node.getFieldName();
-                } else {
-                    parentClass = TypeUtil.getClass(node.getType(), model);
-                    Collection keyFieldNames = ClassKeyHelper
-                                .getKeyFieldNames(classKeys, node.getType());
-                    if (keyFieldNames == null || keyFieldNames.size() == 0) {
-                        return new ArrayList();
-                    }
-                    fieldName = (String) keyFieldNames.iterator().next();
-                }
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("unexpected exception", e);
+        if (getPossibleValues() != null) {
+            fixedOps = new ArrayList<DisplayConstraintOption>();
+            for (ConstraintOp op : SimpleConstraint.fixedEnumOps(path.getEndType())) {
+                fixedOps.add(new DisplayConstraintOption(op.toString(), op.getIndex()));
             }
-            List fieldValues = oss.getFieldValues(parentClass.getName(), fieldName);
-            if (fieldValues != null && node.getType() != null) {
-                newOptionsList.addAll(fieldValues);
-                Class fieldClass = TypeUtil.getFieldInfo(parentClass, fieldName).getType();
-                Iterator iter = SimpleConstraint.fixedEnumOps(fieldClass).iterator();
-
-                // This is commented out so that no edit box appears next to the dropdown
-                // for string constraints.  A proper solution is needed - see #1398.
-                //if (!String.class.equals(parentClass)) {
-                    // for Strings always allow the user to type in a pattern because EQUALS
-                    // constraints are automatically converted to MATCHES constraints if the
-                    // pattern contains a wildcard
-                while (iter.hasNext()) {
-                    fixedOps.add(((ConstraintOp) iter.next()).getIndex());
-                }
-                //}
-
-            }
-        }
-
-        if (optionsList == null) {
-            optionsList = newOptionsList;
         }
         return fixedOps;
     }
 
     /**
-     * Will return an empty list or alternatively, a list of all possible values of the field that
-     * the constraint is attached to. This allows the user interface to present a list of possible
-     * attribute values.
+     * Return true if this is a LOOKUP constraint and an extra constraint should be available.
+     * @return true if an extra constraint option is available
+     */
+    public boolean isExtraConstraint() {
+        if (isLookup()) {
+            String extraValueFieldName = bagQueryConfig.getConnectField();
+            ClassDescriptor cld = (path.isRootPath()) ? path.getStartClassDescriptor()
+                                   : path.getLastClassDescriptor();
+            ReferenceDescriptor fd = cld.getReferenceDescriptorByName(extraValueFieldName, true);
+            return fd != null;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * If a LOOKUP constraint and an extra constraint is available for this path, return a list of
+     * the possible values for populating a dropdown.  Otherwise return null.
+     * @return a list of possible extra constraint values
+     */
+    public List<Object> getExtraConstraintValues() {
+        if (isExtraConstraint()) {
+            String extraValueFieldName = bagQueryConfig.getConstrainField();
+            return oss.getFieldValues(bagQueryConfig.getExtraConstraintClassName(),
+                    extraValueFieldName);
+        }
+        return null;
+    }
+
+    /**
+     * If a LOOKUP constraint and an extra value constraint is available return the classname of
+     * the extra constraint so it can be displayed.  Otherwise return null.
+     * @return the extra constraint class name or null
+     */
+    public String getExtraConstraintClassName() {
+        if (isExtraConstraint()) {
+            String[] splitClassName = bagQueryConfig.getExtraConstraintClassName().split("[.]");
+            return splitClassName[splitClassName.length - 1];
+            //return bagQueryConfig.getExtraConstraintClassName();
+        }
+        return null;
+    }
+
+    /**
+     * Return the key fields for this path as a formatted string, for use in LOOKUP help message.
+     * @return a formatted string listing key fields for this path
+     */
+    public String getKeyFields() {
+        if (ClassKeyHelper.hasKeyFields(classKeys, endCls)) {
+            return StringUtil.prettyList(ClassKeyHelper.getKeyFieldNames(classKeys, endCls), true);
+        }
+        return null;
+    }
+
+    /**
+     * Get a list of public and user bag names available for this path.  If none available return
+     * null.
+     * @return a list of available bag names or null
+     */
+    public List<String> getBags() {
+        if (ClassKeyHelper.hasKeyFields(classKeys, endCls)) {
+            Map<String, InterMineBag> bags =
+                bagManager.getUserOrGlobalBagsOfType(profile, endCls);
+            if (!bags.isEmpty()) {
+                return new ArrayList<String>(bags.keySet());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return the valid constraint ops when constraining on a bag.
+     * @return the possible bag constraint operations
+     */
+    public List<DisplayConstraintOption> getBagOps() {
+        List<DisplayConstraintOption> bagOps = new ArrayList<DisplayConstraintOption>();
+        for (ConstraintOp op : BagConstraint.VALID_OPS) {
+            bagOps.add(new DisplayConstraintOption(op.toString(), op.getIndex()));
+        }
+        return bagOps;
+    }
+
+    /**
+     * Returns the bag type that the constraint can be constrained to.
+     * If there aren't bags return null
      *
-     * @return  list of all possible attribute values for the node or an empty list
+     * @return a String
      */
-    public List getOptionsList() {
-        if (optionsList == null) {
-            getFixedOpIndices();
+    public String getBagType() {
+        if (getBags() != null) {
+            return endCls;
+        } else {
+            return null;
         }
-        return optionsList;
     }
 
     /**
-     * Return whether the node is an attribute.
-     * @return true if node is an attribute
+     * Returns the constraint type selected.
+     *
+     * @return a String representing the constraint type selected
      */
-    public boolean isAttribute() {
-        return node.isAttribute();
+    public String getSelectedConstraint() {
+        if (isBagSelected()) {
+            return "bag";
+        } else if (isNullSelected()) {
+            return "empty";
+        } else if (isLoopSelected()) {
+            return "loopQuery";
+        }
+        return "attribute";
     }
 
     /**
-     * @return the name of the constraint
+     * Returns the set of paths that could feasibly be loop constrained onto the constraint's path,
+     * given the query's outer join situation. A candidate path must be a class path, of the same
+     * type, and in the same outer join group.
+     *
+     * @return a Set of String paths that could be loop joined
+     * @throws PathException if something goes wrong
      */
-    public String getName() {
-        return name;
-    }
-
-    private String setName(PathNode displayNode) {
-        PathNode parent = (PathNode) displayNode.getParent();
-        if (parent == null) {
-            parent = displayNode;
+    public Set<String> getCandidateLoops() throws PathException {
+        if (path.endIsAttribute()) {
+            return Collections.emptySet();
+        } else {
+            if (con instanceof PathConstraintLoop) {
+                Set<String> retval = new LinkedHashSet<String>();
+                retval.add(((PathConstraintLoop) con).getLoopPath());
+                retval.addAll(query.getCandidateLoops(path.getNoConstraintsString()));
+                return retval;
+            } else {
+                return query.getCandidateLoops(path.getNoConstraintsString());
+            }
         }
-        String displayName = parent.getType();
-        if (displayNode.getPathString().contains(".")) {
-            displayName += " " + displayNode.getFriendlyName();
-        }
-        return displayName;
     }
 
     /**
-     * {@inheritDoc}
+     * Return true if the constraint is locked, it should'n be enabled or disabled.
+     * @return true if the constraint is locked
      */
-    public String toString() {
-        return "{DisplayConstraint: model=" + model.getName() + ", name=" + name
-            + ", validOps=" + validOps + ", fixedOps=" + fixedOps
-            + ", optionsList=" + optionsList + "}";
+    public boolean isLocked() {
+        if (switchOffAbility == null || switchOffAbility == SwitchOffAbility.LOCKED) {
+            return true;
+        }
+        return false;
     }
 
+    /**
+     * Return true if the constraint is enabled, false if it is disabled or locked.
+     * @return true if the constraint is enabled,false if it is disabled or locked
+     */
+    public boolean isEnabled() {
+        if (switchOffAbility == SwitchOffAbility.ON) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return true if the constraint is disabled, false if it is enabled or locked.
+     * @return true if the constraint is disabled,false if it is enabled or locked
+     */
+    public boolean isDisabled() {
+        if (switchOffAbility == SwitchOffAbility.OFF) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return the value on, off, locked depending on the constraint SwitchOffAbility .
+     * @return switchable property (on, off, locked)
+     */
+    public String getSwitchable() {
+        if (SwitchOffAbility.ON.equals(switchOffAbility)) {
+            return SwitchOffAbility.ON.toString().toLowerCase();
+        } else if (SwitchOffAbility.OFF.equals(switchOffAbility)) {
+            return SwitchOffAbility.OFF.toString().toLowerCase();
+        } else {
+            return SwitchOffAbility.LOCKED.toString().toLowerCase();
+        }
+    }
+
+    /**
+     * Set the switchOffAbility
+     * @param switchOffAbility value
+     */
+    public void setSwitchOffAbility(SwitchOffAbility switchOffAbility) {
+        this.switchOffAbility = switchOffAbility;
+    }
+
+    /**
+     * Return true if the input field can be displayed, method for use in JSP
+     * @return true if the input is displayed
+     */
+    public boolean isInputFieldDisplayed() {
+        if (con != null) {
+            int selectedOperator = getSelectedOp().getProperty();
+            if (selectedOperator == 6
+                    || selectedOperator == 7
+                    || selectedOperator == 18) {
+                return true;
+            }
+            if (selectedOperator == 12
+                    || selectedOperator == 13) {
+                if (con instanceof PathConstraintBag) {
+                    return true;
+                }
+                return false;
+            }
+            if (getPossibleValues() != null && getPossibleValues().size() > 0) {
+                return false;
+            }
+            return true;
+        }
+        if (getPossibleValues() != null && getPossibleValues().size() > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Return true if the drop-down containing the possibleValues can be displayed,
+     * method for use in JSP
+     * @return true if the drop-down is displayed
+     */
+    public boolean isPossibleValuesDisplayed() {
+        if (con != null) {
+            int selectedOperator = getSelectedOp().getProperty();
+            if (selectedOperator == 6
+                    || selectedOperator == 7
+                    || selectedOperator == 18
+                    || selectedOperator == 12
+                    || selectedOperator == 13) {
+                return false;
+            }
+            if (getPossibleValues() != null && getPossibleValues().size() > 0) {
+                return true;
+            }
+            return false;
+        }
+        if (getPossibleValues() != null && getPossibleValues().size() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return true if the multi-select containing the possibleValue can be displayed,
+     * method for use in JSP
+     * @return true if the multi-select is displayed
+     */
+    public boolean isMultiValuesDisplayed() {
+        if (con != null) {
+            int selectedOperator = getSelectedOp().getProperty();
+            if (selectedOperator == 12
+                    || selectedOperator == 13) {
+                return true;
+            }
+            return false;
+        } return false;
+    }
+
+    /**
+     * Representation of a constraint operation to populate a dropdown.  Label is value to be
+     * displayed in the dropdown, property is the index of the constraint that will be selected.
+     * @author Richard Smith
+     *
+     */
+    public class DisplayConstraintOption
+    {
+        private String label;
+        private Integer property;
+
+        /**
+         * Construct with the constraint lable and index
+         * @param label the value to be shown in dropdown
+         * @param property the constraint index to be added to form on selection
+         */
+        public DisplayConstraintOption(String label, Integer property) {
+            this.label = label;
+            this.property = property;
+        }
+
+        /**
+         * Get the value to be displayed in the dropdown for this operation.
+         * @return the display value
+         */
+        public String getLabel() {
+            return label;
+        }
+
+        /**
+         * Get the constraint index to be put in form when this op is selected.
+         * @return the constraint index
+         */
+        public Integer getProperty() {
+            return property;
+        }
+    }
 }

@@ -36,7 +36,7 @@ public interface IntegrationWriter extends ObjectStoreWriter
      * @param skelSource the data Source to which to attribute skeleton data
      * @throws ObjectStoreException if an error occurs in the underlying objectstore
      */
-    public void store(FastPathObject o, Source source, Source skelSource)
+    void store(FastPathObject o, Source source, Source skelSource)
         throws ObjectStoreException;
 
     /**
@@ -48,7 +48,7 @@ public interface IntegrationWriter extends ObjectStoreWriter
      * @return a Source
      * @throws ObjectStoreException if something goes wrong
      */
-    public Source getMainSource(String name, String type) throws ObjectStoreException;
+    Source getMainSource(String name, String type) throws ObjectStoreException;
 
     /**
      * Converts a string describing the data source into a Source object suitable for passing to the
@@ -59,7 +59,7 @@ public interface IntegrationWriter extends ObjectStoreWriter
      * @return a skeleton Source
      * @throws ObjectStoreException if something goes wrong
      */
-    public Source getSkeletonSource(String name, String type) throws ObjectStoreException;
+    Source getSkeletonSource(String name, String type) throws ObjectStoreException;
 
 
     /**
@@ -72,5 +72,5 @@ public interface IntegrationWriter extends ObjectStoreWriter
      *
      * @param ignoreDuplicates the value of ignoreDuplicates
      */
-    public void setIgnoreDuplicates(boolean ignoreDuplicates);
+    void setIgnoreDuplicates(boolean ignoreDuplicates);
 }

@@ -1,0 +1,115 @@
+HTTP/1.1 200 OK
+Date: Tue, 17 Aug 2010 10:48:31 GMT
+Set-Cookie: JSESSIONID=D75062D6078E244CAC8A8BB54C12BCB5; Path=/
+Pragma: no-cache
+Cache-Control: must-revalidate, max-age=0
+Content-Disposition: inline; filename="result.tsv"
+Content-Type: text/tab-separated-values;charset=ISO-8859-1
+Connection: close
+Transfer-Encoding: chunked
+
+1ff8
+S000000001	YAL001C	10531351	Rubbi L	J Biol Chem	1999	Saccharomyces cerevisiae
+S000000001	YAL001C	10384303	Chédin S	Cold Spring Harb Symp Quant Biol	1998	Saccharomyces cerevisiae
+S000000001	YAL001C	11459191	Rozenfeld S	Mol Genet Genomics	2001	Saccharomyces cerevisiae
+S000000001	YAL001C	11805826	Gavin AC	Nature	2002	Saccharomyces cerevisiae
+S000000001	YAL001C	12533520	Jourdain S	J Biol Chem	2003	Saccharomyces cerevisiae
+S000000001	YAL001C	1279682	Lefebvre O	Proc Natl Acad Sci U S A	1992	Saccharomyces cerevisiae
+S000000001	YAL001C	14576278	Sickmann A	Proc Natl Acad Sci U S A	2003	Saccharomyces cerevisiae
+S000000001	YAL001C	16429126	Gavin AC	Nature	2006	Saccharomyces cerevisiae
+S000000001	YAL001C	16554755	Krogan NJ	Nature	2006	Saccharomyces cerevisiae
+S000000001	YAL001C	16823961	Reinders J	J Proteome Res	2006	Saccharomyces cerevisiae
+S000000001	YAL001C	17200106	Collins SR	Mol Cell Proteomics	2007	Saccharomyces cerevisiae
+S000000001	YAL001C	18708580	D'Ambrosio C	Genes Dev	2008	Saccharomyces cerevisiae
+S000000001	YAL001C	18849469	Simms TA	Eukaryot Cell	2008	Saccharomyces cerevisiae
+S000000001	YAL001C	19116144	Dieci G	Biochem Biophys Res Commun	2009	Saccharomyces cerevisiae
+S000000001	YAL001C	19706510	Tavenet A	Proc Natl Acad Sci U S A	2009	Saccharomyces cerevisiae
+S000000001	YAL001C	2651441	Gabrielsen OS	J Biol Chem	1989	Saccharomyces cerevisiae
+S000000001	YAL001C	3633923	Baker RE	J Biol Chem	1986	Saccharomyces cerevisiae
+S000000001	YAL001C	7688737	Conesa C	J Biol Chem	1993	Saccharomyces cerevisiae
+S000000001	YAL001C	7731988	Bussey H	Proc Natl Acad Sci U S A	1995	Saccharomyces cerevisiae
+S000000001	YAL001C	8083243	Lefebvre O	J Biol Chem	1994	Saccharomyces cerevisiae
+S000000001	YAL001C	8617241	Rüth J	EMBO J	1996	Saccharomyces cerevisiae
+S000000001	YAL001C	8849441	Goffeau A	Science	1996	Saccharomyces cerevisiae
+S000000001	YAL001C	9418847	Arrebola R	Mol Cell Biol	1998	Saccharomyces cerevisiae
+S000000001	YAL001C	9584160	Manaud N	Mol Cell Biol	1998	Saccharomyces cerevisiae
+S000000002	YAL002W	10207082	Li Y	Mol Cell Biol	1999	Saccharomyces cerevisiae
+S000000002	YAL002W	11805826	Gavin AC	Nature	2002	Saccharomyces cerevisiae
+S000000002	YAL002W	11805837	Ho Y	Nature	2002	Saccharomyces cerevisiae
+S000000002	YAL002W	14660704	Graumann J	Mol Cell Proteomics	2004	Saccharomyces cerevisiae
+S000000002	YAL002W	14690608	Krogan NJ	Mol Cell	2003	Saccharomyces cerevisiae
+S000000002	YAL002W	14764870	Tong AH	Science	2004	Saccharomyces cerevisiae
+S000000002	YAL002W	15047864	Subramanian S	Mol Biol Cell	2004	Saccharomyces cerevisiae
+S000000002	YAL002W	16429126	Gavin AC	Nature	2006	Saccharomyces cerevisiae
+S000000002	YAL002W	16487579	Pan X	Cell	2006	Saccharomyces cerevisiae
+S000000002	YAL002W	17200106	Collins SR	Mol Cell Proteomics	2007	Saccharomyces cerevisiae
+S000000002	YAL002W	17314980	Collins SR	Nature	2007	Saccharomyces cerevisiae
+S000000002	YAL002W	17488625	Peplowska K	Dev Cell	2007	Saccharomyces cerevisiae
+S000000002	YAL002W	17513889	Mulder KW	Genetics	2007	Saccharomyces cerevisiae
+S000000002	YAL002W	17923092	McClellan AJ	Cell	2007	Saccharomyces cerevisiae
+S000000002	YAL002W	18212056	Mitchell L	Mol Cell Biol	2008	Saccharomyces cerevisiae
+S000000002	YAL002W	18613951	Tian W	Genome Biol	2008	Saccharomyces cerevisiae
+S000000002	YAL002W	18676811	Lin YY	Genes Dev	2008	Saccharomyces cerevisiae
+S000000002	YAL002W	18708354	Imbeault D	J Biol Chem	2008	Saccharomyces cerevisiae
+S000000002	YAL002W	18845848	Addinall SG	Genetics	2008	Saccharomyces cerevisiae
+S000000002	YAL002W	18931302	Dixon SJ	Proc Natl Acad Sci U S A	2008	Saccharomyces cerevisiae
+S000000002	YAL002W	19233841	Kim JH	J Biol Chem	2009	Saccharomyces cerevisiae
+S000000002	YAL002W	19828734	Markgraf DF	Mol Biol Cell	2009	Saccharomyces cerevisiae
+S000000002	YAL002W	20041197	Hannum G	PLoS Genet	2009	Saccharomyces cerevisiae
+S000000002	YAL002W	20093466	Costanzo M	Science	2010	Saccharomyces cerevisiae
+S000000002	YAL002W	20173035	Pawelec A	Eukaryot Cell	2010	Saccharomyces cerevisiae
+S000000002	YAL002W	7731988	Bussey H	Proc Natl Acad Sci U S A	1995	Saccharomyces cerevisiae
+S000000002	YAL002W	8849441	Goffeau A	Science	1996	Saccharomyces cerevisiae
+S000000002	YAL002W	8969229	Horazdovsky BF	J Biol Chem	1996	Saccharomyces cerevisiae
+S000000002	YAL002W	9265642	Luo W	J Cell Biol	1997	Saccharomyces cerevisiae
+S000000002	YAL002W	9475722	Woolford CA	Genetics	1998	Saccharomyces cerevisiae
+S000000004	YAL005C	10094633	Geymonat M	Mol Microbiol	1998	Saccharomyces cerevisiae
+S000000004	YAL005C	10347213	Shulga N	J Biol Chem	1999	Saccharomyces cerevisiae
+S000000004	YAL005C	10523645	Zhang S	Mol Cell Biol	1999	Saccharomyces cerevisiae
+S000000004	YAL005C	10606269	Bracken AP	RNA	1999	Saccharomyces cerevisiae
+S000000004	YAL005C	10617640	Lau D	J Biol Chem	2000	Saccharomyces cerevisiae
+S000000004	YAL005C	10745074	Satyanarayana C	FEBS Lett	2000	Saccharomyces cerevisiae
+S000000004	YAL005C	11014801	McClellan AJ	Genetics	2000	Saccharomyces cerevisiae
+S000000004	YAL005C	11029046	Verma R	Mol Biol Cell	2000	Saccharomyces cerevisiae
+S000000004	YAL005C	11160944	Honey S	Nucleic Acids Res	2001	Saccharomyces cerevisiae
+S000000004	YAL005C	11237696	Hall MC	Protein Expr Purif	2001	Saccharomyces cerevisiae
+S000000004	YAL005C	11279042	Horton LE	J Biol Chem	2001	Saccharomyces cerevisiae
+S000000004	YAL005C	11387327	Allen NP	J Biol Chem	2001	Saccharomyces cerevisiae
+S000000004	YAL005C	11416143	Wegrzyn RD	Mol Cell Biol	2001	Saccharomyces cerevisiae
+S000000004	YAL005C	11535617	Denning D	J Cell Biol	2001	Saccharomyces cerevisiae
+S000000004	YAL005C	11689685	Hon T	Mol Cell Biol	2001	Saccharomyces cerevisiae
+S000000004	YAL005C	11743879	Qian X	Biochem J	2002	Saccharomyces cerevisiae
+S000000004	YAL005C	11804584	Stevens SW	Mol Cell	2002	Saccharomyces cerevisiae
+S000000004	YAL005C	11805826	Gavin AC	Nature	2002	Saccharomyces cerevisiae
+S000000004	YAL005C	11914276	Kumar A	Genes Dev	2002	Saccharomyces cerevisiae
+S000000004	YAL005C	12052876	Kabani M	Mol Cell Biol	2002	Saccharomyces cerevisiae
+S000000004	YAL005C	12105220	Sondermann H	J Biol Chem	2002	Saccharomyces cerevisiae
+S000000004	YAL005C	12200444	Borggrefe T	J Biol Chem	2002	Saccharomyces cerevisiae
+S000000004	YAL005C	12543930	Allen NP	Mol Cell Proteomics	2002	Saccharomyces cerevisiae
+S000000004	YAL005C	12716905	Wegele H	J Biol Chem	2003	Saccharomyces cerevisiae
+S000000004	YAL005C	12872131	Peng J	Nat Biotechnol	2003	Saccharomyces cerevisiae
+S000000004	YAL005C	14565975	Nekrasov VS	Mol Biol Cell	2003	Saccharomyces cerevisiae
+S000000004	YAL005C	14657253	Fan CY	Mol Biol Cell	2004	Saccharomyces cerevisiae
+S000000004	YAL005C	14685274	Wang H	EMBO J	2004	Saccharomyces cerevisiae
+S000000004	YAL005C	14729968	Baetz KK	Mol Cell Biol	2004	Saccharomyces cerevisiae
+S000000004	YAL005C	14764870	Tong AH	Science	2004	Saccharomyces cerevisiae
+S000000004	YAL005C	15044454	Hainzl O	J Biol Chem	2004	Saccharomyces cerevisiae
+S000000004	YAL005C	15082786	Jones G	Mol Cell Biol	2004	Saccharomyces cerevisiae
+S000000004	YAL005C	15292183	Panse VG	J Biol Chem	2004	Saccharomyces cerevisiae
+S000000004	YAL005C	15545639	Allen KD	Genetics	2005	Saccharomyces cerevisiae
+S000000004	YAL005C	15584090	Kashyap AK	Yeast	2005	Saccharomyces cerevisiae
+S000000004	YAL005C	15590687	Hannich JT	J Biol Chem	2005	Saccharomyces cerevisiae
+S000000004	YAL005C	15687271	Aron R	Genetics	2005	Saccharomyces cerevisiae
+S000000004	YAL005C	15701791	Song Y	Eukaryot Cell	2005	Saccharomyces cerevisiae
+S000000004	YAL005C	15704212	Kabir MA	Yeast	2005	Saccharomyces cerevisiae
+S000000004	YAL005C	15766533	Zhao R	Cell	2005	Saccharomyces cerevisiae
+S000000004	YAL005C	15798213	Yang PK	Mol Cell Biol	2005	Saccharomyces cerevisiae
+S000000004	YAL005C	15843375	Haslbeck M	J Biol Chem	2005	Saccharomyces cerevisiae
+S000000004	YAL005C	16095611	Graindorge JS	J Mol Biol	2005	Saccharomyces cerevisiae
+S000000004	YAL005C	16201971	Elbing K	Biochem J	2006	Saccharomyces cerevisiae
+S000000004	YAL005C	16219770	Yam AY	J Biol Chem	2005	Saccharomyces cerevisiae
+S000000004	YAL005C	16219779	Flom G	Genetics	2006	Saccharomyces cerevisiae
+S000000004	YAL005C	16221677	Shaner L	J Biol Chem	2005	Saccharomyces cerevisiae
+S0000
+8
+00004	YA

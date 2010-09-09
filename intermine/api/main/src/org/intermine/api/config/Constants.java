@@ -15,8 +15,11 @@ package org.intermine.api.config;
  *
  * @author Richard Smith
  */
-public class Constants
+public final class Constants
 {
+    private Constants() {
+    }
+
     /**
      * Batch size for the underlying objectstore
      */

@@ -99,7 +99,7 @@ public class TypeUtilTest extends TestCase
 
 
     public void testGetFieldInfosDynamic() throws Exception {
-        Class c = DynamicUtil.createObject(Collections.singleton(Company.class)).getClass();
+        Class<?> c = DynamicUtil.createObject(Collections.singleton(Company.class)).getClass();
 
         Map got = TypeUtil.getFieldInfos(c);
         assertEquals(new HashSet(Arrays.asList(new String[] {"id", "name", "vatNumber", "address", "oldContracts", "contractors", "CEO", "departments", "secretarys"})), got.keySet());
@@ -182,7 +182,7 @@ public class TypeUtilTest extends TestCase
     }
 
     public void testIsInstanceOf() throws Exception {
-        Manager man = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
+        Manager man = DynamicUtil.createObject(Manager.class);
         assertTrue(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.Manager"));
         assertTrue(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.Employee"));
         assertFalse(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.Company"));

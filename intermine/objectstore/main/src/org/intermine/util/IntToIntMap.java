@@ -30,7 +30,7 @@ public class IntToIntMap
     private static final int OUTER_MASK = ~INNER_MASK;
     private static final int PAGE_SIZE = INNER_MASK + 1;
 
-    private Map pages = new HashMap();
+    private Map<Integer, int[]> pages = new HashMap<Integer, int[]>();
     private int size = 0;
 
     /**
@@ -45,9 +45,9 @@ public class IntToIntMap
      * @param from any int
      * @param to any int - or -1 to effectively remove the mapping
      */
-    public void put(int from, int to) {
+    public synchronized void put(int from, int to) {
         Integer pageNo = new Integer(from & OUTER_MASK);
-        int[] page = (int[]) pages.get(pageNo);
+        int[] page = pages.get(pageNo);
         if (page == null) {
             page = new int[PAGE_SIZE + 1];
             for (int i = 0; i < PAGE_SIZE; i++) {
@@ -77,9 +77,9 @@ public class IntToIntMap
      * @param from any int
      * @return an int - -1 if there is no mapping present that matches
      */
-    public int get(int from) {
+    public synchronized int get(int from) {
         Integer pageNo = new Integer(from & OUTER_MASK);
-        int[] page = (int[]) pages.get(pageNo);
+        int[] page = pages.get(pageNo);
         if (page == null) {
             return -1;
         }
@@ -130,14 +130,14 @@ public class IntToIntMap
      *
      * @return the size
      */
-    public int size() {
+    public synchronized int size() {
         return size;
     }
 
     /**
      * Removes all mappings from the object.
      */
-    public void clear() {
+    public synchronized void clear() {
         pages.clear();
         size = 0;
     }
@@ -145,15 +145,16 @@ public class IntToIntMap
     /**
      * {@inheritDoc}
      */
-    public String toString() {
+    @Override
+    public synchronized String toString() {
         StringBuffer retval = new StringBuffer("{");
         boolean needComma = false;
-        TreeSet sortedKeys = new TreeSet(pages.keySet());
-        Iterator keyIter = sortedKeys.iterator();
+        TreeSet<Integer> sortedKeys = new TreeSet<Integer>(pages.keySet());
+        Iterator<Integer> keyIter = sortedKeys.iterator();
         while (keyIter.hasNext()) {
-            Integer pageNo = (Integer) keyIter.next();
+            Integer pageNo = keyIter.next();
             int pageNoInt = pageNo.intValue();
-            int[] page = (int[]) pages.get(pageNo);
+            int[] page = pages.get(pageNo);
             for (int i = 0; i < PAGE_SIZE; i++) {
                 if (page[i] != -1) {
                     if (needComma) {

@@ -10,8 +10,6 @@ package org.intermine.dataloader;
  *
  */
 
-import java.util.Collections;
-
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.DynamicUtil;
@@ -59,17 +57,19 @@ public class DirectDataLoader extends DataLoader
      * @return the new InterMineObject
      * @throws ClassNotFoundException if the given class doesn't exist
      */
+    @SuppressWarnings("unchecked")
     public InterMineObject createObject(String className) throws ClassNotFoundException {
-        return createObject(Class.forName(className));
+        return createObject((Class<? extends InterMineObject>) Class.forName(className));
     }
 
     /**
      * Create a new object of the given class and give it a unique ID.
      * @param c the class
+     * @param <C> the type of the class
      * @return the new InterMineObject
      */
-    public InterMineObject createObject(Class c) {
-        InterMineObject o = (InterMineObject) DynamicUtil.createObject(Collections.singleton(c));
+    public <C extends InterMineObject> C createObject(Class<C> c) {
+        C o = DynamicUtil.simpleCreateObject(c);
         o.setId(new Integer(idCounter));
         idCounter++;
         return o;

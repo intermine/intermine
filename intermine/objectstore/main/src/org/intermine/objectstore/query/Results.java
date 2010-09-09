@@ -10,22 +10,19 @@ package org.intermine.objectstore.query;
  *
  */
 
-import org.apache.log4j.Logger;
-import java.lang.ref.SoftReference;
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.apache.log4j.Logger;
 import org.intermine.objectstore.DataChangedException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.LazyCollection;
-import org.intermine.util.CacheMap;
 
 /**
  * Results representation as a List of ResultRows.
@@ -37,25 +34,16 @@ import org.intermine.util.CacheMap;
  * @author Richard Smith
  * @author Matthew Wakeling
  */
-public class Results extends AbstractList implements LazyCollection
+public class Results extends AbstractList<Object> implements LazyCollection<Object>
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(Results.class);
 
-    protected Query query;
-    protected ObjectStore os;
-    protected Map<Object, Integer> sequence;
+    protected ResultsBatches resultsBatches;
     protected boolean optimise = true;
     protected boolean explain = true;
     protected boolean prefetch = true;
 
-    protected int minSize = 0;
-    // TODO: update this to use ObjectStore.getMaxRows().
-    protected int maxSize = Integer.MAX_VALUE;
-    // -1 stands for "not estimated yet"
-    protected int estimatedSize = -1;
-    protected int originalMaxSize = maxSize;
-    protected int batchSize = 1000;
-    protected boolean initialised = false;
     protected boolean immutable = false;
 
     // Some prefetch stuff.
@@ -65,14 +53,6 @@ public class Results extends AbstractList implements LazyCollection
     // Basically, this keeps a tally of how many times in a row accesses have been sequential.
     // If sequential gets above a PREFETCH_SEQUENTIAL_THRESHOLD, then we prefetch the batch after
     // the one we are currently using.
-    protected SoftReference<List> thisBatchHolder;
-    protected SoftReference<List> nextBatchHolder;
-
-    protected int lastGetAtGetInfoBatch = -1;
-    protected ResultsInfo info;
-
-    // A map of batch number against a List of ResultsRows
-    protected Map batches = Collections.synchronizedMap(new CacheMap("Results batches"));
 
     /**
      * No argument constructor for testing purposes
@@ -82,7 +62,7 @@ public class Results extends AbstractList implements LazyCollection
     }
 
     /**
-     * Constructor for a Results object
+     * Constructor for a Results object.
      *
      * @param query the Query that produces this Results
      * @param os the ObjectStore that can be used to get results rows from
@@ -98,9 +78,22 @@ public class Results extends AbstractList implements LazyCollection
             throw new NullPointerException("os must not be null");
         }
 
-        this.query = query;
-        this.os = os;
-        this.sequence = sequence;
+        resultsBatches = new ResultsBatches(query, os, sequence);
+    }
+
+    /**
+     * Constructor for a Results object, given a ResultsBatches object.
+     *
+     * @param batches a ResultsBatches object that will back this new object
+     * @param optimise true if queries should be optimised
+     * @param explain true if queries should be explained
+     * @param prefetch true to switch on the PrefetchManager
+     */
+    public Results(ResultsBatches batches, boolean optimise, boolean explain, boolean prefetch) {
+        this.resultsBatches = batches;
+        this.optimise = optimise;
+        this.explain = explain;
+        this.prefetch = prefetch;
     }
 
     /**
@@ -151,7 +144,7 @@ public class Results extends AbstractList implements LazyCollection
      * @return the Query that produced this Results object
      */
     public Query getQuery() {
-        return query;
+        return resultsBatches.getQuery();
     }
 
     /**
@@ -160,7 +153,7 @@ public class Results extends AbstractList implements LazyCollection
      * @return the ObjectStore-specific object
      */
     public Map<Object, Integer> getSequence() {
-        return sequence;
+        return resultsBatches.getSequence();
     }
 
     /**
@@ -169,7 +162,7 @@ public class Results extends AbstractList implements LazyCollection
      * @return an ObjectStore
      */
     public ObjectStore getObjectStore() {
-        return os;
+        return resultsBatches.getObjectStore();
     }
 
     /**
@@ -183,23 +176,24 @@ public class Results extends AbstractList implements LazyCollection
      * @throws IndexOutOfBoundsException if end is beyond the number of rows in the results
      * @throws IllegalArgumentException if start &gt; end
      */
-    public List range(int start, int end) throws ObjectStoreException {
+    public List<Object> range(int start, int end) throws ObjectStoreException {
         if (start > end + 1) {
             throw new IllegalArgumentException("start=" + start + " > (end + 1)=" + (end + 1));
         }
 
         // If we know the size of the results (ie. have had a last partial batch), check that
         // the end is within range
-        if (end >= maxSize) {
-            throw new IndexOutOfBoundsException("(end + 1)=" + (end + 1) + " > size=" + maxSize);
+        if (end >= resultsBatches.getMaxSize()) {
+            throw new IndexOutOfBoundsException("(end + 1)=" + (end + 1) + " > size="
+                    + resultsBatches.getMaxSize());
         }
 
         int startBatch = getBatchNoForRow(start);
         int endBatch = getBatchNoForRow(end);
 
-        List ret = new ArrayList();
+        List<Object> ret = new ArrayList<Object>();
         for (int i = startBatch; i <= endBatch; i++) {
-            ret.addAll(getRowsFromBatch(i, start, end));
+            ret.addAll(resultsBatches.getRowsFromBatch(i, start, end, optimise, explain));
         }
 
         if (start - 1 == lastGet) {
@@ -212,30 +206,12 @@ public class Results extends AbstractList implements LazyCollection
             //LOG.debug("This access not sequential                            Result "
             //        + query.hashCode() + "         access " + start + " - " + end);
         }
-        if ((os != null)
+        if ((resultsBatches.getObjectStore() != null)
                 && prefetch
-                && os.isMultiConnection()
+                && resultsBatches.getObjectStore().isMultiConnection()
                 && (sequential > PREFETCH_SEQUENTIAL_THRESHOLD)
-                && (getBatchNoForRow(maxSize) > endBatch)
-                && !batches.containsKey(new Integer(endBatch + 1))) {
-            PrefetchManager.addRequest(this, endBatch + 1);
-        }
-        synchronized (this) {
-            if (sequential > PREFETCH_SEQUENTIAL_THRESHOLD) {
-                if (startBatch == getBatchNoForRow(end + 1) - 1) {
-                    thisBatchHolder = nextBatchHolder;
-                    nextBatchHolder = null;
-                }
-                if (thisBatchHolder != null) {
-                    thisBatchHolder.get();
-                }
-                if (nextBatchHolder != null) {
-                    nextBatchHolder.get();
-                }
-            } else {
-                thisBatchHolder = null;
-                nextBatchHolder = null;
-            }
+                && (getBatchNoForRow(resultsBatches.getMaxSize()) > endBatch)) {
+            resultsBatches.prefetch(endBatch + 1, optimise, explain);
         }
         lastGet = end;
         /*
@@ -255,108 +231,13 @@ public class Results extends AbstractList implements LazyCollection
     }
 
     /**
-     * Gets a range of rows from within a batch
-     *
-     * @param batchNo the batch number
-     * @param start the row to start from (based on total rows)
-     * @param end the row to end at (based on total rows) - returned List includes this row
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     * @throws IndexOutOfBoundsException if the batch is off the end of the results
-     * @return the rows in the range
-     */
-    protected List getRowsFromBatch(int batchNo, int start, int end) throws ObjectStoreException {
-        List batchList = getBatch(batchNo);
-
-        int startRowInBatch = batchNo * batchSize;
-        int endRowInBatch = startRowInBatch + batchSize - 1;
-
-        start = Math.max(start, startRowInBatch);
-        end = Math.min(end, endRowInBatch);
-
-        return batchList.subList(start - startRowInBatch, end - startRowInBatch + 1);
-    }
-
-    /**
-     * Gets a batch by whatever means - maybe batches, maybe the ObjectStore.
-     *
-     * @param batchNo the batch number to get (zero-indexed)
-     * @return a List which is the batch
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     * @throws IndexOutOfBoundsException if the batch is off the end of the results
-     */
-    protected List getBatch(int batchNo) throws ObjectStoreException {
-        List retval = (List) batches.get(new Integer(batchNo));
-        if (retval == null) {
-            retval = PrefetchManager.doRequest(this, batchNo);
-        }
-        return retval;
-    }
-
-    /**
-     * Gets a batch from the ObjectStore
-     *
-     * @param batchNo the batch number to get (zero-indexed)
-     * @return a List which is the batch
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    protected List fetchBatchFromObjectStore(int batchNo) throws ObjectStoreException {
-        int start = batchNo * batchSize;
-        int limit = batchSize;
-        //int end = start + batchSize - 1;
-        initialised = true;
-        // We now have 3 possibilities:
-        // a) This is a full batch
-        // b) This is a partial batch, in which case we have reached the end of the results
-        //    and can set size.
-        // c) An error has occurred - ie. we have gone beyond the end of the results
-
-        List rows = null;
-        try {
-            rows = os.execute(query, start, limit, optimise, explain, sequence);
-
-            synchronized (this) {
-                // Now deal with a partial batch, so we can update the maximum size
-                if (rows.size() != batchSize) {
-                    int size = start + rows.size();
-                    maxSize = (maxSize > size ? size : maxSize);
-                }
-                // Now deal with non-empty batch, so we can update the minimum size
-                if (!rows.isEmpty()) {
-                    int size = start + rows.size();
-                    minSize = (minSize > size ? minSize : size);
-                }
-
-                Integer key = new Integer(batchNo);
-                // Set holders, so our data doesn't go away too quickly
-                if (sequential > PREFETCH_SEQUENTIAL_THRESHOLD) {
-                    if (batchNo == getBatchNoForRow(lastGet + 1)) {
-                        thisBatchHolder = new SoftReference<List>(rows);
-                    } else if (batchNo == getBatchNoForRow(lastGet + 1) + 1) {
-                        nextBatchHolder = new SoftReference<List>(rows);
-                    }
-                }
-
-                batches.put(key, rows);
-            }
-        } catch (IndexOutOfBoundsException e) {
-            synchronized (this) {
-                if (rows == null) {
-                    maxSize = (maxSize > start ? start : maxSize);
-                }
-            }
-            throw e;
-        }
-
-        return rows;
-    }
-
-    /**
      * {@inheritDoc}
      * @param index of the ResultsRow required
      * @return the relevant ResultsRow as an Object
      */
+    @Override
     public Object get(int index) {
-        List resultList = null;
+        List<Object> resultList = null;
         try {
             resultList = range(index, index);
         } catch (DataChangedException e) {
@@ -377,8 +258,9 @@ public class Results extends AbstractList implements LazyCollection
      * @param end the index to end at (exclusive)
      * @return the sub-list
      */
-    public List subList(int start, int end) {
-        List ret = null;
+    @Override
+    public List<Object> subList(int start, int end) {
+        List<Object> ret = null;
         try {
             ret = range(start, end - 1);
         } catch (DataChangedException e) {
@@ -399,75 +281,17 @@ public class Results extends AbstractList implements LazyCollection
      * {@inheritDoc}
      * @return the number of rows in this Results object
      */
+    @Override
     public int size() {
-        //LOG.debug("size - starting                                       Result "
-        //        + query.hashCode() + "         size " + minSize + " - " + maxSize);
-        if ((minSize == 0) && (maxSize == Integer.MAX_VALUE)) {
-            // Fetch the first batch, as it is reasonably likely that it will cover it.
-            try {
-                get(0);
-            } catch (IndexOutOfBoundsException e) {
-                // Ignore - that means there are NO rows in this results object.
-            }
-            return size();
-        } else if (minSize * 2 + batchSize < maxSize) {
-            // Do a count, because it will probably be a little faster.
-            try {
-                maxSize = os.count(query, sequence);
-            } catch (DataChangedException e) {
-                ConcurrentModificationException e2 = new ConcurrentModificationException("Object"
-                        + "Store error has occurred (in size) - data changed");
-                e2.initCause(e);
-                throw e2;
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException("ObjectStore error has occured (in size)", e);
-            }
-            minSize = maxSize;
-            //LOG.debug("size - returning                                      Result "
-            //        + query.hashCode() + "         size " + maxSize);
-        } else {
-            int iterations = 0;
-            while (minSize < maxSize) {
-                try {
-                    int toGt = (maxSize == originalMaxSize ? minSize * 2
-                            : (minSize + maxSize) / 2);
-                    //LOG.debug("size - getting " + toGt
-                    //        + "                                   Result "
-                    //        + query.hashCode() + "         size " + minSize + " - " + maxSize);
-                    get(toGt);
-                } catch (IndexOutOfBoundsException e) {
-                    // Ignore - this will happen if the end of a batch lies on the
-                    // end of the results
-                    //LOG.debug("size - Exception caught                               Result "
-                    //        + query.hashCode() + "         size " + minSize + " - " + maxSize
-                    //        + " " + e);
-                }
-                iterations++;
-            }
-            //LOG.debug("size - returning after " + (iterations > 9 ? "" : " ") + iterations
-            //        + " iterations                  Result "
-            //        + query.hashCode() + "         size " + maxSize);
-        }
-        return maxSize;
+        return resultsBatches.size(optimise, explain);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isEmpty() {
-        if (minSize > 0) {
-            return false;
-        }
-        if (maxSize <= 0) {
-            return true;
-        }
-        // Okay, we don't know anything. Fetch the first batch.
-        try {
-            get(0);
-        } catch (IndexOutOfBoundsException e) {
-            // Ignore - that means there are NO rows in this results object.
-        }
-        return isEmpty();
+        return resultsBatches.isEmpty(optimise, explain);
     }
 
     /**
@@ -477,11 +301,7 @@ public class Results extends AbstractList implements LazyCollection
      * @return a ResultsInfo object
      */
     public ResultsInfo getInfo() throws ObjectStoreException {
-        if ((info == null) || ((lastGet % batchSize) != lastGetAtGetInfoBatch)) {
-            info = os.estimate(query);
-            lastGetAtGetInfoBatch = lastGet % batchSize;
-        }
-        return new ResultsInfo(info, minSize, maxSize);
+        return resultsBatches.getInfo();
     }
 
     /**
@@ -493,14 +313,7 @@ public class Results extends AbstractList implements LazyCollection
         if (immutable) {
             throw new IllegalArgumentException("Cannot change settings of Results object in cache");
         }
-        if (initialised) {
-            throw new IllegalStateException("Cannot set batchSize if rows have been retrieved");
-        }
-        if (size > os.getMaxLimit()) {
-            throw new IllegalArgumentException("Batch size cannot be greater os.query.max-limit"
-                    + " property (" + os.getMaxLimit() + ") tried to set to: " + size);
-        }
-        batchSize = size;
+        resultsBatches.setBatchSize(size);
     }
 
     /**
@@ -509,7 +322,7 @@ public class Results extends AbstractList implements LazyCollection
      * @return an int
      */
     public int getBatchSize() {
-        return batchSize;
+        return resultsBatches.getBatchSize();
     }
 
     /**
@@ -519,13 +332,13 @@ public class Results extends AbstractList implements LazyCollection
      * @return the batch number
      */
     protected int getBatchNoForRow(int row) {
-        return (int) (row / batchSize);
+        return resultsBatches.getBatchNoForRow(row);
     }
 
     /**
      * {@inheritDoc}
      */
-    public List asList() {
+    public List<Object> asList() {
         return this;
     }
 
@@ -535,13 +348,14 @@ public class Results extends AbstractList implements LazyCollection
      * @return a boolean
      */
     public boolean isSingleBatch() {
-        return maxSize < batchSize;
+        return resultsBatches.isSingleBatch();
     }
 
     /**
      * {@inheritDoc}
      */
-    public Iterator iterator() {
+    @Override
+    public Iterator<Object> iterator() {
         return new Iter();
     }
 
@@ -552,27 +366,26 @@ public class Results extends AbstractList implements LazyCollection
      * @param from the index of the first object to be fetched
      * @return an Interator
      */
-    public Iterator iteratorFrom(int from) {
+    public Iterator<Object> iteratorFrom(int from) {
         Iter iter = new Iter();
         iter.cursor = from;
         return iter;
     }
 
-    private class Iter implements Iterator
+    private class Iter implements Iterator<Object>
     {
         /**
          * Index of element to be returned by subsequent call to next.
          */
         int cursor = 0;
-        List hardThisBatchHolder;
-        List hardNextBatchHolder;
 
         Object nextObject = null;
+        Object thisBatch, nextBatch;
 
         public boolean hasNext() {
             //LOG.debug("iterator.hasNext                                      Result "
             //        + query.hashCode() + "         access " + cursor);
-            if (cursor < minSize) {
+            if (cursor < resultsBatches.getMinSize()) {
                 return true;
             }
             if (nextObject != null) {
@@ -583,13 +396,6 @@ public class Results extends AbstractList implements LazyCollection
                 return true;
             } catch (IndexOutOfBoundsException e) {
                 // Ignore - it means that we should return false;
-            } finally {
-                if (thisBatchHolder != null) {
-                    hardThisBatchHolder = thisBatchHolder.get();
-                }
-                if (nextBatchHolder != null) {
-                    hardNextBatchHolder = nextBatchHolder.get();
-                }
             }
             return false;
         }
@@ -606,21 +412,27 @@ public class Results extends AbstractList implements LazyCollection
                     retval = get(cursor);
                 } catch (IndexOutOfBoundsException e) {
                     throw (new NoSuchElementException());
-                } finally {
-                    if (thisBatchHolder != null) {
-                        hardThisBatchHolder = thisBatchHolder.get();
-                    }
-                    if (nextBatchHolder != null) {
-                        hardNextBatchHolder = nextBatchHolder.get();
-                    }
                 }
             }
             cursor++;
+            int currentBatchNo = getBatchNoForRow(cursor);
+            thisBatch = resultsBatches.batches.get(currentBatchNo);
+            nextBatch = resultsBatches.batches.get(currentBatchNo + 1);
             return retval;
         }
 
         public void remove() {
             throw (new UnsupportedOperationException());
         }
+    }
+
+    /**
+     * Returns the underlying ResultsBatches object that this object is using, in order to create
+     * more Results objects (with different settings) from it.
+     *
+     * @return a ResultsBatches object
+     */
+    public ResultsBatches getResultsBatches() {
+        return resultsBatches;
     }
 }

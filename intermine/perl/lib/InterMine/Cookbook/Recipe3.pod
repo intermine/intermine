@@ -1,0 +1,178 @@
+=pod
+
+=head1 NAME
+
+InterMine::Cookbook::Recipe3 - More Constraints
+
+=head1 SYNOPSIS
+
+  # Get all papers published by Arnosti, Bhat and Carmena
+  # on Even Skipped in D. Melanogater
+
+  use InterMine ('www.flymine.org');
+
+  my $query = InterMine->new_query;
+
+  # Specifying a name and a description is purely optional
+  $query->name('Tutorial 3 Query');
+  $query->description('All the publications by Arnosti, Bhat and Carmena on Eve in D. Melanogaster');
+
+  $query->add_view(qw/
+      Gene.publications.title
+      Gene.publications.year
+      Gene.publications.firstAuthor
+  /);
+
+  $query->add_constraint(
+     path  => 'Gene',
+     op    => 'LOOKUP',
+     value => 'eve',
+     extra_value => 'D. melanogaster',
+  );
+
+  $query->add_constraint(
+     path   => 'Gene.publications.firstAuthor',
+     op     => 'IN',
+     values => [
+         'Arnosti DN',
+         'Bhat VM',
+         'Carmena A',
+     ],
+  );
+
+  my $results = $query->results(as => 'string');
+  print $results;
+
+  # Get all genes that interact with Even Skipped and
+  # are annotated as affecting embryonic development
+  # or which have not yet been annotated
+
+  my $query2 = InterMine->new_query;
+
+  # Specifying a name and a description is purely optional
+  $query2->name('Tutorial 3 Query no 2');
+  $query2->description('All genes interacting with Even Skipped that affect embryonic development, or have not been annotated');
+
+  $query2->add_view(qw/
+      Gene.name
+      Gene.symbol
+  /);
+
+  $query2->add_constraint(
+     path => 'Gene.annotations',
+     type => 'PhenotypeAnnotation',
+  );
+
+  my $con1 = $query2->add_constraint(
+     path  => 'Gene.annotations.developmentTerm',
+     op    => 'IS NULL',
+  );
+
+  my $con2 = $query2->add_constraint(
+     path  => 'Gene.annotations.developmentTerm',
+     op    => 'CONTAINS',
+     value => 'embryonic',
+  );
+
+  my $con3 = $query2->add_constraint(
+     path  => 'Gene.interactions.interactingGenes',
+     op    => 'LOOKUP',
+     value => 'eve',
+     extra_value  => 'D. melanogaster',
+  );
+
+  $query->logic( ($con1 | $con2) & $con3 );
+
+  my $results = $query2->results(as => 'string');
+  print $results;
+
+=head1 DESCRIPTION
+
+There are a wide range of ways that paths can be constrained so
+that you can find what you're looking for. These fall under five
+broad categories, defined primarily by their operators:
+
+=head2 Unary Constraints - constraints which do not take a value
+
+Any string attribute or class can be NULL (absent) - only Integers
+are always present. In the above example, we test for the absense of
+a developmentTerm with the C<IS NULL> operator
+
+The Unary constraints are: C<IS NULL>, C<IS NOT NULL>
+
+=head2 Binary Constraints - constraints which take a value
+
+This is the largest group of constraints, and the most familiar. These
+constraints only operate on attributes, either on strings (text fields) or
+integers (numbers)
+
+=head3 String operators:
+
+C<=>, C<!=>, C<CONTAINS>, C<< > >>, C<< < >>
+
+=head3 Integer operators
+
+C<=>, C<!=>, C<< < >>, C<< > >>, C<< <= >>, C<< >= >>
+
+=head2 Ternary Constraints - constraints which can take two values
+
+There is only one of these at present: C<LOOKUP>. This operates over all
+the fields on a class, so its path must be a path to a classm such as C<Gene>,
+as in the above examples, where both C<Gene> and C<Gene.interactions.interactingGenes>
+are paths to Gene objects. LOOKUP is handy because you don't need to remember
+which specific field a particular piece of information is in; for example C<eve>
+could be the symbol, or primary identifier, or secondary identifier for
+the gene we are looking for, but all those fields will be searched, and if one
+matches then the constraint as a whole will match. C<LOOKUP> is the standard
+way of determining an object's identity, rather than interrogating a
+particular field.
+
+Because this can lead to ambiguities, the C<LOOKUP> constraint allows an C<extra_value>,
+which limits the constraint within a particular organism. This is especially
+useful when constraining genes, one of its main uses, as genes have symbols
+that frequently share values with genes from different organisms.
+
+=head2 Multi Value constraints - constraints that can take more than one value
+
+As the name implies, these constraints can have multiple values. There are two
+of these, C<IN> and C<NOT IN>, and they take a list of values
+(passed as an array reference). C<IN> demand the value of the attribute
+be one of the values, while C<NOT IN> requires it be none of them.
+
+=head2 Sub Class constraints - constraints on the type of the path
+
+The model that conceptualises the database schema is hierarchical, and
+reflects the relationships between the different objects in part through
+inheritance. Sub Class contraints allow you to specify a subclass of a
+class to constrain a path to. This has two possible uses:
+
+=over
+
+=item
+
+Limit results to only those items of this subclass
+
+=item
+
+Allow other paths to use the fields of the subclass as if they were the parent's
+
+  ie: Normally C<Gene.annotations.developmentTerm> would be invalid, but
+      with the above subclass constraint, it is valid, since C<developmentTerm>
+      is a field on the PhenotypeAnnotation class, which is a subclass of
+      Annotation.
+
+=back
+
+Subclass constraints do not have codes, and you cannot use them in the logic
+(ie. they are always active). They also do not have operators, but are called
+by specifying a C<type> instead. Obviously, this type must be a subclass
+of the type of the path it constrains.
+
+=head1 CONCLUSION
+
+There is a wide variety of different constraint types, which gives InterMine
+queries flexibility and considerable expressive power. Other mechanisms for
+defining the query are discussed in Recipe4.
+
+=cut
+

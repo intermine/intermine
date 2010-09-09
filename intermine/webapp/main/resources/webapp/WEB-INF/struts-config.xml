@@ -10,7 +10,7 @@
     <form-bean name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryForm"/>
     <form-bean name="modifyBagForm" type="org.intermine.web.struts.ModifyBagForm"/>
     <form-bean name="modifyTemplateForm" type="org.intermine.web.struts.ModifyTemplateForm"/>
-    <form-bean name="mainForm" type="org.intermine.web.struts.QueryBuilderForm"/>
+    <form-bean name="queryBuilderConstraintForm" type="org.intermine.web.struts.QueryBuilderConstraintForm"/>
     <form-bean name="queryClassSelectForm" type="org.intermine.web.struts.QueryClassSelectForm"/>
     <form-bean name="changeTableSizeForm" type="org.intermine.web.struts.ChangeTableSizeForm"/>
     <form-bean name="saveBagForm" type="org.intermine.web.struts.SaveBagForm"/>
@@ -152,13 +152,13 @@
     <action path="/collectionDetails" type="org.intermine.web.struts.CollectionDetailsAction">
       <forward name="results" redirect="true" path="/results.do"/>
     </action>
-    <action path="/mainChange" type="org.intermine.web.struts.QueryBuilderChange" parameter="method">
+    <action path="/queryBuilderChange" type="org.intermine.web.struts.QueryBuilderChange" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
-      <forward name="browserLines" path="/mainBrowserLines.jsp"/>
-      <forward name="mainConstraint" path="mainConstraint.tile"/>
-      <forward name="queryPaths" path="mainPaths.tile"/>
+      <forward name="browserLines" path="/queryBuilderBrowserLines.jsp"/>
+      <forward name="queryBuilderConstraint" path="queryBuilderConstraint.tile"/>
+      <forward name="queryPaths" path="queryBuilderSummary.tile"/>
     </action>
-    <action path="/viewChange" type="org.intermine.web.struts.ViewChange" parameter="method">
+    <action path="/queryBuilderViewChange" type="org.intermine.web.struts.QueryBuilderViewChange" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
     <action path="/csvExportAction" name="csvExportForm" type="org.intermine.web.struts.TableExportAction" parameter="method"/>
@@ -231,7 +231,7 @@
       <!-- continue waiting -->
       <forward name="waiting" path="waiting.page"/>
     </action>
-    <action path="/viewAction" name="emptyForm" type="org.intermine.web.struts.ViewAction">
+    <action path="/queryBuilderViewAction" name="emptyForm" type="org.intermine.web.struts.QueryBuilderViewAction">
       <forward name="waiting" redirect="false" path="/pollQuery.do"/>
     </action>
     <action path="/createTemplate" type="org.intermine.web.struts.CreateTemplateAction">
@@ -305,7 +305,7 @@
       <forward name="classChooser" path="classChooser.page"/>
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
-    <action path="/mainAction" name="mainForm" type="org.intermine.web.struts.QueryBuilderAction" input="query" parameter="action">
+    <action path="/queryBuilderConstraintAction" name="queryBuilderConstraintForm" type="org.intermine.web.struts.QueryBuilderConstraintAction" input="query" parameter="action">
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
     <action path="/loginAction" name="loginForm" type="org.intermine.web.struts.LoginAction" input="login" parameter="action">
@@ -366,11 +366,11 @@
     <!-- These should all start with /init for session handling purposes -->
     <action path="/initLogin" name="loginForm" validate="false" type="org.intermine.web.struts.LoginController">
     </action>
-    <action path="/initMain" type="org.intermine.web.struts.QueryBuilderController">
+    <action path="/initQueryBuilder" type="org.intermine.web.struts.QueryBuilderController">
     </action>
-    <action path="/initMainConstraint" type="org.intermine.web.struts.QueryBuilderConstraintController">
+    <action path="/initQueryBuilderConstraint" type="org.intermine.web.struts.QueryBuilderConstraintController">
     </action>
-    <action path="/initMainPaths" type="org.intermine.web.struts.QueryBuilderPathsController">
+    <action path="/initQueryBuilderSummary" type="org.intermine.web.struts.QueryBuilderSummaryController">
     </action>
     <action path="/initInlineTagEditor" type="org.intermine.web.struts.InlineTagEditorController">
     </action>

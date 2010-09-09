@@ -13,6 +13,7 @@ package org.intermine.dataloader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
+import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStoreFactory;
 
 /**
@@ -112,10 +113,16 @@ public class ObjectStoreDataLoaderTask extends Task
             PriorityConfig.verify(iw.getModel(), allSources);
             iw.setIgnoreDuplicates(ignoreDuplicates);
             if (queryClass != null) {
+                Class<?> tmpQueryClass = Class.forName(queryClass);
+                if (!FastPathObject.class.isAssignableFrom(tmpQueryClass)) {
+                    throw new ClassCastException("Class " + queryClass + " is not a subclass of "
+                            + "FastPathObject");
+                }
+                @SuppressWarnings("unchecked") Class<? extends FastPathObject> tmp2QueryClass =
+                    (Class) tmpQueryClass;
                 new ObjectStoreDataLoader(iw).process(ObjectStoreFactory.getObjectStore(source),
-                                                      iw.getMainSource(sourceName, sourceType),
-                                                      iw.getSkeletonSource(sourceName, sourceType),
-                                                      Class.forName(queryClass));
+                        iw.getMainSource(sourceName, sourceType), iw.getSkeletonSource(sourceName,
+                                sourceType), tmp2QueryClass);
 
             } else {
                 new ObjectStoreDataLoader(iw).process(ObjectStoreFactory.getObjectStore(source),

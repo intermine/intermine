@@ -22,9 +22,13 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.api.results.Column;
+import org.intermine.api.results.ResultElement;
+import org.intermine.api.results.flatouterjoins.MultiRow;
+import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
@@ -49,9 +53,8 @@ public class EmployeeExporter implements TableHttpExporter
      * @param response The HTTP response we are creating
      * @param form the form containing the columns paths to export
      */
-    public void export(PagedTable pt, HttpServletRequest request,
-                                HttpServletResponse response,
-                                TableExportForm form) {
+    public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
+            @SuppressWarnings("unused") TableExportForm form) {
 
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=exployee.txt");
@@ -65,13 +68,13 @@ public class EmployeeExporter implements TableHttpExporter
         }
 
         try {
-            List columns = pt.getColumns();
-            List rowList = pt.getAllRows();
+            List<Column> columns = pt.getColumns();
+            List<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>> rowList = pt.getAllRows();
 
             for (int rowIndex = 0; rowIndex < rowList.size(); rowIndex++) {
-                List row;
+                MultiRow<ResultsRow<MultiRowValue<ResultElement>>> row;
                 try {
-                    row = (List) rowList.get(rowIndex);
+                    row = rowList.get(rowIndex);
                 } catch (RuntimeException e) {
                     // re-throw as a more specific exception
                     if (e.getCause() instanceof ObjectStoreException) {
@@ -81,13 +84,14 @@ public class EmployeeExporter implements TableHttpExporter
                 }
 
                 for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-                    Column thisColumn = (Column) columns.get(columnIndex);
+                    Column thisColumn = columns.get(columnIndex);
 
                     // the column order from PagedTable.getList() isn't necessarily the order that
                     // the user has chosen for the columns
                     int realColumnIndex = thisColumn.getIndex();
 
-                    Employee employee = (Employee) row.get(realColumnIndex);
+                    // FIXME: The next line is utterly broken.
+                    Employee employee = (Employee) ((Object) row.get(realColumnIndex));
 
                     printWriter.println("Employee:");
                     printWriter.println("  name: " + employee.getName());
@@ -109,7 +113,6 @@ public class EmployeeExporter implements TableHttpExporter
     /**
      * For EmployeeExporter we always return an empty list because all columns and classes are
      * equal for this exporter.
-     * {@inheritDoc}
      */
     public List<Path> getExportClassPaths(@SuppressWarnings("unused") PagedTable pt) {
         return new ArrayList<Path>();
@@ -127,9 +130,9 @@ public class EmployeeExporter implements TableHttpExporter
      * {@inheritDoc}
      */
     public boolean canExport(PagedTable pt) {
-        List columns = pt.getColumns();
+        List<Column> columns = pt.getColumns();
         for (int i = 0; i < columns.size(); i++) {
-            Object columnType = ((Column) columns.get(i)).getType();
+            Object columnType = columns.get(i).getType();
             if (columnType instanceof ClassDescriptor) {
                 ClassDescriptor cd = (ClassDescriptor) columnType;
                 if (Employee.class.isAssignableFrom(cd.getType())) {

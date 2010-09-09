@@ -153,8 +153,7 @@ sub _get_object_field_by_name
            $value - the new value (must not be undefined)
 
 =cut
-sub set
-{
+sub set {
   my $self = shift;
   my $name = shift;
   my $value = shift;
@@ -171,18 +170,19 @@ sub set
 
   if (ref $value) {
     if (ref $value eq 'ARRAY') {
-      if (ref $field ne 'InterMine::Model::Collection') {
-        die "tried to set field '$name' in class '", $self->to_string(),
-            "' to something other than type: ", $field->field_type(), "\n";
+      if ( not $field->isa('InterMine::Model::Collection') ) {
+        die "tried to set field '$name' in class '",
+	    $self->to_string(),
+            "' to something other than type: ",
+	    ref $field, "\n";
       }
-      
+
       my @items = grep {defined} @$value;
       unless (@items == @$value) {
 	  warn "Undefined items passed as value";
       }
 
       push @{$self->{$name}}, $_ for @items;
-
 
       my $collection_hash_name = _get_collection_hash_name($name);
       my %collection_hash = map {$_ => $_} @items;
@@ -199,12 +199,7 @@ sub set
             if (!defined $current_rev_ref || $current_rev_ref != $self) {
               $other_item->set($field->reverse_reference_name(), $self);
             }
-        #  } else {
-        #   if ($field->is_many_to_many()) {
-        #      $other_item->_add_to_collection($field->reverse_reference_name(), $self);
-        #   }    
           }
-        
         } else {
           die "collection '$name' in class '", $self->to_string(),
             "' must contain items of type: ", $field->referenced_type_name(),
@@ -215,22 +210,17 @@ sub set
     } else {
       if (ref $field ne 'InterMine::Model::Reference') {
         die "tried to set field '$name' in class '", $self->to_string(),
-           "' to something other than type: ", $field->field_type(), "\n";
+           "' to something other than type: ", $field->type(), "\n";
       }
 
       if (!defined $self->{$name} || $self->{$name} != $value) {
         $self->{$name} = $value;
-
-        #if ($field->is_many_to_one()) {
-          # add this Item to the collection in the other Item
-        #  $value->_add_to_collection($field->reverse_reference_name(), $self);
-        #}
       }
     }
   } else {
     if (ref $field ne 'InterMine::Model::Attribute') {
       die "tried to set field '$name' in class '", $self->to_string(),
-          "' to something other than type: ", $field->field_type(), "\n";
+          "' to something other than type: ", $field->type(), "\n";
     }
 
     $self->{$name} = $value;
@@ -247,26 +237,27 @@ sub set
  Return  : the value
 
 =cut
-sub get
-{
-  my $self = shift;
-  my $fieldname = shift;
-  my $field = $self->_get_object_field_by_name($fieldname);
+sub get {
+    my $self = shift;
+    my $fieldname = shift;
+    my $field = $self->_get_object_field_by_name($fieldname);
 
-  if (!defined $field) {
-    die qq(object ") . $self->to_string() . qq(" doesn't have a field named: $fieldname\n);
-  }
-
-  my $retval = $self->{$fieldname};
-  if (defined $retval) {
-    return $retval;
-  } else {
-    if ($field->field_type() eq 'collection') {
-      return [];
-    } else {
-      return undef;
+    if (!defined $field) {
+	die qq(object ") .
+	    $self->to_string() .
+	    qq(" doesn't have a field named: $fieldname\n);
     }
-  }
+
+    my $retval = $self->{$fieldname};
+    if (defined $retval) {
+	return $retval;
+    } else {
+	if ($field->isa('InterMine::Model::Collection')) {
+	    return [];
+	} else {
+	    return undef;
+	}
+    }
 }
 
 sub _get_collection_hash_name

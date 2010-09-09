@@ -26,8 +26,11 @@ import org.apache.log4j.Logger;
  * @author Mark Woodbridge
  */
 
-public class ObjectStoreWriterFactory
+public final class ObjectStoreWriterFactory
 {
+    private ObjectStoreWriterFactory() {
+    }
+
     private static final Logger LOG = Logger.getLogger(ObjectStoreWriterFactory.class);
 
     /**
@@ -42,7 +45,7 @@ public class ObjectStoreWriterFactory
         if (alias == null) {
             throw new NullPointerException("ObjectStoreWriter alias cannot be null");
         }
-        if (alias.equals("")) {
+        if ("".equals(alias)) {
             throw new IllegalArgumentException("ObjectStoreWriter alias cannot be empty");
         }
         Properties props = PropertiesUtil.getPropertiesStartingWith(alias);
@@ -70,8 +73,8 @@ public class ObjectStoreWriterFactory
         }
         ObjectStoreWriter osw = null;
         try {
-            Class cls = Class.forName(clsName);
-            Constructor c = cls.getConstructor(new Class[] {ObjectStore.class});
+            Class<?> cls = Class.forName(clsName);
+            Constructor<?> c = cls.getConstructor(new Class[] {ObjectStore.class});
             osw = (ObjectStoreWriter) c.newInstance(new Object[] {os});
         } catch (ClassNotFoundException e) {
             throw new ObjectStoreException("Cannot find specified ObjectStoreWriter class '"
@@ -95,8 +98,8 @@ public class ObjectStoreWriterFactory
             String batchWriterClass = props.getProperty("batchWriter");
             if (batchWriterClass != null) {
                 try {
-                    Class cls = Class.forName(batchWriterClass);
-                    Constructor c = cls.getConstructor(new Class[] {});
+                    Class<?> cls = Class.forName(batchWriterClass);
+                    Constructor<?> c = cls.getConstructor(new Class[] {});
                     BatchWriter batchWriter = (BatchWriter) c.newInstance(new Object[] {});
                     ((ObjectStoreWriterInterMineImpl) osw).setBatchWriter(batchWriter);
                 } catch (Exception e) {

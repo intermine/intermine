@@ -20,10 +20,10 @@ import org.intermine.util.Util;
  *
  * @author Matthew Wakeling
  */
-public class BagConstraint extends Constraint
+public class BagConstraint extends Constraint implements ConstraintWithBag
 {
     protected QueryNode qn;
-    protected Collection bag;
+    protected Collection<?> bag;
     protected ObjectStoreBag osb;
 
     /**
@@ -34,7 +34,7 @@ public class BagConstraint extends Constraint
      * @param op the operation
      * @param bag a Collection that represents the bag
      */
-    public BagConstraint(QueryNode qn, ConstraintOp op, Collection bag) {
+    public BagConstraint(QueryNode qn, ConstraintOp op, Collection<?> bag) {
         if (qn == null) {
             throw new NullPointerException("qe cannot be null");
         }
@@ -93,7 +93,7 @@ public class BagConstraint extends Constraint
      *
      * @return a Set of objects in the bag
      */
-    public Collection getBag() {
+    public Collection<?> getBag() {
         return bag;
     }
 
@@ -109,6 +109,7 @@ public class BagConstraint extends Constraint
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof BagConstraint) {
             BagConstraint bc = (BagConstraint) obj;
@@ -122,6 +123,7 @@ public class BagConstraint extends Constraint
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return (bag == null ? osb.hashCode() : bag.hashCode()) + 5 * qn.hashCode();
     }

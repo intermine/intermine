@@ -8,22 +8,38 @@
 
 <!-- template.jsp -->
 
-<c:set var="index" value="${0}"/>
+
+<%@page import="java.util.List"%><c:set var="index" value="${0}"/>
 
 <tiles:importAttribute/>
+<tiles:importAttribute name="builder" scope="request" ignore="true"/>
 <html:xhtml/>
 <script type="text/javascript" src="js/templateForm.js"></script>
 <script type="text/javascript" src="js/autocompleter.js"></script>
 <link rel="stylesheet" href="css/autocompleter.css" type="text/css"/>
 <link rel="stylesheet" href="css/template.css" type="text/css"/>
 
+<script language="javascript">
+var previousConstraintsOrder = '';
+
+jQuery(document).ready(function(){
+	jQuery('#constraintList').sortable({dropOnEmpty:true,update:function() {
+    	    reorderConstraintsOnServer();
+        }
+	});
+    recordCurrentConstraintsOrder();
+});
+  
+
+</script>
+
+<c:choose>
+<c:when test="${!empty templateQuery}">
 <%-- object trail --%>
 <tiles:get name="objectTrail.tile"/>
-
 <div class="body" align="center">
-<im:boxarea stylename="plainbox" fixedWidth="60%">
+<im:boxarea stylename="plainbox" fixedWidth="90%">
 <html:form action="/templateAction">
-
     <%-- template title --%>
     <h2 class="templateTitle">
         <c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />
@@ -36,254 +52,260 @@
 
     <%-- description --%>
     <div class="templateDescription">${templateQuery.description}</div>
-
-    <ol class="templateForm">
-
+    <div class="templateFormContainer">
+    <ol class="templateForm" id="constraintList">
         <%-- constraint list --%>
-        <c:forEach items="${templateQuery.editableNodes}" var="node">
-
-            <%-- what's this loop --%>
-            <c:forEach items="${constraints[node]}" var="con" >
-
+            <c:forEach items="${dcl}" var="dec" >
                 <c:set var="index" value="${index+1}"/>
-                <c:set var="validOps" value="${displayConstraints[con].validOps}"/>
-                <c:set var="fixedOps" value="${displayConstraints[con].fixedOpIndices}"/>
-                <c:set var="options" value="${displayConstraints[con].optionsList}"/>
-                <c:remove var="bags"/>
-                <c:remove var="bagType"/>
-                <c:if test="${! empty constraintBags[con]}">
-                  <c:set var="bags" value="${constraintBags[con]}"/>
-                  <c:set var="bagType" value="${constraintBagTypes[con]}"/>
+                <li id="constraintElement${index}_${index}">
+                <%-- builder=yes means we are in template preview --%>
+                <c:if test="${!empty builder && builder=='yes'}">
+                <div style="border: 1px solid #bbb;" onmouseover="this.style.border='1px solid #444';this.style.cursor='move';" 
+                    onmouseout="this.style.border='1px solid #bbb';this.style.cursor='default';">
                 </c:if>
-                <c:if test="${!empty con.description}">
-                  <li class="firstLine"><c:if test="${fn:length(templateQuery.editableNodes) > 1}"><span><c:out value="[${index}]"/></span></c:if><i><c:out value="${con.description}"/></i></li>
+                <%-- constraint name --%>
+            <table class="templateConstraint">
+              <tr>
+
+                <c:set var="constraintHeadingClass" value=""/>
+                <c:if test="${dec.disabled}">
+                    <c:set var="constraintHeadingClass" value="constraintHeadingDisabled"/>
                 </c:if>
-                <li>
-
-               <%-- this should be moved to the js file --%>
-              <script type="text/javascript">
-              <!--
-                   fixedOps = new Array();
-                   <c:forEach items="${fixedOps}" var="op" varStatus="oi">
-                     fixedOps[${oi.count}] = "<c:out value="${op}"/>";
-                   </c:forEach>
-                    //-->
-              </script>
-
-              <%-- number --%>
-              <c:if test="${empty con.description}">
-                <c:if test="${fn:length(templateQuery.editableNodes) > 1}"><span><c:out value="[${index}]"/></span></c:if>
-              </c:if>
-
-              <%-- constraint name --%>
-              <label>
-                <c:out value="${displayConstraints[con].name}"/>:
-              </label>
-
-              <%-- operator --%>
-              <c:choose>
-                <c:when test="${fn:length(validOps) == 1}">
-                  <input type="hidden" name="attributeOps(${index})" value="18"/>
-                </c:when>
-                <c:otherwise>
-                  <span valign="top">
-                    <html:select property="attributeOps(${index})" onchange="updateConstraintForm(${index-1}, document.templateForm['attributeOps(${index})'], document.templateForm['attributeOptions(${index})'], document.templateForm['attributeValues(${index})'])">
-                      <c:forEach items="${validOps}" var="op">
-                        <html:option value="${op.key}">
-                          <c:out value="${op.value}"/>
-                        </html:option>
-                      </c:forEach>
-                    </html:select>
-                  </span>
-                </c:otherwise>
-              </c:choose>
-
-              <%-- autocomplete --%>
-              <span nowrap>
-                <span id="operandEditSpan${index-1}">
-
-                  <c:set var="pathString" value="${node.pathString}"/>
-                  <c:set var="classDesc" value="${classDesc}"/>
-                  <c:set var="fieldDesc" value="${fieldDesc}"/>
-                  <c:set var="acPath" value="${classDesc[pathString]}.${fieldDesc[pathString]}"/>
-                  <c:set var="hasAutoC" value="0"/>
-
-                  <!-- TODO this shouldn't need to loop through map each time -->
-                  <c:forEach items="${autoCompleterMap[acPath]}" var="useAC">
-                    <%-- exist for this field a autocompleter --%>
-                    <c:if test="${!empty useAC  and hasAutoC eq 0}">
-                      <input name="attributeValues(${index})" id="attributeId_${index}" size="45" autocomplete="off"
-                             style="background:#ffffc8"
-                             value="${con.displayValue}"
-                             onKeyDown="getId(this.id); isEnter(event);"
-                             onKeyUp="readInput(event, '${classDesc[pathString]}', '${fieldDesc[pathString]}');"
-                             onMouseOver="setMouseOver(${index});"
-                             onMouseOut="setMouseOver(0);"
-                             onBlur="if(MOUSE_OVER != ${index}) { removeList(); }"/>
-                      <div class="error_auto_complete" id="attributeId_${index}_error" tabindex="-1"></div>
-                      <iframe width="100%" height="0" id="attributeId_${index}_IEbugFixFrame" tabindex="-1"
-                              marginheight="0" marginwidth="0" frameborder="0" style="position:absolute;" ></iframe>
-                      <div class="auto_complete" id="attributeId_${index}_display" tabindex="-1"
-                           onMouseOver="setMouseOver(${index});"
-                           onMouseOut="setMouseOver(0);"
-                           onBlur="if(MOUSE_OVER != ${index}) { removeList(); }"></div>
-                      <c:set var="hasAutoC" value="1"/>
+                
+                <td><div class="constraint_${index} ${constraintHeadingClass}"><span class="templateConstraintPath"> <c:out value="${dec.title}" />
+                </span> <c:if test="${not empty dec.description}">
+                  <span class="templateConstraintDescription"><c:out value=" - ${dec.description}" /></span>
+                </c:if></div></td>
+              </tr>
+            </table>
+              <table>
+              <tr>
+              <td class="templateConstraintOptional" rowspan="0">
+                <div>
+                  <c:if test="${!dec.locked}">
+                    <c:set var="clickToEnable" value="javascript:enableConstraint(${index});"/>
+                    <c:set var="clickToDisable" value="javascript:disableConstraint(${index});"/>
+                    <c:if test="${!empty builder}">
+                      <c:set var="clickToEnable" value="javascript:;"/>
+                      <c:set var="clickToDisable" value="javascript:;"/>
                     </c:if>
-                  </c:forEach>
+                    
+                    <span class="optionalText">optional</span><br />
+                    
+                    <c:choose>
+                      <c:when test="${dec.enabled}">
+                         <html:hidden property="switchOff(${index})" value="ON" styleId="switchOff(${index})" />
+                        
+                        <div id="optionalEnabled_${index}" class="optionalOnOff" style="display:inline">
+                          <span class="optionalSelected">ON</span>&nbsp;|&nbsp;<span><a href="${clickToDisable}" title="Disable constraint">OFF</a></span>
+                        </div>
+                        <div id="optionalDisabled_${index}" class="optionalOnOff" style="display:none">
+                          <span><a href="${clickToEnable}" title="Enable constraint">ON</a></span>&nbsp;|&nbsp;<span class="optionalSelected">OFF</span>
+                        </div>
+                      </c:when>
+                      <c:otherwise>
+                        <html:hidden property="switchOff(${index})" value="OFF" styleId="switchOff(${index})" />
 
-                  <%-- no auto completer exists --%>
-                  <c:if test="${hasAutoC eq 0}">
-
-                    <c:set var="datePickerClass" value=""/>
-                    <c:if test="${node.type == 'Date'}">
-                      <c:set var="datePickerClass" value="date-pick"/>
-                    </c:if>
-
-                    <%-- input box --%>
-                    <html:text property="attributeValues(${index})" styleClass="${datePickerClass}" size="10" />
-
-                    <c:if test="${node.type == 'Date'}">
-                      <script type="text/javascript">
-                        jQuery('.date-pick').datepicker(
-                           {
-                              buttonImage: 'images/calendar.png',
-                              buttonImageOnly: true,
-                              dateFormat: 'yy-mm-dd',
-                              showOn: "both",
-                              showAnim: 'blind',
-                              showOptions: {speed: 'fast'}
-                           }
-                        );
-                      </script>
-                    </c:if>
+                        <div id="optionalEnabled_${index}" class="optionalOnOff" style="display:none">
+                          <span class="optionalSelected">ON</span>&nbsp;|&nbsp;<span><a href="${clickToDisable}" title="Disable constraint">OFF</a></span>
+                        </div>
+                        <div id="optionalDisabled_${index}" class="optionalOnOff" style="display:inline">
+                          <span><a href="${clickToEnable}" title="Enable constraint">ON</a></span>&nbsp;|&nbsp;<span class="optionalSelected">OFF</span>
+                        </div>
+                      </c:otherwise>
+                    </c:choose>
                   </c:if>
+                </div></td>
 
-                <%-- help link --%>
-                <c:if test="${!empty keyFields[con]}">
-                  <im:helplink text="Search multiple fields including:  ${keyFields[con]}"/>
+               <c:set var="constraintBodyClass" value=""/>
+                <c:if test="${dec.disabled}">
+                    <c:set var="constraintBodyClass" value="constraintHeadingDisabled"/>
                 </c:if>
-
-                <%-- might want to show up arrow --%>
-                <c:if test="${!empty options}">
-                  <img src="images/left-arrow.gif" title="&lt;-" border="0" height="13" width="13"/>
+                
+              <%-- if Boolean --%>
+              <td class="constraint_${index}">
+              <c:choose>
+              <c:when test="${dec.path.type == 'Boolean'}">
+              <html:hidden property="attributeOps(${index})" value="0" disabled="false" />
+              <html:radio property="attributeValues(${index})" value="true"/>
+              <fmt:message key="query.constraint.true" /> 
+              <html:radio property="attributeValues(${index})" value="false"/>
+              <fmt:message key="query.constraint.false" /> 
+              </c:when>
+              <%-- if null or not null value --%>
+              <c:when test="${dec.nullSelected}">
+                <html:radio property="nullConstraint(${index})" value="IS NULL"/><fmt:message key="query.constraint.null"/>
+                <html:radio property="nullConstraint(${index})" value="IS NOT NULL"/><fmt:message key="query.constraint.notnull"/>
+              </c:when>
+              <c:otherwise>
+              <%-- operator --%>
+                  <div style="float:left;">
+                  <c:choose>
+                  <c:when test="${!dec.lookup}">
+                    <html:select property="attributeOps(${index})" onchange="onChangeAttributeOps(${index});">
+                      <c:forEach items="${dec.validOps}" var="op">
+                      <option value="${op.property}"
+                        <c:if test="${!empty dec.selectedOp && dec.selectedOp.property == op.property}">selected</c:if>>
+                        <im:displayableOpName opName="${op.label}" valueType="${op.property}" />
+                      </option>
+                    </c:forEach>
+                    </html:select>
+                   </c:when>
+                   <c:otherwise>
+                   <html:hidden property="attributeOp" styleId="attribute5" value="${dec.lookupOp.property}" disabled="false" />
+                   <html:hidden styleId="attributeOps(${index})" property="attributeOps(${index})" value="${dec.lookupOp.property}"/>
+                   <label class="marg">
+                   <fmt:message key="query.lookupConstraintLabel" />&nbsp;<%-- LOOKUP: --%>
+                   </label>
+                   </c:otherwise>
+                   </c:choose>
+                  </div>
+               <%-- if can be multi value --%>
+               <c:if test="${!empty dec.possibleValues}">
+                   <html:hidden property="multiValueAttribute(${index})"/>
+                   <html:select property="multiValues(${index})" multiple="true" size="4" onchange="updateMultiValueAttribute(${index});">
+                   <c:forEach items="${dec.possibleValues}" var="multiValue">
+                   <html:option value="${multiValue}"><c:out value="${multiValue}"/></html:option>
+                   </c:forEach>
+                   </html:select>
                 </c:if>
-              </span>
+              <%-- autocomplete --%>
+                <span id="operandEditSpan${index-1}">
+                  <c:choose>
+                  <%-- inputfield for an autocompletion --%>
+                  <c:when test="${!empty dec.autoCompleter}">
+                    <input name="attributeValues(${index})" id="attributeId_${index}" size="45" 
+                      style="background: #ffffc8" 
+                      value="${dec.selectedValue}"
+                      onKeyDown="getId(this.id); isEnter(event);"
+                      onKeyUp="readInput(event, '${dec.path.type}', '${dec.path.fieldName}');"
+                      onMouseOver="setMouseOver(${index});" 
+                      onMouseOut="setMouseOver(0);"
+                      onBlur="if(MOUSE_OVER != ${index}) { removeList(); }" />
+                    <iframe width="100%" height="0" id="attributeId_${index}_IEbugFixFrame"
+                      marginheight="0" marginwidth="0" frameborder="0" style="position: absolute;"> </iframe>
+                    <div class="auto_complete" id="attributeId_${index}_display"
+                      onMouseOver="setMouseOver(${index});" 
+                      onMouseOut="setMouseOver(0);"
+                      onBlur="if(MOUSE_OVER != ${index}) { removeList(); }"></div>
+                    <div class="error_auto_complete" id="attributeId_${index}_error"></div>
+                  </c:when>
+                 
+                  <%-- normal inputfield, no auto completer exists --%>
+                  <c:otherwise>
+                     <im:dateInput attributeType="${dec.path.type}" property="attributeValues(${index})" 
+                       styleId="attribute6" value="${dec.selectedValue}"/>
+                   </c:otherwise>
+                </c:choose>
+                </span>
+                </c:otherwise>
+               
+                </c:choose>
 
               <%-- dropdown --%>
-              <c:if test="${!empty options}">
+              <c:if test="${!empty dec.possibleValues}">
                 <select name="attributeOptions(${index})" onchange="updateAttributeValues(${index});">
-                  <c:forEach items="${options}" var="option">
-                    <option value="${option}">
-                      <c:out value="${option}"/>
-                    </option>
-                  </c:forEach>
+                  <c:forEach items="${dec.possibleValues}" var="option">
+                      <option value="${option}" <c:if test="${dec.selectedValue == option}">selected</c:if>>
+                      <c:out value="${option}" /></option>
+                    </c:forEach>
                 </select>
               </c:if>
-            </span>
-
-                <script type="text/javascript">
-                  /* setting options popup value to correct initial state. */
-                  if (document.templateForm["attributeOptions(${index})"] != null) {
-                        var select = document.templateForm["attributeOptions(${index})"];
-                        var value = document.templateForm["attributeValues(${index})"].value;
-                        var set = false;
-                        for (i=0 ; i<select.options.length ; i++) {
-                            if (select.options[i].value == value) {
-                                select.selectedIndex = i;
-                                set = true;
-                                break;
-                            }
-                        }
-                        updateConstraintForm(${index-1}, document.templateForm["attributeOps(${index})"],
-                                document.templateForm["attributeOptions(${index})"],
-                                document.templateForm["attributeValues(${index})"]);
-                  }
-                </script>
-
+             
+          <!-- lookup constraint -->
+         
          <%-- dropdown (probably organism) --%>
-          <c:if test="${haveExtraConstraint[con]}">
-              <c:if test="${empty keyFields[con]}">
-                 </li>
-              <li>
-              </c:if>
-              <span valign="top" colspan="4" style="color:#eee;">
+         <c:choose>
+          <c:when test="${dec.extraConstraint}">
+          <span style="color:#eee;">
                 <label class="marg">
                   <fmt:message key="bagBuild.extraConstraint">
-                    <fmt:param value="${extraBagQueryClass}"/>
+                    <fmt:param value="${dec.extraConstraintClassName}"/>
                   </fmt:message>
                 </label>
-                <html:select property="extraValues(${index})">
-                  <html:option value="">Any</html:option>
-                  <c:forEach items="${extraClassFieldValues}" var="value">
-                    <html:option value="${value}">
-                      <c:out value="${value}"/>
-                    </html:option>
-                  </c:forEach>
-                </html:select>
-              </span>
-            </c:if>
-          <c:if test="${empty keyFields[con]}">
-            </li>
+            
+            <html:select property="extraValues(${index})" value="${dec.selectedExtraValue}">
+              <html:option value="">Any</html:option>
+               <!-- this should set to extraValue if editing existing constraint -->
+              <c:forEach items="${dec.extraConstraintValues}" var="value">
+                <html:option value="${value}">
+                  <c:out value="${value}" />
+                </html:option>
+              </c:forEach>
+            </html:select>
+          </span>
+          </c:when>
+          <c:otherwise>
+            <html:hidden property="extraValue" value="" />
+          </c:otherwise>
+        </c:choose>
+        </td>
+        
+        <%-- help link --%>
+        <td rowspan="0">
+          <c:if test="${!empty dec.helpMessage}">
+            <span class="templateConstraintHelp"><im:helplink text="${dec.helpMessage}"/></span>
           </c:if>
+        </td>
+        </tr>
+        <tr>
+        <td class="constraint_${index}">
+          <c:if test="${!empty dec.bags && !dec.nullSelected}">
+            <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty dec.bags?'true':'false'}" />
+            <fmt:message key="template.constraintobe"/>
+            <%--Contained in bag:--%>
+            <html:select property="bagOp(${index})" disabled="true">
+              <c:forEach items="${dec.bagOps}" var="bagOp">
+                <option value="${bagOp.property}" <c:if test="${!empty dec.bagSelected && dec.selectedOp.property == bagOp.property}">selected</c:if>>
+                  <c:out value="${bagOp.label}" />
+                </option>
+              </c:forEach>
+            </html:select> 
+            <fmt:message key="template.constraintobelist"><fmt:param value="${dec.bagType}"/></fmt:message>
+            <html:select property="bag(${index})" disabled="true">
+              <c:forEach items="${dec.bags}" var="bag">
+                <option value="${bag}" <c:if test="${!empty dec.bagSelected && dec.selectedValue == bag}">selected</c:if>>
+                  <c:out value="${bag}" />
+                </option>
+              </c:forEach>
+            </html:select> 
+          </c:if> 
+        </td>
 
-          <%-- list constraint --%>
+        <%-- AND and OR button --%>
+       <%--  
+         <td valign="middle">
+           <a id="orButton(${index})" style="text-decoration:none;" href="javascript:addOR(${index})" title="Add OR constraint">
+             <span style="font-size: 12px;color: #477b46;font-weight: bold;margin-left: 15px;margin-right: 5px">OR+</span>
+           </a> 
+           <a id="andButton(${index})" style="text-decoration:none;" href="javascript:addAND(${index})" title="Add AND constraint">
+             <span style="font-size: 12px;color: #477b46;font-weight: bold;margin-right: 5px">AND+</span>
+           </a>
+         </td>
+       --%>
+      </tr>
+                </div>
 
-          <li>
-            <span>
-              &nbsp; <%-- for IE --%>
-            </span>
-            <span>
-              <c:if test="${(!empty bagType) && (! empty constraintBags[con])}">
-                <strong><fmt:message key="template.or"/></strong>
-                <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty bags?'true':'false'}" />
-
-                <fmt:message key="template.constraintobe"/>
-                <html:select property="bagOp(${index})">
-                  <c:forEach items="${bagOps}" var="bagOp">
-                    <html:option value="${bagOp.key}">
-                      <c:out value="${bagOp.value}"/>
-                    </html:option>
-                  </c:forEach>
-                </html:select>
-                <fmt:message key="template.bag"/>
-                <html:select property="bag(${index})" styleId="bagSelect">
-                  <c:forEach items="${bags}" var="bag">
-                    <html:option value="${bag.key}">
-                      <c:out value="${bag.key}"/>
-                    </html:option>
-                  </c:forEach>
-                </html:select>
-
-                <c:if test="${empty bags}">
-                  <div class="noBagsMessage">
-                    <fmt:message key="template.nobags">
-                      <fmt:param value="${bagType}"/>
-                    </fmt:message>
-                  </div>
-                </c:if>
-
-                <script type="text/javascript">
-                  var selectedBagName = '${selectedBagNames[con]}';
-                  if(selectedBagName){
-                        initClickUseBag(${index});
-                  }
-                </script>
-              </c:if>
-            </span>
-
-          </li>
+    </table>
+    <c:if test="${!empty builder && builder=='yes'}">
+      </div>
+    </c:if>
+  </li>
+        
+       <script type="text/javascript">
+         initConstraints(${index});
+       </script>
         </c:forEach>
-      </c:forEach>
-    </ol>
-
+</ol>
+</div>
 <%-- edit/submit buttons --%>
-<c:if test="${empty previewTemplate}">
+<c:if test="${empty builder}">
     <br/>
      <table width="100%">
      <tr>
        <td>
           <html:hidden property="name"/>
-          <html:hidden property="type"/>
+          <html:hidden property="scope"/>
           <html:hidden property="actionType" value="" styleId="actionType"/>
           <html:submit property="skipBuilder" styleId="showResultsButton"><fmt:message key="template.submitToResults"/></html:submit>
           <html:submit property="editQuery"><fmt:message key="template.submitToQuery"/></html:submit>
@@ -291,21 +313,46 @@
             <html:submit property="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
           </c:if>
        </td>
-      <td align="right"><html:link action="/exportTemplates?scope=all&amp;name=${templateQuery.name}"><img src="images/xml.png" title="Export this template to XML"/></html:link></td>
     </tr>
     </table>
 </c:if>
 </html:form>
 
-<%-- embed link --%>
-<c:if test="${empty previewTemplate}">
-    <div style="font-style: italic;"><b>NEW:</b> <a href="javascript:forwardToLinks()">Embed</a> this query. <a href="http://intermine.org/wiki/TemplateWebService#a2.2Templatewebservice">Help</a></div>
-</c:if>
-
-<%-- login msg --%>
-<c:if test="${!PROFILE.loggedIn}">
-    <p><i><fmt:message key="template.notlogged"><fmt:param><im:login/></fmt:param></fmt:message></i></p>
-</c:if>
+<div class="templateActions">
+<table>
+  <tr>
+    <c:set var="webserviceLink" value="javascript:forwardToLinks()"/>
+    <c:if test="${!empty builder}">
+      <c:set var="webserviceLink" value="javascript:;"/>
+    </c:if>
+    <td>
+      <a href="${webserviceLink}" title="Results from template queries can be embedded in other web pages">< embed results /></a>
+    </td>
+    <td>
+      <a href="${webserviceLink}" title="Get a URL to run this template from the command line or a script">web service URL</a>
+    </td>
+    <td></td>
+    <td>
+      <c:choose>
+        <c:when test="${empty builder}">
+          <html:link action="/exportTemplates?scope=all&amp;name=${templateQuery.name}" title="Export this template as XML">export XML</html:link>
+        </c:when>
+        <c:otherwise>
+          <a href="javascript:;" title=">Export this template as XML">export XML</a>
+        </c:otherwise>
+      </c:choose>
+    </td>
+  </tr>
+</table>
+</div>
 </im:boxarea>
 </div>
+</c:when>
+<c:otherwise>
+<div class="bigmessage">
+ <html:link action="/templates">Find template queries</html:link>
+</div>
+</c:otherwise>
+</c:choose>
+
 <!-- /template.jsp -->

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.model.FastPathObject;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TextTable;
 import org.intermine.util.TypeUtil;
@@ -33,6 +34,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     private static final String INTERMINEOBJECT_NAME = "org.intermine.model.InterMineObject";
     protected static final String ENDL = System.getProperty("line.separator");
     private final String className;        // name of this class
+    private Class<FastPathObject> type;
 
     // the supers string passed to the constructor
     private String origSuperNames;
@@ -56,6 +58,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
 
     /**
      * Construct a ClassDescriptor.
+     *
      * @param name the fully qualified name of the described class
      * @param supers a space string of fully qualified interface and superclass names
      * @param isInterface true if describing an interface
@@ -67,7 +70,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     public ClassDescriptor(String name, String supers,
             boolean isInterface, Set<AttributeDescriptor> atts, Set<ReferenceDescriptor> refs,
             Set<CollectionDescriptor> cols) {
-        if (name == null || name.equals("") || (!name.equals(name.trim()))) {
+        if (name == null || "".equals(name) || (!name.equals(name.trim()))) {
             throw new IllegalArgumentException("'name' parameter must be a valid String");
         }
         // Java only accepts names that start with a character, $ or _, some characters
@@ -85,7 +88,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         }
         this.className = name.intern();
 
-        if (supers != null && (supers.equals("") || (!supers.equals(supers.trim())))) {
+        if (supers != null && ("".equals(supers) || (!supers.equals(supers.trim())))) {
             throw new IllegalArgumentException("'supers' parameter for `" + name + "` must be "
                     + "null or a valid list of interface or superclass names but was :'" + supers
                     + "'");
@@ -129,6 +132,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
 
     /**
      * Returns the fully qualified class name described by this ClassDescriptor.
+     *
      * @return qualified name of the described Class
      */
     public String getName() {
@@ -137,19 +141,29 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
 
     /**
      * Returns the Class described by this ClassDescriptor.
+     *
      * @return a Class
      */
-    public Class<?> getType() {
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Can't find class for class descriptor", e);
+    public synchronized Class<? extends FastPathObject> getType() {
+        if (type == null) {
+            try {
+                @SuppressWarnings("unchecked") Class<FastPathObject> tmpType = (Class) Class
+                .forName(className);
+                if (!FastPathObject.class.isAssignableFrom(tmpType)) {
+                    throw new RuntimeException("Class " + className + " is not a FastPathObject");
+                }
+                type = tmpType;
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("Can't find class for class descriptor", e);
+            }
         }
+        return type;
     }
 
     /**
      * Return set of superclass class names. The set will never contain
      * "org.intermine.model.InterMineObject".
+     *
      * @return set of superclass class names
      */
     public Set<String> getSuperclassNames() {
@@ -160,6 +174,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
 
     /**
      * Returns unqualified name of class described by this ClassDescriptor.
+     *
      * @return unqualified name of the described Class
      */
     public String getUnqualifiedName() {
@@ -167,7 +182,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
-     * Gets the FieldDescriptors for this class (but not superclasses)
+     * Gets the FieldDescriptors for this class (but not superclasses).
+     *
      * @return set of FieldDescriptors
      */
     public Set<FieldDescriptor> getFieldDescriptors() {
@@ -176,6 +192,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
 
     /**
      * Gets the FieldDescriptors for this class and all superclasses and interfaces.
+     *
      * @return set of FieldDescriptors
      */
     public Set<FieldDescriptor> getAllFieldDescriptors() {
@@ -258,6 +275,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     /**
      * Gets AttributeDescriptors for this class - i.e. fields that are not references or
      * collections.
+     *
      * @return set of attributes for this Class
      */
     public Set<AttributeDescriptor> getAttributeDescriptors() {
@@ -267,6 +285,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     /**
      * Gets all AttributeDescriptors for this class and its super classes - i.e. fields that are
      * not references or collections.
+     *
      * @return set of attributes for this Class
      */
     public Set<AttributeDescriptor> getAllAttributeDescriptors() {
@@ -281,6 +300,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
 
     /**
      * Gets the descriptors for the external object references in this class.
+     *
      * @return a Set of ReferenceDescriptors for this Class
      */
     public Set<ReferenceDescriptor> getReferenceDescriptors() {
@@ -288,7 +308,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
-     * Gets all ReferenceDescriptors for this class - i.e. including those from superclass
+     * Gets all ReferenceDescriptors for this class - i.e. including those from superclass.
+     *
      * @return a Set of references (but not CollectionDescriptors) for this Class
      */
     public Set<ReferenceDescriptor> getAllReferenceDescriptors() {
@@ -304,6 +325,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     /**
      * Gets a ReferenceDescriptor for a field of the given name.  Returns null if
      * not found. Does NOT look in any superclasses or interfaces.
+     *
      * @param name the name of a ReferenceDescriptor to find
      * @return a ReferenceDescriptor
      */
@@ -314,6 +336,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     /**
      * Gets a ReferenceDescriptor for a field of the given name.  Returns null if
      * not found.  If ascend flag is true will also look in superclasses.
+     *
      * @param name the name of a ReferenceDescriptor to find
      * @param ascend if true search in super class hierarchy
      * @return a ReferenceDescriptor
@@ -339,6 +362,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     /**
      * Gets an AttributeDescriptor for a field of the given name.  Returns null if
      * not found. Does NOT look in any superclasses or interfaces.
+     *
      * @param name the name of an AttributeDescriptor to find
      * @return an AttributeDescriptor
      */
@@ -349,6 +373,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     /**
      * Gets an AttributeDescriptor for a field of the given name.  Returns null if
      * not found.  If ascend flag is true will also look in superclasses.
+     *
      * @param name the name of an AttributeDescriptor to find
      * @param ascend if true search in super class hierarchy
      * @return an AttributeDescriptor
@@ -383,7 +408,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
-     * Gets all CollectionDescriptors for this class - i.e. including those from superclass
+     * Gets all CollectionDescriptors for this class - i.e. including those from superclass.
+     *
      * @return set of collections for this Class
      */
     public Set<CollectionDescriptor> getAllCollectionDescriptors() {
@@ -398,6 +424,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
 
     /**
      * Gets CollectionDescriptors for this class.
+     *
      * @return set of CollectionDescriptors for this Class
      */
     public Set<CollectionDescriptor> getCollectionDescriptors() {
@@ -407,6 +434,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     /**
      * Gets a CollectionDescriptor for a collection of the given name.  Returns null if
      * not found. Does NOT search in any superclasses or interfaces.
+     *
      * @param name the name of a CollectionDescriptor to find
      * @return a CollectionDescriptor
      */
@@ -417,6 +445,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     /**
      * Gets a CollectionDescriptor for a field of the given name.  Returns null if
      * not found.  If ascend flag is true will also look in superclasses.
+     *
      * @param name the name of an CollectionDescriptor to find
      * @param ascend if true search in super class hierarchy
      * @return an CollectionDescriptor
@@ -439,7 +468,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
-     * Get the name of the super class of this class (may be null)
+     * Get the name of the super class of this class (may be null).
+     *
      * @return the super class name
      * @throws IllegalStateException if model not set
      */
@@ -479,6 +509,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
 
     /**
      * True if this class is an interface.
+     *
      * @return true if an interface
      */
     public boolean isInterface() {
@@ -505,6 +536,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     /**
      * Return a Set of ClassDescriptors for all classes that directly extend or implement this class
      * or interface.
+     *
      * @return set of subclass ClassDescriptors
      * @throws IllegalStateException if the set of subclasses has not been set
      */
@@ -517,6 +549,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      * Set the model for this ClassDescriptor, this is only be called once and will
      * throw an Exception if called again.  Is called by Model when the ClassDescriptor
      * is added to it during metadata creation.
+     *
      * @param model the parent model for this ClassDescriptor
      * @throws IllegalStateException if the model is already set
      * @throws MetaDataException if references not found
@@ -573,6 +606,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      * Return -1 if superName names a class that is a super class of otherSuperName, 1 if
      * otherSuperName names a class that is a super class of superName, 0 if they neither is a super
      * class of the other.
+     *
      * @param model the Model to use to find super classes
      * @param className1 a super class name
      * @param className2 a super class name
@@ -611,6 +645,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      * Return a list of the super class names for the given class name.  The search is performed
      * breadth-first and the returned Set is a LinkedHashSet so the direct super class names will
      * be first in the list.
+     *
      * @param model the Model
      * @param className the className
      * @return set of super class names
@@ -624,7 +659,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
-     * Return a list of the super class names for the given class name
+     * Return a list of the super class names for the given class name.
+     *
      * @param model the Model
      * @param className the className
      * @param superClassNames return set of super class names
@@ -650,7 +686,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
-     * Return the model this class is a part of
+     * Return the model this class is a part of.
+     *
      * @return the parent Model
      */
     public Model getModel() {
@@ -667,6 +704,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof ClassDescriptor) {
             ClassDescriptor cld = (ClassDescriptor) obj;
@@ -681,6 +719,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return 3 * className.hashCode()
             + 7 * origSuperNames.hashCode()

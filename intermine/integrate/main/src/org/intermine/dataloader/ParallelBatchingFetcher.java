@@ -58,6 +58,7 @@ public class ParallelBatchingFetcher extends BatchingFetcher
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close(Source source) {
         jobs.finish();
         LOG.info("Parallel Batching equivalent object query summary for source " + source + " :"
@@ -68,6 +69,7 @@ public class ParallelBatchingFetcher extends BatchingFetcher
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void doPks(Map<PrimaryKey, ClassDescriptor> pksToDo,
             Map<InterMineObject, Set<InterMineObject>> results,
             Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld,

@@ -25,8 +25,8 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
@@ -42,11 +42,10 @@ public class GetAttributeAsFileAction extends Action
     /**
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws Exception {
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ObjectStore os = im.getObjectStore();
@@ -80,7 +79,7 @@ public class GetAttributeAsFileAction extends Action
         }
 
         if (fieldExporter == null) {
-            Object fieldValue = TypeUtil.getFieldValue(object, fieldName);
+            Object fieldValue = object.getFieldValue(fieldName);
             if (fileType == null || fileType.length() == 0) {
                 response.setContentType("text/plain; charset=UTF-8");
                 response.setHeader("Content-Disposition ",
@@ -91,7 +90,11 @@ public class GetAttributeAsFileAction extends Action
                                    + fieldName + "." + fileType);
             }
             PrintStream out = new PrintStream(response.getOutputStream());
-            out.print(fieldValue);
+            if (fieldValue instanceof ClobAccess) {
+                ((ClobAccess) fieldValue).drainToPrintStream(out);
+            } else {
+                out.print(fieldValue);
+            }
             out.flush();
         } else {
             fieldExporter.exportField(object, fieldName, os, response);

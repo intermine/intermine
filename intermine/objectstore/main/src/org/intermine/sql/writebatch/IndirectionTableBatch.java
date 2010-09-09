@@ -21,8 +21,8 @@ import java.util.TreeSet;
 public class IndirectionTableBatch implements Table
 {
     private String leftColName, rightColName;
-    private Set rowsToDelete;
-    private Set rowsToInsert;
+    private Set<Row> rowsToDelete;
+    private Set<Row> rowsToInsert;
     private int size = 0;
 
     /**
@@ -34,8 +34,8 @@ public class IndirectionTableBatch implements Table
     public IndirectionTableBatch(String leftColName, String rightColName) {
         this.leftColName = leftColName;
         this.rightColName = rightColName;
-        rowsToDelete = new TreeSet();
-        rowsToInsert = new TreeSet();
+        rowsToDelete = new TreeSet<Row>();
+        rowsToInsert = new TreeSet<Row>();
     }
 
     /**
@@ -45,10 +45,10 @@ public class IndirectionTableBatch implements Table
      * @param rightColName the right column name
      * @param toInsert the Set of Rows to insert
      */
-    protected IndirectionTableBatch(String leftColName, String rightColName, Set toInsert) {
+    protected IndirectionTableBatch(String leftColName, String rightColName, Set<Row> toInsert) {
         this.leftColName = leftColName;
         this.rightColName = rightColName;
-        rowsToDelete = new TreeSet();
+        rowsToDelete = new TreeSet<Row>();
         this.rowsToInsert = toInsert;
     }
 
@@ -109,7 +109,7 @@ public class IndirectionTableBatch implements Table
      *
      * @return rowsToDelete
      */
-    public Set getRowsToDelete() {
+    public Set<Row> getRowsToDelete() {
         return rowsToDelete;
     }
 
@@ -118,7 +118,7 @@ public class IndirectionTableBatch implements Table
      *
      * @return rowsToInsert
      */
-    public Set getRowsToInsert() {
+    public Set<Row> getRowsToInsert() {
         return rowsToInsert;
     }
 

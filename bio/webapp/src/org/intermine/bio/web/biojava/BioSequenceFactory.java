@@ -40,7 +40,7 @@ public abstract class BioSequenceFactory
         if (feature.getSequence() == null) {
             return null;
         } else {
-            String residues = feature.getSequence().getResidues();
+            String residues = feature.getSequence().getResidues().toString();
             return new BioSequence(DNATools.createDNA(residues), feature);
         }
     }
@@ -57,7 +57,7 @@ public abstract class BioSequenceFactory
         if (protein.getSequence() == null) {
             return null;
         } else {
-            String residues = protein.getSequence().getResidues();
+            String residues = protein.getSequence().getResidues().toString();
             return new BioSequence(ProteinTools.createProtein(residues), protein);
         }
     }
@@ -74,11 +74,11 @@ public abstract class BioSequenceFactory
     throws IllegalSymbolException {
         if (bioEnt instanceof Protein) {
             Protein protein = (Protein) bioEnt;
-            String residues = protein.getSequence().getResidues();
+            String residues = protein.getSequence().getResidues().toString();
             return new BioSequence(ProteinTools.createProtein(residues), protein);
         } else if (bioEnt instanceof SequenceFeature) {
             SequenceFeature feature = (SequenceFeature) bioEnt;
-            String residues = feature.getSequence().getResidues();
+            String residues = feature.getSequence().getResidues().toString();
             return new BioSequence(DNATools.createDNA(residues), feature);
         } else {
             throw new RuntimeException("Sequence type not defined.");

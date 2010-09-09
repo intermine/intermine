@@ -22,7 +22,7 @@ import java.util.TreeMap;
  */
 public class StringConstructor implements CharSequence
 {
-    private TreeMap<Integer, String> strings = new TreeMap();
+    private TreeMap<Integer, String> strings = new TreeMap<Integer, String>();
     private int length = 0;
 
     /**
@@ -117,6 +117,7 @@ public class StringConstructor implements CharSequence
      *
      * @return a String
      */
+    @Override
     public String toString() {
         StringBuffer retval = new StringBuffer();
         for (String string : strings.values()) {
@@ -145,7 +146,8 @@ public class StringConstructor implements CharSequence
     /**
      * {@inheritDoc}
      */
-    public CharSequence subSequence(int start, int end) {
+    public CharSequence subSequence(@SuppressWarnings("unused") int start,
+            @SuppressWarnings("unused") int end) {
         throw new UnsupportedOperationException("We probably don't need this method");
     }
 

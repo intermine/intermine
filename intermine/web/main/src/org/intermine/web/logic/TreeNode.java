@@ -10,6 +10,8 @@ package org.intermine.web.logic;
  *
  */
 
+import java.util.List;
+
 /**
  * Bean to represent one row in the display of a tree
  * @author Kim Rutherford
@@ -21,6 +23,7 @@ public class TreeNode
     int indentation;
     Object o;
     String text;
+    List<String> structure;
 
     /**
      * Constructor
@@ -30,15 +33,17 @@ public class TreeNode
      * @param selected whether the node has been selected
      * @param leaf whether this is a leaf node
      * @param open whether this node is 'open' ie. expanded
+     * @param structure a List of Strings - for definition, see getStructure()
      */
-    public TreeNode(Object o, String text,
-                    int indentation, boolean selected, boolean leaf, boolean open) {
+    public TreeNode(Object o, String text, int indentation, boolean selected, boolean leaf,
+            boolean open, List<String> structure) {
         this.o = o;
         this.text = text;
         this.indentation = indentation;
         this.selected = selected;
         this.leaf = leaf;
         this.open = open;
+        this.structure = structure;
     }
 
     /**
@@ -90,8 +95,26 @@ public class TreeNode
     }
 
     /**
+     * Returns the structure of the tree. This is an array of Strings, which are one of four
+     * possible strings, in order to draw a tree structure:
+     * <UL><LI><B>blank</B> - Do not draw any lines.</LI>
+     *     <LI><B>straight</B> - Draw a straight vertical line.</LI>
+     *     <LI><B>ell</B> - Draw an L-shaped line.</LI>
+     *     <LI><B>tee</B> - Draw a T-junction, with lines going vertically and to the right.</LI>
+     * </UL>
+     * If the sequence of these is correctly drawn in front of each tree node, then a tree structure
+     * will be drawn correctly.
+     *
+     * @return a List of Strings
+     */
+    public List<String> getStructure() {
+        return structure;
+    }
+
+    /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof TreeNode)) {
             return false;
@@ -107,6 +130,7 @@ public class TreeNode
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return o.hashCode()
             + 2 * indentation
@@ -118,6 +142,7 @@ public class TreeNode
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return o + " " + text + " " + indentation + " " + selected + " " + leaf + " " + open;
     }

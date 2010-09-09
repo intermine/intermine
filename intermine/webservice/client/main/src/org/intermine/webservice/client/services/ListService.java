@@ -21,14 +21,14 @@ import org.intermine.webservice.client.core.Request.RequestType;
 import org.intermine.webservice.client.util.HttpConnection;
 
 /**
- * The ListService provides some information about public lists in InterMine like 
+ * The ListService provides some information about public lists in InterMine like
  * which lists contain specified object.
- * 
+ *
  * @author Jakub Kulaviak
  **/
-public class ListService extends Service 
+public class ListService extends Service
 {
-    
+
     private static final String SERVICE_RELATIVE_URL = "listswithobject";
 
     /**
@@ -40,7 +40,7 @@ public class ListService extends Service
         super(rootUrl, SERVICE_RELATIVE_URL, applicationName);
     }
 
-    private static class ListRequest extends RequestImpl 
+    private static class ListRequest extends RequestImpl
     {
 
         public ListRequest(RequestType type, String serviceUrl, ContentType contentType) {
@@ -50,28 +50,28 @@ public class ListService extends Service
         public void setPublicId(String publicId) {
             setParameter("publicId", publicId);
         }
-        
+
         public void setObjectType(String type) {
             setParameter("type", type);
-        }        
+        }
     }
 
     /**
      * Returns names of all InterMine public lists containing object with specified publicId.
-     * @param publicId id of object of interest, object can have different id in different public 
-     * databases and InterMine know some of them and searches in all of them contained in 
-     * InterMine. If there are more corresponding objects for this publicId, then exception 
+     * @param publicId id of object of interest, object can have different id in different public
+     * databases and InterMine know some of them and searches in all of them contained in
+     * InterMine. If there are more corresponding objects for this publicId, then exception
      * is thrown.
      * @param type type of Object - Gene ...
      * @return names of public lists containing specified object
      */
     public List<String> getPublicListsWithObject(String publicId, String type) {
-        ListRequest request = new ListRequest(RequestType.POST, getUrl(), 
+        ListRequest request = new ListRequest(RequestType.POST, getUrl(),
                 ContentType.TEXT_TAB);
         request.setPublicId(publicId);
         request.setObjectType(type);
         HttpConnection connection = executeRequest(request);
-        List<List<String>> result = new TabTableResult(connection).getData();        
+        List<List<String>> result = new TabTableResult(connection).getData();
         List<String> ret = new ArrayList<String>();
         for (List<String> row : result) {
             if (row.size() > 0) {

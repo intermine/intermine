@@ -92,20 +92,24 @@ public class QueryOptimiserContext
      * The default context - normal operation with no time limit.
      */
     public static final QueryOptimiserContext DEFAULT = new QueryOptimiserContext() {
-        public void setMode(String mode) {
+        @Override
+        public void setMode(@SuppressWarnings("unused") String mode) {
             throw new IllegalStateException("This is the default QueryOptimiserContext - it cannot"
                     + " be altered");
         }
 
+        @Override
         public String getMode() {
             return MODE_NORMAL;
         }
 
-        public void setTimeLimit(long timeLimit) {
+        @Override
+        public void setTimeLimit(@SuppressWarnings("unused") long timeLimit) {
             throw new IllegalStateException("This is the default QueryOptimiserContext - it cannot"
                     + " be altered");
         }
 
+        @Override
         public long getTimeLimit() {
             return -1;
         }

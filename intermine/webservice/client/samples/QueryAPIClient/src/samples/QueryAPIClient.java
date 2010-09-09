@@ -10,10 +10,12 @@ package samples;
  *
  */
 
+import java.io.IOException;
 import java.util.List;
 
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.services.ModelService;
@@ -45,10 +47,11 @@ public class QueryAPIClient
             new ServiceFactory(serviceRootUrl, "QueryAPIClient").getQueryService();
         Model model = getModel();
         PathQuery query = new PathQuery(model);
-        query.setView("Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol"
-                      + " Gene.name Gene.organism.shortName");
-        query.setOrderBy("Gene.primaryIdentifier");
-        query.addConstraint("Gene.length", Constraints.lessThan(1000));
+        query.addViews("Gene.primaryIdentifier", "Gene.secondaryIdentifier", "Gene.symbol",
+                      "Gene.name", "Gene.organism.shortName");
+        query.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
+        query.addConstraint(Constraints.lessThan("Gene.length", "1000"));
+        
         // first 100 results are fetched
         List<List<String>> result = service.getResult(query, 100);
         System.out.println("First 100 genes shorter than 1kB sorted according to the identifier: ");

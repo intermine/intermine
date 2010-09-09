@@ -14,32 +14,35 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.sf.cglib.proxy.Factory;
 
-import org.intermine.model.InterMineObject;
+import org.apache.log4j.Logger;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.FastPathObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.util.DynamicBean;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-
-import org.apache.log4j.Logger;
 
 /**
  * Parses a String suitable for storing in the OBJECT field of database tables into an Object.
  *
  * @author Matthew Wakeling
  */
-public class NotXmlParser
+public final class NotXmlParser
 {
+    private NotXmlParser() {
+    }
+
     private static final Logger LOG = Logger.getLogger(NotXmlParser.class);
     /**
      * The string that delimits the sections of the NotXml.
@@ -59,8 +62,8 @@ public class NotXmlParser
     private static long classTime = 0;
     private static long createTime = 0;
     private static long parseTime = 0;
-    private static Map<String, Class> classCache = Collections.synchronizedMap(
-            new HashMap<String, Class>());
+    private static Map<String, Class<? extends FastPathObject>> classCache
+        = Collections.synchronizedMap(new HashMap<String, Class<? extends FastPathObject>>());
 
     /**
      * Parse the given NotXml String into an Object.
@@ -78,17 +81,17 @@ public class NotXmlParser
             LOG.warn("Parsing " + xml, e);
         }
         long time1 = System.currentTimeMillis();
-        String a[] = SPLITTER.split(xml);
+        String[] a = SPLITTER.split(xml);
         long time2 = System.currentTimeMillis();
         splitTime += time2 - time1;
 
         InterMineObject retval;
 
-        Class clazz = classCache.get(a[1]);
+        Class<? extends FastPathObject> clazz = classCache.get(a[1]);
         if (clazz == null) {
-            Set<Class> classes = new HashSet();
+            Set<Class<?>> classes = new HashSet<Class<?>>();
             if (!"".equals(a[1])) {
-                String b[] = SPACE_SPLITTER.split(a[1]);
+                String[] b = SPACE_SPLITTER.split(a[1]);
                 for (int i = 0; i < b.length; i++) {
                     classes.add(Class.forName(b[i]));
                 }
@@ -109,7 +112,7 @@ public class NotXmlParser
 
         if (retval instanceof Factory) {
             DynamicBean bean = (DynamicBean) ((Factory) retval).getCallback(0);
-            Map valueMap = bean.getMap();
+            Map<String, Object> valueMap = bean.getMap();
             Map<String, FieldDescriptor> fields = os.getModel()
                 .getFieldDescriptorsForClass(retval.getClass());
             Map<String, TypeUtil.FieldInfo> fieldInfos = TypeUtil.getFieldInfos(clazz);
@@ -117,7 +120,7 @@ public class NotXmlParser
             for (int i = 2; i < a.length; i += 2) {
                 if (a[i].startsWith("a")) {
                     String fieldName = a[i].substring(1).intern();
-                    Class fieldClass = fieldInfos.get(fieldName).getType();
+                    Class<?> fieldClass = fieldInfos.get(fieldName).getType();
                     String firstString = (i + 1 == a.length ? "" : a[i + 1]);
                     StringBuffer string = null;
                     while ((i + 2 < a.length) && (a[i + 2].startsWith(ENCODED_DELIM))) {
@@ -127,9 +130,14 @@ public class NotXmlParser
                         }
                         string.append(DELIM).append(a[i + 1].substring(1));
                     }
-                    valueMap.put(fieldName,
-                            TypeUtil.stringToObject(fieldClass, (string == null ? firstString
-                                    : string.toString())));
+                    if (ClobAccess.class.equals(fieldClass)) {
+                        valueMap.put(fieldName, ClobAccess.decodeDbDescription(os, string == null
+                                ? firstString : string.toString()));
+                    } else {
+                        valueMap.put(fieldName,
+                                TypeUtil.stringToObject(fieldClass, (string == null ? firstString
+                                        : string.toString())));
+                    }
                 } else if (a[i].startsWith("r")) {
                     String fieldName = a[i].substring(1).intern();
                     Integer id = Integer.valueOf(a[i + 1]);
@@ -142,17 +150,17 @@ public class NotXmlParser
                             throw new RuntimeException("failed to get field " + fieldName
                                     + " for object from XML: " + xml);
                         }
-                        valueMap.put(fieldName,
-                                new ProxyReference(os, id, ref.getReferencedClassDescriptor()
-                                    .getType()));
+                        @SuppressWarnings("unchecked") Class<? extends InterMineObject> tmpType =
+                            (Class) ref.getReferencedClassDescriptor().getType();
+                        valueMap.put(fieldName, new ProxyReference(os, id, tmpType));
                     }
                 }
             }
 
-            for (Map.Entry<String, Class> collEntry : os.getModel().getCollectionsForClass(clazz)
+            for (Map.Entry<String, Class<?>> collEntry : os.getModel().getCollectionsForClass(clazz)
                     .entrySet()) {
-                Collection lazyColl = new ProxyCollection(os, retval, collEntry.getKey(),
-                        collEntry.getValue());
+                Collection<Object> lazyColl = new ProxyCollection<Object>(os, retval,
+                        collEntry.getKey(), collEntry.getValue());
                 valueMap.put(collEntry.getKey(), lazyColl);
             }
             time1 = System.currentTimeMillis();
@@ -180,7 +188,7 @@ public class NotXmlParser
             } catch (IllegalStateException e) {
                 // It's alright - fall back to old slow method.
 
-                //LOG.error("Falling back to slow parsing for class " + classes);
+                //LOG.error("Falling back to slow parsing for " + retval.getClass(), e);
 
                 Map<String, FieldDescriptor> fields = os.getModel()
                     .getFieldDescriptorsForClass(retval.getClass());
@@ -188,7 +196,7 @@ public class NotXmlParser
                 for (int i = 2; i < a.length; i += 2) {
                     if (a[i].startsWith("a")) {
                         String fieldName = a[i].substring(1);
-                        Class fieldClass = fieldInfos.get(fieldName).getType();
+                        Class<?> fieldClass = fieldInfos.get(fieldName).getType();
                         String firstString = (i + 1 == a.length ? "" : a[i + 1]);
                         StringBuffer string = null;
                         if (firstString.length() * 10 < xml.length() * 9) {
@@ -201,9 +209,13 @@ public class NotXmlParser
                             }
                             string.append(DELIM).append(a[i + 1].substring(1));
                         }
-                        retval.setFieldValue(fieldName,
-                                TypeUtil.stringToObject(fieldClass, (string == null ? firstString
-                                        : string.toString())));
+                        if (ClobAccess.class.equals(fieldClass)) {
+                            retval.setFieldValue(fieldName, ClobAccess.decodeDbDescription(os,
+                                    string == null ? firstString : string.toString()));
+                        } else {
+                            retval.setFieldValue(fieldName, TypeUtil.stringToObject(fieldClass,
+                                    (string == null ? firstString : string.toString())));
+                        }
                     } else if (a[i].startsWith("r")) {
                         String fieldName = a[i].substring(1);
                         Integer id = Integer.valueOf(a[i + 1]);
@@ -212,19 +224,18 @@ public class NotXmlParser
                             throw new RuntimeException("failed to get field " + fieldName
                                     + " for object from XML: " + xml);
                         }
-                        retval.setFieldValue(fieldName, new ProxyReference(os, id,
-                                    ref.getReferencedClassDescriptor().getType()));
+                        @SuppressWarnings("unchecked") Class<? extends InterMineObject> tmpType =
+                            (Class) ref.getReferencedClassDescriptor().getType();
+                        retval.setFieldValue(fieldName, new ProxyReference(os, id, tmpType));
                     }
                 }
 
-                Iterator collIter = fields.entrySet().iterator();
-                while (collIter.hasNext()) {
-                    Map.Entry collEntry = (Map.Entry) collIter.next();
-                    Object maybeColl = collEntry.getValue();
+                for (Map.Entry<String, FieldDescriptor> collEntry : fields.entrySet()) {
+                    FieldDescriptor maybeColl = collEntry.getValue();
                     if (maybeColl instanceof CollectionDescriptor) {
                         CollectionDescriptor coll = (CollectionDescriptor) maybeColl;
-                        Collection lazyColl = new ProxyCollection(os, retval, coll.getName(),
-                                coll.getReferencedClassDescriptor().getType());
+                        Collection<Object> lazyColl = new ProxyCollection<Object>(os, retval,
+                                coll.getName(), coll.getReferencedClassDescriptor().getType());
                         retval.setFieldValue(coll.getName(), lazyColl);
                     }
                 }

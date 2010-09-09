@@ -37,7 +37,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.OldPathQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -67,7 +67,7 @@ public class SubmissionProtocolsController extends TilesAction
         LOG.info("SUBMISSION id: " + o.getId());
 
         // create the query
-        PathQuery q = new PathQuery(os.getModel());
+        OldPathQuery q = new OldPathQuery(os.getModel());
 
         q.addView("Submission.appliedProtocols.step");
         q.addView("Submission.appliedProtocols:inputs.type");

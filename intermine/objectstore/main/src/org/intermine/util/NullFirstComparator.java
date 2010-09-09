@@ -19,9 +19,9 @@ import java.util.Comparator;
  *
  * @author Matthew Wakeling
  */
-public class NullFirstComparator implements Comparator
+public final class NullFirstComparator implements Comparator<Object>
 {
-    /** Publically-accessible instance */
+    /** Publicly-accessible instance */
     public static final NullFirstComparator SINGLETON = new NullFirstComparator();
 
     private NullFirstComparator() {
@@ -30,6 +30,7 @@ public class NullFirstComparator implements Comparator
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public int compare(Object o1, Object o2) {
         if (o1 == null) {
             if (o2 == null) {
@@ -58,6 +59,6 @@ public class NullFirstComparator implements Comparator
         if (o2 instanceof Boolean) {
             return 1;
         }
-        return ((Comparable) o1).compareTo(o2);
+        return ((Comparable<? super Object>) o1).compareTo(o2);
     }
 }

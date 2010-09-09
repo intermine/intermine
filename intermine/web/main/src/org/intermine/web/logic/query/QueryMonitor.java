@@ -29,22 +29,22 @@ public interface QueryMonitor
      * param request the http servlet request
      * @return false if the query should be cancelled, otherwise true
      */
-    public boolean shouldCancelQuery();
+    boolean shouldCancelQuery();
 
     /**
      * Called when the query has completed.
      */
-    public void queryCompleted();
+    void queryCompleted();
 
     /**
      * Called when the query stopped with an error. The error message should be
      * in the session.
      */
-    public void queryCancelledWithError();
+    void queryCancelledWithError();
 
     /**
      * Called when the query is cancelled. Usually as a result of shouldCancelQuery
      * returning true.
      */
-    public void queryCancelled();
+    void queryCancelled();
 }

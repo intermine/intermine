@@ -50,7 +50,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
 {
     private static final Logger LOG = Logger.getLogger(IntegrationWriterDataTrackingImpl.class);
     protected DataTracker dataTracker;
-    protected Set<Class> trackerMissingClasses;
+    protected Set<Class<?>> trackerMissingClasses;
     protected IntPresentSet skeletons = new IntPresentSet();
     /** This is a list of the objects that did not merge with anything from a previous data
      * source */
@@ -83,19 +83,21 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
 
 
     /**
-     * Creates a new IntegrationWriter instance of the specified class and and with a specificed
+     * Creates a new IntegrationWriter instance of the specified class and with a specified
      * DataTracker class plus properties.
      *
      * @param osAlias the alias of this objectstore
      * @param props the Properties
-     * @param iwClass Class of IntegrationWriter to create - IntegrationWriterDatatrackingImpl
+     * @param iwClass Class of IntegrationWriter to create - IntegrationWriterDataTrackingImpl
      *                or a subclass.
      * @param trackerClass Class of DataTracker to use with IntegrationWriter
      * @return an instance of this class
      * @throws ObjectStoreException sometimes
      */
-    protected static IntegrationWriterDataTrackingImpl getInstance(String osAlias, Properties props,
-                                                                  Class iwClass, Class trackerClass)
+    protected static IntegrationWriterDataTrackingImpl getInstance(
+            @SuppressWarnings("unused") String osAlias, Properties props,
+            Class<? extends IntegrationWriterDataTrackingImpl> iwClass,
+            Class<? extends DataTracker> trackerClass)
         throws ObjectStoreException {
         String writerAlias = props.getProperty("osw");
         if (writerAlias == null) {
@@ -120,25 +122,25 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             int maxSize = Integer.parseInt(trackerMaxSizeString);
             int commitSize = Integer.parseInt(trackerCommitSizeString);
             Database db = ((ObjectStoreWriterInterMineImpl) writer).getDatabase();
-            Set<Class> trackerMissingClasses = new HashSet();
+            Set<Class<?>> trackerMissingClasses = new HashSet<Class<?>>();
             if (trackerMissingClassesString != null) {
-                String trackerMissingClassesStrings[] = StringUtil.split(
+                String[] trackerMissingClassesStrings = StringUtil.split(
                         trackerMissingClassesString, ",");
                 for (String trackerMissingClassString : trackerMissingClassesStrings) {
-                    Class c = Class.forName(writer.getModel().getPackageName() + "."
+                    Class<?> c = Class.forName(writer.getModel().getPackageName() + "."
                             + trackerMissingClassString.trim());
                     trackerMissingClasses.add(c);
                 }
             }
-            Constructor con = trackerClass.getConstructor(new Class[] {Database.class,
-                Integer.TYPE, Integer.TYPE});
-            DataTracker newDataTracker = (DataTracker) con.newInstance(new Object[] {db,
+            Constructor<? extends DataTracker> con = trackerClass.getConstructor(
+                    new Class[] {Database.class, Integer.TYPE, Integer.TYPE});
+            DataTracker newDataTracker = con.newInstance(new Object[] {db,
                 new Integer(maxSize), new Integer(commitSize)});
 
-            con = iwClass.getConstructor(new Class[] {ObjectStoreWriter.class, DataTracker.class,
-                Set.class});
-            return (IntegrationWriterDataTrackingImpl) con.newInstance(new Object[] {writer,
-                newDataTracker, trackerMissingClasses});
+            Constructor<? extends IntegrationWriterDataTrackingImpl> con2 =
+                iwClass.getConstructor(new Class[] {ObjectStoreWriter.class, DataTracker.class,
+                    Set.class});
+            return con2.newInstance(new Object[] {writer, newDataTracker, trackerMissingClasses});
         } catch (Exception e) {
             IllegalArgumentException e2 = new IllegalArgumentException("Problem instantiating"
                     + " IntegrationWriterDataTrackingImpl " + props.getProperty("alias"));
@@ -170,7 +172,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      * @param trackerMissingClasses a Set of classes for which DataTracker data is useless
      */
     public IntegrationWriterDataTrackingImpl(ObjectStoreWriter osw, DataTracker dataTracker,
-            Set<Class> trackerMissingClasses) {
+            Set<Class<?>> trackerMissingClasses) {
         super(osw);
         this.dataTracker = dataTracker;
         this.trackerMissingClasses = trackerMissingClasses;
@@ -180,6 +182,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     /**
      * Resets the IntegrationWriter, clearing the id map and the hints
      */
+    @Override
     public void reset() {
         super.reset();
         skeletons = new IntPresentSet();
@@ -219,8 +222,8 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      * @param c a Class
      * @return a boolean
      */
-    public boolean doTrackerFor(Class c) {
-        for (Class missing : trackerMissingClasses) {
+    public boolean doTrackerFor(Class<?> c) {
+        for (Class<?> missing : trackerMissingClasses) {
             if (missing.isAssignableFrom(c)) {
                 return false;
             }
@@ -238,6 +241,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     /**
      * {@inheritDoc}
      */
+    @Override
     protected InterMineObject store(FastPathObject nimo, Source source, Source skelSource,
             int type) throws ObjectStoreException {
         if (nimo == null) {
@@ -245,106 +249,27 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         }
         try {
             if (!(nimo instanceof InterMineObject)) {
-                long time1 = System.currentTimeMillis();
-                FastPathObject newObj = DynamicUtil.createObject(nimo.getClass());
-                long time2 = System.currentTimeMillis();
-                timeSpentCreate += time2 - time1;
-                Map<String, FieldDescriptor> fields = getModel().getFieldDescriptorsForClass(nimo
-                        .getClass());
-                for (Map.Entry<String, FieldDescriptor> entry : fields.entrySet()) {
-                    String fieldName = entry.getKey();
-                    FieldDescriptor field = entry.getValue();
-                    copyField(nimo, newObj, source, skelSource, field, type);
-                }
-                time1 = System.currentTimeMillis();
-                timeSpentCopyFields += time1 - time2;
-                store(newObj);
-                time2 = System.currentTimeMillis();
-                timeSpentStore += time2 - time1;
+                storeNonInterMineObject(nimo, source, skelSource, type);
                 return null;
             }
             InterMineObject o = (InterMineObject) nimo;
             long time1 = System.currentTimeMillis();
-            Set equivObjects = getEquivalentObjects(o, source);
+            Set<InterMineObject> equivObjects = getEquivalentObjects(o, source);
             long time2 = System.currentTimeMillis();
             timeSpentEquiv += time2 - time1;
-            if ((type != FROM_DB) && ((equivObjects.size() == 0)
-                        || ((equivObjects.size() == 1)
-                            && (o.getId() != null)
-                            && (pureObjects.contains(o.getId()))
-                            && (type == SOURCE)))) {
-                // Take a shortcut!
-                InterMineObject newObj = (InterMineObject) DynamicUtil.createObject(o.getClass());
-                Integer newId;
-                if (equivObjects.size() == 0) {
-                    newId = getSerial();
-                    assignMapping(o.getId(), newId);
-                } else {
-                    newId = ((InterMineObject) equivObjects.iterator().next()).getId();
-                }
-                newObj.setId(newId);
-                if (type == SOURCE) {
-                    if (writtenObjects.contains(newId)) {
-                        // There are duplicate objects
-                        if (!ignoreDuplicates) {
-                            // Yes, this *can* happen, if two items in the tgt-items-database have
-                            // the same item.identifier.
-                            throw new IllegalArgumentException("There are duplicate objects in the "
-                                    + "source being loaded, multiple items exist with the same "
-                                    + "item.identifer. Storing again to id " + newId
-                                    + " object from source " + o);
-                        }
-                        duplicateObjects.add(newId);
-                        isDuplicates = true;
-                    } else {
-                        writtenObjects.add(newId);
-                    }
-                }
-                time1 = System.currentTimeMillis();
-                timeSpentCreate += time1 - time2;
-                Map<String, FieldDescriptor> fields = getModel().getFieldDescriptorsForClass(newObj
-                        .getClass());
-                Map<String, Source> trackingMap = new HashMap();
-                for (Map.Entry<String, FieldDescriptor> entry : fields.entrySet()) {
-                    String fieldName = entry.getKey();
-                    FieldDescriptor field = entry.getValue();
-                    copyField(o, newObj, source, skelSource, field, type);
-                    if (!(field instanceof CollectionDescriptor)) {
-                        trackingMap.put(fieldName, type == SOURCE ? source : skelSource);
-                    }
-                }
-                time2 = System.currentTimeMillis();
-                timeSpentCopyFields += time2 - time1;
-                store(newObj);
-                time1 = System.currentTimeMillis();
-                timeSpentStore += time1 - time2;
-                if (doTrackerFor(newObj.getClass())) {
-                    dataTracker.clearObj(newId);
-                    for (Map.Entry<String, Source> entry : trackingMap.entrySet()) {
-                        dataTracker.setSource(newObj.getId(), entry.getKey(), entry.getValue());
-                    }
-                }
-                if (type == SKELETON) {
-                    skeletons.add(newObj.getId());
-                } else if (skeletons.contains(newObj.getId().intValue())) {
-                    skeletons.set(newObj.getId().intValue(), false);
-                }
-                time2 = System.currentTimeMillis();
-                if (o.getId() != null) {
-                    pureObjects.add(o.getId());
-                }
-                timeSpentDataTrackerWrite += time2 - time1;
-                return newObj;
+            if ((type != FROM_DB) && ((equivObjects.size() == 0) || ((equivObjects.size() == 1)
+                    && (o.getId() != null) && (pureObjects.contains(o.getId()))
+                    && (type == SOURCE)))) {
+                return shortcut(o, equivObjects, type, time2, source, skelSource);
             }
-            if ((equivObjects.size() >= 1) && (type == SKELETON)) {
-                InterMineObject onlyEquivalent = (InterMineObject) equivObjects.iterator().next();
+            if ((equivObjects.size() == 1) && (type == SKELETON)) {
+                InterMineObject onlyEquivalent = equivObjects.iterator().next();
+                assignMapping(o.getId(), onlyEquivalent.getId());
                 return onlyEquivalent;
             }
-            Set classes = new HashSet();
+            Set<Class<?>> classes = new HashSet<Class<?>>();
             classes.addAll(DynamicUtil.decomposeClass(o.getClass()));
-            Iterator objIter = equivObjects.iterator();
-            while (objIter.hasNext()) {
-                InterMineObject obj = (InterMineObject) objIter.next();
+            for (InterMineObject obj : equivObjects) {
                 if (obj instanceof ProxyReference) {
                     obj = ((ProxyReference) obj).getObject();
                 }
@@ -358,9 +283,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             InterMineObject newObj = (InterMineObject) DynamicUtil.createObject(classes);
             Integer newId = null;
             // if multiple equivalent objects in database just use id of first one
-            Iterator equivalentIter = equivObjects.iterator();
+            Iterator<InterMineObject> equivalentIter = equivObjects.iterator();
             if (equivalentIter.hasNext()) {
-                newId = ((InterMineObject) equivalentIter.next()).getId();
+                newId = equivalentIter.next().getId();
                 newObj.setId(newId);
             } else {
                 newObj.setId(getSerial());
@@ -383,39 +308,37 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             time1 = System.currentTimeMillis();
             timeSpentCreate += time1 - time2;
 
-            Map trackingMap = new HashMap();
-            Map fieldToEquivalentObjects = new HashMap();
+            Map<String, Source> trackingMap = new HashMap<String, Source>();
+            Map<FieldDescriptor, Set<InterMineObject>> fieldToEquivalentObjects =
+                new HashMap<FieldDescriptor, Set<InterMineObject>>();
             Model model = getModel();
-            Map fieldDescriptors = model.getFieldDescriptorsForClass(newObj.getClass());
-            Set modelFieldNames = fieldDescriptors.keySet();
-            Set typeUtilFieldNames = TypeUtil.getFieldInfos(newObj.getClass()).keySet();
+            Map<String, FieldDescriptor> fieldDescriptors = model.getFieldDescriptorsForClass(newObj
+                    .getClass());
+            Set<String> modelFieldNames = fieldDescriptors.keySet();
+            Set<String> typeUtilFieldNames = TypeUtil.getFieldInfos(newObj.getClass()).keySet();
             if (!modelFieldNames.equals(typeUtilFieldNames)) {
                 throw new ObjectStoreException("Failed to store data not in the model");
             }
-            Iterator fieldIter = fieldDescriptors.entrySet().iterator();
-            while (fieldIter.hasNext()) {
-                FieldDescriptor field = (FieldDescriptor) ((Map.Entry) fieldIter.next()).getValue();
+            for (FieldDescriptor field : fieldDescriptors.values()) {
                 String fieldName = field.getName();
                 if (!"id".equals(fieldName)) {
-                    Set sortedEquivalentObjects;
+                    Set<InterMineObject> sortedEquivalentObjects;
 
                     // always add to collections, resolve other clashes by priority
                     if (field instanceof CollectionDescriptor) {
-                        sortedEquivalentObjects = new HashSet();
+                        sortedEquivalentObjects = new HashSet<InterMineObject>();
                     } else {
-                        Comparator compare = new SourcePriorityComparator(dataTracker,
-                                newObj.getClass(), field.getName(),
+                        Comparator<InterMineObject> compare = new SourcePriorityComparator(
+                                dataTracker, newObj.getClass(), field.getName(),
                                 (type == SOURCE ? source : skelSource), o, dbIdsStored, this,
                                 source, skelSource, priorityConfig);
-                        sortedEquivalentObjects = new TreeSet(compare);
+                        sortedEquivalentObjects = new TreeSet<InterMineObject>(compare);
                     }
 
                     if (model.getFieldDescriptorsForClass(o.getClass()).containsKey(fieldName)) {
                         sortedEquivalentObjects.add(o);
                     }
-                    objIter = equivObjects.iterator();
-                    while (objIter.hasNext()) {
-                        InterMineObject obj = (InterMineObject) objIter.next();
+                    for (InterMineObject obj : equivObjects) {
                         Source fieldSource = dataTracker.getSource(obj.getId(), fieldName);
                         if ((equivObjects.size() == 1) && (fieldSource != null)
                             && (fieldSource.equals(source)
@@ -454,7 +377,6 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                         }
                         // materialise proxies before searching for this field
                         if (obj instanceof ProxyReference) {
-                            ProxyReference newproxy = (ProxyReference) obj;
                             obj = ((ProxyReference) obj).getObject();
                         }
                         try {
@@ -480,37 +402,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             if (type != FROM_DB) {
                 assignMapping(o.getId(), newObj.getId());
             }
-            Iterator fieldToEquivIter = fieldToEquivalentObjects.entrySet().iterator();
-            while (fieldToEquivIter.hasNext()) {
-                Source lastSource = null;
-                Map.Entry fieldToEquivEntry = (Map.Entry) fieldToEquivIter.next();
-                FieldDescriptor field = (FieldDescriptor) fieldToEquivEntry.getKey();
-                Set sortedEquivalentObjects = (Set) fieldToEquivEntry.getValue();
-                String fieldName = field.getName();
-
-                objIter = sortedEquivalentObjects.iterator();
-                while (objIter.hasNext()) {
-                    InterMineObject obj = (InterMineObject) objIter.next();
-                    if (obj == o) {
-                        copyField(obj, newObj, source, skelSource, field, type);
-                        lastSource = (type == SOURCE ? source : skelSource);
-                    } else {
-                        if (!(field instanceof CollectionDescriptor)) {
-                            lastSource = dataTracker.getSource(obj.getId(), fieldName);
-                        }
-                        if (field instanceof CollectionDescriptor || lastSource != null) {
-                            copyField(obj, newObj, lastSource, lastSource, field, FROM_DB);
-                        }
-                    }
-                }
-                if (!(field instanceof CollectionDescriptor)) {
-                    if (lastSource == null) {
-                        throw new NullPointerException("Error: lastSource is null for"
-                                + " object " + o.getId() + " and fieldName " + fieldName);
-                    }
-                    trackingMap.put(fieldName, lastSource);
-                }
-            }
+            copyFields(source, skelSource, type, o, newObj, trackingMap, fieldToEquivalentObjects);
             time1 = System.currentTimeMillis();
             timeSpentCopyFields += time1 - time2;
 
@@ -518,26 +410,10 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             time2 = System.currentTimeMillis();
             timeSpentStore += time2 - time1;
 
-            if (doTrackerFor(newObj.getClass())) {
-                // We have called store() on an object, and we are about to write all of its data
-                // tracking data. We should tell the data tracker, ONLY IF THE ID OF THE OBJECT IS
-                // NEW, so that the data tracker can cache the writes without having to ask the db
-                // if records for that objectid already exist - we know there aren't.
-                if (newId == null) {
-                    dataTracker.clearObj(newObj.getId());
-                }
-
-                Iterator trackIter = trackingMap.entrySet().iterator();
-                while (trackIter.hasNext()) {
-                    Map.Entry trackEntry = (Map.Entry) trackIter.next();
-                    String fieldName = (String) trackEntry.getKey();
-                    Source lastSource = (Source) trackEntry.getValue();
-                    dataTracker.setSource(newObj.getId(), fieldName, lastSource);
-                }
-            }
+            writeTrackerData(newObj, newId, trackingMap);
 
             while (equivalentIter.hasNext()) {
-                InterMineObject objToDelete = (InterMineObject) equivalentIter.next();
+                InterMineObject objToDelete = equivalentIter.next();
                 delete(objToDelete);
             }
 
@@ -579,6 +455,147 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         }
     }
 
+
+    private void writeTrackerData(InterMineObject newObj, Integer newId,
+            Map<String, Source> trackingMap) {
+        if (doTrackerFor(newObj.getClass())) {
+            // We have called store() on an object, and we are about to write all of its data
+            // tracking data. We should tell the data tracker, ONLY IF THE ID OF THE OBJECT IS
+            // NEW, so that the data tracker can cache the writes without having to ask the db
+            // if records for that objectid already exist - we know there aren't.
+            if (newId == null) {
+                dataTracker.clearObj(newObj.getId());
+            }
+
+            for (Map.Entry<String, Source> trackEntry : trackingMap.entrySet()) {
+                String fieldName = trackEntry.getKey();
+                Source lastSource = trackEntry.getValue();
+                dataTracker.setSource(newObj.getId(), fieldName, lastSource);
+            }
+        }
+    }
+
+
+    private void storeNonInterMineObject(FastPathObject nimo, Source source, Source skelSource,
+            int type) throws IllegalAccessException, ObjectStoreException {
+        long time1 = System.currentTimeMillis();
+        FastPathObject newObj = DynamicUtil.createObject(nimo.getClass());
+        long time2 = System.currentTimeMillis();
+        timeSpentCreate += time2 - time1;
+        Map<String, FieldDescriptor> fields = getModel().getFieldDescriptorsForClass(nimo
+                .getClass());
+        for (Map.Entry<String, FieldDescriptor> entry : fields.entrySet()) {
+            FieldDescriptor field = entry.getValue();
+            copyField(nimo, newObj, source, skelSource, field, type);
+        }
+        time1 = System.currentTimeMillis();
+        timeSpentCopyFields += time1 - time2;
+        store(newObj);
+        time2 = System.currentTimeMillis();
+        timeSpentStore += time2 - time1;
+    }
+
+
+    private void copyFields(Source source, Source skelSource, int type, InterMineObject o,
+            InterMineObject newObj, Map<String, Source> trackingMap,
+            Map<FieldDescriptor, Set<InterMineObject>> fieldToEquivalentObjects)
+        throws IllegalAccessException, ObjectStoreException {
+        for (Map.Entry<FieldDescriptor, Set<InterMineObject>> fieldToEquivEntry
+                : fieldToEquivalentObjects.entrySet()) {
+            Source lastSource = null;
+            FieldDescriptor field = fieldToEquivEntry.getKey();
+            Set<InterMineObject> sortedEquivalentObjects = fieldToEquivEntry.getValue();
+            String fieldName = field.getName();
+
+            for (InterMineObject obj : sortedEquivalentObjects) {
+                if (obj == o) {
+                    copyField(obj, newObj, source, skelSource, field, type);
+                    lastSource = (type == SOURCE ? source : skelSource);
+                } else {
+                    if (!(field instanceof CollectionDescriptor)) {
+                        lastSource = dataTracker.getSource(obj.getId(), fieldName);
+                    }
+                    if (field instanceof CollectionDescriptor || lastSource != null) {
+                        copyField(obj, newObj, lastSource, lastSource, field, FROM_DB);
+                    }
+                }
+            }
+            if (!(field instanceof CollectionDescriptor)) {
+                if (lastSource == null) {
+                    throw new NullPointerException("Error: lastSource is null for"
+                            + " object " + o.getId() + " and fieldName " + fieldName);
+                }
+                trackingMap.put(fieldName, lastSource);
+            }
+        }
+    }
+
+    private InterMineObject shortcut(InterMineObject o, Set<InterMineObject> equivObjects, int type,
+            long time2, Source source, Source skelSource) throws ObjectStoreException,
+            IllegalAccessException {
+        // Take a shortcut!
+        InterMineObject newObj = DynamicUtil.createObject(o.getClass());
+        Integer newId;
+        if (equivObjects.size() == 0) {
+            newId = getSerial();
+            assignMapping(o.getId(), newId);
+        } else {
+            newId = equivObjects.iterator().next().getId();
+        }
+        newObj.setId(newId);
+        if (type == SOURCE) {
+            if (writtenObjects.contains(newId)) {
+                // There are duplicate objects
+                if (!ignoreDuplicates) {
+                    // Yes, this *can* happen, if two items in the tgt-items-database have
+                    // the same item.identifier.
+                    throw new IllegalArgumentException("There are duplicate objects in the "
+                            + "source being loaded, multiple items exist with the same "
+                            + "item.identifer. Storing again to id " + newId
+                            + " object from source " + o);
+                }
+                duplicateObjects.add(newId);
+                isDuplicates = true;
+            } else {
+                writtenObjects.add(newId);
+            }
+        }
+        long time1 = System.currentTimeMillis();
+        timeSpentCreate += time1 - time2;
+        Map<String, FieldDescriptor> fields = getModel().getFieldDescriptorsForClass(newObj
+                .getClass());
+        Map<String, Source> trackingMap = new HashMap<String, Source>();
+        for (Map.Entry<String, FieldDescriptor> entry : fields.entrySet()) {
+            String fieldName = entry.getKey();
+            FieldDescriptor field = entry.getValue();
+            copyField(o, newObj, source, skelSource, field, type);
+            if (!(field instanceof CollectionDescriptor)) {
+                trackingMap.put(fieldName, type == SOURCE ? source : skelSource);
+            }
+        }
+        time2 = System.currentTimeMillis();
+        timeSpentCopyFields += time2 - time1;
+        store(newObj);
+        time1 = System.currentTimeMillis();
+        timeSpentStore += time1 - time2;
+        if (doTrackerFor(newObj.getClass())) {
+            dataTracker.clearObj(newId);
+            for (Map.Entry<String, Source> entry : trackingMap.entrySet()) {
+                dataTracker.setSource(newObj.getId(), entry.getKey(), entry.getValue());
+            }
+        }
+        if (type == SKELETON) {
+            skeletons.add(newObj.getId());
+        } else if (skeletons.contains(newObj.getId().intValue())) {
+            skeletons.set(newObj.getId().intValue(), false);
+        }
+        time2 = System.currentTimeMillis();
+        if (o.getId() != null) {
+            pureObjects.add(o.getId());
+        }
+        timeSpentDataTrackerWrite += time2 - time1;
+        return newObj;
+    }
     /**
      * {@inheritDoc}
     public void commitTransaction() throws ObjectStoreException {
@@ -590,6 +607,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close() throws ObjectStoreException {
         super.close();
         dataTracker.close();

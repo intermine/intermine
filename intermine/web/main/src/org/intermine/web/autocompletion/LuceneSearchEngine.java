@@ -96,7 +96,7 @@ public class LuceneSearchEngine
         QueryParser parser = new QueryParser(Version.LUCENE_30, toSearch, analyzer);
         BooleanQuery.setMaxClauseCount(4096);
 
-        if (!queryString.equals("") && !queryString.trim().startsWith("*")) {
+        if (!"".equals(queryString) && !queryString.trim().startsWith("*")) {
 
             Query query;
 
@@ -142,7 +142,7 @@ public class LuceneSearchEngine
         String status = "true";
         String[] results = null;
 
-        if (!queryS.equals("") && !queryS.trim().startsWith("*")) {
+        if (!"".equals(queryS) && !queryS.trim().startsWith("*")) {
             Query query = null;
             if (queryS.endsWith(" ")) {
                 queryS = queryS.substring(0, queryS.length() - 1);
@@ -195,5 +195,4 @@ public class LuceneSearchEngine
 
         return null;
     }
-
 }

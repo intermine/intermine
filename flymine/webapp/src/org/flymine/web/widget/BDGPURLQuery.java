@@ -10,9 +10,14 @@ package org.flymine.web.widget;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
@@ -42,26 +47,27 @@ public class BDGPURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
-        String viewStrings = "Gene.secondaryIdentifier,Gene.name,Gene.organism.name,"
-            + "Gene.primaryIdentifier";
-        String expressionStrings = "Gene.mRNAExpressionResults.stageRange,"
-            + "Gene.mRNAExpressionResults.mRNAExpressionTerms.name,"
-            + "Gene.mRNAExpressionResults.dataSet.name";
-        q.setView(viewStrings);
-        q.addView(expressionStrings);
-        q.addConstraint(bag.getType(),  Constraints.in(bag.getName()));
+        q.addViews("Gene.secondaryIdentifier", "Gene.name", "Gene.organism.name",
+            "Gene.primaryIdentifier");
+        List<String> expressionStrings = new ArrayList<String>(Arrays.asList(new String[] {
+            "Gene.mRNAExpressionResults.stageRange,",
+            "Gene.mRNAExpressionResults.mRNAExpressionTerms.name",
+            "Gene.mRNAExpressionResults.dataSet.name"
+        }));
+        q.addViews(expressionStrings);
+        q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
 
-        q.addConstraint("Gene.mRNAExpressionResults.expressed", Constraints.eq(Boolean.TRUE));
-        q.addConstraint("Gene.mRNAExpressionResults.dataSet.name", Constraints.eq(DATASET));
+        q.addConstraint(Constraints.eq("Gene.mRNAExpressionResults.expressed",
+                Boolean.TRUE.toString()));
+        q.addConstraint(Constraints.eq("Gene.mRNAExpressionResults.dataSet.name", DATASET));
         if (!showAll) {
-            q.addConstraint("Gene.mRNAExpressionResults.mRNAExpressionTerms",
-                            Constraints.lookup(key));
-            q.setConstraintLogic("A and B and C and D");
-        } else {
-            q.setConstraintLogic("A and B and C");
+            q.addConstraint(Constraints.lookup("Gene.mRNAExpressionResults.mRNAExpressionTerms",
+                    key, ""));
         }
-        q.syncLogicExpression("and");
-        q.setOrderBy(expressionStrings);
+        for (String orderPath : expressionStrings) {
+            q.addOrderBy(orderPath, OrderDirection.ASC);
+        }
+
         return q;
     }
 }

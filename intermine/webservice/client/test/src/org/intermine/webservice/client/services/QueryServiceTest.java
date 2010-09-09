@@ -1,14 +1,12 @@
 package org.intermine.webservice.client.services;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.util.TestUtil;
@@ -37,10 +35,10 @@ public class QueryServiceTest extends TestCase
         Model model = modelService.getModel();
         PathQuery query = new PathQuery(model);
         query.addView("Employee.name,Employee.age,Employee.end,Employee.fullTime");
-        query.addConstraint("Employee.name", new Constraint(ConstraintOp.CONTAINS, "EmployeeA"));
-        query.addConstraint("Employee.age", new Constraint(ConstraintOp.GREATER_THAN_EQUALS, new Integer(10)));
-        query.addConstraint("Employee.age", new Constraint(ConstraintOp.LESS_THAN, new Integer(60)));
-        query.addConstraint("Employee.fullTime", new Constraint(ConstraintOp.EQUALS, true));
+        query.addConstraint(Constraints.like("Employee.name","EmployeeA*"));
+        query.addConstraint(Constraints.greaterThanEqualTo("Employee.age", "10"));
+        query.addConstraint(Constraints.lessThan("Employee.age", "60"));
+        query.addConstraint(Constraints.eq("Employee.fullTime", Boolean.TRUE.toString()));
         DummyQueryService queryService = TestUtil.getQueryService();
         queryService.setFakeResponse("EmployeeA1\t10\t1\ttrue\nEmployeeA2\t20\t2\ttrue");
         queryService.setExpectedRequest("http://localhost:8080/intermine-test/service/query/results?query=%3Cquery+name%3D%22%22+model%3D%22testmodel%22+view%3D%22Employee.name+Employee.age+Employee.end+Employee.fullTime%22%3E%3Cnode+path%3D%22Employee%22+type%3D%22Employee%22%3E%3C%2Fnode%3E%3Cnode+path%3D%22Employee.name%22+type%3D%22String%22%3E%3Cconstraint+op%3D%22CONTAINS%22+value%3D%22EmployeeA%22+description%3D%22%22+identifier%3D%22%22+code%3D%22A%22%3E%3C%2Fconstraint%3E%3C%2Fnode%3E%3Cnode+path%3D%22Employee.age%22+type%3D%22int%22%3E%3Cconstraint+op%3D%22%26gt%3B%3D%22+value%3D%2210%22+description%3D%22%22+identifier%3D%22%22+code%3D%22B%22%3E%3C%2Fconstraint%3E%3Cconstraint+op%3D%22%26lt%3B%22+value%3D%2260%22+description%3D%22%22+identifier%3D%22%22+code%3D%22C%22%3E%3C%2Fconstraint%3E%3C%2Fnode%3E%3Cnode+path%3D%22Employee.fullTime%22+type%3D%22boolean%22%3E%3Cconstraint+op%3D%22%3D%22+value%3D%22true%22+description%3D%22%22+identifier%3D%22%22+code%3D%22D%22%3E%3C%2Fconstraint%3E%3C%2Fnode%3E%3C%2Fquery%3E&size=100");

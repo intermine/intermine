@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
  *
  * @author Andrew Varley
  */
-public class PropertiesUtil
+public final class PropertiesUtil
 {
     private static final Logger LOG = Logger.getLogger(PropertiesUtil.class);
 
@@ -82,7 +82,7 @@ public class PropertiesUtil
         }
 
         Properties subset = new Properties();
-        Enumeration propertyEnum = props.keys();
+        Enumeration<Object> propertyEnum = props.keys();
         while (propertyEnum.hasMoreElements()) {
             String propertyName = (String) propertyEnum.nextElement();
             if (propertyName.startsWith(str)) {
@@ -120,7 +120,7 @@ public class PropertiesUtil
             throw new NullPointerException("props cannot be null");
         }
         Properties ret = new Properties();
-        Enumeration propertyEnum = props.keys();
+        Enumeration<Object> propertyEnum = props.keys();
         while (propertyEnum.hasMoreElements()) {
             String propertyName = (String) propertyEnum.nextElement();
             if (propertyName.startsWith(str + ".")) {

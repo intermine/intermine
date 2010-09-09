@@ -53,6 +53,7 @@ public abstract class AbstractTable implements SQLStringable
      * @param obj an Object to compare to
      * @return true if obj is equal
      */
+    @Override
     public abstract boolean equals(Object obj);
 
     /**
@@ -60,6 +61,7 @@ public abstract class AbstractTable implements SQLStringable
      *
      * @return an arbitrary integer based on the contents of the object
      */
+    @Override
     public abstract int hashCode();
 
     /**

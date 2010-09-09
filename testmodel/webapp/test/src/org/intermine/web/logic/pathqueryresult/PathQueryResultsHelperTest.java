@@ -28,7 +28,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.OldPathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
@@ -93,7 +93,7 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         InterMineAPI im = SessionMethods.getInterMineAPI(context);
         ObjectStore os = im.getObjectStore();
         InterMineBag imBag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
-        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, model);
+        OldPathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, model);
         String expectedXml = "<query name=\"\" model=\"testmodel\" view=\"Employee.name Employee.age Employee.fullTime\">"
         + "<node path=\"Employee\" type=\"Employee\">"
         + "<constraint op=\"IN\" value=\"Fred\" description=\"\" identifier=\"\" code=\"A\">"
@@ -116,7 +116,7 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         d1.setEmployees(employees);
         List<Class> sr = new ArrayList<Class>();
         sr.add(Employee.class);
-        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollectionForClass(webConfig, os.getModel(), (InterMineObject)d1, "employees",sr);
+        OldPathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollectionForClass(webConfig, os.getModel(), (InterMineObject)d1, "employees",sr);
         String expectedXml = "<query name=\"\" model=\"testmodel\" view=\"Department.employees.name Department.employees:department.name Department.employees:department:company.name Department.employees.age Department.employees.fullTime\">" +
         		"<node path=\"Department\" type=\"Department\"></node>" +
         		"<node path=\"Department.employees\" type=\"Employee\"></node>" +

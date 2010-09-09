@@ -31,7 +31,7 @@ public class ExportHelper
      * @param cls a class to look for in the results
      * @return true if the class is found
      */
-    public static boolean canExport(PagedTable pt, Class cls) {
+    public static boolean canExport(PagedTable pt, Class<?> cls) {
         return  (getClassIndex(getColumnClasses(pt), cls) >= 0);
     }
 
@@ -40,7 +40,7 @@ public class ExportHelper
      * @param cls searched class
      * @return index of class that is assignable to given class
      */
-    public static int getClassIndex(List<Class> clazzes, Class cls) {
+    public static int getClassIndex(List<Class<?>> clazzes, Class<?> cls) {
         for (int i = 0; i < clazzes.size(); i++) {
             if (cls.isAssignableFrom(clazzes.get(i))) {
                 return i;
@@ -54,8 +54,8 @@ public class ExportHelper
      * @param searched searched class
      * @return index of class that is assignable to given class
      */
-    public static List<Integer> getClassIndexes(List<Class> clazzes,
-            Class searched) {
+    public static List<Integer> getClassIndexes(List<Class<?>> clazzes,
+            Class<?> searched) {
         List<Integer> ret = new ArrayList<Integer>();
         for (int i = 0; i < clazzes.size(); i++) {
             if (searched.isAssignableFrom(clazzes.get(i))) {
@@ -69,9 +69,9 @@ public class ExportHelper
      * @param pt paged table
      * @return classes of columns
      */
-    public static List<Class> getColumnClasses(PagedTable pt) {
-        List columns = pt.getColumns();
-        List<Class> ret = new ArrayList<Class>();
+    public static List<Class<?>> getColumnClasses(PagedTable pt) {
+        List<Column> columns = pt.getColumns();
+        List<Class<?>> ret = new ArrayList<Class<?>>();
 
         for (int i = 0; i < columns.size(); i++) {
             ret.add(pt.getTypeForColumn(i));
@@ -87,7 +87,7 @@ public class ExportHelper
      * @param cls a class to look for in the results
      * @return the first column index for the class
      */
-    public static int getFirstColumnForClass(PagedTable pt, Class cls) {
+    public static int getFirstColumnForClass(PagedTable pt, Class<?> cls) {
         return getClassIndex(getColumnClasses(pt), cls);
     }
 

@@ -61,6 +61,7 @@ public class BuildBagAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
@@ -101,7 +102,7 @@ public class BuildBagAction extends InterMineAction
         if (formFile != null && formFile.getFileName() != null
                 && formFile.getFileName().length() > 0) {
             String mimetype = formFile.getContentType();
-            if (!mimetype.equals("application/octet-stream") && !mimetype.startsWith("text")) {
+            if (!"application/octet-stream".equals(mimetype) && !mimetype.startsWith("text")) {
                 recordError(new ActionMessage("bagBuild.notText", mimetype), request);
                 return mapping.findForward("bags");
             }
@@ -124,7 +125,7 @@ public class BuildBagAction extends InterMineAction
 
         reader.mark(READ_AHEAD_CHARS);
 
-        char buf[] = new char[READ_AHEAD_CHARS];
+        char[] buf = new char[READ_AHEAD_CHARS];
 
         int read = reader.read(buf, 0, READ_AHEAD_CHARS);
 

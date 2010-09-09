@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -32,9 +31,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStorePassthruImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.objectstore.translating.ObjectStoreTranslatingImpl;
-import org.intermine.objectstore.translating.Translator;
-
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
@@ -44,6 +40,8 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.translating.ObjectStoreTranslatingImpl;
+import org.intermine.objectstore.translating.Translator;
 import org.intermine.util.IntPresentSet;
 
 /**
@@ -58,9 +56,11 @@ import org.intermine.util.IntPresentSet;
  */
 public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePassthruImpl
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(
             ObjectStoreFastCollectionsForTranslatorImpl.class);
     private IntPresentSet doneAlready = new IntPresentSet();
+    @SuppressWarnings("unused")
     private Source source = null;
 
     /**
@@ -81,9 +81,9 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
      * @throws IllegalArgumentException if props are invalid
      * @throws ObjectStoreException if there is a problem with the instance
      */
-    public static ObjectStoreFastCollectionsForTranslatorImpl getInstance(String osAlias,
-                                                                          Properties props)
-        throws ObjectStoreException {
+    public static ObjectStoreFastCollectionsForTranslatorImpl getInstance(
+            @SuppressWarnings("unused") String osAlias,
+            Properties props) throws ObjectStoreException {
         String underlyingOsAlias = props.getProperty("os");
         if (underlyingOsAlias == null) {
             throw new IllegalArgumentException("No 'os' property specified for FastCollections"
@@ -127,6 +127,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
     /**
      * {@inheritDoc}
      */
+    @Override
     public Results execute(Query q) {
         return new Results(q, this, SEQUENCE_IGNORE);
     }
@@ -134,6 +135,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
     /**
      * {@inheritDoc}
      */
+    @Override
     public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
             boolean prefetch) {
         Results retval = new Results(q, this, getSequence(getComponentsForQuery(q)));
@@ -156,6 +158,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
     /**
      * {@inheritDoc}
      */
+    @Override
     public SingletonResults executeSingleton(Query q) {
         return new SingletonResults(q, this, SEQUENCE_IGNORE);
     }
@@ -163,6 +166,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
     /**
      * {@inheritDoc}
      */
+    @Override
     public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
             boolean explain, boolean prefetch) {
         SingletonResults retval = new SingletonResults(q, this,
@@ -186,32 +190,36 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
     /**
      * {@inheritDoc}
      */
-    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            Map<Object, Integer> sequence) throws ObjectStoreException {
+    @Override
+    public List<ResultsRow<Object>> execute(Query q, int start, int limit, boolean optimise,
+            boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException {
         try {
-            List retval = os.execute(q, start, limit, optimise, explain, sequence);
+            List<ResultsRow<Object>> retval = os.execute(q, start, limit, optimise, explain,
+                    sequence);
             synchronized (doneAlready) {
                 if (retval.size() > 1) {
                     // The ItemToObjectTranslator creates collections by creating a query with a
                     // BagConstraint with all the IDs of all the objects that are in the collection.
                     // We should be able to read these queries and extract the IDs, and create a
                     // super-bag for use in a single query.
-                    QuerySelectable node = (QuerySelectable) q.getSelect().get(0);
+                    QuerySelectable node = q.getSelect().get(0);
                     if (node instanceof QueryClass) {
-                        Map<FastPathObject, Map> froms = new HashMap<FastPathObject, Map>();
-                        Set toIds = new TreeSet();
-                        Iterator rowIter = retval.iterator();
-                        while (rowIter.hasNext()) {
-                            FastPathObject o = (FastPathObject) ((ResultsRow) rowIter.next())
-                                .get(0);
-                            Map fromColls = new HashMap();
-                            Map fieldDescriptors = getModel().getFieldDescriptorsForClass(o
-                                    .getClass());
-                            Iterator fieldIter = fieldDescriptors.entrySet().iterator();
-                            while (fieldIter.hasNext()) {
-                                Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
-                                String fieldName = (String) fieldEntry.getKey();
-                                FieldDescriptor field = (FieldDescriptor) fieldEntry.getValue();
+                        Map<FastPathObject, Map<String, Object>> froms =
+                            new HashMap<FastPathObject, Map<String, Object>>();
+                        Set<Integer> toIds = new TreeSet<Integer>();
+                        Set<Integer> toAddToDoneAlready = new HashSet<Integer>();
+                        Map<Integer, FastPathObject> idToObj =
+                            new HashMap<Integer, FastPathObject>();
+                        for (ResultsRow<Object> row : retval) {
+                            FastPathObject o = (FastPathObject) row.get(0);
+                            Map<String, Object> fromColls =
+                                new HashMap<String, Object>();
+                            Map<String, FieldDescriptor> fieldDescriptors = getModel()
+                                .getFieldDescriptorsForClass(o.getClass());
+                            for (Map.Entry<String, FieldDescriptor> fieldEntry
+                                    : fieldDescriptors.entrySet()) {
+                                String fieldName = fieldEntry.getKey();
+                                FieldDescriptor field = fieldEntry.getValue();
                                 if (field.relationType() == FieldDescriptor.M_N_RELATION) {
                                     Object sr = o.getFieldValue(fieldName);
                                     if (sr instanceof SingletonResults) {
@@ -226,10 +234,14 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                                 QueryField qf = (QueryField) bc.getQueryNode();
                                                 if (qf.getFromElement().equals(existingQ.getFrom()
                                                             .iterator().next())
-                                                        && qf.getFieldName().equals("id")) {
-                                                    Collection bag = bc.getBag();
-                                                    fromColls.put(fieldName, new HashSet(bag));
-                                                    toIds.addAll(bag);
+                                                        && "id".equals(qf.getFieldName())) {
+                                                    // We know that the bag is of integers. We can't
+                                                    // persuade Java of this, so we need to copy.
+                                                    Collection<?> bag = bc.getBag();
+                                                    fromColls.put(fieldName, bag);
+                                                    for (Object bagItem : bag) {
+                                                        toIds.add((Integer) bagItem);
+                                                    }
                                                 }
                                             }
                                         }
@@ -248,44 +260,52 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                             }
                             froms.put(o, fromColls);
                             if (o instanceof InterMineObject) {
-                                doneAlready.add(((InterMineObject) o).getId());
+                                toAddToDoneAlready.add(((InterMineObject) o).getId());
+                                idToObj.put(((InterMineObject) o).getId(), o);
                             }
                         }
                         // Now, froms is a Map from object to be populated to a Map from collection
                         // name to a Set of ids of objects that should be in the collection.
                         // toIds is a Set of all the IDs that we need to fetch in our query.
 
-                        // Find all the objects we have in the cache.
+                        // Now, we don't need to load in objects that the dataloader has already
+                        // handled. That includes basically everything we have seen ever.
+                        // This section of code was commented out for a long period of time, which
+                        // would have resulted in more objects being fetched than strictly
+                        // necessary, leading to lower performance. I am uncommenting them.
+                        // Hopefully this will not break anything. Tested on a small build.
 
-                        Map idToObj = new HashMap();
-                        Iterator toIdIter = toIds.iterator();
+                        HashSet<Integer> idsToProxy = new HashSet<Integer>();
+                        Iterator<Integer> toIdIter = toIds.iterator();
                         while (toIdIter.hasNext()) {
-                            Integer toId = (Integer) toIdIter.next();
-                            InterMineObject toObj = os.pilferObjectById(toId);
-                            if (toObj != null) {
-                                idToObj.put(toId, toObj);
+                            Integer toId = toIdIter.next();
+                            if (doneAlready.contains(toId)) {
                                 toIdIter.remove();
+                                idsToProxy.add(toId);
                             }
                         }
 
-                        // Now, we don't need to load in objects that the dataloader has already
-                        // handled. That includes basically everything we have seen ever.
+                        // Find all the objects we have in the cache.
 
-                        HashSet idsToProxy = new HashSet();
-                        //toIdIter = toIds.iterator();
-                        //while (toIdIter.hasNext()) {
-                        //    Integer toId = (Integer) toIdIter.next();
-                        //    if (doneAlready.contains(toId)) {
-                        //        toIdIter.remove();
-                        //        idsToProxy.add(toId);
-                        //    }
-                        //}
+                        toIdIter = toIds.iterator();
+                        while (toIdIter.hasNext()) {
+                            Integer toId = toIdIter.next();
+                            if (idToObj.containsKey(toId)) {
+                                toIdIter.remove();
+                            } else {
+                                InterMineObject toObj = os.pilferObjectById(toId);
+                                if (toObj != null) {
+                                    idToObj.put(toId, toObj);
+                                    toIdIter.remove();
+                                }
+                            }
+                        }
 
                         while (!toIds.isEmpty()) {
-                            Set bag = new HashSet();
+                            Set<Integer> bag = new HashSet<Integer>();
                             toIdIter = toIds.iterator();
                             for (int i = 0; (i < limit) && toIdIter.hasNext(); i++) {
-                                Integer toId = (Integer) toIdIter.next();
+                                Integer toId = toIdIter.next();
                                 bag.add(toId);
                                 toIdIter.remove();
                             }
@@ -300,39 +320,49 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
 
                             SingletonResults l = os.executeSingleton(subQ, limit * 2, optimise,
                                     explain, true);
-                            Iterator lIter = l.iterator();
-                            while (lIter.hasNext()) {
-                                InterMineObject o = (InterMineObject) lIter.next();
+                            for (Object result : l) {
+                                InterMineObject o = (InterMineObject) result;
                                 idToObj.put(o.getId(), o);
                                 doneAlready.add(o.getId());
                             }
                         }
+                        for (Integer toAdd : toAddToDoneAlready) {
+                            doneAlready.add(toAdd);
+                        }
                         // Now we have fetched all the objects in from the database. We now need to
                         // populate every object in our froms Map
 
-                        for (Map.Entry<FastPathObject, Map> fromEntry : froms.entrySet()) {
+                        for (Map.Entry<FastPathObject, Map<String, Object>> fromEntry
+                                : froms.entrySet()) {
                             FastPathObject objToPopulate = fromEntry.getKey();
-                            Map collectionsToPopulate = (Map) fromEntry.getValue();
-                            Iterator collectionIter = collectionsToPopulate.entrySet().iterator();
-                            while (collectionIter.hasNext()) {
-                                Map.Entry collectionEntry = (Map.Entry) collectionIter.next();
-                                String collectionName = (String) collectionEntry.getKey();
+                            //String objDescription;
+                            //if (objToPopulate instanceof InterMineObject) {
+                            //    objDescription = "object with ID "
+                            //        + ((InterMineObject) objToPopulate).getId();
+                            //} else {
+                            //    objDescription = "FastPathObject";
+                            //}
+                            Map<String, Object> collectionsToPopulate = fromEntry.getValue();
+                            for (Map.Entry<String, Object> collectionEntry
+                                    : collectionsToPopulate.entrySet()) {
+                                String collectionName = collectionEntry.getKey();
                                 Object contents = collectionEntry.getValue();
-                                if (contents instanceof Collection) {
-                                    Collection collectionContents = (Collection)
+                                if (contents instanceof Collection<?>) {
+                                    Collection<?> collectionContents = (Collection<?>)
                                         collectionEntry.getValue();
-                                    Collection substituteCollection = (contents instanceof List
-                                            ? (Collection) new ArrayList()
-                                            : (Collection) new HashSet());
-                                    Iterator contentIter = collectionContents.iterator();
-                                    while (contentIter.hasNext()) {
-                                        Integer idToAdd = (Integer) contentIter.next();
+                                    Collection<InterMineObject> substituteCollection =
+                                        new HashSet<InterMineObject>();
+                                    for (Object idToAddObj : collectionContents) {
+                                        Integer idToAdd = (Integer) idToAddObj;
                                         InterMineObject objToAdd = (InterMineObject)
                                             idToObj.get(idToAdd);
                                         if (objToAdd == null) {
                                             if (idsToProxy.contains(idToAdd)) {
                                                 objToAdd = new ProxyReference(os, idToAdd,
                                                         InterMineObject.class);
+                                                //LOG.warn("Did not fetch object with ID " + idToAdd
+                                                //        + " for " + objDescription
+                                                //        + " for collection " + collectionName);
                                             } else {
                                                 ObjectStoreTranslatingImpl osti =
                                                     (ObjectStoreTranslatingImpl) os;
@@ -356,6 +386,10 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                                     + ") which doesn't exist";
                                                 throw new ObjectStoreException(message);
                                             }
+                                        //} else {
+                                            //LOG.warn("Fetched object with ID " + idToAdd
+                                            //        + " for " + objDescription
+                                            //        + " for collection " + collectionName);
                                         }
                                         substituteCollection.add(objToAdd);
                                     }
@@ -367,6 +401,13 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                         idToObj.get(id);
                                     if (objToAdd != null) {
                                         objToPopulate.setFieldValue(collectionName, objToAdd);
+                                        //LOG.warn("Fetched object with ID " + id + " for "
+                                        //        + objDescription + " for reference "
+                                        //        + collectionName);
+                                    //} else {
+                                        //LOG.warn("Did not fetch object with ID " + id + " for "
+                                        //        + objDescription + " for reference "
+                                        //        + collectionName);
                                     }
                                 }
                             }

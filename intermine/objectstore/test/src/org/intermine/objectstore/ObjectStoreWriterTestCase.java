@@ -24,6 +24,8 @@ import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.ImportantPerson;
+import org.intermine.objectstore.query.Clob;
+import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
@@ -733,5 +735,26 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
             fail("Expected: ConcurrentModificationException");
         } catch (ConcurrentModificationException e) {
         }
+    }
+    
+    public void testClob() throws Exception {
+        Clob clob = writer.createClob();
+        writer.replaceClob(clob, "Monkey");
+        ClobAccess ca = new ClobAccess(writer, clob);
+        assertEquals("Monkey", ca.toString());
+        StringBuilder longString = new StringBuilder();
+        for (int i = 0; i < 10000; i++) {
+            longString.append("Lots of monkeys. ");
+        }
+        writer.replaceClob(clob, longString.toString());
+        assertEquals("Monkey", ca.toString());
+        ca = new ClobAccess(writer, clob);
+        assertEquals(170000, ca.length());
+        assertEquals(longString.toString(), ca.toString());
+        assertEquals('L', ca.charAt(1700));
+        assertEquals('L', ca.charAt(16983));
+        ClobAccess sub = ca.subSequence(85000, 85016);
+        assertEquals("Lots of monkeys.", sub.toString());
+        assertEquals(16, sub.length());
     }
 }

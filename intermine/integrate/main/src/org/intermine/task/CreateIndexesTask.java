@@ -43,6 +43,8 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.SynchronisedIterator;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
@@ -70,8 +72,9 @@ public class CreateIndexesTask extends Task
     private DatabaseSchema schema = null;
     private Database database = null;
     private static final Logger LOG = Logger.getLogger(CreateIndexesTask.class);
-    private Map tableIndexesDone = Collections.synchronizedMap(new HashMap());
-    private Set indexesMade = Collections.synchronizedSet(new HashSet());
+    private Map<String, Set<String>> tableIndexesDone = Collections.synchronizedMap(
+            new HashMap<String, Set<String>>());
+    private Set<String> indexesMade = Collections.synchronizedSet(new HashSet<String>());
     private static final int POSTGRESQL_INDEX_NAME_LIMIT = 63;
     private int extraThreads = 3;
     private ObjectStore objectStore;
@@ -153,17 +156,17 @@ public class CreateIndexesTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         setUp();
         Model m = schema.getModel();
-        Map statements = new TreeMap();
-        Map clds = new TreeMap();
+        Map<String, IndexStatement> statements = new TreeMap<String, IndexStatement>();
+        Map<String, Map<String, IndexStatement>> clds =
+            new TreeMap<String, Map<String, IndexStatement>>();
 
-        ClassDescriptor cld = null;
-        try {
-            for (Iterator i = m.getClassDescriptors().iterator(); i.hasNext();) {
-                cld = (ClassDescriptor) i.next();
-                Map cldIndexes = new TreeMap();
+        for (ClassDescriptor cld : m.getClassDescriptors()) {
+            try {
+                Map<String, IndexStatement> cldIndexes = new TreeMap<String, IndexStatement>();
                 if (attributeIndexes) {
                     getAttributeIndexStatements(cld, cldIndexes);
                 } else {
@@ -174,10 +177,10 @@ public class CreateIndexesTask extends Task
                     statements.putAll(cldIndexes);
                     clds.put(cld.getName(), cldIndexes);
                 }
+            } catch (MetaDataException e) {
+                String message = "Error creating indexes for " + cld.getType();
+                throw new BuildException(message, e);
             }
-        } catch (MetaDataException e) {
-            String message = "Error creating indexes for " + cld.getType();
-            throw new BuildException(message, e);
         }
 
 
@@ -194,16 +197,35 @@ public class CreateIndexesTask extends Task
             // limit on index name length (63) and will truncate longer names with a NOTICE rather
             // than an error.
 
-            Iterator statementsIter = clds.keySet().iterator();
-
-            while (statementsIter.hasNext()) {
-                String indexName = (String) statementsIter.next();
-                indexStatement = (IndexStatement) statements.get(indexName);
-                dropIndex(indexName);
+            Set<ClassDescriptor> masters = new HashSet<ClassDescriptor>();
+            for (ClassDescriptor cld : m.getClassDescriptors()) {
+                // For each class descriptor, remove all indexes from the master table
+                ClassDescriptor master = schema.getTableMaster(cld);
+                masters.add(master);
+            }
+            for (ClassDescriptor cld : masters) {
+                String tableName = DatabaseUtil.getTableName(cld);
+                DatabaseMetaData metadata = c.getMetaData();
+                ResultSet r = metadata.getIndexInfo(null, null, tableName.toLowerCase(), false,
+                        false);
+                Set<String> indexNames = new HashSet<String>();
+                while (r.next()) {
+                    if ((r.getShort(7) != DatabaseMetaData.tableIndexStatistic)
+                            && r.getBoolean(4)) {
+                        String indexName = r.getString(6);
+                        indexNames.add(indexName);
+                    }
+                }
+                LOG.info("Dropping indexes for table " + tableName + ": " + indexNames);
+                for (String indexName : indexNames) {
+                    dropIndex(indexName);
+                }
             }
 
-            Iterator cldsIter = new SynchronisedIterator(clds.entrySet().iterator());
-            Set threads = new HashSet();
+            Iterator<Map.Entry<String, Map<String, IndexStatement>>> cldsIter =
+                new SynchronisedIterator<Map.Entry<String, Map<String, IndexStatement>>>(clds
+                        .entrySet().iterator());
+            Set<Integer> threads = new HashSet<Integer>();
 
             synchronized (threads) {
                 for (int i = 1; i <= extraThreads; i++) {
@@ -216,14 +238,13 @@ public class CreateIndexesTask extends Task
 
             try {
                 while (cldsIter.hasNext()) {
-                    Map.Entry cldEntry = (Map.Entry) cldsIter.next();
-                    String cldName = (String) cldEntry.getKey();
+                    Map.Entry<String, Map<String, IndexStatement>> cldEntry = cldsIter.next();
+                    String cldName = cldEntry.getKey();
                     LOG.info("Thread 0 processing class " + cldName);
-                    statementsIter = ((Map) cldEntry.getValue()).entrySet().iterator();
-                    while (statementsIter.hasNext()) {
-                        Map.Entry statementEntry = (Map.Entry) statementsIter.next();
-                        String indexName = (String) statementEntry.getKey();
-                        indexStatement = (IndexStatement) statementEntry.getValue();
+                    for (Map.Entry<String, IndexStatement> statementEntry : cldEntry.getValue()
+                            .entrySet()) {
+                        String indexName = statementEntry.getKey();
+                        indexStatement = statementEntry.getValue();
                         createIndex(c, indexName, indexStatement, 0);
                     }
                 }
@@ -260,8 +281,8 @@ public class CreateIndexesTask extends Task
     private class Worker implements Runnable
     {
         private int threadNo;
-        private Set threads;
-        private Iterator cldsIter;
+        private Set<Integer> threads;
+        private Iterator<Map.Entry<String, Map<String, IndexStatement>>> cldsIter;
 
         /**
          * Create a new Worker object.
@@ -269,7 +290,8 @@ public class CreateIndexesTask extends Task
          * @param cldsIter an Iterator over the classes to index
          * @param threadNo the thread index of this thread
          */
-        public Worker(Set threads, Iterator cldsIter, int threadNo) {
+        public Worker(Set<Integer> threads,
+                Iterator<Map.Entry<String, Map<String, IndexStatement>>> cldsIter, int threadNo) {
             this.threads = threads;
             this.cldsIter = cldsIter;
             this.threadNo = threadNo;
@@ -282,19 +304,18 @@ public class CreateIndexesTask extends Task
                     conn = database.getConnection();
                     conn.setAutoCommit(true);
                     while (cldsIter.hasNext()) {
-                        Map.Entry cldEntry = (Map.Entry) cldsIter.next();
-                        String cldName = (String) cldEntry.getKey();
+                        Map.Entry<String, Map<String, IndexStatement>> cldEntry = cldsIter.next();
+                        String cldName = cldEntry.getKey();
                         LOG.info("Thread " + threadNo + " processing class " + cldName);
-                        Iterator statementsIter = ((Map) cldEntry.getValue()).entrySet().iterator();
-                        while (statementsIter.hasNext()) {
-                            Map.Entry statementEntry = (Map.Entry) statementsIter.next();
-                            String indexName = (String) statementEntry.getKey();
-                            IndexStatement st = (IndexStatement) statementEntry.getValue();
+                        for (Map.Entry<String, IndexStatement> statementEntry : cldEntry.getValue()
+                                .entrySet()) {
+                            String indexName = statementEntry.getKey();
+                            IndexStatement st = statementEntry.getValue();
                             createIndex(conn, indexName, st, threadNo);
                         }
                     }
                 } catch (NoSuchElementException e) {
-                    // rmpty
+                    // empty
                 } finally {
                     try {
                         if (conn != null) {
@@ -322,14 +343,10 @@ public class CreateIndexesTask extends Task
      * TransposableElementInsertionSite__LocatedSequenceFeature__key_indentifer_org to
      * TranspElemenInsertSite__LocateSequenFeatur__key_indentifer_org
      */
-    private void compressNames(Map statements) {
-        Set statementNames = new HashSet(statements.keySet());
+    private void compressNames(Map<String, IndexStatement> statements) {
+        Set<String> statementNames = new HashSet<String>(statements.keySet());
 
-        Iterator statementsIter = statementNames.iterator();
-
-        while (statementsIter.hasNext()) {
-            String origIndexName = (String) statementsIter.next();
-
+        for (String origIndexName : statementNames) {
             if (origIndexName.length() > POSTGRESQL_INDEX_NAME_LIMIT) {
                 String indexName = origIndexName;
 
@@ -341,7 +358,7 @@ public class CreateIndexesTask extends Task
                     String newIndexName = matcher.replaceAll("$1");
 
                     if (newIndexName.length() <= POSTGRESQL_INDEX_NAME_LIMIT) {
-                        Object indexStatement = statements.get(origIndexName);
+                        IndexStatement indexStatement = statements.get(origIndexName);
                         statements.remove(origIndexName);
                         statements.put(newIndexName, indexStatement);
                         break;
@@ -351,14 +368,11 @@ public class CreateIndexesTask extends Task
         }
     }
 
-    private void checkForIndexNameClashes(Map statements) {
+    private void checkForIndexNameClashes(Map<String, IndexStatement> statements) {
         // index names truncated to 63 characters
-        Map truncNames = new HashMap();
+        Map<String, String> truncNames = new HashMap<String, String>();
 
-        Iterator statementsIter = statements.keySet().iterator();
-
-        while (statementsIter.hasNext()) {
-            String indexName = (String) statementsIter.next();
+        for (String indexName : statements.keySet()) {
             String truncName;
             if (indexName.length() > POSTGRESQL_INDEX_NAME_LIMIT) {
                 truncName = indexName.substring(0, POSTGRESQL_INDEX_NAME_LIMIT);
@@ -383,23 +397,20 @@ public class CreateIndexesTask extends Task
      * The key is the index name, the value is a IndexStatement.
      * @throws MetaDataException if a field os not found in model
      */
-    protected void getStandardIndexStatements(ClassDescriptor cld, Map statements)
-        throws MetaDataException {
-        // Set of fieldnames that already are the first element of an index.
-        Set doneFieldNames = new HashSet();
+    protected void getStandardIndexStatements(ClassDescriptor cld,
+            Map<String, IndexStatement> statements) throws MetaDataException {
+        // Set of field names that already are the first element of an index.
+        Set<String> doneFieldNames = new HashSet<String>();
         String cldTableName = DatabaseUtil.getTableName(cld);
 
         boolean simpleClass = !InterMineObject.class.isAssignableFrom(cld.getType());
 
         //add an index for each primary key
-        Map primaryKeys = PrimaryKeyUtil.getPrimaryKeys(cld);
-        for (Iterator i = primaryKeys.entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
-            String keyName = (String) entry.getKey();
-            PrimaryKey key = (PrimaryKey) entry.getValue();
-            List fieldNames = new ArrayList();
-            for (Iterator j = key.getFieldNames().iterator(); j.hasNext();) {
-                String fieldName = (String) j.next();
+        for (Map.Entry<String, PrimaryKey> entry : PrimaryKeyUtil.getPrimaryKeys(cld).entrySet()) {
+            String keyName = entry.getKey();
+            PrimaryKey key = entry.getValue();
+            List<String> fieldNames = new ArrayList<String>();
+            for (String fieldName : key.getFieldNames()) {
                 FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
                 if (fd == null) {
                     throw new MetaDataException("field (" + fieldName + ") not found for class: "
@@ -409,10 +420,9 @@ public class CreateIndexesTask extends Task
             }
 
             // create indexes on this class and on all subclasses
-            Set clds = new HashSet(Collections.singleton(cld));
+            Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>(Collections.singleton(cld));
             clds.addAll(cld.getModel().getAllSubs(cld));
-            for (Iterator k = clds.iterator(); k.hasNext();) {
-                ClassDescriptor nextCld = (ClassDescriptor) k.next();
+            for (ClassDescriptor nextCld : clds) {
                 ClassDescriptor tableMaster = schema.getTableMaster(nextCld);
                 String tableName = DatabaseUtil.getTableName(tableMaster);
                 if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
@@ -435,8 +445,7 @@ public class CreateIndexesTask extends Task
 
         //and one for each bidirectional N-to-1 relation to increase speed of
         //e.g. company.getDepartments
-        for (Iterator i = cld.getAllReferenceDescriptors().iterator(); i.hasNext();) {
-            ReferenceDescriptor ref = (ReferenceDescriptor) i.next();
+        for (ReferenceDescriptor ref : cld.getAllReferenceDescriptors()) {
             ClassDescriptor tableMaster = schema.getTableMaster(cld);
             String tableName = DatabaseUtil.getTableName(tableMaster);
             if (FieldDescriptor.N_ONE_RELATION == ref.relationType()) {
@@ -453,8 +462,7 @@ public class CreateIndexesTask extends Task
 
         //finally add an index to all M-to-N indirection table columns
         //for (Iterator i = cld.getAllCollectionDescriptors().iterator(); i.hasNext();) {
-        for (Iterator i = cld.getCollectionDescriptors().iterator(); i.hasNext();) {
-            CollectionDescriptor col = (CollectionDescriptor) i.next();
+        for (CollectionDescriptor col : cld.getCollectionDescriptors()) {
             if (FieldDescriptor.M_N_RELATION == col.relationType()) {
                 String tableName = DatabaseUtil.getIndirectionTableName(col);
                 String columnName = DatabaseUtil.getInwardIndirectionColumnName(col,
@@ -481,33 +489,28 @@ public class CreateIndexesTask extends Task
      * @param statements the index creation statements for the given cld are added to this Map.
      * The key is the index name, the value is a IndexStatement.
      */
-    protected void getAttributeIndexStatements(ClassDescriptor cld, Map statements) {
+    protected void getAttributeIndexStatements(ClassDescriptor cld,
+            Map<String, IndexStatement> statements) {
 
-        Map primaryKeys = PrimaryKeyUtil.getPrimaryKeys(cld);
+        Map<String, PrimaryKey> primaryKeys = PrimaryKeyUtil.getPrimaryKeys(cld);
         String tableName = DatabaseUtil.getTableName(cld);
         if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
 
         ATTRIBUTE:
-            for (Iterator attributeIter = cld.getAllAttributeDescriptors().iterator();
-                    attributeIter.hasNext();) {
-                AttributeDescriptor att = (AttributeDescriptor) attributeIter.next();
-
-                if (att.getName().equals("id")) {
+            for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
+                if ("id".equals(att.getName())) {
                     continue;
                 }
 
                 String fieldName = DatabaseUtil.getColumnName(att);
 
-                if (!att.getType().equals("java.lang.String")) {
+                if (!"java.lang.String".equals(att.getType())) {
                     // if the attribute is the first column of a primary key, don't bother creating
                     // another index for it - unless it's a String attribute in which case we want
                     // to create a LOWER() index
-                    for (Iterator primaryKeyIter = primaryKeys.entrySet().iterator();
-                            primaryKeyIter.hasNext();) {
-                        Map.Entry primaryKeyEntry = (Map.Entry) primaryKeyIter.next();
-                        PrimaryKey key = (PrimaryKey) primaryKeyEntry.getValue();
-
-                        String firstKeyField = (String) key.getFieldNames().iterator().next();
+                    for (Map.Entry<String, PrimaryKey> primaryKeyEntry : primaryKeys.entrySet()) {
+                        PrimaryKey key = primaryKeyEntry.getValue();
+                        String firstKeyField = key.getFieldNames().iterator().next();
 
                         if (firstKeyField.equals(att.getName())) {
                             continue ATTRIBUTE;
@@ -516,7 +519,7 @@ public class CreateIndexesTask extends Task
                 }
 
                 String indexName = tableName + "__"  + att.getName();
-                if (att.getType().equals("java.lang.String")) {
+                if ("java.lang.String".equals(att.getType())) {
                     // we add 'text_pattern_ops' so that LIKE queries will use the index.  see:
                     // http://www.postgresql.org/docs/8.2/static/indexes-opclass.html
                     addStatement(statements, indexName + "_like", tableName,
@@ -544,10 +547,11 @@ public class CreateIndexesTask extends Task
      * @param cld the ClassDescriptor describing the objects stored in tableName
      * @param tableMaster the master table class for cld
      */
-    private void addStatement(Map statements, String indexName, String tableName,
-            String columnNames, ClassDescriptor cld, ClassDescriptor tableMaster) {
+    private void addStatement(Map<String, IndexStatement> statements, String indexName,
+            String tableName, String columnNames, ClassDescriptor cld,
+            ClassDescriptor tableMaster) {
         if (statements.containsKey(indexName)) {
-            IndexStatement indexStatement = (IndexStatement) statements.get(indexName);
+            IndexStatement indexStatement = statements.get(indexName);
 
             if (!indexStatement.getColumnNames().equals(columnNames)
                 || !indexStatement.getTableName().equals(tableName)) {
@@ -588,9 +592,9 @@ public class CreateIndexesTask extends Task
             int threadNo) {
         String tableName = indexStatement.getTableName();
         LOG.info("Thread " + threadNo + " creating index: " + indexName);
-        Set indexesForTable = (Set) tableIndexesDone.get(tableName);
+        Set<String> indexesForTable = tableIndexesDone.get(tableName);
         if (indexesForTable == null) {
-            indexesForTable = Collections.synchronizedSet(new HashSet());
+            indexesForTable = Collections.synchronizedSet(new HashSet<String>());
             tableIndexesDone.put(tableName, indexesForTable);
         }
         if (!indexesForTable.contains(indexStatement.getColumnNames())) {

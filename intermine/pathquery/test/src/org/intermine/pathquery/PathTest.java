@@ -187,6 +187,13 @@ public class PathTest extends TestCase
         assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Manager"), path.getLastClassDescriptor());
     }
 
+    public void testIsRootPath() throws Exception {
+        Path path = new Path(model, "Department");
+        assertTrue(path.isRootPath());
+        path = new Path(model, "Department.manager");
+        assertFalse(path.isRootPath());
+    }
+    
     public void testEquals() throws Exception {
         Path path1 = new Path(model, "Department.manager.name");
         Path path2 = new Path(model, "Department.manager.name");

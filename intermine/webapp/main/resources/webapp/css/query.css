@@ -46,13 +46,23 @@ div.sortorderpath {
   padding: 1px 0 1px 3px; margin-left: 3px; margin-right: 3px;
   background-color: #E7F1FB; border: 1px solid #bbb; line-height: 25px;}
 
+.subclass {
+  color: purple;
+  border: 1px solid purple;
+  background-color: #f7eaff;
+  padding: 1px;
+  line-height: 22px;}
+
+.reverseReference {
+  color: #898989; }
+
 table.query {
   border: none;}
 
 div.modelbrowse {
   border-right: 1px solid #888;}
   
-#mainBrowser {
+#queryBuilderBrowser {
   float:left;
   width:500px;
   /*margin-right:10px;*/
@@ -146,4 +156,15 @@ table.noborder, table.noborder td, table.noborder th {
   
 #constraintLogicContainer {
   margin-top:25px;
+}
+
+.constraintEditableOptionsDisabled {
+  /* for IE */
+  filter:alpha(opacity=30);
+  /* CSS3 standard */
+  opacity:0.3;
+}
+
+.optionalConstraint {
+  font-size: 0.9em;
 }

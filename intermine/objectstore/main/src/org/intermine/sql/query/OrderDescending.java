@@ -46,6 +46,7 @@ public class OrderDescending extends AbstractValue
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getSQLString() {
         return value.getSQLString() + " DESC";
     }
@@ -53,6 +54,7 @@ public class OrderDescending extends AbstractValue
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof OrderDescending) {
             return value.equals(((OrderDescending) o).getValue());
@@ -63,6 +65,7 @@ public class OrderDescending extends AbstractValue
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return value.hashCode() + 1;
     }
@@ -70,13 +73,17 @@ public class OrderDescending extends AbstractValue
     /**
      * {@inheritDoc}
      */
-    public int compare(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+    @Override
+    public int compare(@SuppressWarnings("unused") AbstractValue obj,
+            @SuppressWarnings("unused") Map<AbstractTable, AbstractTable> tableMap,
+            @SuppressWarnings("unused") Map<AbstractTable, AbstractTable> reverseTableMap) {
         throw new UnsupportedOperationException("Cannot compare OrderDescending objects");
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return getSQLString();
     }
@@ -84,6 +91,7 @@ public class OrderDescending extends AbstractValue
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isAggregate() {
         return value.isAggregate();
     }

@@ -21,9 +21,15 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
+import org.intermine.sql.query.AbstractTable;
 import org.intermine.sql.query.AbstractValue;
 import org.intermine.sql.query.OrderDescending;
 import org.intermine.sql.query.Query;
@@ -42,13 +48,14 @@ public class PrecomputedTableManager
 {
     private static final Logger LOG = Logger.getLogger(PrecomputedTableManager.class);
 
-    protected TreeSet precomputedTables = new TreeSet();
+    protected TreeSet<PrecomputedTable> precomputedTables = new TreeSet<PrecomputedTable>();
     protected Map<String, Map<String, PrecomputedTable>> types
         = new HashMap<String, Map<String, PrecomputedTable>>();
     protected Database database = null;
     protected Connection conn = null;
     protected static final String TABLE_INDEX = "precompute_index";
-    protected static Map instances = new HashMap();
+    protected static Map<Object, PrecomputedTableManager> instances
+        = new HashMap<Object, PrecomputedTableManager>();
 
     /**
      * Create a PrecomputedTableManager for a given Connection.
@@ -107,7 +114,7 @@ public class PrecomputedTableManager
                 instances.put(conn, new PrecomputedTableManager(conn));
             }
         }
-        return (PrecomputedTableManager) instances.get(conn);
+        return instances.get(conn);
     }
 
     /**
@@ -124,7 +131,7 @@ public class PrecomputedTableManager
                 instances.put(database, new PrecomputedTableManager(database));
             }
         }
-        return (PrecomputedTableManager) instances.get(database);
+        return instances.get(database);
     }
 
     /**
@@ -150,7 +157,7 @@ public class PrecomputedTableManager
      * @throws NullPointerException if pt is null
      * @throws IllegalArgumentException if the precomputed table already exists
      */
-    public void add(PrecomputedTable pt, Collection indexes) throws SQLException {
+    public void add(PrecomputedTable pt, Collection<String> indexes) throws SQLException {
         if (pt == null) {
             throw new NullPointerException("PrecomputedTable cannot be null");
         }
@@ -175,9 +182,9 @@ public class PrecomputedTableManager
      * @throws SQLException if something goes wrong
      */
     public void dropEverything() throws SQLException {
-        Iterator iter = precomputedTables.iterator();
+        Iterator<PrecomputedTable> iter = precomputedTables.iterator();
         while (iter.hasNext()) {
-            PrecomputedTable pt = (PrecomputedTable) iter.next();
+            PrecomputedTable pt = iter.next();
             deleteTableFromDatabase(pt.getName());
             iter.remove();
         }
@@ -191,18 +198,17 @@ public class PrecomputedTableManager
      * @param tablesAltered a Set of table names that may have alterations
      * @throws SQLException if something goes wrong
      */
-    public void dropAffected(Set tablesAltered) throws SQLException {
-        Iterator iter = precomputedTables.iterator();
+    public void dropAffected(Set<String> tablesAltered) throws SQLException {
+        Iterator<PrecomputedTable> iter = precomputedTables.iterator();
         while (iter.hasNext()) {
-            PrecomputedTable pt = (PrecomputedTable) iter.next();
+            PrecomputedTable pt = iter.next();
             Query q = pt.getQuery();
             boolean drop = false;
-            Iterator fromIter = q.getFrom().iterator();
-            while ((!drop) && fromIter.hasNext()) {
-                Object table = fromIter.next();
+            for (AbstractTable table : q.getFrom()) {
                 if (table instanceof Table) {
                     if (tablesAltered.contains(((Table) table).getName())) {
                         drop = true;
+                        break;
                     }
                 }
             }
@@ -244,7 +250,7 @@ public class PrecomputedTableManager
      *
      * @return a Set of PrecomputedTables present in the database
      */
-    public Set getPrecomputedTables() {
+    public Set<PrecomputedTable> getPrecomputedTables() {
         return precomputedTables;
     }
 
@@ -257,13 +263,13 @@ public class PrecomputedTableManager
      * @throws SQLException if an error occurs in the underlying database
      */
     public void addTableToDatabase(PrecomputedTable pt,
-            Collection indexes, boolean record) throws SQLException {
+            Collection<String> indexes, boolean record) throws SQLException {
         Connection con = null;
         try {
             con = (conn == null ? database.getConnection() : conn);
             con.setAutoCommit(true);
             if (indexes == null) {
-                indexes = new LinkedHashSet();
+                indexes = new LinkedHashSet<String>();
             }
 
             // Create the table
@@ -280,7 +286,7 @@ public class PrecomputedTableManager
                 LOG.info("Creating orderby_field index on precomputed table " + pt.getName());
                 indexes.add(orderByField);
             } else {
-                List<AbstractValue> orderBy = (List<AbstractValue>) pt.getQuery().getOrderBy();
+                List<AbstractValue> orderBy = pt.getQuery().getOrderBy();
                 if (!orderBy.isEmpty()) {
                     boolean needComma = false;
                     StringBuilder sb = new StringBuilder();
@@ -292,7 +298,7 @@ public class PrecomputedTableManager
                             sb.append(", ");
                         }
                         needComma = true;
-                        SelectValue obv = (SelectValue) pt.getValueMap().get(ob);
+                        SelectValue obv = pt.getValueMap().get(ob);
                         sb.append(obv.getAlias());
                     }
                     indexes.add(sb.toString());
@@ -301,9 +307,7 @@ public class PrecomputedTableManager
             indexes = canonicaliseIndexes(indexes);
 
             LOG.info("Creating " + indexes.size() + " indexes for " + pt.getName());
-            Iterator indexIter = indexes.iterator();
-            while (indexIter.hasNext()) {
-                String indexName = (String) indexIter.next();
+            for (String indexName : indexes) {
                 LOG.info("Creating index on " + pt.getName() + " (" + indexName + ")");
                 addIndex(pt.getName(), indexName, con);
                 // special case for string lower() indexes - add an index that can be used by
@@ -344,12 +348,10 @@ public class PrecomputedTableManager
      * @param indexes the Collection of index strings
      * @return a new Set of index strings
      */
-    protected static Set canonicaliseIndexes(Collection indexes) {
-        Set retval = new LinkedHashSet();
-        Set indexesCovered = new HashSet();
-        Iterator indexIter = indexes.iterator();
-        while (indexIter.hasNext()) {
-            String index = (String) indexIter.next();
+    protected static Set<String> canonicaliseIndexes(Collection<String> indexes) {
+        Set<String> retval = new LinkedHashSet<String>();
+        Set<String> indexesCovered = new HashSet<String>();
+        for (String index : indexes) {
             if (!indexesCovered.contains(index)) {
                 String tmp = index;
                 while (tmp != null) {
@@ -424,7 +426,7 @@ public class PrecomputedTableManager
             byte[] digest = md.digest();
             simpleTable = "";
             for (int i = 0; i < 16; i++) {
-                simpleTable += (char) ('a' + ((((int) digest[i]) & 255) * 26 / 256));
+                simpleTable += (char) ('a' + ((digest[i] & 255) * 26 / 256));
             }
         }
         if (simpleField.length() > 30) {
@@ -438,7 +440,7 @@ public class PrecomputedTableManager
             byte[] digest = md.digest();
             simpleField = "";
             for (int i = 0; i < 16; i++) {
-                simpleField += (char) ('a' + ((((int) digest[i]) & 255) * 26 / 256));
+                simpleField += (char) ('a' + ((digest[i] & 255) * 26 / 256));
             }
         } else {
             simpleField = simpleField.replace(',', '_').replace(' ', '_').replace('(', '_')
@@ -520,7 +522,7 @@ public class PrecomputedTableManager
     public PrecomputedTable lookupSql(String category, String sql) {
         Map<String, PrecomputedTable> queryStrings = types.get(category);
         if (queryStrings != null) {
-            return (PrecomputedTable) queryStrings.get(sql);
+            return queryStrings.get(sql);
         }
         return null;
     }

@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * @author Mark Woodbridge
  * @author Matthew Wakeling
  */
-public class ConstraintOp
+public final class ConstraintOp
 {
     private static List<ConstraintOp> values = new ArrayList<ConstraintOp>();
     private final String name;
@@ -74,7 +74,7 @@ public class ConstraintOp
     public static final ConstraintOp OVERLAPS = new ConstraintOp("OVERLAPS");
     /** Require that a range does not overlap another range */
     public static final ConstraintOp DOES_NOT_OVERLAP = new ConstraintOp("DOES NOT OVERLAP");
-
+    
     private ConstraintOp(String name) {
         this.name = name;
         values.add(this);
@@ -84,6 +84,7 @@ public class ConstraintOp
      * Get the String representation of this ConstraintOp
      * @return a String
      */
+    @Override
     public String toString() {
         return name;
     }
@@ -112,7 +113,7 @@ public class ConstraintOp
      * (Only for use in webapp)
      * @return the List of ConstraintOps
      */
-    public static List getValues() {
+    public static List<ConstraintOp> getValues() {
         return values;
     }
 

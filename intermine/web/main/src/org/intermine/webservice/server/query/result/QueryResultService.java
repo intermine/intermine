@@ -66,8 +66,9 @@ public class QueryResultService extends WebService
      * @param request request
      * @param response response
      */
+    @Override
     protected void execute(HttpServletRequest request,
-            HttpServletResponse response) {
+            @SuppressWarnings("unused") HttpServletResponse response) {
 
         QueryResultInput input = getInput();
 
@@ -88,8 +89,8 @@ public class QueryResultService extends WebService
     private void forward(PathQuery pathQuery, String title, String description,
             WebServiceInput input, String mineLink, String layout) {
         List<String> columnNames = new ArrayList<String>();
-        for (String viewString : pathQuery.getViewStrings()) {
-            columnNames.add(pathQuery.getPathDescription(viewString));
+        for (String viewString : pathQuery.getView()) {
+            columnNames.add(pathQuery.getDescription(viewString));
         }
         if (getFormat() == WebService.HTML_FORMAT) {
             MemoryOutput mout = (MemoryOutput) output;

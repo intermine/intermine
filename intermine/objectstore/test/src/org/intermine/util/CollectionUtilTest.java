@@ -150,7 +150,7 @@ public class CollectionUtilTest extends TestCase
     }
 
     public void testGroupByClass() throws Exception {
-        Collection c = new ArrayList();
+        Collection<Object> c = new ArrayList<Object>();
         c.add(new Integer(5));
         c.add(new Integer(6));
         c.add(new Integer(7));
@@ -188,7 +188,7 @@ public class CollectionUtilTest extends TestCase
     }
 
     public void testFindCommonSuperclasses() throws Exception {
-        Set<Class> input = new HashSet();
+        Set<Class<?>> input = new HashSet();
         input.add(Employee.class);
         input.add(Contractor.class);
         input.add(Manager.class);

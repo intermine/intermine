@@ -22,6 +22,6 @@ public interface QueryOrderable
      *
      * @return class describing the type
      */
-    public Class getType();
+    Class<?> getType();
 }
 

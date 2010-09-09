@@ -13,7 +13,6 @@ package org.intermine.sql.query;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,7 +24,7 @@ import java.util.Set;
 public class InListConstraint extends AbstractConstraint
 {
     protected AbstractValue left;
-    protected Set right;
+    protected Set<Constant> right;
 
     /**
      * Constructor for InListConstraint object.
@@ -37,7 +36,7 @@ public class InListConstraint extends AbstractConstraint
             throw (new NullPointerException("left cannot be null"));
         }
         this.left = left;
-        this.right = new HashSet();
+        this.right = new HashSet<Constant>();
     }
 
     /**
@@ -54,10 +53,8 @@ public class InListConstraint extends AbstractConstraint
      *
      * @param c a Collection of Constants
      */
-    public void addAll(Collection c) {
-        Iterator iter = c.iterator();
-        while (iter.hasNext()) {
-            Constant con = (Constant) iter.next();
+    public void addAll(Collection<? extends Constant> c) {
+        for (Constant con : c) {
             right.add(con);
         }
     }
@@ -76,7 +73,7 @@ public class InListConstraint extends AbstractConstraint
      *
      * @return a Set
      */
-    public Set getRight() {
+    public Set<Constant> getRight() {
         return Collections.unmodifiableSet(right);
     }
 
@@ -86,16 +83,16 @@ public class InListConstraint extends AbstractConstraint
      *
      * @return the String representation
      */
+    @Override
     public String getSQLString() {
         StringBuffer retval = new StringBuffer(left.getSQLString()).append(" IN (");
         boolean needComma = false;
-        Iterator iter = right.iterator();
-        while (iter.hasNext()) {
+        for (Constant con : right) {
             if (needComma) {
                 retval.append(", ");
             }
             needComma = true;
-            retval.append(((Constant) iter.next()).getSQLString());
+            retval.append(con.getSQLString());
         }
         retval.append(")");
         return retval.toString();
@@ -107,7 +104,9 @@ public class InListConstraint extends AbstractConstraint
      *
      * {@inheritDoc}
      */
-    public int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
+    @Override
+    public int compare(AbstractConstraint obj, Map<AbstractTable, AbstractTable> tableMap,
+            Map<AbstractTable, AbstractTable> reverseTableMap) {
         if (obj instanceof InListConstraint) {
             InListConstraint objC = (InListConstraint) obj;
             return (left.valueEquals(objC.left, tableMap, reverseTableMap)
@@ -124,6 +123,7 @@ public class InListConstraint extends AbstractConstraint
      *
      * @return an arbitrary integer based on the contents of the Constraint
      */
+    @Override
     public int hashCode() {
         return (3 * left.hashCode()) + (5 * right.hashCode());
     }

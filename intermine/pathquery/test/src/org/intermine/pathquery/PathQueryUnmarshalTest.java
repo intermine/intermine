@@ -2,6 +2,8 @@ package org.intermine.pathquery;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Collections;
 
 import junit.framework.TestCase;
 
@@ -40,40 +42,24 @@ public class PathQueryUnmarshalTest extends  TestCase
 
     public void testInvalidView() {
         PathQuery query = createQuery("InvalidView.xml");
-        assertTrue(query.getProblems().length == 1);
+        assertTrue(query.verifyQuery().size() == 1);
     }
     
     public void testInvalidSortOrder() {
         PathQuery query = createQuery("InvalidSortOrder.xml");
-        assertTrue(query.getProblems().length == 0);
+        assertTrue(query.verifyQuery().size() == 0);
     }
 
     public void testInvalidConstraintLogic() {
         PathQuery query = createQuery("InvalidConstraintLogic.xml");    
-        assertEquals(0, query.getProblems().length);
+        assertEquals(Collections.EMPTY_LIST, query.verifyQuery());
     }
 
     public void testIncompleteConstraintLogic() {
-        try {
-            createQuery("IncompleteConstraintLogic.xml");    
-        } catch (Exception ex)  {
-            return;
-        }
-        fail("Exception expected, but wasn't thrown.");
+        PathQuery query = createQuery("IncompleteConstraintLogic.xml");    
+        assertEquals(Arrays.asList("Value in constraint Employee.age > bad is not in correct format for type of Integer"), query.verifyQuery());
     }
 
-    public void testInvalidNodeType() {
-        PathQuery query = createQuery("InvalidNodeType.xml");
-        assertEquals(0, query.getProblems().length);
-    }
-
-    public void testInvalidNodePath() {
-        PathQuery query = createQuery("InvalidNodePath.xml");
-        //System.out.println("Details: " + PathQueryUtil.getProblemsSummary(query.getProblems()));        
-        assertEquals(1, query.getProblems().length);  
-           
-    }
-    
     /* ? */
     public void testInvalidConstraintIdentifier() {
     }
@@ -94,8 +80,8 @@ public class PathQueryUnmarshalTest extends  TestCase
 
     public void testInvalidConstraintValue() {
         PathQuery query = createQuery("InvalidConstraintValue.xml");
-        System.out.println(PathQueryUtil.getProblemsSummary(query.getProblems()));        
-        assertEquals(0, query.getProblems().length);
+        System.out.println(query.verifyQuery());
+        assertEquals(Collections.EMPTY_LIST, query.verifyQuery());
     }
 
     private PathQuery createQuery(String fileName)  {

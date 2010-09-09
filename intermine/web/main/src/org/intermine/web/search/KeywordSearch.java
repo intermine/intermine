@@ -34,7 +34,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
@@ -57,7 +56,6 @@ import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.queryParser.QueryParser.Operator;
-import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermsFilter;
@@ -72,6 +70,7 @@ import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.modelproduction.MetadataManager.LargeObjectOutputStream;
@@ -92,7 +91,6 @@ import org.intermine.pathquery.PathException;
 import org.intermine.sql.Database;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.ObjectPipe;
-import org.intermine.util.TypeUtil;
 
 import com.browseengine.bobo.api.BoboBrowser;
 import com.browseengine.bobo.api.BoboIndexReader;
@@ -253,7 +251,7 @@ class InterMineResultsContainer
     @SuppressWarnings("unchecked")
     public InterMineResultsContainer(Results results) {
         this.results = results;
-        this.iterator = results.listIterator();
+        this.iterator = (ListIterator) results.listIterator();
     }
 
     /**
@@ -408,6 +406,7 @@ class InterMineObjectFetcher extends Thread
     /**
      * fetch objects from database, create documents and add them to the queue
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void run() {
         try {
@@ -432,9 +431,10 @@ class InterMineObjectFetcher extends Thread
 
                 LOG.info("QUERY: " + q.toString());
 
-                Results results = os.execute(q, 0, true, false, true);
+                Results results = os.execute(q, 1000, true, false, true);
 
-                ListIterator<ResultsRow<InterMineObject>> it = results.listIterator();
+                ListIterator<ResultsRow<InterMineObject>> it = (ListIterator) results
+                    .listIterator();
                 int i = 0;
                 int size = results.size();
                 LOG.info("Query returned " + size + " results");
@@ -452,7 +452,7 @@ class InterMineObjectFetcher extends Thread
                     for (InterMineObject object : row) {
                         long time2 = System.currentTimeMillis();
 
-                        Set<Class> objectClasses = DynamicUtil.decomposeClass(object.getClass());
+                        Set<Class<?>> objectClasses = DynamicUtil.decomposeClass(object.getClass());
                         Class objectTopClass = objectClasses.iterator().next();
                         ClassDescriptor classDescriptor =
                                 os.getModel().getClassDescriptorByName(objectTopClass.getName());
@@ -467,8 +467,7 @@ class InterMineObjectFetcher extends Thread
                         // find all references associated with this object or
                         // its superclasses
                         for (Entry<Class<? extends InterMineObject>, String[]> specialClass
-                                : specialReferences
-                                .entrySet()) {
+                                : specialReferences.entrySet()) {
                             for (Class<?> objectClass : objectClasses) {
                                 if (specialClass.getKey().isAssignableFrom(objectClass)) {
                                     for (String reference : specialClass.getValue()) {
@@ -506,7 +505,8 @@ class InterMineObjectFetcher extends Thread
                                 // do not count this towards objectParseTime
                                 objectParseTime += (System.currentTimeMillis() - time2);
 
-                                Results resultsc = os.execute(queryReference, 0, true, false, true);
+                                Results resultsc = os.execute(queryReference, 1000, true, false,
+                                        true);
                                 ((ObjectStoreInterMineImpl) os).goFaster(queryReference);
                                 referenceResults.put(reference, new InterMineResultsContainer(
                                         resultsc));
@@ -553,10 +553,8 @@ class InterMineObjectFetcher extends Thread
                                             if (field.startsWith(reference + ".")) {
                                                 String facetAttribute =
                                                         field.substring(field.lastIndexOf('.') + 1);
-                                                Object facetValue =
-                                                        TypeUtil.getFieldValue(
-                                                                (InterMineObject) next.get(1),
-                                                                facetAttribute);
+                                                Object facetValue = ((InterMineObject) next.get(1))
+                                                    .getFieldValue(facetAttribute);
 
                                                 if (facetValue instanceof String
                                                         && !StringUtils
@@ -584,9 +582,8 @@ class InterMineObjectFetcher extends Thread
                                                         .substring(
                                                                 referenceFacet.getField()
                                                                         .lastIndexOf('.') + 1);
-                                        Object facetValue =
-                                                TypeUtil.getFieldValue((InterMineObject) next
-                                                        .get(1), facetAttribute);
+                                        Object facetValue = ((InterMineObject) next.get(1))
+                                            .getFieldValue(facetAttribute);
 
                                         if (facetValue instanceof String
                                                 && !StringUtils.isBlank((String) facetValue)) {
@@ -670,7 +667,7 @@ class InterMineObjectFetcher extends Thread
         }
     }
 
-    private Set<ObjectValueContainer> getAttributeMapForObject(Model model, Object obj) {
+    private Set<ObjectValueContainer> getAttributeMapForObject(Model model, FastPathObject obj) {
         Set<ObjectValueContainer> values = new HashSet<ObjectValueContainer>();
         Vector<ClassAttributes> decomposedClassAttributes =
                 getClassAttributes(model, obj.getClass());
@@ -681,7 +678,7 @@ class InterMineObjectFetcher extends Thread
                     // only index strings
                     if ("java.lang.String".equals(att.getType())
                             || "java.lang.Integer".equals(att.getType())) {
-                        Object value = TypeUtil.getFieldValue(obj, att.getName());
+                        Object value = obj.getFieldValue(att.getName());
 
                         // ignore null values
                         if (value != null) {
@@ -1075,11 +1072,11 @@ public class KeywordSearch
                     ZipOutputStream zipOut =
                             new ZipOutputStream(new BufferedOutputStream(streamOut));
 
-                    byte data[] = new byte[bufferSize];
+                    byte[] data = new byte[bufferSize];
 
                     // get a list of files from current directory
                     File fsDirectory = ((FSDirectory) index.getDirectory()).getFile();
-                    String files[] = fsDirectory.list();
+                    String[] files = fsDirectory.list();
 
                     for (int i = 0; i < files.length; i++) {
                         File file =
@@ -1350,7 +1347,7 @@ public class KeywordSearch
 
                             // make sure we start with a new index
                             if (directoryPath.exists()) {
-                                String files[] = directoryPath.list();
+                                String[] files = directoryPath.list();
                                 for (int i = 0; i < files.length; i++) {
                                     LOG.info("Deleting old file: " + files[i]);
                                     new File(directoryPath.getAbsolutePath() + File.separator
@@ -1373,7 +1370,7 @@ public class KeywordSearch
                                         new BufferedOutputStream(fos, bufferSize);
 
                                 int count;
-                                byte data[] = new byte[bufferSize];
+                                byte[] data = new byte[bufferSize];
 
                                 while ((count = zis.read(data, 0, bufferSize)) != -1) {
                                     bos.write(data, 0, count);

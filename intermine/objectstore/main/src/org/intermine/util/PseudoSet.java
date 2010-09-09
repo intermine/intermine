@@ -19,20 +19,21 @@ import java.util.Set;
  * method.
  *
  * @author Matthew Wakeling
+ * @param <E> The element type
  */
-public abstract class PseudoSet implements Set
+public abstract class PseudoSet<E> implements Set<E>
 {
     /**
      * {@inheritDoc}
      */
-    public boolean add(Object o) {
+    public boolean add(@SuppressWarnings("unused") E o) {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean addAll(Collection c) {
+    public boolean addAll(@SuppressWarnings("unused") Collection<? extends E> c) {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
 
@@ -46,7 +47,7 @@ public abstract class PseudoSet implements Set
     /**
      * {@inheritDoc}
      */
-    public boolean containsAll(Collection c) {
+    public boolean containsAll(Collection<?> c) {
         for (Object o : c) {
             if (!contains(o)) {
                 return false;
@@ -65,28 +66,28 @@ public abstract class PseudoSet implements Set
     /**
      * {@inheritDoc}
      */
-    public Iterator iterator() {
+    public Iterator<E> iterator() {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean remove(Object o) {
+    public boolean remove(@SuppressWarnings("unused") Object o) {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean removeAll(Collection c) {
+    public boolean removeAll(@SuppressWarnings("unused") Collection<?> c) {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean retainAll(Collection c) {
+    public boolean retainAll(@SuppressWarnings("unused") Collection<?> c) {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
 
@@ -107,7 +108,7 @@ public abstract class PseudoSet implements Set
     /**
      * {@inheritDoc}
      */
-    public Object[] toArray(Object o[]) {
+    public <T> T[] toArray(@SuppressWarnings("unused") T[] o) {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
 }

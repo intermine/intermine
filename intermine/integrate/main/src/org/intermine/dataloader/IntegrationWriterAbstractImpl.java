@@ -13,31 +13,33 @@ package org.intermine.dataloader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.Clob;
+import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.util.IntToIntMap;
 import org.intermine.util.IntPresentSet;
-
-import org.apache.log4j.Logger;
+import org.intermine.util.IntToIntMap;
 
 /**
  * Abstract implementation of ObjectStoreIntegrationWriter.  To retain
@@ -63,6 +65,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected HintingFetcher eof;
     protected BaseEquivalentObjectFetcher beof;
     protected Source lastSource = null;
+    protected Set<String> seenBrokenOneToMany = Collections.synchronizedSet(new HashSet<String>());
 
     /**
      * Constructs a new instance of an IntegrationWriter
@@ -126,7 +129,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @return a Set of InterMineObjects
      * @throws ObjectStoreException if an error occurs
      */
-    public Set getEquivalentObjects(InterMineObject obj,
+    public Set<InterMineObject> getEquivalentObjects(InterMineObject obj,
             Source source) throws ObjectStoreException {
         lastSource = source;
         if (obj == null) {
@@ -151,7 +154,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
             }
         } else {
             // was in idMap, no need to query database
-            return Collections.singleton(new ProxyReference(osw, destId, InterMineObject.class));
+            return Collections.singleton((InterMineObject) new ProxyReference(osw, destId,
+                    InterMineObject.class));
         }
     }
 
@@ -202,7 +206,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * that guarantees limited recursion, and FROM_DB to indicate that the source object originated
      * from the destination database.
      * @throws IllegalAccessException should never happen
-     * @throws ObjectStoreException if an error ocurs in the underlying objectstore
+     * @throws ObjectStoreException if an error occurs in the underlying objectstore
      */
     protected void copyField(FastPathObject srcObj, FastPathObject dest,
             Source source, Source skelSource, FieldDescriptor field,
@@ -211,7 +215,16 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         if (!"id".equals(fieldName)) {
             switch (field.relationType()) {
                 case FieldDescriptor.NOT_RELATION:
-                    dest.setFieldValue(fieldName, srcObj.getFieldValue(fieldName));
+                    Object value = srcObj.getFieldValue(fieldName);
+                    if (value instanceof ClobAccess) {
+                        // Don't copy field if this is a skeleton - this avoids creating the Clob
+                        // twice
+                        if ((type == FROM_DB) || (type == SOURCE)) {
+                            dest.setFieldValue(fieldName, value);
+                        }
+                    } else {
+                        dest.setFieldValue(fieldName, value);
+                    }
                     break;
                 case FieldDescriptor.N_ONE_RELATION:
                     if ((type == FROM_DB) || (type == SOURCE)
@@ -224,6 +237,15 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                                 srcObj.getFieldProxy(fieldName);
                             if (sourceTarget instanceof ProxyReference) {
                                 if (idMap.get(sourceTarget.getId()) == null) {
+                                    if (type == SOURCE) {
+                                        if (srcObj instanceof InterMineObject) {
+                                            LOG.error("Having to fetch reference " + fieldName
+                                                    + " for object with ID "
+                                                    + ((InterMineObject) srcObj).getId()
+                                                    + " referencing object with ID "
+                                                    + sourceTarget.getId());
+                                        }
+                                    }
                                     sourceTarget = ((ProxyReference) sourceTarget).getObject();
                                 }
                             }
@@ -288,17 +310,31 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                     break;
                 case FieldDescriptor.ONE_N_RELATION:
                     // Do nothing.
+                    if (type == SOURCE) {
+                        String brokenOneToMany = field.getClassDescriptor().getUnqualifiedName()
+                            + "." + field.getName();
+                        if (!seenBrokenOneToMany.contains(brokenOneToMany)) {
+                            @SuppressWarnings("unchecked") Collection<InterMineObject> col =
+                                (Collection) srcObj.getFieldValue(fieldName);
+                            if (!col.isEmpty()) {
+                                LOG.error("Data source should not contain data in the one to many "
+                                        + "relation " + brokenOneToMany + ", as it is ignored. "
+                                        + "Put the data into the reverse reference instead.");
+                                seenBrokenOneToMany.add(brokenOneToMany);
+                            }
+                        }
+                    }
                     break;
                 case FieldDescriptor.M_N_RELATION:
                     if ((type == SOURCE) || ((type == FROM_DB)
                                 && ((((InterMineObject) dest).getId() == null)
                                 || (!((InterMineObject) dest).getId()
                                     .equals(((InterMineObject) srcObj).getId()))))) {
-                        Collection destCol = (Collection) dest.getFieldValue(fieldName);
-                        Collection col = (Collection) srcObj.getFieldValue(fieldName);
-                        Iterator colIter = col.iterator();
-                        while (colIter.hasNext()) {
-                            InterMineObject colObj = (InterMineObject) colIter.next();
+                        @SuppressWarnings("unchecked") Collection<InterMineObject> destCol =
+                            (Collection) dest.getFieldValue(fieldName);
+                        @SuppressWarnings("unchecked") Collection<InterMineObject> col =
+                            (Collection) srcObj.getFieldValue(fieldName);
+                        for (InterMineObject colObj : col) {
                             if (type == FROM_DB) {
                                 destCol.add(colObj);
                             } else {
@@ -323,6 +359,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                         }
                     }
                     break;
+                default:
+                    throw new Error("Unrecognised relation type " + field.relationType());
             }
         }
     }
@@ -378,14 +416,16 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @return the retrieved object
      * @throws ObjectStoreException if an error occurs retrieving the object
      */
-    public InterMineObject getObjectById(Integer id, Class clazz) throws ObjectStoreException {
+    public InterMineObject getObjectById(Integer id, Class<? extends InterMineObject> clazz)
+        throws ObjectStoreException {
         return osw.getObjectById(id, clazz);
     }
 
     /**
      * {@inheritDoc}
      */
-    public List<InterMineObject> getObjectsByIds(Collection ids) throws ObjectStoreException {
+    public List<InterMineObject> getObjectsByIds(Collection<Integer> ids)
+        throws ObjectStoreException {
         return osw.getObjectsByIds(ids);
     }
 
@@ -408,7 +448,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @param hadId the ID of the object to be placed in the collection
      * @throws ObjectStoreException if something goes wrong
      */
-    public void addToCollection(Integer hasId, Class clazz, String fieldName, Integer hadId)
+    public void addToCollection(Integer hasId, Class<?> clazz, String fieldName, Integer hadId)
         throws ObjectStoreException {
         osw.addToCollection(hasId, clazz, fieldName, hadId);
     }
@@ -497,6 +537,23 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void addToBagFromQuery(ObjectStoreBag osb, Query query) throws ObjectStoreException {
         osw.addToBagFromQuery(osb, query);
+    }
+
+    /**
+     * Creates a new empty Clob that is valid for this ObjectStore.
+     *
+     * @return a Clob
+     * @throws ObjectStoreException if an error occurs fetching a new ID
+     */
+    public Clob createClob() throws ObjectStoreException {
+        return osw.createClob();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void replaceClob(Clob clob, String text) throws ObjectStoreException {
+        osw.replaceClob(clob, text);
     }
 
     /**
@@ -597,8 +654,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * {@inheritDoc}
      */
-    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            Map<Object, Integer> sequence) throws ObjectStoreException {
+    public List<ResultsRow<Object>> execute(Query q, int start, int limit, boolean optimise,
+            boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException {
         return osw.execute(q, start, limit, optimise, explain, sequence);
     }
 
@@ -662,7 +719,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * {@inheritDoc}
      */
     public InterMineObject getObjectByExample(InterMineObject o,
-            Set fieldNames) throws ObjectStoreException {
+            Set<String> fieldNames) throws ObjectStoreException {
         return osw.getObjectByExample(o, fieldNames);
     }
 

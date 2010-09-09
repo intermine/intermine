@@ -20,7 +20,7 @@ import java.util.Date;
 public class QueryCast implements QueryEvaluable
 {
     private QueryEvaluable value;
-    private Class type;
+    private Class<?> type;
 
     /**
      * Construct a QueryCast.
@@ -28,7 +28,7 @@ public class QueryCast implements QueryEvaluable
      * @param value the value of this QueryCast
      * @param type the type of the value for this QueryCast to represent
      */
-    public QueryCast(QueryEvaluable value, Class type) {
+    public QueryCast(QueryEvaluable value, Class<?> type) {
         if (value == null) {
             throw new NullPointerException("Cannot create a QueryCast with null");
         }
@@ -45,7 +45,7 @@ public class QueryCast implements QueryEvaluable
     /**
      * {@inheritDoc}
      */
-    public Class getType() {
+    public Class<?> getType() {
         return type;
     }
 
@@ -61,6 +61,7 @@ public class QueryCast implements QueryEvaluable
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof QueryCast) {
             QueryCast objCast = (QueryCast) obj;
@@ -74,6 +75,7 @@ public class QueryCast implements QueryEvaluable
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return 3 * value.hashCode() + 5 * type.hashCode();
     }
@@ -81,7 +83,7 @@ public class QueryCast implements QueryEvaluable
     /**
      * {@inheritDoc}
      */
-    public void youAreType(Class cls) {
+    public void youAreType(@SuppressWarnings("unused") Class<?> cls) {
         throw new ClassCastException("youAreType called on a QueryCast");
     }
 

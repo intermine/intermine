@@ -22,5 +22,5 @@ public interface SQLStringable
      *
      * @return the String representation
      */
-    public String getSQLString();
+    String getSQLString();
 }

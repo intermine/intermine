@@ -76,6 +76,7 @@
         <attribute name="bigDecimalObjType" type="java.math.BigDecimal"/>
         <attribute name="dateObjType" type="java.util.Date"/>
         <attribute name="stringObjType" type="java.lang.String"/>
+        <attribute name="clobObjType" type="org.intermine.objectstore.query.ClobAccess"/>
     </class>
     <class name="Bank" is-interface="false">
         <attribute name="name" type="java.lang.String"/>

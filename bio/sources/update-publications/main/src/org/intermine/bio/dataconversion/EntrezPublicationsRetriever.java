@@ -314,7 +314,9 @@ public class EntrezPublicationsRetriever
 
         q.setConstraint(cs);
 
-        return (List<Publication>) os.executeSingleton(q);
+        @SuppressWarnings("unchecked") List<Publication> retval = (List<Publication>) ((List) os
+                .executeSingleton(q));
+        return retval;
     }
 
     /**

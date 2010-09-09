@@ -31,8 +31,11 @@ import org.intermine.objectstore.query.ResultsRow;
  * Refer to BioUtil.
  * @author Fengyuan Hu
  */
-public class ModMineUtil
+public final class ModMineUtil
 {
+    private ModMineUtil() {
+    }
+
     /**
      * For a bag of Submission objects, returns a set of Submission objects.
      * @param os ObjectStore
@@ -59,7 +62,8 @@ public class ModMineUtil
         q.setConstraint(cs);
 
         Results r = os.execute(q);
-        Iterator<ResultsRow> it = r.iterator();
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> it = (Iterator) r.iterator();
+
         Set<Submission> subs = new LinkedHashSet<Submission>();
 
         while (it.hasNext()) {

@@ -36,7 +36,8 @@ public class SavedQueryHandler extends PathQueryHandler
      * @param savedBags Map from bag name to bag
      * @param version the version of the xml, an attribute on the profile manager
      */
-    public SavedQueryHandler(Map<String, SavedQuery> queries, Map savedBags, int version) {
+    public SavedQueryHandler(Map<String, SavedQuery> queries,
+            @SuppressWarnings("unused") Map savedBags, int version) {
         super(new HashMap<String, PathQuery> (), version);
         this.queries = queries;
     }
@@ -44,9 +45,10 @@ public class SavedQueryHandler extends PathQueryHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
-        if (qName.equals("saved-query")) {
+        if ("saved-query".equals(qName)) {
             queryName = attrs.getValue("name");
             if (attrs.getValue("date-created") != null) {
                 dateCreated = new Date(Long.parseLong(attrs.getValue("date-created")));
@@ -58,9 +60,10 @@ public class SavedQueryHandler extends PathQueryHandler
     /**
      * {@inheritDoc}
      */
-    public void endElement(String uri, String localName, String qName) {
+    @Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
-        if (qName.equals("saved-query")) {
+        if ("saved-query".equals(qName)) {
             queries.put(queryName, new SavedQuery(queryName, dateCreated, query));
             dateCreated = null;
         }

@@ -16,8 +16,9 @@ import java.util.Map;
  * Interface providing the capability to check partial mappings for validity for the MappingUtil.
  *
  * @author Matthew Wakeling
+ * @param <T> The element type
  */
-public interface MappingUtilChecker
+public interface MappingUtilChecker<T>
 {
     /**
      * Checks a partial mapping.
@@ -25,5 +26,5 @@ public interface MappingUtilChecker
      * @param map the mapping to check
      * @return true if the mapping is valid
      */
-    public boolean check(Map map);
+    boolean check(Map<T, T> map);
 }

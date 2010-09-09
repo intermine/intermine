@@ -56,7 +56,7 @@ public class QueryExpression implements QueryEvaluable
     private int op;
     private QueryEvaluable arg2;
     private QueryEvaluable arg3;
-    private Class type;
+    private Class<?> type;
 
     /**
      * Constructs an arithmetic QueryExpression from two evaluable items
@@ -204,7 +204,7 @@ public class QueryExpression implements QueryEvaluable
     /**
        * {@inheritDoc}
        */
-    public Class getType() {
+    public Class<?> getType() {
         return type;
     }
 
@@ -247,7 +247,7 @@ public class QueryExpression implements QueryEvaluable
     /**
      * {@inheritDoc}
      */
-    public void youAreType(Class cls) {
+    public void youAreType(Class<?> cls) {
         if (type.equals(UnknownTypeValue.class)) {
             // Must be the numeric operation
             arg1.youAreType(cls);

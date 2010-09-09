@@ -60,7 +60,7 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         String seriesName = (String) dataset.getRowKey(series);
         seriesName = seriesName.toLowerCase();
         Boolean expressed = Boolean.FALSE;
-        if (seriesName.equals("expressed")) {
+        if ("expressed".equals(seriesName)) {
             expressed = Boolean.TRUE;
         }
 
@@ -83,25 +83,24 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
-        q.setView("Gene.primaryIdentifier, Gene.secondaryIdentifier, Gene.name, Gene.organism.name,"
-                  + "Gene.mRNAExpressionResults.stageRange, Gene.mRNAExpressionResults.expressed");
+        q.addViews("Gene.primaryIdentifier", "Gene.secondaryIdentifier", "Gene.name",
+                "Gene.organism.name", "Gene.mRNAExpressionResults.stageRange",
+                "Gene.mRNAExpressionResults.expressed");
 
         // bag constraint
-        q.addConstraint("Gene",  Constraints.in(bag.getName()));
+        q.addConstraint(Constraints.in("Gene", bag.getName()));
 
         // filter out BDGP
-        q.addConstraint("Gene.mRNAExpressionResults.dataSet.name",  Constraints.eq(DATASET));
+        q.addConstraint(Constraints.eq("Gene.mRNAExpressionResults.dataSet.name", DATASET));
 
         // stage (category)
-        q.addConstraint("Gene.mRNAExpressionResults.stageRange",
-                        Constraints.eq(category + " (fly-FISH)"));
+        q.addConstraint(Constraints.eq("Gene.mRNAExpressionResults.stageRange",
+                        category + " (fly-FISH)"));
 
         // expressed (series)
-        Boolean expressed = (series.equals("true") ? Boolean.TRUE : Boolean.FALSE);
-        q.addConstraint("Gene.mRNAExpressionResults.expressed",  Constraints.eq(expressed));
-
-        q.setConstraintLogic("A and B and C and D");
-        q.syncLogicExpression("and");
+        Boolean expressed = ("true".equals(series) ? Boolean.TRUE : Boolean.FALSE);
+        q.addConstraint(Constraints.eq("Gene.mRNAExpressionResults.expressed",
+                expressed.toString()));
 
         return q;
     }

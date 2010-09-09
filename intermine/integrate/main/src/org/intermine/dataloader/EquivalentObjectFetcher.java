@@ -35,7 +35,7 @@ public interface EquivalentObjectFetcher
      * @return a Set of InterMineObjects
      * @throws ObjectStoreException if an error occurs
      */
-    public Set queryEquivalentObjects(InterMineObject obj,
+    Set<InterMineObject> queryEquivalentObjects(InterMineObject obj,
             Source source) throws ObjectStoreException;
 
     /**
@@ -50,7 +50,7 @@ public interface EquivalentObjectFetcher
      * @return a new Query (or null if all the primary keys from obj contain a null)
      * @throws MetaDataException if anything goes wrong
      */
-    public Query createPKQuery(InterMineObject obj, Source source,
+    Query createPKQuery(InterMineObject obj, Source source,
             boolean queryNulls) throws MetaDataException;
 
     /**
@@ -67,6 +67,6 @@ public interface EquivalentObjectFetcher
      * @return a new Query (or null if all the primary keys from obj contain a null)
      * @throws MetaDataException if anything goes wrong
      */
-    public Set createPKQueriesForClass(InterMineObject obj, Source source, boolean queryNulls,
+    Set<Query> createPKQueriesForClass(InterMineObject obj, Source source, boolean queryNulls,
             ClassDescriptor cld) throws MetaDataException;
 }

@@ -206,7 +206,7 @@ public class ResultsFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTestCa
             }
         } else {
             Results res = os.execute((Query)queries.get(type), 2, true, true, true);
-            List newRes = new ResultsFlatOuterJoinsImpl((List<ResultsRow>) res, (Query) queries.get(type));
+            List newRes = new ResultsFlatOuterJoinsImpl((List<ResultsRow>) ((List) res), (Query) queries.get(type));
             List expected = (List) results.get(type);
             if ((expected != null) && (!expected.equals(newRes))) {
                 Set a = new HashSet(expected);

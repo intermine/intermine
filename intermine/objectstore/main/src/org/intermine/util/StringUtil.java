@@ -26,13 +26,12 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Andrew Varley
  */
-public class StringUtil
+public final class StringUtil
 {
-    private static final char HEX_CHARS[]
+    private static final char[] HEX_CHARS
         = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
     private StringUtil() {
-        // TODO do we need this?
     }
 
     /**
@@ -58,7 +57,8 @@ public class StringUtil
     }
 
     /**
-     * Returns a String formed by the delimited results of calling toString over a collection
+     * Returns a String formed by the delimited results of calling toString over a collection.
+     *
      * @param c the collection to stringify
      * @param delimiter the character to join on
      * @return the string representation
@@ -142,7 +142,7 @@ public class StringUtil
      * @param buffer byte buffer
      * @return hexadecimal string
      */
-    public static String bufferToHexString(byte buffer[]) {
+    public static String bufferToHexString(byte[] buffer) {
         StringBuffer sb = new StringBuffer(buffer.length * 2);
         for (int i = 0; i < buffer.length; i++) {
             char a = HEX_CHARS[(buffer[i] & 0xF0) >> 4];
@@ -252,7 +252,7 @@ public class StringUtil
         if (str == null) {
             return null;
         }
-        if (str.equals("")) {
+        if ("".equals(str)) {
             return str;
         }
         char first = str.charAt(0);
@@ -410,6 +410,7 @@ public class StringUtil
     /**
      * Take a collection of Strings and return a combined string as a comma separated list
      * with 'and' between the final pair.  For example: [a, b, c] -> "a, b and c".
+     *
      * @param elements a collection of strings to put in the list.
      * @return a string with all the elements suitable for inclusion in a sentence.
      */
@@ -420,6 +421,7 @@ public class StringUtil
     /**
      * Take a collection of Strings and return a combined string as a comma separated list
      * with 'and' between the final pair.  For example: [a, b, c] -> "a, b and c".
+     *
      * @param elements a collection of strings to put in the list.
      * @param sort if true then order the strings alphabetically
      * @return a string with all the elements suitable for inclusion in a sentence.
@@ -449,6 +451,7 @@ public class StringUtil
     /**
      * Return 'a' or 'an' according to first letter of the given article.  If article starts with
      * a vowel or appears to be an acronym return 'an'.
+     *
      * @param noun the subject of the article
      * @return the appropriate indefinite article
      */
@@ -473,7 +476,7 @@ public class StringUtil
     }
 
     /**
-     * Make a Map from the serialized String returned by jQuery.sortable("serialize")
+     * Make a Map from the serialized String returned by jQuery.sortable("serialize").
      *
      * @param str the String
      * @return a Map
@@ -495,7 +498,7 @@ public class StringUtil
      * @return a new String
      */
     public static String colonsToDots(String in) {
-        char array[] = in.toCharArray();
+        char[] array = in.toCharArray();
         for (int i = 0; i < array.length; i++) {
             if (array[i] == ':') {
                 array[i] = '.';
@@ -624,6 +627,7 @@ public class StringUtil
         /**
          * {@inheritDoc}
          */
+        @Override
         public int hashCode() {
             return wrapped.hashCode();
         }
@@ -631,6 +635,7 @@ public class StringUtil
         /**
          * {@inheritDoc}
          */
+        @Override
         public boolean equals(Object o) {
             if (o instanceof LineWrappedString) {
                 LineWrappedString lws = (LineWrappedString) o;

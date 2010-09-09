@@ -1,0 +1,121 @@
+=pod
+
+=head1 NAME
+
+InterMine::Cookbook::Recipe4 - Other Query Features
+
+=head1 SYNOPSIS
+
+  # Get all genes involved in biosynthetic processes, and any
+  # publications on them
+
+  use InterMine ('www.flymine.org');
+
+  my $query = InterMine->new_query;
+
+  # Specifying a name and a description is purely optional
+  $query->name('Tutorial 4 Query');
+  $query->description('All genes involved in biosynthetic processes');
+
+  $query->add_view(qw/
+      Gene.primaryIdentifier
+      Gene.publications.title
+      Gene.publications.year
+      Gene.publications.firstAuthor
+  /);
+
+  $query->add_constraint(
+     path  => 'Gene.goAnnotation.ontologyTerm.name',
+     op    => 'CONTAINS',
+     value => 'biosynthetic process',
+  );
+
+  $query->add_pathdescription(
+     path => 'Gene.goAnnotation.ontologyTerm.name',
+     description => 'The ontology term for the gene',
+  );
+
+  $query->add_join(
+     path  => 'Gene.publications',
+     style => 'OUTER',
+  );
+
+  my $results = $query->results(as => 'string');
+  print $results;
+
+=head1 DESCRIPTION
+
+=head2 Inner and Outer Joins
+
+Merely including a path in a query, even in the view, by default exerts
+a constraining force - ie. it demands that the record you are searching for
+have information in the field the path describes. Sometimes, that is not
+what you want.
+
+In the example above, the purpose of the query is to get a list of all genes
+with a particular GO annotation - whether or not they have publications
+is by the by: we still want to know about them. If they do have publications,
+then by all means let us know, but we want the full list of genes.
+
+To specify this behaviour we describe the link from Gene -> Publication as being
+an 'Outer' join. Normally joins between two objects are 'Inner' joins, which
+requires records to have both objects, which here would mean missing
+genes that meet out criteria with no publications.
+
+Because 'Inner' joins are the default, you do not need to declare them
+as such (although you can, just to remind yourself that you have I<chosen>
+to throw away partially matching records), but 'Outer' joins always need
+to be declared. As we only ever need to declare outer joins, there is a more
+concise way to do this:
+
+  $query->add_join('Gene.publications' => 'OUTER');
+
+or
+
+  $query->add_join('Gene.publications');
+
+While you don't I<need> to indicate the 'Outer'-ness of each join you declare,
+it is recommended, if only for your own sake when reading back over the
+queries you have created - they form a kind of self-commenting code, which can
+help you understand the complex queries you wrote last week you now have no
+recollection of.
+
+=head2 Path Descriptions
+
+Another helpful commenting tool (apart from comments, which are whole-heartedly
+recommended) is the C<path_description> method, which simply adds a human readable
+description of what a path references to the query. As seen in the query above,
+these can sometimes be shorter, and more informative than the actual path.
+
+  $query->add_pathdescription(
+      path => 'Gene.downstreamIntergenicRegion.overlappingFeatures',
+      description => 'Such as a Gene, or an Exon, or an ESTCluster',
+  );
+
+While nice in your code, they can be very useful if your query gets saved,
+or perhaps made into a template (TODO: link to these recipes). When serialised
+to xml, these 'comments' will remain to explain the query, even if nothing
+else does.
+
+=head1 CONCLUSION
+
+Joins and path descriptions are two features which help you tell the server,
+and remind yourself, what you meant by the query you composed, and help
+document what kind of results you expect to get back from it, and why
+they will be useful. In the next recipe we look at how to deal with these results.
+
+=head1 FOOTNOTES
+
+Note that there are two list separation operators in Perl: C<,> and C<< => >>
+
+In several places I have used C<< => >> because it is visually more distinct and
+can helpfully convey the appropriate linking semantics, such as associating
+a path with its join style or description. However, while often interchangible,
+they are not always so, as C<< => >>, or C<the fat comma> enforces scalar context
+on the term to its left, meaning that while C<< (one => 'two') >> and C<('one', 'two')>
+are interchangible, C<< (cwd => 'current directory') >> and C<(cwd, 'current directory')>
+are not, with the first one unhelpfully giving us not the current working
+directory, but just the string "cwd".
+
+=cut
+

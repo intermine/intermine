@@ -17,9 +17,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
-import org.intermine.api.results.WebResults;
-import org.intermine.api.results.WebTable;
-import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -48,20 +45,8 @@ public abstract class HttpExporterBase
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
 
-        int batchSize = BATCH_SIZE;
-        boolean matching = false;
-        WebTable wt = pt.getWebTable();
-        if (wt instanceof WebResults) {
-            Results r = ((WebResults) wt).getInterMineResults();
-            if (r.isSingleBatch()) {
-                batchSize = r.getBatchSize();
-                matching = true;
-            }
-        }
-
         executor = im.getPathQueryExecutor(profile);
-        executor.setBatchSize(batchSize);
-        executor.setMatchingExistingResults(matching);
+        executor.setBatchSize(BATCH_SIZE);
         return executor.execute(pathQuery);
     }
 }

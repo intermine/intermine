@@ -17,8 +17,12 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.modelproduction.ModelParser;
-import org.intermine.metadata.*;
 import org.intermine.util.SAXParser;
 
 import org.apache.commons.lang.StringUtils;
@@ -78,22 +82,23 @@ public class InterMineModelParser implements ModelParser
         /**
          * {@inheritDoc}
          */
+        @Override
         public void startElement(@SuppressWarnings("unused") String uri,
                 @SuppressWarnings("unused") String localName, String qName, Attributes attrs) {
-            if (qName.equals("model")) {
+            if ("model".equals(qName)) {
                 modelName = attrs.getValue("name");
                 packageName = attrs.getValue("package");
                 if (packageName == null) {
                     throw new IllegalArgumentException("Error - package name of model is not "
                             + "defined");
                 }
-            } else if (qName.equals("class")) {
+            } else if ("class".equals(qName)) {
                 String name = attrs.getValue("name");
                 String supers = attrs.getValue("extends");
                 boolean isInterface = Boolean.valueOf(attrs.getValue("is-interface"))
                     .booleanValue();
                 cls = new SkeletonClass(packageName, name, supers, isInterface);
-            } else if (qName.equals("attribute")) {
+            } else if ("attribute".equals(qName)) {
                 String name = attrs.getValue("name");
                 String type = attrs.getValue("type");
 
@@ -106,7 +111,7 @@ public class InterMineModelParser implements ModelParser
                             + "` not defined for `" + cls.name + "`");
                 }
                 cls.attributes.add(new AttributeDescriptor(name, type));
-            } else if (qName.equals("reference")) {
+            } else if ("reference".equals(qName)) {
                 String name = attrs.getValue("name");
                 String origType = attrs.getValue("referenced-type");
                 String type = origType;
@@ -133,7 +138,7 @@ public class InterMineModelParser implements ModelParser
                 String reverseReference = attrs.getValue("reverse-reference");
                 cls.references.add(new ReferenceDescriptor(name, type,
                                                            reverseReference));
-            } else if (qName.equals("collection")) {
+            } else if ("collection".equals(qName)) {
                 String name = attrs.getValue("name");
                 String origType = attrs.getValue("referenced-type");
                 String type = origType;
@@ -170,9 +175,10 @@ public class InterMineModelParser implements ModelParser
         /**
          * {@inheritDoc}
          */
+        @Override
         public void endElement(@SuppressWarnings("unused") String uri,
                 @SuppressWarnings("unused") String localName, String qName) {
-            if (qName.equals("class")) {
+            if ("class".equals(qName)) {
                 classes.add(new ClassDescriptor(cls.name, cls.supers,
                                                 cls.isInterface, cls.attributes, cls.references,
                                                 cls.collections));

@@ -18,6 +18,7 @@ import org.intermine.InterMineException;
  **/
 public class ParseValueException extends InterMineException
 {
+    private static final long serialVersionUID = -3249560275431835992L;
 
     /**
      * Constructor

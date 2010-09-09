@@ -20,17 +20,17 @@ public interface WebSearchable
      * The name (or identifier) usd as the primary key for storing this object.
      * @return the name
      */
-    public String getName();
+    String getName();
 
     /**
      * The user-friendly title for this object.
      * @return the title
      */
-    public String getTitle();
+    String getTitle();
 
     /**
      * Return the description of this object
      * @return the description
      */
-    public String getDescription();
+    String getDescription();
 }

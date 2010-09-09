@@ -126,7 +126,7 @@ public class UniProtFastaLoaderTaskTest extends TestCase
                      + "PITRQQFFDGVKHISKGALRRDSEGSSDDDMTAQYGADQVNEILIGSPAGQAGGKLGKPV"
                      + "STPTVVKTTTKQVLTKNIDGVTHNVEEEVRNLGTGEVTYSTQEHKADATPTDLSGAYVTA"
                      + "TAVTTRTATTHEDLGKNAKTEQLEEKTVATTRTHDPNKQQQRVVTQEVKTTATVTSGDQK"
-                     + "SPLFTTSATTGPHVESTRVVLGEDTPGFSGHGEIISTQTGGGGGGI", protein.getSequence().getResidues());
+                     + "SPLFTTSATTGPHVESTRVVLGEDTPGFSGHGEIISTQTGGGGGGI", protein.getSequence().getResidues().toString());
     }
 
     public void tearDown() throws Exception {

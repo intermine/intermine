@@ -91,28 +91,4 @@ public final class Messages
         }
         return message;
     }
-    public static boolean hasMessage(String key, Object... params) {
-        if (bundles.isEmpty()) {
-            throw new IllegalStateException("Resource bundles have not been set.");
-        }
-        boolean hasKey = false;
-        MissingResourceException error = null;
-        if (bundles.size() == 1) {
-            try {
-                hasKey = (bundles.get(0).getString(key) != null);
-            } catch (MissingResourceException e) {
-                error = e;
-            }
-        } else {
-            for (ResourceBundle bundle : bundles) {
-                try {
-                    hasKey = (bundle.getString(key) != null);
-                    break;
-                } catch (MissingResourceException e) {
-                    error = e;
-                }
-            }
-        }
-        return hasKey;
-    }
 }

@@ -22,5 +22,5 @@ public interface QuerySelectable
      *
      * @return class describing the type
      */
-    public Class getType();
+    Class<?> getType();
 }

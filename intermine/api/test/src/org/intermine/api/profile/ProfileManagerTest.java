@@ -122,7 +122,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         bag.addIdToBag(departmentB1.getId(), "Department");
 
         TemplateQuery template =
-            new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
+            new TemplateQuery("template", "ttitle", "tcomment",
                               new PathQuery(Model.getInstanceByName("testmodel")));
 
         bobProfile = new Profile(pm, bobName, bobId, bobPass,
@@ -153,9 +153,8 @@ public class ProfileManagerTest extends StoreDataTestCase
                 new Date(), os, sallyId, uosw);
         objectBag.addIdToBag(ceoB1.getId(), "CEO");
 
-        template = new TemplateQuery("template", "ttitle", "some desc", "tcomment",
+        template = new TemplateQuery("template", "ttitle", "tcomment",
                                      new PathQuery(Model.getInstanceByName("testmodel")));
-
         sallyProfile = new Profile(pm, sallyName, sallyId, sallyPass,
                                    new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(sallyProfile);

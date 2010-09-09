@@ -59,7 +59,7 @@ public class UnknownTypeValue
      * @param cls a Class into which to attempt to convert the value
      * @return the converted value
      */
-    public Object getConvertedValue(Class cls) {
+    public Object getConvertedValue(Class<?> cls) {
         try {
             if (cls.equals(Boolean.class)) {
                 if ("true".equals(value)) {
@@ -106,6 +106,7 @@ public class UnknownTypeValue
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return value;
     }
@@ -136,7 +137,7 @@ public class UnknownTypeValue
      * @param cls the Class to convert
      * @return an int
      */
-    public static int classToType(Class cls) {
+    public static int classToType(Class<?> cls) {
         if (String.class.equals(cls)) {
             return TYPE_STRING;
         } else if (Boolean.class.equals(cls)) {

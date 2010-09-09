@@ -10,7 +10,9 @@ package org.intermine.sql.query;
  *
  */
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 /**
  * Represents a result from an EXPLAIN request to a database.
@@ -144,12 +146,13 @@ public class ExplainResult
      */
     public long getTime() {
         // TODO: Do this properly.
-        return (long) ((((double) complete) * ((double) estimatedRows)) / ((double) rows));
+        return (long) ((((double) complete) * ((double) estimatedRows)) / rows);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "ExplainResult: rows=" + rows + " start=" + start + " complete=" + complete
             + " width=" + width;
@@ -158,6 +161,7 @@ public class ExplainResult
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof ExplainResult)) {
             return false;
@@ -172,6 +176,7 @@ public class ExplainResult
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return (int) (2 * rows
                       + 3 * start

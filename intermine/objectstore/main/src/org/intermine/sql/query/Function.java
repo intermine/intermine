@@ -10,7 +10,11 @@ package org.intermine.sql.query;
  *
  */
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.intermine.util.IdentityMap;
 
 /**
@@ -22,7 +26,7 @@ import org.intermine.util.IdentityMap;
 public class Function extends AbstractValue
 {
     protected int operation;
-    protected List operands;
+    protected List<AbstractValue> operands;
 
     /**
      * COUNT(*) aggregate function - takes no operands.
@@ -97,7 +101,7 @@ public class Function extends AbstractValue
      */
     public static final int STDDEV = 18;
 
-    private static final String REPRESENTATIONS[] = {"", "COUNT(*)", "MAX(", "MIN(",
+    private static final String[] REPRESENTATIONS = {"", "COUNT(*)", "MAX(", "MIN(",
         "SUM(", "AVG(", " + ", " - ", " * ", " / ", " ^ ", " % ", "::", "STRPOS(", "SUBSTR(",
         "COALESCE(", "LOWER(", "UPPER(", "STDDEV("};
 
@@ -112,7 +116,7 @@ public class Function extends AbstractValue
             throw (new IllegalArgumentException("operation is not valid"));
         }
         this.operation = operation;
-        operands = new ArrayList();
+        operands = new ArrayList<AbstractValue>();
     }
 
     /**
@@ -154,6 +158,9 @@ public class Function extends AbstractValue
                             + " operands");
                 }
                 break;
+            default:
+                // All others are alright
+                break;
         }
         operands.add(obj);
     }
@@ -166,6 +173,7 @@ public class Function extends AbstractValue
      * @throws IllegalStateException if there aren't the correct number of operands for the
      * operation yet.
      */
+    @Override
     public String getSQLString() {
         switch (operation) {
             case COUNT:
@@ -181,7 +189,7 @@ public class Function extends AbstractValue
                     throw (new IllegalStateException("This function needs an operand"));
                 }
                 return REPRESENTATIONS[operation]
-                    + ((AbstractValue) operands.get(0)).getSQLString() + ")";
+                    + operands.get(0).getSQLString() + ")";
             case PLUS:
             case MINUS:
             case MULTIPLY:
@@ -193,14 +201,12 @@ public class Function extends AbstractValue
                 if (operands.size() < 2) {
                     throw (new IllegalStateException("This function needs two operands"));
                 }
-                Iterator iter = operands.iterator();
                 String retval = "";
                 if (operation != TYPECAST) {
                     retval += "(";
                 }
                 boolean needComma = false;
-                while (iter.hasNext()) {
-                    AbstractValue v = (AbstractValue) iter.next();
+                for (AbstractValue v : operands) {
                     if (needComma) {
                         retval += REPRESENTATIONS[operation];
                     }
@@ -219,11 +225,9 @@ public class Function extends AbstractValue
                 if (operands.size() < 2) {
                     throw (new IllegalStateException("This function needs two operands"));
                 }
-                Iterator iter = operands.iterator();
                 String retval = REPRESENTATIONS[operation];
                 boolean needComma = false;
-                while (iter.hasNext()) {
-                    AbstractValue v = (AbstractValue) iter.next();
+                for (AbstractValue v : operands) {
                     if (needComma) {
                         retval += ", ";
                     }
@@ -233,8 +237,9 @@ public class Function extends AbstractValue
                 retval += ")";
                 return retval;
             }
+            default:
+                throw new Error("Unrecognised operation " + operation);
         }
-        throw (new Error("Unknown operation"));
     }
 
     /**
@@ -243,30 +248,27 @@ public class Function extends AbstractValue
      * @param obj the Object to compare to
      * @return true if they are equal
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof Function) {
             Function objF = (Function) obj;
             if (operation == objF.operation) {
                 if ((operation == PLUS) || (operation == MULTIPLY)) {
-                    Map a = new HashMap();
-                    Iterator opIter = operands.iterator();
-                    while (opIter.hasNext()) {
-                        Object operand = opIter.next();
+                    Map<AbstractValue, Integer> a = new HashMap<AbstractValue, Integer>();
+                    for (AbstractValue operand : operands) {
                         if (!a.containsKey(operand)) {
                             a.put(operand, new Integer(1));
                         } else {
-                            Integer i = (Integer) a.get(operand);
+                            Integer i = a.get(operand);
                             a.put(operand, new Integer(1 + i.intValue()));
                         }
                     }
-                    Map b = new HashMap();
-                    opIter = objF.operands.iterator();
-                    while (opIter.hasNext()) {
-                        Object operand = opIter.next();
+                    Map<AbstractValue, Integer> b = new HashMap<AbstractValue, Integer>();
+                    for (AbstractValue operand : objF.operands) {
                         if (!b.containsKey(operand)) {
                             b.put(operand, new Integer(1));
                         } else {
-                            Integer i = (Integer) b.get(operand);
+                            Integer i = b.get(operand);
                             b.put(operand, new Integer(1 + i.intValue()));
                         }
                     }
@@ -282,8 +284,10 @@ public class Function extends AbstractValue
     /**
      * {@inheritDoc}
      */
-    public int compare(AbstractValue obj, Map tableMap, Map reverseTableMap) {
-        if (tableMap instanceof IdentityMap) {
+    @Override
+    public int compare(AbstractValue obj, Map<AbstractTable, AbstractTable> tableMap,
+            @SuppressWarnings("unused") Map<AbstractTable, AbstractTable> reverseTableMap) {
+        if (tableMap instanceof IdentityMap<?>) {
             return equals(obj) ? EQUAL : INCOMPARABLE;
         }
         return EQUAL;
@@ -310,12 +314,12 @@ public class Function extends AbstractValue
      *
      * @return an arbitrary integer based on the contents of the Function
      */
+    @Override
     public int hashCode() {
         int multiplier = 5;
         int state = operation * 3;
-        Iterator iter = operands.iterator();
-        while (iter.hasNext()) {
-            state += multiplier * iter.next().hashCode();
+        for (AbstractValue operand : operands) {
+            state += multiplier * operand.hashCode();
             if ((operation != PLUS) && (operation != MULTIPLY)) {
                 multiplier += 2;
             }
@@ -337,7 +341,7 @@ public class Function extends AbstractValue
      *
      * @return all operands in a List
      */
-    public List getOperands() {
+    public List<AbstractValue> getOperands() {
         return operands;
     }
 
@@ -346,6 +350,7 @@ public class Function extends AbstractValue
      *
      * @return a boolean
      */
+    @Override
     public boolean isAggregate() {
         switch(operation) {
             case COUNT:
@@ -356,10 +361,8 @@ public class Function extends AbstractValue
             case STDDEV:
                 return true;
             default:
-                Iterator iter = operands.iterator();
-                while (iter.hasNext()) {
-                    AbstractValue av = (AbstractValue) iter.next();
-                    if (av.isAggregate()) {
+                for (AbstractValue operand : operands) {
+                    if (operand.isAggregate()) {
                         return true;
                     }
                 }

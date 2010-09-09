@@ -1,0 +1,162 @@
+=pod
+
+=head1 NAME
+
+InterMine::Cookbook::Recipe5 - Dealing with Results
+
+=head1 SYNOPSIS
+
+  # Get a list of first authors of papers about
+  # Even Skipped, sorted by the number of their
+  # papers in the database
+
+  use InterMine ('www.flymine.org');
+
+  my $query = InterMine->new_query;
+
+  # Specifying a name and a description is purely optional
+  $query->name('Tutorial 5 Query');
+  $query->description('All papers on Even Skipped in D. Melanogaster');
+
+  $query->add_view(qw/
+      Gene.publications.firstAuthor
+      Gene.publications.title
+  /);
+
+  $query->add_constraint(
+     path  => 'Gene',
+     op    => 'LOOKUP',
+     value => 'eve',
+     extra_value => 'D. melanogaster',
+  );
+
+  my $results = $query->results(as => 'arrayrefs');
+
+  my %papers_by;
+  for my $row (@$results) {
+      my ($author, $paper) = @$row;
+      push @{$papers_by{$author}}, $paper;
+  }
+
+  my @sorted_authors =
+      sort { @{$papers_by{$b}} <=> @{$papers_by{$a}} } keys %papers_by;
+
+  printf "The most prolific author is %s, with %d papers (%s)",
+         $sorted_authors[0],
+         scalar(@{$papers_by{$sorted_authors[0]}}),
+         join(', ', map {'"'.$_.'"'} @{$papers_by{$sorted_authors[0]}} );
+
+  $results = $query->results(as => 'hashrefs');
+
+  my %occurances_of;
+  for my $row (@$results) {
+      my $title  = $row->{'Gene.publications.title'};
+      my @words  = split(/\s/, $title);
+      $occurances_of{$_}++ for @words;
+  }
+
+  my @sorted_words =
+      sort { $occurances_of{$b} <=> $occurances_of{$a} } keys %occurances_of;
+
+  print "The ten most frequently used words are:"
+        . join(', ', @sorted_words[0 .. 9]);
+
+=head1 DESCRIPTION
+
+There are two primary things one might want to do with the results returned
+by a query: store them and process them. We try to make both of these common
+tasks as trivially simple as possible;
+
+=head2 Storage
+
+The most common data storage format is the flat file (there are other options
+too - please see Recipe7 - Extending InterMine). Storing results in a flat file
+is as simple as:
+
+  my $results = $query->result(as => 'string');
+  open(my $outFH, 'w', $filename) or die "$!";
+  print $outFH $results;
+  close $outFH or die "$!";
+
+By passing the parameters C<< as => 'string' >> you are telling the query you
+want your results in a format suitable for flat file storage, ie. a new-line
+delimited string of tab separated values. If you want more control over the lines
+you get back, you can pass C<< as => 'strings' >>, which will return an arrayref
+of strings, so you can handle them yourself.
+
+=head2 Processing
+
+More useful perhaps is processing your results: normally you would download
+results from somewhere, read them into a program, munge the data into a suitable
+data-structure, and only then be able to actually process the results. Here you
+can do it all in one step, and never have to leave Perl to do so.
+
+As well as returning rows as tab separated strings, results can be returned as
+an arrayref of either arrayrefs or hashrefs, depending on your needs.(1)
+This means that in most cases, your data is already in a format suitable
+for processing.
+
+Above, we can see two basic examples of using I<arrayrefs> and I<hashrefs> to readily access
+your data. Arrayrefs are particularly useful if you want to process each field
+in the returned results, and you know what order they will be in (they are
+returned in the same order as the view list specified on the query).
+Hashrefs can be more useful for providing direct access to individual fields by
+name, and they can have the benefit of more declarative, and thus maintainable
+code. For this reason hashrefs are the default if you call C<< $query->results; >>
+without any format specified.
+
+For unpacking your results, the following pattern will prove useful:
+
+  for my $row (@$results) {
+      # do something with row
+  }
+
+Since the results are in essence just a list of rows, you can also use C<map>
+and C<grep> on them:
+
+  # filters out genes with residue lengths shorter than 5,000
+  my @filtered_results = grep {$_->{'Gene.residue.length'} > 5_000} @$results;
+
+  # Tranforms a two element arrayref row (such as 'Gene.name', 'Gene.symbol')
+  # into a hashref row with the first element as the key (name => 'symbol')
+  # Note: this assumes that the first element is unique in the list
+  my $transformed_results = map { {@$_} } @$results
+
+For very large result sets, you don't have to wait to receive all the results
+before you start processing them - you can process everything in a stream
+via iteration, which can reduce memory usage in your program. For details of
+this please see the next recipe, no 6 - Advanced Results Management.
+
+=head1 CONCLUSION
+
+By default, result rows can be returned one of three different formats: strings
+(for flat file storage), and hash and array references (for processing).
+Hash and array references (of which the default is hashrefs) make for powerful
+and flexible data-structures which get out of the way between you and your data.
+
+=head1 FOOTNOTES
+
+(1) References in Perl.
+Perl has a sophisticated native system of references (similar to C-style pointers)
+and nested data structures. The two used most frequently (and used here) are references
+to arrays (arrayrefs) and references to hashes (hashrefs). These data-structures function
+exactly the same as normal hashes and arrays, but ways of referencing values in them
+differ:
+
+  my @array    = ('one', 'two', 'three');
+  my $arrayref = ['uno', 'duo', 'tre'];
+  my $first_english = $array[0];
+  my $first_italian = $arrayref->[0];
+
+  my %hash    = (one => 'uno',  two => 'duo',  three => 'tre');
+  my %hashref = {one => 'eins', two => 'zwei', three => 'drei'};
+  my $italian_for_two = $hash{two};
+  my $german_for_two  = $hashref->{two};
+
+Note the differences in bracketing and the use of the arrow (dereferencing) operator.
+
+=head1 SEE ALSO
+
+L<perldoc perlref|perlref>
+
+=cut

@@ -13,6 +13,7 @@ package org.intermine.bio.web.widget;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
@@ -44,15 +45,16 @@ public class PathwayURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
-        q.setView("Gene.secondaryIdentifier,Gene.primaryIdentifier,Gene.name,Gene.organism.name,"
-                + "Gene.pathways.identifier,Gene.pathways.name,Gene.pathways.dataSets.title");
-        q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
+        q.addViews("Gene.secondaryIdentifier", "Gene.primaryIdentifier", "Gene.name",
+                "Gene.organism.name", "Gene.pathways.identifier", "Gene.pathways.name",
+                "Gene.pathways.dataSets.title");
+        q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
-            q.addConstraint("Gene.pathways", Constraints.lookup(key));
-            q.setConstraintLogic("A and B");
-            q.syncLogicExpression("and");
+            q.addConstraint(Constraints.lookup("Gene.pathways", key, ""));
         }
-        q.setOrderBy("Gene.pathways.identifier,Gene.primaryIdentifier");
+        q.addOrderBy("Gene.pathways.identifier", OrderDirection.ASC);
+        q.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
+
         return q;
     }
 }

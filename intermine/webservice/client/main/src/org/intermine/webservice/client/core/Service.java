@@ -19,12 +19,12 @@ import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.util.HttpConnection;
 
 
-/** 
+/**
  * This class provides the base level common functionality required to access
  * any InterMine service. It is also designed to act as a base class that can be
- * customized for specific types of InterMine services. It encapsulates all protocol-level 
+ * customized for specific types of InterMine services. It encapsulates all protocol-level
  * interactions with the server.
- * 
+ *
  * @author Jakub Kulaviak
  **/
 public class Service
@@ -33,13 +33,13 @@ public class Service
     private static final String VERSION_HEADER = "InterMine-Version";
 
     private static final String USER_AGENT_HEADER = "User-Agent";
-    
+
     private static final String AUTHENTICATION_FIELD_NAME = "Authorization";
 
     private static Logger logger = Logger.getLogger(Service.class);
-    
+
     protected URL url;
-    
+
     private String rootUrl;
 
     private String applicationName;
@@ -51,13 +51,13 @@ public class Service
     private String password;
 
     /**
-     * Constructor. {@link ServiceFactory} should be used always to create service and not this 
-     * constructor. 
-     * @param rootUrl base url of all services, it is prefix common for all services, 
-     *      Example: http://www.flymine.org/service 
+     * Constructor. {@link ServiceFactory} should be used always to create service and not this
+     * constructor.
+     * @param rootUrl base url of all services, it is prefix common for all services,
+     *      Example: http://www.flymine.org/service
      * @param serviceRelativeUrl part of url specific for this service
      *      Example: query/results
-     * @param applicationName application name, information for server which application uses 
+     * @param applicationName application name, information for server which application uses
      * this service
      */
     public Service(String rootUrl, String serviceRelativeUrl,
@@ -74,7 +74,7 @@ public class Service
             rootUrl = rootUrl + "/";
         }
         try {
-            this.url = new URL(rootUrl + serviceRelativeUrl);    
+            this.url = new URL(rootUrl + serviceRelativeUrl);
         } catch (MalformedURLException ex) {
             throw new IllegalStateException(ex);
         }

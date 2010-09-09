@@ -20,6 +20,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 
 /**
@@ -42,6 +43,7 @@ public class ObjectStoreSafeImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public Results execute(Query q) {
         return os.execute(QueryCloner.cloneQuery(q));
     }
@@ -49,6 +51,7 @@ public class ObjectStoreSafeImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
             boolean prefetch) {
         Results retval = new Results(q, this, getSequence(getComponentsForQuery(q)));
@@ -71,6 +74,7 @@ public class ObjectStoreSafeImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public SingletonResults executeSingleton(Query q) {
         return os.executeSingleton(QueryCloner.cloneQuery(q));
     }
@@ -78,6 +82,7 @@ public class ObjectStoreSafeImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
             boolean explain, boolean prefetch) {
         SingletonResults retval = new SingletonResults(q, this,
@@ -101,14 +106,16 @@ public class ObjectStoreSafeImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
-    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            Map<Object, Integer> sequence) throws ObjectStoreException {
+    @Override
+    public List<ResultsRow<Object>> execute(Query q, int start, int limit, boolean optimise,
+            boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException {
         return os.execute(QueryCloner.cloneQuery(q), start, limit, optimise, explain, sequence);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
         return os.estimate(QueryCloner.cloneQuery(q));
     }
@@ -116,6 +123,7 @@ public class ObjectStoreSafeImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException {
         return os.count(QueryCloner.cloneQuery(q), sequence);
     }
@@ -123,6 +131,7 @@ public class ObjectStoreSafeImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "Safe(" + os + ")";
     }

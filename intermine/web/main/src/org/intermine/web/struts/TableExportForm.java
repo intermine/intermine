@@ -156,8 +156,8 @@ public class TableExportForm extends ActionForm
      * @param request the request
      */
     @Override
-    public void reset(ActionMapping mapping,
-                      HttpServletRequest request) {
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
+                      @SuppressWarnings("unused") HttpServletRequest request) {
         initialise();
     }
 }

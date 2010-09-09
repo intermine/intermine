@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,9 +26,10 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.results.Column;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.model.bio.SequenceFeature;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Sequence;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.results.PagedTable;
@@ -51,7 +51,7 @@ public class SequenceExportOptionsController extends TilesAction
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {
+        throws Exception {
         String tableName = request.getParameter("table");
         HttpSession session = request.getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, tableName);
@@ -89,8 +89,8 @@ public class SequenceExportOptionsController extends TilesAction
         for (Column column: columns) {
             Path prefix = column.getPath().getPrefix();
             ClassDescriptor prefixCD = prefix.getLastClassDescriptor();
-            Set<Class> prefixClasses = DynamicUtil.decomposeClass(prefixCD.getType());
-            Class<?> prefixClass = prefixClasses.iterator().next();
+            Class<? extends FastPathObject> prefixClass = DynamicUtil.getSimpleClass(prefixCD
+                    .getType());
             if (Protein.class.isAssignableFrom(prefixClass)
                 || SequenceFeature.class.isAssignableFrom(prefixClass)
                 || Sequence.class.isAssignableFrom(prefixClass)) {

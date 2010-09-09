@@ -18,7 +18,7 @@ import org.intermine.webservice.client.util.HttpConnection;
  * The NotImplementedException is thrown by a service when an
  * attempt is made to send a request that is not supported by the target
  * service.
- * 
+ *
  * @author Jakub Kulaviak
  */
 public class NotImplementedException extends ServiceException
@@ -44,7 +44,7 @@ public class NotImplementedException extends ServiceException
     }
 
     /**
-     * @param cause cause 
+     * @param cause cause
      */
     public NotImplementedException(Throwable cause) {
         super(cause);

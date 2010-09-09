@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
@@ -36,15 +37,15 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
 {
     private QueryClass qc;
     private String fieldName;
-    private Class type;
-    private Class subclass = null;
+    private Class<?> type;
+    private Class<? extends FastPathObject> subclass = null;
     private QueryClass defaultClass;
-    private List<QuerySelectable> selectList = new ArrayList();
-    private List<FromElement> additionalFromList = new ArrayList();
+    private List<QuerySelectable> selectList = new ArrayList<QuerySelectable>();
+    private List<FromElement> additionalFromList = new ArrayList<FromElement>();
     private Constraint constraint = null;
     private boolean singleton = false;
     private boolean isCollection;
-    private Map<FromElement, String> aliases = new HashMap();
+    private Map<FromElement, String> aliases = new HashMap<FromElement, String>();
 
     /**
      * Constructs a QueryCollectionPathExpression representing a reference from the given
@@ -89,7 +90,7 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
      * @param subclasses a Class that is a subclass of the field class
      * @throws IllegalArgumentException if the field is not a collection or reference
      */
-    public QueryCollectionPathExpression(QueryClass qc, String fieldName, Class... subclasses) {
+    public QueryCollectionPathExpression(QueryClass qc, String fieldName, Class<?>... subclasses) {
         subclass = DynamicUtil.composeDescriptiveClass(subclasses);
         if (qc == null) {
             throw new NullPointerException("QueryClass parameter is null");
@@ -105,7 +106,7 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
             throw new IllegalArgumentException("Field " + fieldName + " not found in "
                     + qc.getType());
         }
-        Class referenceType = type;
+        Class<? extends FastPathObject> referenceType;
         if (Collection.class.isAssignableFrom(type)) {
             isCollection = true;
             referenceType = TypeUtil.getElementType(qc.getType(), fieldName);
@@ -116,6 +117,9 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
             }
             defaultClass = new QueryClass(subclass);
         } else if (InterMineObject.class.isAssignableFrom(type)) {
+            @SuppressWarnings("unchecked") Class<? extends FastPathObject> tmpType =
+                (Class) type;
+            referenceType = tmpType;
             if (!type.isAssignableFrom(subclass)) {
                 throw new IllegalArgumentException("subclass parameter " + subclass.getName()
                         + " is not a subclass of reference type " + type.getName());
@@ -156,14 +160,14 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
      *
      * @return the subclass
      */
-    public Class getSubclass() {
+    public Class<? extends FastPathObject> getSubclass() {
         return subclass;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Class getType() {
+    public Class<?> getType() {
         return type;
     }
 
@@ -259,7 +263,11 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
     public Query getQuery(Collection<? extends InterMineObject> bag) {
         if (isCollection) {
             Query q = new Query();
-            QueryClassBag qcb = new QueryClassBag(qc.getType(), bag);
+            // We know that any QueryClass that has a collection must be of a type that extends
+            // InterMineObject, as you need an id to have a collection.
+            @SuppressWarnings("unchecked") Class<? extends InterMineObject> tmpType =
+                (Class) qc.getType();
+            QueryClassBag qcb = new QueryClassBag(tmpType, bag);
             q.addFrom(qcb, "bag");
             q.addFrom(defaultClass, "default");
             for (FromElement node : additionalFromList) {

@@ -26,10 +26,12 @@ import org.intermine.util.WeakReferenceHashMap;
  * @author Andrew Varley
  */
 
-public class DatabaseFactory
+public final class DatabaseFactory
 {
+    private DatabaseFactory() {
+    }
 
-    protected static Map databases = new WeakReferenceHashMap();
+    protected static Map<String, Database> databases = new WeakReferenceHashMap<String, Database>();
 
     /**
      * Returns a connection to the named database
@@ -47,7 +49,7 @@ public class DatabaseFactory
         synchronized (databases) {
             // If we have this DataSource already configured
             if (databases.containsKey(instance)) {
-                database = (Database) databases.get(instance);
+                database = databases.get(instance);
             } else {
                 Properties props = PropertiesUtil.getPropertiesStartingWith(instance);
                 try {

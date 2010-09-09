@@ -24,7 +24,40 @@ import java.util.Set;
 import antlr.collections.AST;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.query.*;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ClassConstraint;
+import org.intermine.objectstore.query.Constraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.FromElement;
+import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.ObjectStoreBagCombination;
+import org.intermine.objectstore.query.ObjectStoreBagsForObject;
+import org.intermine.objectstore.query.OrderDescending;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryCast;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryClassBag;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryEvaluable;
+import org.intermine.objectstore.query.QueryExpression;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryForeignKey;
+import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryOrderable;
+import org.intermine.objectstore.query.QueryPathExpressionWithSelect;
+import org.intermine.objectstore.query.QueryReference;
+import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SubqueryConstraint;
+import org.intermine.objectstore.query.SubqueryExistsConstraint;
+import org.intermine.objectstore.query.UnknownTypeValue;
 
 /**
  * Parser for the InterMine dialect of OQL (IQL)
@@ -32,7 +65,7 @@ import org.intermine.objectstore.query.*;
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public class IqlQueryParser
+public final class IqlQueryParser
 {
     /**
      * All methods are static - don't allow instance to be constructed
@@ -52,7 +85,7 @@ public class IqlQueryParser
         q.setDistinct(false);
         String modelPackage = iq.getPackageName();
         String iql = iq.getQueryString();
-        Iterator iterator = iq.getParameters().iterator();
+        Iterator<?> iterator = iq.getParameters().iterator();
         AST ast = null;
 
         try {
@@ -126,7 +159,7 @@ public class IqlQueryParser
      * @param iterator an iterator through the list of parameters of the IqlQuery
      */
     private static void processIqlStatementAST(AST ast, Query q, String modelPackage,
-                                               Iterator iterator) {
+            Iterator<?> iterator) {
         if (ast.getType() != IqlTokenTypes.IQL_STATEMENT) {
             throw new IllegalArgumentException("Expected: an IQL SELECT statement");
         }
@@ -152,8 +185,7 @@ public class IqlQueryParser
      * @param modelPackage the package for unqualified class names
      * @param iterator an iterator through the list of parameters of the IqlQuery
      */
-    private static void processAST(AST ast, Query q, String modelPackage, Iterator iterator) {
-        boolean processSelect = false;
+    private static void processAST(AST ast, Query q, String modelPackage, Iterator<?> iterator) {
         AST selectAST = null;
         AST orderAST = null;
         do {
@@ -199,7 +231,8 @@ public class IqlQueryParser
      * @param modelPackage the package for unqualified class names
      * @param iterator an iterator through the list of parameters of the IqlQuery
      */
-    private static void processFromList(AST ast, Query q, String modelPackage, Iterator iterator) {
+    private static void processFromList(AST ast, Query q, String modelPackage,
+            Iterator<?> iterator) {
         do {
             switch (ast.getType()) {
                 case IqlTokenTypes.TABLE:
@@ -224,10 +257,11 @@ public class IqlQueryParser
      * @param modelPackage the package for unqualified class names
      * @param iterator an iterator through the list of parameters of the IqlQuery
      */
-    private static void processNewTable(AST ast, Query q, String modelPackage, Iterator iterator) {
+    private static void processNewTable(AST ast, Query q, String modelPackage,
+            Iterator<?> iterator) {
         String tableAlias = null;
         String tableName = null;
-        Set classes = new HashSet();
+        Set<Class<?>> classes = new HashSet<Class<?>>();
         boolean isBag = false;
         ObjectStoreBag osb = null;
         if (ast.getType() == IqlTokenTypes.QUESTION_MARK) {
@@ -248,7 +282,7 @@ public class IqlQueryParser
                         tableName = (tableName == null ? temp : tableName + "." + temp);
                         tableNameAst = tableNameAst.getNextSibling();
                     } while (tableNameAst != null);
-                    Class c = null;
+                    Class<?> c = null;
                     try {
                         c = Class.forName(tableName);
                     } catch (ClassNotFoundException e) {
@@ -289,7 +323,7 @@ public class IqlQueryParser
         }
         if (isBag) {
             if (osb == null) {
-                QueryClassBag qcb = new QueryClassBag(classes, (Collection) iterator.next());
+                QueryClassBag qcb = new QueryClassBag(classes, (Collection<?>) iterator.next());
                 q.addFrom(qcb, tableAlias);
             } else {
                 QueryClassBag qcb = new QueryClassBag(classes, osb);
@@ -309,8 +343,8 @@ public class IqlQueryParser
      * @param modelPackage the package for unqualified class names
      * @param iterator an iterator through the list of parameters of the IqlQuery
      */
-    private static void processNewSubQuery(AST ast, Query q,
-                                           String modelPackage, Iterator iterator) {
+    private static void processNewSubQuery(AST ast, Query q, String modelPackage,
+            Iterator<?> iterator) {
         AST subquery = null;
         String tableAlias = null;
         int limit = Integer.MAX_VALUE;
@@ -353,7 +387,7 @@ public class IqlQueryParser
      * @param modelPackage the package for unqualified class names
      */
     private static void processSelectList(AST ast, Query q, String modelPackage,
-            Iterator iterator) {
+            Iterator<?> iterator) {
         do {
             switch (ast.getType()) {
                 case IqlTokenTypes.SELECT_VALUE:
@@ -375,7 +409,8 @@ public class IqlQueryParser
      * @param iterator an iterator through the list of parameters of the IqlQuery
      * @param modelPackage the package for unqualified class names
      */
-    private static void processNewSelect(AST ast, Query q, String modelPackage, Iterator iterator) {
+    private static void processNewSelect(AST ast, Query q, String modelPackage,
+            Iterator<?> iterator) {
         QuerySelectable node = null;
         String nodeAlias = null;
         do {
@@ -493,7 +528,7 @@ public class IqlQueryParser
      * @return a QueryNode object corresponding to the input
      */
     private static QueryNode processNewQueryNode(AST ast, Query q, String modelPackage,
-            Iterator iterator) {
+            Iterator<?> iterator) {
         Object retval = processNewQueryNodeOrReference(ast, q, false, modelPackage, iterator);
         if (retval instanceof QueryObjectReference) {
             QueryObjectReference qor = (QueryObjectReference) retval;
@@ -514,18 +549,18 @@ public class IqlQueryParser
      * @return a QuerySelectable object corresponding to the input
      */
     private static QuerySelectable processNewQuerySelectable(AST ast, Query q, String modelPackage,
-            Iterator iterator) {
+            Iterator<?> iterator) {
         return (QuerySelectable) processNewQueryNodeOrReference(ast, q, true, modelPackage,
                 iterator);
     }
 
     private static Object processNewQueryNodeOrReference(AST ast, Query q,
-            boolean isSelect, String modelPackage, Iterator iterator) {
+            boolean isSelect, String modelPackage, Iterator<?> iterator) {
         switch (ast.getType()) {
             case IqlTokenTypes.FIELD:
                 return processNewField(ast.getFirstChild(), q, isSelect, modelPackage, iterator);
             case IqlTokenTypes.CONSTANT:
-                return processNewQueryValue(ast.getFirstChild(), q);
+                return processNewQueryValue(ast.getFirstChild());
             case IqlTokenTypes.UNSAFE_FUNCTION:
                 return processNewUnsafeFunction(ast.getFirstChild(), q, modelPackage, iterator);
             case IqlTokenTypes.SAFE_FUNCTION:
@@ -545,10 +580,9 @@ public class IqlQueryParser
      * Process an AST node that describes a QueryValue.
      *
      * @param ast an AST node to process
-     * @param q the Query to build
      * @return a QueryValue object
      */
-    private static QueryValue processNewQueryValue(AST ast, Query q) {
+    private static QueryValue processNewQueryValue(AST ast) {
         String value = unescape(ast.getText());
         return new QueryValue(new UnknownTypeValue(value));
     }
@@ -571,13 +605,14 @@ public class IqlQueryParser
      * @param iterator an iterator through the list of parameters of the IqlQuery
      * @return an ObjectStoreBagsForObject object
      */
-    private static ObjectStoreBagsForObject processNewBagsFor(AST ast, Iterator iterator) {
+    private static ObjectStoreBagsForObject processNewBagsFor(AST ast, Iterator<?> iterator) {
         String value = unescape(ast.getText());
         AST sibling = ast.getNextSibling();
         if (sibling != null) {
             if (IqlTokenTypes.QUESTION_MARK == sibling.getType()) {
-                return new ObjectStoreBagsForObject(new Integer(Integer.parseInt(value)),
-                        (Collection<ObjectStoreBag>) iterator.next());
+                @SuppressWarnings("unchecked") Collection<ObjectStoreBag> param =
+                    (Collection) iterator.next();
+                return new ObjectStoreBagsForObject(new Integer(Integer.parseInt(value)), param);
             }
             throw new IllegalArgumentException("Unknown AST node: " + sibling.getText() + " ["
                     + sibling.getType() + "]");
@@ -602,7 +637,7 @@ public class IqlQueryParser
      * @return a QueryNode object corresponding to the input
      */
     private static Object processNewField(AST ast, Query q, boolean isSelect, String modelPackage,
-            Iterator iterator) {
+            Iterator<?> iterator) {
         if (ast.getType() != IqlTokenTypes.IDENTIFIER) {
             throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                     + ast.getType() + "]");
@@ -613,7 +648,7 @@ public class IqlQueryParser
         if ((obj instanceof QueryClass) || (obj instanceof QueryClassBag)) {
             ast = ast.getNextSibling();
             if (ast == null) {
-                return (QueryClass) obj;
+                return obj;
             } else {
                 if (obj instanceof QueryClassBag) {
                     if ("id".equals(ast.getText()) && (ast.getNextSibling() == null)) {
@@ -801,7 +836,7 @@ public class IqlQueryParser
      * @return a QueryExpression object correcponding to the input
      */
     private static QueryExpression processNewUnsafeFunction(AST ast, Query q, String modelPackage,
-            Iterator iterator) {
+            Iterator<?> iterator) {
         QueryEvaluable firstObj = null;
         QueryEvaluable secondObj = null;
         int type = -1;
@@ -859,7 +894,7 @@ public class IqlQueryParser
      * @return a QueryEvaluable object corresponding to the input
      */
     private static QueryEvaluable processNewSafeFunction(AST ast, Query q, String modelPackage,
-            Iterator iterator) {
+            Iterator<?> iterator) {
         QueryEvaluable firstObj = null;
         QueryEvaluable secondObj = null;
         QueryEvaluable thirdObj = null;
@@ -957,9 +992,9 @@ public class IqlQueryParser
                 throw new IllegalArgumentException("Need an argument for this function");
             } else {
                 if (firstObj instanceof QueryField) {
-                    return new QueryFunction((QueryField) firstObj, type);
+                    return new QueryFunction(firstObj, type);
                 } else if (firstObj instanceof QueryExpression) {
-                    return new QueryFunction((QueryExpression) firstObj, type);
+                    return new QueryFunction(firstObj, type);
                 } else {
                     throw new IllegalArgumentException("Arguments to aggregate functions may "
                             + "be fields or expressions only");
@@ -978,7 +1013,7 @@ public class IqlQueryParser
      * @return a QueryEvaluable object corresponding to the input
      */
     private static QueryCast processNewTypeCast(AST ast, Query q, String modelPackage,
-            Iterator iterator) {
+            Iterator<?> iterator) {
         QueryEvaluable value = null;
         String type = null;
         do {
@@ -1005,7 +1040,7 @@ public class IqlQueryParser
             }
             ast = ast.getNextSibling();
         } while (ast != null);
-        Class typeClass = null;
+        Class<?> typeClass = null;
         if ("String".equals(type)) {
             typeClass = String.class;
         } else if ("Boolean".equals(type)) {
@@ -1038,7 +1073,7 @@ public class IqlQueryParser
      * @param iterator an iterator through the list of parameters of the IqlQuery
      */
     private static void processOrderClause(AST ast, Query q, String modelPackage,
-            Iterator iterator) {
+            Iterator<?> iterator) {
         do {
             QueryOrderable qo = (QueryOrderable) processNewQueryNodeOrReference(ast, q, false,
                     modelPackage, iterator);
@@ -1061,7 +1096,7 @@ public class IqlQueryParser
      * @param iterator an iterator through the list of parameters of the IqlQuery
      */
     private static void processGroupClause(AST ast, Query q, String modelPackage,
-            Iterator iterator) {
+            Iterator<?> iterator) {
         do {
             q.addToGroupBy(processNewQueryNode(ast, q, modelPackage, iterator));
             ast = ast.getNextSibling();
@@ -1081,9 +1116,8 @@ public class IqlQueryParser
      * @param iterator an iterator through the list of parameters of the IqlQuery
      * @return a Constraint corresponding to the input
      */
-    private static Constraint processConstraintSet(AST ast, ConstraintOp op,
-                                                   Query q, String modelPackage,
-                                                   Iterator iterator) {
+    private static Constraint processConstraintSet(AST ast, ConstraintOp op, Query q,
+            String modelPackage, Iterator<?> iterator) {
         Constraint retval = null;
         boolean isSet = false;
         do {
@@ -1114,7 +1148,7 @@ public class IqlQueryParser
      * @return a Constraint corresponding to the input
      */
     private static Constraint processConstraint(AST ast, Query q, String modelPackage,
-            Iterator iterator) {
+            Iterator<?> iterator) {
         AST subAST;
         switch (ast.getType()) {
             case IqlTokenTypes.AND_CONSTRAINT_SET:
@@ -1161,7 +1195,6 @@ public class IqlQueryParser
                     throw new IllegalArgumentException("Expected a Collection or Object Reference "
                             + "as the first argument of the ContainsConstraint");
                 }
-                QueryReference leftc = null;
                 AST subSubAST = subAST.getFirstChild();
                 String firstString = unescape(subSubAST.getText());
                 if ("?".equals(firstString)) {
@@ -1289,8 +1322,8 @@ public class IqlQueryParser
                     }
                 }
                 Object nextParam = iterator.next();
-                if (nextParam instanceof Collection) {
-                    return new BagConstraint(leftd, ConstraintOp.IN, (Collection) nextParam);
+                if (nextParam instanceof Collection<?>) {
+                    return new BagConstraint(leftd, ConstraintOp.IN, (Collection<?>) nextParam);
                 } else {
                     throw new ClassCastException("Parameter " + nextParam
                             + " not a Collection or ObjectStoreBag");
@@ -1307,7 +1340,7 @@ public class IqlQueryParser
     }
 
     private static Constraint processSimpleConstraint(AST ast, Query q, String modelPackage,
-            Iterator iterator) {
+            Iterator<?> iterator) {
         AST subAST = ast.getFirstChild();
         Object left = processNewQueryNodeOrReference(subAST, q, false, modelPackage, iterator);
         subAST = subAST.getNextSibling();

@@ -24,6 +24,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
 {
     /**
      * Construct a CollectionDescriptor.  name and referencedType may not be null.
+     *
      * @param name name of this field in parent class
      * @param referencedType the fully qualified name of the business object type in this collection
      * @param reverseRefName name of field in the referenced class that points back to this class
@@ -39,6 +40,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
     /**
      * {@inheritDoc}
      */
+    @Override
     public int relationType() {
         ReferenceDescriptor rd = getReverseReferenceDescriptor();
         if (rd == null || rd instanceof CollectionDescriptor) {
@@ -51,6 +53,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof CollectionDescriptor) {
             CollectionDescriptor ref = (CollectionDescriptor) obj;
@@ -65,6 +68,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return 2 * (cld == null ? 0 : cld.getName().hashCode())
             + 3 * name.hashCode()
@@ -75,6 +79,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<collection name=\"" + name + "\" referenced-type=\""

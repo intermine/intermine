@@ -86,9 +86,8 @@ public class BagUploadConfirmIssueController extends TilesAction
                     ConvertedObjectPair pair = (ConvertedObjectPair) obj;
                     objectList.add(pair.getNewObject());
                     if (initialTypeMap.get(identifier) == null) {
-                        Set clds = DynamicUtil.decomposeClass(pair.getOldObject().getClass());
-                        initialTypeMap.put(identifier, TypeUtil.unqualifiedName(((Class) clds
-                            .iterator().next()).getName()));
+                        initialTypeMap.put(identifier, TypeUtil.unqualifiedName(DynamicUtil
+                                .getSimpleClassName(pair.getOldObject().getClass())));
                     }
                 } else {
                     objectList.add(obj);

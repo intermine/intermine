@@ -10,18 +10,16 @@ package org.intermine.dataloader;
  *
  */
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.XmlBinding;
-
-import org.apache.log4j.Logger;
 
 /**
  * Provides a method for unmarshalling XML given source into java
@@ -57,7 +55,7 @@ public class XmlDataLoader extends DataLoader
     public void processXml(InputStream is, Source source, Source skelSource)
         throws InterMineException {
         try {
-            long times[] = new long[20];
+            long[] times = new long[20];
             for (int i = 0; i < 20; i++) {
                 times[i] = -1;
             }
@@ -67,12 +65,10 @@ public class XmlDataLoader extends DataLoader
             LOG.info("Starting XmlDataLoader. Loading XML file.");
             XmlBinding binding = new XmlBinding(getIntegrationWriter().getObjectStore().getModel());
 
-            List objects = (List) binding.unmarshal(is);
+            List<FastPathObject> objects = binding.unmarshal(is);
             LOG.info("Loaded XML file to list of " + objects.size() + " objects");
 
-            Iterator iter = objects.iterator();
-            while (iter.hasNext()) {
-                Object o = iter.next();
+            for (FastPathObject o : objects) {
                 if (o instanceof InterMineObject) {
                     InterMineObject io = (InterMineObject) o;
                     io.setId(new Integer(idCounter++));
@@ -80,9 +76,8 @@ public class XmlDataLoader extends DataLoader
             }
 
             getIntegrationWriter().beginTransaction();
-            iter = objects.iterator();
-            while (iter.hasNext()) {
-                getIntegrationWriter().store((FastPathObject) iter.next(), source, skelSource);
+            for (FastPathObject o : objects) {
+                getIntegrationWriter().store(o, source, skelSource);
                 opCount++;
                 if (opCount % 1000 == 0) {
                     long now = (new Date()).getTime();

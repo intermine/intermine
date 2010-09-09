@@ -29,19 +29,20 @@ public interface IdUpgrader
      * @param os ObjectStore used to resolve objects
      * @return the set of new InterMineObjects
      */
-    public Set<Integer> getNewIds(InterMineObject oldObject, ObjectStore os);
+    Set<Integer> getNewIds(InterMineObject oldObject, ObjectStore os);
 
     /**
      * Return true if upgrade should be performed
      * @return true if upgrade should be performed
      */
-    public boolean doUpgrade();
+    boolean doUpgrade();
 
     /**
      * An upgrader that always fails.  For use when upgrading shouldn't be happening.
      */
-    public static final IdUpgrader ERROR_UPGRADER = new IdUpgrader() {
-        public Set<Integer> getNewIds(InterMineObject oldObject, ObjectStore objectStore) {
+    IdUpgrader ERROR_UPGRADER = new IdUpgrader() {
+        public Set<Integer> getNewIds(@SuppressWarnings("unused") InterMineObject oldObject,
+                @SuppressWarnings("unused") ObjectStore objectStore) {
             throw new RuntimeException("Shouldn't call getNewIds() in a running webapp");
         }
 

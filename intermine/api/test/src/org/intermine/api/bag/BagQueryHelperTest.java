@@ -42,7 +42,7 @@ public class BagQueryHelperTest extends TestCase {
                                                       bagQueryConfig, model, classKeys, input);
 //        BagQuery bq = BagQueryHelper.createDefaultBagQuery(model.getPackageName() + ".Employee",
 //                                                           bagQueryConfig, model, classKeys, input);
-        String expected = "SELECT DISTINCT a1_.id AS a2_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (LOWER(a1_.name) IN ?) 1: [employeea1, employeea2]";
+        String expected = "SELECT DISTINCT a1_.id AS a2_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE LOWER(a1_.name) IN ? 1: [employeea1, employeea2]";
         //assertEquals(expected, bq.getQuery(input, "DepartmentB1").toString());
         assertEquals(expected, q.toString());
     }
@@ -58,7 +58,7 @@ public class BagQueryHelperTest extends TestCase {
         //        BagQuery bq = BagQueryHelper.createDefaultBagQuery(model.getPackageName() + ".Employee",
 //                                                           bagQueryConfigWithExtraConstraint,
 //                                                           model, classKeys, input);
-        String expected = "SELECT DISTINCT a1_.id AS a2_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a4_ WHERE ((LOWER(a1_.name) IN ?) AND a1_.department CONTAINS a4_ AND a4_.name = \'DepartmentB1\') 1: [employeea1, employeea2]";
+        String expected = "SELECT DISTINCT a1_.id AS a2_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a4_ WHERE (LOWER(a1_.name) IN ? AND a1_.department CONTAINS a4_ AND a4_.name = \'DepartmentB1\') 1: [employeea1, employeea2]";
         assertEquals(expected, bq.getQuery(input, "DepartmentB1").toString());
         //assertEquals(expected, q.toString());
     }
@@ -67,7 +67,7 @@ public class BagQueryHelperTest extends TestCase {
         List input = new ArrayList(Arrays.asList(new Object[] {"EmployeeA1", "EmployeeB1"}));
         Query q = BagQueryHelper.createDefaultBagQuery(model.getPackageName() + ".Manager",
                                                          bagQueryConfig, model, classKeys, input);
-        String expected = "SELECT DISTINCT a1_.id AS a2_, a1_.title AS a3_, a1_.name AS a4_ FROM org.intermine.model.testmodel.Manager AS a1_ WHERE (LOWER(a1_.title) IN ? OR LOWER(a1_.name) IN ?) 1: [employeea1, employeeb1] 2: [employeea1, employeeb1]";
+        String expected = "SELECT DISTINCT a1_.id AS a2_, a1_.title AS a3_, a1_.name AS a4_ FROM org.intermine.model.testmodel.Manager AS a1_ WHERE (LOWER(a1_.title), LOWER(a1_.name)) IN ? 1: [employeea1, employeeb1]";
         assertEquals(expected, q.toString());
     }
 }

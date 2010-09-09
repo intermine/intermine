@@ -71,7 +71,9 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
@@ -246,7 +248,7 @@ public class AjaxServices
             if (!NameUtil.isValidName(newName)) {
                 return INVALID_NAME_MSG;
             }
-            if (type.equals("history")) {
+            if ("history".equals(type)) {
                 if (profile.getHistory().get(name) == null) {
                     return "<i>" + name + " does not exist</i>";
                 }
@@ -254,7 +256,7 @@ public class AjaxServices
                     return "<i>" + newName + " already exists</i>";
                 }
                 profile.renameHistory(name, newName);
-            } else if (type.equals("saved")) {
+            } else if ("saved".equals(type)) {
                 if (profile.getSavedQueries().get(name) == null) {
                     return "<i>" + name + " does not exist</i>";
                 }
@@ -265,7 +267,7 @@ public class AjaxServices
                 profile.deleteQuery(sq.getName());
                 sq = new SavedQuery(newName, sq.getDateCreated(), sq.getPathQuery());
                 profile.saveQuery(sq.getName(), sq);
-            } else if (type.equals("bag")) {
+            } else if ("bag".equals(type)) {
                 try {
                     profile.renameBag(name, newName);
                 } catch (IllegalArgumentException e) {
@@ -324,12 +326,13 @@ public class AjaxServices
             WebContext ctx = WebContextFactory.get();
             HttpSession session = ctx.getSession();
             PathQuery query = SessionMethods.getQuery(session);
-            Path path = PathQuery.makePath(query.getModel(), query, pathString);
+            Path path = query.makePath(pathString);
             Path prefixPath = path.getPrefix();
             if (descr == null) {
-                query.getPathDescriptions().remove(prefixPath);
+                // setting to null removes the description
+                query.setDescription(prefixPath.getNoConstraintsString(), null);
             } else {
-                query.getPathDescriptions().put(prefixPath, descr);
+                query.setDescription(prefixPath.getNoConstraintsString(), descr);
             }
             if (descr == null) {
                 return null;
@@ -370,7 +373,8 @@ public class AjaxServices
             WebTable webTable = (SessionMethods.getResultsTable(session, tableName))
                                    .getWebTable();
             PathQuery pathQuery = webTable.getPathQuery();
-            List<ResultsRow> results = webResultsExecutor.summariseQuery(pathQuery, summaryPath);
+            List<ResultsRow> results = (List) webResultsExecutor.summariseQuery(pathQuery,
+                    summaryPath);
 
             // Start the count of results
             Query countQuery = webResultsExecutor.makeSummaryQuery(pathQuery, summaryPath);
@@ -660,7 +664,7 @@ public class AjaxServices
 
             bagName = bagName.trim();
             // TODO get message text from the properties file
-            if (bagName.equals("")) {
+            if ("".equals(bagName)) {
                 return "You cannot save a list with a blank name";
             }
 
@@ -703,7 +707,7 @@ public class AjaxServices
             if (selectedBags.length == 0) {
                 return "No lists are selected";
             }
-            if (operation.equals("delete")) {
+            if ("delete".equals(operation)) {
                 for (int i = 0; i < selectedBags.length; i++) {
                     Set<String> queries = new HashSet<String>();
                     queries.addAll(queriesThatMentionBag(profile.getSavedQueries(),
@@ -714,10 +718,10 @@ public class AjaxServices
                             + "by other queries " + queries;
                     }
                 }
-            } else if (!operation.equals("copy")) {
+            } else if (!"copy".equals(operation)) {
                 Properties properties = SessionMethods.getWebProperties(servletContext);
                 String defaultName = properties.getProperty("lists.input.example");
-                if ((bagName.equals("") || (bagName.equalsIgnoreCase(defaultName)))) {
+                if (("".equals(bagName) || (bagName.equalsIgnoreCase(defaultName)))) {
                     return "New list name is required";
                 } else if (!NameUtil.isValidName(bagName)) {
                     return INVALID_NAME_MSG;
@@ -965,8 +969,8 @@ public class AjaxServices
         List<String> oldOrderList =
             new LinkedList<String>(StringUtil.serializedSortOrderToMap(oldOrder).values());
 
-        List<Path> view = SessionMethods.getEditingView(session);
-        ArrayList<Path> newView = new ArrayList<Path>();
+        List<String> view = SessionMethods.getEditingView(session);
+        ArrayList<String> newView = new ArrayList<String>();
 
         for (int i = 0; i < view.size(); i++) {
             String newi = newOrderList.get(i);
@@ -975,7 +979,38 @@ public class AjaxServices
         }
 
         PathQuery query = SessionMethods.getQuery(session);
-        query.setViewPaths(newView);
+        query.clearView();
+        query.addViews(newView);
+    }
+
+    /**
+     * AJAX request - reorder the constraints.
+     * @param newOrder the new order as a String
+     * @param oldOrder the previous order as a String
+     */
+    public void reorderConstraints(String newOrder, String oldOrder) {
+        HttpSession session = WebContextFactory.get().getSession();
+        List<String> newOrderList =
+            new LinkedList<String>(StringUtil.serializedSortOrderToMap(newOrder).values());
+        List<String> oldOrderList =
+            new LinkedList<String>(StringUtil.serializedSortOrderToMap(oldOrder).values());
+
+        PathQuery query = SessionMethods.getQuery(session);
+        if (query instanceof TemplateQuery) {
+            TemplateQuery template = (TemplateQuery) query;
+            for (int index = 0; index < newOrderList.size() - 1; index++) {
+                String newi = newOrderList.get(index);
+                int oldi = oldOrderList.indexOf(newi);
+                if (index != oldi) {
+                    List<PathConstraint> editableConstraints =
+                        template.getModifiableEditableConstraints();
+                    PathConstraint editableConstraint = editableConstraints.remove(oldi);
+                    editableConstraints.add(index, editableConstraint);
+                    template.setEditableConstraints(editableConstraints);
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -988,7 +1023,12 @@ public class AjaxServices
         throws Exception {
         HttpSession session = WebContextFactory.get().getSession();
         PathQuery query = SessionMethods.getQuery(session);
-        query.setOrderBy(path, direction);
+        OrderDirection orderDirection = OrderDirection.ASC;
+        if ("DESC".equals(direction.toUpperCase())) {
+            orderDirection = OrderDirection.DESC;
+        }
+        query.clearOrderBy();
+        query.addOrderBy(path, orderDirection);
     }
 
     /**
@@ -1245,15 +1285,20 @@ public class AjaxServices
     }
 
     /**
-     * Set the constraint logic on a query to be the given expression
+     * Set the constraint logic on a query to be the given expression.
+     *
      * @param expression the constraint logic for the query
+     * @throws PathException if the query is invalid
      */
-    public static void setConstraintLogic(String expression) {
+    public static void setConstraintLogic(String expression) throws PathException {
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         PathQuery query = SessionMethods.getQuery(session);
         query.setConstraintLogic(expression);
-        query.syncLogicExpression(SessionMethods.getDefaultOperator(session));
+        List<String> messages = query.fixUpForJoinStyle();
+        for (String message : messages) {
+            SessionMethods.recordMessage(message, session);
+        }
     }
 
     /**
@@ -1264,7 +1309,7 @@ public class AjaxServices
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         PathQuery query = SessionMethods.getQuery(session);
-        return (query.getGroupedConstraintLogic().toString());
+        return (query.getConstraintLogic());
     }
 
     /**

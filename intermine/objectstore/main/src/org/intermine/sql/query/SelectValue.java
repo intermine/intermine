@@ -61,6 +61,7 @@ public class SelectValue implements SQLStringable
      * @param obj an Object to compare to
      * @return true if the object is equal
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof SelectValue) {
             SelectValue objSV = (SelectValue) obj;
@@ -74,6 +75,7 @@ public class SelectValue implements SQLStringable
      *
      * @return an arbitrary integer based on the contents of the SelectField
      */
+    @Override
     public int hashCode() {
         return (3 * v.hashCode()) + (5 * alias.hashCode());
     }

@@ -10,9 +10,6 @@ package org.intermine.task;
  *
  */
 
-import org.intermine.sql.Database;
-import org.intermine.sql.DatabaseFactory;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -30,7 +27,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -38,6 +34,8 @@ import java.util.regex.Pattern;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
 
 /**
  * A Task to run acceptance tests, configurable from a file.
@@ -84,6 +82,7 @@ public class AcceptanceTestTask extends Task
      * @throws BuildException if a problem occurs
      * @see Task#execute
      */
+    @Override
     public void execute() {
         if (database == null) {
             throw new BuildException("database attribute is not set");
@@ -101,7 +100,7 @@ public class AcceptanceTestTask extends Task
             Database db = DatabaseFactory.getDatabase(database);
             System.err .println("Processing configuration file: " + configFile.getCanonicalPath());
             LineNumberReader reader = new LineNumberReader(new FileReader(configFile));
-            List testResults = runAllTests(db, reader);
+            List<AcceptanceTestResult> testResults = runAllTests(db, reader);
 
             FileWriter fw;
             try {
@@ -131,10 +130,10 @@ public class AcceptanceTestTask extends Task
      * @throws SQLException if there is a problem running the SQL query
      * @throws IOException if there is a problem reading or parsing the config file
      */
-    protected List runAllTests(Database db, LineNumberReader configReader)
+    protected List<AcceptanceTestResult> runAllTests(Database db, LineNumberReader configReader)
         throws IOException, SQLException {
         Connection con = db.getConnection();
-        List testResults = new ArrayList();
+        List<AcceptanceTestResult> testResults = new ArrayList<AcceptanceTestResult>();
 
         try {
             AcceptanceTest test;
@@ -156,7 +155,7 @@ public class AcceptanceTestTask extends Task
      * @param testResults a List of AcceptanceTestResult objects
      * @param pw the PrintWriter
      */
-    protected void processResults(List testResults, PrintWriter pw) {
+    protected void processResults(List<AcceptanceTestResult> testResults, PrintWriter pw) {
         pw.println("<html>");
         pw.println("<head><title>Acceptance Test Results</title></head>");
         pw.println("<body>");
@@ -166,15 +165,10 @@ public class AcceptanceTestTask extends Task
 
         int failingTestsCount = 0;
 
-        for (Iterator testResultsIter = testResults.iterator(); testResultsIter.hasNext();) {
-            AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
-
+        for (AcceptanceTestResult atr : testResults) {
             if (!atr.isSuccessful()) {
                 failingTestsCount++;
             }
-
-//            pw.println("</ul>");
-
             testCount++;
         }
 
@@ -195,20 +189,13 @@ public class AcceptanceTestTask extends Task
 
             pw.println("<ul>");
 
-            for (Iterator testResultsIter = testResults.iterator(); testResultsIter.hasNext();) {
-                AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
-
-//                pw.println("<ul>");
-
+            for (AcceptanceTestResult atr : testResults) {
                 if (!atr.isSuccessful()) {
                     pw.println("<li><a href=\"#test" + count + "\">");
                     pw.println(atr.getTest().getSql());
                     pw.println("</a><p><font size='-1'>(" + atr.getTest().getNote()
                                + ")</font></p></li>");
                 }
-
-//                pw.println("</ul>");
-
                 count++;
             }
             pw.println("</ul>");
@@ -219,11 +206,7 @@ public class AcceptanceTestTask extends Task
 
         count = 0;
 
-        Iterator testResultsIter = testResults.iterator();
-
-        while (testResultsIter.hasNext()) {
-            AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
-
+        for (AcceptanceTestResult atr : testResults) {
             pw.println("<h2><a name=\"test" + count + "\">Testing: <font size=\"-1\">"
                        + atr.getTest().getSql() + "</font></a></h2>");
             pw.println("<h3>test type: " + atr.getTest().getType() + "</h3>");
@@ -257,18 +240,9 @@ public class AcceptanceTestTask extends Task
             count++;
         }
 
-        testResultsIter = testResults.iterator();
-
         List<Integer> allTrackerIds = new ArrayList<Integer>();
-
-        while (testResultsIter.hasNext()) {
-            AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
-
-            Iterator trackerIdIter = atr.getTrackerMap().keySet().iterator();
-
-            while (trackerIdIter.hasNext()) {
-                Integer id = (Integer) trackerIdIter.next();
-
+        for (AcceptanceTestResult atr : testResults) {
+            for (Integer id : atr.getTrackerMap().keySet()) {
                 // to avoid repeating trackers entries
                 if (allTrackerIds.contains(id)) {
                     continue;
@@ -276,7 +250,7 @@ public class AcceptanceTestTask extends Task
                     allTrackerIds.add(id);
                 }
 
-                List trackerRows = (List) atr.getTrackerMap().get(id);
+                List<List<Object>> trackerRows = atr.getTrackerMap().get(id);
                 pw.println("<h2><a name=\"object" + id + "\">Tracker entries for "
                            + id + "</a></h2>");
                 outputTable(pw, atr, null, trackerRows);
@@ -289,29 +263,24 @@ public class AcceptanceTestTask extends Task
         pw.close();
     }
 
-    private void outputTable(PrintWriter pw, AcceptanceTestResult atr, List columnHeadings,
-                             List results) {
+    private void outputTable(PrintWriter pw, AcceptanceTestResult atr, List<String> columnHeadings,
+            List<List<Object>> results) {
         pw.println("<table border=1>");
         if (columnHeadings != null) {
             pw.println("<tr bgcolor=#eeeeee>");
-            Iterator columnHeadingsIter = columnHeadings.iterator();
-            while (columnHeadingsIter.hasNext()) {
-                pw.println("<th>" + columnHeadingsIter.next() + "</th>");
+            for (String heading : columnHeadings) {
+                pw.println("<th>" + heading + "</th>");
             }
             pw.println("</tr>");
         }
-        Iterator resultsIter = results.iterator();
-        while (resultsIter.hasNext()) {
-            List row = (List) resultsIter.next();
+        for (List<Object> row : results) {
             pw.println("<tr>");
-            Iterator rowIter = row.iterator();
-            while (rowIter.hasNext()) {
+            for (Object o : row) {
                 pw.println("<td>");
-                Object o = rowIter.next();
                 if (o != null) {
                     if (o instanceof Integer) {
                         Integer id = (Integer) o;
-                        List trackerRows = (List) atr.getTrackerMap().get(id);
+                        List<List<Object>> trackerRows = atr.getTrackerMap().get(id);
                         if (trackerRows == null) {
                             pw.println(id);
                         } else {
@@ -380,13 +349,13 @@ public class AcceptanceTestTask extends Task
             Matcher lineMatcher = linePattern.matcher(line);
 
             if (lineMatcher.matches()) {
-                if (lineMatcher.group(1).equals("sql")) {
+                if ("sql".equals(lineMatcher.group(1))) {
                     sql = lineMatcher.group(2);
                     continue;
-                } else if (lineMatcher.group(1).equals("note")) {
+                } else if ("note".equals(lineMatcher.group(1))) {
                     note = lineMatcher.group(2);
                     continue;
-                } else if (lineMatcher.group(1).equals("max-results")) {
+                } else if ("max-results".equals(lineMatcher.group(1))) {
                     try {
                         maxResults = Integer.valueOf(lineMatcher.group(2));
                     } catch (NumberFormatException e) {
@@ -401,7 +370,7 @@ public class AcceptanceTestTask extends Task
                 }
             }
 
-            if (line.trim().equals("}")) {
+            if ("}".equals(line.trim())) {
                 if (sql == null) {
                     throw new IOException("no sql in test at line "
                                           + configReader.getLineNumber());
@@ -565,11 +534,12 @@ class AcceptanceTestResult
 {
     private AcceptanceTest test;
     private SQLException sqlException = null;
-    private List results = null;
-    private List columnLabels = null;
+    private List<List<Object>> results = null;
+    private List<String> columnLabels = null;
     private int resultCount = -1;
     // a Map from InterMine ID to the corresponding entries in the tracker table
-    private Map trackerMap = new HashMap();
+    private Map<Integer, List<List<Object>>> trackerMap
+        = new HashMap<Integer, List<List<Object>>>();
     private final long time;
 
     /**
@@ -592,7 +562,7 @@ class AcceptanceTestResult
             }
 
             ResultSetMetaData metadata = rs.getMetaData();
-            columnLabels = new ArrayList();
+            columnLabels = new ArrayList<String>();
             for (int i = 1; i <= metadata.getColumnCount(); i++) {
                 columnLabels.add(metadata.getColumnLabel(i));
             }
@@ -605,13 +575,11 @@ class AcceptanceTestResult
 
                 for (int i = 1; i <= metadata.getColumnCount(); i++) {
                     if (metadata.getColumnType(i) == Types.INTEGER
-                        && metadata.getColumnLabel(i).equals("id")) {
+                        && "id".equals(metadata.getColumnLabel(i))) {
                         // look up each ID in the tracker table and save the results
-                        Iterator rowIter = results.iterator();
-                        while (rowIter.hasNext()) {
-                            List row = (List) rowIter.next();
+                        for (List<Object> row : results) {
                             Integer id = (Integer) row.get(i - 1);
-                            List trackerRows = getTrackerRows(id, con);
+                            List<List<Object>> trackerRows = getTrackerRows(id, con);
 
                             trackerMap.put(id, trackerRows);
                         }
@@ -628,7 +596,7 @@ class AcceptanceTestResult
      * IDs seen in query results will appear in the keySet of the Map.
      * @return the tracker Map
      */
-    public Map getTrackerMap() {
+    public Map<Integer, List<List<Object>>> getTrackerMap() {
         return trackerMap;
     }
 
@@ -653,7 +621,7 @@ class AcceptanceTestResult
      * @return the results as a List of Lists or null if there is an SQLException (which is stored
      * in sqlException)
      */
-    private List getTrackerRows(Integer id, Connection con) {
+    private List<List<Object>> getTrackerRows(Integer id, Connection con) {
         Statement sm = null;
         ResultSet rs = null;
         try {
@@ -699,7 +667,7 @@ class AcceptanceTestResult
         }
         if (test.getType().equals(AcceptanceTest.ASSERT_TEST)) {
             if (results.size() == 1) {
-                Object o = ((List) results.get(0)).get(0);
+                Object o = results.get(0).get(0);
                 if (o instanceof Boolean) {
                     return ((Boolean) o).booleanValue();
                 } else {
@@ -724,7 +692,7 @@ class AcceptanceTestResult
      * the first maxResults rows are returned.
      * @return the query results
      */
-    public List getResults() {
+    public List<List<Object>> getResults() {
         return results;
     }
 
@@ -732,7 +700,7 @@ class AcceptanceTestResult
      * Return a List of the column labels.
      * @return the column labels.
      */
-    public List getColumnLabels() {
+    public List<String> getColumnLabels() {
         return columnLabels;
     }
 
@@ -744,14 +712,14 @@ class AcceptanceTestResult
         return sqlException;
     }
 
-    private static List copyResults(ResultSet rs, int maxRows) throws SQLException {
-        List returnList = new ArrayList();
+    private static List<List<Object>> copyResults(ResultSet rs, int maxRows) throws SQLException {
+        List<List<Object>> returnList = new ArrayList<List<Object>>();
 
         int columnCount = rs.getMetaData().getColumnCount();
 
         for (int rowIndex = 0; maxRows == -1 || rowIndex < maxRows; rowIndex++) {
             if (rs.next()) {
-                List rowCopy = new ArrayList();
+                List<Object> rowCopy = new ArrayList<Object>();
                 for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
                     rowCopy.add(rs.getObject(columnIndex));
                 }

@@ -30,6 +30,7 @@ import junit.framework.Test;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
@@ -900,5 +901,58 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             fail("Expected: ConcurrentModificationException");
         } catch (ConcurrentModificationException e) {
         }
+    }
+    
+    public void testBatchesCache() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        Results r1 = os.execute(q, 1000, true, true, true);
+        Results r2 = os.execute(q, 1000, true, true, true);
+        assertTrue(r1 == r2);
+        Results r3 = os.execute(q, 1000, true, false, false);
+        assertTrue(r1 != r3);
+        assertTrue(r1.getResultsBatches() == r3.getResultsBatches());
+        assertTrue(!r1.isSingleBatch());
+        assertTrue(!r3.isSingleBatch());
+        r1.get(0);
+        assertTrue(r1.isSingleBatch());
+        assertTrue(r3.isSingleBatch());
+        Results r4 = os.execute(q, 500, true, true, true);
+        assertTrue(r1.getResultsBatches() != r4.getResultsBatches());
+        assertTrue(r4.isSingleBatch());
+        assertEquals(r1, r4);
+        SingletonResults r5 = os.executeSingleton(q, 400, true, true, true);
+        assertTrue(r1.getResultsBatches() != r5.getResultsBatches());
+        assertTrue(r5.isSingleBatch());
+    }
+    
+    public void testBatchesCacheSmallToLarge() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        Results r1 = os.execute(q, 1, false, false, false);
+        r1.get(0);
+        Results r2 = os.execute(q, 100, false, false, false);
+        r2.get(0);
+        assertNotNull(r2.get(1));
+    }
+    
+    public void testBatchesFavourFilled() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(CEO.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        Results r1 = os.execute(q, 100, false, false, false);
+        Results r2 = os.execute(q, 101, false, false, false);
+        assertTrue(!r1.isSingleBatch());
+        assertTrue(!r2.isSingleBatch());
+        r1.get(0);
+        assertTrue(r1.isSingleBatch());
+        assertTrue(!r2.isSingleBatch());
+        Results r3 = os.execute(q, 102, false, false, false);
+        assertTrue(r3.isSingleBatch());
     }
 }

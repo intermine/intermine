@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
@@ -40,10 +41,10 @@ public class QueryObjectPathExpression implements QueryPathExpressionWithSelect,
 {
     private QueryClass qc;
     private String fieldName;
-    private Class type;
-    private Class subclass = null;
+    private Class<? extends InterMineObject> type;
+    private Class<? extends FastPathObject> subclass = null;
     private QueryClass defaultClass;
-    private List<QuerySelectable> selectList = new ArrayList();
+    private List<QuerySelectable> selectList = new ArrayList<QuerySelectable>();
     private Constraint constraint = null;
 
     /**
@@ -75,7 +76,9 @@ public class QueryObjectPathExpression implements QueryPathExpressionWithSelect,
         }
         this.qc = qc;
         this.fieldName = fieldName;
-        this.type = field.getReturnType();
+        @SuppressWarnings("unchecked") Class<? extends InterMineObject> tmpType =
+            (Class) field.getReturnType();
+        this.type = tmpType;
         defaultClass = new QueryClass(type);
     }
 
@@ -88,7 +91,7 @@ public class QueryObjectPathExpression implements QueryPathExpressionWithSelect,
      * @param subclasses a Class that is a subclass of the field class
      * @throws IllegalArgumentException if the field is not an object reference
      */
-    public QueryObjectPathExpression(QueryClass qc, String fieldName, Class... subclasses) {
+    public QueryObjectPathExpression(QueryClass qc, String fieldName, Class<?>... subclasses) {
         subclass = DynamicUtil.composeDescriptiveClass(subclasses);
         if (fieldName == null) {
             throw new NullPointerException("Field name parameter is null");
@@ -117,7 +120,9 @@ public class QueryObjectPathExpression implements QueryPathExpressionWithSelect,
         }
         this.qc = qc;
         this.fieldName = fieldName;
-        this.type = field.getReturnType();
+        @SuppressWarnings("unchecked") Class<? extends InterMineObject> tmpType =
+            (Class) field.getReturnType();
+        this.type = tmpType;
         defaultClass = new QueryClass(subclass);
         if (subclass.equals(type)) {
             subclass = null;
@@ -147,14 +152,14 @@ public class QueryObjectPathExpression implements QueryPathExpressionWithSelect,
      *
      * @return the subclass
      */
-    public Class getSubclass() {
+    public Class<? extends FastPathObject> getSubclass() {
         return subclass;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Class getType() {
+    public Class<?> getType() {
         if (selectList.isEmpty()) {
             return type;
         } else {
@@ -219,12 +224,13 @@ public class QueryObjectPathExpression implements QueryPathExpressionWithSelect,
     public Query getQuery(Collection<Integer> bag, boolean isNoNotXml) {
         if (isNoNotXml && (constraint == null) && selectList.isEmpty() && (subclass == null)) {
             Query q = new Query();
-            QueryClass qc = new QueryClass(InterMineObject.class);
-            q.addFrom(qc);
-            q.addToSelect(new QueryField(qc, "id"));
-            q.addToSelect(qc);
+            QueryClass newQc = new QueryClass(InterMineObject.class);
+            q.addFrom(newQc);
+            q.addToSelect(new QueryField(newQc, "id"));
+            q.addToSelect(newQc);
             if (bag != null) {
-                q.setConstraint(new BagConstraint(new QueryField(qc, "id"), ConstraintOp.IN, bag));
+                q.setConstraint(new BagConstraint(new QueryField(newQc, "id"), ConstraintOp.IN,
+                        bag));
             }
             q.setDistinct(false);
             return q;

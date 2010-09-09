@@ -13,6 +13,7 @@ package org.intermine.bio.web.widget;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
@@ -43,17 +44,17 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
-        q.setView("Protein.primaryIdentifier,Protein.primaryAccession,Protein.organism.name,"
-                      + "Protein.features.feature.name,Protein.features.type,"
-                      + "Protein.features.description,"
-                      + "Protein.features.begin,Protein.features.end");
-        q.setOrderBy("Protein.features.feature.name, Protein.primaryAccession");
-        q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
+        q.addViews("Protein.primaryIdentifier", "Protein.primaryAccession", "Protein.organism.name",
+                "Protein.features.feature.name", "Protein.features.type",
+                "Protein.features.description",
+                "Protein.features.begin", "Protein.features.end");
+        q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
-            q.addConstraint("Protein.features.feature", Constraints.lookup(key));
-            q.setConstraintLogic("A and B");
-            q.syncLogicExpression("and");
+            q.addConstraint(Constraints.lookup("Protein.features.feature", key, ""));
         }
+        q.addOrderBy("Protein.features.feature.name", OrderDirection.ASC);
+        q.addOrderBy("Protein.primaryAccession", OrderDirection.ASC);
+
         return q;
     }
 }

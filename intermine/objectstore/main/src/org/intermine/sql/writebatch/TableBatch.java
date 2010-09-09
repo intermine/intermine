@@ -12,7 +12,6 @@ package org.intermine.sql.writebatch;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,12 +30,10 @@ import org.intermine.util.StringConstructor;
 public class TableBatch implements Table
 {
     private static final Logger LOG = Logger.getLogger(TableBatch.class);
-    private static final Integer NULL_VALUE = new Integer(0);
-
     private String idField;
-    private String colNames[];
-    private Set idsToDelete;
-    private Map idsToInsert;
+    private String[] colNames;
+    private Set<Object> idsToDelete;
+    private Map<Object, Object> idsToInsert;
     private int size = 0;
 
     /**
@@ -66,10 +63,11 @@ public class TableBatch implements Table
      * @param values an array of Objects to be put in the row, in the same order as colNames
      * @return the number of bytes by which the batch should be deemed to have expanded
      */
-    public int addRow(Object idValue, String colNames[], Object values[]) {
+    @SuppressWarnings("unchecked")
+    public int addRow(Object idValue, String[] colNames, Object[] values) {
         if (this.colNames == null) {
             this.colNames = colNames;
-            idsToInsert = new TreeMap(NullFirstComparator.SINGLETON);
+            idsToInsert = new TreeMap<Object, Object>(NullFirstComparator.SINGLETON);
         } else {
             if (colNames != this.colNames) {
                 if (colNames.length != this.colNames.length) {
@@ -95,11 +93,11 @@ public class TableBatch implements Table
         Object currentEntry = idsToInsert.get(idValue);
         if (currentEntry == null) {
             idsToInsert.put(idValue, values);
-        } else if (currentEntry instanceof List) {
-            ((List) currentEntry).add(values);
+        } else if (currentEntry instanceof List<?>) {
+            ((List<Object[]>) currentEntry).add(values);
         } else {
-            List newEntry = new ArrayList();
-            newEntry.add(currentEntry);
+            List<Object[]> newEntry = new ArrayList<Object[]>();
+            newEntry.add((Object[]) currentEntry);
             newEntry.add(values);
             idsToInsert.put(idValue, newEntry);
         }
@@ -124,10 +122,11 @@ public class TableBatch implements Table
      * @param idValue the value of the ID field for this row
      * @return the number of bytes by which the batch should be deemed to have expanded
      */
+    @SuppressWarnings("unchecked")
     public int deleteRow(String idField, Object idValue) {
         if (this.idField == null) {
             this.idField = idField;
-            idsToDelete = new TreeSet(NullFirstComparator.SINGLETON);
+            idsToDelete = new TreeSet<Object>(NullFirstComparator.SINGLETON);
         } else if (!this.idField.equals(idField)) {
             throw new IllegalStateException("Cannot change idField once it is set");
         }
@@ -138,7 +137,7 @@ public class TableBatch implements Table
                 if (removed instanceof Object[]) {
                     retval -= sizeOfArray((Object[]) removed);
                 } else {
-                    retval -= sizeOfList((List) removed);
+                    retval -= sizeOfList((List<Object[]>) removed);
                 }
             }
         }
@@ -170,7 +169,7 @@ public class TableBatch implements Table
      *
      * @return a Map
      */
-    public Map getIdsToInsert() {
+    public Map<Object, Object> getIdsToInsert() {
         return idsToInsert;
     }
 
@@ -179,7 +178,7 @@ public class TableBatch implements Table
      *
      * @return a Set
      */
-    public Set getIdsToDelete() {
+    public Set<Object> getIdsToDelete() {
         return idsToDelete;
     }
 
@@ -233,11 +232,9 @@ public class TableBatch implements Table
      * @param list a List of arrays
      * @return an int
      */
-    protected static int sizeOfList(List list) {
+    protected static int sizeOfList(List<Object[]> list) {
         int retval = 0;
-        Iterator iter = list.iterator();
-        while (iter.hasNext()) {
-            Object array[] = (Object[]) iter.next();
+        for (Object[] array : list) {
             retval += sizeOfArray(array);
         }
         return retval;
