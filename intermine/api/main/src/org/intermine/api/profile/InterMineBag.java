@@ -19,6 +19,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.bag.IncompatibleTypesException;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -114,7 +115,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             Class<?> cls = Class.forName(getQualifiedType());
             classDescriptors = os.getModel().getClassDescriptorsForClass(cls);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("bag type " + getQualifiedType() + " not known", e);
+            throw new UnknownBagTypeException("bag type " + getQualifiedType() + " not known", e);
         }
     }
 
