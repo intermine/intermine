@@ -141,8 +141,8 @@ sub make_item {
 
   $self->{id_counter}++;
 
-  $classname  = $args{classname}  || '';
-  $implements = $args{implements} || '';
+  my $classname  = $args{classname}  || '';
+  my $implements = $args{implements} || '';
 
   my $item = new InterMine::Item(
       classname  => $classname, 
