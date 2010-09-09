@@ -34,3 +34,7 @@ override to_string => sub {
     my $self = shift;
     return super . q{: "} . $self->description . q{"};
 };
+
+sub _build_element_name {
+    return 'pathDescription';
+}
