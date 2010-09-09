@@ -8,14 +8,14 @@ function initConstraint(selectedConstraint) {
 
   function onChangeAttributeOp() { 
 	    //attribute5 operator
-	    //attribute6 attribute value 
+	    //attribute8 attribute value 
 	    //attribute7 options
 	    //LIKE or NOT LIKE or LOOKUP
 	    if (document.getElementById("attribute5")) {
 	    	if (document.getElementById("attribute5").value == '6'
 	            || document.getElementById("attribute5").value == '7'
 	            || document.getElementById("attribute5").value == '18') {
-	    		document.getElementById("attribute6").style.display = 'inline';
+	    		document.getElementById("attribute8").style.display = 'inline';
 	            if (document.getElementById("attribute7")) 
 	            	document.getElementById("attribute7").style.display = 'none';
 	            if (document.getElementById("multiValue")) 
@@ -25,20 +25,20 @@ function initConstraint(selectedConstraint) {
 	            || document.getElementById("attribute5").value == '13') {
 	            if (document.getElementById("multiValue")) 
 	            	document.getElementById("multiValue").style.display = 'inline';
-	            if(document.getElementById("attribute6"))
-	                document.getElementById("attribute6").style.display = 'none';
+	            if(document.getElementById("attribute8"))
+	                document.getElementById("attribute8").style.display = 'none';
 	            if (document.getElementById("attribute7")) 
 	                  document.getElementById("attribute7").style.display = 'none';
 	          } else {
 	            if (document.getElementById("attribute7")) {
 	                document.getElementById("attribute7").style.display = 'inline';
-	                if (document.getElementById("attribute6").style != undefined)
-	                    document.getElementById("attribute6").style.display = 'none';
+	                if (document.getElementById("attribute8").style != undefined)
+	                    document.getElementById("attribute8").style.display = 'none';
 	                if (document.getElementById("attribute7") != undefined)
-	                    document.getElementById("attribute6").value = document.getElementById("attribute7").value;
+	                    document.getElementById("attribute8").value = document.getElementById("attribute7").value;
 	            } else {
-	            	if (document.getElementById("attribute6").style != undefined)
-	                    document.getElementById("attribute6").style.display = 'inline';
+	            	if (document.getElementById("attribute8").style != undefined)
+	                    document.getElementById("attribute8").style.display = 'inline';
 	            }
 	             if (document.getElementById("multiValue")) 
 	               document.getElementById("multiValue").style.display = 'none';
