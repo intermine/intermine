@@ -36,7 +36,6 @@ package InterMine::TypeLibrary; {
 	'IS NOT NULL', 'IS NULL'
     ];
     enum BinaryOperator, [
-        'CONTAINS', 'LIKE',
         '=', '!=',
         '<', '>',
         '>=','<=',
@@ -45,8 +44,8 @@ package InterMine::TypeLibrary; {
        as Str,
        where { $_ eq 'LOOKUP' };
     enum MultiOperator, [
-	'IN',
-	'NOT IN',
+	'ONE OF',
+	'NONE OF',
     ];
     enum LogicOperator, [
 	'and',
@@ -79,10 +78,10 @@ package InterMine::TypeLibrary; {
 	as HashRef[Template];
     subtype PathString,
         as Str,
-        where {/^[A-Za-z]+[A-Za-z\.]*[A-Za-z]$/},
+        where {/^[[:upper:]]+[[:alnum:]\.]*[[:alnum:]]$/},
         message {
 	    (defined)
-		? "PathString can only contain 'A-Z' and '.', not '$_'"
+		? "PathString can only contain 'A-Z', '0-9' and '.', not '$_'"
 		: "PathString must be defined"
 	    };
     subtype PathList,
@@ -126,7 +125,7 @@ package InterMine::TypeLibrary; {
     };
     subtype JoinedPathString,
         as Str,
-	where {/^[A-Za-z\.,\s]+$/};
+	where {/^[[:alnum:]\.,\s]+$/};
     enum QueryType, [
 	'template',
 	'saved-query',
