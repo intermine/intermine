@@ -194,7 +194,7 @@ jQuery(document).ready(function(){
                   <%-- normal inputfield, no auto completer exists --%>
                   <c:otherwise>
                      <im:dateInput attributeType="${dec.path.type}" property="attributeValues(${index})" 
-                       styleId="attribute6" value="${dec.selectedValue}"/>
+                       styleId="attribute6" value="${(dec.possibleValuesDisplayed && dec.selectedValue == null) ? dec.possibleValues[0] : dec.selectedValue}"/>
                    </c:otherwise>
                 </c:choose>
                 </span>
