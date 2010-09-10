@@ -12,14 +12,11 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.xml.ws.Dispatch;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
@@ -35,8 +32,6 @@ import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintBag;
@@ -172,7 +167,7 @@ public class TemplateController extends TilesAction
                 Collection<String> selectedValues = displayConstraint.getMultiValues();
                 String[] multiSelecteValue = new String[selectedValues.size()];
                 int multiValueIndex = 0;
-                for(String selectedvalue : selectedValues) {
+                for (String selectedvalue : selectedValues) {
                     multiSelecteValue[multiValueIndex++] = selectedvalue;
                 }
                 tf.setMultiValues("" + (index + 1), multiSelecteValue);
