@@ -21,7 +21,7 @@ my $build = Module::Build->new(
 				   'Text::CSV_XS'		   => 0.62,
 				   'URI'			   => 1.37,
 				   'XML::Parser::PerlSAX'	   => 0.08,
-				   'XML::Smart'			   => '1.5.8',
+				   'XML::DOM'			   => 0,
 				   'XML::Writer'		   => 0.602,
 			       },
 			       recommends => {
