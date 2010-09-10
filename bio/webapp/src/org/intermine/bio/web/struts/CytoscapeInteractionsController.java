@@ -11,6 +11,7 @@ package org.intermine.bio.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -29,9 +30,9 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.bio.web.AttributeLinkDisplayerController;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.Interaction;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
@@ -66,6 +67,7 @@ public class CytoscapeInteractionsController extends TilesAction
     public ActionForward execute(ComponentContext context,
             ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
+
         // Get InterMineAPI
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -122,10 +124,17 @@ public class CytoscapeInteractionsController extends TilesAction
         List<String> keys = new ArrayList<String>();
         keys.add(gene.getPrimaryIdentifier());
 
-        Set<Interaction> interactions = gene.getInteractions();
+        Set<?> interactions = gene.getInteractions();
 
-        for (Interaction aInteraction : interactions) {
-            Set<Gene> interactingGenes = aInteraction.getInteractingGenes();
+        for (Object aInteraction : interactions) {
+
+            if (!(aInteraction instanceof org.intermine.model.bio.Interaction))
+            {
+                return Collections.EMPTY_SET;
+            }
+
+            Set<Gene> interactingGenes =
+                ((org.intermine.model.bio.Interaction) aInteraction).getInteractingGenes();
 
             for (Gene aInteractingGene : interactingGenes) {
                 keys.add(aInteractingGene.getPrimaryIdentifier());
@@ -168,10 +177,19 @@ public class CytoscapeInteractionsController extends TilesAction
         Query q = new Query();
 
         QueryClass qcGene = new QueryClass(Gene.class);
-        QueryClass qcInteraction = new QueryClass(Interaction.class);
+        QueryClass qcInteraction = null;
         QueryClass qcInteractingGene = new QueryClass(Gene.class);
         QueryClass qcInteractionDataSet = new QueryClass(DataSet.class);
         QueryClass qcInteractionDataSource = new QueryClass(DataSource.class);
+
+        // Test if Interaction class in the core model?
+        try {
+            Model model = im.getObjectStore().getModel();
+            qcInteraction =
+                new QueryClass(Class.forName(model.getPackageName() + ".Interaction"));
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
 
         // result columns
         QueryField qfGenePID = new QueryField(qcGene, "primaryIdentifier");
