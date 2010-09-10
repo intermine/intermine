@@ -1,9 +1,10 @@
-To build the code, simply execute:
+To build the code, simply execute the build script:
 
-mvn install
+> ./build
 
-from the top level directory.
+To run the compiled code execute the run script
 
+> ./run
 
 To build the site documentation, execute:
 
