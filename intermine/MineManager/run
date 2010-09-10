@@ -1,3 +1,4 @@
 #!/bin/bash
+DISPLAY=:0
 scriptdir=$(dirname $0)
-java -jar $scriptdir/installer/target/installer-1.0-SNAPSHOT-jar-with-dependencies.jar org.intermine.install.IntermineInstaller
+java -jar $scriptdir/bin/MineManager.jar org.intermine.install.IntermineInstaller
