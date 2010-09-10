@@ -481,7 +481,14 @@ public class ProjectEditor extends JFrame
         
         modifiedLabel.setVisible(false);
     }
-
+    
+    private void switchToLoadedButtonState() {
+        loadButton.setText(Messages.getMessage("savemine"));
+        loadButton.setMnemonic('s');
+        loadButton.removeActionListener(loadAction);
+        loadButton.addActionListener(saveAction);
+        buildButton.setEnabled(true);
+    }
     /**
      * Overridden so that on disposal, the related model viewer frame is also disposed.
      * 
@@ -577,12 +584,7 @@ public class ProjectEditor extends JFrame
             MineManagerBackingStore.getInstance().setLastProjectFile(this.projectFile);
             
             loadModel();
-            
-            loadButton.setText(Messages.getMessage("savemine"));
-            loadButton.setMnemonic('s');
-            loadButton.removeActionListener(loadAction);
-            loadButton.addActionListener(saveAction);
-            buildButton.setEnabled(true);
+            switchToLoadedButtonState();
 
             if (project.getSources().getSource().isEmpty()) {
                 JOptionPane.showMessageDialog(this,
@@ -634,6 +636,7 @@ public class ProjectEditor extends JFrame
         postProcessorDialog.initialise(project);
         
         statusLabel.setText(Messages.getMessage("project.loaded"));
+        switchToLoadedButtonState();
         statusMessageClearTimer.restart();
     }
     
