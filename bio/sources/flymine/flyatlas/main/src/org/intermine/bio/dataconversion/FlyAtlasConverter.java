@@ -30,7 +30,7 @@ import org.intermine.xml.full.Item;
 public class FlyAtlasConverter extends BioFileConverter
 {
     private Item expt, org;
-    protected Map<String, Item> assays = new HashMap<String, Item>();
+    protected Map<String, Item> tissues = new HashMap<String, Item>();
 
     /**
      * Constructor
@@ -84,7 +84,7 @@ public class FlyAtlasConverter extends BioFileConverter
                      * We can't always use ' ' to identify the tissue because there are duplicates.
                      * */
                     if (col.contains(" vs ")) {
-                       tissue = col.substring(0, col.indexOf(" vs ")).toLowerCase();
+                        tissue = col.substring(0, col.indexOf(" vs ")).toLowerCase();
                     } else {
                         tissue = col.substring(0, col.indexOf(' ')).toLowerCase();
                     }
@@ -110,7 +110,7 @@ public class FlyAtlasConverter extends BioFileConverter
     public void close() throws ObjectStoreException {
         store(org);
         store(expt);
-        store(assays.values());
+        store(tissues.values());
     }
 
     private Item createProbe(String probeId) {
@@ -133,12 +133,12 @@ public class FlyAtlasConverter extends BioFileConverter
             result.setAttribute("enrichment", round(results[4], 2));
         }
 
-        // set assay
-        if (!assays.containsKey(tissue)) {
+        // set tissue
+        if (!tissues.containsKey(tissue)) {
             throw new IllegalArgumentException("Unrecognised tissue type read from file: '"
                                                + tissue + "'.");
         }
-        result.addToCollection("assays", assays.get(tissue).getIdentifier());
+        result.setReference("tissue", tissues.get(tissue).getIdentifier());
 
         // set experiment
         result.setReference("experiment", expt.getIdentifier());
@@ -179,47 +179,47 @@ public class FlyAtlasConverter extends BioFileConverter
                 + " available at http://www.flyatlas.org.");
 
 
-        assays = new HashMap<String, Item>();
-        // names of assays from column headins, could be made more descriptive
-        assays.put("brain", createAssay("Brain"));
-        assays.put("head", createAssay("Head"));
-        assays.put("crop", createAssay("Crop"));
-        assays.put("midgut", createAssay("Midgut"));
-        assays.put("hind", createAssay("Hindgut"));
-        assays.put("tubule t test", createAssay("Tubule"));
-        assays.put("ovary", createAssay("Ovary"));
-        assays.put("testis", createAssay("Testis"));
-        assays.put("acc", createAssay("Male accessory glands"));
-        assays.put("lt", createAssay("Larval tubule"));
-        assays.put("fb", createAssay("Larval fat body"));
-        assays.put("tag", createAssay("Thoracicoabdominal ganglion"));
-        assays.put("car", createAssay("Adult carcass"));
-        assays.put("sg", createAssay("Salivary gland"));
-        assays.put("l_sg", createAssay("Larval salivary gland"));
-        assays.put("l_mid", createAssay("Larval midgut"));
+        tissues = new HashMap<String, Item>();
+        // names of tissues from column headins, could be made more descriptive
+        tissues.put("brain", createTissue("Brain"));
+        tissues.put("head", createTissue("Head"));
+        tissues.put("crop", createTissue("Crop"));
+        tissues.put("midgut", createTissue("Midgut"));
+        tissues.put("hind", createTissue("Hindgut"));
+        tissues.put("tubule t test", createTissue("Tubule"));
+        tissues.put("ovary", createTissue("Ovary"));
+        tissues.put("testis", createTissue("Testis"));
+        tissues.put("acc", createTissue("Male accessory glands"));
+        tissues.put("lt", createTissue("Larval tubule"));
+        tissues.put("fb", createTissue("Larval fat body"));
+        tissues.put("tag", createTissue("Thoracicoabdominal ganglion"));
+        tissues.put("car", createTissue("Adult carcass"));
+        tissues.put("sg", createTissue("Salivary gland"));
+        tissues.put("l_sg", createTissue("Larval salivary gland"));
+        tissues.put("l_mid", createTissue("Larval midgut"));
 
-        assays.put("larvae hindgut", createAssay("Larvae hindgut"));
-        assays.put("sptv", createAssay("Virgin spermatheca"));
-        assays.put("sptm", createAssay("Mated spermatheca"));
+        tissues.put("larvae hindgut", createTissue("Larvae hindgut"));
+        tissues.put("sptv", createTissue("Virgin spermatheca"));
+        tissues.put("sptm", createTissue("Mated spermatheca"));
 
         // is this used?
-        assays.put("FlyMean", createAssay("Whole Fly"));
+        tissues.put("FlyMean", createTissue("Whole Fly"));
 
         // new 2009-05-19
-        assays.put("feeded larvae central nerve system", createAssay("Larval CNS"));
-        assays.put("adult fat body", createAssay("Adult fat body"));
-        assays.put("feeded larvae carcuss", createAssay("Larval carcass"));
-        assays.put("eye", createAssay("Adult eye"));
-        assays.put("heart", createAssay("Adult heart"));
-        assays.put("lftrachea", createAssay("Larval trachea"));
-        assays.put("drosophila s2 cells", createAssay("S2 cells"));
+        tissues.put("feeded larvae central nerve system", createTissue("Larval CNS"));
+        tissues.put("adult fat body", createTissue("Adult fat body"));
+        tissues.put("feeded larvae carcuss", createTissue("Larval carcass"));
+        tissues.put("eye", createTissue("Adult eye"));
+        tissues.put("heart", createTissue("Adult heart"));
+        tissues.put("lftrachea", createTissue("Larval trachea"));
+        tissues.put("drosophila s2 cells", createTissue("S2 cells"));
 
     }
 
-    private Item createAssay(String name) {
-        Item assay = createItem("MicroArrayAssay");
-        assay.setAttribute("name", name);
-        return assay;
+    private Item createTissue(String name) {
+        Item tissue = createItem("Tissue");
+        tissue.setAttribute("name", name);
+        return tissue;
     }
 
     private String round(String num, int dp) {

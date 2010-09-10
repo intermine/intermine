@@ -39,12 +39,12 @@ public class FlyAtlasConverterTest extends ItemsTestCase
         FlyAtlasConverter converter = new FlyAtlasConverter(itemWriter,
                                                         Model.getInstanceByName("genomic"));
 
-        // replace the assays map so we don't store all tissues
-        Map<String, Item> mockAssays = new HashMap<String, Item>();
-        mockAssays.put("brain", createMockAssay("Brain", converter));
-        mockAssays.put("head", createMockAssay("Head", converter));
-        mockAssays.put("FlyMean", createMockAssay("Whole Fly", converter));
-        converter.assays = mockAssays;
+        // replace the tissues map so we don't store all tissues
+        Map<String, Item> mockTissues = new HashMap<String, Item>();
+        mockTissues.put("brain", createMockTissue("Brain", converter));
+        mockTissues.put("head", createMockTissue("Head", converter));
+        mockTissues.put("FlyMean", createMockTissue("Whole Fly", converter));
+        converter.tissues = mockTissues;
 
 
         converter.process(new StringReader(input));
@@ -57,9 +57,9 @@ public class FlyAtlasConverterTest extends ItemsTestCase
     }
 
 
-    private Item createMockAssay(String name, FlyAtlasConverter converter) {
-        Item mockAssay = converter.createItem("MicroArrayAssay");
-        mockAssay.setAttribute("name", name);
-        return mockAssay;
+    private Item createMockTissue(String name, FlyAtlasConverter converter) {
+        Item mockTissue = converter.createItem("Tissue");
+        mockTissue.setAttribute("name", name);
+        return mockTissue;
     }
 }
