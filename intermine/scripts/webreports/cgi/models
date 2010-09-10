@@ -15,18 +15,18 @@ use LWP::Simple qw(get);
 use List::MoreUtils qw(uniq zip);
 
 use lib '/home/alex/svn/dev/intermine/perl/lib';
-use InterMine::WebService::Service::ModelService;
+use InterMine;
 
 my $cache_file = dirname($ENV{SCRIPT_FILENAME}).'/../cached_data/models';
 my $cache = eval{retrieve($cache_file)} || {};
 my $order = sub {lc($a) cmp lc($b)};
 
 # The two different methods used in an analysis, and things that change depending on them
-my @wanted_values = ('get_own_fields', 'extends_class_descriptors'); 
-my @wanted_labels = ('Declared fields', 'Superclasses');
+my @wanted_values = ('get_own_fields', 'parental_class_descriptors', 'fields', 'ancestors'); 
+my @wanted_labels = ('Declared fields', 'Direct superclasses', 'All fields', 'All superclasses');
 my %label_hash    = zip(@wanted_values, @wanted_labels);
 my @column_headers = ('has field in', 'Inherits from in');
-my %col_header_for = zip(@wanted_values, @column_headers);
+my %col_header_for = zip(@wanted_values, @column_headers, @column_headers);
 
 my $wanted = 
     (param('submitted'))
@@ -91,9 +91,7 @@ while (<DATA>) {
 	if ($cache->{version_of}{$service_name} eq $version_of{$service_name}
 	    and defined $cache->{model_from});
     next if ((param('submitted')) and (not param($service_name)));
-    my $ms = 
-	InterMine::WebService::Service::ModelService->new($_ . '/service', APP);	
-    $model_from->{$service_name} = $ms->get_model();
+    $model_from->{$service_name} = InterMine->get_service($_.'/service')->model;
 }
 
 store {model_from => $model_from, version_of => \%version_of,}, $cache_file;
@@ -135,7 +133,7 @@ my @rows   = map { {Class => $_} } @all_classes;
 for my $row (@rows) {
     for my $service (@services) {
 	my ($m, $c) = ($model_from->{$service}, $row->{Class});
-	$row->{$service} = (($m->get_classdescriptor_by_name($c))  
+	$row->{$service} = ((eval {$m->get_classdescriptor_by_name($c)})  
 			       ? scalar(grep {$_->name ne $c} 
 					$m->get_classdescriptor_by_name($c)->$wanted)
 			       : 'NO');
@@ -158,21 +156,21 @@ for my $class_name (@all_classes) {
     my (%fields, %fields_for);
     # Get an inclusive list of the fields
     while (my ($service, $model) = each %$model_from) {
-	for (eval{$model->get_classdescriptor_by_name($class_name)->$wanted}) {
-	    next if ($_->name eq $class_name);
-	    push @{$fields_for{$service}}, $_->name; 
-	    $fields{$_->name}++;
-	}
+        for (eval{$model->get_classdescriptor_by_name($class_name)->$wanted}) {
+            next if ($_->name eq $class_name);
+            push @{$fields_for{$service}}, $_->name; 
+            $fields{$_->name}++;
+        }
     }
     my $col1_name = $col_header_for{$wanted};
     my @rows      = map { {$col1_name => $_} } sort($order keys %fields);
     next unless @rows;
     for my $row (@rows) {
-	for my $service (@services) {
-	    $row->{$service} = (grep {$row->{$col1_name} eq $_} @{$fields_for{$service}})
+        for my $service (@services) {
+            $row->{$service} = (grep {$row->{$col1_name} eq $_} @{$fields_for{$service}})
 		              ? 'YES'
                               : 'NO';
-	}
+        }
     }
     my $row_order = [$col1_name, sort($order grep {$_ ne $col1_name} keys %{$rows[0]})];
     my $class_table = make_table_from_rows(\@rows, $row_order);
