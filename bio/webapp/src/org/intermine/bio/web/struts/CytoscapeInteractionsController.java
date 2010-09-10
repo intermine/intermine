@@ -29,13 +29,14 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.bio.web.AttributeLinkDisplayerController;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Protein;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -59,7 +60,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class CytoscapeInteractionsController extends TilesAction
 {
     private static final Logger LOG = Logger.getLogger(CytoscapeInteractionsController.class);
-
+    private Model model = null;
     /**
      * {@inheritDoc}
      */
@@ -71,6 +72,7 @@ public class CytoscapeInteractionsController extends TilesAction
         // Get InterMineAPI
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        model = im.getModel();
 
         // Get object from request
         InterMineObject object = (InterMineObject) request
@@ -123,20 +125,35 @@ public class CytoscapeInteractionsController extends TilesAction
         // A list of genes including the hub and its interacting genes
         List<String> keys = new ArrayList<String>();
         keys.add(gene.getPrimaryIdentifier());
+        ClassDescriptor cd = model.getClassDescriptorByName("Gene");
 
-        Set<?> interactions = gene.getInteractions();
+        // interactions not in the model
+        if (cd.getCollectionDescriptorByName("interactions") == null) {
+            return Collections.EMPTY_SET;
+        }
+        Object interactions = null;
+        try {
+            interactions = gene.getFieldValue("interactions");
+        } catch (IllegalAccessException e) {
+            return Collections.EMPTY_SET;
+        }
 
-        for (Object aInteraction : interactions) {
-
-            if (!(aInteraction instanceof org.intermine.model.bio.Interaction))
-            {
+        cd = model.getClassDescriptorByName("Interaction");
+        if (cd == null) {
+            return Collections.EMPTY_SET;
+        }
+        if (cd.getCollectionDescriptorByName("interactingGenes") == null) {
+            return Collections.EMPTY_SET;
+        }
+        for (Object aInteraction : (Set) interactions) {
+            Object interactingGenes = null;
+            try {
+                interactingGenes = ((FastPathObject) aInteraction).getFieldValue("interactingGenes");
+            } catch (IllegalAccessException e) {
                 return Collections.EMPTY_SET;
             }
 
-            Set<Gene> interactingGenes =
-                ((org.intermine.model.bio.Interaction) aInteraction).getInteractingGenes();
-
-            for (Gene aInteractingGene : interactingGenes) {
+            for (Gene aInteractingGene : (Set<Gene>) interactingGenes) {
                 keys.add(aInteractingGene.getPrimaryIdentifier());
             }
         }
@@ -184,7 +201,7 @@ public class CytoscapeInteractionsController extends TilesAction
 
         // Test if Interaction class in the core model?
         try {
-            Model model = im.getObjectStore().getModel();
+
             qcInteraction =
                 new QueryClass(Class.forName(model.getPackageName() + ".Interaction"));
         } catch (ClassNotFoundException e) {
