@@ -37,7 +37,8 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.OldPathQuery;
+import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -67,7 +68,7 @@ public class SubmissionProtocolsController extends TilesAction
         LOG.info("SUBMISSION id: " + o.getId());
 
         // create the query
-        OldPathQuery q = new OldPathQuery(os.getModel());
+        PathQuery q = new PathQuery(os.getModel());
 
         q.addView("Submission.appliedProtocols.step");
         q.addView("Submission.appliedProtocols:inputs.type");
@@ -78,8 +79,8 @@ public class SubmissionProtocolsController extends TilesAction
         q.addView("Submission.appliedProtocols:outputs.name");
         q.addView("Submission.appliedProtocols:outputs.value");
 
-        q.addConstraint("Submission.id", Constraints.eq(o.getId()));
-        q.addOrderBy("Submission.appliedProtocols.step");
+        q.addConstraint(Constraints.eq("Submission.id", o.getId().toString()));
+        q.addOrderBy("Submission.appliedProtocols.step", OrderDirection.ASC);
 
         Profile profile = SessionMethods.getProfile(session);
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
@@ -109,13 +110,13 @@ public class SubmissionProtocolsController extends TilesAction
         q1.setConstraint(sc);
         Results result = os.executeSingleton(q1);
 
-        Integer DCCid = 0;
+        Integer dccId = 0;
         Iterator i = result.iterator();
         while (i.hasNext()) {
             Submission sub = (Submission) i.next();
-            DCCid = sub.getdCCid();
+            dccId = sub.getdCCid();
         }
-        request.setAttribute("DCCid", DCCid);
+        request.setAttribute("DCCid", dccId);
         return null;
     }
 }

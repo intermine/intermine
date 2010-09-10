@@ -57,7 +57,7 @@ public class SubmissionDisplayerController extends TilesAction
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {
+        throws Exception {
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         final ServletContext servletContext = servlet.getServletContext();
 
@@ -105,9 +105,11 @@ public class SubmissionDisplayerController extends TilesAction
         Map<String, Long> featureCounts = new LinkedHashMap<String, Long>();
 
         // for each classes set the values for jsp
-        for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
-            ResultsRow row = iter.next();
-            Class feat = (Class) row.get(0);
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+            (Iterator) results.iterator();
+        while (iter.hasNext()) {
+            ResultsRow<?> row = iter.next();
+            Class<?> feat = (Class<?>) row.get(0);
             Long count = (Long) row.get(1);
 
             featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);

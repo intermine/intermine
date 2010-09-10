@@ -19,8 +19,8 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.PathNode;
-import org.intermine.pathquery.OldPathQuery;
+import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.ForwardParameters;
 import org.intermine.web.struts.InterMineAction;
@@ -50,7 +50,7 @@ public class SubmissionOverlapsAction extends InterMineAction
                                  ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {        
+        throws Exception {
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ObjectStore os = im.getObjectStore();
 
@@ -59,29 +59,29 @@ public class SubmissionOverlapsAction extends InterMineAction
         String submissionTitle = submissionOverlapsForm.getSubmissionTitle();
         String submissionId = submissionOverlapsForm.getSubmissionId();
 
-        OldPathQuery q = new OldPathQuery(os.getModel());
+        PathQuery q = new PathQuery(os.getModel());
 
         if (request.getParameter("overlaps") != null) {
             String featureType = submissionOverlapsForm.getOverlapFeatureType();
             String findFeatureType = submissionOverlapsForm.getOverlapFindType();
             String description = "Results of searching for " + featureType + "s generated from DCC"
-            		+ " submission " + submissionTitle + " that overlap " + findFeatureType + "s.";
+                + " submission " + submissionTitle + " that overlap " + findFeatureType + "s.";
             q.setDescription(description);
-            		
+
             q.addView(findFeatureType + ".primaryIdentifier");
             q.addView(findFeatureType + ".overlappingFeatures.secondaryIdentifier");
             q.addView(findFeatureType + ".chromosomeLocation.start");
             q.addView(findFeatureType + ".chromosomeLocation.end");
             q.addView(findFeatureType + ".chromosomeLocation.strand");
 
-            if (findFeatureType.equals("Exon")) {
+            if ("Exon".equals(findFeatureType)) {
                 q.addView(findFeatureType + ".gene.primaryIdentifier");
             }
 
-            PathNode featureNode = q.addNode(findFeatureType + ".overlappingFeatures");
-            featureNode.setType(featureType);
-            q.addConstraint(findFeatureType + ".overlappingFeatures.submissions.title",
-                    Constraints.eq(submissionTitle));
+            q.addConstraint(Constraints.type(findFeatureType + ".overlappingFeatures",
+                    featureType));
+            q.addConstraint(Constraints.eq(findFeatureType
+                    + ".overlappingFeatures.submissions.title", submissionTitle));
 
         } else if (request.getParameter("flanking") != null) {
             String direction = submissionOverlapsForm.getDirection();
@@ -96,32 +96,28 @@ public class SubmissionOverlapsAction extends InterMineAction
             //q.addView("GeneFlankingRegion.gene.chromosomeLocation.end");
             //q.addView("GeneFlankingRegion.gene.secondaryIdentifier");
 
-            PathNode featureNode = q.addNode("GeneFlankingRegion.overlappingFeatures");
-            featureNode.setType(featureType);
+            q.addConstraint(Constraints.type("GeneFlankingRegion.overlappingFeatures",
+                    featureType));
 
-            q.addConstraint("GeneFlankingRegion.distance", Constraints.eq(distance));
-            q.addConstraint("GeneFlankingRegion.overlappingFeatures.submissions.title",
-                    Constraints.eq(submissionTitle));
+            q.addConstraint(Constraints.eq("GeneFlankingRegion.distance", distance));
+            q.addConstraint(
+                    Constraints.eq("GeneFlankingRegion.overlappingFeatures.submissions.title",
+                    submissionTitle));
 
-            if (!direction.equalsIgnoreCase("bothways")){
-                q.addConstraint("GeneFlankingRegion.direction", Constraints.eq(direction));
-                q.setConstraintLogic("A and B and C");                    
-            } else {
-                q.setConstraintLogic("A and B");
+            if (!direction.equalsIgnoreCase("bothways")) {
+                q.addConstraint(Constraints.eq("GeneFlankingRegion.direction", direction));
             }
-            q.setOrderBy("GeneFlankingRegion.gene.primaryIdentifier");
+            q.addOrderBy("GeneFlankingRegion.gene.primaryIdentifier", OrderDirection.ASC);
         }
-        q.syncLogicExpression("and");
+
         String qid = SessionMethods.startQueryWithTimeout(request, false, q);
         Thread.sleep(200);
 
         String trail = "|" + submissionId;
 
         return new ForwardParameters(mapping.findForward("waiting"))
-        .addParameter("qid", qid)
-        .addParameter("trail", trail)
-        .forward();
-
-        //return mapping.findForward("results");
+            .addParameter("qid", qid)
+            .addParameter("trail", trail)
+            .forward();
     }
 }

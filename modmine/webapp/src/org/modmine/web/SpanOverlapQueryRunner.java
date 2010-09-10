@@ -20,13 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Experiment;
-import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -53,10 +52,13 @@ import org.intermine.util.TypeUtil;
  * @author Fengyuan Hu
  *
  */
-public class SpanOverlapQueryRunner
+public final class SpanOverlapQueryRunner
 {
 
-    private static final Logger LOG = Logger.getLogger(SpanOverlapQueryRunner.class);
+    //private static final Logger LOG = Logger.getLogger(SpanOverlapQueryRunner.class);
+
+    private SpanOverlapQueryRunner() {
+    }
 
     /**
      * Query the information of all the organisms and their chromosomes' names and length. The
@@ -434,8 +436,10 @@ public class SpanOverlapQueryRunner
 
             Results results = im.getObjectStore().execute(q);
 
-            for (Iterator<ResultsRow<?>> iter = results.iterator(); iter.hasNext(); ) {
-                ResultsRow<?> row = (ResultsRow<?>) iter.next();
+            @SuppressWarnings("unchecked") Iterator<ResultsRow> resIter =
+                (Iterator) results.iterator();
+            while (resIter.hasNext()) {
+                ResultsRow<?> row = (ResultsRow<?>) resIter.next();
                 Class<?> featureClass = (Class<?>) row.get(0);
                 String featureType = (String) row.get(1);
 
