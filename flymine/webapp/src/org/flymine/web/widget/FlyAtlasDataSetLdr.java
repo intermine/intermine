@@ -19,7 +19,6 @@ import java.util.Set;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.model.bio.FlyAtlasResult;
 import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.MicroArrayAssay;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -29,6 +28,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.widget.DataSetLdr;
@@ -126,10 +126,10 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
     private Query createQuery(InterMineBag bag) {
 
         QueryClass far = new QueryClass(FlyAtlasResult.class);
-        QueryClass maa = new QueryClass(MicroArrayAssay.class);
+        QueryClass tissue = new QueryClass(Tissue.class);
         QueryClass gene = new QueryClass(Gene.class);
 
-        QueryField tissueName = new QueryField(maa, "name");
+        QueryField tissueName = new QueryField(tissue, "name");
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
@@ -137,9 +137,10 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
 
         QueryCollectionReference r1 = new QueryCollectionReference(far, "genes");
-        QueryCollectionReference r2 = new QueryCollectionReference(far, "assays");
         cs.addConstraint(new ContainsConstraint(r1, ConstraintOp.CONTAINS, gene));
-        cs.addConstraint(new ContainsConstraint(r2, ConstraintOp.CONTAINS, maa));
+
+        QueryObjectReference r2 = new QueryObjectReference(far, "tissue");
+        cs.addConstraint(new ContainsConstraint(r2, ConstraintOp.CONTAINS, tissue));
 
         Query q = new Query();
 
@@ -148,7 +149,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         q.addToSelect(new QueryField(gene, "primaryIdentifier"));
 
         q.addFrom(far);
-        q.addFrom(maa);
+        q.addFrom(tissue);
         q.addFrom(gene);
 
         q.setConstraint(cs);

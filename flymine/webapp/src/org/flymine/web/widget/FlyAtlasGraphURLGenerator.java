@@ -74,7 +74,7 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
                   "FlyAtlasResult.genes.primaryIdentifier",
                   "FlyAtlasResult.genes.name",
                   "FlyAtlasResult.genes.organism.name",
-                  "FlyAtlasResult.assays.name",
+                  "FlyAtlasResult.tissue.name",
                   "FlyAtlasResult.enrichment",
                   "FlyAtlasResult.affyCall",
                   "FlyAtlasResult.mRNASignal",
@@ -91,7 +91,7 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         q.addConstraint(Constraints.eq("FlyAtlasResult.affyCall", series));
 
         // assay (tissue) has to match what the user clicked on
-        q.addConstraint(Constraints.eq("FlyAtlasResult.assays.name", category));
+        q.addConstraint(Constraints.eq("FlyAtlasResult.tissue.name", category));
 
         q.addOrderBy("FlyAtlasResult.enrichment", sortOrder);
         q.addOrderBy("FlyAtlasResult.genes.secondaryIdentifier", OrderDirection.ASC);
