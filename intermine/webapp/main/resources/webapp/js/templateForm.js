@@ -105,7 +105,7 @@ function reorderConstraintsOnServer() {
 }
 
 function initConstraints(index) {
-	onChangeAttributeOps(index);
+	onChangeAttributeOps(index, true);
     if (document.getElementById("switchOff(" + index + ")")) {
         if (document.getElementById("switchOff(" + index + ")").value == "ON") {
             document.getElementById("optionalEnabled_" + index).style.display = "inline"
@@ -187,7 +187,7 @@ function disableFields(index, disable) {
     }
 }
 
-function onChangeAttributeOps(index) {
+function onChangeAttributeOps(index, init) {
 	    //LIKE or NOT LIKE
 	    if(document.templateForm["attributeOps(" + index + ")"] != undefined && document.templateForm["attributeOps(" + index + ")"]){
 	    	if (document.templateForm["attributeOps(" + index + ")"].value == '6'
@@ -199,6 +199,8 @@ function onChangeAttributeOps(index) {
 	                document.templateForm["attributeOptions(" + index + ")"].style.display = 'none';
 	        	if (document.templateForm["multiValues(" + index + ")"]) 
 	                document.templateForm["multiValues(" + index + ")"].style.display = 'none';
+	        	if (document.templateForm["multiValueAttribute(" + index + ")"]) 
+	                document.templateForm["multiValueAttribute(" + index + ")"].value = '';
 	        } // IN or NOT IN
 	    	else if (document.templateForm["attributeOps(" + index + ")"].value == '12'
 	        	|| document.templateForm["attributeOps(" + index + ")"].value == '13') {
@@ -214,9 +216,9 @@ function onChangeAttributeOps(index) {
 		        	if (document.templateForm["attributeValues(" + index + ")"]) {
 		        		if (document.templateForm["attributeValues(" + index + ")"].style != undefined)
 		        	        document.templateForm["attributeValues(" + index + ")"].style.display = 'none';
-		        		if (document.templateForm["attributeOptions(" + index + ")"] != undefined)
+		        		if (!init && document.templateForm["attributeOptions(" + index + ")"] != undefined) 
 		        		    document.templateForm["attributeValues(" + index + ")"].value = document.templateForm["attributeOptions("
-		                                                                                                  + index + ")"].value;
+		                                                                                                  + index + ")"].options[0].value;
 		        	}
 	        	} else {
 	        		if (document.templateForm["attributeValues(" + index + ")"]) {
@@ -226,6 +228,8 @@ function onChangeAttributeOps(index) {
 	        	}
 	            if (document.templateForm["multiValues(" + index + ")"]) 
 	                document.templateForm["multiValues(" + index + ")"].style.display = 'none';
+	            if (document.templateForm["multiValueAttribute(" + index + ")"]) 
+	                document.templateForm["multiValueAttribute(" + index + ")"].value = '';
 	        } 
 	    }
 }
