@@ -433,7 +433,7 @@ EDATE=`grep -w ^$DCCID $DATADIR/ftplist | grep -v true | sed -n 's/.*\t//;p'`
 
 echo -n "filling $CHADODB db with $DCCID (eDate: $EDATE) -- "
 date "+%d%b%Y %H:%M"
-echo
+echo >> $LOG
 echo -n "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
 
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
@@ -591,6 +591,7 @@ grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i piano, | a
 grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i snyder, | awk '{print $1}' > $DATADIR/snyder.live
 grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i waterston, | awk '{print $1}' > $DATADIR/waterston.live
 grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i white, | awk '{print $1}' > $DATADIR/white.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i oliver, | awk '{print $1}' > $DATADIR/oliver.live
 
 }
 
@@ -607,6 +608,14 @@ touch $LOG
 
 # copy of last wget.log
 mv $LOGDIR/wget.log $LOGDIR/wget.log.bup
+
+WLOGDATE=
+
+if [ "$FULL" = "y" ]
+then
+# we want to keep a copy of the wget load in case
+WLOGDATE=`date "+%y%m%d.%H%M"`
+fi
 
 
 #FTPURL=http://submit.modencode.org/submit/public/
@@ -642,17 +651,16 @@ grep released $DATADIR/ftplist | grep true | awk '$4 == "true" {print $1, " -> "
 awk '{print $1}' $DATADIR/deprecation.table > $DATADIR/all.dead
 fi
 
-
 cd $MIRROR/new
 
 interact "START WGET NOW"
 
 for sub in $LOOPVAR
 do
- wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee -a $LOGDIR/wget.log
+ wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee -a $LOGDIR/wget.log$WLOGDATE
 
 cd $PATCHDIR
- wget -t3 -N $FTPURL/get_file/$sub/extracted/applied_patches_$sub.chadoxml --progress=dot:mega 2>&1 | tee -a $LOGDIR/wget.log
+ wget -t3 -N $FTPURL/get_file/$sub/extracted/applied_patches_$sub.chadoxml --progress=dot:mega 2>&1 | tee -a $LOGDIR/wget.log$WLOGDATE
 # it gets the html if nothing there
 rm -vf *extracted*
 cd $MIRROR/new
