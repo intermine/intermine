@@ -59,7 +59,7 @@ public class SubmissionsController extends TilesAction
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {
+        throws Exception {
 
 
         if (submissions.size() > 0) {
@@ -89,8 +89,10 @@ public class SubmissionsController extends TilesAction
 
         List<Submission> all = new ArrayList<Submission>();
 
-        for (Iterator<ResultsRow> row = results.iterator(); row.hasNext(); ) {
-            Submission s = (Submission) row.next().get(0);
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> resIter = (Iterator) results.iterator();
+        while (resIter.hasNext()) {
+            ResultsRow<?> row = resIter.next();
+            Submission s = (Submission) row.get(0);
             all.add(s);
         }
         // CHECK END
@@ -123,10 +125,11 @@ public class SubmissionsController extends TilesAction
         results = os.execute(q);
 
         // for each class set the values for jsp
-        for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
-            ResultsRow row = iter.next();
+        resIter = (Iterator) results.iterator();
+        while (resIter.hasNext()) {
+            ResultsRow<?> row = resIter.next();
             Submission submission = (Submission) row.get(0);
-            Class feat = (Class) row.get(1);
+            Class<?> feat = (Class<?>) row.get(1);
             Long count = (Long) row.get(2);
 
             Map<String, Long> featureCountMap = submissions.get(submission);
@@ -145,7 +148,7 @@ public class SubmissionsController extends TilesAction
 
         if (!all.isEmpty()) {
             // add to the map all the subs without features
-            Iterator <Submission> it  = all.iterator();
+            Iterator<Submission> it = all.iterator();
             while (it.hasNext()) {
                 submissions.put(it.next(), noFeat);
             }

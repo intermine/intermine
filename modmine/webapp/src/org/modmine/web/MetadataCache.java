@@ -61,7 +61,7 @@ import org.modmine.web.GBrowseParser.GBrowseTrack;
  *
  * @author Richard Smith
  */
-public class MetadataCache
+public final class MetadataCache
 {
     private static final Logger LOG = Logger.getLogger(MetadataCache.class);
 
@@ -83,6 +83,9 @@ public class MetadataCache
 
     private static long lastTrackCacheRefresh = 0;
     private static final long TWO_HOUR = 7200000;
+
+    private MetadataCache() {
+    }
 
     /**
      * Fetch experiment details for display.
@@ -395,7 +398,7 @@ public class MetadataCache
                 }
 
                 if (!difference.isEmpty()) {
-                    List <String> thisUnlocated = new ArrayList<String>();
+                    List<String> thisUnlocated = new ArrayList<String>();
 
                     for (String fType : difference) {
                         thisUnlocated.add(fType);
@@ -450,7 +453,7 @@ public class MetadataCache
      * @param i the donating list
      */
     private static void addToList(List<GBrowseTrack> l, List<GBrowseTrack> i) {
-        Iterator <GBrowseTrack> it  = i.iterator();
+        Iterator<GBrowseTrack> it  = i.iterator();
         while (it.hasNext()) {
             GBrowseTrack thisId = it.next();
             if (!l.contains(thisId)) {
@@ -546,7 +549,7 @@ public class MetadataCache
 
         for (DisplayExperiment exp : getExperiments(os)) {
             for (Submission sub : exp.getSubmissions()) {
-                Map <String, Long> subFeat = subELevels.get(sub.getdCCid());
+                Map<String, Long> subFeat = subELevels.get(sub.getdCCid());
                 if (subFeat != null) {
                     // get the experiment feature map
                     Map<String, Long> expFeat =
@@ -598,8 +601,8 @@ public class MetadataCache
 
     private static void readExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-        Map <String, Map<String, Long>> featureCounts = getExperimentFeatureCounts(os);
-        Map <String, Map<String, Long>> uniqueFeatureCounts = getUniqueExperimentFeatureCounts(os);
+        Map<String, Map<String, Long>> featureCounts = getExperimentFeatureCounts(os);
+        Map<String, Map<String, Long>> uniqueFeatureCounts = getUniqueExperimentFeatureCounts(os);
 
 
         try {
@@ -626,10 +629,11 @@ public class MetadataCache
 
             experimentCache = new HashMap<String, DisplayExperiment>();
 
-            Iterator<ResultsRow<?>> i = results.iterator();
+            @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+                (Iterator) results.iterator();
 
-            while (i.hasNext()) {
-                ResultsRow<?> row = (ResultsRow<?>) i.next();
+            while (iter.hasNext()) {
+                ResultsRow<?> row = (ResultsRow<?>) iter.next();
 
                 Project project = (Project) row.get(0);
                 Experiment experiment = (Experiment) row.get(1);
@@ -731,7 +735,9 @@ public class MetadataCache
             new LinkedHashMap<String, Map<String, Long>>();
 
         // for each classes set the values for jsp
-        for (Iterator<ResultsRow<?>> iter = results.iterator(); iter.hasNext(); ) {
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+            (Iterator) results.iterator();
+        while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
             String expName = (String) row.get(0);
             Class<?> feat = (Class<?>) row.get(1);
@@ -834,10 +840,11 @@ public class MetadataCache
             new LinkedHashMap<String, Map<String, Long>>();
 
         // for each classes set the values for jsp
-        for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
-            ResultsRow row = iter.next();
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter = (Iterator) results.iterator();
+        while (iter.hasNext()) {
+            ResultsRow<?> row = iter.next();
             String expName = (String) row.get(0);
-            Class feat = (Class) row.get(1);
+            Class<?> feat = (Class<?>) row.get(1);
             Long count = (Long) row.get(2);
 
             Map<String, Long> expFeatureCounts = featureCounts.get(expName);
@@ -936,10 +943,13 @@ public class MetadataCache
         Results results = os.execute(superQ);
 
         Map<String, Long> featureCounts = new LinkedHashMap<String, Long>();
-        for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
-            ResultsRow row = iter.next();
 
-            Class feat = (Class) row.get(0);
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+            (Iterator) results.iterator();
+        while (iter.hasNext()) {
+            ResultsRow<?> row = iter.next();
+
+            Class<?> feat = (Class<?>) row.get(0);
             Long count = (Long) row.get(1);
 
             featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
@@ -989,7 +999,9 @@ public class MetadataCache
         Results results = os.execute(q);
 
         // for each classes set the values for jsp
-        for (Iterator<ResultsRow<?>> iter = results.iterator(); iter.hasNext(); ) {
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+            (Iterator) results.iterator();
+        while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
             Submission sub = (Submission) row.get(0);
             Class<?> feat = (Class<?>) row.get(1);
@@ -1053,7 +1065,9 @@ public class MetadataCache
         Results results = os.execute(q);
 
         // for each classes set the values for jsp
-        for (Iterator<ResultsRow<?>> iter = results.iterator(); iter.hasNext(); ) {
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+            (Iterator) results.iterator();
+        while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
             Submission sub = (Submission) row.get(0);
             Class<?> feat = (Class<?>) row.get(1);
@@ -1127,7 +1141,9 @@ public class MetadataCache
         Results results = os.execute(q);
 
         // for each classes set the values for jsp
-        for (Iterator<ResultsRow<?>> iter = results.iterator(); iter.hasNext(); ) {
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+            (Iterator) results.iterator();
+        while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
             Experiment exp = (Experiment) row.get(0);
             Class<?> feat = (Class<?>) row.get(1);
@@ -1221,7 +1237,9 @@ public class MetadataCache
         Results results = os.execute(q);
 
         // for each classes set the values for jsp
-        for (Iterator<ResultsRow<?>> iter = results.iterator(); iter.hasNext(); ) {
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+            (Iterator) results.iterator();
+        while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
             Submission sub = (Submission) row.get(0);
             Class<?> feat = (Class<?>) row.get(1);
@@ -1288,7 +1306,7 @@ public class MetadataCache
             List<String[]> subRep = new ArrayList<String[]>();
             Iterator<?> i = results.iterator();
             while (i.hasNext()) {
-                ResultsRow row = (ResultsRow) i.next();
+                ResultsRow<?> row = (ResultsRow<?>) i.next();
 
                 counter++;
                 Integer dccId = (Integer) row.get(0);
