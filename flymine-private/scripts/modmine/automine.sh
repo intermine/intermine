@@ -437,7 +437,7 @@ echo >> $LOG
 echo -n "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
 
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
-$DBPW -noupdate cvterm,dbxref,db,cv,feature $1 
+$DBPW -noupdate cvterm,dbxref,db,cv,feature -cache feature=1 $1 
 
 exitstatus=$?
 
