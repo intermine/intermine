@@ -89,7 +89,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
          <c:set var="selectedValue" value="${dec.selectedValue}" />
        </c:if>
 
-        <table border="0" cellspacing="5" cellpadding="1" border="0" class="noborder">
+        <table border="0" cellspacing="2" cellpadding="1" border="0" class="noborder">
           <tr>
             <!--  constraint op -->
             <c:choose>
