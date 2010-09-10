@@ -78,7 +78,7 @@ jQuery(document).ready(function(){
                 </c:if></div></td>
               </tr>
             </table>
-              <table>
+              <table cellspacing="4">
               <tr>
               <td class="templateConstraintOptional" rowspan="0">
                 <div>
@@ -139,9 +139,9 @@ jQuery(document).ready(function(){
               </c:when>
               <c:otherwise>
               <%-- operator --%>
-                  <div style="float:left;">
                   <c:choose>
                   <c:when test="${!dec.lookup}">
+                    <div style="float:left;margin-right:5px;">
                     <html:select property="attributeOps(${index})" style="padding-right: 10px" onchange="onChangeAttributeOps(${index});">
                       <c:forEach items="${dec.validOps}" var="op">
                       <option value="${op.property}"
@@ -150,17 +150,16 @@ jQuery(document).ready(function(){
                       </option>
                     </c:forEach>
                     </html:select>
+                    </div>
                    </c:when>
                    <c:otherwise>
+                   
                    <html:hidden property="attributeOp" styleId="attribute5" value="${dec.lookupOp.property}" disabled="false" />
                    <html:hidden styleId="attributeOps(${index})" property="attributeOps(${index})" value="${dec.lookupOp.property}"/>
-                   <label class="marg">
                    <fmt:message key="query.lookupConstraintLabel" />&nbsp;<%-- LOOKUP: --%>
-                   </label>
                    </c:otherwise>
                    </c:choose>
-                  </div>
-               <%-- if can be multi value --%>
+                   <%-- if can be multi value --%>
                <c:if test="${!empty dec.possibleValues}">
                    <html:hidden property="multiValueAttribute(${index})"/>
                    <html:select property="multiValues(${index})" multiple="true" size="4" style="padding-right: 10px" onchange="updateMultiValueAttribute(${index});">
