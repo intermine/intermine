@@ -40,7 +40,7 @@ public class KeggIdentifiersConverter extends BioFileConverter
      * @param model the Model
      */
     public KeggIdentifiersConverter(ItemWriter writer, Model model) {
-        super(writer, model, "GenomeNet", "KEGG PATHWAY");
+        super(writer, model, "GenomeNet", "KEGG PATHWAY", null);
     }
 
     /**
