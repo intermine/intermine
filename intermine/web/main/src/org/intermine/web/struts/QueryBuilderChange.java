@@ -288,6 +288,9 @@ public class QueryBuilderChange extends DispatchAction
         HttpSession session = request.getSession();
         PathQuery query = SessionMethods.getQuery(session);
         TemplateQuery template = new TemplateQuery("", "", "", query);
+        for (PathConstraint con : query.getConstraints().keySet()) {
+            template.setEditable(con, true);
+        }
         SessionMethods.loadQuery(template, session, response);
         session.setAttribute(Constants.NEW_TEMPLATE, Boolean.TRUE);
         session.removeAttribute(Constants.EDITING_TEMPLATE);
