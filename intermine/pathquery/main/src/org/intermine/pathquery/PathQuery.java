@@ -2077,21 +2077,20 @@ public class PathQuery implements Cloneable
      */
     protected synchronized void sortConstraints(List<PathConstraint> listToSortBy) {
         ConstraintComparator comparator = new ConstraintComparator(listToSortBy);
-        TreeMap<PathConstraint, String> orderedConstraints = 
+        TreeMap<PathConstraint, String> orderedConstraints =
             new TreeMap<PathConstraint, String>(comparator);
         orderedConstraints.putAll(constraints);
         constraints = new LinkedHashMap<PathConstraint, String>(orderedConstraints);
     }
-    
-    
-    private class ConstraintComparator implements Comparator<PathConstraint> {
+
+    private class ConstraintComparator implements Comparator<PathConstraint>
+    {
         private List<PathConstraint> listToSortBy;
-        
+
         public ConstraintComparator (List<PathConstraint> listToSortBy) {
             this.listToSortBy = listToSortBy;
         }
-        
-        @Override
+
         public int compare(PathConstraint c1, PathConstraint c2) {
             if (listToSortBy.contains(c1) && listToSortBy.contains(c2)) {
                 return listToSortBy.indexOf(c1) - listToSortBy.indexOf(c2);
@@ -2099,7 +2098,7 @@ public class PathQuery implements Cloneable
             return 0;
         }
     }
-    
+
     /**
      * Converts this object into a rudimentary String format, containing all the data.
      *
