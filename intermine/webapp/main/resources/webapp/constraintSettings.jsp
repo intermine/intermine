@@ -79,7 +79,7 @@
       
     </table>
     </div>
-  <html:submit property="template">
+  <html:submit property="template" style="float:right; margin-bottom:10px;">
             Update
   </html:submit>
 </div>
