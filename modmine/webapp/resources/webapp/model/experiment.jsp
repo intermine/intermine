@@ -57,6 +57,7 @@ input.submit {
          jQuery('#allSub').css("opacity", 1);
      }
 
+     /*
      function updateCheckStatus(status)
      {
          var statTag;
@@ -80,6 +81,36 @@ input.submit {
          if (statTag) {
            jQuery("#allSub").attr('checked', true);
            jQuery("#allSub").css("opacity", 0.5); }
+         else {
+           jQuery("#allSub").attr('checked', true);
+           jQuery("#allSub").css("opacity", 1);}
+         }
+     }
+     */
+
+     function updateCheckStatus(status)
+     {
+         var statTag;
+         if (!status) { //unchecked
+           jQuery(".aSub").each(function() {
+             if (this.checked) {statTag=true;}
+           });
+
+           if (statTag) {
+            jQuery("#allSub").removeAttr('checked');
+            jQuery("#allSub").css("opacity", 1);}
+           else {
+            jQuery("#allSub").removeAttr('checked');
+            jQuery("#allSub").css("opacity", 1);}
+         }
+         else { //checked
+           jQuery(".aSub").each(function() {
+             if (!this.checked) {statTag=true;}
+         });
+
+         if (statTag) {
+           jQuery("#allSub").removeAttr('checked');
+            jQuery("#allSub").css("opacity", 1);}
          else {
            jQuery("#allSub").attr('checked', true);
            jQuery("#allSub").css("opacity", 1);}

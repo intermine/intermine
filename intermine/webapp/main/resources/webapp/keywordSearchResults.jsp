@@ -16,7 +16,7 @@
 
 <style type="text/css">
 input.submit {
-  color: #008AB8;
+  color: #927f97;
   font: bold 84% 'trebuchet ms',helvetica,sans-serif;
   background-color: #fed;
   border:1px solid;
@@ -60,7 +60,7 @@ input.submit {
          jQuery('#allItems').css("opacity", 1);
      }
 
-     function updateCheckStatus(status)
+     /* function updateCheckStatus(status)
      {
          var statTag;
          if (!status) { //unchecked
@@ -83,6 +83,35 @@ input.submit {
          if (statTag) {
            jQuery("#allItems").attr('checked', true);
            jQuery("#allItems").css("opacity", 0.5); }
+         else {
+           jQuery("#allItems").attr('checked', true);
+           jQuery("#allItems").css("opacity", 1);}
+         }
+     } */
+
+     function updateCheckStatus(status)
+     {
+         var statTag;
+         if (!status) { //unchecked
+           jQuery(".item").each(function() {
+             if (this.checked) {statTag=true;}
+           });
+
+           if (statTag) {
+            jQuery("#allItems").removeAttr('checked');
+            jQuery("#allItems").css("opacity", 1);}
+           else {
+            jQuery("#allItems").removeAttr('checked');
+            jQuery("#allItems").css("opacity", 1);}
+         }
+         else { //checked
+           jQuery(".item").each(function() {
+             if (!this.checked) {statTag=true;}
+         });
+
+         if (statTag) {
+           jQuery("#allItems").removeAttr('checked');
+            jQuery("#allItems").css("opacity", 1);}
          else {
            jQuery("#allItems").attr('checked', true);
            jQuery("#allItems").css("opacity", 1);}
@@ -336,17 +365,18 @@ input.submit {
             </c:forEach>
       </div>
 
+  <div class="resultTableContainer">
+
     <c:if test="${!empty searchFacetValues['Category']}">
       <form action="/${WEB_PROPERTIES['webapp.path']}/saveFromIdsToBag.do" id="saveFromIdsToBagForm" method="POST">
           <input type="hidden" id="type" name="type" value="${searchFacetValues['Category']}"/>
           <input type="hidden" id="ids" name="ids" value=""/>
           <input type="hidden" name="source" value="keywordSearchResults"/>
           <input type="hidden" name="newBagName" value="new_${searchFacetValues['Category']}_list"/>
-          <div align="left" style="padding:10px;"><input type="submit" class="submit" value="CREATE LIST"/></div>
+          <div align="left" style="position:relative; top:1em; padding-bottom:5px;"><input type="submit" class="submit" value="CREATE LIST"/></div>
       </form>
     </c:if>
 
-      <div class="resultTableContainer">
         <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
         <tr>
 

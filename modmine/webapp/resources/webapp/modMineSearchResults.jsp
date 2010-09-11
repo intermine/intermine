@@ -59,7 +59,7 @@ input.submit {
          jQuery('#allSub').css("opacity", 1);
      }
 
-     function updateCheckStatus(status)
+     /* function updateCheckStatus(status)
      {
          var statTag;
          if (!status) { //unchecked
@@ -86,6 +86,35 @@ input.submit {
            jQuery("#allSub").attr('checked', true);
            jQuery("#allSub").css("opacity", 1);}
          }
+     } */
+
+     function updateCheckStatus(status)
+     {
+         var statTag;
+         if (!status) { //unchecked
+           jQuery(".aSub").each(function() {
+             if (this.checked) {statTag=true;}
+           });
+
+           if (statTag) {
+            jQuery("#allSub").removeAttr('checked');
+            jQuery("#allSub").css("opacity", 1);}
+           else {
+            jQuery("#allSub").removeAttr('checked');
+            jQuery("#allSub").css("opacity", 1);}
+         }
+         else { //checked
+           jQuery(".aSub").each(function() {
+             if (!this.checked) {statTag=true;}
+         });
+
+         if (statTag) {
+           jQuery("#allSub").removeAttr('checked');
+            jQuery("#allSub").css("opacity", 1);}
+         else {
+           jQuery("#allSub").attr('checked', true);
+           jQuery("#allSub").css("opacity", 1);}
+         }
      }
 
 </script>
@@ -108,7 +137,7 @@ Search Term: <c:out value="${searchTerm}"/>
       <input type="hidden" id="ids" name="ids" value=""/>
       <input type="hidden" name="source" value="modMineSearchResults"/>
       <input type="hidden" name="newBagName" value="new_submission_list"/>
-      <div style="padding:10px;"><input type="submit" class="submit" value="CREATE LIST"/></div>
+      <div style="position:relative; top:15px; padding:20px;"><input type="submit" class="submit" value="CREATE LIST"/></div>
     </form>
 </c:if>
 
