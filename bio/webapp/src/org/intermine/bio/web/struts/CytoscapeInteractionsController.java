@@ -141,28 +141,9 @@ public class CytoscapeInteractionsController extends TilesAction
         List<String> keyList = new ArrayList<String>(keySet);
 
         // Query database
-        Results results = dbQuery(keyList, im);
-        if (results == null) {
+        interactionSet = queryInteractions(keyList, im, interactionSet);
+        if (interactionSet == null) {
             return Collections.EMPTY_SET;
-        }
-
-        // Handle results
-        for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
-            ResultsRow<?> row = (ResultsRow<?>) iter.next();
-
-            // String genePID = (String) row.get(0);
-            String geneSymbol = (String) row.get(1);
-            String interactionType = (String) row.get(2);
-            // String interactingGenePID = (String) row.get(3);
-            String interactingGeneSymbol = (String) row.get(4);
-            String dataSourceName = (String) row.get(5);
-            String interactionShortName = (String) row.get(6);
-
-//            LOG.info("Interaction Results: " + geneSymbol + "-"
-//                    + interactionType + "-" + interactingGeneSymbol);
-
-            interactionSet = addToInteractionSet(geneSymbol, interactionType,
-                    interactingGeneSymbol, dataSourceName, interactionShortName, interactionSet);
         }
 
         return interactionSet;
@@ -180,6 +161,7 @@ public class CytoscapeInteractionsController extends TilesAction
         Query q = new Query();
 
         QueryClass qcGene = new QueryClass(Gene.class);
+        QueryClass qcInteractingGene = new QueryClass(Gene.class);
         QueryClass qcInteraction = null;
 
         // Test if Interaction class in the core model
@@ -191,14 +173,15 @@ public class CytoscapeInteractionsController extends TilesAction
         }
 
         // result columns
-        QueryField qfClass = new QueryField(qcInteraction, "class");
+        QueryField qfInteractingGenePID = new QueryField(qcInteractingGene, "primaryIdentifiers");
 
         q.setDistinct(true);
 
-        q.addToSelect(qfClass);
+        q.addToSelect(qfInteractingGenePID);
 
         q.addFrom(qcGene);
         q.addFrom(qcInteraction);
+        q.addFrom(qcInteractingGene);
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
@@ -208,10 +191,16 @@ public class CytoscapeInteractionsController extends TilesAction
         cs.addConstraint(sc);
 
         // gene.interactions
-        QueryCollectionReference cr = new QueryCollectionReference(qcGene,
+        QueryCollectionReference cr1 = new QueryCollectionReference(qcGene,
                 "interactions");
-        cs.addConstraint(new ContainsConstraint(cr, ConstraintOp.CONTAINS,
+        cs.addConstraint(new ContainsConstraint(cr1, ConstraintOp.CONTAINS,
                 qcInteraction));
+
+        // gene.interations.genePID
+        QueryCollectionReference cr2 = new QueryCollectionReference(
+                qcInteraction, "interactingGenes");
+        cs.addConstraint(new ContainsConstraint(cr2, ConstraintOp.CONTAINS,
+                qcInteractingGene));
 
         q.setConstraint(cs);
 
@@ -237,7 +226,8 @@ public class CytoscapeInteractionsController extends TilesAction
      * @param im
      * @return query results
      */
-    private Results dbQuery(List<String> keys, InterMineAPI im) {
+    private Set<CytoscapeNetworkData> queryInteractions(List<String> keys,
+            InterMineAPI im, Set<CytoscapeNetworkData> interactionSet) {
 
         // IQL
         Query q = new Query();
@@ -324,9 +314,27 @@ public class CytoscapeInteractionsController extends TilesAction
         q.setConstraint(cs);
 
         Results results = im.getObjectStore().execute(q);
-        LOG.info(results);
 
-        return results;
+        // Handle results
+        for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+            ResultsRow<?> row = (ResultsRow<?>) iter.next();
+
+            // String genePID = (String) row.get(0);
+            String geneSymbol = (String) row.get(1);
+            String interactionType = (String) row.get(2);
+            // String interactingGenePID = (String) row.get(3);
+            String interactingGeneSymbol = (String) row.get(4);
+            String dataSourceName = (String) row.get(5);
+            String interactionShortName = (String) row.get(6);
+
+//            LOG.info("Interaction Results: " + geneSymbol + "-"
+//                    + interactionType + "-" + interactingGeneSymbol);
+
+            interactionSet = addToInteractionSet(geneSymbol, interactionType,
+                    interactingGeneSymbol, dataSourceName, interactionShortName, interactionSet);
+        }
+
+        return interactionSet;
     }
 
     /**
