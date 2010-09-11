@@ -209,12 +209,8 @@ public class CytoscapeInteractionsController extends TilesAction
         for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
             ResultsRow<?> row = (ResultsRow<?>) iter.next();
 
-            org.intermine.model.bio.Interaction  aInteraction =
-                (org.intermine.model.bio.Interaction) row.get(0);
-            Set<Gene> interactingGenes = aInteraction.getInteractingGenes();
-            for (Gene aInteractingGene : interactingGenes) {
-                interactingGeneSet.add(aInteractingGene.getPrimaryIdentifier());
-            }
+            String  aInteractingGene = (String) row.get(0);
+            interactingGeneSet.add(aInteractingGene);
         }
 
         return interactingGeneSet;
