@@ -10,11 +10,114 @@
 
 <html:xhtml/>
 
+        <style type="text/css">
+
+            span.tree_tee .ver
+           {
+            BACKGROUND-COLOR: #000000;
+               COLOR: #000000;
+               FONT-SIZE: 1px;
+               padding-top:10px;
+               padding-bottom:15px;
+               padding-right:0px;
+               padding-left:0px;
+               position:relative;
+               top:-4px;
+               left: 8px;
+           }
+
+           .tree_tee .hor
+           {
+             BACKGROUND-COLOR: #000000;
+               COLOR: #000000;
+               FONT-SIZE: 1px;
+               padding-top:0px;
+               padding-bottom:0px;
+               padding-right:0px;
+               padding-left:8px;
+               position:relative;
+               top:-4px;
+               left:3px;
+
+           }
+
+           .tree_straight .ver
+           {
+               BACKGROUND-COLOR: #000000;
+               COLOR: #000000;
+               FONT-SIZE: 1px;
+               padding-top:10px;
+               padding-bottom:15px;
+               padding-right:0px;
+               padding-left:0px;
+               position:relative;
+               top:-4px;
+               left:8px;
+
+           }
+
+           .tree_straight .hor
+           {
+             color: #ffffff;
+           }
+
+           .tree_ell .ver
+           {
+               BACKGROUND-COLOR: #000000;
+               COLOR: #000000;
+               FONT-SIZE: 1px;
+               padding-top:10px;
+               padding-bottom:0px;
+               padding-right:0px;
+               padding-left:0px;
+               position:relative;
+               top:-4px;
+               left:8px;
+
+           }
+
+           .tree_ell .hor
+           {
+               BACKGROUND-COLOR: #000000;
+               COLOR: #000000;
+               FONT-SIZE: 1px;
+               padding-top:0px;
+               padding-bottom:0px;
+               padding-right:0px;
+               padding-left:8px;
+               position:relative;
+               top:-4px;
+               left:3px;
+           }
+
+           .tree_blank .ver
+           {
+              BACKGROUND-COLOR: #ffffff;
+              FONT-SIZE: 1px;
+              padding-right:5px;
+              color: #ffffff;
+           }
+
+           .tree_blank .hor
+           {
+              BACKGROUND-COLOR: #ffffff;
+              FONT-SIZE: 1px;
+              padding-right:0px;
+              color: #ffffff;
+           }
+
+        </style>
+
     <div class="browserline">
       <c:if test="${node.indentation > 0}">
         &nbsp;&nbsp;&nbsp;&nbsp;
         <c:forEach var="structure" items="${node.structure}">
-          <img src="images/tree_${structure}.png" align="top" height="16" width="15"/>
+          <!-- <img src="images/tree_${structure}.png" align="top" height="16" width="15"/> -->
+          <span class="tree_${structure}">
+            <span class="ver">a</span>
+            <span class="hor">.</span>
+          </span>
+
         </c:forEach>
       </c:if>
       <a name="${node.pathString}"></a>
@@ -23,7 +126,7 @@
         <span class="nullStrike">
       </c:if>
       <%-- construct the real path for this node --%>
-      <c:set var="fullpath" value="${node.pathString}"/> 
+      <c:set var="fullpath" value="${node.pathString}"/>
       <c:choose>
         <c:when test="${node.reverseReference && node.reference}">
         </c:when>
@@ -144,7 +247,7 @@
         <c:choose>
           <c:when test="${isNull || !node.canCreateConstraint}">
             <img class="arrow" src="images/constrain-disabled.gif" width="70"
-                 height="13" title="constrain"/> 
+                 height="13" title="constrain"/>
           </c:when>
           <c:otherwise>
             <html:link action="/queryBuilderChange?method=newConstraint&path=${node.pathString}" title="${addConstraintToTitle}"
