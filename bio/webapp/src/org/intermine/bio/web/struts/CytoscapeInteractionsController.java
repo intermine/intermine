@@ -29,9 +29,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
@@ -46,8 +44,10 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -94,12 +94,16 @@ public class CytoscapeInteractionsController extends TilesAction
                 // Add the interaction network for this gene to the whole
                 // network
                 interactionSet = createNetwork(gene, im, interactionSet);
+                if (interactionSet.isEmpty()) { return null; }
+
                 theNetwork = makeSIFString(interactionSet);
 
             }
         } else if (object instanceof Gene) {
             Gene gene = (Gene) object;
             interactionSet = createNetwork(gene, im, interactionSet);
+            if (interactionSet.isEmpty()) { return null; }
+
             theNetwork = makeSIFString(interactionSet);
         }
 
@@ -119,47 +123,29 @@ public class CytoscapeInteractionsController extends TilesAction
      * @param interactionSet A set of CytoscapeNetworkData
      * @return the network as a string in SIF format
      */
+    @SuppressWarnings("unchecked")
     private Set<CytoscapeNetworkData> createNetwork(Gene gene, InterMineAPI im,
             Set<CytoscapeNetworkData> interactionSet) {
 
         // A list of genes including the hub and its interacting genes
-        List<String> keys = new ArrayList<String>();
-        keys.add(gene.getPrimaryIdentifier());
-        ClassDescriptor cd = model.getClassDescriptorByName("Gene");
+        Set<String> keySet = new HashSet<String>();
+        keySet.add(gene.getPrimaryIdentifier());
 
-        // interactions not in the model
-        if (cd.getCollectionDescriptorByName("interactions") == null) {
-            return Collections.EMPTY_SET;
-        }
-        Object interactions = null;
-        try {
-            interactions = gene.getFieldValue("interactions");
-        } catch (IllegalAccessException e) {
+        // get all the genes that interact with the hub gene
+        Set<String> interactingGeneSet = findInteractingGenes(gene.getPrimaryIdentifier(), im);
+        if (interactingGeneSet == null) {
             return Collections.EMPTY_SET;
         }
 
-        cd = model.getClassDescriptorByName("Interaction");
-        if (cd == null) {
-            return Collections.EMPTY_SET;
-        }
-        if (cd.getCollectionDescriptorByName("interactingGenes") == null) {
-            return Collections.EMPTY_SET;
-        }
-        for (Object aInteraction : (Set) interactions) {
-            Object interactingGenes = null;
-            try {
-                interactingGenes = ((FastPathObject) aInteraction).getFieldValue("interactingGenes");
-            } catch (IllegalAccessException e) {
-                return Collections.EMPTY_SET;
-            }
-
-            for (Gene aInteractingGene : (Set<Gene>) interactingGenes) {
-                keys.add(aInteractingGene.getPrimaryIdentifier());
-            }
-        }
+        keySet.addAll(interactingGeneSet);
+        List<String> keyList = new ArrayList<String>(keySet);
 
         // Query database
-        Results results = dbQuery(keys, im);
+        Results results = dbQuery(keyList, im);
+        if (results == null) {
+            return Collections.EMPTY_SET;
+        }
+
         // Handle results
         for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
             ResultsRow<?> row = (ResultsRow<?>) iter.next();
@@ -180,6 +166,69 @@ public class CytoscapeInteractionsController extends TilesAction
         }
 
         return interactionSet;
+    }
+
+    /**
+     * Find genes that interact with the hub gene
+     * @param gene hub gene
+     * @return a list of genes
+     */
+    private Set<String> findInteractingGenes(String genePID, InterMineAPI im) {
+        Set<String> interactingGeneSet = new HashSet<String>();
+
+        // IQL
+        Query q = new Query();
+
+        QueryClass qcGene = new QueryClass(Gene.class);
+        QueryClass qcInteraction = null;
+
+        // Test if Interaction class in the core model
+        try {
+            qcInteraction =
+                new QueryClass(Class.forName(model.getPackageName() + ".Interaction"));
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+
+        // result columns
+        QueryField qfClass = new QueryField(qcInteraction, "class");
+
+        q.setDistinct(true);
+
+        q.addToSelect(qfClass);
+
+        q.addFrom(qcGene);
+        q.addFrom(qcInteraction);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryField qfGenePID = new QueryField(qcGene, "primaryIdentifier");
+        SimpleConstraint sc = new SimpleConstraint(qfGenePID, ConstraintOp.EQUALS,
+                new QueryValue(genePID));
+        cs.addConstraint(sc);
+
+        // gene.interactions
+        QueryCollectionReference cr = new QueryCollectionReference(qcGene,
+                "interactions");
+        cs.addConstraint(new ContainsConstraint(cr, ConstraintOp.CONTAINS,
+                qcInteraction));
+
+        q.setConstraint(cs);
+
+        Results results = im.getObjectStore().execute(q);
+
+        for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+            ResultsRow<?> row = (ResultsRow<?>) iter.next();
+
+            org.intermine.model.bio.Interaction  aInteraction =
+                (org.intermine.model.bio.Interaction) row.get(0);
+            Set<Gene> interactingGenes = aInteraction.getInteractingGenes();
+            for (Gene aInteractingGene : interactingGenes) {
+                interactingGeneSet.add(aInteractingGene.getPrimaryIdentifier());
+            }
+        }
+
+        return interactingGeneSet;
     }
 
     /**
