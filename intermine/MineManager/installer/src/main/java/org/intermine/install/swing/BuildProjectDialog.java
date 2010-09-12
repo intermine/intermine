@@ -174,7 +174,7 @@ public class BuildProjectDialog extends StandardJDialog
         new JTextField(
                 new RestrictedInputDocument(
                     RestrictedInputDocument.UPPER_CASE
-                    + RestrictedInputDocument.DIGITS + "_", true), "SQL_ASCII", 25);
+                    + RestrictedInputDocument.DIGITS + "_", true), "UTF8", 25);
     /**
      * Destination database text field label.
      * @serial
