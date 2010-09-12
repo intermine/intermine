@@ -1,7 +1,5 @@
 package org.intermine.pathquery;
 
-import junit.framework.TestCase;
-
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,10 +8,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+
+import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -907,6 +909,57 @@ public class PathQueryUnitTest extends TestCase
         }
     }
 
+    
+    public void testSortConstraints() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery q = new PathQuery(model);
+        q.addViews("Department.name");
+        PathConstraintAttribute a = Constraints.eq("Deparment.name", "a");
+        q.addConstraints(a);
+        PathConstraintAttribute b = Constraints.eq("Deparment.name", "b");
+        q.addConstraints(b);
+        PathConstraintAttribute c = Constraints.eq("Deparment.name", "c");
+        q.addConstraints(c);
+
+        // original order should be as added to query
+        List<PathConstraint> expected = makeConstraintOrder(a, b, c);
+        assertEquals(expected, readActualConstraintOrder(q));
+
+        // any constraints not in list to sort by should move to start
+        q.sortConstraints(makeConstraintOrder(c, a));
+        expected = makeConstraintOrder(b, c, a);
+        assertEquals(expected, readActualConstraintOrder(q));
+
+        q.sortConstraints(makeConstraintOrder(c, b));
+        expected = makeConstraintOrder(a, c, b);
+        assertEquals(expected, readActualConstraintOrder(q));
+
+        q.sortConstraints(makeConstraintOrder(c, a, b));
+        expected = makeConstraintOrder(c, a, b);
+        assertEquals(expected, readActualConstraintOrder(q));
+
+        // neither a or c in list, order of a and c should be consistent but not predictable. b last
+        q.sortConstraints(makeConstraintOrder(b));
+        expected = makeConstraintOrder(a, c, b);
+        assertEquals(expected, readActualConstraintOrder(q));
+}
+
+    private List<PathConstraint> makeConstraintOrder(PathConstraint... cons) {
+        ArrayList<PathConstraint> expected = new ArrayList<PathConstraint>();
+        for (PathConstraint con : cons) {
+            expected.add(con);
+        }
+        return expected;
+    }
+
+    private List<PathConstraint> readActualConstraintOrder(PathQuery q) {
+        ArrayList<PathConstraint> actual = new ArrayList<PathConstraint>();
+        for (Map.Entry<PathConstraint, String> entry : q.getConstraints().entrySet()) {
+            actual.add(entry.getKey());
+        }
+        return actual;
+    }
+    
     public static class PathConstraintInvalid extends PathConstraint
     {
         public PathConstraintInvalid(String path) {

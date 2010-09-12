@@ -2092,10 +2092,13 @@ public class PathQuery implements Cloneable
         }
 
         public int compare(PathConstraint c1, PathConstraint c2) {
-            if (listToSortBy.contains(c1) && listToSortBy.contains(c2)) {
-                return listToSortBy.indexOf(c1) - listToSortBy.indexOf(c2);
-            }
-            return 0;
+            // if neither in list we don't care how they compare, but want a consistent order
+            if (!listToSortBy.contains(c1) && !listToSortBy.contains(c2)) {
+                return -1;
+            }    
+            // otherwise put lowest index first, if not in list indexOf() will return -1 so
+            // constraints not in list will move to start
+            return (listToSortBy.indexOf(c1) < listToSortBy.indexOf(c2)) ? -1 : 1;
         }
     }
 
