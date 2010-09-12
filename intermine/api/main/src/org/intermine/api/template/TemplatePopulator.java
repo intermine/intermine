@@ -58,24 +58,29 @@ public final class TemplatePopulator
         TemplateQuery template = origTemplate.clone();
         template.setEdited(true);
 
+        
         for (String editablePath : template.getEditablePaths()) {
             List<PathConstraint> constraints = template.getEditableConstraints(editablePath);
             List<TemplateValue> values = newConstraints.get(editablePath);
 
+            // TODO this is a temporary fix, this section of code should be re-written without
+            // editablePaths.  Each TemplateValue has a reference to a PathConstraint.
             if (values == null) {
-                throw new TemplatePopulatorException("There are no specified constraint values "
-                        + "for path " + editablePath);
+                values = new ArrayList<TemplateValue>();
             }
-            if (values.size() == 0) {
-                for (PathConstraint con : constraints) {
-                    template.removeConstraint(con);
-                }
-                continue;
-            }
+            
             if (constraints.size() < values.size()) {
                 throw new TemplatePopulatorException("There were more values provided than "
                         + "  there are editable constraints on the path " + editablePath);
             }
+
+//            if (values.size() == 0) {
+//                for (PathConstraint con : constraints) {
+//                    template.removeConstraint(con);
+//                }
+//                continue;
+//            }
+
 
             for (PathConstraint con : constraints) {
                 boolean found = false;
@@ -92,6 +97,12 @@ public final class TemplatePopulator
                     }
                 }
                 if (!found) {
+                    if (template.getSwitchOffAbility(con).equals(SwitchOffAbility.LOCKED)) {
+                        throw new TemplatePopulatorException("No value provided for constraint on"
+                                + " path: " + con.getPath() + ", code: "
+                                + template.getConstraints().get(con)
+                                + " but this constraint is not optional.");
+                    }
                     template.removeConstraint(con);
                 }
             }
