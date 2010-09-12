@@ -178,7 +178,7 @@
                       style="background: #ffffc8" 
                       value="${dec.selectedValue}"
                       onKeyDown="getId(this.id); isEnter(event);"
-                      onKeyUp="readInput(event, '${dec.path.type}', '${dec.path.fieldName}');"
+                      onKeyUp="readInput(event, '${dec.path.lastClassName}', '${dec.path.fieldName}');"
                       onMouseOver="setMouseOver(${index});" 
                       onMouseOut="setMouseOver(0);"
                       onBlur="if(MOUSE_OVER != ${index}) { removeList(); }" />

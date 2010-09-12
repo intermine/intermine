@@ -169,7 +169,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                     <input name="attributeValue" id="attribute6" size="55"
                       style="background: #ffffc8" value="${dec.selectedValue}"
                       onKeyDown="getId(this.id); isSubmit(event);"
-                      onKeyUp="readInput(event, '${dec.path.type}', '${dec.path.fieldName}');"
+                      onKeyUp="readInput(event, '${dec.path.lastClassName}', '${dec.path.fieldName}');"
                       onMouseOver="setMouseOver(1);" onMouseOut="setMouseOver(0);"
                       onBlur="if(MOUSE_OVER != 1) { removeList(); }" />
                     <iframe width="100%" height="0" id="attribute6_IEbugFixFrame" marginheight="0"

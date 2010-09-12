@@ -147,6 +147,15 @@ public class DisplayPath
         }
     }
 
+    /**
+     * Fetch the unqualified class name of the final class on this path, if the path represents an
+     * attribute this will be the parent class of that attribute.  For example Company.name will
+     * return Company.
+     * @return an unqualified class name
+     */
+    public String getLastClassName() {
+        return path.getLastClassDescriptor().getUnqualifiedName();
+    }
 
     /**
      * Returns a representation of the Path as a String, with class constraint markers.  eg.
