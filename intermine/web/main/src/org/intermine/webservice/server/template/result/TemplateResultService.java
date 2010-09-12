@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
@@ -53,6 +54,8 @@ public class TemplateResultService extends QueryResultService
     /** Name of name parameter **/
     public static final String NAME_PARAMETER = "name";
 
+    private static final Logger LOG = Logger.getLogger(TemplateResultService.class);
+    
     /**
      * Construct with an InterMineAPI.
      * @param im the InterMine API
@@ -87,7 +90,9 @@ public class TemplateResultService extends QueryResultService
             populatedTemplate =
                 TemplatePopulator.getPopulatedTemplate(template, templateValues);
         } catch (TemplatePopulatorException e) {
-            throw new BadRequestException("Error in applying constraint values to template: "
+        	e.printStackTrace();
+            LOG.error("Error populating template: " + template.getName() + ". " + e);
+        	throw new BadRequestException("Error in applying constraint values to template: "
                     + template.getName(), e);
         }
         if (populatedTemplate.isValid()) {
@@ -170,9 +175,7 @@ public class TemplateResultService extends QueryResultService
                     + ((code != null) ? " and code " + code : "")
                     + " in the request, this constraint is required.");
         } else {
-            // no value was provided but the constraint was optional so create a dummy value
-            // that won't be included in the final query that is executed.
-            addToValuesMap(values, createDummyTemplateValue(con));
+            // no value was provided but the constraint was optional so we can do nothing
         }
     }
 
