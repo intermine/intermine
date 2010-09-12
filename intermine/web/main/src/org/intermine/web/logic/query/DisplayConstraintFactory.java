@@ -13,13 +13,11 @@ package org.intermine.web.logic.query;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.api.bag.BagManager;
-import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.api.template.TemplateSummariser;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
@@ -29,26 +27,18 @@ import org.intermine.web.autocompletion.AutoCompleter;
 
 public class DisplayConstraintFactory
 {
-    private ObjectStoreSummary oss;
-    private Map<String, List<FieldDescriptor>> classKeys;
-    private BagQueryConfig bagQueryConfig;
+    private InterMineAPI im;    
     private AutoCompleter ac;
-    private BagManager bagManager;
 
-    public DisplayConstraintFactory(AutoCompleter ac, ObjectStoreSummary oss,
-            BagQueryConfig bagQueryConfig, BagManager bagManager,
-            Map<String, List<FieldDescriptor>> classKeys) {
-        this.oss = oss;
-        this.classKeys = classKeys;
-        this.bagQueryConfig = bagQueryConfig;
+    public DisplayConstraintFactory(InterMineAPI im, AutoCompleter ac) {
+        this.im = im;
         this.ac = ac;
-        this.bagManager = bagManager;
     }
 
 
     public DisplayConstraint get(Path path, Profile profile, PathQuery query) {
-        return new DisplayConstraint(path, profile, query, ac, oss,
-                bagQueryConfig, classKeys, bagManager);
+        return new DisplayConstraint(path, profile, query, ac, im.getObjectStoreSummary(),
+                im.getBagQueryConfig(), im.getClassKeys(), im.getBagManager());
 
     }
 
@@ -57,6 +47,7 @@ public class DisplayConstraintFactory
 
         Path path = query.makePath(con.getPath());
         String label = null;
+        List<Object> templateSummary = null;
 
         boolean editableInTemplate = false;
         SwitchOffAbility switchOffAbility = null;
@@ -65,8 +56,13 @@ public class DisplayConstraintFactory
             editableInTemplate = template.isEditable(con);
             label = template.getConstraintDescription(con);
             switchOffAbility = template.getSwitchOffAbility(con);
+            TemplateSummariser templateSummariser = im.getTemplateSummariser();
+            if (templateSummariser.isSummarised(template)) {
+                templateSummary = templateSummariser.getPossibleValues(template, con.getPath());
+            }
         }
         return new DisplayConstraint(path, con, label, query.getConstraints().get(con),
-                editableInTemplate, switchOffAbility, profile, query, ac, oss, bagQueryConfig, classKeys, bagManager);
+                editableInTemplate, switchOffAbility, profile, query, ac, im.getObjectStoreSummary(),
+                im.getBagQueryConfig(), im.getClassKeys(), im.getBagManager(), templateSummary);
     }
 }

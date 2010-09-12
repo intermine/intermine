@@ -103,9 +103,7 @@ public class QueryBuilderConstraintController extends TilesAction
     private DisplayConstraintFactory getFactory(HttpSession session) {
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
         AutoCompleter ac = SessionMethods.getAutoCompleter(session.getServletContext());
-        DisplayConstraintFactory factory =
-            new DisplayConstraintFactory(ac, im.getObjectStoreSummary(),
-                    im.getBagQueryConfig(), im.getBagManager(), im.getClassKeys());
+        DisplayConstraintFactory factory = new DisplayConstraintFactory(im, ac);
         return factory;
     }
 }
