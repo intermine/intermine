@@ -188,11 +188,11 @@ function disableFields(index, disable) {
 }
 
 function onChangeAttributeOps(index, init) {
+	
 	    //LIKE or NOT LIKE
 	    if(document.templateForm["attributeOps(" + index + ")"] != undefined && document.templateForm["attributeOps(" + index + ")"]){
-	    	if (document.templateForm["attributeOps(" + index + ")"].value == '6'
-	        	|| document.templateForm["attributeOps(" + index + ")"].value == '7'
-	        	|| document.templateForm["attributeOps(" + index + ")"].value == '18') {
+			var constraintOpIndex = document.templateForm["attributeOps(" + index + ")"].value;
+	    	if (constraintOpIndex == '6' || constraintOpIndex == '7' || constraintOpIndex == '18') {
 	        	if (document.templateForm["attributeValues(" + index + ")"])
 	    		    document.templateForm["attributeValues(" + index + ")"].style.display = 'inline';
 	        	if (document.templateForm["attributeOptions(" + index + ")"]) 
@@ -201,9 +201,8 @@ function onChangeAttributeOps(index, init) {
 	                document.templateForm["multiValues(" + index + ")"].style.display = 'none';
 	        	if (document.templateForm["multiValueAttribute(" + index + ")"]) 
 	                document.templateForm["multiValueAttribute(" + index + ")"].value = '';
-	        } // IN or NOT IN
-	    	else if (document.templateForm["attributeOps(" + index + ")"].value == '12'
-	        	|| document.templateForm["attributeOps(" + index + ")"].value == '13') {
+	        } // ONE OF or NONE OF
+	    	else if (constraintOpIndex == '21' || constraintOpIndex == '22') {
 	    		if (document.templateForm["multiValues(" + index + ")"]) 
 	    		    document.templateForm["multiValues(" + index + ")"].style.display = 'inline';
 	    		if (document.templateForm["attributeValues(" + index + ")"])

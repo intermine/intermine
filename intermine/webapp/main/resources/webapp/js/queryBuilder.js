@@ -12,17 +12,15 @@ function initConstraint(selectedConstraint) {
 	    //attribute7 options
 	    //LIKE or NOT LIKE or LOOKUP
 	    if (document.getElementById("attribute5")) {
-	    	if (document.getElementById("attribute5").value == '6'
-	            || document.getElementById("attribute5").value == '7'
-	            || document.getElementById("attribute5").value == '18') {
+	    	var constraintOpIndex = document.getElementById("attribute5").value;
+	    	if (constraintOpIndex == '6' || constraintOpIndex == '7' || constraintOpIndex == '18') {
 	    		document.getElementById("attribute8").style.display = 'inline';
 	            if (document.getElementById("attribute7")) 
 	            	document.getElementById("attribute7").style.display = 'none';
 	            if (document.getElementById("multiValue")) 
 	            	document.getElementById("multiValue").style.display = 'none';
 	          } // IN or NOT IN
-	        else if (document.getElementById("attribute5").value == '12'
-	            || document.getElementById("attribute5").value == '13') {
+	        else if (constraintOpIndex == '21' || constraintOpIndex == '22') {
 	            if (document.getElementById("multiValue")) 
 	            	document.getElementById("multiValue").style.display = 'inline';
 	            if(document.getElementById("attribute8"))

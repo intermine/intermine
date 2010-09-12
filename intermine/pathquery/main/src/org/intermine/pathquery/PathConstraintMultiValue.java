@@ -26,7 +26,7 @@ public class PathConstraintMultiValue extends PathConstraint
 {
     /** List of valid ops for this type of constraint */
     public static final Set<ConstraintOp> VALID_OPS = new HashSet<ConstraintOp>(Arrays.asList(
-                ConstraintOp.IN, ConstraintOp.NOT_IN));
+                ConstraintOp.ONE_OF, ConstraintOp.NONE_OF));
     private Collection<String> values;
 
     /**
