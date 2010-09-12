@@ -11,4 +11,5 @@
 <class name="GOEvidenceCode" is-interface="true">
   <attribute name="code" type="java.lang.String" />
 </class>
+<class name="GOTerm" extends="OntologyTerm" is-interface="true"/>
 </classes>
