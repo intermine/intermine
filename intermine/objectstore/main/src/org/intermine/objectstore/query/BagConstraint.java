@@ -28,27 +28,29 @@ public class BagConstraint extends Constraint implements ConstraintWithBag
 
     /**
      * Construct a BagConstraint from a Collection.  Note that the bag isn't copied so it should
-     * not be changed after the Query has been executed.
+     * not be changed after the Query has been executed.  BagConstraint will accept ONE_OF and
+     * NONE_OF as constraint op arguments but will use corresponding IN and NOT_IN.
      *
      * @param qn the QueryNode to compare to the bag
      * @param op the operation
      * @param bag a Collection that represents the bag
      */
     public BagConstraint(QueryNode qn, ConstraintOp op, Collection<?> bag) {
-        if (qn == null) {
+    	ConstraintOp translatedOp = getTranslatedOp(op);
+    	if (qn == null) {
             throw new NullPointerException("qe cannot be null");
         }
-        if (op == null) {
+        if (translatedOp == null) {
             throw new NullPointerException("op cannot be null");
         }
-        if (!VALID_OPS.contains(op)) {
-            throw new IllegalArgumentException("op cannot be " + op);
+        if (!VALID_OPS.contains(translatedOp)) {
+            throw new IllegalArgumentException("op cannot be " + translatedOp);
         }
         if (bag == null) {
             throw new NullPointerException("bag cannot be null");
         }
         this.qn = qn;
-        this.op = op;
+        this.op = translatedOp;
         this.bag = bag;
         this.osb = null;
     }
@@ -61,24 +63,35 @@ public class BagConstraint extends Constraint implements ConstraintWithBag
      * @param osb an ObjectStoreBag
      */
     public BagConstraint(QueryNode qn, ConstraintOp op, ObjectStoreBag osb) {
-        if (qn == null) {
+    	ConstraintOp translatedOp = getTranslatedOp(op);
+    	if (qn == null) {
             throw new NullPointerException("qe cannot be null");
         }
-        if (op == null) {
+        if (translatedOp == null) {
             throw new NullPointerException("op cannot be null");
         }
-        if (!VALID_OPS.contains(op)) {
-            throw new IllegalArgumentException("op cannot be " + op);
+        if (!VALID_OPS.contains(translatedOp)) {
+            throw new IllegalArgumentException("op cannot be " + translatedOp);
         }
         if (osb == null) {
             throw new NullPointerException("osb cannot be null");
         }
         this.qn = qn;
-        this.op = op;
+        this.op = translatedOp;
         this.osb = osb;
         this.bag = null;
     }
 
+    // translate ONE_OF to IN and NONE_OF to NOT_IN
+    private ConstraintOp getTranslatedOp(ConstraintOp op) {
+    	if (ConstraintOp.ONE_OF.equals(op)) {
+    		return ConstraintOp.IN;
+    	} else if (ConstraintOp.NONE_OF.equals(op)) {
+    		return ConstraintOp.NOT_IN;
+    	}
+    	return op;
+    }
+    
     /**
      * Get the QueryNode.
      *

@@ -433,7 +433,6 @@ public class DisplayConstraint
         }
 
         return validOps;
-
     }
 
     /**
@@ -728,8 +727,8 @@ public class DisplayConstraint
                     || selectedOperator == 18) {
                 return true;
             }
-            if (selectedOperator == 12
-                    || selectedOperator == 13) {
+            if (selectedOperator == ConstraintOp.ONE_OF.getIndex()
+                    || selectedOperator == ConstraintOp.NONE_OF.getIndex()) {
                 if (con instanceof PathConstraintBag) {
                     return true;
                 }
@@ -757,8 +756,8 @@ public class DisplayConstraint
             if (selectedOperator == 6
                     || selectedOperator == 7
                     || selectedOperator == 18
-                    || selectedOperator == 12
-                    || selectedOperator == 13) {
+                    || selectedOperator == ConstraintOp.ONE_OF.getIndex()
+                    || selectedOperator == ConstraintOp.NONE_OF.getIndex()) {
                 return false;
             }
             if (getPossibleValues() != null && getPossibleValues().size() > 0) {
@@ -780,8 +779,8 @@ public class DisplayConstraint
     public boolean isMultiValuesDisplayed() {
         if (con != null) {
             int selectedOperator = getSelectedOp().getProperty();
-            if (selectedOperator == 12
-                    || selectedOperator == 13) {
+            if (selectedOperator == ConstraintOp.ONE_OF.getIndex()
+                    || selectedOperator == ConstraintOp.NONE_OF.getIndex()) {
                 return true;
             }
             return false;
