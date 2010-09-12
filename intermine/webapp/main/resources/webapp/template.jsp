@@ -19,20 +19,21 @@
 <link rel="stylesheet" href="css/autocompleter.css" type="text/css"/>
 <link rel="stylesheet" href="css/template.css" type="text/css"/>
 
-<script language="javascript">
-var previousConstraintsOrder = '';
 
-jQuery(document).ready(function(){
-	jQuery('#constraintList').sortable({dropOnEmpty:true,update:function() {
-    	    reorderConstraintsOnServer();
-        }
-	});
-    recordCurrentConstraintsOrder();
-});
+<c:if test="${!empty builder && builder=='yes'}">
+  <script language="javascript">
+  var previousConstraintsOrder = '';
+
+  jQuery(document).ready(function(){
+	  jQuery('#constraintList').sortable({dropOnEmpty:true,update:function() {
+    	      reorderConstraintsOnServer();
+          }
+	  });
+      recordCurrentConstraintsOrder();
+  });
   
-
 </script>
-
+</c:if>
 <c:choose>
 <c:when test="${!empty templateQuery}">
 <%-- object trail --%>
