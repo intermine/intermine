@@ -83,7 +83,8 @@ public class DisplayConstraint
     private boolean isBagSelected;
     private String selectedBagValue;
     private ConstraintOp selectedBagOp;
-
+    private List<Object> templateSummary;
+    
     /**
      * Construct for a new constraint that is being added to a query.
      * @param path The path that is being constrained
@@ -121,13 +122,15 @@ public class DisplayConstraint
             boolean editableInTemplate, SwitchOffAbility switchOffAbility, Profile profile,
             PathQuery query, AutoCompleter ac,
             ObjectStoreSummary oss, BagQueryConfig bagQueryConfig,
-            Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager) {
+            Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager,
+            List<Object> templateSummary) {
         init(path, profile, query, ac, oss, bagQueryConfig, classKeys, bagManager);
         this.con = con;
         this.constraintLabel = label;
         this.code = code;
         this.editableInTemplate = editableInTemplate;
         this.switchOffAbility = switchOffAbility;
+        this.templateSummary = templateSummary;
     }
 
     private void init(Path path, Profile profile, PathQuery query, AutoCompleter ac,
@@ -489,6 +492,15 @@ public class DisplayConstraint
         } else {
             className = path.getLastClassDescriptor().getType().getCanonicalName();
         }
+
+        // if this is a template, it may have been summarised so we have a restricted set if values
+        // for particular paths (the TemplateSummariser runs queries to work out exact values
+        // constraints could take given the other constraints in the query.
+        if (templateSummary != null) {
+            return templateSummary;
+        }
+
+        // otherwise, we may have possible values from the ObjectStoreSummary
         List<Object> fieldValues = oss.getFieldValues(className, fieldName);
 
         if (path.endIsAttribute()) {
