@@ -210,6 +210,7 @@ public class InitialiserPlugin implements PlugIn
                     SessionMethods.setAutoCompleter(servletContext, ac);
                 } else {
                     ac = null;
+                    LOG.warn("No AutoCompleter index found in database.");
                 }
             } catch (SQLException e) {
                 LOG.error("Problem with database", e);

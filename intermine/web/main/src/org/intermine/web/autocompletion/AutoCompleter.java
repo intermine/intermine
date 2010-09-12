@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.ScoreDoc;
@@ -55,6 +56,8 @@ public class AutoCompleter
     private static final File TEMP_DIR =
         new File("build" + File.separatorChar + "autocompleteIndexes");
 
+    private static final Logger LOG = Logger.getLogger(AutoCompleter.class);
+    
     /**
      * Autocompleter standard constructor.
      */
@@ -107,6 +110,7 @@ public class AutoCompleter
                     search = new LuceneSearchEngine(value);
                     ramIndexMap.put(key, search);
                     fieldIndexMap.put(key, key);
+                    LOG.info("AutoCompleter read index for: " + key);
                 }
             }
 
