@@ -121,8 +121,8 @@ public class BuildProjectDialog extends StandardJDialog
      * Make database backups check box.
      * @serial
      */
-    private JCheckBox serverBackupCheckBox =
-        new JCheckBox(Messages.getMessage("build.project.flag.T"));
+//    private JCheckBox serverBackupCheckBox =
+//        new JCheckBox(Messages.getMessage("build.project.flag.T"));
     
     /**
      * Create destination database check box.
@@ -340,11 +340,11 @@ public class BuildProjectDialog extends StandardJDialog
         cons.weightx = 0.5;
         cp.add(encodingTextField, cons);
 
-        cons.gridy++;
-        cons.gridx = 0;
-        cons.gridwidth = 3;
-        cons.weightx = 1;
-        cp.add(serverBackupCheckBox, cons);
+//        cons.gridy++;
+//        cons.gridx = 0;
+//        cons.gridwidth = 3;
+//        cons.weightx = 1;
+//        cp.add(serverBackupCheckBox, cons);
         
         cons.gridy++;
         cp.add(destinationCheckBox, cons);
@@ -588,9 +588,9 @@ public class BuildProjectDialog extends StandardJDialog
                 commands.add("-V");
                 commands.add(releaseNumberTextField.getText());
             }
-            if (serverBackupCheckBox.isSelected()) {
-                commands.add("-T");
-            }
+//            if (serverBackupCheckBox.isSelected()) {
+//                commands.add("-T");
+//            }
             if (destinationCheckBox.isSelected()) {
                 assert StringUtils.isNotEmpty(destinationTextField.getText())
                        : "No destination database set";
