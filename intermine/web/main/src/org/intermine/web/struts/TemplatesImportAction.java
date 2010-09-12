@@ -102,13 +102,11 @@ public class TemplatesImportAction extends InterMineAction
         }
     }
 
-    // rebuild the template, but with the new special-character-free name
+    // clone the template and set the new special-character-free name
     private TemplateQuery renameTemplate(String newName, TemplateQuery template) {
 
-        TemplateQuery newTemplate = new TemplateQuery(newName, template.getTitle(),
-                                                      template.getComment(),
-                                                      template);
-
+        TemplateQuery newTemplate = template.clone();
+        newTemplate.setName(newName);
         return newTemplate;
     }
 }
