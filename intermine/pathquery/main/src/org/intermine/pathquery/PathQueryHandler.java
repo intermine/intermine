@@ -227,39 +227,39 @@ public class PathQueryHandler extends DefaultHandler
         } else if (PathConstraintNull.VALID_OPS.contains(constraintOp)) {
             return new PathConstraintNull(path, constraintOp);
         } else if (PathConstraintBag.VALID_OPS.contains(constraintOp)) {
-        	String bag = attrs.get("value");
-        	String ids = attrs.get("ids");
-        	if (bag != null) {
-        		return new PathConstraintBag(path, constraintOp, bag);
-        	} else if (ids != null) {
-        		String[] idArray = ids.split(",");
-        		Collection<Integer> idsCollection = new LinkedHashSet<Integer>();
-        		for (String id : idArray) {
-        			try {
-        				idsCollection.add(Integer.valueOf(id.trim()));
-        			} catch (NumberFormatException e) {
-        				throw new SAXException("List of IDs contains invalid integer: " + id, e);
-        			}
-        		}
-        		return new PathConstraintIds(path, constraintOp, idsCollection);
-        	} else {
-        		throw new SAXException("Invalid query: operation was: " + constraintOp
-            			+ " but no bag or ids were provided (from text \""
-            			+ attrs.get("op") + "\", attributes: " + attrs + ")");
-        	}
+            String bag = attrs.get("value");
+            String ids = attrs.get("ids");
+            if (bag != null) {
+                return new PathConstraintBag(path, constraintOp, bag);
+            } else if (ids != null) {
+                String[] idArray = ids.split(",");
+                Collection<Integer> idsCollection = new LinkedHashSet<Integer>();
+                for (String id : idArray) {
+                    try {
+                        idsCollection.add(Integer.valueOf(id.trim()));
+                    } catch (NumberFormatException e) {
+                        throw new SAXException("List of IDs contains invalid integer: " + id, e);
+                    }
+                }
+                return new PathConstraintIds(path, constraintOp, idsCollection);
+            } else {
+                throw new SAXException("Invalid query: operation was: " + constraintOp
+                        + " but no bag or ids were provided (from text \""
+                        + attrs.get("op") + "\", attributes: " + attrs + ")");
+            }
         } else if (PathConstraintMultiValue.VALID_OPS.contains(constraintOp)) {
-        	Collection<String> valuesCollection = new LinkedHashSet<String>();
-        	for (String value : values) {
-        		valuesCollection.add(value.trim());
-        	}
-        	return new PathConstraintMultiValue(path, constraintOp, valuesCollection);
+            Collection<String> valuesCollection = new LinkedHashSet<String>();
+            for (String value : values) {
+                valuesCollection.add(value.trim());
+            }
+            return new PathConstraintMultiValue(path, constraintOp, valuesCollection);
         } else if (ConstraintOp.LOOKUP.equals(constraintOp)) {
-        	String lookup = attrs.get("value");
-        	String extraValue = attrs.get("extraValue");
-        	return new PathConstraintLookup(path, lookup, extraValue);
+            String lookup = attrs.get("value");
+            String extraValue = attrs.get("extraValue");
+            return new PathConstraintLookup(path, lookup, extraValue);
         } else {
-        	throw new SAXException("Invalid operation type: " + constraintOp
-        			+ " (from text \"" + attrs.get("op") + "\", attributes: " + attrs + ")");
+            throw new SAXException("Invalid operation type: " + constraintOp
+                    + " (from text \"" + attrs.get("op") + "\", attributes: " + attrs + ")");
         }
     }
 
