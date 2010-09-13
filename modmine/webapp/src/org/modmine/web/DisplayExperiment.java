@@ -83,7 +83,7 @@ public class DisplayExperiment
                 this.description = submission.getDescription();
             }
             submissions.add(submission);
-            labs.add(submission.getLab().getSurname());
+            labs.add(submission.getLab().getName());
             for (ExperimentalFactor factor : submission.getExperimentalFactors()) {
                 factorTypes.add(factor.getType());
             }
