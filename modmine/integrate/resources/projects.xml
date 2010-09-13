@@ -397,7 +397,19 @@
 			<reference ref_id="0"/>
 		</collection>
   </item>
-
+	<item id="1025" class="" implements="Project">
+		<attribute name="name" value="Comparative Genomics"/>
+		<attribute name="title" value="Functional Validation of the Drosophila transcriptome by comparative genomics"/>
+		<attribute name="surnamePI" value="Oliver"/>
+		<attribute name="namePI" value="Brian"/>
+		<attribute name="url" value="http://www.modencode.org/Oliver.shtml"/>
+		<collection name="labs">
+			<reference ref_id="1110"/>
+		</collection>
+		<collection name="organisms">
+			<reference ref_id="0"/>
+		</collection>
+  </item>
 <!-- LABS -->
 	<item id="1051" class="" implements="Lab">
 		<attribute name="surname" value="Ahmad"/>
@@ -753,6 +765,13 @@
 		<reference name="project" ref_id="1021"/>
 	</item>
 
+	<item id="1110" class="" implements="Lab">
+		<attribute name="surname" value="Oliver"/>
+		<attribute name="name" value="Brian Oliver"/>
+		<attribute name="affiliation" value="National Institutes of Health"/>
+		<attribute name="url" value="http://www.modencode.org/Oliver.shtml"/>
+		<reference name="project" ref_id="1025"/>
+	</item>
 
 
 	
