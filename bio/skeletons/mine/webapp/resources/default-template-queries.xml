@@ -5,16 +5,6 @@
   <queries>
   </queries>
 <template-queries>
-<template name="A_IdentifierSynonym_Object" title="Identifier or synonym --&gt; Database object." longDescription="Find an entry in the database using any identifier or synonym." comment="This is the template that the quick search runs.  If the name is changed it also has to be changed for the quick search configuration - Rachel. Removed tags so no longer displayed - just used for quick search now.  Rachel.">
-  <query name="A_IdentifierSynonym_Object" model="genomic" view="Synonym.subject.primaryIdentifier Synonym.value Synonym.subject.organism.name" sortOrder="Synonym.subject.primaryIdentifier asc">
-    <node path="Synonym" type="Synonym">
-    </node>
-    <node path="Synonym.value" type="String">
-      <constraint op="=" value="timeout" description="" identifier="Synonym.value.1" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
 <template name="GO_name_Gene" title="GO term name/id --&gt; Genes in one specific organism." longDescription="Search for genes in a specified organism that is associated with a particular GO annotation." comment="">
   <query name="GO_name_Gene" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name" sortOrder="Gene.symbol asc" constraintLogic="A and B">
     <pathDescription pathString="Gene.goAnnotation" description="GO annotation">
@@ -58,7 +48,7 @@
   </query>
 </template>
 <template name="Gene_GO" title="Gene --&gt; GO terms." longDescription="Search for GO annotations for a particular gene." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="Gene_GO" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.goEvidenceCodes.code Gene.goAnnotation.qualifier Gene.goAnnotation:ontologyTerm.identifier Gene.goAnnotation:ontologyTerm.name Gene.goAnnotation:ontologyTerm.namespace" sortOrder="Gene.primaryIdentifier asc">
+  <query name="Gene_GO" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.goEvidenceCodes.code Gene.goAnnotation.qualifier Gene.goAnnotation:ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.ontologyTerm.namespace" sortOrder="Gene.primaryIdentifier asc">
     <pathDescription pathString="Gene.goAnnotation" description="GO annotation">
     </pathDescription>
     <pathDescription pathString="Gene.goAnnotation.goEvidenceCodes" description="GO annotation &gt; evidence">
@@ -128,7 +118,7 @@
   </query>
 </template>
 <template name="Gene_particularGoannotation" title="Gene + GO term name --&gt; Gene with the GO term name." longDescription="Show if the following gene has the following GO term." comment="">
-  <query name="Gene_particularGoannotation" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene:goAnnotation.ontologyTerm.identifier Gene:goAnnotation.ontologyTerm.name" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B">
+  <query name="Gene_particularGoannotation" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B">
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="CG9015" description="For the gene(s):" identifier="" editable="true" code="A">
       </constraint>
@@ -170,7 +160,7 @@
   </query>
 </template>
 <template name="Organism_GoTerm_GeneWithannotation" title="Organism + GO term [with particular evidence code] --&gt; Genes + 'with' annotation." longDescription="Show genes from a particular organism annotated with a particular GO term and GO evidence code which also have a 'with' annotation (The 'with' field holds an additional identifier for annotations using certain evidence codes)" comment="">
-  <query name="Organism_GoTerm_GeneWithannotation" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.goEvidenceCodes.code Gene.goAnnotation.withText Gene.goAnnotation:with.primaryIdentifier" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B and C">
+  <query name="Organism_GoTerm_GeneWithannotation" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.goEvidenceCodes.code Gene.goAnnotation.withText Gene.goAnnotation.with.primaryIdentifier" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B and C">
     <node path="Gene" type="Gene">
     </node>
     <node path="Gene.organism" type="Organism">
@@ -208,7 +198,7 @@
   </query>
 </template>
 <template name="Protein_GOterms" title="Protein --&gt; GO terms." longDescription="Show all GO terms that have been associated with the gene that codes for the following protein." comment="06.06.07 updated to work from protein class - Philip">
-  <query name="Protein_GOterms" model="genomic" view="Protein.primaryAccession Protein.genes.secondaryIdentifier Protein.genes.symbol Protein.genes.goAnnotation:ontologyTerm.namespace Protein.genes.goAnnotation:ontologyTerm.identifier Protein.genes.goAnnotation:ontologyTerm.name" sortOrder="Protein.primaryAccession asc">
+  <query name="Protein_GOterms" model="genomic" view="Protein.primaryAccession Protein.genes.secondaryIdentifier Protein.genes.symbol Protein.genes.goAnnotation.ontologyTerm.namespace Protein.genes.goAnnotation.ontologyTerm.identifier Protein.genes.goAnnotation.ontologyTerm.name" sortOrder="Protein.primaryAccession asc">
     <pathDescription pathString="Protein.genes" description="Gene">
     </pathDescription>
     <node path="Protein" type="Protein">
