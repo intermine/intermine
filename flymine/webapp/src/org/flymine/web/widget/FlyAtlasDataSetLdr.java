@@ -19,6 +19,7 @@ import java.util.Set;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.model.bio.FlyAtlasResult;
 import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Tissue;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
