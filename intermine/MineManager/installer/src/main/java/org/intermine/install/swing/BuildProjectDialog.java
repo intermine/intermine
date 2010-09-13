@@ -102,20 +102,22 @@ public class BuildProjectDialog extends StandardJDialog
         new JCheckBox(Messages.getMessage("build.project.flag.V"));
 
     /**
-     * Release number text field label.
+     * Release number text field label.  TODO I think this be deleted
+     *
      * @serial
      */
-//    private JLabel releaseNumberLabel =
-//        new JLabel(Messages.getMessage("build.project.release.number"));
+    private JLabel releaseNumberLabel =
+        new JLabel(Messages.getMessage("build.project.release.number"));
 
     /**
      * Release number text field.
+     *
      * @serial
      */
     private JTextField releaseNumberTextField =
         new JTextField(
                 new RestrictedInputDocument(
-                        RestrictedInputDocument.WORD_CHARACTERS + ".+/"), "", 10);
+                        RestrictedInputDocument.WORD_CHARACTERS + ".+/"), "", 20);
 
     /**
      * Make database backups check box.
@@ -174,7 +176,7 @@ public class BuildProjectDialog extends StandardJDialog
         new JTextField(
                 new RestrictedInputDocument(
                     RestrictedInputDocument.UPPER_CASE
-                    + RestrictedInputDocument.DIGITS + "_", true), "UTF8", 12);
+                    + RestrictedInputDocument.DIGITS + "_", true), "UTF8", 20);
     /**
      * Destination database text field label.
      * @serial
@@ -189,7 +191,7 @@ public class BuildProjectDialog extends StandardJDialog
     private JTextField destinationTextField =
         new JTextField(
                 new RestrictedInputDocument(
-                        RestrictedInputDocument.WORD_CHARACTERS), "", 12);
+                        RestrictedInputDocument.WORD_CHARACTERS), "", 20);
 
     /**
      * Dump host text field.
@@ -199,14 +201,14 @@ public class BuildProjectDialog extends StandardJDialog
         new JTextField(
                 new RestrictedInputDocument(
                         RestrictedInputDocument.LOWER_CASE
-                        + RestrictedInputDocument.DIGITS + "_-.", true), "", 12);
+                        + RestrictedInputDocument.DIGITS + "_-.", true), "", 20);
 
     /**
      * Dump prefix text field.
      * @serial
      */
     private JTextField prefixTextField
-        = new JTextField(Messages.getMessage("build.project.dump.prefix.default"), 12);
+        = new JTextField(Messages.getMessage("build.project.dump.prefix.default"), 20);
 
     /**
      * Action to start running <code>project_build</code>.
@@ -263,7 +265,7 @@ public class BuildProjectDialog extends StandardJDialog
         setName("Build Project Dialog");
         setTitle(Messages.getMessage("build.project.title"));
 
-//        releaseNumberLabel.setLabelFor(releaseNumberTextField);
+        releaseNumberLabel.setLabelFor(releaseNumberTextField);
         destinationLabel.setLabelFor(destinationTextField);
 
         Container cp = getContentPane();
@@ -423,7 +425,7 @@ public class BuildProjectDialog extends StandardJDialog
         startPolicyGroup.add(testRadioButton);
 
         releaseNumberCheckBox.addActionListener(
-                new LinkedFieldListener(releaseNumberCheckBox, null, releaseNumberTextField));
+                new LinkedFieldListener(releaseNumberCheckBox, releaseNumberLabel, releaseNumberTextField));
         destinationCheckBox.addActionListener(
                 new LinkedFieldListener(destinationCheckBox, destinationLabel,
                                         destinationTextField));
