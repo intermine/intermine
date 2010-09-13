@@ -420,7 +420,7 @@
 	</item>
 	<item id="1052" class="" implements="Lab">
 		<attribute name="surname" value="Ahringer"/>
-		<attribute name="name" value="Julie Ahringer "/>
+		<attribute name="name" value="Julie Ahringer"/>
 		<attribute name="affiliation" value="University of Cambridge"/>
 		<attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
 		<reference name="project" ref_id="1011"/>
