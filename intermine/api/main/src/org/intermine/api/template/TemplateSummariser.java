@@ -46,7 +46,8 @@ public class TemplateSummariser
     protected ObjectStoreWriter osw;
     protected Map<TemplateQuery, HashMap<String, List<Object>>> possibleValues
         = new IdentityHashMap<TemplateQuery, HashMap<String, List<Object>>>();
-
+    private static final int MAX_SUMMARY = 200;
+    
     /**
      * Construct a TemplateSummariser.
      *
@@ -79,9 +80,9 @@ public class TemplateSummariser
             }
             Query q = TemplatePrecomputeHelper.getPrecomputeQuery(templateQuery, null, node);
             LOG.info("Summarising template " + templateQuery.getName() + " by running query: " + q);
-            List<ResultsRow<Object>> results = os.execute(q, 0, 20, true, false,
+            List<ResultsRow<Object>> results = os.execute(q, 0, MAX_SUMMARY, true, false,
                     ObjectStore.SEQUENCE_IGNORE);
-            if (results.size() < 20) {
+            if (results.size() < MAX_SUMMARY) {
                 if (path.endIsAttribute() || results.isEmpty()) {
                     List<Object> values = new ArrayList<Object>();
                     for (ResultsRow<Object> row : results) {
