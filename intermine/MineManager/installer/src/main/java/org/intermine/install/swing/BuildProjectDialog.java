@@ -30,6 +30,7 @@ import javax.swing.Action;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
@@ -108,7 +109,7 @@ public class BuildProjectDialog extends StandardJDialog
      */
     private JLabel releaseNumberLabel =
         new JLabel(Messages.getMessage("build.project.release.number"));
-
+    
     /**
      * Release number text field.
      *
@@ -167,7 +168,13 @@ public class BuildProjectDialog extends StandardJDialog
       */
     private JLabel encodingLabel =
         new JLabel(Messages.getMessage("build.project.db.encoding"));
+    
+    /**
+      * Database encoding drop down list.
+      */ 
+    private JComboBox encodingDropdown;
 
+    private String encodings[] = { "UTF8", "ASCII" };
     /**
       * Database encoding text field
       * @serial
@@ -332,10 +339,13 @@ public class BuildProjectDialog extends StandardJDialog
         cons.weightx = 0;
         cons.gridwidth = 1;
         cp.add(encodingLabel, cons);
-
+        
         cons.gridx++;
         cons.weightx = 0.5;
-        cp.add(encodingTextField, cons);
+        encodingDropdown = new JComboBox(encodings);
+        cp.add(encodingDropdown, cons);
+
+//        cp.add(encodingTextField, cons);
 
 //        cons.gridy++;
 //        cons.gridx = 0;
@@ -611,9 +621,10 @@ public class BuildProjectDialog extends StandardJDialog
                 commands.add(destinationTextField.getText());
             }
 
-            assert StringUtils.isNotEmpty(encodingTextField.getText()) : "No encoding value";
+//            assert StringUtils.isNotEmpty(encodingTextField.getText()) : "No encoding value";
             commands.add("-E");
-            commands.add(encodingTextField.getText());
+            String chosenEncoding = (String) encodingDropdown.getSelectedItem();
+            commands.add(chosenEncoding);
 
             assert StringUtils.isNotEmpty(hostTextField.getText()) : "No host value";
             commands.add(hostTextField.getText());
