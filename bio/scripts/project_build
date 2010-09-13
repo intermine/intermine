@@ -680,7 +680,7 @@ sub get_actions
               or userprofile_db_already_populated($properties_file) ) {
           push @actions, {
               type => 'webapp',
-              args => 'build-db-userprofile',
+              args => ['build-db-userprofile'],
               name => 'Build_Userprofile_DB',
           };
      }
