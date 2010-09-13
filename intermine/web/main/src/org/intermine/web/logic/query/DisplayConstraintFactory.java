@@ -11,11 +11,11 @@ package org.intermine.web.logic.query;
  */
 
 import java.util.List;
-import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.SwitchOffAbility;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.pathquery.Path;
@@ -56,9 +56,16 @@ public class DisplayConstraintFactory
             editableInTemplate = template.isEditable(con);
             label = template.getConstraintDescription(con);
             switchOffAbility = template.getSwitchOffAbility(con);
+
+            // we need to find the original template to retrieve the summary
+            TemplateManager templateManager = im.getTemplateManager();
+            
+            TemplateQuery originalTemplate =
+                templateManager.getUserOrGlobalTemplate(profile, template.getName());
             TemplateSummariser templateSummariser = im.getTemplateSummariser();
-            if (templateSummariser.isSummarised(template)) {
-                templateSummary = templateSummariser.getPossibleValues(template, con.getPath());
+            if (templateSummariser.isSummarised(originalTemplate)) {
+                templateSummary =
+                    templateSummariser.getPossibleValues(originalTemplate, con.getPath());
             }
         }
         return new DisplayConstraint(path, con, label, query.getConstraints().get(con),
