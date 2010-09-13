@@ -496,7 +496,7 @@ public class DisplayConstraint
         // if this is a template, it may have been summarised so we have a restricted set if values
         // for particular paths (the TemplateSummariser runs queries to work out exact values
         // constraints could take given the other constraints in the query.
-        if (templateSummary != null) {
+        if (templateSummary != null && !templateSummary.isEmpty()) {
             return templateSummary;
         }
 
