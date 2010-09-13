@@ -10,103 +10,90 @@
 
 <html:xhtml/>
 
-        <style type="text/css">
+    <style type="text/css">
 
-            span.tree_tee .ver
-           {
-            BACKGROUND-COLOR: #000000;
-               COLOR: #000000;
-               FONT-SIZE: 1px;
-               padding-top:10px;
-               padding-bottom:15px;
-               padding-right:0px;
-               padding-left:0px;
-               position:relative;
-               top:-4px;
-               left: 8px;
-           }
+    span.tree_tee .ver
+    {
+        border:1px solid black;
+        border-right-style:none;
+        border-top-style:none;
+        border-bottom-style:none;
+        padding-top:1px;
+        padding-bottom:8px;
+        position: relative;
+        left: 10px;
+    }
 
-           .tree_tee .hor
-           {
-             BACKGROUND-COLOR: #000000;
-               COLOR: #000000;
-               FONT-SIZE: 1px;
-               padding-top:0px;
-               padding-bottom:0px;
-               padding-right:0px;
-               padding-left:8px;
-               position:relative;
-               top:-4px;
-               left:3px;
+    .tree_tee .hor
+    {
+        border:1px solid black;
+        border-right-style:none;
+        border-left-style:none;
+        border-top-style:none;
+        margin-right:7px;
+        color: white;
+        position: relative;
+        left: 10px;
+        top: -7px
+    }
 
-           }
+    .tree_straight .ver
+    {
+        border:1px solid black;
+        border-right-style:none;
+        border-top-style:none;
+        border-bottom-style:none;
+        padding-top:1px;
+        padding-bottom:8px;
+        position: relative;
+        left: 10px;
+     }
 
-           .tree_straight .ver
-           {
-               BACKGROUND-COLOR: #000000;
-               COLOR: #000000;
-               FONT-SIZE: 1px;
-               padding-top:10px;
-               padding-bottom:15px;
-               padding-right:0px;
-               padding-left:0px;
-               position:relative;
-               top:-4px;
-               left:8px;
+    .tree_straight .hor
+    {
+         color: #ffffff;
+    }
 
-           }
+    .tree_ell .ver
+    {
+        border:1px solid black;
+        border-right-style:none;
+        border-top-style:none;
+        border-bottom-style:none;
+        position: relative;
+        left: 10px;
+        top: -6px
+     }
 
-           .tree_straight .hor
-           {
-             color: #ffffff;
-           }
+    .tree_ell .hor
+    {
+        border:1px solid black;
+        border-right-style:none;
+        border-left-style:none;
+        border-top-style:none;
+        margin-right:7px;
+        color: white;
+        position: relative;
+        left: 10px;
+        top: -7px
+     }
 
-           .tree_ell .ver
-           {
-               BACKGROUND-COLOR: #000000;
-               COLOR: #000000;
-               FONT-SIZE: 1px;
-               padding-top:10px;
-               padding-bottom:0px;
-               padding-right:0px;
-               padding-left:0px;
-               position:relative;
-               top:-4px;
-               left:8px;
+    .tree_blank .ver
+    {
+        background-color: #ffffff;
+        font-size: 1px;
+        color: #ffffff;
+    }
 
-           }
+    .tree_blank .hor
+    {
+         background-color: #ffffff;
+         font-size: 1px;
+         color: #ffffff;
+         padding-right:4px;
+     }
 
-           .tree_ell .hor
-           {
-               BACKGROUND-COLOR: #000000;
-               COLOR: #000000;
-               FONT-SIZE: 1px;
-               padding-top:0px;
-               padding-bottom:0px;
-               padding-right:0px;
-               padding-left:8px;
-               position:relative;
-               top:-4px;
-               left:3px;
-           }
-
-           .tree_blank .ver
-           {
-              BACKGROUND-COLOR: #ffffff;
-              FONT-SIZE: 1px;
-              padding-right:5px;
-              color: #ffffff;
-           }
-
-           .tree_blank .hor
-           {
-              BACKGROUND-COLOR: #ffffff;
-              FONT-SIZE: 1px;
-              padding-right:0px;
-              color: #ffffff;
-           }
-
-        </style>
+    </style>
 
     <div class="browserline">
       <c:if test="${node.indentation > 0}">
@@ -114,7 +101,7 @@
         <c:forEach var="structure" items="${node.structure}">
           <!-- <img src="images/tree_${structure}.png" align="top" height="16" width="15"/> -->
           <span class="tree_${structure}">
-            <span class="ver">a</span>
+            <span class="ver"></span>
             <span class="hor">.</span>
           </span>
 
