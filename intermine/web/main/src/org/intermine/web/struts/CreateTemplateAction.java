@@ -10,6 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -93,10 +96,10 @@ public class CreateTemplateAction extends InterMineAction
         // Check whether there is a template name clash
         boolean isNewTemplate = (session.getAttribute(Constants.NEW_TEMPLATE) != null
             && (Boolean) session.getAttribute(Constants.NEW_TEMPLATE)) ? true : false;
-        String prevTemplateName = (String) session.getAttribute(Constants.PREV_TEMPLATE_NAME);
+        List<String> prevTemplateName = (ArrayList<String>) session.getAttribute(Constants.PREV_TEMPLATE_NAME);
         if (profile.getSavedTemplates().containsKey(template.getName())
                 && (isNewTemplate
-                || (prevTemplateName != null && !prevTemplateName.equals(template.getName())))) {
+                || (prevTemplateName != null && !prevTemplateName.contains(template.getName())))) {
             recordError(new ActionMessage("errors.createtemplate.existing", template.getName()),
                     request);
             seenProblem = true;
@@ -158,7 +161,7 @@ public class CreateTemplateAction extends InterMineAction
         // Replace template if needed
         if (!isNewTemplate) {
             String templateName = (prevTemplateName != null)
-                ? prevTemplateName : template.getName();
+                ? prevTemplateName.get(prevTemplateName.size() - 1) : template.getName();
             profile.deleteTemplate(templateName);
             session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
         }

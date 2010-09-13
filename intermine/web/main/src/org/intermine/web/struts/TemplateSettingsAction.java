@@ -10,6 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -51,7 +54,14 @@ public class TemplateSettingsAction extends InterMineAction
 
         TemplateQuery template = (TemplateQuery)SessionMethods.getQuery(session);
         template.setDescription(tsf.getDescription());
-        session.setAttribute(Constants.PREV_TEMPLATE_NAME, template.getName());
+        List<String> previousTempNames = (ArrayList<String>) session.getAttribute(Constants.PREV_TEMPLATE_NAME);
+        if (previousTempNames != null) {
+            previousTempNames.add(template.getName());
+        } else {
+            previousTempNames = new ArrayList<String>();
+            previousTempNames.add(template.getName());
+            session.setAttribute(Constants.PREV_TEMPLATE_NAME, previousTempNames);
+        }
         template.setName(tsf.getName());
         template.setTitle(tsf.getTitle());
         template.setComment(tsf.getComment());
