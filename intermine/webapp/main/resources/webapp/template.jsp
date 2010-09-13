@@ -335,7 +335,7 @@
     <td>
       <c:choose>
         <c:when test="${empty builder}">
-          <html:link action="/exportTemplates?scope=all&amp;name=${templateQuery.name}" title="Export this template as XML">export XML</html:link>
+          <a href="javascript:exportTemplate()" title="Export this template as XML">export XML</a>
         </c:when>
         <c:otherwise>
           <a href="javascript:;" title=">Export this template as XML">export XML</a>
