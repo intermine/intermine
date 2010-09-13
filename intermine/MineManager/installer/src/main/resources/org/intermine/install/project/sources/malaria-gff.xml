@@ -2,7 +2,7 @@
 <sd:source xmlns:sd="http://flymine.org/sourcedescriptor/1.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://flymine.org/sourcedescriptor/1.0 http://www.flymine.org/download/schemas/sourcedescriptor.xsd"
-           type="gff">
+           type="malaria-gff">
 
     <property name="gff3.taxonId">
         <validation><![CDATA[^\d+(\s\d+)*$]]></validation>
