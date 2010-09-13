@@ -69,17 +69,18 @@ public class SubmissionProtocolsController extends TilesAction
 
         // create the query
         PathQuery q = new PathQuery(os.getModel());
-
         q.addView("Submission.appliedProtocols.step");
-        q.addView("Submission.appliedProtocols:inputs.type");
-        q.addView("Submission.appliedProtocols:inputs.name");
-        q.addView("Submission.appliedProtocols:inputs.value");
+        q.addView("Submission.appliedProtocols.inputs.type");
+        q.addView("Submission.appliedProtocols.inputs.name");
+        q.addView("Submission.appliedProtocols.inputs.value");
         q.addView("Submission.appliedProtocols.protocol.name");
-        q.addView("Submission.appliedProtocols:outputs.type");
-        q.addView("Submission.appliedProtocols:outputs.name");
-        q.addView("Submission.appliedProtocols:outputs.value");
+        q.addView("Submission.appliedProtocols.outputs.type");
+        q.addView("Submission.appliedProtocols.outputs.name");
+        q.addView("Submission.appliedProtocols.outputs.value");
 
         q.addConstraint(Constraints.eq("Submission.id", o.getId().toString()));
+        // rm the outer join for i/o: check if ok. in case revert and add
+        // q.setOuterJoinStatus("Submission.appliedProtocols.inputs", OuterJoinStatus.OUTER);
         q.addOrderBy("Submission.appliedProtocols.step", OrderDirection.ASC);
 
         Profile profile = SessionMethods.getProfile(session);
