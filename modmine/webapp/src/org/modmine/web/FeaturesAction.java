@@ -36,6 +36,7 @@ import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.bag.BagHelper;
@@ -145,7 +146,7 @@ public class FeaturesAction extends InterMineAction
                 q.addView(featureType + ".score");
                 if ("results".equals(action)) {
                     // we don't want this field on exports
-                    q.addView(featureType + ":scoreProtocol.name");
+                    q.addView(featureType + ".scoreProtocol.name");
                 }
                 q.addConstraint(Constraints.eq(featureType + ".submissions.experiment.name",
                         experimentName));
@@ -208,7 +209,9 @@ public class FeaturesAction extends InterMineAction
                 q.addView(featureType + ".primaryIdentifier");
                 q.addView(featureType + ".score");
                 if ("results".equals(action)) {
-                    q.addView(featureType + ":scoreProtocol.name");
+                    q.addView(featureType + ".scoreProtocol.name");
+                    q.setOuterJoinStatus(featureType + ".scoreProtocol.name",
+                            OuterJoinStatus.OUTER);
                 }
                 q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
 
@@ -218,7 +221,6 @@ public class FeaturesAction extends InterMineAction
 
                 } else {
                     q.addView(featureType + ".submissions.DCCid");
-
                     addEFactorToQuery(q, featureType, hasPrimer);
                 }
             }
@@ -377,8 +379,10 @@ public class FeaturesAction extends InterMineAction
     private void addEFactorToQuery(PathQuery q, String featureType,
             boolean hasPrimer) {
         if (!hasPrimer) {
-            q.addView(featureType + ".submissions:experimentalFactors.type");
-            q.addView(featureType + ".submissions:experimentalFactors.name");
+            q.addView(featureType + ".submissions.experimentalFactors.type");
+            q.addView(featureType + ".submissions.experimentalFactors.name");
+            q.setOuterJoinStatus(featureType + ".submissions.experimentalFactors",
+                    OuterJoinStatus.OUTER);
         }
     }
 
