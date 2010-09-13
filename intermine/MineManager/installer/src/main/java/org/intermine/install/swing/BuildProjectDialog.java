@@ -312,20 +312,20 @@ public class BuildProjectDialog extends StandardJDialog
 
         userDBPanel.add(userDBOptionsLabel, userDBCons);
 
-        userDBCons.gridy++;
-        nowriteUserDbRadio.setFont(infoLabel.getFont().deriveFont(Font.PLAIN));
-        userDBPanel.add(nowriteUserDbRadio, userDBCons);
-
-        userDBCons.gridy++;
-        writeUserDbRadio.setFont(infoLabel.getFont().deriveFont(Font.PLAIN));
-        userDBPanel.add(writeUserDbRadio, userDBCons);
-
-        userDBCons.gridy++;
-        overwriteUserDbRadio.setFont(infoLabel.getFont().deriveFont(Font.PLAIN));
-        userDBPanel.add(overwriteUserDbRadio, userDBCons);
-
-        cons.gridy++;
-        cp.add(userDBPanel, cons);
+//        userDBCons.gridy++;
+//        nowriteUserDbRadio.setFont(infoLabel.getFont().deriveFont(Font.PLAIN));
+//        userDBPanel.add(nowriteUserDbRadio, userDBCons);
+//
+//        userDBCons.gridy++;
+//        writeUserDbRadio.setFont(infoLabel.getFont().deriveFont(Font.PLAIN));
+//        userDBPanel.add(writeUserDbRadio, userDBCons);
+//
+//        userDBCons.gridy++;
+//        overwriteUserDbRadio.setFont(infoLabel.getFont().deriveFont(Font.PLAIN));
+//        userDBPanel.add(overwriteUserDbRadio, userDBCons);
+//
+//        cons.gridy++;
+//        cp.add(userDBPanel, cons);
 
         cons.gridy++;
         cons.gridx = 0;
