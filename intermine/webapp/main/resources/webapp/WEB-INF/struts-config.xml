@@ -249,6 +249,7 @@
       <forward name="query" path="query.page"/>
       <forward name="template" path="template.page"/>
       <forward name="serviceLink" path="/serviceLink.do" redirect="false"/>
+      <forward name="export" path="/exportTemplates.do" redirect="false"/>
     </action>
     <action path="/importTemplates" name="importTemplatesForm" type="org.intermine.web.struts.TemplatesImportAction" scope="request" input="import">
       <forward name="import" path="importTemplates.page"/>

@@ -37,6 +37,11 @@ function forwardToLinks() {
 	document.templateForm.submit();
 }
 
+function exportTemplate() {
+    document.getElementById('actionType').value = 'exportTemplate';
+    document.templateForm.submit();
+}
+
 function isBagUsed() {
 	// checks if bag is used, the presumption is that there aren't more than 10
     // bag constraints

@@ -23,6 +23,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.XmlUtil;
@@ -34,7 +35,7 @@ import org.intermine.web.logic.template.TemplateHelper;
  *
  * @author Thomas Riley
  */
-public class TemplatesExportAction extends InterMineAction
+public class TemplatesExportAction extends TemplateAction
 {
     /**
      * {@inheritDoc}
@@ -64,7 +65,7 @@ public class TemplatesExportAction extends InterMineAction
                                                    + scope);
             }
         } else {
-            TemplateQuery template = templateManager.getTemplate(profile, name, scope);
+            TemplateQuery template = (TemplateQuery) SessionMethods.getQuery(session);
             if (template != null) {
                 xml = template.toXml(PathQuery.USERPROFILE_VERSION);
             } else {

@@ -158,6 +158,11 @@ public class TemplateAction extends InterMineAction
             return mapping.findForward("serviceLink");
 
         }
+        
+        if (exportTemplate(request)) {
+            SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
+            return mapping.findForward("export");
+        }
 
         // We're editing the query: load as a PathQuery
         if (!skipBuilder && !editTemplate) {
@@ -227,8 +232,12 @@ public class TemplateAction extends InterMineAction
     private boolean forwardToLinksPage(HttpServletRequest request) {
         return "links".equalsIgnoreCase(request.getParameter("actionType"));
     }
+    
+    private boolean exportTemplate(HttpServletRequest request) {
+        return "exportTemplate".equalsIgnoreCase(request.getParameter("actionType"));
+    }
 
-    private Map<String, List<TemplateValue>> templateFormToTemplateValues(TemplateForm tf,
+    protected Map<String, List<TemplateValue>> templateFormToTemplateValues(TemplateForm tf,
             TemplateQuery template) {
         Map<String, List<TemplateValue>> templateValues =
             new HashMap<String, List<TemplateValue>>();
