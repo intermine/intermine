@@ -27,6 +27,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
@@ -147,7 +148,7 @@ public final class TypeConverter
      * @return a PathQuery that finds converted objects for the given bag
      */
     public static PathQuery getConversionQuery(List<TemplateQuery> conversionTemplates,
-            Class typeA, Class typeB, Object bagOrIds) {
+            Class<?> typeA, Class<?> typeB, Object bagOrIds) {
         PathQuery pq = getConversionMapQuery(conversionTemplates, typeA, typeB, bagOrIds);
         if (pq == null) {
             return null;
@@ -159,6 +160,11 @@ public final class TypeConverter
                 Path path = pq.makePath(viewElement);
                 if (path.getLastClassDescriptor().getType().equals(typeA)) {
                     pq.removeView(viewElement);
+                    for (OrderElement orderBy : pq.getOrderBy()) {
+                        if (orderBy.getOrderPath().equals(viewElement)) {
+                            pq.removeOrderBy(viewElement);
+                        }
+                    }
                 }
             }
             return pq;
