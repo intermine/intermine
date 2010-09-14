@@ -2,98 +2,85 @@
 
 use warnings;
 use strict;
-use lib '/../intermine/perl/lib';
+use lib '../../intermine/perl/lib';
 
 use XML::Writer;
 use InterMine::Model;
-use InterMine::ItemFactory;
+use InterMine::Item::Document;
 
-if (@ARGV != 4) {
-  die "usage: $0 model_file kegg_map_title_file kegg_gene_map out_file\n";
+if ( @ARGV != 4 ) {
+    die "usage: $0 model_file kegg_map_title_file kegg_gene_map out_file\n";
 }
 
-my ($model_file, $map_title_filename, $gene_map_filename, $out_file) = @ARGV;
+my ( $model_file, $map_title_filename, $gene_map_filename, $out_file ) = @ARGV;
 
 my $data_source = 'Kegg';
 my $taxon_id    = 36329;
 
 # The item factory needs the model so that it can check that new objects have
 # valid classnames and fields
-my $model        = InterMine::Model->new(file => $model_file);
-my $item_factory = InterMine::ItemFactory->new(model => $model);
-
-my (@items, %pathway_with);
-
-my $datasource_item = $item_factory->make_item(
-    'DataSource',
-    name => $data_source,
+my $model = InterMine::Model->new( 
+    file => $model_file,
 );
-my $dataset_item = $item_factory->make_item(
+my $document = InterMine::Item::Document->new(
+    model  => $model,
+    output => $out_file,
+);
+
+
+my $datasource_item =
+  $document->add_item( 'DataSource', name => $data_source, );
+my $dataset_item = $document->add_item(
     'DataSet',
     name       => $data_source . ' data set for taxon id: ' . $taxon_id,
     dataSource => $datasource_item,
 );
-my $org_item = $item_factory->make_item(
+my $org_item = $document->add_item(
     'Organism',
-    taxonId  => $taxon_id,
-    dataSets => [$dataset_item],
+    taxonId => $taxon_id,
+
+    #    dataSets => [$dataset_item],
 );
-push @items, $datasource_item, $org_item, $dataset_item;
 
 # read the map title file into %pathways
+my %pathway_with;
 
-open(my $input, '<', $map_title_filename) 
-    or die "Could not open $map_title_filename for reading, $!";
+open( my $input, '<', $map_title_filename )
+  or die "Could not open $map_title_filename for reading, $!";
 
 while (<$input>) {
     chomp;
-    my ($id, $title) = split(/\t/);
-    my $item = $item_factory->make_item(
-       'Pathway',
-       identifier => $id,
-       name       => $title,
-       dataSets   => [$dataset_item],
+    my ( $id, $title ) = split(/\t/);
+    my $item = $document->add_item(
+        'Pathway',
+        identifier => $id,
+        name       => $title,
+        dataSets   => [$dataset_item],
     );
-    push @items, $item;
     $pathway_with{$id} = $item;
-}   
+}
 close($input) or die "Could not close $map_title_filename, $!";
 
 # read the gene map file and create item objects
 
-open($input, '<', $gene_map_filename) 
-    or die "Could not open $gene_map_filename for reading, $!";
+open( $input, '<', $gene_map_filename )
+  or die "Could not open $gene_map_filename for reading, $!";
 
 while (<$input>) {
     chomp;
-    my ($id, $pathways) = split(/\t/);
+    my ( $id, $pathways ) = split(/\t/);
 
-    my @pathway_items = @pathway_with{split(/\s/, $pathways)};
-    
-    my $item = $item_factory->make_item(
-       'Gene',
-       primaryIdentifier => $id,
-       organism          => $org_item,
-       pathways          => [@pathway_items],
-       dataSets          => [$dataset_item],
+    my @pathway_items = @pathway_with{ split( /\s/, $pathways ) };
+
+    my $item = $document->add_item(
+        'Gene',
+        primaryIdentifier => $id,
+        organism          => $org_item,
+        pathways          => [@pathway_items],
+        dataSets          => [$dataset_item],
     );
-    push @items, $item;
-}   
+}
 close($input) or die "Could not close $gene_map_filename, $!";
 
 # write the items
-open(my $output, '>', $out_file) 
-    or die "Cannot open $out_file for writing, $!";
-
-my $writer = new XML::Writer(
-    DATA_MODE   => 1, 
-    DATA_INDENT => 3, 
-    OUTPUT      => $output,
-);
-
-$writer->startTag("items");
-$_->as_xml($writer) for @items;
-$writer->endTag("items");
-
-close($output) or die "Cannot close $out_file, $!";
-exit;
+$document->write();
