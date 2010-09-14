@@ -11,7 +11,7 @@ use InterMine::Item::Document;
 my $output;
 
 my $model = new InterMine::Model(file => 't/data/testmodel_model.xml');
-my $document = new InterMine::Item::Document(model => $model, output => $output);
+my $document = new InterMine::Item::Document(model => $model, output => \$output);
 
 
 my $emp1 = $document->add_item("Employee");

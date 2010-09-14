@@ -110,7 +110,7 @@ sub new {
         DATA_MODE   => 1, 
         DATA_INDENT => 3, 
     );
-  if (my $output = delete $opts{output}) {
+  if (my $out_file = delete $opts{output}) {
      open(my $output, '>', $out_file) 
         or die "Cannot open $out_file for writing, $!";
     $writer_args{OUTPUT} = $output;
@@ -183,7 +183,7 @@ sub close {
 
 =cut
 
-sub make_item {
+sub add_item {
   my $self = shift;
   my %args;
   my %attr;
