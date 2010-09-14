@@ -7,7 +7,7 @@
 # where <mine_name> is the name of the directory where the script is run
 
 BEGIN {
-  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib');
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/InterMine-Util/lib');
 }
 
 use strict;
