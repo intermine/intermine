@@ -54,7 +54,7 @@
     <pathDescription pathString="Gene.goAnnotation.goEvidenceCodes" description="GO annotation &gt; evidence">
     </pathDescription>
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG11348" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A">
+      <constraint op="LOOKUP" value="PFL2660w" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A">
       </constraint>
     </node>
     <node path="Gene.goAnnotation" type="GOAnnotation">
@@ -120,7 +120,7 @@
 <template name="Gene_particularGoannotation" title="Gene + GO term name --&gt; Gene with the GO term name." longDescription="Show if the following gene has the following GO term." comment="">
   <query name="Gene_particularGoannotation" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B">
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG9015" description="For the gene(s):" identifier="" editable="true" code="A">
+      <constraint op="LOOKUP" value="PFL2660w" description="For the gene(s):" identifier="" editable="true" code="A">
       </constraint>
     </node>
     <node path="Gene.goAnnotation" type="GOAnnotation">
