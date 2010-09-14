@@ -55,7 +55,7 @@ while (<$input>) {
         'Pathway',
         identifier => $id,
         name       => $title,
-        dataSets   => [$dataset_item],
+#       dataSets   => [$dataset_item],
     );
     $pathway_with{$id} = $item;
 }
