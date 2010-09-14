@@ -1367,8 +1367,8 @@ public class ProjectEditor extends JFrame
         @Override
         protected void done() {
             if (failure == null) {
-                
-                modelViewer.initialise(newModel);
+                File projectHome = projectFile.getParentFile();
+                modelViewer.initialise(newModel, projectHome);
 
             } else {
                 logger.error(Messages.getMessage("model.load.failed.message"), failure);
