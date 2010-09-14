@@ -16,6 +16,10 @@ import static org.intermine.modelviewer.swing.CustomisedMxGraph.REFERENCE_EDGE_S
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.awt.Dialog;
+import java.awt.event.ActionEvent;
+import java.awt.GridBagConstraints;
+import java.awt.Dimension;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -25,9 +29,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JFrame;
+import javax.swing.JButton;
+import javax.swing.Box;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -43,6 +52,9 @@ import javax.swing.tree.TreeSelectionModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.intermine.common.swing.Messages;
+import org.intermine.common.swing.GridBagHelper;
+import org.intermine.common.swing.SystemProcessProgressDialog;
+import org.intermine.common.swing.SystemProcessSwingWorker;
 import org.intermine.modelviewer.ProjectLoader;
 import org.intermine.modelviewer.model.ForeignKey;
 import org.intermine.modelviewer.model.Model;
@@ -109,6 +121,10 @@ public class ModelViewer extends JPanel
     private JTree classTree;
     
     /**
+      * Progress dialog to display the output from <code>ant build-db</code>
+      */
+    private SystemProcessProgressDialog processDialog;
+    /**
      * The table model for the attribute table.
      * @serial
      */
@@ -163,13 +179,45 @@ public class ModelViewer extends JPanel
      */
     private Map<String, mxICell> graphNodes = new HashMap<String, mxICell>();
 
-    
+    /**
+      * The parent fram of the ModelViewer pane
+      */
+    private JFrame parentFrame;
+
+    /**
+      * Button panel
+      */
+    private JPanel buttonPanel = new JPanel();
+
+    /**
+      * Create the build model button
+      */
+    private JButton buildButton = new JButton(Messages.getMessage("build.model"));
     /**
      * Initialises this component.
      */
     public ModelViewer() {
         init();
     }
+    
+    public ModelViewer(JFrame frame) {
+        parentFrame = frame;
+        init();
+    }
+
+    private File projectHome;
+    
+    /**
+    * Progress dialog to display the output from <code>ant build-db</code>. 
+    * @serial  
+    */ 
+    private SystemProcessProgressDialog progressDialog; 
+  
+    /** 
+     * Build model action. 
+     * @serial 
+     */ 
+    private Action buildModelAction = new BuildModelAction(); 
 
     /**
      * Lays out the components within this panel and wires up the relevant
@@ -188,12 +236,18 @@ public class ModelViewer extends JPanel
             projectFileChooser.setSelectedFile(lastProjectFile);
         }
 
+        initButtonPanel();
+        
         classTreeModel = new ClassTreeModel();
         classTree = new JTree(classTreeModel);
         classTree.setCellRenderer(new ClassTreeCellRenderer());
         classTree.setRootVisible(false);
         classTree.setShowsRootHandles(true);
         
+        Box vbox = Box.createVerticalBox();
+        vbox.add(new JScrollPane(classTree));
+        vbox.add(buttonPanel);
+
         DefaultTreeSelectionModel selectionModel = new DefaultTreeSelectionModel();
         selectionModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         classTree.setSelectionModel(selectionModel);
@@ -220,7 +274,7 @@ public class ModelViewer extends JPanel
             new JSplitPane(JSplitPane.VERTICAL_SPLIT, tableTab, graphComponent);
         
         JSplitPane mainSplit =
-            new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(classTree), rightSplit);
+            new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, vbox, rightSplit);
         
         setOpaque(true);
         setLayout(new BorderLayout());
@@ -228,8 +282,21 @@ public class ModelViewer extends JPanel
         
         rightSplit.setDividerLocation(150);
         mainSplit.setDividerLocation(200);
+
     }
     
+    /**
+      * Initialise the button panel
+      */
+    private void initButtonPanel() {
+        GridBagConstraints cons = GridBagHelper.setup(buttonPanel); 
+        cons.weightx = 1; 
+        buttonPanel.add(buildButton, cons); 
+        buildButton.setMnemonic('b'); 
+        buildButton.addActionListener(buildModelAction); 
+        buttonPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, 50)); 
+    } 
+
     /**
      * Get the project file chooser component.
      * @return The project file JFileChooser.
@@ -237,7 +304,17 @@ public class ModelViewer extends JPanel
     public JFileChooser getProjectFileChooser() {
         return projectFileChooser;
     }
-    
+
+   /** 
+    * Initialise the Model Viewer with the project directory 
+    * 
+    * @param model The model to display 
+    * @param projectDir The project directory 
+    */ 
+    public void initialise(Model model, File projectDir) { 
+       projectHome = projectDir; 
+       initialise(model); 
+    } 
     /**
      * Reinitialise this component to display the given model.
      * 
@@ -477,6 +554,57 @@ public class ModelViewer extends JPanel
         @Override
         public String getDescription() {
             return Messages.getMessage("filter.project");
+        }
+    }
+    
+    /**
+      * Action to build the model.
+      */
+    private class BuildModelAction extends AbstractAction {
+        private static final long serialVersionUID = 1764086264698226094L;
+    
+        /**
+          * Constructor.
+          */
+        public BuildModelAction() {
+
+        }
+    
+        /** 
+         * Called when the action fires, this method builds the model. 
+         *  
+         * @param event The action event. 
+         */ 
+        @Override 
+        public void actionPerformed(ActionEvent event) { 
+            File execDir = new File(projectHome, "/dbmodel/");
+
+            List<String> commands = new ArrayList<String>(); 
+            commands.add("ant"); 
+            commands.add("build-db"); 
+        
+            StringBuilder b = new StringBuilder(); 
+            Iterator<String> iter = commands.iterator(); 
+            while (iter.hasNext()) { 
+                b.append(iter.next()); 
+                if (iter.hasNext()) { 
+                  b.append(' '); 
+                } 
+            } 
+            logger.debug(b); 
+                    
+            SystemProcessSwingWorker worker = 
+              new SystemProcessSwingWorker(commands, execDir, true); 
+
+            progressDialog = new SystemProcessProgressDialog(parentFrame); 
+            progressDialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL); 
+            progressDialog.setTitle(Messages.getMessage("build.model.title")); 
+            progressDialog.setInformationLabel(Messages.getMessage("build.model.message"));
+
+            progressDialog.setWorker(worker);
+            progressDialog.writeOutput(b + "\n\n");
+            worker.execute();
+            progressDialog.setVisible(true);
         }
     }
 }
