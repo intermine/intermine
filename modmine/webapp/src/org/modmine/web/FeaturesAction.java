@@ -210,7 +210,7 @@ public class FeaturesAction extends InterMineAction
                 q.addView(featureType + ".score");
                 if ("results".equals(action)) {
                     q.addView(featureType + ".scoreProtocol.name");
-                    q.setOuterJoinStatus(featureType + ".scoreProtocol.name",
+                    q.setOuterJoinStatus(featureType + ".scoreProtocol",
                             OuterJoinStatus.OUTER);
                 }
                 q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
