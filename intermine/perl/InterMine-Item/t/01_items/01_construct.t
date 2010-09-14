@@ -27,7 +27,7 @@ throws_ok(sub {$document->add_item('beatnik')},
 
 my $emp1;
 lives_ok(
-    sub { $emp1 => $document->make_item(
+    sub { $emp1 = $document->add_item(
         Employee => (
         name => "fred",
         age  => 40,
@@ -89,7 +89,7 @@ throws_ok(sub {$emp3->set('no_such_field', 'some_value')},
 my $dept_exp = $document->add_item("Department");
 $dept_exp->set("employees", [$emp1, $emp2]);
 
-my $dept_got = $document->make_item("Department");
+my $dept_got = $document->add_item("Department");
 $dept_got->{id} = $dept_exp->{id}; # otherwise compare will fail
 
 warning_like(sub {$dept_got->set("employees", [$emp1, undef, $emp2])}, 

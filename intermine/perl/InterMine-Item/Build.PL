@@ -3,11 +3,12 @@ use warnings;
 use Module::Build;
 
 my $builder = Module::Build->new(
-    module_name         => 'InterMine::Item',
-    license             => 'perl',
-    dist_author         => q{InterMine <dev@intermine.org>},
-    dist_version_from   => 'lib/InterMine/Item.pm',
-    dist_abstract       => 'Tools for writing InterMine-Items-XML files',
+    module_name          => 'InterMine::Item',
+    license              => 'perl',
+    dist_author          => q{InterMine <dev@intermine.org>},
+    dist_version_from    => 'lib/InterMine/Item.pm',
+    dist_abstract        => 'Tools for writing InterMine-Items-XML files',
+    recursive_test_files => 1,
     requires => {
         'InterMine::Model' => 0.94,
         'XML::Writer' => 0,
