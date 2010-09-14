@@ -173,7 +173,7 @@ public class CytoscapeInteractionsController extends TilesAction
         }
 
         // result columns
-        QueryField qfInteractingGenePID = new QueryField(qcInteractingGene, "primaryIdentifiers");
+        QueryField qfInteractingGenePID = new QueryField(qcInteractingGene, "primaryIdentifier");
 
         q.setDistinct(true);
 
