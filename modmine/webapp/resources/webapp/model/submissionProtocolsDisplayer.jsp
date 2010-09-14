@@ -148,12 +148,16 @@ div#submissionProtocols h3 {
 														<td
 															id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
 															rowspan="${subRow[column.index].rowspan}"
-															class="<c:out value="${stepClass}${rowClass}"/>"><c:choose>
+															class="<c:out value="${stepClass}${rowClass}"/>">
+															<c:choose>
 															<c:when
-																test="${fn:startsWith(fn:trim(resultElement.field), 'http://')}">
+																test="${fn:startsWith(fn:trim(resultElement.field), 'http://')
+																|| fn:startsWith(fn:trim(resultElement.field), 'ftp://')
+																}">
 																<a href="${resultElement.field}" class="value extlink">
 																<c:set var="elements"
-																	value="${fn:split(resultElement.field,'/')}" /> <c:out
+																	value="${fn:split(resultElement.field,'/')}" /> 
+																	<c:out
 																	value="${elements[fn:length(elements) - 1]}" /> </a>
 															</c:when>
 
