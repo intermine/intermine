@@ -98,9 +98,6 @@ public class SystemProcessProgressDialog extends StandardJDialog
      */
     protected PropertyChangeListener listener = new WorkerListener();
     
-    public SystemProcessProgressDialog() {
-        init();
-    }
     
     /**
      * Initialise with the given parent Dialog.
