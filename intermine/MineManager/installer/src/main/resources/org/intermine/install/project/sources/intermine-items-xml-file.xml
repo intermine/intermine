@@ -6,5 +6,5 @@
 
     <property name="src.data.file" type="file" required="true" />
     
-    <derivation antTask="have.file.xml.tgt" />
+    <derivation antTask="have.file.custom.tgt" />
 </sd:source>
