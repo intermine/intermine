@@ -54,7 +54,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
    ATTRIBUTE OR LOOKUP CONSTRAINT 
 -->  
   <c:if test="${dec.path.attribute || dec.lookup}">
-  <FIELDSET>
+  <FIELDSET class="constraintFieldset">
     <LEGEND>
     <a href="javascript:swapInputs('attribute');"> 
     <fmt:message key="query.filterValue" /><%--Filter query results on this field having a specific value.--%>
@@ -219,8 +219,8 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
 	<!--  
 	   BAGS CONSTRAINT 
 	--> 
-	  <br />
 	  <c:if test="${!dec.path.attribute && !empty dec.bags}">
+	  <br />
 	    <strong><fmt:message key="query.or" /></strong>
 	    <input type="checkbox" id="checkBoxBag" onclick="swapInputs('bag');" />
 	     <%--
@@ -241,7 +241,6 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
 	        </option>
 	      </c:forEach>
 	    </html:select> 
-	<br/><br/>
 	</c:if> 
 	</FIELDSET>
 	</c:if> 
@@ -252,13 +251,11 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
 --> 
  <c:if test="${dec.path.indentation != 0 && !empty SUBCLASSES[dec.path.type]}">
 	<!-- SUBCLASS -->
-    <FIELDSET>
+    <FIELDSET class="constraintFieldset">
     <LEGEND>
     <a href="javascript:swapInputs('subclass');"> <fmt:message key="query.filterSubclass" /><%--Filter query results based on this field being a member of a specific class of objects.--%>
       </a>
     </LEGEND>
-    <br/>
-
 	<p style="text-align: left;">
 	    <fmt:message key="query.subclassConstraint"/><%--Constraint to be subtype:--%>
 	    <html:select property="subclassValue" styleId="subclass1" disabled="true">
@@ -272,7 +269,6 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
 	        <fmt:message key="query.submitConstraint"/><%--Add to query--%>
 	    </html:submit>
 	</p>
-	<br/>
 	</FIELDSET>
 </c:if>
 
@@ -280,12 +276,11 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
    LOOP QUERY CONSTRAINT
 -->
 <c:if test="${!empty dec.candidateLoops && !empty dec.loopQueryOps}">
- <FIELDSET>
+ <FIELDSET class="constraintFieldset">
     <LEGEND>
     <a href="javascript:swapInputs('loopQuery');"> <fmt:message key="query.filterLoopQuery" /><%--Filter query results on the query loop.--%>
       </a>
     </LEGEND>
-    <br/>
 	<p style="text-align: left;">
     <fmt:message key="query.loopQueryConstraint"/><%--Constraint to another field:--%>
     <html:select property="loopQueryOp" styleId="loopQuery1" disabled="true">
@@ -307,7 +302,6 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
 	    <fmt:message key="query.submitConstraint"/><%--Add to query--%>
 	</html:submit>
 	</p>
-	<br/>
 	</FIELDSET>
 </c:if>
 
@@ -316,13 +310,12 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
 -->
   <c:if test="${dec.path.attribute && !dec.path.primitive}"> <!-- only if it is an attribute and primitive type -->
   <br/>
-  <FIELDSET>
+  <FIELDSET class="constraintFieldset">
     <LEGEND>
     <a href="javascript:swapInputs('empty');">
             <fmt:message key="query.filterEmpty"/><%--Filter query results on this field having any value or not.--%>
         </a>
     </LEGEND>
-    <br/>
     <p style="text-align: left;">
     	<c:set var="selectedValue" value="" />
         <c:if test="${dec.nullSelected}">
@@ -335,7 +328,6 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
         <fmt:message key="query.submitConstraint"/><%--Add to query--%>
         </html:submit>
     </p>
-    <br/>
     </FIELDSET>
 	</c:if>
 

@@ -168,3 +168,6 @@ table.noborder, table.noborder td, table.noborder th {
 .optionalConstraint {
   font-size: 0.9em;
 }
+
+.constraintFieldset {
+  padding: 5px 5px 7px 5px;}
