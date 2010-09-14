@@ -48,7 +48,7 @@
   </query>
 </template>
 <template name="Gene_GO" title="Gene --&gt; GO terms." longDescription="Search for GO annotations for a particular gene." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="Gene_GO" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.goEvidenceCodes.code Gene.goAnnotation.qualifier Gene.goAnnotation:ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.ontologyTerm.namespace" sortOrder="Gene.primaryIdentifier asc">
+  <query name="Gene_GO" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.goEvidenceCodes.code Gene.goAnnotation.qualifier Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.ontologyTerm.namespace" sortOrder="Gene.primaryIdentifier asc">
     <pathDescription pathString="Gene.goAnnotation" description="GO annotation">
     </pathDescription>
     <pathDescription pathString="Gene.goAnnotation.goEvidenceCodes" description="GO annotation &gt; evidence">
@@ -123,11 +123,11 @@
       <constraint op="LOOKUP" value="CG9015" description="For the gene(s):" identifier="" editable="true" code="A">
       </constraint>
     </node>
-    <node path="Gene:goAnnotation" type="GOAnnotation">
+    <node path="Gene.goAnnotation" type="GOAnnotation">
     </node>
-    <node path="Gene:goAnnotation.ontologyTerm" type="OntologyTerm">
+    <node path="Gene.goAnnotation.ontologyTerm" type="OntologyTerm">
     </node>
-    <node path="Gene:goAnnotation.ontologyTerm.name" type="String">
+    <node path="Gene.goAnnotation.ontologyTerm.name" type="String">
       <constraint op="=" value="*transcription factor*" description="GO Term" identifier="" editable="true" code="B" extraValue="">
       </constraint>
     </node>
