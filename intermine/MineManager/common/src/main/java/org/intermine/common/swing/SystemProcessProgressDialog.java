@@ -14,6 +14,7 @@ import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -168,9 +169,13 @@ public class SystemProcessProgressDialog extends StandardJDialog
         cons.weighty = 0.5;
         cp.add(outputAreaScrollPane, cons);
         
+        outputArea.setFont(new Font("monospaced", Font.PLAIN, 10));
+
         cons.gridy++;
         cp.add(errorAreaScrollPane, cons);
         
+        errorArea.setFont(new Font("monospaced", Font.PLAIN, 10));
+
         cons.gridy++;
         cons.fill = GridBagConstraints.HORIZONTAL;
         cons.weighty = 0;
@@ -289,7 +294,8 @@ public class SystemProcessProgressDialog extends StandardJDialog
          */
         @Override
         public void actionPerformed(ActionEvent event) {
-            setVisible(false);
+            //setVisible(false);
+            dispose();
         }
     }
     
