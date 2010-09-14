@@ -200,7 +200,7 @@
       <displayer src="cytoscapeInteractionsDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
-      <displayer src="orthologueLinkDisplayer.tile"/>
+      <displayer src="orthologueLinkDisplayer.tile" showOnLeft="false" />
    </bagdisplayers>
   </class>
 
