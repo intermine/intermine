@@ -89,7 +89,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
          <c:set var="selectedValue" value="${dec.selectedValue}" />
        </c:if>
 
-        <table border="0" cellspacing="2" cellpadding="1" border="0" class="noborder">
+        <table cellspacing="2" cellpadding="1" class="noborder">
           <tr>
             <!--  constraint op -->
             <c:choose>
@@ -196,60 +196,66 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                   </c:otherwise>
                 </c:choose> 
                 </td>
+                <td>
+                <c:choose>
+                <c:when test="${dec.lookup && dec.extraConstraint}">
+                    <p style="text-align: left;"><fmt:message key="bagBuild.extraConstraint">
+                      <fmt:param value="${dec.extraConstraintClassName}" />
+                     </fmt:message> <html:select property="extraValue" styleId="extraValue1" value="${dec.selectedExtraValue}">
+                      <html:option value="">Any</html:option>
+                      <!-- this should set to extraValue if editing existing constraint -->
+                      <c:forEach items="${dec.extraConstraintValues}" var="value">
+                         <html:option value="${value}">
+                          <c:out value="${value}" />
+                         </html:option>
+                      </c:forEach>
+                    </html:select></p>
+                  </c:when>
+                  <c:otherwise>
+                    <html:hidden property="extraValue" value="" />
+                  </c:otherwise>
+                </c:choose>
+                </td>
             </c:otherwise>
             </c:choose>
-            <td valign="top">&nbsp; <html:submit property="attribute" styleId="attributeSubmit"
+            <td valign="middle" rowspan="2"><html:submit property="attribute" styleId="attributeSubmit"
               disabled="false">
               <fmt:message key="query.submitConstraint" />
               <%--Add to query--%>
             </html:submit></td>
           </tr>
+          <tr>
+          <td colspan="3">
+          <!--  
+          BAGS CONSTRAINT 
+         --> 
+          <c:if test="${!dec.path.attribute && !empty dec.bags}">
+          <strong><fmt:message key="query.or" /></strong>
+          <input type="checkbox" id="checkBoxBag" onclick="swapInputs('bag');" />
+           <%--
+          <html:checkbox property="useBagConstraint" styleId="bag1" disabled="true"/>
+            --%>
+          <fmt:message key="query.bagConstraint" /><%--Contained in bag:--%>
+          <html:select property="bagOp" styleId="bag1" disabled="true">
+            <c:forEach items="${dec.bagOps}" var="bagOp">
+              <html:option value="${bagOp.property}">
+                <c:out value="${bagOp.label}" />
+              </html:option>
+            </c:forEach>
+          </html:select> 
+          <html:select property="bagValue" styleId="bag2" disabled="true">
+            <c:forEach items="${dec.bags}" var="bag">
+              <option value="${bag}" <c:if test="${dec.bagSelected && dec.selectedValue == bag}">selected</c:if>>
+                <c:out value="${bag}" />
+              </option>
+            </c:forEach>
+          </html:select> 
+         </c:if> 
+          </td>
+          </tr>
         </table>
-        <c:choose>
-          <c:when test="${dec.lookup && dec.extraConstraint}">
-            <p style="text-align: left;"><fmt:message key="bagBuild.extraConstraint">
-              <fmt:param value="${dec.extraConstraintClassName}" />
-            </fmt:message> <html:select property="extraValue" styleId="extraValue1" value="${dec.selectedExtraValue}">
-              <html:option value="">Any</html:option>
-              <!-- this should set to extraValue if editing existing constraint -->
-              <c:forEach items="${dec.extraConstraintValues}" var="value">
-                <html:option value="${value}">
-                  <c:out value="${value}" />
-                </html:option>
-              </c:forEach>
-            </html:select></p>
-          </c:when>
-          <c:otherwise>
-            <html:hidden property="extraValue" value="" />
-          </c:otherwise>
-        </c:choose>
   
-	<!--  
-	   BAGS CONSTRAINT 
-	--> 
-	  <c:if test="${!dec.path.attribute && !empty dec.bags}">
-	  <br />
-	    <strong><fmt:message key="query.or" /></strong>
-	    <input type="checkbox" id="checkBoxBag" onclick="swapInputs('bag');" />
-	     <%--
-		<html:checkbox property="useBagConstraint" styleId="bag1" disabled="true"/>
-	      --%>
-	    <fmt:message key="query.bagConstraint" /><%--Contained in bag:--%>
-	    <html:select property="bagOp" styleId="bag1" disabled="true">
-	      <c:forEach items="${dec.bagOps}" var="bagOp">
-	        <html:option value="${bagOp.property}">
-	          <c:out value="${bagOp.label}" />
-	        </html:option>
-	      </c:forEach>
-	    </html:select> 
-	    <html:select property="bagValue" styleId="bag2" disabled="true">
-	      <c:forEach items="${dec.bags}" var="bag">
-	        <option value="${bag}" <c:if test="${dec.bagSelected && dec.selectedValue == bag}">selected</c:if>>
-	          <c:out value="${bag}" />
-	        </option>
-	      </c:forEach>
-	    </html:select> 
-	</c:if> 
+	
 	</FIELDSET>
 	</c:if> 
 
