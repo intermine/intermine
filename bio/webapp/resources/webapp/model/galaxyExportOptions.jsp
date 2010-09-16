@@ -158,7 +158,7 @@
 
   function initForm()
   {
-    jQuery("#data_type").val("");
+    jQuery("#data_type").val("txt");
     jQuery("#URL").val("");
     jQuery("#info").val("");
     jQuery("#dbkey").val("");
