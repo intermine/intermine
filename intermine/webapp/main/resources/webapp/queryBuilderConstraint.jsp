@@ -93,7 +93,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
           <tr>
             <!--  constraint op -->
             <c:choose>
-              <c:when test="${dec.path.type == 'Boolean'}">
+              <c:when test="${dec.path.type == 'Boolean' || dec.path.type == 'boolean'}">
                 <!--  boolean doesn't have a separate op dropdown -->
                 <td valign="top"><html:hidden property="attributeOp" styleId="attribute1"
                   value="0" disabled="false" /> 
@@ -103,10 +103,14 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                   <input type="radio" name="attributeValue" id="attribute3" value="false"
                   <c:if test="${selectedValue == 'false'}">checked</c:if>/>
                   <fmt:message key="query.constraint.false" /> 
-                  <input type="radio" name="attributeValue" id="attribute4" value="NULL"
-                  <c:if test="${selectedValue == 'NULL'}">checked</c:if>/>
-                  <fmt:message key="query.constraint.null" />
-                </td><br/><br/>
+                  <c:choose>
+                      <c:when test="${dec.path.type == 'Boolean'}">
+                      <input type="radio" name="attributeValue" id="attribute4" value="NULL"
+                      <c:if test="${selectedValue == 'NULL'}">checked</c:if>/>
+                      <fmt:message key="query.constraint.null" />
+                      </c:when>
+                  </c:choose>
+                </td><br/>
               </c:when>
               <c:otherwise>
                 <!-- dropdown to select constraint op or label for lookup-->

@@ -227,7 +227,7 @@ public class SimpleConstraint extends Constraint
             return NUMBER_OPS;
         } else if (String.class.equals(arg)) {
             return STRING_OPS;
-        } else if (Boolean.class.equals(arg)) {
+        } else if (Boolean.class.equals(arg) || boolean.class.equals(arg)) {
             return BOOLEAN_OPS;
         } else if (Date.class.equals(arg)) {
             return DATE_OPS;
