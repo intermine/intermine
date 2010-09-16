@@ -251,8 +251,10 @@ public final class Util
             return Long.class;
         } else if ("java.lang.String".equals(type)) {
             return String.class;
-        } else if ("boolean".equals(type) || "java.lang.Boolean".equals(type)) {
-            return Boolean.class;
+        } else if ("boolean".equals(type)) {
+            return boolean.class;
+        } else if ("java.lang.Boolean".equals(type)) {
+        	return Boolean.class;
         } else if ("float".equals(type) || "java.lang.Float".equals(type)) {
             return Float.class;
         } else if ("double".equals(type) || "java.lang.Double".equals(type)) {
