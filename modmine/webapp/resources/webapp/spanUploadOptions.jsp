@@ -95,13 +95,13 @@
 
          var ftHTMLArray = [];
          for(i=0; i<uniqueFeatureTypes.length; i++) {
-           ftHTMLArray.push("<input type='checkbox' checked='yes' name='featureTypes' value='"
+           ftHTMLArray.push("<input type='checkbox' checked='yes' class='featureType' name='featureTypes' value='"
                     + uniqueFeatureTypes[i] + "'/>" + uniqueFeatureTypes[i] + "<br/>");
          }
 
          jQuery("#featureType").html(ftHTMLArray.join(""));
          if(ftHTMLArray.join("") != "") {
-             jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id, 'featureTypes')\"/>Select Feature Types:"); }
+             jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id)\"/>Select Feature Types:"); }
            else {
              jQuery("#selectFeatureTypes").html("Select Feature Types:"); }
      })
@@ -202,13 +202,13 @@
 
          var ftHTMLArray = [];
          for(i=0; i<uniqueFeatureTypes.length; i++) {
-           ftHTMLArray.push("<input type='checkbox' checked='yes' class='featureTypes' value='"
+           ftHTMLArray.push("<input type='checkbox' checked='yes' class='featureType' name='featureTypes' value='"
                     + uniqueFeatureTypes[i] + "' onclick='uncheck(this.checked, \"featureTypes\")'/>" + uniqueFeatureTypes[i] + "<br/>");
          }
 
          jQuery("#featureType").html(ftHTMLArray.join(""));
          if(ftHTMLArray.join("") != "") {
-           jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id, 'featureTypes')\"/>Select Feature Types:"); }
+           jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id)\"/>Select Feature Types:"); }
          else {
            jQuery("#selectFeatureTypes").html("Select Feature Types:<br><i>Please select some experiments first</i>"); }
      })
@@ -265,9 +265,9 @@
   }
 
    // (un)Check all featureType checkboxes
-   function checkAll(id, name)
+   function checkAll(id)
    {
-     jQuery(".featureTypes").attr('checked', jQuery('#' + id).is(':checked'));
+     jQuery(".featureType").attr('checked', jQuery('#' + id).is(':checked'));
      jQuery("#check").css("opacity", 1);
    }
 
@@ -276,7 +276,7 @@
    {
      var statTag;
      if (!status) { //unchecked
-       jQuery(".featureTypes").each(function() {
+       jQuery(".featureType").each(function() {
          if (this.checked) {statTag=true;}
        });
 
@@ -288,7 +288,7 @@
         jQuery("#check").css("opacity", 1);}
      }
      else { //checked
-       jQuery(".featureTypes").each(function() {
+       jQuery(".featureType").each(function() {
          if (!this.checked) {statTag=true;}
      });
 

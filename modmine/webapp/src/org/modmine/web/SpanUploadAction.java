@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -212,9 +213,9 @@ public class SpanUploadAction extends InterMineAction
         }
         List<Span> spanList = new ArrayList<Span>(spanSet);
 
-        // >>>>>>
+        // ******
         // Refer to code from BuildBagAction.java
-        // <<<<<<
+        // ******
 
         // > Step 2 - Logic >>>>>
         // >> 2.1 Query chromosome info for span validation purpose
@@ -225,31 +226,40 @@ public class SpanUploadAction extends InterMineAction
         Map<String, List<ChromosomeInfo>> chrInfoMap = SpanOverlapQueryRunner
                 .runSpanValidationQuery(im);
 
-        // >> 2.2 Validate the spans (parse and validate by AJAX???)
-        ///*
-        Map<String, List<Span>> resultMap = SpanValidator.runSpanValidation(
-                orgName, spanList, chrInfoMap);
+        Map<Span, Results> spanOverlapResultDisplayMap = new LinkedHashMap<Span, Results>();
+        if (chrInfoMap.isEmpty()) {
+            // >> 2.3 Query the overlapped features
+            spanOverlapResultDisplayMap = SpanOverlapQueryRunner
+             .runSpanOverlapQuery(spanUploadForm, spanList, im);
 
-        // store the error in the session and return it to the webpage
-        // what if all spans are wrong or no error???
-        String errorMsg = "";
-        if (resultMap.get(SpanUploadAction.ERROR).size() == 0) {
-            errorMsg = null;
         } else {
-            String spanString = "";
-            for (Span span : resultMap.get(SpanUploadAction.ERROR)) {
-                spanString = spanString + span.getChr() + ":" + span.getStart()
-                        + ".." + span.getEnd() + ",";
-            }
-            errorMsg = "Invalid spans: " + spanString.substring(0, spanString.lastIndexOf(","));
-        }
-        //*/
 
-        // >> 2.3 Query the overlapped features
-        Map<Span, Results> spanOverlapResultDisplayMap = SpanOverlapQueryRunner
-                .runSpanOverlapQuery(spanUploadForm, resultMap
-                        .get(SpanUploadAction.PASS), im);
-//         .runSpanOverlapQuery(spanUploadForm, spanList, im);
+            // >> 2.2 Validate the spans (parse and validate by AJAX???)
+            Map<String, List<Span>> resultMap = SpanValidator.runSpanValidation(
+                    orgName, spanList, chrInfoMap);
+
+            // store the error in the session and return it to the webpage
+            // what if all spans are wrong or no error???
+            String errorMsg = "";
+            if (resultMap.get(SpanUploadAction.ERROR).size() == 0) {
+                errorMsg = null;
+            } else {
+                String spanString = "";
+                for (Span span : resultMap.get(SpanUploadAction.ERROR)) {
+                    spanString = spanString + span.getChr() + ":" + span.getStart()
+                            + ".." + span.getEnd() + ",";
+                }
+                errorMsg = "Invalid spans: " + spanString.substring(0, spanString.lastIndexOf(","));
+            }
+
+            // >> 2.3 Query the overlapped features
+            spanOverlapResultDisplayMap = SpanOverlapQueryRunner
+                    .runSpanOverlapQuery(spanUploadForm, resultMap
+                            .get(SpanUploadAction.PASS), im);
+
+            session.setAttribute("errorMsg", errorMsg);
+        }
+
 
         // > Step3 - Session data preparation >>>>>
         String expString = "";
@@ -264,7 +274,7 @@ public class SpanUploadAction extends InterMineAction
         }
         session.setAttribute("selectedFt", "Selected feature types: "
                 + ftString.substring(0, ftString.lastIndexOf(",")));
-        session.setAttribute("errorMsg", errorMsg);
+
         session.setAttribute("results", spanOverlapResultDisplayMap);
 
         return mapping.findForward("spanUploadResults");
