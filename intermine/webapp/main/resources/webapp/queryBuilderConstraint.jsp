@@ -114,9 +114,10 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
               </c:when>
               <c:otherwise>
                 <!-- dropdown to select constraint op or label for lookup-->
-                <td valign="top">
+                
                 <c:choose>
 	                <c:when test="${dec.path.attribute}">
+	                <td valign="top">
 	                  <html:select property="attributeOp" styleId="attribute5"
 	                      onchange="onChangeAttributeOp();">
 	                    <c:forEach items="${dec.validOps}" var="op">
@@ -126,13 +127,16 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
 	                      </option>
 	                    </c:forEach>
 	                  </html:select>
+	                  </td>
 	                  </c:when>
                   <c:otherwise>
                    <html:hidden property="attributeOp" styleId="attribute5" value="${dec.lookupOp.property}" disabled="false" />
+                   <td>
                    <fmt:message key="query.lookupConstraintLabel" /><%-- LOOKUP: --%>
+                   </td>
                   </c:otherwise>
                  </c:choose>
-                </td>
+                
               
             
               <!-- constraint value -->
