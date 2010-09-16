@@ -93,6 +93,12 @@
          padding-right:4px;
      }
 
+     .toggle
+     {
+        position: relative;
+        top: 2px;
+     }
+
     </style>
 
     <div class="browserline">
@@ -118,18 +124,18 @@
         <c:when test="${node.reverseReference && node.reference}">
         </c:when>
         <c:when test="${isNull}">
-          <img border="0" src="images/plus-disabled.gif" width="11" height="11" title="+"/>
+          <img class="toggle" border="0" src="images/plus-disabled.gif" width="11" height="11" title="+"/>
         </c:when>
         <c:when test="${node.button == '+'}">
           <html:link action="/queryBuilderChange?method=changePath&amp;path=${node.pathString}"
             onclick="return toggleNode('${node.pathString}', '${node.pathString}')">
-            <img id="img_${node.pathString}" border="0" src="images/plus.gif" width="11" height="11" title="+"/>
+            <img class="toggle" id="img_${node.pathString}" border="0" src="images/plus.gif" width="11" height="11" title="+"/>
           </html:link>
         </c:when>
         <c:when test="${node.button == '-'}">
           <html:link action="/queryBuilderChange?method=changePath&amp;path=${node.prefix}"
             onclick="return toggleNode('${node.pathString}', '${node.pathString}');">
-            <img id="img_${node.pathString}" border="0" src="images/minus.gif" width="11" height="11" title="-"/>
+            <img class="toggle" id="img_${node.pathString}" border="0" src="images/minus.gif" width="11" height="11" title="-"/>
           </html:link>
         </c:when>
         <c:otherwise>
