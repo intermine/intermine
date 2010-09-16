@@ -126,7 +126,7 @@ function swapInputs(open) {
         jQuery('#inner').attr("disabled", false);
         jQuery('#joinStyleSubmit').attr("disabled", false);
     }
-    if(open == 'attribute') {
+    if(open == 'attribute' && document.getElementById("extraValue1")) {
     	document.getElementById("extraValue1").disabled = false;
     } else {
     	document.getElementById("extraValue1").disabled = true;
