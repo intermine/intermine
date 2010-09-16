@@ -93,7 +93,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
           <tr>
             <!--  constraint op -->
             <c:choose>
-              <c:when test="${dec.path.type == 'Boolean' || dec.path.type == 'boolean'}">
+              <c:when test="${dec.boolean}">
                 <!--  boolean doesn't have a separate op dropdown -->
                 <td valign="top"><html:hidden property="attributeOp" styleId="attribute1"
                   value="0" disabled="false" /> 
