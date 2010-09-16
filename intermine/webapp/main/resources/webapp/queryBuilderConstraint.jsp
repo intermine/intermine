@@ -48,8 +48,8 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
 <div class="body">
  <c:choose>
  <c:when  test="${empty joinStyleOnly}" >
-  <h3><fmt:message key="query.constraintHeading"/></h3> <%--1. Choose a filter--%>
-
+  <h4><fmt:message key="query.constraintHeading"/></h4> <%--1. Choose a filter--%>
+<br/>
 <!--  
    ATTRIBUTE OR LOOKUP CONSTRAINT 
 -->  
