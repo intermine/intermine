@@ -202,7 +202,7 @@
                
                 </c:choose>
 
-              <%-- dropdown --%>
+              <%-- dropdown --%><!--
               <c:if test="${!empty dec.possibleValues}">
                 <select name="attributeOptions(${index})" onchange="updateAttributeValues(${index});">
                   <c:forEach items="${dec.possibleValues}" var="option">
@@ -211,8 +211,7 @@
                     </c:forEach>
                 </select>
               </c:if>
-             
-          <!-- lookup constraint -->
+          -->
          
          <%-- dropdown (probably organism) --%>
          <c:choose>
