@@ -154,7 +154,7 @@ public class TemplateController extends TilesAction
             }
             displayConstraintList.add(displayConstraint);
             // to allow struts tag to set the combo checked
-            if ("Boolean".equals(path.getEndType().getSimpleName())) {
+            if (displayConstraint.isBoolean()) {
                 tf.setAttributeValues("" + (index + 1), displayConstraint.getSelectedValue());
             }
             if (pathConstraint instanceof PathConstraintNull) {

@@ -283,6 +283,10 @@ public class DisplayConstraint
         return (con != null && con instanceof PathConstraintNull);
     }
 
+    public boolean isBoolean() {
+        String type = getPath().getType();
+        return ("boolean".equals(type) || "java.lang.Boolean".equals(type));
+    }
     /**
      * Return true if editing an existing constraint and an attribute value or LOOKUP constraint
      * was selected.
