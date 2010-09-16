@@ -218,7 +218,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                 </td>
             </c:otherwise>
             </c:choose>
-            <td valign="middle" rowspan="2"><html:submit property="attribute" styleId="attributeSubmit"
+            <td valign="middle" rowspan="2" style="margin-left:5px;"><html:submit property="attribute" styleId="attributeSubmit"
               disabled="false">
               <fmt:message key="query.submitConstraint" />
               <%--Add to query--%>
