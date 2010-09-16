@@ -140,7 +140,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
               
             
               <!-- constraint value -->
-            <td valign="top" align="center">
+            <td valign="top">
               <c:if test="${!empty dec.possibleValues}">
                 <c:set var="possibleValuesDisplay" value="display:none;"/>
                 <c:if test="${dec.possibleValuesDisplayed}">
