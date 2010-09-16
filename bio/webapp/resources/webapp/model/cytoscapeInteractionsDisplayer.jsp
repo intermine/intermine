@@ -61,7 +61,7 @@
 
         if (networkdata == "") {
             jQuery(document).ready(function() {
-              jQuery('#cytoscapeweb').html("no interactions found")
+              jQuery('#cytoscapeweb').html("interaction data unavailable")
                                 .css('font-style','italic')
                                 .height(50)
                                 .width(150);

@@ -158,59 +158,64 @@ public class CytoscapeInteractionsController extends TilesAction
         Set<String> interactingGeneSet = new HashSet<String>();
 
         // IQL
-        Query q = new Query();
-
-        QueryClass qcGene = new QueryClass(Gene.class);
-        QueryClass qcInteractingGene = new QueryClass(Gene.class);
-        QueryClass qcInteraction = null;
-
-        // Test if Interaction class in the core model
         try {
-            qcInteraction =
-                new QueryClass(Class.forName(model.getPackageName() + ".Interaction"));
-        } catch (ClassNotFoundException e) {
-            return null;
-        }
+            Query q = new Query();
 
-        // result columns
-        QueryField qfInteractingGenePID = new QueryField(qcInteractingGene, "primaryIdentifier");
+            QueryClass qcGene = new QueryClass(Gene.class);
+            QueryClass qcInteractingGene = new QueryClass(Gene.class);
+            QueryClass qcInteraction = null;
 
-        q.setDistinct(true);
+            // Test if Interaction class in the core model
+            try {
+                qcInteraction =
+                    new QueryClass(Class.forName(model.getPackageName() + ".Interaction"));
+            } catch (ClassNotFoundException e) {
+                return null;
+            }
 
-        q.addToSelect(qfInteractingGenePID);
+            // result columns
+            QueryField qfGenePID = new QueryField(qcGene, "primaryIdentifier");
+            QueryField qfInteractingGenePID =
+                new QueryField(qcInteractingGene, "primaryIdentifier");
 
-        q.addFrom(qcGene);
-        q.addFrom(qcInteraction);
-        q.addFrom(qcInteractingGene);
+            q.setDistinct(true);
 
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+            q.addToSelect(qfInteractingGenePID);
 
-        QueryField qfGenePID = new QueryField(qcGene, "primaryIdentifier");
-        SimpleConstraint sc = new SimpleConstraint(qfGenePID, ConstraintOp.EQUALS,
-                new QueryValue(genePID));
-        cs.addConstraint(sc);
+            q.addFrom(qcGene);
+            q.addFrom(qcInteraction);
+            q.addFrom(qcInteractingGene);
 
-        // gene.interactions
-        QueryCollectionReference cr1 = new QueryCollectionReference(qcGene,
-                "interactions");
-        cs.addConstraint(new ContainsConstraint(cr1, ConstraintOp.CONTAINS,
-                qcInteraction));
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        // gene.interations.genePID
-        QueryCollectionReference cr2 = new QueryCollectionReference(
-                qcInteraction, "interactingGenes");
-        cs.addConstraint(new ContainsConstraint(cr2, ConstraintOp.CONTAINS,
-                qcInteractingGene));
+            SimpleConstraint sc = new SimpleConstraint(qfGenePID, ConstraintOp.EQUALS,
+                    new QueryValue(genePID));
+            cs.addConstraint(sc);
 
-        q.setConstraint(cs);
+            // gene.interactions
+            QueryCollectionReference cr1 = new QueryCollectionReference(qcGene,
+                    "interactions");
+            cs.addConstraint(new ContainsConstraint(cr1, ConstraintOp.CONTAINS,
+                    qcInteraction));
 
-        Results results = im.getObjectStore().execute(q);
+            // gene.interations.genePID
+            QueryCollectionReference cr2 = new QueryCollectionReference(
+                    qcInteraction, "interactingGenes");
+            cs.addConstraint(new ContainsConstraint(cr2, ConstraintOp.CONTAINS,
+                    qcInteractingGene));
 
-        for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
-            ResultsRow<?> row = (ResultsRow<?>) iter.next();
+            q.setConstraint(cs);
 
-            String  aInteractingGene = (String) row.get(0);
-            interactingGeneSet.add(aInteractingGene);
+            Results results = im.getObjectStore().execute(q);
+
+            for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+                ResultsRow<?> row = (ResultsRow<?>) iter.next();
+
+                String  aInteractingGene = (String) row.get(0);
+                interactingGeneSet.add(aInteractingGene);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return interactingGeneSet;
@@ -226,108 +231,133 @@ public class CytoscapeInteractionsController extends TilesAction
             InterMineAPI im, Set<CytoscapeNetworkData> interactionSet) {
 
         // IQL
-        Query q = new Query();
-
-        QueryClass qcGene = new QueryClass(Gene.class);
-        QueryClass qcInteraction = null;
-        QueryClass qcInteractingGene = new QueryClass(Gene.class);
-        QueryClass qcInteractionDataSet = new QueryClass(DataSet.class);
-        QueryClass qcInteractionDataSource = new QueryClass(DataSource.class);
-
-        // Test if Interaction class in the core model?
         try {
+            Query q = new Query();
 
-            qcInteraction =
-                new QueryClass(Class.forName(model.getPackageName() + ".Interaction"));
-        } catch (ClassNotFoundException e) {
-            return null;
-        }
+            QueryClass qcGene = new QueryClass(Gene.class);
+            QueryClass qcInteraction = null;
+            QueryClass qcInteractingGene = new QueryClass(Gene.class);
+            QueryClass qcInteractionDataSet = new QueryClass(DataSet.class);
+            QueryClass qcInteractionDataSource = new QueryClass(DataSource.class);
 
-        // result columns
-        QueryField qfGenePID = new QueryField(qcGene, "primaryIdentifier");
-        QueryField qfGeneSymbol = new QueryField(qcGene, "symbol");
-        QueryField qfInteractionType = new QueryField(qcInteraction,
-                "interactionType");
-        QueryField qfInteractingGenePID = new QueryField(qcInteractingGene,
-                "primaryIdentifier");
-        QueryField qfInteractingGeneSymbol = new QueryField(qcInteractingGene,
-            "symbol");
-        QueryField qfInteractionShortName = new QueryField(qcInteraction,
-            "shortName");
-        QueryField qfDataSourceName = new QueryField(qcInteractionDataSource,
-            "name");
+            // Test if Interaction class in the core model
+            try {
 
-        q.setDistinct(true);
+                qcInteraction =
+                    new QueryClass(Class.forName(model.getPackageName() + ".Interaction"));
+            } catch (ClassNotFoundException e) {
+                return null;
+            }
 
-        q.addToSelect(qfGenePID);
-        q.addToSelect(qfGeneSymbol);
-        q.addToSelect(qfInteractionType);
-        q.addToSelect(qfInteractingGenePID);
-        q.addToSelect(qfInteractingGeneSymbol);
-        q.addToSelect(qfDataSourceName);
-        q.addToSelect(qfInteractionShortName);
+            // result columns
+            QueryField qfGenePID = new QueryField(qcGene, "primaryIdentifier");
+            QueryField qfGeneSymbol = new QueryField(qcGene, "symbol");
+            QueryField qfInteractionType = new QueryField(qcInteraction,
+                    "interactionType");
+            QueryField qfInteractingGenePID = new QueryField(qcInteractingGene,
+                    "primaryIdentifier");
+            QueryField qfInteractingGeneSymbol = new QueryField(qcInteractingGene,
+                "symbol");
+            QueryField qfInteractionShortName = new QueryField(qcInteraction,
+                "shortName");
+            QueryField qfDataSourceName = new QueryField(qcInteractionDataSource,
+                "name");
 
-        q.addFrom(qcGene);
-        q.addFrom(qcInteraction);
-        q.addFrom(qcInteractingGene);
-        q.addFrom(qcInteractionDataSet);
-        q.addFrom(qcInteractionDataSource);
+            q.setDistinct(true);
+
+            q.addToSelect(qfGenePID);
+            q.addToSelect(qfGeneSymbol);
+            q.addToSelect(qfInteractionType);
+            q.addToSelect(qfInteractingGenePID);
+            q.addToSelect(qfInteractingGeneSymbol);
+            q.addToSelect(qfDataSourceName);
+            q.addToSelect(qfInteractionShortName);
+
+            q.addFrom(qcGene);
+            q.addFrom(qcInteraction);
+            q.addFrom(qcInteractingGene);
+            q.addFrom(qcInteractionDataSet);
+            q.addFrom(qcInteractionDataSource);
 
 
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        // Reference
-        // Interaction.dataSets = dataSet
-        QueryCollectionReference dataset = new QueryCollectionReference(qcInteraction,
-            "dataSets");
-        ContainsConstraint ccDataset = new ContainsConstraint(dataset,
-                ConstraintOp.CONTAINS, qcInteractionDataSet);
-        cs.addConstraint(ccDataset);
+            // Reference
+            // Interaction.dataSets = dataSet
+            QueryCollectionReference dataset = new QueryCollectionReference(qcInteraction,
+                "dataSets");
+            ContainsConstraint ccDataset = new ContainsConstraint(dataset,
+                    ConstraintOp.CONTAINS, qcInteractionDataSet);
+            cs.addConstraint(ccDataset);
 
-        // Interaction.dataSets.dataSource = dataSource
-        QueryObjectReference datasource = new QueryObjectReference(qcInteractionDataSet,
-            "dataSource");
-        ContainsConstraint ccDatasource = new ContainsConstraint(datasource,
-                ConstraintOp.CONTAINS, qcInteractionDataSource);
-        cs.addConstraint(ccDatasource);
+            // Interaction.dataSets.dataSource = dataSource
+            QueryObjectReference datasource = new QueryObjectReference(qcInteractionDataSet,
+                "dataSource");
+            ContainsConstraint ccDatasource = new ContainsConstraint(datasource,
+                    ConstraintOp.CONTAINS, qcInteractionDataSource);
+            cs.addConstraint(ccDatasource);
 
-        // gene.primaryidentifier in a list
-        cs.addConstraint(new BagConstraint(qfGenePID, ConstraintOp.IN, keys));
-        cs.addConstraint(new BagConstraint(qfInteractingGenePID, ConstraintOp.IN, keys));
+            // gene.primaryidentifier in a list
+            cs.addConstraint(new BagConstraint(qfGenePID, ConstraintOp.IN, keys));
+            cs.addConstraint(new BagConstraint(qfInteractingGenePID, ConstraintOp.IN, keys));
 
-        // gene.interactions
-        QueryCollectionReference c2 = new QueryCollectionReference(qcGene,
-                "interactions");
-        cs.addConstraint(new ContainsConstraint(c2, ConstraintOp.CONTAINS,
-                qcInteraction));
+            // gene.interactions
+            QueryCollectionReference c2 = new QueryCollectionReference(qcGene,
+                    "interactions");
+            cs.addConstraint(new ContainsConstraint(c2, ConstraintOp.CONTAINS,
+                    qcInteraction));
 
-        // gene.interations.genePID
-        QueryCollectionReference c3 = new QueryCollectionReference(
-                qcInteraction, "interactingGenes");
-        cs.addConstraint(new ContainsConstraint(c3, ConstraintOp.CONTAINS,
-                qcInteractingGene));
+            // gene.interations.genePID
+            QueryCollectionReference c3 = new QueryCollectionReference(
+                    qcInteraction, "interactingGenes");
+            cs.addConstraint(new ContainsConstraint(c3, ConstraintOp.CONTAINS,
+                    qcInteractingGene));
 
-        q.setConstraint(cs);
+            q.setConstraint(cs);
 
-        Results results = im.getObjectStore().execute(q);
+            Results results = im.getObjectStore().execute(q);
 
-        // Handle results
-        for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
-            ResultsRow<?> row = (ResultsRow<?>) iter.next();
+            // Handle results
+            for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+                ResultsRow<?> row = (ResultsRow<?>) iter.next();
 
-            // String genePID = (String) row.get(0);
-            String geneSymbol = (String) row.get(1);
-            String interactionType = (String) row.get(2);
-            // String interactingGenePID = (String) row.get(3);
-            String interactingGeneSymbol = (String) row.get(4);
-            String dataSourceName = (String) row.get(5);
-            String interactionShortName = (String) row.get(6);
+                String genePID = (String) row.get(0);
+                String geneSymbol = (String) row.get(1);
+                String interactionType = (String) row.get(2);
+                String interactingGenePID = (String) row.get(3);
+                String interactingGeneSymbol = (String) row.get(4);
+                String dataSourceName = (String) row.get(5);
+                String interactionShortName = (String) row.get(6);
 
-//            LOG.info("Interaction Results: " + geneSymbol + "-"
-//                    + interactionType + "-" + interactingGeneSymbol);
+                // gene symbol will be missing sometime from the database (null or empty)
+                if (geneSymbol == null && interactingGeneSymbol != null) {
+                    interactionSet = addToInteractionSet(genePID,
+                            interactionType, interactingGeneSymbol,
+                            dataSourceName, interactionShortName,
+                            interactionSet);
+                }
+                if (geneSymbol != null && interactingGeneSymbol == null) {
+                    interactionSet = addToInteractionSet(geneSymbol,
+                            interactionType, interactingGenePID,
+                            dataSourceName, interactionShortName,
+                            interactionSet);
+                }
+                if (geneSymbol == null && interactingGeneSymbol == null) {
+                    interactionSet = addToInteractionSet(genePID,
+                            interactionType, interactingGenePID,
+                            dataSourceName, interactionShortName,
+                            interactionSet);
+                }
+                if (geneSymbol != null && interactingGeneSymbol != null) {
+                    interactionSet = addToInteractionSet(geneSymbol,
+                            interactionType, interactingGeneSymbol,
+                            dataSourceName, interactionShortName,
+                            interactionSet);
+                }
+            }
 
-            interactionSet = addToInteractionSet(geneSymbol, interactionType,
-                    interactingGeneSymbol, dataSourceName, interactionShortName, interactionSet);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return interactionSet;
