@@ -84,7 +84,7 @@ public class DisplayConstraint
     private String selectedBagValue;
     private ConstraintOp selectedBagOp;
     private List<Object> templateSummary;
-    
+
     /**
      * Construct for a new constraint that is being added to a query.
      * @param path The path that is being constrained
@@ -283,6 +283,10 @@ public class DisplayConstraint
         return (con != null && con instanceof PathConstraintNull);
     }
 
+    /**
+     * Return true if editing an existing having the attribute type boolean or Boolean
+     * @return true if the type is the primitive boolean or the object java.lang.Boolean
+     */
     public boolean isBoolean() {
         String type = getPath().getType();
         return ("boolean".equals(type) || "java.lang.Boolean".equals(type));
