@@ -43,8 +43,7 @@
       <reference ref_id="15"/>
     </collection>
   </item>
-  <item id="3" class="Contractor" implements="Broke">
-    <attribute name="debt" value="7634"/>
+  <item id="3" class="Contractor">
     <attribute name="name" value="ContractorA"/>
     <attribute name="seniority" value="128764"/>
     <reference name="businessAddress" ref_id="21"/>
