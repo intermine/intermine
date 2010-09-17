@@ -23,6 +23,8 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
@@ -30,11 +32,11 @@ import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Sequence;
 import org.intermine.model.bio.Transcript;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.ClobAccess;
+import org.intermine.objectstore.query.PendingClob;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
@@ -169,7 +171,6 @@ public class WriteGFFTaskTest extends TestCase
             "cagccacggcggataacgtcttttgccttgagcaccattgcggttttcatttccggcgtg";
 
         storedSequence = (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-        storedSequence.setResidues(residues);
 
         storedChromosome =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
