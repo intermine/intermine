@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.dataconversion.ItemWriter;
@@ -155,12 +156,12 @@ public class ProteinStructureDataConverter extends BioFileConverter
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
             super.startElement(uri, localName, qName, attrs);
-            if (qName.equals("fragment")) {
+            if ("fragment".equals(qName)) {
                 proteinStructure = createItem("ProteinStructure");
                 strId = attrs.getValue("id");
-            } else if (qName.equals("alignment_file")
-                            && attrs.getValue("format").equals("joy_html")
-                            && stack.peek().equals("model")) {
+            } else if ("alignment_file".equals(qName)
+                            && "joy_html".equals(attrs.getValue("format"))
+                            && "model".equals(stack.peek())) {
                 alignmentFile = true;
             }
 
@@ -177,33 +178,33 @@ public class ProteinStructureDataConverter extends BioFileConverter
             super.endElement(uri, localName, qName);
             try {
                 stack.pop();
-                if (qName.equals("uniprot_id")) {
+                if ("uniprot_id".equals(qName)) {
                     //Reference my be to proteinItemIdentifier accession
                     protId = attValue.toString();
                     proteinItemIdentifier = getProtein(protId);
                     proteinStructure.setCollection("proteins", new ArrayList<String>(
                                                     Collections.singleton(proteinItemIdentifier)));
-                } else if (qName.equals("pfam_id")) {
+                } else if ("pfam_id".equals(qName)) {
                     pfamId = attValue.toString();
                     proteinFeature = getFeature(pfamId);
                     proteinStructure.setReference("proteinDomain", proteinFeature);
-                } else if (qName.equals("begin")) {
+                } else if ("begin".equals(qName)) {
                     proteinStructure.setAttribute("start", attValue.toString());
-                } else if (qName.equals("end")) {
+                } else if ("end".equals(qName)) {
                     proteinStructure.setAttribute("end", attValue.toString());
-                } else if (qName.equals("atomic_coordinate_file")) {
+                } else if ("atomic_coordinate_file".equals(qName)) {
                     String atm;
                     try {
                         atm = getFileContent(attValue.toString(), ".atm");
                     } catch (InterMineException e) {
                         throw new SAXException(e);
                     }
-                    if (atm == null || atm.equals("")) {
+                    if (StringUtils.isEmpty(atm)) {
                         LOG.warn("found an empty atm for: " + strId);
                     } else {
                         proteinStructure.setAttribute("atm", atm);
                     }
-                } else if (qName.equals("alignment_file") && alignmentFile) {
+                } else if ("alignment_file".equals(qName) && alignmentFile) {
                     String html;
                     try {
                         html = getFileContent(attValue.toString(), ".html");
@@ -218,17 +219,17 @@ public class ProteinStructureDataConverter extends BioFileConverter
                     } catch (InterMineException e) {
                         throw new SAXException(e);
                     }
-                    if (html == null || html.equals("")) {
+                    if (StringUtils.isEmpty(html)) {
                         LOG.warn("found an empty alignment for: " + strId);
                     } else {
                         proteinStructure.setAttribute("alignment", html.toString());
                     }
                     alignmentFile = false;
-                } else if (qName.equals("prosa_z_score")) {
+                } else if ("prosa_z_score".equals(qName)) {
                     proteinStructure.setAttribute("prosaZScore", attValue.toString());
-                } else if (qName.equals("prosa_q_score")) {
+                } else if ("prosa_q_score".equals(qName)) {
                     proteinStructure.setAttribute("prosaQScore", attValue.toString());
-                } else if (qName.equals("protein_structure")) {
+                } else if ("protein_structure".equals(qName)) {
                     proteinStructure.setAttribute("technique", "Computer prediction");
                     proteinStructure.setAttribute("identifier", protId + "_" + pfamId);
                     store(proteinStructure);
@@ -241,7 +242,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
         }
 
         private String getProtein(String identifier)
-            throws ObjectStoreException, SAXException {
+            throws ObjectStoreException {
             String proteinIdentifier = proteinMap.get(identifier);
             if (proteinIdentifier == null) {
                 Item protein = createItem("Protein");
