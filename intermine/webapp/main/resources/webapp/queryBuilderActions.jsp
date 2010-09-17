@@ -15,7 +15,7 @@
           <fmt:message key="view.showresults"/>
         </html:image>
       </html:form><p/>
-	  <c:if test="${PROFILE.loggedIn && (NEW_TEMPLATE == null && EDITING_TEMPLATE == null)}">
+	  <c:if test="${PROFILE.loggedIn && (NEW_TEMPLATE == null && EDITING_TEMPLATE == null) && fn:length(viewStrings) > 0}">
 	      <p><form action="<html:rewrite action="/queryBuilderChange"/>" method="post">
 	        or...&nbsp;<input type="hidden" name="method" value="startTemplateBuild"/>
 	        <input type="submit" value="Start building a template query" />
