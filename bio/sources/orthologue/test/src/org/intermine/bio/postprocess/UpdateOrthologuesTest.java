@@ -165,12 +165,12 @@ public class UpdateOrthologuesTest extends XMLTestCase {
     // create an [Ortho|Para]logue with object and subject Proteins that have objGenes and subGenes
     // in their respective genes collections
     private void setUpData(Class relClass, Gene objGene, Gene subGene, boolean startsOnSubGene) throws Exception {
-        InterMineObject io = (InterMineObject) DynamicUtil.createObject(Collections.singleton(relClass));
+        InterMineObject io = (InterMineObject) DynamicUtil.simpleCreateObject(relClass);
         Protein objProtein = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         objProtein.setId(OBJ_PROTEIN_ID);
         objProtein.addGenes(objGene);
         System.out.println("setUpData: objGenes= " + objGene);
-        
+
         Protein subProtein = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         subProtein.setId(SUB_PROTEIN_ID);
         System.out.println("setUpData: subGene = " + subGene);
