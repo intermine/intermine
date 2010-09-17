@@ -32,6 +32,7 @@ public final class StringUtil
         = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
     private StringUtil() {
+        // do nothing
     }
 
     /**
@@ -452,14 +453,14 @@ public final class StringUtil
      * Return 'a' or 'an' according to first letter of the given article.  If article starts with
      * a vowel or appears to be an acronym return 'an'.
      *
-     * @param noun the subject of the article
+     * @param s the subject of the article
      * @return the appropriate indefinite article
      */
-    public static String indefiniteArticle(String noun) {
+    @SuppressWarnings("boxing")
+    public static String indefiniteArticle(String s) {
         List<Character> vowels =
             new ArrayList<Character>(Arrays.asList(new Character[] {'a', 'e', 'i', 'o', 'u'}));
-
-        noun = noun.trim();
+        String noun = s.trim();
         if (vowels.contains(noun.charAt(0))) {
             return "an";
         }
@@ -509,6 +510,7 @@ public final class StringUtil
 
     /**
      * Trim starting and trailing '/' characters from a string if present.
+     *
      * @param s the string to trim slashes from
      * @return a string with no starting or trailing slashes, or null if input string was null
      */
@@ -516,13 +518,14 @@ public final class StringUtil
         if (s == null) {
             return null;
         }
-        if (s.startsWith("/")) {
-            s = s.substring(1);
+        String formattedString = s;
+        if (formattedString.startsWith("/")) {
+            formattedString = formattedString.substring(1);
         }
-        if (s.endsWith("/")) {
-            s = s.substring(0, s.length() - 1);
+        if (formattedString.endsWith("/")) {
+            formattedString = formattedString.substring(0, formattedString.length() - 1);
         }
-        return s;
+        return formattedString;
     }
 
     /**
@@ -548,36 +551,38 @@ public final class StringUtil
      */
     public static LineWrappedString wrapLines(String input, int lineLength, int lineCount,
             int lastLineShorter) {
-        input = input.trim();
+        String formattedString = input.trim();
         String trimmed = "";
         boolean truncated = false;
         for (int i = 1; i <= lineCount; i++) {
             if (i == lineCount) {
-                if (input.length() > lineLength - lastLineShorter) {
-                    int breakPoint = input.lastIndexOf(" ", lineLength - 3 - lastLineShorter);
+                if (formattedString.length() > lineLength - lastLineShorter) {
+                    int breakPoint = formattedString.lastIndexOf(" ",
+                            lineLength - 3 - lastLineShorter);
                     if (breakPoint > lineLength / 2) {
-                        trimmed += input.substring(0, breakPoint) + "...";
+                        trimmed += formattedString.substring(0, breakPoint) + "...";
                     } else {
-                        trimmed += input.substring(0, lineLength - 3 - lastLineShorter) + "...";
+                        trimmed += formattedString.substring(0,
+                                lineLength - 3 - lastLineShorter) + "...";
                     }
                     truncated = true;
                 } else {
-                    trimmed += input;
+                    trimmed += formattedString;
                     break;
                 }
             } else {
-                if (input.length() > lineLength) {
-                    int breakPoint = input.lastIndexOf(" ", lineLength);
+                if (formattedString.length() > lineLength) {
+                    int breakPoint = formattedString.lastIndexOf(" ", lineLength);
                     if (breakPoint > lineLength / 2) {
-                        trimmed += input.substring(0, breakPoint) + "\n";
-                        input = input.substring(breakPoint + 1);
+                        trimmed += formattedString.substring(0, breakPoint) + "\n";
+                        formattedString = formattedString.substring(breakPoint + 1);
                     } else {
-                        trimmed += input.substring(0, lineLength - 1)
+                        trimmed += formattedString.substring(0, lineLength - 1)
                             + "-\n";
-                        input = input.substring(lineLength - 1);
+                        formattedString = formattedString.substring(lineLength - 1);
                     }
                 } else {
-                    trimmed += input;
+                    trimmed += formattedString;
                     break;
                 }
             }
