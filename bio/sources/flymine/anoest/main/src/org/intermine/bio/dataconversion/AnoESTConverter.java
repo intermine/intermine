@@ -10,6 +10,10 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -18,12 +22,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
-import org.xml.sax.SAXException;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * DataConverter to read from AnoEST's MySQL database into items
@@ -66,7 +64,7 @@ public class AnoESTConverter extends BioDBConverter
     }
 
     private void makeClusterItems(Connection connection)
-        throws SQLException, ObjectStoreException, SAXException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getClusterResultSet(connection);
 
         while (res.next()) {
@@ -82,7 +80,7 @@ public class AnoESTConverter extends BioDBConverter
             store(cluster);
 
             // some clusters have no location
-            if (chromosomeIdentifier != null && !chromosomeIdentifier.equals("mitochondrial")
+            if (chromosomeIdentifier != null && !("mitochondrial".equals(chromosomeIdentifier))
                             && start > 0 && end > 0) {
                 Item chromosomeItem = getChromosome(chromosomeIdentifier, ANOPHELES_TAXON_ID);
                 String chromosomeItemId = chromosomeItem.getIdentifier();
@@ -112,7 +110,7 @@ public class AnoESTConverter extends BioDBConverter
     }
 
     private void makeEstItems(Connection connection)
-        throws SQLException, ObjectStoreException, SAXException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getEstResultSet(connection);
         while (res.next()) {
             String accession = res.getString(1);
@@ -157,7 +155,7 @@ public class AnoESTConverter extends BioDBConverter
      * {@inheritDoc}
      */
     @Override
-    public String getDataSetTitle(int taxonId) {
+    public String getDataSetTitle(@SuppressWarnings("unused") int taxonId) {
         return DATASET_TITLE;
     }
 
