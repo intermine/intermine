@@ -777,9 +777,6 @@ public class DisplayConstraint
                 return false;
             }
             if (getPossibleValues() != null && getPossibleValues().size() > 0) {
-                if (con instanceof PathConstraintNull) {
-                    return false;
-                }
                 return true;
             }
             return false;
