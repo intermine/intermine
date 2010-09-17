@@ -54,8 +54,6 @@ public class TiffinGFF3RecordHandler extends GFF3RecordHandler
 
             motifs.put(name, motif);
             addEarlyItem(motif);
-            Item synonym = converter.getSynonym(motif, name);
-            addItem(synonym);
         }
         return motif;
     }
