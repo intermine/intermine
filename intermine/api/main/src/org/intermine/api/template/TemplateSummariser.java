@@ -47,7 +47,7 @@ public class TemplateSummariser
     protected Map<TemplateQuery, HashMap<String, List<Object>>> possibleValues
         = new IdentityHashMap<TemplateQuery, HashMap<String, List<Object>>>();
     private static final int MAX_SUMMARY = 200;
-    
+
     /**
      * Construct a TemplateSummariser.
      *
@@ -151,17 +151,17 @@ public class TemplateSummariser
     }
 
     /**
-     * Returns the possible values that a particular editable node in a template query can take,
+     * Returns the possible values that a particular path in a template query can take,
      * for dropdowns on template forms.
      *
      * @param templateQuery a TemplateQuery
-     * @param node the editable node
+     * @param path the path that is being constrained
      * @return a List of possible values
      */
-    public List<Object> getPossibleValues(TemplateQuery templateQuery, String node) {
+    public List<Object> getPossibleValues(TemplateQuery templateQuery, String path) {
         Map<String, List<Object>> templatePossibleValues = getPossibleValues(templateQuery);
         if (templatePossibleValues != null) {
-            return templatePossibleValues.get(node);
+            return templatePossibleValues.get(path);
         }
         return null;
     }
@@ -174,7 +174,7 @@ public class TemplateSummariser
      */
     public Map<String, List<Object>> getPossibleValues(TemplateQuery templateQuery) {
         HashMap<String, List<Object>> templatePossibleValues = possibleValues.get(templateQuery);
-        if (templatePossibleValues == null) {
+        if (templateQuery != null && templatePossibleValues == null) {
             SavedTemplateQuery template = templateQuery.getSavedTemplateQuery();
             if (template != null) {
                 try {
