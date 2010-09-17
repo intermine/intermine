@@ -27,7 +27,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
-import org.xml.sax.SAXException;
 
 /**
  * DataConverter to parse Anopheles Expression data file into Items.
@@ -88,10 +87,10 @@ public class AnophExprConverter extends BioFileConverter
         // don't load header
         String line = br.readLine();
         while ((line = br.readLine()) != null) {
-            String fields[] = StringUtils.split(line, '\t');
+            String[] fields = StringUtils.split(line, '\t');
             String reporter = fields[0];
             String gene = fields[2];
-            if (gene != null && !gene.equals("") && !gene.equals("0")) {
+            if (StringUtils.isNotEmpty(gene) && !("0".equals(gene))) {
                 reporterToGene.put(reporter, gene);
             }
         }
@@ -155,7 +154,7 @@ public class AnophExprConverter extends BioFileConverter
             line = br.readLine();
             headerArray = StringUtils.split(line, '\t');
             for (int colIndex = 1; colIndex < headerArray.length; colIndex++) {
-                if (!headerArray[lineIndex].equals("")) {
+                if (StringUtils.isNotEmpty(headerArray[lineIndex])) {
                     if (lineIndex == 0) {
                         stageNames[colIndex] = new StageName();
                         String age =  headerArray[colIndex];
@@ -181,7 +180,7 @@ public class AnophExprConverter extends BioFileConverter
 
         // process probes
         while ((line = br.readLine()) != null) {
-            String lineBits[] = StringUtils.split(line, '\t');
+            String[] lineBits = StringUtils.split(line, '\t');
 
             String probe = lineBits[0];
             if (reporterToGene.get(probe) != null) {
@@ -243,7 +242,7 @@ public class AnophExprConverter extends BioFileConverter
         }
     }
 
-    private Item getGene(String geneCG) throws SAXException, ObjectStoreException {
+    private Item getGene(String geneCG) {
         if (genes.containsKey(geneCG)) {
             return genes.get(geneCG);
         }
