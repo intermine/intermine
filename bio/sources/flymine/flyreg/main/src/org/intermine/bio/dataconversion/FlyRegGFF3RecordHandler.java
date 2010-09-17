@@ -114,9 +114,8 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         addPublication(pubmedItem);
 
         String factorGeneName = record.getAttributes().get("Factor").get(0);
-
-        if (!factorGeneName.toLowerCase().equals("unknown")
-            && !factorGeneName.toLowerCase().equals("unspecified")) {
+        if (!("unknown").equals(factorGeneName.toLowerCase())
+                    && !("unspecified").equals(factorGeneName.toLowerCase())) {
             Item gene = getGene(factorGeneName);
             if (gene != null) {
                 bindingSite.setReference("factor", gene.getIdentifier());
@@ -125,8 +124,8 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 
         String targetGeneName = record.getAttributes().get("Target").get(0);
 
-        if (!targetGeneName.toLowerCase().equals("unknown")
-            && !targetGeneName.toLowerCase().equals("unspecified")) {
+        if (!("unknown").equals(targetGeneName.toLowerCase())
+                && !("unspecified").equals(targetGeneName.toLowerCase())) {
             Item gene = getGene(targetGeneName);
             if (gene != null) {
                 bindingSite.setReference("gene", gene.getIdentifier());
