@@ -19,14 +19,14 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.dataconversion.MockItemsTestCase;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 
 
-public class GoConverterTest extends MockItemsTestCase
+public class GoConverterTest extends ItemsTestCase
 {
     private File goOboFile;
     Model model;
@@ -86,8 +86,8 @@ public class GoConverterTest extends MockItemsTestCase
         organism.setAttribute("taxonId", "7227");
 
         Set<String> expected = new HashSet<String>();
-        expected.add("0_1");
-        expected.add("0_2");
+        expected.add("1_1");
+        expected.add("1_2");
         converter.initialiseMapsForFile();
         assertEquals(expected, new HashSet<String>(converter.createWithObjects(
                 "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, "FlyBase")));
