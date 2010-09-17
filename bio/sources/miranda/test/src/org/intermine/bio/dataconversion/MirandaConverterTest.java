@@ -14,14 +14,11 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.xml.full.ItemFactory;
 
 /**
  * Test for data from miRanda
