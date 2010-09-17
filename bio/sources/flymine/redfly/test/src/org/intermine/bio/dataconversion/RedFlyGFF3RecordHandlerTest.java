@@ -12,22 +12,14 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Set;
 
-import org.intermine.bio.io.gff3.GFF3Parser;
-import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.util.TypeUtil;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
 
 /**
  * Tests for the RedFlyGFF3RecordHandler class.

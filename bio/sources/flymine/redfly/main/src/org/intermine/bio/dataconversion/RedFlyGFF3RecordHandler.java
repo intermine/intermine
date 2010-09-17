@@ -91,9 +91,9 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
         if (dbxrefs != null) {
             Iterator<String> dbxrefsIter = dbxrefs.iterator();
+
             while (dbxrefsIter.hasNext()) {
                 String dbxref = dbxrefsIter.next();
-
                 int colonIndex = dbxref.indexOf(":");
                 if (colonIndex == -1) {
                     throw new RuntimeException("external reference not understood: " + dbxref);
@@ -129,7 +129,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
                                        + " found these dbxrefs: " + dbxrefs);
         }
 
-        if (StringUtils.isNotEmpty(geneName)) {
+        if (StringUtils.isEmpty(geneName)) {
             geneName = name;
         }
 
