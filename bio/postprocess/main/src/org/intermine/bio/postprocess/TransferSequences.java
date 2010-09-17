@@ -16,8 +16,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.biojava.bio.symbol.IllegalAlphabetException;
-import org.biojava.bio.symbol.IllegalSymbolException;
 import org.intermine.bio.util.ClobAccessReverseComplement;
 import org.intermine.bio.util.Constants;
 import org.intermine.model.bio.CDS;
@@ -225,8 +223,7 @@ public class TransferSequences
                 sequence.setResidues(featureSeq);
                 sequence.setLength(featureSeq.length());
                 osw.store(sequence);
-                SequenceFeature cloneLsf =
-                    (SequenceFeature) PostProcessUtil.cloneInterMineObject(feature);
+                SequenceFeature cloneLsf = PostProcessUtil.cloneInterMineObject(feature);
                 cloneLsf.setSequence(sequence);
                 cloneLsf.setLength(new Integer(featureSeq.length()));
                 osw.store(cloneLsf);
@@ -255,8 +252,7 @@ public class TransferSequences
                 + (System.currentTimeMillis() - startTime) + " ms.");
     }
 
-    private ClobAccess getSubSequence(Sequence chromosomeSequence, Location locationOnChr)
-        throws IllegalSymbolException, IllegalAlphabetException {
+    private ClobAccess getSubSequence(Sequence chromosomeSequence, Location locationOnChr) {
         int charsToCopy =
             locationOnChr.getEnd().intValue() - locationOnChr.getStart().intValue() + 1;
         ClobAccess chromosomeSequenceString = chromosomeSequence.getResidues();
