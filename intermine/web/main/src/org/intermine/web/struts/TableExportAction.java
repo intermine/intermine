@@ -28,6 +28,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.config.WebConfig;
@@ -116,6 +117,13 @@ public class TableExportAction extends InterMineAction
         } catch (RuntimeException e) {
             throw new RuntimeException("Error while converting " + pathsString, e);
         }
+        // all order by paths should also be in the view, remove any that now aren't
+        for (OrderElement orderElement : newPathQuery.getOrderBy()) {
+            if (!newPathQuery.getView().contains(orderElement.getOrderPath())) {
+                newPathQuery.removeOrderBy(orderElement.getOrderPath());
+            }
+        }
+
         Profile profile = SessionMethods.getProfile(session);
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         return new PagedTable(executor.execute(newPathQuery));
