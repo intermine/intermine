@@ -218,7 +218,14 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                 </td>
             </c:otherwise>
             </c:choose>
-            <td valign="middle" rowspan="2" style="margin-left:5px;"><html:submit property="attribute" styleId="attributeSubmit"
+            <c:set var="valignSubmitBtn" value="top"/>
+            <c:set var="rowspanSubmitBtn" value="1"/>
+            <c:if test="${!dec.path.attribute && !empty dec.bags}">
+              <c:set var="valignSubmitBtn" value="middle"/>
+              <c:set var="rowspanSubmitBtn" value="2"/>
+            </c:if>
+            <td valign="${valignSubmitBtn}" rowspan="${rowspanSubmitBtn}" style="margin-left:5px;">
+            <html:submit property="attribute" styleId="attributeSubmit"
               disabled="false">
               <fmt:message key="query.submitConstraint" />
               <%--Add to query--%>
