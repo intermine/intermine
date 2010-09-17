@@ -21,7 +21,8 @@ import java.util.HashSet;
 public class ClassDescriptorTest extends TestCase
 {
     private static final Set EMPTY_SET = Collections.EMPTY_SET;
-
+    private static final String ENDL = System.getProperty("line.separator");
+    
     public ClassDescriptorTest(String arg) {
         super(arg);
     }
@@ -213,7 +214,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
         ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class2 package.name.Interface1", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
         String expected = "<class name=\"Class3\" extends=\"Class2 Interface1\" is-interface=\"false\">"
-            + "</class>";
+            + "</class>" + ENDL;
         Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
         assertEquals(expected, cld3.toString());
     }
@@ -222,7 +223,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", "package.name.Interface1", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
         String expected = "<class name=\"Class2\" extends=\"Interface1\" is-interface=\"false\">"
-            + "</class>";
+            + "</class>" + ENDL;
         Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
         assertEquals(expected, cld2.toString());
     }
