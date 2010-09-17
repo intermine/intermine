@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -197,7 +198,7 @@ public class InparanoidConverter extends BioFileConverter
 
             // not all rows have a bootsrap score
             String bootstrap = null;
-            if (array.length > 5 && array[5] != null && !array[5].equals("")) {
+            if (array.length > 5 && StringUtils.isNotEmpty(array[5])) {
                 try {
                     bootstrap = array[5].substring(0, array[5].indexOf('%'));
                 } catch (Exception e) {
@@ -219,14 +220,14 @@ public class InparanoidConverter extends BioFileConverter
 
             // work out if this is a Gene or Protein and create item
             if (createObjects.get(code) != null) {
-                if (createObjects.get(code).equals("Gene")) {
-                    bio = newBioEntity(identifier, (String) attributes.get(code),
+                if ("Gene".equals(createObjects.get(code))) {
+                    bio = newBioEntity(identifier, attributes.get(code),
                             getOrganism(code), "Gene");
                     isGene = true;
                 } else {
                     // if we have found a mapping file for this organism then convert protein
                     // to genes and don't create proteins
-                    String taxonId = (String) taxonIds.get(code);
+                    String taxonId = taxonIds.get(code);
 
                     if (peptideGeneMaps.containsKey(taxonId)) {
                         isGene = true;
@@ -234,7 +235,7 @@ public class InparanoidConverter extends BioFileConverter
                         if (peptideGeneMap.containsKey(identifier)) {
                             // found corresponding gene, so create it
                             String geneId = peptideGeneMap.get(identifier);
-                            bio = newBioEntity(geneId, (String) attributes.get(code),
+                            bio = newBioEntity(geneId, attributes.get(code),
                                     getOrganism(code), "Gene");
                         } else {
                             // no peptide id found so remove whole cluster
@@ -244,7 +245,7 @@ public class InparanoidConverter extends BioFileConverter
                         }
                     } else {
                         // create protein as a last resort
-                        bio = newBioEntity(identifier, (String) attributes.get(code),
+                        bio = newBioEntity(identifier, attributes.get(code),
                                 getOrganism(code), "Protein");
                         isGene = false;
                     }
@@ -376,10 +377,10 @@ public class InparanoidConverter extends BioFileConverter
             homologue.setReference("homologueProtein", second.getBio());
         }
 
-        if (type.equals("orthologue") && first.getBootstrap() != null) {
+        if ("orthologue".equals(type) && first.getBootstrap() != null) {
             homologue.setAttribute("bootstrapScore", first.getBootstrap());
         }
-        if (type.equals("orthologue") && second.getBootstrap() != null) {
+        if ("orthologue".equals(type) && second.getBootstrap() != null) {
             homologue.setAttribute("homologueBootstrapScore", second.getBootstrap());
         }
 
@@ -406,7 +407,7 @@ public class InparanoidConverter extends BioFileConverter
         // lookup by identifier and type, sometimes same id for protein and gene
         String key = type + identifier;
         if (bioEntities.containsKey(key)) {
-            return (Item) bioEntities.get(key);
+            return bioEntities.get(key);
         }
         Item item = createItem(type);
         item.setAttribute(attribute, identifier);
@@ -478,7 +479,7 @@ public class InparanoidConverter extends BioFileConverter
      * @return ID representing the stored organism object
      */
     public String getOrganism(String code) {
-        String taxonId = (String) taxonIds.get(code);
+        String taxonId = taxonIds.get(code);
         if (taxonId == null) {
             throw new IllegalArgumentException("Unable to find taxonId for code: "
                     + code + ", check properties: " + PROP_FILE);
