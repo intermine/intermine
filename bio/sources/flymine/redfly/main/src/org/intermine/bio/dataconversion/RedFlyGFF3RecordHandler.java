@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
@@ -128,7 +129,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
                                        + " found these dbxrefs: " + dbxrefs);
         }
 
-        if (geneName.equals("")) {
+        if (StringUtils.isNotEmpty(geneName)) {
             geneName = name;
         }
 
@@ -137,7 +138,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
             feature.setReference("gene", gene);
         }
 
-        if (!pubmedId.equals("")) {
+        if (StringUtils.isNotEmpty(pubmedId)) {
             addPublication(getPublication(pubmedId));
         }
 
