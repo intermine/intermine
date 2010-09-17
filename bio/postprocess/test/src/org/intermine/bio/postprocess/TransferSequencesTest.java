@@ -30,6 +30,7 @@ import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.PendingClob;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
@@ -264,7 +265,8 @@ public class TransferSequencesTest extends TestCase
 
         Sequence chrSequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-        chrSequence.setResidues(storedChrSequence);
+        PendingClob clob = new PendingClob(storedChrSequence);
+        chrSequence.setResidues(clob.subSequence(425, storedChrSequence.length()));
         storedChromosome.setSequence(chrSequence);
         toStore.add(chrSequence);
         toStore.add(storedChromosome);
@@ -278,7 +280,8 @@ public class TransferSequencesTest extends TestCase
 
         Sequence transcriptSequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-        transcriptSequence.setResidues(EXPECTED_TRANSCRIPT_0_RESIDUES);
+        clob = new PendingClob(EXPECTED_TRANSCRIPT_0_RESIDUES);
+        transcriptSequence.setResidues(clob.subSequence(0, EXPECTED_TRANSCRIPT_0_RESIDUES.length()));
         storedTranscripts[0].setSequence(transcriptSequence);
         toStore.add(transcriptSequence);
 
@@ -291,7 +294,8 @@ public class TransferSequencesTest extends TestCase
 
         Sequence exonSequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-        exonSequence.setResidues(expectedExonSequence0);
+        clob = new PendingClob(expectedExonSequence0);
+        exonSequence.setResidues(clob.subSequence(0, expectedExonSequence0.length()));
         storedExons[0].setSequence(exonSequence);
         toStore.add(exonSequence);
 
