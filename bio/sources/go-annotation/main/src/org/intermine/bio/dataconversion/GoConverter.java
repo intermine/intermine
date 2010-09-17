@@ -118,8 +118,8 @@ public class GoConverter extends BioFileConverter
                                                    + "taxon: " + taxonId + " in file: "
                                                    + PROP_FILE);
             }
-            if (!(geneAttribute.equals("symbol")
-                            || geneAttribute.equals("primaryIdentifier"))) {
+            if (!("symbol".equals(geneAttribute)
+                            || "primaryIdentifier".equals(geneAttribute))) {
                 throw new IllegalArgumentException("Invalid geneAttribute value for taxon: "
                                                    + taxonId + " was: " + geneAttribute);
             }
@@ -128,7 +128,7 @@ public class GoConverter extends BioFileConverter
             String readColumn = taxonProps.getProperty("readColumn");
             if (readColumn != null) {
                 readColumn = readColumn.trim();
-                if (!(readColumn.equals("symbol") || readColumn.equals("identifier"))) {
+                if (!("symbol".equals(readColumn) || "identifier".equals(readColumn))) {
                     throw new IllegalArgumentException("Invalid readColumn value for taxon: "
                             + taxonId + " was: " + readColumn);
                 }
@@ -171,7 +171,7 @@ public class GoConverter extends BioFileConverter
             String taxonId = parseTaxonId(array[12]);
             int readColumn = 1;
             if (readColumns.containsKey(taxonId)) {
-                if (readColumns.get(taxonId).equals("symbol")) {
+                if ("symbol".equals(readColumns.get(taxonId))) {
                     readColumn = 2;
                 }
             }
@@ -188,7 +188,7 @@ public class GoConverter extends BioFileConverter
             String strEvidence = array[6];
             String withText = array[7];
             String evidenceId = null;
-            if (strEvidence != null && !strEvidence.equals("")) {
+            if (StringUtils.isNotEmpty(strEvidence)) {
                 evidenceId = newGoEvidence(strEvidence);
             }
             String type = array[11];
@@ -216,14 +216,11 @@ public class GoConverter extends BioFileConverter
                     assignmentEvidence = new AssignmentEvidence(storedAnnotationId);
                     assignmentEvidenceMap.put(key, assignmentEvidence);
                 }
-
-                // add evidence to new or existing assignment
                 String newPublicationId = newPublication(array[5]);
                 if (newPublicationId != null) {
                     assignmentEvidence.addPublicationIdentifier(newPublicationId);
                 }
-
-                if (strEvidence != null && !strEvidence.equals("")) {
+                if (StringUtils.isNotEmpty(strEvidence)) {
                     evidenceId = newGoEvidence(strEvidence);
                 }
                 if (evidenceId != null) {
@@ -244,7 +241,6 @@ public class GoConverter extends BioFileConverter
         storedProductIds = new HashMap<String, Integer>();
     }
 
-
     private void storeProductCollections() throws ObjectStoreException {
         for (Map.Entry<Integer, List<String>> entry : productCollectionsMap.entrySet()) {
             Integer storedProductId = entry.getKey();
@@ -254,14 +250,12 @@ public class GoConverter extends BioFileConverter
         }
     }
 
-
     private void storeAssignmentEvidence() throws ObjectStoreException {
         for (AssignmentEvidence evidence : assignmentEvidenceMap.values()) {
-
             if (!evidence.publicationIdentifiers.isEmpty()) {
-                ReferenceList publications = new ReferenceList("publications",
+                ReferenceList pubs = new ReferenceList("publications",
                         new ArrayList<String>(evidence.getPublicationIdentifiers()));
-                store(publications, evidence.storedAnnotationId);
+                store(pubs, evidence.storedAnnotationId);
             }
 
             ReferenceList evidenceCodes = new ReferenceList("goEvidenceCodes",
@@ -296,7 +290,7 @@ public class GoConverter extends BioFileConverter
 
         goAnnotation.addToCollection("dataSets", getDataset(dataSourceCode));
 
-        if (productType.equals("gene")) {
+        if ("gene".equals(productType)) {
             addProductCollection(productIdentifier, goAnnotation.getIdentifier());
         }
         Integer storedAnnotationId = store(goAnnotation);
@@ -341,19 +335,19 @@ public class GoConverter extends BioFileConverter
                     String prefix = entry.substring(0, entry.indexOf(':'));
                     String value = entry.substring(entry.indexOf(':') + 1);
 
-                    if (withTypes.containsKey(prefix) && (value != null) && (!value.equals(""))) {
+                    if (withTypes.containsKey(prefix) && StringUtils.isNotEmpty(value)) {
                         WithType wt = withTypes.get(prefix);
                         String productIdentifier = null;
 
                         // if a UniProt protein it may be from a different organism
                         // also FlyBase may be from a different Drosophila species
-                        if (prefix.equals("UniProt")) {
+                        if ("UniProt".equals(prefix)) {
                             productIdentifier = newProduct(value, wt.clsName,
                                                         organism, dataSourceCode, false, null);
-                        } else if (prefix.equals("FB")) {
+                        } else if ("FB".equals(prefix)) {
                             // if organism is D. melanogaster then create with gene
                             // TODO could still be wrong as the FBgn could be a different species
-                            if (organism.getAttribute("taxonId").getValue().equals("7227")) {
+                            if ("7227".equals(organism.getAttribute("taxonId").getValue())) {
                                 productIdentifier = newProduct(value, wt.clsName, organism,
                                         dataSourceCode, true, "primaryIdentifier");
                             }
@@ -399,7 +393,7 @@ public class GoConverter extends BioFileConverter
             }
 
             // if a Dmel gene we need to use FlyBaseIdResolver to find a current id
-            if (taxonId.equals("7227")) {
+            if ("7227".equals(taxonId)) {
                 IdResolver resolver = flybaseResolverFactory.getIdResolver(false);
                 if (resolver != null) {
                     int resCount = resolver.countResolutions(taxonId, accession);
@@ -412,7 +406,7 @@ public class GoConverter extends BioFileConverter
                     }
                     accession = resolver.resolveId(taxonId, accession).iterator().next();
                 }
-            } else if (taxonId.equals("9606")) {
+            } else if ("9606".equals(taxonId)) {
                 IdResolver resolver = hgncResolverFactory.getIdResolver(true);
                 if (resolver != null) {
                     int resCount = resolver.countResolutions(taxonId, accession);
@@ -452,7 +446,7 @@ public class GoConverter extends BioFileConverter
         }
 
         boolean includeOrganism;
-        if (idField.equals("primaryIdentifier") || type.equals("protein")) {
+        if ("primaryIdentifier".equals(idField) || "protein".equals(type)) {
             includeOrganism = false;
         } else {
             includeOrganism = createOrganism;
@@ -598,7 +592,7 @@ public class GoConverter extends BioFileConverter
     }
 
     private String parseTaxonId(String input) {
-        if (input.equals("taxon:")) {
+        if ("taxon:".equals(input)) {
             throw new IllegalArgumentException("Invalid taxon id read: " + input);
         }
         String taxonId = input.split(":")[1];
