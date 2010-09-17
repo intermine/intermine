@@ -15,6 +15,7 @@ function initConstraint(selectedConstraint) {
 	    	var constraintOpIndex = document.getElementById("attribute5").value;
 	    	if (constraintOpIndex == '6' || constraintOpIndex == '7' || constraintOpIndex == '18') {
 	    		document.getElementById("attribute8").style.display = 'inline';
+	    		document.getElementById("attribute8").value = '';
 	            if (document.getElementById("attribute7")) 
 	            	document.getElementById("attribute7").style.display = 'none';
 	            if (document.getElementById("multiValue")) 
@@ -33,7 +34,7 @@ function initConstraint(selectedConstraint) {
 	                if (document.getElementById("attribute8").style != undefined)
 	                    document.getElementById("attribute8").style.display = 'none';
 	                if (document.getElementById("attribute7") != undefined)
-	                    document.getElementById("attribute8").value = document.getElementById("attribute7").value;
+	                    document.getElementById("attribute8").value = document.getElementById("attribute7").options[0].value;
 	            } else {
 	            	if (document.getElementById("attribute8").style != undefined)
 	                    document.getElementById("attribute8").style.display = 'inline';
