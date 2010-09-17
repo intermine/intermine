@@ -70,8 +70,6 @@ public class TransferSequences
         this.osw = osw;
     }
 
-
-
     private void storeNewSequence(SequenceFeature feature, ClobAccess sequenceString)
         throws ObjectStoreException {
         Sequence sequence =
