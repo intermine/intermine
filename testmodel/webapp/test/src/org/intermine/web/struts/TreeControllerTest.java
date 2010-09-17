@@ -54,13 +54,14 @@ public class TreeControllerTest extends MockStrutsTestCase
 
         actionPerform();
         verifyNoActionErrors();
-
+        List structure = new ArrayList();
+        structure.add("blank");
         List expected = new ArrayList();
-        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Thing"), "", 0, false, false, true));
-        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Address"), "", 1, false, true, false));
-        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Employable"), "", 1, false, false, true));
-        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Contractor"), "", 2, false, true, false));
-        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Employee"), "", 2, false, false, false));
+        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Thing"), "", 0, false, false, true, structure));
+        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Address"), "", 1, false, true, false, structure));
+        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Employable"), "", 1, false, false, true, structure));
+        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Contractor"), "", 2, false, true, false, structure));
+        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Employee"), "", 2, false, false, false, structure));
 
         assertEquals(openClasses, getSession().getAttribute("openClasses"));
         assertEquals(expected, componentContext.getAttribute("nodes"));
