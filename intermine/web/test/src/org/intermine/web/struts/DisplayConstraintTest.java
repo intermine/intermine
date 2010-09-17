@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import junit.framework.TestCase;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
@@ -46,24 +48,30 @@ import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.query.DisplayConstraint;
 import org.intermine.web.logic.query.DisplayConstraintFactory;
 import org.intermine.web.logic.query.DisplayConstraint.DisplayConstraintOption;
+import org.intermine.web.logic.session.SessionMethods;
 
-public class DisplayConstraintTest extends TestCase {
-	private ProfileManager pm;
+import servletunit.struts.MockStrutsTestCase;
+
+public class DisplayConstraintTest extends MockStrutsTestCase {
+    private ProfileManager pm;
     private ObjectStore os;
+    private InterMineAPI im;
     private ObjectStoreWriter uosw;
     private Profile superUser, testUser, emptyUser;
-	private DisplayConstraint dcAttribute, dcNull, dcBag, dcLookup, dcSubclass, dcLoop, dcNullPathConstraint, dcAttribute2, dcInTemplate;
-	private InterMineBag firstEmployeeBag, secondEmployeeBag;
-    
-    
+    private DisplayConstraint dcAttribute, dcNull, dcBag, dcLookup, dcSubclass, dcLoop, dcNullPathConstraint, dcAttribute2, dcInTemplate;
+    private InterMineBag firstEmployeeBag, secondEmployeeBag;
+    private HttpSession session;
+    ServletContext context;
+
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         os = ObjectStoreFactory.getObjectStore("os.unittest");
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
-        
+
         pm = new ProfileManager(os, uosw);
         superUser = new Profile(pm, "superUser", null, "password", new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(superUser);
@@ -71,88 +79,91 @@ public class DisplayConstraintTest extends TestCase {
 
         testUser = new Profile(pm, "testUser", null, "password", new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(testUser);
-        
+
         emptyUser = new Profile(pm, "emptyUser", null, "password", new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(emptyUser);
-        
+
         initializeDisplayConstraints();
-        
+
         firstEmployeeBag = superUser.createBag("firstEmployeeBag", "Employee", "");
         secondEmployeeBag = superUser.createBag("secondEmployeeBag", "Employee", "");
     }
-    
+
     private void initializeDisplayConstraints() {
-    	Model model = os.getModel();
-    	BagManager bagManager = new BagManager(superUser, model);
-        
-    	Properties classKeyProps = new Properties();
-    	try {
-    		classKeyProps.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
-    	} catch(IOException ioe) {
-    		ioe.printStackTrace();
-    	}
+        Model model = os.getModel();
+
+        BagManager bagManager = new BagManager(superUser, model);
+
+        Properties classKeyProps = new Properties();
+        try {
+            classKeyProps.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+        }
         Map<String, List<FieldDescriptor>> classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
 
         InputStream is = getClass().getClassLoader().getResourceAsStream("bag-queries.xml");
         BagQueryConfig bagQueryConfig = null;
         try {
-        	bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
+            bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
         } catch(Exception e) {
-    		e.printStackTrace();
-    	}
-        
+            e.printStackTrace();
+        }
+
         Properties ossProps = new Properties();
         ossProps.put("org.intermine.model.testmodel.Department.classCount", "3");
         ossProps.put("org.intermine.model.testmodel.Department.name.fieldValues", "DepartmentA1$_^DepartmentB1$_^DepartmentB2");
         ossProps.put("org.intermine.model.testmodel.Department.id.fieldValues", "12000014$_^12000016$_^12000017");
         ossProps.put("org.intermine.model.testmodel.Department.nullFields", "rejectedEmployee");
         ObjectStoreSummary oss = new ObjectStoreSummary(ossProps);
-        
+
+        InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        AutoCompleter ac = null;
         DisplayConstraintFactory dcf =
-            new DisplayConstraintFactory(null, oss, bagQueryConfig, bagManager, classKeys);
-        
+            new DisplayConstraintFactory(im, ac);
+
         PathQuery query = new PathQuery(model);
         TemplateQuery template = new TemplateQuery("MyFirstTemplate", "FirstTemplate", "", query);
-        
+
         try {
-        	PathConstraint pathConstraintAttribute = new PathConstraintAttribute("Department.id", ConstraintOp.EQUALS, "11000014");
-	        dcAttribute = dcf.get(pathConstraintAttribute, superUser, query);
-	        PathConstraint pathConstraintNull = new PathConstraintNull("Employee.id", ConstraintOp.IS_NOT_NULL);
-	        dcNull = dcf.get(pathConstraintNull, superUser, query);
-	        PathConstraint pathConstraintBag = new PathConstraintBag("Employee", ConstraintOp.IN, "MySecondEmployeeList");
-	        dcBag = dcf.get(pathConstraintBag, superUser, query);
-	        PathConstraint pathConstraintLookup = new PathConstraintLookup("Employee", "Employee", "EmployeeA1");
-	        dcLookup = dcf.get(pathConstraintLookup, superUser, query);
-	        PathConstraint pathConstraintSubclass = new PathConstraintSubclass("Department.employees", "Manager");
-	        dcSubclass = dcf.get(pathConstraintSubclass, superUser, query);
-	        PathConstraint pathConstraintLoop = new PathConstraintLoop("Company.contractors.oldComs", ConstraintOp.EQUALS, "Company");
-	        dcLoop = dcf.get(pathConstraintLoop, superUser, query);
-	        Path path = new Path(model, "Employee.id"); 
-	        dcNullPathConstraint = dcf.get(path, superUser, query);
-	        PathConstraint pathConstraintAttribute2 = new PathConstraintAttribute("Employee.id", ConstraintOp.EQUALS, "11000014");
-	        dcAttribute2 = dcf.get(pathConstraintAttribute2, superUser, query);
-	        
-	        //template
-	        PathConstraint pathConstraintInTemplate = new PathConstraintAttribute("Employee.id", ConstraintOp.EQUALS, "11000014");
-	        template.addConstraint(pathConstraintInTemplate, "A");
-	        template.setEditable(pathConstraintInTemplate, true);
-	        template.setSwitchOffAbility(pathConstraintInTemplate, SwitchOffAbility.ON);
-	        dcInTemplate = dcf.get(pathConstraintInTemplate, superUser, template);
+            PathConstraint pathConstraintAttribute = new PathConstraintAttribute("Department.id", ConstraintOp.EQUALS, "11000014");
+            dcAttribute = dcf.get(pathConstraintAttribute, superUser, query);
+            PathConstraint pathConstraintNull = new PathConstraintNull("Employee.id", ConstraintOp.IS_NOT_NULL);
+            dcNull = dcf.get(pathConstraintNull, superUser, query);
+            PathConstraint pathConstraintBag = new PathConstraintBag("Employee", ConstraintOp.IN, "MySecondEmployeeList");
+            dcBag = dcf.get(pathConstraintBag, superUser, query);
+            PathConstraint pathConstraintLookup = new PathConstraintLookup("Employee", "Employee", "EmployeeA1");
+            dcLookup = dcf.get(pathConstraintLookup, superUser, query);
+            PathConstraint pathConstraintSubclass = new PathConstraintSubclass("Department.employees", "Manager");
+            dcSubclass = dcf.get(pathConstraintSubclass, superUser, query);
+            PathConstraint pathConstraintLoop = new PathConstraintLoop("Company.contractors.oldComs", ConstraintOp.EQUALS, "Company");
+            dcLoop = dcf.get(pathConstraintLoop, superUser, query);
+            Path path = new Path(model, "Employee.id");
+            dcNullPathConstraint = dcf.get(path, superUser, query);
+            PathConstraint pathConstraintAttribute2 = new PathConstraintAttribute("Employee.id", ConstraintOp.EQUALS, "11000014");
+            dcAttribute2 = dcf.get(pathConstraintAttribute2, superUser, query);
+
+            //template
+            PathConstraint pathConstraintInTemplate = new PathConstraintAttribute("Employee.id", ConstraintOp.EQUALS, "11000014");
+            template.addConstraint(pathConstraintInTemplate, "A");
+            template.setEditable(pathConstraintInTemplate, true);
+            template.setSwitchOffAbility(pathConstraintInTemplate, SwitchOffAbility.ON);
+            dcInTemplate = dcf.get(pathConstraintInTemplate, superUser, template);
         } catch (PathException pe) {
-        	pe.printStackTrace();
+            pe.printStackTrace();
         }
     }
-    
+
     public void tearDown() throws Exception {
         superUser.deleteBag(firstEmployeeBag.getName());
         superUser.deleteBag(secondEmployeeBag.getName());
         removeUserProfile(superUser.getUsername());
-        removeUserProfile(testUser.getUsername()); 
-        removeUserProfile(emptyUser.getUsername()); 
-        
+        removeUserProfile(testUser.getUsername());
+        removeUserProfile(emptyUser.getUsername());
+
         uosw.close();
     }
-    
+
     private void removeUserProfile(String username) throws ObjectStoreException {
         Query q = new Query();
         QueryClass qc = new QueryClass(UserProfile.class);
@@ -168,7 +179,7 @@ public class DisplayConstraintTest extends TestCase {
             uosw.delete(o);
         }
     }
-    
+
     public void testGetCode() {
         assertNull(dcAttribute.getCode());
         assertNull(dcNullPathConstraint.getCode());
@@ -179,36 +190,36 @@ public class DisplayConstraintTest extends TestCase {
         assertEquals(false, dcAttribute.isEditableInTemplate());
         assertEquals(false, dcNullPathConstraint.isEditableInTemplate());
     }
-    
+
     public void testGetSelectedValue() {
-    	assertEquals("11000014", dcAttribute.getSelectedValue());
-    	assertEquals("IS NOT NULL", dcNull.getSelectedValue());
-    	assertEquals("MySecondEmployeeList", dcBag.getSelectedValue());
-    	assertEquals("Employee", dcLookup.getSelectedValue());
-    	assertEquals("Manager", dcSubclass.getSelectedValue());
-    	assertEquals("Company", dcLoop.getSelectedValue());
-    	assertNull(dcNullPathConstraint.getSelectedValue());
-    	
-    	dcAttribute2.setBagSelected(true);
-    	dcAttribute2.setSelectedBagValue("secondEmployeeBag");
-    	assertEquals("secondEmployeeBag", dcAttribute2.getSelectedValue());
+        assertEquals("11000014", dcAttribute.getSelectedValue());
+        assertEquals("IS NOT NULL", dcNull.getSelectedValue());
+        assertEquals("MySecondEmployeeList", dcBag.getSelectedValue());
+        assertEquals("Employee", dcLookup.getSelectedValue());
+        assertEquals("Manager", dcSubclass.getSelectedValue());
+        assertEquals("Company", dcLoop.getSelectedValue());
+        assertNull(dcNullPathConstraint.getSelectedValue());
+
+        dcAttribute2.setBagSelected(true);
+        dcAttribute2.setSelectedBagValue("secondEmployeeBag");
+        assertEquals("secondEmployeeBag", dcAttribute2.getSelectedValue());
     }
-     
+
     public void testIsBagSelected() {
-    	assertEquals(false, dcAttribute.isBagSelected());
-    	dcAttribute.setBagSelected(true);
-    	assertEquals(true, dcAttribute.isBagSelected());
-    	dcAttribute.setBagSelected(false);
-    	assertEquals(true, dcBag.isBagSelected());
-    	assertEquals(false, dcNullPathConstraint.isBagSelected());
+        assertEquals(false, dcAttribute.isBagSelected());
+        dcAttribute.setBagSelected(true);
+        assertEquals(true, dcAttribute.isBagSelected());
+        dcAttribute.setBagSelected(false);
+        assertEquals(true, dcBag.isBagSelected());
+        assertEquals(false, dcNullPathConstraint.isBagSelected());
     }
-    
+
     public void testIsNullSelected() {
-    	assertEquals(false, dcAttribute.isNullSelected());
-    	assertEquals(true, dcNull.isNullSelected());
-    	assertEquals(false, dcNullPathConstraint.isNullSelected());
+        assertEquals(false, dcAttribute.isNullSelected());
+        assertEquals(true, dcNull.isNullSelected());
+        assertEquals(false, dcNullPathConstraint.isNullSelected());
     }
-    
+
     public void testIsValueSelected() {
         assertEquals(true, dcAttribute.isValueSelected());
         assertEquals(true, dcLookup.isValueSelected());
@@ -263,36 +274,36 @@ public class DisplayConstraintTest extends TestCase {
      * @return the selected constraint op or null
      */
     public void testGetSelectedOp() {
-    	DisplayConstraintOption dco = null;
-    	dco = dcAttribute.new DisplayConstraintOption(ConstraintOp.EQUALS.toString(), ConstraintOp.EQUALS.getIndex());
-    	assertEquals(dco.getLabel(), dcAttribute.getSelectedOp().getLabel());
-    	assertEquals(dco.getProperty(), dcAttribute.getSelectedOp().getProperty());
-    	
-    	dco = dcNull.new DisplayConstraintOption(ConstraintOp.IS_NOT_NULL.toString(), ConstraintOp.IS_NOT_NULL.getIndex());
-    	assertEquals(dco.getLabel(), dcNull.getSelectedOp().getLabel());
-    	assertEquals(dco.getProperty(), dcNull.getSelectedOp().getProperty());
-    	
-    	dco = dcBag.new DisplayConstraintOption(ConstraintOp.IN.toString(), ConstraintOp.IN.getIndex());
-    	assertEquals(dco.getLabel(), dcBag.getSelectedOp().getLabel());
-    	assertEquals(dco.getProperty(), dcBag.getSelectedOp().getProperty());
-    	
-    	dco = dcLookup.new DisplayConstraintOption(ConstraintOp.LOOKUP.toString(), ConstraintOp.LOOKUP.getIndex());
-    	assertEquals(dco.getLabel(), dcLookup.getSelectedOp().getLabel());
-    	assertEquals(dco.getProperty(), dcLookup.getSelectedOp().getProperty());
-    	
-    	assertNull(dcSubclass.getSelectedOp());
-    	
-    	dco = dcLoop.new DisplayConstraintOption(ConstraintOp.EQUALS.toString(), ConstraintOp.EQUALS.getIndex());
-    	assertEquals(dco.getLabel(), dcLoop.getSelectedOp().getLabel());
-    	assertEquals(dco.getProperty(), dcLoop.getSelectedOp().getProperty());
-    	
-    	assertNull(dcNullPathConstraint.getSelectedOp());
-    	
-    	dcAttribute2.setBagSelected(true);
-    	dcAttribute2.setSelectedBagOp(ConstraintOp.IN);
-    	dco = dcAttribute2.new DisplayConstraintOption(ConstraintOp.IN.toString(), ConstraintOp.IN.getIndex());
-    	assertEquals(dco.getLabel(), dcAttribute2.getSelectedOp().getLabel());
-    	assertEquals(dco.getProperty(), dcAttribute2.getSelectedOp().getProperty());
+        DisplayConstraintOption dco = null;
+        dco = dcAttribute.new DisplayConstraintOption(ConstraintOp.EQUALS.toString(), ConstraintOp.EQUALS.getIndex());
+        assertEquals(dco.getLabel(), dcAttribute.getSelectedOp().getLabel());
+        assertEquals(dco.getProperty(), dcAttribute.getSelectedOp().getProperty());
+
+        dco = dcNull.new DisplayConstraintOption(ConstraintOp.IS_NOT_NULL.toString(), ConstraintOp.IS_NOT_NULL.getIndex());
+        assertEquals(dco.getLabel(), dcNull.getSelectedOp().getLabel());
+        assertEquals(dco.getProperty(), dcNull.getSelectedOp().getProperty());
+
+        dco = dcBag.new DisplayConstraintOption(ConstraintOp.IN.toString(), ConstraintOp.IN.getIndex());
+        assertEquals(dco.getLabel(), dcBag.getSelectedOp().getLabel());
+        assertEquals(dco.getProperty(), dcBag.getSelectedOp().getProperty());
+
+        dco = dcLookup.new DisplayConstraintOption(ConstraintOp.LOOKUP.toString(), ConstraintOp.LOOKUP.getIndex());
+        assertEquals(dco.getLabel(), dcLookup.getSelectedOp().getLabel());
+        assertEquals(dco.getProperty(), dcLookup.getSelectedOp().getProperty());
+
+        assertNull(dcSubclass.getSelectedOp());
+
+        dco = dcLoop.new DisplayConstraintOption(ConstraintOp.EQUALS.toString(), ConstraintOp.EQUALS.getIndex());
+        assertEquals(dco.getLabel(), dcLoop.getSelectedOp().getLabel());
+        assertEquals(dco.getProperty(), dcLoop.getSelectedOp().getProperty());
+
+        assertNull(dcNullPathConstraint.getSelectedOp());
+
+        dcAttribute2.setBagSelected(true);
+        dcAttribute2.setSelectedBagOp(ConstraintOp.IN);
+        dco = dcAttribute2.new DisplayConstraintOption(ConstraintOp.IN.toString(), ConstraintOp.IN.getIndex());
+        assertEquals(dco.getLabel(), dcAttribute2.getSelectedOp().getLabel());
+        assertEquals(dco.getProperty(), dcAttribute2.getSelectedOp().getProperty());
     }
 
     /**
@@ -321,9 +332,9 @@ public class DisplayConstraintTest extends TestCase {
         assertEquals(2, dcLoop.getValidOps().size());
         assertEquals(6, dcNullPathConstraint.getValidOps().size());
     }
-    
+
     public void testGetLoopQueryOps() {
-    	assertEquals(2, dcLoop.getLoopQueryOps().size());
+        assertEquals(2, dcLoop.getLoopQueryOps().size());
     }
 
     /**
@@ -336,12 +347,12 @@ public class DisplayConstraintTest extends TestCase {
         assertEquals(true, dcLookup.isLookup());
         assertEquals(false, dcNullPathConstraint.isLookup());
     }
-    
+
     public void testGetLookupOp() {
-    	assertEquals(ConstraintOp.LOOKUP.toString(), dcLookup.getLookupOp().getLabel());
+        assertEquals(ConstraintOp.LOOKUP.toString(), dcLookup.getLookupOp().getLabel());
         assertEquals(ConstraintOp.LOOKUP.getIndex(), dcLookup.getLookupOp().getProperty());
     }
-    
+
     /**
      * Return the autocompleter for this path if one is available.  Otherwise return null.
      * @return an autocompleter for this path or null
@@ -360,10 +371,10 @@ public class DisplayConstraintTest extends TestCase {
      * @return possible values to populate a dropdown
      */
     public void testGetPossibleValues() {
-    	assertEquals(3, dcAttribute.getPossibleValues().size());
-    	assertNull(dcNull.getPossibleValues());
-    	assertNull(dcBag.getPossibleValues());
-    	assertNull(dcNullPathConstraint.getPossibleValues());
+        assertEquals(3, dcAttribute.getPossibleValues().size());
+        assertNull(dcNull.getPossibleValues());
+        assertNull(dcBag.getPossibleValues());
+        assertNull(dcNullPathConstraint.getPossibleValues());
     }
 
     /**
@@ -373,9 +384,9 @@ public class DisplayConstraintTest extends TestCase {
      */
     // TODO Do we need this, could getValildOps return the correct ops if a dropdown is available
     public void testGetFixedOps() {
-    	assertEquals(6, dcAttribute.getFixedOps().size());
-    	assertNull(dcNull.getFixedOps());
-    	assertNull(dcNullPathConstraint.getFixedOps());
+        assertEquals(6, dcAttribute.getFixedOps().size());
+        assertNull(dcNull.getFixedOps());
+        assertNull(dcNullPathConstraint.getFixedOps());
     }
 
     /**
@@ -383,7 +394,7 @@ public class DisplayConstraintTest extends TestCase {
      * @return true if an extra constraint option is available
      */
     public void testIsExtraConstraint() {
-    	assertEquals(false, dcAttribute.isExtraConstraint());
+        assertEquals(false, dcAttribute.isExtraConstraint());
         assertEquals(true, dcLookup.isExtraConstraint());
         assertEquals(false, dcNullPathConstraint.isExtraConstraint());
     }
@@ -394,7 +405,7 @@ public class DisplayConstraintTest extends TestCase {
      * @return a list of possible extra constraint values
      */
     public void testGetExtraConstraintValues() {
-    	assertNull(dcAttribute.getExtraConstraintValues());
+        assertNull(dcAttribute.getExtraConstraintValues());
         assertEquals(3, dcLookup.getExtraConstraintValues().size());
     }
 
@@ -404,7 +415,7 @@ public class DisplayConstraintTest extends TestCase {
      * @return the extra constraint class name or null
      */
     public void testGetExtraConstraintClassName() {
-    	assertNull(dcAttribute.getExtraConstraintClassName());
+        assertNull(dcAttribute.getExtraConstraintClassName());
         assertEquals("Department", dcLookup.getExtraConstraintClassName());
     }
 
@@ -418,7 +429,7 @@ public class DisplayConstraintTest extends TestCase {
         assertEquals(2, dcBag.getBags().size());
         assertEquals(2, dcNullPathConstraint.getBags().size());
     }
-    
+
     public void testGetBagsOps() {
         assertEquals(2, dcBag.getBagOps().size());
     }
@@ -429,7 +440,7 @@ public class DisplayConstraintTest extends TestCase {
      * @return a String
      */
     public void testGetBagType() {
-    	assertNull(dcAttribute.getBagType());
+        assertNull(dcAttribute.getBagType());
         assertEquals("Employee", dcNull.getBagType());
         assertEquals("Employee", dcNullPathConstraint.getBagType());
     }
@@ -458,12 +469,12 @@ public class DisplayConstraintTest extends TestCase {
      * @throws PathException if something goes wrong
      */
     public void testGetCandidateLoops() {
-    	try {
-    	    assertEquals(0, dcAttribute.getCandidateLoops().size());
-    	    assertEquals(1, dcLoop.getCandidateLoops().size());
-    	} catch(PathException pe) {
-    		pe.printStackTrace();
-    	}
+        try {
+            assertEquals(0, dcAttribute.getCandidateLoops().size());
+            assertEquals(1, dcLoop.getCandidateLoops().size());
+        } catch(PathException pe) {
+            pe.printStackTrace();
+        }
     }
 
     /**
@@ -491,8 +502,8 @@ public class DisplayConstraintTest extends TestCase {
      * @return switchable property (on, off, locked)
      */
     public void testGetSwitchable() {
-    	assertEquals("locked", dcAttribute.getSwitchable());
-    	assertEquals("locked", dcNullPathConstraint.getSwitchable());
-    	assertEquals("on", dcInTemplate.getSwitchable());
+        assertEquals("locked", dcAttribute.getSwitchable());
+        assertEquals("locked", dcNullPathConstraint.getSwitchable());
+        assertEquals("on", dcInTemplate.getSwitchable());
     }
 }

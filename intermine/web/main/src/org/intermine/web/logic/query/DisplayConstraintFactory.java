@@ -24,10 +24,9 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.autocompletion.AutoCompleter;
 
-
 public class DisplayConstraintFactory
 {
-    private InterMineAPI im;    
+    private InterMineAPI im;
     private AutoCompleter ac;
 
     public DisplayConstraintFactory(InterMineAPI im, AutoCompleter ac) {
@@ -35,15 +34,13 @@ public class DisplayConstraintFactory
         this.ac = ac;
     }
 
-
     public DisplayConstraint get(Path path, Profile profile, PathQuery query) {
         return new DisplayConstraint(path, profile, query, ac, im.getObjectStoreSummary(),
                 im.getBagQueryConfig(), im.getClassKeys(), im.getBagManager());
-
     }
 
     public DisplayConstraint get(PathConstraint con, Profile profile, PathQuery query)
-    throws PathException {
+        throws PathException {
 
         Path path = query.makePath(con.getPath());
         String label = null;
@@ -59,7 +56,7 @@ public class DisplayConstraintFactory
 
             // we need to find the original template to retrieve the summary
             TemplateManager templateManager = im.getTemplateManager();
-            
+
             TemplateQuery originalTemplate =
                 templateManager.getUserOrGlobalTemplate(profile, template.getName());
             TemplateSummariser templateSummariser = im.getTemplateSummariser();
@@ -69,7 +66,8 @@ public class DisplayConstraintFactory
             }
         }
         return new DisplayConstraint(path, con, label, query.getConstraints().get(con),
-                editableInTemplate, switchOffAbility, profile, query, ac, im.getObjectStoreSummary(),
-                im.getBagQueryConfig(), im.getClassKeys(), im.getBagManager(), templateSummary);
+                editableInTemplate, switchOffAbility, profile, query, ac,
+                im.getObjectStoreSummary(), im.getBagQueryConfig(), im.getClassKeys(),
+                im.getBagManager(), templateSummary);
     }
 }
