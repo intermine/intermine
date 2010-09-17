@@ -50,19 +50,19 @@ public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
 
         List<String> newIds = record.getAttributes().get("newID");
         if (newIds != null) {
-            String newId = (String) newIds.get(0);
+            String newId = newIds.get(0);
             feature.setAttribute("primaryIdentifier", newId);
         }
         List<String> oldIds = record.getAttributes().get("oldID");
         if (oldIds != null) {
-            String oldId = (String) oldIds.get(0);
+            String oldId = oldIds.get(0);
             if (!oldId.equals(record.getId())) {
                 converter.getSynonym(feature, oldId);
             }
         }
-        if (clsName.equals("PCRProduct")) {
+        if ("PCRProduct".equals(clsName)) {
             List<String> promoters = record.getAttributes().get("promotor");
-            if (promoters.get(0).equals("1")) {
+            if ("1".equals(promoters.get(0))) {
                 feature.setAttribute("promoter", "true");
             } else {
                 feature.setAttribute("promoter", "false");
