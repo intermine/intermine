@@ -47,7 +47,7 @@ public class GFF3RecordHandlerTest extends TestCase
         handler.addParent(gene.getIdentifier());
 
         Item expected = itemFactory.makeItem(threePrimeUTR.getIdentifier(), "ThreePrimeUTR", "");
-        expected.setReference("gene", gene.getIdentifier());
+//        expected.setReference("gene", gene.getIdentifier());
 
         Map refs = new HashMap();
         refs.put("ThreePrimeUTR", "gene");
@@ -77,7 +77,7 @@ public class GFF3RecordHandlerTest extends TestCase
         Item expected = itemFactory.makeItem(exon.getIdentifier(), "Exon", "");
         ReferenceList transcripts = new ReferenceList("transcripts", Arrays.asList(new String[] {transcript1.getIdentifier(),
                                                                                                  transcript2.getIdentifier()}));
-        expected.addCollection(transcripts);
+//        expected.addCollection(transcripts);
 
         Map refs = new HashMap();
         refs.put("Exon", "transcripts");
