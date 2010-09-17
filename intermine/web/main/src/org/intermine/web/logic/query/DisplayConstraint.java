@@ -738,9 +738,9 @@ public class DisplayConstraint
     public boolean isInputFieldDisplayed() {
         if (con != null) {
             int selectedOperator = getSelectedOp().getProperty();
-            if (selectedOperator == 6
-                    || selectedOperator == 7
-                    || selectedOperator == 18) {
+            if (selectedOperator == ConstraintOp.MATCHES.getIndex()
+                    || selectedOperator == ConstraintOp.DOES_NOT_MATCH.getIndex()
+                    || selectedOperator == ConstraintOp.LOOKUP.getIndex()) {
                 return true;
             }
             if (selectedOperator == ConstraintOp.ONE_OF.getIndex()
@@ -769,9 +769,9 @@ public class DisplayConstraint
     public boolean isPossibleValuesDisplayed() {
         if (con != null) {
             int selectedOperator = getSelectedOp().getProperty();
-            if (selectedOperator == 6
-                    || selectedOperator == 7
-                    || selectedOperator == 18
+            if (selectedOperator == ConstraintOp.MATCHES.getIndex()
+                    || selectedOperator == ConstraintOp.DOES_NOT_MATCH.getIndex()
+                    || selectedOperator == ConstraintOp.LOOKUP.getIndex()
                     || selectedOperator == ConstraintOp.ONE_OF.getIndex()
                     || selectedOperator == ConstraintOp.NONE_OF.getIndex()) {
                 return false;
