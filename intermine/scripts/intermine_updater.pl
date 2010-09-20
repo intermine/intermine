@@ -385,43 +385,43 @@ sub process_field_list {
     chomp @values;
     my $class_name = my $guff = '';
     if ($key =~ /\./) {
-	# split into 'class.name' and '.fields'
-	($class_name, $guff) = $key =~ /(^.*)(\.\S*)/;
+        # split into 'class.name' and '.fields'
+        ($class_name, $guff) = $key =~ /(^.*)(\.\S*)/;
     }
     else {
-	$class_name = $key;
+        $class_name = $key;
     }
     my $class = check_class_name($class_name);
     unless ($class) {
-	my $new_class_name = update_path($class_name, '');
-	if ($new_class_name 
-	    and $new_class_name ne $class_name
-	    and $class = check_class_name($new_class_name) ) {
-	    $changed++;
-	    push @$err, "$class_name => $new_class_name";
-	    $class_name = $new_class_name;
-	}
-	else {
-	    return (undef, undef, "Cannot find class $class_name");
-	}
+        my $new_class_name = update_path($class_name, '');
+        if ($new_class_name 
+                and $new_class_name ne $class_name
+                and $class = check_class_name($new_class_name) ) {
+            $changed++;
+            push @$err, "$class_name => $new_class_name";
+            $class_name = $new_class_name;
+        }
+        else {
+            return (undef, undef, "Cannot find class $class_name");
+        }
     }
     my @new_values;
     foreach my $field_name (@values) {
-	$field_name =~ s/^\s*//;
-	chomp $field_name;
-	if (not $class->get_field_by_name($field_name)) {
-	    if (my $new_path = update_path($class_name . '.' . $field_name, '')) {
-		($field_name) = $new_path =~ /([^\.]*$)/;
-		push @new_values, $field_name;
-	    }
-	    else {
-		push @$err, "$field_name deleted";
-	    }
-	    $changed++;
-	}
-	else {
-	    push @new_values, $field_name;
-	}
+        $field_name =~ s/^\s*//;
+        chomp $field_name;
+        if (not $class->get_field_by_name($field_name)) {
+            if (my $new_path = update_path($class_name . '.' . $field_name, '')) {
+                ($field_name) = $new_path =~ /([^\.]*$)/;
+                push @new_values, $field_name;
+            }
+            else {
+                push @$err, "$field_name deleted";
+            }
+            $changed++;
+        }
+        else {
+            push @new_values, $field_name;
+        }
     }
     my $new_key   = $class_name . $guff;
     my $new_value = join( (($value =~ /,/)?', ':' '), @new_values);
@@ -471,74 +471,80 @@ sub process_xml_line {
     $line   =~ s/></>><</g;
     my @elems = split('><', $line);
     while (my $elem = shift @elems) {	    
-	my ($end, $type) = $elem =~ m!^\s*<(/?)([a-z-]+)[\s>]!i;
-	if ($type) {
-	    push @open_tags, $type;
-	    $counter{$type}++ unless $end;  
-	    $counter{total}++;
-	    printf "\rProcessing element %10s", format_number($counter{total})
-	        unless $writing_to_stdout;
-	    $is_buffering = 1 if ($needs_processing{$type});
-	}
-	if ($is_buffering) {
-	    $buffer .= $elem;
-	}
-	else {
-	    $new_line .= $elem;
-	}
-	if ($elem =~ m!/>\s*$! or $end) { # a closed contentless tag
-		$end  = pop @open_tags;
-		$type = $end unless $type;
-	}
-	if ($type and $needs_processing{$type} and $end) {
-	    undef $is_buffering;
-	    my $origin = qq{$file ll. $. };
-	    my ($updated_buffer, $changes) = update_buffer($buffer, $type, $origin);
-	    $new_line .= $updated_buffer;
-	    undef $buffer;
-	    if (defined $changes) {
-		if ($changes) {
-			$counter{broken}{$type}++;
-		}
-		else {
-		    $counter{changed}{$type}++;
-		    }
-	    } 
-	    else {
-		    $counter{unchanged}{$type}++;
-	    }
-	}
+        my ($end, $type) = $elem =~ m!^\s*<(/?)([a-z-]+)[\s>]!i;
+        if ($type) {
+            push @open_tags, $type;
+            $counter{$type}++ unless $end;  
+            $counter{total}++;
+            printf "\rProcessing element %10s", format_number($counter{total})
+            unless $writing_to_stdout;
+            $is_buffering = 1 if ($needs_processing{$type});
+        }
+        if ($is_buffering) {
+            $buffer .= $elem;
+        }
+        else {
+            $new_line .= $elem;
+        }
+        if ($elem =~ m{/>\s*$} or $end) { # a closed contentless tag
+            $end  = pop @open_tags;
+            $type = $end unless $type;
+        }
+        if ($type and $needs_processing{$type} and $end) {
+            undef $is_buffering;
+            my $origin = qq{$file ll. $. };
+            my ($updated_buffer, $changes) = update_buffer($buffer, $type, $origin);
+            $new_line .= $updated_buffer;
+            undef $buffer;
+            if (defined $changes) {
+                if ($changes) {
+                    $counter{broken}{$type}++;
+                }
+                else {
+                    $counter{changed}{$type}++;
+                }
+            } 
+            else {
+                $counter{unchanged}{$type}++;
+            }
+        }
     }
     return $new_line;
 }
 
+### MAIN 
+
+### PROCESS THE INPUT FILES 
+
 die "No input files specified! Please supply some using --inputfile or -i\n"
-    unless @in_files;
+unless @in_files;
 for my $in_file (@in_files) {
     my $out_file = (shift @out_files) || $in_file . '.new';
     open(my $INFH, '<', $in_file) 
-	or (warn "\rCannot open $in_file, $! - skipping\n" and next);
+        or (warn "\rCannot open $in_file, $! - skipping\n" and next);
     my $OUT;
     if ($out_file eq '-') {
-	$OUT = *STDOUT;
+        $OUT = *STDOUT;
     }
     else {
-	open($OUT,  '>', $out_file) or die "Cannot write to $out_file, $!";
+        open($OUT,  '>', $out_file) or die "Cannot write to $out_file, $!";
     }
     print $OUT '-' x 70, "\n", $in_file, ":\n\n" if $writing_to_stdout;
-    
+
     while(<$INFH>) {
-	my $new_line;
-	if ($in_file =~ /\.xml$/) {
-	    $new_line = process_xml_line($_, $in_file);
-	}
-	else {
-	    $new_line = process_key_value_line($_, $in_file);
-	}
-	
-	print $OUT $new_line;
+        my $new_line;
+        if ($in_file =~ /\.xml$/) {
+            $new_line = process_xml_line($_, $in_file);
+        }
+        else {
+            $new_line = process_key_value_line($_, $in_file);
+        }
+
+        print $OUT $new_line;
     }
 }
+
+### REPORT THE RESULTS
 
 if (%counter) {
     $log->info('Processed', format_number($counter{total}), 'elements');
@@ -558,6 +564,8 @@ if (%counter) {
     }
     print "\n" unless $writing_to_stdout;
 }
+
+exit()
 
 __DATA__
 
