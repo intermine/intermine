@@ -154,7 +154,7 @@ public class ModifyTemplateAction extends InterMineAction
     }
 
     private ActionForward getReturn(String pageName, ActionMapping mapping) {
-        if (pageName != null && pageName.equals("MyMine")) {
+        if (pageName != null && "MyMine".equals(pageName)) {
             return mapping.findForward("mymine");
         }
         return mapping.findForward("templates");
