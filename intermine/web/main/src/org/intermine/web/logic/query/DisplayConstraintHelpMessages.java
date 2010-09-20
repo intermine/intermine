@@ -1,13 +1,22 @@
 package org.intermine.web.logic.query;
 
+/*
+ * Copyright (C) 2002-2010 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 /**
  * Class to generate help messages appropriate to a given constraint for display in the QueryBuilder
  * and template form.
  * @author Richard Smith
  *
  */
-public class DisplayConstraintHelpMessages {
-    
+public class DisplayConstraintHelpMessages
+{
     /**
      * Generate a context sensitive help message for a constraint.  The message will explain all
      * available options - e.g. if a dropdown will explain how to enter multiple values, if a
@@ -16,9 +25,8 @@ public class DisplayConstraintHelpMessages {
      * @return a context sensitive help message
      */
     public static String getHelpMessage(DisplayConstraint con) {
-       
         StringBuffer sb = new StringBuffer();
-        
+
         if (con.isLookup()) {
             sb.append("Search multiple fields including: " + con.getKeyFields()
                     + " You can enter multiple values separated by comma, use * as a wildcard.");
@@ -31,7 +39,7 @@ public class DisplayConstraintHelpMessages {
         } else if (con.getPossibleValues() != null && !con.getPossibleValues().isEmpty()) {
             sb.append("Choose a value from the dropdown.  To choose multiple values set the"
                     + " operation to IN or NOT IN.");
-            if (con.getPath().isAttribute() && con.getPath().getType().equals("String")) {
+            if (con.getPath().isAttribute() && "String".equals(con.getPath().getType())) {
                 sb.append(" To type text set the operation to LIKE or NOT LIKE");
                 sb.append(", you can use * as a wildcard");
             }
@@ -42,15 +50,15 @@ public class DisplayConstraintHelpMessages {
             sb.append(getBagMessage(con));
         }
         if (sb.length() == 0) {
-            return null; 
+            return null;
         }
         return sb.toString();
     }
-    
+
     private static String getBagMessage(DisplayConstraint con) {
         if (con.getBags() != null) {
-            return " Or use the checkbox and constrain the " + con.getBagType() 
-            + " to be in a saved list.";
+            return " Or use the checkbox and constrain the " + con.getBagType()
+                + " to be in a saved list.";
         }
         return "";
     }
