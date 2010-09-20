@@ -141,8 +141,9 @@ public class QueryBuilderConstraintAction extends InterMineAction
                 newConstraint = new PathConstraintLookup(constraintForm.getPath(), constraintValue,
                         constraintForm.getExtraValue());
             } else if (PathConstraintMultiValue.VALID_OPS.contains(constraintOp)) {
-            	String multiValues = constraintForm.getMultiValueAttribute();
-                newConstraint = new PathConstraintMultiValue(constraintForm.getPath(), constraintOp, Arrays.asList(multiValues.split(",")));
+                String multiValues = constraintForm.getMultiValueAttribute();
+                newConstraint = new PathConstraintMultiValue(constraintForm.getPath(), constraintOp,
+                                                             Arrays.asList(multiValues.split(",")));
             } else {
                 newConstraint = new PathConstraintAttribute(constraintForm.getPath(), constraintOp,
                         constraintValue);
