@@ -96,7 +96,8 @@ public class CreateTemplateAction extends InterMineAction
         // Check whether there is a template name clash
         boolean isNewTemplate = (session.getAttribute(Constants.NEW_TEMPLATE) != null
             && (Boolean) session.getAttribute(Constants.NEW_TEMPLATE)) ? true : false;
-        List<String> prevTemplateName = (ArrayList<String>) session.getAttribute(Constants.PREV_TEMPLATE_NAME);
+        List<String> prevTemplateName = (ArrayList<String>)
+                                        session.getAttribute(Constants.PREV_TEMPLATE_NAME);
         if (profile.getSavedTemplates().containsKey(template.getName())
                 && (isNewTemplate
                 || (prevTemplateName != null && !prevTemplateName.contains(template.getName())))) {
