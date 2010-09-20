@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-InterMine::Cookbook::Recipe5 - Dealing with Results
+Webservice::InterMine::Cookbook::Recipe5 - Dealing with Results
 
 =head1 SYNOPSIS
 
@@ -10,19 +10,21 @@ InterMine::Cookbook::Recipe5 - Dealing with Results
   # Even Skipped, sorted by the number of their
   # papers in the database
 
-  use InterMine ('www.flymine.org');
+  use Webservice::InterMine ('www.flymine.org');
 
-  my $query = InterMine->new_query;
+  my $query = Webservice::InterMine->new_query;
 
   # Specifying a name and a description is purely optional
   $query->name('Tutorial 5 Query');
   $query->description('All papers on Even Skipped in D. Melanogaster');
 
+  ############### SET OUTPUT COLUMNS
   $query->add_view(qw/
       Gene.publications.firstAuthor
       Gene.publications.title
   /);
 
+  ############## SET QUERY TERMS
   $query->add_constraint(
      path  => 'Gene',
      op    => 'LOOKUP',
@@ -30,15 +32,16 @@ InterMine::Cookbook::Recipe5 - Dealing with Results
      extra_value => 'D. melanogaster',
   );
 
+  ############# GET RESULTS AS ARRAYS
   my $results = $query->results(as => 'arrayrefs');
 
-  my %papers_by;
+  my %papers_by; # Collect all authors by the same author together
   for my $row (@$results) {
       my ($author, $paper) = @$row;
       push @{$papers_by{$author}}, $paper;
   }
 
-  my @sorted_authors =
+  my @sorted_authors = # sort the authors by the number of paper 
       sort { @{$papers_by{$b}} <=> @{$papers_by{$a}} } keys %papers_by;
 
   printf "The most prolific author is %s, with %d papers (%s)",
@@ -46,6 +49,7 @@ InterMine::Cookbook::Recipe5 - Dealing with Results
          scalar(@{$papers_by{$sorted_authors[0]}}),
          join(', ', map {'"'.$_.'"'} @{$papers_by{$sorted_authors[0]}} );
 
+  ############ GET RESULTS AS HASHES
   $results = $query->results(as => 'hashrefs');
 
   my %occurances_of;
@@ -58,7 +62,7 @@ InterMine::Cookbook::Recipe5 - Dealing with Results
   my @sorted_words =
       sort { $occurances_of{$b} <=> $occurances_of{$a} } keys %occurances_of;
 
-  print "The ten most frequently used words are:"
+  print "The ten most frequently used words in titles are:"
         . join(', ', @sorted_words[0 .. 9]);
 
 =head1 DESCRIPTION
@@ -70,7 +74,7 @@ tasks as trivially simple as possible;
 =head2 Storage
 
 The most common data storage format is the flat file (there are other options
-too - please see Recipe7 - Extending InterMine). Storing results in a flat file
+too - please see Recipe7 - Extending Webservice::InterMine). Storing results in a flat file
 is as simple as:
 
   my $results = $query->result(as => 'string');
@@ -122,11 +126,6 @@ and C<grep> on them:
   # Note: this assumes that the first element is unique in the list
   my $transformed_results = map { {@$_} } @$results
 
-For very large result sets, you don't have to wait to receive all the results
-before you start processing them - you can process everything in a stream
-via iteration, which can reduce memory usage in your program. For details of
-this please see the next recipe, no 6 - Advanced Results Management.
-
 =head1 CONCLUSION
 
 By default, result rows can be returned one of three different formats: strings
@@ -158,5 +157,40 @@ Note the differences in bracketing and the use of the arrow (dereferencing) oper
 =head1 SEE ALSO
 
 L<perldoc perlref|perlref>
+
+=head1 AUTHOR
+
+Alex Kalderimis C<< <dev@intermine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<dev@intermine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Webservice::InterMine
+
+You can also look for information at:
+
+=over 4
+
+=item * InterMine
+
+L<http://www.intermine.org>
+
+=item * Documentation
+
+L<http://www.intermine.org/perlapi>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2006 - 2010 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut

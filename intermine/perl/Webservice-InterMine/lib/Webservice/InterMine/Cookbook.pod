@@ -2,12 +2,12 @@
 
 =head1 NAME
 
-InterMine::Cookbook - how to run InterMine webservice queries
+Webservice::InterMine::Cookbook - how to run Webservice::InterMine webservice queries
 
 =head1 DESCRIPTION
 
-The InterMine cookbook is a set of short tutorial 'recipes'
-which aim to demonstrate particular features of the InterMine
+The Webservice::InterMine cookbook is a set of short tutorial 'recipes'
+which aim to demonstrate particular features of the Webservice::InterMine
 Perl API. Each recipe presents some code, followed by a section
 which explains and discusses the features used.
 
@@ -15,59 +15,59 @@ which explains and discusses the features used.
 
 =over
 
-=item L<InterMine::Cookbook::Recipe1> - The bare basics
+=item L<Webservice::InterMine::Cookbook::Recipe1> - The bare basics
 
 The bare minimum you need to create and run a valid
-InterMine query from scratch
+Webservice::InterMine query from scratch
 
-=item L<InterMine::Cookbook::Recipe2> - Adding constraints
+=item L<Webservice::InterMine::Cookbook::Recipe2> - Adding constraints
 
 Queries without constraints are not very useful, so here
 we look at how to add some simple constraints to your searches
 
-=item L<InterMine::Cookbook::Recipe3> - More constraints
+=item L<Webservice::InterMine::Cookbook::Recipe3> - More constraints
 
 There are several different constraint types, distinguished
 by their operators; this recipe introduces all the main
 constraint types.
 
-=item L<InterMine::Cookbook::Recipe4> - Other Query Features
+=item L<Webservice::InterMine::Cookbook::Recipe4> - Other Query Features
 
 This recipe presents the other potential features of a query:
 joins and path descriptions
 
-=item L<InterMine::Cookbook::Recipe5> - Dealing with Results
+=item L<Webservice::InterMine::Cookbook::Recipe5> - Dealing with Results
 
 Once you have your query working the way you want it to, you
 will then need to deal with the results it returns - this recipe
 introduces the different result formats and how to access your data
 
-=item L<InterMine::Cookbook::Recipe6> - Advanced Results Management
+=item L<Webservice::InterMine::Cookbook::Recipe6> - Advanced Results Management
 
 This recipe looks at using iteration, and ways that you can use
 features such as filtering results, limiting them, and processing
 them in a stream.
 
-=item L<InterMine::Cookbook::Recipe7> - Extending InterMine
+=item L<Webservice::InterMine::Cookbook::Recipe7> - Extending Webservice::InterMine
 
 The Perl API is written to be easily extensible with Moose roles - so
 if there is something you wish it could do, it probably can: here we
 look at adding different output formats to queries.
 
-=item L<InterMine::Cookbook::Recipe8> - Saving Queries
+=item L<Webservice::InterMine::Cookbook::Recipe8> - Saving Queries
 
 B<NOT IMPLEMENTED YET>
 You can save queries you run to the webservice so that you
 can access them anywhere you are. They can then be accessed
 from the webservice and run within Perl.
 
-=item L<InterMine::Cookbook::Templates::Recipe1> - Accessing Templates
+=item L<Webservice::InterMine::Cookbook::Templates::Recipe1> - Accessing Templates
 
 You don't have to create all your own queries - much of the
 work has been done for you with re-usable 'Templates' available from the
 webservice - here we look at the basics of calling a template
 
-=item L<InterMine::Cookbook::Templates::Recipe2> - Authoring Templates
+=item L<Webservice::InterMine::Cookbook::Templates::Recipe2> - Authoring Templates
 
 B<NOT IMPLEMENTED YET>
 Your scripted queries can be saved to the web-service
@@ -88,7 +88,7 @@ Please report any bugs or feature requests to C<dev@intermine.org>.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc InterMine
+    perldoc Webservice::InterMine
 
 You can also look for information at:
 

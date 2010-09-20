@@ -2,16 +2,16 @@
 
 =head1 NAME
 
-InterMine::Cookbook::Recipe4 - Other Query Features
+Webservice::InterMine::Cookbook::Recipe4 - Other Query Features
 
 =head1 SYNOPSIS
 
   # Get all genes involved in biosynthetic processes, and any
   # publications on them
 
-  use InterMine ('www.flymine.org');
+  use Webservice::InterMine ('www.flymine.org');
 
-  my $query = InterMine->new_query;
+  my $query = Webservice::InterMine->new_query;
 
   # Specifying a name and a description is purely optional
   $query->name('Tutorial 4 Query');
@@ -117,5 +117,39 @@ are interchangible, C<< (cwd => 'current directory') >> and C<(cwd, 'current dir
 are not, with the first one unhelpfully giving us not the current working
 directory, but just the string "cwd".
 
-=cut
+=head1 AUTHOR
 
+Alex Kalderimis C<< <dev@intermine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<dev@intermine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Webservice::InterMine
+
+You can also look for information at:
+
+=over 4
+
+=item * InterMine
+
+L<http://www.intermine.org>
+
+=item * Documentation
+
+L<http://www.intermine.org/perlapi>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2006 - 2010 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut

@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-InterMine::Cookbook::Recipe7 - Extending InterMine
+Webservice::InterMine::Cookbook::Recipe7 - Extending Webservice::InterMine
 
 =head1 SYNOPSIS
 
@@ -26,9 +26,9 @@ InterMine::Cookbook::Recipe7 - Extending InterMine
 
   # Later, in a nearby script
 
-  use InterMine ('www.flymine.org');
+  use Webservice::InterMine ('www.flymine.org');
 
-  my $query = InterMine->new_query(with => ['WriteOutYaml']);
+  my $query = Webservice::InterMine->new_query(with => ['WriteOutYaml']);
 
   # Specifying a name and a description is purely optional
   $query->name('Tutorial 7 Query');
@@ -58,10 +58,10 @@ up writing your code in an almost cookie-cutter style. When that happens, it
 is time to refactor out the commonalities into reusable chunks of code,
 ie. as modules.
 
-InterMine is designed to incorporate any additions you may want to write in
+Webservice::InterMine is designed to incorporate any additions you may want to write in
 as simply as possible. Being object orientated, it is possible to subclass and
-reimplement the entire InterMine suite. However, a simpler approach is to use
-roles(1). The InterMine modules are written using the Moose MOP system, and
+reimplement the entire Webservice::InterMine suite. However, a simpler approach is to use
+roles(1). The Webservice::InterMine modules are written using the Moose MOP system, and
 you can specify additional roles to be composed into the query or result
 iterator objects from the constructors.
 
@@ -70,10 +70,10 @@ the results data to files. Rather than repeating the same chunk of code in
 each script, that functionality has been packaged up in a 'role',
 and then passed to the query constructor:
 
-  my $query = InterMine->new_query(with => [$role]);
+  my $query = Webservice::InterMine->new_query(with => [$role]);
 
   # note that we can pass a list of roles
-  my $query = InterMine->new_query(with => [$role1, $role2]);
+  my $query = Webservice::InterMine->new_query(with => [$role1, $role2]);
 
 
 Now the query has all the extra functionality that the role provides, so here
@@ -152,7 +152,7 @@ Combining these two kinds of roles can produce some radically new behaviour:
 
   # Later, in a nearby script
 
-  my $query = InterMine->new_query(with => ['HTMLTable']);
+  my $query = Webservice::InterMine->new_query(with => ['HTMLTable']);
 
   # ... define the query here
 
@@ -169,7 +169,7 @@ and flexibility.
 
 L<Moose::Role>
 
-see examples of roles that can be applied to queries in InterMine/Query/Roles/Extra/
+see examples of roles that can be applied to queries in Webservice::InterMine/Query/Roles/Extra/
 
 =head1 FOOTNOTES
 
@@ -179,5 +179,40 @@ similar to Ruby's mixins, scala's traits, or Java's interfaces (except they
 have code too). For a discussion of roles in Perl see:
 L<http://www.modernperlbooks.com/mt/2009/04/the-why-of-perl-roles.html> and
 L<http://perlbuzz.com/2010/07/why-roles-in-perl-are-awesome.html>.
+
+=head1 AUTHOR
+
+Alex Kalderimis C<< <dev@intermine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<dev@intermine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Webservice::InterMine
+
+You can also look for information at:
+
+=over 4
+
+=item * InterMine
+
+L<http://www.intermine.org>
+
+=item * Documentation
+
+L<http://www.intermine.org/perlapi>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2006 - 2010 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut

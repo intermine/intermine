@@ -2,13 +2,13 @@
 
 =head1 NAME
 
-InterMine::Cookbook::Templates::Recipe1 - Accessing Templates
+Webservice::InterMine::Cookbook::Templates::Recipe1 - Accessing Templates
 
 =head1 SYNOPSIS
 
-  use InterMine 'www.flymine.org/query/service';
+  use Webservice::InterMine 'www.flymine.org/query/service';
 
-  my $template = InterMine->template('All_Genes_In_Organism_To_Publications);
+  my $template = Webservice::InterMine->template('All_Genes_In_Organism_To_Publications);
       or die "Could not find template";
 
   my $results  = $template->results_with(
@@ -29,7 +29,7 @@ holds true for them as well - you can change them by adding constraints, and you
 can call C<results> and C<results_iterator>, and the result format is the same.
 You can even extent them with roles in exactly the same way:
 
-  my $template = InterMine->template(
+  my $template = Webservice::InterMine->template(
       $name,
       with => [@roles],
   );
@@ -74,7 +74,7 @@ need to include it in the list:
 If I call
 
   my $name = 'GeneOrganism1_OrthologueOrganism2';
-  print InterMine->template($name)->show_constraints;
+  print Webservice::InterMine->template($name)->show_constraints;
 
 I get back:
 
@@ -140,5 +140,40 @@ with scripting can mean extremely efficient workflows. If you find that you are
 using some of your own queries heavily as scripts, you can make them
 more widely accessible by uploading them as templates, a process
 which we will look at in the next recipe.
+
+=head1 AUTHOR
+
+Alex Kalderimis C<< <dev@intermine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<dev@intermine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Webservice::InterMine
+
+You can also look for information at:
+
+=over 4
+
+=item * InterMine
+
+L<http://www.intermine.org>
+
+=item * Documentation
+
+L<http://www.intermine.org/perlapi>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2006 - 2010 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut

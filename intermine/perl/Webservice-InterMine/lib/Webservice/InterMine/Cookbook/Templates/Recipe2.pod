@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-InterMine::Cookbook::Templates::Recipe2 - Authoring Templates
+Webservice::InterMine::Cookbook::Templates::Recipe2 - Authoring Templates
 
 =head1 NOT IMPLEMENTED YET
 
@@ -12,9 +12,9 @@ we release web-service user authentication.
 
 =head1 SYNOPSIS
 
-  use InterMine ('www.flymine.org/query/service', $user, $pass);
+  use Webservice::InterMine ('www.flymine.org/query/service', $user, $pass);
 
-  my $query = InterMine->new_query;
+  my $query = Webservice::InterMine->new_query;
 
   # define query here;
 
@@ -24,7 +24,7 @@ we release web-service user authentication.
       description => 'Find the cure for cancer given a specific gene',
   );
 
-  my $template = InterMine->template('Gene_To_Cure_For_Cancer');
+  my $template = Webservice::InterMine->template('Gene_To_Cure_For_Cancer');
       or die "Could not find template";
 
   # These methods are only available for templates authored by you
@@ -39,7 +39,7 @@ we release web-service user authentication.
 
 Any query that you describe in the API can be saved to your userprofile
 at the webservice you are using as a template or saved query (see
-L<InterMine::Cookbook::Recipe8>). As long as you have provided your login
+L<Webservice::InterMine::Cookbook::Recipe8>). As long as you have provided your login
 information to the service, you will be able to access your saved
 templates, upload new ones, and make changes to the ones you already have.
 
