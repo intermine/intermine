@@ -283,7 +283,6 @@ public class ModelTest extends TestCase
         "<class name=\"SimpleObject\" extends=\"java.lang.Object\" is-interface=\"false\">" + INDENT + "<attribute name=\"name\" type=\"java.lang.String\"/>" + INDENT + "<reference name=\"employee\" referenced-type=\"Employee\" reverse-reference=\"simpleObjects\"/>" + ENDL + "</class>" + ENDL +
         "<class name=\"Range\" is-interface=\"false\">" + INDENT + "<attribute name=\"rangeStart\" type=\"int\"/>" + INDENT + "<attribute name=\"rangeEnd\" type=\"int\"/>" + INDENT + "<attribute name=\"name\" type=\"java.lang.String\"/>" + INDENT + "<reference name=\"parent\" referenced-type=\"Company\"/>" + ENDL + "</class>" + ENDL
         + "</model>";
-        String actual = model.toString();
         assertEquals(modelString, model.toString());
     }
 }
