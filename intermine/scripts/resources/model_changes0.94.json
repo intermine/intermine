@@ -45,8 +45,10 @@
       "CrossGenomeMatch":1,
       "Scaffold":1,
       "TFBSCluster":1,
-      "InfoSource":1
-      
+      "InfoSource":1,
+      "type":1
+      "featureType":1,      
+      "isPrimary":1,
    },
    "translation_for":{
       "Amplicon":"PCRProduct",
