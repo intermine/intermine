@@ -96,23 +96,6 @@ public class KeywordSearchResultsController extends TilesAction
             }
         }
 
-        // LOG.info("TEMPLATES: -----------------------------------------");
-        // TemplateManager templateManager = im.getTemplateManager();
-        // Map<ClassDescriptor, Map<String, TemplateQuery>> templatesForClass =
-        // templateManager.getTemplateClassMapWithTag(
-        // im.getProfileManager().getSuperuserProfile(),
-        // TagNames.IM_SEARCH_RESULTS);
-        //
-        // for(ClassDescriptor cld : templatesForClass.keySet()) {
-        // LOG.info(cld.getUnqualifiedName() + ":");
-        // for(Entry<String, TemplateQuery> e :
-        // templatesForClass.get(cld).entrySet()) {
-        // LOG.info("-> "+e.getKey()+";"+e.getValue().getTitle()+"");
-        // }
-        // }
-        //
-        // LOG.info("/TEMPLATES -----------------------------------------");
-
         KeywordSearch.initKeywordSearch(im, contextPath);
         Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
         Vector<KeywordSearchFacet> searchResultsFacets = new Vector<KeywordSearchFacet>();
@@ -202,7 +185,8 @@ public class KeywordSearchResultsController extends TilesAction
 
             Vector<KeywordSearchHit> searchHits = new Vector<KeywordSearchHit>();
             long timeSearch = System.currentTimeMillis();
-            BrowseResult result = KeywordSearch.runBrowseSearch(searchTerm, offset, facetValues, ids);
+            BrowseResult result = KeywordSearch.runBrowseSearch(searchTerm, offset, facetValues,
+                    ids);
             timeSearch = System.currentTimeMillis() - timeSearch;
 
             long time2 = System.currentTimeMillis();
