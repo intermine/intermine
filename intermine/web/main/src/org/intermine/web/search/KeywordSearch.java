@@ -623,7 +623,7 @@ class InterMineObjectFetcher extends Thread
 
         Float boost = classBoost.get(classDescriptor);
         if (boost != null) {
-            doc.setBoost(boost);
+            doc.setBoost(boost.floatValue());
         }
 
         // id has to be stored so we can fetch the actual objects for the
@@ -750,7 +750,7 @@ class InterMineObjectFetcher extends Thread
         org.intermine.pathquery.Path path =
                 new org.intermine.pathquery.Path(os.getModel(), pathString);
         List<ClassDescriptor> classDescriptors = path.getElementClassDescriptors();
-        List<String> fieldNames = path.getElements();
+        List<String> fields = path.getElements();
 
         ClassDescriptor parentClassDescriptor = null;
         QueryClass parentQueryClass = null;
@@ -769,7 +769,7 @@ class InterMineObjectFetcher extends Thread
                 q.addToSelect(topId);
                 q.addToOrderBy(topId); // important for optimization in run()
             } else {
-                String fieldName = fieldNames.get(i - 1);
+                String fieldName = fields.get(i - 1);
 
                 if (parentClassDescriptor.getReferenceDescriptorByName(fieldName, true) != null) {
                     LOG.info(parentClassDescriptor.getType().getSimpleName() + " -> " + fieldName
@@ -808,10 +808,12 @@ class InterMineObjectFetcher extends Thread
 }
 
 /**
- * allows for full-text searches over all metadata using the apache lucene
- * engine
+ * Allows for full-text searches over all metadata using the apache lucene
+ * engine.
+ *
  * @author nils
  */
+
 public class KeywordSearch
 {
     private static final String LUCENE_INDEX_DIR = "keyword_search_index";
@@ -1291,10 +1293,10 @@ public class KeywordSearch
         return result;
     }
 
-    private static String parseQueryString(String queryString) {
+    private static String parseQueryString(String qs) {
+        String queryString = qs;
         queryString = queryString.replaceAll("\\b(\\s+)\\+(\\s+)\\b", "$1AND$2");
         queryString = queryString.replaceAll("(^|\\s+)'(\\b[^']+ [^']+\\b)'(\\s+|$)", "$1\"$2\"$3");
-
         return queryString;
     }
 
@@ -1455,7 +1457,7 @@ public class KeywordSearch
 
             // make sure we start with a new index
             if (tempFile.exists()) {
-                String files[] = tempFile.list();
+                String[] files = tempFile.list();
                 for (int i = 0; i < files.length; i++) {
                     LOG.info("Deleting old file: " + files[i]);
                     new File(tempFile.getAbsolutePath() + File.separator + files[i]).delete();
@@ -1573,7 +1575,7 @@ public class KeywordSearch
             LOG.info("Deleting index directory: " + tempFile.getAbsolutePath());
 
             if (tempFile.exists()) {
-                String files[] = tempFile.list();
+                String[] files = tempFile.list();
                 for (int i = 0; i < files.length; i++) {
                     LOG.info("Deleting index file: " + files[i]);
                     new File(tempFile.getAbsolutePath() + File.separator + files[i]).delete();
