@@ -65,7 +65,9 @@ public class TemplatesExportAction extends TemplateAction
                                                    + scope);
             }
         } else {
-            TemplateQuery template = (TemplateQuery) SessionMethods.getQuery(session);
+            TemplateQuery template = ((TemplateQuery) SessionMethods.getQuery(session) != null)
+                                     ? (TemplateQuery) SessionMethods.getQuery(session)
+                                     : templateManager.getTemplate(profile, name, scope);
             if (template != null) {
                 xml = template.toXml(PathQuery.USERPROFILE_VERSION);
             } else {
