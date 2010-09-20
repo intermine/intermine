@@ -87,7 +87,7 @@
     </source>
 
     <source name="ensembl" type="ensembl">
-     <property name="src.data.dir" location="/shared/data/ensembl/model_update"/>
+     <property name="src.data.dir" location="/shared/data/ensembl/current"/>
     </source>
 
     <source name="interpro" type="interpro">
