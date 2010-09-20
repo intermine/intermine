@@ -158,7 +158,7 @@ public class TemplateAction extends InterMineAction
             return mapping.findForward("serviceLink");
 
         }
-        
+
         if (exportTemplate(request)) {
             SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
             return mapping.findForward("export");
@@ -232,11 +232,19 @@ public class TemplateAction extends InterMineAction
     private boolean forwardToLinksPage(HttpServletRequest request) {
         return "links".equalsIgnoreCase(request.getParameter("actionType"));
     }
-    
+
     private boolean exportTemplate(HttpServletRequest request) {
         return "exportTemplate".equalsIgnoreCase(request.getParameter("actionType"));
     }
 
+    /**
+     * The method returns a map of TemplateValue for each editable constraint. The map is obtained
+     * matching the values retrieved from the request through the TemplateForm with the editable
+     * constraint defined in the current template
+     * @param tf the actionform containing the value from the requst
+     * @param template the current template
+     * @return Map<String, List<TemplateValue>
+     */
     protected Map<String, List<TemplateValue>> templateFormToTemplateValues(TemplateForm tf,
             TemplateQuery template) {
         Map<String, List<TemplateValue>> templateValues =
@@ -342,7 +350,7 @@ public class TemplateAction extends InterMineAction
                 return switchOffAbility;
             }
         }
-        throw new IllegalArgumentException("Invalid value specified for constraint" +
-                " switchOffAbility '" + value + "', if this happens there is a bug. ");
+        throw new IllegalArgumentException("Invalid value specified for constraint"
+                + " switchOffAbility '" + value + "', if this happens there is a bug. ");
     }
 }
