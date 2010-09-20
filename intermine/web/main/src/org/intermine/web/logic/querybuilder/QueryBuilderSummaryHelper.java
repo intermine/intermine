@@ -41,7 +41,6 @@ public final class QueryBuilderSummaryHelper
      * display in the QueryBuilder summary section.  The list of SummaryPath objects collect
      * information for simple display in the JSP.
      * @param query the query to create summary information from
-     * @param tbs a TemplateBuildState object if we are building a template
      * @return a list if summary information about paths on the query
      * @throws PathException if the PathQuery is invalid
      */
@@ -82,14 +81,15 @@ public final class QueryBuilderSummaryHelper
                 String description = null;
                 String switchable = SwitchOffAbility.LOCKED.toString().toLowerCase();
                 if (query instanceof TemplateQuery) {
-                	TemplateQuery template = (TemplateQuery)query;
+                    TemplateQuery template = (TemplateQuery) query;
                     editable = template.getEditableConstraints().contains(con);
                     description = template.getConstraintDescriptions().get(con);
-                    SwitchOffAbility constraintSwitchOffAbility = template.getConstraintSwitchOffAbility().get(con);
+                    SwitchOffAbility constraintSwitchOffAbility =
+                        template.getConstraintSwitchOffAbility().get(con);
                     if (SwitchOffAbility.ON.equals(constraintSwitchOffAbility)) {
                         switchable = SwitchOffAbility.ON.toString().toLowerCase();
                     } else if (SwitchOffAbility.OFF.equals(constraintSwitchOffAbility)) {
-                    	switchable = SwitchOffAbility.OFF.toString().toLowerCase();
+                        switchable = SwitchOffAbility.OFF.toString().toLowerCase();
                     }
                 }
                 // subclass constraints aren't display
