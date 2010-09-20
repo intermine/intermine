@@ -29,49 +29,54 @@ public class HTMLWidgetConfig extends WidgetConfig
 
     @Override
     public String getExternalLink() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getExternalLinkLabel() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag, ObjectStore os)
+    public Map<String, Collection<String>> getExtraAttributes(@SuppressWarnings("unused")
+            InterMineBag imBag, @SuppressWarnings("unused") ObjectStore os)
         throws Exception {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Widget getWidget(InterMineBag imBag, ObjectStore os, List<String> attributes) {
-        // TODO Auto-generated method stub
+    public Widget getWidget(@SuppressWarnings("unused") InterMineBag imBag,
+            @SuppressWarnings("unused") ObjectStore os,
+            @SuppressWarnings("unused") List<String> attributes) {
         return null;
     }
 
     @Override
-    public void setExternalLink(String externalLink) {
-        // TODO Auto-generated method stub
-
+    public void setExternalLink(@SuppressWarnings("unused") String externalLink) {
+        // dummy
     }
 
     @Override
-    public void setExternalLinkLabel(String externalLinkLabel) {
-        // TODO Auto-generated method stub
-
+    public void setExternalLinkLabel(@SuppressWarnings("unused") String externalLinkLabel) {
+        // dummy
     }
 
+    /**
+     * Set the content of the widget.
+     *
+     * @param content content of widget
+     */
     public void setContent(String content) {
         this.content = content;
     }
 
+    /**
+     * Get the content of the widget.
+     *
+     * @return the content of the widget
+     */
     public String getContent() {
         return content;
     }
-
-
 }
 

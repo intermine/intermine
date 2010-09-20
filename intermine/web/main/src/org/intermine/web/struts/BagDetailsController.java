@@ -100,8 +100,9 @@ public class BagDetailsController extends TilesAction
         }
 
         if (imBag == null) {
-        	ActionMessages actionMessages = getErrors(request);
-            actionMessages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.bag.missing", bagName));
+            ActionMessages actionMessages = getErrors(request);
+            actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
+                    new ActionMessage("errors.bag.missing", bagName));
             saveErrors(request, actionMessages);
             request.setAttribute("bag", imBag);
             return null;
