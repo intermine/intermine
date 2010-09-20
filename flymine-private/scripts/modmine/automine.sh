@@ -436,8 +436,12 @@ date "+%d%b%Y %H:%M"
 echo >> $LOG
 echo -n "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
 
+## we should test more the use with this option (according to profiler is cheaper)
+#stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
+#$DBPW -noupdate cvterm,dbxref,db,cv,feature -cache feature=1 $1 
+
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
-$DBPW -noupdate cvterm,dbxref,db,cv,feature -cache feature=1 $1 
+$DBPW -noupdate cvterm,dbxref,db,cv,feature $1
 
 exitstatus=$?
 
