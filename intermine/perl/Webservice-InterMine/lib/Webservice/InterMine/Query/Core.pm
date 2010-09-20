@@ -240,10 +240,8 @@ sub all_paths {
     my $self    = shift;
     my $to_path = sub { $_->path };
     my @paths   = (
-        $self->views,
-        $self->map_constraints($to_path),
-        $self->map_joins($to_path),
-        $self->map_path_descriptions($to_path),
+        $self->views,               $self->map_constraints($to_path),
+        $self->map_joins($to_path), $self->map_path_descriptions($to_path),
     );
     return uniq(@paths);
 }
@@ -253,16 +251,15 @@ sub all_paths {
 sub check_logic {
     my ( $self, $value ) = @_;
     unless ( blessed $value) {
-        my $new_value =
-          _parse_logic( $value, $self->coded_constraints );
+        my $new_value = _parse_logic( $value, $self->coded_constraints );
         $self->logic($new_value);
     }
 }
 
 sub _parse_logic {
 
-# eg: Organism_interologues: which has the fiercesome:
-# (B or G) and (I or F) and J and C and D and E and H and K and L and M and A
+   # eg: Organism_interologues: which has the fiercesome:
+   # (B or G) and (I or F) and J and C and D and E and H and K and L and M and A
     my $logic_string = shift;
     my @cons         = @_;
     my %found_con;
@@ -300,9 +297,7 @@ sub add_constraint {
     my %args       = parse_constraint_string(@_);
     my $constraint = $self->constraint_factory->make_constraint(%args);
     if ( $constraint->can('code') ) {
-        while ( grep { $constraint->code eq $_ }
-            $self->constraint_codes )
-        {
+        while ( grep { $constraint->code eq $_ } $self->constraint_codes ) {
             my $code = $constraint->code;
             $constraint->set_code( ++$code );
         }
@@ -312,26 +307,49 @@ sub add_constraint {
 }
 
 sub parse_constraint_string {
-    return @_ if ( @_ > 1 );
-    my $constraint_string = shift;
-    my %args;
-    my @bits = split /\s+/, $constraint_string, 2;
-    if ( @bits < 2 ) {
-        croak "can't parse constraint: $constraint_string";
-    }
-    $args{path} = $bits[0];
-    $constraint_string = $bits[1];
-    @bits =
-      $constraint_string =~ m/^(IS\sNOT\sNULL|IS\sNULL|NOT\sIN|\S+)
-	  (?:\s+(.*))?
-	 /x;
-    if ( @bits < 1 ) {
-        croak "can't parse constraint: $constraint_string\n";
-    }
+    if ( @_ > 1 ) {
+        if (@_ % 2 == 0) {
+            my %args = @_;
+            my @keys = keys %args;
+            if (    ( grep { $_ eq 'path' } @keys )
+                and ( grep { $_ =~ /^(?:type|op)$/ } @keys ) ) {   
+                return %args;  
+            } 
+        }
+        my %args;
+        @args{qw/path op value extra_value/} = @_;
+        if ( ref $args{value} eq 'ARRAY' ) {
+            $args{values} = delete $args{value};
+        }
+        return map { $_ => $args{$_} } grep { defined $args{$_} } keys(%args);
+    } else {
+        my $constraint_string = shift;
+        my %args;
+        my @bits = split /\s+/, $constraint_string, 2;
+        if ( @bits < 2 ) {
+            croak "can't parse constraint: $constraint_string";
+        }
+        $args{path} = $bits[0];
+        $constraint_string = $bits[1];
+        @bits = $constraint_string 
+            =~ m/^
+                (
+                IS\sNOT\sNULL|
+                IS\sNULL|
+                NOT\sIN|\S+
+                )
+        	   (
+               ?:\s+(.*)
+               )?
+	        /x;
+        if ( @bits < 1 ) {
+            croak "can't parse constraint: $constraint_string\n";
+        }
 
-    $args{op} = $bits[0];
-    $args{value} = $bits[1] if $bits[1];
-    return %args;
+        $args{op} = $bits[0];
+        $args{value} = $bits[1] if $bits[1];
+        return %args;
+    }
 }
 
 sub clean_out_SCCs {
@@ -372,19 +390,17 @@ sub validate_paths {
     my $self = shift;
     my @paths = ( $self->all_paths, $self->subclasses );
     my @errs =
-      map { validate_path( $self->model, $_, $self->type_dict ) }
-      @paths;
+      map { validate_path( $self->model, $_, $self->type_dict ) } @paths;
     return @errs;
 }
 
 sub validate_consistency {
     my $self = shift;
     my @roots =
-      map { root( $self->model, $_, $self->type_dict ) }
-      $self->all_paths;
+      map { root( $self->model, $_, $self->type_dict ) } $self->all_paths;
     unless ( uniq(@roots) == 1 ) {
         return
-"Inconsistent query: all paths must descend from the same root."
+            "Inconsistent query: all paths must descend from the same root."
           . " - we got: "
           . join( ', ', map { $_->name } uniq @roots ) . "\n";
     }

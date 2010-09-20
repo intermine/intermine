@@ -2,15 +2,15 @@
 
 =head1 NAME
 
-InterMine::Cookbook::Recipe2 - Adding Constraints
+Webservice::InterMine::Cookbook::Recipe2 - Adding Constraints
 
 =head1 SYNOPSIS
 
   # Get a list of the drosophilids in the database
 
-  use InterMine ('www.flymine.org');
+  use Webservice::InterMine ('www.flymine.org');
 
-  my $query = InterMine->new_query;
+  my $query = Webservice::InterMine->new_query;
 
   # Specifying a name and a description is purely optional
   $query->name('Tutorial 2 Query');
@@ -23,13 +23,12 @@ InterMine::Cookbook::Recipe2 - Adding Constraints
      value => 'Drosophila'
   );
 
-  my $results = $query->results(as => 'string');
-  print $results;
+  print query->results(as => 'string');
 
   # Get the authors, titles and PubMed IDs of all publications on drosophilid
   # genes between 2004 and 2010
 
-  my $query2 = InterMine->new_query;
+  my $query2 = Webservice::InterMine->new_query;
 
   $query2->add_view(qw/
       Gene.publications.firstAuthor
@@ -39,8 +38,8 @@ InterMine::Cookbook::Recipe2 - Adding Constraints
 
   $query2->add_constraint(
       path  => 'Gene.organism.name',
-      op    => 'CONTAINS',
-      value => 'Drosophila',
+      op    => '=',
+      value => '*Drosophila*',
   );
   $query2->add_constraint(
       path  => 'Gene.publications.year',
@@ -53,8 +52,7 @@ InterMine::Cookbook::Recipe2 - Adding Constraints
       value => 2010,
   );
 
-  my $publications_results = $query2->results(as => 'string');
-  print $publications_results;
+  print $query2->results(as => 'string');
 
 =head1 DESCRIPTION
 
@@ -81,10 +79,20 @@ C<value> - the value to be applied to the operator
 
 =back
 
-In the example above we have three different operators: C<CONTAINS>, C<< >= >>,
-and C<< <= >>, all of which take a value and use it to constrain their path.
+In the example above we have three different operators: C<=>, C<< >= >>,
+and C<< <= >>, all of which take a value and use it to constrain their path. The 
+C<=> operator permits the use of wild-cards (C<*> in the example above) to search
+on a basic pattern.
 
-For the simpler constraints, it is also possible to add constraints using the
+It is also possible to specifiy constraints using a list of their parameters:
+
+  $query->add_constraint('Gene.symbol', '=', 'eve');
+  $query->add_constraint('Gene.homologue', 'IS NOT NULL');
+  $query->add_constraint('Gene.name', 'IN', ['Even skipped', 'Zerknullt']);
+
+This works for all constraint types.
+
+For the simpler constraints (Binary and Unary constraints only), it is also possible to add constraints using the
 following pattern:
 
   $query->add_constraint('Gene.organism.name = "Drosophila Yakuba"');
@@ -100,7 +108,7 @@ together as well - see below:
   # Get the authors, titles and PubMed IDs of all publications
   # since 2004 on genes in D. Yakuba or D. Melanogaster
 
-  my $query3 = InterMine->new_query;
+  my $query3 = Webservice::InterMine->new_query;
 
   $query3->add_view(qw/
       Gene.publications.firstAuthor
@@ -155,7 +163,7 @@ having a specific code you can call:
       code  => 'Q',
   );
 
-and then you know that this constraint has code 'Q'. Generally however, you shoudln't
+and then you know that this constraint has code 'Q'. Generally however, you shouldn't
 need to directly handle these codes yourself, as they will be generated
 automatically for you.
 
@@ -165,6 +173,41 @@ automatically for you.
 A query can be made very powerful with a few basic constraints and some
 simple logic. There are several different kinds of constraints as well, which
 are detailed in Recipe3.
+
+=head1 AUTHOR
+
+Alex Kalderimis C<< <dev@intermine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<dev@intermine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Webservice::InterMine
+
+You can also look for information at:
+
+=over 4
+
+=item * InterMine
+
+L<http://www.intermine.org>
+
+=item * Documentation
+
+L<http://www.intermine.org/perlapi>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2006 - 2010 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut
 

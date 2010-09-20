@@ -2,16 +2,16 @@
 
 =head1 NAME
 
-InterMine::Cookbook::Recipe3 - More Constraints
+Webservice::InterMine::Cookbook::Recipe3 - More Constraints
 
 =head1 SYNOPSIS
 
   # Get all papers published by Arnosti, Bhat and Carmena
   # on Even Skipped in D. Melanogater
 
-  use InterMine ('www.flymine.org');
+  use Webservice::InterMine ('www.flymine.org');
 
-  my $query = InterMine->new_query;
+  my $query = Webservice::InterMine->new_query;
 
   # Specifying a name and a description is purely optional
   $query->name('Tutorial 3 Query');
@@ -47,7 +47,7 @@ InterMine::Cookbook::Recipe3 - More Constraints
   # are annotated as affecting embryonic development
   # or which have not yet been annotated
 
-  my $query2 = InterMine->new_query;
+  my $query2 = Webservice::InterMine->new_query;
 
   # Specifying a name and a description is purely optional
   $query2->name('Tutorial 3 Query no 2');
@@ -114,7 +114,7 @@ C<=>, C<!=>, C<CONTAINS>, C<< > >>, C<< < >>
 
 C<=>, C<!=>, C<< < >>, C<< > >>, C<< <= >>, C<< >= >>
 
-=head2 Ternary Constraints - constraints which can take two values
+=head2 Ternary Constraints - constraints which take one required and one optional value
 
 There is only one of these at present: C<LOOKUP>. This operates over all
 the fields on a class, so its path must be a path to a classm such as C<Gene>,
@@ -170,9 +170,43 @@ of the type of the path it constrains.
 
 =head1 CONCLUSION
 
-There is a wide variety of different constraint types, which gives InterMine
+There is a wide variety of different constraint types, which gives Webservice::InterMine
 queries flexibility and considerable expressive power. Other mechanisms for
 defining the query are discussed in Recipe4.
 
-=cut
+=head1 AUTHOR
 
+Alex Kalderimis C<< <dev@intermine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<dev@intermine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Webservice::InterMine
+
+You can also look for information at:
+
+=over 4
+
+=item * InterMine
+
+L<http://www.intermine.org>
+
+=item * Documentation
+
+L<http://www.intermine.org/perlapi>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2006 - 2010 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut

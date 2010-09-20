@@ -2,16 +2,16 @@
 
 =head1 NAME
 
-InterMine::Cookbook::Recipe6 - Advanced Results Management
+Webservice::InterMine::Cookbook::Recipe6 - Advanced Results Management
 
 =head1 SYNOPSIS
 
   # Get a list of Blast Matches, either 500 of them,
   # or ones with E-values over 8.0, whichever is the larger set
 
-  use InterMine ('www.flymine.org');
+  use Webservice::InterMine ('www.flymine.org');
 
-  my $query = InterMine->new_query;
+  my $query = Webservice::InterMine->new_query;
 
   # Specifying a name and a description is purely optional
   $query->name('Tutorial 6 Query');
@@ -94,15 +94,50 @@ in the brackets:
       # do something with the row...
   }
 
-If you use InterMine queries a lot, you may find yourself doing the same thing over
+If you use Webservice::InterMine queries a lot, you may find yourself doing the same thing over
 and over in your code - this may be a sign that you can refactor out some
 of that repetition, instead of copy and pasting it between scripts. In the next recipe we
-examine ways to extend InterMine to make it do what you want it to do.
+examine ways to extend Webservice::InterMine to make it do what you want it to do.
 
 =head1 CONCLUSION
 
 As well as using the results method, you can get back the ResultsIterator directly
 to have fine-grained control over the results you get back, and what you
 want to do with them.
+
+=head1 AUTHOR
+
+Alex Kalderimis C<< <dev@intermine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<dev@intermine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Webservice::InterMine
+
+You can also look for information at:
+
+=over 4
+
+=item * InterMine
+
+L<http://www.intermine.org>
+
+=item * Documentation
+
+L<http://www.intermine.org/perlapi>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2006 - 2010 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut

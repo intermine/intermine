@@ -31,6 +31,7 @@ lib/Webservice/InterMine/Path.pm
 lib/Webservice/InterMine/PathDescription.pm
 lib/Webservice/InterMine/PathFeature.pm
 lib/Webservice/InterMine/Query.pm
+lib/Webservice/InterMine/Query/.Core.pm.swp
 lib/Webservice/InterMine/Query/Core.pm
 lib/Webservice/InterMine/Query/Handler.pm
 lib/Webservice/InterMine/Query/Roles/ExtendedQuery.pm
@@ -58,13 +59,11 @@ lib/Webservice/InterMine/Role/Described.pm
 lib/Webservice/InterMine/Role/Logical.pm
 lib/Webservice/InterMine/Role/ModelOwner.pm
 lib/Webservice/InterMine/Role/Named.pm
-lib/Webservice/InterMine/Roles/CommonAttributes.pm
-lib/Webservice/InterMine/Roles/Logical.pm
-lib/Webservice/InterMine/Roles/ModelOwner.pm
 lib/Webservice/InterMine/Service.pm
 lib/Webservice/InterMine/SortOrder.pm
 lib/Webservice/InterMine/TemplateConstraintFactory.pm
 lib/Webservice/InterMine/TemplateFactory.pm
+Makefile.PL
 MANIFEST			This list of files
 README
 t/00-load.t

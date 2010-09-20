@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-InterMine::Cookbook::Recipe8 - Saving Queries
+Webservice::InterMine::Cookbook::Recipe8 - Saving Queries
 
 =head1 NOT IMPLEMENTED YET
 
@@ -12,9 +12,9 @@ we release web-service user authentication.
 
 =head1 SYNOPSIS
 
-  use InterMine ('www.flymine.org/query/service', $user, $pass);
+  use Webservice::InterMine ('www.flymine.org/query/service', $user, $pass);
 
-  my $query = InterMine->new_query;
+  my $query = Webservice::InterMine->new_query;
 
   # define query here;
 
@@ -24,9 +24,9 @@ we release web-service user authentication.
 
   # Later, at another computer
 
-  use InterMine ('www.flymine.org/query/service', $user, $pass);
+  use Webservice::InterMine ('www.flymine.org/query/service', $user, $pass);
 
-  my $query = InterMine->saved_query('My First Saved Query');
+  my $query = Webservice::InterMine->saved_query('My First Saved Query');
 
   my $results  = $template->results;
 
@@ -34,7 +34,7 @@ we release web-service user authentication.
 
 Any query that you describe in the API can be saved to your userprofile
 at the webservice you are using as a template or saved query (see
-L<InterMine::Cookbook::Templates::Recipe2>). As long as you have provided your login
+L<Webservice::InterMine::Cookbook::Templates::Recipe2>). As long as you have provided your login
 information to the service, you will be able to access your saved
 queries, upload new ones, and make changes to the ones you already have.
 

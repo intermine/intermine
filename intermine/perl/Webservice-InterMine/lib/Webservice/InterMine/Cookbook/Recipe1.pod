@@ -2,23 +2,24 @@
 
 =head1 NAME
 
-InterMine::Cookbook::Recipe1 - The Bare Basics
+Webservice::InterMine::Cookbook::Recipe1 - The Bare Basics
 
 =head1 SYNOPSIS
 
   # Get a list of the organisms in the database
 
-  use InterMine ('www.flymine.org/query/service');
+  use Webservice::InterMine ('www.flymine.org/query/service');
 
-  my $query = InterMine->new_query;
+  my $query = Webservice::InterMine->new_query;
 
   # Specifying a name and a description is purely optional
   $query->name('Tutorial 1 Query');
   $query->description('A list of all the organisms in the database');
+
+  # The view specifies the output columns
   $query->add_view('Organism.name');
 
-  my $results = $query->results(as => 'string');
-  print $results;
+  print $query->results(as => 'string');
 
   # Also get the taxon-id associated with the organism, and sort by id
 
@@ -26,8 +27,7 @@ InterMine::Cookbook::Recipe1 - The Bare Basics
 
   $query->sort_order('Organism.taxonId' => 'desc');
 
-  my $results = $query->results(as => 'string');
-  print $results;
+  print $query->results(as => 'string');
 
 
 =head1 DESCRIPTION
@@ -36,7 +36,7 @@ At its heart a query is just a description of what you want to get out
 of the database - and the first part of that is the view, which specifies
 the fields for each row of results you get back.
 
-The view is a list of strings which represent 'paths' in InterMine terminology.
+The view is a list of strings which represent 'paths' in Webservice::InterMine terminology.
 C<Organism.name> is such a path, which says you want to know the name
 of each organism. The dotted notation resembles object notation on purpose, as
 in the background the database is populated by objects with fields, which
@@ -131,7 +131,7 @@ Alex Kalderimis <perldev@flymine.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2004-2010 by InterMine
+Copyright 2004-2010 by Webservice::InterMine
 
 L<http://www.intermine.org>
 

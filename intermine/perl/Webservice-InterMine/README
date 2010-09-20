@@ -1,55 +1,118 @@
-Webservice-InterMine
+NAME
+    Webservice::InterMine - modules for interacting with InterMine
+    datawarehouse webservices
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+SYNOPSIS
+        use Webservice::InterMine;
 
-A README file is required for CPAN modules since CPAN extracts the README
-file from a module distribution so that people browsing the archive
-can use it to get an idea of the module's uses. It is usually a good idea
-to provide version information here so that people can decide whether
-fixes for the module are worth downloading.
+        my $service  = Webservice::InterMine->new_service($url);
+        my $template = $service->template($name);
+        my $results  = $template->results_with(valueA => 'x', valueB => 'y');
 
+      OR
 
-INSTALLATION
+        use Webservice::InterMine 'www.flymine.org';
 
-To install this module, run the following commands:
+        my $query    = Webservice::InterMine->new_query;
+        $query->add_view(@views);
+        $query->add_constraint(
+                        path  => $path,
+                        op    => $op,
+                        value => $value,
+                        );
+        my $results  = $query->results;
 
-	perl Build.PL
-	./Build
-	./Build test
-	./Build install
+DESCRIPTION
+    This distribution is the client interface to any implementation of the
+    InterMine Datawarehousing WebService (www.intermine.org). Primarily used
+    for biological genomic databases, the webservice allows the user to
+    easily write and execute structured queries.
 
-SUPPORT AND DOCUMENTATION
+    This module allows you to interact with one or more webservices by
+    providing a url to an InterMine implementation.
 
-After installing, you can find documentation for this module with the
-perldoc command.
+  Usage
+    You can call "use Webservice::InterMine" without any parameters, which
+    simply means you need to either specify the webservice url on every
+    call, or call the methods on a service directly.
 
-    perldoc Webservice::InterMine
+    If you call "use Webservice::InterMine $url", a default service will be
+    set, meaning method calls will not require the webservice url. Unless
+    you are intending to access multiple services, the latter form is
+    recommended.
 
-You can also look for information at:
+METHODS
+  new_query( [$url] )
+    returns a new query object for you to fill in with constraints before
+    being run to get its results. If you pass a url, it constructs a query
+    for the specified webservice.
 
-    RT, CPAN's request tracker
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Webservice-InterMine
+    Please see Webservice::InterMine::Query
 
-    AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/Webservice-InterMine
+  template( $name, [$url] )
+    returns the named template (if it exists - if not it returns undef). If
+    you pass a url, it returns the named template from the specified
+    webservice.
 
-    CPAN Ratings
-        http://cpanratings.perl.org/d/Webservice-InterMine
+    Please see Webservice::InterMine::Query::Template
 
-    Search CPAN
-        http://search.cpan.org/dist/Webservice-InterMine/
+  saved_query( $name, [$url] ) NOT IMPLEMENTED YET
+    returns the named saved_query (if it exists - if not it returns undef).
+    If you pass a url, it returns the named query from the specified
+    webservice.
 
+    This method requires you to have provided a username and password to the
+    webservice for authentication.
 
-LICENSE AND COPYRIGHT
+    Please see Webservice::InterMine::Query::Saved
 
-Copyright (C) 2010 InterMine
+  get_service( [$url, $user, $pass] )
+    returns a webservice object, which is used to construct queries and
+    fetch templates and saved queries. If a url is passed, the webservice
+    for that url is returned, otherwise the service for the url given to
+    "use" is returned.
 
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
+    Please note: user and password based authentication has not yet been
+    implemented.
 
-See http://dev.perl.org/licenses/ for more information.
+    Please see: Webservice::InterMine::Service
+
+SEE ALSO
+    *   Webservice::InterMine::Cookbook for guide on how to use these
+        modules.
+
+    *   Webservice::InterMine::Query
+
+    *   Webservice::InterMine::Service
+
+    *   Webservice::InterMine::Query::Template
+
+    *   Webservice::InterMine::Query::Saved
+
+AUTHOR
+    Alex Kalderimis "<dev@intermine.org>"
+
+BUGS
+    Please report any bugs or feature requests to "dev@intermine.org".
+
+SUPPORT
+    You can find documentation for this module with the perldoc command.
+
+        perldoc Webservice::InterMine
+
+    You can also look for information at:
+
+    *   Webservice::InterMine
+
+        <http://www.intermine.org>
+
+    *   Documentation
+
+        <http://www.intermine.org/perlapi>
+
+COPYRIGHT AND LICENSE
+    Copyright 2006 - 2010 FlyMine, all rights reserved.
+
+    This program is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
 
