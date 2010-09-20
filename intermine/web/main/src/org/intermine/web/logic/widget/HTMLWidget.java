@@ -14,52 +14,55 @@ import java.util.List;
 
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
+/**
+ * Represents a widget with no data, it just diplays the "content" string.
+ *
+ * @author Julie Sullivan
+ */
 public class HTMLWidget extends Widget
 {
 
+    /**
+     * @param config widget config
+     */
     public HTMLWidget(WidgetConfig config) {
         super(config);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
     public List<String> getElementInList() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<List<String>> getExportResults(String[] selected) throws Exception {
-        // TODO Auto-generated method stub
+    public List<List<String>> getExportResults(@SuppressWarnings("unused") String[] selected)
+        throws Exception {
         return null;
     }
 
     @Override
     public List<List<String[]>> getFlattenedResults() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public boolean getHasResults() {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public int getNotAnalysed() {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
     public void process() throws Exception {
-        // TODO Auto-generated method stub
+        // nothing to do
     }
 
     @Override
-    public void setNotAnalysed(int notAnalysed) {
-        // TODO Auto-generated method stub
+    public void setNotAnalysed(@SuppressWarnings("unused") int notAnalysed) {
+        // nothing to do
     }
 
 }
