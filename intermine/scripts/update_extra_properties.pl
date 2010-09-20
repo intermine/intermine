@@ -3,24 +3,48 @@
 use strict;
 use warnings;
 
-my %replacements = (
-    qr{\s*compile\.dependencies\s=\sintermine/integrate/main\s*$} => q{$&, bio/core/main},
+my %DBModel_replacements = (
+    qr{(\s*compile\.dependencies\s=\sintermine/integrate/main)\s*$} => q{$1.", bio/core/main\n"},
+   => q{},
+)
+my @DBModel_additions = (
+   'so.termlist.file = resources/so_term_list.txt',
+   'so.obo.file = ../../bio/sources/so/so.obo',
+   'so.output.file = build/model/so_additions.xml',
+)
+my %DOTInterMine_replacements = (
     qr{org\.postgresql\.jdbc3\.Jdbc3PoolingDataSource} => q{"org.postgresql.ds.PGPoolingDataSource"},
 )
 
-my $svn_loc = $ARGV[0];
+my %BuildXML_replacements = (
+    qr{<project\s.*$} => q!$& . '
+<target name="create-so-model" depends="init, -init-deps">
+    <taskdef name="so-model" classname="org.intermine.bio.task.SOToModelTask">
+        <classpath refid="task.class.path"/>
+    </taskdef>
+    <so-model soTermListFile="${so.termlist.file}" soFile="${so.obo.file}" outputFile="${so.output.file}"/>
+</target>
+'!,
+)
+
 my $ext = '.orig';
 
-my @files_to_process;
-
-# FIND ALL THE PROJECT PROPERTIES FILES IN DBMODEL DIRECTORIES
+# FIND ALL THE PROJECT PROPERTIES FILES AND BUILD.XML FILES IN DBMODEL DIRECTORIES
+my $svn_loc = $ARGV[0];
 opendir(my $svn_dir, $svn_loc) or die;
-for (map {"$svn_loc/$_"} readdir($svn_dir)) {
-    if (-d) {
-        opendir(my $subdir, $_) or die;
-        for my $f (readdir($subdir)) {
-            if ($f eq 'dbmodel' and -d $f) {
-            push @files_to_process, $_.'/'.$f.'/project.properties';
+for my $mine (readdir($svn_dir)) {
+    my $abs_mine = $svn_loc . '/' . $mine;
+    if (-d $abs_mine) {
+        opendir(my $subdir, $abs_mine) or die;
+        for my $dbmodel (readdir($subdir)) {
+            if ($dbmodel eq 'dbmodel' and -d $abs_mine . '/' . $dbmodel) {
+                my %replacements = %DBModel_replacements;
+                $replacements{qr{bio/sources/so/so_additions\.xml}}
+                    = qq{{"$mine/dbmodel/build/model/so_additions.xml"}};
+                process($abs_mine.'/dbmodel/project.properties', \%replacements, \@DBModel_additions);
+                my $buildxml = $abs_mine.'/dbmodel/build.xml';
+                process($buildxml, \%BuildXML_replacements, [])
+                    if (qx{grep 'create-so-model' $buildxml}); # This is our test for it already being there
            }
         }
     }
@@ -31,22 +55,30 @@ my $dot_intermine_loc = $ENV{HOME} . '/' . '.intermine'
 opendir(my $home_dir, $dot_intermine_loc) or die;
 for (map {"$dot_intermine_loc/$_"} readdir($home_dir)) {
     if (/\.properties$/) {
-        push @files_to_process, $_;
+        process($_, \%DOTInterMine_replacements, []);
     }
 }
 
 # RUN THE REPLACEMENT LIST OVER THE FILES
-for my $file (map {"$_/project.properties"} @files_to_process) {
+sub process {
+    my ($file, $replacements, $additions) = @_;
     open($in, '<', $file) or die;
     my $backup = $file . $ext;
     rename($file, $backup)
     open(my $out, '>', $file) or die;
     select($out);
+    my @seen_lines;
     while (<$in>) {
-        while (my ($k, $v) = each %replacements) {
+        while (my ($k, $v) = each %$replacements) {
             s/$k/eval($v)/e;
         }
+        push @seen_lines, $_; # keep track of what is already there
         print;
+    }
+    for my $a (@$additions) { # Only add the additional lines if they are not already there
+        unless (grep {/$a/} @seen_lines) {
+            print $a, "\n";
+        }
     }
     close $in;
     close $out;
