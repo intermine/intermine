@@ -146,41 +146,78 @@ public class TemplateForm extends ActionForm
         return attributeValues.get(key);
     }
 
+    /**
+     * Set the multiValues
+     * @param multiValues the multi values
+     */
     public void setMultiValues(Map<String, String[]> multiValues) {
         this.multiValues = multiValues;
     }
 
+    /**
+     * Returns the multiValues
+     * @return the map containing the multi values
+     */
     public Map<String, String[]> getMultiValues() {
-    	return this.multiValues;
+        return this.multiValues;
     }
 
+    /**
+     * Get a multi value
+     * @param key the key
+     * @return the value
+     */
     public String[] getMultiValues(String key) {
-    	return multiValues.get(key);
+        return multiValues.get(key);
     }
 
+    /**
+     * Set a multiselect attribute value
+     * @param key the key
+     * @param values the value
+     */
     public void setMultiValues(String key, String[] values) {
         multiValues.put(key, values);
-        String multiValueAttribute = "";
+        String multiValueAttributeTemp = "";
         for (String value : values) {
-        	if (!multiValueAttribute.equals(""))
-        		multiValueAttribute += ",";
-        	multiValueAttribute += value;
+            if (!"".equals(multiValueAttributeTemp)) {
+                multiValueAttributeTemp += ",";
+            }
+            multiValueAttributeTemp += value;
         }
-        setMultiValueAttribute(key, multiValueAttribute);
+        setMultiValueAttribute(key, multiValueAttributeTemp);
     }
 
+    /**
+     * Set the multivalueattribute
+     * @param multiValueAttribute the map containing the multiVAlueAttribute
+     */
     public void setMultiValueAttribute(Map<String, String> multiValueAttribute) {
         this.multiValueAttribute = multiValueAttribute;
     }
 
+    /**
+     * Returns the multivalueattribute
+     * @return the map containing the multiVAlueAttribute
+     */
     public Map<String, String> getMultiValueAttribute() {
         return this.multiValueAttribute;
     }
 
+    /**
+     * Returns the multivalueattribute given a key
+     * @param key the key
+     * @return multiVAlueAttribute
+     */
     public String getMultiValueAttribute(String key) {
         return multiValueAttribute.get(key);
     }
 
+    /**
+     * Set the multivalueattribute
+     * @param key the key
+     * @param value the value
+     */
     public void setMultiValueAttribute(String key, String value) {
         multiValueAttribute.put(key, value);
     }
