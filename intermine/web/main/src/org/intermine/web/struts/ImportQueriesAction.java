@@ -54,8 +54,8 @@ public class ImportQueriesAction extends InterMineAction
 
 
         if (queries.size() == 1
-            && ((request.getParameter("query_builder") != null && request
-                .getParameter("query_builder").equals("yes")) || profile.getUsername() == null)) {
+            && ((request.getParameter("query_builder") != null && "yes".equals(request
+                    .getParameter("query_builder"))) || profile.getUsername() == null)) {
             // special case to redirect straight to the query builder
             PathQuery pathQuery = queries.values().iterator().next();
             if (!pathQuery.isValid()) {
