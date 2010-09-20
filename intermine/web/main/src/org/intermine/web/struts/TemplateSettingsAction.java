@@ -52,9 +52,10 @@ public class TemplateSettingsAction extends InterMineAction
         ActionErrors errors = tsf.validate(mapping, request);
         saveErrors(request, (ActionMessages) errors);
 
-        TemplateQuery template = (TemplateQuery)SessionMethods.getQuery(session);
+        TemplateQuery template = (TemplateQuery) SessionMethods.getQuery(session);
         template.setDescription(tsf.getDescription());
-        List<String> previousTempNames = (ArrayList<String>) session.getAttribute(Constants.PREV_TEMPLATE_NAME);
+        List<String> previousTempNames = (ArrayList<String>)
+                                         session.getAttribute(Constants.PREV_TEMPLATE_NAME);
         if (previousTempNames != null) {
             previousTempNames.add(template.getName());
         } else {
