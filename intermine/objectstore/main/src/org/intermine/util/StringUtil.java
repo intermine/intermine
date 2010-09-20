@@ -525,6 +525,9 @@ public final class StringUtil
         if (formattedString.endsWith("/")) {
             formattedString = formattedString.substring(0, formattedString.length() - 1);
         }
+        if (formattedString.startsWith("/") || formattedString.endsWith("/")) {
+            formattedString = trimSlashes(formattedString);
+        }
         return formattedString;
     }
 
