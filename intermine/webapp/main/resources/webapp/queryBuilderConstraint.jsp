@@ -189,8 +189,16 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                   </c:when>
                   <%-- normal inputfield --%>
                   <c:otherwise>
+                    <c:choose>
+                    <c:when test="${dec.bagSelected}">
+                        <c:set var="selectedValue" value=""/>
+                    </c:when>
+                    <c:otherwise>
+                      <c:set var="selectedValue" value="${(dec.possibleValuesDisplayed && dec.selectedValue == null) ? dec.possibleValues[0] : dec.selectedValue}"/>
+                    </c:otherwise>
+                    </c:choose>
                     <im:dateInput attributeType="${dec.path.type}" property="attributeValue" 
-                        styleId="attribute8" value="${(dec.possibleValuesDisplayed && dec.selectedValue == null) ? dec.possibleValues[0] : dec.selectedValue}" 
+                        styleId="attribute8" value="${selectedValue}" 
                         onkeypress="if(event.keyCode == 13) {$('attribute').click();return false;}"
                         visible="${dec.inputFieldDisplayed}"/>
                   </c:otherwise>
