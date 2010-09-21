@@ -289,7 +289,7 @@ public class DisplayConstraint
      */
     public boolean isBoolean() {
         String type = getPath().getType();
-        return ("boolean".equals(type) || "java.lang.Boolean".equals(type));
+        return ("boolean".equals(type) || "Boolean".equals(type));
     }
     /**
      * Return true if editing an existing constraint and an attribute value or LOOKUP constraint
