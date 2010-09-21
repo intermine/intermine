@@ -40,8 +40,6 @@ use MooseX::Types::Moose qw/Str/;
 use InterMine::TypeLibrary
   qw(Uri Model TemplateFactory SavedQueryFactory ListFactory);
 
-use IO::String;
-
 =head2 new( $url, [$user, $pass] )
 
 A service can be constructed directly by passing a webservice
