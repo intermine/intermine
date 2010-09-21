@@ -62,7 +62,7 @@ public class PerformanceTester
      * @param args number of threads you want to run
      * @throws Exception if something goes horribly wrong
      */
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
         superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
         ObjectStore productionOs = ObjectStoreFactory.getObjectStore("os.production");
         ObjectStoreFactory.getObjectStore("os.userprofile-production");

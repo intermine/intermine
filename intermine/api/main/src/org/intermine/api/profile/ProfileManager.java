@@ -252,14 +252,14 @@ public class ProfileManager
                 if (StringUtils.isBlank(savedBag.getName())) {
                     LOG.warn("Failed to load bag with blank name on login for user: " + username);
                 } else {
-                	try {
-                		InterMineBag bag = new InterMineBag(os, bagId, uosw);
-                		savedBags.put(bag.getName(), bag);
-                	} catch (UnknownBagTypeException e) {
-                    	LOG.warn("Ignoring a bag '" + savedBag.getName() + " for user '"
-                    			+ username + "' because type: " + savedBag.getType()
-                    			+ " is not in the model.", e);
-                	}
+                    try {
+                        InterMineBag bag = new InterMineBag(os, bagId, uosw);
+                        savedBags.put(bag.getName(), bag);
+                    } catch (UnknownBagTypeException e) {
+                        LOG.warn("Ignoring a bag '" + savedBag.getName() + " for user '"
+                                + username + "' because type: " + savedBag.getType()
+                                + " is not in the model.", e);
+                    }
                 }
             }
         } catch (ObjectStoreException e) {
