@@ -10,7 +10,6 @@ use Test::More;
 use Test::Exception;
 use Test::MockObject::Extends;
 use InterMine::Model;
-use IO::String;
 
 sub class {'Webservice::InterMine::ResultIterator'}
 
@@ -42,7 +41,6 @@ sub fake_connection {
     my $results = shift;
     my $fake_connection = Test::MockObject->new;
     $fake_connection->{io} = IO::File->new($results, 'r');
-    $fake_connection->set_isa('IO::String');
     $fake_connection->set_isa('Net::HTTP');
     $fake_connection->mock(
 	getline => sub {

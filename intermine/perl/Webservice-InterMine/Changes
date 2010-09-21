@@ -6,4 +6,5 @@ Revision history for Webservice-InterMine
 0.9401  Tue Sep 21 10:24:38 BST 2010
         * Constraints can be specified with a positional list of parameters
         * Typos in the Cookbook have been fixed
-
+0.9402  Tue Sep 21 11:33:19 BST 2010
+        * Removed useless dependency that broke install
