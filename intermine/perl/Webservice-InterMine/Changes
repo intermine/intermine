@@ -1,5 +1,9 @@
 Revision history for Webservice-InterMine
 
-0.01    Date/time
-        First version, released on an unsuspecting world.
+0.94    Monday Sept 13
+        Revised version of the Webservice client for InterMine 0.94 Webservices
+
+0.9401  Tue Sep 21 10:24:38 BST 2010
+        * Constraints can be specified with a positional list of parameters
+        * Typos in the Cookbook have been fixed
 
