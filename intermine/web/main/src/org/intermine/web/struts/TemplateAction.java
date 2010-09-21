@@ -159,7 +159,7 @@ public class TemplateAction extends InterMineAction
 
         }
 
-        if (exportTemplate(request)) {
+        if (!editQuery && !skipBuilder && !editTemplate && exportTemplate(request)) {
             SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
             return mapping.findForward("export");
         }
@@ -234,7 +234,12 @@ public class TemplateAction extends InterMineAction
     }
 
     private boolean exportTemplate(HttpServletRequest request) {
-        return "exportTemplate".equalsIgnoreCase(request.getParameter("actionType"));
+        String exportTemplate = request.getParameter("actionType");
+        if (exportTemplate != null
+               && "exportTemplate".equalsIgnoreCase(exportTemplate)) {
+            return true;
+        }
+        return false;
     }
 
     /**
