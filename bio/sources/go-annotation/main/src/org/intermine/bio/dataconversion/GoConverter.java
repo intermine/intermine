@@ -110,6 +110,7 @@ public class GoConverter extends BioFileConverter
         while (propNames.hasMoreElements()) {
             String taxonId = (String) propNames.nextElement();
             taxonId = taxonId.substring(0, taxonId.indexOf("."));
+
             Properties taxonProps = PropertiesUtil.stripStart(taxonId,
                 PropertiesUtil.getPropertiesStartingWith(taxonId, props));
             String geneAttribute = taxonProps.getProperty("geneAttribute").trim();
@@ -132,6 +133,7 @@ public class GoConverter extends BioFileConverter
                     throw new IllegalArgumentException("Invalid readColumn value for taxon: "
                             + taxonId + " was: " + readColumn);
                 }
+
                 readColumns.put(taxonId, readColumn);
             }
         }
@@ -167,7 +169,6 @@ public class GoConverter extends BioFileConverter
                 continue;
             }
 
-
             String taxonId = parseTaxonId(array[12]);
             int readColumn = 1;
             if (readColumns.containsKey(taxonId)) {
@@ -179,7 +180,8 @@ public class GoConverter extends BioFileConverter
 
             // Wormbase has some proteins with UniProt accessions and some with WB:WP ids,
             // hack here to get just the UniProt ones.
-            if ("protein".equalsIgnoreCase(array[11]) && !array[0].startsWith("UniProt")) {
+            if ("protein".equalsIgnoreCase(array[11]) && !array[0].startsWith("UniProt")
+                    && !("FB").equals(array[0])) {
                 continue;
             }
 
@@ -192,6 +194,12 @@ public class GoConverter extends BioFileConverter
                 evidenceId = newGoEvidence(strEvidence);
             }
             String type = array[11];
+
+            // TODO FIXME HACK ALERT
+            // flybase has "protein" as the type instead of gene
+            if (("FB").equals(array[0]) && "protein".equals(type)) {
+                type = "gene";
+            }
 
             // create unique key for go annotation
             GoTermToGene key = new GoTermToGene(productId, goId, qualifier);
