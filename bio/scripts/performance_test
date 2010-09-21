@@ -5,9 +5,9 @@
 
 export whichmine=$*
 
-export INTERMINE=~/svn/model_update/intermine
-export MINE=~/svn/model_update/$whichmine
-export BIO=~/svn/model_update/bio
+export INTERMINE=~/svn/dev/intermine
+export MINE=~/svn/dev/$whichmine
+export BIO=~/svn/dev/bio
 
 CP=$CLASSPATH
 
