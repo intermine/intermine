@@ -1,1 +1,0 @@
-echo "SELECT intermine_start, intermine_end FROM location WHERE objectid = 2000003;" | psql -h bert mnw21_modmine_bioseg_test >locations_1chr
