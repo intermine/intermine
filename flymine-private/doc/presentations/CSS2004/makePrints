@@ -1,7 +1,0 @@
-#!/bin/bash
-
-pstops "2:0L@.85(23.5cm,-1.5cm)+1L@.85(23.5cm,13.35cm)" <1.ps >1_1.ps
-pstops "2:0L@.85(23.5cm,-1.5cm)+1L@.85(23.5cm,13.35cm)" <2.ps >2_1.ps
-ps2ps -r600 1_1.ps 1_2.ps
-ps2ps -r600 2_1.ps 2_2.ps
-
