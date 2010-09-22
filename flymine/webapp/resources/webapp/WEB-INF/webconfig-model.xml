@@ -44,8 +44,8 @@
 
   <class className="org.intermine.model.bio.BlastMatch">
     <fields>
-      <fieldconfig fieldExpr="parent.primaryIdentifier"/>
-      <fieldconfig fieldExpr="child.primaryIdentifier"/>
+      <fieldconfig fieldExpr="query.primaryIdentifier"/>
+      <fieldconfig fieldExpr="hit.primaryIdentifier"/>
       <fieldconfig fieldExpr="EValue"/>
     </fields>
   </class>
@@ -626,7 +626,7 @@
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="stockCenter"/>
-      <fieldconfig fieldExpr="alleles.primaryIdentifier"/>
+      <fieldconfig fieldExpr="alleles.primaryIdentifier" showInSummary="false" />
     </fields>
   </class>
 

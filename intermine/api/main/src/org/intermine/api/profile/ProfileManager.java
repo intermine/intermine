@@ -299,7 +299,7 @@ public class ProfileManager
                 Map<String, TemplateQuery> templateMap = TemplateQueryBinding.unmarshal(sr,
                         savedBags, version);
                 String templateName = templateMap.keySet().iterator().next();
-                TemplateQuery templateQuery = (TemplateQuery) templateMap.get(templateName);
+                TemplateQuery templateQuery = templateMap.get(templateName);
                 templateQuery.setSavedTemplateQuery(template);
                 savedTemplates.put(templateName, templateQuery);
             } catch (Exception err) {
