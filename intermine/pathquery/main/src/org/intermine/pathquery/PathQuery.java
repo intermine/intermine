@@ -659,22 +659,22 @@ public class PathQuery implements Cloneable
      * any of the elements in the collection, then none of the elements will be added and the
      * query will be unchanged.
      *
-     * @param constraints the PathConstraint objects to add to this query
+     * @param constraintList the PathConstraint objects to add to this query
      * @throws NullPointerException if constraints is null, or if it contains a null element
      */
-    public synchronized void addConstraints(Collection<PathConstraint> constraints) {
+    public synchronized void addConstraints(Collection<PathConstraint> constraintList) {
         deVerify();
-        if (constraints == null) {
+        if (constraintList == null) {
             throw new NullPointerException("Cannot add null collection of PathConstraints to this "
                     + "query");
         }
-        for (PathConstraint constraint : constraints) {
+        for (PathConstraint constraint : constraintList) {
             if (constraint == null) {
                 throw new NullPointerException("Cannot add null PathConstraint (from collection \""
-                        + constraints + "\" to this query");
+                        + constraintList + "\" to this query");
             }
         }
-        for (PathConstraint constraint : constraints) {
+        for (PathConstraint constraint : constraintList) {
             addConstraint(constraint);
         }
     }
@@ -688,22 +688,22 @@ public class PathQuery implements Cloneable
      * elements in the array/varargs, then none of the elements will be added and the query will be
      * unchanged.
      *
-     * @param constraints the PathConstraint objects to add to this query
+     * @param constraintList the PathConstraint objects to add to this query
      * @throws NullPointerException if constraints is null, or if it contains a null element
      */
-    public synchronized void addConstraints(PathConstraint ... constraints) {
+    public synchronized void addConstraints(PathConstraint ... constraintList) {
         deVerify();
-        if (constraints == null) {
+        if (constraintList == null) {
             throw new NullPointerException("Cannot add null array of PathConstraints to this "
                     + "query");
         }
-        for (PathConstraint constraint : constraints) {
+        for (PathConstraint constraint : constraintList) {
             if (constraint == null) {
                 throw new NullPointerException("Cannot add null PathConstraint (from array \""
-                        + constraints + "\" to this query");
+                        + constraintList + "\" to this query");
             }
         }
-        for (PathConstraint constraint : constraints) {
+        for (PathConstraint constraint : constraintList) {
             addConstraint(constraint);
         }
     }
@@ -2001,11 +2001,12 @@ public class PathQuery implements Cloneable
      * @param path a Path object
      */
     private static void addValidPaths(Set<String> validMainPaths, Path path) {
+        Path rootPath = path;
         while (!path.isRootPath()) {
             validMainPaths.add(path.toStringNoConstraints());
-            path = path.getPrefix();
+            rootPath = path.getPrefix();
         }
-        validMainPaths.add(path.toStringNoConstraints());
+        validMainPaths.add(rootPath.toStringNoConstraints());
     }
 
     /**
@@ -2095,7 +2096,7 @@ public class PathQuery implements Cloneable
             // if neither in list we don't care how they compare, but want a consistent order
             if (!listToSortBy.contains(c1) && !listToSortBy.contains(c2)) {
                 return -1;
-            }    
+            }
             // otherwise put lowest index first, if not in list indexOf() will return -1 so
             // constraints not in list will move to start
             return (listToSortBy.indexOf(c1) < listToSortBy.indexOf(c2)) ? -1 : 1;
