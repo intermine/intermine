@@ -75,7 +75,7 @@
                   </td>
                   <td>
                     <c:choose>
-                      <c:when test="${object.fieldValues[expr] && empty object.fieldValues[expr]}">
+                      <c:when test="${empty object.fieldValues && empty object.fieldValues[expr]}">
                         &nbsp;
                       </c:when>
                       <c:otherwise>
