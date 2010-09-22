@@ -2001,12 +2001,12 @@ public class PathQuery implements Cloneable
      * @param path a Path object
      */
     private static void addValidPaths(Set<String> validMainPaths, Path path) {
-        Path rootPath = path;
-        while (!rootPath.isRootPath()) {
-            validMainPaths.add(rootPath.toStringNoConstraints());
-            rootPath = path.getPrefix();
+        Path pathToAdd = path;
+        while (!pathToAdd.isRootPath()) {
+            validMainPaths.add(pathToAdd.toStringNoConstraints());
+            pathToAdd = pathToAdd.getPrefix();
         }
-        validMainPaths.add(rootPath.toStringNoConstraints());
+        validMainPaths.add(pathToAdd.toStringNoConstraints());
     }
 
     /**
