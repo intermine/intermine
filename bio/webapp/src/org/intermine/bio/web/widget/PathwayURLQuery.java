@@ -47,7 +47,7 @@ public class PathwayURLQuery implements WidgetURLQuery
         PathQuery q = new PathQuery(os.getModel());
         q.addViews("Gene.secondaryIdentifier", "Gene.primaryIdentifier", "Gene.name",
                 "Gene.organism.name", "Gene.pathways.identifier", "Gene.pathways.name",
-                "Gene.pathways.dataSets.title");
+                "Gene.pathways.dataSets.name");
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
             q.addConstraint(Constraints.lookup("Gene.pathways", key, ""));
