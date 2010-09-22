@@ -14,7 +14,6 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
-import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
@@ -46,23 +45,20 @@ public class HomologueURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
-        q.addViews("Gene.primaryIdentifier", "Gene.symbol", "Gene.organism.name",
+        q.addViews("Gene.primaryIdentifier", "Gene.symbol", "Gene.organism.shortName",
                 "Gene.homologues.homologue.primaryIdentifier",
                 "Gene.homologues.homologue.symbol",
-                "Gene.homologues.homologue.organism.name",
+                "Gene.homologues.homologue.organism.shortName",
                 "Gene.homologues.type");
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         q.addConstraint(Constraints.eq("Gene.homologues.type", "orthologue"));
         if (!showAll) {
             q.addConstraint(Constraints.lookup("Gene.homologues.homologue.organism", key, ""));
         }
-        q.addOrderBy(new OrderElement("Gene.organism.name", OrderDirection.ASC));
-        q.addOrderBy(new OrderElement("Gene.primaryIdentifier", OrderDirection.ASC));
-        q.addOrderBy(new OrderElement("Gene.homologues.homologue.organism.name",
-                OrderDirection.ASC));
-        q.addOrderBy(new OrderElement("Gene.homologues.homologue.primaryIdentifier",
-                OrderDirection.ASC));
-
+        q.addOrderBy("Gene.organism.shortName", OrderDirection.ASC);
+        q.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
+        q.addOrderBy("Gene.homologues.homologue.organism.name", OrderDirection.ASC);
+        q.addOrderBy("Gene.homologues.homologue.primaryIdentifier", OrderDirection.ASC);
         return q;
     }
 }

@@ -245,7 +245,8 @@ public class WidgetAction extends InterMineAction
     }
 
     /**
-     * Export selected entries
+     * Export selected entries.
+     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -254,7 +255,7 @@ public class WidgetAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward export(@SuppressWarnings("unused") ActionMapping mapping, ActionForm form,
+    public ActionForward export(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
