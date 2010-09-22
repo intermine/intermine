@@ -26,10 +26,18 @@
   <br/>
 </c:if>
 
-<html:link action="/exportOptions?table=${tableName}&amp;type=galaxy&amp;trail=${queryTrailLink}|${tableName}">
-  <fmt:message key="exporter.galaxy.description"/>
-</html:link>
-<br/>
+<%-- Bag is not support so far, Galaxy can not fetch data by the query, fix me --%>
+<c:choose>
+  <c:when test="${fn:substring(tableName,0,3) == 'bag'}">
+    <span class="nullStrike"><fmt:message key="exporter.galaxy.description"/></span><br>
+  </c:when>
+  <c:otherwise>
+    <html:link action="/exportOptions?table=${tableName}&amp;type=galaxy&amp;trail=${queryTrailLink}|${tableName}">
+      <fmt:message key="exporter.galaxy.description"/>
+    </html:link>
+    <br/>
+  </c:otherwise>
+</c:choose>
 <%--
   <c:choose>
     <c:when test="${exportAsBED}">

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,6 +61,7 @@ public class GalaxyExportOptionsController extends TilesAction
         throws Exception {
         String tableName = request.getParameter("table");
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         PagedTable pt = SessionMethods.getResultsTable(session, tableName);
 
         LinkedHashMap<Path, Integer> exportClassPathsMap = getExportClassPaths(pt);
@@ -92,7 +94,33 @@ public class GalaxyExportOptionsController extends TilesAction
         // Build webservice URL
         PathQuery query = pt.getWebTable().getPathQuery();
 
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        // Test if it has bag constraints
+        // TODO Move the method to PathQuery class in the next round refactoring
+        /*
+        Set<String> bagNames = query.getBagNames();
+        if (!bagNames.isEmpty()) {
+            Map<PathConstraint, String> constrains = query.getConstraints();
+            for (PathConstraint constraint : constrains.keySet()) {
+                if (constraint instanceof PathConstraintBag) {
+                    String bagName = ((PathConstraintBag) constraint).getBag();
+                    String path = ((PathConstraintBag) constraint).getPath();
+                    InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(
+                            SessionMethods.getProfile(session), bagName);
+                    PathConstraintIds newConstraint = new PathConstraintIds(
+                            path, ConstraintOp.IN, imBag.getContentsAsIds());
+                    query.replaceConstraint(constraint, newConstraint);
+                }
+            }
+        }*/
+
+        // TODO Bag is not support so far, Galaxy can not fetch data by the query, fix me
+        String isBag = "false";
+        Set<String> bagNames = query.getBagNames();
+        if (!bagNames.isEmpty()) {
+            isBag = "true";
+            request.setAttribute("isBag", isBag);
+        }
+
         Model model = im.getModel();
         String queryXML = PathQueryBinding.marshal(query, "tmpName", model.getName(),
                                                    PathQuery.USERPROFILE_VERSION);

@@ -17,6 +17,15 @@
      jQuery("input[name='exportOptions']").filter("[value='feature']").attr('disabled', 'disabled');
      //<<<<<
 
+     //>>>>>
+     // Bag is not support so far, Galaxy can not fetch data by the query, fix me
+     if ("${isBag}" == "true")
+     {
+       jQuery("#exportTableView").html("<i>Export a list to Galaxy is not supported at the moment...</i>");
+       jQuery("input[name='submit']").attr("disabled", "disabled");
+     }
+     //>>>>>
+
      initForm();
      jQuery("#URL").val("${viewURL}");
 
@@ -190,7 +199,7 @@ li { margin-bottom:0.5em; }
 
       <ol>Export results of this query to the Galaxy tool:</ol>
 
-      <li>
+      <li id="exportTableView">
       <fieldset>
       <input type="radio" name="exportOptions" checked="checked" value="view"/><label>Send the results as a table</label>
       </fieldset>
