@@ -1924,7 +1924,7 @@ public class PathQuery implements Cloneable
             }
         }
         return retval;
-    }
+    }intermine/web/main/src/org/intermine/web/struts/QueryBuilderChange.java
 
     /**
      * Returns the outer join constraint codes groups map for this query, if the query verifies
@@ -2002,8 +2002,8 @@ public class PathQuery implements Cloneable
      */
     private static void addValidPaths(Set<String> validMainPaths, Path path) {
         Path rootPath = path;
-        while (!path.isRootPath()) {
-            validMainPaths.add(path.toStringNoConstraints());
+        while (!rootPath.isRootPath()) {
+            validMainPaths.add(rootPath.toStringNoConstraints());
             rootPath = path.getPrefix();
         }
         validMainPaths.add(rootPath.toStringNoConstraints());
