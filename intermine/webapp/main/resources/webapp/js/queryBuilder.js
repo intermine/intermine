@@ -11,6 +11,8 @@ function initConstraint(selectedConstraint) {
 	    //attribute8 attribute value 
 	    //attribute7 options
 	    //LIKE or NOT LIKE or LOOKUP
+	    if(document.getElementById("multiValueAttribute"))
+	        document.getElementById("multiValueAttribute").value = "";
 	    if (document.getElementById("attribute5")) {
 	    	var constraintOpIndex = document.getElementById("attribute5").value;
 	    	if (constraintOpIndex == '6' || constraintOpIndex == '7' || constraintOpIndex == '18') {
@@ -23,7 +25,8 @@ function initConstraint(selectedConstraint) {
 	          } // IN or NOT IN
 	        else if (constraintOpIndex == '21' || constraintOpIndex == '22') {
 	            if (document.getElementById("multiValue")) 
-	            	document.getElementById("multiValue").style.display = 'inline';
+	                document.getElementById("multiValue").style.display = 'inline';
+	            document.getElementById("multiValue").selectedIndex='-1';
 	            if(document.getElementById("attribute8"))
 	                document.getElementById("attribute8").style.display = 'none';
 	            if (document.getElementById("attribute7")) 
