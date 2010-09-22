@@ -58,8 +58,8 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception if the application business logic throws
      */
     public ActionForward removeNode(ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
 
         PathQuery pathQuery = SessionMethods.getQuery(session);
@@ -82,9 +82,9 @@ public class QueryBuilderChange extends DispatchAction
      *                if the application business logic throws
      */
     public ActionForward newConstraint(ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form,
+            ActionForm form,
             HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response)
+            HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = SessionMethods.getQuery(session).clone();
@@ -108,8 +108,8 @@ public class QueryBuilderChange extends DispatchAction
      *                if the application business logic throws
      */
     public ActionForward removeConstraint(ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = SessionMethods.getQuery(session);
         String code = request.getParameter("code");
@@ -130,13 +130,13 @@ public class QueryBuilderChange extends DispatchAction
      * @throws Exception if something goes wrong
      */
     public ActionForward removeSubclass(ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = SessionMethods.getQuery(session);
         String path = request.getParameter("path");
-        Collection<String> messages = query.removeSubclassAndFixUp(path);
-        for (String message : messages) {
+        Collection<String> msgs = query.removeSubclassAndFixUp(path);
+        for (String message : msgs) {
             SessionMethods.recordMessage(message, session);
         }
         return mapping.findForward("query");
@@ -154,9 +154,9 @@ public class QueryBuilderChange extends DispatchAction
      *                if the application business logic throws
      */
     public ActionForward editConstraint(ActionMapping mapping,
-                                        @SuppressWarnings("unused") ActionForm form,
+                                        ActionForm form,
                                         HttpServletRequest request,
-                                        @SuppressWarnings("unused") HttpServletResponse response)
+                                        HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = SessionMethods.getQuery(session);
@@ -180,10 +180,9 @@ public class QueryBuilderChange extends DispatchAction
      *                if the application business logic throws
      */
     public ActionForward editTemplateConstraint(ActionMapping mapping,
-                                                @SuppressWarnings("unused") ActionForm form,
+                                                ActionForm form,
                                                 HttpServletRequest request,
-                                                @SuppressWarnings("unused")
-                                                   HttpServletResponse response)
+                                                HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = SessionMethods.getQuery(session);
@@ -207,10 +206,9 @@ public class QueryBuilderChange extends DispatchAction
      *                if the application business logic throws
      */
     public ActionForward editSwitchableConstraint(ActionMapping mapping,
-                                                @SuppressWarnings("unused") ActionForm form,
+                                                ActionForm form,
                                                 HttpServletRequest request,
-                                                @SuppressWarnings("unused")
-                                                   HttpServletResponse response)
+                                                HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = SessionMethods.getQuery(session);
@@ -234,10 +232,9 @@ public class QueryBuilderChange extends DispatchAction
      *                if the application business logic throws
      */
     public ActionForward editJoinStyle(ActionMapping mapping,
-                                                @SuppressWarnings("unused") ActionForm form,
+                                                ActionForm form,
                                                 HttpServletRequest request,
-                                                @SuppressWarnings("unused")
-                                                   HttpServletResponse response)
+                                                HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         String path = request.getParameter("path");
@@ -258,8 +255,8 @@ public class QueryBuilderChange extends DispatchAction
      *                if the application business logic throws
      */
     public ActionForward changePath(ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         String path = request.getParameter("path");
 
@@ -280,10 +277,9 @@ public class QueryBuilderChange extends DispatchAction
      *                if the application business logic throws
      */
     public ActionForward startTemplateBuild(ActionMapping mapping,
-                                            @SuppressWarnings("unused") ActionForm form,
+                                            ActionForm form,
                                             HttpServletRequest request,
-                                            @SuppressWarnings("unused")
-                                                HttpServletResponse response)
+                                            HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = SessionMethods.getQuery(session);
@@ -310,9 +306,9 @@ public class QueryBuilderChange extends DispatchAction
      *                if the application business logic throws
      */
     public ActionForward stopTemplateBuild(ActionMapping mapping,
-                                           @SuppressWarnings("unused") ActionForm form,
+                                           ActionForm form,
                                            HttpServletRequest request,
-                                           @SuppressWarnings("unused") HttpServletResponse response)
+                                           HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         session.removeAttribute(Constants.NEW_TEMPLATE);
@@ -332,9 +328,9 @@ public class QueryBuilderChange extends DispatchAction
      *                if the application business logic throws
      */
     public ActionForward addToView(ActionMapping mapping,
-                                   @SuppressWarnings("unused") ActionForm form,
+                                   ActionForm form,
                                    HttpServletRequest request,
-                                   @SuppressWarnings("unused") HttpServletResponse response)
+                                   HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         WebConfig webConfig = SessionMethods.getWebConfig(request);
@@ -509,7 +505,7 @@ public class QueryBuilderChange extends DispatchAction
      *                if the application business logic throws
      */
     public ActionForward ajaxRenderPaths(ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         QueryBuilderController.populateRequest(request, response);
         return mapping.findForward("queryPaths");
