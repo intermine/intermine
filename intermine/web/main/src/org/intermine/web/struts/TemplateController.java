@@ -98,7 +98,8 @@ public class TemplateController extends TilesAction
         TemplateQuery originalTemplate = null;
         if (loadModifiedTemplate != null) {
             String savedQueryName = request.getParameter("savedQueryName");
-            modifiedTemplate = getTemporaryTemplate(session, savedQueryName);
+            modifiedTemplate = (savedQueryName != null) ? getTemporaryTemplate(session, savedQueryName)
+                                : getTemporaryTemplate(session, templateName);
             templateName = modifiedTemplate.getName();
             template = modifiedTemplate;
             if (scope == null) {
