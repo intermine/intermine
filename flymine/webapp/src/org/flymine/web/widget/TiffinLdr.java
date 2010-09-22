@@ -137,9 +137,9 @@ public class TiffinLdr extends EnrichmentWidgetLdr
         //         }
 
 
-        if (action.equals("analysed")) {
+        if ("analysed".equals(action)) {
             q.addToSelect(qfGeneId);
-        } else if (action.equals("export")) {
+        } else if ("export".equals(action)) {
             q.addToSelect(qfId);
             q.addToSelect(qfPrimaryIdentifier);
             q.addToOrderBy(qfId);
@@ -152,7 +152,7 @@ public class TiffinLdr extends EnrichmentWidgetLdr
         } else {
             q.addToSelect(qfId);
             q.addToSelect(new QueryFunction()); // gene count
-            if (action.equals("sample")) {
+            if ("sample".equals(action)) {
                 q.addToSelect(qfId);
             }
             q.addToGroupBy(qfId);
@@ -160,6 +160,3 @@ public class TiffinLdr extends EnrichmentWidgetLdr
         return q;
     }
 }
-
-
-

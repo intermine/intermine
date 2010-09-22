@@ -50,7 +50,7 @@ public class BDGPURLQuery implements WidgetURLQuery
         q.addViews("Gene.secondaryIdentifier", "Gene.name", "Gene.organism.name",
             "Gene.primaryIdentifier");
         List<String> expressionStrings = new ArrayList<String>(Arrays.asList(new String[] {
-            "Gene.mRNAExpressionResults.stageRange,",
+            "Gene.mRNAExpressionResults.stageRange",
             "Gene.mRNAExpressionResults.mRNAExpressionTerms.name",
             "Gene.mRNAExpressionResults.dataSet.name"
         }));

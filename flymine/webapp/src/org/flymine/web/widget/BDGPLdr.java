@@ -37,7 +37,6 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
 /**
- * {@inheritDoc}
  * @author Julie Sullivan
  */
 public class BDGPLdr extends EnrichmentWidgetLdr
@@ -121,12 +120,12 @@ public class BDGPLdr extends EnrichmentWidgetLdr
 
         subQ.setConstraint(cs);
 
-        if (action.equals("export")) {
+        if ("export".equals(action)) {
             subQ.addToSelect(qfTerm);
             subQ.addToSelect(qfPrimaryIdentifier);
             subQ.addToOrderBy(qfTerm);
             return subQ;
-        } else if (action.equals("analysed")) {
+        } else if ("analysed".equals(action)) {
             subQ.addToSelect(qfGene);
             return subQ;
         } else if (action.endsWith("Total")) {
@@ -144,7 +143,7 @@ public class BDGPLdr extends EnrichmentWidgetLdr
             q.addToSelect(outerQfTerm);
             q.addToGroupBy(outerQfTerm);
             q.addToSelect(qfCount);
-            if (action.equals("sample")) {
+            if ("sample".equals(action)) {
                 q.addToSelect(outerQfTerm);
             }
         }

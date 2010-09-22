@@ -70,9 +70,9 @@ public class FlyAtlasGridDataSetLdr implements GridDataSetLdr
             String tissue = (String) resRow.get(1);
             String identifier = (String) resRow.get(2);
             if (affyCall != null) {
-                if (affyCall.equals("Up")) {
+                if ("Up".equals(affyCall)) {
                     dataSet.addValue(tissue, identifier, true);
-                } else if (affyCall.equals("Down")) {
+                } else if ("Down".equals(affyCall)) {
                     dataSet.addValue(tissue, identifier, false);
                 }
                 genes.add(identifier);

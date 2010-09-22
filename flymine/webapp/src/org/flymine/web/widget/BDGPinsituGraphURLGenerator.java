@@ -98,7 +98,7 @@ public class BDGPinsituGraphURLGenerator implements GraphCategoryURLGenerator
                         category + " (BDGP in situ)"));
 
         // expressed (series)
-        Boolean expressed = "true".equals(series);
+        Boolean expressed = Boolean.valueOf("true".equals(series));
         q.addConstraint(Constraints.eq("Gene.mRNAExpressionResults.expressed",
                 expressed.toString()));
 
