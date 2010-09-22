@@ -97,16 +97,7 @@ public class PathQueryHandler extends DefaultHandler
                     // joins
                     String[] viewPathArray = PathQuery.SPACE_SPLITTER.split(view.trim());
                     for (String viewPath : viewPathArray) {
-                        int from = 0;
-                        while (viewPath.indexOf(':', from) != -1) {
-                            int colonPos = viewPath.indexOf(':', from);
-                            int nextDot = viewPath.replace(':', '.').indexOf('.', colonPos + 1);
-                            String outerJoin = nextDot == -1 ? viewPath
-                                : viewPath.substring(0, nextDot);
-                            query.setOuterJoinStatus(outerJoin.replace(':', '.'),
-                                    OuterJoinStatus.OUTER);
-                            from = colonPos + 1;
-                        }
+                        setOuterJoins(query, viewPath);
                     }
                     view = view.replace(':', '.');
                 }
@@ -120,7 +111,12 @@ public class PathQueryHandler extends DefaultHandler
         } else if ("node".equals(qName)) {
             // There's a node tag, so all constraints inside must inherit this path. Set it in a
             // variable, and reset the variable to null when we see the end tag.
+            
             currentNodePath = attrs.getValue("path");
+            if (currentNodePath.contains(":")) {
+                setOuterJoins(query, currentNodePath);
+                currentNodePath = currentNodePath.replace(':', '.');
+            }
             String type = attrs.getValue("type");
             if ((type != null) && (!ATTRIBUTE_TYPES.contains(type))
                     && (currentNodePath.contains(".") || currentNodePath.contains(":"))) {
@@ -357,5 +353,25 @@ public class PathQueryHandler extends DefaultHandler
             }
         }
         return validatedName;
+    }
+
+    /**
+     * Given a path that may contain ':' characters to represent outer joins, find each : separated
+     * segment and set the status for that join to OUTER.  NOTE this method will change the
+     * query parameter handed to it.
+     * @param query the query to set join styles
+     * @param path a path that may contain outer joins represented by ':'
+     */
+    protected void setOuterJoins(PathQuery query, String path) {
+        int from = 0;
+        while (path.indexOf(':', from) != -1) {
+            int colonPos = path.indexOf(':', from);
+            int nextDot = path.replace(':', '.').indexOf('.', colonPos + 1);
+            String outerJoin = nextDot == -1 ? path
+                : path.substring(0, nextDot);
+            query.setOuterJoinStatus(outerJoin.replace(':', '.'),
+                    OuterJoinStatus.OUTER);
+            from = colonPos + 1;
+        }
     }
 }
