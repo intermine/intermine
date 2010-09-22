@@ -66,8 +66,12 @@ public class LoginAction extends LoginHandler
             }
             return mapping.findForward("mymine");
         }
+
+        // don't return user to the page they logged in from in certain situations
+        // eg. if they were in the middle of uploading a list
         if (lf.returnToString != null && lf.returnToString.startsWith("/")
-                && lf.returnToString.indexOf("error") == -1) {
+                && lf.returnToString.indexOf("error") == -1
+                && lf.returnToString.indexOf("buildBag") == -1) {
             return new ActionForward(lf.returnToString);
         }
         return mapping.findForward("mymine");
