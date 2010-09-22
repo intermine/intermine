@@ -1924,7 +1924,7 @@ public class PathQuery implements Cloneable
             }
         }
         return retval;
-    }intermine/web/main/src/org/intermine/web/struts/QueryBuilderChange.java
+    }
 
     /**
      * Returns the outer join constraint codes groups map for this query, if the query verifies
