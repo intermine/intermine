@@ -11,6 +11,8 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,19 +32,15 @@ import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryResult;
+import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplatePopulator;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
@@ -82,7 +80,7 @@ public class PortalQueryAction extends InterMineAction
      *  an exception
      */
     @Override
-    public ActionForward execute(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -113,9 +111,24 @@ public class PortalQueryAction extends InterMineAction
         // Use the old way = quicksearch template in case some people used to link in
         // without class name
         if ((idList.length == 1) && (className == null || className.length() == 0)) {
-            String qid = loadObjectDetails(servletContext, session, request, response, extId);
-            return new ForwardParameters(mapping.findForward("waiting"))
-                .addParameter("qid", qid).forward();
+//            String qid = loadObjectDetails(servletContext, session, request, response, extId);
+//            return new ForwardParameters(mapping.findForward("waiting"))
+//                .addParameter("qid", qid).forward();
+
+            BagQueryRunner bagRunner = new BagQueryRunner(im.getObjectStore(), im.getClassKeys(),
+                    im.getBagQueryConfig(), Collections.EMPTY_LIST);
+            BagQueryResult bqr
+                = bagRunner.searchForBag("bioentity", Arrays.asList(idList), null, false);
+            Map<Integer, List> results = bqr.getMatches();
+            if (results.isEmpty()) {
+                return new ForwardParameters(mapping.findForward("noResults")).forward();
+            } else {
+                for (Map.Entry<Integer, List> entry : results.entrySet()) {
+                    String id = entry.getKey().toString();
+                    return new ForwardParameters(mapping.findForward("objectDetails"))
+                        .addParameter("id", id).forward();
+                }
+            }
         }
 
         Model model = im.getModel();
@@ -257,38 +270,5 @@ public class PortalQueryAction extends InterMineAction
             ActionMessage msg = new ActionMessage("portal.nomatches", extId);
             actionMessages.add(Constants.PORTAL_MSG, msg);
         }
-    }
-
-    /**
-     * @deprecated Use the quicksearch action instead
-     */
-    private String loadObjectDetails(ServletContext servletContext, HttpSession session,
-            HttpServletRequest request, HttpServletResponse response, String extId)
-        throws InterruptedException {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Properties properties = SessionMethods.getWebProperties(servletContext);
-        String templateName = properties.getProperty("begin.browse.template");
-        Profile superProfile = im.getProfileManager().getSuperuserProfile();
-
-        TemplateManager templateManager = im.getTemplateManager();
-        TemplateQuery template = templateManager.getUserTemplate(superProfile, templateName);
-
-        if (template == null) {
-            throw new IllegalStateException("Could not find template \"" + templateName + "\"");
-        }
-
-        TemplateQuery populatedTemplate;
-        try {
-            populatedTemplate = TemplatePopulator.populateTemplateOneConstraint(template,
-                ConstraintOp.EQUALS, extId);
-        } catch (PathException e) {
-            throw new IllegalArgumentException("Invalid template", e);
-        }
-
-        SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
-
-        String qid = SessionMethods.startQueryWithTimeout(request, false, populatedTemplate);
-        Thread.sleep(200); // slight pause in the hope of avoiding holding page
-        return qid;
     }
 }
