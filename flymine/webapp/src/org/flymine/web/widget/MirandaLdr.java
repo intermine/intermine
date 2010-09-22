@@ -107,13 +107,13 @@ public class MirandaLdr extends EnrichmentWidgetLdr
         q.setConstraint(cs);
 
         // which columns to return when the user clicks on 'export'
-        if (action.equals("export")) {
+        if ("export".equals(action)) {
             q.addToSelect(qfMiRIdentifier);
             q.addToSelect(qfGeneIdentifier);
             q.addToOrderBy(qfMiRIdentifier);
 
         // analysed query:  return the gene only
-        } else if (action.equals("analysed")) {
+        } else if ("analysed".equals(action)) {
             q.addToSelect(qfGeneId);
 
         // total query:  only return the count of unique genes
@@ -148,7 +148,7 @@ public class MirandaLdr extends EnrichmentWidgetLdr
             q.addToSelect(new QueryFunction());
 
             // if this is the sample query, it expects a third column
-            if (action.equals("sample")) {
+            if ("sample".equals(action)) {
                 q.addToSelect(qfUniqueTargets);
             }
 
