@@ -118,7 +118,7 @@ public class PortalQueryAction extends InterMineAction
             BagQueryRunner bagRunner = new BagQueryRunner(im.getObjectStore(), im.getClassKeys(),
                     im.getBagQueryConfig(), Collections.EMPTY_LIST);
             BagQueryResult bqr
-                = bagRunner.searchForBag("bioentity", Arrays.asList(idList), null, false);
+                = bagRunner.searchForBag("BioEntity", Arrays.asList(idList), null, false);
             Map<Integer, List> results = bqr.getMatches();
             if (results.isEmpty()) {
                 return new ForwardParameters(mapping.findForward("noResults")).forward();
