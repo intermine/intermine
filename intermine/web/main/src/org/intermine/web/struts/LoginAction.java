@@ -71,7 +71,7 @@ public class LoginAction extends LoginHandler
         // eg. if they were in the middle of uploading a list
         if (lf.returnToString != null && lf.returnToString.startsWith("/")
                 && lf.returnToString.indexOf("error") == -1
-                && lf.returnToString.indexOf("buildBag") == -1) {
+                && lf.returnToString.indexOf("bagUploadConfirm") == -1) {
             return new ActionForward(lf.returnToString);
         }
         return mapping.findForward("mymine");
