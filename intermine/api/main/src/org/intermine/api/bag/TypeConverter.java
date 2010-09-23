@@ -153,7 +153,7 @@ public final class TypeConverter
         if (pq == null) {
             return null;
         }
-        // remove typeA from the output
+        // remove typeA from the output and sort order
         try {
             List<String> view = pq.getView();
             for (String viewElement : view) {

@@ -76,9 +76,15 @@ public class BagConversionHelper
         WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
         Model model = im.getModel();
         String typeBStr = TypeUtil.unqualifiedName(typeB.getName());
+        // bit hacky, remove any remainging ids on the view
+        List<String> views = pq.getView();
+        for (String viewPath : views) {
+            if (viewPath.endsWith(".id")) {
+                pq.removeView(viewPath);
+            }
+        }
         pq.addViews(PathQueryResultHelper.getDefaultViewForClass(typeBStr, model, webConfig,
                 convertFrom));
-        pq.addConstraint(Constraints.in(convertFrom, imBag.getName()));
 
         Profile profile = SessionMethods.getProfile(session);
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);

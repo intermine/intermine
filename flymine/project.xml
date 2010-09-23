@@ -91,7 +91,7 @@
     </source>
 
     <source name="interpro" type="interpro">
-      <property name="src.data.dir" location="/shared/data/interpro/current"/>
+      <property name="src.data.dir" location="/data/interpro/"/>
     </source>
 
     <source name="homophila" type="homophila">

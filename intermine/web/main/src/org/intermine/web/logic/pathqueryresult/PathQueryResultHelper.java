@@ -58,7 +58,7 @@ public final class PathQueryResultHelper
      * @param type the class name to create a view for
      * @param model the model
      * @param webConfig we configuration
-     * @param prefix a path to prefix the class
+     * @param prefix a path to prefix the class, can be null
      * @return the configured view paths for the class
      */
     public static List<String> getDefaultViewForClass(String type, Model model, WebConfig webConfig,
@@ -86,18 +86,21 @@ public final class PathQueryResultHelper
 
         for (FieldConfig fieldConfig : fieldConfigs) {
             String relPath = fieldConfig.getFieldExpr();
-            try {
-                Path path = new Path(model, prefix + "." + relPath);
-                if (path.isOnlyAttribute()) {
+            // only add attributes, don't follow references
+            if (relPath.indexOf(".") == -1) {
+                try {
+                    Path path = new Path(model, prefix + "." + relPath);
                     view.add(path.getNoConstraintsString());
+                } catch (PathException e) {
+                    LOG.error("Invalid path configured in webconfig for class: " + type);
                 }
-            } catch (PathException e) {
-                LOG.error("Invalid path configured in webconfig for class: " + type);
             }
         }
         if (view.size() == 0) {
             for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
-                view.add(prefix + "." + att.getName());
+                if (!"id".equals(att.getName())) {
+                    view.add(prefix + "." + att.getName());
+                }
             }
         }
         return view;
@@ -110,7 +113,7 @@ public final class PathQueryResultHelper
         ClassDescriptor cld = model.getClassDescriptorByName(type);
         List<FieldConfig> fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
 
-        if (prefix == null || prefix.length() <= 0) {
+        if (!StringUtils.isBlank(prefix)) {
             try {
                 // if the type is different to the end of the prefix path, add a subclass constraint
                 Path prefixPath = new Path(model, prefix);
@@ -123,20 +126,20 @@ public final class PathQueryResultHelper
             }
             prefix = type;
         }
-
+        
         for (FieldConfig fieldConfig : fieldConfigs) {
             if (fieldConfig.getShowInResults()) {
-                String relPath = fieldConfig.getFieldExpr();
-                try {
-                    Path path = query.makePath(relPath);
-                    if (!path.isOnlyAttribute()) {
-                        query.setOuterJoinStatus(path.getNoConstraintsString(),
-                                OuterJoinStatus.OUTER);
-                    }
-                    query.addView(path.getNoConstraintsString());
-                } catch (PathException e) {
-                    LOG.error("Invalid path configured in webconfig for class: " + type);
+                String path = prefix + "." + fieldConfig.getFieldExpr();
+                int from = prefix.length() + 1;
+                while (path.indexOf('.', from) != -1) {
+                    int dotPos = path.indexOf('.', from);
+                    int nextDot = path.indexOf('.', dotPos + 1);
+                    String outerJoin = nextDot == -1 ? path.substring(0, dotPos)
+                            : path.substring(0, nextDot);
+                    query.setOuterJoinStatus(outerJoin, OuterJoinStatus.OUTER);
+                    from = dotPos + 1;
                 }
+                query.addView(path);
             }
         }
         if (query.getView().size() == 0) {
@@ -188,6 +191,10 @@ public final class PathQueryResultHelper
         List<Class<?>> types = new ArrayList<Class<?>>();
         if (path.endIsCollection()) {
             types = queryForTypesInCollection(object, field, os);
+            if (types.isEmpty()) {
+                // the collection was empty, but still generate a query with the collection type
+                types.add(os.getModel().getClassDescriptorByName(referencedClassName).getType());
+            }
         } else if (path.endIsReference()) {
             types.add(path.getLastClassDescriptor().getType());
         }
@@ -233,7 +240,8 @@ public final class PathQueryResultHelper
         PathQuery pathQuery = getQueryWithDefaultView(typeOfCollection, model, webConfig,
                 collectionPath);
         pathQuery.addConstraint(Constraints.eq(startClass + ".id", object.getId().toString()));
-        pathQuery.addConstraint(Constraints.type(collectionPath, typeOfCollection));
+
+        //pathQuery.addConstraint(Constraints.type(collectionPath, typeOfCollection));
 
         return pathQuery;
     }
