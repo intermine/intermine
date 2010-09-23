@@ -55,9 +55,9 @@ public class HtmlHeadController extends TilesAction
      */
     @Override
     public ActionForward execute(ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);

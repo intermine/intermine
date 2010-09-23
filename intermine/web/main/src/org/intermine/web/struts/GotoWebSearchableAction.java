@@ -36,10 +36,10 @@ public class GotoWebSearchableAction extends InterMineAction
      *  an exception
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         String type = request.getParameter("type");
         String scope = request.getParameter("scope");
