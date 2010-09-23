@@ -98,8 +98,14 @@ public class TemplateController extends TilesAction
         TemplateQuery originalTemplate = null;
         if (loadModifiedTemplate != null) {
             String savedQueryName = request.getParameter("savedQueryName");
-            modifiedTemplate = (savedQueryName != null) ? getTemporaryTemplate(session, savedQueryName)
-                                : getTemporaryTemplate(session, templateName);
+            if (savedQueryName != null) {
+                modifiedTemplate = getHistoryTemplate(session, savedQueryName);
+            } else {
+                PathQuery query = SessionMethods.getQuery(session);
+                if (query instanceof TemplateQuery) {
+                    modifiedTemplate = (TemplateQuery) query;
+                }
+            }
             templateName = modifiedTemplate.getName();
             template = modifiedTemplate;
             if (scope == null) {
@@ -180,16 +186,12 @@ public class TemplateController extends TilesAction
         return null;
     }
 
-    private TemplateQuery getTemporaryTemplate(HttpSession session, String templateName) {
+    private TemplateQuery getHistoryTemplate(HttpSession session, String templateName) {
         Profile profile = SessionMethods.getProfile(session);
         SavedQuery savedQuery = profile.getHistory().get(templateName);
-        PathQuery currentQuery = SessionMethods.getQuery(session);
         TemplateQuery template = null;
-        if (savedQuery.getPathQuery() instanceof TemplateQuery) {
+        if (savedQuery != null && savedQuery.getPathQuery() instanceof TemplateQuery) {
             template = (TemplateQuery) savedQuery.getPathQuery();
-        } else if (currentQuery instanceof TemplateQuery) {
-            // see #1435
-            template = (TemplateQuery) currentQuery;
         }
         return template;
     }
