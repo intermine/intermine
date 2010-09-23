@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
@@ -41,6 +42,8 @@ import org.intermine.pathquery.PathQuery;
  */
 public final class TypeConverter
 {
+    private static final Logger LOG = Logger.getLogger(TypeConverter.class);
+    
     private TypeConverter() {
     }
 
@@ -169,8 +172,10 @@ public final class TypeConverter
             }
             return pq;
         } catch (PathException e) {
-            throw new RuntimeException("Template is invalid", e);
+            e.fillInStackTrace();
+            LOG.error("Invalid conversion template: " + e);
         }
+        return null;
     }
 
     /**
