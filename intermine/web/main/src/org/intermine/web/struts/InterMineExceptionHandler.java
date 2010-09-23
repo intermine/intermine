@@ -52,9 +52,9 @@ public class InterMineExceptionHandler extends ExceptionHandler
     public ActionForward execute(Exception ex,
                                  ExceptionConfig ae,
                                  ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm formInstance,
+                                 ActionForm formInstance,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response) {
+                                 HttpServletResponse response) {
 
         ActionForward forward = null;
 
@@ -121,7 +121,7 @@ public class InterMineExceptionHandler extends ExceptionHandler
     protected void storeException(HttpServletRequest request,
                                   String property,
                                   ActionMessage message,
-                                  @SuppressWarnings("unused") ActionForward forward,
+                                  ActionForward forward,
                                   String scope) {
 
         ActionMessages messages = null;

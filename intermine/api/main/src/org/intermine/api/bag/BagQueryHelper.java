@@ -40,6 +40,7 @@ import org.xml.sax.InputSource;
 public final class BagQueryHelper
 {
     private BagQueryHelper() {
+        // nothing to do
     }
 
     /**
@@ -60,8 +61,8 @@ public final class BagQueryHelper
      * @throws ClassNotFoundException if the type isn't in the model
      */
     public static Query createDefaultBagQuery(String type,
-            @SuppressWarnings("unused") BagQueryConfig bagQueryConfig,
-            @SuppressWarnings("unused") Model model, Map<String, List<FieldDescriptor>> classKeys,
+            BagQueryConfig bagQueryConfig,
+            Model model, Map<String, List<FieldDescriptor>> classKeys,
             Collection<String> input) throws ClassNotFoundException {
 
         Class<?> cls = Class.forName(type);

@@ -60,9 +60,9 @@ public class ObjectDetailsController extends InterMineAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(ActionMapping mapping,
-            ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         TagManager tagManager = im.getTagManager();
@@ -105,7 +105,7 @@ public class ObjectDetailsController extends InterMineAction
         for (Iterator<Entry<String, DisplayField>> iter
                 = dobj.getRefsAndCollections().entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String, DisplayField> entry = iter.next();
-            DisplayField df = (DisplayField) entry.getValue();
+            DisplayField df = entry.getValue();
             if (df instanceof DisplayReference) {
                 categoriseBasedOnTags(((DisplayReference) df).getDescriptor(),
                         "reference", df, miscRefs, tagManager, superuser,

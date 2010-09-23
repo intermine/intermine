@@ -57,8 +57,8 @@ public class ModifyDetails extends DispatchAction
      * @exception Exception if the application business logic throws an exception
      */
     public ActionForward runTemplate(ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         String name = request.getParameter("name");
@@ -124,8 +124,8 @@ public class ModifyDetails extends DispatchAction
      */
     @Deprecated
     public ActionForward verbosify(ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         if (session == null) {
             return null;
@@ -154,8 +154,8 @@ public class ModifyDetails extends DispatchAction
      */
     @Deprecated
     public ActionForward unverbosify(ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
@@ -176,8 +176,8 @@ public class ModifyDetails extends DispatchAction
      * @exception Exception if the application business logic throws an exception
      */
     public ActionForward ajaxVerbosify(ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
