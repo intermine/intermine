@@ -90,7 +90,9 @@ public final class PathQueryResultHelper
             if (relPath.indexOf(".") == -1) {
                 try {
                     Path path = new Path(model, prefix + "." + relPath);
-                    view.add(path.getNoConstraintsString());
+                    if (path.endIsAttribute()) {
+                        view.add(path.getNoConstraintsString());
+                    }
                 } catch (PathException e) {
                     LOG.error("Invalid path configured in webconfig for class: " + type);
                 }
