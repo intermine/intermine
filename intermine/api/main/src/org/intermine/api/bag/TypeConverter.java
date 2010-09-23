@@ -43,8 +43,9 @@ import org.intermine.pathquery.PathQuery;
 public final class TypeConverter
 {
     private static final Logger LOG = Logger.getLogger(TypeConverter.class);
-    
+
     private TypeConverter() {
+        // nothing to do
     }
 
     /**
@@ -187,7 +188,7 @@ public final class TypeConverter
             List<TemplateQuery> conversionTemplates, Class typeA) {
         Map<Class, TemplateQuery> retval = new HashMap();
         for (TemplateQuery tq : conversionTemplates) {
-            
+
             try {
                 // Find conversion types
                 List<String> view = tq.getView();
@@ -205,7 +206,7 @@ public final class TypeConverter
                             TemplateQuery prevTq = retval.get(typeB);
                             if (prevTq != null) {
                                 Class prevTypeA = prevTq.makePath(prevTq.getView().get(0))
-                                .getLastClassDescriptor().getType();
+                                    .getLastClassDescriptor().getType();
                                 if (prevTypeA.isAssignableFrom(tqTypeA)) {
                                     // This tq is more specific
                                     retval.put(typeB, tq);
@@ -220,7 +221,7 @@ public final class TypeConverter
                 e.fillInStackTrace();
                 LOG.error("Invalid conversion template: " + e);
             }
-            
+
         }
         return retval;
     }
