@@ -172,10 +172,8 @@ public final class TypeConverter
             }
             return pq;
         } catch (PathException e) {
-            e.fillInStackTrace();
-            LOG.error("Invalid conversion template: " + e);
+            throw new RuntimeException("Conversion query was invalid: ", e);
         }
-        return null;
     }
 
     /**
@@ -187,9 +185,10 @@ public final class TypeConverter
      */
     public static Map<Class, TemplateQuery> getConversionTemplates(
             List<TemplateQuery> conversionTemplates, Class typeA) {
-        try {
-            Map<Class, TemplateQuery> retval = new HashMap();
-            for (TemplateQuery tq : conversionTemplates) {
+        Map<Class, TemplateQuery> retval = new HashMap();
+        for (TemplateQuery tq : conversionTemplates) {
+            
+            try {
                 // Find conversion types
                 List<String> view = tq.getView();
                 if (view.size() == 2) {
@@ -199,14 +198,14 @@ public final class TypeConverter
                     if (tqTypeA.isAssignableFrom(typeA)) {
                         // Correct typeA in SELECT list. Now check for editable constraint.
                         if ((tq.getEditableConstraints(select1.toStringNoConstraints()).size() == 1)
-                                        && (tq.getEditableConstraints().size() == 1)) {
+                                && (tq.getEditableConstraints().size() == 1)) {
                             // Editable constraint is okay.
                             Class typeB = tq.makePath(view.get(1)).getLastClassDescriptor()
-                                .getType();
+                            .getType();
                             TemplateQuery prevTq = retval.get(typeB);
                             if (prevTq != null) {
                                 Class prevTypeA = prevTq.makePath(prevTq.getView().get(0))
-                                    .getLastClassDescriptor().getType();
+                                .getLastClassDescriptor().getType();
                                 if (prevTypeA.isAssignableFrom(tqTypeA)) {
                                     // This tq is more specific
                                     retval.put(typeB, tq);
@@ -217,10 +216,12 @@ public final class TypeConverter
                         }
                     }
                 }
+            } catch (PathException e) {
+                e.fillInStackTrace();
+                LOG.error("Invalid conversion template: " + e);
             }
-            return retval;
-        } catch (PathException e) {
-            throw new RuntimeException("Template is invalid", e);
+            
         }
+        return retval;
     }
 }
