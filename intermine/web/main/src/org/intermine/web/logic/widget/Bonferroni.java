@@ -39,7 +39,13 @@ public class Bonferroni implements ErrorCorrection
     public Bonferroni(HashMap<String, BigDecimal> originalMap) {
         this.originalMap = originalMap;
         numberOfTests = new BigDecimal(originalMap.size());
-        alphaPerTest = ALPHA.divide(numberOfTests, MathContext.DECIMAL32);
+        if (numberOfTests.intValue() == 0) {
+            // the results should never be empty, this shouldn't happen.  if the results for the
+            // widget are empty, then there should be no error correction done
+            alphaPerTest = numberOfTests;
+        } else {
+            alphaPerTest = ALPHA.divide(numberOfTests, MathContext.DECIMAL32);
+        }
     }
 
     /**
