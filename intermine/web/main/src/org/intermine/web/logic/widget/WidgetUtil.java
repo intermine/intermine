@@ -137,21 +137,26 @@ public final class WidgetUtil
 
             Map<String, BigDecimal> adjustedResultsMap = new HashMap<String, BigDecimal>();
 
-            if (!"None".equals(errorCorrection)) {
-                adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
+            if (resultsMap.isEmpty()) {
+                // no results
+                dummy.put("widgetTotal", new Integer(0));
             } else {
-                // TODO move this to the ErrorCorrection class
-                BigDecimal max = new BigDecimal(maxValue.doubleValue());
-                for (String id : resultsMap.keySet()) {
-                    BigDecimal pvalue = resultsMap.get(id);
-                    if (pvalue.compareTo(max) <= 0) {
-                        adjustedResultsMap.put(id, pvalue);
+                if (!"None".equals(errorCorrection)) {
+                    adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
+                } else {
+                    // TODO move this to the ErrorCorrection class
+                    BigDecimal max = new BigDecimal(maxValue.doubleValue());
+                    for (String id : resultsMap.keySet()) {
+                        BigDecimal pvalue = resultsMap.get(id);
+                        if (pvalue.compareTo(max) <= 0) {
+                            adjustedResultsMap.put(id, pvalue);
+                        }
                     }
                 }
+                sortedMap = new SortableMap(adjustedResultsMap);
+                sortedMap.sortValues();
+                dummy.put("widgetTotal", new Integer(sampleTotal));
             }
-            sortedMap = new SortableMap(adjustedResultsMap);
-            sortedMap.sortValues();
-            dummy.put("widgetTotal", new Integer(sampleTotal));
         } else {
             // no results
             dummy.put("widgetTotal", new Integer(0));
