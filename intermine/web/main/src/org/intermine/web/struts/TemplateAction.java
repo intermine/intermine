@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateManager;
@@ -42,6 +44,7 @@ import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.pathquery.PathConstraintSubclass;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
@@ -121,7 +124,13 @@ public class TemplateAction extends InterMineAction
         TemplateManager templateManager = im.getTemplateManager();
 
         TemplateQuery template = templateManager.getTemplate(profile, templateName, scope);
-
+        //If I' browsing from the history or from saved query the template is in the session
+        if (template == null) {
+            PathQuery query = SessionMethods.getQuery(session);
+            if (query instanceof TemplateQuery) {
+                template = (TemplateQuery) query;
+            }
+        }
         TemplateQuery populatedTemplate = TemplatePopulator.getPopulatedTemplate(
                 template, templateFormToTemplateValues(tf, template));
 
@@ -177,9 +186,6 @@ public class TemplateAction extends InterMineAction
             // Reload the initial template
             session.removeAttribute(Constants.NEW_TEMPLATE);
             session.setAttribute(Constants.EDITING_TEMPLATE, Boolean.TRUE);
-            template = templateManager.getTemplate(profile, templateName,
-                    Scope.ALL);
-
             if (template == null) {
                 recordMessage(new ActionMessage("errors.edittemplate.empty"),
                         request);
@@ -337,7 +343,14 @@ public class TemplateAction extends InterMineAction
         } else if (con instanceof PathConstraintNull) {
             return ((PathConstraintNull) con).getOp().toString();
         } else if (con instanceof PathConstraintMultiValue) {
-            return ((PathConstraintMultiValue) con).getOp().toString();
+            Collection<String> multiValuesCollection = ((PathConstraintMultiValue) con).getValues();
+            String multiValuesAsString = "";
+            if (multiValuesCollection != null) {
+                for (String value : multiValuesCollection) {
+                    multiValuesAsString += value + ",";
+                }
+            }
+            return multiValuesAsString;
         }
         return null;
     }
