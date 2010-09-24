@@ -23,14 +23,14 @@
 				href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
  ${item.key.name}
     </html:link>
-     
-     
+
+
      <td>
       <c:forEach items="${counts}" var="nr">
         <c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
           <c:set var="nrSubs" value="${nr.value}" />
         </c:if>
-      </c:forEach> 
+      </c:forEach>
       <c:choose>
         <c:when test="${nrSubs eq 0}">
         -
@@ -38,7 +38,7 @@
         <c:when test="${nrSubs gt 0}">
           <im:querylink text="${nrSubs}" skipBuilder="true">
             <query name="" model="genomic"
-              view="Project.labs.submissions.title Project.labs.submissions.design Project.labs.submissions.factorName Project.labs.submissions.factorType Project.labs.submissions.description"
+              view="Project.labs.submissions.title Project.labs.submissions.design Project.labs.submissions.description"
               sortOrder="Project.labs.submissions.title">
             <node path="Project" type="Project">
             </node>
@@ -51,9 +51,9 @@
           </im:querylink>
         </c:when>
       </c:choose>
-     
-     
-     
+
+
+
   </c:forEach>
 
 </table>
