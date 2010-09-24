@@ -25,10 +25,6 @@
       <reference name="gene" referenced-type="Gene" reverse-reference="flankingRegions"/>
     </class>
 
-    <class name="InsertionSite" is-interface="true">
-      <collection name="genes" referenced-type="Gene"/>
-    </class>
-
     <class name="IntergenicRegion" is-interface="true">
       <collection name="adjacentGenes" referenced-type="Gene"/>
 	 </class>
