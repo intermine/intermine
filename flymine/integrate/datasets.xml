@@ -228,7 +228,7 @@
     <item id="290" class="" implements="DataSource">
         <attribute name="name" value="GENE3D"/>
         <attribute name="description" value="Structural and Functional Annotation of Protein Families."/>
-        <attribute name="url" value="http://bsmmac1.biochem.ucl.ac.uk:8080/Gene3D/"/>
+        <attribute name="url" value="http://www.cathdb.info"/>
     </item>
 
     <item id="300" class="" implements="DataSource">
