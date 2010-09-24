@@ -67,9 +67,9 @@ public class TableController extends TilesAction
      * @exception Exception if an error occurs
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-            ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
-            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
+    public ActionForward execute(ComponentContext context,
+            ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
