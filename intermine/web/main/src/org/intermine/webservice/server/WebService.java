@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
@@ -323,7 +324,7 @@ public abstract class WebService
      */
     public int getFormat() {
         String format = request.getParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
-        if (format == null || format.equals("")) {
+        if (StringUtils.isEmpty(format)) {
             return TSV_FORMAT;
         }
         if (WebServiceRequestParser.FORMAT_PARAMETER_XML
