@@ -141,7 +141,7 @@ public class TreefamConverter extends BioFileConverter
         throws IOException, ObjectStoreException, SAXException {
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
-            String bits[] = lineIter.next();
+            String[] bits = lineIter.next();
             if (bits.length < 9) {
                 throw new IllegalArgumentException("bad data file, couldn't process:" + bits);
             }
@@ -185,9 +185,9 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private Item getGene(String identifierType, String id, String taxonId)
-        throws ObjectStoreException, SAXException {
+        throws ObjectStoreException {
         String identifier = id;
-        if (taxonId.equals("7227")) {
+        if ("7227".equals(taxonId)) {
             identifier = resolveGene(identifier);
             if (identifier == null) {
                 return null;
@@ -232,7 +232,7 @@ public class TreefamConverter extends BioFileConverter
         }
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
-            String bits[] = lineIter.next();
+            String[] bits = lineIter.next();
             if (bits.length < 4) {
                 continue;
             }
@@ -253,7 +253,7 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
-        throws ObjectStoreException, SAXException {
+        throws ObjectStoreException {
 
         String gene1 = holder1.getGeneRefId();
         String gene2 = holder2.getGeneRefId();
@@ -275,7 +275,7 @@ public class TreefamConverter extends BioFileConverter
 
     // now that we know this gene is a homologue, store
     private void storeHomologueGene(GeneHolder holder)
-        throws ObjectStoreException, SAXException {
+        throws ObjectStoreException {
         Item gene = holder.getGene();
         if (gene == null) {
             return;
@@ -381,7 +381,7 @@ public class TreefamConverter extends BioFileConverter
     private String setIdentifier(String ident, String sym, String col) {
         String identifier = ident;
         String symbol = sym;
-        if (col.equals("symbol")) {
+        if ("symbol".equals(col)) {
             if (symbol.contains("_")) {
                 // to handle this case:  WBGene00022038_F2
                 symbol = symbol.split("_")[0];
