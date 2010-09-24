@@ -19,15 +19,118 @@ div#submissionProtocols h3 {
 }
 </style>
 
-
 <div class="body">
+
+<%--========== --%>
+
+<script type="text/javascript" charset="utf-8">
+    jQuery(document).ready(function () {
+        jQuery("#sis").click(function () {
+           if(jQuery("#protocols").is(":hidden")) {
+             jQuery("#co").attr("src", "images/disclosed.gif");
+           } else {
+             jQuery("#co").attr("src", "images/undisclosed.gif");
+           }
+           jQuery("#protocols").toggle("slow");
+        });
+    })
+</script>
+
+<html:link linkName="#" styleId="sis" style="cursor:pointer">
+
+<h3>Protocols used for this submission (click to toggle)<img src="images/undisclosed.gif" id="co"></h3>
+</html:link>
+  <div id="protocols" style="display: block">
+    <p>
+
+<script type="text/javascript" charset="utf-8">
+
+jQuery(document).ready(function () {
+ jQuery(".tbox").children('apri').show();
+ jQuery(".tbox").children('chiudi').hide();
+
+	jQuery('.tbox').click(function () {
+	var text = jQuery(this).children('chiudi');
+
+	if (text.is(':hidden')) {
+	     jQuery(this).children('chiudi').show("slow");
+	   } else {
+	       jQuery(this).children('apri').show("slow");
+	    }
+	 });
+
+  jQuery("apri").click(function(){
+     jQuery(this).toggle("slow");
+     return true;
+    });
+
+  jQuery("chiudi").click(function(){
+      jQuery(this).toggle("slow");
+        return true;
+    });
+
+
+	});
+
+</script>
+
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0" class="results">
+<tr><th>Type</th><th>Protocol</th><th>Wiki</th><th width="50%" >Description</th></tr>
+    <c:forEach items="${protocols}" var="prot" varStatus="p_status">
+       <c:set var="pRowClass">
+        <c:choose>
+          <c:when test="${p_status.count % 2 == 1}">odd</c:when>
+          <c:otherwise>even</c:otherwise>
+        </c:choose>
+      </c:set>
+
+<tr class="<c:out value="${pRowClass}"/>">
+
+
+    <td>${prot.type}</td>
+    <td><html:link
+    href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prot.id}">
+    ${prot.name}
+    </html:link></td>
+    <td>
+    <a href="${prot.wikiLink}" class="value extlink"> </td>
+
+
+    <td class="description">
+<div class="tbox">
+    <apri><img src="images/undisclosed.gif">
+<ii>
+    ${fn:substring(prot.description,0,80)}...
+
+    </ii>
+    </apri>
+
+    <chiudi><img src="images/disclosed.gif">
+     <i>
+    ${prot.description}
+    </i>
+    </chiudi>
+</div>
+    </td>
+
+    </tr>
+    </c:forEach>
+</table>
+
+</div>
+
+<p></p>
+
+
+<%---========= --%>
 
 <table cellspacing="0" width="100%">
 <tr>
   <TD colspan=2 align="left" style="padding-bottom:10px">
 <script type="text/javascript" charset="utf-8">
     jQuery(document).ready(function () {
-        jQuery("#bro").click(function () { 
+        jQuery("#bro").click(function () {
            if(jQuery("#submissionProtocols").is(":hidden")) {
              jQuery("#oc").attr("src", "images/disclosed.gif");
            } else {
@@ -36,13 +139,13 @@ div#submissionProtocols h3 {
            jQuery("#submissionProtocols").toggle("slow");
         });
     })
-</script> 
+</script>
 
 
 <c:choose>
 <c:when test="${fn:length(pagedResults.rows) > 1}">
 
-<html:link linkName="#" styleId="bro" style="cursor:pointer"> 
+<html:link linkName="#" styleId="bro" style="cursor:pointer">
 
 <h3>Browse metadata for this submission (click to toggle)<img src="images/undisclosed.gif" id="oc"></h3>
 </html:link>
@@ -50,8 +153,8 @@ div#submissionProtocols h3 {
   <div id="submissionProtocols" style="display: block">
     <p>
     <table cellpadding="0" cellspacing="0" border="0" class="results">
-      
-      <tr>
+
+      <tr class="<c:out value="${stepClass}${rowClass}"/>">
         <th>Step</th>
         <th colspan="2">Inputs</th>
         <th>Applied Protocol</th>
@@ -74,8 +177,8 @@ div#submissionProtocols h3 {
        <tr class="<c:out value="${rowClass}"/>">
 --%>
 
-        <im:instanceof instanceofObject="${subRow[0]}" 
-          instanceofClass="org.intermine.api.results.flatouterjoins.MultiRowFirstValue" 
+        <im:instanceof instanceofObject="${subRow[0]}"
+          instanceofClass="org.intermine.api.results.flatouterjoins.MultiRowFirstValue"
           instanceofVariable="isFirstValue"/>
         <c:if test="${isFirstValue == 'true'}">
          <c:set var="step" value="${subRow[0].value.field}" scope="request"/>
@@ -111,11 +214,11 @@ div#submissionProtocols h3 {
                   </c:otherwise>
                  </c:choose>
                 </c:when>
-            
+
               <c:when test="${column.index == 1  || column.index == 5}">
-            
+
                 <c:if test="${fn:startsWith(resultElement.field,'Anonymous Datum')}">
-                  
+
                   <td colspan="2" rowspan="${subRow[column.index].rowspan}" >
                     <c:choose>
                       <c:when test="${column.index == 1}">
@@ -125,25 +228,25 @@ div#submissionProtocols h3 {
 --%>
                       </c:when>
                       <c:otherwise>
-                        <i><c:out value="--> next Step"/></i>                     
+                        <i><c:out value="--> next Step"/></i>
                       </c:otherwise>
                     </c:choose>
                   </td>
                   <c:set var="output" value="false"/>
-                </c:if>            
+                </c:if>
 
                 <c:if test="${fn:length(fn:substringBefore(resultElement.field,'File')) gt 0}">
                   <c:set var="output" value="true"/>
                   <c:set var="isFile" value="true" />
-  							</c:if>            
+  							</c:if>
 
               </c:when>
               <c:otherwise>
-              
+
                 <c:if test="${column.index == 4}">
                   <c:set var="output" value="true"/>
-                </c:if>     
-                                   
+                </c:if>
+
                 <c:if test="${output}">
 														<td
 															id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
@@ -156,7 +259,7 @@ div#submissionProtocols h3 {
 																}">
 																<a href="${resultElement.field}" class="value extlink">
 																<c:set var="elements"
-																	value="${fn:split(resultElement.field,'/')}" /> 
+																	value="${fn:split(resultElement.field,'/')}" />
 																	<c:out
 																	value="${elements[fn:length(elements) - 1]}" /> </a>
 															</c:when>
@@ -164,18 +267,17 @@ div#submissionProtocols h3 {
 															<c:when test="${isFile}">
 																<c:out value="${resultElement.field}" /></td>
 														<c:set var="isFile" value="false" />
-                            <c:set var="doLink" value="true" />														
+                            <c:set var="doLink" value="true" />
 														</c:when>
-														
+
                               <c:when test="${doLink}">
                                 <a href="${WEB_PROPERTIES['ftp.prefix']}/${DCCid}/extracted/${resultElement.field}" class="value extlink">
                                 <c:out value="${resultElement.field}" /> </a></td>
                             <c:set var="doLink" value="false" />
-
                             </c:when>
-                    
-                    
-                    
+
+
+
                     <c:otherwise>
                       <tiles:insert name="objectView.tile" />
                   </c:otherwise>
@@ -203,6 +305,7 @@ div#submissionProtocols h3 {
 </c:when>
 <c:otherwise>
 
+<%-- too many rows: just do a normal query --%>
 <im:querylink
 text="<h3>Browse metadata for this submission (click to view)</h3>"  skipBuilder="true">
 <%--<im:querylink text="${nrSubs} submissions " skipBuilder="true">--%>
@@ -223,4 +326,5 @@ text="<h3>Browse metadata for this submission (click to view)</h3>"  skipBuilder
 </c:otherwise>
 </c:choose>
 </div>
+
 

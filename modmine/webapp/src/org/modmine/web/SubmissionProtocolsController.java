@@ -10,7 +10,9 @@ package org.modmine.web;
  *
  */
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +29,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.Protocol;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -79,8 +82,9 @@ public class SubmissionProtocolsController extends TilesAction
         q.addView("Submission.appliedProtocols.outputs.value");
 
         q.addConstraint(Constraints.eq("Submission.id", o.getId().toString()));
-        // rm the outer join for i/o: check if ok. in case revert and add
+        // rm the outer join for i/o: check if ok. if not add
         // q.setOuterJoinStatus("Submission.appliedProtocols.inputs", OuterJoinStatus.OUTER);
+        // q.setOuterJoinStatus("Submission.appliedProtocols.outputs", OuterJoinStatus.OUTER);
         q.addOrderBy("Submission.appliedProtocols.step", OrderDirection.ASC);
 
         Profile profile = SessionMethods.getProfile(session);
@@ -88,7 +92,6 @@ public class SubmissionProtocolsController extends TilesAction
         WebResults results = executor.execute(q);
 
         if (results.size() > 2000) {
-//             LOG.info("DAG SUBMISSION id: " + o.getId());
             request.setAttribute("subId", o.getId());
             return null;
         }
@@ -112,12 +115,17 @@ public class SubmissionProtocolsController extends TilesAction
         Results result = os.executeSingleton(q1);
 
         Integer dccId = 0;
+        Set<Protocol> pt = new HashSet<Protocol>();
+
         Iterator i = result.iterator();
         while (i.hasNext()) {
             Submission sub = (Submission) i.next();
             dccId = sub.getdCCid();
+            pt = sub.getProtocols();            
         }
         request.setAttribute("DCCid", dccId);
+        request.setAttribute("protocols", pt);
+
         return null;
     }
 }
