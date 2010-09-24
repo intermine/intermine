@@ -46,10 +46,10 @@ dateStyle="short"
  ${item.value.title}
     </html:link>
     </td>
-    
+
     <td><fmt:formatDate value="${item.value.publicReleaseDate}" type="date" pattern="yyyy-MM-dd"/>
     </td>
-    
+
       </tr>
     </c:if>
   </c:forEach>
@@ -61,10 +61,10 @@ dateStyle="short"
 
 <table cellspacing="4"><tr>
 
-<td>		
+<td>
 <im:querylink text="Fly" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
-    view="Submission.title Submission.DCCid Submission.design Submission.factorName Submission.publicReleaseDate"
+    view="Submission.title Submission.DCCid Submission.design Submission.publicReleaseDate"
     sortOrder="Submission.title">
   <node path="Submission" type="Submission">
   </node>
@@ -80,7 +80,7 @@ dateStyle="short"
 <td>
 <im:querylink text="Worm" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
-    view="Submission.title Submission.DCCid Submission.design Submission.factorName Submission.publicReleaseDate"
+    view="Submission.title Submission.DCCid Submission.design Submission.publicReleaseDate"
     sortOrder="Submission.title">
   <node path="Submission" type="Submission">
   </node>
@@ -102,7 +102,7 @@ dateStyle="short"
 <br>
 </td>
 	</tr></table>
- 
+
 
 
 

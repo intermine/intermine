@@ -180,7 +180,7 @@ href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=resul
 <td>
 <im:querylink text="Fly" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
-    view="Submission.title Submission.DCCid Submission.design Submission.factorName Submission.publicReleaseDate"
+    view="Submission.title Submission.DCCid Submission.design Submission.publicReleaseDate"
     sortOrder="Submission.title">
   <node path="Submission" type="Submission">
   </node>
@@ -196,7 +196,7 @@ href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=resul
 <td>
 <im:querylink text="Worm" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
-    view="Submission.title Submission.DCCid Submission.design Submission.factorName Submission.publicReleaseDate"
+    view="Submission.title Submission.DCCid Submission.design Submission.publicReleaseDate"
     sortOrder="Submission.title">
   <node path="Submission" type="Submission">
   </node>
@@ -212,7 +212,7 @@ href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=resul
 <td>
 <im:querylink text="All submissions" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
-    view="Submission.title Submission.DCCid Submission.design Submission.factorName Submission.publicReleaseDate"
+    view="Submission.title Submission.DCCid Submission.design Submission.publicReleaseDate"
     sortOrder="Submission.title">
   <node path="Submission" type="Submission">
   </node>

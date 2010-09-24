@@ -182,7 +182,7 @@
       </query>
     </template>
     <template name="datatype_subDetails" title="Data type -&amp;gt; Submission details" longDescription="Retrieve submissions with a certain data type and display details" comment="">
-      <query name="datatype_subDetails" model="genomic" view="Submission.title Submission.design Submission.factorName Submission.factorType Submission.submissionData.name Submission.submissionData.type Submission.submissionData.value" sortOrder="Submission.title asc">
+      <query name="datatype_subDetails" model="genomic" view="Submission.title Submission.design Submission.submissionData.name Submission.submissionData.type Submission.submissionData.value" sortOrder="Submission.title asc">
         <node path="Submission" type="Submission">
         </node>
         <node path="Submission.submissionData" type="SubmissionData">
@@ -194,7 +194,7 @@
       </query>
     </template>
     <template name="datatype_subs" title="Data type -&amp;gt; Submissions" longDescription="Retrieve all submissions with a certain data type" comment="">
-      <query name="datatype_subs" model="genomic" view="Submission.title Submission.design Submission.factorName Submission.factorType" sortOrder="Submission.title asc">
+      <query name="datatype_subs" model="genomic" view="Submission.title Submission.design" sortOrder="Submission.title asc">
         <node path="Submission" type="Submission">
         </node>
         <node path="Submission.submissionData" type="SubmissionData">
@@ -216,7 +216,7 @@
       </query>
     </template>
     <template name="feature_sub" title="Feature -&gt; Submissions" longDescription="All the submissions related to a certain feature" comment="the feature is identified via its secondary identifier">
-      <query name="feature_sub" model="genomic" view="Submission.title Submission.design Submission.factorName Submission.factorType Submission.submissionData.features.secondaryIdentifier Submission.submissionData.features.primaryIdentifier" sortOrder="Submission.title asc">
+      <query name="feature_sub" model="genomic" view="Submission.title Submission.design Submission.submissionData.features.secondaryIdentifier Submission.submissionData.features.primaryIdentifier" sortOrder="Submission.title asc">
         <node path="Submission" type="Submission">
         </node>
         <node path="Submission.submissionData" type="SubmissionData">
@@ -230,7 +230,7 @@
       </query>
     </template>
     <template name="feature_sub_1" title="Feature -&gt; Submissions" longDescription="All the submissions related to a certain feature" comment="the feature is identified via its secondary identifier">
-      <query name="feature_sub_1" model="genomic" view="Submission.title Submission.design Submission.factorName Submission.factorType Submission.submissionData.features.secondaryIdentifier Submission.submissionData.features.primaryIdentifier" sortOrder="Submission.title asc">
+      <query name="feature_sub_1" model="genomic" view="Submission.title Submission.design Submission.submissionData.features.secondaryIdentifier Submission.submissionData.features.primaryIdentifier" sortOrder="Submission.title asc">
         <node path="Submission" type="Submission">
         </node>
         <node path="Submission.submissionData" type="SubmissionData">
@@ -920,7 +920,7 @@
       </query>
     </template>
     <template name="lab_sub" title="Lab --&amp;gt; Submissions" longDescription="All the submissions for a given Lab" comment="">
-      <query name="lab_sub" model="genomic" view="Submission.title Submission.design Submission.factorName Submission.factorType" sortOrder="Submission.title asc">
+      <query name="lab_sub" model="genomic" view="Submission.title Submission.design" sortOrder="Submission.title asc">
         <node path="Submission" type="Submission">
         </node>
         <node path="Submission.lab" type="Lab">
@@ -1288,7 +1288,7 @@
       </query>
     </template>
     <template name="project_sub" title="Project --&amp;gt; Submissions" longDescription="All submissions for a given project." comment="">
-      <query name="project_sub" model="genomic" view="Submission.title Submission.design Submission.factorName Submission.factorType" sortOrder="Submission.title asc">
+      <query name="project_sub" model="genomic" view="Submission.title Submission.design" sortOrder="Submission.title asc">
         <node path="Submission" type="Submission">
         </node>
         <node path="Submission.lab" type="Lab">
@@ -1386,7 +1386,7 @@
       </query>
     </template>
     <template name="protocoltype_exp" title="Protocol type --&gt; Submissions" longDescription="All submissions with a given protocol type" comment="">
-      <query name="protocoltype_exp" model="genomic" view="Protocol.type Protocol.submissions.title Protocol.submissions.design Protocol.submissions.factorName Protocol.submissions.factorType" sortOrder="Protocol.type asc">
+      <query name="protocoltype_exp" model="genomic" view="Protocol.type Protocol.submissions.title Protocol.submissions.design" sortOrder="Protocol.type asc">
         <node path="Protocol" type="Protocol">
         </node>
         <node path="Protocol.type" type="String">
