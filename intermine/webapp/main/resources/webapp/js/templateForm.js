@@ -59,7 +59,7 @@ function updateAttributeValues(index) {
 	var attributeValues = document.templateForm['attributeValues('+index+')'];
 	var selectedString = '';
 	var attributeOptions = document.templateForm['attributeOptions('+index+')'];
-	if (attributeOptions != "undefined") {
+	if (attributeOptions != undefined) {
 		var i;
 		var count = 0;
 		for (i = 0; i < attributeOptions.options.length; i++) {
