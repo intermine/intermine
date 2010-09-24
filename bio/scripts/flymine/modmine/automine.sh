@@ -30,7 +30,7 @@ FTPURL=http://submit.modencode.org/submit/public
 SUBDIR=/shared/data/modmine/subs
 REPORTS=$SUBDIR/reports
 PROPDIR=$HOME/.intermine
-SCRIPTDIR=../flymine-private/scripts/modmine/
+SCRIPTDIR=../bio/scripts/flymine/modmine/
 
 
 RECIPIENTS=contrino@flymine.org,rns@flymine.org
