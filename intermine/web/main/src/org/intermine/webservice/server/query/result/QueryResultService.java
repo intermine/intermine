@@ -90,7 +90,7 @@ public class QueryResultService extends WebService
             WebServiceInput input, String mineLink, String layout) {
         List<String> columnNames = new ArrayList<String>();
         for (String viewString : pathQuery.getView()) {
-            columnNames.add(pathQuery.getDescription(viewString));
+            columnNames.add(pathQuery.getGeneratedPathDescription(viewString));
         }
         if (getFormat() == WebService.HTML_FORMAT) {
             MemoryOutput mout = (MemoryOutput) output;
