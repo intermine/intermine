@@ -79,9 +79,16 @@
                 </c:if></div></td>
               </tr>
             </table>
+            <c:set var="valignExternalTd" value="top"/>
+            <c:set var="rowspanExternalTd" value="1"/>
+            <%--if the bag constraint is displayed the helpLink and the optional sections have different valign and rowspan --%> 
+            <c:if test="${!empty dec.bags && !dec.nullSelected}">
+              <c:set var="valignExternalTd" value="middle"/>
+              <c:set var="rowspanExternalTd" value="2"/>
+            </c:if>
               <table cellspacing="4">
               <tr>
-              <td class="templateConstraintOptional" rowspan="0">
+              <td class="templateConstraintOptional" rowspan="${rowspanExternalTd}" valign="${valignExternalTd}">
                 <div>
                   <c:if test="${!dec.locked}">
                     <c:set var="clickToEnable" value="javascript:enableConstraint(${index});"/>
@@ -240,7 +247,7 @@
         </td>
         
         <%-- help link --%>
-        <td rowspan="0">
+        <td rowspan="${rowspanExternalTd}" valign="${valignExternalTd}">
           <c:if test="${!empty dec.helpMessage}">
             <span class="templateConstraintHelp"><im:helplink text="${dec.helpMessage}"/></span>
           </c:if>
