@@ -58,14 +58,14 @@ span.templateResCount {
 /* =DIV */
 div.templateIcon {
   float: left; padding-top: 2px;}
-  
+
 div.resultsPage {
   clear:both; padding-top: 10px;
 }
 
 
 
-	
+
 /* =TABLE £TABLE,£BAGDETAILS*/
 table.results {
   clear:left;
@@ -80,7 +80,14 @@ table.results th {
 }
 table.results td {
   white-space:nowrap;
-  padding: 4px; 
+  padding: 4px;
+  border-right:1px solid #FFF;
+  border-bottom:1px solid #FFF;
+}
+
+table.results tr td.description {
+  white-space:normal;
+  padding: 4px;
   border-right:1px solid #FFF;
   border-bottom:1px solid #FFF;
 }
