@@ -170,19 +170,19 @@
     <item id="170" class="" implements="DataSource">
         <attribute name="name" value="PRINTS"/>
         <attribute name="description" value="A compendium of protein fingerprints."/>
-        <attribute name="url" value="http://umber.sbs.man.ac.uk/dbbrowser/PRINTS/PRINTS.html"/>
+        <attribute name="url" value="http://www.bioinf.manchester.ac.uk/dbbrowser/PRINTS/"/>
     </item>
 
     <item id="180" class="" implements="DataSource">
         <attribute name="name" value="PRODOM"/>
         <attribute name="description" value="ProDom is a comprehensive set of protein domain families automatically generated from the SWISS-PROT and TrEMBL sequence databases"/>
-        <attribute name="url" value="http://protein.toulouse.inra.fr/prodom/current/html/home.php"/>
+        <attribute name="url" value="http://prodom.prabi.fr/"/>
     </item>
 
     <item id="190" class="" implements="DataSource">
         <attribute name="name" value="PANTHER"/>
         <attribute name="description" value="The PANTHER (Protein ANalysis THrough Evolutionary Relationships) Classification System was designed to classify proteins (and their genes) in order to facilitate high-throughput analysis. Proteins have been classified according to families and subfamilies, molecular functions, biological processes, pathways."/>
-        <attribute name="url" value="http://www.appliedbiosystems.com/"/>
+        <attribute name="url" value="http://www.pantherdb.org/"/>
     </item>
 
     <item id="210" class="" implements="DataSource">
@@ -432,9 +432,6 @@
         <reference name="dataSource" ref_id="610"/>
     </item>
 
-
-
-
     <item id="630" class="" implements="DataSource">
         <attribute name="name" value="BioGRID"/>
         <attribute name="description" value="General repository for interaction datasets"/>
@@ -445,7 +442,6 @@
         <attribute name="url" value="http://www.thebiogrid.org/downloads.php"/>
         <reference name="dataSource" ref_id="630"/>
     </item>
-
 
     <item id="640" class="" implements="DataSource">
         <attribute name="name" value="NCBI"/>
