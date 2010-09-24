@@ -55,7 +55,7 @@ public class TemplateResultService extends QueryResultService
     public static final String NAME_PARAMETER = "name";
 
     private static final Logger LOG = Logger.getLogger(TemplateResultService.class);
-    
+
     /**
      * Construct with an InterMineAPI.
      * @param im the InterMine API
@@ -90,9 +90,9 @@ public class TemplateResultService extends QueryResultService
             populatedTemplate =
                 TemplatePopulator.getPopulatedTemplate(template, templateValues);
         } catch (TemplatePopulatorException e) {
-        	e.printStackTrace();
+            e.printStackTrace();
             LOG.error("Error populating template: " + template.getName() + ". " + e);
-        	throw new BadRequestException("Error in applying constraint values to template: "
+            throw new BadRequestException("Error in applying constraint values to template: "
                     + template.getName(), e);
         }
         if (populatedTemplate.isValid()) {
@@ -209,12 +209,12 @@ public class TemplateResultService extends QueryResultService
         return value;
     }
 
-    private TemplateValue createDummyTemplateValue(PathConstraint con) {
-        TemplateValue value;
-        value = new TemplateValue(con, con.getOp(), "dummy",
-                TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.OFF);
-        return value;
-    }
+//    private TemplateValue createDummyTemplateValue(PathConstraint con) {
+//        TemplateValue value;
+//        value = new TemplateValue(con, con.getOp(), "dummy",
+//                TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.OFF);
+//        return value;
+//    }
 
     private TemplateResultInput getInput() {
         return new TemplateResultRequestParser(request).getInput();

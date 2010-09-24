@@ -12,14 +12,13 @@ package org.intermine.web.tags.table;
 
 import java.io.IOException;
 import java.util.List;
-
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 
 /**
  * Class rendering html table.
+ *
  * @author Jakub Kulaviak
  **/
 public class TableTag extends SimpleTagSupport
@@ -52,7 +51,7 @@ public class TableTag extends SimpleTagSupport
     /**
      * {@inheritDoc}
      */
-    public void doTag() throws JspException, IOException {
+    public void doTag() throws IOException {
         JspWriter writer = getJspContext().getOut();
         StringBuilder sb = new StringBuilder();
         sb.append("<table border=\"1px\" style=\"border-collapse:collapse;\" "
