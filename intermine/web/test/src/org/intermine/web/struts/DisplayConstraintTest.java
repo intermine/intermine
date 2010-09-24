@@ -1,11 +1,19 @@
 package org.intermine.web.struts;
 
+/*
+ * Copyright (C) 2002-2010 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -56,31 +64,36 @@ import org.intermine.web.logic.session.SessionMethods;
 
 import servletunit.struts.MockStrutsTestCase;
 
-public class DisplayConstraintTest extends MockStrutsTestCase {
+public class DisplayConstraintTest extends MockStrutsTestCase
+{
     private ProfileManager pm;
     private ObjectStore os;
-    private InterMineAPI im;
     private ObjectStoreWriter uosw;
     private Profile superUser, testUser, emptyUser;
-    private DisplayConstraint dcAttribute, dcNull, dcBag, dcLookup, dcSubclass, dcLoop, dcNullPathConstraint, dcAttribute2, dcInTemplate;
+    private DisplayConstraint dcAttribute, dcNull, dcBag, dcLookup, dcSubclass,
+    dcLoop, dcNullPathConstraint, dcAttribute2, dcInTemplate;
     private InterMineBag firstEmployeeBag, secondEmployeeBag;
     private HttpSession session;
     ServletContext context;
 
-    public void setUp() throws Exception {
+    public void setUp() throws Exception
+    {
         super.setUp();
         os = ObjectStoreFactory.getObjectStore("os.unittest");
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
 
         pm = new ProfileManager(os, uosw);
-        superUser = new Profile(pm, "superUser", null, "password", new HashMap(), new HashMap(), new HashMap());
+        superUser = new Profile(pm, "superUser", null, "password",
+            new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(superUser);
         pm.setSuperuser("super");
 
-        testUser = new Profile(pm, "testUser", null, "password", new HashMap(), new HashMap(), new HashMap());
+        testUser = new Profile(pm, "testUser", null, "password",
+            new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(testUser);
 
-        emptyUser = new Profile(pm, "emptyUser", null, "password", new HashMap(), new HashMap(), new HashMap());
+        emptyUser = new Profile(pm, "emptyUser", null, "password",
+            new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(emptyUser);
 
         initializeDisplayConstraints();
@@ -96,24 +109,20 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
 
         Properties classKeyProps = new Properties();
         try {
-            classKeyProps.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
-        } catch(IOException ioe) {
+            classKeyProps.load(getClass().getClassLoader()
+                .getResourceAsStream("class_keys.properties"));
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        Map<String, List<FieldDescriptor>> classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
 
         InputStream is = getClass().getClassLoader().getResourceAsStream("bag-queries.xml");
-        BagQueryConfig bagQueryConfig = null;
-        try {
-            bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
 
         Properties ossProps = new Properties();
         ossProps.put("org.intermine.model.testmodel.Department.classCount", "3");
-        ossProps.put("org.intermine.model.testmodel.Department.name.fieldValues", "DepartmentA1$_^DepartmentB1$_^DepartmentB2");
-        ossProps.put("org.intermine.model.testmodel.Department.id.fieldValues", "12000014$_^12000016$_^12000017");
+        ossProps.put("org.intermine.model.testmodel.Department.name.fieldValues",
+            "DepartmentA1$_^DepartmentB1$_^DepartmentB2");
+        ossProps.put("org.intermine.model.testmodel.Department.id.fieldValues",
+            "12000014$_^12000016$_^12000017");
         ossProps.put("org.intermine.model.testmodel.Department.nullFields", "rejectedEmployee");
         ObjectStoreSummary oss = new ObjectStoreSummary(ossProps);
 
@@ -126,25 +135,34 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
         TemplateQuery template = new TemplateQuery("MyFirstTemplate", "FirstTemplate", "", query);
 
         try {
-            PathConstraint pathConstraintAttribute = new PathConstraintAttribute("Department.id", ConstraintOp.EQUALS, "11000014");
+            PathConstraint pathConstraintAttribute =
+                new PathConstraintAttribute("Department.id", ConstraintOp.EQUALS, "11000014");
             dcAttribute = dcf.get(pathConstraintAttribute, superUser, query);
-            PathConstraint pathConstraintNull = new PathConstraintNull("Employee.id", ConstraintOp.IS_NOT_NULL);
+            PathConstraint pathConstraintNull =
+                new PathConstraintNull("Employee.id", ConstraintOp.IS_NOT_NULL);
             dcNull = dcf.get(pathConstraintNull, superUser, query);
-            PathConstraint pathConstraintBag = new PathConstraintBag("Employee", ConstraintOp.IN, "MySecondEmployeeList");
+            PathConstraint pathConstraintBag =
+                new PathConstraintBag("Employee", ConstraintOp.IN, "MySecondEmployeeList");
             dcBag = dcf.get(pathConstraintBag, superUser, query);
-            PathConstraint pathConstraintLookup = new PathConstraintLookup("Employee", "Employee", "EmployeeA1");
+            PathConstraint pathConstraintLookup =
+                new PathConstraintLookup("Employee", "Employee", "EmployeeA1");
             dcLookup = dcf.get(pathConstraintLookup, superUser, query);
-            PathConstraint pathConstraintSubclass = new PathConstraintSubclass("Department.employees", "Manager");
+            PathConstraint pathConstraintSubclass =
+                new PathConstraintSubclass("Department.employees", "Manager");
             dcSubclass = dcf.get(pathConstraintSubclass, superUser, query);
-            PathConstraint pathConstraintLoop = new PathConstraintLoop("Company.contractors.oldComs", ConstraintOp.EQUALS, "Company");
+            PathConstraint pathConstraintLoop =
+                new PathConstraintLoop("Company.contractors.oldComs",
+                                       ConstraintOp.EQUALS, "Company");
             dcLoop = dcf.get(pathConstraintLoop, superUser, query);
             Path path = new Path(model, "Employee.id");
             dcNullPathConstraint = dcf.get(path, superUser, query);
-            PathConstraint pathConstraintAttribute2 = new PathConstraintAttribute("Employee.id", ConstraintOp.EQUALS, "11000014");
+            PathConstraint pathConstraintAttribute2 =
+                new PathConstraintAttribute("Employee.id", ConstraintOp.EQUALS, "11000014");
             dcAttribute2 = dcf.get(pathConstraintAttribute2, superUser, query);
 
             //template
-            PathConstraint pathConstraintInTemplate = new PathConstraintAttribute("Employee.id", ConstraintOp.EQUALS, "11000014");
+            PathConstraint pathConstraintInTemplate =
+                new PathConstraintAttribute("Employee.id", ConstraintOp.EQUALS, "11000014");
             template.addConstraint(pathConstraintInTemplate, "A");
             template.setEditable(pathConstraintInTemplate, true);
             template.setSwitchOffAbility(pathConstraintInTemplate, SwitchOffAbility.ON);
@@ -170,7 +188,8 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
         q.addFrom(qc);
         q.addToSelect(qc);
         QueryField qf = new QueryField(qc, "username");
-        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(username));
+        SimpleConstraint sc =
+            new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(username));
         q.setConstraint(sc);
         SingletonResults res = uosw.getObjectStore().executeSingleton(q);
         Iterator resIter = res.iterator();
@@ -238,7 +257,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
 
     /**
      * Return the last class in the path and fieldname as the title for the constraint.
-     * @return the title of this constraint
      */
     public void testGetTitle() {
         assertEquals("Department id", dcAttribute.getTitle());
@@ -248,7 +266,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
 
     /**
      * Return the label associated with a constraint if editing a template query constraint.
-     * @return the constraint label
      */
     public void testGetDescription() {
         assertNull(dcAttribute.getDescription());
@@ -259,7 +276,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
      * Return a help message to display alongside the constraint, this will examine the constraint
      * type and generate and appropriate message, e.g. list the key fields for LOOKUP constraints
      * and explain the use of wildcards.  Returns null when there is no appropriate help.
-     * @return the help message or null
      */
     public void testGetHelpMessage() {
         assertNotNull(dcAttribute.getHelpMessage());
@@ -271,29 +287,33 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
      * If the bag is selected, return the value setted with the method setSelectedBagOp
      * If editing an existing constraint return the operation used.
      * Otherwise return null.
-     * @return the selected constraint op or null
      */
     public void testGetSelectedOp() {
         DisplayConstraintOption dco = null;
-        dco = dcAttribute.new DisplayConstraintOption(ConstraintOp.EQUALS.toString(), ConstraintOp.EQUALS.getIndex());
+        dco = dcAttribute.new DisplayConstraintOption(ConstraintOp.EQUALS.toString(),
+                ConstraintOp.EQUALS.getIndex());
         assertEquals(dco.getLabel(), dcAttribute.getSelectedOp().getLabel());
         assertEquals(dco.getProperty(), dcAttribute.getSelectedOp().getProperty());
 
-        dco = dcNull.new DisplayConstraintOption(ConstraintOp.IS_NOT_NULL.toString(), ConstraintOp.IS_NOT_NULL.getIndex());
+        dco = dcNull.new DisplayConstraintOption(ConstraintOp.IS_NOT_NULL.toString(),
+                ConstraintOp.IS_NOT_NULL.getIndex());
         assertEquals(dco.getLabel(), dcNull.getSelectedOp().getLabel());
         assertEquals(dco.getProperty(), dcNull.getSelectedOp().getProperty());
 
-        dco = dcBag.new DisplayConstraintOption(ConstraintOp.IN.toString(), ConstraintOp.IN.getIndex());
+        dco = dcBag.new DisplayConstraintOption(ConstraintOp.IN.toString(),
+                ConstraintOp.IN.getIndex());
         assertEquals(dco.getLabel(), dcBag.getSelectedOp().getLabel());
         assertEquals(dco.getProperty(), dcBag.getSelectedOp().getProperty());
 
-        dco = dcLookup.new DisplayConstraintOption(ConstraintOp.LOOKUP.toString(), ConstraintOp.LOOKUP.getIndex());
+        dco = dcLookup.new DisplayConstraintOption(ConstraintOp.LOOKUP.toString(),
+                ConstraintOp.LOOKUP.getIndex());
         assertEquals(dco.getLabel(), dcLookup.getSelectedOp().getLabel());
         assertEquals(dco.getProperty(), dcLookup.getSelectedOp().getProperty());
 
         assertNull(dcSubclass.getSelectedOp());
 
-        dco = dcLoop.new DisplayConstraintOption(ConstraintOp.EQUALS.toString(), ConstraintOp.EQUALS.getIndex());
+        dco = dcLoop.new DisplayConstraintOption(ConstraintOp.EQUALS.toString(),
+                ConstraintOp.EQUALS.getIndex());
         assertEquals(dco.getLabel(), dcLoop.getSelectedOp().getLabel());
         assertEquals(dco.getProperty(), dcLoop.getSelectedOp().getProperty());
 
@@ -301,7 +321,8 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
 
         dcAttribute2.setBagSelected(true);
         dcAttribute2.setSelectedBagOp(ConstraintOp.IN);
-        dco = dcAttribute2.new DisplayConstraintOption(ConstraintOp.IN.toString(), ConstraintOp.IN.getIndex());
+        dco = dcAttribute2.new DisplayConstraintOption(ConstraintOp.IN.toString(),
+                ConstraintOp.IN.getIndex());
         assertEquals(dco.getLabel(), dcAttribute2.getSelectedOp().getLabel());
         assertEquals(dco.getProperty(), dcAttribute2.getSelectedOp().getProperty());
     }
@@ -309,7 +330,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
     /**
      * If editing an existing LOOKUP constraint return the value selected for the extra constraint
      * field.  Otherwise return null
-     * @return the LOOKUP constraint extra value or null
      */
     public void testGetSelectedExtraValue() {
         assertNull(dcAttribute.getSelectedExtraValue());
@@ -320,7 +340,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
     /**
      * Given the path being constrained return the valid constraint operations.  If constraining an
      * attribute the valid ops depend on the type being constraint - String, Integer, Boolean, etc.
-     * @return the valid constraint operations
      */
     //TOVERIFY
     public void testGetValidOps() {
@@ -340,7 +359,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
     /**
      * Return true if this constraint should be a LOOKUP, true if constraining a class (ref/col)
      * instead of an attribute and that class has class keys defined.
-     * @return true if this constraint should be a LOOKUP
      */
     public void testIsLookup() {
         assertEquals(false, dcAttribute.isLookup());
@@ -368,7 +386,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
 
     /**
      * Values to populate a dropdown for the path if possible values are available.
-     * @return possible values to populate a dropdown
      */
     public void testGetPossibleValues() {
         assertEquals(3, dcAttribute.getPossibleValues().size());
@@ -380,7 +397,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
     /**
      * If a dropdown is available for a constraint fewer operations are possible, return the list
      * of operations.
-     * @return  the constraint ops available when selecting values from a dropdown
      */
     // TODO Do we need this, could getValildOps return the correct ops if a dropdown is available
     public void testGetFixedOps() {
@@ -391,7 +407,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
 
     /**
      * Return true if this is a LOOKUP constraint and an extra constraint should be available.
-     * @return true if an extra constraint option is available
      */
     public void testIsExtraConstraint() {
         assertEquals(false, dcAttribute.isExtraConstraint());
@@ -402,7 +417,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
     /**
      * If a LOOKUP constraint and an extra constraint is available for this path, return a list of
      * the possible values for populating a dropdown.  Otherwise return null.
-     * @return a list of possible extra constraint values
      */
     public void testGetExtraConstraintValues() {
         assertNull(dcAttribute.getExtraConstraintValues());
@@ -412,7 +426,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
     /**
      * If a LOOKUP constraint and an extra value constraint is available return the classname of
      * the extra constraint so it can be displayed.  Otherwise return null.
-     * @return the extra constraint class name or null
      */
     public void testGetExtraConstraintClassName() {
         assertNull(dcAttribute.getExtraConstraintClassName());
@@ -422,7 +435,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
     /**
      * Get a list of public and user bag names available for this path.  If none available return
      * null.
-     * @return a list of available bag names or null
      */
     public void testGetBags() {
         assertNull(dcAttribute.getBags());
@@ -437,7 +449,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
     /**
      * Returns the bag type that the constraint can be constrained to.
      *
-     * @return a String
      */
     public void testGetBagType() {
         assertNull(dcAttribute.getBagType());
@@ -448,7 +459,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
     /**
      * Returns the constraint type selected.
      *
-     * @return a String representing the constraint type selected
      */
     public void testGetSelectedConstraint() {
         assertEquals("attribute", dcAttribute.getSelectedConstraint());
@@ -464,22 +474,18 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
      * Returns the set of paths that could feasibly be loop constrained onto the constraint's path,
      * given the query's outer join situation. A candidate path must be a class path, of the same
      * type, and in the same outer join group.
-     *
-     * @return a Set of String paths that could be loop joined
-     * @throws PathException if something goes wrong
      */
     public void testGetCandidateLoops() {
         try {
             assertEquals(0, dcAttribute.getCandidateLoops().size());
             assertEquals(1, dcLoop.getCandidateLoops().size());
-        } catch(PathException pe) {
+        } catch (PathException pe) {
             pe.printStackTrace();
         }
     }
 
     /**
      * Return true if the constraint is locked, it should'n be enabled or disabled.
-     * @return true if the constraint is locked
      */
     public void testIsLocked() {
         assertEquals(true, dcAttribute.isLocked());
@@ -489,7 +495,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
 
     /**
      * Return true if the constraint is enabled, false if it is disabled or locked.
-     * @return true if the constraint is enabled,false if it is disabled or locked
      */
     public void testIsEnabled() {
         assertEquals(false, dcAttribute.isEnabled());
@@ -499,7 +504,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase {
 
     /**
      * Return the value on, off, locked depending on the constraint SwitchOffAbility .
-     * @return switchable property (on, off, locked)
      */
     public void testGetSwitchable() {
         assertEquals("locked", dcAttribute.getSwitchable());
