@@ -78,8 +78,7 @@ public class GoPostprocess extends PostProcessor
 
             GOAnnotation tempAnnotation;
             try {
-                tempAnnotation =
-                    (GOAnnotation) PostProcessUtil.copyInterMineObject(thisAnnotation);
+                tempAnnotation = PostProcessUtil.copyInterMineObject(thisAnnotation);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -142,23 +141,15 @@ public class GoPostprocess extends PostProcessor
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         QueryCollectionReference geneProtRef = new QueryCollectionReference(qcProtein, "genes");
-        ContainsConstraint geneProtConstraint =
-            new ContainsConstraint(geneProtRef, ConstraintOp.CONTAINS, qcGene);
-        cs.addConstraint(geneProtConstraint);
+        cs.addConstraint(new ContainsConstraint(geneProtRef, ConstraintOp.CONTAINS, qcGene));
 
         QueryObjectReference annSubjectRef =
             new QueryObjectReference(qcAnnotation, "subject");
-        ContainsConstraint annSubjectConstraint =
-            new ContainsConstraint(annSubjectRef, ConstraintOp.CONTAINS, qcProtein);
-        cs.addConstraint(annSubjectConstraint);
-
+        cs.addConstraint(new ContainsConstraint(annSubjectRef, ConstraintOp.CONTAINS, qcProtein));
 
         q.setConstraint(cs);
 
-        ObjectStore os = osw.getObjectStore();
-
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
-                                                   .PRECOMPUTE_CATEGORY);
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q, 5000, true, true, true);
         return res.iterator();
     }
