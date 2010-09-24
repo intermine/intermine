@@ -219,7 +219,11 @@
 
 </p>
 
-<%-- BagDisplayers used to be inserted here --%>
+<%-- BagDisplayers--%>
+    <tiles:insert page="/bagDisplayers.jsp">
+       <tiles:put name="bag" beanName="bag"/>
+       <tiles:put name="showOnLeft" value="false"/>
+    </tiles:insert>
 
 </div>
 </html:form>
