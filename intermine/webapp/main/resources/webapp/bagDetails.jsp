@@ -194,17 +194,18 @@
 <small>Date Created:  <im:dateDisplay date="${bag.dateCreated}" /></small>
 </div>
 
-<%-- BagDisplayers--%>
+<%-- BagDisplayers -- temporarily removed, see #2371
     <tiles:insert page="/bagDisplayers.jsp">
        <tiles:put name="bag" beanName="bag"/>
        <tiles:put name="showOnLeft" value="true"/>
     </tiles:insert>
-
+--%>
 </TD>
 
 <TD align="left" valign="top" width="40%">
 
 
+<!-- closing toolbar div -->
 
 <div id="convertList" class="listtoolbox" align="left">
 <h3><img src="images/icons/convert.png" title="Convert objects in this bag to different type"/>&nbsp;Convert</h3>
@@ -216,17 +217,18 @@
      <tiles:put name="idname" value="cp" />
      <tiles:put name="orientation" value="h" />
 </tiles:insert>
-
+</html:form>
 </p>
 
-<%-- BagDisplayers--%>
+<%-- BagDisplayers --%>
     <tiles:insert page="/bagDisplayers.jsp">
        <tiles:put name="bag" beanName="bag"/>
        <tiles:put name="showOnLeft" value="false"/>
     </tiles:insert>
 
+
 </div>
-</html:form>
+
 
 <!-- link outs -->
 <div id="linkOuts" class="listtoolbox" align="left">
