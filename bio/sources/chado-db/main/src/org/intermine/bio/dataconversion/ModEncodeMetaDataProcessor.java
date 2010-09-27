@@ -1,4 +1,4 @@
- package org.intermine.bio.dataconversion;
+package org.intermine.bio.dataconversion;
 
 /*
  * Copyright (C) 2002-2010 FlyMine
@@ -288,7 +288,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         // hold features that should only be processed once across all submissions, initialise
         // processor with this map each time
-        Map <Integer, FeatureData> commonFeaturesMap = new HashMap<Integer, FeatureData>();
+        Map<Integer, FeatureData> commonFeaturesMap = new HashMap<Integer, FeatureData>();
 
         for (Map.Entry<Integer, SubmissionDetails> entry: submissionMap.entrySet()) {
 
@@ -361,7 +361,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     private void processDataFeatureTable(Connection connection, Map<Integer, List<String>> subCols,
-                Map<Integer, FeatureData> featureMap, Integer chadoExperimentId, String queryList)
+            Map<Integer, FeatureData> featureMap, Integer chadoExperimentId, String queryList)
         throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
         ResultSet res = getDataFeature(connection, queryList);
@@ -691,18 +691,18 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
-    * ==============
-    *    ORGANISM
-    * ==============
-    * Organism for a submission is derived from the organism associated with
-    * the protocol of the first applied protocol (of the submission).
-    * it is the name. a request to associate the submission directly with
-    * the taxonid has been made to chado people.
-    *
-    * @param connection
-    * @throws SQLException
-    * @throws ObjectStoreException
-    */
+     * ==============
+     *    ORGANISM
+     * ==============
+     * Organism for a submission is derived from the organism associated with
+     * the protocol of the first applied protocol (of the submission).
+     * it is the name. a request to associate the submission directly with
+     * the taxonid has been made to chado people.
+     *
+     * @param connection
+     * @throws SQLException
+     * @throws ObjectStoreException
+     */
     private void processSubmissionOrganism(Connection connection)
         throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
@@ -721,13 +721,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
-    * Return the row needed for the organism.
-    * This is a protected method so that it can be overridden for testing
-    *
-    * @param connection the db connection
-    * @return the SQL result set
-    * @throws SQLException if a database problem occurs
-    */
+     * Return the row needed for the organism.
+     * This is a protected method so that it can be overridden for testing
+     *
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
     protected ResultSet getSubmissionOrganism(Connection connection)
         throws SQLException {
         String query =
@@ -768,8 +768,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         res.close();
 
-        Set <Integer> exp = submissionProjectMap.keySet();
-        Iterator <Integer> i  = exp.iterator();
+        Set<Integer> exp = submissionProjectMap.keySet();
+        Iterator<Integer> i  = exp.iterator();
         while (i.hasNext()) {
             Integer thisExp = i.next();
             String project = submissionProjectMap.get(thisExp);
@@ -833,8 +833,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         res.close();
 
-        Set <Integer> exp = submissionLabMap.keySet();
-        Iterator <Integer> i  = exp.iterator();
+        Set<Integer> exp = submissionLabMap.keySet();
+        Iterator<Integer> i  = exp.iterator();
         while (i.hasNext()) {
             Integer thisExp = i.next();
             String prov = submissionLabMap.get(thisExp);
@@ -899,8 +899,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         res.close();
 
-        Set <String> experiment = expSubMap.keySet();
-        Iterator <String> i  = experiment.iterator();
+        Set<String> experiment = expSubMap.keySet();
+        Iterator<String> i  = experiment.iterator();
         while (i.hasNext()) {
             String name = i.next();
 
@@ -1643,7 +1643,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         SubmissionProperty buildSubProperty = null;
         Integer lastDataId = new Integer(-1);
-        Map<String, SubmissionProperty> props = new HashMap <String, SubmissionProperty>();
+        Map<String, SubmissionProperty> props = new HashMap<String, SubmissionProperty>();
 
         Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes =
             new HashMap<Integer, Map<String, List<SubmissionProperty>>>();
@@ -1942,7 +1942,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private void addToSubToTypes(Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes,
             Integer submissionId, SubmissionProperty prop) {
-     // submissionId -> [type -> SubmissionProperty]
+        // submissionId -> [type -> SubmissionProperty]
         if (submissionId == null) {
             throw new RuntimeException("Called addToSubToTypes with a null sub id!");
         }
@@ -2195,7 +2195,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 } else if (clsName.equals("CellLine")) {
                     setAttributeOnProp(prop, propItem, "sex", "sex");
                     setAttributeOnProp(prop, propItem, "short description",
-                            "description");
+                        "description");
                     setAttributeOnProp(prop, propItem, "species", "species");
                     setAttributeOnProp(prop, propItem, "tissue", "tissue");
                     setAttributeOnProp(prop, propItem, "cell type", "cellType");
@@ -2626,7 +2626,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             + " a.attribute_id, a.heading as att_heading, a.name as att_name, a.value as att_value,"
             + " a.dbxref_id as att_dbxref, a.rank as att_rank"
             + " FROM data d, data_attribute da, attribute a, dbxref ax, db"
-             + " WHERE d.data_id = da.data_id"
+            + " WHERE d.data_id = da.data_id"
             + " AND da.attribute_id = a.attribute_id"
             + " AND a.dbxref_id = ax.dbxref_id"
             + " AND ax.db_id = db.db_id"
@@ -3105,7 +3105,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         while (exp.hasNext()) {
             String thisExp = exp.next();
             List<Integer> subs = expSubMap.get(thisExp);
-            Iterator <Integer> s = subs.iterator();
+            Iterator<Integer> s = subs.iterator();
             while (s.hasNext()) {
                 Integer thisSubId = s.next();
                 Reference reference = new Reference();
@@ -3246,7 +3246,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("Multiply Mapped Read Count", "Multiply Mapped Read Count");
         FIELD_NAME_MAP.put("Uniquely Mapped Read Count", "Uniquely Mapped Read Count");
 
-        
         // data: parameter values
         FIELD_NAME_MAP.put("Array Data File", "arrayDataFile");
         FIELD_NAME_MAP.put("Array Design REF", "arrayDesignRef");
