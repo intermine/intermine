@@ -83,6 +83,7 @@ public class ObjectDetailsController extends InterMineAction
         DisplayObject dobj = displayObjects.get(object);
         dobj.getClass();
         request.setAttribute("object", dobj);
+        session.setAttribute("displayObject", dobj);
 
         Map<String, Map<String, DisplayField>> placementRefsAndCollections = new TreeMap<String,
             Map<String, DisplayField>>();
