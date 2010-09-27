@@ -246,8 +246,6 @@ public class AttributeLinkDisplayerController extends TilesAction
 
             Matcher matcher = xrefpat.matcher(key);
             if (matcher.matches()) {
-                LOG.info("xref key - " + key);
-                LOG.info("xref value - " + value);
 
                 String sourceName = matcher.group(1);
                 String propType = matcher.group(2);
