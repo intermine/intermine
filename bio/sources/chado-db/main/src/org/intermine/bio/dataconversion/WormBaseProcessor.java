@@ -55,9 +55,9 @@ public class WormBaseProcessor extends SequenceProcessor
      */
     private void processItem(Item item, Integer taxonId) {
         if (item.getClassName().equals("DataSource")
-            || item.getClassName().equals("DataSet")
-            || item.getClassName().equals("Organism")
-            || item.getClassName().equals("Sequence")) {
+                || item.getClassName().equals("DataSet")
+                || item.getClassName().equals("Organism")
+                || item.getClassName().equals("Sequence")) {
             return;
         }
 
@@ -84,30 +84,30 @@ public class WormBaseProcessor extends SequenceProcessor
     @SuppressWarnings("unchecked")
     @Override
     protected Map<MultiKey, List<ConfigAction>> getConfig(int taxonId) {
-       if (config == null) {
-           config = new MultiKeyMap();
-           config.put(new MultiKey("feature", "Gene", "WormBase", "uniquename"),
-                      Arrays.asList(new SetFieldConfigAction("primaryIdentifier"),
-                                    CREATE_SYNONYM_ACTION));
-           config.put(new MultiKey("feature", "Gene", "WormBase", "name"),
-                      Arrays.asList(new SetFieldConfigAction("symbol"),
-                                    CREATE_SYNONYM_ACTION));
-           config.put(new MultiKey("prop", "Gene", "cds"),
-                      Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                    CREATE_SYNONYM_ACTION));
-           // sequence names -> secondaryIdentifier.  These are synonyms, for some reason they have
-           // is_current set to false and type 'exact'
-           config.put(new MultiKey("synonym", "Gene", "exact", Boolean.FALSE),
-                   Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                 CREATE_SYNONYM_ACTION));
-       }
+        if (config == null) {
+            config = new MultiKeyMap();
+            config.put(new MultiKey("feature", "Gene", "WormBase", "uniquename"),
+                    Arrays.asList(new SetFieldConfigAction("primaryIdentifier"),
+                            CREATE_SYNONYM_ACTION));
+            config.put(new MultiKey("feature", "Gene", "WormBase", "name"),
+                    Arrays.asList(new SetFieldConfigAction("symbol"),
+                            CREATE_SYNONYM_ACTION));
+            config.put(new MultiKey("prop", "Gene", "cds"),
+                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
+                            CREATE_SYNONYM_ACTION));
+            // sequence names -> secondaryIdentifier.  These are synonyms, for some reason they have
+            // is_current set to false and type 'exact'
+            config.put(new MultiKey("synonym", "Gene", "exact", Boolean.FALSE),
+                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
+                            CREATE_SYNONYM_ACTION));
+        }
 
-       return config;
+        return config;
     }
 
     private static final List<String> FEATURES = Arrays.asList(
-       "gene", "mRNA", "transcript", "intron", "exon", "five_prime_untranslated_region",
-       "five_prime_UTR", "three_prime_untranslated_region", "three_prime_UTR"
+            "gene", "mRNA", "transcript", "intron", "exon", "five_prime_untranslated_region",
+            "five_prime_UTR", "three_prime_untranslated_region", "three_prime_UTR"
     );
 
     /**
@@ -138,9 +138,9 @@ public class WormBaseProcessor extends SequenceProcessor
         // in SequenceProcessor.
         // so we assume that uniquename is never null and that if null it is a name.
         if (StringUtils.isEmpty(identifier)) {
-                identifier = uniqueName;
-                LOG.debug("Found NULL name for feature: " + uniqueName);
-            }
+            identifier = uniqueName;
+            LOG.debug("Found NULL name for feature: " + uniqueName);
+        }
 
         if (identifier.startsWith(type + ":")) {
             return identifier.substring(type.length() + 1);
