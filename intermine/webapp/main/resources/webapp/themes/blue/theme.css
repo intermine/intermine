@@ -22,10 +22,10 @@ div.heading, div.heading2, div.heading a,div .heading2  a {
 
 /* =HEADER
 --------------------------*/
-div#header h1, 
-div#header h1 a, 
+div#header h1,
+div#header h1 a,
 div#header h1 a:link,
-div#header h1 a:visited, 
+div#header h1 a:visited,
 div#header p {
     color:#FFFFFF;
 }
@@ -37,7 +37,7 @@ div#header p {
    border-left:1px solid #192F39;
    border-right:1px solid #192F39;
    border-bottom:1px solid #192F39;
-}   
+}
 
 
 #loginbar  a:link, #loginbar a:visited, #loginbar{
@@ -63,7 +63,7 @@ div#header p {
 	background:#B9E6F9;}
 
 .gradientbox {
-	padding:10px; 
+	padding:10px;
 	border:1px solid #192F39;background: url('grad_box.png') repeat-x;}
 
 /* =NAVIGATION
@@ -117,14 +117,14 @@ ul#submenulist li a:hover {
 --------------------------*/
 div.filterBar {
     background:#192F39;color:white;}
-    
+
 div#filter_tool_bar {
     background-color:#FFF;
     border-right:1px solid #192F39;
     border-left:1px solid #192F39;
     border-bottom:1px solid #192F39;
 }
-    
+
 .imbox {
     padding:5px 5px 10px 5px; border-top:solid 1px #888; border-bottom:solid 1px #888; height:1.2em;
     font-size:0.8em; background:#000; color:white;}
@@ -160,12 +160,12 @@ table.results tr.stepO TD{
 
 table.results tr.stepOeven TD{
   background-color: #FFF;
-  border-right:1px solid #F0F8FF; 
+  border-right:1px solid #F0F8FF;
   border-bottom:1px solid #F0F8FF;}
 
 table.results tr.stepOodd TD{
   background-color: #F0F8FF;
-  border-right:1px solid #FFF; 
+  border-right:1px solid #FFF;
   border-bottom:1px solid #FFF;}
 
 table.results tr.stepEodd TD{
@@ -181,6 +181,20 @@ table.results tr.stepEeven TD{
 table.results tr td.highlightObject {
   background-color: #ee6;
 }
+
+
+/* =TOOLBOX RESULTS GREEN
+
+ for protocol table in modMine
+--------------------------*/
+
+table.results tr.evengreen TD{
+  background-color: #DDFFAA;}
+
+table.results tr.oddgreen TD{
+  border-right:1px solid #DDFFAA;
+  border-bottom:1px solid #DDFFAA;}
+
 
 
 /* =TOOLBOX RESULTS
