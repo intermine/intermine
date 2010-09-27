@@ -61,7 +61,7 @@ public class EmployeeExporter implements TableHttpExporter
 
         PrintWriter printWriter;
         try {
-            printWriter = HttpExportUtil.getPrintWriterForClient(request, 
+            printWriter = HttpExportUtil.getPrintWriterForClient(request,
                     response.getOutputStream());
         } catch (IOException e) {
             throw new ExportException("Export failed.", e);
@@ -113,6 +113,8 @@ public class EmployeeExporter implements TableHttpExporter
     /**
      * For EmployeeExporter we always return an empty list because all columns and classes are
      * equal for this exporter.
+     * @param pt
+     * @return List
      */
     public List<Path> getExportClassPaths(@SuppressWarnings("unused") PagedTable pt) {
         return new ArrayList<Path>();
