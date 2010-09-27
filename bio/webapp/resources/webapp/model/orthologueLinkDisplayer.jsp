@@ -27,7 +27,7 @@
         </a>
 
     <%-- orthologue link popup --%>
-    <form action="${mine.url}/portal.do" method="post" name="orthologueLinkForm${status.count}" target="_blank">
+    <form action="${mine.url}/portal.do" method="post" id="orthologueLinkForm${status.count}" name="orthologueLinkForm${status.count}" target="_blank">
     <div id="orthologue_link_${status.count}" style="display:none">
 
         You are exporting your list to ${mineName}
@@ -37,7 +37,7 @@
             <td valign="top"><b>Orthologues</b></td>
             <td valign="top">
             <span id="orthologueSelect${status.count}" style="float:left;">
-            <select name="orthologueDatasets" onchange="checkOrthologueMapping('${status.count}', '${mineName}', '${WEB_PROPERTIES['project.title']}');">
+            <select name="orthologueDatasets" id="orthologueDatasets" onchange="checkOrthologueMapping('${status.count}', '${mineName}', '${WEB_PROPERTIES['project.title']}');">
             <c:forEach var="entry" items="${orthologuesToDatasets}" varStatus="entryStatus">
                 <c:set var="orthologue" value="${entry.key}"/>
                 <c:set var="datasets" value="${entry.value}"/>
@@ -62,13 +62,14 @@
         </tr>
         </table>
         <br/><br/>
-        <input type="hidden" name="originalExternalids" value="${identifierList}"/>
-        <input type="hidden" name="orthologue" value="${mine.defaultOrganismName}"/>
-        <input type="hidden" name="externalids" value="${identifierList}"/>
-        <input type="hidden" name="class" value="${bag.type}"/>
-        <input type="button" name="submitButton" value="GO" onClick="javascript:submitOrthologueLinkForm('${bag.type}', '${bag.name}', '${status.count}');" />
 
+        <input type="button" name="submitButton" value="GO" onClick="javascript:submitOrthologueLinkForm('${bag.type}', '${bag.name}', '${status.count}');" />
     </div>
+
+            <input type="hidden" name="originalExternalids" value="${identifierList}"/>
+            <input type="hidden" name="orthologue" value="${mine.defaultOrganismName}"/>
+            <input type="hidden" name="externalids" value="${identifierList}"/>
+            <input type="hidden" name="class" value="${bag.type}"/>
         </form>
 
     </td>
