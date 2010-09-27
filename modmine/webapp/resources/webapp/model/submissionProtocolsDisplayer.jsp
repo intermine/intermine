@@ -46,25 +46,25 @@ div#submissionProtocols h3 {
 <script type="text/javascript" charset="utf-8">
 
 jQuery(document).ready(function () {
- jQuery(".tbox").children('apri').show();
- jQuery(".tbox").children('chiudi').hide();
+ jQuery(".tbox").children('doopen').show();
+ jQuery(".tbox").children('doclose').hide();
 
 	jQuery('.tbox').click(function () {
-	var text = jQuery(this).children('chiudi');
+	var text = jQuery(this).children('doclose');
 
 	if (text.is(':hidden')) {
-	     jQuery(this).children('chiudi').show("slow");
+	     jQuery(this).children('doclose').show("slow");
 	   } else {
-	       jQuery(this).children('apri').show("slow");
+	       jQuery(this).children('doopen').show("slow");
 	    }
 	 });
 
-  jQuery("apri").click(function(){
+  jQuery("doopen").click(function(){
      jQuery(this).toggle("slow");
      return true;
     });
 
-  jQuery("chiudi").click(function(){
+  jQuery("doclose").click(function(){
       jQuery(this).toggle("slow");
         return true;
     });
@@ -80,8 +80,8 @@ jQuery(document).ready(function () {
     <c:forEach items="${protocols}" var="prot" varStatus="p_status">
        <c:set var="pRowClass">
         <c:choose>
-          <c:when test="${p_status.count % 2 == 1}">odd</c:when>
-          <c:otherwise>even</c:otherwise>
+          <c:when test="${p_status.count % 2 == 1}">oddgreen</c:when>
+          <c:otherwise>evengreen</c:otherwise>
         </c:choose>
       </c:set>
 
@@ -99,18 +99,18 @@ jQuery(document).ready(function () {
 
     <td class="description">
 <div class="tbox">
-    <apri><img src="images/undisclosed.gif">
+    <doopen><img src="images/undisclosed.gif">
 <ii>
     ${fn:substring(prot.description,0,80)}...
 
     </ii>
-    </apri>
+    </doopen>
 
-    <chiudi><img src="images/disclosed.gif">
+    <doclose><img src="images/disclosed.gif">
      <i>
     ${prot.description}
     </i>
-    </chiudi>
+    </doclose>
 </div>
     </td>
 
