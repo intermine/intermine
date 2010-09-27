@@ -13,6 +13,7 @@ package org.intermine.bio.web;
 import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -230,6 +231,41 @@ public class AttributeLinkDisplayerController extends TilesAction
         processConfigs(linkConfigs);
         request.setAttribute("attributeLinkConfiguration", linkConfigs);
         request.setAttribute("attributeLinkClassName", className);
+
+        // TODO HACKed for Xref
+        // Logic:
+        // 1.parse xref.properties
+        // 2.create a data structure to store the info
+        Map<String, XRef> xrefMap = new LinkedHashMap<String, XRef>();
+        final String xrefRegExp = "xreflink\\.([^.]+)\\.(url|imageName)";
+        Pattern xrefpat = Pattern.compile(xrefRegExp);
+
+        for (Map.Entry<Object, Object> entry: webProperties.entrySet()) {
+            String key = (String) entry.getKey();
+            String value = (String) entry.getValue();
+
+            Matcher matcher = xrefpat.matcher(key);
+            if (matcher.matches()) {
+                LOG.info("xref key - " + key);
+                LOG.info("xref value - " + value);
+
+                String sourceName = matcher.group(1);
+                String propType = matcher.group(2);
+
+                XRef xref = new XRef();
+                xref.setSourceName(sourceName);
+                if ("url".equals(propType)) {
+                    xref.setUrl(value);
+                } else if ("imageName".equals(propType)) {
+                    xref.setSourceName(value);
+                }
+
+                xrefMap.put(sourceName, xref);
+            }
+        }
+
+        request.setAttribute("xrefMap", xrefMap);
+
         return null;
     }
 

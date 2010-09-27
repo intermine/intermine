@@ -360,4 +360,12 @@ public class InlineResultsTable
     public Map<Object, Map<String, Object>> getRowFieldValues() {
         return rowFieldValues;
     }
+
+    /**
+     * For HACK purpose
+     * @return resultsAsList
+     */
+    public List getResultsAsList() {
+        return resultsAsList;
+    }
 }

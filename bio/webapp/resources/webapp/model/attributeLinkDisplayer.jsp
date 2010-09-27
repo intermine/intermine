@@ -59,4 +59,25 @@
     </c:if>
   </c:forEach>
 </table>
+
+<%-- show xrefs --%>
+<table id="xrefTable" class="lookupReport" cellspacing="5" cellpadding="0">
+  <c:forEach var="xrefCol" items="${displayObject.refsAndCollections}">
+    <c:if test='${(xrefCol.key == "crossReferences") && (xrefCol.value.size > 0)}'>
+     <c:forEach var="xref" items="${xrefCol.value.table.resultsAsList}">
+       <c:forEach var="xrefMapItem" items="${xrefMap}">
+         <c:if test="${xrefMapItem.key == xref.source.name}">
+           <tr>
+            <td>
+              <a target="_new" href="${xrefMapItem.value.url}${xref.identifier}">${xref.source.name}: ${xref.identifier}
+                <img title="${xref.source.name}: ${xref.identifier}" src="images/ext_link.png">
+              </a>
+            </td>
+           </tr>
+         </c:if>
+       </c:forEach>
+     </c:forEach>
+    </c:if>
+  </c:forEach>
+</table>
 <!-- /attributeLinkDisplayer.jsp -->
