@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryResult;
@@ -45,15 +44,13 @@ import org.intermine.pathquery.PathQuery;
  * @author Richard Smith
  * @author Jakub Kulaviak
  */
-public class WebResultsExecutor
+public class WebResultsExecutor extends QueryExecutor
 {
     private ObjectStore os;
     private Map<String, List<FieldDescriptor>> classKeys;
     private Profile profile;
     private BagManager bagManager;
     private BagQueryRunner bagQueryRunner;
-    private static Map<Query, Map<String, QuerySelectable>> queryToPathToQueryNode
-        = Collections.synchronizedMap(new WeakHashMap<Query, Map<String, QuerySelectable>>());
     private Map<PathQuery, ResultsInfo> infoCache = Collections.synchronizedMap(
             new IdentityHashMap<PathQuery, ResultsInfo>());
 

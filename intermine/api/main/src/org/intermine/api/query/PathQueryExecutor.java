@@ -10,10 +10,12 @@ package org.intermine.api.query;
  *
  */
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -22,6 +24,9 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQuery;
 
 /**
@@ -30,13 +35,13 @@ import org.intermine.pathquery.PathQuery;
  *
  * @author Jakub Kulaviak
  */
-public class PathQueryExecutor
+public class PathQueryExecutor extends QueryExecutor
 {
 
     private static final int DEFAULT_BATCH_SIZE = 5000;
 
     private BagManager bagManager;
-    private BagQueryRunner runner;
+    private BagQueryRunner bagQueryRunner;
     private ObjectStore os;
     private Profile profile;
     private int batchSize = DEFAULT_BATCH_SIZE;
@@ -63,7 +68,7 @@ public class PathQueryExecutor
             Map<String, List<FieldDescriptor>> classKeys, Profile profile,
             BagQueryRunner bagQueryRunner, BagManager bagManager) {
         this.os = os;
-        this.runner = bagQueryRunner;
+        this.bagQueryRunner = bagQueryRunner;
         this.bagManager = bagManager;
         this.profile = profile;
     }
@@ -77,8 +82,21 @@ public class PathQueryExecutor
      */
     public ExportResultsIterator execute(PathQuery pathQuery) {
         try {
-            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-            return new ExportResultsIterator(os, pathQuery, allBags, runner, batchSize);
+            Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
+            Map<String, BagQueryResult> returnBagQueryResults =
+                new HashMap<String, BagQueryResult>();
+
+            Query q = makeQuery(pathQuery, returnBagQueryResults, pathToQueryNode);
+
+            Results results = os.execute(q, batchSize, true, true, false);
+
+            Query realQ = results.getQuery();
+            if (realQ == q) {
+                queryToPathToQueryNode.put(q, pathToQueryNode);
+            } else {
+                pathToQueryNode = queryToPathToQueryNode.get(realQ);
+            }
+            return new ExportResultsIterator(pathQuery, results, pathToQueryNode);
         } catch (ObjectStoreException e) {
             throw new RuntimeException("Creating export results iterator failed", e);
         }
@@ -97,12 +115,35 @@ public class PathQueryExecutor
     public ExportResultsIterator execute(PathQuery pathQuery, final int start,
             final int limit) {
         try {
-            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-            return new ResultIterator(os, pathQuery, allBags, runner, batchSize, start, limit);
+            Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
+            Map<String, BagQueryResult> returnBagQueryResults =
+                new HashMap<String, BagQueryResult>();
+
+            Query q = makeQuery(pathQuery, returnBagQueryResults, pathToQueryNode);
+
+            Results results = os.execute(q, batchSize, true, true, false);
+
+            Query realQ = results.getQuery();
+            if (realQ == q) {
+                queryToPathToQueryNode.put(q, pathToQueryNode);
+            } else {
+                pathToQueryNode = queryToPathToQueryNode.get(realQ);
+            }
+            return new ResultIterator(pathQuery, results, pathToQueryNode, start, limit);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(
                     "Creating export results iterator failed", e);
         }
+    }
+
+    private Query makeQuery(PathQuery pathQuery, Map<String, BagQueryResult> pathToBagQueryResult,
+            Map<String, QuerySelectable> pathToQueryNode) throws ObjectStoreException {
+
+        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+
+        Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bagQueryRunner,
+                pathToBagQueryResult);
+        return q;
     }
 }
 
@@ -125,19 +166,18 @@ class ResultIterator extends ExportResultsIterator
      * Constructor for ExportResultsIterator. This creates a new instance from the given
      * ObjectStore, PathQuery, and other necessary objects.
      *
-     * @param os an ObjectStore that the query will be run on
-     * @param pq a PathQuery to run
-     * @param savedBags a Map of the bags that the query may have used
-     * @param bagQueryRunner a BagQueryRunner for any LOOKUP constraints
-     * @param batchSize the batch size for the results
-     * @param start start index from which retrieve results
-     * @param limit maximum number retrieved results
+     * @param pathQuery a PathQuery to run
+     * @param results the results object created when executing the query
+     * @param pathToQueryNode a map from path in pathQuery to QuerySelectable in the generated
+     * ObjectStore query
+     * @param start the first row of results to be returned
+     * @param limit the number of result rows to return
      * @throws ObjectStoreException if something goes wrong executing the query
      */
-    public ResultIterator(ObjectStore os, PathQuery pq, Map savedBags,
-            BagQueryRunner bagQueryRunner, int batchSize, int start,
-            int limit) throws ObjectStoreException {
-        super(os, pq, savedBags, bagQueryRunner, batchSize);
+    public ResultIterator(PathQuery pathQuery, Results results,
+            Map<String, QuerySelectable> pathToQueryNode, int start, int limit)
+        throws ObjectStoreException {
+        super(pathQuery, results, pathToQueryNode);
         this.limit = limit;
         this.start = start;
     }
