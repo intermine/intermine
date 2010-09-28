@@ -62,7 +62,12 @@ public class ImportQueriesAction extends InterMineAction
                 recordError(new ActionMessage("errors.importFailed",
                         StringUtil.prettyList(pathQuery.verifyQuery())), request);
             }
-            SessionMethods.loadQuery(pathQuery, session, response);
+            try {
+                SessionMethods.loadQuery(pathQuery, session, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return mapping.findForward("importQueries");
+            }
             return mapping.findForward("query");
         }
         if (!profile.isLoggedIn()) {
