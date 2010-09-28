@@ -169,7 +169,7 @@ public class GraphWidgetConfig extends WidgetConfig
         if (extraAttributes.size() > 0) {
             returnMap.put("Organism", extraAttributes);
         }
-        if (editable != null && editable.equals("true")) {
+        if (editable != null && "true".equals(editable)) {
             returnMap.put("Editable", new ArrayList<String>());
         }
         return returnMap;
