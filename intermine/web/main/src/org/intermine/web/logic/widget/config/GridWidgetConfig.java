@@ -100,7 +100,7 @@ public class GridWidgetConfig extends WidgetConfig
             InterMineBag imBag, @SuppressWarnings("unused") ObjectStore os) {
         Map<String, Collection<String>> returnMap = new HashMap<String, Collection<String>>();
         returnMap.put("pValue", Arrays.asList(getFilters().split(",")));
-        if (editable != null && editable.equals("true")) {
+        if (editable != null && "true".equals(editable)) {
             returnMap.put("Editable", new ArrayList<String>());
         }
         if (width != null) {
