@@ -32,11 +32,17 @@
         <div>
         <h3>Search modMine</h3><br/>
           Search for modENCODE submissions by metadata
+          <p>
+            All fields will be searched, for example: antibody names <i>(e.g. 'PolII', 'H3K4me1', 'CP190')</i>,
+            lab names <i>(e.g. 'Reinke', 'Snyder')</i>, data types <i>(e.g. 'UTR', 'bindingsite')</i>
+          </p>
+          <!--
             <ul>
-                <!-- <li>For example antibody names (CP190, H3K4me1) or data types (bindingsite, UTR)</li> -->
+                <li>For example antibody names (CP190, H3K4me1) or data types (bindingsite, UTR)</li>
                 <li>Use AND to combine: <a href="/${WEB_PROPERTIES['webapp.path']}/modMineSearchResults.do?searchTerm=fly+AND+embryo">fly AND embryo</a></li>
                 <li>Use AND NOT to exclude: <a href="/${WEB_PROPERTIES['webapp.path']}/modMineSearchResults.do?searchTerm=fly+AND+NOT+embryo">fly AND NOT embryo</a></li>
             </ul>
+            -->
          <html:form action="/modMineSearchAction" focus="searchTerm">
             <input name="searchTerm" type="text" class="qs_input">
             <html:submit>Go</html:submit>

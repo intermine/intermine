@@ -5,7 +5,7 @@
      /*background-color:#61EDF5;*/
      padding:0px 0;margin:20px 0;
  }
- 
+
 .frontpage_sections ol {
     margin:0;
     padding:0;
@@ -25,6 +25,20 @@
     color:#192F39;
     text-decoration: none;
 }
+
+.frontpage_sections p {
+    float:left;
+    text-align:left;
+    font-size:12px;%;
+    font-weight: normal;
+}
+
+.frontpage_sections i {
+    text-align:left;
+    font-size:12px;%;
+    font-weight: normal;
+}
+
 
 .frontpage_sections li h3{
     float:left;
@@ -104,7 +118,7 @@ table.projects td {
     border-bottom: 1px solid #B9E6F9;
     background: #fff;
 }
-    
+
 table.projects td h4{
     margin:0; padding:0;
     font-size: 16px;
