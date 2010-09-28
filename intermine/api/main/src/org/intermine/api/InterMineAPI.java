@@ -50,6 +50,12 @@ public class InterMineAPI
     private ObjectStoreSummary oss;
     private BagQueryRunner bagQueryRunner;
 
+    // query executors are cached per profile
+    private Map<Profile, WebResultsExecutor> wreCache =
+        new IdentityHashMap<Profile, WebResultsExecutor>();
+    private Map<Profile, PathQueryExecutor> pqeCache =
+        new IdentityHashMap<Profile, PathQueryExecutor>();
+
     /**
      * Construct an InterMine API object.
      * @param objectStore the production database
@@ -121,8 +127,6 @@ public class InterMineAPI
         return templateSummariser;
     }
 
-    private Map<Profile, WebResultsExecutor> wreCache = new IdentityHashMap<Profile,
-            WebResultsExecutor>();
     /**
      * @param profile the user that is executing the query
      * @return the webResultsExecutor
@@ -144,8 +148,15 @@ public class InterMineAPI
      * @return the pathQueryExecutor
      */
     public PathQueryExecutor getPathQueryExecutor(Profile profile) {
-        return new PathQueryExecutor(objectStore, classKeys, profile,
-                bagQueryRunner, bagManager);
+        synchronized (pqeCache) {
+            PathQueryExecutor retval = pqeCache.get(profile);
+            if (retval == null) {
+                retval = new PathQueryExecutor(objectStore, classKeys, profile,
+                        bagQueryRunner, bagManager);
+                pqeCache.put(profile, retval);
+            }
+            return retval;
+        }
     }
 
     /**
