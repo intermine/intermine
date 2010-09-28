@@ -602,7 +602,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws ObjectStoreException
      */
     private void traverseDag()
-        throws SQLException, ObjectStoreException {
+        throws ObjectStoreException {
         List<Integer> currentIterationAP = firstAppliedProtocols;
         List<Integer> nextIterationAP = new ArrayList<Integer>();
         Integer step = 1; // DAG level
@@ -627,7 +627,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws ObjectStoreException
      */
     private List<Integer> buildADagLevel(List<Integer> previousAppliedProtocols, Integer step)
-        throws SQLException, ObjectStoreException {
+        throws ObjectStoreException {
         List<Integer> nextIterationProtocols = new ArrayList<Integer>();
         Iterator<Integer> pap = previousAppliedProtocols.iterator();
         while (pap.hasNext()) {
@@ -713,7 +713,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer submissionId = new Integer(res.getInt("experiment_id"));
             String value = res.getString("value");
             submissionOrganismMap.put(submissionId, value);
-            count++;
+            LOG.info("TAXID " + submissionId + "|" + value);
+           count++;
         }
         res.close();
         LOG.info("found an organism for " + submissionOrganismMap.size() + " submissions.");
@@ -1003,8 +1004,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String labName = submissionLabMap.get(submissionId);
             String labItemIdentifier = labIdRefMap.get(labName);
             submission.setReference("lab", labItemIdentifier);
-
             String organismName = submissionOrganismMap.get(submissionId);
+
 
             int divPos = organismName.indexOf(' ');
             String genus = organismName.substring(0, divPos);
@@ -2816,6 +2817,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         throws ObjectStoreException {
         List<String> dbRecordIds = new ArrayList<String>();
 
+        String defaultURL = config.dbURL;
+
         Set<String> cleanAccessions = new HashSet<String>();
 
         // NOTE - this is a special case to deal with a very strange SRA accession format in some
@@ -2831,6 +2834,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     cleanAccessions.add(part);
                 }
             }
+        } else if (config.dbName.equals("SRA") && (accession.startsWith("SRX"))) {
+            config.dbURL = "http://www.ncbi.nlm.nih.gov/sra/";
+            dbRecordIds.add(createDatabaseRecord(accession, config));
+            config.dbURL = defaultURL;
+
         } else {
             cleanAccessions.add(accession);
         }
