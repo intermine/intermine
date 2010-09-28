@@ -225,18 +225,17 @@
         }
     }
 
-
     // highlight the actual topic
     function markIndex() {
         if (INDEX != -1) {
-            $('li' + INDEX.toString()).style.background = '#8AECFF';
-        }
+            jQuery("#li" + INDEX.toString()).css("background","#8AECFF");
+          }
     }
 
     // remove the higlight of the actual topic
     function remarkIndex() {
         if (INDEX != -1) {
-            $('li' + INDEX.toString()).style.background = 'none';
+            jQuery("#li" + INDEX.toString()).css("background", "none");
         }
     }
 
