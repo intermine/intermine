@@ -20,11 +20,10 @@
 </table>
 <br>
 
-<table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
-<tr><th align="center">modMine 17 contains the 15 February 2010 data freeze</th></tr>
-</table>
 <!--
-<table bgcolor="#63B7DE"><tr><th>modMine 17 contains the 15 February 2010 data freeze</th></tr></table>
+<table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
+<tr><th align="center">modMine 18 contains the 15 February 2010 data freeze</th></tr>
+</table>
 -->
 <div class="frontpage_sections">
     <ol>
