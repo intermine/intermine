@@ -94,7 +94,7 @@ public class Type
 
         // TODO we don't have displayers tied to aspects anymore.
         // this should be removed
-        String aspects[];
+        String[] aspects;
         if (StringUtils.isEmpty(disp.getAspects())) {
             aspects = new String[]{""};
         } else {
