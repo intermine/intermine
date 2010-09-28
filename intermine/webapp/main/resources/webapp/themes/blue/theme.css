@@ -187,13 +187,21 @@ table.results tr td.highlightObject {
 
  for protocol table in modMine
 --------------------------*/
-
+/*
 table.results tr.evengreen TD{
   background-color: #DDFFAA;}
 
 table.results tr.oddgreen TD{
   border-right:1px solid #DDFFAA;
   border-bottom:1px solid #DDFFAA;}
+*/
+
+table.results tr.even-alt TD{
+  background-color: #FFFFCC;}
+
+table.results tr.odd-alt TD{
+  border-right:1px solid #FFFFCC;
+  border-bottom:1px solid #FFFFCC;}
 
 
 
