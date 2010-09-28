@@ -74,13 +74,12 @@ public final class ConstraintOp
     public static final ConstraintOp OVERLAPS = new ConstraintOp("OVERLAPS");
     /** Require that a range does not overlap another range */
     public static final ConstraintOp DOES_NOT_OVERLAP = new ConstraintOp("DOES NOT OVERLAP");
-    
+
     /** Require that the first argument is one of a list a values */
     public static final ConstraintOp ONE_OF = new ConstraintOp("ONE OF");
     /** Require that the first argument is not one of a list of values */
     public static final ConstraintOp NONE_OF = new ConstraintOp("NONE OF");
 
-    
     private ConstraintOp(String name) {
         this.name = name;
         values.add(this);
