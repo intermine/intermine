@@ -57,7 +57,7 @@ public class AutoCompleter
         new File("build" + File.separatorChar + "autocompleteIndexes");
 
     private static final Logger LOG = Logger.getLogger(AutoCompleter.class);
-    
+
     /**
      * Autocompleter standard constructor.
      */
