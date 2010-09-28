@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -51,7 +52,7 @@ public class BagQueryRunner
 
     private BagQueryConfig bagQueryConfig;
 
-    private List<TemplateQuery> conversionTemplates;
+    private TemplateManager templateManager;
 
     /**
      * Construct with configured bag queries and a map of type -&gt; key fields.
@@ -62,16 +63,16 @@ public class BagQueryRunner
      *            the class keys Map
      * @param bagQueryConfig
      *            the configuration for running queries
-     * @param conversionTemplates
+     * @param templateManager the InterMine template manager to access conversion templates
      *            a list of template queries to be used when type converting results
      */
     public BagQueryRunner(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
-            BagQueryConfig bagQueryConfig, List<TemplateQuery> conversionTemplates) {
+            BagQueryConfig bagQueryConfig, TemplateManager templateManager) {
         this.model = os.getModel();
         this.os = os;
         this.classKeys = classKeys;
         this.bagQueryConfig = bagQueryConfig;
-        this.conversionTemplates = conversionTemplates;
+        this.templateManager = templateManager;
     }
 
     /**
@@ -353,8 +354,8 @@ public class BagQueryRunner
 
                 // try to convert objects to target type
                 Map<InterMineObject, List<InterMineObject>> convertedObjsMap =
-                    TypeConverter.getConvertedObjectMap(conversionTemplates, fromClass,
-                            type, idsToConvert, os);
+                    TypeConverter.getConvertedObjectMap(getConversionTemplates(),
+                            fromClass, type, idsToConvert, os);
                 if (convertedObjsMap == null) {
                     // no conversion found
                     continue;
@@ -402,5 +403,14 @@ public class BagQueryRunner
         queries.addAll(config.getBagQueries(TypeUtil.unqualifiedName(type)));
 
         return queries;
+    }
+
+    /**
+     * Fetch conversion template queries from the template manager.  This is in a separate method
+     * so we can override and easily use a custom list of templates for testing.
+     * @return a list of conversion templates
+     */
+    protected List<TemplateQuery> getConversionTemplates() {
+        return templateManager.getConversionTemplates();
     }
 }

@@ -14,13 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -57,18 +55,15 @@ public class PathQueryExecutor
      *
      * @param os the ObjectStore to run the query in
      * @param classKeys key fields for classes in the data model
-     * @param bagQueryConfig bag queries to run when interpreting LOOKUP constraints
      * @param profile the user executing the query - for access to saved lists
-     * @param conversionTemplates templates used for converting bag query results between types
+     * @param bagQueryRunner for executing bag searches in queries
      * @param bagManager access to global and user bags
      */
     public PathQueryExecutor(ObjectStore os,
-            Map<String, List<FieldDescriptor>> classKeys,
-            BagQueryConfig bagQueryConfig, Profile profile,
-            List<TemplateQuery> conversionTemplates,
-            BagManager bagManager) {
+            Map<String, List<FieldDescriptor>> classKeys, Profile profile,
+            BagQueryRunner bagQueryRunner, BagManager bagManager) {
         this.os = os;
-        this.runner = new BagQueryRunner(os, classKeys, bagQueryConfig, conversionTemplates);
+        this.runner = bagQueryRunner;
         this.bagManager = bagManager;
         this.profile = profile;
     }

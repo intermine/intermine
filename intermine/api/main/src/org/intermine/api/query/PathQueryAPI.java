@@ -19,11 +19,11 @@ import java.util.Properties;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
+import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -48,8 +48,8 @@ public final class PathQueryAPI
      * @return a PathQueryExecutor
      */
     public static PathQueryExecutor getPathQueryExecutor() {
-        return new PathQueryExecutor(getObjectStore(), getClassKeys(), getBagQueryConfig(),
-                getProfile(), getConversionTemplates(), getBagManager());
+        return new PathQueryExecutor(getObjectStore(), getClassKeys(), getProfile(),
+                getBagQueryRunner(), getBagManager());
     }
 
     /**
@@ -161,21 +161,32 @@ public final class PathQueryAPI
         return profileManager;
     }
 
-    private static List<TemplateQuery> conversionTemplates = null;
+    private static TemplateManager templateManager = null;
     /**
-     * Returns the list of TemplateQueries that are conversion templates.
+     * Returns the TemplateManager for access to global and user template queries.
      *
      * @return a List
      */
-    public static List<TemplateQuery> getConversionTemplates() {
-        if (conversionTemplates == null) {
-            TemplateManager templateManger = new TemplateManager(getProfile(),
+    public static TemplateManager getTemplateManager() {
+        if (templateManager == null) {
+            templateManager = new TemplateManager(getProfile(),
                     getObjectStore().getModel());
-            conversionTemplates = templateManger.getConversionTemplates();
         }
-        return conversionTemplates;
+        return templateManager;
     }
 
+    private static BagQueryRunner bagQueryRunner = null;
+    /**
+     * Return the BagQueryRunner for executing LOOKUP queries.
+     * @return the bag query runnner
+     */
+    private static BagQueryRunner getBagQueryRunner() {
+        if (bagQueryRunner == null) {
+            bagQueryRunner = new BagQueryRunner(getObjectStore(), getClassKeys(),
+                    getBagQueryConfig(), getTemplateManager());
+        }
+        return bagQueryRunner;
+    }
 
     private static BagManager bagManager = null;
     /**

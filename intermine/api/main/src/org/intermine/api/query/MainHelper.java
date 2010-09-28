@@ -37,7 +37,6 @@ import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -851,10 +850,9 @@ public final class MainHelper
             ProfileManager pm) throws ObjectStoreException {
         TemplateManager templateManager = new TemplateManager(pm.getSuperuserProfile(),
                 os.getModel());
-        List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
         BagQueryRunner bagQueryRunner = null;
         if (os != null) {
-            bagQueryRunner = new BagQueryRunner(os, classKeys, bagQueryConfig, conversionTemplates);
+            bagQueryRunner = new BagQueryRunner(os, classKeys, bagQueryConfig, templateManager);
         }
         return MainHelper.makeSummaryQuery(pathQuery, summaryPath, savedBags, pathToQueryNode,
                 bagQueryRunner);

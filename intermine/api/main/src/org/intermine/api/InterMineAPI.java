@@ -48,6 +48,7 @@ public class InterMineAPI
     private BagManager bagManager;
     private TemplateSummariser templateSummariser;
     private ObjectStoreSummary oss;
+    private BagQueryRunner bagQueryRunner;
 
     /**
      * Construct an InterMine API object.
@@ -70,6 +71,8 @@ public class InterMineAPI
         this.templateManager = new TemplateManager(profileManager.getSuperuserProfile(), model);
         this.templateSummariser = new TemplateSummariser(objectStore,
                 profileManager.getProfileObjectStoreWriter());
+        this.bagQueryRunner =
+            new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
     }
 
     /**
@@ -128,8 +131,8 @@ public class InterMineAPI
         synchronized (wreCache) {
             WebResultsExecutor retval = wreCache.get(profile);
             if (retval == null) {
-                retval = new WebResultsExecutor(objectStore, classKeys, bagQueryConfig, profile,
-                        templateManager.getConversionTemplates(), bagManager);
+                retval = new WebResultsExecutor(objectStore, classKeys, bagQueryRunner, profile,
+                        bagManager);
                 wreCache.put(profile, retval);
             }
             return retval;
@@ -141,16 +144,15 @@ public class InterMineAPI
      * @return the pathQueryExecutor
      */
     public PathQueryExecutor getPathQueryExecutor(Profile profile) {
-        return new PathQueryExecutor(objectStore, classKeys, bagQueryConfig, profile,
-                templateManager.getConversionTemplates(), bagManager);
+        return new PathQueryExecutor(objectStore, classKeys, profile,
+                bagQueryRunner, bagManager);
     }
 
     /**
      * @return the bagQueryRunner
      */
     public BagQueryRunner getBagQueryRunner() {
-        return new BagQueryRunner(objectStore, classKeys, bagQueryConfig,
-                templateManager.getConversionTemplates());
+        return bagQueryRunner;
     }
 
     /**
