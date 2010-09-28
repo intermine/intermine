@@ -86,7 +86,7 @@ public class WebServiceRequestParser
     private Integer parseInteger(String stringValue, String name, int minValue, int maxValue,
             WebServiceInput input) {
         Integer ret = null;
-        if (stringValue != null && !stringValue.equals("")) {
+        if (stringValue != null && !"".equals(stringValue)) {
             try {
                 ret = new Integer(stringValue);
                 if (ret < minValue || ret > maxValue) {

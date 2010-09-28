@@ -28,7 +28,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateManager;
