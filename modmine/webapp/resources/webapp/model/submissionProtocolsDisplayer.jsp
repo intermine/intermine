@@ -80,8 +80,8 @@ jQuery(document).ready(function () {
     <c:forEach items="${protocols}" var="prot" varStatus="p_status">
        <c:set var="pRowClass">
         <c:choose>
-          <c:when test="${p_status.count % 2 == 1}">oddgreen</c:when>
-          <c:otherwise>evengreen</c:otherwise>
+          <c:when test="${p_status.count % 2 == 1}">odd-alt</c:when>
+          <c:otherwise>even-alt</c:otherwise>
         </c:choose>
       </c:set>
 
