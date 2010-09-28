@@ -27,5 +27,5 @@ public interface WidgetHelper
      * @param bag the bag
      * @return a collection of strings to pass to the datasetloader
      */
-    public Collection<String> getExtraAttributes(ObjectStore os, InterMineBag bag);
+    Collection<String> getExtraAttributes(ObjectStore os, InterMineBag bag);
 }
