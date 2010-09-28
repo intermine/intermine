@@ -63,7 +63,7 @@ public class SaveQueryForm extends ActionForm
         Map<String, SavedQuery> savedQueries = profile.getSavedQueries();
 
         ActionErrors errors = null;
-        if (queryName.equals("")) {
+        if ("".equals(queryName)) {
             errors = new ActionErrors();
             errors.add(ActionMessages.GLOBAL_MESSAGE,
                        new ActionMessage("errors.savequery.blank", queryName));

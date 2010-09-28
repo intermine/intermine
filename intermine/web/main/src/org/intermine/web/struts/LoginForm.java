@@ -94,7 +94,7 @@ public class LoginForm extends ActionForm
 
         ActionErrors errors = new ActionErrors();
 
-        if (username.equals("")) {
+        if ("".equals(username)) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.emptyusername"));
         } else {
             if (pm.hasProfile(username)) {
