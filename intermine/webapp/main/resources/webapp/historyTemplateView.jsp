@@ -137,14 +137,34 @@
                 &nbsp;
               </td>
               <td class="sorting" align="center" nowrap>
-               <html:link action="/template?name=${savedTemplate.value.name}&amp;scope=user"
-                         titleKey="history.action.execute.hover">
-                  <fmt:message key="history.action.execute"/>
-               </html:link> |
-                <html:link action="/editTemplate?name=${savedTemplate.value.name}"
-                        titleKey="history.action.edit.hover">
-                  <fmt:message key="history.action.edit"/>
-                </html:link> |
+              <%-- Disable Run & Edit for bad template queries --%>
+              <c:choose>
+                <c:when test="${!savedTemplate.value.valid}">
+                   <span style="color:grey;"><fmt:message key="history.action.execute"/></span>
+                </c:when>
+                <c:otherwise>
+                   <html:link action="/template?name=${savedTemplate.value.name}&amp;scope=user"
+                             titleKey="history.action.execute.hover">
+                      <fmt:message key="history.action.execute"/>
+                   </html:link>
+                </c:otherwise>
+              </c:choose>
+
+              |
+
+              <c:choose>
+                <c:when test="${!savedTemplate.value.valid}">
+                      <span style="color:grey;"><fmt:message key="history.action.edit"/></span>
+                </c:when>
+                <c:otherwise>
+                    <html:link action="/editTemplate?name=${savedTemplate.value.name}"
+                            titleKey="history.action.edit.hover">
+                      <fmt:message key="history.action.edit"/>
+                    </html:link>
+                </c:otherwise>
+              </c:choose>
+
+                |
                 <html:link action="/exportTemplates?scope=user&amp;name=${savedTemplate.value.name}"
                         titleKey="history.action.export.hover">
                   <fmt:message key="history.action.export"/>
