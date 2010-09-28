@@ -36,8 +36,8 @@ public class BagConstraint extends Constraint implements ConstraintWithBag
      * @param bag a Collection that represents the bag
      */
     public BagConstraint(QueryNode qn, ConstraintOp op, Collection<?> bag) {
-    	ConstraintOp translatedOp = getTranslatedOp(op);
-    	if (qn == null) {
+        ConstraintOp translatedOp = getTranslatedOp(op);
+        if (qn == null) {
             throw new NullPointerException("qe cannot be null");
         }
         if (translatedOp == null) {
@@ -63,8 +63,8 @@ public class BagConstraint extends Constraint implements ConstraintWithBag
      * @param osb an ObjectStoreBag
      */
     public BagConstraint(QueryNode qn, ConstraintOp op, ObjectStoreBag osb) {
-    	ConstraintOp translatedOp = getTranslatedOp(op);
-    	if (qn == null) {
+        ConstraintOp translatedOp = getTranslatedOp(op);
+        if (qn == null) {
             throw new NullPointerException("qe cannot be null");
         }
         if (translatedOp == null) {
@@ -84,14 +84,13 @@ public class BagConstraint extends Constraint implements ConstraintWithBag
 
     // translate ONE_OF to IN and NONE_OF to NOT_IN
     private ConstraintOp getTranslatedOp(ConstraintOp op) {
-    	if (ConstraintOp.ONE_OF.equals(op)) {
-    		return ConstraintOp.IN;
-    	} else if (ConstraintOp.NONE_OF.equals(op)) {
-    		return ConstraintOp.NOT_IN;
-    	}
-    	return op;
+        if (ConstraintOp.ONE_OF.equals(op)) {
+            return ConstraintOp.IN;
+        } else if (ConstraintOp.NONE_OF.equals(op)) {
+            return ConstraintOp.NOT_IN;
+        }
+        return op;
     }
-    
     /**
      * Get the QueryNode.
      *
