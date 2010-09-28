@@ -159,7 +159,7 @@ public class ContactForm extends ValidatorForm
      * @return true if message contains headers, false if not
      */
     protected boolean containsHeaders(String msg, StringBuffer buffer) {
-        String lines[] = msg.split("\n");
+        String[] lines = msg.split("\n");
         boolean found = false;
         for (int i = 0; i < lines.length; i++) {
             if (isEmailHeader(lines[i], "to")
