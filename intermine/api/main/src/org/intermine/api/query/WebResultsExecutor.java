@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.config.Constants;
@@ -39,8 +38,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.pathquery.PathQuery;
 
-import org.apache.log4j.Logger;
-
 /**
  * Executes a PathQuery and returns a WebResults object, to be used when multi-row
  * style results are required.
@@ -50,13 +47,11 @@ import org.apache.log4j.Logger;
  */
 public class WebResultsExecutor
 {
-    private static final Logger LOG = Logger.getLogger(WebResultsExecutor.class);
     private ObjectStore os;
     private Map<String, List<FieldDescriptor>> classKeys;
-    private BagQueryConfig bagQueryConfig;
     private Profile profile;
-    private List<TemplateQuery> conversionTemplates;
     private BagManager bagManager;
+    private BagQueryRunner bagQueryRunner;
     private static Map<Query, Map<String, QuerySelectable>> queryToPathToQueryNode
         = Collections.synchronizedMap(new WeakHashMap<Query, Map<String, QuerySelectable>>());
     private Map<PathQuery, ResultsInfo> infoCache = Collections.synchronizedMap(
@@ -68,21 +63,19 @@ public class WebResultsExecutor
      *
      * @param os the ObjectStore to run the query in
      * @param classKeys key fields for classes in the data model
-     * @param bagQueryConfig bag queries to run when interpreting LOOKUP constraints
+     * @param bagQueryRunner for executing bag queries
      * @param profile the user executing the query - for access to saved lists
-     * @param conversionTemplates templates used for converting bag query results between types
      * @param bagManager access to global and user bags
      */
     public WebResultsExecutor(ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys,
-            BagQueryConfig bagQueryConfig,
-            Profile profile, List<TemplateQuery> conversionTemplates,
+            BagQueryRunner bagQueryRunner,
+            Profile profile,
             BagManager bagManager) {
         this.os = os;
         this.classKeys = classKeys;
-        this.bagQueryConfig = bagQueryConfig;
+        this.bagQueryRunner = bagQueryRunner;
         this.profile = profile;
-        this.conversionTemplates = conversionTemplates;
         this.bagManager = bagManager;
     }
 
@@ -192,12 +185,10 @@ public class WebResultsExecutor
      */
     public Query makeQuery(PathQuery pathQuery, Map<String, BagQueryResult> pathToBagQueryResult,
             Map<String, QuerySelectable> pathToQueryNode) throws ObjectStoreException {
-        BagQueryRunner bqr = new BagQueryRunner(os, classKeys, bagQueryConfig,
-                conversionTemplates);
 
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
 
-        Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bqr,
+        Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bagQueryRunner,
                 pathToBagQueryResult);
         return q;
     }
@@ -226,11 +217,10 @@ public class WebResultsExecutor
     public Query makeSummaryQuery(PathQuery pathQuery,
             String summaryPath) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
-        BagQueryRunner bqr = new BagQueryRunner(os, classKeys, bagQueryConfig,
-                conversionTemplates);
+
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
         Query q = MainHelper.makeSummaryQuery(pathQuery, summaryPath, allBags, pathToQueryNode,
-                bqr);
+                bagQueryRunner);
         return q;
     }
 

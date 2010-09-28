@@ -148,9 +148,8 @@ public class PerformanceTester
             TemplateManager templateManager = new TemplateManager(pm.getSuperuserProfile(),
                     productionOs.getModel());
 
-            List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
             BagQueryRunner bqr = new BagQueryRunner(productionOs, classKeys, bagQueryConfig,
-                    conversionTemplates);
+                    templateManager);
             Query q = MainHelper.makeQuery(templateQuery, new HashMap<String, InterMineBag>(),
                     new HashMap<String, QuerySelectable>(), bqr, null);
             String sqlString = SqlGenerator.generate(q, 0, Integer.MAX_VALUE,

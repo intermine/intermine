@@ -16,6 +16,7 @@ import java.util.Set;
 import junit.framework.Test;
 
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.metadata.FieldDescriptor;
@@ -39,7 +40,7 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
 
     private ObjectStore os;
     private Map<String, Employee> eIds;
-    private BagQueryRunner runner;
+    private TestingBagQueryRunner runner;
 
     public BagQueryRunnerTest(String arg0) {
         super(arg0);
@@ -58,7 +59,10 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
         
         TemplateQueryBinding tqb = new TemplateQueryBinding();
         Map<String, TemplateQuery> tqs = tqb.unmarshal(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("BagQueryRunnerTest_templates.xml")), null, PathQuery.USERPROFILE_VERSION);
-        runner = new BagQueryRunner(os, classKeys, bagQueryConfig, new ArrayList<TemplateQuery>(tqs.values()));
+
+        // construct with a null TemplateManager and set conversion templates to specific list
+        runner = new TestingBagQueryRunner(os, classKeys, bagQueryConfig, null);
+        runner.setConversionTemplates(new ArrayList<TemplateQuery>(tqs.values()));
     }
 
     public void executeTest(String type) {

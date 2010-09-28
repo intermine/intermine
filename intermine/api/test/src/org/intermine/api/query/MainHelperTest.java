@@ -17,13 +17,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -32,10 +29,9 @@ import junit.framework.TestCase;
 
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
-import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.bag.TestingBagQueryRunner;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
@@ -51,13 +47,10 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.LogicExpression;
-import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
@@ -73,7 +66,7 @@ public class MainHelperTest extends TestCase {
     private BagQueryConfig bagQueryConfig;
     private ObjectStore os;
     private Map<String, List<FieldDescriptor>> classKeys;
-    private BagQueryRunner bagQueryRunner;
+    private TestingBagQueryRunner bagQueryRunner;
 
     public MainHelperTest(String arg) {
         super(arg);
@@ -93,7 +86,8 @@ public class MainHelperTest extends TestCase {
         InputStream config = MainHelperTest.class.getClassLoader()
             .getResourceAsStream("bag-queries.xml");
         bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), config);
-        bagQueryRunner = new BagQueryRunner(os, classKeys, bagQueryConfig, Collections.EMPTY_LIST);
+        bagQueryRunner = new TestingBagQueryRunner(os, classKeys, bagQueryConfig, null);
+        bagQueryRunner.setConversionTemplates(Collections.EMPTY_LIST);
     }
 
     public void testMakeConstraintSets() {

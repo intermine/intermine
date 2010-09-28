@@ -12,7 +12,6 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,8 +114,7 @@ public class PortalQueryAction extends InterMineAction
 //            return new ForwardParameters(mapping.findForward("waiting"))
 //                .addParameter("qid", qid).forward();
 
-            BagQueryRunner bagRunner = new BagQueryRunner(im.getObjectStore(), im.getClassKeys(),
-                    im.getBagQueryConfig(), Collections.EMPTY_LIST);
+            BagQueryRunner bagRunner = im.getBagQueryRunner();
             BagQueryResult bqr
                 = bagRunner.searchForBag("BioEntity", Arrays.asList(idList), null, false);
             Map<Integer, List> results = bqr.getMatches();
