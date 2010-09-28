@@ -27,5 +27,5 @@ public interface RowFormatter
      * @param row formatted objects
      * @return returned formatted string
      */
-    public String format(List<Object> row);
+    String format(List<Object> row);
 }
