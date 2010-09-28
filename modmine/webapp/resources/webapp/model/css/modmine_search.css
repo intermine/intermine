@@ -19,16 +19,18 @@
 }
 
 .examples {
-   margin-top: 1em;
+   font-size: 0.9em;
+	 margin-top: 0.9em;
    margin-right:auto;
    margin-bottom: 1em;
-   margin-left:auto;
+   margin-left: auto;
    text-align:left;
-   width: 425px;
+   width: 500px;
 }
-	
+
 .examples li {
   font-size: 0.9em;
   text-align: left;
   margin-left: 0px;
+   width: 450px;
 }
