@@ -50,7 +50,7 @@ public class RowFormatterImpl implements RowFormatter
             if (o != null) {
                 if (o instanceof Number
                     || (!quoted && o.toString().indexOf(delimiter) < 0
-                        && !o.toString().equals(""))) {
+                        && !"".equals(o.toString()))) {
                     sb.append(getUnQuoted(o));
                 } else {
                     sb.append(getQuoted(o));
