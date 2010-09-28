@@ -21,15 +21,11 @@ import javax.servlet.http.HttpSession;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.bag.BagQueryConfig;
-import org.intermine.api.bag.BagQueryHelper;
-import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.UserProfile;
