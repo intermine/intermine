@@ -41,6 +41,7 @@ import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.iql.IqlQuery;
+import org.intermine.util.StringUtil;
 
 /**
  * A class encapsulating a query used to create a bag from a collection of input identifiers.
@@ -124,8 +125,12 @@ public class BagQuery
                                                            classKeys, lowerCaseBag);
             return addExtraConstraint(q, extraFieldValue);
         }
-        IqlQuery q = new IqlQuery(queryString, packageName,
-                new ArrayList<Object>(Collections.singleton(lowerCaseBag)));
+        List<Object> bags = new ArrayList<Object>();
+        int bagCount = StringUtil.countOccurances("?", queryString);
+        for (int i = 0; i < bagCount; i++) {
+            bags.add(lowerCaseBag);
+        }
+        IqlQuery q = new IqlQuery(queryString, packageName, bags);
         return addExtraConstraint(q.toQuery(), extraFieldValue);
 
     }
