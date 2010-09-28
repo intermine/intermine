@@ -22,19 +22,28 @@
   <p><i>Search for modENCODE submissions by metadata</i></p>
     <html:form action="/modMineSearchAction" focus="searchTerm">
       <!-- <input style="" id="modMineSearchInput" name="value" type="text" focus = "value" class="modMineSearchBox">-->
-      <html:text property="searchTerm" style="width: 350px;" />     
+      <html:text property="searchTerm" style="width: 350px;" />
       <html:submit>Search</html:submit>
     </html:form>
     <div class="examples">
+      All fields will be searched, for example:
+      antibody names (e.g. <i>PolII</i>, <i>H3K4me1</i>, <i>CP190</i>),
+      lab names (e.g. <i>Reinke</i>, <i>Snyder</i>),
+      data types (e.g. <i>UTR</i>, <i>bindingsite</i>). The search supports:
+      <p></p>
+      - Boolean operators: e.g. <i>fly AND embryo</i> to combine terms, <i>fly AND NOT embryo</i> to exclude one
+    <br> - Partial matches: e.g. <i>dros*</i>
+    </br>
+    <br> - Phrase matches: e.g. <i>"dna binding site"
+    </br>
+    <!--
     <ul>
-    <li>
-    	All fields will be searched, for example:
-    	antibody names (e.g. <i>'PolII</i>', <i>'H3K4me1</i>', <i>'CP190</i>'),
-    	lab names (e.g. <i>'Reinke</i>', <i>'Snyder'</i>),
-    	data types (e.g. <i>'UTR'</i>, <i>'bindingsite'</i>)
+    <li> - Boolean operators: e.g. <i>fly AND embryo</i> to combine terms, <i>fly AND NOT embryo</i> to exclude one</li>
     </li>
-    <li>Boolean search is supported: e.g. <i>'fly AND embryo'</i> to combine terms, <i>'fly AND NOT embryo'</i> to exclude one</li>
+    <li> - Partial matches: e.g. <i>dros*</i></li>
+    <li> - Phrase matches: e.g. <i>"dna binding site"</li>
     </ul>
+    -->
     </div>
 </div>
 
