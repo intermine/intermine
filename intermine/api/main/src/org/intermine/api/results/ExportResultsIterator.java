@@ -18,19 +18,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.intermine.api.bag.BagQueryRunner;
-import org.intermine.api.query.MainHelper;
+import org.intermine.api.query.QueryExecutor;
 import org.intermine.model.FastPathObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.PathExpressionField;
-import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsBatches;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
@@ -41,7 +37,7 @@ import org.intermine.pathquery.PathQuery;
  *
  * @author Matthew Wakeling
  */
-public class ExportResultsIterator implements Iterator<List<ResultElement>>
+public class ExportResultsIterator extends QueryExecutor implements Iterator<List<ResultElement>>
 {
     private static final Logger LOG = Logger.getLogger(ExportResultsIterator.class);
 
@@ -53,49 +49,31 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
     private Results results;
     private boolean isGoingFaster = false;
 
+
      /**
      * Constructor for ExportResultsIterator. This creates a new instance from the given
      * ObjectStore, PathQuery, and other necessary objects.
      *
-     * @param os an ObjectStore that the query will be run on
-     * @param pq a PathQuery to run
-     * @param savedBags a Map of the bags that the query may have used
-     * @param bagQueryRunner a BagQueryRunner for any LOOKUP constraints
+     * @param pathQuery a PathQuery to run
+     * @param results the results object created when executing the query
+     * @param pathToQueryNode a map from path in pathQuery to QuerySelectable in the generated
+     * ObjectStore query
      * @throws ObjectStoreException if something goes wrong executing the query
      */
-    public ExportResultsIterator(ObjectStore os, PathQuery pq, Map savedBags,
-            BagQueryRunner bagQueryRunner) throws ObjectStoreException {
-        init(os, pq, savedBags, bagQueryRunner, ResultsBatches.DEFAULT_BATCH_SIZE);
+    public ExportResultsIterator(PathQuery pathQuery, Results results,
+            Map<String, QuerySelectable> pathToQueryNode) throws ObjectStoreException {
+        this.results = results;
+        init(pathQuery, pathToQueryNode);
     }
 
-    /**
-     * Constructor for ExportResultsIterator. This creates a new instance from the given
-     * ObjectStore, PathQuery, and other necessary objects.
-     *
-     * @param os an ObjectStore that the query will be run on
-     * @param pq a PathQuery to run
-     * @param savedBags a Map of the bags that the query may have used
-     * @param bagQueryRunner a BagQueryRunner for any LOOKUP constraints
-     * @param batchSize the batch size for the results
-     * @throws ObjectStoreException if something goes wrong executing the query
-     */
-    public ExportResultsIterator(ObjectStore os, PathQuery pq, Map savedBags,
-            BagQueryRunner bagQueryRunner, int batchSize) throws ObjectStoreException {
-        init(os, pq, savedBags, bagQueryRunner, batchSize);
-    }
 
-    private void init(ObjectStore os, PathQuery pq, Map savedBags,
-            BagQueryRunner bagQueryRunner, int batchSize)
+
+    private void init(PathQuery pq, Map<String, QuerySelectable> pathToQueryNode)
         throws ObjectStoreException {
-        Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
-        Map returnBagQueryResults = new HashMap();
-        Query q = MainHelper.makeQuery(pq, savedBags, pathToQueryNode, bagQueryRunner,
-                returnBagQueryResults);
-        results = os.execute(q, batchSize, true, true, true);
         osIter = ((List) results).iterator();
         List<List<ResultElement>> empty = Collections.emptyList();
         subIter = empty.iterator();
-        columns = convertColumnTypes(q.getSelect(), pq, pathToQueryNode);
+        columns = convertColumnTypes(results.getQuery().getSelect(), pq, pathToQueryNode);
         columnCount = pq.getView().size();
     }
 
