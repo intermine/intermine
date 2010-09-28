@@ -128,7 +128,7 @@ public final class PathQueryResultHelper
             }
             prefix = type;
         }
-        
+
         for (FieldConfig fieldConfig : fieldConfigs) {
             if (fieldConfig.getShowInResults()) {
                 String path = prefix + "." + fieldConfig.getFieldExpr();
