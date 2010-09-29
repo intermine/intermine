@@ -22,6 +22,7 @@ import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintMultiValue;
+import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.util.StringUtil;
 import org.intermine.webservice.server.CodeTranslator;
 import org.intermine.webservice.server.LinkGeneratorBase;
@@ -219,6 +220,8 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
             return ((PathConstraintBag) con).getBag();
         } else if (con instanceof PathConstraintMultiValue) {
             return StringUtil.join(((PathConstraintMultiValue) con).getValues(), ",");
+        } else if (con instanceof PathConstraintNull) {
+            return ((PathConstraintNull) con).getOp().toString();
         } else {
             throw new IllegalArgumentException("Constraints of type '" + con.getClass()
                     + "' are not yet supported template queries.");
