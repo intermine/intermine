@@ -13,37 +13,62 @@ use List::MoreUtils qw/uniq/;
 
 use MooseX::Types::Moose qw/Str Bool/;
 use InterMine::TypeLibrary qw(
-  PathList PathHash SortOrder
+  PathList PathHash SortOrder SortOrderList
   ConstraintList LogicOrStr JoinList
   QueryName PathDescriptionList
   ConstraintFactory
 );
 use Webservice::InterMine::Join;
 use Webservice::InterMine::PathDescription;
-use Webservice::InterMine::Path qw(:validate);
+use Webservice::InterMine::Path qw(:validate type_of);
 use Webservice::InterMine::SortOrder;
 use Exporter 'import';
 
 our @EXPORT_OK = qw(AND OR);
 
 ######### ATTRIBUTES
-has '+name' => ( isa => QueryName, );
+has '+name' => ( 
+    isa => QueryName, 
+    coerce => 1,
+);
 
-has sort_order => (
-    is      => 'ro',
-    writer  => '_set_sort_order',
-    isa     => SortOrder,
-    lazy    => 1,
-    coerce  => 1,
-    trigger => sub {
+has _sort_order => (
+    traits     => ['Array'],
+    is         => 'ro',
+    writer     => '_set_sort_order',
+    isa        => SortOrderList,
+    lazy_build => 1,
+    coerce     => 1,
+    predicate  => 'has_sort_order',
+    trigger    => sub {
         my $self = shift;
         $self->_validate;
     },
-    default => sub {
-        my $self = shift;
-        ( $self->view )->[0];
+    handles => {
+        push_sort_order => 'push',
+        sort_orders    => 'elements',
+        joined_so      => 'join',
+        clear_sort_order => 'clear',
     },
 );
+
+sub add_sort_order {
+    my $self = shift;
+    my @args = @_;
+    my $so = Webservice::InterMine::SortOrder->new(@args);
+    $self->push_sort_order($so);
+}
+sub sort_order {
+    my $self = shift;
+    confess "You can't use this method to modify this attribute"
+        if shift;
+    return $self->joined_so(' ');
+}
+
+sub _build__sort_order {
+    my $self = shift;
+    ( $self->view )->[0];
+}
 
 sub set_sort_order {
     my $self = shift;
@@ -110,13 +135,22 @@ sub get_constraint {
     return $matches[0];
 }
 
-sub remove_constraint {
+sub remove {
     my $self     = shift;
     my $delendum = shift;    # Constraintum delendum est
     my $i        = 0;
-    for ( $self->all_constraints ) {
+    my $type;
+    for ($delendum->element_name) {
+        if (/pathDescription/) {$type = 'path_description'}
+        elsif (/join/)         {$type = 'join'}
+        elsif (/constraint/)   {$type = 'constraint'}
+        else {confess "Cannot delete elements of type $_ from queries"}
+    }
+    my $all = 'all_' . $type . 's';
+    my $del = 'delete_' . $type;
+    for ( $self->$all ) {
         if ( $_ eq $delendum ) {
-            $self->delete_constraint($i);
+            $self->$del($i);
         }
         $i++;
     }
@@ -174,6 +208,7 @@ has joins => (
         push_join   => 'push',
         map_joins   => 'map',
         clear_joins => 'clear',
+        delete_join => 'delete',
     }
 );
 
@@ -194,6 +229,8 @@ has path_descriptions => (
         all_path_descriptions => 'elements',
         push_path_description => 'push',
         map_path_descriptions => 'map',
+        clear_path_descriptions => 'clear',
+        delete_path_description => 'delete',
     },
 );
 
@@ -236,16 +273,31 @@ has is_validating => (
     },
 );
 
+has is_dubious => (
+    isa     => Bool,
+    default => 0,
+    is      => 'ro',
+);
 sub all_paths {
     my $self    = shift;
     my $to_path = sub { $_->path };
     my @paths   = (
-        $self->views,               $self->map_constraints($to_path),
-        $self->map_joins($to_path), $self->map_path_descriptions($to_path),
+        $self->views,               
+        $self->map_constraints($to_path),
+        $self->map_joins($to_path), 
+        $self->map_path_descriptions($to_path),
     );
     return uniq(@paths);
 }
 
+sub all_children {
+    my $self = shift;
+    my @children;
+    for my $meth (qw/all_path_descriptions all_joins all_constraints/) {
+        push @children, $self->$meth;
+    }
+    return @children;
+}
 ############### METHODS
 
 sub check_logic {
@@ -273,19 +325,24 @@ sub _parse_logic {
     for my $bit (@bits) {
         if ( $bit =~ /^[\(\)]$/ ) {
             push @processed_bits, $bit;
-        } elsif ( $bit =~ /^[A-Z]+$/ ) {
+        }
+        elsif ( $bit =~ /^[A-Z]+$/ ) {
             if ( $found_con{$bit} ) {
                 push @processed_bits, '$found_con{' . $bit . '}';
-            } else {
+            }
+            else {
                 confess "No constraint with code $bit in this query "
                   . " - we only have "
                   . join( ', ', keys %found_con );
             }
-        } elsif ( $bit =~ /^and$/ ) {
+        }
+        elsif ( $bit =~ /^and$/ ) {
             push @processed_bits, ' & ';
-        } elsif ( $bit =~ /^or$/ ) {
+        }
+        elsif ( $bit =~ /^or$/ ) {
             push @processed_bits, ' | ';
-        } else {
+        }
+        else {
             croak "unexpected element in logic string: $bit";
         }
     }
@@ -308,13 +365,14 @@ sub add_constraint {
 
 sub parse_constraint_string {
     if ( @_ > 1 ) {
-        if (@_ % 2 == 0) {
+        if ( @_ % 2 == 0 ) {
             my %args = @_;
             my @keys = keys %args;
             if (    ( grep { $_ eq 'path' } @keys )
-                and ( grep { $_ =~ /^(?:type|op)$/ } @keys ) ) {   
-                return %args;  
-            } 
+                and ( grep { $_ =~ /^(?:type|op)$/ } @keys ) )
+            {
+                return %args;
+            }
         }
         my %args;
         @args{qw/path op value extra_value/} = @_;
@@ -322,7 +380,8 @@ sub parse_constraint_string {
             $args{values} = delete $args{value};
         }
         return map { $_ => $args{$_} } grep { defined $args{$_} } keys(%args);
-    } else {
+    }
+    else {
         my $constraint_string = shift;
         my %args;
         my @bits = split /\s+/, $constraint_string, 2;
@@ -331,8 +390,7 @@ sub parse_constraint_string {
         }
         $args{path} = $bits[0];
         $constraint_string = $bits[1];
-        @bits = $constraint_string 
-            =~ m/^
+        @bits = $constraint_string =~ m/^
                 (
                 IS\sNOT\sNULL|
                 IS\sNULL|
@@ -354,11 +412,11 @@ sub parse_constraint_string {
 
 sub clean_out_SCCs {
     my $self = shift;
-    my $c;
     for ( $self->sub_class_constraints ) {
         if ( end_is_class( $self->model, $_->path ) ) {
-            $self->remove_constraint($_);
-            $c++;
+            $self->remove($_); # remove it because it is not a class
+        } elsif (type_of($self->model, $_->path) eq $_->type) {
+            $self->remove($_); # remove it because it is constraine to itself
         }
     }
 }
@@ -410,8 +468,10 @@ sub validate_consistency {
 sub validate_sort_order {
     my $self = shift;
     return if $self->view_is_empty;
-    unless ( grep { $self->sort_order->path eq $_ } $self->views ) {
-        return $self->sort_order->path . " is not in the view\n";
+    for my $so ($self->sort_orders) {
+        unless ( grep { $so->path eq $_ } $self->views ) {
+            return $so->path . " is not in the view\n";
+        }
     }
     return;
 }

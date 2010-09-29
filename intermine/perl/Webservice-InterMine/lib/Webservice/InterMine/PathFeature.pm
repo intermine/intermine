@@ -21,6 +21,7 @@ around BUILDARGS => sub {
 
 has path => (
     is       => 'ro',
+    writer   => 'set_path',
     isa      => PathString,
     coerce   => 1,
     required => 1,

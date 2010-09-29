@@ -73,6 +73,7 @@ use constant {
     USER_AGENT         => 'WebserviceInterMinePerlAPIClient',
     LIST_PATH          => '/lists/xml',
     SAVEDQUERY_PATH    => '/savedqueries/xml',
+    RELEASE_PATH       => '/version/release',
 };
 
 =head2 root | user | pass
@@ -140,7 +141,10 @@ has _templates => (
             $self->fetch( $self->root . TEMPLATES_PATH ),
         ];
     },
-    handles => { get_template => 'get_template_by_name', },
+    handles => { 
+        get_template => 'get_template_by_name', 
+        get_templates => 'get_templates',
+    },
 );
 
 sub template {
@@ -199,7 +203,24 @@ has version => (
     lazy     => 1,
     default  => sub {
         my $self = shift;
-        $self->fetch( $self->root . VERSION_PATH ),;
+        $self->fetch( $self->root . VERSION_PATH );
+    },
+);
+
+=head2 release
+
+Returns the release string of the webservice
+
+=cut
+
+has release => (
+    is => 'ro',
+    isa => Str,
+    required => 1,
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+        $self->fetch( $self->root . RELEASE_PATH );
     },
 );
 

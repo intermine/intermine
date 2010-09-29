@@ -156,8 +156,8 @@ sub sort_order_initial_state : Test {
     my $test = shift;
     my $obj = $test->{object};
     is(
-	$obj->sort_order->to_string, 'Employee.name asc',
-	"Sets the sort order correctly",
+        $obj->sort_order, 'Employee.name asc',
+        "Sets the sort order correctly",
     );
 }
 

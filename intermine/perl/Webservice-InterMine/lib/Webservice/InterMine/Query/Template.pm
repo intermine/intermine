@@ -11,8 +11,7 @@ with(
     'Webservice::InterMine::Query::Roles::Serviced',
     'Webservice::InterMine::Query::Roles::ReadInAble',
     'Webservice::InterMine::Query::Roles::WriteOutAble',
-    'Webservice::InterMine::Query::Roles::ExtendedQuery' =>
-      { type => 'template', },
+    'Webservice::InterMine::Query::Roles::ExtendedQuery',
 );
 
 sub _build_handler {

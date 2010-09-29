@@ -11,7 +11,7 @@ use Webservice::InterMine::Path qw(:validate);
 # internal functions we would like access to for testing
 my $parse      = Webservice::InterMine::Path->can('_parse');
 my $class_of   = Webservice::InterMine::Path->can('class_of');
-my $next_class = Webservice::InterMine::Path->can('_next_class');
+my $next_class = Webservice::InterMine::Path->can('next_class');
 my $last_bit   = Webservice::InterMine::Path->can('last_bit');
 
 my $model = new InterMine::Model(file => 't/data/testmodel_model.xml');
@@ -31,21 +31,18 @@ is($class_of->($class)->name, 'Department', 'Gets class of class');
 is($class_of->($ref)->name,   'Employee',   'Gets class of reference');
 is($class_of->($att),          undef,       'Returns undef for attributes');
 
-my $types = {$two_bit_string => 'Manager'};
-my @parts = ($class, $ref);
 
 is($next_class->($class, $model)->name, 'Department', 'Next class of a cd is the cd');
 is($next_class->($ref, $model)->name, 'Employee', 'Next class of a ref is the ref cd');
 is($next_class->($att, $model), undef, 'Next class of an att is undef');
-is($next_class->($ref, $model, $types, @parts)->name, 'Manager', 
+is($next_class->($ref, $model, 'Manager')->name, 'Manager', 
    'Next class of a subclassed path is the subclass');
 
-$types->{$two_bit_string} = 'Foo';
-throws_ok( sub {$next_class->($ref, $model, $types, @parts)},
+throws_ok( sub {$next_class->($ref, $model, 'Foo')},
 	   qr/Foo not in the model/,
 	   'Catches bad next class');
 dies_ok( sub {$next_class->($model, $ref)}, 'Dies on bad input');
-
+my @parts;
 lives_ok(sub {@parts = $parse->($model, $good_path_string)}, 
     'Can parse a good path');
 is(scalar(@parts), 3, 'Gets the number of parts right');

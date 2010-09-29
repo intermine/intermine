@@ -18,8 +18,7 @@ with(
     'Webservice::InterMine::Query::Roles::ReadInAble',
     'Webservice::InterMine::Query::Roles::WriteOutAble',
     'Webservice::InterMine::Query::Roles::WriteOutLegacy',
-    'Webservice::InterMine::Query::Roles::ExtendedQuery' =>
-      { type => 'saved-query', },
+    'Webservice::InterMine::Query::Roles::ExtendedQuery',
 );
 
 __PACKAGE__->meta->make_immutable;
