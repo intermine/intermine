@@ -182,6 +182,7 @@ public class OrthologueLinkManager
 
         // query for which organisms are available;
         if (!setOrganisms(mine)) {
+            LOG.warn("No organisms found for " + mine.getName());
             return;
         }
 
@@ -231,7 +232,7 @@ public class OrthologueLinkManager
             }
 
             if (mineName.equals(localMineName)) {
-                if (localMine.getUrl() == null) {
+                if (localMine.getUrl() == null || DEBUG) {
                     localMine.setUrl(url);
                     localMine.setLogo(logo);
                     setLocalOrthologues(im);
@@ -432,8 +433,6 @@ public class OrthologueLinkManager
                 // add dataset for this gene.organism + gene.homologue.organism pair
                 homologueMapping.addRemoteDataSet(dataSet);
             }
-            localMine.setOrthologues(geneOrganismToOrthologues);
-
         } catch (MalformedURLException e) {
             LOG.info("Unable to access " + mine.getName() + " at " + webserviceURL);
             return;

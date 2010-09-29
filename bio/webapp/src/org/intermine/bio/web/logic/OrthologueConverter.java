@@ -27,7 +27,6 @@ import org.intermine.api.results.WebResults;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
@@ -66,6 +65,7 @@ public class OrthologueConverter extends BagConverter
     /**
      * runs the orthologue conversion pathquery and returns a comma-delimited list of identifiers
      * used on list analysis page for intermine linking, called via Ajax
+     *
      * @param profile the user's profile
      * @param bagType the class of the list, has to be gene I think
      * @param bagName name of list
@@ -77,11 +77,17 @@ public class OrthologueConverter extends BagConverter
         StringBuffer orthologues = new StringBuffer();
         String geneIdentifier = "Gene.homologues.homologue.primaryIdentifier";
         PathQuery pathQuery = constructPathQuery(organismName);
-        pathQuery.addConstraint(Constraints.eq(bagType, bagName));
-        pathQuery.addConstraint(Constraints.isNull(geneIdentifier));
+        pathQuery.addConstraint(Constraints.in(bagType, bagName));
+        pathQuery.addConstraint(Constraints.isNotNull(geneIdentifier));
         pathQuery.addView(geneIdentifier);
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-        ExportResultsIterator it = executor.execute(pathQuery);
+        ExportResultsIterator it = null;
+
+        try {
+            it = executor.execute(pathQuery);
+        } catch (Exception e) {
+            throw new RuntimeException("bad pathquery", e);
+        }
 
         while (it.hasNext()) {
             List<ResultElement> row = it.next();
@@ -166,7 +172,7 @@ public class OrthologueConverter extends BagConverter
 
     @Override
     public WebResults getConvertedObjects(Profile profile, List<Integer> fromList, String type,
-            String parameters) throws ObjectStoreException, PathException {
+            String parameters) throws ObjectStoreException {
 
         PathQuery q = new PathQuery(model);
         List<String> view = PathQueryResultHelper.getDefaultViewForClass(type, model, webConfig,
