@@ -157,7 +157,8 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
                     continue;
                 }
                 // the Path we need is the parent of one of the paths in the columns
-                paths.add(seqPath.append("chromosomeLocation"));
+                // Broken in 0.94
+                // paths.add(seqPath.append("chromosomeLocation"));
             }
         }
 
