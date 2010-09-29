@@ -772,6 +772,9 @@ public class DisplayConstraint
      */
     public boolean isPossibleValuesDisplayed() {
         if (con != null) {
+            if (getSelectedOp() == null) {
+                return false;
+            }
             int selectedOperator = getSelectedOp().getProperty();
             if (selectedOperator == ConstraintOp.MATCHES.getIndex()
                     || selectedOperator == ConstraintOp.DOES_NOT_MATCH.getIndex()
