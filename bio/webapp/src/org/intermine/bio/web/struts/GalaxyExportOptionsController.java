@@ -113,13 +113,20 @@ public class GalaxyExportOptionsController extends TilesAction
             }
         }*/
 
-        // TODO Bag is not support so far, Galaxy can not fetch data by the query, fix me
-        String isBag = "false";
+        // TODO Private Bag is not support so far, Galaxy can not fetch data by the query, fix me
+        String isUserBag = "false";
         Set<String> bagNames = query.getBagNames();
         if (!bagNames.isEmpty()) {
-            isBag = "true";
-            request.setAttribute("isBag", isBag);
+            // if the bags are all public, export to Galaxy is allowed
+            if (!im.getBagManager().getGlobalBags().isEmpty()
+                    && im.getBagManager().getGlobalBags().keySet()
+                            .containsAll(bagNames)) {
+                isUserBag = "false";
+            } else {
+                isUserBag = "true";
+            }
         }
+        request.setAttribute("isBag", isUserBag);
 
         Model model = im.getModel();
         String queryXML = PathQueryBinding.marshal(query, "tmpName", model.getName(),
