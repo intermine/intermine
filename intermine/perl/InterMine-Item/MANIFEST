@@ -3,14 +3,15 @@ Changes
 ignore.txt
 lib/InterMine/Item.pm
 lib/InterMine/Item/Document.pm
+Makefile.PL
 MANIFEST
+META.yml
 README
 t/00-load.t
 t/01_items/01_construct.t
 t/01_items/02_xml.t
 t/boilerplate.t
+t/data/testmodel_model.xml
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
-Makefile.PL
-META.yml
