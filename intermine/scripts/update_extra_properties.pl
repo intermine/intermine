@@ -1,20 +1,24 @@
 #!/usr/bin/perl
 
+# This script makes some straightforward changes to the project.properties
+# and build.xml files in the dbmodel directories, as to the .intermine/mine.properties
+# files in the users home directory
+
 use strict;
 use warnings;
+use File::Copy;
 
 my %DBModel_replacements = (
     qr{(\s*compile\.dependencies\s=\sintermine/integrate/main)\s*$} => q{$1.", bio/core/main\n"},
-   => q{},
-)
+);
 my @DBModel_additions = (
    'so.termlist.file = resources/so_term_list.txt',
    'so.obo.file = ../../bio/sources/so/so.obo',
    'so.output.file = build/model/so_additions.xml',
-)
+);
 my %DOTInterMine_replacements = (
     qr{org\.postgresql\.jdbc3\.Jdbc3PoolingDataSource} => q{"org.postgresql.ds.PGPoolingDataSource"},
-)
+);
 
 my %BuildXML_replacements = (
     qr{<project\s.*$} => q!$& . '
@@ -25,12 +29,19 @@ my %BuildXML_replacements = (
     <so-model soTermListFile="${so.termlist.file}" soFile="${so.obo.file}" outputFile="${so.output.file}"/>
 </target>
 '!,
-)
+);
 
+# Do not delete the original, but back it up to file.old.orig
 my $ext = '.orig';
 
 # FIND ALL THE PROJECT PROPERTIES FILES AND BUILD.XML FILES IN DBMODEL DIRECTORIES
 my $svn_loc = $ARGV[0];
+
+die "We need to know where the svn directory is"
+    unless $svn_loc;
+
+my $reverting = ($ARGV[1] and $ARGV[1] eq 'revert');
+
 opendir(my $svn_dir, $svn_loc) or die;
 for my $mine (readdir($svn_dir)) {
     my $abs_mine = $svn_loc . '/' . $mine;
@@ -44,14 +55,15 @@ for my $mine (readdir($svn_dir)) {
                 process($abs_mine.'/dbmodel/project.properties', \%replacements, \@DBModel_additions);
                 my $buildxml = $abs_mine.'/dbmodel/build.xml';
                 process($buildxml, \%BuildXML_replacements, [])
-                    if (qx{grep 'create-so-model' $buildxml}); # This is our test for it already being there
+                    if (qx{grep 'create-so-model' $buildxml});
+                    # This is our test for it already being there
            }
         }
     }
 }
 
 # FIND ALL THE .intermine/$MINE.properties FILES
-my $dot_intermine_loc = $ENV{HOME} . '/' . '.intermine'
+my $dot_intermine_loc = $ENV{HOME} . '/' . '.intermine';
 opendir(my $home_dir, $dot_intermine_loc) or die;
 for (map {"$dot_intermine_loc/$_"} readdir($home_dir)) {
     if (/\.properties$/) {
@@ -62,9 +74,18 @@ for (map {"$dot_intermine_loc/$_"} readdir($home_dir)) {
 # RUN THE REPLACEMENT LIST OVER THE FILES
 sub process {
     my ($file, $replacements, $additions) = @_;
-    open($in, '<', $file) or die;
+    open(my $in, '<', $file) or die;
     my $backup = $file . $ext;
-    rename($file, $backup)
+    print STDERR "backing up $file to $backup\n";
+    if (-f $backup) {
+        if ($reverting) {
+            move($backup, $file);
+            return;
+        } else {
+            die "Back up file ($backup) exists - we do not want to overwrite it";
+        }
+    }
+    rename($file, $backup);
     open(my $out, '>', $file) or die;
     select($out);
     my @seen_lines;
@@ -80,8 +101,9 @@ sub process {
             print $a, "\n";
         }
     }
-    close $in;
-    close $out;
+    close $in or die "Cannot close original file, $!";
+    close $out or die "Cannot close new file, $!";
+    print STDERR "finished processing $file\n";
 }
 
 exit()
