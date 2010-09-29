@@ -1,55 +1,92 @@
-InterMine-Model
+NAME
+    InterMine::Model - the representation of an InterMine model
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+SYNOPSIS
+      use InterMine::Model;
+      use InterMine::ItemFactory;
 
-A README file is required for CPAN modules since CPAN extracts the README
-file from a module distribution so that people browsing the archive
-can use it to get an idea of the module's uses. It is usually a good idea
-to provide version information here so that people can decide whether
-fixes for the module are worth downloading.
+      my $model_file = 'flymine/dbmodel/build/model/genomic_model.xml';
+      my $model = new InterMine::Model(file => $model_file);
+      my $factory = new InterMine::ItemFactory(model => $model);
 
+      ...
 
-INSTALLATION
+DESCRIPTION
+    The class is the Perl representation of an InterMine data model. The
+    new() method can parse the model file. The get_classdescriptor_by_name()
+    method will return an InterMine::Model::ClassDescriptor object for the
+    class with the given name.
 
-To install this module, run the following commands:
+    For an example model see:
+    http://trac.flymine.org/browser/trunk/intermine/objectstore/model/testmo
+    del/testmodel_model.xml
 
-	perl Build.PL
-	./Build
-	./Build test
-	./Build install
+AUTHOR
+    FlyMine "<support@flymine.org>"
 
-SUPPORT AND DOCUMENTATION
+BUGS
+    Please report any bugs or feature requests to "support@flymine.org".
 
-After installing, you can find documentation for this module with the
-perldoc command.
+SUPPORT
+    You can find documentation for this module with the perldoc command.
 
-    perldoc InterMine::Model
+        perldoc InterMine::Model;
 
-You can also look for information at:
+    You can also look for information at:
 
-    RT, CPAN's request tracker
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=InterMine-Model
+    *   FlyMine
 
-    AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/InterMine-Model
+        <http://www.flymine.org>
 
-    CPAN Ratings
-        http://cpanratings.perl.org/d/InterMine-Model
+COPYRIGHT & LICENSE
+    Copyright 2006,2007,2008,2009 FlyMine, all rights reserved.
 
-    Search CPAN
-        http://search.cpan.org/dist/InterMine-Model/
+    This program is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
 
+FUNCTIONS
+  new
+     Title   : new
+     Usage   : $model = new InterMine::Model(file => $model_file);
+                 or
+               $model = new InterMine::Model(string => $model_string);
+     Function: return a Model object for the given file
+     Args    : file - the InterMine model XML file
 
-LICENSE AND COPYRIGHT
+  get_classdescriptor_by_name
+     Title   : get_classdescriptor_by_name
+     Usage   : $cd = $model->get_classdescriptor_by_name("Gene");
+     Function: return the InterMine::Model::ClassDescriptor for the given class or
+               undef if the class isn't in the model
+     Args    : the classname
 
-Copyright (C) 2010 InterMine
+  get_all_classdescriptors
+     Title   : get_all_classdescriptors
+     Usage   : @cds = $model->get_all_classdescriptors();
+     Function: return all the InterMine::Model::ClassDescriptor objects for this
+               model
+     Args    : none
 
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
+  get_referenced_classdescriptor
+     Usage    : my $cd = $model->get_referenced_classdescriptor($ref);
+     Function : get the class descriptor at the other end of a reference
+     Args     : The reference
 
-See http://dev.perl.org/licenses/ for more information.
+  find_classes_declaring_field
+     Usage    : my @classes = $model->find_classes_declaring_field($str);
+     Function : get the class descriptors that declare fields of a certain name  
+     Args     : The field's name
+
+  package_name
+     Title   : package_name
+     Usage   : $package_name = $model->package_name();
+     Function: return the package name derived from the name space
+               eg. "org.intermine.model"
+     Args    : none
+
+  model_name
+     Title   : model_name
+     Usage   : $model_name = $model->model_name();
+     Function: return the model name from the model file eg. "testmodel"
+     Args    : none
 

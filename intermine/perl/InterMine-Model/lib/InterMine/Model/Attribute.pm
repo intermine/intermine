@@ -54,7 +54,10 @@ under the same terms as Perl itself.
 
 =cut
 use Moose;
-with 'InterMine::Model::Role::Field';
+with (
+    'InterMine::Model::Role::Descriptor',
+    'InterMine::Model::Role::Field',
+);
 
 use MooseX::Types::Moose qw(Str);
 

@@ -55,9 +55,9 @@ under the same terms as Perl itself.
 =cut
 
 use Moose;
-
+with 'InterMine::Model::Role::Descriptor';
 use InterMine::TypeLibrary qw(
-    FieldList FieldHash ClassDescriptorList Model ClassDescriptor
+    FieldList FieldHash ClassDescriptorList ClassDescriptor
 );
 use MooseX::Types::Moose qw(ArrayRef Str);
 
@@ -73,19 +73,6 @@ use MooseX::Types::Moose qw(ArrayRef Str);
                      extends
 
 =cut
-
-has name => (
-    is => 'ro',
-    isa => Str,
-    required => 1,
-);
-
-has model => (
-    is => 'ro',
-    isa => Model,
-    required => 1,
-);
-
 
 has own_fields => (
     traits => ['Array'],
@@ -263,7 +250,7 @@ sub sub_class_of
   my $self = shift;
   my $other_class_desc = shift;
 
-  if ($self == $other_class_desc) {
+  if ($self eq $other_class_desc) {
     return 1;
   } else {
     for my $parent ($self->parental_class_descriptors()) {

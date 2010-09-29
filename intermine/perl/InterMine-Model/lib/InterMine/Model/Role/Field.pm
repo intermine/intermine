@@ -1,7 +1,7 @@
 
 =head1 NAME
 
-InterMine::Model::Field - Representation of a field of a class
+InterMine::Model::Role::Field - Provides common behaviour for field descriptors
 
 =head1 SYNOPSIS
 
@@ -17,7 +17,7 @@ Please report any bugs or feature requests to C<support@flymine.org>.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc InterMine::Model::Field
+    perldoc InterMine::Model::Role::Field
 
 You can also look for information at:
 
@@ -65,20 +65,7 @@ package InterMine::Model::Role::Field;
 
 use Moose::Role;
 
-use InterMine::TypeLibrary qw(ClassDescriptor Model);
-use MooseX::Types::Moose qw(Str);
-
-has name => (
-    is => 'ro',
-    isa => Str,
-    required => 1,
-);
-
-has model => (
-    is => 'ro',
-    isa => Model,
-    required => 1,
-);
+use InterMine::TypeLibrary qw(ClassDescriptor);
 
 =head2 field_class
 

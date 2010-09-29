@@ -65,7 +65,10 @@ under the same terms as Perl itself.
 
 package InterMine::Model::Reference;
 use Moose;
-with 'InterMine::Model::Role::Field';
+with (
+    'InterMine::Model::Role::Descriptor',
+    'InterMine::Model::Role::Field',
+);
 
 use MooseX::Types::Moose qw(Str Maybe);
 use InterMine::TypeLibrary qw(
