@@ -1,7 +1,7 @@
 package InterMine::TypeLibrary;
 {
 
-    our $VERSION = 0.94;
+    our $VERSION = 0.9401;
 
 =head1 NAME
 
@@ -57,7 +57,7 @@ under the same terms as Perl itself.
           LogicOperator LogicGroup LogicOrStr
           JoinedPathString PathString PathList PathHash
           Constraint ConstraintList ConstraintFactory
-          SortOrder SortDirection
+          SortOrder SortDirection SortOrderList
           Join JoinStyle JoinList
           PathDescription PathDescriptionList
           Service
@@ -66,7 +66,7 @@ under the same terms as Perl itself.
           Template TemplateFactory TemplateHash
           Uri HTTPCode NetHTTP
           NotAllLowerCase
-          Query QueryType QueryName QueryHandler
+          Query QueryType QueryName QueryHandler IllegalQueryName
           SavedQuery SavedQueryFactory
           ListFactory
           TextCSVXS
@@ -81,8 +81,8 @@ under the same terms as Perl itself.
     # Type definitions
     enum ConstraintCode, [ 'A' .. 'ZZ' ];
     enum UnaryOperator,  [ 'IS NOT NULL', 'IS NULL' ];
-    enum BinaryOperator, [ '=', '!=', '<', '>', '>=', '<=', ];
-    subtype TernaryOperator, as Str, where { $_ eq 'LOOKUP' };
+    enum BinaryOperator, [ '=', '!=', '<', '>', '>=', '<=',];
+    enum TernaryOperator, [ 'LOOKUP', 'IN', 'NOT IN'];
     enum MultiOperator, [ 'ONE OF', 'NONE OF', ];
     enum LogicOperator, [ 'and',    'or', ];
     class_type Join, { class => 'Webservice::InterMine::Join' };
@@ -118,13 +118,15 @@ under the same terms as Perl itself.
     role_type LogicGroup, { role => 'Webservice::InterMine::Role::Logical' };
     subtype LogicOrStr, as LogicGroup | Str;
     class_type SortOrder, { class => 'Webservice::InterMine::SortOrder' };
+    subtype SortOrderList, as ArrayRef[SortOrder];
     subtype JoinedPathString, as Str, where { /^[[:alnum:]\.,\s]+$/ };
     enum QueryType, [ 'template', 'saved-query', ];
-    subtype QueryName, as Str, where { /^[\w\.\s-]*$/ }, message {
+    subtype QueryName, as Str, where { /^[\w\.,\s-]*$/ }, message {
         ( defined $_ )
-          ? "'$_'  includes some characters we do not accept"
+          ? "'$_' includes some characters we do not accept"
           : "Name is undefined";
     };
+    subtype IllegalQueryName, as Str, where { /[^\w\.,\s-]/ };
     class_type QueryHandler, { class => 'Webservice::InterMine::Query::Handler', };
     class_type Query,        { class => 'Webservice::InterMine::Query::Core', };
     subtype SavedQuery,
@@ -145,12 +147,25 @@ under the same terms as Perl itself.
     subtype FieldHash,  as HashRef[Field];
 
     # Type coercions
+    coerce QueryName, from IllegalQueryName, 
+        via { 
+            s/[^a-zA-Z0-9_,. -]/_/g; 
+            return $_; 
+        };
     coerce SortDirection, from NotAllLowerCase, via { lc($_) };
     coerce SortOrder, from Str,
       via { 
           require Webservice::InterMine::SortOrder;
           Webservice::InterMine::SortOrder->new( split /\s/ ) 
     };
+    coerce SortOrderList, 
+        from SortOrder,
+            via { [$_] },
+        from Str,
+            via {
+                require Webservice::InterMine::SortOrder;
+                [Webservice::InterMine::SortOrder->new(split /\s/)]
+            };
     coerce PathList, from JoinedPathString, via { [ split /[,\s]+/ ] };
     coerce PathString, from JoinedPathString,
       via { ( split /[\s]+/ )[0] };
