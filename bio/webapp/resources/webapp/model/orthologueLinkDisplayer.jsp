@@ -4,12 +4,19 @@
 
 <!-- orthologueLinkDisplayer.jsp -->
 
+<form id="orthologueLinkForm" name="orthologueLinkForm" target="_blank">
+
+    <input type="hidden" id="originalExternalids" name="originalExternalids" value="${identifierList}"/>
+    <input type="hidden" id="externalids" name="externalids" value="${identifierList}"/>
+    <input type="hidden" id="class" name="class" value="${bag.type}"/>
+
 <table class="lookupReport" cellspacing="5" cellpadding="0">
+
+
   <c:forEach var="mineEntry" items="${mines}" varStatus="status">
 
     <c:set var="mine" value="${mineEntry.key}"/>
     <c:set var="orthologuesToDatasets" value="${mineEntry.value}"/>
-
     <c:set var="imageName" value="${mine.logo}"/>
     <c:set var="mineName" value="${mine.name}"/>
 
@@ -27,8 +34,8 @@
         </a>
 
     <%-- orthologue link popup --%>
-    <form action="${mine.url}/portal.do" method="post" id="orthologueLinkForm${status.count}" name="orthologueLinkForm${status.count}" target="_blank">
-    <div id="orthologue_link_${status.count}" style="display:none">
+
+    <div id="orthologue_link_${status.count}" style="display:none;">
 
         You are exporting your list to ${mineName}
         <br/><br/>
@@ -37,7 +44,7 @@
             <td valign="top"><b>Orthologues</b></td>
             <td valign="top">
             <span id="orthologueSelect${status.count}" style="float:left;">
-            <select name="orthologueDatasets" id="orthologueDatasets" onchange="checkOrthologueMapping('${status.count}', '${mineName}', '${WEB_PROPERTIES['project.title']}');">
+            <select name="orthologueDatasets${status.count}" id="orthologueDatasets${status.count}" onchange="checkOrthologueMapping('${status.count}', '${mineName}', '${WEB_PROPERTIES['project.title']}');">
             <c:forEach var="entry" items="${orthologuesToDatasets}" varStatus="entryStatus">
                 <c:set var="orthologue" value="${entry.key}"/>
                 <c:set var="datasets" value="${entry.value}"/>
@@ -56,32 +63,42 @@
         <tr>
            <td valign="top"><b>Mapping</b></td>
            <td valign="top">
-                <span id="orthologueMappingRemoteRadio${status.count}" style="float:left;"><input type="radio" name="orthologueMapping" <c:if test="${mine.defaultMapping == 'remote'}">checked</c:if> value="remote"></span><span id="orthologueMappingRemoteLabel${status.count}" style="float:left;">${mineName}</span>
-                <span id="orthologueMappingLocalRadio${status.count}" style="float:left;"><input type="radio" name="orthologueMapping" <c:if test="${mine.defaultMapping == 'local'}">checked</c:if> value="local"></span><span id="orthologueMappingLocalLabel${status.count}" style="float:left;">${WEB_PROPERTIES['project.title']}</span>
+
+                <c:set var="remoteChecked" value="false"/>
+                <c:set var="localChecked" value="false"/>
+
+           <c:if test="${mine.defaultMapping == 'remote'}"><c:set var="remoteChecked" value="true"/></c:if>
+           <c:if test="${mine.defaultMapping == 'local'}"><c:set var="localChecked" value="true"/></c:if>
+
+                <span id="orthologueMappingRemoteRadio${status.count}" style="float:left;"><input type="radio" id="orthologueMapping${status.count}Remote" name="orthologueMapping${status.count}" checked="${remoteChecked}" value="remote"></span><span id="orthologueMappingRemoteLabel${status.count}" style="float:left;">${mineName}</span>
+                <span id="orthologueMappingLocalRadio${status.count}" style="float:left;"><input type="radio" id="orthologueMapping${status.count}Local" name="orthologueMapping${status.count}" checked="${localChecked}" value="local"></span><span id="orthologueMappingLocalLabel${status.count}" style="float:left;">${WEB_PROPERTIES['project.title']}</span>
            </td>
         </tr>
         </table>
         <br/><br/>
 
-        <input type="button" name="submitButton" value="GO" onClick="javascript:submitOrthologueLinkForm('${bag.type}', '${bag.name}', '${status.count}');" />
+        <input type="button" name="submitButton${status.count}" value="GO" onClick="javascript:submitOrthologueLinkForm('${bag.type}', '${bag.name}', '${status.count}');" />
+        <input type="hidden" id="orthologue${status.count}" name="orthologue${status.count}" value="${mine.defaultOrganismName}"/>
+        <input type="hidden" id="formAction${status.count}" name="formAction${status.count}" value="${mine.url}/portal.do"/>
+
     </div>
-
-            <input type="hidden" name="originalExternalids" value="${identifierList}"/>
-            <input type="hidden" name="orthologue" value="${mine.defaultOrganismName}"/>
-            <input type="hidden" name="externalids" value="${identifierList}"/>
-            <input type="hidden" name="class" value="${bag.type}"/>
-        </form>
-
     </td>
     </tr>
 </c:forEach>
 </table>
+ </form>
+
 
 <script type="text/javascript" charset="utf-8">
 <!--//<![CDATA[
     jQuery(document).ready(function(){
         jQuery(".boxy").boxy();
     });
+
+    function newBoxy(index) {
+        new Boxy(jQuery('#orthologue_link_' + index), {title: "Constraint for ", unloadOnHide: true});
+    }
+
 //]]>-->
 </script>
 

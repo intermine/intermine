@@ -786,28 +786,29 @@ function reDrawConstraintLogic() {
 
 
 function submitOrthologueLinkForm(bagType, bagName, index) {
-    var myForm = document.forms["orthologueLinkForm" + index];
-    var orthologueSelect = myForm.orthologueDatasets;
-    var selectedOrganism = orthologueSelect.options[orthologueSelect.selectedIndex].text;
+    var selectedIndex = document.getElementById("orthologueDatasets" + index).selectedIndex;
+    var selectedOrganism =  document.getElementById("orthologueDatasets" + index).options[selectedIndex].text;
+    document.orthologueLinkForm.action=document.getElementById("formAction" + index).value;
+    document.orthologueLinkForm.method="post";
 
     // use remote mapping, just post the original list
-    if (myForm.orthologueMapping[0].checked) {
-        myForm.externalids.value = myForm.originalExternalids.value;
-        myForm.orthologue.disabled = false;
-        myForm.orthologue.value = selectedOrganism;
-        myForm.submit();
+    if (document.getElementById("orthologueMapping" + index + "Local").checked) {
+        document.getElementById("externalids").value = document.getElementById("originalExternalids").value;
+        document.getElementById("orthologue" + index).disabled = false;
+        document.getElementById("orthologue" + index).value = selectedOrganism;
+        document.getElementById("orthologueLinkForm").submit();
         return;
     }
 
     // LOCAL intermine
     // convert orthologues then post
-    if (myForm.orthologueMapping[1].checked) {
+    if (document.getElementById("orthologueMapping" + index + "Remote")) {
         // convert orthologues
         AjaxServices.convertObjects(bagType, bagName, 'orthologue', selectedOrganism, function(identifiers) {
             if (identifiers != null && identifiers != '') {
-                myForm.externalids.value = identifiers;
-                myForm.orthologue.disabled = true;
-                myForm.submit();
+                document.getElementById("externalids").value = identifiers;
+                document.getElementById("orthologue" + index).disabled = true;
+                document.getElementById("orthologueLinkForm").submit();
             } else {
                 alert("Error.  No orthologues found.");
                 return;
@@ -816,57 +817,59 @@ function submitOrthologueLinkForm(bagType, bagName, index) {
     }
 }
 
-function checkOrthologueMapping(statusCount, remoteMine, localMine) {
+function checkOrthologueMapping(index, remoteMine, localMine) {
 
-    var myForm = document.forms['orthologueLinkForm' + statusCount];
-    var orthologueSelect = myForm.orthologueDatasets;
-    var datasets = orthologueSelect.options[orthologueSelect.selectedIndex].value;
+    var myForm = document.getElementById("orthologueLinkForm");
+
+    var selectedIndex = document.getElementById("orthologueDatasets" + index).selectedIndex;
+    var datasets =  document.getElementById("orthologueDatasets" + index).options[selectedIndex].value;
     var bits = datasets.split("|");
     var localMapping = bits[0];
     var remoteMapping = bits[1];
 
-    var selectedOrganism = orthologueSelect.options[orthologueSelect.selectedIndex].text;
-    myForm.orthologue.value = selectedOrganism;
+    var selectedIndex = document.getElementById("orthologueDatasets" + index).selectedIndex;
+    var selectedOrganism =  document.getElementById("orthologueDatasets" + index).options[selectedIndex].text;
+
     var selectLocal = false;
 
     // hide/show the radio button and name of intermine if they do/don't have orthologues
     if (localMapping != null && localMapping != "") {
-        display('orthologueMappingLocalLabel' + statusCount, true);
+        display('orthologueMappingLocalLabel' + index, true);
         if (remoteMapping != null && remoteMapping != "") {
-            display('orthologueMappingRemoteLabel' + statusCount, true);
-            display('orthologueMappingRemoteRadio' + statusCount, true);
-            display('orthologueMappingLocalRadio' + statusCount, true);
+            display('orthologueMappingRemoteLabel' + index, true);
+            display('orthologueMappingRemoteRadio' + index, true);
+            display('orthologueMappingLocalRadio' + index, true);
         } else {
-            display('orthologueMappingRemoteLabel' + statusCount, false);
-            display('orthologueMappingRemoteRadio' + statusCount, false);
-            display('orthologueMappingLocalRadio' + statusCount, false);
+            display('orthologueMappingRemoteLabel' + index, false);
+            display('orthologueMappingRemoteRadio' + index, false);
+            display('orthologueMappingLocalRadio' + index, false);
             // check hidden radio button so that `local` mine is selected
             // radio button is hidden but script needs this value to be checked
-            myForm.orthologueMapping[0].checked = false;
-            myForm.orthologueMapping[1].checked = true;
+            document.getElementById("orthologueMapping" + index + "Local").checked = false;
+            document.getElementById("orthologueMapping" + index + "Remote").checked = true;
         }
     } else {
         // don't show radio button, there's only one option
-        display('orthologueMappingRemoteLabel' + statusCount, true);
-        display('orthologueMappingLocalLabel' + statusCount, false);
-        display('orthologueMappingRemoteRadio' + statusCount, false);
-        display('orthologueMappingLocalRadio' + statusCount, false);
+        display('orthologueMappingRemoteLabel' + index, true);
+        display('orthologueMappingLocalLabel' + index, false);
+        display('orthologueMappingRemoteRadio' + index, false);
+        display('orthologueMappingLocalRadio' + index, false);
         //check hidden radio button so that `remote` mine is selected
         // radio button is hidden but script needs this value to be checked
-        myForm.orthologueMapping[0].checked = true;
-        myForm.orthologueMapping[1].checked = false;
+        document.getElementById("orthologueMapping" + index + "Local").checked = true;
+        document.getElementById("orthologueMapping" + index + "Remote").checked = false;
     }
 
     // if there is only one option, don't show a dropdown
 //    if (orthologueSelect.length == 1) {
-//        display('orthologueSelectDisplay' + statusCount, true);
-//        display('orthologueSelect' + statusCount, false);
+//        display('orthologueSelectDisplay' + index, true);
+//        display('orthologueSelect' + index, false);
 //        // update text to be selected value
-//        document.getElementById('orthologueSelect' + statusCount).innerHtml
+//        document.getElementById('orthologueSelect' + index).innerHtml
 //            = orthologueSelect.options[0].text;
 //    } else {
 //        // show dropdown
-//        display('orthologueSelectDisplay' + statusCount, false);
-//        display('orthologueSelect' + statusCount, true);
+//        display('orthologueSelectDisplay' + index, false);
+//        display('orthologueSelect' + index, true);
 //    }
 }

@@ -1335,8 +1335,9 @@ public class AjaxServices
     }
 
     /**
-     * used on list analysis page to convert list contents to orthologues.  then forwarded to
-     * another intermine instance
+     * Used on list analysis page to convert list contents to orthologues.  then forwarded to
+     * another intermine instance.
+     *
      * @param bagType class of bag
      * @param bagName name of bag
      * @param param name of parameter value, eg. `orthologue`
@@ -1372,6 +1373,4 @@ public class AjaxServices
         }
         return null;
     }
-
-
 }
