@@ -10,6 +10,8 @@ has 'date' => (
     default => '',
 );
 
+sub type { 'saved-query' }
+
 sub head {
     my $self = shift;
     return { name => $self->name, 'date-created' => $self->date };

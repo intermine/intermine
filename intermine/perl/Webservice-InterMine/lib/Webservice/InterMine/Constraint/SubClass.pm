@@ -6,6 +6,7 @@ extends 'Webservice::InterMine::Constraint';
 
 has 'type' => (
     is       => 'ro',
+    writer   => 'set_type',
     isa      => 'Str',
     required => 1,
 );

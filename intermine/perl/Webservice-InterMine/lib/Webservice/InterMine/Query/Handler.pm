@@ -83,7 +83,8 @@ sub start_element {
         confess "We have two names and they differ"
           if (  $query->name
             and $nameattr
-            and $query->name ne $nameattr );
+        # we can't test for equality due to the effect of coercion
+            and length($query->name) != length($nameattr) );
         $query->name($nameattr);
         confess
           if (
@@ -105,8 +106,19 @@ sub start_element {
                 $query->add_view($_);
             }
         }
-        $query->set_sort_order( $args->{Attributes}{sortOrder} )
-          if $args->{Attributes}{sortOrder};
+        if (my $so = $args->{Attributes}{sortOrder}) {
+            $query->clear_sort_order;
+            #assume all paths have directions
+            if ($so =~ / (?:asc|desc)/) {
+                my %path_dir = split(/\s/, $so);
+                while (my ($p, $d) = each %path_dir) {
+                    $query->add_sort_order($p, $d);
+                }
+            } else {
+                my @paths = split(/\s/, $so);
+                $query->add_sort_order($_) for @paths;
+            }
+        }
         my ( $already, $new ) =
           ( $query->description, $args->{Attributes}{longDescription} );
         confess
@@ -132,7 +144,9 @@ sub start_element {
     elsif ( $args->{Name} eq 'node' ) {
         my $path = $args->{Attributes}{path};
         if ( $path =~ /:/ ) {    # add the outer join
-            my ( $before_colon, $after_colon ) = split( /:/, $path, 2 );
+            my ( @parts ) = split( /:/, $path );
+            my $after_colon = pop(@parts);
+            my $before_colon = join('.', @parts);
             my ( $field, @rest ) = split( /\./, $after_colon );
             $query->add_join(
                 path  => join( '.', $before_colon, $field ),
@@ -204,6 +218,18 @@ sub process_constraint_attr {
       if ( exists $attr->{value} and $attr->{value} ne 'null' );
     $args{type} = $attr->{type} if $attr->{type};
 
+    # Workarounds for legacy operators which may be present in old xml
+    if ($args{op}) {
+        if ($args{op} eq 'CONTAINS') {
+            $args{op}    = '=';
+            $args{value} = '*' . $args{value} . '*';
+        } elsif ($args{op} eq 'LIKE') {
+            $args{op} = '=';
+        } elsif ($args{op} eq 'NOT LIKE') {
+            $args{op} = '!=';
+        }
+    }
+
     if ( $self->has_constraint_values ) {
         $args{values} = [ $self->current_constraint_values ];
         $self->clear_constraint_values;
@@ -213,10 +239,12 @@ sub process_constraint_attr {
 
 sub end_document {
     my $self = shift;
-    $self->query->clean_out_SCCs;
-    $self->query->resume_validation;
+    unless ($self->query->is_dubious) {
+        $self->query->clean_out_SCCs;
+        $self->query->resume_validation;
+    }
     $self->query->logic( $self->logic_string ) if $self->logic_string;
-    $self->query->validate;
+    $self->query->validate unless $self->query->is_dubious;
 }
 
 __PACKAGE__->meta->make_immutable;

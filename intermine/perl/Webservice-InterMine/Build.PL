@@ -17,7 +17,6 @@ my $build = Module::Build->new(
         'LWP'                           => 5.8,
         'Module::Find'                  => 0.05,
         'Moose'                         => 0.95,
-        'MooseX::Role::Parameterized'   => 0.10,
         'MooseX::Role::WithOverloading' => 0.03,
         'MooseX::Types'                 => 0.22,
         'Text::CSV_XS'                  => 0.62,
@@ -27,11 +26,11 @@ my $build = Module::Build->new(
     },
     recommends => {
         'YAML::Syck'              => 1.07,
-        'Perl::Tidy'              => 20070801,
         'Spreadsheet::WriteExcel' => 0,
     },
     build_requires => {
         'Test::Class'               => 0,
+        'Perl::Tidy'                => 20070801,
         'Test::Exception'           => 0,
         'Test::More'                => 0,
         'Test::XML'                 => 0,

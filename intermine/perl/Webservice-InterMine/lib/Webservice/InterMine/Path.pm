@@ -52,7 +52,7 @@ under the same terms as Perl itself.
 use Exporter 'import';
 
 my @validators = qw(validate_path end_is_class b_is_subclass_of_a root);
-our @EXPORT_OK = ( @validators, 'type_of' );
+our @EXPORT_OK = ( @validators, 'type_of', 'class_of', 'next_class');
 our %EXPORT_TAGS = ( validate => \@validators );
 
 use strict;
@@ -233,22 +233,23 @@ sub _parse {
                 }
             }
             push @parts, $current_field;
+            my $type =  $type_hashref->{join('.', map {$_->name} @parts)};
             $current_class =
-              _next_class( $current_field, $model, $type_hashref, @parts );
+              next_class( $current_field, $model, $type );
         }
     }
     return @parts;
 }
 
-sub _next_class {
-    my ( $current_field, $model, $typehash, @parts ) = @_;
+sub next_class {
+    my ( $current_field, $model, $type ) = @_;
     return undef
       if $current_field->isa('InterMine::Model::Attribute');
 
     # if the type was given, respect it
     my $next_class;
-    if ( my $name = $typehash->{ join( '.', map { $_->name } @parts ) } ) {
-        $next_class = $model->get_classdescriptor_by_name($name);
+    if ( $type ) {
+        $next_class = $model->get_classdescriptor_by_name($type);
     }
     else {
         $next_class = class_of($current_field);

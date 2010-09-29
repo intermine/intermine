@@ -20,6 +20,8 @@ has [ 'comment', 'title', ] => (
     default => '',
 );
 
+sub type { 'template' }
+
 sub insertion { {} }
 
 sub head {
@@ -81,7 +83,7 @@ sub results_with {
               if ( exists $new_value_for{$code} );
             $attr{op} = $new_op_for{$code}
               if ( exists $new_op_for{$code} );
-            $clone->remove_constraint($con);
+            $clone->remove($con);
             $clone->add_constraint(%attr);
         } else {
             confess "no constraint with code $code on this query";

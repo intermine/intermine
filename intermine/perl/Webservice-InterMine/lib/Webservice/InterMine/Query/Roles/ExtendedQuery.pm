@@ -1,39 +1,29 @@
 package Webservice::InterMine::Query::Roles::ExtendedQuery;
 
-use MooseX::Role::Parameterized;
+use Moose::Role;
 use InterMine::TypeLibrary qw(QueryType);
 use MooseX::Types::Moose qw(HashRef);
 
-requires(qw/to_DOM insertion head apply_attributes_to_element/);
+requires(qw/type to_DOM insertion head apply_attributes_to_element/);
 
-parameter type => (
-    isa      => QueryType,
-    required => 1,
-);
+around to_DOM => sub {
+    my $orig  = shift;
+    my $self  = shift;
+    my $query = $self->$orig;
+    my $doc   = $query->getOwnerDocument;
+    my $head  = $doc->createElement( $self->type );
+    $self->apply_attributes_to_element( $head, %{ $self->head } );
+    $head->appendChild($query);
 
-role {
-    my $param = shift;
-    my %args  = @_;
+    my $insertions = $self->insertion;
 
-    around to_DOM => sub {
-        my $orig  = shift;
-        my $self  = shift;
-        my $query = $self->$orig;
-        my $doc   = $query->getOwnerDocument;
-        my $head  = $doc->createElement( $param->type );
-        $self->apply_attributes_to_element( $head, %{ $self->head } );
-        $head->appendChild($query);
+    while ( my ( $tag, $hash ) = each %$insertions ) {
+        my $elem = $doc->createElement($tag);
+        $self->apply_attributes_to_element( $elem, %$hash );
+        $query->appendChild($elem);
+    }
 
-        my $insertions = $self->insertion;
-
-        while ( my ( $tag, $hash ) = each %$insertions ) {
-            my $elem = $doc->createElement($tag);
-            $self->apply_attributes_to_element( $elem, %$hash );
-            $query->appendChild($elem);
-        }
-
-        return $head;
-    };
+    return $head;
 };
 
 1;
