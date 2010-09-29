@@ -1,5 +1,7 @@
 Revision history for InterMine-Item
 
-0.01    Date/time
-        First version, released on an unsuspecting world.
+0.94.1    Tue Sep 14 12:06:10 BST 2010
+          Bug fixes.
 
+0.94     Mon Sep 13 23:00:00 BST 2010                              
+         First release of InterMine::Item as a separate distribution
