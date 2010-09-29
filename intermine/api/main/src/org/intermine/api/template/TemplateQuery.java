@@ -27,6 +27,8 @@ import org.intermine.api.search.WebSearchable;
 import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.model.userprofile.SavedTemplateQuery;
 import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintLoop;
+import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
 
 /**
@@ -333,7 +335,12 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     public synchronized void replaceConstraint(PathConstraint old, PathConstraint replacement) {
         super.replaceConstraint(old, replacement);
         if (editableConstraints.contains(old)) {
-            editableConstraints.set(editableConstraints.indexOf(old), replacement);
+            if ((replacement instanceof PathConstraintSubclass)
+                 || (replacement instanceof PathConstraintLoop)) {
+                editableConstraints.remove(editableConstraints.indexOf(old));
+            } else {
+                editableConstraints.set(editableConstraints.indexOf(old), replacement);
+            }
         }
         String description = constraintDescriptions.remove(old);
         if (description != null) {
