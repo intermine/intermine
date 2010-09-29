@@ -26,9 +26,9 @@
   <br/>
 </c:if>
 
-<%-- Bag is not support so far, Galaxy can not fetch data by the query, fix me --%>
+<%-- User Bag is not support so far, Galaxy can not fetch data by the query, fix me --%>
 <c:choose>
-  <c:when test="${fn:substring(tableName,0,3) == 'bag'}">
+  <c:when test="${isUserBag == 'true'}">
     <span class="nullStrike"><fmt:message key="exporter.galaxy.description"/></span><br>
   </c:when>
   <c:otherwise>

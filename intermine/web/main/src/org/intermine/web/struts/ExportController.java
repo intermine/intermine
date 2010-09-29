@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +25,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.config.TableExportConfig;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.http.TableHttpExporter;
@@ -88,6 +91,36 @@ public class ExportController extends TilesAction
             }
         }
         request.setAttribute("exporters", usableExporters);
+
+        // TODO A HACK for Galaxy export
+        // Allow to export public list
+        // Private Bag is not support so far, Galaxy can not fetch data by the query, fix me
+        PathQuery query = pt.getWebTable().getPathQuery();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+
+        String isUserBag = "false";
+        Set<String> bagNames = query.getBagNames();
+        if (!bagNames.isEmpty()) {
+            // if the bags are all public, export to Galaxy is allowed
+            if (!im.getBagManager().getGlobalBags().isEmpty()
+                    && im.getBagManager().getGlobalBags().keySet()
+                            .containsAll(bagNames)) {
+                isUserBag = "false";
+            } else {
+                isUserBag = "true";
+            }
+        }
+        request.setAttribute("isUserBag", isUserBag);
+
+        /* if (tableName.startsWith("bag")) {
+            String bagName = tableName.substring(4, tableName.length());
+            LOG.info("bagName is - " + bagName);
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+            if (im.getBagManager().getGlobalBag(bagName) == null) {
+                LOG.info("bag is - " + im.getBagManager().getGlobalBag(bagName));
+                request.setAttribute("isPubBag", "false");
+            }
+        } */
 
         return null;
     }
