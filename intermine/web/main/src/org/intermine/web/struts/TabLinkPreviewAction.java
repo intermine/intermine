@@ -38,19 +38,28 @@ public class TabLinkPreviewAction extends InterMineAction
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         PrintWriter writer = response.getWriter();
         String link = request.getParameter("link");
-        String url = prepareURL(link);
-        HttpClient client = new HttpClient();
-        byte[] data = client.download(url);
-        writer.println("<html>");
         String content;
-        if (data.length == 0) {
-            content = "There are no results for this query."
-                    + "Please notice, that this message is displayed only for preview. "
-                    + "Empty output is returned in case of downloading data with script.";
-        } else {
-            content = new String(data);
+        try {
+            String url = prepareURL(link);
+            HttpClient client = new HttpClient();
+            byte[] data = client.download(url);
+            writer.println("<html>");
+
+            if (data.length == 0) {
+                content = "There are no results for this query."
+                        + "Please notice, that this message is displayed only for preview. "
+                        + "Empty output is returned in case of downloading data with script.";
+            } else {
+                content = new String(data);
+            }
+            printPage(content, writer);
+        } catch (Exception e) {
+            e.printStackTrace();
+            writer.println("<html>");
+            content =
+                "Please examine your template, there might be some invalid characters, e.g. \"%\".";
+            printPage(content, writer);
         }
-        printPage(content, writer);
         return null;
     }
 
