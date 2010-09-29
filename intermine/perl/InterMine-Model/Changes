@@ -1,5 +1,8 @@
 Revision history for InterMine-Model
 
-0.01    Date/time
-        First version, released on an unsuspecting world.
+0.94    14 Sep 2010
+        Version of Model library compatible with InterMine 0.94
+
+0.9401  Sun Sep 26 13:54:14 BST 2010
+        Descriptors now have overloaded string representation: $_->name
 
