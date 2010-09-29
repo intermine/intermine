@@ -26,7 +26,8 @@ my @wanted_values = ('get_own_fields', 'parental_class_descriptors', 'fields', '
 my @wanted_labels = ('Declared fields', 'Direct superclasses', 'All fields', 'All superclasses');
 my %label_hash    = zip(@wanted_values, @wanted_labels);
 my @column_headers = ('has field in', 'Inherits from in');
-my %col_header_for = zip(@wanted_values, @column_headers, @column_headers);
+push @column_headers, @column_headers;
+my %col_header_for = zip(@wanted_values, @column_headers);
 
 my $wanted = 
     (param('submitted'))
