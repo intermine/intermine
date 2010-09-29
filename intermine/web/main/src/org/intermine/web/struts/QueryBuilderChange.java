@@ -29,6 +29,8 @@ import org.intermine.pathquery.Node;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintLoop;
+import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
@@ -285,7 +287,9 @@ public class QueryBuilderChange extends DispatchAction
         PathQuery query = SessionMethods.getQuery(session);
         TemplateQuery template = new TemplateQuery("", "", "", query);
         for (PathConstraint con : query.getConstraints().keySet()) {
-            template.setEditable(con, true);
+            if (!(con instanceof PathConstraintLoop) && !(con instanceof PathConstraintSubclass)) {
+                template.setEditable(con, true);
+            }
         }
         SessionMethods.loadQuery(template, session, response);
         session.setAttribute(Constants.NEW_TEMPLATE, Boolean.TRUE);

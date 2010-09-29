@@ -217,18 +217,22 @@ public class QueryBuilderConstraintAction extends InterMineAction
             sb.append("}");
             throw new IllegalArgumentException("Unrecognised action: " + sb);
         }
-        if ((oldConstraint != null) && (newConstraint != null)) {
-            // subclass constraints don't have a code but all other constraint types do
-            if (oldConstraint instanceof PathConstraintSubclass
-                    || newConstraint instanceof PathConstraintSubclass) {
-                query.removeConstraint(oldConstraint);
-                query.addConstraint(newConstraint);
+        if (newConstraint != null) {
+            if (oldConstraint != null) {
+                // subclass constraints don't have a code but all other constraint types do
+                if (oldConstraint instanceof PathConstraintSubclass
+                        || newConstraint instanceof PathConstraintSubclass) {
+                    query.removeConstraint(oldConstraint);
+                    query.addConstraint(newConstraint);
+                } else {
+                    query.replaceConstraint(oldConstraint, newConstraint);
+                }
             } else {
-                query.replaceConstraint(oldConstraint, newConstraint);
+                query.addConstraint(newConstraint);
             }
-        } else if (newConstraint != null) {
-            query.addConstraint(newConstraint);
-            if (query instanceof TemplateQuery) {
+            if (query instanceof TemplateQuery
+                 && !(newConstraint instanceof PathConstraintSubclass)
+                 && !(newConstraint instanceof PathConstraintLoop)) {
                 ((TemplateQuery) query).setEditable(newConstraint, true);
             }
         }
