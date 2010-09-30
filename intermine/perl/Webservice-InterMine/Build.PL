@@ -26,10 +26,10 @@ my $build = Module::Build->new(
     recommends => {
         'YAML::Syck'              => 1.07,
         'Spreadsheet::WriteExcel' => 0,
+        'Perl::Tidy'                => 20070801,
     },
     build_requires => {
         'Test::Class'               => 0,
-        'Perl::Tidy'                => 20070801,
         'Test::Exception'           => 0,
         'Test::More'                => 0,
         'Test::XML'                 => 0,
