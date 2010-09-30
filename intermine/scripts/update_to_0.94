@@ -36,6 +36,7 @@ if ($reverting) {
     for my $file (@in_files) {
         my $backup = $file . $ext;
         if (-f $backup) {
+            print STERR "Reverting $file from $backup\n";
             move($backup, $file);
         }
     }
