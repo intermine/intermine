@@ -294,6 +294,7 @@ public class QueryBuilderChange extends DispatchAction
         SessionMethods.loadQuery(template, session, response);
         session.setAttribute(Constants.NEW_TEMPLATE, Boolean.TRUE);
         session.removeAttribute(Constants.EDITING_TEMPLATE);
+        session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
         return mapping.findForward("query");
     }
 
