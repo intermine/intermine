@@ -48,6 +48,7 @@ public class TemplatesExportAction extends TemplateAction
         Profile profile = SessionMethods.getProfile(session);
         String name = request.getParameter("name");
         String scope = request.getParameter("scope");
+        String originalTemplate = request.getParameter("originalTemplate");
 
         String xml = null;
 
@@ -64,9 +65,9 @@ public class TemplatesExportAction extends TemplateAction
                                                    + scope);
             }
         } else {
-            TemplateQuery template = ((TemplateQuery) SessionMethods.getQuery(session) != null)
-                                     ? (TemplateQuery) SessionMethods.getQuery(session)
-                                     : templateManager.getTemplate(profile, name, scope);
+            TemplateQuery template = (originalTemplate != null)
+                                     ? templateManager.getTemplate(profile, name, scope)
+                                     : (TemplateQuery) SessionMethods.getQuery(session);
             if (template != null) {
                 xml = template.toXml(PathQuery.USERPROFILE_VERSION);
             } else {
