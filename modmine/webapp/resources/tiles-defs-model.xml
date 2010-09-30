@@ -88,6 +88,11 @@
         controllerUrl="/initSpanUploadResults.do"/>
 <!-- End of Span Upload configuration -->
 
+<!-- links to other intermines -->
+<definition name="orthologueLinkDisplayer.tile" path="/model/orthologueLinkDisplayer.jsp"
+        controllerUrl="/initOrthologueLinkDisplayer.do"/>
+
+
 <!--
 <definition name="latestSubs.tile" path="/model/latestSubs.jsp"
         controllerUrl="/initLatestSubs.do"/>
