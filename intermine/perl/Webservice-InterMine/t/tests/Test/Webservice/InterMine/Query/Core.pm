@@ -316,15 +316,19 @@ sub all_paths : Test(2) {
     );
 
     is_deeply(
-	[sort $obj->all_paths],
-	[sort uniq($test->test_paths)],
+	[sort {$a cmp $b} $obj->all_paths],
+	[sort {$a cmp $b} uniq($test->test_paths)],
 	"Gets all the relevant paths for validation",
     )
-	or diag(explain [sort $obj->all_paths],
-		explain [sort uniq($test->test_paths)]);
+	or diag(explain [sort {$a cmp $b} $obj->all_paths],
+		explain [sort {$a cmp $b} uniq($test->test_paths)]);
 
     $obj->add_view('Employee');
-    is_deeply([sort $obj->all_paths], [sort uniq($test->test_paths)], "Duplicates are ignored");
+    is_deeply(
+        [sort {$a cmp $b} $obj->all_paths], 
+        [sort {$a cmp $b} uniq($test->test_paths)], 
+        "Duplicates are ignored",
+    );
 }
 
 sub suspend_validation : Test(5) {
