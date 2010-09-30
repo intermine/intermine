@@ -52,10 +52,11 @@ for my $mine (readdir($svn_dir)) {
                 my %replacements = %DBModel_replacements;
                 $replacements{qr{bio/sources/so/so_additions\.xml}}
                     = qq{{"$mine/dbmodel/build/model/so_additions.xml"}};
-                process($abs_mine.'/dbmodel/project.properties', \%replacements, \@DBModel_additions);
+                my $file = $abs_mine.'/dbmodel/project.properties';
+                process($file, \%replacements, \@DBModel_additions) if (-f $file);
                 my $buildxml = $abs_mine.'/dbmodel/build.xml';
                 process($buildxml, \%BuildXML_replacements, [])
-                    if (qx{grep 'create-so-model' $buildxml});
+                    if (-f $buildxml and not qx{grep 'create-so-model' $buildxml});
                     # This is our test for it already being there
            }
         }
