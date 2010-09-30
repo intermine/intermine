@@ -85,6 +85,7 @@ sub process {
             die "Back up file ($backup) exists - we do not want to overwrite it";
         }
     }
+    return if $reverting;
     print STDERR "backing up $file to $backup\n";
     rename($file, $backup);
     open(my $out, '>', $file) or die;
