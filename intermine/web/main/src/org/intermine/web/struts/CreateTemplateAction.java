@@ -96,11 +96,10 @@ public class CreateTemplateAction extends InterMineAction
         // Check whether there is a template name clash
         boolean isNewTemplate = (session.getAttribute(Constants.NEW_TEMPLATE) != null
             && (Boolean) session.getAttribute(Constants.NEW_TEMPLATE)) ? true : false;
-        List<String> prevTemplateName = (ArrayList<String>)
-                                        session.getAttribute(Constants.PREV_TEMPLATE_NAME);
+        String prevTemplateName = (String) session.getAttribute(Constants.PREV_TEMPLATE_NAME);
         if (profile.getSavedTemplates().containsKey(template.getName())
                 && (isNewTemplate
-                || (prevTemplateName != null && !prevTemplateName.contains(template.getName())))) {
+                || (prevTemplateName != null && !prevTemplateName.equals(template.getName())))) {
             recordError(new ActionMessage("errors.createtemplate.existing", template.getName()),
                     request);
             seenProblem = true;
@@ -162,7 +161,7 @@ public class CreateTemplateAction extends InterMineAction
         // Replace template if needed
         if (!isNewTemplate) {
             String templateName = (prevTemplateName != null)
-                ? prevTemplateName.get(prevTemplateName.size() - 1) : template.getName();
+                ? prevTemplateName : template.getName();
             profile.deleteTemplate(templateName);
             session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
         }
@@ -178,6 +177,7 @@ public class CreateTemplateAction extends InterMineAction
             }
         }
         session.removeAttribute(Constants.NEW_TEMPLATE);
+        session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
         return new ForwardParameters(mapping.findForward("mymine"))
             .addParameter("subtab", "templates").forward();
     }
