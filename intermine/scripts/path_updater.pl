@@ -46,7 +46,7 @@ my $prefix = 'org.intermine.model.bio.';
 # Set up configured options 
 my $config = AppConfig->new({GLOBAL => {EXPAND   => EXPAND_ALL,
             ARGCOUNT => ARGCOUNT_ONE}});
-$config->define('oldmodel', 'newmodel', 'changesfile', 'logfile', 'mine', 'svndirectory');
+$config->define('oldmodel', 'newmodel', 'changesfile', 'logfile', 'mine', 'svndirectory', 'ext');
 $config->define('help|usage!');
 $config->define('inputfile|infile=s@');
 
@@ -59,6 +59,7 @@ my @in_files       = @{$config->inputfile()};
 my $help           = $config->help();
 my $new_model_file = $config->newmodel();
 my $changes_file   = $config->changesfile();
+my $ext            = $config->ext();
 
 @in_files = split(/,/, join (',', @in_files));
 
@@ -752,9 +753,7 @@ sub process_xml_line {
             push @open_tags, $type;
             $counter{$type}++ unless $end;  
             $counter{total}++;
-            unless ($writing_to_stdout) {
-                printf "\rProcessing element %10s", format_number($counter{total})
-            }
+            printf "\rProcessing element %10s", format_number($counter{total});
             $is_buffering = 1 if ($needs_processing{$type});
         }
         if ($is_buffering) {
@@ -801,17 +800,17 @@ for my $file (@in_files) {
         die "Back up file ($backup) exists - we do not want to overwrite it";
     }
     open(my $INFH, '<', $file) 
-        or (warn "\rCannot open $in_file, $! - skipping\n" and next);
+        or (warn "\rCannot open $file, $! - skipping\n" and next);
     rename($file, $backup);
     open(my $OUT,  '>', $file) or die "Cannot write to $file, $!";
     
     while(<$INFH>) {
         my $new_line;
-        if ($in_file =~ /\.xml$/) {
-            $new_line = process_xml_line($_, $in_file);
+        if ($file =~ /\.xml$/) {
+            $new_line = process_xml_line($_, $file);
         }
         else {
-            $new_line = process_key_value_line($_, $in_file);
+            $new_line = process_key_value_line($_, $file);
         }
 
         print $OUT $new_line;
@@ -838,7 +837,7 @@ if (%counter) {
         );
         $log->info($msg);
     }
-    print "\n" unless $writing_to_stdout;
+    print "\n";
 }
 
 exit()
