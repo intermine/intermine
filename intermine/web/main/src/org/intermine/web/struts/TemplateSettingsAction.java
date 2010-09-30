@@ -54,15 +54,12 @@ public class TemplateSettingsAction extends InterMineAction
 
         TemplateQuery template = (TemplateQuery) SessionMethods.getQuery(session);
         template.setDescription(tsf.getDescription());
-        List<String> previousTempNames = (ArrayList<String>)
-                                         session.getAttribute(Constants.PREV_TEMPLATE_NAME);
-        if (previousTempNames != null) {
-            previousTempNames.add(template.getName());
-        } else {
-            previousTempNames = new ArrayList<String>();
-            previousTempNames.add(template.getName());
-            session.setAttribute(Constants.PREV_TEMPLATE_NAME, previousTempNames);
+        if (session.getAttribute(Constants.PREV_TEMPLATE_NAME) == null) {
+            if (!"".equals(template.getName())) {
+                session.setAttribute(Constants.PREV_TEMPLATE_NAME, template.getName());
+            }
         }
+
         template.setName(tsf.getName());
         template.setTitle(tsf.getTitle());
         template.setComment(tsf.getComment());
