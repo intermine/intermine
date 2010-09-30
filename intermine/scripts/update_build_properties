@@ -74,7 +74,7 @@ for (map {"$dot_intermine_loc/$_"} readdir($home_dir)) {
 # RUN THE REPLACEMENT LIST OVER THE FILES
 sub process {
     my ($file, $replacements, $additions) = @_;
-    open(my $in, '<', $file) or die;
+    open(my $in, '<', $file) or die "Cannot open input file $file, $!";
     my $backup = $file . $ext;
     if (-f $backup) {
         if ($reverting) {
