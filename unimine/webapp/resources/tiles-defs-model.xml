@@ -1,9 +1,0 @@
-<definition name="orthologueDisplayer.tile" path="/model/orthologueDisplayer.jsp"
-            controllerUrl="/initOrthologueDisplayer.do"/>
-
-<definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp"
-            controllerUrl="/initAttributeLinkDisplayer.do"/>
-
-<definition name="geneMicroArrayDisplayer.tile" path="/model/geneMicroArrayDisplayer.jsp" 
-            controllerUrl="/initGeneMicroArrayDisplayer.do"/>
-
