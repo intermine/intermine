@@ -108,6 +108,10 @@
 </action>
 <!-- End of Span Upload configuration -->
 
+<!-- links to other intermines -->
+<action path="/initOrthologueLinkDisplayer"
+        type="org.intermine.bio.web.OrthologueLinkController"/>
+
 <!--
 <action path="/initLatestSubs"
   type="org.modmine.web.LatestSubsController" />
