@@ -1,5 +1,12 @@
 package Test::Webservice::InterMine::Query::Scripted;
 
+BEGIN {
+    eval "use Perl::Tidy";
+    if ($@) {
+        __PACKAGE__->SKIP_CLASS( "Perl::Tidy needed for these tests" );
+    }
+}
+
 use base ('Test::Webservice::InterMine::Query::Core');
 use Test::MockObject;
 use Test::More;
