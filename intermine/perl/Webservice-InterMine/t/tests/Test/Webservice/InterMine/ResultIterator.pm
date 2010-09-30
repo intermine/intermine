@@ -6,6 +6,7 @@ use warnings;
 
 use base 'Test::Class';
 use Encode;
+use IO::File;
 use Test::More;
 use Test::Exception;
 use Test::MockObject::Extends;
