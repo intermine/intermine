@@ -76,15 +76,16 @@ sub process {
     my ($file, $replacements, $additions) = @_;
     open(my $in, '<', $file) or die;
     my $backup = $file . $ext;
-    print STDERR "backing up $file to $backup\n";
     if (-f $backup) {
         if ($reverting) {
+            print STDERR "Reverting $file from $backup\n";
             move($backup, $file);
             return;
         } else {
             die "Back up file ($backup) exists - we do not want to overwrite it";
         }
     }
+    print STDERR "backing up $file to $backup\n";
     rename($file, $backup);
     open(my $out, '>', $file) or die;
     select($out);
