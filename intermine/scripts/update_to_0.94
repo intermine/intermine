@@ -6,7 +6,7 @@ use File::Copy;
 my $config = AppConfig->new({
         CREATE => 1,
         GLOBAL => {
-            EXPAND => EXPAND_ALL,
+            EXPAND   => EXPAND_ALL,
             ARGCOUNT => ARGCOUNT_ONE,
         }
     });
@@ -21,13 +21,23 @@ die "The config file must define the location of your svn directory"
 my $perl = qx/which perl/;
 chomp $perl;
 
-my $reverting = ($ARGV[0] eq 'revert');
+if (@ARGV != 1) {
+    print "Please tell me what to do ('all' or 'paths' or 'build') or 'revert'\n";
+    exit();
+}
 
-my @search_replace_commands = ($perl, "update_extra_properties.pl", $svn_dir);
+my $reverting =      ($ARGV[0] eq 'revert');
+my $updating_paths = ($ARGV[0] eq 'paths');
+my $updating_build = ($ARGV[0] eq 'build');
+my $updating_all   = ($ARGV[0] eq 'all');
+
+my @search_replace_commands = ($perl, "update_build_properties", $svn_dir);
 push @search_replace_commands, 'revert' if $reverting;
 
-system(@search_replace_commands) == 0
-    or die "search and replace failed $?";
+if ($updating_build || $updating_all || $reverting) {
+    system(@search_replace_commands) == 0
+        or die "search and replace failed $?";
+}
 
 if ($reverting) {
     my @in_files       = @{$config->inputfile()};
@@ -40,7 +50,7 @@ if ($reverting) {
             move($backup, $file);
         }
     }
-} else {
+} elsif ($updating_paths || $updating_all) {
     my @path_update_commands = ($perl, "path_updater.pl");
     system(@path_update_commands) == 0
         or die "Path update failed $?";
