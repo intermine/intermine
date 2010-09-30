@@ -169,15 +169,15 @@
       <fieldconfig fieldExpr="predictionStatus"/>
     </fields>
   </class>
-  
+
     <class className="org.intermine.model.bio.ReadCount">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="value"/>
     </fields>
   </class>
-  
-  
+
+
 
 
 <!-- =================================================================== -->
@@ -356,6 +356,9 @@
       <displayer src="cytoscapeInteractionsDisplayer.tile"/>
       <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
+   <bagdisplayers>
+      <displayer src="orthologueLinkDisplayer.tile" showOnLeft="false" />
+   </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.GOAnnotation">
