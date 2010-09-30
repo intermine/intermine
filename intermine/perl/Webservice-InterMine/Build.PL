@@ -12,7 +12,6 @@ my $build = Module::Build->new(
         'perl'                          => '5.8.3',
         'InterMine::Model',             => 0.94,
         'InterMine::TypeLibrary',       => 0.94,
-        'Clone'                         => 0.26,
         'List::MoreUtils'               => 0.22,
         'LWP'                           => 5.8,
         'Module::Find'                  => 0.05,
