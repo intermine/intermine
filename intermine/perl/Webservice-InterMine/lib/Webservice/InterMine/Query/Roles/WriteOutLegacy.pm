@@ -23,7 +23,7 @@ sub to_legacy_xml {
         my $path = $_->getAttribute('pathString');
         $_->setAttribute( pathString => $self->put_joins_in($path) );
     }
-    my @paths = sort uniq map { $_->getAttribute('path') } @constraints;
+    my @paths = sort {$a cmp $b} uniq map { $_->getAttribute('path') } @constraints;
     my $type_dict = $self->type_dict;
     for my $p (@paths) {
         my $type = $type_dict->{$p} || type_of( $self->model, $p );
