@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -38,6 +41,7 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
@@ -64,7 +68,7 @@ public class PortalQueryAction extends InterMineAction
 {
     private static int index = 0;
 
-//    private static final Logger LOG = Logger.getLogger(PortalQueryAction.class);
+    private static final Logger LOG = Logger.getLogger(PortalQueryAction.class);
 
     /**
      * Link-ins from other sites end up here (after some redirection).
@@ -110,24 +114,51 @@ public class PortalQueryAction extends InterMineAction
         // Use the old way = quicksearch template in case some people used to link in
         // without class name
         if ((idList.length == 1) && (className == null || className.length() == 0)) {
-//            String qid = loadObjectDetails(servletContext, session, request, response, extId);
-//            return new ForwardParameters(mapping.findForward("waiting"))
-//                .addParameter("qid", qid).forward();
-
             BagQueryRunner bagRunner = im.getBagQueryRunner();
             BagQueryResult bqr
-                = bagRunner.searchForBag("BioEntity", Arrays.asList(idList), null, false);
-            Map<Integer, List> results = bqr.getMatches();
-            if (results.isEmpty()) {
+            = bagRunner.searchForBag("BioEntity", Arrays.asList(idList), null, false);
+
+            Map<Integer, List> matches = bqr.getMatches();
+            Map<String, Map<String, Map<String, List>>> issues = bqr.getIssues();
+
+            LOG.debug("XXXa: " + matches);
+            LOG.debug("XXXb: " + issues);
+
+            if (matches.isEmpty() && issues.isEmpty()) {
                 return new ForwardParameters(mapping.findForward("noResults")).forward();
-            } else {
-                for (Map.Entry<Integer, List> entry : results.entrySet()) {
-                    String id = entry.getKey().toString();
-                    return new ForwardParameters(mapping.findForward("objectDetails"))
-                        .addParameter("id", id).forward();
+            }
+
+            // check the matches first...
+            for (Map.Entry<Integer, List> entry : matches.entrySet()) {
+                String id = entry.getKey().toString();
+                return new ForwardParameters(mapping.findForward("objectDetails"))
+                .addParameter("id", id).forward();
+            }
+
+            // and if there are none check the issues
+            for (Entry<String, Map<String, Map<String, List>>> issue : issues.entrySet()) {
+
+                Set<String> queryType = issue.getValue().keySet();
+                for (String qt : queryType) {
+                    Object obj = issue.getValue().get(qt).get(idList[0]).get(0);
+
+                    // parse the string representation of the object
+                    String ob = obj.toString().substring(obj.toString().indexOf('[')+1);
+                    String id = null;
+                    String[] result = ob.split(", ");
+                    for (String token : result) {
+                        String[] pair = token.split("=");
+                        if (pair[0].equalsIgnoreCase("id")) {
+                            id = pair[1].replaceAll("\"", "").replaceAll("]", "");
+                            return new ForwardParameters(mapping.findForward("objectDetails"))
+                            .addParameter("id", id).forward();
+                        }
+                        continue;
+                    }
                 }
             }
         }
+
 
         Model model = im.getModel();
         WebConfig webConfig = SessionMethods.getWebConfig(request);
