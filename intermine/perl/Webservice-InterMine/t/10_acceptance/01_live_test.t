@@ -4,7 +4,7 @@ use warnings;
 use Test::More tests => 33;
 use Test::Exception;
 
-my $do_live_tests = $ENV{LIVE_TESTING};
+my $do_live_tests = $ENV{RELEASE_TESTING};
 
 
 SKIP: {
