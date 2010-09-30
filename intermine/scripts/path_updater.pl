@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Carp qw(carp croak confess);
 
+# We want all warnings to be very very fatal
 $SIG{__WARN__} = sub {
     confess @_;
 };
@@ -14,17 +15,10 @@ use Log::Handler;
 use AppConfig qw(:expand :argcount);
 
 ## These should be installed or on the path before use
-BEGIN {
-    eval "
-        use InterMine::Model 0.9401;
-        use Webservice::InterMine::Query::Template;
-        use Webservice::InterMine::Query::Saved;
-        use Webservice::InterMine::Path qw(type_of class_of next_class);
-    ";
-    if (@_) {
-        die "Problem using InterMine modules - have you installed these or placed them on your path (PERL5LIB)?";
-    }
-}
+use InterMine::Model 0.9401;
+use Webservice::InterMine::Query::Template;
+use Webservice::InterMine::Query::Saved;
+use Webservice::InterMine::Path qw(type_of class_of next_class);
 
 ## Optional Module: Number:Format
 BEGIN {
@@ -84,6 +78,8 @@ $log->add(
         filename => $log_file,
         maxlevel => 'debug',
         minlevel => 'emergency',
+        mode     => 'append',
+        newline  => 1,
     }
 );
 open(my $items_by_owner, '>', $log_file . '.users') or die "$!";
