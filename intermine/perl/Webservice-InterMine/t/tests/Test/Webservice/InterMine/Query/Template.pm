@@ -222,7 +222,7 @@ sub results_with : Test(14) {
     lives_ok(
 	sub {$results = $obj->results_with();},
 	"Runs results_with with no args OK",
-    );
+    ) or diag( $obj->show_constraints );
     is_xml(
 	$results->[0]->to_xml,
 	$exp_xml,
