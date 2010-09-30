@@ -1,7 +1,6 @@
 package Webservice::InterMine::Query::Roles::Templated;
 
 use Moose::Role;
-use Clone qw(clone);
 use URI;
 use List::MoreUtils qw/uniq/;
 
@@ -71,7 +70,7 @@ sub results_with {
             confess sprintf( $error_format, $_ );
         }
     }
-    my $clone = clone($self);
+    my $clone = $self->clone;
 
     for my $code ( uniq( keys(%new_value_for), keys(%new_op_for) ) ) {
         if ( my $con = $clone->get_constraint($code) ) {
@@ -128,4 +127,17 @@ around _validate => sub {
     return $self->$orig(@errs);
 };
 
+sub clone {
+    my $self  = shift;
+    my $clone = bless {%$self}, ref $self;
+    $clone->{constraints} = [];
+    $clone->suspend_validation;
+    for my $con ($self->all_constraints) {
+        $clone->add_constraint(%$con);
+    }
+    $clone->resume_validation;
+    return $clone;
+}
+    
+    
 1;
