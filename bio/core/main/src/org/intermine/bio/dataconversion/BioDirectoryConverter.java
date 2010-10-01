@@ -70,6 +70,7 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
      * @param model the data model
      * @param dataSourceName the DataSource name
      * @param dataSetTitle the DataSet title
+     * @param ontology name of Ontology eg. "Sequence Ontology"
      */
     public BioDirectoryConverter (ItemWriter writer, Model model, String dataSourceName,
             String dataSetTitle, String ontology) {
@@ -85,7 +86,7 @@ public abstract class BioDirectoryConverter extends DirectoryConverter
         hook = new BioStoreHook(model, dataSetRefId, dataSourceRefId, ontology);
         setStoreHook(hook);
     }
-    
+
     /**
      * Update the dataset reference Id.  Overwrites the one set in the constructor.  Needed for
      * Uniprot which has a few different datasets.
