@@ -41,6 +41,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -83,8 +84,8 @@ public class SubmissionProtocolsController extends TilesAction
 
         q.addConstraint(Constraints.eq("Submission.id", o.getId().toString()));
         // rm the outer join for i/o: check if ok. if not add
-        // q.setOuterJoinStatus("Submission.appliedProtocols.inputs", OuterJoinStatus.OUTER);
-        // q.setOuterJoinStatus("Submission.appliedProtocols.outputs", OuterJoinStatus.OUTER);
+        q.setOuterJoinStatus("Submission.appliedProtocols.inputs", OuterJoinStatus.OUTER);
+        q.setOuterJoinStatus("Submission.appliedProtocols.outputs", OuterJoinStatus.OUTER);
         q.addOrderBy("Submission.appliedProtocols.step", OrderDirection.ASC);
 
         Profile profile = SessionMethods.getProfile(session);
@@ -121,7 +122,7 @@ public class SubmissionProtocolsController extends TilesAction
         while (i.hasNext()) {
             Submission sub = (Submission) i.next();
             dccId = sub.getdCCid();
-            pt = sub.getProtocols();            
+            pt = sub.getProtocols();
         }
         request.setAttribute("DCCid", dccId);
         request.setAttribute("protocols", pt);
