@@ -76,8 +76,10 @@ public class BioStoreHook implements DataConverterStoreHook
     }
 
     /**
-     * @see BioStoreHook#setDataSets(Item, Item, Item)
-     * {@inheritDoc}
+     * Assigns SO terms and datasets to item, if appropriate.
+     *
+     * @param dataConverter converter where item was created
+     * @param item item to be processed
      */
     public void processItem(DataConverter dataConverter, Item item) {
         setSOTerm(dataConverter, item, null, ontologyRefId);

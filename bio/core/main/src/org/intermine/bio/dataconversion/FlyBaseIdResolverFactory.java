@@ -86,14 +86,12 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     }
 
 
-    private IdResolver createFromDb(Database db) {
+    private IdResolver createFromDb(Database database) {
         IdResolver resolver = new IdResolver(soTerm);
         Connection conn = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
-
-
         try {
-            conn = db.getConnection();
+            conn = database.getConnection();
             String query = "select c.cvterm_id"
                 + " from cvterm c, cv"
                 + " where c.cv_id = cv.cv_id"
@@ -122,7 +120,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
             }
 
             String extraConstraint = "";
-            if (soTerm.equals("gene")) {
+            if ("gene".equals(soTerm)) {
                 extraConstraint = " and  f.uniquename like \'FBgn%\'";
             }
 
@@ -143,8 +141,8 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 String uniquename = res.getString("uniquename");
                 String name = res.getString("name");
                 String organism = res.getString("abbreviation");
-                String taxonId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
-                resolver.addSynonyms(taxonId, uniquename, Collections.singleton(name));
+                String taxId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
+                resolver.addSynonyms(taxId, uniquename, Collections.singleton(name));
                 i++;
             }
             LOG.info("feature query returned " + i + " rows.");
@@ -172,13 +170,13 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 String uniquename = res.getString("uniquename");
                 String synonym = res.getString("name");
                 String organism = res.getString("abbreviation");
-                String taxonId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
-                Boolean isCurrent = res.getBoolean("is_current");
+                String taxId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
+                boolean isCurrent = res.getBoolean("is_current");
                 String type = res.getString("type");
-                if (isCurrent && type.equals("symbol")) {
-                    resolver.addMainIds(taxonId, uniquename, Collections.singleton(synonym));
+                if (isCurrent && "symbol".equals(type)) {
+                    resolver.addMainIds(taxId, uniquename, Collections.singleton(synonym));
                 } else {
-                    resolver.addSynonyms(taxonId, uniquename, Collections.singleton(synonym));
+                    resolver.addSynonyms(taxId, uniquename, Collections.singleton(synonym));
                 }
             }
             stmt.close();
@@ -207,12 +205,12 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 String accession = res.getString("accession");
                 String organism = res.getString("abbreviation");
                 String dbName = res.getString("name");
-                Boolean isCurrent = res.getBoolean("is_current");
-                String taxonId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
-                if (isCurrent && dbName.equals("FlyBase Annotation IDs")) {
-                    resolver.addMainIds(taxonId, uniquename, Collections.singleton(accession));
+                boolean isCurrent = res.getBoolean("is_current");
+                String taxId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
+                if (isCurrent && "FlyBase Annotation IDs".equals(dbName)) {
+                    resolver.addMainIds(taxId, uniquename, Collections.singleton(accession));
                 } else {
-                    resolver.addSynonyms(taxonId, uniquename, Collections.singleton(accession));
+                    resolver.addSynonyms(taxId, uniquename, Collections.singleton(accession));
                 }
             }
             stmt.close();
