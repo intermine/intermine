@@ -28,23 +28,19 @@
   <c:set var="constraint" value="${dec}" scope="request"/>
   <tiles:insert page="constraintSettings.jsp"/>
 </c:if>
-<c:if test="${(EDITING_TEMPLATE != null || NEW_TEMPLATE != null) && editingSwitchableConstraint}">
-  <c:set var="constraint" value="${dec}" scope="request"/>
-  <tiles:insert page="constraintSwitchableSettings.jsp"/>
-</c:if>
 
 <%--to prevent submit twice --%>
 <html:hidden
 property="<%=org.apache.struts.taglib.html.Constants.TOKEN_KEY%>"
 value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>"/>
 
-<c:if test="${!editingTemplateConstraint && !editingSwitchableConstraint}">
+<c:if test="${!editingTemplateConstraint}">
   <div class="heading constraintTitle">
     <fmt:message key="query.constrain"/><%--Constraint--%> 
   </div>
 </c:if>
 
-<c:if test="${!editingTemplateConstraint && !editingSwitchableConstraint}">
+<c:if test="${!editingTemplateConstraint}">
 <div class="body">
  <c:choose>
  <c:when  test="${empty joinStyleOnly}" >
@@ -269,10 +265,8 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
           </td>
           </tr>
         </table>
-  
-	
-	</FIELDSET>
-	</c:if> 
+    </FIELDSET>
+    </c:if> 
 
  
 <!--
