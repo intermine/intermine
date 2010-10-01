@@ -104,6 +104,7 @@ my $release;
 my @required_actions_list = ();
 my $start_action = undef;
 
+# Process command-line opts
 my %opts = ();
 
 if (!getopts('vrlbTnuUE:D:a:V:', \%opts)) {
@@ -178,8 +179,9 @@ if (@ARGV == 2) {
 }
 
 my $log_file = "pbuild.log";
+my $mode = ($run_build_db) ? '>' : '>>'; 
+open(LOG, $mode, $log_file) or die "can't open $log_file: $!\n";
 
-open LOG, ">>$log_file" or die "can't open $log_file: $!\n";
 my $old_handle = select(LOG);
 $| = 1; # autoflush
 select $old_handle;
