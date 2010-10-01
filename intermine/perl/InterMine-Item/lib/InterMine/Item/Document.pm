@@ -125,6 +125,12 @@ sub new {
   return $self;
 }
 
+=head2 writer
+
+ Function : Return the writer for this document
+
+=cut
+
 sub writer {
     my $self = shift;
     return $self->{writer};
@@ -158,7 +164,8 @@ sub write {
 }
 
 sub DESTROY {
- if ($self-{writer}->within_element('items')) {
+    my $self = shift;
+    if ($self->{writer}->within_element('items')) {
         $self->close;
     }
 }
@@ -178,14 +185,17 @@ sub close {
     return;
 }
     
-=head2 add_item
+=head2 make_item
 
- Title   : add_item
- Usage   : $item = $doc->add_item("Gene");
+ Title   : make_item
+ Usage   : $item = $doc->make_item("Gene", [%attributes]);
  Function: return a new Item object of the given type
+           while not storing it 
  Args    : the classname of the new Item
+           Any attributes for the item
 
 =cut
+
 sub make_item {
   my $self = shift;
   my %args;
@@ -217,6 +227,18 @@ sub make_item {
   }
   return $item;
 }
+
+=head2 add_item
+
+ Title   : add_item
+ Usage   : $item = $doc->add_item("Gene");
+ Function: return a new Item object of the given type,
+           while storing it in an internal record for writing
+           out later
+ Args    : the classname of the new Item
+           Any attributes for the item
+
+=cut
 
 sub add_item {
     my $self = shift;

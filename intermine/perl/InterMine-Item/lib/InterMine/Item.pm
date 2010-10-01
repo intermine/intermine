@@ -1,6 +1,6 @@
 package InterMine::Item;
 
-our $VERSION = 0.941;
+our $VERSION = 0.942;
 
 =head1 NAME
 

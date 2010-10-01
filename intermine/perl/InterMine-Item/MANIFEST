@@ -4,7 +4,7 @@ ignore.txt
 lib/InterMine/Item.pm
 lib/InterMine/Item/Document.pm
 Makefile.PL
-MANIFEST
+MANIFEST			This list of files
 META.yml
 README
 t/00-load.t
