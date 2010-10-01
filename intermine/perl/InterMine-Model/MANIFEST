@@ -6,8 +6,11 @@ lib/InterMine/Model/Attribute.pm
 lib/InterMine/Model/ClassDescriptor.pm
 lib/InterMine/Model/Collection.pm
 lib/InterMine/Model/Reference.pm
+lib/InterMine/Model/Role/Descriptor.pm
 lib/InterMine/Model/Role/Field.pm
-MANIFEST
+Makefile.PL
+MANIFEST			This list of files
+META.yml
 README
 t/00-load.t
 t/01_model/01_field.t
@@ -18,5 +21,3 @@ t/data/testmodel_model.xml
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
-Makefile.PL
-META.yml
