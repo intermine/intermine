@@ -18,7 +18,7 @@ echo "Getting Fly Anatomy Ontology"
 ./get_fly_anatomy_ontology $logdir $tempname $shared_data
     if [ $? -ne 0 ]
     then
-        "error getting Fly Anatomy Ontology" 2>&1 >> tempfile
+        echo "error getting Fly Anatomy Ontology" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
 echo
@@ -27,7 +27,7 @@ echo "Getting PSI-MI Ontology"
 ./get_psi_ontology $logdir $tempname $shared_data
     if [ $? -ne 0 ]
     then
-        "error getting PSI-MI Ontology" 2>&1 >> tempfile
+        echo "error getting PSI-MI Ontology" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
 echo
@@ -36,7 +36,7 @@ echo "Getting FlyAtlas data"
 ./get_flyatlas $logdir $tempname $shared_data
     if [ $? -ne 0 ]
     then
-        "error getting FlyAtlas data" 2>&1 >> tempfile
+        echo "error getting FlyAtlas data" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
 echo
@@ -45,7 +45,7 @@ echo "Getting GO annotation"
 ./get_go-annotation $logdir $tempname $shared_data $config_file
     if [ $? -ne 0 ]
     then
-        "error gettingGO annotation" 2>&1 >> tempfile
+        echo "error gettingGO annotation" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
 echo
@@ -54,7 +54,7 @@ echo "Getting IntAct data"
 ./get_intact $logdir $tempname $shared_data $config_file
     if [ $? -ne 0 ]
     then
-        "error gettingIntAct data" 2>&1 >> tempfile
+        echo "error gettingIntAct data" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
 echo
@@ -63,7 +63,7 @@ echo "Getting KEGG data"
 ./get_kegg $logdir $tempname $shared_data
     if [ $? -ne 0 ]
     then
-        "error getting KEGG data" 2>&1 >> tempfile
+        echo "error getting KEGG data" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
 
@@ -74,7 +74,7 @@ echo "==========================================================="
 #./get_wormbase_identifiers $logdir $tempname $shared_data
 #    if [ $? -ne 0 ]
 #    then
-#        "error getting WormBase identifiers" 2>&1 >> tempfile
+#        echo "error getting WormBase identifiers" 2>&1 >> $tempfile
 #    fi
 #echo "==========================================================="
 echo
@@ -83,7 +83,7 @@ echo "Getting PubMed data"
 ./get_ncbi_pubmed $logdir $tempname $shared_data $config_file
     if [ $? -ne 0 ]
     then
-        "error getting PubMed data" 2>&1 >> tempfile
+        echo "error getting PubMed data" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
 echo
@@ -92,7 +92,7 @@ echo "Getting Homophila data"
 ./get_homophila $logdir $tempname $shared_data
     if [ $? -ne 0 ]
     then
-        "error getting Homophila data" 2>&1 >> tempfile
+        echo "error getting Homophila data" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
 echo
@@ -103,7 +103,7 @@ echo "Getting UniProt data"
 #./get_uniprot
     if [ $? -ne 0 ]
     then
-        "error getting UniProt data" 2>&1 >> tempfile
+        echo "error getting UniProt data" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
 
@@ -133,7 +133,7 @@ echo "Getting Interpro xml file"
 ./get_interproXML $logdir $tempname $shared_data 
     if [ $? -ne 0 ]
     then
-         "error getting Interpro" 2>&1 >> tempfile
+         echo "error getting Interpro" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
 echo
@@ -142,7 +142,7 @@ echo "Getting FlyBase FASTA files"
 ./get_flybase $logdir $tempname $shared_data
     if [ $? -ne 0 ]
     then
-        "error getting FlyBase FASTA files" 2>&1 >> tempfile
+        echo "error getting FlyBase FASTA files" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
 echo
@@ -151,7 +151,7 @@ echo "Getting Redfly GFF files"
 ./get_redfly "$shared_data/redfly" $tempfile
     if [ $? -ne 0 ]
     then
-        "error getting Redfly GFF files" 2>&1 >> tempfile
+        echo "error getting Redfly GFF files" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
 echo
@@ -160,7 +160,7 @@ echo "Getting Reactome BioPAX files"
 ./get_reactome
     if [ $? -ne 0 ]
     then
-        "error getting Reactome files" 2>&1 >> tempfile
+        echo "error getting Reactome files" 2>&1 >> $tempfile
     fi
 echo "==========================================================="
 
@@ -170,7 +170,7 @@ logfile="$logdir/$today.txt"
 mv $tempfile $logfile
 
 file_with_usernames=${1:-./resources/mail_list}
-for name in `cat ${file_with_usernames}`
+for name in $(cat $file_with_usernames)
 do
   mail -s "Outcome of data download run on $today" $name < $logfile
 done
