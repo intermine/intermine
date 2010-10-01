@@ -161,8 +161,6 @@
                     </div>
                    </c:when>
                    <c:otherwise>
-                   
-                   <html:hidden property="attributeOp" styleId="attribute5" value="${dec.lookupOp.property}" disabled="false" />
                    <html:hidden styleId="attributeOps(${index})" property="attributeOps(${index})" value="${dec.lookupOp.property}"/>
                    <fmt:message key="query.lookupConstraintLabel" />&nbsp;<%-- LOOKUP: --%>
                    </c:otherwise>
