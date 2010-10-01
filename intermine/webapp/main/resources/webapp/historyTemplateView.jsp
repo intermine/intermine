@@ -165,7 +165,7 @@
               </c:choose>
 
                 |
-                <html:link action="/exportTemplates?scope=user&amp;name=${savedTemplate.value.name}"
+                <html:link action="/exportTemplates?scope=user&amp;name=${savedTemplate.value.name}&amp;originalTemplate=true"
                         titleKey="history.action.export.hover">
                   <fmt:message key="history.action.export"/>
                 </html:link>
