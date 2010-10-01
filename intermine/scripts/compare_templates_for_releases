@@ -68,9 +68,11 @@ my $icmp = sub {lc($a) cmp lc($b)};
 for my $template (sort($icmp keys %rows_from)) {
     my @res = map {$rows_from{$template}{$_}} @services;
     if (grep(defined, @res) == 2) {
-        my ($x, $y) = @res;       
-        my $diff;
-        $diff = 100.0 * abs($x - $y) / $x;
+        my ($x, $y) = sort {$b <=> $a} @res;       
+        my $diff = 0;
+        if ($x != $y) {
+            $diff = 100.0 * abs($x - $y) / $x;
+        }
         my $group = ($diff >= 10) ? 'high' : 'low';
         my $line = sprintf(
             "%*s release-%s: %7d, release-%s: %7d, diff: %3.0f%%", 
@@ -132,7 +134,7 @@ print $reply_to;
 print $subject;
 print $send_to;
 print "Content-type: text/plain\n\n"; # dbl NL for header/content separation
-if (@{$in_both{high}}) {
+if (exists $in_both{high}) {
     print $long, $NL, $half, "In Both: Diff >= 10%", $NL, 
         join($NL, @{$in_both{high}}), $NL;
 }
@@ -140,7 +142,7 @@ for (keys %only_in) {
     print $long, $NL, $half, "Only in $_:", $NL,
         join($NL, @{$only_in{$_}}), $NL;
 }
-if (@{$in_both{low}}) {
+if (exists $in_both{low}) {
     print '-' x 50, "In Both: Diff < 10%$NL", 
         join($NL, @{$in_both{low}}), $NL;
 }
