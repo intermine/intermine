@@ -78,8 +78,6 @@ public class QueryBuilderConstraintController extends TilesAction
             session.removeAttribute("editingConstraint");
             if (session.getAttribute("editingTemplateConstraint") != null) {
                 SessionMethods.moveToRequest("editingTemplateConstraint", request);
-            } else if (session.getAttribute("editingSwitchableConstraint") != null) {
-                SessionMethods.moveToRequest("editingSwitchableConstraint", request);
             }
         } else if (session.getAttribute("joinStylePath") != null) {
             // ONLY EDITING JOIN STYLE

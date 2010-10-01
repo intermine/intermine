@@ -197,32 +197,6 @@ public class QueryBuilderChange extends DispatchAction
     }
 
     /**
-     * Edit the switachable property of template settings identified by code in query.
-     *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws
-     */
-    public ActionForward editSwitchableConstraint(ActionMapping mapping,
-                                                ActionForm form,
-                                                HttpServletRequest request,
-                                                HttpServletResponse response)
-        throws Exception {
-        HttpSession session = request.getSession();
-        PathQuery query = SessionMethods.getQuery(session);
-        String code = request.getParameter("code");
-
-        session.setAttribute("editingSwitchableConstraint", Boolean.TRUE);
-        PathConstraint c = query.getConstraintForCode(code);
-        session.setAttribute("editingConstraint", c);
-        return mapping.findForward("query");
-    }
-
-    /**
      * Edit a the join style settings for a path.
      *
      * @param mapping The ActionMapping used to select this instance
@@ -476,25 +450,6 @@ public class QueryBuilderChange extends DispatchAction
                                             HttpServletResponse response)
         throws Exception {
         editTemplateConstraint(mapping, form, request, response);
-        return mapping.findForward("queryBuilderConstraint");
-    }
-
-    /**
-     * AJAX request - edit the switchable property of a template constraint (on, off, locked).
-     *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws
-     */
-    public ActionForward ajaxEditSwitchableConstraint(ActionMapping mapping, ActionForm form,
-                                            HttpServletRequest request,
-                                            HttpServletResponse response)
-        throws Exception {
-        editSwitchableConstraint(mapping, form, request, response);
         return mapping.findForward("queryBuilderConstraint");
     }
 
