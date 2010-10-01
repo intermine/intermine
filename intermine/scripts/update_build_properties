@@ -44,6 +44,7 @@ my $reverting = ($ARGV[1] and $ARGV[1] eq 'revert');
 
 opendir(my $svn_dir, $svn_loc) or die;
 for my $mine (readdir($svn_dir)) {
+    next if ($mine = 'testmodel');
     my $abs_mine = $svn_loc . '/' . $mine;
     if (-d $abs_mine) {
         opendir(my $subdir, $abs_mine) or die;
