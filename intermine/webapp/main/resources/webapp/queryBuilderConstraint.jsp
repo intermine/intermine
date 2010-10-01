@@ -186,7 +186,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                   <%-- normal inputfield --%>
                   <c:otherwise>
                     <c:choose>
-                    <c:when test="${dec.bagSelected}">
+                    <c:when test="${dec.bagSelected || dec.nullSelected}">
                         <c:set var="selectedValue" value=""/>
                     </c:when>
                     <c:otherwise>
