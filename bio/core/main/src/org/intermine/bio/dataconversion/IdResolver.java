@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -142,7 +141,7 @@ public class IdResolver
      * @param ids a set of alternative main identifiers
      */
     protected void addMainIds(String taxonId, String primaryIdentifier, Set<String> ids) {
-        addEntry(taxonId, primaryIdentifier, ids, true);
+        addEntry(taxonId, primaryIdentifier, ids, Boolean.TRUE);
     }
 
     /**
@@ -152,7 +151,7 @@ public class IdResolver
      * @param ids a set synonyms
      */
     protected void addSynonyms(String taxonId, String primaryIdentifier, Set<String> ids) {
-        addEntry(taxonId, primaryIdentifier, ids, false);
+        addEntry(taxonId, primaryIdentifier, ids, Boolean.FALSE);
     }
 
     /**
@@ -174,7 +173,7 @@ public class IdResolver
 
         Map<String, Set<String>> lookupMap = null;
         Map<String, Set<String>> reverseMap = null;
-        if (mainId) {
+        if (mainId.booleanValue()) {
             lookupMap = orgMainMaps.get(taxonId);
             if (lookupMap == null) {
                 lookupMap = new HashMap<String, Set<String>>();
@@ -267,10 +266,9 @@ public class IdResolver
     /**
      * Read contents of an IdResolver from file, allows for caching during a build.
      * @param f the file to read from
-     * @throws FileNotFoundException if file not found
      * @throws IOException if problem reading from file
      */
-    public void populateFromFile(File f) throws FileNotFoundException, IOException {
+    public void populateFromFile(File f) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(f));
         String line = null;
         while ((line = reader.readLine()) != null) {
@@ -281,7 +279,7 @@ public class IdResolver
             String mainIdsStr = cols[2];
             if (!StringUtils.isBlank(mainIdsStr)) {
                 String[] mainIds = mainIdsStr.split(",");
-                addEntry(taxonId, primaryId, Arrays.asList(mainIds), true);
+                addEntry(taxonId, primaryId, Arrays.asList(mainIds), Boolean.TRUE);
             }
 
             // read synonyms if they are present
@@ -289,7 +287,7 @@ public class IdResolver
                 String synonymsStr = cols[3];
                 if (!StringUtils.isBlank(synonymsStr)) {
                     String[] synonyms = synonymsStr.split(",");
-                    addEntry(taxonId, primaryId, Arrays.asList(synonyms), false);
+                    addEntry(taxonId, primaryId, Arrays.asList(synonyms), Boolean.FALSE);
                 }
             }
         }
