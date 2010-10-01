@@ -153,18 +153,17 @@ jQuery(document).ready(function () {
   <div id="submissionProtocols" style="display: block">
     <p>
     <table cellpadding="0" cellspacing="0" border="0" class="results">
-
-      <tr class="<c:out value="${stepClass}${rowClass}"/>">
+      <tr>
         <th>Step</th>
         <th colspan="2">Inputs</th>
         <th>Applied Protocol</th>
-        <th colspan=2">Outputs</th>
+        <th colspan="2">Outputs</th>
       </tr>
        <c:set var="prevStep" value="0" />
 
       <tbody>
-    <c:forEach var="row" items="${pagedResults.rows}" varStatus="status">
 
+    <c:forEach var="row" items="${pagedResults.rows}" varStatus="status">
       <c:set var="rowClass">
         <c:choose>
           <c:when test="${status.count % 2 == 1}">odd</c:when>
@@ -173,10 +172,6 @@ jQuery(document).ready(function () {
       </c:set>
 
       <c:forEach var="subRow" items="${row}" varStatus="multiRowStatus">
-       <%--
-       <tr class="<c:out value="${rowClass}"/>">
---%>
-
         <im:instanceof instanceofObject="${subRow[0]}"
           instanceofClass="org.intermine.api.results.flatouterjoins.MultiRowFirstValue"
           instanceofVariable="isFirstValue"/>
@@ -185,12 +180,13 @@ jQuery(document).ready(function () {
          </c:if>
                     <c:set var="stepClass">
                       <c:choose>
-                       <c:when test="${step % 2 == 1}">stepE</c:when>
-                       <c:otherwise>stepO</c:otherwise>
+                       <c:when test="${step % 2 == 1}">stepO</c:when>
+                       <c:otherwise>stepE</c:otherwise>
                       </c:choose>
                     </c:set>
 
        <tr class="<c:out value="${stepClass}${rowClass}"/>">
+
        <c:set var="output" value="true"/>
 
        <c:forEach var="column" items="${pagedResults.columns}" varStatus="status2">
@@ -203,11 +199,13 @@ jQuery(document).ready(function () {
                 <c:when test="${column.index == 0}">
                  <c:choose>
                    <c:when test="${resultElement.field != prevStep}">
+
                     <td rowspan="${subRow[column.index].rowspan}" >${resultElement.field}
                     </td>
                     <c:set var="prevStep" value="${resultElement.field}"/>
                   </c:when>
                   <c:otherwise>
+
                     <c:set var="output" value="true"/>
                     <td rowspan="${subRow[column.index].rowspan}" >${resultElement.field}
                     </td>

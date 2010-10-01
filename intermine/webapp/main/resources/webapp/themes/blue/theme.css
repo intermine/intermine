@@ -150,33 +150,31 @@ table.results tr.odd TD{
   border-right:1px solid #B9E6F9;
   border-bottom:1px solid #B9E6F9;}
 
-table.results tr.stepE TD{
+table.results tr.stepO TD{
   background-color: #B9E6F9;}
 
-table.results tr.stepO TD{
+table.results tr.stepE TD{
   border-right:1px solid #B9E6F9;
   border-bottom:1px solid #B9E6F9;}
 
 
-table.results tr.stepOeven TD{
+table.results tr.stepEeven TD{
   background-color: #FFF;
   border-right:1px solid #F0F8FF;
   border-bottom:1px solid #F0F8FF;}
 
-table.results tr.stepOodd TD{
+table.results tr.stepEodd TD{
   background-color: #F0F8FF;
   border-right:1px solid #FFF;
   border-bottom:1px solid #FFF;}
 
-table.results tr.stepEodd TD{
+table.results tr.stepOodd TD{
   background-color: #B9E6F9;}
 
-table.results tr.stepEeven TD{
+table.results tr.stepOeven TD{
 	background-color: #63B7DE;
   border-right:1px solid #B9E6F9;
   border-bottom:1px solid #B9E6F9;}
-
-
 
 table.results tr td.highlightObject {
   background-color: #ee6;
