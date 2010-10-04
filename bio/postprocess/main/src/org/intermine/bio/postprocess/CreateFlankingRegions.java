@@ -169,10 +169,10 @@ public class CreateFlankingRegions
                 if ("upstream".equals(direction) && "1".equals(strand)) {
                     start = geneStart - (int) Math.round(distance * 1000);
                     end = geneStart - 1;
-                } else if (direction.equals("upstream") && strand.equals("-1")) {
+                } else if ("upstream".equals(direction) && "-1".equals(strand)) {
                     start = geneEnd + 1;
                     end = geneEnd + (int) Math.round(distance * 1000);
-                } else if (direction.equals("downstream") && strand.equals("1")) {
+                } else if ("downstream".equals(direction) && "1".equals(strand)) {
                     start = geneEnd + 1;
                     end = geneEnd + (int) Math.round(distance * 1000);
                 } else {  // direction.equals("downstream") && strand.equals("-1")
@@ -182,14 +182,16 @@ public class CreateFlankingRegions
 
                 // if the region hangs off the start or end of a chromosome set it to finish
                 // at the end of the chromosome
-                location.setStart(Math.max(start, 1));
-                location.setEnd(Math.min(end, chr.getLength()));
+                location.setStart(new Integer(Math.max(start, 1)));
+                int e = Math.min(end, chr.getLength().intValue());
+                location.setEnd(new Integer(e));
 
                 location.setStrand(strand);
                 location.setLocatedOn(chr);
                 location.setFeature(region);
 
-                region.setLength(new Integer((location.getEnd() - location.getStart()) + 1));
+                region.setLength(new Integer((location.getEnd().intValue()
+                        - location.getStart().intValue()) + 1));
 
                 osw.store(location);
                 osw.store(region);
