@@ -35,7 +35,8 @@ import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.StringUtil;
+import org.intermine.sql.writebatch.Batch;
+import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
@@ -49,6 +50,7 @@ import org.intermine.xml.full.ReferenceList;
 public class ModEncodeMetaDataProcessor extends ChadoProcessor
 {
     private static final Logger LOG = Logger.getLogger(ModEncodeMetaDataProcessor.class);
+    private static final String DATA_IDS_TABLE_NAME = "data_ids";
     private static final String WIKI_URL = "http://wiki.modencode.org/project/index.php?title=";
     private static final String FILE_URL = "http://submit.modencode.org/submit/public/get_file/";
     private static final Set<String> DB_RECORD_TYPES =
@@ -239,6 +241,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processExperiment(connection);
         processDag(connection);
         findScoreProtocols();
+
         processFeatures(connection, submissionMap);
 
         // set references
@@ -303,9 +306,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             List<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
             LOG.debug("DATA IDS " + chadoExperimentId + ": " + thisSubmissionDataIds.size());
 
+            // Create a temporary table with the feature ids related to this submission based on the
+            // data_feature table
+            String dataIdsTempTable = createDataIdsTempTable(connection, chadoExperimentId,
+                    thisSubmissionDataIds);
+
             ModEncodeFeatureProcessor processor =
                 new ModEncodeFeatureProcessor(getChadoDBConverter(), submissionItemIdentifier,
-                        labItemIdentifier, thisSubmissionDataIds, submissionTitle,
+                        labItemIdentifier, dataIdsTempTable, submissionTitle,
                         scoreProtocols.get(chadoExperimentId));
             processor.initialiseCommonFeatures(commonFeaturesMap);
             processor.process(connection);
@@ -326,9 +334,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     + "featureMap: " + subFeatureMap.keySet().size());
 
             // Populate map of submissions to features, some features are in multiple submissions
-            String queryList = StringUtil.join(thisSubmissionDataIds, ",");
             processDataFeatureTable(connection, subCollections, subFeatureMap,
-                    chadoExperimentId, queryList);
+                    chadoExperimentId, dataIdsTempTable);
+
+            dropDataIdsTempTable(connection, dataIdsTempTable);
 
             // read any genes that have been created so we can re-use the same item identifiers
             // when creating antibody/strain target genes later
@@ -361,20 +370,25 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     private void processDataFeatureTable(Connection connection, Map<Integer, List<String>> subCols,
-            Map<Integer, FeatureData> featureMap, Integer chadoExperimentId, String queryList)
+            Map<Integer, FeatureData> featureMap, Integer chadoExperimentId, String dataIdTable)
         throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
-        ResultSet res = getDataFeature(connection, queryList);
+
         String submissionItemId = submissionMap.get(chadoExperimentId).itemIdentifier;
+
+        bT = System.currentTimeMillis(); // to monitor time spent in the process
+        ResultSet res = getDataFeature(connection, dataIdTable);
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
             Integer featureId = new Integer(res.getInt("feature_id"));
+
             FeatureData featureData = featureMap.get(featureId);
             if (featureData == null) {
                 LOG.debug("Check feature type: no data for feature_id: " + featureId
                         + " in processDataFeatureTable(), data_id =" + dataId);
                 continue;
             }
+
             Integer featureObjectId = featureData.getIntermineObjectId();
             List<String> subs = subCols.get(featureObjectId);
             if (subs == null) {
@@ -383,14 +397,62 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             subs.add(submissionItemId);
         }
-        LOG.info("PROCESS TIME data_feature table: " + (System.currentTimeMillis() - bT) + " ms");
+        LOG.info("DATA IDS PROCESS TIME data_feature table: " + (System.currentTimeMillis() - bT));
     }
-    private ResultSet getDataFeature(Connection connection, String queryList)
+
+    private String createDataIdsTempTable(Connection connection, Integer chadoExperimentId,
+            List<Integer> dataIds) throws SQLException {
+        String tableName = DATA_IDS_TABLE_NAME + "_" + chadoExperimentId;
+
+        long bT = System.currentTimeMillis();
+        String query =
+            " CREATE TEMPORARY TABLE " + tableName + " (data_id int)";
+        Statement stmt = connection.createStatement();
+        LOG.info("executing: " + query);
+        stmt.execute(query);
+
+        BatchWriterPostgresCopyImpl batchWriter = new BatchWriterPostgresCopyImpl();
+        Batch batch = new Batch(batchWriter);
+
+        for (Integer dataId : dataIds) {
+            batch.addRow(connection, tableName, dataId, new String[] {"data_id"},
+                    new Object[] {dataId});
+        }
+        batch.close(connection);
+        LOG.info("CREATED DATA IDS TABLE: " + (System.currentTimeMillis() - bT));
+
+        String idIndexQuery = "CREATE INDEX " + tableName + "_data_id_index ON "
+            + tableName + "(data_id)";
+        LOG.info("DATA IDS executing: " + idIndexQuery);
+        long bT1 = System.currentTimeMillis();
+        stmt.execute(idIndexQuery);
+        LOG.info("DATA IDS TIME feature creating INDEX: " + (System.currentTimeMillis() - bT1));
+        String analyze = "ANALYZE " + tableName;
+        LOG.info("executing: " + analyze);
+        long bT2 = System.currentTimeMillis();
+        stmt.execute(analyze);
+        LOG.info("DATA IDS TIME  analyzing: " + (System.currentTimeMillis() - bT2));
+
+        return tableName;
+    }
+
+    private void dropDataIdsTempTable(Connection connection, String dataIdsTableName)
+        throws SQLException {
+        long bT = System.currentTimeMillis();
+        String query = " DROP TABLE " + dataIdsTableName;
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        stmt.execute(query);
+        LOG.info("DATA IDS TIME dropping table '" + dataIdsTableName + "': "
+                + (System.currentTimeMillis() - bT));
+    }
+
+    private ResultSet getDataFeature(Connection connection, String dataIdTable)
         throws SQLException {
         String query =
             "SELECT df.data_id, df.feature_id"
-            + " FROM data_feature df "
-            + " WHERE data_id in (" + queryList + ")";
+            + " FROM data_feature df, " + dataIdTable + " d"
+            + " WHERE df.data_id = d.data_id";
 
         return doQuery(connection, query, "getDataFeature");
     }

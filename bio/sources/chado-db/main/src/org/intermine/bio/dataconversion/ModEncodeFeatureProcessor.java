@@ -46,9 +46,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private static final Logger LOG = Logger.getLogger(ModEncodeFeatureProcessor.class);
 
     private final String dataSetIdentifier;
-    private final List<Integer> dataList;
     private final String title;
     private final String scoreProtocolItemId;
+    private final String dataIdsTableName;
 
     private Set<String> commonFeatureInterMineTypes = new HashSet<String>();
 
@@ -88,19 +88,19 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      *                             i.e. the submissionItemIdentifier
      * @param dataSourceIdentifier the item identifier of the DataSource,
      *                             i.e. the labItemIdentifier
-     * @param dataList             the list of data ids to be used in the subquery
+     * @param dataIdsTableName     name of a temporary table containing the data ids for the sub
      * @param title                the title
      * @param scoreProtocolItemId  score protocol item id
      */
 
     public ModEncodeFeatureProcessor(ChadoDBConverter chadoDBConverter,
             String dataSetIdentifier, String dataSourceIdentifier,
-            List <Integer> dataList, String title, String scoreProtocolItemId) {
+            String dataIdsTableName, String title, String scoreProtocolItemId) {
         super(chadoDBConverter);
         this.dataSetIdentifier = dataSetIdentifier;
-        this.dataList = dataList;
         this.title = title;
         this.scoreProtocolItemId = scoreProtocolItemId;
+        this.dataIdsTableName = dataIdsTableName;
 
         for (String chromosomeType : getChromosomeFeatureTypes()) {
             commonFeatureInterMineTypes.add(
@@ -478,38 +478,17 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     }
 
     /**
-     * method to transform dataList (list of integers)
-     * in the string for a IN clause in SQL (comma separated)
-     * @return String
-     */
-    protected String forINclause() {
-        StringBuffer ql = new StringBuffer();
-
-        Iterator<Integer> i = dataList.iterator();
-        Integer index = 0;
-        while (i.hasNext()) {
-            index++;
-            if (index > 1) {
-                ql = ql.append(", ");
-            }
-            ql = ql.append(i.next());
-        }
-        return ql.toString();
-    }
-
-    /**
      * Create a temporary table of all feature_ids for a given submission.
      * @param connection the connection
      * @throws SQLException if there is a database problem
      */
     protected void createSubFeatureIdTempTable(Connection connection) throws SQLException {
-        String queryList = forINclause();
 
         String query =
             " CREATE TEMPORARY TABLE " + SUBFEATUREID_TEMP_TABLE_NAME
-            + " AS SELECT data_feature.feature_id "
-            + " FROM data_feature "
-            + " WHERE data_id IN (" + queryList + ")";
+            + " AS SELECT df.feature_id "
+            + " FROM data_feature df, " + dataIdsTableName + " d"
+            + " WHERE df.data_id = d.data_id";
 
         Statement stmt = connection.createStatement();
         LOG.info("executing: " + query);
