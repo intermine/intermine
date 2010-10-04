@@ -39,10 +39,14 @@ import org.intermine.util.TypeUtil;
  *
  * @author Julie Sullivan
  */
-public class OboToModel
+public final class OboToModel
 {
     // TODO put this in config file - SO:0000340
     private static final String CHROMOSOME = "chromosome";
+
+    private OboToModel() {
+        // saves some memory
+    }
 
     /**
      * Run conversion from Obo to Model format.

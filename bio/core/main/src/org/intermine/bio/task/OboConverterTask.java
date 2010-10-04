@@ -10,7 +10,6 @@ package org.intermine.bio.task;
  *
  */
 
-import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.bio.dataconversion.OboConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -29,7 +28,7 @@ import org.intermine.task.ConverterTask;
  */
 public class OboConverterTask extends ConverterTask
 {
-    protected static final Logger LOG = Logger.getLogger(OboConverterTask.class);
+//    protected static final Logger LOG = Logger.getLogger(OboConverterTask.class);
 
     private String file, ontologyName, osName, url, termClass;
 
@@ -79,7 +78,7 @@ public class OboConverterTask extends ConverterTask
      * Run the task
      * @throws BuildException if a problem occurs
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (file == null) {
             throw new BuildException("database attribute is not set");
         }

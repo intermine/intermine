@@ -28,13 +28,19 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 
 /**
- * Helper class for data converters
- * @author julie
+ * Helper class for data converters.
+ *
+ * @author Julie Sullivan
   */
-public class BioConverterUtil
+public final class BioConverterUtil
 {
     private static final String PROP_FILE = "soClassName.properties";
     private static Map<String, String> javaNamesToSO = new HashMap<String, String>();
+
+    private BioConverterUtil() {
+      //disable external instantiation
+    }
+
     /**
      * Get SO name for Java class, eg. SequenceFeature to sequence_feature
      * @param javaClassName the relevant string
@@ -52,7 +58,7 @@ public class BioConverterUtil
             }
             String line = null;
             while ((line = br.readLine()) != null) {
-                String fields[] = StringUtils.split(line, ' ');
+                String[] fields = StringUtils.split(line, ' ');
                 String javaName = fields[0];
                 String soName = fields[1];
                 javaNamesToSO.put(javaName, soName);

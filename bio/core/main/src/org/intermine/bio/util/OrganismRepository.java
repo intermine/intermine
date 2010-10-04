@@ -26,7 +26,7 @@ import org.apache.commons.collections.keyvalue.MultiKey;
  * A class to hold information about organisms.
  * @author Kim Rutherford
  */
-public class OrganismRepository
+public final class OrganismRepository
 {
     private static OrganismRepository or = null;
     private Map<Integer, OrganismData> taxonMap = new HashMap<Integer, OrganismData>();
@@ -44,7 +44,7 @@ public class OrganismRepository
         PREFIX + "\\.(\\d+)\\.(" + SPECIES + "|" + GENUS + "|" + ABBREVIATION + ")";
 
     private OrganismRepository() {
-        // empty
+      //disable external instantiation
     }
 
     /**

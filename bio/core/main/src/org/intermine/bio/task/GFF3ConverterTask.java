@@ -30,6 +30,7 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.Task;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 
@@ -155,7 +156,6 @@ public class GFF3ConverterTask extends Task
 
     /**
      * @see Task#execute()
-     * {@inheritDoc}
      */
     @Override
     public void execute() {
@@ -210,7 +210,7 @@ public class GFF3ConverterTask extends Task
                     (GFF3RecordHandler) handlerClass.getConstructor(types).newInstance(args);
             }
             GFF3SeqHandler sequenceHandler;
-            if (seqHandlerClassName == null || seqHandlerClassName.equals("")) {
+            if (StringUtils.isEmpty(seqHandlerClassName)) {
                 sequenceHandler = new GFF3SeqHandler();
             } else {
                 Class<?> handlerClass;

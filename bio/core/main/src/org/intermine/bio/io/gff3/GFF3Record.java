@@ -58,13 +58,13 @@ public class GFF3Record
 
         sequenceID = XmlUtil.fixEntityNames(URLDecoder.decode(st.nextToken(), "UTF-8")).trim();
         source = st.nextToken().trim();
-        if (source.equals("") || source.equals(".")) {
+        if ("".equals(source) || ".".equals(source)) {
             source = null;
         }
         type = st.nextToken().trim();
         String startString = st.nextToken().trim();
         try {
-            if (startString.equals(".")) {
+            if (".".equals(startString)) {
                 start = -1;
             } else {
                 start = Integer.parseInt(startString);
@@ -76,7 +76,7 @@ public class GFF3Record
 
         String endString = st.nextToken().trim();
         try {
-            if (endString.equals(".")) {
+            if (".".equals(endString)) {
                 end = -1;
             } else {
                 end = Integer.parseInt(endString);
@@ -88,7 +88,7 @@ public class GFF3Record
 
         String scoreString = st.nextToken().trim();
 
-        if (scoreString.equals("") || scoreString.equals(".")) {
+        if ("".equals(scoreString) || ".".equals(scoreString)) {
             score = null;
         } else {
             try {
@@ -101,13 +101,12 @@ public class GFF3Record
 
         strand = st.nextToken().trim();
 
-        if (strand.equals("") || strand.equals(".")) {
+        if ("".equals(strand) || ".".equals(strand)) {
             strand = null;
         }
 
         phase = st.nextToken().trim();
-
-        if (phase.equals("") || phase.equals(".")) {
+        if ("".equals(phase) || ".".equals(phase)) {
             phase = null;
         }
 
@@ -167,7 +166,7 @@ public class GFF3Record
                 attName = attVal.substring(0, spaceIndx);
                 attributeString = attVal.substring(spaceIndx + 1).trim();
 
-                if (!attributeString.equals("\"\"")) {
+                if (!"\"\"".equals(attributeString)) {
                     while (attributeString.length() > 0) {
                         if (attributeString.startsWith("\"")) {
                             attributeString = attributeString.substring(1);
@@ -199,7 +198,7 @@ public class GFF3Record
             // Decode values
             for (int i = 0; i < valList.size(); i++) {
                 String value = valList.get(i);
-                if (!attName.equals("Target") && !attName.equals("Gap")) {
+                if (!"Target".equals(attName) && !"Gap".equals(attName)) {
                     value = URLDecoder.decode(value, "UTF-8");
                 }
                 value = XmlUtil.fixEntityNames(value);

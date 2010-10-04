@@ -39,7 +39,7 @@ import org.intermine.objectstore.query.iql.IqlQuery;
  * websites.
  * @author Julie Sullivan
  */
-public class CreateSiteMaps
+public final class CreateSiteMaps
 {
     protected static final Logger LOG = Logger.getLogger(CreateSiteMaps.class);
     private static final String LOC = "portal.do?externalid=";
@@ -52,6 +52,10 @@ public class CreateSiteMaps
     private static String date, prefix;
     private static final String WEBPAGEWEIGHT = "0.7";
     private static Random generator = null;
+
+    private CreateSiteMaps() {
+        //disable external instantiation
+    }
 
     /**
      * Create sitemaps
@@ -70,7 +74,7 @@ public class CreateSiteMaps
                                      String paths, String webappPages, String targetModel,
                                      String sitePrefix, String defaultContext) throws Exception {
 
-        if (sitePrefix.equals("") || paths.equals("")) {
+        if ("".equals(sitePrefix) || "".equals(paths)) {
             LOG.warn("Sitemaps not created.  project.sitePrefix or sitemap.paths properties "
                       + "have not been set ");
             return;
