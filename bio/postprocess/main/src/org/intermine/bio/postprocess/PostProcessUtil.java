@@ -43,6 +43,7 @@ import org.intermine.util.TypeUtil;
 public final class PostProcessUtil
 {
     private PostProcessUtil() {
+        //disable external instantiation
     }
 
     /**
@@ -55,7 +56,7 @@ public final class PostProcessUtil
      * @throws IllegalAccessException if problems with reflection
      */
     public static <O extends InterMineObject> O cloneInterMineObject(O obj)
-    throws IllegalAccessException {
+        throws IllegalAccessException {
         return PostProcessUtil.cloneInterMineObject(obj, false);
     }
 
