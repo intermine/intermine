@@ -34,6 +34,10 @@ import org.intermine.objectstore.query.SimpleConstraint;
 public abstract class BioQueries
 {
 
+    private BioQueries() {
+        //disable external instantiation
+    }
+
     /**
      * Query ObjectStore for all Location object between given object (eg. Chromosome) and
      * subject (eg. Gene) classes.  Return an iterator over the results ordered by subject if

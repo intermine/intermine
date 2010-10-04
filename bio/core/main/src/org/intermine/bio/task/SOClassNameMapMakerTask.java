@@ -64,7 +64,7 @@ public class SOClassNameMapMakerTask extends Task
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         Reader reader;
         try {
             reader = new FileReader(soFile);

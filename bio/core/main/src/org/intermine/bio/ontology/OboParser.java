@@ -187,11 +187,11 @@ public class OboParser
             if (headMatcher.matches()) {
                 String stanzaType = headMatcher.group(1);
                 tagValues = new MultiValueMap(); // cut loose
-                if (stanzaType.equals("Term")) {
+                if ("Term".equals(stanzaType)) {
                     termTagValuesList.add(tagValues);
                     LOG.debug("recorded term with " + tagValues.size() + " tag values");
                 } else
-                    if (stanzaType.equals("Typedef")) {
+                    if ("Typedef".equals(stanzaType)) {
                         typeTagValuesList.add(tagValues);
                         LOG.debug("recorded type with " + tagValues.size() + " tag values");
                     } else {
@@ -204,7 +204,7 @@ public class OboParser
                 tagValues.put(tag, value);
                 LOG.debug("matched tag \"" + tag + "\" with value \"" + value + "\"");
 
-                if (tag.equals("default-namespace")) {
+                if ("default-namespace".equals(tag)) {
                     defaultNS = value;
                     LOG.info("default-namespace is \"" + value + "\"");
                 }
@@ -345,7 +345,6 @@ public class OboParser
     /**
      * This method reads relations calculated by the GO2Link script in OBOEdit.
      *
-     *
      * @param in the reader for the Go2Link file
      * @throws IOException an exception
      */
@@ -389,6 +388,8 @@ public class OboParser
                             redundant = (bits[i]).matches("redundant");
                             break;
                         }
+                        default:
+                            break;
                     }
                 }
                 OboRelation relation = new OboRelation(id1, id2, type);

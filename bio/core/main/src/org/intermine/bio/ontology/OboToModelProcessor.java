@@ -220,10 +220,10 @@ public class OboToModelProcessor
              * child  = exon
              * Transcript has a collection of exons
              */
-            if ((relationshipType.equals("part_of") || relationshipType.equals("member_of"))
+            if (("part_of".equals(relationshipType) || "member_of".equals("member_of"))
                     && r.direct) {
                 assignPartOf(parent, child);
-            } else if (relationshipType.equals("is_a") && r.direct) {
+            } else if ("is_a".equals(relationshipType) && r.direct) {
                 BioConverterUtil.addToSetMap(childToParents, child, parent);
            /**
            * HAS_PART (inverse of part_of)
@@ -231,7 +231,7 @@ public class OboToModelProcessor
            * child  = OverlappingESTSet
            * OverlappingESTSet has a collection of ESTs
            */
-            } else if (relationshipType.equals("has_part") && r.direct) {
+            } else if ("has_part".equals(relationshipType) && r.direct) {
                 assignPartOf(child, parent);
             }
         }
@@ -245,7 +245,7 @@ public class OboToModelProcessor
             String child = r.childTermId;
             String parent = r.parentTermId;
             String relationshipType = r.getRelationship().getName();
-            if (relationshipType.equals("is_a") && r.direct) {
+            if ("is_a".equals(relationshipType) && r.direct) {
                 assignPartOfsToChild(parent, child);
             }
         }
@@ -537,8 +537,8 @@ public class OboToModelProcessor
 
     private void debugOutput(String oboTerm, String err) {
         if (DEBUG) {
-            err += " " + oboTerm + " Valid terms count: " + validOboTerms.size();
-            System.out .println(err);
+            System.out .println(err + " " + oboTerm
+                    + " Valid terms count: " + validOboTerms.size());
         }
     }
 
