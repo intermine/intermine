@@ -89,14 +89,13 @@ public class IntronUtil
      * @param organisms a comma separated list of taxon ids
      */
     public void setOrganisms(String organisms) {
-        if (StringUtils.isEmpty(organisms)) {
+        if (!StringUtils.isEmpty(organisms)) {
             String[] array = organisms.split(",");
             for (int i = 0; i < array.length; i++) {
                 taxonIds.add(new Integer(array[i].trim()));
             }
         }
     }
-
 
     /**
      * Create Intron objects
@@ -314,14 +313,11 @@ public class IntronUtil
                     DynamicUtil.createObject(Collections.singleton(Intron.class));
                 Location location =
                     (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-                Synonym synonym =
-                    (Synonym) DynamicUtil.createObject(Collections.singleton(Synonym.class));
 
                 intron.setChromosome(chr);
                 intron.setOrganism(chr.getOrganism());
                 intron.addDataSets(dataSet);
                 intron.setPrimaryIdentifier(identifier);
-
 
                 location.setStart(new Integer(newLocStart));
                 location.setEnd(new Integer(newLocEnd));
@@ -330,18 +326,12 @@ public class IntronUtil
                 location.setLocatedOn(transcript);
                 location.addDataSets(dataSet);
 
-                synonym.addDataSets(dataSet);
-                synonym.setSubject(intron);
-                synonym.setValue(intron.getPrimaryIdentifier());
-                osw.store(synonym);
-
                 intron.setChromosomeLocation(location);
                 osw.store(location);
 
                 int length = location.getEnd().intValue() - location.getStart().intValue() + 1;
                 intron.setLength(new Integer(length));
                 intron.addTranscripts(transcript);
-
                 intronMap.put(identifier, intron);
             } else {
                 Intron intron = intronMap.get(identifier);
