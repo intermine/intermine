@@ -272,10 +272,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
 
                 //index and save
                 KeywordSearch.saveIndexToDatabase(os, classKeys);
-                System.out.println("Search index created and saved to database!");
-
                 KeywordSearch.deleteIndexDirectory();
-                System.out.println("Temp directory deleted");
             } else if ("create-overlap-view".equals(operation)) {
                 OverlapViewTask ovt = new OverlapViewTask(getObjectStoreWriter());
                 ovt.createView();

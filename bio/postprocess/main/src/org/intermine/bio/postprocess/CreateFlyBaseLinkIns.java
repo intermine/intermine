@@ -41,7 +41,7 @@ import org.intermine.objectstore.query.SingletonResults;
  *
  * @author Richard Smith
  */
-public class CreateFlyBaseLinkIns
+public final class CreateFlyBaseLinkIns
 {
 
 //    <dbname>_dbinfo.txt
@@ -81,6 +81,10 @@ public class CreateFlyBaseLinkIns
 //    private static final String LINKOUT_FILENAME = DBNAME + "_linkout.txt";
 //    private static final String DATASOURCE = "FlyBase";
 
+
+    private CreateFlyBaseLinkIns() {
+        //disable external instantiation
+    }
 
     /**
      * Create link-in file.
@@ -138,7 +142,7 @@ public class CreateFlyBaseLinkIns
         QueryClass qcObject = null;
         QueryField qf = null;
 
-        if (objectType.equals("protein")) {
+        if ("protein".equals(objectType)) {
             qcObject = new QueryClass(Protein.class);
             qf = new QueryField(qcObject, "secondaryIdentifier");
         } else {

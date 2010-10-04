@@ -376,7 +376,7 @@ public class CreateReferences
 
             if (lastMRNA != null && !mrna.getId().equals(lastMRNA.getId())) {
                 // clone so we don't change the ObjectStore cache
-                MRNA tempMRNA = (MRNA) PostProcessUtil.cloneInterMineObject(lastMRNA);
+                MRNA tempMRNA = PostProcessUtil.cloneInterMineObject(lastMRNA);
                 if (fivePrimeUTR != null) {
                     tempMRNA.setFieldValue("fivePrimeUTR", fivePrimeUTR);
                     fivePrimeUTR = null;
@@ -400,7 +400,7 @@ public class CreateReferences
 
         if (lastMRNA != null) {
             // clone so we don't change the ObjectStore cache
-            MRNA tempMRNA = (MRNA) PostProcessUtil.cloneInterMineObject(lastMRNA);
+            MRNA tempMRNA = PostProcessUtil.cloneInterMineObject(lastMRNA);
             tempMRNA.setFieldValue("fivePrimeUTR", fivePrimeUTR);
             tempMRNA.setFieldValue("threePrimeUTR", threePrimeUTR);
             osw.store(tempMRNA);

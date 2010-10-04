@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -53,8 +52,7 @@ public class IntergenicRegionUtil
      * Create a new IntergenicRegionUtil object that will operate on the given
      * ObjectStoreWriter.
      *
-     * @param osw
-     *            the ObjectStoreWriter to use when creating/changing objects
+     * @param osw the ObjectStoreWriter to use when creating/changing objects
      */
     public IntergenicRegionUtil(ObjectStoreWriter osw) {
         this.osw = osw;
@@ -72,8 +70,7 @@ public class IntergenicRegionUtil
     /**
      * Create IntergenicRegion objects
      *
-     * @throws ObjectStoreException
-     *             if there is an ObjectStore problem
+     * @throws ObjectStoreException if there is an ObjectStore problem
      */
     public void createIntergenicRegionFeatures() throws ObjectStoreException {
         Results results = BioQueries.findLocationAndObjects(os, Chromosome.class, Gene.class, false,
@@ -152,21 +149,18 @@ public class IntergenicRegionUtil
      * ObjectStoreWriter.store() on the IntergenicRegion, its chromosomeLocation
      * and the synonym in the synonyms collection.
      *
-     * @param locationSet
-     *            a set of Locations for the Genes on a particular chromosome
-     * @param locToGeneMap
-     *            a Map from Location.start to Gene and Location.end to Gene,
+     * @param locationSet a set of Locations for the Genes on a particular chromosome
+     * @param locToGeneMap a Map from Location.start to Gene and Location.end to Gene,
      *            used by this method to find the next and previous Genes for
      *            setting the IntergenicRegion.upstreamGene and downstreamGene
      *            fields
-     * @param chrId
-     *            the ID of the Chromosome that the Locations refer to
+     * @param chrId the ID of the Chromosome that the Locations refer to
      * @return an Iterator over IntergenicRegion objects
-     * @throws ObjectStoreException
-     *             if there is an ObjectStore problem
+     * @throws ObjectStoreException if there is an ObjectStore problem
      */
     protected Iterator<?> createIntergenicRegionFeatures(Set<Location> locationSet,
-            final Map<Location, Set<Gene>> locToGeneMap, Integer chrId) throws ObjectStoreException {
+            final Map<Location, Set<Gene>> locToGeneMap, Integer chrId)
+        throws ObjectStoreException {
         final Chromosome chr = (Chromosome) os.getObjectById(chrId);
 
         // do nothing if chromosome has no length set
@@ -248,7 +242,7 @@ public class IntergenicRegionUtil
 
                 Set<Gene> adjacentGenes = new HashSet<Gene>();
 
-                Set<Gene> nextGenes = (Set<Gene>) locToGeneMap.get(new Integer(newLocEnd + 1));
+                Set<Gene> nextGenes = locToGeneMap.get(new Integer(newLocEnd + 1));
                 if (nextGenes != null) {
                     Iterator<?> nextGenesIter = nextGenes.iterator();
 
@@ -259,7 +253,7 @@ public class IntergenicRegionUtil
                             strand = nextGene.getChromosomeLocation().getStrand();
                         }
                         if (strand != null) {
-                            if (strand.equals("1")) {
+                            if ("1".equals(strand)) {
                                 nextGene.setUpstreamIntergenicRegion(intergenicRegion);
                             } else {
                                 nextGene.setDownstreamIntergenicRegion(intergenicRegion);
@@ -269,8 +263,7 @@ public class IntergenicRegionUtil
                     }
                 }
 
-                Set<Gene> prevGenes = (Set<Gene>) locToGeneMap.get(new Integer(
-                        newLocStart - 1));
+                Set<Gene> prevGenes = locToGeneMap.get(new Integer(newLocStart - 1));
                 if (prevGenes != null) {
                     Iterator<?> prevGenesIter = prevGenes.iterator();
 
@@ -281,7 +274,7 @@ public class IntergenicRegionUtil
                             strand = prevGene.getChromosomeLocation().getStrand();
                         }
                         if (strand != null) {
-                            if (strand.equals("1")) {
+                            if ("1".equals(strand)) {
                                 prevGene.setDownstreamIntergenicRegion(intergenicRegion);
                             } else {
                                 prevGene.setUpstreamIntergenicRegion(intergenicRegion);

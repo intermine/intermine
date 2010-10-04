@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
@@ -88,7 +89,7 @@ public class IntronUtil
      * @param organisms a comma separated list of taxon ids
      */
     public void setOrganisms(String organisms) {
-        if (organisms != null && !organisms.equals("")) {
+        if (StringUtils.isEmpty(organisms)) {
             String[] array = organisms.split(",");
             for (int i = 0; i < array.length; i++) {
                 taxonIds.add(new Integer(array[i].trim()));
@@ -229,8 +230,8 @@ public class IntronUtil
         //osw.beginTransaction();
         int stored = 0;
         for (Iterator<String> i = intronMap.keySet().iterator(); i.hasNext();) {
-            String identifier = (String) i.next();
-            Intron intron = (Intron) intronMap.get(identifier);
+            String identifier = i.next();
+            Intron intron = intronMap.get(identifier);
             osw.store(intron);
             //osw.store(intron.getChromosomeLocation());
             //osw.store((InterMineObject) intron.getSynonyms().iterator().next());
@@ -343,7 +344,7 @@ public class IntronUtil
 
                 intronMap.put(identifier, intron);
             } else {
-                Intron intron = (Intron) intronMap.get(identifier);
+                Intron intron = intronMap.get(identifier);
                 intron.addTranscripts(transcript);
                 intronMap.put(identifier, intron);
             }

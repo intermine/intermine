@@ -47,6 +47,10 @@ public abstract class OverlapUtil
 {
     private static final Logger LOG = Logger.getLogger(OverlapUtil.class);
 
+    private OverlapUtil() {
+      //disable external instantiation
+    }
+
     /**
      * Creates OverlapRelations for overlapping SequenceFeature objects that are located
      * on the given subject (generally a Chromosome).
@@ -91,7 +95,7 @@ public abstract class OverlapUtil
                 Class<?> thisClass = Class.forName(className);
                 Class<?> targetClass = Class.forName(targetClassName);
 
-                Set<Class<?>> targetClasses = (Set<Class<?>>) classesToIgnore.get(thisClass);
+                Set<Class<?>> targetClasses = classesToIgnore.get(thisClass);
                 if (targetClasses == null) {
                     targetClasses = new HashSet<Class<?>>();
                     classesToIgnore.put(thisClass, targetClasses);
@@ -156,9 +160,8 @@ public abstract class OverlapUtil
                 while (currIter.hasNext()) {
                     Map.Entry<Location, SequenceFeature> currEntry = (Map.Entry<Location,
                             SequenceFeature>) currIter.next();
-                    Location currLoc = (Location) currEntry.getKey();
-                    SequenceFeature currLsf = (SequenceFeature) currEntry
-                        .getValue();
+                    Location currLoc = currEntry.getKey();
+                    SequenceFeature currLsf = currEntry.getValue();
                     if (currLoc.getEnd().intValue() < start) {
                         currIter.remove();
                     } else {
@@ -183,7 +186,7 @@ public abstract class OverlapUtil
                                 String summaryLine = classname1.compareTo(classname2) > 0
                                     ? classname2 + " - " + classname1 : classname1 + " - "
                                     + classname2;
-                                Integer summaryCount = (Integer) summary.get(summaryLine);
+                                Integer summaryCount = summary.get(summaryLine);
                                 if (summaryCount == null) {
                                     summaryCount = new Integer(0);
                                 }
@@ -198,7 +201,7 @@ public abstract class OverlapUtil
             LOG.info("Stored " + count + " overlaps for " + results.size()
                     + " features on feature id " + subject.getId() + ", identifier: "
                      + subject.getSecondaryIdentifier());
-            Integer summaryCount = (Integer) summary.get("total");
+            Integer summaryCount = summary.get("total");
             if (summaryCount == null) {
                 summaryCount = new Integer(0);
             }
@@ -227,8 +230,8 @@ public abstract class OverlapUtil
         while (iter.hasNext()) {
             Map.Entry<Class<?>, Set<Class<?>>> entry = (Map.Entry<Class<?>, Set<Class<?>>>)
                 iter.next();
-            Class<?> thisClass = (Class<?>) entry.getKey();
-            Set<Class<?>> targetClasses = (Set<Class<?>>) entry.getValue();
+            Class<?> thisClass = entry.getKey();
+            Set<Class<?>> targetClasses = entry.getValue();
 
             if (thisClass.isAssignableFrom(class1)) {
                 Iterator<?> iter2 = targetClasses.iterator();

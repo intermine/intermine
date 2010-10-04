@@ -445,7 +445,7 @@ public class CalculateLocations
 
     private void setChromosomeReferencesAndStore(SequenceFeature lsf, Location loc,
                                                  Integer chrId) throws Exception {
-        SequenceFeature lsfClone = (SequenceFeature) PostProcessUtil.cloneInterMineObject(lsf);
+        SequenceFeature lsfClone = PostProcessUtil.cloneInterMineObject(lsf);
 
         lsfClone.setChromosomeLocation(loc);
         if (loc.getStart() != null && loc.getEnd() != null) {
@@ -463,7 +463,6 @@ public class CalculateLocations
         osw.store(lsfClone);
     }
 
-
     /**
      * Return true if locations of two objects on some parent object
      * have any overlap.
@@ -480,7 +479,6 @@ public class CalculateLocations
         }
         return false;
     }
-
 
     /**
      * Lightweight representation of a Location for easier manipulation and
@@ -591,7 +589,6 @@ public class CalculateLocations
         public void setStrand(String strand) {
             this.strand = strand;
         }
-
 
         /**
          * @see Object#toString()
