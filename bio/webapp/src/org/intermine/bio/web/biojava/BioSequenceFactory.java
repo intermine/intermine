@@ -25,7 +25,29 @@ import org.intermine.model.bio.Protein;
 
 public abstract class BioSequenceFactory
 {
-    public enum SequenceType { DNA, PROTEIN, RNA }
+    /**
+     * Type of sequences.
+     *
+     * @author Julie Sullivan
+     */
+    public enum SequenceType {
+        /**
+         * DNA sequence
+         */
+        DNA,
+        /**
+         * PROTEIN sequence
+         */
+        PROTEIN,
+        /**
+         * RNA sequence
+         */
+        RNA
+    }
+
+    private BioSequenceFactory() {
+        // nothing to do
+    }
 
     /**
      * Create a new BioSequence from a SequenceFeature
@@ -53,7 +75,7 @@ public abstract class BioSequenceFactory
      * turned into amino acid symbols.
      */
     public static BioSequence make(Protein protein)
-    throws IllegalSymbolException {
+        throws IllegalSymbolException {
         if (protein.getSequence() == null) {
             return null;
         } else {
@@ -71,7 +93,7 @@ public abstract class BioSequenceFactory
      * turned into amino acid symbols.
      */
     public static BioSequence make(BioEntity bioEnt, SequenceType type)
-    throws IllegalSymbolException {
+        throws IllegalSymbolException {
         if (bioEnt instanceof Protein) {
             Protein protein = (Protein) bioEnt;
             String residues = protein.getSequence().getResidues().toString();
