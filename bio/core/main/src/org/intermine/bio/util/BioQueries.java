@@ -33,7 +33,6 @@ import org.intermine.objectstore.query.SimpleConstraint;
  */
 public abstract class BioQueries
 {
-
     private BioQueries() {
         //disable external instantiation
     }

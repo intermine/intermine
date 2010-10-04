@@ -10,21 +10,19 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.FullParser;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Class to read a GFF3 source data and produce a data representation
@@ -41,7 +39,6 @@ public class GFF3ConverterTest extends ItemsTestCase {
     GFF3Converter converter;
     File f = null;
 
-    GFF3Parser parser = new GFF3Parser();
     MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
     String seqClsName = "Chromosome";
     String orgTaxonId = "7227";

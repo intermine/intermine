@@ -22,8 +22,12 @@ import java.io.IOException;
  * @author Kim Rutherford
  */
 
-public class GFF3Parser
+public final class GFF3Parser
 {
+    private GFF3Parser() {
+        // nothing to do
+    }
+
     /**
      * Read GFF3 lines from a BufferedReader and return an Iterator over the GFF3Records.
      * @param reader the Reader to reader from
@@ -76,7 +80,7 @@ public class GFF3Parser
                 }
             }
 
-            public void remove() throws UnsupportedOperationException {
+            public void remove() {
                 throw new UnsupportedOperationException("remove not supported");
             }
         };

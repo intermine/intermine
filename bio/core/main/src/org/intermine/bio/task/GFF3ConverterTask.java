@@ -192,7 +192,6 @@ public class GFF3ConverterTask extends Task
         try {
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(targetAlias);
             writer = new ObjectStoreItemWriter(osw);
-            parser = new GFF3Parser();
             Model tgtModel = Model.getInstanceByName(model);
             GFF3RecordHandler recordHandler;
             if (handlerClassName == null) {
