@@ -220,7 +220,7 @@ public class OboToModelProcessor
              * child  = exon
              * Transcript has a collection of exons
              */
-            if (("part_of".equals(relationshipType) || "member_of".equals("member_of"))
+            if (("part_of".equals(relationshipType) || "member_of".equals(relationshipType))
                     && r.direct) {
                 assignPartOf(parent, child);
             } else if ("is_a".equals(relationshipType) && r.direct) {
