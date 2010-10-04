@@ -211,7 +211,7 @@ public class GFF3Converter extends DataConverter
 
         feature.addReference(getOrgRef());
         feature.addToCollection("dataSets", dataSet);
-        if (!record.getType().equals("chromosome") && seq != null) {
+        if (!"chromosome".equals(record.getType()) && seq != null) {
             boolean makeLocation = record.getStart() >= 1 && record.getEnd() >= 1
                 && !dontCreateLocations
                 && handler.createLocations(record);
@@ -226,10 +226,10 @@ public class GFF3Converter extends DataConverter
                     location.setAttribute("start", String.valueOf(end));
                     location.setAttribute("end", String.valueOf(start));
                 }
-                if (record.getStrand() != null && record.getStrand().equals("+")) {
+                if (record.getStrand() != null && "+".equals(record.getStrand())) {
                     location.setAttribute("strand", "1");
                 } else
-                    if (record.getStrand() != null && record.getStrand().equals("-")) {
+                    if (record.getStrand() != null && "-".equals(record.getStrand())) {
                         location.setAttribute("strand", "-1");
                     } else {
                         location.setAttribute("strand", "0");
@@ -242,7 +242,7 @@ public class GFF3Converter extends DataConverter
                 location.addToCollection("dataSets", dataSet);
 
                 handler.setLocation(location);
-                if (seqClsName.equals("Chromosome")
+                if ("Chromosome".equals(seqClsName)
                         && (cd.getFieldDescriptorByName("chromosome") != null)) {
                     feature.setReference("chromosome", seq.getIdentifier());
                     if (makeLocation) {
@@ -253,7 +253,7 @@ public class GFF3Converter extends DataConverter
         }
         handler.addDataSet(dataSet);
         Double score = record.getScore();
-        if (score != null && !String.valueOf(score).equals("")) {
+        if (score != null && !"".equals(String.valueOf(score))) {
             feature.setAttribute("score", String.valueOf(score));
             feature.setAttribute("scoreType", record.getSource());
         }
@@ -288,7 +288,7 @@ public class GFF3Converter extends DataConverter
                 && parents != null && !parents.isEmpty()) {
             ClassDescriptor cld =
                 tgtModel.getClassDescriptorByName(tgtModel.getPackageName() + "." + clsName);
-            String refName = (String) refsAndCollections.get(clsName);
+            String refName = refsAndCollections.get(clsName);
             Iterator<String> parentIter = parents.iterator();
             if (cld.getReferenceDescriptorByName(refName, true) != null) {
                 String parent = parentIter.next();
