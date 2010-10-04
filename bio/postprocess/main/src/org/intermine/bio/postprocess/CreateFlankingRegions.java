@@ -166,7 +166,7 @@ public class CreateFlankingRegions
                 // this should be some clever algorithm
                 int start, end;
 
-                if (direction.equals("upstream") && strand.equals("1")) {
+                if ("upstream".equals(direction) && "1".equals(strand)) {
                     start = geneStart - (int) Math.round(distance * 1000);
                     end = geneStart - 1;
                 } else if (direction.equals("upstream") && strand.equals("-1")) {
