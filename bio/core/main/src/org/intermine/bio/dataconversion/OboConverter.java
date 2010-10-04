@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.ontology.OboParser;
 import org.intermine.bio.ontology.OboRelation;
@@ -196,10 +197,10 @@ public class OboConverter extends DataConverter
             item.addToCollection("synonyms", synItem);
         }
         OboTerm oboterm = term;
-        if (oboterm.getNamespace() != null && !oboterm.getNamespace().equals("")) {
+        if (!StringUtils.isEmpty(oboterm.getNamespace())) {
             item.setAttribute("namespace", oboterm.getNamespace());
         }
-        if (oboterm.getDescription() != null && !oboterm.getDescription().equals("")) {
+        if (!StringUtils.isEmpty(oboterm.getDescription())) {
             item.setAttribute("description", oboterm.getDescription());
         }
         item.setAttribute("obsolete", "" + oboterm.isObsolete());

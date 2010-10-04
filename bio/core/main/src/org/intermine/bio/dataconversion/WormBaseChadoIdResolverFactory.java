@@ -82,12 +82,12 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
         return resolver;
     }
 
-    private IdResolver createFromDb(Database db) {
+    private IdResolver createFromDb(Database database) {
         IdResolver resolver = new IdResolver(soTerm);
         Connection conn = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         try {
-            conn = db.getConnection();
+            conn = database.getConnection();
             String query = "select c.cvterm_id"
                 + " from cvterm c, cv"
                 + " where c.cv_id = cv.cv_id"
@@ -131,8 +131,8 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
                 String uniquename = res.getString("uniquename");
                 String name = res.getString("name");
                 String organism = res.getString("abbreviation");
-                String taxonId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
-                resolver.addMainIds(taxonId, uniquename, Collections.singleton(name));
+                String taxId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
+                resolver.addMainIds(taxId, uniquename, Collections.singleton(name));
                 i++;
             }
             LOG.info("feature query returned " + i + " rows.");
@@ -158,13 +158,13 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
                 String uniquename = res.getString("uniquename");
                 String synonym = res.getString("name");
                 String organism = res.getString("abbreviation");
-                String taxonId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
-                Boolean isCurrent = res.getBoolean("is_current");
+                String taxId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
+                boolean isCurrent = res.getBoolean("is_current");
                 String type = res.getString("type");
-                if (isCurrent && type.equals("symbol")) {
-                    resolver.addMainIds(taxonId, uniquename, Collections.singleton(synonym));
+                if (isCurrent && "symbol".equals(type)) {
+                    resolver.addMainIds(taxId, uniquename, Collections.singleton(synonym));
                 } else {
-                    resolver.addSynonyms(taxonId, uniquename, Collections.singleton(synonym));
+                    resolver.addSynonyms(taxId, uniquename, Collections.singleton(synonym));
                 }
             }
             stmt.close();
