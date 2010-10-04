@@ -92,7 +92,7 @@ public class CalculateLocations
         Iterator<?> chromosomeIdIter = chromosomeMap.keySet().iterator();
         while (chromosomeIdIter.hasNext()) {
             Integer id = (Integer) chromosomeIdIter.next();
-            createSubjectOverlapRelations((Chromosome) chromosomeMap.get(id), classNamesToIgnore,
+            createSubjectOverlapRelations(chromosomeMap.get(id), classNamesToIgnore,
                     ignoreSelfMatches, summary);
         }
         osw.commitTransaction();
@@ -102,8 +102,8 @@ public class CalculateLocations
         while (summaryIter.hasNext()) {
             Map.Entry<String, Integer> summaryEntry = (Map.Entry<String, Integer>)
                 summaryIter.next();
-            sortList.add(new SortElement((String) summaryEntry.getKey(),
-                        ((Integer) summaryEntry.getValue()).intValue()));
+            sortList.add(new SortElement(summaryEntry.getKey(),
+                        summaryEntry.getValue().intValue()));
         }
         Collections.sort(sortList);
         summaryIter = sortList.iterator();
@@ -210,14 +210,14 @@ public class CalculateLocations
             }
 
             Map<Integer, SimpleLoc> parentObjectMap
-                = (Map<Integer, SimpleLoc>) locatedOnObjectMap.get(locatedOnObject.getId());
+                = locatedOnObjectMap.get(locatedOnObject.getId());
 
             if (parentObjectMap == null) {
                 parentObjectMap = new HashMap<Integer, SimpleLoc>();
                 locatedOnObjectMap.put(locatedOnObject.getId(), parentObjectMap);
             }
 
-            SimpleLoc parentObjectSimpleLoc = (SimpleLoc) parentObjectMap.get(parentObjectId);
+            SimpleLoc parentObjectSimpleLoc = parentObjectMap.get(parentObjectId);
 
             if (parentObjectSimpleLoc == null) {
                 parentObjectSimpleLoc = new SimpleLoc(-1, -1, Integer.MAX_VALUE, -1, "0");
@@ -248,13 +248,13 @@ public class CalculateLocations
             Integer locatedOnObjectId = (Integer) locatedOnObjectIterator.next();
             BioEntity locatedOnObject = (BioEntity) os.getObjectById(locatedOnObjectId);
             Map<Integer, SimpleLoc> parentObjectMap
-                = (Map<Integer, SimpleLoc>) locatedOnObjectMap.get(locatedOnObjectId);
+                = locatedOnObjectMap.get(locatedOnObjectId);
             Iterator<?> parentObjectMapIterator = parentObjectMap.keySet().iterator();
 
             while (parentObjectMapIterator.hasNext()) {
                 Integer parentObjectId = (Integer) parentObjectMapIterator.next();
                 BioEntity parentObject = (BioEntity) os.getObjectById(parentObjectId);
-                SimpleLoc parentObjectSimpleLoc = (SimpleLoc) parentObjectMap.get(parentObjectId);
+                SimpleLoc parentObjectSimpleLoc = parentObjectMap.get(parentObjectId);
                 Location newLocation =
                     (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
 
