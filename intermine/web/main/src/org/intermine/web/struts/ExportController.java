@@ -98,35 +98,6 @@ public class ExportController extends TilesAction
         }
         request.setAttribute("exporters", usableExporters);
 
-        // Support export public and private lists to Galaxy
-        PathQuery query = pt.getWebTable().getPathQuery();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        ObjectStore os = im.getObjectStore();
-
-        Map<PathConstraint, String> constrains = query.getConstraints();
-        for (PathConstraint constraint : constrains.keySet()) {
-            if (constraint instanceof PathConstraintBag) {
-                String bagName = ((PathConstraintBag) constraint).getBag();
-                InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(
-                        SessionMethods.getProfile(session), bagName);
-
-                // find the classKeys
-                Set<String> classKeySet = new LinkedHashSet<String>();
-                for (Integer id : imBag.getContentsAsIds()) {
-                    String classKey =
-                        pt.findClassKeyValue(im.getClassKeys(), os.getObjectById(id));
-                    classKeySet.add(classKey);
-                }
-
-                String path = ((PathConstraintBag) constraint).getPath();
-                // replace constraint in the pathquery
-                PathConstraintLookup newConstraint = new PathConstraintLookup(
-                        path, classKeySet.toString().substring(1,
-                                classKeySet.toString().length() - 1), null);
-                query.replaceConstraint(constraint, newConstraint);
-            }
-        }
-
         return null;
     }
 }
