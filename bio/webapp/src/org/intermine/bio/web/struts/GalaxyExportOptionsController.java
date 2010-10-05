@@ -13,8 +13,10 @@ package org.intermine.bio.web.struts;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,13 +28,18 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.results.Column;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.SequenceFeature;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintBag;
+import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.DynamicUtil;
@@ -91,7 +98,34 @@ public class GalaxyExportOptionsController extends TilesAction
         }
 
         // Build webservice URL
+
+        // Support export public and private lists to Galaxy
         PathQuery query = pt.getWebTable().getPathQuery();
+        ObjectStore os = im.getObjectStore();
+
+        Map<PathConstraint, String> constrains = query.getConstraints();
+        for (PathConstraint constraint : constrains.keySet()) {
+            if (constraint instanceof PathConstraintBag) {
+                String bagName = ((PathConstraintBag) constraint).getBag();
+                InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(
+                        SessionMethods.getProfile(session), bagName);
+
+                // find the classKeys
+                Set<String> classKeySet = new LinkedHashSet<String>();
+                for (Integer id : imBag.getContentsAsIds()) {
+                    String classKey =
+                        pt.findClassKeyValue(im.getClassKeys(), os.getObjectById(id));
+                    classKeySet.add(classKey);
+                }
+
+                String path = ((PathConstraintBag) constraint).getPath();
+                // replace constraint in the pathquery
+                PathConstraintLookup newConstraint = new PathConstraintLookup(
+                        path, classKeySet.toString().substring(1,
+                                classKeySet.toString().length() - 1), null);
+                query.replaceConstraint(constraint, newConstraint);
+            }
+        }
 
         Model model = im.getModel();
         String queryXML = PathQueryBinding.marshal(query, "tmpName", model.getName(),
