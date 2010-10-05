@@ -27,7 +27,6 @@ public class LongOligoGFF3RecordHandlerTest extends ItemsTestCase
     LongOligoGFF3RecordHandler handler;
     GFF3Converter converter;
 
-    GFF3Parser parser = new GFF3Parser();
     MockItemWriter writer = new MockItemWriter(new LinkedHashMap<String, Item>());
     String seqClsName = "MRNA";
     String taxonId = "7227";
