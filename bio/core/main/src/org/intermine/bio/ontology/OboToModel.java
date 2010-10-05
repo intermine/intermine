@@ -54,7 +54,7 @@ public final class OboToModel
      * Examples:
      *  oboName = so
      *  oboFileName = $PATH/bio/sources/so/so.obo
-     *  additionsFile = $PATH/bio/sources/so/so_additions.xml
+     *  additionsFile = $PATH/dbmodel/build/model/so_additions.xml
      *  packageName = org.intermine.model.bio
      *  filename = so_terms.txt (OPTIONAL)
      * @param args oboName oboFileName additionsFile packageName filename
