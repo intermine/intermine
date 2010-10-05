@@ -29,11 +29,6 @@
       <collection name="adjacentGenes" referenced-type="Gene"/>
 	 </class>
 
-    <class name="MRNA" is-interface="true">
-      <reference name="fivePrimeUTR" referenced-type="FivePrimeUTR"/>
-      <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR"/>
-    </class>
-
     <class name="Protein" is-interface="true">
       <collection name="CDSs" referenced-type="CDS" reverse-reference="protein"/>
       <collection name="transcripts" referenced-type="Transcript" reverse-reference="protein"/>
