@@ -36,12 +36,11 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 
 /**
- * DataConverter to parse a go annotation file into Items
- *
- *
+ * DataConverter to parse a go annotation file into Items.
+ * *
  * @author Andrew Varley
  * @author Peter Mclaren - some additions to record the parents of a go term.
- * @author Julie Sullivan - changed evidence to be collection
+ * @author Julie Sullivan - updated to handle GAF 2.0
  * @author Xavier Watkins - refactored model
  */
 public class GoConverter extends BioFileConverter
@@ -49,8 +48,7 @@ public class GoConverter extends BioFileConverter
     protected static final String PROP_FILE = "go-annotation_config.properties";
 
     // configuration maps
-    private Map<String, String> geneAttributes = new HashMap<String, String>();
-    private Map<String, String> readColumns = new HashMap<String, String>();
+    private Map<String, Config> configs = new HashMap<String, Config>();
     private Map<String, WithType> withTypes = new LinkedHashMap<String, WithType>();
 
     // maps retained across all files
@@ -97,7 +95,6 @@ public class GoConverter extends BioFileConverter
         readConfig();
     }
 
-
     // read config file that has specific settings for each organism, key is taxon id
     private void readConfig() {
         Properties props = new Properties();
@@ -113,18 +110,19 @@ public class GoConverter extends BioFileConverter
 
             Properties taxonProps = PropertiesUtil.stripStart(taxonId,
                 PropertiesUtil.getPropertiesStartingWith(taxonId, props));
-            String geneAttribute = taxonProps.getProperty("geneAttribute").trim();
-            if (geneAttribute == null) {
+            String identifier = taxonProps.getProperty("identifier");
+            if (identifier == null) {
                 throw new IllegalArgumentException("Unable to find geneAttribute property for "
                                                    + "taxon: " + taxonId + " in file: "
                                                    + PROP_FILE);
             }
-            if (!("symbol".equals(geneAttribute)
-                            || "primaryIdentifier".equals(geneAttribute))) {
-                throw new IllegalArgumentException("Invalid geneAttribute value for taxon: "
-                                                   + taxonId + " was: " + geneAttribute);
+            if (!("symbol".equals(identifier)
+                            || "primaryIdentifier".equals(identifier)
+                            || "primaryAccession".equals(identifier)
+                            )) {
+                throw new IllegalArgumentException("Invalid identifier value for taxon: "
+                                                   + taxonId + " was: " + identifier);
             }
-            geneAttributes.put(taxonId, geneAttribute);
 
             String readColumn = taxonProps.getProperty("readColumn");
             if (readColumn != null) {
@@ -133,12 +131,18 @@ public class GoConverter extends BioFileConverter
                     throw new IllegalArgumentException("Invalid readColumn value for taxon: "
                             + taxonId + " was: " + readColumn);
                 }
-
-                readColumns.put(taxonId, readColumn);
             }
+
+            String annotationType = taxonProps.getProperty("typeAnnotated");
+            if (annotationType == null) {
+                LOG.info("Unable to find annotationType property for " + "taxon: " + taxonId
+                        + " in file: " + PROP_FILE + ".  Creating genes by default.");
+            }
+
+            Config config = new Config(identifier, readColumn, annotationType);
+            configs.put(taxonId, config);
         }
     }
-
 
     /**
      * {@inheritDoc}
@@ -161,29 +165,14 @@ public class GoConverter extends BioFileConverter
                                                    + array.length + ") in line: " + line);
             }
 
-            // We only want to create GOAnnotation objects applied to genes and proteins
-            // some file entries apply to type 'transcript' and possibly others
-            if (!("gene".equalsIgnoreCase(array[11])
-                    || "protein".equalsIgnoreCase(array[11]))) {
-                LOG.info("Ignored line with type: " + array[11]);
-                continue;
-            }
-
             String taxonId = parseTaxonId(array[12]);
-            int readColumn = 1;
-            if (readColumns.containsKey(taxonId)) {
-                if ("symbol".equals(readColumns.get(taxonId))) {
-                    readColumn = 2;
-                }
+            Config config = configs.get(taxonId);
+            if (config == null) {
+                throw new NullPointerException("No entry for organism with taxonId = '"
+                        + taxonId + "' found in config file.");
             }
+            int readColumn = config.readColumn();
             String productId = array[readColumn];
-
-            // Wormbase has some proteins with UniProt accessions and some with WB:WP ids,
-            // hack here to get just the UniProt ones.
-            if ("protein".equalsIgnoreCase(array[11]) && !array[0].startsWith("UniProt")
-                    && !("FB").equals(array[0])) {
-                continue;
-            }
 
             String goId = array[4];
             String qualifier = array[3];
@@ -193,12 +182,15 @@ public class GoConverter extends BioFileConverter
             if (StringUtils.isNotEmpty(strEvidence)) {
                 evidenceId = newGoEvidence(strEvidence);
             }
-            String type = array[11];
+            // this is now type of gene product, we're not interested in at the moment
+            // String type = array[11];
+            String type = configs.get(taxonId).annotationType;
 
-            // TODO FIXME HACK ALERT
-            // flybase has "protein" as the type instead of gene
-            if (("FB").equals(array[0]) && "protein".equals(type)) {
-                type = "gene";
+            // Wormbase has some proteins with UniProt accessions and some with WB:WP ids,
+            // hack here to get just the UniProt ones.
+            if ("protein".equalsIgnoreCase(type) && !array[0].startsWith("UniProt")
+                    && !("FB").equals(array[0])) {
+                continue;
             }
 
             // create unique key for go annotation
@@ -287,10 +279,7 @@ public class GoConverter extends BioFileConverter
         // with objects
         if (!StringUtils.isEmpty(withText)) {
             goAnnotation.setAttribute("withText", withText);
-            List<String> with = createWithObjects(withText,
-                                          organism,
-                                          dataSourceCode);
-
+            List<String> with = createWithObjects(withText, organism, dataSourceCode);
             if (!with.isEmpty()) {
                 goAnnotation.addCollection(new ReferenceList("with", with));
             }
@@ -378,13 +367,8 @@ public class GoConverter extends BioFileConverter
         return withProductList;
     }
 
-
-    private String newProduct(String identifier,
-                                     String type,
-                                     Item organism,
-                                     String dataSourceCode,
-                                     boolean createOrganism,
-                                     String field) throws ObjectStoreException {
+    private String newProduct(String identifier, String type, Item organism, String dataSourceCode,
+            boolean createOrganism, String field) throws ObjectStoreException {
         String idField = field;
         String accession = identifier;
         String clsName = null;
@@ -393,9 +377,9 @@ public class GoConverter extends BioFileConverter
             clsName = "Gene";
             String taxonId = organism.getAttribute("taxonId").getValue();
             if (idField == null) {
-                idField = geneAttributes.get(taxonId);
+                idField = configs.get(taxonId).identifier;
                 if (idField == null) {
-                    throw new RuntimeException("Could not find a geneAttribute property for taxon: "
+                    throw new RuntimeException("Could not find a identifier property for taxon: "
                                                + taxonId + " check properties file: " + PROP_FILE);
                 }
             }
@@ -437,6 +421,7 @@ public class GoConverter extends BioFileConverter
                 }
             }
         } else if ("protein".equalsIgnoreCase(type)) {
+            // TODO use values in config
             clsName = "Protein";
             idField = "primaryAccession";
         } else {
@@ -449,7 +434,7 @@ public class GoConverter extends BioFileConverter
                 }
             }
             if (clsName == null) {
-                throw new IllegalArgumentException("Unrecognised geneProduct type '" + type + "'");
+                throw new IllegalArgumentException("Unrecognised annotation type '" + type + "'");
             }
         }
 
@@ -718,6 +703,39 @@ public class GoConverter extends BioFileConverter
         WithType(String clsName, String fieldName) {
             this.clsName = clsName;
             this.fieldName = fieldName;
+        }
+    }
+
+    /**
+     * Class to hold the config info for each taxonId.
+     */
+    class Config
+    {
+        protected String annotationType;
+        protected String identifier;
+        protected String readColumn;
+
+        /**
+         * Constructor.
+         *
+         * @param annotationType type of object being annotated, gene or protein
+         * @param identifier which identifier to set, primaryIdentifier or symbol
+         * @param readColumn which identifier column to read, identifier or symbol
+         */
+        Config(String identifier, String readColumn, String annotationType) {
+            this.annotationType = annotationType;
+            this.identifier = identifier;
+            this.readColumn = readColumn;
+        }
+
+        /**
+         * @return 1 = use identifier column, 2 = use symbol column
+         */
+        protected int readColumn() {
+            if (StringUtils.isNotEmpty(readColumn) && "symbol".equals(readColumn)) {
+                return 2;
+            }
+            return 1;
         }
     }
 }
