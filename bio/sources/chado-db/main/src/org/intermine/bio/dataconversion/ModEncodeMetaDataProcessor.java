@@ -414,9 +414,18 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         BatchWriterPostgresCopyImpl batchWriter = new BatchWriterPostgresCopyImpl();
         Batch batch = new Batch(batchWriter);
 
+        // TODO this is for a debug message, just need to make sure data ids are unique
+        HashSet<Integer> uniqueDataIds = new HashSet<Integer>();
+
         for (Integer dataId : dataIds) {
-            batch.addRow(connection, tableName, dataId, new String[] {"data_id"},
-                    new Object[] {dataId});
+            if (uniqueDataIds.contains(dataId)) {
+                LOG.warn("Ignoring a duplicate data id: " + dataId + " for submission: "
+                        + dccIdMap.get(chadoExperimentId));
+            } else {
+                uniqueDataIds.add(dataId);
+                batch.addRow(connection, tableName, dataId, new String[] {"data_id"},
+                        new Object[] {dataId});
+            }
         }
         batch.close(connection);
         LOG.info("CREATED DATA IDS TABLE: " + (System.currentTimeMillis() - bT));
