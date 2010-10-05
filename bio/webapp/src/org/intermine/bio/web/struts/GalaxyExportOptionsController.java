@@ -93,25 +93,6 @@ public class GalaxyExportOptionsController extends TilesAction
         // Build webservice URL
         PathQuery query = pt.getWebTable().getPathQuery();
 
-        // Test if it has bag constraints
-        // TODO Move the method to PathQuery class in the next round refactoring
-        /*
-        Set<String> bagNames = query.getBagNames();
-        if (!bagNames.isEmpty()) {
-            Map<PathConstraint, String> constrains = query.getConstraints();
-            for (PathConstraint constraint : constrains.keySet()) {
-                if (constraint instanceof PathConstraintBag) {
-                    String bagName = ((PathConstraintBag) constraint).getBag();
-                    String path = ((PathConstraintBag) constraint).getPath();
-                    InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(
-                            SessionMethods.getProfile(session), bagName);
-                    PathConstraintIds newConstraint = new PathConstraintIds(
-                            path, ConstraintOp.IN, imBag.getContentsAsIds());
-                    query.replaceConstraint(constraint, newConstraint);
-                }
-            }
-        }*/
-
         Model model = im.getModel();
         String queryXML = PathQueryBinding.marshal(query, "tmpName", model.getName(),
                                                    PathQuery.USERPROFILE_VERSION);

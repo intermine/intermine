@@ -480,8 +480,11 @@ public class PagedTable
 
     /**
      * Return the first non-null class key field for the object with the given id.
+     * @param classKeysMap classKeys
+     * @param object InterMineObject
+     * @return the first non-null class key field
      */
-    private String findClassKeyValue(Map<String, List<FieldDescriptor>> classKeysMap,
+    public String findClassKeyValue(Map<String, List<FieldDescriptor>> classKeysMap,
                                      InterMineObject object) {
         try {
             String objectClassName = DynamicUtil.getFriendlyName(object.getClass());

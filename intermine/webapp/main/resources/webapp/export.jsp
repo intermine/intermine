@@ -26,18 +26,10 @@
   <br/>
 </c:if>
 
-<%-- User Bag is not support so far, Galaxy can not fetch data by the query, fix me --%>
-<c:choose>
-  <c:when test="${isUserBag == 'true'}">
-    <span class="nullStrike"><fmt:message key="exporter.galaxy.description"/></span><br>
-  </c:when>
-  <c:otherwise>
     <html:link action="/exportOptions?table=${tableName}&amp;type=galaxy&amp;trail=${queryTrailLink}|${tableName}">
       <fmt:message key="exporter.galaxy.description"/>
     </html:link>
     <br/>
-  </c:otherwise>
-</c:choose>
 <%--
   <c:choose>
     <c:when test="${exportAsBED}">
