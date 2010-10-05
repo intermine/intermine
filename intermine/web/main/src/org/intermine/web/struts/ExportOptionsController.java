@@ -53,10 +53,10 @@ public class ExportOptionsController extends TilesAction
      * @return an ActionForward object defining where control goes next
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) {
+    public ActionForward execute(ComponentContext context,
+            ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) {
 
         HttpSession session = request.getSession();
         String type = request.getParameter("type");
@@ -71,19 +71,21 @@ public class ExportOptionsController extends TilesAction
         TableExporterFactory factory = new TableExporterFactory(webConfig);
 
         try {
-            TableHttpExporter exporter = factory.getExporter(type);
-            List<Path> initialPaths = exporter.getInitialExportPaths(pt);
-            Map<String, String> pathsMap = new LinkedHashMap<String, String>();
-            PathQuery query = pt.getWebTable().getPathQuery();
-            for (Path path : initialPaths) {
-                String pathString = path.toStringNoConstraints();
-                String title = query.getGeneratedPathDescription(pathString);
-                title = WebUtil.formatColumnName(title);
-                pathsMap.put(pathString, title);
+            if (!"galaxy".equals(type)) {
+                TableHttpExporter exporter = factory.getExporter(type);
+                List<Path> initialPaths = exporter.getInitialExportPaths(pt);
+                Map<String, String> pathsMap = new LinkedHashMap<String, String>();
+                PathQuery query = pt.getWebTable().getPathQuery();
+                for (Path path : initialPaths) {
+                    String pathString = path.toStringNoConstraints();
+                    String title = query.getGeneratedPathDescription(pathString);
+                    title = WebUtil.formatColumnName(title);
+                    pathsMap.put(pathString, title);
+                }
+                request.setAttribute("pathsMap", pathsMap);
+                String pathStrings = StringUtil.join(initialPaths, " ");
+                request.setAttribute("pathsString", pathStrings);
             }
-            request.setAttribute("pathsMap", pathsMap);
-            String pathStrings = StringUtil.join(initialPaths, " ");
-            request.setAttribute("pathsString", pathStrings);
         } catch (Exception e) {
             LOG.error("Exception", e);
             SessionMethods.recordError("An internal error has occured while creating the "

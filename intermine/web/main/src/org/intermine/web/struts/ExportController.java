@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +27,11 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintBag;
+import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.config.TableExportConfig;
 import org.intermine.web.logic.config.WebConfig;
@@ -92,35 +98,34 @@ public class ExportController extends TilesAction
         }
         request.setAttribute("exporters", usableExporters);
 
-        // TODO A HACK for Galaxy export
-        // Allow to export public list
-        // Private Bag is not support so far, Galaxy can not fetch data by the query, fix me
+        // Support export public and private lists to Galaxy
         PathQuery query = pt.getWebTable().getPathQuery();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ObjectStore os = im.getObjectStore();
 
-        String isUserBag = "false";
-        Set<String> bagNames = query.getBagNames();
-        if (!bagNames.isEmpty()) {
-            // if the bags are all public, export to Galaxy is allowed
-            if (!im.getBagManager().getGlobalBags().isEmpty()
-                    && im.getBagManager().getGlobalBags().keySet()
-                            .containsAll(bagNames)) {
-                isUserBag = "false";
-            } else {
-                isUserBag = "true";
+        Map<PathConstraint, String> constrains = query.getConstraints();
+        for (PathConstraint constraint : constrains.keySet()) {
+            if (constraint instanceof PathConstraintBag) {
+                String bagName = ((PathConstraintBag) constraint).getBag();
+                InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(
+                        SessionMethods.getProfile(session), bagName);
+
+                // find the classKeys
+                Set<String> classKeySet = new LinkedHashSet<String>();
+                for (Integer id : imBag.getContentsAsIds()) {
+                    String classKey =
+                        pt.findClassKeyValue(im.getClassKeys(), os.getObjectById(id));
+                    classKeySet.add(classKey);
+                }
+
+                String path = ((PathConstraintBag) constraint).getPath();
+                // replace constraint in the pathquery
+                PathConstraintLookup newConstraint = new PathConstraintLookup(
+                        path, classKeySet.toString().substring(1,
+                                classKeySet.toString().length() - 1), null);
+                query.replaceConstraint(constraint, newConstraint);
             }
         }
-        request.setAttribute("isUserBag", isUserBag);
-
-        /* if (tableName.startsWith("bag")) {
-            String bagName = tableName.substring(4, tableName.length());
-            LOG.info("bagName is - " + bagName);
-            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            if (im.getBagManager().getGlobalBag(bagName) == null) {
-                LOG.info("bag is - " + im.getBagManager().getGlobalBag(bagName));
-                request.setAttribute("isPubBag", "false");
-            }
-        } */
 
         return null;
     }
