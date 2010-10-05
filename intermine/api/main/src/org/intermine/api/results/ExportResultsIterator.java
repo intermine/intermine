@@ -68,8 +68,7 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
 
 
 
-    private void init(PathQuery pq, Map<String, QuerySelectable> pathToQueryNode)
-        throws ObjectStoreException {
+    private void init(PathQuery pq, Map<String, QuerySelectable> pathToQueryNode) {
         osIter = ((List) results).iterator();
         List<List<ResultElement>> empty = Collections.emptyList();
         subIter = empty.iterator();
@@ -195,7 +194,6 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
                     }
                     if (qs.equals(selectableForPath)) {
                         fieldToColumnNumber.put(path, new Integer(columnNo));
-                    } else {
                     }
                     columnNo++;
                 }
@@ -225,19 +223,19 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     }
 
     private void expandCollections(List row, List<List<ResultElement>> retval,
-            List<ResultElement> template, List columns) {
-        if (row.size() != columns.size()) {
-            throw new IllegalArgumentException("Column description (size " + columns.size()
+            List<ResultElement> template, List cols) {
+        if (row.size() != cols.size()) {
+            throw new IllegalArgumentException("Column description (size " + cols.size()
                     + ") does not match input data (size " + row.size() + ")");
         }
-        template = new ArrayList(template);
+        List<ResultElement> templateResults = new ArrayList(template);
         int columnNo = 0;
         boolean multiRow = false;
-        for (Object column : columns) {
+        for (Object column : cols) {
             if (column instanceof Map) {
                 Map<Path, Integer> desc = (Map<Path, Integer>) column;
                 for (Map.Entry<Path, Integer> descEntry : desc.entrySet()) {
-                    template.set(descEntry.getValue().intValue(),
+                    templateResults.set(descEntry.getValue().intValue(),
                             new ResultElement((FastPathObject) row.get(columnNo),
                                 descEntry.getKey(), false));
                 }
@@ -257,33 +255,33 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
         }
         boolean hasCollections = false;
         columnNo = 0;
-        for (Object column : columns) {
+        for (Object column : cols) {
             if (column instanceof List) {
                 List<List> collection = (List<List>) row.get(columnNo);
                 for (List subRow : collection) {
                     if (multiRow) {
                         hasCollections = true;
-                        expandCollections(subRow, retval, template, (List) column);
+                        expandCollections(subRow, retval, templateResults, (List) column);
                     } else {
-                        expandCollectionsJustOneRow(subRow, retval, template, (List) column);
+                        expandCollectionsJustOneRow(subRow, retval, templateResults, (List) column);
                     }
                 }
             }
             columnNo++;
         }
         if (!hasCollections) {
-            retval.add(template);
+            retval.add(templateResults);
         }
     }
 
     private void expandCollectionsJustOneRow(List row, List<List<ResultElement>> retval,
-            List<ResultElement> template, List columns) {
-        if (row.size() != columns.size()) {
-            throw new IllegalArgumentException("Column description (size " + columns.size()
+            List<ResultElement> template, List cols) {
+        if (row.size() != cols.size()) {
+            throw new IllegalArgumentException("Column description (size " + cols.size()
                     + ") does not match input data (size " + row.size() + ")");
         }
         int columnNo = 0;
-        for (Object column : columns) {
+        for (Object column : cols) {
             if (column instanceof Map) {
                 Map<Path, Integer> desc = (Map<Path, Integer>) column;
                 for (Map.Entry<Path, Integer> descEntry : desc.entrySet()) {
@@ -301,10 +299,10 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
         }
     }
 
-    private boolean isCollectionMultiRow(List row, List columns) {
+    private boolean isCollectionMultiRow(List row, List cols) {
         boolean multiRow = false;
         int columnNo = 0;
-        for (Object column : columns) {
+        for (Object column : cols) {
             if ((column instanceof List) && (!multiRow)) {
                 List<List> collection = (List<List>) row.get(columnNo);
                 if (collection.size() > 1) {
