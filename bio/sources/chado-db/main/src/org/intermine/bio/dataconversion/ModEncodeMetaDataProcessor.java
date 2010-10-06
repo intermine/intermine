@@ -427,8 +427,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         new Object[] {dataId});
             }
         }
+        batch.flush(connection);
         batch.close(connection);
-        LOG.info("CREATED DATA IDS TABLE: " + (System.currentTimeMillis() - bT));
+        LOG.info("CREATED DATA IDS TABLE: " + (System.currentTimeMillis() - bT) + " with "
+                + uniqueDataIds + " data ids.");
 
         String idIndexQuery = "CREATE INDEX " + tableName + "_data_id_index ON "
             + tableName + "(data_id)";
