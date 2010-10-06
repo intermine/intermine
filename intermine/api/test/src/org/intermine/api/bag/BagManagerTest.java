@@ -55,7 +55,7 @@ public class BagManagerTest extends TestCase
 
         superUser = new Profile(pm, "superUser", null, "password", new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(superUser);
-        pm.setSuperuser("super");
+        pm.setSuperuser("superUser");
 
         testUser = new Profile(pm, "testUser", null, "password", new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(testUser);
