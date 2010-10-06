@@ -31,8 +31,8 @@ public class HgncConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(HgncConverter.class);
 
-    private static final String DATASET_TITLE = "Add DataSet.title here";
-    private static final String DATA_SOURCE_NAME = "Add DataSource.name here";
+    private static final String DATASET_TITLE = "HGNC approved gene symbols";
+    private static final String DATA_SOURCE_NAME = "HUGO Gene Nomenclature Committee ";
 
     /**
      * Constructor
@@ -73,8 +73,8 @@ public class HgncConverter extends BioFileConverter
             }
             String symbol = line[1];
             String name = line[2];
-            String entrez = line[9];
-            String ensembl = line[10];
+            String entrez = line[6];
+            String ensembl = line[7];
             if (symbols.contains(symbol)) {
                 LOG.warn("HGNC seen same symbol already: " + symbol);
             } else {
