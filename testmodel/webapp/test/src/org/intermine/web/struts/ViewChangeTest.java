@@ -41,8 +41,8 @@ public class ViewChangeTest extends MockStrutsTestCase
     public void testRemove() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         PathQuery query = new PathQuery(model);
-        query.getView().add(PathQuery.makePath(model, query, "Employee.name"));
-        query.getView().add(PathQuery.makePath(model, query, "Employee.age"));
+        query.addView("Employee.age");
+        query.addView("Employee.name");
         SessionMethods.getQuery(getSession());
 
         addRequestParameter("path", "Employee.age");
@@ -58,9 +58,9 @@ public class ViewChangeTest extends MockStrutsTestCase
         actionPerform();
         verifyNoActionErrors();
         //verifyForward("query");
-
+        PathQuery q = new PathQuery(model);
         ArrayList<Path> expected = new ArrayList<Path>();
-        expected.add(OldPathQuery.makePath(model, query, "Employee.name"));
+        expected.add(q.makePath("Employee.name"));
         assertEquals(expected, SessionMethods.getQuery(getSession()).getView());
     }
 }

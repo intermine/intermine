@@ -187,9 +187,9 @@ public class PagedResultsTest extends TestCase
 
             PathQuery pq = (PathQuery) entry.getValue();
             Map pathToQueryNode = new HashMap();
-            Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null, false);
+            Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
             Results r = new DummyResults(os, q, (List) results.get(queryName));
-            pq.setViewPaths((List) headers.get(queryName));
+//            ((Object) pq).setViewPaths((List) headers.get(queryName));
             WebResults webResults = new WebResults(pq,r, model, pathToQueryNode, classKeys, null);
             PagedTable pr = new PagedTable(webResults);
             assertEquals("Failed with query: " + queryName + ". ", (List) expected.get(queryName), (List) pr.getRows().get(0));
@@ -202,8 +202,8 @@ public class PagedResultsTest extends TestCase
         public DummyResults(ObjectStore os, Query query, List rows) {
             super(query, os, ObjectStore.SEQUENCE_IGNORE);
             this.rows = rows;
-            minSize = rows.size();
-            maxSize = rows.size();
+//            minSize = rows.size();
+//            maxSize = rows.size();
         }
 
         public Object get(int index) {

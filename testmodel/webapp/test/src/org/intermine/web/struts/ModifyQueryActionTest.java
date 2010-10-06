@@ -7,8 +7,7 @@ import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
@@ -35,19 +34,18 @@ public class ModifyQueryActionTest extends MockStrutsTestCase
         Model testmodel = Model.getInstanceByName("testmodel");
         query = new PathQuery(testmodel);
 
-        query.getView().add(PathQuery.makePath(testmodel, query, "Employee"));
-        query.getView().add(PathQuery.makePath(testmodel, query, "Employee.name"));
+        query.addView("Employee");
+        query.addView("Employee.name");
         queryBag = new PathQuery(testmodel);
 
-        queryBag.getView().add(PathQuery.makePath(testmodel, query, "Employee"));
-        queryBag.getView().add(PathQuery.makePath(testmodel, query, "Employee.name"));
-        queryBag.addNode("Employee.name").getConstraints().add(new Constraint(ConstraintOp.IN, "bag2"));
+        queryBag.addView("Employee");
+        queryBag.addView("Employee.name");
+        queryBag.addConstraint(Constraints.in("Employee",  "bag2"));
         sq = new SavedQuery("query1", date, query);
         sqBag = new SavedQuery("query3", date, queryBag);
         hist = new SavedQuery("query2", date, (PathQuery) query.clone());
         hist2 = new SavedQuery("query1", date, query.clone());
-        template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                new PathQuery(testmodel));
+        template = new TemplateQuery("template", "ttitle", "tdesc", new PathQuery(testmodel));
 
         SessionMethods.initSession(this.getSession());
         Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);
