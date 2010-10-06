@@ -73,8 +73,14 @@ public class HgncConverter extends BioFileConverter
             }
             String symbol = line[1];
             String name = line[2];
-            String entrez = line[6];
-            String ensembl = line[7];
+            String entrez = null;
+            if (line.length > 8) {
+                entrez = line[8];
+            }
+            String ensembl = null;
+            if (line.length > 9) {
+                ensembl = line[9];
+            }
             if (symbols.contains(symbol)) {
                 LOG.warn("HGNC seen same symbol already: " + symbol);
             } else {
