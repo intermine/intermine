@@ -38,6 +38,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
@@ -143,6 +144,10 @@ public class GalaxyExportAction extends InterMineAction
         // Get extra information - genomeBuild & organism & extra info
 //        ResultManipulater rm = new ResultManipulater();
 //        Map<Integer, String> orgNameMap = rm.findOrganisms(pt, request, index);
+
+        // Genome Build is in web.properties now, refer to AttributeLinkDisplayerController
+//        Properties webProperties =
+//            (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
 
         /*
         // Write to Response
