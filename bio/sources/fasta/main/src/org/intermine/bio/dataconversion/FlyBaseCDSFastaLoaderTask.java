@@ -15,13 +15,17 @@ import java.util.regex.Pattern;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.Sequence;
+import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.CDS;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Location;
-import org.intermine.model.bio.MRNA;
 import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.SequenceFeature;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.DynamicUtil;
 
 /**
  * A fasta loader that understand the headers of FlyBase fasta CDS fasta files and can make the
@@ -36,22 +40,33 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
     @Override
     protected void extraProcessing(Sequence bioJavaSequence,
             org.intermine.model.bio.Sequence flymineSequence,
-            BioEntity interMineObject, Organism organism, DataSet dataSet)
+            BioEntity bioEntity, Organism organism, DataSet dataSet)
         throws ObjectStoreException {
         Annotation annotation = bioJavaSequence.getAnnotation();
         String header = (String) annotation.getProperty("description");
         String mrnaIdentifier = getMRNAIdentifier(header);
-        CDS cds;
-        if (interMineObject instanceof CDS) {
-            cds = (CDS) interMineObject;
+
+        ObjectStore os = getIntegrationWriter().getObjectStore();
+        Model model = os.getModel();
+        if (model.hasClassDescriptor("CDS")) {
+            Class<? extends FastPathObject> cdsCls =
+                model.getClassDescriptorByName("CDS").getType();
+            if (!DynamicUtil.isInstance(bioEntity, cdsCls)) {
+                throw new RuntimeException("the InterMineObject passed to "
+                        + "FlyBaseCDSFastaLoaderTask.extraProcessing() is not a "
+                        + "CDS: " + bioEntity);
+            }
+            InterMineObject mrna = getMRNA(mrnaIdentifier, organism, model);
+            if (mrna != null) {
+                bioEntity.setFieldValue("transcript", mrna);
+            }
+            Location loc = getLocationFromHeader(header, (SequenceFeature) bioEntity,
+                    organism);
+            getDirectDataLoader().store(loc);
         } else {
-            throw new RuntimeException("the InterMineObject passed to "
-                                       + "FlyBaseCDSFastaLoaderTask.extraProcessing() is not a "
-                                       + "CDS: " + interMineObject);
+            throw new RuntimeException("Trying to load CDS sequence but CDS does not exist in the"
+                    + " data model");
         }
-        cds.setTranscript(getMRNA(mrnaIdentifier, organism));
-        Location loc = getLocationFromHeader(header, cds, organism);
-        getDirectDataLoader().store(loc);
     }
 
     /**
@@ -85,11 +100,17 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         throw new RuntimeException("can't find FBtr identifier in header: " + header);
     }
 
-    private MRNA getMRNA(String mrnaIdentifier, Organism organism) throws ObjectStoreException {
-        MRNA mrna = (MRNA) getDirectDataLoader().createObject(MRNA.class);
-        mrna.setPrimaryIdentifier(mrnaIdentifier);
-        mrna.setOrganism(organism);
-        getDirectDataLoader().store(mrna);
+    private InterMineObject getMRNA(String mrnaIdentifier, Organism organism, Model model)
+        throws ObjectStoreException {
+        InterMineObject mrna = null;
+        if (model.hasClassDescriptor("MRNA")) {
+            @SuppressWarnings("unchecked") Class<? extends InterMineObject> mrnaCls =
+                (Class<? extends InterMineObject>) model.getClassDescriptorByName("MRNA").getType();
+            mrna = getDirectDataLoader().createObject(mrnaCls);
+            mrna.setFieldValue("primaryIdentifier", mrnaIdentifier);
+            mrna.setFieldValue("organism", organism);
+            getDirectDataLoader().store(mrna);
+        }
         return mrna;
     }
 }

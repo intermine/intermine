@@ -378,14 +378,14 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * This method is called before the new objects are stored
      * @param bioJavaSequence the BioJava Sequence
      * @param flymineSequence the FlyMine Sequence
-     * @param interMineObject the object that references the flymineSequence
+     * @param bioEntity the object that references the flymineSequence
      * @param organism the Organism object for the new InterMineObject
      * @param dataSet the DataSet object
      * @throws ObjectStoreException if a store() fails during processing
      */
     protected void  extraProcessing(@SuppressWarnings("unused") Sequence bioJavaSequence,
             @SuppressWarnings("unused") org.intermine.model.bio.Sequence flymineSequence,
-            @SuppressWarnings("unused") BioEntity interMineObject,
+            @SuppressWarnings("unused") BioEntity bioEntity,
             @SuppressWarnings("unused") Organism organism,
             @SuppressWarnings("unused") DataSet dataSet) throws ObjectStoreException {
         // default - no extra processing
