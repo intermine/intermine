@@ -1,13 +1,11 @@
 package org.intermine.web.struts;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.intermine.api.profile.InterMineBag;
@@ -30,18 +28,17 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.OldPathQuery;
+import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
-import servletunit.ServletContextSimulator;
 import servletunit.struts.MockStrutsTestCase;
 
 
 public class ModifyBagActionTest extends MockStrutsTestCase
 {
-    OldPathQuery query, queryBag;
+    PathQuery query, queryBag;
     SavedQuery sq, sqBag, hist, hist2;
     Date date = new Date();
     InterMineBag bag2;
@@ -82,20 +79,19 @@ public class ModifyBagActionTest extends MockStrutsTestCase
             session.setAttribute(Constants.PROFILE, profile);
 
             Model model = Model.getInstanceByName("testmodel");
-            query = new OldPathQuery(model);
-            query.getView().add(OldPathQuery.makePath(model, query, "Employee"));
-            query.getView().add(OldPathQuery.makePath(model, query, "Employee.name"));
-            queryBag = new OldPathQuery(model);
+            query = new PathQuery(model);
+            query.addView("Employee");
+            query.addView("Employee.name");
+            queryBag = new PathQuery(model);
 
-            queryBag.getView().add(OldPathQuery.makePath(model, query, "Employee"));
-            queryBag.getView().add(OldPathQuery.makePath(model, query, "Employee.name"));
-            queryBag.addNode("Employee.name").getConstraints().add(new Constraint(ConstraintOp.IN, "bag2"));
+            queryBag.addView("Employee");
+            queryBag.addView("Employee.name");
+            queryBag.addConstraint(Constraints.in("Employee",  "bag2"));
             sq = new SavedQuery("query1", date, query);
             sqBag = new SavedQuery("query3", date, queryBag);
-            hist = new SavedQuery("query2", date, (OldPathQuery) query.clone());
-            hist2 = new SavedQuery("query1", date, (OldPathQuery) query.clone());
-            template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                    new OldPathQuery(model));
+            hist = new SavedQuery("query2", date, (PathQuery) query.clone());
+            hist2 = new SavedQuery("query1", date, (PathQuery) query.clone());
+            template = new TemplateQuery("template", "ttitle", "tdesc", new PathQuery(model));
 
             //Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);
             profile.saveQuery(sq.getName(), sq);

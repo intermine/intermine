@@ -55,8 +55,7 @@ public class ProfileTest extends TestCase
         //Collections.singleton("testElement"));
 //        bag = new InterMinePrimitiveBag(bobId, "bob", userprofileOS, Collections.singleton("1234"));
         sq = new SavedQuery("query1", date, query);
-        template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                new PathQuery(Model.getInstanceByName("testmodel")));
+        template = new TemplateQuery("template", "ttitle", "tdesc", new PathQuery(Model.getInstanceByName("testmodel")));
         profileManager = new DummyProfileManager(userprofileOS);
 
     }

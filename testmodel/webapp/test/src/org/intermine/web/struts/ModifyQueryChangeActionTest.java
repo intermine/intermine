@@ -35,13 +35,12 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
         Model testmodel = Model.getInstanceByName("testmodel");
         query = new PathQuery(testmodel);
 
-        query.getView().add(PathQuery.makePath(testmodel, query, "Employee"));
-        query.getView().add(PathQuery.makePath(testmodel, query, "Employee.name"));
+        query.addView("Employee");
+        query.addView("Employee.name");
         sq = new SavedQuery("query1", date, query);
         hist = new SavedQuery("query2", date, (PathQuery) query.clone());
         hist2 = new SavedQuery("query1", date, (PathQuery) query.clone());
-        template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                new PathQuery(testmodel));
+        template = new TemplateQuery("template", "ttitle", "tdesc", new PathQuery(testmodel));
 
         SessionMethods.initSession(this.getSession());
         Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);
