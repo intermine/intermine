@@ -18,6 +18,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -49,6 +50,8 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class SubmissionDisplayerController extends TilesAction
 {
+    private static final Logger LOG = Logger.getLogger(MetadataCache.class);
+
     /**
      * {@inheritDoc}
      */
@@ -83,13 +86,13 @@ public class SubmissionDisplayerController extends TilesAction
         q.addToGroupBy(sub);
         q.addToGroupBy(qfClass);
 
-        q.addToOrderBy(new QueryField(sub, "publicReleaseDate"), "desc");
+//        q.addToOrderBy(new QueryField(sub, "publicReleaseDate"), "desc");
         q.addToOrderBy(qfClass);
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        QueryCollectionReference datasets = new QueryCollectionReference(lsf, "dataSets");
-        ContainsConstraint cc = new ContainsConstraint(datasets, ConstraintOp.CONTAINS, sub);
+        QueryCollectionReference submissions = new QueryCollectionReference(lsf, "submissions");
+        ContainsConstraint cc = new ContainsConstraint(submissions, ConstraintOp.CONTAINS, sub);
         cs.addConstraint(cc);
 
         QueryField qfId = new QueryField(sub, "id");
@@ -114,6 +117,9 @@ public class SubmissionDisplayerController extends TilesAction
 
             featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
         }
+
+        LOG.info("FC: " + featureCounts);
+
 
         request.setAttribute("featureCounts", featureCounts);
 
