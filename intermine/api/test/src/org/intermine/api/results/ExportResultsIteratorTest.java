@@ -115,7 +115,7 @@ public class ExportResultsIteratorTest extends TestCase
         pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
         pq.setOuterJoinStatus("Company.departments.employees", OuterJoinStatus.OUTER);
 
-        ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
+        ExportResultsIterator iter = new ExportResultsIterator(pq, null, new HashMap());
         List got = new ArrayList();
         for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
             got.add(gotRow);
@@ -190,7 +190,7 @@ public class ExportResultsIteratorTest extends TestCase
         Path p3 = pq.makePath("Company.departments.name");
         Path p4 = pq.makePath("Company.contractors.name");
 
-        ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
+        ExportResultsIterator iter = new ExportResultsIterator(pq, null, new HashMap());
         List got = new ArrayList();
         for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
             got.add(gotRow);
@@ -235,7 +235,7 @@ public class ExportResultsIteratorTest extends TestCase
         Path p1 = pq.makePath("Department.name");
         Path p2 = pq.makePath("Department.company.name");
 
-        ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
+        ExportResultsIterator iter = new ExportResultsIterator(pq, null, new HashMap());
         List got = new ArrayList();
         for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
             got.add(gotRow);
@@ -287,8 +287,7 @@ public class ExportResultsIteratorTest extends TestCase
         Path p1 = pq.makePath("Employee.name");
         Path p2 = pq.makePath("Employee.department.name");
         Path p3 = pq.makePath("Employee.department.company.name");
-
-        ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
+        ExportResultsIterator iter = new ExportResultsIterator(pq, null, new HashMap());
         System.out.println("Columns: " + iter.getColumns());
         List got = new ArrayList();
         for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
@@ -337,8 +336,7 @@ public class ExportResultsIteratorTest extends TestCase
         Path p1 = pq.makePath("Company.name");
         Path p2 = pq.makePath("Company.departments.name");
         Path p3 = pq.makePath("Company.contractors.name");
-
-        ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
+        ExportResultsIterator iter = new ExportResultsIterator(pq, null, new HashMap());
         List got = new ArrayList();
         for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
             got.add(gotRow);
