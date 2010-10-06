@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceFeature;
@@ -140,6 +142,29 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
             throw new RuntimeException("can't find minimum value from location: " + locString);
         }
         return currentMax;
+    }
+
+    /**
+     * Create an MRNA with the given primaryIdentifier and organism or return null of MRNA is not in
+     * the data model.
+     * @param mrnaIdentifier primaryIdentifier of MRNA to create
+     * @param organism orgnism of MRNA to create
+     * @param model the data model
+     * @return an InterMineObject representing an MRNA or null of MRNA not in the data model
+     * @throws ObjectStoreException if problem storing
+     */
+    protected InterMineObject getMRNA(String mrnaIdentifier, Organism organism, Model model)
+        throws ObjectStoreException {
+        InterMineObject mrna = null;
+        if (model.hasClassDescriptor("MRNA")) {
+            @SuppressWarnings("unchecked") Class<? extends InterMineObject> mrnaCls =
+                (Class<? extends InterMineObject>) model.getClassDescriptorByName("MRNA").getType();
+            mrna = getDirectDataLoader().createObject(mrnaCls);
+            mrna.setFieldValue("primaryIdentifier", mrnaIdentifier);
+            mrna.setFieldValue("organism", organism);
+            getDirectDataLoader().store(mrna);
+        }
+        return mrna;
     }
 
 }

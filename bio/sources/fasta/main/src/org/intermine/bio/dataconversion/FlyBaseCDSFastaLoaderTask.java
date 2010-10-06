@@ -99,18 +99,4 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         }
         throw new RuntimeException("can't find FBtr identifier in header: " + header);
     }
-
-    private InterMineObject getMRNA(String mrnaIdentifier, Organism organism, Model model)
-        throws ObjectStoreException {
-        InterMineObject mrna = null;
-        if (model.hasClassDescriptor("MRNA")) {
-            @SuppressWarnings("unchecked") Class<? extends InterMineObject> mrnaCls =
-                (Class<? extends InterMineObject>) model.getClassDescriptorByName("MRNA").getType();
-            mrna = getDirectDataLoader().createObject(mrnaCls);
-            mrna.setFieldValue("primaryIdentifier", mrnaIdentifier);
-            mrna.setFieldValue("organism", organism);
-            getDirectDataLoader().store(mrna);
-        }
-        return mrna;
-    }
 }

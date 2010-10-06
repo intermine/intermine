@@ -10,19 +10,27 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.Sequence;
+import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Location;
-import org.intermine.model.bio.MRNA;
 import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.UTR;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.DynamicUtil;
 
 /**
  * A fasta loader that understand the headers of FlyBase fasta UTR fasta files and can make the
@@ -40,27 +48,36 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
     @Override
     protected void extraProcessing(Sequence bioJavaSequence,
             org.intermine.model.bio.Sequence flymineSequence,
-            BioEntity interMineObject, Organism organism,
+            BioEntity bioEntity, Organism organism,
             DataSet dataSet)
         throws ObjectStoreException {
         Annotation annotation = bioJavaSequence.getAnnotation();
         String mrnaIdentifier = bioJavaSequence.getName();
-        UTR utr;
-        if (interMineObject instanceof UTR) {
-            utr = (UTR) interMineObject;
+
+        ObjectStore os = getIntegrationWriter().getObjectStore();
+        Model model = os.getModel();
+        if (model.hasClassDescriptor("UTR")) {
+            Class<? extends FastPathObject> cdsCls =
+                model.getClassDescriptorByName("UTR").getType();
+            if (!DynamicUtil.isInstance(bioEntity, cdsCls)) {
+                throw new RuntimeException("the InterMineObject passed to "
+                        + "FlyBaseUTRFastaDataLoaderTask.extraProcessing() is not a "
+                        + "UTR: " + bioEntity);
+            }
+            InterMineObject mrna = getMRNA(mrnaIdentifier, organism, model);
+            System.out.println("mrna: " + mrna);
+            if (mrna != null) {
+                Set<? extends InterMineObject> mrnas = new HashSet(Collections.singleton(mrna));
+                bioEntity.setFieldValue("transcripts", mrnas);
+            }
+            String header = (String) annotation.getProperty("description");
+            Location loc = getLocationFromHeader(header, (SequenceFeature) bioEntity,
+                    organism);
+            getDirectDataLoader().store(loc);
         } else {
-            throw new RuntimeException("the InterMineObject passed to "
-                                       + "FlyBaseUTRFastaLoaderTask.extraProcessing() is not a "
-                                       + "UTR");
+            throw new RuntimeException("Trying to load UTR sequence but UTR does not exist in the"
+                    + " data model");
         }
-
-        MRNA mrna = getMRNA(mrnaIdentifier, organism);
-        utr.addTranscripts(mrna);
-
-        String header = (String) annotation.getProperty("description");
-
-        Location loc = getLocationFromHeader(header, utr, organism);
-        getDirectDataLoader().store(loc);
     }
 
     /**
@@ -72,14 +89,5 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
             return bioJavaSequence.getName() + "-5-prime-utr";
         }
         return bioJavaSequence.getName() + "-3-prime-utr";
-    }
-
-    private MRNA getMRNA(String mrnaIdentifier, Organism organism) throws ObjectStoreException {
-        MRNA mrna = (MRNA) getDirectDataLoader().createObject(MRNA.class);
-        mrna.setPrimaryIdentifier(mrnaIdentifier);
-        mrna.setOrganism(organism);
-        mrna.addDataSets(getDataSet());
-        getDirectDataLoader().store(mrna);
-        return mrna;
     }
 }
