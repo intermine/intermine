@@ -15,10 +15,7 @@ import java.util.HashSet;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.pathquery.PathNode;
-import org.intermine.pathquery.OldPathQuery;
-import org.intermine.web.logic.Constants;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.query.DisplayConstraint;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -35,24 +32,15 @@ public class DisplayConstraintTest extends MockStrutsTestCase
     public void setUp() throws Exception {
         super.setUp();
 
-        OldPathQuery query = new OldPathQuery(Model.getInstanceByName("testmodel"));
-        PathNode node = query.addNode("Employee.name");
+        PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
 
         InterMineAPI im = SessionMethods.getInterMineAPI(getActionServlet().getServletContext());
-        dc = new DisplayConstraint(node, Model.getInstanceByName("testmodel"),
-                im.getObjectStoreSummary(), null, null);
+
     }
 
     public void testValidOps() throws Exception {
         assertEquals(7, dc.getValidOps().size());
     }
 
-    public void testOptionsList() throws Exception {
-        assertEquals(6, dc.getOptionsList().size());
-    }
 
-    public void testFixedOpsIndeces() throws Exception {
-        assertEquals(new HashSet(Arrays.asList(new Object[]{new Integer(0), new Integer(1)})),
-                     new HashSet(dc.getFixedOpIndices()));
-    }
 }
