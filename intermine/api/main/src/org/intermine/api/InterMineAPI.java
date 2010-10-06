@@ -39,23 +39,25 @@ import org.intermine.objectstore.ObjectStoreWriter;
  */
 public class InterMineAPI
 {
-    private ObjectStore objectStore;
-    private Model model;
-    private Map<String, List<FieldDescriptor>> classKeys;
-    private BagQueryConfig bagQueryConfig;
-    private ProfileManager profileManager;
-    private TemplateManager templateManager;
-    private BagManager bagManager;
-    private TemplateSummariser templateSummariser;
-    private ObjectStoreSummary oss;
-    private BagQueryRunner bagQueryRunner;
+    protected ObjectStore objectStore;
+    protected Model model;
+    protected Map<String, List<FieldDescriptor>> classKeys;
+    protected BagQueryConfig bagQueryConfig;
+    protected ProfileManager profileManager;
+    protected TemplateManager templateManager;
+    protected BagManager bagManager;
+    protected TemplateSummariser templateSummariser;
+    protected ObjectStoreSummary oss;
+    protected BagQueryRunner bagQueryRunner;
 
     // query executors are cached per profile
     private Map<Profile, WebResultsExecutor> wreCache =
         new IdentityHashMap<Profile, WebResultsExecutor>();
     private Map<Profile, PathQueryExecutor> pqeCache =
         new IdentityHashMap<Profile, PathQueryExecutor>();
-
+    
+    public InterMineAPI() {
+    }
     /**
      * Construct an InterMine API object.
      * @param objectStore the production database
