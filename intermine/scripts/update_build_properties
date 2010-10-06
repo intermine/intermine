@@ -28,6 +28,7 @@ my %BuildXML_replacements = (
     </taskdef>
     <so-model soTermListFile="${so.termlist.file}" soFile="${so.obo.file}" outputFile="${so.output.file}"/>
 </target>
+<target name="-pre-init-merge" depends="create-so-model"/> 
 '!,
 );
 
