@@ -423,14 +423,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         + dccIdMap.get(chadoExperimentId));
             } else {
                 uniqueDataIds.add(dataId);
+                LOG.warn("Adding data id: " + dataId + " for submission: "
+                        + dccIdMap.get(chadoExperimentId));
                 batch.addRow(connection, tableName, dataId, new String[] {"data_id"},
                         new Object[] {dataId});
             }
         }
         batch.flush(connection);
         batch.close(connection);
-        LOG.info("CREATED DATA IDS TABLE: " + (System.currentTimeMillis() - bT) + " with "
-                + uniqueDataIds + " data ids.");
+        LOG.info("CREATED DATA IDS TABLE: " + tableName + " with "
+                + uniqueDataIds.size() + " data ids in " +(System.currentTimeMillis() - bT) + "ms");
 
         String idIndexQuery = "CREATE INDEX " + tableName + "_data_id_index ON "
             + tableName + "(data_id)";
