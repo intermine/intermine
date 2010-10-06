@@ -249,7 +249,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
         if (r.next()) {
             int returnValue = (int) r.getFloat(1);
             if (r.next()) {
-                throw new SQLException("Too many results");
+                throw new SQLException("Too many results for table " + name.toLowerCase());
             }
             return returnValue;
         } else {
