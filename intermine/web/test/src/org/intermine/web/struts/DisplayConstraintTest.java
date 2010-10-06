@@ -14,18 +14,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
+import junit.framework.TestCase;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.bag.BagQueryHelper;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.UserProfile;
@@ -52,25 +57,20 @@ import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.query.DisplayConstraint;
 import org.intermine.web.logic.query.DisplayConstraintFactory;
 import org.intermine.web.logic.query.DisplayConstraint.DisplayConstraintOption;
-import org.intermine.web.logic.session.SessionMethods;
 
-import servletunit.struts.MockStrutsTestCase;
 
-public class DisplayConstraintTest extends MockStrutsTestCase
+public class DisplayConstraintTest extends TestCase
 {
-    private ProfileManager pm;
-    private ObjectStore os;
-    private ObjectStoreWriter uosw;
-    private Profile superUser, testUser, emptyUser;
-    private DisplayConstraint dcAttribute, dcNull, dcBag, dcLookup, dcSubclass,
+    protected ProfileManager pm;
+    protected ObjectStore os;
+    protected ObjectStoreWriter uosw;
+    protected Profile superUser, testUser, emptyUser;
+    protected DisplayConstraint dcAttribute, dcNull, dcBag, dcLookup, dcSubclass,
     dcLoop, dcNullPathConstraint, dcAttribute2, dcInTemplate;
-    private InterMineBag firstEmployeeBag, secondEmployeeBag;
-    private HttpSession session;
-    ServletContext context;
+    protected InterMineBag firstEmployeeBag, secondEmployeeBag;
 
     public void setUp() throws Exception
     {
@@ -82,7 +82,7 @@ public class DisplayConstraintTest extends MockStrutsTestCase
         superUser = new Profile(pm, "superUser", null, "password",
             new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(superUser);
-        pm.setSuperuser("super");
+        pm.setSuperuser("superUser");
 
         testUser = new Profile(pm, "testUser", null, "password",
             new HashMap(), new HashMap(), new HashMap());
@@ -100,8 +100,7 @@ public class DisplayConstraintTest extends MockStrutsTestCase
 
     private void initializeDisplayConstraints() {
         Model model = os.getModel();
-
-        BagManager bagManager = new BagManager(superUser, model);
+        //BagManager bagManager = new BagManager(superUser, model);
 
         Properties classKeyProps = new Properties();
         try {
@@ -110,8 +109,16 @@ public class DisplayConstraintTest extends MockStrutsTestCase
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+        Map<String, List<FieldDescriptor>> classKeys =
+            ClassKeyHelper.readKeys(model, classKeyProps);
 
         InputStream is = getClass().getClassLoader().getResourceAsStream("bag-queries.xml");
+        BagQueryConfig bagQueryConfig = null;
+        try {
+            bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         Properties ossProps = new Properties();
         ossProps.put("org.intermine.model.testmodel.Department.classCount", "3");
@@ -122,13 +129,12 @@ public class DisplayConstraintTest extends MockStrutsTestCase
         ossProps.put("org.intermine.model.testmodel.Department.nullFields", "rejectedEmployee");
         ObjectStoreSummary oss = new ObjectStoreSummary(ossProps);
 
-        InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        AutoCompleter ac = null;
-        DisplayConstraintFactory dcf =
-            new DisplayConstraintFactory(im, ac);
 
         PathQuery query = new PathQuery(model);
         TemplateQuery template = new TemplateQuery("MyFirstTemplate", "FirstTemplate", "", query);
+        InterMineAPI im = new InterMineAPITest(os, pm, classKeys, bagQueryConfig, oss);
+        DisplayConstraintFactory dcf =
+            new DisplayConstraintFactory(im, null);
 
         try {
             PathConstraint pathConstraintAttribute =
@@ -165,6 +171,11 @@ public class DisplayConstraintTest extends MockStrutsTestCase
             dcInTemplate = dcf.get(pathConstraintInTemplate, superUser, template);
         } catch (PathException pe) {
             pe.printStackTrace();
+            try {
+                tearDown();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -337,10 +348,9 @@ public class DisplayConstraintTest extends MockStrutsTestCase
      * Given the path being constrained return the valid constraint operations.  If constraining an
      * attribute the valid ops depend on the type being constraint - String, Integer, Boolean, etc.
      */
-    //TOVERIFY
     public void testGetValidOps() {
-        assertEquals(6, dcAttribute.getValidOps().size());
-        assertEquals(2, dcNull.getValidOps().size());
+        assertEquals(8, dcAttribute.getValidOps().size());
+        assertEquals(6, dcNull.getValidOps().size());
         assertEquals(2, dcBag.getValidOps().size());
         assertEquals(1, dcLookup.getValidOps().size());
         assertEquals(0, dcSubclass.getValidOps().size());
@@ -394,7 +404,6 @@ public class DisplayConstraintTest extends MockStrutsTestCase
      * If a dropdown is available for a constraint fewer operations are possible, return the list
      * of operations.
      */
-    // TODO Do we need this, could getValildOps return the correct ops if a dropdown is available
     public void testGetFixedOps() {
         assertEquals(6, dcAttribute.getFixedOps().size());
         assertNull(dcNull.getFixedOps());
@@ -463,7 +472,7 @@ public class DisplayConstraintTest extends MockStrutsTestCase
         assertEquals("loopQuery", dcLoop.getSelectedConstraint());
         assertEquals("attribute", dcLookup.getSelectedConstraint());
         assertEquals("attribute", dcSubclass.getSelectedConstraint());
-        assertNull(dcNullPathConstraint.getSelectedConstraint());
+        assertEquals("attribute", dcNullPathConstraint.getSelectedConstraint());
     }
 
     /**
