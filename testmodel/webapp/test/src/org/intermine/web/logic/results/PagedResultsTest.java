@@ -41,7 +41,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.pathquery.Path;
-import org.intermine.pathquery.OldPathQuery;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.DynamicUtil;
 
@@ -57,7 +57,7 @@ public class PagedResultsTest extends TestCase
     private List columnPath;
     private Map pathToQueryNode;
     private Map classKeys;
-    private OldPathQuery pathQuery;
+    private PathQuery pathQuery;
 
     public void setUp() throws Exception {
         os = new ObjectStoreDummyImpl();
@@ -75,7 +75,7 @@ public class PagedResultsTest extends TestCase
         classKeys.put("Employee", defaultClassKeys);
         classKeys.put("Department", defaultClassKeys);
         classKeys.put("Company", defaultClassKeys);
-        pathQuery = new OldPathQuery(model);
+        pathQuery = new PathQuery(model);
     }
 
     private PagedTable getEmptyResults() throws Exception {
@@ -182,10 +182,10 @@ public class PagedResultsTest extends TestCase
             Map.Entry entry = (Map.Entry) queryIter.next();
             String queryName = (String) entry.getKey();
             if (!expected.containsKey(queryName)) {
-            	continue;
+                continue;
             }
 
-            OldPathQuery pq = (OldPathQuery) entry.getValue();
+            PathQuery pq = (PathQuery) entry.getValue();
             Map pathToQueryNode = new HashMap();
             Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null, false);
             Results r = new DummyResults(os, q, (List) results.get(queryName));

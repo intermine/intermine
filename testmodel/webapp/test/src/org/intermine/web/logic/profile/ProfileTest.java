@@ -27,11 +27,11 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.pathquery.OldPathQuery;
+import org.intermine.pathquery.PathQuery;
 
 public class ProfileTest extends TestCase
 {
-    OldPathQuery query;
+    PathQuery query;
     SavedQuery sq;
     Date date = new Date();
     InterMineBag bag;
@@ -40,14 +40,14 @@ public class ProfileTest extends TestCase
     private ObjectStoreWriter userprofileOS;
     private ObjectStore objectstoreOS;
     ProfileManager profileManager;
-    
+
     public ProfileTest(String arg) {
         super(arg);
     }
 
     public void setUp() throws Exception {
         super.setUp();
-        query = new OldPathQuery(Model.getInstanceByName("testmodel"));
+        query = new PathQuery(Model.getInstanceByName("testmodel"));
         userprofileOS = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         objectstoreOS = ObjectStoreFactory.getObjectStore("os.unittest");
         bag = new InterMineBag("bob", "Company", "Description", new Date(),
@@ -56,9 +56,9 @@ public class ProfileTest extends TestCase
 //        bag = new InterMinePrimitiveBag(bobId, "bob", userprofileOS, Collections.singleton("1234"));
         sq = new SavedQuery("query1", date, query);
         template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                new OldPathQuery(Model.getInstanceByName("testmodel")));
+                new PathQuery(Model.getInstanceByName("testmodel")));
         profileManager = new DummyProfileManager(userprofileOS);
-        
+
     }
 
     public void tearDown() throws Exception {
