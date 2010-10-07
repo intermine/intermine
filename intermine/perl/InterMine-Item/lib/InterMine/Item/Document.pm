@@ -162,7 +162,7 @@ sub write {
 
 sub DESTROY {
     my $self = shift;
-    if ($self->{writer}->within_element('items')) {
+    if ($self->writer->within_element('items')) {
         $self->close;
     }
 }
@@ -177,7 +177,7 @@ sub DESTROY {
 sub close {
     my $self = shift;
     $self->write();
-    if ($self->within_element('items')) {
+    if ($self->writer->within_element('items')) {
         $self->writer->endTag('items');
     }
     return;
