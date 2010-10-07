@@ -46,8 +46,10 @@ public class OrthologueLinkController  extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form,
+            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
@@ -60,6 +62,8 @@ public class OrthologueLinkController  extends TilesAction
             e.printStackTrace();
             return null;
         }
+
+        // hack so we can use ensembl for ratmine
         if (TypeUtil.getFieldInfo(c, alternativeIdentifierField) != null) {
             identifierField = alternativeIdentifierField;
         }
@@ -73,7 +77,6 @@ public class OrthologueLinkController  extends TilesAction
         if (!mines.isEmpty()) {
             request.setAttribute("mines", mines);
         }
-
         return null;
     }
 }

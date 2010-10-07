@@ -37,10 +37,28 @@ public class HomologueMapping
     }
 
     /**
+     * Copy Constructor
+     *
+     * @param mapping the object to clone
+     */
+    public HomologueMapping(HomologueMapping mapping) {
+        this(mapping.getOrganism());
+        this.localDataSets = mapping.getLocalDataSets();
+        this.remoteDataSets = mapping.getRemoteDataSets();
+    }
+
+    /**
      * @return the gene.homologue.organism
      */
     public String getOrganism() {
         return organism;
+    }
+
+    /**
+     * @param organism the organism to set
+     */
+    public void setOrganism(String organism) {
+        this.organism = organism;
     }
 
     /**
