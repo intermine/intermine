@@ -2,14 +2,17 @@
 # translates data from ensembl database to intermine items XML file
 
 BEGIN {
-    unshift( @INC,
-        ( $0 =~ m:(.*)/.*: )[0]
-          . '/../../../intermine/perl/InterMine-Util/lib' );
+    my $base = ( $0 =~ m:(.*)/.*: )[0];
+    unshift( @INC, 
+        map( {$base . $_} 
+            '/../../../intermine/perl/InterMine-Util/lib',
+            '/../../../intermine/perl/InterMine-Item/lib',
+        ),
+    );
 }
 
 use strict;
 use warnings;
-use Switch;
 
 use Getopt::Std;
 
@@ -17,7 +20,7 @@ use InterMine::Item::Document;
 use InterMine::Model;
 use Bio::EnsEMBL::DBSQL::DBAdaptor;
 use InterMine::Util qw(parse_properties_file);
-use IO qw(Handle File);
+use Log::Handler;
 use Digest::MD5 qw(md5);
 
 my $script_dir = ( $0 =~ m:(.*)/.*: )[0];
@@ -37,19 +40,24 @@ my ( $mine_name, $taxon_ids, $data_destination ) = @ARGV;
 my $start_time = time();
 
 my $logfile = $opt_l;
-my $loghandle;
+my $log = Log::Handle->new();
 if ($logfile) {
-    open $loghandle, '>>', $logfile or die $!;
+    $log->add(
+        file => {
+            filename => $logfile,
+            mode => 'append',
+            newline => 1,
+        },
+    );
+} else {
+    $log->add(
+        screen => {
+            log_to => "STDERR",
+        },
+    );
 }
-else {
-    $loghandle = new IO::Handle;
-    $loghandle->fdopen( \*STDERR, '>>' ) or die $!;
-}
-my @times = localtime($start_time);
-print $loghandle
-  '[',
-  join( '-', ( $times[5] + 1900 ), ( $times[4] + 1 ), $times[3] ),
-  " $times[2]:$times[1]] Running $0\n";
+
+$log->info("Running $0");
 
 # Set-up the intermine item-creating apparatus
 my $release = ($opt_r) ? '.' . $opt_r : '';
@@ -61,7 +69,7 @@ for ( $model_file, $properties_file ) {
     die "Cannot read $_" unless -r;
 }
 
-my $model = new InterMine::Model( file => $model_file );
+my $model = InterMine::Model->new( file => $model_file );
 my $properties = parse_properties_file($properties_file);
 
 # init vars which need to be globally accessible
@@ -126,8 +134,10 @@ sub make_item {
 
 sub check_output {
     if ( $total_made != $total_written ) {
-        warn "We made $total_made items but wrote out $total_written!\n",
-          "Something went wrong: please check your logs\n";
+        warn(
+            "We made $total_made items but wrote out $total_written!",
+            "Something went wrong: please check your logs",
+        );
     }
     return $total_made - $total_written;
 }
@@ -369,10 +379,11 @@ foreach my $taxon_id ( keys %organisms ) {
             my %seen = ();
             my @uniqs = grep { !$seen{$_}++ } @{ $hash->{$_} };
             if ( @uniqs > 1 ) {
-                print $loghandle scalar(@uniqs),
-                  " matches for $thing $_: ",
-                  join( ' ', @uniqs ),
-                  "\n";
+                $log->info(
+                    scalar(@uniqs), 
+                    "matches for $thing $_:",
+                    join( ' ', @uniqs ),
+                );
             }
         }
     }
@@ -384,7 +395,7 @@ exit $status;
 
 sub announce_duplicate {
     my $complaint = sprintf( "item %s (%s %s) duplicates item %s\n", @_ );
-    print $loghandle $complaint;
+    $log->warning($complaint);
     return;
 }
 
