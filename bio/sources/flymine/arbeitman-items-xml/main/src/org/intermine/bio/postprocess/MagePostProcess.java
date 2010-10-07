@@ -147,7 +147,7 @@ public class MagePostProcess extends PostProcessor
             if (lastGene == null || !thisGene.getId().equals(lastGene.getId())) {
                 if (lastGene != null) {
                     // clone so we don't change the ObjectStore cache
-                    Gene tempGene = (Gene) PostProcessUtil.cloneInterMineObject(lastGene);
+                    Gene tempGene = PostProcessUtil.cloneInterMineObject(lastGene);
                     tempGene.setFieldValue("microArrayResults", newCollection);
                     osw.store(tempGene);
                     count++;
@@ -162,7 +162,7 @@ public class MagePostProcess extends PostProcessor
 
         if (lastGene != null) {
             // clone so we don't change the ObjectStore cache
-            Gene tempGene = (Gene) PostProcessUtil.cloneInterMineObject(lastGene);
+            Gene tempGene = PostProcessUtil.cloneInterMineObject(lastGene);
             tempGene.setFieldValue("microArrayResults", newCollection);
             osw.store(tempGene);
             count++;
@@ -237,7 +237,7 @@ public class MagePostProcess extends PostProcessor
             if (lastClone == null || !thisClone.getId().equals(lastClone.getId())) {
                 if (lastClone != null) {
                     // clone so we don't change the ObjectStore cache
-                    CDNAClone tempClone = (CDNAClone) PostProcessUtil
+                    CDNAClone tempClone = PostProcessUtil
                         .cloneInterMineObject(lastClone);
                     tempClone.setFieldValue("results", newCollection);
                     osw.store(tempClone);
@@ -253,7 +253,7 @@ public class MagePostProcess extends PostProcessor
 
         if (lastClone != null) {
             // clone so we don't change the ObjectStore cache
-            CDNAClone tempClone = (CDNAClone) PostProcessUtil.cloneInterMineObject(lastClone);
+            CDNAClone tempClone = PostProcessUtil.cloneInterMineObject(lastClone);
             tempClone.setFieldValue("results", newCollection);
             osw.store(tempClone);
             count++;
@@ -328,7 +328,7 @@ public class MagePostProcess extends PostProcessor
             if (lastComSeq == null || !thisComSeq.getId().equals(lastComSeq.getId())) {
                 if (lastComSeq != null) {
                     // clone so we don't change the ObjectStore cache
-                    ProbeSet tempProbeSet = (ProbeSet) PostProcessUtil
+                    ProbeSet tempProbeSet = PostProcessUtil
                         .cloneInterMineObject(lastComSeq);
                     tempProbeSet.setFieldValue("results", newCollection);
                     osw.store(tempProbeSet);
@@ -344,7 +344,7 @@ public class MagePostProcess extends PostProcessor
 
         if (lastComSeq != null) {
             // clone so we don't change the ObjectStore cache
-            ProbeSet tempProbeSet = (ProbeSet) PostProcessUtil.cloneInterMineObject(lastComSeq);
+            ProbeSet tempProbeSet = PostProcessUtil.cloneInterMineObject(lastComSeq);
             tempProbeSet.setFieldValue("results", newCollection);
             osw.store(tempProbeSet);
             count++;
