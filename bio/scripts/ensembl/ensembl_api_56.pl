@@ -40,7 +40,7 @@ my ( $mine_name, $taxon_ids, $data_destination ) = @ARGV;
 my $start_time = time();
 
 my $logfile = $opt_l;
-my $log = Log::Handle->new();
+my $log = Log::Handler->new();
 if ($logfile) {
     $log->add(
         file => {
