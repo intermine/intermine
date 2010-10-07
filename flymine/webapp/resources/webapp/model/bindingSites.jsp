@@ -71,7 +71,7 @@
   </node>
   <node path="CRM.dataSets" type="DataSet">
   </node>
-  <node path="CRM.dataSets.title" type="String">
+  <node path="CRM.dataSets.name" type="String">
     <constraint op="=" value="REDfly Drosophila transcriptional cis-regulatory modules" description="" identifier="" code="C">
     </constraint>
   </node>

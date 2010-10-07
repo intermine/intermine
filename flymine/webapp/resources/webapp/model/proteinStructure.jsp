@@ -55,53 +55,25 @@
 
           <li>
             <im:querylink text="All 3-D protein structure data (Kenji Mizuguchi and PDB data) " skipBuilder="true">
-<query name="" model="genomic" view="Protein.organism.name Protein.primaryAccession Protein.name Protein.structures.identifier Protein.structures.dataSets.title" sortOrder="Protein.organism.name asc Protein.primaryAccession asc Protein.name asc Protein.structures.identifier asc">
-  <node path="Protein" type="Protein">
-  </node>
-  <node path="Protein.structures" type="ProteinStructure">
-  </node>
+<query name="" model="genomic" view="Protein.organism.name Protein.primaryAccession Protein.name Protein.structures.identifier Protein.structures.dataSets.name" sortOrder="Protein.organism.name asc">
 </query>
             </im:querylink>
           </li>
 
           <li>
             <im:querylink text="All 3-D protein structure data for <i>A. gambiae</i> (Kenji Mizuguchi data) " skipBuilder="true">
-<query name="" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.structures.identifier Protein.structures.start Protein.structures.end" sortOrder="Protein.primaryIdentifier asc" constraintLogic="A and B">
-  <node path="Protein" type="Protein">
-  </node>
-  <node path="Protein.structures" type="ProteinStructure">
-  </node>
-  <node path="Protein.structures.dataSets" type="DataSet">
-  </node>
-  <node path="Protein.structures.dataSets.title" type="String">
-    <constraint op="=" value="Mizuguchi protein structure predictions" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Protein.organism" type="Organism">
-    <constraint op="LOOKUP" value="Anopheles gambiae" description="" identifier="" code="B" extraValue="">
-    </constraint>
-  </node>
+<query name="" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.structures.identifier Protein.structures.start Protein.structures.end" sortOrder="Protein.primaryAccession asc" constraintLogic="A and B">
+  <constraint path="Protein.organism.name" code="A" op="=" value="Anopheles gambiae"/>
+  <constraint path="Protein.structures.dataSets.name" code="B" op="=" value="Mizuguchi protein structure predictions"/>
 </query>
             </im:querylink>
           </li>
 
           <li>
             <im:querylink text="All 3-D protein structure data for <i>D. melanogaster</i> (Kenji Mizuguchi data) " skipBuilder="true">
-<query name="" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.structures.identifier Protein.structures.start Protein.structures.end" sortOrder="Protein.primaryIdentifier asc" constraintLogic="A and B">
-  <node path="Protein" type="Protein">
-  </node>
-  <node path="Protein.structures" type="ProteinStructure">
-  </node>
-  <node path="Protein.structures.dataSets" type="DataSet">
-  </node>
-  <node path="Protein.structures.dataSets.title" type="String">
-    <constraint op="=" value="Mizuguchi protein structure predictions" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Protein.organism" type="Organism">
-    <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="B" extraValue="">
-    </constraint>
-  </node>
+<query name="" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.structures.identifier Protein.structures.start Protein.structures.end" sortOrder="Protein.primaryAccession asc" constraintLogic="A and B">
+  <constraint path="Protein.organism.name" code="A" op="=" value="Drosophila melanogaster"/>
+  <constraint path="Protein.structures.dataSets.name" code="B" op="=" value="Mizuguchi protein structure predictions"/>
 </query>
             </im:querylink>
           </li>
@@ -109,16 +81,7 @@
           <li>
             <im:querylink text="All 3-D protein structure data for <i>D. melanogaster</i> (PDB data) " skipBuilder="true">
 <query name="" model="genomic" view="Protein.primaryIdentifier Protein.name Protein.structures.identifier Protein.structures.title Protein.structures.technique Protein.structures.resolution" sortOrder="Protein.primaryIdentifier asc">
-  <node path="Protein" type="Protein">
-  </node>
-  <node path="Protein.structures" type="ProteinStructure">
-  </node>
-  <node path="Protein.structures.dataSets" type="DataSet">
-  </node>
-  <node path="Protein.structures.dataSets.name" type="String">
-    <constraint op="=" value="PDB dmel data set" description="" identifier="" code="A">
-    </constraint>
-  </node>
+  <constraint path="Protein.structures.dataSets.name" code="A" op="=" value="PDB dmel data set"/>
 </query>
             </im:querylink>
          </li>

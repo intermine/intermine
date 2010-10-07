@@ -32,12 +32,7 @@ for <i>D. melanogaster</i> and <i>D. pseudoobscura</i> from FlyBase.
           <li>
            <im:querylink text="All <i> D. melanogaster</i> publications"  skipBuilder="true">
 <query name="" model="genomic" view="Gene.publications.year Gene.publications.firstAuthor Gene.publications.journal Gene.publications.title Gene.publications.pubMedId" sortOrder="Gene.publications.year asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-    <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="A" extraValue="">
-    </constraint>
-  </node>
+    <constraint path="Gene.organism.shortName" op="=" value="D. melanogaster"/>
 </query>
        </im:querylink>
           </li>
@@ -45,12 +40,7 @@ for <i>D. melanogaster</i> and <i>D. pseudoobscura</i> from FlyBase.
           <li>
            <im:querylink text="All <i> D. pseudoobscura</i> publications"  skipBuilder="true">
 <query name="" model="genomic" view="Gene.publications.year Gene.publications.firstAuthor Gene.publications.journal Gene.publications.title Gene.publications.pubMedId" sortOrder="Gene.publications.year asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-    <constraint op="LOOKUP" value="Drosophila pseudoobscura" description="" identifier="" code="A" extraValue="">
-    </constraint>
-  </node>
+  <constraint path="Gene.organism.shortName" op="=" value="D. pseudoobscura"/>
 </query>
        </im:querylink>
           </li>
@@ -58,12 +48,7 @@ for <i>D. melanogaster</i> and <i>D. pseudoobscura</i> from FlyBase.
           <li>
            <im:querylink text="All <i> C. elegans</i> publications"  skipBuilder="true">
 <query name="" model="genomic" view="Gene.publications.year Gene.publications.firstAuthor Gene.publications.journal Gene.publications.title Gene.publications.pubMedId" sortOrder="Gene.publications.year asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-    <constraint op="LOOKUP" value="Caenorhabditis elegans" description="" identifier="" code="A" extraValue="">
-    </constraint>
-  </node>
+    <constraint path="Gene.organism.shortName" op="=" value="C. elegans"/>
 </query>
            </im:querylink>
           </li>
@@ -71,12 +56,7 @@ for <i>D. melanogaster</i> and <i>D. pseudoobscura</i> from FlyBase.
           <li>
           <im:querylink text="All <i> S. cerevisiae</i> publications"  skipBuilder="true">
 <query name="" model="genomic" view="Gene.publications.year Gene.publications.firstAuthor Gene.publications.journal Gene.publications.title Gene.publications.pubMedId" sortOrder="Gene.publications.year asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-    <constraint op="LOOKUP" value="Saccharomyces cerevisiae" description="" identifier="" code="A" extraValue="">
-    </constraint>
-  </node>
+    <constraint path="Gene.organism.shortName" op="=" value="S. cerevisiae"/>
 </query>
            </im:querylink>
           </li>
