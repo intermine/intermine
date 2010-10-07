@@ -282,7 +282,7 @@
     </source>
     <source name="flybase-dvir-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7244"/>
-      <property name="fasta.dataSetTitle" value="FlyBase fasta fasta data set for Drosophila virilis"/>
+      <property name="fasta.dataSetTitle" value="FlyBase fasta data set for Drosophila virilis"/>
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
