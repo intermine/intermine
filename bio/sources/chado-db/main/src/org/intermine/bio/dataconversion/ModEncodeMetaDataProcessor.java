@@ -441,10 +441,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             long bT2 = System.currentTimeMillis();
             stmt.execute(analyze);
             LOG.info("DATA IDS TIME analyzing: " + (System.currentTimeMillis() - bT2) + "ms");
-        } finally {
+        } catch (SQLException e) {
             // the batch writer system doesn't like to have duplicate named tables
             query = "DROP TABLE " + tableName;
             stmt.execute(query);
+            throw e;
         }
         return tableName;
     }
