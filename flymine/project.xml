@@ -525,7 +525,6 @@
     <source name="miranda" type="miranda">
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
-      <property name="gff3.dataSetTitle" value="miRBase Targets"/>  
       <property name="src.data.dir" location="/shared/data/mirna/miranda/current"/>
       <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster.gff"/>
     </source>
