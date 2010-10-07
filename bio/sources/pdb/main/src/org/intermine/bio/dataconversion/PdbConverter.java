@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.biojava.bio.structure.Structure;
 import org.biojava.bio.structure.io.PDBFileParser;
@@ -135,13 +136,13 @@ public class PdbConverter extends BioDirectoryConverter
         }
 
         String title = (((String) structure.getHeader().get("title"))).trim();
-        if (title != null && !title.equals("")) {
+        if (StringUtils.isNotEmpty(title)) {
             proteinStructure.setAttribute("title", title);
         } else {
             LOG.warn("No value for title in structure: " + idCode);
         }
         String technique = ((String) structure.getHeader().get("technique")).trim();
-        if (technique != null && !technique.equals("")) {
+        if (StringUtils.isNotEmpty(technique)) {
             proteinStructure.setAttribute("technique", technique);
         } else {
             LOG.warn("No value for technique in structure: " + idCode);
@@ -206,7 +207,7 @@ public class PdbConverter extends BioDirectoryConverter
             String line = super.readLine();
             if (line != null && line.matches("^DBREF.*")) {
                 String [] split = line.split("\\s+");
-                if (split[5].equals("SWS") || split[5].equals("UNP")) {
+                if ("SWS".equals(split[5]) || "UNP".equals(split[5])) {
                     dbrefs.add(split[6]);
                 }
             }
