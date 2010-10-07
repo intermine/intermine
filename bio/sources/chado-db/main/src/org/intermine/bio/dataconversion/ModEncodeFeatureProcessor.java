@@ -524,6 +524,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     protected void finishedProcessing(Connection connection,
             Map<Integer, FeatureData> featureDataMap)
         throws SQLException {
+        super.finishedProcessing(connection, featureDataMap);
+
         String query = "DROP TABLE " + SUBFEATUREID_TEMP_TABLE_NAME;
         Statement stmt = connection.createStatement();
         LOG.info("executing: " + query);

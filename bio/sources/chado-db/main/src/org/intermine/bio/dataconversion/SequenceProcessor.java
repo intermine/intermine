@@ -564,13 +564,17 @@ public class SequenceProcessor extends ChadoProcessor
      * Perform any actions needed after all processing is finished.
      * @param connection the Connection
      * @param featureDataMap a map from chado feature_id to data for that feature
-     * @throws ObjectStoreException if there is a problem while storing
      * @throws SQLException if there is a problem
      */
     protected void finishedProcessing(Connection connection,
                                     Map<Integer, FeatureData> featureDataMap)
-        throws ObjectStoreException, SQLException {
-        // override in subclasses as necessary
+        throws SQLException {
+        // override and add additional processing if necessary, but method should call parent
+
+        String query = "DROP TABLE " + tempFeatureTableName;
+        Statement stmt = connection.createStatement();
+        LOG.info("executing: " + query);
+        stmt.execute(query);
     }
 
     /**
