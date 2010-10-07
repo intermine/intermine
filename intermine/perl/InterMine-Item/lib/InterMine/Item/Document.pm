@@ -178,7 +178,7 @@ sub close {
     my $self = shift;
     $self->write();
     if ($self->within_element('items')) {
-        $writer->endTag('items');
+        $self->writer->endTag('items');
     }
     return;
 }
