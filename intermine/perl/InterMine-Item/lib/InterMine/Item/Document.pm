@@ -157,9 +157,6 @@ sub write {
     while (my $item = shift @{$self->{unwritten_items}}) {
         $item->as_xml($writer);
     }
-    unless ($self->{auto_write}) {
-        $writer->endTag('items');
-    }
     return;
 }
 
@@ -179,9 +176,10 @@ sub DESTROY {
 
 sub close {
     my $self = shift;
-    my $aw = delete $self->{auto_write};
     $self->write();
-    $self->{auto_write} = $aw;
+    if ($self->within_element('items')) {
+        $writer->endTag('items');
+    }
     return;
 }
     
