@@ -158,33 +158,16 @@
           <li>
             <im:querylink text="All DrosDel deletions " skipBuilder="true">
 <query name="" model="genomic" view="ChromosomalDeletion.primaryIdentifier ChromosomalDeletion.available ChromosomalDeletion.chromosome.primaryIdentifier ChromosomalDeletion.chromosomeLocation.start ChromosomalDeletion.chromosomeLocation.end ChromosomalDeletion.element1.primaryIdentifier ChromosomalDeletion.element2.primaryIdentifier" sortOrder="ChromosomalDeletion.primaryIdentifier asc">
-  <node path="ChromosomalDeletion" type="ChromosomalDeletion">
-  </node>
-  <node path="ChromosomalDeletion.organism" type="Organism">
-  </node>
-  <node path="ChromosomalDeletion.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-    </constraint>
-  </node>
+  <constraint path="ChromosomalDeletion.organism.name" op="=" value="Drosophila melanogaster"/>
 </query>
             </im:querylink>
           </li>
 
           <li>
             <im:querylink text="All available DrosDel deletions " skipBuilder="true">
-<query name="" model="genomic" view="ChromosomalDeletion.primaryIdentifier ChromosomalDeletion.secondaryIdentifier ChromosomalDeletion.chromosome.primaryIdentifier ChromosomalDeletion.chromosomeLocation.start ChromosomalDeletion.chromosomeLocation.end" sortOrder="ChromosomalDeletion.primaryIdentifier asc" constraintLogic="A and B">
-  <node path="ChromosomalDeletion" type="ChromosomalDeletion">
-  </node>
-  <node path="ChromosomalDeletion.organism" type="Organism">
-  </node>
-  <node path="ChromosomalDeletion.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="ChromosomalDeletion.available" type="Boolean">
-    <constraint op="=" value="true" description="" identifier="" code="B">
-    </constraint>
-  </node>
+<query name="" model="genomic" view="ChromosomalDeletion.primaryIdentifier ChromosomalDeletion.available ChromosomalDeletion.chromosome.primaryIdentifier ChromosomalDeletion.chromosomeLocation.start ChromosomalDeletion.chromosomeLocation.end ChromosomalDeletion.element1.primaryIdentifier ChromosomalDeletion.element2.primaryIdentifier" sortOrder="ChromosomalDeletion.primaryIdentifier asc" constraintLogic="A and B">
+  <constraint path="ChromosomalDeletion.organism.name" code="A" op="=" value="Drosophila melanogaster"/>
+  <constraint path="ChromosomalDeletion.available" code="B" op="=" value="true"/>
 </query>
             </im:querylink>
           </li>
@@ -212,15 +195,9 @@
 
         <li>
             <im:querylink text="All <i>D. melanogaster</i> transposon insertions (including Exelixis and DrosDel)" skipBuilder="true">
-<query name="" model="genomic" view="TransposableElementInsertionSite.primaryIdentifier TransposableElementInsertionSite.secondaryIdentifier" sortOrder="TransposableElementInsertionSite.primaryIdentifier asc">
-  <node path="TransposableElementInsertionSite" type="TransposableElementInsertionSite">
-  </node>
-  <node path="TransposableElementInsertionSite.organism" type="Organism">
-  </node>
-  <node path="TransposableElementInsertionSite.organism.shortName" type="String">
-    <constraint op="=" value="D. melanogaster" description="" identifier="" code="A">
-    </constraint>
-  </node>
+<query name="" model="genomic" view="TransposableElementInsertionSite.primaryIdentifier TransposableElementInsertionSite.name TransposableElementInsertionSite.type TransposableElementInsertionSite.subType TransposableElementInsertionSite.chromosome.primaryIdentifier TransposableElementInsertionSite.chromosomeLocation.start TransposableElementInsertionSite.chromosomeLocation.end" sortOrder="TransposableElementInsertionSite.primaryIdentifier asc" constraintLogic="A and B">
+  <constraint path="TransposableElementInsertionSite.organism.name" code="A" op="=" value="Drosophila melanogaster"/>
+  <constraint path="TransposableElementInsertionSite.dataSets.name" code="B" op="=" value="DrosDel P-element and Deletion collection"/>
 </query>
           </im:querylink>
           </li>
