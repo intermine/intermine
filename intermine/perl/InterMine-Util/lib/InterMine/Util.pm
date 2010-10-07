@@ -9,7 +9,7 @@ InterMine::Util - Utility functions for InterMine
 use strict;
 
 use Exporter;
-
+our $VERSION = "0.94";
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(parse_properties_file get_property_value 
                     get_latest_properties_version $INTERMINE_CONF_DIR 
