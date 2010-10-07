@@ -15,7 +15,6 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -28,7 +27,7 @@ import org.intermine.xml.full.Item;
  */
 public class BDGPCloneConverter extends CDNACloneConverter
 {
-    protected static final Logger LOG = Logger.getLogger(BDGPCloneConverter.class);
+//    protected static final Logger LOG = Logger.getLogger(BDGPCloneConverter.class);
     private Map<String, Item> genes = new HashMap<String, Item>();
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";

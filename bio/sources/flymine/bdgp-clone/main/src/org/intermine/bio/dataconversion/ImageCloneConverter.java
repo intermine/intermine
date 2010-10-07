@@ -10,6 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,20 +22,14 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
-import java.io.BufferedReader;
-import java.io.Reader;
-
-import org.apache.log4j.Logger;
-
 /**
  * DataConverter to load flat file linking BDGP clones to Flybase genes.
  * @author Wenyan Ji
  */
 public class ImageCloneConverter extends CDNACloneConverter
 {
-    protected static final Logger LOG = Logger.getLogger(ImageCloneConverter.class);
+//    protected static final Logger LOG = Logger.getLogger(ImageCloneConverter.class);
 
-    protected Item organism;
     protected Map<String, Item> geneMap = new HashMap<String, Item>();
     protected Map<String, Item> cloneMap = new HashMap<String, Item>();
 
@@ -52,7 +48,6 @@ public class ImageCloneConverter extends CDNACloneConverter
         organism.setAttribute("abbreviation", "HS");
         store(organism);
     }
-
 
     /**
      * Read each line from flat file.
@@ -83,7 +78,6 @@ public class ImageCloneConverter extends CDNACloneConverter
                             gene.getIdentifier(), getItemWriter());
             }
         }
-
     }
 
     /**
@@ -96,7 +90,7 @@ public class ImageCloneConverter extends CDNACloneConverter
      */
     private Item createGene(String clsName, String id, String orgId, ItemWriter writer)
         throws Exception {
-        Item gene = (Item) geneMap.get(id);
+        Item gene = geneMap.get(id);
         if (gene == null) {
             gene = createItem(clsName);
             gene.setAttribute("primaryIdentifier", id);
@@ -114,13 +108,12 @@ public class ImageCloneConverter extends CDNACloneConverter
      * @param geneId = ref id for gene item
      * @param dbId = ref id for db item
      * @param writer = itemWriter write item to objectstore
-     * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
      */
     private void createClone(String clsName, String id, String orgId, String geneId,
             ItemWriter writer)
         throws Exception {
-        Item clone = (Item) cloneMap.get(id);
+        Item clone = cloneMap.get(id);
         if (clone == null) {
             clone = createItem(clsName);
             clone.setAttribute("primaryIdentifier", id);
@@ -128,12 +121,6 @@ public class ImageCloneConverter extends CDNACloneConverter
             clone.setReference("gene", geneId);
             cloneMap.put(id, clone);
             store(clone);
-
-            Item synonym = createItem("Synonym");
-            synonym.setAttribute("type", "identifier");
-            synonym.setAttribute("value", id);
-            synonym.setReference("subject", clone.getIdentifier());
-            store(synonym);
         }
     }
 }

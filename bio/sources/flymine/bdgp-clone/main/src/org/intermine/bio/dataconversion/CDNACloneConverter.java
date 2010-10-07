@@ -33,10 +33,10 @@ public abstract class CDNACloneConverter extends BioFileConverter
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
-     * @throws ObjectStoreException if an error occurs in storing
-     * @throws MetaDataException if cannot generate model
      * @param dataSourceName the DataSource name
      * @param dataSetTitle the DataSet title
+     * @throws ObjectStoreException if an error occurs in storing
+     * @throws MetaDataException if cannot generate model
      */
     public CDNACloneConverter(ItemWriter writer, Model model,
                               String dataSourceName, String dataSetTitle)
@@ -44,7 +44,6 @@ public abstract class CDNACloneConverter extends BioFileConverter
                MetaDataException {
         super(writer, model, dataSourceName, dataSetTitle);
     }
-
 
     /**
      * Read each line from flat file.

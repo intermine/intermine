@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -29,9 +28,8 @@ import org.intermine.xml.full.Item;
  */
 public class AffyConverter extends CDNACloneConverter
 {
-    protected static final Logger LOG = Logger.getLogger(AffyConverter.class);
+//    protected static final Logger LOG = Logger.getLogger(AffyConverter.class);
 
-    protected Item organism;
     protected Map<String, Item> geneMap = new HashMap<String, Item>();
     private static final String PROBEPREFIX = "Affymetrix:CompositeSequence:HG-U133A:";
     private static final String PROBEURL = "https://www.affymetrix.com/LinkServlet?probeset=";
@@ -96,7 +94,7 @@ public class AffyConverter extends CDNACloneConverter
      */
     private Item createGene(String geneEnsembl)
         throws ObjectStoreException {
-        Item gene = (Item) geneMap.get(geneEnsembl);
+        Item gene = geneMap.get(geneEnsembl);
         if (gene == null) {
             gene = createItem("Gene");
             gene.setReference("organism", organism);
