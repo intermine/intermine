@@ -492,7 +492,7 @@
         <attribute name="url" value="http://func.med.harvard.edu/yeast/"/>
     </item>
     <item id="681" class="" implements="DataSet">
-        <attribute name="name" value="GO Annotation for YeastFunc"/>
+        <attribute name="name" value="GO Annotation from YeastFunc"/>
         <reference name="dataSource" ref_id="680"/>
     </item>
 </items>
