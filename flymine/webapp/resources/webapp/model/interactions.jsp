@@ -48,24 +48,8 @@
           <li>
             <im:querylink text="All <i>D. melanogaster</i> interactions from BioGRID " skipBuilder="true">
 <query name="" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.gene.primaryIdentifier Interaction.role Interaction.interactingGenes.primaryIdentifier Interaction.type.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
-  <node path="Interaction" type="Interaction">
-  </node>
-  <node path="Interaction.gene" type="Gene">
-  </node>
-  <node path="Interaction.gene.organism" type="Organism">
-  </node>
-  <node path="Interaction.gene.organism.shortName" type="String">
-    <constraint op="=" value="D. melanogaster" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Interaction.dataSets" type="DataSet">
-  </node>
-  <node path="Interaction.dataSets.dataSource" type="DataSource">
-  </node>
-  <node path="Interaction.dataSets.dataSource.name" type="String">
-    <constraint op="=" value="BioGRID" description="" identifier="" code="B">
-    </constraint>
-  </node>
+  <constraint path="Interaction.gene.organism.shortName" code="A" op="=" value="D. melanogaster"/>
+  <constraint path="Interaction.dataSets.dataSource.name" code="B" op="=" value="BioGRID"/>
 </query>
             </im:querylink>
     </li>
@@ -73,135 +57,46 @@
    <li>
             <im:querylink text="All <i>C. elegans</i> interactions from BioGRID " skipBuilder="true">
 <query name="" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.gene.primaryIdentifier Interaction.role Interaction.interactingGenes.primaryIdentifier Interaction.type.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
-  <node path="Interaction" type="Interaction">
-  </node>
-  <node path="Interaction.gene" type="Gene">
-  </node>
-  <node path="Interaction.gene.organism" type="Organism">
-  </node>
-  <node path="Interaction.gene.organism.shortName" type="String">
-    <constraint op="=" value="C. elegans" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Interaction.dataSets" type="DataSet">
-  </node>
-  <node path="Interaction.dataSets.dataSource" type="DataSource">
-  </node>
-  <node path="Interaction.dataSets.dataSource.name" type="String">
-    <constraint op="=" value="BioGRID" description="" identifier="" code="B">
-    </constraint>
-  </node>
+  <constraint path="Interaction.gene.organism.shortName" code="A" op="=" value="C. elegans"/>
+  <constraint path="Interaction.dataSets.dataSource.name" code="B" op="=" value="BioGRID"/>
 </query>
             </im:querylink>
    </li>
-
-
    <li>
-            <im:querylink text="All <i>S. cerevisiae</i> interactions from BioGRID " skipBuilder="true">
+          <im:querylink text="All <i>S. cerevisiae</i> interactions from BioGRID " skipBuilder="true">
 <query name="" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.gene.primaryIdentifier Interaction.role Interaction.interactingGenes.primaryIdentifier Interaction.type.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
-  <node path="Interaction" type="Interaction">
-  </node>
-  <node path="Interaction.gene" type="Gene">
-  </node>
-  <node path="Interaction.gene.organism" type="Organism">
-  </node>
-  <node path="Interaction.gene.organism.shortName" type="String">
-    <constraint op="=" value="S. cerevisiae" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Interaction.dataSets" type="DataSet">
-  </node>
-  <node path="Interaction.dataSets.dataSource" type="DataSource">
-  </node>
-  <node path="Interaction.dataSets.dataSource.name" type="String">
-    <constraint op="=" value="BioGRID" description="" identifier="" code="B">
-    </constraint>
-  </node>
+  <constraint path="Interaction.gene.organism.shortName" code="A" op="=" value="S. cerevisiae"/>
+  <constraint path="Interaction.dataSets.dataSource.name" code="B" op="=" value="BioGRID"/>
 </query>
             </im:querylink>
    </li>
 
+          <li>
+            <im:querylink text="All <i>D. melanogaster</i> interactions from BioGRID " skipBuilder="true">
+<query name="" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.gene.primaryIdentifier Interaction.role Interaction.interactingGenes.primaryIdentifier Interaction.type.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
+  <constraint path="Interaction.gene.organism.shortName" code="A" op="=" value="D. melanogaster"/>
+  <constraint path="Interaction.dataSets.dataSource.name" code="B" op="=" value="IntAct"/>
+</query>
+            </im:querylink>
+    </li>
 
    <li>
-            <im:querylink text="All <i>D. melanogaster</i> interactions from IntAct " skipBuilder="true">
-<query name="" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.experiment.name Interaction.experiment.interactionDetectionMethod.name Interaction.experiment.participantIdentificationMethod.name Interaction.gene.primaryIdentifier Interaction.role Interaction.interactingGenes.primaryIdentifier Interaction.type.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
-  <node path="Interaction" type="Interaction">
-  </node>
-  <node path="Interaction.gene" type="Gene">
-  </node>
-  <node path="Interaction.gene.organism" type="Organism">
-  </node>
-  <node path="Interaction.gene.organism.shortName" type="String">
-    <constraint op="=" value="D. melanogaster" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Interaction.dataSets" type="DataSet">
-  </node>
-  <node path="Interaction.dataSets.dataSource" type="DataSource">
-  </node>
-  <node path="Interaction.dataSets.dataSource.name" type="String">
-    <constraint op="=" value="IntAct" description="" identifier="" code="B">
-    </constraint>
-  </node>
+            <im:querylink text="All <i>C. elegans</i> interactions from BioGRID " skipBuilder="true">
+<query name="" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.gene.primaryIdentifier Interaction.role Interaction.interactingGenes.primaryIdentifier Interaction.type.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
+  <constraint path="Interaction.gene.organism.shortName" code="A" op="=" value="C. elegans"/>
+  <constraint path="Interaction.dataSets.dataSource.name" code="B" op="=" value="IntAct"/>
 </query>
             </im:querylink>
    </li>
-
-
    <li>
-            <im:querylink text="All <i>C. elegans</i> interactions from IntAct " skipBuilder="true">
-<query name="" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.experiment.name Interaction.experiment.interactionDetectionMethod.name Interaction.experiment.participantIdentificationMethod.name Interaction.gene.primaryIdentifier Interaction.role Interaction.interactingGenes.primaryIdentifier Interaction.type.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
-  <node path="Interaction" type="Interaction">
-  </node>
-  <node path="Interaction.gene" type="Gene">
-  </node>
-  <node path="Interaction.gene.organism" type="Organism">
-  </node>
-  <node path="Interaction.gene.organism.shortName" type="String">
-    <constraint op="=" value="C. elegans" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Interaction.dataSets" type="DataSet">
-  </node>
-  <node path="Interaction.dataSets.dataSource" type="DataSource">
-  </node>
-  <node path="Interaction.dataSets.dataSource.name" type="String">
-    <constraint op="=" value="IntAct" description="" identifier="" code="B">
-    </constraint>
-  </node>
+          <im:querylink text="All <i>S. cerevisiae</i> interactions from BioGRID " skipBuilder="true">
+<query name="" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.gene.primaryIdentifier Interaction.role Interaction.interactingGenes.primaryIdentifier Interaction.type.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
+  <constraint path="Interaction.gene.organism.shortName" code="A" op="=" value="S. cerevisiae"/>
+  <constraint path="Interaction.dataSets.dataSource.name" code="B" op="=" value="IntAct"/>
 </query>
             </im:querylink>
    </li>
-
-
-   <li>
-            <im:querylink text="All <i>S. cerevisiae</i> interactions from IntAct " skipBuilder="true">
-<query name="" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.experiment.name Interaction.experiment.interactionDetectionMethod.name Interaction.experiment.participantIdentificationMethod.name Interaction.gene.primaryIdentifier Interaction.role Interaction.interactingGenes.primaryIdentifier Interaction.type.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
-  <node path="Interaction" type="Interaction">
-  </node>
-  <node path="Interaction.gene" type="Gene">
-  </node>
-  <node path="Interaction.gene.organism" type="Organism">
-  </node>
-  <node path="Interaction.gene.organism.shortName" type="String">
-    <constraint op="=" value="S. cerevisiae" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Interaction.dataSets" type="DataSet">
-  </node>
-  <node path="Interaction.dataSets.dataSource" type="DataSource">
-  </node>
-  <node path="Interaction.dataSets.dataSource.name" type="String">
-    <constraint op="=" value="IntAct" description="" identifier="" code="B">
-    </constraint>
-  </node>
-</query>
-            </im:querylink>
-</li>
-
-
         </ul>
-
       </div>
     </td>
   </tr>

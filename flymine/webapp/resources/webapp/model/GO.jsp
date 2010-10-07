@@ -35,7 +35,7 @@
          <li><i>C. elegans</i> - GO annotations for <i>C. elegans</i> gene products assigned by <a href="http://www.wormbase.org" target="_new">WormBase</a>.</li><br/>
          <li><i>S. cerevisiae</i> - GO annotations for <i>S. cerevisiae</i> gene products assigned by <a href="http://www.yeastgenome.org/" target="_new">SGD</a>.</li><br/>
          <li><i>M. musculus</i> - GO annotations for <i>M. musculus</i> gene products assigned by <a href="http://www.informatics.jax.org" target="_new">MGI</a>.</li><br/>
-		 <li>Protein Domains - GO annotations for InterPro protein domains gene  assigned by <a href="http://www.ebi.ac.uk/interpro/" target="_new">InterPro</a>.</li><br/>
+         <li>Protein Domains - GO annotations for InterPro protein domains gene  assigned by <a href="http://www.ebi.ac.uk/interpro/" target="_new">InterPro</a>.</li><br/>
        </ul>
       </div>
 
@@ -108,18 +108,7 @@
           <li>
             <im:querylink text="All gene/GO annotation pairs from <i>D. melanogaster</i> " skipBuilder="true">
 <query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.namespace" sortOrder="Gene.primaryIdentifier asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.shortName" type="String">
-    <constraint op="=" value="D. melanogaster" description="" identifier="" code="A" extraValue="">
-    </constraint>
-  </node>
-  <node path="Gene.goAnnotation" type="GOAnnotation">
-  </node>
-  <node path="Gene.goAnnotation.ontologyTerm" type="OntologyTerm">
-  </node>
+  <constraint path="Gene.organism.shortName" op="=" value="D. melanogaster"/>
 </query>
 </im:querylink>
          </li>
@@ -127,19 +116,9 @@
          <li>
            <im:querylink text="All gene/GO annotation pairs from <i>A. gambiae</i> " skipBuilder="true">
 <query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.namespace" sortOrder="Gene.primaryIdentifier asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.shortName" type="String">
-    <constraint op="=" value="A. gambiae" description="" identifier="" code="A" extraValue="">
-    </constraint>
-  </node>
-  <node path="Gene.goAnnotation" type="GOAnnotation">
-  </node>
-  <node path="Gene.goAnnotation.ontologyTerm" type="OntologyTerm">
-  </node>
+  <constraint path="Gene.organism.shortName" op="=" value="A. gambiae"/>
 </query>
+</im:querylink>
  </im:querylink>
         </li>
 
