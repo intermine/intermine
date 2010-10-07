@@ -10,6 +10,7 @@ package org.intermine.bio.logic;
  *
  */
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -132,6 +133,15 @@ public class Mine
     }
 
     /**
+     * Test whether this Mine has genes
+     *
+     * @return true if the Mine has genes
+     */
+    public boolean hasGenes() {
+        return !organismNames.isEmpty();
+    }
+
+    /**
      * Return map of map, gene.organism --> gene.homologue.organism --> datasets
      * @return the orthologues
      */
@@ -140,11 +150,75 @@ public class Mine
     }
 
     /**
-     * Set map of map, gene.organism --> gene.homologue.organism --> datasets
+     * Set map of map, gene.organism --> gene.homologue.organism --> datasets.  Also add matching
+     * orthologues in the localMine.
+     *
      * @param orthologues the orthologues to set
+     * @param localMine the mine where the user is
      */
-    public void setOrthologues(Map<String, Map<String, HomologueMapping>> orthologues) {
+    public void setOrthologues(Map<String, Map<String, HomologueMapping>> orthologues,
+            Mine localMine) {
         this.geneToOrthologues = orthologues;
+        // merge the orthologues from the local mine with this one
+        if (localMine != null) {
+            mergeLocalOrthologues(localMine);
+        }
+    }
+
+    /**
+     * Add the orthologues from the local mine to this mine, only for organisms that are present
+     * in this (remote) mine.
+     *
+     * @param localMine the local mine - where the user is
+     */
+    private void mergeLocalOrthologues(Mine localMine) {
+
+        // gene --> gene.orthologue --> datasets
+        Map<String, Map<String, HomologueMapping>> localOrthologues = localMine.getOrthologues();
+
+        if (localOrthologues.isEmpty()) {
+            // no local orthologues, nothing to merge
+            return;
+        }
+
+        // list of organisms for which remote mine has genes.
+        Set<String> remoteGeneOrganisms = getOrganisms();
+
+        // does the local mine have orthologues for gene.organism in remote mine?
+        for (Map.Entry<String, Map<String, HomologueMapping>> entry : localOrthologues.entrySet()) {
+
+            // C. elegans
+            String localGeneOrganism = entry.getKey();
+            // C. elegans
+            if (remoteGeneOrganisms.contains(localGeneOrganism)) {
+                swap(localGeneOrganism, entry.getValue());
+            }
+        }
+    }
+
+    /**
+     * Swaps around the map to be used in the remote mine.  This is just done for easier lookups
+     * by the webapp.
+     *
+     *  Original map looks like this:
+     *
+     *      [A] --> [B]
+     *
+     *  A = gene in remote mine [geneOrganism]
+     *  B = gene in local mine  [homologueOrganism]
+     *
+     * The webapp code will have a bag of type [B].  We need to swap this around to what the webapp
+     * expects.  The goal is to convert the genes to type [A].
+     *
+     *      [B] --> [A]
+     *
+     */
+    private void swap(String geneOrganism, Map<String, HomologueMapping> mapping) {
+        for (Map.Entry<String, HomologueMapping> entry : mapping.entrySet()) {
+            String homologueOrganism = entry.getKey();
+            HomologueMapping mapCopy = new HomologueMapping(entry.getValue());
+            merge(homologueOrganism, newMap(geneOrganism, mapCopy));
+        }
     }
 
     /**
@@ -153,10 +227,9 @@ public class Mine
      * @param geneOrganism gene.organism
      * @param localOrthologues mapping from gene.homologue.organism --> datasets
      */
-    public void addLocalOrthologues(String geneOrganism,
-            Map<String, HomologueMapping> localOrthologues) {
+    private void merge(String geneOrganism, Map<String, HomologueMapping> localOrthologues) {
 
-        // what this mine has already
+        // what this mine has already for this organism
         Map<String, HomologueMapping> orthologues = geneToOrthologues.get(geneOrganism);
 
         // -- ADD ALL --
@@ -185,11 +258,68 @@ public class Mine
     }
 
     /**
-     * Test mine has gene.orthologues for organism.
-     * @param shortName name to test
-     * @return TRUE if this mine has orthologues for this organism
+     *
+     * @param organisms list of organisms in list
+     * @return mapping
      */
-    public boolean validOrganism(String shortName) {
-        return geneToOrthologues.containsKey(shortName);
+    public Map<String, HomologueMapping> getRelevantHomologues(Collection<String> organisms) {
+
+        // [gene -->] orthologue --> datasets
+        Map<String, HomologueMapping> homologuesForList = new HashMap<String, HomologueMapping>();
+
+        // get all gene --> homologue entries
+        for (Map.Entry<String, Map<String, HomologueMapping>> entry
+                : geneToOrthologues.entrySet()) {
+
+            // gene
+            String geneOrganismName = entry.getKey();
+            // homologue --> datasets
+            Map<String, HomologueMapping> orthologuesToDatasets = entry.getValue();
+
+            // gene.organism is in user's bag
+            if (organisms.contains(geneOrganismName)) {
+
+                // for every gene.homologue, add to list and add datasets
+                for (Map.Entry<String, HomologueMapping> orthologueEntry
+                        : orthologuesToDatasets.entrySet()) {
+
+                    // gene.orthologue.organism.name
+                    String orthologueOrganismName = orthologueEntry.getKey();
+                    // gene.orthologue.organism --> dataSets
+                    HomologueMapping homologueMapping = orthologueEntry.getValue();
+
+                    //  create list for display on JSP
+                    addHomologues(homologuesForList, orthologueOrganismName, homologueMapping);
+
+                }
+            }
+        }
+        return homologuesForList;
+    }
+
+    /* add homologues to map used on JSP to display to user*/
+    // TODO this method can be merged with merge() and OLM.addToMap
+    private static void addHomologues(Map<String, HomologueMapping> homologuesForList,
+            String orthologueOrganismName, HomologueMapping homologueMapping) {
+
+        // this mapping is used by the JSP to print out the homologues to the user
+        HomologueMapping mappingForThisList = homologuesForList.get(orthologueOrganismName);
+
+        if (mappingForThisList == null) {
+            mappingForThisList = new HomologueMapping(orthologueOrganismName);
+            homologuesForList.put(orthologueOrganismName, mappingForThisList);
+        }
+
+        // add datasets for display
+        mappingForThisList.addRemoteDataSets(homologueMapping.getRemoteDataSets());
+        mappingForThisList.addLocalDataSets(homologueMapping.getLocalDataSets());
+    }
+
+    private Map<String, HomologueMapping> newMap(String geneOrganism,
+            HomologueMapping newMapping) {
+        newMapping.setOrganism(geneOrganism);
+        Map<String, HomologueMapping> newMap = new HashMap();
+        newMap.put(geneOrganism, newMapping);
+        return newMap;
     }
 }

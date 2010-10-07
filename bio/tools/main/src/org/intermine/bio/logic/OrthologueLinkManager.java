@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -57,7 +58,7 @@ import org.intermine.util.PropertiesUtil;
  */
 public class OrthologueLinkManager
 {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static boolean cached = false;
     private static OrthologueLinkManager orthologueLinkManager = null;
     private static long lastCacheRefresh = 0;
@@ -137,16 +138,10 @@ public class OrthologueLinkManager
 
             if (StringUtils.isEmpty(newReleaseVersion)
                     && StringUtils.isEmpty(currentReleaseVersion)) {
-
-                // FIXME remove when 0.93 is released
-                // for now we are going to ignore the fact we didn't get a release version
-                // versioning was added in 0.93, which some don't have yet
-                currentReleaseVersion = mine.getName();
-
                 // didn't get a release version this time or last time
-//                String msg = "Unable to retrieve release version for " + mine.getName();
-//                LOG.error(msg);
-//                continue;
+                String msg = "Unable to retrieve release version for " + mine.getName();
+                LOG.error(msg);
+                continue;
             }
 
             // if release version is different
@@ -188,45 +183,33 @@ public class OrthologueLinkManager
 
         // query for which orthologues are available
         setOrthologues(mine);
-
-        // check if local mine has orthologues for genes in this remote mine
-        // has to be done last so we know which genes to check for
-        getLocalOrthologues(mine);
     }
 
     // loop through properties and get mines' names, URLs and logos
     private static Map<String, Mine> readConfig(InterMineAPI im, Properties webProperties,
             String localMineName) {
-
         mines = new HashMap<String, Mine>();
+        Properties props = PropertiesUtil.stripStart("intermines",
+                PropertiesUtil.getPropertiesStartingWith("intermines", webProperties));
 
-        Properties props = PropertiesUtil.getPropertiesStartingWith("intermines", webProperties);
-        Iterator<Object> propIter = props.keySet().iterator();
-        while (propIter.hasNext()) {
+        Enumeration<?> propNames = props.propertyNames();
 
-            // intermine.flymine.url
-            String key = (String) propIter.next();
-            String[] bits = key.split("[\\.]+");
+        while (propNames.hasMoreElements()) {
+            String mineId =  (String) propNames.nextElement();
+            mineId = mineId.substring(0, mineId.indexOf("."));
+            Properties mineProps = PropertiesUtil.stripStart(mineId,
+                    PropertiesUtil.getPropertiesStartingWith(mineId, props));
 
-            if (bits.length != 3) {
-                String msg = "InterMine configured incorrectly in web.properties.  Cannot generate "
-                    + " linkouts: " + key;
-                LOG.error(msg);
-                continue;
-            }
-
-            String mineId = bits[1];
-            String mineName = webProperties.getProperty("intermines." + mineId + ".name");
-            String url = webProperties.getProperty("intermines." + mineId + ".url");
-            String logo = webProperties.getProperty("intermines." + mineId + ".logo");
-            String organism
-                = webProperties.getProperty("intermines." + mineId + ".defaultOrganism");
-            String mapping = webProperties.getProperty("intermines." + mineId + ".defaultMapping");
+            String mineName = mineProps.getProperty("name");
+            String url = mineProps.getProperty("url");
+            String logo = mineProps.getProperty("logo");
+            String organism = mineProps.getProperty("defaultOrganism");
+            String mapping = mineProps.getProperty("defaultMapping");
 
             if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(url)
                     || StringUtils.isEmpty(logo)) {
                 String msg = "InterMine configured incorrectly in web.properties.  Cannot generate "
-                    + " linkouts: " + key;
+                    + " linkouts: " + mineId;
                 LOG.error(msg);
                 continue;
             }
@@ -363,44 +346,15 @@ public class OrthologueLinkManager
             String homologueOrganismName = (String) row.get(2);
 
             // return a mapping from homologue to datasets
-            HomologueMapping homologueMapping = getMapping(orthologues, geneOrganismName,
+            HomologueMapping homologueMapping = addToMap(orthologues, geneOrganismName,
                     homologueOrganismName);
 
             // add dataset for this gene.organism + gene.homologue.organism pair
             homologueMapping.addLocalDataSet(dataSet);
         }
-        localMine.setOrthologues(orthologues);
+        localMine.setOrthologues(orthologues, null);
     }
 
-    /*
-    * gene   --> homologue      -- > datasets
-    *
-    * D. rerio | H. sapiens        |   treefam
-    *          |                   |   inparanoid
-    *          | C. elegans        |   treefam
-    */
-    private static HomologueMapping getMapping(
-            Map<String, Map<String, HomologueMapping>> orthologues, String geneOrganismName,
-            String homologueOrganismName) {
-        // gene.organism --> gene.homologue.organism
-        Map<String, HomologueMapping> homologuesToDataSets = orthologues.get(geneOrganismName);
-
-        // if we haven't seen this gene.organism before
-        if (homologuesToDataSets == null) {
-            homologuesToDataSets = new HashMap<String, HomologueMapping>();
-            orthologues.put(geneOrganismName, homologuesToDataSets);
-        }
-
-        // homologue --> datasets
-        HomologueMapping homologueMapping = homologuesToDataSets.get(homologueOrganismName);
-
-        // if we haven't seen this gene.homologue.organism;
-        if (homologueMapping == null) {
-            homologueMapping = new HomologueMapping(homologueOrganismName);
-            homologuesToDataSets.put(homologueOrganismName, homologueMapping);
-        }
-        return homologueMapping;
-    }
 
     private static void setOrthologues(Mine mine) {
         URL url;
@@ -427,7 +381,7 @@ public class OrthologueLinkManager
                 String dataSet = bits[1];
                 String homologueOrganismName = bits[2];
 
-                HomologueMapping homologueMapping = getMapping(geneOrganismToOrthologues,
+                HomologueMapping homologueMapping = addToMap(geneOrganismToOrthologues,
                         geneOrganismName, homologueOrganismName);
 
                 // add dataset for this gene.organism + gene.homologue.organism pair
@@ -435,12 +389,12 @@ public class OrthologueLinkManager
             }
         } catch (MalformedURLException e) {
             LOG.info("Unable to access " + mine.getName() + " at " + webserviceURL);
-            return;
         } catch (IOException e) {
             LOG.info("Unable to access " + mine.getName() + " at " + webserviceURL);
-            return;
         }
-        mine.setOrthologues(geneOrganismToOrthologues);
+        // adds orthologues for this remote mine
+        // merging with any matching orthologues in the local mine
+        mine.setOrthologues(geneOrganismToOrthologues, localMine);
     }
 
     /**
@@ -456,8 +410,7 @@ public class OrthologueLinkManager
      * @param organismNames list of organisms from our bag
      * @return the list of valid mines for the given list
      */
-    public Map<Mine, Map<String, HomologueMapping>> getMines(
-            Collection<String> organismNames) {
+    public Map<Mine, Map<String, HomologueMapping>> getMines(Collection<String> organismNames) {
 
         // list of mines and orthologues for genes in our list
         // mines without relevant orthologues are discarded
@@ -467,98 +420,49 @@ public class OrthologueLinkManager
         // remote mines
         for (Mine mine : mines.values()) {
 
-            // gene --> orthologue [--> datasets]
-            Map<String, Map<String, HomologueMapping>> geneToOrthologues = mine.getOrthologues();
-
-            // [gene -->] orthologue --> datasets
-            Map<String, HomologueMapping> homologuesForList
-                = new HashMap<String, HomologueMapping>();
-
-            if (geneToOrthologues.isEmpty()) {
-                LOG.info(mine.getName() + " has no orthologues");
+            if (!mine.hasGenes()) {
+                LOG.info(mine.getName() + " has no genes");
                 continue;
             }
 
-            // get all gene --> homologue entries
-            for (Map.Entry<String, Map<String, HomologueMapping>> entry
-                    : geneToOrthologues.entrySet()) {
-
-                // gene
-                String geneOrganismName = entry.getKey();
-                // homologue --> datasets
-                Map<String, HomologueMapping> orthologuesToDatasets = entry.getValue();
-
-                // gene.organism is in user's bag
-                if (organismNames.contains(geneOrganismName)) {
-
-                    // for every gene.homologue, add to list and add datasets
-                    for (Map.Entry<String, HomologueMapping> orthologueEntry
-                            : orthologuesToDatasets.entrySet()) {
-
-                        // gene.orthologue.organism.name
-                        String orthologueOrganismName = orthologueEntry.getKey();
-                        // gene.orthologue.organism --> dataSets
-                        HomologueMapping homologueMapping = orthologueEntry.getValue();
-
-                        // create list for display on JSP
-                        addHomologues(homologuesForList, orthologueOrganismName, homologueMapping);
-                    }
-                }
-            }
+            // return all orthologues for bag.type()
+            Map<String, HomologueMapping> homologuesForList
+                = mine.getRelevantHomologues(organismNames);
 
             // only add to list if this mine has orthologues for genes in this list
-            if (!homologuesForList.isEmpty()) {
+            if (homologuesForList != null  && !homologuesForList.isEmpty()) {
                 filteredMines.put(mine, homologuesForList);
             }
         }
         return filteredMines;
     }
 
-    /* add homologues to map used on JSP to display to user.
-     *
-     * One organism may be a homologue to different organisms in this list, so combine datasets
-     */
-    private static void addHomologues(
-            Map<String, HomologueMapping> homologuesForList,
-            String orthologueOrganismName, HomologueMapping homologueMapping) {
+    /*
+    * gene   --> homologue      -- > datasets
+    *
+    * D. rerio | H. sapiens        |   treefam
+    *          |                   |   inparanoid
+    *          | C. elegans        |   treefam
+    */
+    private static HomologueMapping addToMap(Map<String, Map<String, HomologueMapping>>
+        orthologues, String geneOrganismName, String homologueOrganismName) {
+        // gene.organism --> gene.homologue.organism
+        Map<String, HomologueMapping> homologuesToDataSets = orthologues.get(geneOrganismName);
 
-        // this mapping is used by the JSP to print out the homologues to the user
-        HomologueMapping mappingForThisList = homologuesForList.get(orthologueOrganismName);
-
-        if (mappingForThisList == null) {
-            mappingForThisList = new HomologueMapping(orthologueOrganismName);
-            homologuesForList.put(orthologueOrganismName, mappingForThisList);
+        // if we haven't seen this gene.organism before
+        if (homologuesToDataSets == null) {
+            homologuesToDataSets = new HashMap<String, HomologueMapping>();
+            orthologues.put(geneOrganismName, homologuesToDataSets);
         }
 
-        // add datasets for display
-        mappingForThisList.addRemoteDataSets(homologueMapping.getRemoteDataSets());
-        mappingForThisList.addLocalDataSets(homologueMapping.getLocalDataSets());
-    }
+        // homologue --> datasets
+        HomologueMapping homologueMapping = homologuesToDataSets.get(homologueOrganismName);
 
-    /* for all the genes available in the remote mine, see if the local mine has orthologues
-     * NB this assumes the remote mine has its orthologues populated already
-     */
-    private static void getLocalOrthologues(Mine mine) {
-
-        // list of organisms for which local mine has genes.
-        Set<String> remoteGeneOrganisms = mine.getOrganisms();
-
-        // gene --> gene.orthologue --> datasets
-        Map<String, Map<String, HomologueMapping>> localOrthologues = localMine.getOrthologues();
-
-        if (localOrthologues.isEmpty()) {
-            // no local orthologues
-            return;
+        // if we haven't seen this gene.homologue.organism;
+        if (homologueMapping == null) {
+            homologueMapping = new HomologueMapping(homologueOrganismName);
+            homologuesToDataSets.put(homologueOrganismName, homologueMapping);
         }
-
-        // does the local mine have orthologues for gene.organism in remote mine?
-        for (Map.Entry<String, Map<String, HomologueMapping>> entry : localOrthologues.entrySet()) {
-            String localGeneOrganism = entry.getKey();
-            if (remoteGeneOrganisms.contains(localGeneOrganism)) {
-                Map<String, HomologueMapping> orthologueToDatasets = entry.getValue();
-                mine.addLocalOrthologues(localGeneOrganism, orthologueToDatasets);
-            }
-        }
-        return;
+        return homologueMapping;
     }
 }
