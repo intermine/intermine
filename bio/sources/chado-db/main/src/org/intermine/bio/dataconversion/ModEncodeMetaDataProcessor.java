@@ -402,7 +402,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private String createDataIdsTempTable(Connection connection, Integer chadoExperimentId,
             List<Integer> dataIds) throws SQLException {
-        String tableName = DATA_IDS_TABLE_NAME + "_" + chadoExperimentId;
+
+        // the batch writer system doesn't like to have duplicate named tables
+        String tableName = DATA_IDS_TABLE_NAME + "_" + chadoExperimentId + "_"
+            + System.currentTimeMillis();
 
         long bT = System.currentTimeMillis();
         String query =
@@ -411,41 +414,38 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("executing: " + query);
         stmt.execute(query);
 
-        BatchWriterPostgresCopyImpl batchWriter = new BatchWriterPostgresCopyImpl();
-        Batch batch = new Batch(batchWriter);
+        try {
+            BatchWriterPostgresCopyImpl batchWriter = new BatchWriterPostgresCopyImpl();
+            Batch batch = new Batch(batchWriter);
 
-        // TODO this is for a debug message, just need to make sure data ids are unique
-        HashSet<Integer> uniqueDataIds = new HashSet<Integer>();
+            HashSet<Integer> uniqueDataIds = new HashSet<Integer>(dataIds);
 
-        for (Integer dataId : dataIds) {
-            if (uniqueDataIds.contains(dataId)) {
-                LOG.warn("Ignoring a duplicate data id: " + dataId + " for submission: "
-                        + dccIdMap.get(chadoExperimentId));
-            } else {
-                uniqueDataIds.add(dataId);
-                LOG.warn("Adding data id: " + dataId + " for submission: "
-                        + dccIdMap.get(chadoExperimentId));
-                batch.addRow(connection, tableName, dataId, new String[] {"data_id"},
-                        new Object[] {dataId});
+            String[] colNames = new String[] {"data_id"};
+            for (Integer dataId : uniqueDataIds) {
+                batch.addRow(connection, tableName, dataId, colNames, new Object[] {dataId});
             }
+            batch.flush(connection);
+            batch.close(connection);
+
+            LOG.info("CREATED DATA IDS TABLE: " + tableName + " with " + uniqueDataIds.size()
+                    + " data ids in " + (System.currentTimeMillis() - bT) + "ms");
+
+            String idIndexQuery = "CREATE INDEX " + tableName + "_data_id_index ON "
+                + tableName + "(data_id)";
+            LOG.info("DATA IDS executing: " + idIndexQuery);
+            long bT1 = System.currentTimeMillis();
+            stmt.execute(idIndexQuery);
+            LOG.info("DATA IDS TIME creating INDEX: " + (System.currentTimeMillis() - bT1) + "ms");
+            String analyze = "ANALYZE " + tableName;
+            LOG.info("executing: " + analyze);
+            long bT2 = System.currentTimeMillis();
+            stmt.execute(analyze);
+            LOG.info("DATA IDS TIME analyzing: " + (System.currentTimeMillis() - bT2) + "ms");
+        } finally {
+            // the batch writer system doesn't like to have duplicate named tables
+            query = "DROP TABLE " + tableName;
+            stmt.execute(query);
         }
-        batch.flush(connection);
-        batch.close(connection);
-        LOG.info("CREATED DATA IDS TABLE: " + tableName + " with "
-                + uniqueDataIds.size() + " data ids in " +(System.currentTimeMillis() - bT) + "ms");
-
-        String idIndexQuery = "CREATE INDEX " + tableName + "_data_id_index ON "
-            + tableName + "(data_id)";
-        LOG.info("DATA IDS executing: " + idIndexQuery);
-        long bT1 = System.currentTimeMillis();
-        stmt.execute(idIndexQuery);
-        LOG.info("DATA IDS TIME feature creating INDEX: " + (System.currentTimeMillis() - bT1));
-        String analyze = "ANALYZE " + tableName;
-        LOG.info("executing: " + analyze);
-        long bT2 = System.currentTimeMillis();
-        stmt.execute(analyze);
-        LOG.info("DATA IDS TIME  analyzing: " + (System.currentTimeMillis() - bT2));
-
         return tableName;
     }
 
