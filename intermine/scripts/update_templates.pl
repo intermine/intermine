@@ -44,7 +44,11 @@ $log->add(
         newline  => 1,
     }
 );
-
+sub usage {
+    print 
+"Please define the keys 'newmodelfile' and 'oldserviceurl' in 'resources/config'\n";
+    exit;
+}
 for ($old_service_url, $model_file,) {
     usage() unless $_;
 }
@@ -58,14 +62,14 @@ my $updater = Updater->new(
     changes => $changes,
 );
 
+# And now download, and update, and print out the templates
 print '<templates>';
 for my $t ($service->get_templates) {
     my $xml = $t->source_string;
+    $t->suspend_validation;
     $t->{model} = $model;
     my ($updated_t, $is_broken) = $updater->update_query($t, $old_service_url);
-    unless ($is_broken) {
-        $xml = $updated_t->to_xml;
-    }
+    $xml = $updated_t->to_xml unless ($is_broken);
     print $xml;
 }
 print '</templates>';
