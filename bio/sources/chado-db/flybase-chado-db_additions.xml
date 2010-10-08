@@ -49,4 +49,9 @@
     <attribute name="stage" type="java.lang.String"/>
     <reference name="tissueSource" referenced-type="AnatomyTerm" />
   </class>
+  <!-- postprocess needs this -->
+      <class name="MRNA" is-interface="true">
+        <reference name="fivePrimeUTR" referenced-type="FivePrimeUTR"/>
+        <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR"/>
+      </class>
 </classes>
