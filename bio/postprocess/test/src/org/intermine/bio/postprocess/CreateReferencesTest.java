@@ -18,6 +18,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.FivePrimeUTR;
@@ -25,8 +26,6 @@ import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.MRNA;
 import org.intermine.model.bio.ThreePrimeUTR;
-import org.intermine.model.bio.Transcript;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
@@ -88,8 +87,7 @@ public class CreateReferencesTest extends TestCase {
 
     public void testInsertReferenceField() throws Exception {
         CreateReferences cr = new CreateReferences(osw);
-        cr.insertReferenceField(Gene.class, "transcripts", Transcript.class, "exons",
-                Exon.class, "gene");
+        cr.insertReferenceField("Gene", "transcripts", "Transcript", "exons", "Exon", "gene");
 
         Query q = new Query();
         QueryClass qcGene = new QueryClass(Gene.class);
@@ -118,8 +116,8 @@ public class CreateReferencesTest extends TestCase {
     public void testInsertCollectionField() throws Exception {
         CreateReferences cr = new CreateReferences(osw);
 
-        cr.insertCollectionField(Gene.class, "locations", Location.class, "locatedOn",
-                Chromosome.class, "locatedFeatures", false);
+        cr.insertCollectionField("Gene", "locations", "Location", "locatedOn",
+                "Chromosome", "locatedFeatures", false);
         Query q = new Query();
         QueryClass qcChromosome = new QueryClass(Chromosome.class);
         q.addFrom(qcChromosome);

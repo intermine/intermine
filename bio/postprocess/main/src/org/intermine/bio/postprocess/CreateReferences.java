@@ -10,6 +10,7 @@ package org.intermine.bio.postprocess;
  *
  */
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -19,18 +20,8 @@ import org.intermine.bio.util.Constants;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.bio.CDS;
-import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.ChromosomeBand;
-import org.intermine.model.bio.Exon;
-import org.intermine.model.bio.FivePrimeUTR;
-import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.Location;
-import org.intermine.model.bio.MRNA;
-import org.intermine.model.bio.ThreePrimeUTR;
-import org.intermine.model.bio.Transcript;
-import org.intermine.model.bio.UTR;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
@@ -45,6 +36,8 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.sql.DatabaseUtil;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.StringUtil;
 
 /**
  * Fill in additional references/collections in genomic model
@@ -76,26 +69,19 @@ public class CreateReferences
 
         LOG.info("insertReferences stage 1");
         // fill in collections on Chromosome
-        insertCollectionField(ChromosomeBand.class, "locations", Location.class, "locatedOn",
-                              Chromosome.class, "chromosomeBands", false);
+        insertCollectionField("ChromosomeBand", "locations", "Location", "locatedOn",
+                "Chromosome", "chromosomeBands", false);
 
         LOG.info("insertReferences stage 2");
         // Exon.gene / Gene.exons
-        insertReferenceField(Gene.class, "transcripts", Transcript.class, "exons",
-                Exon.class, "gene");
+        insertReferenceField("Gene", "transcripts", "Transcript", "exons", "Exon", "gene");
         LOG.info("insertReferences stage 3");
         // UTR.gene / Gene.UTRs
-        insertReferenceField(Gene.class, "transcripts", Transcript.class, "UTRs", UTR.class,
-                "gene");
+        insertReferenceField("Gene", "transcripts", "Transcript", "UTRs", "UTR", "gene");
 
         LOG.info("insertReferences stage 4");
         // CDS.gene / Gene.CDSs
-        insertReferenceField(Gene.class, "transcripts", Transcript.class, "CDSs", CDS.class,
-                "gene");
-
-        LOG.info("insertReferences stage 5");
-//        insertGeneAnnotationReferences();
-
+        insertReferenceField("Gene", "transcripts", "Transcript", "CDSs", "CDS", "gene");
     }
 
     /**
@@ -108,34 +94,55 @@ public class CreateReferences
      *
      * in overview we are doing:
      * BioEntity1 -&gt; BioEntity2 -&gt; BioEntity3   ==&gt;   BioEntitiy1 -&gt; BioEntity3
-     * @param sourceClass the first class in the query
+     * @param sourceClsName the first class in the query
      * @param sourceClassFieldName the field in the sourceClass which should contain the
      * connectingClass
-     * @param connectingClass the class referred to by sourceClass.sourceFieldName
+     * @param connectingClsName the class referred to by sourceClass.sourceFieldName
      * @param connectingClassFieldName the field in connectingClass which should contain
      * destinationClass
-     * @param destinationClass the class referred to by
+     * @param destinationClsName the class referred to by
      * connectingClass.connectingClassFieldName
      * @param createFieldName the reference field in the destinationClass - the
      * collection to create/set
      * @throws Exception if anything goes wrong
      */
-    protected void insertReferenceField(Class<? extends InterMineObject> sourceClass,
-            String sourceClassFieldName, Class<? extends InterMineObject> connectingClass,
-            String connectingClassFieldName, Class<? extends InterMineObject> destinationClass,
+    protected void insertReferenceField(String sourceClsName,
+            String sourceClassFieldName, String connectingClsName,
+            String connectingClassFieldName, String destinationClsName,
             String createFieldName) throws Exception {
-        LOG.info("Beginning insertReferences("
-                 + sourceClass.getName() + ", "
-                 + sourceClassFieldName + ", "
-                 + connectingClass.getName() + ", "
-                 + connectingClassFieldName + ","
-                 + destinationClass.getName() + ", "
-                 + createFieldName + ")");
+
+        String insertMessage = "insertReferences("
+                + sourceClsName + ", "
+                + sourceClassFieldName + ", "
+                + connectingClsName + ", "
+                + connectingClassFieldName + ","
+                + destinationClsName + ", "
+                + createFieldName + ")";
+
+        Set<String> classesNotInModel = new HashSet<String>(
+                Arrays.asList(new String[] {sourceClsName, connectingClsName, destinationClsName}));
+        Set<String> tmpClasses = new HashSet<String>(classesNotInModel);
+        for (String clsName : tmpClasses) {
+            if (model.hasClassDescriptor(clsName)) {
+                classesNotInModel.remove(clsName);
+            }
+        }
+        if (!classesNotInModel.isEmpty()) {
+            LOG.warn("Not performing " + insertMessage + "  Because classes don't exist in model"
+                    + StringUtil.prettyList(classesNotInModel));
+            return;
+        }
+
+        LOG.info("Beginning " + insertMessage);
         long startTime = System.currentTimeMillis();
 
         Iterator<ResultsRow<InterMineObject>> resIter = PostProcessUtil.findConnectingClasses(
-                osw.getObjectStore(), sourceClass, sourceClassFieldName, connectingClass,
-                connectingClassFieldName, destinationClass, true);
+                osw.getObjectStore(),
+                model.getClassDescriptorByName(sourceClsName).getType(),
+                sourceClassFieldName,
+                model.getClassDescriptorByName(connectingClsName).getType(),
+                connectingClassFieldName,
+                model.getClassDescriptorByName(destinationClsName).getType(), true);
 
         // results will be sourceClass ; destClass (ordered by sourceClass)
         osw.beginTransaction();
@@ -153,9 +160,9 @@ public class CreateReferences
                 tempObject.setFieldValue(createFieldName, thisSourceObject);
                 count++;
                 if (count % 10000 == 0) {
-                    LOG.info("Created " + count + " references in " + destinationClass.getName()
-                             + " to " + sourceClass.getName()
-                             + " via " + connectingClass.getName());
+                    LOG.info("Created " + count + " references in " + destinationClsName
+                             + " to " + sourceClsName
+                             + " via " + connectingClsName);
                 }
                 osw.store(tempObject);
             } catch (IllegalAccessException e) {
@@ -164,15 +171,15 @@ public class CreateReferences
             }
         }
 
-        LOG.info("Finished: created " + count + " references in " + destinationClass.getName()
-                 + " to " + sourceClass.getName() + " via " + connectingClass.getName()
+        LOG.info("Finished: created " + count + " references in " + destinationClsName
+                 + " to " + sourceClsName + " via " + connectingClsName
                  + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
         osw.commitTransaction();
 
         // now ANALYSE tables relation to class that has been altered - may be rows added
         // to indirection tables
         if (osw instanceof ObjectStoreWriterInterMineImpl) {
-            ClassDescriptor cld = model.getClassDescriptorByName(destinationClass.getName());
+            ClassDescriptor cld = model.getClassDescriptorByName(destinationClsName);
             DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
         }
     }
@@ -187,13 +194,13 @@ public class CreateReferences
      *   ORDER BY gene
      * and then set protected gene.protein (if created
      * BioEntity1 -&gt; BioEntity2 -&gt; BioEntity3   ==&gt;   BioEntity1 -&gt; BioEntity3
-     * @param firstClass the first class in the query
+     * @param firstClsName the first class in the query
      * @param firstClassFieldName the field in the firstClass which should contain the
      * connectingClass
-     * @param connectingClass the class referred to by firstClass.sourceFieldName
+     * @param connectingClsName the class referred to by firstClass.sourceFieldName
      * @param connectingClassFieldName the field in connectingClass which should contain
      * secondClass
-     * @param secondClass the class referred to by
+     * @param secondClsName the class referred to by
      * connectingClass.connectingClassFieldName
      * @param createFieldName the collection field in the secondClass - the
      * collection to create/set
@@ -201,21 +208,37 @@ public class CreateReferences
      * create in secondClass
      * @throws Exception if anything goes wrong
      */
-    protected void insertCollectionField(Class<? extends InterMineObject> firstClass,
-            String firstClassFieldName, Class<? extends InterMineObject> connectingClass,
-            String connectingClassFieldName, Class<? extends InterMineObject> secondClass,
+    protected void insertCollectionField(String firstClsName,
+            String firstClassFieldName, String connectingClsName,
+            String connectingClassFieldName, String secondClsName,
             String createFieldName, boolean createInFirstClass) throws Exception {
         InterMineObject lastDestObject = null;
         Set<InterMineObject> newCollection = new HashSet<InterMineObject>();
 
-        LOG.info("Beginning insertCollectionField("
-                 + firstClass.getName() + ", "
-                 + firstClassFieldName + ", "
-                 + connectingClass.getName() + ", "
-                 + connectingClassFieldName + ","
-                 + secondClass.getName() + ", "
-                 + createFieldName + ", "
-                 + createInFirstClass + ")");
+        String insertMessage = "insertCollectionField("
+            + firstClsName + ", "
+            + firstClassFieldName + ", "
+            + connectingClsName + ", "
+            + connectingClassFieldName + ","
+            + secondClsName + ", "
+            + createFieldName + ", "
+            + createInFirstClass + ")";
+
+        Set<String> classesNotInModel = new HashSet<String>(
+                Arrays.asList(new String[] {firstClsName, connectingClsName, secondClsName}));
+        Set<String> tmpClasses = new HashSet<String>(classesNotInModel);
+        for (String clsName : tmpClasses) {
+            if (model.hasClassDescriptor(clsName)) {
+                classesNotInModel.remove(clsName);
+            }
+        }
+        if (!classesNotInModel.isEmpty()) {
+            LOG.warn("Not performing " + insertMessage + "  Because classes don't exist in model"
+                    + StringUtil.prettyList(classesNotInModel));
+            return;
+        }
+
+        LOG.info("Beginning " + insertMessage);
         long startTime = System.currentTimeMillis();
 
         // if this is a many to many collection we can use ObjectStore.addToCollection which will
@@ -223,15 +246,14 @@ public class CreateReferences
         boolean manyToMany = false;
         ClassDescriptor destCld;
         if (createInFirstClass) {
-            destCld = model.getClassDescriptorByName(firstClass.getName());
+            destCld = model.getClassDescriptorByName(firstClsName);
         } else {
-            destCld = model.getClassDescriptorByName(secondClass.getName());
+            destCld = model.getClassDescriptorByName(secondClsName);
         }
         CollectionDescriptor col = destCld.getCollectionDescriptorByName(createFieldName);
         if (col == null) {
             String msg = "Error running post-process `create-references` for `" + createFieldName
-                + "` since this collection doesn't exist in the model.  Remove this post-process "
-                + " from the project.xml file to avoid this error.";
+                + "` since this collection doesn't exist in the model.";
             LOG.error(msg);
             return;
         }
@@ -241,8 +263,12 @@ public class CreateReferences
         }
 
         Iterator<ResultsRow<InterMineObject>> resIter = PostProcessUtil.findConnectingClasses(
-                osw.getObjectStore(), firstClass, firstClassFieldName, connectingClass,
-                connectingClassFieldName, secondClass, createInFirstClass);
+                osw.getObjectStore(),
+                model.getClassDescriptorByName(firstClsName).getType(),
+                firstClassFieldName,
+                model.getClassDescriptorByName(connectingClsName).getType(),
+                connectingClassFieldName,
+                model.getClassDescriptorByName(secondClsName).getType(), createInFirstClass);
 
         // results will be firstClass ; destClass (ordered by firstClass)
         osw.beginTransaction();
@@ -301,15 +327,15 @@ public class CreateReferences
             count += newCollection.size();
             osw.store(tempObject);
         }
-        LOG.info("Finished: created " + count + " references in " + secondClass.getName() + " to "
-                 + firstClass.getName() + " via " + connectingClass.getName()
+        LOG.info("Finished: created " + count + " references in " + secondClsName + " to "
+                 + firstClsName + " via " + connectingClsName
                  + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
         osw.commitTransaction();
 
         // now ANALYSE tables relation to class that has been altered - may be rows added
         // to indirection tables
         if (osw instanceof ObjectStoreWriterInterMineImpl) {
-            ClassDescriptor cld = model.getClassDescriptorByName(secondClass.getName());
+            ClassDescriptor cld = model.getClassDescriptorByName(secondClsName);
             DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
         }
     }
@@ -326,12 +352,12 @@ public class CreateReferences
         Query q = new Query();
         q.setDistinct(false);
 
-        QueryClass qcMRNA = new QueryClass(MRNA.class);
+        QueryClass qcMRNA = new QueryClass(model.getClassDescriptorByName("MRNA").getType());
         q.addFrom(qcMRNA);
         q.addToSelect(qcMRNA);
         q.addToOrderBy(qcMRNA);
 
-        QueryClass qcUTR = new QueryClass(UTR.class);
+        QueryClass qcUTR = new QueryClass(model.getClassDescriptorByName("UTR").getType());
         q.addFrom(qcUTR);
         q.addToSelect(qcUTR);
         q.addToOrderBy(qcUTR);
@@ -361,22 +387,25 @@ public class CreateReferences
         Results res = os.execute(q, 500, true, true, true);
 
         int count = 0;
-        MRNA lastMRNA = null;
+        InterMineObject lastMRNA = null;
 
-        FivePrimeUTR fivePrimeUTR = null;
-        ThreePrimeUTR threePrimeUTR = null;
+        InterMineObject fivePrimeUTR = null;
+        InterMineObject threePrimeUTR = null;
 
         osw.beginTransaction();
+
+        Class<? extends FastPathObject> fivePrimeUTRCls =
+            model.getClassDescriptorByName("FivePrimeUTR").getType();
 
         Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
             ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
-            MRNA mrna = (MRNA) rr.get(0);
-            UTR utr = (UTR) rr.get(1);
+            InterMineObject mrna = (InterMineObject) rr.get(0);
+            InterMineObject utr = (InterMineObject) rr.get(1);
 
             if (lastMRNA != null && !mrna.getId().equals(lastMRNA.getId())) {
                 // clone so we don't change the ObjectStore cache
-                MRNA tempMRNA = PostProcessUtil.cloneInterMineObject(lastMRNA);
+                InterMineObject tempMRNA = PostProcessUtil.cloneInterMineObject(lastMRNA);
                 if (fivePrimeUTR != null) {
                     tempMRNA.setFieldValue("fivePrimeUTR", fivePrimeUTR);
                     fivePrimeUTR = null;
@@ -389,10 +418,10 @@ public class CreateReferences
                 count++;
             }
 
-            if (utr instanceof FivePrimeUTR) {
-                fivePrimeUTR = (FivePrimeUTR) utr;
+            if (DynamicUtil.isInstance(utr, fivePrimeUTRCls)) {
+                fivePrimeUTR = utr;
             } else {
-                threePrimeUTR = (ThreePrimeUTR) utr;
+                threePrimeUTR = utr;
             }
 
             lastMRNA = mrna;
@@ -400,7 +429,7 @@ public class CreateReferences
 
         if (lastMRNA != null) {
             // clone so we don't change the ObjectStore cache
-            MRNA tempMRNA = PostProcessUtil.cloneInterMineObject(lastMRNA);
+            InterMineObject tempMRNA = PostProcessUtil.cloneInterMineObject(lastMRNA);
             tempMRNA.setFieldValue("fivePrimeUTR", fivePrimeUTR);
             tempMRNA.setFieldValue("threePrimeUTR", threePrimeUTR);
             osw.store(tempMRNA);
@@ -414,7 +443,7 @@ public class CreateReferences
         // now ANALYSE tables relating to class that has been altered - may be rows added
         // to indirection tables
         if (osw instanceof ObjectStoreWriterInterMineImpl) {
-            ClassDescriptor cld = model.getClassDescriptorByName(MRNA.class.getName());
+            ClassDescriptor cld = model.getClassDescriptorByName("MRNA");
             DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
         }
     }

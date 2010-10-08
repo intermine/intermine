@@ -20,14 +20,16 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.bio.util.BioQueries;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.IntergenicRegion;
 import org.intermine.model.bio.Location;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Synonym;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -47,6 +49,7 @@ public class IntergenicRegionUtil
     private ObjectStore os;
     private DataSet dataSet;
     private DataSource dataSource;
+    private static final Logger LOG = Logger.getLogger(IntergenicRegionUtil.class);
 
     /**
      * Create a new IntergenicRegionUtil object that will operate on the given
@@ -71,8 +74,17 @@ public class IntergenicRegionUtil
      * Create IntergenicRegion objects
      *
      * @throws ObjectStoreException if there is an ObjectStore problem
+     * @throws IllegalAccessException if a field is missing from the model
      */
-    public void createIntergenicRegionFeatures() throws ObjectStoreException {
+    public void createIntergenicRegionFeatures()
+        throws ObjectStoreException, IllegalAccessException {
+
+        if (!os.getModel().hasClassDescriptor("IntergenicRegion")) {
+            LOG.error("IntergenicRegionUtil was called to create IntergenicRegion features but "
+                    + " IntegergenicRegion does not in the data model");
+            return;
+        }
+
         Results results = BioQueries.findLocationAndObjects(os, Chromosome.class, Gene.class, false,
                 false, false, 1000);
         dataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
@@ -129,13 +141,13 @@ public class IntergenicRegionUtil
      * Store the objects returned by createIntergenicRegionFeatures().
      */
     private void storeItergenicRegions(ObjectStoreWriter objectStoreWriter,
-            Iterator<?> irIter) throws ObjectStoreException {
+            Iterator<?> irIter) throws ObjectStoreException, IllegalAccessException {
         while (irIter.hasNext()) {
-            IntergenicRegion ir = (IntergenicRegion) irIter.next();
+            SequenceFeature ir = (SequenceFeature) irIter.next();
             objectStoreWriter.store(ir);
             objectStoreWriter.store(ir.getChromosomeLocation());
             objectStoreWriter.store(ir.getSynonyms().iterator().next());
-            Set<Gene> adjacentGenes = ir.getAdjacentGenes();
+            Set<Gene> adjacentGenes = (Set<Gene>) ir.getFieldValue("adjacentGenes");
             Iterator<?> adjacentGenesIter = adjacentGenes.iterator();
             while (adjacentGenesIter.hasNext()) {
                 objectStoreWriter.store(adjacentGenesIter.next());
@@ -212,8 +224,10 @@ public class IntergenicRegionUtil
                 int newLocStart = nextIntergenicStart;
                 int newLocEnd = intergenicEnd;
 
-                IntergenicRegion intergenicRegion = (IntergenicRegion) DynamicUtil
-                .createObject(Collections.singleton(IntergenicRegion.class));
+                Class<? extends FastPathObject> igCls =
+                    os.getModel().getClassDescriptorByName("IntergenicRegion").getType();
+                SequenceFeature intergenicRegion = (SequenceFeature) DynamicUtil
+                .createObject(Collections.singleton(igCls));
                 Location location = (Location) DynamicUtil.createObject(
                         Collections.singleton(Location.class));
                 Synonym synonym = (Synonym) DynamicUtil
@@ -254,9 +268,11 @@ public class IntergenicRegionUtil
                         }
                         if (strand != null) {
                             if ("1".equals(strand)) {
-                                nextGene.setUpstreamIntergenicRegion(intergenicRegion);
+                                nextGene.setFieldValue("upstreamIntergenicRegion",
+                                        intergenicRegion);
                             } else {
-                                nextGene.setDownstreamIntergenicRegion(intergenicRegion);
+                                nextGene.setFieldValue("downstreamIntergenicRegion",
+                                        intergenicRegion);
                             }
                         }
                         adjacentGenes.add(nextGene);
@@ -275,16 +291,18 @@ public class IntergenicRegionUtil
                         }
                         if (strand != null) {
                             if ("1".equals(strand)) {
-                                prevGene.setDownstreamIntergenicRegion(intergenicRegion);
+                                prevGene.setFieldValue("downstreamIntergenicRegion",
+                                        intergenicRegion);
                             } else {
-                                prevGene.setUpstreamIntergenicRegion(intergenicRegion);
+                                prevGene.setFieldValue("upstreamIntergenicRegion",
+                                        intergenicRegion);
                             }
                         }
                         adjacentGenes.add(prevGene);
                     }
                 }
                 synonym.setValue(intergenicRegion.getPrimaryIdentifier());
-                intergenicRegion.setAdjacentGenes(adjacentGenes);
+                intergenicRegion.setFieldValue("adjacentGenes", adjacentGenes);
                 return intergenicRegion;
             }
 

@@ -18,15 +18,12 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.ClobAccessReverseComplement;
 import org.intermine.bio.util.Constants;
-import org.intermine.model.bio.CDS;
+import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.ChromosomeBand;
-import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Sequence;
 import org.intermine.model.bio.SequenceFeature;
-import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -60,6 +57,7 @@ import org.intermine.util.DynamicUtil;
 public class TransferSequences
 {
     protected ObjectStoreWriter osw;
+    private Model model;
     private static final Logger LOG = Logger.getLogger(TransferSequences.class);
 
     /**
@@ -68,6 +66,7 @@ public class TransferSequences
      */
     public TransferSequences (ObjectStoreWriter osw) {
         this.osw = osw;
+        this.model = osw.getModel();
     }
 
     private void storeNewSequence(SequenceFeature feature, ClobAccess sequenceString)
@@ -188,15 +187,15 @@ public class TransferSequences
 
             try {
 
-                if (feature instanceof ChromosomeBand) {
+                if (PostProcessUtil.isInstance(model, feature, "ChromosomeBand")) {
                     continue;
                 }
 
-                if (feature instanceof Transcript) {
+                if (PostProcessUtil.isInstance(model, feature, "Transcript")) {
                     continue;
                 }
 
-                if (feature instanceof CDS) {
+                if (PostProcessUtil.isInstance(model, feature, "CDS")) {
                     continue;
                 }
 
@@ -268,21 +267,6 @@ public class TransferSequences
             LOG.warn("SequenceFeature has negative coordinate, ignoring Location: "
                       + locationOnChr.getId() + "  LSF id: " + locationOnChr.getFeature());
             return null;
-
-            // Do we really want an exception?  Not much we can do about it.  (rns 22/10/06)
-// TODO XXX FIXME - uncomment this
-//             throw new RuntimeException("in TransferSequences.getSubSequence(): locationOnChr "
-//                                        + locationOnChr
-//                                        + "\n  startPos: " + startPos + " endPos " + endPos
-//                                        + "\n chromosomeSequence.substr(0,1000) " +
-//                                        chromosomeSequenceString.substring(0,1000)
-//                                        + "\n location.getObject() "
-//                                        + locationOnChr.getObject().toString()
-//                                        + " location.getSubject() " +
-//                                        locationOnChr.getSubject().toString() + " "
-//                                        + "\n location.getSubject().getId() " +
-//                                        locationOnChr.getSubject().getId() +
-//                                        "\n location.getObject().getId() ");
         }
 
         if (endPos > chromosomeSequenceString.length()) {
@@ -324,12 +308,13 @@ public class TransferSequences
         Query q = new Query();
         q.setDistinct(false);
 
-        QueryClass qcTranscript = new QueryClass(Transcript.class);
+        QueryClass qcTranscript =
+            new QueryClass(model.getClassDescriptorByName("Transcript").getType());
         q.addFrom(qcTranscript);
         q.addToSelect(qcTranscript);
         q.addToOrderBy(qcTranscript);
 
-        QueryClass qcExon = new QueryClass(Exon.class);
+        QueryClass qcExon = new QueryClass(model.getClassDescriptorByName("Exon").getType());
         q.addFrom(qcExon);
         q.addToSelect(qcExon);
 
@@ -379,14 +364,14 @@ public class TransferSequences
 
         Iterator<?> resIter = res.iterator();
 
-        Transcript currentTranscript = null;
+        SequenceFeature currentTranscript = null;
         StringBuffer currentTranscriptBases = new StringBuffer();
 
         long start = System.currentTimeMillis();
         int i = 0;
         while (resIter.hasNext()) {
             ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
-            Transcript transcript =  (Transcript) rr.get(0);
+            SequenceFeature transcript =  (SequenceFeature) rr.get(0);
 
             if (currentTranscript == null || !transcript.equals(currentTranscript)) {
                 if (currentTranscript != null) {
