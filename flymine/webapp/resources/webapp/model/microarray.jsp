@@ -120,22 +120,8 @@
           <li>
             <im:querylink text="All BDGP in situ results for <i>D. melanogaster</i> genes " skipBuilder="true">
 <query name="" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.mRNAExpressionResults.stageRange Gene.mRNAExpressionResults.expressed Gene.mRNAExpressionResults.mRNAExpressionTerms.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Gene.mRNAExpressionResults" type="MRNAExpressionResult">
-  </node>
-  <node path="Gene.mRNAExpressionResults.dataSet" type="DataSet">
-  </node>
-  <node path="Gene.mRNAExpressionResults.dataSet.name" type="String">
-    <constraint op="=" value="BDGP in situ data set" description="" identifier="" code="B">
-    </constraint>
-  </node>
+  <constraint path="Gene.organism.name" code="A" op="=" value="Drosophila melanogaster"/>
+  <constraint path="Gene.dataSets.name" code="B" op="=" value="BDGP in situ data set"/>
 </query>
             </im:querylink>
           </li>
@@ -143,28 +129,9 @@
           <li>
             <im:querylink text="All FlyAtlas results for <i>D. melanogaster</i> genes " skipBuilder="true">
 <query name="" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.microArrayResults.material.primaryIdentifier Gene.microArrayResults.assays.name Gene.microArrayResults.mRNASignal Gene.microArrayResults.mRNASignalSEM Gene.microArrayResults.presentCall Gene.microArrayResults.enrichment Gene.microArrayResults.affyCall" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
-  <pathDescription pathString="Gene.probeSets" description="Probe">
-  </pathDescription>
-  <pathDescription pathString="Gene.microArrayResults" description="Microarray result">
-  </pathDescription>
-  <pathDescription pathString="Gene.microArrayResults.assays" description="Microarray assay">
-  </pathDescription>
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="B">
-    </constraint>
-  </node>
-  <node path="Gene.microArrayResults" type="FlyAtlasResult">
-  </node>
-  <node path="Gene.microArrayResults.dataSets" type="DataSet">
-  </node>
-  <node path="Gene.microArrayResults.dataSets.name" type="String">
-    <constraint op="=" value="FlyAtlas" description="" identifier="" code="A">
-    </constraint>
-  </node>
+  <constraint path="Gene.organism.name" code="A" op="=" value="Drosophila melanogaster"/>
+  <constraint path="Gene.microArrayResults.dataSets.name" code="B" op="=" value="FlyAtlas"/>
+  <constraint path="Gene.microArrayResults" type="FlyAtlasResult"/>
 </query>
             </im:querylink>
           </li>
@@ -173,50 +140,18 @@
           <li>
             <im:querylink text="All Fly-FISH results for <i>D. melanogaster</i> genes " skipBuilder="true">
 <query name="" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.mRNAExpressionResults.stageRange Gene.mRNAExpressionResults.expressed Gene.mRNAExpressionResults.mRNAExpressionTerms.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
-  <pathDescription pathString="Gene.probeSets" description="Probe">
-  </pathDescription>
-  <pathDescription pathString="Gene.mRNAExpressionResults" description="mRNA expression">
-  </pathDescription>
-  <pathDescription pathString="Gene.microArrayResults" description="Microarray result">
-  </pathDescription>
-  <pathDescription pathString="Gene.microArrayResults.assays" description="Microarray assay">
-  </pathDescription>
-  <pathDescription pathString="Gene.mRNAExpressionResults.mRNAExpressionTerms" description="mRNA expression term">
-  </pathDescription>
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="B">
-    </constraint>
-  </node>
-  <node path="Gene.mRNAExpressionResults" type="MRNAExpressionResult">
-  </node>
-  <node path="Gene.mRNAExpressionResults.dataSet" type="DataSet">
-  </node>
-  <node path="Gene.mRNAExpressionResults.dataSet.name" type="String">
-    <constraint op="=" value="fly-Fish data set" description="" identifier="" code="A">
-    </constraint>
-  </node>
+  <constraint path="Gene.organism.name" code="A" op="=" value="Drosophila melanogaster"/>
+  <constraint path="Gene.dataSets.name" code="B" op="=" value="fly-Fish data set"/>
 </query>
             </im:querylink>
           </li>
 
           <li>
             <im:querylink text="All results from Koutsos et al for <i>A. gambiae</i> genes " skipBuilder="true">
-              <query name="" model="genomic" view="Gene.primaryIdentifier Gene.microArrayResults.value Gene.microArrayResults.standardError Gene.microArrayResults.type Gene.microArrayResults.assays.name" sortOrder="Gene.primaryIdentifier Gene.microArrayResults.value Gene.microArrayResults.standardError Gene.microArrayResults.type Gene.microArrayResults.assays.name">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A" extraValue="">
-                  </constraint>
-                </node>
-                <node path="Gene.microArrayResults" type="AGambiaeLifeCycle">
-                </node>
-              </query>
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.microArrayResults.value Gene.microArrayResults.standardError Gene.microArrayResults.type Gene.microArrayResults.assays.name" sortOrder="Gene.primaryIdentifier asc Gene.primaryIdentifier asc" constraintLogic="A and B">
+  <constraint path="Gene.organism.name" code="A" op="=" value="Anopheles gambiae"/>
+  <constraint path="Gene.microArrayResults" type="AGambiaeLifeCycle"/>
+</query>
             </im:querylink>
           </li>
         </ul>

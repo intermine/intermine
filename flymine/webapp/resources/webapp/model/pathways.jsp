@@ -25,7 +25,7 @@
         database have been manually entered from published
         materials. Current KEGG data in FlyMine include only the KEGG
         pathway names with their IDs and the genes involved.</dt>
- 
+
       <dt>REACTOME: Data from <a href="http://www.reactome.org"
         target="_new">Reactome</a> includes the Reactome pathway name
         and identifier and the genes involved in each pathway.  The
@@ -51,7 +51,7 @@
           <li>
             <im:querylink text="All KEGG pathways with associated genes " skipBuilder="true">
 
-            <query name="" model="genomic" view="Pathway.identifier Pathway.name Pathway.genes.primaryIdentifier Pathway.genes.identifier"></query>
+            <query name="" model="genomic" view="Pathway.identifier Pathway.name Pathway.genes.primaryIdentifier Pathway.genes.symbol"></query>
             </im:querylink>
 
           </li>

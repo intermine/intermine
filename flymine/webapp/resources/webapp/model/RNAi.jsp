@@ -94,26 +94,16 @@
           <ul>
             <li>
 <im:querylink text="All <i>D. melanogaster</i> alleles linked to genes " skipBuilder="true">
-<query name="" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.alleles.primaryIdentifier Gene.alleles.secondaryIdentifier Gene.alleles.mutagen" sortOrder="Gene.primaryIdentifier asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-    <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="A" extraValue="">
-    </constraint>
-  </node>
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.alleles.primaryIdentifier Gene.alleles.secondaryIdentifier Gene.alleles.mutagens.description" sortOrder="Gene.primaryIdentifier asc">
+  <constraint path="Gene.organism.name" op="=" value="Drosophila melanogaster"/>
 </query>
               </im:querylink>
             </li>
 
            <li>
 <im:querylink text="All <i>D. melanogaster</i> alleles with phenotypes " skipBuilder="true">
-<query name="" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.alleles.primaryIdentifier Gene.alleles.secondaryIdentifier Gene.alleles.mutagen Gene.alleles.alleleClass Gene.alleles.phenotypeAnnotations.annotationType Gene.alleles.phenotypeAnnotations.description" sortOrder="Gene.primaryIdentifier asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-    <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="A" extraValue="">
-    </constraint>
-  </node>
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.alleles.primaryIdentifier Gene.alleles.secondaryIdentifier Gene.alleles.mutagens.description Gene.alleles.alleleClass Gene.alleles.phenotypeAnnotations.annotationType Gene.alleles.phenotypeAnnotations.description" sortOrder="Gene.primaryIdentifier asc">
+  <constraint path="Gene.organism.name" op="=" value="Drosophila melanogaster"/>
 </query>
               </im:querylink>
             </li>
@@ -121,35 +111,17 @@
           <li>
              <im:querylink text="All <i>D. melanogaster</i> RNAi data " skipBuilder="true">
 <query name="" model="genomic" view="Gene.rnaiResults.rnaiScreen.publication.pubMedId Gene.rnaiResults.pcrProduct.primaryIdentifier Gene.rnaiResults.result" sortOrder="Gene.rnaiResults.rnaiScreen.publication.pubMedId asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.rnaiResults" type="RNAiScreenHit">
-  </node>
-  <node path="Gene.rnaiResults.pcrProduct" type="PCRProduct">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-    </constraint>
-  </node>
+  <constraint path="Gene.rnaiResults" type="RNAiScreenHit"/>
+  <constraint path="Gene.organism.name" op="=" value="Drosophila melanogaster"/>
 </query>
               </im:querylink>
             </li>
 
             <li>
               <im:querylink text="All <i>C. elegans</i> RNAi data " skipBuilder="true">
-<query name="" model="genomic" view="Gene.primaryIdentifier Gene.rnaiResults.name Gene.rnaiResults.code Gene.rnaiResults.observed Gene.rnaiResults.penetranceFrom Gene.rnaiResults.penetranceTo Gene.rnaiResults.publications.pubMedId" sortOrder="Gene.primaryIdentifier">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Gene.rnaiResults" type="RNAiPhenotype">
-  </node>
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.rnaiResults.name Gene.rnaiResults.code Gene.rnaiResults.penetranceFrom Gene.rnaiResults.penetranceTo Gene.rnaiResults.publications.pubMedId" sortOrder="Gene.primaryIdentifier asc">
+  <constraint path="Gene.organism.name" op="=" value="Caenorhabditis elegans"/>
+  <constraint path="Gene.rnaiResults" type="RNAiPhenotype"/>
 </query>
               </im:querylink>
             </li>
