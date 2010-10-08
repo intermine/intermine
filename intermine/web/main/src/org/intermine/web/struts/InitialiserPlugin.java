@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.io.InputStream;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -56,7 +57,11 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.Database;
+import org.intermine.tracker.Tracker;
+import org.intermine.tracker.TrackerFactory;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
@@ -116,9 +121,10 @@ public class InitialiserPlugin implements PlugIn
         final ObjectStoreSummary oss = summariseObjectStore(servletContext, os);
         final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
+        Map<String, Tracker> trackers = getTrackers(webProperties, userprofileOSW);
 
         final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
-                oss);
+                oss, trackers);
         SessionMethods.setInterMineAPI(servletContext, im);
 
         // need a global reference to ProfileManager so it can be closed cleanly on destroy
@@ -462,5 +468,34 @@ public class InitialiserPlugin implements PlugIn
             children.add(child.getName());
             getChildren(child, children);
         }
+    }
+
+    private Map<String, Tracker> getTrackers(Properties webProperties, ObjectStoreWriter userprofileOSW) {
+        Map<String, Tracker> trackers = new HashMap<String, Tracker>();
+        String userProfileAlias = (String) webProperties.get("webapp.userprofile.os.alias");
+        Properties props = PropertiesUtil.getPropertiesStartingWith(userProfileAlias);
+        if (0 == props.size()) {
+            throw new RuntimeException("No trackers were found for alias '"
+                                      + userProfileAlias + "'");
+        }
+        props = PropertiesUtil.stripStart(userProfileAlias, props);
+        String trackerList = props.getProperty("trackers");
+        LOG.warn("initializeTrackers: trackerList is" + trackerList);
+        if (trackerList != null) {
+            ObjectStoreWriterInterMineImpl uosw = (ObjectStoreWriterInterMineImpl) userprofileOSW;
+            Connection con;
+            String[] trackerClassNames = trackerList.split(",");
+            Tracker tracker;
+            for (String trackerClassName : trackerClassNames) {
+                try {
+                    con = uosw.getDatabase().getConnection();
+                    tracker = TrackerFactory.getTracker(trackerClassName, con);
+                    trackers.put(tracker.getName(), tracker);
+                } catch (Exception e) {
+                    LOG.warn("Tracker " + trackerClassName + " hasn't been instatiate", e);
+                }
+            }
+        }
+        return trackers;
     }
 }
