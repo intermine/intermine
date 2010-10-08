@@ -72,7 +72,7 @@
    </li>
 
           <li>
-            <im:querylink text="All <i>D. melanogaster</i> interactions from BioGRID " skipBuilder="true">
+            <im:querylink text="All <i>D. melanogaster</i> interactions from IntAct " skipBuilder="true">
 <query name="" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.gene.primaryIdentifier Interaction.role Interaction.interactingGenes.primaryIdentifier Interaction.type.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
   <constraint path="Interaction.gene.organism.shortName" code="A" op="=" value="D. melanogaster"/>
   <constraint path="Interaction.dataSets.dataSource.name" code="B" op="=" value="IntAct"/>
@@ -81,7 +81,7 @@
     </li>
 
    <li>
-            <im:querylink text="All <i>C. elegans</i> interactions from BioGRID " skipBuilder="true">
+            <im:querylink text="All <i>C. elegans</i> interactions from IntAct " skipBuilder="true">
 <query name="" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.gene.primaryIdentifier Interaction.role Interaction.interactingGenes.primaryIdentifier Interaction.type.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
   <constraint path="Interaction.gene.organism.shortName" code="A" op="=" value="C. elegans"/>
   <constraint path="Interaction.dataSets.dataSource.name" code="B" op="=" value="IntAct"/>
@@ -89,7 +89,7 @@
             </im:querylink>
    </li>
    <li>
-          <im:querylink text="All <i>S. cerevisiae</i> interactions from BioGRID " skipBuilder="true">
+          <im:querylink text="All <i>S. cerevisiae</i> interactions from IntAct " skipBuilder="true">
 <query name="" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.gene.primaryIdentifier Interaction.role Interaction.interactingGenes.primaryIdentifier Interaction.type.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
   <constraint path="Interaction.gene.organism.shortName" code="A" op="=" value="S. cerevisiae"/>
   <constraint path="Interaction.dataSets.dataSource.name" code="B" op="=" value="IntAct"/>
