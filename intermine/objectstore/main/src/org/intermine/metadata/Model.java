@@ -207,7 +207,8 @@ public class Model
     }
 
     /**
-     * Return true if named ClassDescriptor is found in the model.
+     * Return true if named ClassDescriptor is found in the model.  Looking for fully qualified
+     * classname, eg. org.intermine.model.bio.Gene.
      *
      * @param name named of ClassDescriptor search for
      * @return true if named descriptor found

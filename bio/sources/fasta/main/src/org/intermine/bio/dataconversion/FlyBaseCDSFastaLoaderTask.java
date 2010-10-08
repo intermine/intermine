@@ -10,11 +10,13 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.Sequence;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -48,7 +50,18 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
 
         ObjectStore os = getIntegrationWriter().getObjectStore();
         Model model = os.getModel();
-        if (model.hasClassDescriptor("CDS")) {
+        try {
+            System.out.println(model.getQualifiedTypeName("CDS"));
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        Set<ClassDescriptor> clds = model.getClassDescriptors();
+        for (ClassDescriptor cls : clds) {
+            System.out.println(cls.getName());
+        }
+
+        if (model.hasClassDescriptor(model.getPackageName() + ".CDS")) {
             Class<? extends FastPathObject> cdsCls =
                 model.getClassDescriptorByName("CDS").getType();
             if (!DynamicUtil.isInstance(bioEntity, cdsCls)) {

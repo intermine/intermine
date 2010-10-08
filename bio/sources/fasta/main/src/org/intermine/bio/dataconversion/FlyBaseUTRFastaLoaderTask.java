@@ -27,7 +27,6 @@ import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceFeature;
-import org.intermine.model.bio.UTR;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.DynamicUtil;
@@ -47,16 +46,16 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
      */
     @Override
     protected void extraProcessing(Sequence bioJavaSequence,
-            org.intermine.model.bio.Sequence flymineSequence,
+            @SuppressWarnings("unused") org.intermine.model.bio.Sequence flymineSequence,
             BioEntity bioEntity, Organism organism,
-            DataSet dataSet)
+            @SuppressWarnings("unused") DataSet dataSet)
         throws ObjectStoreException {
         Annotation annotation = bioJavaSequence.getAnnotation();
         String mrnaIdentifier = bioJavaSequence.getName();
 
         ObjectStore os = getIntegrationWriter().getObjectStore();
         Model model = os.getModel();
-        if (model.hasClassDescriptor("UTR")) {
+        if (model.hasClassDescriptor(model.getPackageName() + ".UTR")) {
             Class<? extends FastPathObject> cdsCls =
                 model.getClassDescriptorByName("UTR").getType();
             if (!DynamicUtil.isInstance(bioEntity, cdsCls)) {
@@ -65,7 +64,6 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
                         + "UTR: " + bioEntity);
             }
             InterMineObject mrna = getMRNA(mrnaIdentifier, organism, model);
-            System.out.println("mrna: " + mrna);
             if (mrna != null) {
                 Set<? extends InterMineObject> mrnas = new HashSet(Collections.singleton(mrna));
                 bioEntity.setFieldValue("transcripts", mrnas);

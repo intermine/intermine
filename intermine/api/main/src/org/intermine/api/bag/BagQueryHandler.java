@@ -102,7 +102,7 @@ public class BagQueryHandler extends DefaultHandler
         }
         if ("bag-type".equals(qName)) {
             type = attrs.getValue("type");
-            if (!model.hasClassDescriptor(pkg + "." + type)) {
+            if (!model.hasClassDescriptor(type)) {
                 throw new SAXException("Type was not found in model: " + type);
             }
             queryList = new ArrayList<BagQuery>();

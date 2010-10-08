@@ -156,7 +156,7 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
     protected InterMineObject getMRNA(String mrnaIdentifier, Organism organism, Model model)
         throws ObjectStoreException {
         InterMineObject mrna = null;
-        if (model.hasClassDescriptor("MRNA")) {
+        if (model.hasClassDescriptor(model.getPackageName() + ".MRNA")) {
             @SuppressWarnings("unchecked") Class<? extends InterMineObject> mrnaCls =
                 (Class<? extends InterMineObject>) model.getClassDescriptorByName("MRNA").getType();
             mrna = getDirectDataLoader().createObject(mrnaCls);
