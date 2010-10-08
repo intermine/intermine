@@ -29,6 +29,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.tracker.Tracker;
 
 /**
  * InterMineAPI provides access to manager objects for the main parts of an InterMine application:
@@ -49,6 +50,7 @@ public class InterMineAPI
     protected TemplateSummariser templateSummariser;
     protected ObjectStoreSummary oss;
     protected BagQueryRunner bagQueryRunner;
+    protected Map<String, Tracker> trackers;
 
     // query executors are cached per profile
     private Map<Profile, WebResultsExecutor> wreCache =
@@ -65,10 +67,11 @@ public class InterMineAPI
      * @param classKeys the class keys
      * @param bagQueryConfig configured bag queries used by BagQueryRunner
      * @param oss summary information for the ObjectStore
+     * @param trackers map containing trackers
      */
     public InterMineAPI(ObjectStore objectStore, ObjectStoreWriter userProfileWriter,
             Map<String, List<FieldDescriptor>> classKeys, BagQueryConfig bagQueryConfig,
-            ObjectStoreSummary oss) {
+            ObjectStoreSummary oss, Map<String, Tracker> trackers) {
         this.objectStore = objectStore;
         this.model = objectStore.getModel();
         this.classKeys = classKeys;
@@ -81,6 +84,7 @@ public class InterMineAPI
                 profileManager.getProfileObjectStoreWriter());
         this.bagQueryRunner =
             new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
+        this.trackers = trackers;
     }
 
     /**
@@ -187,5 +191,12 @@ public class InterMineAPI
      */
     public BagQueryConfig getBagQueryConfig() {
         return bagQueryConfig;
+    }
+    
+    /**
+     * @return the trackers map
+     */
+    public Map<String, Tracker> getTrackers() {
+        return trackers;
     }
 }
