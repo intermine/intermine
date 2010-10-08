@@ -220,15 +220,8 @@
 
            <li>
              <im:querylink text="Affymetrix probesets from the GeneChip <i>Drosophila</i> Genome Array with their locations" skipBuilder="true">
-<query name="" model="genomic" view="ProbeSet.primaryIdentifier ProbeSet.locations.object.primaryIdentifier ProbeSet.locations.start ProbeSet.locations.end" sortOrder="ProbeSet.primaryIdentifier asc">
-  <node path="ProbeSet" type="ProbeSet">
-  </node>
-  <node path="ProbeSet.dataSets" type="DataSet">
-  </node>
-  <node path="ProbeSet.dataSets.name" type="String">
-    <constraint op="=" value="Affymetrix array: DrosGenome1" description="" identifier="" code="A">
-    </constraint>
-  </node>
+<query name="" model="genomic" view="ProbeSet.primaryIdentifier ProbeSet.locations.locatedOn.primaryIdentifier ProbeSet.locations.start ProbeSet.locations.end" sortOrder="ProbeSet.primaryIdentifier asc">
+  <constraint path="ProbeSet.dataSets.name" op="=" value="Affymetrix array: DrosGenome1"/>
 </query>
            </im:querylink>
           </li>
@@ -236,29 +229,15 @@
           <li>
              <im:querylink text="Affymetrix probesets from the GeneChip <i>Drosophila</i> Genome Array with the genes they map to" skipBuilder="true">
 <query name="" model="genomic" view="ProbeSet.primaryIdentifier ProbeSet.genes.primaryIdentifier ProbeSet.genes.symbol" sortOrder="ProbeSet.primaryIdentifier asc">
-  <node path="ProbeSet" type="ProbeSet">
-  </node>
-  <node path="ProbeSet.dataSets" type="DataSet">
-  </node>
-  <node path="ProbeSet.dataSets.name" type="String">
-    <constraint op="=" value="Affymetrix array: DrosGenome1" description="" identifier="" code="A">
-    </constraint>
-  </node>
+  <constraint path="ProbeSet.dataSets.name" op="=" value="Affymetrix array: DrosGenome1"/>
 </query>
              </im:querylink>
             </li>
 
           <li>
              <im:querylink text="Affymetrix probesets from the GeneChip <i>Drosophila</i> 2 Array with their locations" skipBuilder="true">
-<query name="" model="genomic" view="ProbeSet.primaryIdentifier ProbeSet.locations.object.primaryIdentifier ProbeSet.locations.start ProbeSet.locations.end" sortOrder="ProbeSet.primaryIdentifier asc">
-  <node path="ProbeSet" type="ProbeSet">
-  </node>
-  <node path="ProbeSet.dataSets" type="DataSet">
-  </node>
-  <node path="ProbeSet.dataSets.name" type="String">
-    <constraint op="=" value="Affymetrix array: Drosophila_2" description="" identifier="" code="A">
-    </constraint>
-  </node>
+<query name="" model="genomic" view="ProbeSet.primaryIdentifier ProbeSet.locations.locatedOn.primaryIdentifier ProbeSet.locations.start ProbeSet.locations.end" sortOrder="ProbeSet.primaryIdentifier asc">
+  <constraint path="ProbeSet.dataSets.name" op="=" value="Affymetrix array: Drosophila_2"/>
 </query>
              </im:querylink>
             </li>
@@ -266,14 +245,7 @@
      <li>
              <im:querylink text="Affymetrix probesets from the GeneChip <i>Drosophila</i> 2 Array with the genes they map to" skipBuilder="true">
 <query name="" model="genomic" view="ProbeSet.primaryIdentifier ProbeSet.genes.primaryIdentifier ProbeSet.genes.symbol" sortOrder="ProbeSet.primaryIdentifier asc">
-  <node path="ProbeSet" type="ProbeSet">
-  </node>
-  <node path="ProbeSet.dataSets" type="DataSet">
-  </node>
-  <node path="ProbeSet.dataSets.name" type="String">
-    <constraint op="=" value="Affymetrix array: Drosophila_2" description="" identifier="" code="A">
-    </constraint>
-  </node>
+  <constraint path="ProbeSet.dataSets.name" op="=" value="Affymetrix array: Drosophila_2"/>
 </query>
              </im:querylink>
             </li>
