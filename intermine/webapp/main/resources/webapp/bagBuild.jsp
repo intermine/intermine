@@ -17,19 +17,16 @@
       jQuery('#' + close + 'Input').attr("disabled","disabled");
     }
 
-    function clearExample() {
-      if(jQuery('#pasteInput').val() == "e.g.: ${bagExampleIdentifiers}") {
-         jQuery('#pasteInput').val("");
-         jQuery('#pasteInput').css("color", "#000");
-         jQuery('#pasteInput').css("fontStyle", "normal");
-      }
-    }
-
     function resetInputs() {
        jQuery('#fileInput').attr("disabled","");
        jQuery('#pasteInput').attr("disabled","");
        jQuery('#fileInput').val('');
        jQuery('#pasteInput').val('');
+    }
+
+    function openInputs() {
+       jQuery('#fileInput').attr("disabled","");
+       jQuery('#pasteInput').attr("disabled","");
     }
 
     function loadExample(example) {
@@ -111,7 +108,7 @@
            </html:link>
          </div>
      </c:if>
-   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="if (this.value != '') switchInputs('paste','file');" onkeypress="switchInputs('paste','file');" />
+   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onclick="if(this.value != ''){switchInputs('paste','file');}else{openInputs();}" onkeyup="if(this.value != ''){switchInputs('paste','file');}else{openInputs();}" />
    </span>
    </li>
      <%-- file input --%>
