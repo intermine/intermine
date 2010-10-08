@@ -214,7 +214,11 @@ public class Model
      * @return true if named descriptor found
      */
     public boolean hasClassDescriptor(String name) {
-        return cldMap.containsKey(name);
+        boolean found = cldMap.containsKey(name);
+        if (!found) {
+            found = cldMap.containsKey(getPackageName() + "." + name);
+        }
+        return found;
     }
 
     /**
