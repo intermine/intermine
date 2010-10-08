@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.CDS;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Location;
@@ -45,7 +46,8 @@ public class TransferSequencesTest extends TestCase
     private Chromosome storedChromosome;
     private Exon [] storedExons;
     private Transcript [] storedTranscripts;
-
+    private CDS storedCDS;
+    
     private String expectedExonSequence0 =
         "ctctctctctaaagagaggggaggaggaggactctctctct";
 
@@ -203,35 +205,43 @@ public class TransferSequencesTest extends TestCase
         checkTranscriptSequences();
     }
 
-
+    public void testIgnoreCDS() throws Exception {
+        TransferSequences ts = new TransferSequences(osw);
+        ts.transferToLocatedSequenceFeatures();
+        ObjectStore os = osw.getObjectStore();
+        System.out.println("storedCDS.getId(): " + storedCDS.getId());
+        CDS resCDS = (CDS) os.getObjectById(storedCDS.getId());
+        assertNull(resCDS.getSequence());
+    }
+    
     public void checkExonSequences() throws Exception {
         osw.flushObjectById();
 
         ObjectStore os = osw.getObjectStore();
 
         Exon resExon0 = (Exon) os.getObjectById(storedExons[0].getId());
-        Assert.assertEquals(expectedExonSequence0, resExon0.getSequence().getResidues());
+        Assert.assertEquals(expectedExonSequence0, resExon0.getSequence().getResidues().toString());
 
         Exon resExon4 = (Exon) os.getObjectById(storedExons[4].getId());
-        Assert.assertEquals(expectedExonSequence4, resExon4.getSequence().getResidues());
+        Assert.assertEquals(expectedExonSequence4, resExon4.getSequence().getResidues().toString());
 
         Exon resExon1 = (Exon) os.getObjectById(storedExons[1].getId());
-        Assert.assertEquals(expectedExonSequence1, resExon1.getSequence().getResidues());
+        Assert.assertEquals(expectedExonSequence1, resExon1.getSequence().getResidues().toString());
 
         Exon resExon2 = (Exon) os.getObjectById(storedExons[2].getId());
-        Assert.assertEquals(expectedExonSequence2, resExon2.getSequence().getResidues());
+        Assert.assertEquals(expectedExonSequence2, resExon2.getSequence().getResidues().toString());
 
         Exon resExon5 = (Exon) os.getObjectById(storedExons[5].getId());
-        Assert.assertEquals(expectedExonSequence5, resExon5.getSequence().getResidues());
+        Assert.assertEquals(expectedExonSequence5, resExon5.getSequence().getResidues().toString());
 
         Exon resExon3 = (Exon) os.getObjectById(storedExons[3].getId());
-        Assert.assertEquals(expectedExonSequence3, resExon3.getSequence().getResidues());
+        Assert.assertEquals(expectedExonSequence3, resExon3.getSequence().getResidues().toString());
 
         Exon resExon6 = (Exon) os.getObjectById(storedExons[6].getId());
-        Assert.assertEquals(expectedExonSequence6, resExon6.getSequence().getResidues());
+        Assert.assertEquals(expectedExonSequence6, resExon6.getSequence().getResidues().toString());
 
         Exon resExon7 = (Exon) os.getObjectById(storedExons[7].getId());
-        Assert.assertEquals(expectedExonSequence7, resExon7.getSequence().getResidues());
+        Assert.assertEquals(expectedExonSequence7, resExon7.getSequence().getResidues().toString());
 
     }
 
@@ -242,13 +252,13 @@ public class TransferSequencesTest extends TestCase
 
         Transcript resTranscript0 =
             (Transcript) os.getObjectById(storedTranscripts[0].getId());
-        assertEquals(EXPECTED_TRANSCRIPT_0_RESIDUES, resTranscript0.getSequence().getResidues());
+        assertEquals(EXPECTED_TRANSCRIPT_0_RESIDUES, resTranscript0.getSequence().getResidues().toString());
 
         Transcript resTranscript1 =
             (Transcript) os.getObjectById(storedTranscripts[1].getId());
         String expectedResidues1 = expectedExonSequence7 + expectedExonSequence6;
         assertEquals(expectedResidues1,
-                     resTranscript1.getSequence().getResidues());
+                     resTranscript1.getSequence().getResidues().toString());
     }
 
     private void createData() throws Exception {
@@ -291,7 +301,6 @@ public class TransferSequencesTest extends TestCase
             storedExons[i].setPrimaryIdentifier("exon_" + i);
         }
 
-
         Sequence exonSequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
         clob = new PendingClob(expectedExonSequence0);
@@ -305,24 +314,6 @@ public class TransferSequencesTest extends TestCase
 
         List<Exon> transcript1Exons = Arrays.asList(new Exon[] {storedExons[7], storedExons[6]});
         storedTranscripts[1].setExons(new HashSet<Exon>(transcript1Exons));
-
-//        for (int i = 0; i < transcript0Exons.size() ; i++) {
-//            RankedRelation rankedRelation =
-//                (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
-//            rankedRelation.setRank(new Integer(i + 1));
-//            rankedRelation.setSubject((BioEntity) transcript0Exons.get(i));
-//            rankedRelation.setObject(storedTranscripts[0]);
-//            toStore.add(rankedRelation);
-//        }
-//
-//        for (int i = 0; i < transcript1Exons.size() ; i++) {
-//            RankedRelation rankedRelation =
-//                (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
-//            rankedRelation.setRank(new Integer(i + 1));
-//            rankedRelation.setSubject((BioEntity) transcript1Exons.get(i));
-//            rankedRelation.setObject(storedTranscripts[1]);
-//            toStore.add(rankedRelation);
-//        }
 
         Location loc0 = createLocation(storedChromosome, storedExons[0], "1",   1673,  1759);
         toStore.add(loc0);
@@ -349,6 +340,12 @@ public class TransferSequencesTest extends TestCase
         toStore.add(loc7);
         storedExons[7].setChromosomeLocation(loc7);
 
+        storedCDS = (CDS) DynamicUtil.createObject(Collections.singleton(CDS.class));
+        storedCDS.setPrimaryIdentifier("cds_1");
+        toStore.add(storedCDS);
+        Location loc8 = createLocation(storedChromosome, storedCDS, "1", 3863, 3993);
+        toStore.add(loc8);
+        
         osw.beginTransaction();
         for (InterMineObject obj : toStore) {
             osw.store(obj);

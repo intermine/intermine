@@ -18,6 +18,8 @@ import java.util.Map;
 
 import org.intermine.bio.util.Constants;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -93,6 +95,24 @@ public final class PostProcessUtil
         return newObj;
     }
 
+    /**
+     * Convenience method to test whether an InterMineObject is an instance of the given class name
+     * without needing to import the class itself.  This is used to refer to classes that may not
+     * be present in particular data models.
+     * @param model the data model
+     * @param obj an object to test
+     * @param clsName test whether obj is an instance of this class
+     * @return true if obj is an instance of clsName
+     */
+    public static boolean isInstance(Model model, InterMineObject obj, String clsName) {
+        if (model.hasClassDescriptor(clsName)) {
+            Class<? extends FastPathObject> cls = model.getClassDescriptorByName(clsName).getType();
+            if (DynamicUtil.isInstance(obj, cls)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Return an iterator over the results of a query that connects two classes by a third using
@@ -116,9 +136,9 @@ public final class PostProcessUtil
      * class.
      */
     public static Iterator<ResultsRow<InterMineObject>> findConnectingClasses(ObjectStore os,
-            Class<? extends InterMineObject> sourceClass, String sourceClassFieldName,
-            Class<? extends InterMineObject> connectingClass, String connectingClassFieldName,
-            Class<? extends InterMineObject> destinationClass, boolean orderBySource)
+            Class<? extends FastPathObject> sourceClass, String sourceClassFieldName,
+            Class<? extends FastPathObject> connectingClass, String connectingClassFieldName,
+            Class<? extends FastPathObject> destinationClass, boolean orderBySource)
         throws ObjectStoreException, IllegalAccessException {
 
         Query q = new Query();
