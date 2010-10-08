@@ -65,6 +65,7 @@ has processed_paths => (
     handles => {
         has_processed        => 'exists',
         processed_version_of => 'accessor',
+        delete_processed     => 'delete',
     },
 );
 
@@ -174,7 +175,7 @@ sub update_path {
 qq{Unexpected deletion of field "$bit" from "$current_class" in "$so_far", while processing "$path"}
                 );
             }
-            $self->processed_version_of($path => undef);
+            $self->delete_processed($path);
             return;
         }
     } continue {
