@@ -44,8 +44,8 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
         Item feature = getFeature();
 
         String note = record.getNote();
-        if (record.getType().equals("ChromosomalDeletion")) {
-            if (note.equals("made")) {
+        if ("ChromosomalDeletion".equals(record.getType())) {
+            if ("made".equals(note)) {
                 feature.setAttribute("available", "true");
             } else {
                 feature.setAttribute("available", "false");
@@ -64,7 +64,7 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
      * {@inheritDoc}
      */
     @Override
-    protected boolean createLocations(GFF3Record record) {
+    protected boolean createLocations(@SuppressWarnings("unused") GFF3Record record) {
         return false;
     }
 
