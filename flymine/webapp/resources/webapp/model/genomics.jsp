@@ -1,5 +1,6 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
+<!-- genomics.jsp -->
 <table width="100%">
   <tr>
     <td valign="top">
@@ -160,3 +161,4 @@
   </tr>
 
 </table>
+<!-- /genomics.jsp -->

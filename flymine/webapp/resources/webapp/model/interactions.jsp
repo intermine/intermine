@@ -1,5 +1,5 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
-
+<!-- interactions.jsp -->
 <table width="100%">
   <tr>
     <td valign="top">
@@ -101,3 +101,4 @@
     </td>
   </tr>
 </table>
+<!-- /interactions.jsp -->

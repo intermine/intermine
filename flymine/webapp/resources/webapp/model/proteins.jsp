@@ -1,5 +1,5 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
-
+<!--  proteins.jsp -->
 <table width="100%">
   <tr>
     <td valign="top" rowspan="2">
@@ -147,3 +147,4 @@
     </td>
   </tr>
 </table>
+<!-- /proteins.jsp -->
