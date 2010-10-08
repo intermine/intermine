@@ -45,6 +45,7 @@ import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
+import org.intermine.util.TrackerManager;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
@@ -208,7 +209,7 @@ public class TemplateAction extends InterMineAction
 
         String qid = SessionMethods.startQueryWithTimeout(request, saveQuery, populatedTemplate);
         Thread.sleep(200);
-
+        TrackerManager.trackTemplate(populatedTemplate.getName(), im, session);
         String trail = "";
 
         // only put query on the trail if we are saving the query
