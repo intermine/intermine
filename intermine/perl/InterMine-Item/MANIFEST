@@ -10,6 +10,7 @@ README
 t/00-load.t
 t/01_items/01_construct.t
 t/01_items/02_xml.t
+t/02_document.t
 t/boilerplate.t
 t/data/testmodel_model.xml
 t/manifest.t

@@ -59,5 +59,6 @@ my $xml_exp = q[
 ];
 
 $document->write;
+undef $document; #Testing document closure on destruction
 
 is_xml($output, $xml_exp); 
