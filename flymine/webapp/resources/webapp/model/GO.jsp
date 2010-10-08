@@ -119,7 +119,6 @@
   <constraint path="Gene.organism.shortName" op="=" value="A. gambiae"/>
 </query>
 </im:querylink>
- </im:querylink>
         </li>
 
         <li>
