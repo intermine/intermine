@@ -49,7 +49,7 @@ public class TemplateQueryHandler extends PathQueryHandler
      * @param version the version of the XML, an attribute on the profile manager
      */
     public TemplateQueryHandler(Map<String, TemplateQuery> templates,
-            @SuppressWarnings("unused") Map<String, InterMineBag> savedBags, int version) {
+            Map<String, InterMineBag> savedBags, int version) {
         super(new HashMap<String, PathQuery>(), version);
         this.templates = templates;
         reset();
@@ -80,7 +80,9 @@ public class TemplateQueryHandler extends PathQueryHandler
             String code = attrs.getValue("code");
             String type = attrs.getValue("type");
             if (type != null) {
+                // subclass constraint, don't do anything else.
                 query.addConstraint(new PathConstraintSubclass(path, type));
+                return;
             } else {
                 path = path.replace(':', '.');
                 if (path == null) {
@@ -96,6 +98,27 @@ public class TemplateQueryHandler extends PathQueryHandler
                 constraintCode = code;
 
             }
+
+            PathConstraint constraint = processConstraint(query, constraintPath,
+                    constraintAttributes, constraintValues);
+            if ((constraintCode == null) || (constraint instanceof PathConstraintLoop)) {
+                query.addConstraint(constraint);
+            } else {
+                query.addConstraint(constraint, constraintCode);
+            }
+            String description = constraintAttributes.get("description");
+            String editable = constraintAttributes.get("editable");
+            if ("true".equals(editable)) {
+                editableConstraints.add(constraint);
+            }
+            constraintDescriptions.put(constraint, description);
+            String switchable = constraintAttributes.get("switchable");
+            if ("on".equals(switchable)) {
+                constraintSwitchables.put(constraint, SwitchOffAbility.ON);
+            } else if ("off".equals(switchable)) {
+                constraintSwitchables.put(constraint, SwitchOffAbility.OFF);
+            }
+            constraintPath = null;
         } else {
             super.startElement(uri, localName, qName, attrs);
         }
@@ -119,27 +142,6 @@ public class TemplateQueryHandler extends PathQueryHandler
             }
             templates.put(templateName, t);
             reset();
-        } else if ("constraint".equals(qName)) {
-            PathConstraint constraint = processConstraint(query, constraintPath,
-                    constraintAttributes, constraintValues);
-            if ((constraintCode == null) || (constraint instanceof PathConstraintLoop)) {
-                query.addConstraint(constraint);
-            } else {
-                query.addConstraint(constraint, constraintCode);
-            }
-            String description = constraintAttributes.get("description");
-            String editable = constraintAttributes.get("editable");
-            if ("true".equals(editable)) {
-                editableConstraints.add(constraint);
-            }
-            constraintDescriptions.put(constraint, description);
-            String switchable = constraintAttributes.get("switchable");
-            if ("on".equals(switchable)) {
-                constraintSwitchables.put(constraint, SwitchOffAbility.ON);
-            } else if ("off".equals(switchable)) {
-                constraintSwitchables.put(constraint, SwitchOffAbility.OFF);
-            }
-            constraintPath = null;
         } else {
             super.endElement(uri, localName, qName);
         }
