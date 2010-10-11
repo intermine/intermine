@@ -56,7 +56,7 @@ public class ImportQueriesForm extends ValidatorForm
         throws Exception {
         if (map == null) {
             // multiple queries must be wrapped by <queries> element, add it if not already there
-            String xml = getXml().trim();
+            xml = xml.trim();
             if (!xml.startsWith("<queries>")) {
                 xml = "<queries>" + xml + "</queries>";
             }
