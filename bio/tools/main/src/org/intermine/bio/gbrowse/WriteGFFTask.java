@@ -32,6 +32,7 @@ import org.apache.tools.ant.Task;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.Constants;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.ChromosomeBand;
 import org.intermine.model.bio.Exon;
@@ -341,10 +342,14 @@ public class WriteGFFTask extends Task
             if (transcript instanceof MRNA) {
                 // special case for CDS objects - display them as MRNA as GBrowse uses the CDS class
                 // for displaying MRNAs
-                Iterator<CDS> cdsIter = ((MRNA) transcript).getcDSs().iterator();
-                while (cdsIter.hasNext()) {
-                    CDS cds = cdsIter.next();
-                    synonymList.add(makeIdString(cds.getId()));
+                try {
+                    @SuppressWarnings("unchecked") Set<InterMineObject> cdss =
+                        (Set<InterMineObject>) transcript.getFieldValue("CDSs");
+                    for (InterMineObject cds : cdss) {
+                        synonymList.add(makeIdString(cds.getId()));
+                    }
+                } catch (IllegalAccessException e) {
+                    // no nothing, there was no collection of CDSs
                 }
             }
 
