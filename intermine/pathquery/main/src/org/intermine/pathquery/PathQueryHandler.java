@@ -111,7 +111,7 @@ public class PathQueryHandler extends DefaultHandler
         } else if ("node".equals(qName)) {
             // There's a node tag, so all constraints inside must inherit this path. Set it in a
             // variable, and reset the variable to null when we see the end tag.
-            
+
             currentNodePath = attrs.getValue("path");
             if (currentNodePath.contains(":")) {
                 setOuterJoins(query, currentNodePath);
@@ -252,6 +252,10 @@ public class PathQueryHandler extends DefaultHandler
         } else if (ConstraintOp.LOOKUP.equals(constraintOp)) {
             String lookup = attrs.get("value");
             String extraValue = attrs.get("extraValue");
+            if (path == null) {
+                String msg = "Null path in template " + queryName + " for query " + query;
+                throw new IllegalArgumentException(msg);
+            }
             return new PathConstraintLookup(path, lookup, extraValue);
         } else {
             throw new SAXException("Invalid operation type: " + constraintOp
