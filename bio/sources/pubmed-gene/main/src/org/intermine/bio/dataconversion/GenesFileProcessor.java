@@ -192,7 +192,7 @@ public class GenesFileProcessor
         // If there is a gene in gene information file that doesn't have
         // any publication then the gene is skipped
         // if there isn't primary identifier gene is skipped
-        if (publications != null && !primIdentifier.equals("-")) {
+        if (publications != null && !"-".equals(primIdentifier)) {
             primIdentifier = removeDatabasePrefix(primIdentifier);
             if (!isValidPrimIdentifier(primIdentifier)) {
                 return;
@@ -236,7 +236,7 @@ public class GenesFileProcessor
     }
 
     private boolean isDrosophilaMelanogaster(String taxonId) {
-        return taxonId.equals("7227");
+        return "7227".equals(taxonId);
     }
 
     private Item createGene(Integer ncbiGeneId, String primaryIdentifier, Item organism) {
