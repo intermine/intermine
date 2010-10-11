@@ -35,7 +35,7 @@ public class UniprotConverterTest extends MockItemsTestCase
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn0000001", Collections.singleton("CG1111"));
         resolverFactory.addResolverEntry("7227", "FBgn0000002", Collections.singleton("CG2222"));
-        converter.resolverFactory = resolverFactory;
+        converter.flyResolverFactory = resolverFactory;
         super.setUp();
     }
 
