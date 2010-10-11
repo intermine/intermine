@@ -33,7 +33,7 @@ import org.intermine.util.PropertiesUtil;
  */
 public class HgncIdResolverFactory extends IdResolverFactory
 {
-    protected static final Logger LOG = Logger.getLogger(FlyBaseIdResolverFactory.class);
+    protected static final Logger LOG = Logger.getLogger(HgncIdResolverFactory.class);
     private final String clsName = "gene";
     private final String propName = "resolver.hgnc.file";
     private final String taxonId = "9606";
