@@ -83,28 +83,25 @@ public class TemplateQueryHandler extends PathQueryHandler
                 // subclass constraint, don't do anything else.
                 query.addConstraint(new PathConstraintSubclass(path, type));
                 return;
-            } else {
-                path = path.replace(':', '.');
-                if (path == null) {
-                    throw new NullPointerException("Null path while processing template "
-                            + templateName);
-                }
-                constraintPath = path;
-                constraintAttributes = new HashMap<String, String>();
-                for (int i = 0; i < attrs.getLength(); i++) {
-                    constraintAttributes.put(attrs.getQName(i), attrs.getValue(i));
-                }
-                constraintValues = new LinkedHashSet<String>();
-                constraintCode = code;
-
             }
+            path = path.replace(':', '.');
+            if (path == null) {
+                throw new NullPointerException("Null path while processing template "
+                        + templateName);
+            }
+            constraintPath = path;
+            constraintAttributes = new HashMap<String, String>();
+            for (int i = 0; i < attrs.getLength(); i++) {
+                constraintAttributes.put(attrs.getQName(i), attrs.getValue(i));
+            }
+            constraintValues = new LinkedHashSet<String>();
 
             PathConstraint constraint = processConstraint(query, constraintPath,
                     constraintAttributes, constraintValues);
-            if ((constraintCode == null) || (constraint instanceof PathConstraintLoop)) {
+            if ((code == null) || (constraint instanceof PathConstraintLoop)) {
                 query.addConstraint(constraint);
             } else {
-                query.addConstraint(constraint, constraintCode);
+                query.addConstraint(constraint, code);
             }
             String description = constraintAttributes.get("description");
             String editable = constraintAttributes.get("editable");
