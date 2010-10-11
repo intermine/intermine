@@ -31,7 +31,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.Constants;
-import org.intermine.model.bio.CDS;
+import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.ChromosomeBand;
 import org.intermine.model.bio.Exon;
@@ -129,6 +129,8 @@ public class WriteGFFTask extends Task
     void writeGFF(ObjectStore os)
         throws ObjectStoreException, IOException {
 
+        Model model = os.getModel();
+
         Results results =
             BioQueries.findLocationAndObjects(os, Chromosome.class,
                     LOCATED_SEQUENCE_FEATURE_CLASS, false, true, false, 2000);
@@ -179,11 +181,14 @@ public class WriteGFFTask extends Task
                // ignore - ChromosomalDeletion is not in the model
             }
 
-            if (feature instanceof CDS) {
-                // ignore for now as it interferes with the CDS GFF records created by
-                // writeTranscriptsAndExons() for use by the processed_transcript
-                // aggregator
-                continue;
+            if (model.hasClassDescriptor("CDS")) {
+                if (DynamicUtil.isInstance(feature,
+                        model.getClassDescriptorByName("CDS").getType())) {
+                    // ignore for now as it interferes with the CDS GFF records created by
+                    // writeTranscriptsAndExons() for use by the processed_transcript
+                    // aggregator
+                    continue;
+                }
             }
 
             if (currentChrId == null || !currentChrId.equals(resultChrId)) {
