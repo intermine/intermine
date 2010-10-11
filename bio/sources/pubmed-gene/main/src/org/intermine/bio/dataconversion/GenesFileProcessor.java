@@ -193,21 +193,26 @@ public class GenesFileProcessor
         // any publication then the gene is skipped
         // if there isn't primary identifier gene is skipped
         if (publications != null && !"-".equals(primIdentifier)) {
-            primIdentifier = removeDatabasePrefix(primIdentifier);
-            if (!isValidPrimIdentifier(primIdentifier)) {
-                return;
+            if (setPrimaryIdentifier(organismId.toString())) {
+                primIdentifier = removeDatabasePrefix(primIdentifier);
+                if (!isValidPrimIdentifier(primIdentifier)) {
+                    return;
+                }
+
+                if (isDrosophilaMelanogaster(organismId.toString()) && resolver != null) {
+                    primIdentifier = resolvePrimIdentifier(organismId.toString(), primIdentifier);
+                }
+
+                if (primIdentifier == null) {
+                    LOG.warn("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                            + primaryIdentifier + ". Number of matched ids: "
+                            + resolver.countResolutions(organismId.toString(), primIdentifier));
+                    return;
+                }
+            } else {
+                primIdentifier = null;
             }
 
-            if (isDrosophilaMelanogaster(organismId.toString()) && resolver != null) {
-                primIdentifier = resolvePrimIdentifier(organismId.toString(), primIdentifier);
-            }
-
-            if (primIdentifier == null) {
-                LOG.warn("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                        + primaryIdentifier + ". Number of matched ids: "
-                        + resolver.countResolutions(organismId.toString(), primIdentifier));
-                return;
-            }
             Item gene = createGene(ncbiGeneId, primIdentifier, organism);
             for (String writerPubId : publications) {
                 gene.addToCollection("publications", writerPubId);
@@ -221,6 +226,10 @@ public class GenesFileProcessor
             }
             alreadyProcessedGenes.add(ncbiGeneId);
         }
+    }
+
+    private boolean setPrimaryIdentifier(String taxonId) {
+        return !isHomoSapiens(taxonId);
     }
 
     private boolean isValidPrimIdentifier(String primIdentifier) {
@@ -239,10 +248,16 @@ public class GenesFileProcessor
         return "7227".equals(taxonId);
     }
 
+    private boolean isHomoSapiens(String taxonId) {
+        return "9606".equals(taxonId);
+    }
+
     private Item createGene(Integer ncbiGeneId, String primaryIdentifier, Item organism) {
         Item gene = createItem("Gene");
         gene.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
-        gene.setAttribute("primaryIdentifier", primaryIdentifier);
+        if (primaryIdentifier != null) {
+            gene.setAttribute("primaryIdentifier", primaryIdentifier);
+        }
         gene.setReference("organism", organism);
         gene.setCollection("dataSets", new ArrayList<String>(Collections.singleton(datasetRefId)));
         return gene;
