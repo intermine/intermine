@@ -66,8 +66,8 @@ public class UniprotConverter extends BioDirectoryConverter
     private boolean creatego = false;
     private Set<String> taxonIds = null;
 
-    protected IdResolverFactory resolverFactory;
-    private IdResolver flyResolver;
+    protected IdResolverFactory flyResolverFactory;
+    protected IdResolverFactory hgncResolverFactory;
     private String datasourceRefId = null;
 
     /**
@@ -78,7 +78,8 @@ public class UniprotConverter extends BioDirectoryConverter
     public UniprotConverter(ItemWriter writer, Model model) {
         super(writer, model, "UniProt", "Swiss-Prot data set");
         // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
+        flyResolverFactory = new FlyBaseIdResolverFactory("gene");
+        hgncResolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     /**
@@ -863,10 +864,10 @@ public class UniprotConverter extends BioDirectoryConverter
                     return null;
                 }
                 identifierValue = uniprotEntry.getGeneNames().get(value);
-            } else if (method.equals("dbref")) {
-                if (value.equals("Ensembl")) {
+            } else if ("dbxref".equals(method)) {
+                if ("Ensembl".equals(value) || "HGNC".equals(value)) {
                     // See #2122
-                    identifierValue = uniprotEntry.getGeneDesignation("Ensembl");
+                    identifierValue = uniprotEntry.getGeneDesignation(value);
                 } else {
                     Map<String, List<String>> dbrefs = uniprotEntry.getDbrefs();
                     String msg = "no " + value + " identifier found for gene attached to protein: "
@@ -888,7 +889,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 return null;
             }
             geneSynonyms.add(identifierValue);
-            if (isUniqueIdentifier && taxId.equals("7227")) {
+
+            if (isUniqueIdentifier && "7227".equals(taxId)) {
                 identifierValue = resolveGene(taxId, identifierValue);
 
                 // try again!
@@ -897,14 +899,32 @@ public class UniprotConverter extends BioDirectoryConverter
                     Iterator<String> iter = uniprotEntry.getGeneNames().values().iterator();
                     while (iter.hasNext() && identifierValue == null) {
                         identifierValue = resolveGene(taxId, iter.next());
+                        if (identifierValue != null) {
+                            LOG.info("Successfully resolved fly gene '" + identifierValue
+                                    + "' with second attempt.");
+                        }
                     }
                 }
             }
+
+            if (isUniqueIdentifier && "9606".equals(taxId)) {
+                resolveGene(taxId, identifierValue);
+            }
+
             return identifierValue;
         }
 
         private String resolveGene(String taxId, String identifier) {
-            flyResolver = resolverFactory.getIdResolver(false);
+            if ("7227".equals(taxId)) {
+                return resolveFlyGene(taxId, identifier);
+            } else if ("9606".equals(taxId)) {
+                return resolveHumanGene(taxId, identifier);
+            }
+            return identifier;
+        }
+
+        private String resolveFlyGene(String taxId, String identifier) {
+            IdResolver flyResolver = flyResolverFactory.getIdResolver(false);
             if (flyResolver == null) {
                 // no id resolver available, so return the original identifier
                 return identifier;
@@ -917,6 +937,21 @@ public class UniprotConverter extends BioDirectoryConverter
                 return null;
             }
             return flyResolver.resolveId(taxId, identifier).iterator().next();
+        }
+
+        private String resolveHumanGene(String taxId, String identifier) {
+            IdResolver resolver = hgncResolverFactory.getIdResolver(true);
+            if (resolver == null) {
+                return identifier;
+            }
+            int resCount = resolver.countResolutions(taxonId, identifier);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: HGNC failed to resolve gene to one identifier, "
+                        + "ignoring gene: " + identifier + " count: " + resCount
+                        + " symbol: " + resolver.resolveId(taxonId, identifier));
+                return null;
+            }
+            return resolver.resolveId(taxonId, identifier).iterator().next();
         }
     }
 
