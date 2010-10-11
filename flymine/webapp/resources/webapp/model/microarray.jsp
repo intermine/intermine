@@ -128,7 +128,7 @@
 
           <li>
             <im:querylink text="All FlyAtlas results for <i>D. melanogaster</i> genes " skipBuilder="true">
-<query name="" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.microArrayResults.material.primaryIdentifier Gene.microArrayResults.assays.name Gene.microArrayResults.mRNASignal Gene.microArrayResults.mRNASignalSEM Gene.microArrayResults.presentCall Gene.microArrayResults.enrichment Gene.microArrayResults.tissue.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.microArrayResults.material.primaryIdentifier Gene.microArrayResults.tissue.name Gene.microArrayResults.mRNASignal Gene.microArrayResults.mRNASignalSEM Gene.microArrayResults.presentCall Gene.microArrayResults.enrichment Gene.microArrayResults.affyCall" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
   <constraint path="Gene.organism.name" code="A" op="=" value="Drosophila melanogaster"/>
   <constraint path="Gene.microArrayResults.dataSets.name" code="B" op="=" value="FlyAtlas"/>
   <constraint path="Gene.microArrayResults" type="FlyAtlasResult"/>
