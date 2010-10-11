@@ -129,11 +129,11 @@ sub _inheritance : Test(3) {
     my $parent = 'Webservice::InterMine::Query::Core';
     isa_ok($test->class, $parent, "Inherits ok -");
     my @roles = (qw/
-	Webservice::InterMine::Query::Roles::Runnable
-	Webservice::InterMine::Query::Roles::WriteOutAble
+        Webservice::InterMine::Query::Roles::Runnable
+        Webservice::InterMine::Query::Roles::WriteOutAble
     /);
     for (@roles) {
-	ok($test->class->does($_), "... and does $_");
+        ok($test->class->does($_), "... and does $_");
     }
 }
 

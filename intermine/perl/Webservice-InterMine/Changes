@@ -10,3 +10,9 @@ Revision history for Webservice-InterMine
         * Removed useless dependency that broke install
 0.9403  Tue Sep 21 14:32:34 BST 2010
         * Finally removed last reference to IO::String
+0.9407  Fri Oct  8 12:43:11 BST 2010
+        * Readded Perl::Tidy as dependency to fix tests
+        * Changed attribute type in TemplateFactory in response to change in Moose 1.15
+0.9408  Mon Oct 11 13:08:42 BST 2010
+        * Perl::Tidy and YAML::Syck now recommendations.
+        * Changed WriteOutYaml role to dump to string rather than file

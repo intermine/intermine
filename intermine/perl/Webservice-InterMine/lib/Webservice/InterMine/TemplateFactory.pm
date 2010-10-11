@@ -50,8 +50,8 @@ under the same terms as Perl itself.
 
 use Moose;
 with 'Webservice::InterMine::Role::ModelOwner';
-use MooseX::Types::Moose qw/Str/;
-use InterMine::TypeLibrary qw/File TemplateHash Service/;
+use MooseX::Types::Moose qw/Str HashRef/;
+use InterMine::TypeLibrary qw/File Service Template/;
 use Webservice::InterMine::Query::Template;
 
 around BUILDARGS => sub {
@@ -101,7 +101,7 @@ has source_string => (
 
 has template_list => (
     traits  => ['Hash'],
-    isa     => TemplateHash,
+    isa     => HashRef[Template],
     default => sub { {} },
     handles => {
         _set_template        => "set",
