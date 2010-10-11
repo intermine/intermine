@@ -9,19 +9,16 @@ Webservice::InterMine::Cookbook::Recipe7 - Extending Webservice::InterMine
   package WriteOutYaml;
 
   use Moose::Role;
-  use YAML::Syck;
-
+  use YAML::Syck qw(Dump);
+  
   requires qw(results);
-
-  sub dump_yaml_to_file {
+  
+  sub results_to_yaml {
       my $self = shift;
       my %args = @_;
-      my $file = $args{file} or confess "dump_to_file needs a file";
-      delete $args{file};
       my $results = $self->results(%args);
-      DumpFile($file, $results);
+      return Dump($results);
   }
-
   1;
 
   # Later, in a nearby script
@@ -46,7 +43,7 @@ Webservice::InterMine::Cookbook::Recipe7 - Extending Webservice::InterMine
      value => 'biosynthetic process',
   );
 
-  $query->dump_yaml_to_file(file => $filename, as => 'hashrefs');
+  print $query->results_to_yaml(as => 'hashrefs');
 
 =head1 DESCRIPTION
 

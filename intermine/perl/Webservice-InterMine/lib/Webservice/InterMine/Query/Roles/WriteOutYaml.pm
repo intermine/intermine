@@ -1,17 +1,15 @@
 package Webservice::InterMine::Query::Roles::WriteOutYaml;
 
 use Moose::Role;
-use YAML::Syck;
+use YAML::Syck qw(Dump);
 
 requires qw(results);
 
-sub dump_yaml_to_file {
+sub results_to_yaml {
     my $self = shift;
     my %args = @_;
-    my $file = $args{file} or confess "dump_to_file needs a file";
-    delete $args{file};
     my $results = $self->results(%args);
-    DumpFile( $file, $results );
+    return Dump($results);
 }
 
 1;

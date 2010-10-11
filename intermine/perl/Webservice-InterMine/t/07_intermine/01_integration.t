@@ -1,14 +1,20 @@
 use strict;
 use warnings;
+use Carp qw(confess);
+BEGIN {
+    eval "use YAML::Syck";
+    $ENV{TEST_YAML} = ($@) ? 0 : 1;
+}
+$SIG{__DIE__} = sub {
+    confess(@_);
+};
 
-use lib 't/tests';
-
-use Test::More tests => 39;
+use lib 't/tests'; # for the test role FooBar
+use Test::More tests => 41;
 use Test::MockObject::Extends;
 use Test::Exception;
 use HTTP::Response;
 use IO::File;
-use YAML::Syck;
 
 sub slurp {
     my $file = shift;
@@ -234,19 +240,26 @@ like(
     qr|^<table>(?:<tr>(?:<td>.*</td>)*</tr>)*</table>$|,
     "Makes a table of results ok"
 );
-$role = 'Webservice::InterMine::Query::Roles::WriteOutYaml';
-$t = $module->template('employeeByName', with => [$role]);
-my $out_buffer;
-open(my $out_handle, '>', \$out_buffer) or die $!;
-lives_ok(
-    sub{$t->dump_yaml_to_file(file => $out_handle);},
-    "lives dumping yaml",
-);
-#close($out_handle);
-#my $data;
-#lives_ok(
-#    sub {$data = Load($out_buffer);},
-#    "De-yamalises ok",
-#);
-#
-#is_deeply($data, $res, "Yamlises, and back, ok");
+
+SKIP: {
+    skip(
+        "Need YAML::Syck to test YAML role",
+        3,
+    ) unless $ENV{TEST_YAML};
+
+    $role = 'Webservice::InterMine::Query::Roles::WriteOutYaml';
+    $t = $module->template('employeeByName', with => [$role]);
+    my $out_buffer;
+    lives_ok(
+        sub{$out_buffer = $t->results_to_yaml();},
+        "lives dumping yaml",
+    );
+    my $data;
+    my $i = 1;
+    lives_ok(
+        sub {($data) = Load($out_buffer);},
+        "Lives loading yaml",
+    ) or diag(join "\n", map {$i++ . $_} split("\n", $out_buffer));
+
+    is_deeply($data, $res, "Yamlises, and back, ok");
+}
