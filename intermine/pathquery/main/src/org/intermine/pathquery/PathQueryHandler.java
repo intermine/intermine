@@ -183,14 +183,14 @@ public class PathQueryHandler extends DefaultHandler
     /**
      * Process a constraint from the xml attributes.
      *
-     * @param query the PathQuery, to enable creating Path objects
+     * @param q the PathQuery, to enable creating Path objects
      * @param path the path of the constraint to create
      * @param attrs the XML attributes
      * @param values the enclosed values
      * @return a PathConstraint object
      * @throws SAXException if something is wrong
      */
-    public PathConstraint processConstraint(PathQuery query, String path,
+    public PathConstraint processConstraint(PathQuery q, String path,
             Map<String, String> attrs, Collection<String> values) throws SAXException {
         ConstraintOp constraintOp = ConstraintOp.getConstraintOp(attrs.get("op"));
         if (ConstraintOp.CONTAINS.equals(constraintOp)) {
@@ -200,7 +200,7 @@ public class PathQueryHandler extends DefaultHandler
             boolean isLoop = false;
             if (PathConstraintLoop.VALID_OPS.contains(constraintOp)) {
                 try {
-                    Path constraintPath2 = query.makePath(path);
+                    Path constraintPath2 = q.makePath(path);
                     if (!constraintPath2.endIsAttribute()) {
                         isLoop = true;
                     }
@@ -252,10 +252,6 @@ public class PathQueryHandler extends DefaultHandler
         } else if (ConstraintOp.LOOKUP.equals(constraintOp)) {
             String lookup = attrs.get("value");
             String extraValue = attrs.get("extraValue");
-            if (path == null) {
-                String msg = "Null path in template " + queryName + " for query " + query;
-                throw new IllegalArgumentException(msg);
-            }
             return new PathConstraintLookup(path, lookup, extraValue);
         } else {
             throw new SAXException("Invalid operation type: " + constraintOp
