@@ -555,8 +555,9 @@ public class PathQuery implements Cloneable
         }
         Set<String> usedCodes = new HashSet<String>(constraints.values());
         if (usedCodes.contains(code)) {
-            throw new IllegalStateException("Given code " + code + " conflicts with an existing "
-                    + "constraint");
+            throw new IllegalStateException("Given code " + code + " from constraint "
+                    + constraint + " conflicts with an existing constraint for query "
+                    + this.toString());
         }
         if (logic == null) {
             logic = new LogicExpression(code);
