@@ -192,6 +192,11 @@ public class PathQueryHandler extends DefaultHandler
      */
     public PathConstraint processConstraint(PathQuery q, String path,
             Map<String, String> attrs, Collection<String> values) throws SAXException {
+
+        if (path == null) {
+            throw new SAXException("Path is null: " + q.toString());
+        }
+
         ConstraintOp constraintOp = ConstraintOp.getConstraintOp(attrs.get("op"));
         if (ConstraintOp.CONTAINS.equals(constraintOp)) {
             constraintOp = ConstraintOp.MATCHES;
@@ -252,10 +257,6 @@ public class PathQueryHandler extends DefaultHandler
         } else if (ConstraintOp.LOOKUP.equals(constraintOp)) {
             String lookup = attrs.get("value");
             String extraValue = attrs.get("extraValue");
-            // this is checked later, but by then we've lost the query name
-            if (path == null) {
-                throw new SAXException("Path is null: " + q.toString());
-            }
             return new PathConstraintLookup(path, lookup, extraValue);
         } else {
             throw new SAXException("Invalid operation type: " + constraintOp
