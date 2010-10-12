@@ -219,10 +219,12 @@ public class GenesFileProcessor
             }
             // checks gene duplicates - if there are two or more same genes with
             // the same primIdentifier but different ncbi gene id then all these genes are removed
-            if (genes.get(primIdentifier) == null) {
-                genes.put(primIdentifier, gene);
-            } else {
-                genesToRemove.add(primIdentifier);
+            if (primIdentifier != null) {
+                if (genes.get(primIdentifier) == null) {
+                    genes.put(primIdentifier, gene);
+                } else {
+                    genesToRemove.add(primIdentifier);
+                }
             }
             alreadyProcessedGenes.add(ncbiGeneId);
         }
