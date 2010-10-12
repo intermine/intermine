@@ -20,7 +20,6 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryHandler;
@@ -119,10 +118,12 @@ public class TemplateQueryHandler extends PathQueryHandler
             }
             templates.put(templateName, t);
             reset();
-        } else if ("constraint".equals(qName)) {
+        // constraintPath will be null if this is a subclass constraint
+        // subclass constraints have already been processed
+        } else if ("constraint".equals(qName) && (constraintPath != null)) {
             PathConstraint constraint = processConstraint(query, constraintPath,
                     constraintAttributes, constraintValues);
-            if ((constraintCode == null) || (constraint instanceof PathConstraintLoop)) {
+            if (constraintCode == null) {
                 query.addConstraint(constraint);
             } else {
                 query.addConstraint(constraint, constraintCode);
