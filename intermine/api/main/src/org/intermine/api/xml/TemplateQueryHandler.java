@@ -49,7 +49,7 @@ public class TemplateQueryHandler extends PathQueryHandler
      * @param version the version of the XML, an attribute on the profile manager
      */
     public TemplateQueryHandler(Map<String, TemplateQuery> templates,
-            @SuppressWarnings("unused") Map<String, InterMineBag> savedBags, int version) {
+            Map<String, InterMineBag> savedBags, int version) {
         super(new HashMap<String, PathQuery>(), version);
         this.templates = templates;
         reset();
