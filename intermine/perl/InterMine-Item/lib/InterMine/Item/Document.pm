@@ -200,10 +200,10 @@ sub make_item {
     my %attr;
 
     if ( @_ == 1 ) {
-        $args{implements} = shift;
+        $args{classname} = shift;
     }
     elsif ( @_ % 2 == 1 ) {
-        $args{implements} = shift;
+        $args{classname} = shift;
         %attr = @_;
     }
     else {
