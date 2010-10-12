@@ -29,13 +29,13 @@
 <reference name="ontologyTerm" ref_id="7_1"/>
 <reference name="subject" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="goEvidenceCodes"><reference ref_id="1_1"/></collection>
+<collection name="evidence"><reference ref_id="9_1"/></collection>
 </item>
 <item id="8_2" class="GOAnnotation">
 <reference name="ontologyTerm" ref_id="7_2"/>
 <reference name="subject" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="goEvidenceCodes"><reference ref_id="1_1"/></collection>
+<collection name="evidence"><reference ref_id="9_2"/></collection>
 </item>
 <item id="1_1" class="GOEvidenceCode">
 <attribute name="code" value="NAS"/>
@@ -44,7 +44,7 @@
 <reference name="ontologyTerm" ref_id="7_4"/>
 <reference name="subject" ref_id="3_2"/>
 <collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="goEvidenceCodes"><reference ref_id="1_1"/></collection>
+<collection name="evidence"><reference ref_id="9_4"/></collection>
 </item>
 <item id="7_2" class="GOTerm">
 <attribute name="identifier" value="GO:0000005"/>
@@ -74,7 +74,23 @@
 <reference name="ontologyTerm" ref_id="7_3"/>
 <reference name="subject" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="goEvidenceCodes"><reference ref_id="1_1"/></collection>
+<collection name="evidence"><reference ref_id="9_3"/></collection>
 <collection name="with"><reference ref_id="3_2"/></collection>
+</item>
+<item id="9_4" class="GOEvidence">
+<reference name="code" ref_id="1_1"/>
+<collection name="publications"></collection>
+</item>
+<item id="9_1" class="GOEvidence">
+<reference name="code" ref_id="1_1"/>
+<collection name="publications"></collection>
+</item>
+<item id="9_3" class="GOEvidence">
+<reference name="code" ref_id="1_1"/>
+<collection name="publications"></collection>
+</item>
+<item id="9_2" class="GOEvidence">
+<reference name="code" ref_id="1_1"/>
+<collection name="publications"></collection>
 </item>
 </items>
