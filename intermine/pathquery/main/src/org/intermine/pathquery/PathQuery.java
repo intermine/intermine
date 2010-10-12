@@ -550,7 +550,8 @@ public class PathQuery implements Cloneable
                 return;
             } else {
                 throw new IllegalStateException("Given constraint is already associated with code "
-                        + constraints.get(constraint) + " - cannot associate with code " + code);
+                        + constraints.get(constraint) + " - cannot associate with code " + code
+                        + "for query " + this.toString());
             }
         }
         Set<String> usedCodes = new HashSet<String>(constraints.values());
