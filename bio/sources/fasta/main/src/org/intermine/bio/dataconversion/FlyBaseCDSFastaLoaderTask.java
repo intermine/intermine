@@ -10,13 +10,11 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.Sequence;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
