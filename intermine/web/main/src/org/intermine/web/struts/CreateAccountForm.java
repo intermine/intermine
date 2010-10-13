@@ -131,7 +131,7 @@ public class CreateAccountForm extends ActionForm
         username = null;
         password = null;
         password2 = null;
-        mailinglist = true;
+        mailinglist = false;
     }
 
 }
