@@ -15,6 +15,9 @@
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/inlineTagEditor.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/resultstables.css'/>" />
 
+<c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
+
 <%
 /* In Safari, loading a css that doesnt exist causes weirdness */
 String pageName = (String) request.getAttribute("pageName");
@@ -23,11 +26,8 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 }
 %>
 <c:if test="${pageCSS == 'true'}">
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/${pageName}.css'/>"/>
+	<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/${pageName}.css'/>"/>
 </c:if>
-
-<c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
 
 <c:choose>
   <c:when test="${pageName == 'spanUploadOptions'}">
