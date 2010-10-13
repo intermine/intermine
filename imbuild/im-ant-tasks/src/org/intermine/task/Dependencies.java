@@ -13,6 +13,7 @@ package org.intermine.task;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -303,6 +304,7 @@ public class Dependencies extends Task
                 ant.execute();
             }
 
+
             DirSet dirset = new DirSet();
             dirset.setDir(projDir);
             dirset.setIncludes("build/classes");
@@ -504,7 +506,9 @@ public class Dependencies extends Task
     public static Properties loadProjectProperties(File projDir) {
         Properties properties = new Properties();
         try {
-            properties.load(new FileInputStream(new File(projDir, PROJECT_PROPERTIES)));
+            InputStream is = new FileInputStream(new File(projDir, PROJECT_PROPERTIES));
+            properties.load(is);
+//            is.close();
         } catch (IOException e) {
             throw new BuildException("Failed to load project properties from "
                     + projDir.getAbsolutePath(), e);
