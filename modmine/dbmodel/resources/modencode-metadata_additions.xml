@@ -111,9 +111,9 @@
   <attribute name="marginalSensitivity" type="java.lang.Double" />
   <attribute name="meanIntensity" type="java.lang.Double" />
   <attribute name="rankScore" type="java.lang.Double" />
-  <collection name="exons" referenced-type="Exon" reverse-reference="transcriptRegions" />  
-  <collection name="exonRegions" referenced-type="ExonRegion" reverse-reference="transcriptRegions" />  
-  <collection name="introns" referenced-type="Intron" reverse-reference="transcriptRegions" />  
+  <collection name="exons" referenced-type="Exon" reverse-reference="transcriptRegions" />
+  <collection name="exonRegions" referenced-type="ExonRegion" reverse-reference="transcriptRegions" />
+  <collection name="introns" referenced-type="Intron" reverse-reference="transcriptRegions" />
 </class>
 
 <!-- OTHER modENCODE classes -->
@@ -260,8 +260,8 @@
   <attribute name="experimentType" type="java.lang.String" />
   <attribute name="totalReadCount" type="java.lang.Integer" />
   <attribute name="multiplyMappedReadCount" type="java.lang.Integer" />
-  <attribute name="uniquelyMappedReadCount" type="java.lang.Integer" /> 
-  
+  <attribute name="uniquelyMappedReadCount" type="java.lang.Integer" />
+
   <reference name="organism" referenced-type="Organism" />
   <reference name="publication" referenced-type="Publication"/>
     <reference name="experiment" referenced-type="Experiment" reverse-reference="submissions" />

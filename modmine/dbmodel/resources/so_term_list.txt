@@ -1,6 +1,7 @@
 binding_site
 cDNA
 cDNA_clone
+cDNA_match
 CDS
 chromosomal_deletion
 chromosomal_duplication
