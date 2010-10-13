@@ -10,7 +10,6 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -19,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.intermine.bio.util.Constants;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -37,7 +37,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.StringUtil;
 
 /**
  * Fill in additional references/collections in genomic model
@@ -119,17 +118,12 @@ public class CreateReferences
                 + destinationClsName + ", "
                 + createFieldName + ")";
 
-        Set<String> classesNotInModel = new HashSet<String>(
-                Arrays.asList(new String[] {sourceClsName, connectingClsName, destinationClsName}));
-        Set<String> tmpClasses = new HashSet<String>(classesNotInModel);
-        for (String clsName : tmpClasses) {
-            if (model.hasClassDescriptor(clsName)) {
-                classesNotInModel.remove(clsName);
-            }
-        }
-        if (!classesNotInModel.isEmpty()) {
-            LOG.warn("Not performing " + insertMessage + "  Because classes don't exist in model"
-                    + StringUtil.prettyList(classesNotInModel));
+        // Check that classes and fields specified exist in model
+        try {
+            checkFieldExists(sourceClsName, sourceClassFieldName, insertMessage);
+            checkFieldExists(connectingClsName, connectingClassFieldName, insertMessage);
+            checkFieldExists(destinationClsName, createFieldName, insertMessage);
+        } catch (MetaDataException e) {
             return;
         }
 
@@ -184,6 +178,21 @@ public class CreateReferences
         }
     }
 
+    private void checkFieldExists(String className, String fieldName, String message)
+        throws MetaDataException {
+        ClassDescriptor cld = model.getClassDescriptorByName(className);
+        if (cld == null) {
+            LOG.warn("Not performing " + message + " because " + className
+                    + " doesn't exist in model");
+            throw new MetaDataException();
+        }
+
+        if (cld.getFieldDescriptorByName(fieldName) == null) {
+            LOG.warn("Not performing " + message + " because " + cld.getUnqualifiedName()
+                    + "." + fieldName + " doesn't exist in model");
+            throw new MetaDataException();
+        }
+    }
 
     /**
      * Add a collection of objects of type X to objects of type Y by using a connecting class.
@@ -224,17 +233,12 @@ public class CreateReferences
             + createFieldName + ", "
             + createInFirstClass + ")";
 
-        Set<String> classesNotInModel = new HashSet<String>(
-                Arrays.asList(new String[] {firstClsName, connectingClsName, secondClsName}));
-        Set<String> tmpClasses = new HashSet<String>(classesNotInModel);
-        for (String clsName : tmpClasses) {
-            if (model.hasClassDescriptor(clsName)) {
-                classesNotInModel.remove(clsName);
-            }
-        }
-        if (!classesNotInModel.isEmpty()) {
-            LOG.warn("Not performing " + insertMessage + "  Because classes don't exist in model"
-                    + StringUtil.prettyList(classesNotInModel));
+        // Check that classes and fields specified exist in model
+        try {
+            checkFieldExists(firstClsName, firstClassFieldName, insertMessage);
+            checkFieldExists(connectingClsName, connectingClassFieldName, insertMessage);
+            checkFieldExists(secondClsName, createFieldName, insertMessage);
+        } catch (MetaDataException e) {
             return;
         }
 
