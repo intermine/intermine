@@ -64,7 +64,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             "binding_site", "protein_binding_site", "TF_binding_site",
             "transcript_region", "histone_binding_site", "copy_number_variation",
             "natural_transposable_element", "start_codon", "stop_codon"
-            , "cDNA", "miRNA"
+            , "cDNA", "cDNA_match", "miRNA"
             , "three_prime_RACE_clone", "three_prime_RST", "three_prime_UST"
             , "polyA_site", "polyA_signal_sequence", "overlapping_EST_set", "exon_region"
             , "SL1_acceptor_site", "SL2_acceptor_site"
