@@ -297,8 +297,9 @@ sub update_sort_order {
     my $query = shift;
     my $is_changed = 0;
     my $place = 'sort order';
+    my @orders = $query->sort_orders;
     $query->clear_sort_order;
-    for my $so ($query->sort_orders) {
+    for my $so (@orders) {
         my $path = $so->path;
         if ( my $translation = $self->update_path( $path, $query->type_dict ) ) {
             unless ($path eq $translation) {
