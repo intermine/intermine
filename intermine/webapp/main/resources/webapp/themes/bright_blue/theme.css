@@ -220,3 +220,9 @@ table.results tr td.highlightObject {
 /*    .columnHeader {
       background: #353B40;
     }*/
+
+/* hints */
+#hints { margin:10px 10px 0 10px; padding:4px; font-size:12px; background-repeat:no-repeat; background-position:10px 8px; }
+	#hints p { display:inline; padding-left:34px; }
+	#hints a { float:right; }
+	#hints.information { background-color:#E6F7FE; background-image:url("icons/information-small.png"); border:1px solid #BEDCE4; }
