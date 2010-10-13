@@ -277,6 +277,10 @@ public class OboParser
             if (synonyms != null) {
                 addSynonyms(term, synonyms, "narrow_synonym");
             }
+            List<?> altIds = (List<?>) tagValues.get("alt_id");
+            if (altIds != null) {
+                addSynonyms(term, altIds, "alt_id");
+            }
 
             // Set namespace
             List<?> nsl = (List<?>) tagValues.get("namespace");
@@ -336,6 +340,8 @@ public class OboParser
             synMatcher.reset(line);
             if (synMatcher.matches()) {
                 term.addSynonym(new OboTermSynonym(unescape(synMatcher.group(1)), type));
+            } else if ("alt_id".equals(type)) {
+                term.addSynonym(new OboTermSynonym(line, type));
             } else {
                 LOG.warn("Could not match synonym value from: " + line);
             }
