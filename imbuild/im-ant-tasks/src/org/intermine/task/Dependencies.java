@@ -508,7 +508,7 @@ public class Dependencies extends Task
         try {
             InputStream is = new FileInputStream(new File(projDir, PROJECT_PROPERTIES));
             properties.load(is);
-//            is.close();
+            is.close();
         } catch (IOException e) {
             throw new BuildException("Failed to load project properties from "
                     + projDir.getAbsolutePath(), e);
