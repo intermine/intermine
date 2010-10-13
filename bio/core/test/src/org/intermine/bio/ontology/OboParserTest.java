@@ -15,6 +15,7 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,14 +64,15 @@ public class OboParserTest extends TestCase
 
         OboTerm dt3 = (OboTerm) parser.terms.get("GO:0000003");
 
-        assertEquals(5, dt3.getSynonyms().size());
+        assertEquals(6, dt3.getSynonyms().size());
 
-        HashSet expSyns = new HashSet();
+        HashSet expSyns = new LinkedHashSet();
         expSyns.add(new OboTermSynonym("some_value", "synonym"));
-        expSyns.add(new OboTermSynonym("exact_value", "exact_synonym"));
         expSyns.add(new OboTermSynonym("related_value", "related_synonym"));
+        expSyns.add(new OboTermSynonym("exact_value", "exact_synonym"));
         expSyns.add(new OboTermSynonym("broad_value", "broad_synonym"));
         expSyns.add(new OboTermSynonym("narrow_value", "narrow_synonym"));
+        expSyns.add(new OboTermSynonym("GO:0019952", "alt_id"));
 
         assertEquals(expSyns, dt3.getSynonyms());
     }
@@ -165,7 +167,7 @@ public class OboParserTest extends TestCase
         assertEquals("a\\bc:d,e[f)g{h i\tj\nk", parser.unescape("a\\\\b\\c\\:d\\,e\\[f\\)g\\{h\\Wi\\tj\\nk"));
     }
 
-    public void testAddSynonyms() {
+    public void testAddSynonyms() throws Exception {
         OboTerm term = new OboTerm("id", "name");
         parser.addSynonyms(term,
                 Arrays.asList(new String[]{"\"no escapes\" []",
