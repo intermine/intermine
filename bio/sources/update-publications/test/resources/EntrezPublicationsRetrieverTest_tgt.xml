@@ -16,15 +16,9 @@
   </item>
   <item id="-1_2" class="Author">
     <attribute name="name" value="Lie YS"/>
-    <collection name="publications">
-      <reference ref_id="-1_1"/>
-    </collection>
   </item>
   <item id="-1_3" class="Author">
     <attribute name="name" value="Macdonald PM"/>
-    <collection name="publications">
-      <reference ref_id="-1_1"/>
-    </collection>
   </item>
   <item id="-1_5" class="Publication">
     <attribute name="issue" value="6"/>
@@ -43,21 +37,11 @@
   </item>
   <item id="-1_6" class="Author">
     <attribute name="name" value="Morita K"/>
-    <collection name="publications">
-      <reference ref_id="-1_5"/>
-    </collection>
   </item>
   <item id="-1_4" class="Author">
     <attribute name="name" value="Chow KL"/>
-    <collection name="publications">
-      <reference ref_id="-1_1"/>
-      <reference ref_id="-1_5"/>
-    </collection>
   </item>
   <item id="-1_7" class="Author">
     <attribute name="name" value="Ueno N"/>
-    <collection name="publications">
-      <reference ref_id="-1_5"/>
-    </collection>
   </item>
 </items>
