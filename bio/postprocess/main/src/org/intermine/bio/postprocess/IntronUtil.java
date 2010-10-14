@@ -22,14 +22,14 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.Constants;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
-import org.intermine.model.bio.Exon;
-import org.intermine.model.bio.Intron;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
-import org.intermine.model.bio.Transcript;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -60,8 +60,11 @@ public class IntronUtil
     private DataSet dataSet;
     private DataSource dataSource;
     private Set<Integer> taxonIds = new HashSet<Integer>();
+    private Model model;
 
-    protected Map<String, Intron> intronMap = new HashMap<String, Intron>();
+    protected Map<String, SequenceFeature> intronMap = new HashMap<String, SequenceFeature>();
+    protected Map<SequenceFeature, Set<SequenceFeature>> intronTranscripts =
+        new HashMap<SequenceFeature, Set<SequenceFeature>>();
 
     /**
      * Create a new IntronUtil object that will operate on the given ObjectStoreWriter.
@@ -71,6 +74,7 @@ public class IntronUtil
     public IntronUtil(ObjectStoreWriter osw) {
         this.osw = osw;
         this.os = osw.getObjectStore();
+        this.model = os.getModel();
         dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
         dataSource.setName("FlyMine");
         try {
@@ -115,13 +119,21 @@ public class IntronUtil
         // for each transcript with the exon chromosome location.  This is then used
         // to calculate intron locations.
 
+        try {
+            String message = "Not performing create introns postprocess ";
+            PostProcessUtil.checkFieldExists(model, "Transcript", "exons", message);
+            PostProcessUtil.checkFieldExists(model, "Intron", "transcripts", message);
+            PostProcessUtil.checkFieldExists(model, "Exon", null, message);
+        } catch (MetaDataException e) {
+            return;
+        }
 
         // Construct a new query and a set to hold constraints that will be ANDed together
         Query q = new Query();
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         // Add Transcript to the from and select lists
-        QueryClass qcTran = new QueryClass(Transcript.class);
+        QueryClass qcTran = new QueryClass(model.getClassDescriptorByName("Transcript").getType());
         q.addFrom(qcTran);
         q.addToSelect(qcTran);
 
@@ -149,7 +161,7 @@ public class IntronUtil
         }
 
         // Include the Exon class from the Transcript.exons collection
-        QueryClass qcExon = new QueryClass(Exon.class);
+        QueryClass qcExon = new QueryClass(model.getClassDescriptorByName("Exon").getType());
         q.addFrom(qcExon);
         QueryCollectionReference qcrExons = new QueryCollectionReference(qcTran, "exons");
         ContainsConstraint ccTranExons =
@@ -182,8 +194,8 @@ public class IntronUtil
         // When we start interating the query will be executed
         Iterator<?> resultsIter = results.iterator();
 
-        Set<Object> locationSet = new HashSet<Object>();
-        Transcript lastTran = null;
+        Set<Location> locationSet = new HashSet<Location>();
+        SequenceFeature lastTran = null;
         Location lastTranLoc = null;
         int tranCount = 0, exonCount = 0, intronCount = 0;
 
@@ -194,7 +206,7 @@ public class IntronUtil
             // that were added to the select list of the query.  The order of columns is
             // as they were added to the select list.
             ResultsRow<?> rr = (ResultsRow<?>) resultsIter.next();
-            Transcript thisTran = (Transcript) rr.get(0);
+            SequenceFeature thisTran = (SequenceFeature) rr.get(0);
 
             if (lastTran == null) {
                 lastTran = thisTran;
@@ -209,11 +221,11 @@ public class IntronUtil
                     LOG.info("Created " + intronCount + " Introns for " + tranCount
                              + " Transcripts with " + exonCount + " Exons.");
                 }
-                locationSet = new HashSet<Object>();
+                locationSet = new HashSet<Location>();
                 lastTran = thisTran;
                 lastTranLoc = (Location) rr.get(1);
             }
-            locationSet.add(rr.get(2));
+            locationSet.add((Location) rr.get(2));
         }
 
         if (lastTran != null) {
@@ -228,10 +240,12 @@ public class IntronUtil
         int stored = 0;
         for (Iterator<String> i = intronMap.keySet().iterator(); i.hasNext();) {
             String identifier = i.next();
-            Intron intron = intronMap.get(identifier);
+            SequenceFeature intron = intronMap.get(identifier);
+            Set<SequenceFeature> transcripts = intronTranscripts.get(intron);
+            if (transcripts != null) {
+                intron.setFieldValue("transcripts", transcripts);
+            }
             osw.store(intron);
-            //osw.store(intron.getChromosomeLocation());
-            //osw.store((InterMineObject) intron.getSynonyms().iterator().next());
             stored++;
             if (stored % 1000 == 0) {
                 LOG.info("Stored " + stored + " introns.");
@@ -255,7 +269,7 @@ public class IntronUtil
      * @return a set of Intron objects
      * @throws ObjectStoreException if there is an ObjectStore problem
      */
-    protected int createIntronFeatures(Set<Object> locationSet, Transcript transcript,
+    protected int createIntronFeatures(Set<Location> locationSet, SequenceFeature transcript,
             Location tranLoc)
         throws ObjectStoreException {
         if (locationSet.size() == 1 || tranLoc == null || transcript == null
@@ -263,23 +277,17 @@ public class IntronUtil
             return 0;
         }
 
-        //final BitSet bs = new BitSet(transcript.getLength().intValue() + 1);
         final BitSet bs = new BitSet(transcript.getLength().intValue());
-
-
         Chromosome chr = transcript.getChromosome();
 
-        Iterator<Object> locationIter = locationSet.iterator();
         int tranStart = tranLoc.getStart().intValue();
 
-        while (locationIter.hasNext()) {
-            Location location = (Location) locationIter.next();
+        for (Location location : locationSet) {
             bs.set(location.getStart().intValue() - tranStart,
                    (location.getEnd().intValue() - tranStart) + 1);
         }
 
         int prevEndPos = 0;
-
         int intronCount = 0;
         while (prevEndPos != -1) {
             intronCount++;
@@ -307,8 +315,9 @@ public class IntronUtil
                 + "_" + Integer.toString(newLocStart) + ".." + Integer.toString(newLocEnd);
 
             if (intronMap.get(identifier) == null) {
-                Intron intron = (Intron)
-                    DynamicUtil.createObject(Collections.singleton(Intron.class));
+                Class<?> intronCls = model.getClassDescriptorByName("Intron").getType();
+                SequenceFeature intron = (SequenceFeature)
+                    DynamicUtil.createObject(Collections.singleton(intronCls));
                 Location location =
                     (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
 
@@ -329,14 +338,23 @@ public class IntronUtil
 
                 int length = location.getEnd().intValue() - location.getStart().intValue() + 1;
                 intron.setLength(new Integer(length));
-                intron.addTranscripts(transcript);
+                addToIntronTranscripts(intron, transcript);
                 intronMap.put(identifier, intron);
             } else {
-                Intron intron = intronMap.get(identifier);
-                intron.addTranscripts(transcript);
+                SequenceFeature intron = intronMap.get(identifier);
+                addToIntronTranscripts(intron, transcript);
                 intronMap.put(identifier, intron);
             }
         }
         return intronCount;
+    }
+    
+    private void addToIntronTranscripts(SequenceFeature intron, SequenceFeature transcript) {
+        Set<SequenceFeature> transcripts = intronTranscripts.get(intron);
+        if (transcripts == null) {
+            transcripts = new HashSet<SequenceFeature>();
+            intronTranscripts.put(intron, transcripts);
+        }
+        transcripts.add(transcript);
     }
 }

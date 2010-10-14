@@ -25,9 +25,6 @@ import org.apache.tools.ant.BuildException;
 
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.model.bio.Exon;
-import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.Transcript;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
@@ -150,8 +147,8 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             } else if ("make-spanning-locations".equals(operation)) {
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
                 LOGGER.info("Starting CalculateLocations.createSpanningLocations()");
-                cl.createSpanningLocations(Transcript.class, Exon.class, "exons");
-                cl.createSpanningLocations(Gene.class, Transcript.class, "transcripts");
+                cl.createSpanningLocations("Transcript", "Exon", "exons");
+                cl.createSpanningLocations("Gene", "Transcript", "transcripts");
             } else if ("create-intergenic-region-features".equals(operation)) {
                 IntergenicRegionUtil ig = new IntergenicRegionUtil(getObjectStoreWriter());
                 LOGGER.info("Starting IntergenicRegionUtil.createIntergenicRegionFeatures()");

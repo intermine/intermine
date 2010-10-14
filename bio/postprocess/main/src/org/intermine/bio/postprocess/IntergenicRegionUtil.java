@@ -23,6 +23,8 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.bio.util.BioQueries;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
@@ -49,6 +51,7 @@ public class IntergenicRegionUtil
     private ObjectStore os;
     private DataSet dataSet;
     private DataSource dataSource;
+    private Model model;
     private static final Logger LOG = Logger.getLogger(IntergenicRegionUtil.class);
 
     /**
@@ -60,6 +63,7 @@ public class IntergenicRegionUtil
     public IntergenicRegionUtil(ObjectStoreWriter osw) {
         this.osw = osw;
         this.os = osw.getObjectStore();
+        this.model = os.getModel();
         dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
         dataSource.setName("FlyMine");
         try {
@@ -79,9 +83,12 @@ public class IntergenicRegionUtil
     public void createIntergenicRegionFeatures()
         throws ObjectStoreException, IllegalAccessException {
 
-        if (!os.getModel().hasClassDescriptor("IntergenicRegion")) {
-            LOG.error("IntergenicRegionUtil was called to create IntergenicRegion features but "
-                    + " IntegergenicRegion does not in the data model");
+        try {
+            String message = "Not performing IntergenicRegionUtil.createIntergenicRegionFeatures ";
+            PostProcessUtil.checkFieldExists(model, "IntergenicRegion", "adjacentGenes", message);
+            PostProcessUtil.checkFieldExists(model, "Gene", "upstreamIntergenicRegion", message);
+            PostProcessUtil.checkFieldExists(model, "Gene", "downstreamIntergenicRegion", message);
+        } catch (MetaDataException e) {
             return;
         }
 

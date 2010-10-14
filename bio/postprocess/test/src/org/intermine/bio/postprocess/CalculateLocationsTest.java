@@ -10,12 +10,10 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -30,7 +28,6 @@ import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.ReversePrimer;
-import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -39,7 +36,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
-import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 
 public class CalculateLocationsTest extends TestCase
@@ -90,7 +86,7 @@ public class CalculateLocationsTest extends TestCase
         chr.setLength(new Integer(1000));
         chr.setId(new Integer(101));
 
-        Set toStore = new HashSet();
+        Set<InterMineObject> toStore = new HashSet<InterMineObject>();
 
         toStore.add(chr);
 
@@ -147,10 +143,8 @@ public class CalculateLocationsTest extends TestCase
         toStore.addAll(Arrays.asList(exons));
         toStore.addAll(Arrays.asList(exonLocs));
 
-        Iterator iter = toStore.iterator();
-        while (iter.hasNext()) {
-            InterMineObject o = (InterMineObject) iter.next();
-            osw.store(o);
+        for (InterMineObject imo : toStore) {
+            osw.store(imo);
         }
     }
 
@@ -305,30 +299,30 @@ public class CalculateLocationsTest extends TestCase
         Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         gene.setId(new Integer(301));
 
-        exon1.setTranscripts(new HashSet(Arrays.asList(new Object [] {trans1})));
-        exon2.setTranscripts(new HashSet(Arrays.asList(new Object [] {trans1})));
+        exon1.setTranscripts(new HashSet<Transcript>(Arrays.asList(new Transcript [] {trans1})));
+        exon2.setTranscripts(new HashSet<Transcript>(Arrays.asList(new Transcript [] {trans1})));
 
         // the location of exon3 should be ignored by createSpanningLocations() because trans2
         // already has a location
-        exon3.setTranscripts(new HashSet(Arrays.asList(new Object [] {trans2})));
+        exon3.setTranscripts(new HashSet<Transcript>(Arrays.asList(new Transcript [] {trans2})));
 
         trans1.setGene(gene);
         trans2.setGene(gene);
 
-        Set toStore = new HashSet(Arrays.asList(new Object[] {
-                                                    getChromosome(), gene, trans1, trans2,
-                                                    exon1, exon2, exon3,
-                                                    exon1OnChr, exon2OnChr, trans2OnChr
-                                                }));
+        Set<InterMineObject> toStore =
+            new HashSet<InterMineObject>(Arrays.asList(new InterMineObject[] {
+                    getChromosome(), gene, trans1, trans2,
+                    exon1, exon2, exon3,
+                    exon1OnChr, exon2OnChr, trans2OnChr
+            }));
 
-        Iterator i = toStore.iterator();
-        while (i.hasNext()) {
-            osw.store((InterMineObject) i.next());
+        for (InterMineObject imo : toStore) {
+            osw.store(imo);
         }
 
         CalculateLocations cl = new CalculateLocations(osw);
-        cl.createSpanningLocations(Transcript.class, Exon.class, "exons");
-        cl.createSpanningLocations(Gene.class, Transcript.class, "transcripts");
+        cl.createSpanningLocations("Transcript", "Exon", "exons");
+        cl.createSpanningLocations("Gene", "Transcript", "transcripts");
 
         ObjectStore os = osw.getObjectStore();
         Transcript resTrans1 = (Transcript) os.getObjectById(new Integer(201));
@@ -427,14 +421,14 @@ public class CalculateLocationsTest extends TestCase
         Location exon3OnChr = createLocation(chr2, exon3, "1", 601, 650, Location.class);
         exon3OnChr.setId(new Integer(1013));
 
-        Set toStore = new HashSet(Arrays.asList(new Object[] {
-            chr1, chr2, exon1, exon2, exon3,
-            exon1OnChr, exon2OnChr, exon2OnChrDup, exon3OnChr
-        }));
+        Set<InterMineObject> toStore =
+            new HashSet<InterMineObject>(Arrays.asList(new InterMineObject[] {
+                    chr1, chr2, exon1, exon2, exon3,
+                    exon1OnChr, exon2OnChr, exon2OnChrDup, exon3OnChr
+            }));
 
-        Iterator i = toStore.iterator();
-        while (i.hasNext()) {
-            osw.store((InterMineObject) i.next());
+        for (InterMineObject imo : toStore) {
+            osw.store(imo);
         }
 
         CalculateLocations cl = new CalculateLocations(osw);
@@ -472,17 +466,6 @@ public class CalculateLocationsTest extends TestCase
         loc.setEnd(new Integer(end));
         loc.setStrand(strand);
         return loc;
-    }
-
-
-
-    private Item toItem(InterMineObject o) {
-        if (o.getId() == null) {
-            o.setId(new Integer(0));
-        }
-        Item item = itemFactory.makeItem(o);
-        item.setIdentifier("0");
-        return item;
     }
 
     private Chromosome getChromosome() {

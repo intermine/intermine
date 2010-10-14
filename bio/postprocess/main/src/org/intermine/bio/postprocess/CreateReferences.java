@@ -120,9 +120,13 @@ public class CreateReferences
 
         // Check that classes and fields specified exist in model
         try {
-            checkFieldExists(sourceClsName, sourceClassFieldName, insertMessage);
-            checkFieldExists(connectingClsName, connectingClassFieldName, insertMessage);
-            checkFieldExists(destinationClsName, createFieldName, insertMessage);
+            String errorMessage = "Not performing " + insertMessage;
+            PostProcessUtil.checkFieldExists(model, sourceClsName, sourceClassFieldName,
+                    errorMessage);
+            PostProcessUtil.checkFieldExists(model, connectingClsName, connectingClassFieldName,
+                    errorMessage);
+            PostProcessUtil.checkFieldExists(model, destinationClsName, createFieldName,
+                    errorMessage);
         } catch (MetaDataException e) {
             return;
         }
@@ -178,22 +182,6 @@ public class CreateReferences
         }
     }
 
-    private void checkFieldExists(String className, String fieldName, String message)
-        throws MetaDataException {
-        ClassDescriptor cld = model.getClassDescriptorByName(className);
-        if (cld == null) {
-            LOG.warn("Not performing " + message + " because " + className
-                    + " doesn't exist in model");
-            throw new MetaDataException();
-        }
-
-        if (cld.getFieldDescriptorByName(fieldName) == null) {
-            LOG.warn("Not performing " + message + " because " + cld.getUnqualifiedName()
-                    + "." + fieldName + " doesn't exist in model");
-            throw new MetaDataException();
-        }
-    }
-
     /**
      * Add a collection of objects of type X to objects of type Y by using a connecting class.
      * Eg. Add a collection of Protein objects to Gene by examining the Transcript objects in the
@@ -235,9 +223,12 @@ public class CreateReferences
 
         // Check that classes and fields specified exist in model
         try {
-            checkFieldExists(firstClsName, firstClassFieldName, insertMessage);
-            checkFieldExists(connectingClsName, connectingClassFieldName, insertMessage);
-            checkFieldExists(secondClsName, createFieldName, insertMessage);
+            String errorMessage = "Not performing " + insertMessage;
+            PostProcessUtil.checkFieldExists(model, firstClsName, firstClassFieldName,
+                    errorMessage);
+            PostProcessUtil.checkFieldExists(model, connectingClsName, connectingClassFieldName,
+                    errorMessage);
+            PostProcessUtil.checkFieldExists(model, secondClsName, createFieldName, errorMessage);
         } catch (MetaDataException e) {
             return;
         }

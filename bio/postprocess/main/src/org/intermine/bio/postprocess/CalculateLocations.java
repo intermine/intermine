@@ -20,12 +20,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.SequenceFeature;
-import org.intermine.model.bio.Location;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.Constants;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -60,6 +62,7 @@ public class CalculateLocations
 
     protected ObjectStoreWriter osw;
     protected ObjectStore os;
+    private Model model;
 
 
 
@@ -70,6 +73,7 @@ public class CalculateLocations
     public CalculateLocations(ObjectStoreWriter osw) {
         this.osw = osw;
         this.os = osw.getObjectStore();
+        this.model = os.getModel();
     }
 
 
@@ -167,8 +171,20 @@ public class CalculateLocations
      * @param refField the linking field eg. "exons"
      * @throws ObjectStoreException if the is a problem with the ObjectStore
      */
-    public void createSpanningLocations(Class<?> parentClass, Class<?> childClass, String refField)
+    public void createSpanningLocations(String parentClsName, String childClsName, String refField)
         throws ObjectStoreException {
+
+        try {
+            String message = "Not performing CalculateLocations.createSpanningLocations("
+                + parentClsName + ", " + childClsName + ", " + refField + ") ";
+            PostProcessUtil.checkFieldExists(model, parentClsName, refField, message);
+            PostProcessUtil.checkFieldExists(model, childClsName, null, message);
+        } catch (MetaDataException e) {
+            return;
+        }
+
+        Class<?> parentClass = model.getClassDescriptorByName(parentClsName).getType();
+        Class<?> childClass = model.getClassDescriptorByName(childClsName).getType();
 
         Query parentIdQuery =
             new IqlQuery("SELECT DISTINCT a1_.id as id FROM "

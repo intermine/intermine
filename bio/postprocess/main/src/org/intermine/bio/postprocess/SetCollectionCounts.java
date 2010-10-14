@@ -10,20 +10,19 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
+import java.util.Collection;
+import java.util.Iterator;
 
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-
-import org.intermine.model.bio.Transcript;
-
-import java.util.Collection;
-import java.util.Iterator;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 
 /**
  * SetCollectionCounts class
@@ -34,8 +33,8 @@ import java.util.Iterator;
 public class SetCollectionCounts
 {
     private ObjectStoreWriter osw;
-
     private ObjectStore os;
+    private Model model;
 
     /**
      * Construct with an ObjectStoreWriter, read and write from same ObjectStore
@@ -44,6 +43,7 @@ public class SetCollectionCounts
     public SetCollectionCounts(ObjectStoreWriter osw) {
         this.osw = osw;
         this.os = osw.getObjectStore();
+        this.model = os.getModel();
     }
 
     /**
@@ -52,22 +52,32 @@ public class SetCollectionCounts
      * @throws Exception if an error occurs
      */
     public void setCollectionCount() throws Exception {
-        setCollectionCountField(Transcript.class, "exons", "exonCount");
+        setCollectionCountField("Transcript", "exons", "exonCount");
     }
 
     /**
      * Count a collection and set an Integer field with the count.
-     * @param c the Class to find the fields in
+     * @param clsName name of the class to set count field in
      * @param collectionName the name of the collection to count
      * @param countFieldName the Integer field to set
      * @throws ObjectStoreException if an ObjectStore method fails
      * @throws IllegalAccessException if a field cannot be accessed
      */
-    void setCollectionCountField(Class<?> c, String collectionName, String countFieldName)
+    void setCollectionCountField(String clsName, String collectionName, String countFieldName)
         throws ObjectStoreException, IllegalAccessException {
+
+        String message = "Not performing setCollectionCountField(" + clsName + ", " + collectionName
+            + ", " + countFieldName + ") ";
+        try {
+            PostProcessUtil.checkFieldExists(model, clsName, collectionName, message);
+            PostProcessUtil.checkFieldExists(model, clsName, countFieldName, message);
+        } catch (MetaDataException e) {
+            return;
+        }
+
         Query q = new Query();
 
-        QueryClass qc = new QueryClass(c);
+        QueryClass qc = new QueryClass(model.getClassDescriptorByName(clsName).getType());
         q.addFrom(qc);
         q.addToSelect(qc);
 

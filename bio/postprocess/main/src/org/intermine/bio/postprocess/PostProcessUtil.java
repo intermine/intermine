@@ -16,8 +16,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.bio.util.Constants;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -44,6 +48,8 @@ import org.intermine.util.TypeUtil;
  */
 public final class PostProcessUtil
 {
+    private static final Logger LOG = Logger.getLogger(PostProcessUtil.class);
+
     private PostProcessUtil() {
         //disable external instantiation
     }
@@ -112,6 +118,34 @@ public final class PostProcessUtil
             }
         }
         return false;
+    }
+
+    /**
+     * Check that a class exists and has a field of the given name.  If the either the class or
+     * field aren't in the model this will write a warning to the log preceded by the give message
+     * and throw a MetaDataException.  If fieldName is null or an empty string just the class will
+     * be tested.
+     * @param model the data model
+     * @param className the class to check in the model
+     * @param fieldName check that className has a field with this name, can be null or empty string
+     * @param message some text to precede the logged warning.
+     * @throws MetaDataException if the the class or field name don't exist
+     */
+    public static void checkFieldExists(Model model, String className, String fieldName,
+            String message) throws MetaDataException {
+        ClassDescriptor cld = model.getClassDescriptorByName(className);
+        if (cld == null) {
+            LOG.warn(message + " because " + className + " doesn't exist in model");
+            throw new MetaDataException();
+        }
+
+        if (!StringUtils.isBlank(fieldName)) {
+            if (cld.getFieldDescriptorByName(fieldName) == null) {
+                LOG.warn(message + " because " + cld.getUnqualifiedName() + "." + fieldName
+                        + " doesn't exist in model");
+                throw new MetaDataException();
+            }
+        }
     }
 
     /**
