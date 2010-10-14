@@ -864,7 +864,7 @@ public class UniprotConverter extends BioDirectoryConverter
                     return null;
                 }
                 identifierValue = uniprotEntry.getGeneNames().get(value);
-            } else if ("dbxref".equals(method)) {
+            } else if ("dbref".equals(method)) {
                 if ("Ensembl".equals(value) || "HGNC".equals(value)) {
                     // See #2122
                     identifierValue = uniprotEntry.getGeneDesignation(value);
