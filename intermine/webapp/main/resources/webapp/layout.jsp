@@ -83,25 +83,19 @@
     <!-- Nav trail -->
   <fmt:message key="${pageName}.tab" var="tab" />
   <c:if test="${tab != '???.tab???' && tab != '???tip.tab???'}">
-    
-    <!-- context help -->
-    <div id="contextHelp">
-    	<im:contextHelp/>
-    </div>
-    
-    <!-- breadcrumbs -->
-    <p id="crumbs" class="alignright">
+    <p class="alignright">
     <html:link href="${WEB_PROPERTIES['project.sitePrefix']}"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link>
     <c:if test="${! empty tab }">
-      <span>►</span><html:link action="${tab}"><fmt:message key="menu.${tab}" /></html:link>
+      &nbsp;&gt;&nbsp;<html:link action="${tab}"><fmt:message key="menu.${tab}" /></html:link>
       <c:if test="${pageName != tab}">
         <fmt:message key="${pageName}.title" var="pageTitle">
           <fmt:param value="${param.name}"/>
         </fmt:message>
-        <span>►</span><c:out value="${pageTitle}" />
+        &nbsp;&gt;&nbsp;<c:out value="${pageTitle}" />
       </c:if>
     </c:if>
-	</p>
+    <im:contextHelp/>
+</p>
   </c:if>
  </div>
 

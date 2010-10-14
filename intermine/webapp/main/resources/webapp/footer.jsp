@@ -6,7 +6,7 @@
 
 <br/><br/><br/>
 
-<div id="default-footer" class="body" align="center" style="clear:both">
+<div class="body" align="center" style="clear:both">
 
       <c:if test="${pageName != 'contact'}">
         <div id="contactFormDivButton">
@@ -25,7 +25,7 @@
       </c:if>
 
 <br/>
-<div id="funding-footer"><fmt:message key="funding"/></div>
+<div><fmt:message key="funding"/></div>
 
 </div>
 
