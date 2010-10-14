@@ -132,7 +132,7 @@ public class DisplayConstraintTest extends TestCase
 
         PathQuery query = new PathQuery(model);
         TemplateQuery template = new TemplateQuery("MyFirstTemplate", "FirstTemplate", "", query);
-        InterMineAPI im = new InterMineAPITest(os, pm, classKeys, bagQueryConfig, oss);
+        InterMineAPI im = new TestInterMineAPI(os, pm, classKeys, bagQueryConfig, oss);
         DisplayConstraintFactory dcf =
             new DisplayConstraintFactory(im, null);
 

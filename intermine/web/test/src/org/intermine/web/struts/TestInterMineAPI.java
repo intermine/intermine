@@ -26,7 +26,7 @@ import org.intermine.objectstore.ObjectStoreSummary;
  * The contrusctor method receives in input the ProfileManager object
  * created by the test class.
  */
-public class InterMineAPITest extends InterMineAPI
+public class TestInterMineAPI extends InterMineAPI
 {
      /**
      * Construct an InterMine API object.
@@ -36,7 +36,7 @@ public class InterMineAPITest extends InterMineAPI
      * @param bagQueryConfig configured bag queries used by BagQueryRunner
      * @param oss summary information for the ObjectStore
      */
-    public InterMineAPITest(ObjectStore objectStore, ProfileManager pm,
+    public TestInterMineAPI(ObjectStore objectStore, ProfileManager pm,
             Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig, ObjectStoreSummary oss) {
         super();
