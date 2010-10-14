@@ -89,13 +89,13 @@ public class UniprotConfig
             }
             String taxonId = attributes[0];
 
-            if (taxonId.equals("feature")) {
+            if ("feature".equals(taxonId)) {
                 String[] types = value.split("[, ]+");
                 featureTypes.addAll(Arrays.asList(types));
                 continue;
             }
 
-            if (taxonId.equals("crossReference")) {
+            if ("crossReference".equals(taxonId)) {
                 String[] types = value.split("[, ]+");
                 xrefs.addAll(Arrays.asList(types));
                 continue;
@@ -103,7 +103,7 @@ public class UniprotConfig
 
             ConfigEntry configEntry = getConfig(taxonId);
 
-            if (attributes[1].equals("uniqueField")) {
+            if ("uniqueField".equals(attributes[1])) {
                 configEntry.setUniqueIdentifier(value);
             } else if (attributes.length == 3) {
                 configEntry.addIdentifier(attributes[1], attributes[2], value);
