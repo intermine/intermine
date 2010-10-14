@@ -222,7 +222,12 @@ table.results tfoot tr td {
 }
 
 /* hints */
-#hints { margin:10px 10px 0 10px; padding:4px; font-size:12px; background-repeat:no-repeat; background-position:10px 8px; }
+#hints { margin:10px 10px 0 10px; padding:4px; font-size:12px; background-repeat:no-repeat; background-position:10px 4px; }
 	#hints p { display:inline; padding-left:34px; }
 	#hints a { float:right; }
 	#hints.information { background-color:#E6F7FE; background-image:url("icons/information-small.png"); border:1px solid #BEDCE4; }
+
+/* breadcrumbs */
+p#crumbs { ; }
+	p#crumbs span { color:#E2E1E6; font-size:9px; margin:0 2px 0 1px; }
+	#contextHelp { display:inline; float:right; }
