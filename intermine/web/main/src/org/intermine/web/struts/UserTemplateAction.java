@@ -43,10 +43,8 @@ public class UserTemplateAction extends InterMineDispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward delete(ActionMapping mapping,
-                                @SuppressWarnings("unused") ActionForm form,
-                                HttpServletRequest request,
-                                @SuppressWarnings("unused") HttpServletResponse response)
+    public ActionForward delete(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();

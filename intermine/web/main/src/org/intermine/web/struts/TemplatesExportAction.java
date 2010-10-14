@@ -38,6 +38,8 @@ public class TemplatesExportAction extends TemplateAction
 {
     /**
      * {@inheritDoc}
+     * @param mapping not used
+     * @param form not used
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)

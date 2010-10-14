@@ -40,8 +40,7 @@ public class TempImageLoader extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         OutputStream out = response.getOutputStream();
         try {
