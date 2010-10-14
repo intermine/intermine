@@ -801,7 +801,7 @@ public final class SessionMethods
 
     /**
      * Execute a query and return a PagedTable to display contents of a Collection, field of
-     * a given InterMineObject
+     * a given InterMineObject.
      *
      * @param request the ServletRequest
      * @param obj the InterMineObject
@@ -811,8 +811,7 @@ public final class SessionMethods
      * @throws ObjectStoreException exception thrown
      */
     public static PagedTable doQueryGetPagedTable(HttpServletRequest request, InterMineObject obj,
-                                                  String field,
-            String referencedClassName) throws ObjectStoreException {
+            String field, String referencedClassName) throws ObjectStoreException {
         HttpSession session = request.getSession();
         final InterMineAPI im = getInterMineAPI(session);
         ObjectStore os = im.getObjectStore();

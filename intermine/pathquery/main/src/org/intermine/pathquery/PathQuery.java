@@ -1532,8 +1532,8 @@ public class PathQuery implements Cloneable
                 } else {
                     String newRootClass = path.getStartClassDescriptor().getUnqualifiedName();
                     if (!rootClass.equals(newRootClass)) {
-                        problems.add("Multiple root classes in query: " + rootClass + " and "
-                                + newRootClass);
+                        problems.add("Multiple root classes: " + rootClass + " and "
+                                + newRootClass + " in query: " + this.toString());
                         continue;
                     }
                 }
@@ -1617,8 +1617,8 @@ public class PathQuery implements Cloneable
                         String newRootClass = loopPath.getStartClassDescriptor()
                             .getUnqualifiedName();
                         if (!rootClass.equals(newRootClass)) {
-                            problems.add("Multiple root classes in query: " + rootClass
-                                    + " and " + newRootClass);
+                            problems.add("Multiple root classes: " + rootClass + " and "
+                                    + newRootClass + " in query: " + this.toString());
                             continue;
                         }
                         addValidPaths(validMainPaths, loopPath);
@@ -1681,8 +1681,8 @@ public class PathQuery implements Cloneable
                 } else {
                     String newRootClass = path.getStartClassDescriptor().getUnqualifiedName();
                     if (!rootClass.equals(newRootClass)) {
-                        problems.add("Multiple root classes in query: " + rootClass + " and "
-                                + newRootClass);
+                        problems.add("Multiple root classes: " + rootClass + " and "
+                                + newRootClass + " in query: " + this.toString());
                         continue;
                     }
                 }
