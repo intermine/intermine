@@ -13,10 +13,7 @@ package org.intermine.pathquery;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -159,6 +156,6 @@ public class PathQueryBindingTest extends TestCase
         q.setOuterJoinStatus("Employee.department", OuterJoinStatus.INNER);
         q.setDescription("Flibble");
         q.setDescription("Employee.name", "Albert");
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name\" longDescription=\"Flibble\" sortOrder=\"Employee.age asc\" constraintLogic=\"A or B\"><join path=\"Employee.department\" style=\"INNER\"/><pathDescription pathString=\"Employee.name\" description=\"Albert\"/><constraint path=\"Employee.age\" op=\"&lt;\" value=\"50\" code=\"A\"/><constraint path=\"Employee.department.name\" op=\"=\" value=\"Fred\" code=\"B\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name\" longDescription=\"Flibble\" sortOrder=\"Employee.age asc\" constraintLogic=\"A or B\"><join path=\"Employee.department\" style=\"INNER\"/><pathDescription pathString=\"Employee.name\" description=\"Albert\"/><constraint path=\"Employee.age\" code=\"A\" op=\"&lt;\" value=\"50\"/><constraint path=\"Employee.department.name\" code=\"B\" op=\"=\" value=\"Fred\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
     }
 }
