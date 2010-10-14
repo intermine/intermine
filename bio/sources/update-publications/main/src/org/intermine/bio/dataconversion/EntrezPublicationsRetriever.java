@@ -370,7 +370,6 @@ public class EntrezPublicationsRetriever
                     author.setAttribute("name", authorString);
                     authorMap.put(authorString, author);
                 }
-                author.addToCollection("publications", publication);
                 publication.addToCollection("authors", author);
                 if (!publication.hasAttribute("firstAuthor")) {
                     publication.setAttribute("firstAuthor", authorString);
