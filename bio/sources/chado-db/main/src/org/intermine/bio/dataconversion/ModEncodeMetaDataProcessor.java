@@ -1960,6 +1960,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 String type = ef.efTypes.get(exFactor);
                 createEFItem(submissionId, type, exFactor, null);
             }
+
+            storeSubmissionCollection(storedSubmissionId, "properties", allPropertyItems);
         }
         LOG.info("PROCESS TIME submission properties: "
                 + (System.currentTimeMillis() - bT) + " ms");
