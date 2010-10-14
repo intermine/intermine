@@ -84,13 +84,12 @@
     <!-- this runs the postprocessing steps in all sources -->
     <post-process name="do-sources" dump="true"/>
 
-    <post-process name="synonym-update"/>
-
     <post-process name="create-bioseg-location-index"/>
     <post-process name="create-overlap-view" />
 
     <post-process name="summarise-objectstore"/>
     <post-process name="create-autocomplete-index"/>
+    <post-process name="create-search-index"/>
     <post-process name="create-attribute-indexes"/>
   </post-processing>
 
