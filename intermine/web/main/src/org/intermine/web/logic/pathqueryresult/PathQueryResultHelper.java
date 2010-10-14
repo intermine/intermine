@@ -47,6 +47,7 @@ import org.intermine.web.logic.config.WebConfig;
 public final class PathQueryResultHelper
 {
     private PathQueryResultHelper() {
+        //disable external instantiation
     }
 
     private static final Logger LOG = Logger.getLogger(PathQueryResultHelper.class);
@@ -55,18 +56,19 @@ public final class PathQueryResultHelper
      * Return a list of string paths that are defined as WebConfig to be shown in results.  This
      * will include only attributes of the given class and not follow references.  Optionally
      * provide a prefix to for creating a view for references/collections.
+     *
      * @param type the class name to create a view for
      * @param model the model
      * @param webConfig we configuration
-     * @param prefix a path to prefix the class, can be null
+     * @param startingPath a path to prefix the class, can be null
      * @return the configured view paths for the class
      */
     public static List<String> getDefaultViewForClass(String type, Model model, WebConfig webConfig,
-            String prefix) {
+            String startingPath) {
+        String prefix = startingPath;
         List<String> view = new ArrayList<String>();
         ClassDescriptor cld = model.getClassDescriptorByName(type);
         List<FieldConfig> fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
-
 
         if (!StringUtils.isEmpty(prefix)) {
             try {
@@ -106,50 +108,6 @@ public final class PathQueryResultHelper
             }
         }
         return view;
-    }
-
-
-    public static PathQuery getQueryWithDefaultView(String type, Model model, WebConfig webConfig,
-            String prefix) {
-        PathQuery query = new PathQuery(model);
-        ClassDescriptor cld = model.getClassDescriptorByName(type);
-        List<FieldConfig> fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
-
-        if (!StringUtils.isBlank(prefix)) {
-            try {
-                // if the type is different to the end of the prefix path, add a subclass constraint
-                Path prefixPath = new Path(model, prefix);
-                String prefixEndType = TypeUtil.unqualifiedName(prefixPath.getEndType().getName());
-                if (!prefixEndType.equals(type)) {
-                    query.addConstraint(Constraints.type(prefix, type));
-                }
-            } catch (PathException e) {
-                LOG.error("Invalid path configured in webconfig for class: " + type);
-            }
-            prefix = type;
-        }
-
-        for (FieldConfig fieldConfig : fieldConfigs) {
-            if (fieldConfig.getShowInResults()) {
-                String path = prefix + "." + fieldConfig.getFieldExpr();
-                int from = prefix.length() + 1;
-                while (path.indexOf('.', from) != -1) {
-                    int dotPos = path.indexOf('.', from);
-                    int nextDot = path.indexOf('.', dotPos + 1);
-                    String outerJoin = nextDot == -1 ? path.substring(0, dotPos)
-                            : path.substring(0, nextDot);
-                    query.setOuterJoinStatus(outerJoin, OuterJoinStatus.OUTER);
-                    from = dotPos + 1;
-                }
-                query.addView(path);
-            }
-        }
-        if (query.getView().size() == 0) {
-            for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
-                query.addView(prefix + "." + att.getName());
-            }
-        }
-        return query;
     }
 
     /**
@@ -238,13 +196,67 @@ public final class PathQueryResultHelper
         String startClass = TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(object
                 .getClass()));
         String collectionPath = startClass + "." + field;
-
         PathQuery pathQuery = getQueryWithDefaultView(typeOfCollection, model, webConfig,
                 collectionPath);
         pathQuery.addConstraint(Constraints.eq(startClass + ".id", object.getId().toString()));
-
-        //pathQuery.addConstraint(Constraints.type(collectionPath, typeOfCollection));
-
         return pathQuery;
     }
+
+    /**
+     * Used for making a query for a reference or collection.  Only used when a user clicks on
+     * [show all] under an inline table on an Object's report page.  The type of that object is
+     * "startingPath", eg. Department.  This path will be prepended to every path in the query.
+     * The "type" is the type of the reference/collection, eg. Employee.
+     *
+     * TODO use getDefaultViewForClass() instead
+     *
+     * @param type class of object we are querying for eg. Employee
+     * @param model the model
+     * @param webConfig the webconfig
+     * @param startingPath the prefix to prepend to type, eg. Department
+     * @return query, eg. Department.employees.name
+     */
+    private static PathQuery getQueryWithDefaultView(String type, Model model, WebConfig webConfig,
+            String startingPath) {
+        String prefix = startingPath;
+        PathQuery query = new PathQuery(model);
+        ClassDescriptor cld = model.getClassDescriptorByName(type);
+        List<FieldConfig> fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
+
+        if (!StringUtils.isBlank(prefix)) {
+            try {
+                // if the type is different to the end of the prefix path, add a subclass constraint
+                Path prefixPath = new Path(model, prefix);
+                String prefixEndType = TypeUtil.unqualifiedName(prefixPath.getEndType().getName());
+                if (!prefixEndType.equals(type)) {
+                    query.addConstraint(Constraints.type(prefix, type));
+                }
+            } catch (PathException e) {
+                LOG.error("Invalid path configured in webconfig for class: " + type);
+            }
+        }
+
+        for (FieldConfig fieldConfig : fieldConfigs) {
+            if (fieldConfig.getShowInResults()) {
+                String path = prefix + "." + fieldConfig.getFieldExpr();
+                int from = prefix.length() + 1;
+                while (path.indexOf('.', from) != -1) {
+                    int dotPos = path.indexOf('.', from);
+                    int nextDot = path.indexOf('.', dotPos + 1);
+                    String outerJoin = nextDot == -1 ? path.substring(0, dotPos)
+                            : path.substring(0, nextDot);
+                    query.setOuterJoinStatus(outerJoin, OuterJoinStatus.OUTER);
+                    from = dotPos + 1;
+                }
+                query.addView(path);
+            }
+        }
+        if (query.getView().size() == 0) {
+            for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
+                query.addView(prefix + "." + att.getName());
+            }
+        }
+        return query;
+    }
+
 }
