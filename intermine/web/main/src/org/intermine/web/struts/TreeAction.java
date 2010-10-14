@@ -22,7 +22,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
 /**
- * Implementation of <strong>Action</strong> that modifies a tree
+ * Implementation of <strong>Action</strong> that modifies a tree.
+ *
  * @author Kim Rutherford
  * @author Mark Woodbridge
  */
@@ -44,15 +45,11 @@ public class TreeAction extends DispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward expand(ActionMapping mapping,
-                                @SuppressWarnings("unused") ActionForm form,
-                                HttpServletRequest request,
-                                @SuppressWarnings("unused") HttpServletResponse response)
+    public ActionForward expand(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                HttpServletResponse response)
         throws Exception {
-
         Set<String> openClasses = (Set<String>) request.getSession().getAttribute("openClasses");
         openClasses.add(request.getParameter("node"));
-
         return mapping.findForward("renderTree");
     }
 
@@ -72,14 +69,11 @@ public class TreeAction extends DispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward collapse(ActionMapping mapping,
-                                  @SuppressWarnings("unused") ActionForm form,
-                                  HttpServletRequest request,
-                                  @SuppressWarnings("unused") HttpServletResponse response)
+    public ActionForward collapse(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
         throws Exception {
         Set<String> openClasses = (Set<String>) request.getSession().getAttribute("openClasses");
         openClasses.remove(request.getParameter("node"));
-
         return mapping.findForward("renderTree");
     }
 
@@ -99,16 +93,12 @@ public class TreeAction extends DispatchAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward select(ActionMapping mapping,
-                                @SuppressWarnings("unused") ActionForm form,
-                                HttpServletRequest request,
-                                @SuppressWarnings("unused") HttpServletResponse response)
+    public ActionForward select(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         String className = request.getParameter("node");
-
         QueryClassSelectAction.newQuery(className, session);
-
         return mapping.findForward("query");
     }
 }

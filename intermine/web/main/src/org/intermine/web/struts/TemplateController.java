@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -32,7 +31,6 @@ import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathConstraintMultiValue;
@@ -83,9 +81,6 @@ public class TemplateController extends TilesAction
         String templateName = request.getParameter("name");
         String scope = request.getParameter("scope");
         String loadModifiedTemplate = request.getParameter("loadModifiedTemplate");
-        String idForLookup = request.getParameter("idForLookup");
-        if (!StringUtils.isEmpty(idForLookup)) {
-        }
 
         TemplateForm tf = (TemplateForm) form;
         tf.setScope(scope);
@@ -142,13 +137,13 @@ public class TemplateController extends TilesAction
 
         DisplayConstraintFactory factory = getFactory(session);
         int index = 0;
-        Path path = null;
+//        Path path = null;
         DisplayConstraint displayConstraint = null;
         for (PathConstraint pathConstraint : template.getEditableConstraints()) {
             if ((loadModifiedTemplate != null) && (pathConstraint instanceof PathConstraintBag)) {
                 String code = template.getConstraints().get(pathConstraint);
                 PathConstraint originalPathConstraint = originalTemplate.getConstraintForCode(code);
-                path = originalTemplate.makePath(originalPathConstraint.getPath());
+//                path = originalTemplate.makePath(originalPathConstraint.getPath());
                 displayConstraint = factory.get(originalPathConstraint, profile, originalTemplate);
                 displayConstraint.setSwitchOffAbility(template.getSwitchOffAbility(pathConstraint));
                 displayConstraint.setBagSelected(true);
@@ -156,7 +151,7 @@ public class TemplateController extends TilesAction
                 displayConstraint.setSelectedBagValue(
                                   ((PathConstraintBag) pathConstraint).getBag());
             } else {
-                path = template.makePath(pathConstraint.getPath());
+//                path = template.makePath(pathConstraint.getPath());
                 displayConstraint = factory.get(pathConstraint, profile, template);
             }
             displayConstraintList.add(displayConstraint);

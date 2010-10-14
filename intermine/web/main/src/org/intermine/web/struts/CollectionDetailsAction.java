@@ -50,10 +50,8 @@ public class CollectionDetailsAction extends Action
      * @exception Exception
      *                if an error occurs
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);

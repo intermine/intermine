@@ -38,10 +38,8 @@ public class TipAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         Properties props = SessionMethods.getWebProperties(session.getServletContext());
