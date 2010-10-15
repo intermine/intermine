@@ -10,7 +10,6 @@ $SIG{__WARN__} = sub {
 ## Modules to be installed
 use XML::Rules;
 use XML::Writer;
-use YAML;
 use Log::Handler;
 use AppConfig qw(:expand :argcount);
 
@@ -18,7 +17,9 @@ use AppConfig qw(:expand :argcount);
 use InterMine::Model 0.9401;
 use Webservice::InterMine::Query::Template;
 use Webservice::InterMine::Query::Saved;
-use Webservice::InterMine::Path qw(type_of class_of next_class);
+
+## This is required from its relative location
+require 'resources/lib/updater.pm';
 
 ## Optional Module: Number:Format
 BEGIN {
@@ -35,11 +36,15 @@ my $nothing = '';
 my $broken  = 1;
 my $NEWLINE = "\n";
 my $separator = '-' x 70 . $NEWLINE;
-my $prefix = 'org.intermine.model.bio.';
 
 # Set up configured options 
-my $config = AppConfig->new({GLOBAL => {EXPAND   => EXPAND_ALL,
-            ARGCOUNT => ARGCOUNT_ONE}});
+my $config = AppConfig->new({
+        CREATE => 1,
+        GLOBAL => 
+            {EXPAND   => EXPAND_ALL,
+            ARGCOUNT => ARGCOUNT_ONE
+        }
+    });
 $config->define('oldmodel', 'newmodel', 'changesfile', 'logfile', 'mine', 'svndirectory', 'ext');
 $config->define('help|usage!');
 $config->define('inputfile|infile=s@');
@@ -66,9 +71,9 @@ if ($help or not ($new_model_file and $changes_file)) {
     exit;
 }
 
-my ($delete_these, $translate_these) = YAML::LoadFile($changes_file);
 my $newmodel = InterMine::Model->new(file => $new_model_file);
-my $service = bless {}, 'Webservice::InterMine::Service'; # dummy service needed for instantiation
+# dummy service needed for instantiation of Templates/Saved-Queries
+my $service = bless {}, 'Webservice::InterMine::Service'; 
 
 # Set up logging, to screen if there is no file specified
 die "Log file not defined" if (not defined $log_file);
@@ -84,249 +89,12 @@ $log->add(
 );
 open(my $items_by_owner, '>', $log_file . '.users') or die "$!";
         
-sub changed {
-    my $key = shift;
-    return $translate_these->{$key};
-}
+my $updater = Updater->new(
+    model => $newmodel,
+    logger => $log,
+    changes => $changes_file,
+);
 
-sub dead {
-    my $key = shift;
-    $key =~ s/$prefix//;
-    return grep {$_ eq $key} @$delete_these;
-}
-
-sub check_class_name {
-    my $class_name = shift;
-    $class_name =~ s/$prefix// if $class_name;
-    my $class = eval { $newmodel->get_classdescriptor_by_name($class_name) };
-    return $class;
-}
-
-####### ROUTINE TO TRANSLATE AN OLD DOTTED PATH INTO ITS NEW FORM
-### TAKES TWO ARGS: update_path($path, [$type_dict])
-
-my %processed;
-sub update_path {
-    my $path = shift;
-    
-    ### Mangle the path in a couple of ways
-    if ( exists $processed{$path} ) {
-        return $processed{$path};
-    }
-
-    my $prefixed;
-    if ( $path =~ /$prefix/ ) {
-        $path =~ s/$prefix//;    # cut off the prefix
-        $prefixed++;             # but remember that we did so
-    }
-    #######
-
-    my $type_dict = shift || {};
-    my @new_bits;
-    my @bits       = split /\./, $path;
-    my $class_name = shift @bits;
-    my $class = check_class_name($class_name);
-
-    if ( defined $class ) {
-        push @new_bits, $class;
-    } else {
-        # Maybe this class has a new name
-        if ( $class = check_class_name( changed($class_name) ) ) {
-            push @new_bits, $class;
-        } else {
-            $log->warning(qq{Unexpected deletion of class "$class_name" from "$path"} )
-                unless dead($class_name);
-            return;
-        }
-    }
-
-    my $current_class = $class;
-    my $current_field = undef;
-
-    my @path_so_far = ( $class_name );
-    FIELD: while (my $bit = shift @bits) {
-
-        if ( $bit eq 'id' and not @bits ) {    
-            # id is an internal attribute for all tables
-            $current_field = InterMine::Model::Attribute->new(
-                name => 'id',
-                type => 'Integer',
-                model => $newmodel,
-            );
-            next FIELD;
-
-        } else {
-            my $old_path = join('.', @path_so_far );
-
-            $current_field = $current_class->get_field_by_name($bit);
-            
-            next FIELD if (defined $current_field);
-
-            # Maybe this field has a new name, either here or in a parent class?
-            my @ancestors = map { $_->name } $current_class->get_ancestors;
-
-            foreach my $ancestor (@ancestors) {
-                my $key = "$ancestor.$bit";
-                if (my $translation = changed($key)) {
-                    if ($translation =~ /\w+\.\w+/) { # Translation is not one, but two steps
-                        unshift @bits, split(/\./, $translation);
-                        $bit = shift @bits;
-                        redo FIELD;
-                    } elsif ( $current_field = $current_class->get_field_by_name($translation)) {
-                        next FIELD;
-                    } 
-                }
-            }
-            # We've got a dead one here
-            unless ( dead($bit) ) {
-                my $so_far = join('.', @new_bits);
-                $log->warn(qq{Unexpected deletion of field "$bit" from "$current_class" in "$so_far", while processing "$path"});
-            }
-            return $processed{$path} = undef;
-        }
-    } continue {
-        push @new_bits,    $current_field;
-        push @path_so_far, $bit;
-        confess "Type dictionary is not a hash ref" if (($type_dict) and (not ref $type_dict eq 'HASH'));
-        my $type = $type_dict->{join('.', @path_so_far)};
-        $current_class = next_class($current_field, $newmodel, $type);
-    }
-    my $new_path = join( '.', @new_bits );
-
-    if ($prefixed) {    # put it back on then
-        $path     = $prefix . $path;
-        $new_path = $prefix . $new_path;
-    }
-    $processed{$path} = $new_path;
-    return $processed{$path};
-}
-
-my $deletion =
-q!$is_changed++;"[DELETION][". $origin . $query->name . qq{][$place] "$path"}!;
-my $change =
-q!$is_changed++;"[CHANGE][" . $origin . $query->name . qq{][$place] "$path" => "$translation"}!;
-
-sub update_type_classes {
-    my ($query, $origin) = @_;
-    my $is_changed = 0;
-    # Needs changing first, 
-    # so that the typedict contains useful information
-    my @java_types = (qw/
-        String Boolean Double Float
-    /);
-    for my $scc ( $query->sub_class_constraints ) {
-        my $path  = $scc->type;
-        if (grep {$_ eq $path} @java_types) {
-            $query->remove($scc);
-        } else {
-            my $place = 'sub-class-constraints';
-            if ( my $translation = update_path($path) ) {
-                $log->info( eval $change ) unless ( $path eq $translation );
-                $scc->set_type($translation);
-            } else {
-                $log->info( eval $deletion );
-                $query->remove($scc);
-            }
-        }
-    }
-    return $is_changed;
-}
-
-sub update_view {
-    my ($query, $origin) = @_;
-    my $is_changed = 0;
-    my @views = $query->views;
-    my @new_views;
-    for my $path (@views) {
-        my $place = 'view';
-        if ( my $translation = update_path( $path, $query->type_dict ) ) {
-            $log->info( eval $change ) unless ( $path eq $translation );
-            push @new_views, $translation;
-        } else {
-            $log->info( eval $deletion );
-        }
-    }
-    $query->clear_view;
-    
-    $query->add_view(@new_views) if (@new_views); 
-    return $is_changed;
-}
-
-sub update_sort_order {
-    my ($query, $origin) = @_;
-    my $place = 'sort order';
-    my $is_changed = 0;
-    $query->clear_sort_order;
-    for my $so ($query->sort_orders) {
-        my $path = $so->path;
-        if ( my $translation = update_path( $path, $query->type_dict ) ) {
-            $log->info( eval $change ) unless ( $path eq $translation );
-            $query->add_sort_order( $translation, $so->direction );
-        } else {
-            $log->info( eval $deletion );
-        }
-    }
-    return $is_changed;
-}
-
-sub update_child_elements {
-    my ($query, $origin) = @_;
-    my $is_changed = 0;
-    for my $path_feature ( $query->all_children ) {
-        my $path  = $path_feature->path;
-        my $place = $path_feature->element_name;
-        if ( my $translation = update_path( $path, $query->type_dict ) ) {
-            $log->info( eval $change ) unless ( $path eq $translation );
-            $path_feature->set_path($translation);
-        } else {
-            $log->info( eval $deletion );
-            $query->remove($path_feature);
-        }
-    }
-    return $is_changed;
-}
-
-sub update_query {
-    my $query  = shift;
-    my $origin = shift;
-    my ( $is_broken, $is_changed );
-
-    confess "$query is not a reference" unless ( ref $query );
-    $log->info(
-        sprintf( qq{Processing %s "%s"}, $query->type, $query->name ) );
-    
-    $is_changed += update_type_classes($query, $origin);
-    $is_changed += update_view($query, $origin);
-    $is_broken = "It doesn't have any valid views" unless $query->views;
-
-    if ( not $is_broken and $query->has_sort_order ) {
-        $is_changed += update_sort_order($query, $origin);
-        $is_broken++ unless $query->has_sort_order;
-    }
-
-    unless ($is_broken) {
-        my $no_of_children = $query->all_children;
-        $is_changed += update_child_elements($query, $origin);
-        $is_broken = "Some or all of its child nodes were deleted" 
-            unless ($query->all_children == $no_of_children);
-    }
-
-    $query->clean_out_SCCs; 
-
-    my $this_query =
-    sprintf( qq{%s %s "%s"}, $origin, $query->type, $query->name );
-    if ($is_broken) {       # Three code system: pos value for broken
-        $log->warning( $this_query, 'is broken' );
-    } elsif ($is_changed) {
-        $log->info( $this_query, 'has been updated' );
-        $is_broken = 0;     # Three code system: 0 for ok, but changed
-    } else {
-        $log->info( $this_query, 'is unchanged' );
-        $is_broken = undef; # Three code system: undef for unchanged
-    }
-
-    return $query, $is_broken;
-}
 
 sub update_buffer {
     my ($buffer, $type, $origin, $owner) = @_;
@@ -360,7 +128,7 @@ sub translate_query { # takes in xml, returns xml
     my $stack_trace = $@;
     if ($q) {
         $q->suspend_validation;
-        ($new_q, $is_broken) = update_query($q, $origin);
+        ($new_q, $is_broken) = $updater->update_query($q, $origin);
         unless ($is_broken) {
             $ret_xml  = eval {$new_q->to_xml}; # it still might break
         }
@@ -392,7 +160,7 @@ sub translate_graphdisplayer {
     my (@new_class_names, $changed);
     my @class_names = split /,/, $naked->{typeClass};
     for my $old_class_name (@class_names) {
-        my $new_class_name = update_path($old_class_name);
+        my $new_class_name = $updater->update_path($old_class_name);
         if ($new_class_name) {
             unless ($new_class_name eq $old_class_name) {
                 $log->info($CHANGE, $origin, $type, ':',
@@ -402,7 +170,7 @@ sub translate_graphdisplayer {
             push @new_class_names, $new_class_name;
         }
         else {
-            if (dead($old_class_name)) {
+            if ($updater->knows_about_deletion_of($old_class_name)) {
                 $log->info($DEL, $origin, 'anticipated deletion in', $type, $id, 
                     ': could not find', $old_class_name);
             }
@@ -428,7 +196,7 @@ sub check_bag_type {
     my $bag_name = $naked->{name};
     my $bag_type = $naked->{type};
     my $changed;
-    my $translation = update_path($bag_type);
+    my $translation = $updater->update_path($bag_type);
     if ($translation) {
         unless ($bag_type eq $translation) {
             $naked->{type} = $translation;
@@ -436,7 +204,7 @@ sub check_bag_type {
             $changed++;
         }
     } else {
-        if (dead($bag_type)) {
+        if ($updater->knows_about_deletion_of($bag_type)) {
             $log->info($CHANGE, $origin, 'anticipated deletion of', $type, $bag_name, 
                 ': This type has been deleted in the model -', $bag_type);
         }
@@ -471,16 +239,16 @@ sub translate_item { # takes in xml, returns xml
         croak "This sub doesn't only does classes and items: I got $type";
     }
 
-    unless ($class = check_class_name($$class_name)) {
-        my $translation = update_path($$class_name);
+    unless ($class = $updater->get_class($$class_name)) {
+        my $translation = $updater->update_path($$class_name);
 
-        if ($translation and $class = check_class_name($translation)) {
+        if ($translation and $class = $updater->get_class($translation)) {
             $log->info($CHANGE, $origin, $type, $id, ':', $$class_name, '=>', $translation);
             $$class_name = $translation;
             $changed++;
         }
         else {
-            if (dead($$class_name)) {
+            if ($updater->knows_about_deletion_of($$class_name)) {
                 $log->info($DEL, $origin, 'anticipated deletion of', $type, $id, 
                     ': could not find', $$class_name);
             }
@@ -497,7 +265,7 @@ sub translate_item { # takes in xml, returns xml
         @{$hash_ref->{fields}[0]{fieldconfig}}) {
         my $field_ref = ($field->{name}) ? \$field->{name} : \$field->{fieldExpr};
         my $path = join '.', $class, $$field_ref;
-        my $translation = update_path($path);
+        my $translation = $updater->update_path($path);
         if (defined $translation) {
             my $cn = $class->name;
             $translation =~ s/$cn\.//; # strip off the classname
@@ -568,7 +336,7 @@ sub process_precomputequery {
 
     my %updated_version_of;
     for my $old_path (@old_paths) {
-        my $new_path = update_path($old_path, '');
+        my $new_path = $updater->update_path($old_path, '');
         unless ($new_path) {
             return (undef, "could not find $old_path");
         }
@@ -618,7 +386,7 @@ sub process_constructquery {
 
     my @new_pathbits;
     for my $old_path (%type_of) {
-        my $new_path = update_path($old_path, '');
+        my $new_path = $updater->update_path($old_path, '');
         unless ($new_path) {
             return (undef, "could not find $old_path");
         }
@@ -655,12 +423,12 @@ sub process_field_list {
     else {
         $class_name = $key;
     }
-    my $class = check_class_name($class_name);
+    my $class = $updater->get_class($class_name);
     unless ($class) {
-        my $new_class_name = update_path($class_name, '');
+        my $new_class_name = $updater->update_path($class_name, '');
         if ($new_class_name 
                 and $new_class_name ne $class_name
-                and $class = check_class_name($new_class_name) ) {
+                and $class = $updater->get_class($new_class_name) ) {
             $changed++;
             push @$err, "$class_name => $new_class_name";
             $class_name = $new_class_name;
@@ -674,7 +442,7 @@ sub process_field_list {
         $field_name =~ s/^\s*//;
         chomp $field_name;
         if (not $class->get_field_by_name($field_name)) {
-            if (my $new_path = update_path($class_name . '.' . $field_name, '')) {
+            if (my $new_path = $updater->update_path($class_name . '.' . $field_name, '')) {
                 ($field_name) = $new_path =~ /([^\.]*$)/;
                 push @new_values, $field_name;
             }
@@ -797,7 +565,9 @@ for my $file (@in_files) {
     }
     open(my $INFH, '<', $file) 
         or (warn "\rCannot open $file, $! - skipping\n" and next);
+    $log->info("Processing file $file");
     rename($file, $backup);
+    print STDERR "Backing up $file to $backup\n";
     open(my $OUT,  '>', $file) or die "Cannot write to $file, $!";
     
     while(<$INFH>) {
