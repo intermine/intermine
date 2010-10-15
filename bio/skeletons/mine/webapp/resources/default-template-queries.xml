@@ -48,10 +48,8 @@
   </query>
 </template>
 <template name="Gene_GO" title="Gene --&gt; GO terms." longDescription="Search for GO annotations for a particular gene." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="Gene_GO" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.goEvidenceCodes.code Gene.goAnnotation.qualifier Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.ontologyTerm.namespace" sortOrder="Gene.primaryIdentifier asc">
+  <query name="Gene_GO" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.qualifier Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.ontologyTerm.namespace" sortOrder="Gene.primaryIdentifier asc">
     <pathDescription pathString="Gene.goAnnotation" description="GO annotation">
-    </pathDescription>
-    <pathDescription pathString="Gene.goAnnotation.goEvidenceCodes" description="GO annotation &gt; evidence">
     </pathDescription>
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="PFL2660w" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A">
@@ -94,18 +92,14 @@
   </query>
 </template>
 <template name="Gene_allGOTerms" title="Gene --&gt; GO terms and parents of those terms." longDescription="Given a gene show the associated GO terms, and the all parents to the top of the directed graph." comment="">
-  <query name="Gene_allGOTerms" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.relations.childTerm.identifier Gene.goAnnotation.ontologyTerm.relations.childTerm.name Gene.goAnnotation.ontologyTerm.relations.relationship Gene.goAnnotation.ontologyTerm.relations.parentTerm.identifier Gene.goAnnotation.ontologyTerm.relations.parentTerm.name Gene.goAnnotation.goEvidenceCodes.code" sortOrder="Gene.secondaryIdentifier asc">
+  <query name="Gene_allGOTerms" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.relations.childTerm.identifier Gene.goAnnotation.ontologyTerm.relations.childTerm.name Gene.goAnnotation.ontologyTerm.relations.relationship Gene.goAnnotation.ontologyTerm.relations.parentTerm.identifier Gene.goAnnotation.ontologyTerm.relations.parentTerm.name" sortOrder="Gene.secondaryIdentifier asc">
     <pathDescription pathString="Gene.goAnnotation" description="GO annotation">
-    </pathDescription>
-    <pathDescription pathString="Gene.goAnnotation.goEvidenceCodes" description="GO annotation &gt; evidence">
     </pathDescription>
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="PFL2660w" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A" extraValue="">
       </constraint>
     </node>
     <node path="Gene.goAnnotation" type="GOAnnotation">
-    </node>
-    <node path="Gene.goAnnotation.goEvidenceCodes" type="GOEvidenceCode">
     </node>
     <node path="Gene.goAnnotation.ontologyTerm" type="OntologyTerm">
     </node>
@@ -129,58 +123,6 @@
     </node>
     <node path="Gene.goAnnotation.ontologyTerm.name" type="String">
       <constraint op="=" value="*transcription factor*" description="GO Term" identifier="" editable="true" code="B" extraValue="">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="Organism_GoTerm_Gene" title="Organism + GO term [with particular evidence code] --&gt; Genes." longDescription="Show genes from a particular organism annotated with a particular GO term with a particular evidence code." comment="">
-  <query name="Organism_GoTerm_Gene" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.goEvidenceCodes.code" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B and C">
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Plasmodium falciparum 3D7" description="Show genes from organism:" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.goAnnotation" type="GOAnnotation">
-    </node>
-    <node path="Gene.goAnnotation.ontologyTerm" type="OntologyTerm">
-    </node>
-    <node path="Gene.goAnnotation.ontologyTerm.name" type="String">
-      <constraint op="=" value="protein binding" description="GO Term" identifier="" editable="true" code="B" extraValue="">
-      </constraint>
-    </node>
-    <node path="Gene.goAnnotation.goEvidenceCodes" type="GOEvidenceCode">
-    </node>
-    <node path="Gene.goAnnotation.goEvidenceCodes.code" type="String">
-      <constraint op="=" value="IPI" description="GO Evidence Code" identifier="" editable="true" code="C" extraValue="">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="Organism_GoTerm_GeneWithannotation" title="Organism + GO term [with particular evidence code] --&gt; Genes + 'with' annotation." longDescription="Show genes from a particular organism annotated with a particular GO term and GO evidence code which also have a 'with' annotation (The 'with' field holds an additional identifier for annotations using certain evidence codes)" comment="">
-  <query name="Organism_GoTerm_GeneWithannotation" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.goEvidenceCodes.code Gene.goAnnotation.withText Gene.goAnnotation.with.primaryIdentifier" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B and C">
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Plasmodium falciparum 3D7" description="Show genes and 'with' annotations from organism:" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.goAnnotation" type="GOAnnotation">
-    </node>
-    <node path="Gene.goAnnotation.ontologyTerm" type="OntologyTerm">
-    </node>
-    <node path="Gene.goAnnotation.ontologyTerm.name" type="String">
-      <constraint op="=" value="protein binding" description="GO Term" identifier="" editable="true" code="B" extraValue="">
-      </constraint>
-    </node>
-    <node path="Gene.goAnnotation.goEvidenceCodes" type="GOEvidenceCode">
-    </node>
-    <node path="Gene.goAnnotation.goEvidenceCodes.code" type="String">
-      <constraint op="=" value="IPI" description="GOEvidenceCode code" identifier="" editable="true" code="C" extraValue="">
       </constraint>
     </node>
   </query>
