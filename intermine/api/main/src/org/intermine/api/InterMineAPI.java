@@ -71,7 +71,7 @@ public class InterMineAPI
      */
     public InterMineAPI(ObjectStore objectStore, ObjectStoreWriter userProfileWriter,
             Map<String, List<FieldDescriptor>> classKeys, BagQueryConfig bagQueryConfig,
-            ObjectStoreSummary oss, Map<String, Tracker> trackers) {
+            ObjectStoreSummary oss/*, Map<String, Tracker> trackers*/) {
         this.objectStore = objectStore;
         this.model = objectStore.getModel();
         this.classKeys = classKeys;
@@ -84,7 +84,7 @@ public class InterMineAPI
                 profileManager.getProfileObjectStoreWriter());
         this.bagQueryRunner =
             new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
-        this.trackers = trackers;
+        //this.trackers = trackers;
     }
 
     /**
