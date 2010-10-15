@@ -20,7 +20,17 @@
 <html:xhtml/>
 
 <im:boxarea titleKey="menu.templates" stylename="gradientbox" minWidth="800px" htmlId="templatetop">
-<div style=""><fmt:message key="templates.intro"/></div>
+<div style="">
+<fmt:message key="templates.intro"/>
+<%-- 
+<br/>
+<b>
+<fmt:message key="templates.mostpopular">
+<fmt:param value="${mostPopularTemplate}"/>
+</fmt:message>
+</b>
+--%>
+</div>
 <div class="" id="ws_${wsListId}_template">
 <tiles:insert name="wsFilterList.tile">
   <tiles:put name="type" value="template"/>
