@@ -22,7 +22,7 @@
         <div class="center span-12 last">
         	<div class="bochs" id="bochs-1">
 	            <div id="thumb" class="span-4">
-	                <img src="/metabolicmine/model/public/img/thumb-image.png" alt="metabolicMine interface" />
+	                <img src="/metabolicmine/themes/metabolic/thumbs/thumb-image.png" alt="metabolicMine interface" />
 	            </div>
 	            <div class="span-8 last">
 			        <h2>First time here?</h2>
@@ -42,7 +42,7 @@
             </div>
             <div class="bochs" id="bochs-2" style="display:none;">
 	            <div id="thumb" class="span-4">
-	                <img src="/metabolicmine/model/public/img/thumb-image.png" alt="metabolicMine interface" />
+	                <img src="/metabolicmine/themes/metabolic/thumbs/thumb-image.png" alt="metabolicMine interface" />
 	            </div>
 	            <div class="span-8 last">
 			        <h2>More text goes here</h2>
@@ -118,7 +118,7 @@
                 	<div><span>Query lists</span></div>
                 </a>
             </div>
-            <div class="last thumb"><img src="/metabolicmine/model/public/img/thumb-1.gif" alt="thumbnail 1" /></div>
+            <div class="last thumb"><img src="/metabolicmine/themes/metabolic/thumbs/thumb-1.gif" alt="thumbnail 1" /></div>
         </div>
         <div class="bottom span-6 last"></div>
     </div>
@@ -127,7 +127,7 @@
         <div class="center span-6 last">
             <div class="span-3 text">
                 <div class="image">
-                	<img src="/metabolicmine/themes/metabolic/icons/templates-64x.png" alt="templates" />
+                	<img src="/metabolicmine/themes/metabolic/icons/templates.png" alt="templates" />
                 </div>
                 <h3>Templates</h3>
 				<p>Templates are <strong>predefined queries</strong>, each has a simple form and a description. You can edit
@@ -136,7 +136,7 @@
                 	<div><span>Templates</span></div>
                 </a>
             </div>
-            <div class="last thumb"><img src="/metabolicmine/model/public/img/thumb-2.gif" alt="thumbnail 2" /></div>
+            <div class="last thumb"><img src="/metabolicmine/themes/metabolic/thumbs/thumb-2.gif" alt="thumbnail 2" /></div>
         </div>
         <div class="bottom span-6 last"></div>
     </div>
@@ -170,7 +170,7 @@
 	            </div>
 	            <div class="span-4 last templates">
 	                <div class="image">
-	                	<img src="/metabolicmine/themes/metabolic/icons/templates-64x.png" alt="Templates" />
+	                	<img src="/metabolicmine/themes/metabolic/icons/templates.png" alt="Templates" />
 	                </div>
 	                <h3>Work with template queries</h3>
 	                <div style="clear:both;"> </div>
@@ -332,7 +332,7 @@
         <div class="top"></div>
         <div class="center span-4 last">
             <h4>Java<span>&nbsp;&amp;&nbsp;</span>Python API</h4>
-            <img src="/metabolicmine/model/public/img/python-java-ico.gif" alt="python java" />
+            <img src="/metabolicmine/themes/metabolic/icons/python-java-ico.gif" alt="python java" />
             <p>We support programatic access to our data through Application Programming Interface too! Choose from options below:</p>
             <ul>
                 <li><a href="#">Java API</a></li>
@@ -362,7 +362,7 @@
         <div class="top"></div>
         <div class="center span-4 last">
             <h4>User Feedback</h4>
-            <img src="/metabolicmine/model/public/img/stockphoto.jpg" alt="Stock Photo" />
+            <img src="/metabolicmine/themes/metabolic/img/stockphoto.jpg" alt="Stock Photo" />
             <p>It's not how fat you are, it's what you do with it that counts, and that is why we feel that
                 metabolicMine is a valid addition to the data mining lorem.</p>
             <q>- E. Novak-Brown, University of Cambridge</q>
@@ -392,13 +392,13 @@
         </div>
         <div class="span-4 last">
             <a href="http://nih.gov/" title="National Institutes of Health">
-            	<img src="/metabolicmine/model/public/img/nih-ico.png" alt="National Institutes of Health" />
+            	<img src="/metabolicmine/themes/metabolic/icons/small/nih-ico.png" alt="National Institutes of Health" />
            	</a>
            	<a href="http://www.gen.cam.ac.uk/" title="Department of Genetics">
-           		<img src="/metabolicmine/model/public/img/genetics-ico.gif" alt="Department of Genetics" />
+           		<img src="/metabolicmine/themes/metabolic/icons/small/genetics-ico.gif" alt="Department of Genetics" />
            	</a>
            	<a href="http://www.cam.ac.uk/" title="University of Cambridge">
-            	<img src="/metabolicmine/model/public/img/cam-ico.gif" alt="University of Cambridge" />
+            	<img src="/metabolicmine/themes/metabolic/icons/small/cam-ico.gif" alt="University of Cambridge" />
             </a>
         </div>
     </div>

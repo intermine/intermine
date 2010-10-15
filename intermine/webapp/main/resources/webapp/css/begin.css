@@ -1,0 +1,55 @@
+div#leftcolumn {
+    float:left;
+}
+div#rightColumn {
+	margin-left:340px; padding-top:0px;	_margin-top:15px;/* IE Only Hack */	margin-right:0px;}
+	
+div.aspectOverview{
+	padding:5px; margin:5px 5px 10px 5px;}
+
+.aspectIcon{
+	float:left;
+	margin-bottom:5px; margin-right:5px;
+	border:1px solid #222;}
+
+div.aspectDescr{
+	visibility:hidden;
+	font-style: italic;}
+
+div.wsList {
+   font-size: 0.95em;
+   padding-left: 15px;}
+
+div.frontBoxList {
+   margin-top: 5px; margin-left: 10px;	}
+
+#qbImport {
+	margin-top:10px;}
+
+ol#news li {
+    list-style: disc;
+    margin-bottom:5px;
+    padding-left:5px;
+}
+
+#newsbox {
+  height:100px;
+  width:50%;
+  overflow-y: auto;
+  border-bottom:1px solid #CCC;
+}
+
+#tipbox {
+    width:40%;
+	float:right; 
+	border-left:1px solid #CCC; 
+	padding-left:15px;}
+
+#tipbox h3 {
+	margin:0px 0px 5px 0px;
+	background:none;color:#5C0075;}
+	
+.fp_button {
+    float:right;
+    clear:right;
+}
