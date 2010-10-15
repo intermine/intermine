@@ -11,8 +11,9 @@ CSS MUST FOLLOW THE PATTERN:
 --------------------------*/
 
 *{
-    padding:0px;
+    /*padding:0px;*/	/* creating more trouble for us than its worth... */
     margin:0px;}
+ul { padding-left:0; }
 
 .alignleft {
 float: left;
