@@ -71,8 +71,6 @@ public class GoConverter extends BioFileConverter
     protected String annotationClassName = "GOAnnotation";
 
     protected IdResolverFactory flybaseResolverFactory;
-    protected IdResolverFactory hgncResolverFactory;
-    private Set<String> resolverFails = new HashSet<String>();
 
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
 
@@ -90,7 +88,6 @@ public class GoConverter extends BioFileConverter
 
         // only construct factory here so can be replaced by mock factory in tests
         flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
-        hgncResolverFactory = new HgncIdResolverFactory();
 
         readConfig();
     }
@@ -415,27 +412,6 @@ public class GoConverter extends BioFileConverter
                         return null;
                     }
                     accession = resolver.resolveId(taxonId, accession).iterator().next();
-                }
-            } else if ("9606".equals(taxonId)) {
-                IdResolver resolver = hgncResolverFactory.getIdResolver(true);
-                if (resolver != null) {
-                    int resCount = resolver.countResolutions(taxonId, accession);
-
-                    if (resCount != 1) {
-                        if (!resolverFails.contains(accession)) {
-                            LOG.info("RESOLVER: HGNC failed to resolve gene to one identifier, "
-                                    + "ignoring gene: " + accession + " count: " + resCount
-                                    + " symbol: " + resolver.resolveId(taxonId, accession));
-                            resolverFails.add(accession);
-                        }
-                        return null;
-                    }
-                    String previous = accession;
-                    accession = resolver.resolveId(taxonId, accession).iterator().next();
-                    if (!accession.equals(previous)) {
-                        LOG.info("RESOLVER: HGNC successfully resolved: " + previous + " to: "
-                                + accession);
-                    }
                 }
             }
         } else if ("protein".equalsIgnoreCase(type)) {
