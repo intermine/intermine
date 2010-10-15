@@ -2,6 +2,12 @@ package org.intermine.tracker;
 
 import java.lang.ref.WeakReference;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.intermine.util.ShutdownHook;
 
@@ -33,6 +39,90 @@ public class TemplateTracker extends TrackerAbstract
         return templateTracker;
     }
 
+    public TemplateTrack getMostPopularTemplate() {
+        ResultSet rs = null;
+        try {
+            Statement stm = connection.createStatement();
+            String sql = "SELECT tt.templatename, COUNT(tt.templatename) accessnumbers"
+                        + " FROM templatetrack tt, tag t"
+                        + " WHERE tt.templatename=t.objectidentifier "
+                        + " AND t.tagname LIKE '%public' AND t.type='template'"
+                        + " GROUP BY tt.templatename"
+                        + " ORDER BY accessnumbers DESC LIMIT 1";
+            rs = stm.executeQuery(sql);
+            rs.next();
+            return new TemplateTrack(rs.getString(1), "", rs.getInt(2));
+        } catch (SQLException sqle) {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    LOG.error("Problem closing  resultset in getMostVisitedTemplateByUser", e);
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<String> getMostPopularTemplateOrder() {
+        ResultSet rs = null;
+        List<String> mostPopularTemplateOrder = new ArrayList<String>();
+        try {
+            Statement stm = connection.createStatement();
+            String sql = "SELECT tt.templatename, COUNT(tt.templatename) accessnumbers"
+                        + " FROM templatetrack tt, tag t"
+                        + " WHERE tt.templatename=t.objectidentifier "
+                        + " AND t.tagname LIKE '%public' AND t.type='template'"
+                        + " GROUP BY tt.templatename"
+                        + " ORDER BY accessnumbers DESC";
+            rs = stm.executeQuery(sql);
+            while (rs.next()) {
+                mostPopularTemplateOrder.add(rs.getString(1));
+            }
+            return mostPopularTemplateOrder;
+        } catch (SQLException sqle) {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    LOG.error("Problem closing  resultset in getMostVisitedTemplateByUser", e);
+                }
+            }
+        }
+        return null;
+    }
+
+    public TemplateTrack getMostPopularTemplate(String userName, String sessionId) {
+        ResultSet rs = null;
+        try {
+            Statement stm = connection.createStatement();
+            StringBuffer sql = new StringBuffer("SELECT templatename, "
+                                                + " COUNT(templatename) as accessnumbers,"
+                                                + " username as user "
+                                                + " FROM templatetrack GROUP BY templatename"
+                                                + " ORDER BY accessnumbers DESC LIMIT 1 "
+                                                + " WHERE sessionidentifier = " + sessionId);
+            if (userName != null && !"".equals(userName)) {
+                sql.append(" OR user=" + userName);
+            }
+            rs = stm.executeQuery(sql.toString());
+            String templateName = rs.getString(0);
+            int accessCounter = rs.getInt(1);
+            rs.close();
+            return new TemplateTrack(templateName, userName, accessCounter);
+        } catch (SQLException sqle) {
+            LOG.error("Problem executing query mostVisitedTemplateByUser", sqle);
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    LOG.error("Problem closing  resultset in getMostVisitedTemplateByUser", e);
+                }
+            }
+        }
+        return null;
+    }
+
     public Object getTrack() {
         return null;
     }
@@ -43,8 +133,8 @@ public class TemplateTracker extends TrackerAbstract
     }
 
     public Object[] getFormattedTrack(TrackerInput track) {
-        if (track instanceof TemplateTrackerInput) {
-            TemplateTrackerInput tti = (TemplateTrackerInput) track;
+        if (track instanceof TemplateTrack) {
+            TemplateTrack tti = (TemplateTrack) track;
             return new Object[] {tti.getTemplateName(), tti.getUserName(),
                                 tti.getTimestamp(), tti.getSessionIdentifier()};
         } else {
