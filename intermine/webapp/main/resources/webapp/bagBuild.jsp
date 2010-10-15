@@ -59,7 +59,7 @@
 </script>
 
 
-<im:boxarea titleKey="bagBuild.makeNewBag" stylename="plainbox" fixedWidth="60%">
+<im:boxarea titleImage="lists.png" titleKey="bagBuild.makeNewBag" stylename="plainbox" fixedWidth="60%">
   <div class="body">
     <html:form action="/buildBag" method="post" enctype="multipart/form-data" >
       <p><fmt:message key="bagBuild.bagFormText1"/></p>

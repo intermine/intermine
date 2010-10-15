@@ -494,3 +494,22 @@ div#ui-datepicker-div {
 div#ui-datepicker-control {
     background: #655;
 }
+
+/* templates.do etc box header (we expect a 64x64 image)  */
+div.gradientbox dt img { float:left; padding:0 10px 0 0; /*background:url("../images/icons/shade.png") no-repeat 4px 58px;*/ }
+div.gradientbox dd { /*margin-top:16px;*/ }
+div.gradientbox h1#templatetop { font-size:22px; }
+
+/* template.do etc box header (we expect a 64x64 image)  */
+div.plainbox dt img { float:left; padding:0 10px 0 0; /*background:url("../images/icons/shade.png") no-repeat 4px 58px;*/ }
+div.plainbox h2.templateTitle { /*padding-top:16px;*/ }
+div.plainbox div.templateFormContainer { margin-top:34px; padding-left:14px; }
+
+/* templateAction.do query builder model browser icon (we expect a 64x64 image) */
+#queryBuilderBrowser #browserbody img.icon { float:left; display:inline-block; padding:0 10px; }
+
+/* button styling */
+input[type="submit"], input[type="button"] { cursor:pointer; border:outset 1px #CCCCCC; background:#999999; background-repeat:repeat-x;
+	padding:1px 2px; background-image:url("../images/buttons/button-bg.gif"); background-position:left top; vertical-align:middle; }
+input[type="submit"].queryBuilder { background-image:url("../images/buttons/button-bg-query-builder.gif"); background-repeat:repeat-none;
+	background-position:left top; padding-left:26px; }
