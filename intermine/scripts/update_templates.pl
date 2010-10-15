@@ -10,7 +10,6 @@ use Log::Handler;
 require 'resources/lib/updater.pm';
 use AppConfig qw(:expand :argcount);
 
-
 my $config = AppConfig->new({
         CREATE => 1,
         GLOBAL => {
