@@ -422,17 +422,17 @@ sub add_xrefs {
     my ( $feature, $item ) = @_;
     my $gene_name = $item->get('primaryIdentifier');
 
-    foreach my $xref ( @{ $feature->get_all_DBLinks } ) {
+    #foreach my $xref ( @{ $feature->get_all_DBLinks } ) {
 
 #probably a much better way of doing this exists, but could be useful for loading all
 #known xRefs for a record
-        if ( $xref->dbname eq 'EntrezGene' ) {
-            my $ncbi_no = $xref->primary_id;
-            $item->set( ncbiGeneNumber => $ncbi_no );
-            push @{ $genesncbis{$gene_name} }, $ncbi_no;
-            push @{ $ncbisgenes{$ncbi_no} },   $gene_name;
-        }
-    }
+#        if ( $xref->dbname eq 'EntrezGene' ) {
+#            my $ncbi_no = $xref->primary_id;
+#            $item->set( ncbiGeneNumber => $ncbi_no );
+#            push @{ $genesncbis{$gene_name} }, $ncbi_no;
+#            push @{ $ncbisgenes{$ncbi_no} },   $gene_name;
+#        }
+#    }
 }
 
 # read in the config file
