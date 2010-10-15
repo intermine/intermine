@@ -67,7 +67,6 @@ public class UniprotConverter extends BioDirectoryConverter
     private Set<String> taxonIds = null;
 
     protected IdResolverFactory flyResolverFactory;
-    protected IdResolverFactory hgncResolverFactory;
     private String datasourceRefId = null;
 
     /**
@@ -79,7 +78,6 @@ public class UniprotConverter extends BioDirectoryConverter
         super(writer, model, "UniProt", "Swiss-Prot data set");
         // only construct factory here so can be replaced by mock factory in tests
         flyResolverFactory = new FlyBaseIdResolverFactory("gene");
-        hgncResolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     /**
@@ -865,7 +863,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 }
                 identifierValue = uniprotEntry.getGeneNames().get(value);
             } else if ("dbref".equals(method)) {
-                if ("Ensembl".equals(value) || "HGNC".equals(value)) {
+                if ("Ensembl".equals(value)) {
                     // See #2122
                     identifierValue = uniprotEntry.getGeneDesignation(value);
                 } else {
@@ -917,8 +915,6 @@ public class UniprotConverter extends BioDirectoryConverter
         private String resolveGene(String taxId, String identifier) {
             if ("7227".equals(taxId)) {
                 return resolveFlyGene(taxId, identifier);
-            } else if ("9606".equals(taxId)) {
-                return resolveHumanGene(taxId, identifier);
             }
             return identifier;
         }
@@ -937,21 +933,6 @@ public class UniprotConverter extends BioDirectoryConverter
                 return null;
             }
             return flyResolver.resolveId(taxId, identifier).iterator().next();
-        }
-
-        private String resolveHumanGene(String taxId, String identifier) {
-            IdResolver resolver = hgncResolverFactory.getIdResolver(true);
-            if (resolver == null) {
-                return identifier;
-            }
-            int resCount = resolver.countResolutions(taxonId, identifier);
-            if (resCount != 1) {
-                LOG.info("RESOLVER: HGNC failed to resolve gene to one identifier, "
-                        + "ignoring gene: " + identifier + " count: " + resCount
-                        + " symbol: " + resolver.resolveId(taxonId, identifier));
-                return null;
-            }
-            return resolver.resolveId(taxonId, identifier).iterator().next();
         }
     }
 
