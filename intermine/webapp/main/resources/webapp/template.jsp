@@ -150,7 +150,7 @@
                   <c:choose>
                   <c:when test="${!dec.lookup}">
                     <div style="float:left;margin-right:5px;">
-                    <html:select property="attributeOps(${index})" style="padding-right: 10px" onchange="onChangeAttributeOps(${index});">
+                    <html:select property="attributeOps(${index})" onchange="onChangeAttributeOps(${index});">
                       <c:forEach items="${dec.validOps}" var="op">
                       <option value="${op.property}"
                         <c:if test="${!empty dec.selectedOp && dec.selectedOp.property == op.property}">selected</c:if>>
@@ -168,7 +168,7 @@
                    <%-- if can be multi value --%>
                <c:if test="${!empty dec.possibleValues}">
                    <html:hidden property="multiValueAttribute(${index})"/>
-                   <html:select property="multiValues(${index})" multiple="true" size="4" style="padding-right: 10px" onchange="updateMultiValueAttribute(${index});">
+                   <html:select property="multiValues(${index})" multiple="true" size="4" onchange="updateMultiValueAttribute(${index});">
                    <c:forEach items="${dec.possibleValues}" var="multiValue">
                    <html:option value="${multiValue}"><c:out value="${multiValue}"/></html:option>
                    </c:forEach>
