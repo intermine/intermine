@@ -549,7 +549,7 @@ public class DisplayConstraint
      * @return true if an extra constraint option is available
      */
     public boolean isExtraConstraint() {
-        if (isLookup()) {
+        if (isLookup() && bagQueryConfig != null) {
             String extraValueFieldName = bagQueryConfig.getConnectField();
             ClassDescriptor cld = (path.isRootPath()) ? path.getStartClassDescriptor()
                                    : path.getLastClassDescriptor();
