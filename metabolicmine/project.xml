@@ -8,7 +8,7 @@
 
   <sources>
     <source name="hgnc" type="hgnc">
-     <property name="src.data.dir" location="/shared/data/hgnc/test"/>
+     <property name="src.data.dir" location="/shared/data/hgnc/current"/>
     </source>
     <source name="ensembl-human" type="ensembl" dump="true">
      <property name="src.data.dir" location="/shared/data/ensembl/metabolic/current"/>
