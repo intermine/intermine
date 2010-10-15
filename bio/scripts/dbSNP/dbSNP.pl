@@ -7,16 +7,19 @@ use warnings;
 use Switch;
 
 BEGIN {
-  # find the lib directory by looking at the path to this script
-    push (@INC, ($0 =~ m:(.*)/.*:)[0] .'/../../../intermine/perl/lib/');
+    my $base = ( $0 =~ m:(.*)/.*: )[0];
+    unshift( @INC, 
+        map( {$base . $_} 
+            '/../../../intermine/perl/InterMine-Util/lib',
+            '/../../../intermine/perl/InterMine-Item/lib',
+        ),
+    );
 }
 
-use XML::Writer;
 use InterMine::Item;
-use InterMine::ItemFactory;
+use InterMine::Item::Document;
 use InterMine::Model;
 use InterMine::Util qw(get_property_value);
-use IO qw(Handle File);
 use Cwd;
 
 use Bio::EnsEMBL::Variation::DBSQL::DBAdaptor;
@@ -35,11 +38,16 @@ parse_config(read_file($config_file));
 
 # properties file for database info
 my $properties_file = "$ENV{HOME}/.intermine/$mine_name.properties";
+chomp( my $date = qx(date "+%F") );
+my $outfile = "$data_destination/ensembl-$date.xml";
 
 # intermine
 my $model_file = "../../../$mine_name/dbmodel/build/main/genomic_model.xml";
 my $model = new InterMine::Model(file => $model_file);
-my $item_factory = new InterMine::ItemFactory(model => $model);
+my $doc = new InterMine::Item::Document(
+    model => $model,
+    output => $outfile,
+);
 
 # maps to prevent duplicate items
 my %sourceMap;
@@ -47,102 +55,57 @@ my %statesMap;
 my %typeMap;
 
 my $start_time = time();
-# TODO add date to file
-my $outfile =$data_destination . '/ensembl.xml';
-my $output = new IO::File(">$outfile");
-my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
-$writer->startTag('items');
 
 my $datasource = 'Ensembl';
 my $datasource_item = make_item("DataSource");
-$datasource_item->set('name', $datasource);
-$datasource_item->as_xml($writer);
+$datasource_item->set(name => $datasource);
+$doc->write($datasource_item);
 
 my $org_item;
 my $dataset_item;
 my $count = 0;
 
 # loop through each organism specified
-foreach my $taxon_id(keys %organisms) {
+while (my ($taxon_id, $chromosomes) = each %organisms) {
     
     print "processing taxon_id $taxon_id\n";
 
-    # databases
-    #my $dbCore = get_db("core", $taxon_id); 
-    #my $dbVariation = get_db("variation", $taxon_id); 
-
-    # FIXME use get_db sub instead
-    my $core_host = get_property_value("db.ensembl.$taxon_id.core.datasource.serverName", $properties_file);
-    my $core_dbname = get_property_value("db.ensembl.$taxon_id.core.datasource.databaseName", $properties_file);
-    my $core_user = get_property_value("db.ensembl.$taxon_id.core.datasource.user", $properties_file);
-    my $core_pass = get_property_value("db.ensembl.$taxon_id.core.datasource.password", $properties_file);
-    my $species = get_property_value("db.ensembl.$taxon_id.core.datasource.species", $properties_file);
-    
-    my $var_host = get_property_value("db.ensembl.$taxon_id.variation.datasource.serverName", $properties_file);
-    my $var_dbname = get_property_value("db.ensembl.$taxon_id.variation.datasource.databaseName", $properties_file);
-    my $var_user = get_property_value("db.ensembl.$taxon_id.variation.datasource.user", $properties_file);
-    my $var_pass = get_property_value("db.ensembl.$taxon_id.variation.datasource.password", $properties_file);
-    
     $org_item = make_item("Organism");
     $org_item->set("taxonId", $taxon_id);
-    $org_item->as_xml($writer);
 
     $dataset_item = make_item("DataSet");
-    $dataset_item->set('title', "$datasource data set for taxon id: $taxon_id");
-    $dataset_item->as_xml($writer);
+    $dataset_item->set(name => "$datasource data set for taxon id: $taxon_id");
 
-    my @chromosomes = ();
-    my $chromosomes_string = $organisms{$taxon_id};
+    $doc->write($org_item, $dataset_item);
 
-    if ($chromosomes_string) {
-        @chromosomes = parse_chromosomes($chromosomes_string);
-    } else {
-        die "You must specify the chromosomes to process in the configuration file.\n";
-    }
+    my @chromosomes = parse_chromosomes($chromosomes);
 
     # TODO query for list of chromosomes if not specified
     # loop through every chromosome
     while (my $chromosome = shift @chromosomes) {
 
         print "processing chromsome $chromosome\n";
-
-        my $dbCore = Bio::EnsEMBL::DBSQL::DBAdaptor->new
-            (-host => $var_host,
-             -dbname => $core_dbname,
-             -species => $species,
-             -group => 'core',
-             -user => $core_user,
-             -pass => $core_pass);
-    
+        
+        my ($dbCore, $dbVariation) = get_db($taxon_id);
         
         #get the database adaptor for Slice objects
         my $slice_adaptor = $dbCore->get_SliceAdaptor(); 
         my $slice = $slice_adaptor->fetch_by_region('chromosome',$chromosome);
-        
-        #Connect to EnsEMBL variation database5C
-        my $dbVariation = Bio::EnsEMBL::Variation::DBSQL::DBAdaptor->new
-            (-host => $var_host,
-             -dbname => $var_dbname,
-             -species => $species,
-             -group => 'variation',
-             -user => $var_user,
-             -pass => $var_pass);
     
         my $vf_adaptor = $dbVariation->get_VariationFeatureAdaptor(); 
         # get adaptor to VariationFeature object
         my $vfs = $vf_adaptor->fetch_all_by_Slice($slice); 
         # return ALL variations defined in $slice
         
-        # don't need to set the id, unless we use a shell script
-        # my $chromosome_item = make_item_chromosome(id => $i);
         my $chromosome_item = make_item("Chromosome");
         $chromosome_item->set('primaryIdentifier', $slice->seq_region_name);
-        $chromosome_item->as_xml($writer);
+        $doc->write($chromosome_item);
 
         # use while loop and shift instead of foreach to save memory
         while ( my $vf = shift @{$vfs} ) {
             #print "SNP NUMBER: ".$counter++." CHR:".$i."\n";
-            my @alleles = split('[/.-]', $vf->allele_string);
+            my @alleles = split(/[\/.-]/, $vf->allele_string);
+
             if(!$alleles[0]) {
                 $alleles[0]='-';
             }
@@ -166,7 +129,7 @@ foreach my $taxon_id(keys %organisms) {
                         $state_item = make_item('ValidationState');
                         $state_item->set('state', $state);
                         $statesMap{$state} = $state_item;
-                        $state_item->as_xml($writer);
+                        $doc->write($state_item);
                     }
                     push(@stateItems, $state_item);
                 }	
@@ -182,7 +145,7 @@ foreach my $taxon_id(keys %organisms) {
                         $type_item = make_item('ConsequenceType');
                         $type_item->set('type', $type);
                         $typeMap{$type} = $type_item;
-                        $type_item->as_xml($writer);
+                        $doc->write($type_item);
                     }
                     push(@typeItems, $type_item);
                 }
@@ -198,13 +161,13 @@ foreach my $taxon_id(keys %organisms) {
                         $source_item = make_item('Source');
                         $source_item->set('source',$source);
                         $sourceMap{$source} = $source_item;
-                        $source_item->as_xml($writer);
+                        $doc->write($source_item);
                     }
                     push(@sourceItems, $source_item);
                 }
                 $snp_item->set('chromosome', $chromosome_item);
                 $snp_item->set('sources', [@sourceItems]);
-                $snp_item->as_xml($writer);
+                $doc->write($snp_item);
             }
        
             undef $dbCore;
@@ -216,9 +179,7 @@ foreach my $taxon_id(keys %organisms) {
     my $action_time = $end_time - $start_time;
     
     #write xml file
-    $writer->endTag('items');
-    $writer->end();
-    $output->close();
+    $doc->close();
     
     $end_time = time();
     $action_time = $end_time - $start_time;
@@ -226,9 +187,25 @@ foreach my $taxon_id(keys %organisms) {
     
 }
 
+sub get_db_props {
+    my $taxon_id = shift;
+    my %db_props;
+    # core host is not used
+    $db_props{core_host} = get_property_value("db.ensembl.$taxon_id.core.datasource.serverName", $properties_file);
+    $db_props{core_dbname} = get_property_value("db.ensembl.$taxon_id.core.datasource.databaseName", $properties_file);
+    $db_props{core_user} = get_property_value("db.ensembl.$taxon_id.core.datasource.user", $properties_file);
+    $db_props{core_pass} = get_property_value("db.ensembl.$taxon_id.core.datasource.password", $properties_file);
+    $db_props{species} = get_property_value("db.ensembl.$taxon_id.core.datasource.species", $properties_file);
+    
+    $db_props{var_host} = get_property_value("db.ensembl.$taxon_id.variation.datasource.serverName", $properties_file);
+    $db_props{var_dbname} = get_property_value("db.ensembl.$taxon_id.variation.datasource.databaseName", $properties_file);
+    $db_props{var_user} = get_property_value("db.ensembl.$taxon_id.variation.datasource.user", $properties_file);
+    $db_props{var_pass} = get_property_value("db.ensembl.$taxon_id.variation.datasource.password", $properties_file);
+    return %db_props;
+}
 sub make_item{
     my $implements = shift;
-    my $item = $item_factory->make_item(implements => $implements);
+    my $item = $doc->make_item(implements => $implements);
     #push @items, $item;    
     if ($item->valid_field('organism')) {
         $item->set('organism', $org_item);
@@ -260,23 +237,24 @@ sub read_file {
 
 # get db info
 sub get_db {
+    my $taxon_id = shift;
+    my %props = get_db_props($taxon_id);
 
-    my($group, $taxon_id) = @_;
-
-    my $host = get_property_value("db.ensembl.$taxon_id.$group.datasource.serverName", $properties_file);
-    my $dbname = get_property_value("db.ensembl.$taxon_id.$group.datasource.databaseName", $properties_file);
-    my $user = get_property_value("db.ensembl.$taxon_id.$group.datasource.user", $properties_file);
-    my $pass = get_property_value("db.ensembl.$taxon_id.$group.datasource.password", $properties_file);
-    my $species = get_property_value("db.ensembl.$taxon_id.$group.datasource.species", $properties_file);
-    
-    my $db = Bio::EnsEMBL::DBSQL::DBAdaptor->new
-        (-host => $host,
-         -dbname => $dbname,
-         -species => $species,
-         -group => $group,
-         -user => $user,
-         -pass => $pass);
-    return $db;
+    my $dbCore = Bio::EnsEMBL::DBSQL::DBAdaptor->new
+        (-host => $props{var_host},
+        -dbname => $props{core_dbname},
+        -species => $props{species},
+        -group => 'core',
+        -user => $props{core_user},
+        -pass => $props{core_pass});
+    my $dbVariation = Bio::EnsEMBL::Variation::DBSQL::DBAdaptor->new
+        (-host => $props{var_host},
+        -dbname => $props{var_dbname},
+        -species => $props{species},
+        -group => 'variation',
+        -user => $props{var_user},
+        -pass => $props{var_pass});
+    return $dbCore, $dbVariation;;
 }
 
 # parse the config file
@@ -296,24 +274,22 @@ sub parse_config {
 # user can specify which chromosomes to load  
 # eg 1-21,X,Y
 sub parse_chromosomes {
-    my ($chromosome_string) = shift;
+    my $chromosome_string = shift;
+    die "You must specify the chromosomes to process in the configuration file.\n"
+        unless $chromosome_string;
   
-    my @bits = split(",", $chromosome_string);
+    my @bits = split(/,/, $chromosome_string);
     my @chromosomes = ();
  
-    foreach (@bits) {
-        my $bit = $_;
-        
-        # list may be a range
-        if ($bit =~ "-") {
-            my @range = split("-", $bit);
-            my $min = $range[0];
-            my $max = $range[1];
-            for (my $i = $min; $i <= $max; $i++) {
-                push(@chromosomes, $i);
+    foreach (@bits) { # Handles single values and ranges x-y
+        if (/-/) {
+            my ($min, $max, @rest) = split /-/;
+            if (@rest or not $min <= $max) {
+                die "Bad range: $_";
             }
+            push @chromosomes, $min .. $max;
         } else {
-            push(@chromosomes, $bit);
+            push @chromosomes, $_;
         }
     }
     return @chromosomes;
@@ -333,9 +309,9 @@ sub make_synonym {
 
 sub parse_orgs {
     my ($taxon_ids) = @_;
-    my %orgs = ();    
-    for (split("\\,", $taxon_ids)) {
-        $orgs{$_} = "";
+    my %orgs;    
+    for (split(/,/, $taxon_ids)) {
+        $orgs{$_} = undef;
     }
     return %orgs;
 }

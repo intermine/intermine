@@ -1,17 +1,22 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 use strict;
+use warnings;
 
 BEGIN {
-  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../perl/lib');
+    my $base = ( $0 =~ m:(.*)/.*: )[0];
+    unshift( @INC, 
+        map( {$base . $_} 
+            '/../../../intermine/perl/InterMine-Item/lib',
+        ),
+    );
 }
 
 use TIGR_XML_parser;
 use Gene_obj;
 
-use XML::Writer;
 use InterMine::Item;
-use InterMine::ItemFactory;
+use InterMine::Item::Document;
 use InterMine::Model;
 
 if (@ARGV < 4) {
@@ -22,9 +27,7 @@ my ($data_source, $taxon_id, $model_file, @files) = @ARGV;
 my @items = ();
 my $model = new InterMine::Model(file => $model_file);
 
-my $item_factory = new InterMine::ItemFactory(model => $model);
-
-my @items_to_write = ();
+my $item_factory = new InterMine::Item::Document(model => $model);
 
 my $data_source_item = make_item("DataSource");
 $data_source_item->set('name', $data_source);
