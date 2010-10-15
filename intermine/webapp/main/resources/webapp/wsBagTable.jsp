@@ -20,7 +20,7 @@
 
 <fmt:message key="bags.title" var="titleKey" />
 
-<im:boxarea title="${titleKey}" stylename="gradientbox" minWidth="800px" htmlId="liststop">
+<im:boxarea titleImage="lists.png" title="${titleKey}" stylename="gradientbox" minWidth="800px" htmlId="liststop">
 <div class="" id="ws_${wsListId}_bag"><fmt:message key="lists.intro"/>
 
 <tiles:insert name="wsFilterList.tile">
