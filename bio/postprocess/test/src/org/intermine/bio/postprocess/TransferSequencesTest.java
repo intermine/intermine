@@ -276,7 +276,7 @@ public class TransferSequencesTest extends TestCase
         Sequence chrSequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
         PendingClob clob = new PendingClob(storedChrSequence);
-        chrSequence.setResidues(clob.subSequence(425, storedChrSequence.length()));
+        chrSequence.setResidues(clob.subSequence(0, storedChrSequence.length()));
         storedChromosome.setSequence(chrSequence);
         toStore.add(chrSequence);
         toStore.add(storedChromosome);
