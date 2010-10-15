@@ -377,11 +377,13 @@ sub update_query {
     
     $is_changed += $self->update_type_classes($query);
     $is_changed += $self->update_view($query);
-    $is_broken = "It doesn't have any valid views" unless $query->views;
+    $is_broken = "doesn't have any valid views" unless $query->views;
+    $self->warn($query->name, $is_broken) if $is_broken;
 
     if ( not $is_broken and $query->has_sort_order ) {
         $is_changed += $self->update_sort_order($query);
-        $is_broken++ unless $query->has_sort_order;
+        $is_broken = "has had its sort-order deleted" unless $query->has_sort_order;
+
     }
 
     unless ($is_broken) {
@@ -396,7 +398,7 @@ sub update_query {
     my $this_query =
     sprintf( qq{[%s %s] "%s"}, $origin, $query->type, $query->name );
     if ($is_broken) {       # Three code system: pos value for broken
-        $self->warning( $this_query, 'is broken' );
+        $self->warning( $this_query, 'is broken:', $is_broken );
     } elsif ($is_changed) {
         $self->info( $this_query, 'has been updated' );
         $is_broken = 0;     # Three code system: 0 for ok, but changed
