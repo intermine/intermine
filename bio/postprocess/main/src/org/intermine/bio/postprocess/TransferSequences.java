@@ -390,11 +390,10 @@ public class TransferSequences
 
             Sequence exonSequence = (Sequence) rr.get(2);
             Location  location = (Location) rr.get(3);
-
             if (location.getStrand() != null && "-1".equals(location.getStrand())) {
-                currentTranscriptBases.insert(0, exonSequence.getResidues());
+                currentTranscriptBases.insert(0, exonSequence.getResidues().toString());
             } else {
-                currentTranscriptBases.append(exonSequence.getResidues());
+                currentTranscriptBases.append(exonSequence.getResidues().toString());
             }
         }
         if (currentTranscript == null) {
