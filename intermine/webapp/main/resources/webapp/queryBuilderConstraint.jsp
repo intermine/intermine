@@ -170,18 +170,18 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
               <c:choose>
                 <%-- inputfield for an autocompletion --%>
                   <c:when test="${!empty dec.autoCompleter}">
-                    <input name="attributeValue" id="attribute6" size="55"
+                    <input name="attributeValue" id="attribute8" size="55"
                       style="background: #ffffc8" value="${dec.selectedValue}"
                       onKeyDown="getId(this.id); isSubmit(event);"
                       onKeyUp="readInput(event, '${dec.path.lastClassName}', '${dec.path.fieldName}');"
                       onMouseOver="setMouseOver(1);" onMouseOut="setMouseOver(0);"
                       onBlur="if(MOUSE_OVER != 1) { removeList(); }" />
-                    <iframe width="100%" height="0" id="attribute6_IEbugFixFrame" marginheight="0"
+                    <iframe width="100%" height="0" id="attribute8_IEbugFixFrame" marginheight="0"
                       marginwidth="0" frameborder="0" style="position: absolute;"> </iframe>
-                    <div class="auto_complete" id="attribute6_display"
+                    <div class="auto_complete" id="attribute8_display"
                       onMouseOver="setMouseOver(1);" onMouseOut="setMouseOver(0);">
                       </div>
-                    <div class="error_auto_complete" id="attribute6_error"></div>
+                    <div class="error_auto_complete" id="attribute8_error"></div>
                   </c:when>
                   <%-- normal inputfield --%>
                   <c:otherwise>
