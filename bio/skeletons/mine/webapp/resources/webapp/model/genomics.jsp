@@ -38,31 +38,9 @@
       <div class="body">
         <ul>
           <li>
-            <im:querylink text="All <i>P. falciparum 3D7</i> genes (browse)" skipBuilder="true">
-              <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="All <i>P. falciparum 3D7</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
-              <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
+            <im:querylink text="All <i>P. falciparum 3D7</i> genes identifiers, chromosome positions and chromosome identifiers" skipBuilder="true">
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.organism.shortName Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" sortOrder="Gene.primaryIdentifier asc">
+</query>
             </im:querylink>
           </li>
         </ul>

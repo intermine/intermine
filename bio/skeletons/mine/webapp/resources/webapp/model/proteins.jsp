@@ -42,33 +42,11 @@
       <div class="body">
         <ul>
           <li>
-            <i>Plasmodium falciparum</i> proteins and corresponding genes:
             <span style="white-space:nowrap">
-              <im:querylink text="[browse]" skipBuilder="true">
-                <query name="" model="genomic" view="Protein Protein.genes">
-                  <node path="Protein" type="Protein">
-                  </node>
-                  <node path="Protein.organism" type="Organism">
-                  </node>
-                  <node path="Protein.organism.name" type="String">
-                    <constraint op="=" value="Plasmodium falciparum 3D7"
-                                description="" identifier="" code="A">
-                    </constraint>
-                  </node>
-                </query>
-              </im:querylink>
-              or
-              <im:querylink text="[export/download]" skipBuilder="true">
-                <query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier Protein.genes.chromosomeLocation.start Protein.genes.chromosomeLocation.end">
-                  <node path="Protein" type="Protein">
-                  </node>
-                  <node path="Protein.organism" type="Organism">
-                  </node>
-                  <node path="Protein.organism.name" type="String">
-                    <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
-                    </constraint>
-                  </node>
-                </query>
+              <im:querylink text="Plasmodium falciparum proteins and corresponding genes:" skipBuilder="true">
+<query name="" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.organism.name Protein.genes.primaryIdentifier Protein.genes.secondaryIdentifier Protein.genes.organism.shortName" sortOrder="Protein.primaryIdentifier asc">
+  <constraint path="Protein.organism.name" op="=" value="Plasmodium falciparum 3D7"/>
+</query>
               </im:querylink>
             </span>
           </li>
