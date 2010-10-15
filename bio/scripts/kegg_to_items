@@ -2,9 +2,7 @@
 
 use warnings;
 use strict;
-use lib '../../intermine/perl/lib';
 
-use XML::Writer;
 use InterMine::Model;
 use InterMine::Item::Document;
 
@@ -19,14 +17,11 @@ my $taxon_id    = 36329;
 
 # The item factory needs the model so that it can check that new objects have
 # valid classnames and fields
-my $model = InterMine::Model->new( 
-    file => $model_file,
-);
+my $model = InterMine::Model->new( file => $model_file, );
 my $document = InterMine::Item::Document->new(
     model  => $model,
     output => $out_file,
 );
-
 
 my $datasource_item =
   $document->add_item( 'DataSource', name => $data_source, );
@@ -38,8 +33,6 @@ my $dataset_item = $document->add_item(
 my $org_item = $document->add_item(
     'Organism',
     taxonId => $taxon_id,
-
-    #    dataSets => [$dataset_item],
 );
 
 # read the map title file into %pathways
@@ -55,13 +48,12 @@ while (<$input>) {
         'Pathway',
         identifier => $id,
         name       => $title,
-#       dataSets   => [$dataset_item],
     );
     $pathway_with{$id} = $item;
 }
 close($input) or die "Could not close $map_title_filename, $!";
 
-# read the gene map file and create item objects
+# read the gene map file and create gene objects
 
 open( $input, '<', $gene_map_filename )
   or die "Could not open $gene_map_filename for reading, $!";

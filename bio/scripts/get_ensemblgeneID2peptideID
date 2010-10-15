@@ -13,10 +13,15 @@ use IO::All;
 use LWP::Simple;
 
 BEGIN {
-  # find the lib directory by looking at the path to this script
-  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+    my $base = ( $0 =~ m:(.*)/.*: )[0];
+    unshift( @INC, 
+        map( {$base . $_} 
+            '/../../intermine/perl/InterMine-Util/lib',
+            '/../../intermine/perl/InterMine-Item/lib',
+        ),
+    );
 }
-use InterMine::DataDownloader;
+use InterMine::Util::DataDownloader;
 
 #Define ARGVs
 my ($logdir,$logname,$home,$file);
@@ -110,14 +115,14 @@ sub update_files(){
 use IO::File;
 use XML::Writer;
 use InterMine::Item;
-use InterMine::ItemFactory;
+use InterMine::Item::Document;
 use InterMine::Model;
 
 #Kim's stuff for writing XML
 my @items = ();
 my $model_file = '../../flymine/dbmodel/build/model/genomic_model.xml';
 my $model = new InterMine::Model(file => $model_file);
-my $item_factory = new InterMine::ItemFactory(model => $model);
+my $item_factory = new InterMine::Item::Document(model => $model);
 my @items_to_write = ();
 
 my ($log_buffer,$version_buffer);
