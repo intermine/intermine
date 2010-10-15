@@ -72,6 +72,8 @@ public class ClobAccessReverseComplement extends ClobAccess
                 return 'N';
             case 'N':
                 return 'N';
+            case '.':
+                return '.';
             default:
                 throw new IllegalArgumentException("DNA sequence is invalid - cannot contain "
                         + in);
