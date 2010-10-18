@@ -32,18 +32,14 @@ import org.apache.tools.ant.Task;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.Constants;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.ChromosomeBand;
-import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Location;
-import org.intermine.model.bio.MRNA;
-import org.intermine.model.bio.NcRNA;
 import org.intermine.model.bio.Sequence;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Synonym;
-import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -144,7 +140,7 @@ public class WriteGFFTask extends Task
         Map<String, Integer> objectCounts = null;
 
         // Map from Transcript to Location (on Chromosome)
-        Map<Transcript, Location> seenTranscripts = new HashMap<Transcript, Location>();
+        Map<SequenceFeature, Location> seenTranscripts = new HashMap<SequenceFeature, Location>();
         // Map from exon primary identifier to Location (on Chromosome)
         Map<String, Location> seenTranscriptParts = new HashMap<String, Location>();
 
@@ -161,7 +157,7 @@ public class WriteGFFTask extends Task
             Location loc = (Location) rr.get(2);
 
             // TODO XXX FIXME - see #628
-            if (feature instanceof ChromosomeBand) {
+            if (isInstance(model, feature, "ChromosomeBand")) {
                 continue;
             }
 
@@ -182,21 +178,18 @@ public class WriteGFFTask extends Task
                // ignore - ChromosomalDeletion is not in the model
             }
 
-            if (model.hasClassDescriptor("CDS")) {
-                if (DynamicUtil.isInstance(feature,
-                        model.getClassDescriptorByName("CDS").getType())) {
-                    // ignore for now as it interferes with the CDS GFF records created by
-                    // writeTranscriptsAndExons() for use by the processed_transcript
-                    // aggregator
-                    continue;
-                }
+            if (isInstance(model, feature, "CDS")) {
+                // ignore for now as it interferes with the CDS GFF records created by
+                // writeTranscriptsAndExons() for use by the processed_transcript
+                // aggregator
+                continue;
             }
 
             if (currentChrId == null || !currentChrId.equals(resultChrId)) {
                 if (currentChrId != null) {
-                    writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
+                    writeTranscriptsAndExons(model, gffWriter, currentChr, seenTranscripts,
                                              seenTranscriptParts, synonymMap);
-                    seenTranscripts = new HashMap<Transcript, Location>();
+                    seenTranscripts = new HashMap<SequenceFeature, Location>();
                     seenTranscriptParts = new HashMap<String, Location>();
                 }
 
@@ -245,14 +238,14 @@ public class WriteGFFTask extends Task
 
             // process Transcripts but not tRNAs
             // we can't just check for MRNA because the Transcripts of Pseudogenes aren't MRNAs
-            if (feature instanceof Transcript && !(feature instanceof NcRNA)) {
-                seenTranscripts.put((Transcript) feature, loc);
+            if (isInstance(model, feature, "Transcript")) {
+                if (!isInstance(model, feature, "NcRNA")) {
+                    seenTranscripts.put(feature, loc);
+                }
             }
 
             String primaryIdentifier = feature.getPrimaryIdentifier();
-            if (feature instanceof Exon
-                // || feature instanceof FivePrimeUTR || feature instanceof ThreePrimeUTR
-                ) {
+            if (isInstance(model, feature, "Exon")) {
                 seenTranscriptParts.put(primaryIdentifier, loc);
             }
 
@@ -267,12 +260,6 @@ public class WriteGFFTask extends Task
             List<String> synonymList = synonymMap.get(feature.getId());
             Map<String, List<String>> extraAttributes = new HashMap<String, List<String>>();
 
-            if (feature instanceof ChromosomeBand) {
-                ArrayList<String> indexList = new ArrayList<String>();
-                indexList.add(objectCounts.get(feature.getClass()).toString());
-                extraAttributes.put("Index", indexList);
-            }
-
             writeFeature(gffWriter, currentChr, feature, loc, identifier,
                     featureType.toLowerCase(), featureType, extraAttributes,
                     synonymList, feature.getId());
@@ -284,7 +271,7 @@ public class WriteGFFTask extends Task
             throw new RuntimeException("no chromosomes found");
         }
 
-        writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts, seenTranscriptParts,
+        writeTranscriptsAndExons(model, gffWriter, currentChr, seenTranscripts, seenTranscriptParts,
                 synonymMap);
 
         if (gffWriter != null) {
@@ -308,17 +295,22 @@ public class WriteGFFTask extends Task
         return nameBuffer.toString();
     }
 
-    private void writeTranscriptsAndExons(PrintWriter gffWriter, Chromosome chr,
-                                          Map<Transcript, Location> seenTranscripts,
+    private void writeTranscriptsAndExons(Model model, PrintWriter gffWriter, Chromosome chr,
+                                          Map<SequenceFeature, Location> seenTranscripts,
                                           Map<String, Location> seenTranscriptParts,
                                           Map<Integer, List<String>> synonymMap) {
-        Iterator<Transcript> transcriptIter = seenTranscripts.keySet().iterator();
+        Iterator<SequenceFeature> transcriptIter = seenTranscripts.keySet().iterator();
         while (transcriptIter.hasNext()) {
             // we can't just use MRNA here because the Transcripts of a pseudogene are Transcripts,
             // but aren't MRNAs
-            Transcript transcript = transcriptIter.next();
+            SequenceFeature transcript = transcriptIter.next();
 
-            Gene gene = transcript.getGene();
+            Gene gene = null;
+            try {
+                gene = (Gene) transcript.getFieldValue("gene");
+            } catch (IllegalAccessException e) {
+                // there is not gene
+            }
             if (gene == null) {
                 continue;
             }
@@ -339,7 +331,7 @@ public class WriteGFFTask extends Task
                 synonymList = new ArrayList<String>();
             }
 
-            if (transcript instanceof MRNA) {
+            if (isInstance(model, transcript, "MRNA")) {
                 // special case for CDS objects - display them as MRNA as GBrowse uses the CDS class
                 // for displaying MRNAs
                 try {
@@ -358,24 +350,30 @@ public class WriteGFFTask extends Task
                          transcriptFeatureType, "mRNA", geneNameAttributeMap, synonymList,
                          transcript.getId());
 
-            Collection<Exon> exons = transcript.getExons();
+            try {
+                Collection<SequenceFeature> exons =
+                    (Collection<SequenceFeature>) transcript.getFieldValue("exons");
 
-            ProxyCollection<Exon> exonsResults = (ProxyCollection<Exon>) exons;
+                ProxyCollection<SequenceFeature> exonsResults =
+                    (ProxyCollection<SequenceFeature>) exons;
 
-            // exon collections are small enough that optimisation just slows things down
-            exonsResults.setNoOptimise();
-            exonsResults.setNoExplain();
+                // exon collections are small enough that optimisation just slows things down
+                exonsResults.setNoOptimise();
+                exonsResults.setNoExplain();
 
-            Iterator<Exon> exonIter = exons.iterator();
-            while (exonIter.hasNext()) {
-                Exon exon = exonIter.next();
-                Location exonLocation = seenTranscriptParts.get(exon.getPrimaryIdentifier());
+                Iterator<SequenceFeature> exonIter = exons.iterator();
+                while (exonIter.hasNext()) {
+                    SequenceFeature exon = exonIter.next();
+                    Location exonLocation = seenTranscriptParts.get(exon.getPrimaryIdentifier());
 
-                List<String> exonSynonymValues = synonymMap.get(exon.getId());
+                    List<String> exonSynonymValues = synonymMap.get(exon.getId());
 
-                writeFeature(gffWriter, chr, exon, exonLocation, transcript.getPrimaryIdentifier(),
-                             "CDS", "mRNA", null, exonSynonymValues,
-                             transcript.getId());
+                    writeFeature(gffWriter, chr, exon, exonLocation,
+                            transcript.getPrimaryIdentifier(), "CDS", "mRNA", null,
+                            exonSynonymValues, transcript.getId());
+                }
+            } catch (IllegalAccessException e) {
+                // there was no exons collection
             }
         }
     }
@@ -671,5 +669,15 @@ public class WriteGFFTask extends Task
                 + chr.getOrganism().getSpecies().replaceAll(" ", "_");
         }
         return orgPrefix + "_chr_" + chr.getPrimaryIdentifier();
+    }
+
+    private boolean isInstance(Model model, InterMineObject obj, String clsName) {
+        if (model.hasClassDescriptor(clsName)) {
+            Class<? extends FastPathObject> cls = model.getClassDescriptorByName(clsName).getType();
+            if (DynamicUtil.isInstance(obj, cls)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
