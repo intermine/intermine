@@ -121,52 +121,36 @@ function clearBagName(element) {
 
 <div id="filter_tool_bar">
     <!-- <html:link styleId="actions_button" linkName="#">List Actions (Union, Intersection,..)&nbsp;<img src="images/arrow_down.png" width="10" height="8" alt="Arrow Down"></html:link> -->
-    <ul id="actions_menu">
-        <li><strong>Actions:</strong></li>
+	<script language="javascript">
+	<!--
+		jQuery("document").ready(function() {
+			jQuery("#export_button").click(function() {
+				jQuery("#modifyTemplateForm").submit();
+			});
+		});
+	// -->
+	</script>
+	
+    <strong>Actions:</strong>
     <c:choose>
-    <c:when test="${type == 'template'}">
-    <script language="javascript">
-      jQuery("document").ready(function(){
-        jQuery("#export_button").click(function(){
-          jQuery("#modifyTemplateForm").submit();
-        });
-      });
-    </script>
-        <li>
-            <html:submit property="export" value="Export selected"/>
-            <html:hidden property="pageName" value="templates"/>
-            <html:hidden property="templateButton" value="export"/>
-        </li>
-    </c:when>
+	    <c:when test="${type == 'template'}">
+			<html:submit property="export" value="Export selected"/>
+	        <html:hidden property="pageName" value="templates"/>
+	        <html:hidden property="templateButton" value="export"/>
+	    </c:when>
     <c:otherwise>
-    <li>
-        <a href="#operations" title="Union" onclick="jQuery('#listsButton').val('union')" class="boxy"><img src="images/union.png" width="21" height="14" alt="Union">Union</a>&nbsp;|&nbsp;
-    </li>
-    <li>
-        <a href="#operations" title="Intersect" onclick="jQuery('#listsButton').val('intersect')" class="boxy"><img src="images/intersect.png" width="21" height="14" alt="Intersect">Intersect</a>&nbsp;|&nbsp;
-    </li>
-    <li>
-        <a href="#operations" title="Subtract" onclick="jQuery('#listsButton').val('subtract')" class="boxy"><img src="images/subtract.png" width="21" height="14" alt="Subtract">Subtract</a>&nbsp;|&nbsp;
-    </li>
-    <li>
-        <a href="#operations" title="Copy" onclick="jQuery('#listsButton').val('copy')" class="boxy"><img src="images/copy.png" width="16" height="16" alt="Copy">Copy</a>
-    </li>
+		<a href="#operations" title="Union" onclick="jQuery('#listsButton').val('union')" class="boxy"><img src="images/union.png" width="21" height="14" alt="Union">Union</a>&nbsp;|&nbsp;
+		<a href="#operations" title="Intersect" onclick="jQuery('#listsButton').val('intersect')" class="boxy"><img src="images/intersect.png" width="21" height="14" alt="Intersect">Intersect</a>&nbsp;|&nbsp;
+		<a href="#operations" title="Subtract" onclick="jQuery('#listsButton').val('subtract')" class="boxy"><img src="images/subtract.png" width="21" height="14" alt="Subtract">Subtract</a>&nbsp;|&nbsp;
+		<a href="#operations" title="Copy" onclick="jQuery('#listsButton').val('copy')" class="boxy"><img src="images/copy.png" width="16" height="16" alt="Copy">Copy</a>
     </c:otherwise>
     </c:choose>
-    <li>&nbsp;&nbsp;&nbsp;</li>
-    <li><b>Options:</b></li>
-    <li>
-      <c:if test="${! empty userShowDescription}">
-        <c:set var="checkboxChecked" value="checked" />
-      </c:if>
-      <input type="checkbox" <c:out value="${checkboxChecked}" /> id="showCheckbox"
-      onclick="showDescriptions('<c:out value="${wsListId}" />', '<c:out value="${type}" />', this.checked)">
-    </li>
-    <li>
-      <label for="showCheckbox">Show descriptions</label>
-    </li>
-    </ul>
-    <br clear="both"/>
+    <strong class="pad">Options:</strong>
+	<c:if test="${! empty userShowDescription}">
+    	<c:set var="checkboxChecked" value="checked" />
+	</c:if>
+    <input type="checkbox" <c:out value="${checkboxChecked}" /> id="showCheckbox" onclick="showDescriptions('<c:out value="${wsListId}" />', '<c:out value="${type}" />', this.checked)">
+	<label for="showCheckbox">Show descriptions</label>
 </div>
 <html:hidden property="listsButton" value="" styleId="listsButton"/>
 <%-- Need a dummy because boxy puts it outside of the form --%>
