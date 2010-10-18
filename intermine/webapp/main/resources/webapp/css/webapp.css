@@ -1,4 +1,4 @@
-/*
+	/*
 CSS MUST FOLLOW THE PATTERN:
  style {
     list of positioning attributes;
@@ -521,5 +521,9 @@ input[type="submit"].queryBuilder { background-image:url("../images/buttons/butt
 		#filter_tool_bar strong.pad { margin-left:25px; }
 	#filter_tool_bar * { padding-right:2px; vertical-align:middle; }
 
-/* customeQuery.do */
+/* customQuery.do */
 input#submitClassSelect { margin-top:5px; }
+
+/* WebKit lists display fix */
+#all_template_template_container.wsListContainer, #all_bag_bag_container.wsListContainer,
+	#all_templates_template_container.wsListContainer { display:inline; }
