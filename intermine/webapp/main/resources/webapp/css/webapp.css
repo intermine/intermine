@@ -511,6 +511,15 @@ div.plainbox div.templateFormContainer { margin-top:34px; padding-left:14px; }
 
 /* button styling */
 input[type="submit"], input[type="button"] { cursor:pointer; border:outset 1px #CCCCCC; background:#999999; background-repeat:repeat-x;
-	padding:1px 2px; background-image:url("../images/buttons/button-bg.gif"); background-position:left top; vertical-align:middle; }
+	padding:1px 2px; background-image:url("../images/buttons/button-bg.gif"); background-position:left top; }
 input[type="submit"].queryBuilder { background-image:url("../images/buttons/button-bg-query-builder.gif"); background-repeat:repeat-none;
 	background-position:left top; padding-left:26px; }
+	
+/* templates listing header submenu */
+#filter_tool_bar { text-align:left !important; }
+	#filter_tool_bar strong { color:#004499; }
+		#filter_tool_bar strong.pad { margin-left:25px; }
+	#filter_tool_bar * { padding-right:2px; vertical-align:middle; }
+
+/* customeQuery.do */
+input#submitClassSelect { margin-top:5px; }
