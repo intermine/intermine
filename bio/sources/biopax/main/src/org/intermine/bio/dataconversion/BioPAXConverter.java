@@ -37,7 +37,6 @@ import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
-import org.xml.sax.SAXException;
 /**
  * Converts BioPAX files into InterMine objects.
  *
@@ -83,7 +82,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
      * {@inheritDoc}
      */
     @Override
-    public void process(Reader reader) throws Exception {
+    public void process(@SuppressWarnings("unused") Reader reader) throws Exception {
         String taxonId = getTaxonId();
         if (taxonId == null) {
             // this file isn't from an organism specified in the project file
@@ -212,15 +211,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
                     = (org.biopax.paxtools.model.level2.entity) bpe;
                 String className = entity.getModelInterface().getSimpleName();
                 if (className.equalsIgnoreCase("protein") && StringUtils.isNotEmpty(pathwayRefId)) {
-                    try {
-                        processProteinEntry(entity);
-                    } catch (SAXException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (ObjectStoreException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                    processProteinEntry(entity);
                 }
             }
             if (!visited.contains(bpe)) {
@@ -232,8 +223,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         }
     }
 
-    private void processProteinEntry(org.biopax.paxtools.model.level2.entity entity)
-        throws SAXException, ObjectStoreException {
+    private void processProteinEntry(org.biopax.paxtools.model.level2.entity entity) {
         String identifier = entity.getRDFId();
 
         // there is only one gene
@@ -252,8 +242,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         }
     }
 
-    private void processGene(String xref, String pathway)
-        throws SAXException, ObjectStoreException {
+    private void processGene(String xref, String pathway) {
 
         // db source for this identifier, eg. UniProt, FlyBase
         String identifierSource = (xref.contains(dbName) ? dbName : DEFAULT_DB_NAME);
@@ -279,7 +268,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
             return;
         }
 
-        if (organism.getAttribute("taxonId").getValue().equals("7227")) {
+        if ("7227".equals(organism.getAttribute("taxonId").getValue())) {
             identifier = resolveGene("7227", identifier);
             fieldName = "primaryIdentifier";
         }
@@ -317,8 +306,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         return null;
     }
 
-    private Item getGene(String fieldName, String identifier)
-        throws SAXException, ObjectStoreException {
+    private Item getGene(String fieldName, String identifier) {
         Item item = genes.get(identifier);
         if (item == null) {
             item = createItem("Gene");
@@ -402,7 +390,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
     private String resolveGene(String taxonId, String identifier) {
         IdResolver resolver = resolverFactory.getIdResolver(false);
         String id = identifier;
-        if (taxonId.equals("7227") && resolver != null) {
+        if ("7227".equals(taxonId) && resolver != null) {
             int resCount = resolver.countResolutions(taxonId, identifier);
             if (resCount != 1) {
                 return null;
