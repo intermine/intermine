@@ -28,6 +28,7 @@
 <tiles:importAttribute name="initialFilterText" ignore="true"/>
 <tiles:importAttribute name="loginMessageKey" ignore="true"/>
 <tiles:importAttribute name="showCount" ignore="true"/>
+<tiles:importAttribute name="templatesPublicPage" ignore="true"/>
 
 
 <html:xhtml/>
@@ -212,6 +213,7 @@ function clearBagName(element) {
   <tiles:put name="delayDisplay" value="${!empty initialFilterText}"/>
   <tiles:put name="loginMessageKey" value="${loginMessageKey}"/>
   <tiles:put name="showCount" value="${showCount}"/>
+  <tiles:put name="templatesPublicPage" value="${templatesPublicPage}"/>
 </tiles:insert>
 
  <script type="text/javascript">
