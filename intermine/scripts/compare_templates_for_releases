@@ -4,7 +4,14 @@ use strict;
 use warnings;
 use Webservice::InterMine;
 use List::Util qw(max);
-use Email::Valid;
+
+my $validator;
+eval "require Email::Valid";
+if ($@) {  # just assume it's valid
+    $validator  = sub { 1 };
+} else {  # actually validate it
+    $validator = Email::Valid->can("address");
+}
 
 sub usage {
     my $message = 
@@ -23,7 +30,7 @@ my $to   = $ARGV[2];
 my $from = $ARGV[3];
 
 for ($to, $from) {
-    usage() unless (Email::Valid->address($_));
+    usage() unless ($validator->("Email::Valid", $_));
 }
 print "Starting template comparison test at " . qx/date/;
 my $start = time;
