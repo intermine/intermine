@@ -1,5 +1,7 @@
 package org.intermine.util;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.intermine.api.InterMineAPI;
@@ -38,6 +40,10 @@ public class TrackerManager
 
     public TemplateTrack getMostPopularTemplate() {
         return tracker.getMostPopularTemplate();
+    }
+
+    public List<String> getMostPopularTemplateOrder() {
+        return tracker.getMostPopularTemplateOrder();
     }
 
     public TemplateTrack getMostPopularTemplateByUser(HttpSession session) {
