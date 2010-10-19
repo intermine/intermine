@@ -168,11 +168,6 @@
 <reference name="subject" ref_id="8_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="17_2" class="Synonym">
-<attribute name="value" value="FBgn0000001"/>
-<reference name="subject" ref_id="14_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
 <item id="5_1" class="OntologyTerm">
 <attribute name="name" value="keyword!"/>
 <reference name="ontology" ref_id="0_2"/>
@@ -180,11 +175,6 @@
 </item>
 <item id="0_2" class="Ontology">
 <attribute name="name" value="UniProtKeyword"/>
-</item>
-<item id="17_1" class="Synonym">
-<attribute name="value" value="FBgn0000002"/>
-<reference name="subject" ref_id="14_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="2_1" class="DataSet">
 <attribute name="name" value="Swiss-Prot data set"/>

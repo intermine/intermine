@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.metadata.MetaDataException;
@@ -32,7 +31,6 @@ import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.SequenceFeature;
-import org.intermine.model.bio.Synonym;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -52,7 +50,7 @@ public class IntergenicRegionUtil
     private DataSet dataSet;
     private DataSource dataSource;
     private Model model;
-    private static final Logger LOG = Logger.getLogger(IntergenicRegionUtil.class);
+//    private static final Logger LOG = Logger.getLogger(IntergenicRegionUtil.class);
 
     /**
      * Create a new IntergenicRegionUtil object that will operate on the given
@@ -165,8 +163,8 @@ public class IntergenicRegionUtil
     /**
      * Return an iterator over a Set of IntergenicRegion objects that don't
      * overlap the Locations in the locationSet argument. The caller must call
-     * ObjectStoreWriter.store() on the IntergenicRegion, its chromosomeLocation
-     * and the synonym in the synonyms collection.
+     * ObjectStoreWriter.store() on the IntergenicRegion, its chromosomeLocation.  Doesn't create
+     * synonyms anymore.
      *
      * @param locationSet a set of Locations for the Genes on a particular chromosome
      * @param locToGeneMap a Map from Location.start to Gene and Location.end to Gene,
@@ -237,8 +235,6 @@ public class IntergenicRegionUtil
                 .createObject(Collections.singleton(igCls));
                 Location location = (Location) DynamicUtil.createObject(
                         Collections.singleton(Location.class));
-                Synonym synonym = (Synonym) DynamicUtil
-                        .createObject(Collections.singleton(Synonym.class));
                 location.setStart(new Integer(newLocStart));
                 location.setEnd(new Integer(newLocEnd));
                 location.setStrand("1");
@@ -249,10 +245,8 @@ public class IntergenicRegionUtil
                 intergenicRegion.setChromosomeLocation(location);
                 intergenicRegion.setChromosome(chr);
                 intergenicRegion.setOrganism(chr.getOrganism());
-                intergenicRegion.addSynonyms(synonym);
                 intergenicRegion.addDataSets(dataSet);
-                synonym.addDataSets(dataSet);
-                synonym.setSubject(intergenicRegion);
+
                 int length = location.getEnd().intValue() - location.getStart().intValue() + 1;
                 intergenicRegion.setLength(new Integer(length));
 
@@ -308,7 +302,6 @@ public class IntergenicRegionUtil
                         adjacentGenes.add(prevGene);
                     }
                 }
-                synonym.setValue(intergenicRegion.getPrimaryIdentifier());
                 intergenicRegion.setFieldValue("adjacentGenes", adjacentGenes);
                 return intergenicRegion;
             }
