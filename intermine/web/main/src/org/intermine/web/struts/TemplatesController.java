@@ -43,10 +43,6 @@ public class TemplatesController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        /*final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        String mostPopularTemplate =
-            TrackerManager.getInstance(im).getMostPopularTemplate().getTemplateName();
-        request.setAttribute("mostPopularTemplate", mostPopularTemplate);*/
         Profile profile = SessionMethods.getProfile(session);
         MyMineController.getPrecomputedSummarisedInfo(profile, session, request);
         return null;
