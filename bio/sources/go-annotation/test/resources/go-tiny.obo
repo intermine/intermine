@@ -8,6 +8,7 @@ def: "A phase of elevated metabolic activity, during which oxygen consumption in
 id: GO:0000002
 name: root term 2
 namespace: root_term
+alt_id: GO:9999999
 
 [Term]
 id: GO:0000003
