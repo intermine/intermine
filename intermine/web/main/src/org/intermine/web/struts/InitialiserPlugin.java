@@ -121,11 +121,9 @@ public class InitialiserPlugin implements PlugIn
         final ObjectStoreSummary oss = summariseObjectStore(servletContext, os);
         final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
-        //Map<String, Tracker> trackers = getTrackers(webProperties, userprofileOSW);
+        Map<String, Tracker> trackers = getTrackers(webProperties, userprofileOSW);
         final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
-                oss);
-        /*final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
-                oss, trackers);*/
+                oss, trackers);
         SessionMethods.setInterMineAPI(servletContext, im);
 
         // need a global reference to ProfileManager so it can be closed cleanly on destroy
