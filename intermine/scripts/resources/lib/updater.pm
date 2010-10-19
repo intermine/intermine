@@ -41,6 +41,7 @@ has deletions => (
     isa     => HashRef,
     writer  => 'set_deletions',
     traits  => ['Hash'],
+    default => sub { {} },
     handles => { has_deletion => 'exists', },
 );
 
@@ -48,6 +49,7 @@ has translations => (
     isa     => HashRef,
     writer  => 'set_translations',
     traits  => ['Hash'],
+    default => sub { {} },
     handles => { get_translation_for => 'get', },
 );
 
@@ -62,6 +64,7 @@ sub knows_about_deletion_of {
 has processed_paths => (
     isa     => HashRef,
     traits  => ['Hash'],
+    default => sub { {} },
     handles => {
         has_processed        => 'exists',
         processed_version_of => 'accessor',
