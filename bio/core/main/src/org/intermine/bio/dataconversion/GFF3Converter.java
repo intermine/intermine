@@ -186,18 +186,20 @@ public class GFF3Converter extends DataConverter
 
         if (names != null) {
             if (cd.getFieldDescriptorByName("symbol") == null) {
-                feature.setAttribute("name", (String) names.get(0));
+                String name = (String) names.get(0);
+                feature.setAttribute("name", name);
                 for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
                     String recordName = (String) i.next();
-                    if (!recordName.equals(record.getId())) {
+                    if (!recordName.equals(record.getId()) && !recordName.equals(name)) {
                         synonymsToAdd.add(getSynonym(feature, recordName));
                     }
                 }
             } else {
+                String symbol = (String) names.get(0);
                 feature.setAttribute("symbol", (String) names.get(0));
                 for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
                     String recordName = (String) i.next();
-                    if (!recordName.equals(record.getId())) {
+                    if (!recordName.equals(record.getId()) && !recordName.equals(symbol)) {
                         synonymsToAdd.add(getSynonym(feature, recordName));
                     }
                 }

@@ -62,11 +62,6 @@
 <reference name="ontology" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="10_1" class="Synonym">
-<attribute name="value" value="ACTAAGAGTGAGCTCCGTGAGG"/>
-<reference name="subject" ref_id="9_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
 <item id="4_1" class="Chromosome">
 <attribute name="primaryIdentifier" value="2L"/>
 <reference name="organism" ref_id="0_1"/>
