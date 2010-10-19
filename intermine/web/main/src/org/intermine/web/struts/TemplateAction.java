@@ -209,7 +209,7 @@ public class TemplateAction extends InterMineAction
 
         String qid = SessionMethods.startQueryWithTimeout(request, saveQuery, populatedTemplate);
         Thread.sleep(200);
-        //TrackerManager.getInstance(im).trackTemplate(populatedTemplate.getName(), session);
+        TrackerManager.getInstance(im).trackTemplate(populatedTemplate.getName(), session);
         String trail = "";
 
         // only put query on the trail if we are saving the query
