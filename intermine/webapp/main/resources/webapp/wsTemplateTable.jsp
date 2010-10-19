@@ -16,6 +16,7 @@
 <tiles:importAttribute name="tags" ignore="true"/>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
 <tiles:importAttribute name="showSearchBox" ignore="true"/>
+<tiles:importAttribute name="templatesPublicPage" ignore="true"/>
 
 <html:xhtml/>
 
@@ -43,6 +44,7 @@
   <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
   <tiles:put name="makeLine" value="true"/>
   <tiles:put name="makeTable" value="false"/>
+  <tiles:put name="templatesPublicPage" value="${templatesPublicPage}"/>
   <!-- <tiles:put name="wsHeader" value="wsTemplateHeader.tile"/> -->
   <tiles:put name="wsRow" value="wsTemplateLine.tile"/>
   <tiles:put name="limit" value="${limit}"/>
