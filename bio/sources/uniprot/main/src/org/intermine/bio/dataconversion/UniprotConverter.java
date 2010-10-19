@@ -110,9 +110,9 @@ public class UniprotConverter extends BioDirectoryConverter
                 File file = files[i];
                 String filename = file.getName();
                 // process sprot, then trembl
-                if (filename.equals("uniprot_sprot.xml")) {
+                if ("uniprot_sprot.xml".equals(filename)) {
                     sortedFiles[0] = file;
-                } else if (filename.equals("uniprot_trembl.xml")) {
+                } else if ("uniprot_trembl.xml".equals(filename)) {
                     sortedFiles[1] = file;
                 }
             }
@@ -168,12 +168,12 @@ public class UniprotConverter extends BioDirectoryConverter
             }
             String source = bits[2].replace(".xml", "");
             // process trembl last because trembl has duplicates of sprot proteins
-            if (!source.equals("sprot") && !source.equals("trembl")) {
+            if (!"sprot".equals(source) && !"trembl".equals(source)) {
                 LOG.info("Bad file found:  "  + file.getName()
                         +  " (" + bits[2] + "), expecting sprot or trembl ");
                 continue;
             }
-            int i = (source.equals("sprot") ? 0 : 1);
+            int i = ("sprot".equals(source) ? 0 : 1);
             if (!files.containsKey(taxonId)) {
                 File[] sourceFiles = new File[2];
                 sourceFiles[i] = file;
@@ -191,7 +191,7 @@ public class UniprotConverter extends BioDirectoryConverter
      * @param createinterpro String whether or not to import interpro data (true/false)
      */
     public void setCreateinterpro(String createinterpro) {
-        if (createinterpro.equals("true")) {
+        if ("true".equals(createinterpro)) {
             this.createInterpro = true;
         } else {
             this.createInterpro = false;
@@ -203,7 +203,7 @@ public class UniprotConverter extends BioDirectoryConverter
      * @param creatego whether or not to import GO terms (true/false)
      */
     public void setCreatego(String creatego) {
-        if (creatego.equals("true")) {
+        if ("true".equals(creatego)) {
             this.creatego = true;
         } else {
             this.creatego = false;
@@ -772,7 +772,7 @@ public class UniprotConverter extends BioDirectoryConverter
             List<String> geneSynonyms = new ArrayList<String>();
 
             String uniqueIdentifierValue = getGeneIdentifier(uniprotEntry, taxId,
-                    uniqueIdentifierFieldType, geneSynonyms, true);
+                    uniqueIdentifierFieldType, true);
             if (uniqueIdentifierValue == null) {
                 return null;
             }
@@ -788,8 +788,7 @@ public class UniprotConverter extends BioDirectoryConverter
                         // we've already set the key field
                         continue;
                     }
-                    String identifier = getGeneIdentifier(uniprotEntry, taxId, geneField,
-                            geneSynonyms, false);
+                    String identifier = getGeneIdentifier(uniprotEntry, taxId, geneField, false);
 
                     if (identifier == null) {
                         LOG.error("Couldn't process gene, no " + geneField);
@@ -829,7 +828,6 @@ public class UniprotConverter extends BioDirectoryConverter
                 for (String identifier : geneSynonyms) {
                     createSynonym(geneRefId, identifier, true);
                 }
-                createSynonym(geneRefId, uniqueIdentifierValue, true);
             }
             return geneRefId;
         }
@@ -837,7 +835,7 @@ public class UniprotConverter extends BioDirectoryConverter
         // gets the identifier for a gene from the dbref/names collected from the XML
         // which identifier is chosen depends on the configuration in the uniprot config file
         private String getGeneIdentifier(UniprotEntry uniprotEntry, String taxId,
-                String identifierType, List<String> geneSynonyms, boolean isUniqueIdentifier) {
+                String identifierType, boolean isUniqueIdentifier) {
 
             String identifierValue = null;
             // how to get the identifier, eg. dbref OR name
@@ -855,7 +853,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 }
             }
 
-            if (method.equals("name")) {
+            if ("name".equals(method)) {
                 if (uniprotEntry.getGeneNames() == null || uniprotEntry.getGeneNames().isEmpty()) {
                     LOG.error("No gene names for " + taxId + ". protein accession:"
                               + uniprotEntry.getPrimaryAccession());
@@ -886,8 +884,6 @@ public class UniprotConverter extends BioDirectoryConverter
                 LOG.error("error processing line in config file for organism " + taxId);
                 return null;
             }
-            geneSynonyms.add(identifierValue);
-
             if (isUniqueIdentifier && "7227".equals(taxId)) {
                 identifierValue = resolveGene(taxId, identifierValue);
 
