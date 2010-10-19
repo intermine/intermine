@@ -93,9 +93,10 @@ div.container input.button { font-family:"Myriad Pro", Arial, Garuda, Helvetica,
 
 /*.container { background:url("../themes/metabolic/preview.png") no-repeat -103px -57px; min-height:2000px; }*/
 
-#help a { position:absolute; top:180px; left:0; z-index:2000; background:url("../themes/metabolic/icons/small/help-float.png") no-repeat top; font-size:0;
-	height:46px; line-height:0; overflow:hidden; position:absolute; bottom:0px; right:0px; width:47px; z-index:10; padding:0;
-	cursor:pointer; }
+#corner { position:absolute; top:0px; left:0; z-index:2000; background:url("../themes/metabolic/img/preview-corner.gif") no-repeat top; font-size:0;
+	height:100px; line-height:0; overflow:hidden; width:100px; padding:0; }
+#help a { position:absolute; top:180px; left:0; z-index:2000; background:url("../themes/metabolic/icons/small/help-float.png") no-repeat top;
+	font-size:0; height:46px; line-height:0; overflow:hidden; width:47px; padding:0; cursor:pointer; }
 
 /* ======== header & menu ======== */
 /*
@@ -325,7 +326,16 @@ div.white div.center { background:url("../themes/metabolic/img/box-third-white-c
 div.white div.bottom { background:url("../themes/metabolic/img/box-third-white-bottom.png") no-repeat bottom; width:320px;
     height:5px; font-size:0; line-height:0; overflow:hidden; }
 
+div.white-half div.top { background:url("../themes/metabolic/img/box-half-white-top.png") no-repeat top; height:5px; width:488px;
+    font-size:0; line-height:0; overflow:hidden; margin-top:20px; }
+div.white-half div.center { background:url("../themes/metabolic/img/box-half-white-center.png") repeat-y scroll 0 0 transparent;
+    padding:4px 0 4px 14px; position:relative; min-height:100px; }
+div.white-half div.bottom { background:url("../themes/metabolic/img/box-half-white-bottom.png") no-repeat bottom; width:488px;
+    height:5px; font-size:0; line-height:0; overflow:hidden; }
+
 div.white div.more { background:url("../themes/metabolic/img/box-third-white-gray-bottom.png") no-repeat bottom; width:320px;
+    height:36px; }
+div.white-medium div.more { background:url("../themes/metabolic/img/box-half-white-gray-bottom.png") no-repeat bottom; width:488px;
     height:36px; }
 div.white div.more a.more { background:url("../themes/metabolic/icons/small/more-button.png") no-repeat top; overflow:hidden;
     text-decoration:none; padding:8px 30px; float:right; margin:4px; }

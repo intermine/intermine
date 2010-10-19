@@ -11,6 +11,7 @@
 <!-- metabolicMine CSS -->
 <!--[if lt IE 8]><link rel="stylesheet" href="/metabolicmine/model/public/css/ie.css" type="text/css" media="screen, projection"/><![endif]-->
 
+<div id="corner">&nbsp;</div>
 <div id="help"><a href="#" onclick="showContactForm();return false;" title="Need help?">&nbsp;</a></div>
 
 <!-- BluePrint CSS container -->
@@ -328,23 +329,29 @@
         <div class="bottom span-12 last"></div>
     </div>
 
-    <div id="api" class="span-4 white">
+    <div id="api" class="span-6 white-half">
         <div class="top"></div>
-        <div class="center span-4 last">
-            <h4>Java<span>&nbsp;&amp;&nbsp;</span>Python API</h4>
-            <img src="/metabolicmine/themes/metabolic/icons/python-java-ico.gif" alt="python java" />
+        <div class="center span-6 last">
+            <h4>Perl<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
+            <img src="/metabolicmine/themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
             <p>We support programatic access to our data through Application Programming Interface too! Choose from options below:</p>
             <ul>
+                <li><a href="#">Perl API</a></li>
                 <li><a href="#">Java API</a></li>
-                <li><a href="#">Python API</a></li>
             </ul>
         </div>
-        <div class="bottom span-4 last"></div>
+        <div class="bottom span-6 last"></div>
     </div>
-    <div id="rss" class="span-4 white">
+    
+    <div id="rss" class="span-6 last white-half">
+    	<script type="text/javascript">
+    		// TODO: fetch RSS feed using jQuery and display
+		</script>
+    
         <div class="top"></div>
-        <div class="center span-4 last">
+        <div class="center span-6 last">
             <h4>News<span>&nbsp;&amp;&nbsp;</span>Updates</h4>
+            <div id="articles"><img src="/metabolicmine/themes/metabolic/img/spinner.gif" alt="spinner" /></div>
             <table id="articles">
                 <tr>
                     <td class="date"><a href="#">27<br /><span>Aug</span></a></td>
@@ -355,9 +362,12 @@
                     <td><a href="#">Preparing to launch new version</a><br/>We will be launching soon and need your ...</td>
                 </tr>
             </table>
+            
         </div>
-        <div class="more span-4 last"><a href="#" class="more">&nbsp;</a></div>
+        <div class="more span-6 last"><a href="#" class="more">&nbsp;</a></div>
     </div>
+    
+    <!-- 
     <div id="testimonials" class="span-4 last blue">
         <div class="top"></div>
         <div class="center span-4 last">
@@ -369,6 +379,7 @@
         </div>
         <div class="bottom span-4 last"></div>
     </div>
+    -->
 
     <div id="footer" class="span-12 last">
         <div class="span-8">

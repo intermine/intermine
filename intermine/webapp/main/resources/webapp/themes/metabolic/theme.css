@@ -32,7 +32,7 @@ body{background:#FFF url(top-gradient.jpg) repeat-x top;}
 div#filter_tool_bar{background-color:#FFF;border-bottom:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;}
 div#header h1,div#header h1 a{text-decoration:none;vertical-align:text-bottom;}
 div#header h1,div#header h1 a,div#header h1 a:link,div#header h1 a:visited,div#header p{color:#505050;line-height:45px;margin:0;padding:0;}
-div.filterBar{background:#000;color:#FFF;}
+div.filterBar{background:#D3D3D3;color:#4B3F4B;border:1px solid #000;border-bottom:0;}
 h1 a:hover,h1 a:visited:hover{color:#333;text-decoration:underline;}
 html,body{background-color:#FFF;color:#000;font-family:"Lucida Grande",Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif;}
 table.dbsources{margin:10px 20px;padding:0;}

@@ -8,7 +8,7 @@
 <html:xhtml/>
 <div class="body" align="center">
 <im:boxarea stylename="plainbox" fixedWidth="60%">
-  <html:form action="/loginAction" focus="username" method="post" enctype="multipart/form-data">
+  <html:form styleId="loginForm" action="/loginAction" focus="username" method="post" enctype="multipart/form-data">
     <fmt:message key="login.haspassword"/><br/><br/>
     <html:hidden property="returnToString"/>
     <table>
