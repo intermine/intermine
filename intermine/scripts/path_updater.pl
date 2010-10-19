@@ -7,6 +7,9 @@ use Carp qw(carp croak confess);
 $SIG{__WARN__} = sub {
     confess @_;
 };
+$SIG{__DIE__} = sub {
+    confess @_;
+};
 ## Modules to be installed
 use XML::Rules;
 use XML::Writer;
