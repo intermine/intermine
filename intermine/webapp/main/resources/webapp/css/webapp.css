@@ -539,3 +539,5 @@ table#buildbaglist a /* desc top of textarea */ { float:right; }
 
 /* IE7 hints div height fix */
 #hints { *height:16px; }
+
+form#loginForm a { vertical-align:bottom; }
