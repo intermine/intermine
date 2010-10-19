@@ -151,7 +151,6 @@ public class IntergenicRegionUtil
             SequenceFeature ir = (SequenceFeature) irIter.next();
             objectStoreWriter.store(ir);
             objectStoreWriter.store(ir.getChromosomeLocation());
-            objectStoreWriter.store(ir.getSynonyms().iterator().next());
             Set<Gene> adjacentGenes = (Set<Gene>) ir.getFieldValue("adjacentGenes");
             Iterator<?> adjacentGenesIter = adjacentGenes.iterator();
             while (adjacentGenesIter.hasNext()) {
