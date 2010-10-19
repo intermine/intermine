@@ -110,28 +110,14 @@ public class InterProConverter extends BioFileConverter
             // <interpro><abstract>
             } else if (qName.equals("abstract") && stack.peek().equals("interpro")) {
                 attName = "description";
-            } else if (qName.equals("sec_ac")) {
-                try {
-                    Item synonym = createSynonym(proteinDomain.getIdentifier(),
-                            attrs.getValue("acc"), false);
-                    if (synonym != null) {
-                        delayedItems.add(synonym);
-                    }
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
-                }
            //<member_list><db_xref db="PFAM" dbkey="PF01167" name="SUPERTUBBY" />
             } else if (qName.equals("db_xref") && stack.peek().equals("member_list")) {
                 String dbkey = attrs.getValue("dbkey");
-                String name = attrs.getValue("name");
+//                String name = attrs.getValue("name");
                 String db = attrs.getValue("db");
                 try {
                     Item item = createCrossReference(proteinDomain.getIdentifier(), dbkey,
                             db, false);
-                    if (item != null) {
-                        delayedItems.add(item);
-                    }
-                    item = createSynonym(proteinDomain.getIdentifier(), name, false);
                     if (item != null) {
                         delayedItems.add(item);
                     }
