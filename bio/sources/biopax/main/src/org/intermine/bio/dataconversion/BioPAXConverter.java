@@ -45,21 +45,24 @@ import org.intermine.xml.full.Item;
 public class BioPAXConverter extends BioFileConverter implements Visitor
 {
     private static final Logger LOG = Logger.getLogger(BioPAXConverter.class);
-    private static final String PROP_FILE = "biopax_config.properties";
     private static final String DEFAULT_DB_NAME = "UniProt";
+    private String dbName = DEFAULT_DB_NAME;
+    private String identifierField = "primaryAccession";
+    private String bioentityType = "Protein";
     protected IdResolverFactory resolverFactory;
-    private Map<String, Item> genes = new HashMap<String, Item>();
+    private Map<String, Item> bioentities = new HashMap<String, Item>();
     private Traverser traverser;
     private Set<BioPAXElement> visited = new HashSet<BioPAXElement>();
     private int depth = 0;
     private Item organism, dataset;
     private String pathwayRefId = null;
     private Set<String> taxonIds = new HashSet<String>();
-    private Map<String, String[]> configs = new HashMap<String, String[]>();
     private OrganismRepository or;
-    private String dbName, identifierField;
     private String dataSourceRefId = null, dataSourceName = null;
     private String curated = "false";
+    private Map<String, Config> configs = new HashMap<String, Config>();
+    private static final String PROP_FILE = "biopax_config.properties";
+
 
     /**
      * Constructor
@@ -77,6 +80,39 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         or = OrganismRepository.getOrganismRepository();
     }
 
+    private void readConfig() {
+        Properties props = new Properties();
+        try {
+            props.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
+        } catch (IOException e) {
+            throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
+        }
+        for (Map.Entry<Object, Object> entry: props.entrySet()) {
+            String key = (String) entry.getKey();
+            String value = ((String) entry.getValue()).trim();
+
+            String[] attributes = key.split("\\.");
+            if (attributes.length != 2) {
+                throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
+                        + key);
+            }
+            String taxonId = attributes[0];
+            String identifier = attributes[1];
+
+            Config config = configs.get(taxonId);
+            if (config == null) {
+                config = new Config();
+                configs.put(taxonId, config);
+            }
+
+            if ("bioentity".equals(identifier)) {
+                config.setBioentity(value);
+            } else {
+                config.setIdentifier(identifier);
+                config.setDb(value);
+            }
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -105,6 +141,15 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
             }
             visited = new HashSet<BioPAXElement>();
             traverser.traverse(pathwayObj, model);
+        }
+    }
+
+    private void setConfig(String taxonId) {
+        Config config = configs.get(taxonId);
+        if (config != null) {
+            dbName = config.getDb();
+            identifierField = config.getIdentifier();
+            bioentityType = config.getBioentity();
         }
     }
 
@@ -152,50 +197,6 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         dataset.setAttribute("name", title);
     }
 
-    private void readConfig() {
-        Properties props = new Properties();
-        try {
-            props.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
-        } catch (IOException e) {
-            throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
-        }
-        for (Map.Entry<Object, Object> entry: props.entrySet()) {
-            String key = (String) entry.getKey();
-            String value = ((String) entry.getValue()).trim();
-
-            String[] attributes = key.split("\\.");
-            if (attributes.length != 2) {
-                throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
-                                           + key);
-            }
-            String taxonId = attributes[0];
-            String identifier = attributes[1];
-
-            String[] bits = new String[2];
-            bits[0] = value;
-            bits[1] = identifier;
-
-            if (configs.get(taxonId) == null) {
-                configs.put(taxonId, bits);
-            } else {
-                throw new RuntimeException("Problem loading properties '" + PROP_FILE + "': "
-                                           + " duplicate entries for organism " + taxonId);
-            }
-        }
-    }
-
-    // set which identifier to set for genes
-    private void setConfig(String taxonId) {
-        String[] bits = configs.get(taxonId);
-        if (bits != null) {
-            dbName = bits[0];
-            identifierField = bits[1];
-        } else {
-            dbName = DEFAULT_DB_NAME;
-            identifierField = "primaryIdentifier";
-        }
-    }
-
     /**
      * Adds the BioPAX element into the model and traverses the element for its dependent elements.
      *
@@ -227,58 +228,43 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         String identifier = entity.getRDFId();
 
         // there is only one gene
-        if (identifier.contains(dbName) || identifier.contains(DEFAULT_DB_NAME)) {
-            processGene(identifier, pathwayRefId);
+        if (identifier.contains(DEFAULT_DB_NAME)) {
+            processBioentity(identifier, pathwayRefId);
 
         // there are multiple genes
         } else {
             Set<org.biopax.paxtools.model.level2.xref> xrefs = entity.getXREF();
             for (org.biopax.paxtools.model.level2.xref xref : xrefs) {
                 identifier = xref.getRDFId();
-                if (identifier.contains(dbName) || identifier.contains(DEFAULT_DB_NAME)) {
-                    processGene(identifier, pathwayRefId);
+                if (identifier.contains(DEFAULT_DB_NAME)) {
+                    processBioentity(identifier, pathwayRefId);
                 }
             }
         }
     }
 
-    private void processGene(String xref, String pathway) {
+    private void processBioentity(String xref, String pathway) {
 
         // db source for this identifier, eg. UniProt, FlyBase
         String identifierSource = (xref.contains(dbName) ? dbName : DEFAULT_DB_NAME);
 
+        if (StringUtils.isEmpty(identifierSource)) {
+            return;
+        }
+
         // remove prefix, eg. UniProt or ENSEMBL
-        String identifier = StringUtils.substringAfter(xref, identifierSource + "_");
+        String accession = StringUtils.substringAfter(xref, identifierSource + "_");
 
-        // which gene field to set
-        String fieldName = identifierField;
+        if (accession.contains("_")) {
+            accession = accession.split("_")[0];
+        }
 
-        if (identifier.contains("_")) {
-            if (identifierSource.equals(DEFAULT_DB_NAME)) {
-                // eg. P38132-CDC47
-                identifier = identifier.split("_")[1];
-                fieldName = "symbol";
-            } else {
-                // eg. CG1234-PA
-                identifier = identifier.split("_")[0];
-            }
-        } else if (identifierSource.equals(DEFAULT_DB_NAME)) {
-            // this is a uniprot entry without a gene symbol.  there is nothing to be done.
-            LOG.warn("Gene not stored:" + xref);
+        if (accession == null || accession.length() < 2) {
+            LOG.warn(bioentityType + " not stored:" + xref);
             return;
         }
 
-        if ("7227".equals(organism.getAttribute("taxonId").getValue())) {
-            identifier = resolveGene("7227", identifier);
-            fieldName = "primaryIdentifier";
-        }
-
-        if (identifier == null || identifier.length() < 2) {
-            LOG.warn("Gene not stored:" + xref);
-            return;
-        }
-
-        Item item = getGene(fieldName, identifier);
+        Item item = getBioentity(accession);
         item.addToCollection("pathways", pathway);
         return;
     }
@@ -306,14 +292,14 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         return null;
     }
 
-    private Item getGene(String fieldName, String identifier) {
-        Item item = genes.get(identifier);
+    private Item getBioentity(String identifier) {
+        Item item = bioentities.get(identifier);
         if (item == null) {
-            item = createItem("Gene");
-            item.setAttribute(fieldName, identifier);
+            item = createItem(bioentityType);
+            item.setAttribute(identifierField, identifier);
             item.setReference("organism", organism);
             item.addToCollection("dataSets", dataset);
-            genes.put(identifier, item);
+            bioentities.put(identifier, item);
         }
         return item;
     }
@@ -382,32 +368,72 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
     }
 
     /**
-     * resolve dmel genes
-     * @param taxonId id of organism for this gene
-     * @param ih interactor holder
-     * @throws ObjectStoreException
-     */
-    private String resolveGene(String taxonId, String identifier) {
-        IdResolver resolver = resolverFactory.getIdResolver(false);
-        String id = identifier;
-        if ("7227".equals(taxonId) && resolver != null) {
-            int resCount = resolver.countResolutions(taxonId, identifier);
-            if (resCount != 1) {
-                return null;
-            }
-            id = resolver.resolveId(taxonId, identifier).iterator().next();
-        }
-        return id;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public void close()
         throws ObjectStoreException {
-        for (Item item : genes.values()) {
+        for (Item item : bioentities.values()) {
             store(item);
+        }
+    }
+
+    /**
+     * Class to hold the config info for each taxonId.
+     */
+    class Config
+    {
+        protected String bioentity;
+        protected String identifier;
+        protected String db;
+
+        /**
+         * Constructor.
+         */
+        Config() {
+            // nothing to do
+        }
+
+        /**
+         * @return the bioentity
+         */
+        public String getBioentity() {
+            return bioentity;
+        }
+
+        /**
+         * @param bioentity the bioentity to set
+         */
+        public void setBioentity(String bioentity) {
+            this.bioentity = bioentity;
+        }
+
+        /**
+         * @return the identifier
+         */
+        public String getIdentifier() {
+            return identifier;
+        }
+
+        /**
+         * @param identifier the identifier to set
+         */
+        public void setIdentifier(String identifier) {
+            this.identifier = identifier;
+        }
+
+        /**
+         * @return the db
+         */
+        public String getDb() {
+            return db;
+        }
+
+        /**
+         * @param db the db to set
+         */
+        public void setDb(String db) {
+            this.db = db;
         }
     }
 }

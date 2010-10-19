@@ -1,5 +1,9 @@
 <?xml version="1.0"?>
 <classes>
+  <class name="Protein" is-interface="true">
+     <collection name="pathways" referenced-type="Pathway"/>
+  </class>
+  <!-- populated by postprocess -->
   <class name="Gene" is-interface="true">
      <collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
   </class>

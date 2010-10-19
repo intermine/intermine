@@ -26,20 +26,21 @@ public class BioPAXConverterTest extends ItemsTestCase
 {
     private BioPAXConverter converter;
     private MockItemWriter itemWriter;
-    //private static final String TEST_FILE = "Bos taurus.owl";
-    private static final String TEST_FILE = "Drosophila melanogaster.owl";
+    private String TEST_FILE = "Bos taurus.owl";
+    private String TAXON_ID = "9913";
+    private boolean processDmel = false;
     public BioPAXConverterTest(String arg) {
         super(arg);
     }
 
     public void testProcess() throws Exception {
+        if (processDmel) {
+            TEST_FILE = "Drosophila melanogaster.owl";
+            TAXON_ID = "7227";
+        }
 
         itemWriter = new MockItemWriter(new HashMap());
         converter = new BioPAXConverter(itemWriter, Model.getInstanceByName("genomic"));
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn0000001", Collections.singleton("CG10863"));
-        resolverFactory.addResolverEntry("7227", "FBgn0000002", Collections.singleton("CG2767"));
-        converter.resolverFactory = resolverFactory;
 
         ClassLoader loader = getClass().getClassLoader();
         String input = IOUtils.toString(loader.getResourceAsStream(TEST_FILE));
@@ -48,8 +49,7 @@ public class BioPAXConverterTest extends ItemsTestCase
         converter.setBiopaxDatasourcename("Reactome");
         converter.setBiopaxDatasetname("Reactome data set");
         converter.setCurrentFile(currentFile);
-        //converter.setBiopaxOrganisms("9913");
-        converter.setBiopaxOrganisms("7227");
+        converter.setBiopaxOrganisms(TAXON_ID);
         converter.process(new StringReader(input));
         converter.close();
 
