@@ -20,6 +20,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
+import org.intermine.util.TrackerManager;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -75,6 +76,10 @@ public class BeginAction extends InterMineAction
         request.setAttribute("templateCount", new Integer(im
                 .getTemplateManager().getGlobalTemplates().size()));
 
+        /*most popular template*/
+        String mostPopularTemplate =
+            TrackerManager.getInstance(im).getMostPopularTemplate().getTemplateName();
+        request.setAttribute("mostPopularTemplate", mostPopularTemplate);
 
         String[] beginQueryClasses = (properties.get("begin.query.classes").toString())
             .split("[ ,]+");
