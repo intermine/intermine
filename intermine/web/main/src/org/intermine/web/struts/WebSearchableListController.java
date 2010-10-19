@@ -38,8 +38,10 @@ import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.util.StringUtil;
+import org.intermine.util.TrackerManager;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.stringtree.json.JSONWriter;
@@ -68,6 +70,7 @@ public class WebSearchableListController extends TilesAction
         String tags = (String) context.getAttribute("tags");
         String list = (String) context.getAttribute("list");
         String limit = (String) context.getAttribute("limit");
+        String templatesPublicPage = (String) context.getAttribute("templatesPublicPage");
         Map filteredWebSearchables;
         HttpSession session = request.getSession();
 
@@ -105,7 +108,11 @@ public class WebSearchableListController extends TilesAction
         if (limitInt > 0) {
             filteredWebSearchables = WebUtil.shuffle(filteredWebSearchables, limitInt);
         } else {
-            filteredWebSearchables = sortList(filteredWebSearchables);
+            if ("true".equals(templatesPublicPage)) {
+                filteredWebSearchables = sortListByMostPopular(filteredWebSearchables, session);
+            } else {
+                filteredWebSearchables = sortList(filteredWebSearchables);
+            }
         }
 
         Map<String, Object> wsMapForJS = new HashMap<String, Object>();
@@ -175,6 +182,38 @@ public class WebSearchableListController extends TilesAction
         return sortedMap;
     }
 
+    private Map<String, WebSearchable> sortListByMostPopular(final Map<String, WebSearchable>
+    filteredWebSearchables, HttpSession session) {
+        InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        MostPopularTemplateComparator comparator = new MostPopularTemplateComparator(
+            TrackerManager.getInstance(im).getMostPopularTemplateOrder());
+        Map<String, WebSearchable> sortedMap =
+            new TreeMap<String, WebSearchable>(comparator);
+        sortedMap.putAll(filteredWebSearchables);
+        if (filteredWebSearchables.size() != sortedMap.size()) {
+            LOG.error("Important error."
+                + "Sorting of web searchables by most popular removed some items.");
+        }
+        return sortedMap;
+    }
+
+    private class MostPopularTemplateComparator implements Comparator<String>
+    {
+        private List<String> mostPopulareTemplateNames;
+
+        public MostPopularTemplateComparator(List<String> mostPopulareTemplateNames) {
+            this.mostPopulareTemplateNames = mostPopulareTemplateNames;
+        }
+
+        public int compare(String templateName1, String templateName2) {
+            if (!mostPopulareTemplateNames.contains(templateName1)
+                && !mostPopulareTemplateNames.contains(templateName2)) {
+                return -1;
+            }
+            return (mostPopulareTemplateNames.indexOf(templateName1)
+                   < mostPopulareTemplateNames.indexOf(templateName2)) ? -1 : 1;
+        }
+    }
     /**
      * Get all the WebSearchables in the given scope and of the given type.
      * @param request request
