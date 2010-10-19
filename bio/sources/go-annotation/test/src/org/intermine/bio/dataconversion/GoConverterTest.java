@@ -51,6 +51,14 @@ public class GoConverterTest extends ItemsTestCase
         resolverFactory.addResolverEntry("7227", "FBgn0026430", Collections.singleton("FBgn0026430"));
         resolverFactory.addResolverEntry("7227", "FBgn0001612", Collections.singleton("FBgn0001612"));
         converter.flybaseResolverFactory = resolverFactory;
+
+        resolverFactory = new MockIdResolverFactory("go");
+        resolverFactory.addResolverEntry("0", "GO:1234567", Collections.singleton("GO:9999999"));
+        resolverFactory.addResolverEntry("0", "GO:0000011:", Collections.singleton("GO:0000011"));
+        resolverFactory.addResolverEntry("0", "GO:0000004", Collections.singleton("GO:0000004"));
+        resolverFactory.addResolverEntry("0", "GO:0000005", Collections.singleton("GO:0000005"));
+        resolverFactory.addResolverEntry("0", "GO:0000001", Collections.singleton("GO:0000001"));
+        converter.ontologyResolverFactory = resolverFactory;
     }
 
     private void writeTempFile(File outFile, Reader srcFileReader) throws Exception {
@@ -74,7 +82,7 @@ public class GoConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write a new target items file
-        //writeItemsFile(writer.getItems(), "go-tgt-items.xml");
+        writeItemsFile(writer.getItems(), "go-tgt-items.xml");
 
         assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
     }

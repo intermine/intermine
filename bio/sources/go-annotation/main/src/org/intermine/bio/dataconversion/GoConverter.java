@@ -70,7 +70,7 @@ public class GoConverter extends BioFileConverter
     protected String termCollectionName = "goAnnotation";
     protected String annotationClassName = "GOAnnotation";
 
-    protected IdResolverFactory flybaseResolverFactory;
+    protected IdResolverFactory flybaseResolverFactory, ontologyResolverFactory;
 
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
 
@@ -88,6 +88,7 @@ public class GoConverter extends BioFileConverter
 
         // only construct factory here so can be replaced by mock factory in tests
         flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
+        ontologyResolverFactory = new OntologyIdResolverFactory("GO");
 
         readConfig();
     }
@@ -212,14 +213,19 @@ public class GoConverter extends BioFileConverter
 
                 // new evidence
                 if (allEvidenceForAnnotation == null) {
-                    Evidence evidence = new Evidence(strEvidence, pubRefId);
-                    allEvidenceForAnnotation = new HashSet<Evidence>();
-                    allEvidenceForAnnotation.add(evidence);
-                    goTermGeneToEvidence.put(key, allEvidenceForAnnotation);
 
                     // go term
                     String goTermIdentifier = newGoTerm(goId, dataSourceCode);
 
+                    if (goTermIdentifier == null) {
+                        LOG.warn("not storing annotation for " + goTermIdentifier);
+                        continue;
+                    }
+
+                    Evidence evidence = new Evidence(strEvidence, pubRefId);
+                    allEvidenceForAnnotation = new HashSet<Evidence>();
+                    allEvidenceForAnnotation.add(evidence);
+                    goTermGeneToEvidence.put(key, allEvidenceForAnnotation);
                     Integer storedAnnotationId = createGoAnnotation(productIdentifier, type,
                             goTermIdentifier, organism, qualifier, withText, dataSourceCode);
                     evidence.setStoredAnnotationId(storedAnnotationId);
@@ -477,7 +483,31 @@ public class GoConverter extends BioFileConverter
             ? organism.getIdentifier() : "");
     }
 
-    private String newGoTerm(String goId, String dataSourceCode) throws ObjectStoreException {
+    private String resolveTerm(String identifier) {
+        String goId = identifier;
+        IdResolver resolver = ontologyResolverFactory.getIdResolver(false);
+        if (resolver != null) {
+            int resCount = resolver.countResolutions("0", identifier);
+
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve ontology term to one identifier, "
+                         + "ignoring term: " + identifier + " count: " + resCount + " : "
+                         + resolver.resolveId("0", identifier));
+                return null;
+            }
+            goId = resolver.resolveId("0", identifier).iterator().next();
+        }
+        return goId;
+    }
+
+    private String newGoTerm(String identifier, String dataSourceCode) throws ObjectStoreException {
+
+        String goId = resolveTerm(identifier);
+
+        if (goId == null) {
+            return null;
+        }
+
         String goTermIdentifier = goTerms.get(goId);
         if (goTermIdentifier == null) {
             Item item = createItem(termClassName);
