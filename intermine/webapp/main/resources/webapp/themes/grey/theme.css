@@ -233,10 +233,19 @@ table.results tr td.highlightObject {
     }*/
 
 /* hints */
-#hints { margin:10px 10px 0 10px; padding:4px; font-size:12px; background-repeat:no-repeat; background-position:10px 4px; }
+#hints { margin:10px 10px 0 10px; padding:6px; font-size:12px; background-repeat:no-repeat; background-position:10px 6px; }
 	#hints p { display:inline; padding-left:34px; }
 	#hints a { float:right; }
-	#hints.information { background-color:#E6F7FE; background-image:url("icons/information-small.png"); border:1px solid #BEDCE4; }
+	#hints.information { background-color:#E6F7FE; background-image:url("icons/information.png"); border:1px solid #BEDCE4; }
+
+/* error messages */	
+.topBar { margin:5px 10px 10px 10px; padding:6px; background:#FFF; font-size:13px; }
+  
+.messages { background:#D5FFCE url("icons/success.png") no-repeat 10px 6px; border:1px solid #9ADF8F; }
+.errors, .lookupWarn, .lookupError, .lookupReport { background:#FFFBCC url("icons/alert.png") no-repeat 10px 6px; border:1px solid #E6DB55;
+	color:#000 !important; }
+.messages p, .errors p, .lookupWarn p, .lookupError p, .lookupReport p { display:inline; padding-left:34px; }
+.messages a, .errors a, .lookupWarn a, .lookupError a, .lookupReport a { float:right; }
 
 /* breadcrumbs */
 p#crumbs { ; }
