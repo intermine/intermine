@@ -1,6 +1,7 @@
 package org.intermine.util;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -46,11 +47,15 @@ public class TrackerManager
         return tracker.getMostPopularTemplateOrder();
     }
 
-    public TemplateTrack getMostPopularTemplateByUser(HttpSession session) {
+    public List<String> getMostPopularTemplateOrder(HttpSession session) {
         Profile profile = SessionMethods.getProfile(session);
         if (profile != null) {
-            return tracker.getMostPopularTemplate(profile.getUsername(), session.getId());
+            return tracker.getMostPopularTemplateOrder(profile.getUsername(), session.getId());
         }
         return null;
+    }
+    
+    public Map<String, Integer> getRank() {
+        return tracker.getRank();
     }
 }
