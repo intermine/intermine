@@ -13,6 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.io.Reader;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.util.FormattedTextParser;
@@ -60,17 +61,17 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
 //                                           + Arrays.asList(line));
 //            }
             String primaryidentifier = line[0];
-            String identifier = line[1];
-            String symbol = line[2];
+            String identifier = line[2];
+            String symbol = line[1];
 
             Item gene = createItem("Gene");
-            if (primaryidentifier != null && !primaryidentifier.equals("")) {
+            if (!StringUtils.isEmpty(primaryidentifier)) {
                 gene.setAttribute("primaryIdentifier", primaryidentifier);
             }
-            if (identifier != null && !identifier.equals("")) {
+            if (!StringUtils.isEmpty(identifier)) {
                 gene.setAttribute("secondaryIdentifier", identifier);
             }
-            if (symbol != null && !symbol.equals("")) {
+            if (!StringUtils.isEmpty(symbol)) {
                 gene.setAttribute("symbol", symbol);
                 // per Rachel.  We can't seem to get the gene names out of wormmart.
                 gene.setAttribute("name", symbol);
