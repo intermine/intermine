@@ -150,11 +150,6 @@
             pageTracker._trackPageview();
         </script>
     </c:if>
-    <script type="text/javascript">
-    jQuery(document).ready(function() {
-        display("contactUsLink", true);
-    });
-    </script>
     <c:if test="${!empty fixedLayout}">
       </div>
     </c:if>

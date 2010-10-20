@@ -30,52 +30,54 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 </c:if>
 
 <c:choose>
-  <c:when test="${pageName == 'spanUploadOptions'}">
+  <c:when test="${pageName == 'spanUploadOptions' || pageName == 'begin'}">
     <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.4.2.min.js'/>"></script>
+    <script type="text/javascript" src="<html:rewrite page='/js/jquery.xdomainajax.js'/>"></script>
   </c:when>
   <c:otherwise>
     <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.3.2.min.js'/>"></script>
   </c:otherwise>
 </c:choose>
 
-<c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'objectDetails'}">
-  <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
-</c:if>
-<c:if test="${pageName == 'begin'}">
-  <script type="text/javascript" src="<html:rewrite page='/js/jQuery.roundCorners-1.1.1.js'/>"></script>
-  <script type="text/javascript" src="<html:rewrite page='/js/excanvas.js'/>"></script>
-</c:if>
-<c:if test="${pageName == 'results' || pageName == 'query' || pageName == 'templates' || pageName == 'bagDetails' || pageName == 'objectDetails' || pageName == 'bag' || pageName == 'mymine'}">
-  <script type="text/javascript" src="<html:rewrite page='/js/jquery.boxy.js'/>"></script>
-  <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/boxy.css'/>"/>
-  <script type="text/javascript" src="<html:rewrite page='/js/jquery.dimensions.min.js'/>"></script>
-  <script type="text/javascript" src="<html:rewrite page='/js/jquery.center.js'/>"></script>
-</c:if>
-
-<c:if test="${pageName == 'query' || pageName == 'exportOptions'}">
-  <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/jquery-ui-1.7.2.custom.css'/>"/>
-  <script type="text/javascript" src="<html:rewrite page='/js/jquery-ui-1.7.2.custom.min.js'/>"></script>
-</c:if>
-
-<script type="text/javascript">
-  jQuery.noConflict();
-</script>
-
-<%-- this has to live after jQuery.  do not move --%>
-<script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
-
-<script type="text/javascript" src="<html:rewrite page='/dwr/interface/AjaxServices.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/dwr/engine.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/dwr/util.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/imdwr.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/imutils.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/inlineTagEditor.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/date.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/tagSelect.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/table.js'/>"></script>
-<!--[if lt IE 7.]>
-  <script defer type="text/javascript" src="pngfix.js"></script>
-<![endif]-->
+<c:if test="${pageName != 'begin'}">
+	<c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'objectDetails'}">
+	  <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
+	</c:if>
+	<c:if test="${pageName == 'begin'}">
+	  <script type="text/javascript" src="<html:rewrite page='/js/jQuery.roundCorners-1.1.1.js'/>"></script>
+	  <script type="text/javascript" src="<html:rewrite page='/js/excanvas.js'/>"></script>
+	</c:if>
+	<c:if test="${pageName == 'results' || pageName == 'query' || pageName == 'templates' || pageName == 'bagDetails' || pageName == 'objectDetails' || pageName == 'bag' || pageName == 'mymine'}">
+	  <script type="text/javascript" src="<html:rewrite page='/js/jquery.boxy.js'/>"></script>
+	  <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/boxy.css'/>"/>
+	  <script type="text/javascript" src="<html:rewrite page='/js/jquery.dimensions.min.js'/>"></script>
+	  <script type="text/javascript" src="<html:rewrite page='/js/jquery.center.js'/>"></script>
+	</c:if>
+	
+	<c:if test="${pageName == 'query' || pageName == 'exportOptions'}">
+	  <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/jquery-ui-1.7.2.custom.css'/>"/>
+	  <script type="text/javascript" src="<html:rewrite page='/js/jquery-ui-1.7.2.custom.min.js'/>"></script>
+	</c:if>
+	
+	<script type="text/javascript">
+	  jQuery.noConflict();
+	</script>
+	
+	<%-- this has to live after jQuery.  do not move --%>
+	<script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
+</c:if>	
+	<script type="text/javascript" src="<html:rewrite page='/dwr/interface/AjaxServices.js'/>"></script>
+	<script type="text/javascript" src="<html:rewrite page='/dwr/engine.js'/>"></script>
+	<script type="text/javascript" src="<html:rewrite page='/dwr/util.js'/>"></script>
+	<script type="text/javascript" src="<html:rewrite page='/js/imdwr.js'/>"></script>
+	<script type="text/javascript" src="<html:rewrite page='/js/imutils.js'/>"></script>
+	<script type="text/javascript" src="<html:rewrite page='/js/inlineTagEditor.js'/>"></script>
+	<script type="text/javascript" src="<html:rewrite page='/js/date.js'/>"></script>
+	<script type="text/javascript" src="<html:rewrite page='/js/tagSelect.js'/>"></script>
+	<script type="text/javascript" src="<html:rewrite page='/js/table.js'/>"></script>
+	<!--[if lt IE 7.]>
+	  <script defer type="text/javascript" src="pngfix.js"></script>
+	<![endif]-->
 
 <meta content="${WEB_PROPERTIES['meta.keywords']}" name="keywords"/>
 <meta content="${WEB_PROPERTIES['meta.description']}" name="description"/>
