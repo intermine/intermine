@@ -11,8 +11,8 @@
 <!-- historyTemplates.jsp -->
 <html:xhtml/>
 
-
-  <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
+<script type="text/javascript" src="js/tablesort.js"></script>
+<link rel="stylesheet" type="text/css" href="css/sorting.css"/>
 
   <tiles:useAttribute id="type" name="type"/>
 
@@ -68,6 +68,11 @@
             <th align="left" class="sortable">
               <fmt:message key="history.commentheader"/>
             </th>
+            <c:if test="${IS_SUPERUSER}">
+	            <th align="left" class="sortable-numeric">
+	              <fmt:message key="history.rankheader"/>
+	            </th>
+	        </c:if>
             <th align="center">
               <fmt:message key="history.actionscolumnheader"/>
             </th>
@@ -136,6 +141,11 @@
                 </c:choose>
                 &nbsp;
               </td>
+               <c:if test="${IS_SUPERUSER}">
+               <td class="sorting">
+                   ${templateRank[savedTemplate.value.name]}
+               </td>
+               </c:if>
               <td class="sorting" align="center" nowrap>
               <%-- Disable Run & Edit for bad template queries --%>
               <c:choose>
