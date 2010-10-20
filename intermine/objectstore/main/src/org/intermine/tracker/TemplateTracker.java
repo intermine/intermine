@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.intermine.util.ShutdownHook;
@@ -92,26 +94,48 @@ public class TemplateTracker extends TrackerAbstract
         return null;
     }
 
-    public TemplateTrack getMostPopularTemplate(String userName, String sessionId) {
+    public List<String> getMostPopularTemplateOrder(String userName, String sessionId) {
         ResultSet rs = null;
+        List<String> mostPopularTemplateOrder = new ArrayList<String>();
         try {
             Statement stm = connection.createStatement();
-            StringBuffer sql = new StringBuffer("SELECT templatename, "
-                                                + " COUNT(templatename) as accessnumbers,"
-                                                + " username as user "
-                                                + " FROM templatetrack GROUP BY templatename"
-                                                + " ORDER BY accessnumbers DESC LIMIT 1 "
-                                                + " WHERE sessionidentifier = " + sessionId);
-            if (userName != null && !"".equals(userName)) {
-                sql.append(" OR user=" + userName);
+            String sql = "SELECT tt.templatename, COUNT(tt.templatename) accessnumbers"
+                        + " FROM templatetrack tt"
+                        + " WHERE username = '" + userName + "'"
+                        + " OR  sessionidentifier = '" + sessionId + "'"
+                        + " GROUP BY tt.templatename"
+                        + " ORDER BY accessnumbers DESC";
+            rs = stm.executeQuery(sql);
+            while (rs.next()) {
+                mostPopularTemplateOrder.add(rs.getString(1));
             }
-            rs = stm.executeQuery(sql.toString());
-            String templateName = rs.getString(0);
-            int accessCounter = rs.getInt(1);
-            rs.close();
-            return new TemplateTrack(templateName, userName, accessCounter);
+            return mostPopularTemplateOrder;
         } catch (SQLException sqle) {
-            LOG.error("Problem executing query mostVisitedTemplateByUser", sqle);
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    LOG.error("Problem closing  resultset in getMostVisitedTemplateByUser", e);
+                }
+            }
+        }
+        return null;
+    }
+
+    public Map<String, Integer> getRank() {
+        ResultSet rs = null;
+        Map<String, Integer> templateRank = new HashMap<String, Integer>();
+        try {
+            Statement stm = connection.createStatement();
+            String sql = "SELECT tt.templatename, COUNT(tt.templatename) accessnumbers"
+                        + " FROM templatetrack tt"
+                        + " GROUP BY tt.templatename";
+            rs = stm.executeQuery(sql);
+            while (rs.next()) {
+                templateRank.put(rs.getString(1), rs.getInt(2));
+            }
+            return templateRank;
+        } catch (SQLException sqle) {
             if (rs != null) {
                 try {
                     rs.close();
