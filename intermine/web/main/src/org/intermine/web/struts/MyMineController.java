@@ -65,6 +65,10 @@ public class MyMineController extends TilesAction
 
         Profile profile = SessionMethods.getProfile(session);
 
+        if (SessionMethods.isSuperUser(session)) {
+            request.setAttribute("templateRank", TrackerManager.getInstance(im).getRank());
+        }
+
         /* if the user is on a restricted page and they are not logged in, send them to the bags
          * page.  query history is not a restricted page.
          */
