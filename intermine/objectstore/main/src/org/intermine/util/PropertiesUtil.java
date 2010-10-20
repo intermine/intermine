@@ -51,7 +51,7 @@ public final class PropertiesUtil
                 throw new RuntimeException("intermine.properties is not in the classpath");
             }
             globalProperties.load(is);
-
+            is.close();
         } catch (IOException e) {
             // Do nothing
         }
@@ -158,8 +158,9 @@ public final class PropertiesUtil
                 return null;
             }
             props.load(is);
+            is.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to load :" + filename, e);
         }
         return props;
     }
