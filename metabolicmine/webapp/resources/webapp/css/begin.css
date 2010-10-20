@@ -313,6 +313,7 @@ div.wide-gray div.bottom { background:url("../themes/metabolic/img/box-wide-gray
 
 #articles { margin-bottom:0; }
     #articles td { padding:0 0 6px 0; }
+		#articles td { padding-right:30px; }
         #articles td.date { padding-right:16px; }
     #articles .date a { text-decoration:none; font-weight:bold; font-size:18px; line-height:14px; }
         #articles .date a span { font-size:12px; font-weight:normal; }
@@ -335,10 +336,11 @@ div.white-half div.bottom { background:url("../themes/metabolic/img/box-half-whi
 
 div.white div.more { background:url("../themes/metabolic/img/box-third-white-gray-bottom.png") no-repeat bottom; width:320px;
     height:36px; }
-div.white-medium div.more { background:url("../themes/metabolic/img/box-half-white-gray-bottom.png") no-repeat bottom; width:488px;
+div.white-half div.more { background:url("../themes/metabolic/img/box-half-white-gray-bottom.png") no-repeat bottom; width:488px;
     height:36px; }
-div.white div.more a.more { background:url("../themes/metabolic/icons/small/more-button.png") no-repeat top; overflow:hidden;
-    text-decoration:none; padding:8px 30px; float:right; margin:4px; }
+
+div.white div.more a.more, div.white-half div.more a.more { background:url("../themes/metabolic/icons/small/more-button.png") no-repeat top;
+	overflow:hidden; text-decoration:none; padding:8px 30px; float:right; margin:4px; }
 
 div.blue div.top { background:url("../themes/metabolic/img/box-third-blue-top.png") no-repeat top; height:5px; width:320px;
     font-size:0; line-height:0; overflow:hidden; margin-top:20px; }
