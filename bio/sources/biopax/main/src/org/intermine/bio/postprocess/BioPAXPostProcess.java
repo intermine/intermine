@@ -90,7 +90,6 @@ public class BioPAXPostProcess extends PostProcessor
         }
 
         Results results = findProteinPathways(osw.getObjectStore());
-        Iterator<?> iter = results.iterator();
         int count = 0;
         Gene lastGene = null;
         Set<Pathway> newCollection = new HashSet<Pathway>();
