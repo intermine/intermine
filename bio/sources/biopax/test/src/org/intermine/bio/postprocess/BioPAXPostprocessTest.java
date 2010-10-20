@@ -47,22 +47,22 @@ public class BioPAXPostprocessTest extends XMLTestCase {
         setUpData();
     }
 
-//    public void tearDown() throws Exception {
-//        Query q = new Query();
-//        QueryClass qc = new QueryClass(InterMineObject.class);
-//        q.addFrom(qc);
-//        q.addToSelect(qc);
-//        ObjectStore os = osw.getObjectStore();
-//        SingletonResults res = os.executeSingleton(q);
-//        Iterator resIter = res.iterator();
-//        osw.beginTransaction();
-//        while (resIter.hasNext()) {
-//            InterMineObject o = (InterMineObject) resIter.next();
-//            osw.delete(o);
-//        }
-//        osw.commitTransaction();
-//        osw.close();
-//    }
+    public void tearDown() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(InterMineObject.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        ObjectStore os = osw.getObjectStore();
+        SingletonResults res = os.executeSingleton(q);
+        Iterator resIter = res.iterator();
+        osw.beginTransaction();
+        while (resIter.hasNext()) {
+            InterMineObject o = (InterMineObject) resIter.next();
+            osw.delete(o);
+        }
+        osw.commitTransaction();
+        osw.close();
+    }
 
     public void testPostProcess() throws Exception {
         BioPAXPostProcess bp = new BioPAXPostProcess(osw);
