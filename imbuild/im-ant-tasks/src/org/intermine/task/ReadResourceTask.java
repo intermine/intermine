@@ -131,6 +131,12 @@ public class ReadResourceTask extends Task
         } catch (IOException e) {
             throw new BuildException("failed to close StringWriter", e);
         }
+        try {
+            bufferedReader.close();
+        } catch (IOException e) {
+            throw new BuildException("failed to close bufferedReader", e);
+        }
+
         getProject().setProperty(property, stringWriter.toString());
     }
 }
