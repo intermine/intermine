@@ -230,8 +230,9 @@ public class GenesFileProcessor
         }
     }
 
+    // don't set primaryidentifier for mouse or people
     private boolean setPrimaryIdentifier(String taxonId) {
-        return !isHomoSapiens(taxonId);
+        return !isHomoSapiens(taxonId) && !isMouse(taxonId);
     }
 
     private boolean isValidPrimIdentifier(String primIdentifier) {
@@ -252,6 +253,10 @@ public class GenesFileProcessor
 
     private boolean isHomoSapiens(String taxonId) {
         return "9606".equals(taxonId);
+    }
+
+    private boolean isMouse(String taxonId) {
+        return "10090".equals(taxonId);
     }
 
     private Item createGene(Integer ncbiGeneId, String primaryIdentifier, Item organism) {
