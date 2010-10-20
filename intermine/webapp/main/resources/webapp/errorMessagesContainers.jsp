@@ -7,9 +7,15 @@
 <!-- errorMessagesContainers.jsp -->
 <link rel="stylesheet" type="text/css" href="css/errorMessages.css"/>
 <div>
-    <div class="topBar errors" id="error_msg" style="display:none"><span style="float:right;padding:0;margin:0"><img src="images/close.png" alt="Dismiss" title="Dismiss" style="cursor:pointer;" onclick="javascript:jQuery('#error_msg').hide('slow');"></span></div>
-    <div class="topBar messages" id="msg" style="display:none"><span style="float:right;padding:0;margin:0"><img src="images/close.png" alt="Dismiss" title="Dismiss" style="cursor:pointer;" onclick="javascript:jQuery('#msg').hide('slow');"></span></div>
-    <div class="topBar lookupReport" id="lookup_msg" style="display:none"><span style="float:right;padding:0;margin:0"><img src="images/close.png" alt="Dismiss" title="Dismiss" style="cursor:pointer;" onclick="javascript:jQuery('#lookup_msg').hide('slow');"></span></div>
+    <div class="topBar errors" id="error_msg" style="display:none">
+    	<a onclick="javascript:jQuery('#error_msg').hide('slow');return false" href="#">Hide</a>
+    </div>
+    <div class="topBar messages" id="msg" style="display:none">
+    	<a onclick="javascript:jQuery('#msg').hide('slow');return false" href="#">Hide</a>
+    </div>
+    <div class="topBar lookupReport" id="lookup_msg" style="display:none">
+    	<a onclick="javascript:jQuery('#lookup_msg').hide('slow');return false" href="#">Hide</a>
+    </div>
 
     <noscript>
       <div class="topBar errors">
