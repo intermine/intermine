@@ -343,9 +343,7 @@
         <div class="bottom span-6 last"></div>
     </div>
     
-    <div id="rss" class="span-6 last white-half" style="display:none;">
-    	<!-- Google AJAX Feed API, key valid for: http://aragorn:8080, get new one at http://code.google.com/apis/ajaxfeeds/signup.html -->
-    	<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAIjWYcqZIw9KvbQkBEXxYOxTy-NlgDp9q4xV86KLS12xDqhWAGhRZXw5vvuSZ0VoVeQ3OwhgnS5VVUw"></script>
+    <div id="rss" class="span-6 last white-half">
     	<script type="text/javascript">
 			// feed URL
 			var feedURL = "http://blog.flymine.org/feed/";
@@ -356,44 +354,46 @@
 
 			var months = new Array(12); months[0]="Jan"; months[1]="Feb"; months[2]="Mar"; months[3]="Apr"; months[4]="May"; months[5]="Jun";
 			months[6]="Jul"; months[7]="Aug"; months[8]="Sep"; months[9]="Oct"; months[10]="Nov"; months[11]="Dec";
-			
-			// get project feed using Google AJAX Feed API and jQuery
-        	google.load("feeds", "1");
-        	function initialize() {
-				var feed = new google.feeds.Feed(feedURL);
-          		feed.load(function(result) {
-            		if (!result.error) {
-                		var entry, date, row, feedTitle, feedContent, date, feedDate; 
-						// traverse entries
-          				for (var i = 0; i < result.feed.entries.length; i++) {
-								if (i < maxEntries) {
-									// fetch entry
-                					entry = result.feed.entries[i];
 
-									// prep
-									feedTitle = trimmer(entry.title, 40);
-									feedContent = trimmer(entry.content, 70);
-									feedDate = new Date(entry.publishedDate);
-									
-                					// build table row
-                					row = '<tr>'
-	                	                    + '<td class="date">'
-	                	                    	+ '<a target="new" href="' + entry.link + '">' + feedDate.getDate()
-	                	                    	+ '<br /><span>' + months[feedDate.getMonth()] + '</span></a></td>'
-	                	                    + '<td><a target="new" href="' + entry.link + '">' + feedTitle + '</a><br/>' + feedContent + '</td>'
-                	                	+ '</tr>';
-                					// append, done
-                					javascript:jQuery(target).append(row);
-								}
-              				}
-          					javascript:jQuery('#rss').slideToggle('slow');
-            			}
-          		});
-        	}
-        	google.setOnLoadCallback(initialize);
+			$(document).ready(function(){
+				// DWR fetch, see AjaxServices.java
+				AjaxServices.getNewsPreview('http://blog.flymine.org/feed/', function(data){
+					// declare
+					var feedTitle, feedDescription, feedDate, feedLink, row;
+
+					// convert to XML, jQuery manky...
+		            var feed = new DOMParser().parseFromString(data, "text/xml");
+		            var items = feed.getElementsByTagName("item");
+		            for (var i = 0; i < items.length; ++i) {
+					//$(data).find('item').each(function() {
+						// early bath
+						if (i > maxEntries) return;
+
+			            feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 40);
+			            feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 70);
+			            feedDate = new Date(items[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue);
+			            feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
+
+    					// build table row
+    					row = '<tr>'
+        	                    + '<td class="date">'
+        	                    	+ '<a target="new" href="' + feedLink + '">' + feedDate.getDate()
+        	                    	+ '<br /><span>' + months[feedDate.getMonth()] + '</span></a></td>'
+        	                    + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
+    	                	+ '</tr>';
+    					// append, done
+    					javascript:jQuery(target).append(row);
+    					i++;
+					//});
+		            }
+				});
+				// show
+				//$('#rss').slideToggle('slow');
+			});
         	
         	// trim text to a specified length
 			function trimmer(grass, length) {
+				if (!grass) return;
 				grass = stripHTML(grass);
 				if (grass.length > length) return grass.substring(0, length) + '...';
 				return grass;
@@ -404,7 +404,6 @@
         	   var tmp = document.createElement("DIV"); tmp.innerHTML = html; return tmp.textContent || tmp.innerText;
         	}
     	</script>
-    	
         <div class="top"></div>
         <div class="center span-6 last">
             <h4>News<span>&nbsp;&amp;&nbsp;</span>Updates</h4>
