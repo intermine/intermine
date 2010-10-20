@@ -25,7 +25,7 @@ import org.intermine.xml.full.Item;
 
 
 /**
- * 
+ *
  * @author
  */
 public class HgncConverter extends BioFileConverter
@@ -83,7 +83,7 @@ public class HgncConverter extends BioFileConverter
             String name = line[2];
             String previous = line[4];
             String aliases = line[5];
-            
+
             String entrez = null;
             if (line.length > 8) {
                 entrez = line[8];
@@ -114,7 +114,7 @@ public class HgncConverter extends BioFileConverter
                 GeneRecord record = new GeneRecord(symbol, name, entrez, ensembl);
                 record.previous = readCommaSeparated(previous);
                 record.aliases = readCommaSeparated(aliases);
-                
+
                 records.add(record);
             }
         }
@@ -134,7 +134,7 @@ public class HgncConverter extends BioFileConverter
             gene.setReference("organism", organism);
             gene.setAttribute("symbol", record.symbol);
             if (StringUtils.isBlank(record.name)) {
-                LOG.warn("HGNC no name for symbol: " + record.name);
+                LOG.warn("HGNC no name for symbol: " + record.symbol);
             } else {
                 gene.setAttribute("name", record.name);
             }
