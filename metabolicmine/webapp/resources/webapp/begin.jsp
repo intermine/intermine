@@ -343,28 +343,76 @@
         <div class="bottom span-6 last"></div>
     </div>
     
-    <div id="rss" class="span-6 last white-half">
+    <div id="rss" class="span-6 last white-half" style="display:none;">
+    	<!-- Google AJAX Feed API, key valid for: http://aragorn:8080, get new one at http://code.google.com/apis/ajaxfeeds/signup.html -->
+    	<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAIjWYcqZIw9KvbQkBEXxYOxTy-NlgDp9q4xV86KLS12xDqhWAGhRZXw5vvuSZ0VoVeQ3OwhgnS5VVUw"></script>
     	<script type="text/javascript">
-    		// TODO: fetch RSS feed using jQuery and display
-		</script>
-    
+			// feed URL
+			var feedURL = "http://blog.flymine.org/feed/";
+			// limit number of entries displayed
+			var maxEntries = 2;
+			// where are we appending entries? (jQuery syntax)
+			var target = 'table#articles';
+
+			var months = new Array(12); months[0]="Jan"; months[1]="Feb"; months[2]="Mar"; months[3]="Apr"; months[4]="May"; months[5]="Jun";
+			months[6]="Jul"; months[7]="Aug"; months[8]="Sep"; months[9]="Oct"; months[10]="Nov"; months[11]="Dec";
+			
+			// get project feed using Google AJAX Feed API and jQuery
+        	google.load("feeds", "1");
+        	function initialize() {
+				var feed = new google.feeds.Feed(feedURL);
+          		feed.load(function(result) {
+            		if (!result.error) {
+                		var entry, date, row, feedTitle, feedContent, date, feedDate; 
+						// traverse entries
+          				for (var i = 0; i < result.feed.entries.length; i++) {
+								if (i < maxEntries) {
+									// fetch entry
+                					entry = result.feed.entries[i];
+
+									// prep
+									feedTitle = trimmer(entry.title, 40);
+									feedContent = trimmer(entry.content, 70);
+									feedDate = new Date(entry.publishedDate);
+									
+                					// build table row
+                					row = '<tr>'
+	                	                    + '<td class="date">'
+	                	                    	+ '<a target="new" href="' + entry.link + '">' + feedDate.getDate()
+	                	                    	+ '<br /><span>' + months[feedDate.getMonth()] + '</span></a></td>'
+	                	                    + '<td><a target="new" href="' + entry.link + '">' + feedTitle + '</a><br/>' + feedContent + '</td>'
+                	                	+ '</tr>';
+                					// append, done
+                					javascript:jQuery(target).append(row);
+								}
+              				}
+          					javascript:jQuery('#rss').slideToggle('slow');
+            			}
+          		});
+        	}
+        	google.setOnLoadCallback(initialize);
+        	
+        	// trim text to a specified length
+			function trimmer(grass, length) {
+				grass = stripHTML(grass);
+				if (grass.length > length) return grass.substring(0, length) + '...';
+				return grass;
+			}
+
+			// strip HTML
+        	function stripHTML(html) {
+        	   var tmp = document.createElement("DIV"); tmp.innerHTML = html; return tmp.textContent || tmp.innerText;
+        	}
+    	</script>
+    	
         <div class="top"></div>
         <div class="center span-6 last">
             <h4>News<span>&nbsp;&amp;&nbsp;</span>Updates</h4>
-            <div id="articles"><img src="/metabolicmine/themes/metabolic/img/spinner.gif" alt="spinner" /></div>
             <table id="articles">
-                <tr>
-                    <td class="date"><a href="#">27<br /><span>Aug</span></a></td>
-                    <td><a href="#">A new version of metabolicMine!</a><br/>Added support for new templates and impro...</td>
-                </tr>
-                <tr>
-                    <td class="date"><a href="#">15<br /><span>Aug</span></a></td>
-                    <td><a href="#">Preparing to launch new version</a><br/>We will be launching soon and need your ...</td>
-                </tr>
+            	<!-- append babies here -->
             </table>
-            
         </div>
-        <div class="more span-6 last"><a href="#" class="more">&nbsp;</a></div>
+        <div class="more span-6 last"><a target="new" href="http://blog.flymine.org/" class="more">&nbsp;</a></div>
     </div>
     
     <!-- 
