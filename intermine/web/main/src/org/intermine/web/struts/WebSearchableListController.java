@@ -185,8 +185,15 @@ public class WebSearchableListController extends TilesAction
     private Map<String, WebSearchable> sortListByMostPopular(final Map<String, WebSearchable>
     filteredWebSearchables, HttpSession session) {
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        TrackerManager tm = TrackerManager.getInstance(im);
+        List<String> mostPopulareTemplateNames;
+        if (SessionMethods.getProfile(session).isLoggedIn()) {
+            mostPopulareTemplateNames = tm.getMostPopularTemplateOrder(session);
+        } else {
+            mostPopulareTemplateNames = tm.getMostPopularTemplateOrder();
+        }
         MostPopularTemplateComparator comparator = new MostPopularTemplateComparator(
-            TrackerManager.getInstance(im).getMostPopularTemplateOrder());
+            mostPopulareTemplateNames, filteredWebSearchables);
         Map<String, WebSearchable> sortedMap =
             new TreeMap<String, WebSearchable>(comparator);
         sortedMap.putAll(filteredWebSearchables);
@@ -200,14 +207,24 @@ public class WebSearchableListController extends TilesAction
     private class MostPopularTemplateComparator implements Comparator<String>
     {
         private List<String> mostPopulareTemplateNames;
+        private Map<String, WebSearchable> filteredWebSearchables;
 
-        public MostPopularTemplateComparator(List<String> mostPopulareTemplateNames) {
+        public MostPopularTemplateComparator(List<String> mostPopulareTemplateNames,
+            final Map<String, WebSearchable> filteredWebSearchables) {
             this.mostPopulareTemplateNames = mostPopulareTemplateNames;
+            this.filteredWebSearchables = filteredWebSearchables;
         }
 
         public int compare(String templateName1, String templateName2) {
             if (!mostPopulareTemplateNames.contains(templateName1)
                 && !mostPopulareTemplateNames.contains(templateName2)) {
+                return filteredWebSearchables.get(templateName1).getTitle()
+                       .compareTo(filteredWebSearchables.get(templateName2).getTitle());
+            }
+            if (!mostPopulareTemplateNames.contains(templateName1)) {
+                return +1;
+            }
+            if (!mostPopulareTemplateNames.contains(templateName2)) {
                 return -1;
             }
             return (mostPopulareTemplateNames.indexOf(templateName1)
