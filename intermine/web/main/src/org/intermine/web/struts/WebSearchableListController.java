@@ -218,8 +218,13 @@ public class WebSearchableListController extends TilesAction
         public int compare(String templateName1, String templateName2) {
             if (!mostPopulareTemplateNames.contains(templateName1)
                 && !mostPopulareTemplateNames.contains(templateName2)) {
-                return filteredWebSearchables.get(templateName1).getTitle()
-                       .compareTo(filteredWebSearchables.get(templateName2).getTitle());
+                WebSearchable ws1 = filteredWebSearchables.get(templateName1);
+                WebSearchable ws2 = filteredWebSearchables.get(templateName2);
+                if (ws1.getTitle().equals(ws2.getTitle())) {
+                    return ws1.getName().compareTo(ws2.getName());
+                } else {
+                    return ws1.getTitle().compareTo(ws2.getTitle());
+                }
             }
             if (!mostPopulareTemplateNames.contains(templateName1)) {
                 return +1;
