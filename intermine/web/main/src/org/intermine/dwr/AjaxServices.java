@@ -1065,6 +1065,8 @@ public class AjaxServices
      * Get the news
      * @param rssURI the URI of the rss feed
      * @return the news feed as html
+     * 
+     * @deprecated use getNewsPreview() instead
      */
     public static String getNewsRead(String rssURI) {
         try {
