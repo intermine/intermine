@@ -32,9 +32,17 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.CrossReference">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="source.name"/>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.DataSet">
     <fields>
-      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="url" doNotTruncate="true"/>
     </fields>
   </class>
@@ -74,9 +82,67 @@
     </bagdisplayers>
   </class>
 
-  <class className="org.intermine.model.bio.InfoSource">
+  <class className="org.intermine.model.bio.GOAnnotation">
     <fields>
-      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
+      <fieldconfig fieldExpr="ontologyTerm.identifier" />
+      <fieldconfig fieldExpr="ontologyTerm.name" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.intermine.model.bio.GOEvidenceCode">
+    <fields>
+      <fieldconfig fieldExpr="code"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+    <class className="org.intermine.model.bio.GOTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description" showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+    <class className="org.intermine.model.bio.Homologue">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false" />
+      <fieldconfig fieldExpr="inParanoidScore"/>
+      <fieldconfig fieldExpr="homologue.primaryIdentifier"/>
+      <fieldconfig fieldExpr="homologue.organism.shortName"/>
+    </fields>
+  </class>
+
+    <class className="org.intermine.model.bio.Interaction">
+   <fields>
+     <fieldconfig fieldExpr="gene.primaryIdentifier"/>
+     <fieldconfig fieldExpr="shortName"/>
+     <fieldconfig fieldExpr="confidenceText"/>
+     <fieldconfig fieldExpr="confidence"/>
+     <fieldconfig fieldExpr="role"/>
+    </fields>
+
+  </class>
+  <class className="org.intermine.model.bio.InteractionExperiment">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description"/>
+    </fields>
+  </class>
+  <class className="org.intermine.model.bio.InteractionTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
@@ -89,8 +155,7 @@
     </fields>
   </class>
 
-
-  <class className="org.intermine.model.bio.LocatedSequenceFeature">
+  <class className="org.intermine.model.bio.SequenceFeature">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
@@ -140,6 +205,31 @@
     </longdisplayers>
   </class>
 
+    <class className="org.intermine.model.bio.OrthologueEvidence">
+    <fields>
+      <fieldconfig fieldExpr="evidenceCode.name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.OrthologueEvidenceCode">
+    <fields>
+      <fieldconfig fieldExpr="abbreviation"/>
+      <fieldconfig fieldExpr="name" />
+    </fields>
+  </class>
+
+    <class className="org.intermine.model.bio.Pathway">
+    <fields>
+      <fieldconfig fieldExpr="identifier" />
+      <fieldconfig fieldExpr="name" />
+    </fields>
+    <longdisplayers>
+      <displayer src="pathwayLinkDisplayer.tile"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+
   <class className="org.intermine.model.bio.Protein">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -149,9 +239,22 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
     </bagdisplayers>
+  </class>
+
+  <class className="org.intermine.model.bio.ProteinDomain">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="shortName"/>
+      <fieldconfig fieldExpr="type"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Publication">
@@ -169,13 +272,6 @@
     </longdisplayers>
   </class>
 
-  <class className="org.intermine.model.bio.Relation">
-    <fields>
-      <fieldconfig fieldExpr="object.primaryIdentifier"/>
-      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.Sequence">
     <fields>
       <fieldconfig fieldExpr="residues" fieldExporter="org.intermine.bio.web.export.ResidueFieldExporter"
@@ -189,14 +285,12 @@
   <class className="org.intermine.model.bio.Synonym">
     <fields>
       <fieldconfig fieldExpr="value"/>
-      <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
 
   <class className="org.intermine.model.bio.Transcript">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="exonCount"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false"/>
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
@@ -208,10 +302,19 @@
     </longdisplayers>
   </class>
 
+  <class className="org.intermine.model.bio.UniProtFeature">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="begin"/>
+      <fieldconfig fieldExpr="end"/>
+    </fields>
+  </class>
+
 <!-- exporters -->
   <tableExportConfig id="sequence" className="org.intermine.bio.web.export.SequenceHttpExporter"/>
   <tableExportConfig id="gff3" className="org.intermine.bio.web.export.GFF3HttpExporter"/>
-  
+
 <!-- widgets -->
 <widgets>
       <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution"
@@ -224,6 +327,58 @@
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
         typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature"
        />
+      <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
+                                 link="org.intermine.bio.web.widget.GoStatURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
+                                 description="GO terms enriched for items in this list."
+                                 label="GO Term"
+                                 filters="biological_process,cellular_component,molecular_function"
+                                 filterLabel="Ontology"
+                                 typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
+
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
+                                 link="org.intermine.bio.web.widget.ProteinDomainURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.ProteinDomainLdr"
+                                 label="Protein Domain"
+                                 description="Protein Domains enriched for items in this list."
+                                 typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
+
+      <enrichmentwidgetdisplayer id="publication_enrichment" title="Publication Enrichment"
+                                 link="org.intermine.bio.web.widget.PublicationURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.PublicationLdr"
+                                 label="Publication"
+                                 description="Publications enriched for genes in this list."
+                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
+                                 typeClass="org.intermine.model.bio.Gene"
+                                 externalLinkLabel="PubMed:" />
+      <enrichmentwidgetdisplayer id="pathway_enrichment" title="Pathway Enrichment"
+                                 link="org.intermine.bio.web.widget.PathwayURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.PathwayLdr"
+                                 label="Pathways"
+                                 filters="All datasets,KEGG,Reactome"
+                                 filterLabel="DataSet"
+                                 description="Pathways enriched for genes in this list - data from KEGG and Reactome"
+                                 typeClass="org.intermine.model.bio.Gene" />
+
+      <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
+                         link="org.intermine.bio.web.widget.HomologueURLQuery"
+                         description="Counts of orthologues in other organisms for the genes in this list."
+                         displayFields="name"
+                         exportField="primaryIdentifier"
+                         typeClass="org.intermine.model.bio.Gene"
+                         columnTitle="Orthologues"/>
+
+      <bagtabledisplayer id="interactions" title="Interactions"
+                         pathStrings="Gene.interactions.interactingGenes"
+                         link="org.intermine.bio.web.widget.InteractionURLQuery"
+                         description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
+                         displayFields="primaryIdentifier"
+                         exportField="primaryIdentifier"
+                         typeClass="org.intermine.model.bio.Gene"
+                         columnTitle="Interactions"/>
+
 
 </widgets>
 </webconfig>
