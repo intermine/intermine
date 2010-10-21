@@ -471,14 +471,7 @@ public class InitialiserPlugin implements PlugIn
 
     private Map<String, Tracker> getTrackers(Properties webProperties, ObjectStoreWriter userprofileOSW) {
         Map<String, Tracker> trackers = new HashMap<String, Tracker>();
-        String userProfileAlias = (String) webProperties.get("webapp.userprofile.os.alias");
-        Properties props = PropertiesUtil.getPropertiesStartingWith(userProfileAlias);
-        if (0 == props.size()) {
-            throw new RuntimeException("No trackers were found for alias '"
-                                      + userProfileAlias + "'");
-        }
-        props = PropertiesUtil.stripStart(userProfileAlias, props);
-        String trackerList = props.getProperty("trackers");
+        String trackerList = (String) webProperties.get("webapp.trackers");
         LOG.warn("initializeTrackers: trackerList is" + trackerList);
         if (trackerList != null) {
             ObjectStoreWriterInterMineImpl uosw = (ObjectStoreWriterInterMineImpl) userprofileOSW;
