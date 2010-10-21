@@ -343,7 +343,7 @@
         <div class="bottom span-6 last"></div>
     </div>
     
-    <div id="rss" class="span-6 last white-half">
+    <div id="rss" class="span-6 last white-half" style="display:none;">
     	<script type="text/javascript">
 			// feed URL
 			var feedURL = "http://blog.flymine.org/feed/";
@@ -355,40 +355,42 @@
 			var months = new Array(12); months[0]="Jan"; months[1]="Feb"; months[2]="Mar"; months[3]="Apr"; months[4]="May"; months[5]="Jun";
 			months[6]="Jul"; months[7]="Aug"; months[8]="Sep"; months[9]="Oct"; months[10]="Nov"; months[11]="Dec";
 
-			$(document).ready(function(){
+			$(document).ready(function() {
 				// DWR fetch, see AjaxServices.java
-				AjaxServices.getNewsPreview('http://blog.flymine.org/feed/', function(data){
-					// declare
-					var feedTitle, feedDescription, feedDate, feedLink, row;
-
-					// convert to XML, jQuery manky...
-		            var feed = new DOMParser().parseFromString(data, "text/xml");
-		            var items = feed.getElementsByTagName("item");
-		            for (var i = 0; i < items.length; ++i) {
-					//$(data).find('item').each(function() {
-						// early bath
-						if (i > maxEntries) return;
-
-			            feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 40);
-			            feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 70);
-			            feedDate = new Date(items[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue);
-			            feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
-
-    					// build table row
-    					row = '<tr>'
-        	                    + '<td class="date">'
-        	                    	+ '<a target="new" href="' + feedLink + '">' + feedDate.getDate()
-        	                    	+ '<br /><span>' + months[feedDate.getMonth()] + '</span></a></td>'
-        	                    + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
-    	                	+ '</tr>';
-    					// append, done
-    					javascript:jQuery(target).append(row);
-    					i++;
-					//});
-		            }
+				AjaxServices.getNewsPreview('http://blog.flymine.org/feed/', function(data) {
+					if (data) {
+						// show us
+						$('#rss').slideToggle('slow');
+					
+						// declare
+						var feedTitle, feedDescription, feedDate, feedLink, row;
+	
+						// convert to XML, jQuery manky...
+			            var feed = new DOMParser().parseFromString(data, "text/xml");
+			            var items = feed.getElementsByTagName("item"); // ATOM!!!
+			            for (var i = 0; i < items.length; ++i) {
+						//$(data).find('item').each(function() {
+							// early bath
+							if (i > maxEntries) return;
+	
+				            feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 40);
+				            feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 70);
+				            feedDate = new Date(items[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue);
+				            feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
+	
+	    					// build table row
+	    					row = '<tr>'
+	        	                    + '<td class="date">'
+	        	                    	+ '<a target="new" href="' + feedLink + '">' + feedDate.getDate()
+	        	                    	+ '<br /><span>' + months[feedDate.getMonth()] + '</span></a></td>'
+	        	                    + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
+	    	                	+ '</tr>';
+	    					// append, done
+	    					$(target).append(row);
+	    					i++;
+		            	}
+		            } 
 				});
-				// show
-				//$('#rss').slideToggle('slow');
 			});
         	
         	// trim text to a specified length
