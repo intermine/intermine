@@ -47,10 +47,12 @@
       <im:boxarea title="Templates" titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do" stylename="gradientbox">
         <em><p><fmt:message key="begin.templates"/></p></em>
         <br/>
+        <c:if test="${!empty mostPopularTemplate}">
         <fmt:message key="templates.mostpopular">
          <fmt:param value="${mostPopularTemplate}"/>
         </fmt:message>
         <br/>
+        </c:if>
         <div>
           Example templates (<a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">${templateCount} total</a>):
         </div>
