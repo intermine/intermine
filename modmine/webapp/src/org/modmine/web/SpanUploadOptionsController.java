@@ -47,6 +47,7 @@ import org.intermine.web.logic.session.SessionMethods;
 
 public class SpanUploadOptionsController extends TilesAction
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(SpanUploadOptionsController.class);
 
     /**
@@ -176,7 +177,6 @@ public class SpanUploadOptionsController extends TilesAction
 //        request.setAttribute("theMap", theMap);
         request.setAttribute("orgMap", orgMap);
         request.setAttribute("spanConstraint", "Organism");
-        request.setAttribute("exampleSpans", "2L:10345..15409");
 
         return null;
     }

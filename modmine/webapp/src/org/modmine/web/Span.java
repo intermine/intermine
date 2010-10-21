@@ -15,7 +15,6 @@ package org.modmine.web;
  * The record should be in BED format: "chr start end".
  *
  * @author Fengyuan Hu
- *
  */
 public class Span
 {
@@ -24,7 +23,6 @@ public class Span
     private Integer end;
 
     /**
-     *
      * @return chr
      */
     public String getChr() {
@@ -32,7 +30,6 @@ public class Span
     }
 
     /**
-     *
      * @param chr chromosome
      */
     public void setChr(String chr) {
@@ -40,7 +37,6 @@ public class Span
     }
 
     /**
-     *
      * @return start
      */
     public Integer getStart() {
@@ -48,7 +44,6 @@ public class Span
     }
 
     /**
-     *
      * @param start start poistion
      */
     public void setStart(Integer start) {
@@ -56,7 +51,6 @@ public class Span
     }
 
     /**
-     *
      * @return end
      */
     public Integer getEnd() {
@@ -64,10 +58,17 @@ public class Span
     }
 
     /**
-     *
      * @param end end position
      */
     public void setEnd(Integer end) {
         this.end = end;
+    }
+
+    /**
+     * @return chr:start..end
+     */
+    @Override
+    public String toString() {
+        return chr + ":" + start + ".." + end;
     }
 }

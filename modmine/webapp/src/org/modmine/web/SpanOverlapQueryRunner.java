@@ -12,7 +12,6 @@ package org.modmine.web;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -44,8 +43,6 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.util.TypeUtil;
-import org.jfree.util.Log;
 
 /**
  * SpanOverlapQuery is a class with query logic. It has two methods: runSpanValidationQuery queries
@@ -58,6 +55,7 @@ import org.jfree.util.Log;
 public final class SpanOverlapQueryRunner
 {
 
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(SpanOverlapQueryRunner.class);
 
     private SpanOverlapQueryRunner() {
@@ -167,14 +165,14 @@ public final class SpanOverlapQueryRunner
      * @return spanOverlapResultMap A HashMap contains all the spans and their query results
      * @throws ClassNotFoundException Model.getQualifiedTypeName() throws
      */
-    public static Map<Span, Results> runSpanOverlapQuery(SpanUploadForm form,
+    @SuppressWarnings("rawtypes")
+    public static Map<Span, List<SpanQueryResultRow>> runSpanOverlapQuery(SpanUploadForm form,
             List<Span> spanList, InterMineAPI im) throws ClassNotFoundException {
 
         String orgName = form.getOrgName();
 
         // featureTypes in this case are (the last bit of ) class instead of featuretype in the db
         // table; gain the full name by Model.getQualifiedTypeName(className)
-        @SuppressWarnings("rawtypes")
         List<Class> ftKeys = new ArrayList<Class>();
         String modelPackName = im.getModel().getPackageName();
         for (String aClass : form.getFeatureTypes()) {
@@ -184,7 +182,8 @@ public final class SpanOverlapQueryRunner
         List<Integer> subKeys = getSubmissionsByExperimentNames(form.getExperiments(), im);
 
 
-        Map<Span, Results> spanOverlapResultDisplayMap = new LinkedHashMap<Span, Results>();
+        Map<Span, List<SpanQueryResultRow>> spanOverlapResultDisplayMap =
+            new LinkedHashMap<Span, List<SpanQueryResultRow>>();
 
         try {
             Query q;
@@ -216,7 +215,7 @@ public final class SpanOverlapQueryRunner
                 QueryField qfChrPID = new QueryField(qcChr, "primaryIdentifier");
                 QueryField qfFeaturePID = new QueryField(qcFeature, "primaryIdentifier");
                 QueryField qfFeatureClass = new QueryField(qcFeature, "class");
-//                QueryField qfSubmissionTitle = new QueryField(qcSubmission, "title");
+                QueryField qfSubmissionTitle = new QueryField(qcSubmission, "title");
                 QueryField qfSubmissionDCCid = new QueryField(qcSubmission, "DCCid");
                 QueryField qfChr = new QueryField(qcChr, "primaryIdentifier");
                 QueryField qfLocStart = new QueryField(qcLoc, "start");
@@ -228,6 +227,7 @@ public final class SpanOverlapQueryRunner
                 q.addToSelect(qfLocStart);
                 q.addToSelect(qfLocEnd);
                 q.addToSelect(qfSubmissionDCCid);
+                q.addToSelect(qfSubmissionTitle);
 
                 q.addFrom(qcChr);
                 q.addFrom(qcOrg);
@@ -300,11 +300,32 @@ public final class SpanOverlapQueryRunner
                 //>>>>> TEST CODE <<<<<
 //                LOG.info("Query: " + q.toString());
 //                LOG.info("Result Size: " + results.size());
-//                LOG.info("Result: " + results);
+//                LOG.info("Result >>>>> " + results);
                 //>>>>> TEST CODE <<<<<
 
-                // TODO - Create a new class for result
-                spanOverlapResultDisplayMap.put(aSpan, results);
+                List<SpanQueryResultRow> spanResults = new ArrayList<SpanQueryResultRow>();
+                if (results == null || results.isEmpty()) {
+                    spanOverlapResultDisplayMap.put(aSpan, null);
+                }
+                else {
+                    for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+                        ResultsRow<?> row = (ResultsRow<?>) iter.next();
+
+                        SpanQueryResultRow aRow = new SpanQueryResultRow();
+                        aRow.setFeaturePID((String) row.get(0));
+                        aRow.setFeatureClass((Class) row.get(1));
+                        aRow.setChr((String) row.get(2));
+                        aRow.setStart((Integer) row.get(3));
+                        aRow.setEnd((Integer) row.get(4));
+                        aRow.setSubDCCid((Integer) row.get(5));
+                        aRow.setSubTitle((String) row.get(6));
+
+                        spanResults.add(aRow);
+                    }
+
+                    spanOverlapResultDisplayMap.put(aSpan, spanResults);
+                }
+
             }
 
         } catch (Exception e) {

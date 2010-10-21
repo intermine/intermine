@@ -7,6 +7,7 @@
 <%@ attribute name="fixedWidth" required="false" %>
 <%@ attribute name="floatValue" required="false" %>
 <%@ attribute name="htmlId" required="false" %>
+<%@ attribute name="titleStyle" required="false" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -23,7 +24,7 @@
 </c:set>
  <div class="${stylename}" style="${extraStyle}" >
   <dl>
-    <dt><h1 id="${htmlId}">
+    <dt><h1 id="${htmlId}" style="${titleStyle}" >
       <c:choose>
         <c:when test="${!empty titleLink}">
           <a href="${titleLink}" rel="NOFOLLOW">${title}</a>

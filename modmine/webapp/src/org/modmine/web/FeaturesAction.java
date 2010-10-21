@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -68,11 +69,14 @@ public class FeaturesAction extends InterMineAction
      *  an exception
      */
 
-//    private static final Logger LOG = Logger.getLogger(MetadataCache.class);
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(FeaturesAction.class);
 
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response)
         throws Exception {
+
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ObjectStore os = im.getObjectStore();
@@ -81,6 +85,7 @@ public class FeaturesAction extends InterMineAction
         String type = (String) request.getParameter("type");
         String featureType = (String) request.getParameter("feature");
         String action = (String) request.getParameter("action");
+
         String dccId = null;
         String experimentName = null;
 
@@ -258,6 +263,27 @@ public class FeaturesAction extends InterMineAction
 
             q.addConstraint(Constraints.eq("Experiment.name", eName));
         }
+        else if ("span".equals(type)) {
+            // Use feature pids as the value in lookup constraint
+            String value = (String) request.getParameter("value");
+//            LOG.info("allFeaturePIDs >>>>> " + value);
+
+            String path = "SequenceFeature";
+            q.addView(path + ".primaryIdentifier");
+            q.addView(path + ".chromosomeLocation.locatedOn.primaryIdentifier");
+            q.addView(path + ".chromosomeLocation.start");
+            q.addView(path + ".chromosomeLocation.end");
+            q.addView(path + ".submissions.DCCid");
+            q.addView(path + ".submissions.title");
+            q.addView(path + ".organism.name");
+
+            q.addConstraint(Constraints.lookup(path, value, null));
+
+            String organism = (String) request.getParameter("extraValue");
+            Set<String> organisms = new HashSet<String>();
+            organisms.add(organism);
+            taxIds = getTaxonIds(organisms);
+        }
 
         if ("results".equals(action)) {
             String qid = SessionMethods.startQueryWithTimeout(request, false, q);
@@ -292,6 +318,7 @@ public class FeaturesAction extends InterMineAction
                 exportForm.setDoGzip(doGzip);
                 ((GFF3ExportForm) exportForm).setOrganisms(taxIds);
             }
+
             exporter.export(pt, request, response, exportForm);
 
             // If null is returned then no forwarding is performed and

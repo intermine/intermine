@@ -31,12 +31,12 @@
 <!-- DWR mapping -->
 <!-- ================================================================================= -->
   <servlet>
-	<servlet-name>dwr-invoker</servlet-name>
-	<servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
-	<init-param>
-	   <param-name>debug</param-name>
-	   <param-value>true</param-value>
-	</init-param>
+  <servlet-name>dwr-invoker</servlet-name>
+  <servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
     <init-param>
       <param-name>activeReverseAjaxEnabled</param-name>
       <param-value>true</param-value>
@@ -49,55 +49,53 @@
   </servlet>
 
   <servlet-mapping>
-	<servlet-name>dwr-invoker</servlet-name>
-	<url-pattern>/dwr/*</url-pattern>
+  <servlet-name>dwr-invoker</servlet-name>
+  <url-pattern>/dwr/*</url-pattern>
   </servlet-mapping>
 
 <!-- ================================================================================= -->
 <!-- Intermine Web Service mapping -->
 <!-- ================================================================================= -->
   <servlet>
-	<servlet-name>ws-query-results</servlet-name>
-	<servlet-class>org.intermine.webservice.server.query.result.QueryResultServlet</servlet-class>
-	<init-param>
-	   <param-name>debug</param-name>
-	   <param-value>true</param-value>
-	</init-param>
+  <servlet-name>ws-query-results</servlet-name>
+  <servlet-class>org.intermine.webservice.server.query.result.QueryResultServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
   </servlet>
 
   <servlet-mapping>
-	<servlet-name>ws-query-results</servlet-name>
-	<url-pattern>/service/query/results</url-pattern>
-  </servlet-mapping>
-
-
-
-  <servlet>
-	<servlet-name>ws-lists</servlet-name>
-	<servlet-class>org.intermine.webservice.server.lists.ListsServlet</servlet-class>
-	<init-param>
-	   <param-name>debug</param-name>
-	   <param-value>true</param-value>
-	</init-param>
-  </servlet>
-
-  <servlet-mapping>
-	<servlet-name>ws-lists</servlet-name>
-	<url-pattern>/service/listswithobject</url-pattern>
+  <servlet-name>ws-query-results</servlet-name>
+  <url-pattern>/service/query/results</url-pattern>
   </servlet-mapping>
 
   <servlet>
-	<servlet-name>ws-template-results</servlet-name>
-	<servlet-class>org.intermine.webservice.server.template.result.TemplateResultServlet</servlet-class>
-	<init-param>
-	   <param-name>debug</param-name>
-	   <param-value>true</param-value>
-	</init-param>
+  <servlet-name>ws-lists</servlet-name>
+  <servlet-class>org.intermine.webservice.server.lists.ListsServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
   </servlet>
 
   <servlet-mapping>
-	<servlet-name>ws-template-results</servlet-name>
-	<url-pattern>/service/template/results</url-pattern>
+  <servlet-name>ws-lists</servlet-name>
+  <url-pattern>/service/listswithobject</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  <servlet-name>ws-template-results</servlet-name>
+  <servlet-class>org.intermine.webservice.server.template.result.TemplateResultServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>ws-template-results</servlet-name>
+  <url-pattern>/service/template/results</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -127,7 +125,7 @@
     <servlet-name>ws-model</servlet-name>
     <url-pattern>/service/model</url-pattern>
   </servlet-mapping>
-  
+
   <servlet>
     <servlet-name>ws-widgets</servlet-name>
     <servlet-class>org.intermine.webservice.server.widget.WidgetsServlet</servlet-class>
@@ -141,7 +139,7 @@
     <servlet-name>ws-widgets</servlet-name>
     <url-pattern>/service/widgets</url-pattern>
   </servlet-mapping>
-  
+
   <servlet>
     <servlet-name>ws-version</servlet-name>
     <servlet-class>org.intermine.webservice.server.VersionServlet</servlet-class>
@@ -155,7 +153,7 @@
     <servlet-name>ws-version</servlet-name>
     <url-pattern>/service/version/*</url-pattern>
   </servlet-mapping>
-  
+
 <!-- ================================================================================= -->
 
   <session-config>
@@ -176,11 +174,11 @@
     <filter-class>org.intermine.web.filters.HeaderFilter</filter-class>
     <init-param>
       <param-name>Cache-Control</param-name>
-	  <param-value>no-cache,no-store,max-age=0</param-value>
+    <param-value>no-cache,no-store,max-age=0</param-value>
     </init-param>
     <init-param>
       <param-name>Expires</param-name>
-	  <param-value>0</param-value>
+    <param-value>0</param-value>
     </init-param>
   </filter>
 

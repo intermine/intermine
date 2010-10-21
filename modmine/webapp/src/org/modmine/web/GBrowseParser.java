@@ -32,6 +32,7 @@ public class GBrowseParser
     private static final Logger LOG = Logger.getLogger(GBrowseParser.class);
 
     private static final String GBROWSE_BASE_URL = getGBrowsePrefix();
+    @SuppressWarnings("unused")
     private static final String GBROWSE_URL_END = "/?show_tracks=1";
     private static final String GBROWSE_ST_URL_END = "/?action=scan";
     private static final String GBROWSE_DEFAULT_URL =

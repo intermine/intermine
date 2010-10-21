@@ -23,31 +23,28 @@
 
 <!--  spanUploadOptions.jsp -->
 
-<link type="text/css" rel="stylesheet" href="model/jsTree/_docs/syntax/!style.css"/>
-<link type="text/css" rel="stylesheet" href="model/jsTree/_docs/!style.css"/>
 
-<%-- <script type="text/javascript" src="model/jsTree/_lib/jquery.js"></script> --%>
+<html:xhtml />
+
+<link type="text/css" rel="stylesheet" href="model/jsTree/_docs/syntax/!style.css"/>
+
+<%--
+<link type="text/css" rel="stylesheet" href="model/jsTree/_docs/!style.css"/>
+<script type="text/javascript" src="model/jsTree/_lib/jquery.js"></script>
+--%>
+
 <script type="text/javascript" src="model/jsTree/_lib/jquery.cookie.js"></script>
 <script type="text/javascript" src="model/jsTree/_lib/jquery.hotkeys.js"></script>
-
 <script type="text/javascript" src="model/jsTree/jquery.jstree.js"></script>
-
 <script type="text/javascript" src="model/jsTree/_docs/syntax/!script.js"></script>
-
+<script type="text/javascript" src="model/jquery_qtip/jquery.qtip-1.0.js"></script>
 <script type="text/javascript" class="source">
+
 <!--//<![CDATA[
    function switchInputs(open, close) {
       jQuery('#' + open + 'Input').attr("disabled","");
       jQuery('#' + close + 'Input').attr("disabled","disabled");
       jQuery('#whichInput').val(open);
-    }
-
-    function clearExample() {
-      if(jQuery('#pasteInput').val() == "e.g.: ${bagExampleIdentifiers}") {
-         jQuery('#pasteInput').val("");
-         jQuery('#pasteInput').css("color", "#000");
-         jQuery('#pasteInput').css("fontStyle", "normal");
-      }
     }
 
     function resetInputs() {
@@ -57,17 +54,25 @@
        jQuery('#pasteInput').val('');
     }
 
-    function loadExample(example) {
+    function openInputs() {
+       jQuery('#fileInput').attr("disabled","");
+       jQuery('#pasteInput').attr("disabled","");
+    }
+
+    function loadExample() {
       switchInputs('paste','file');
       jQuery('#pasteInput').focus();
       if (jQuery("#orgSelector").val() == "C. elegans") {
-        jQuery('#pasteInput').val("I:2145137..2146137\nII:3631105..3631106\nIII:8245810..8245811\nIV:2263659..2263660");}
+        jQuery('#pasteInput').val("I:2145137..2146137\nchrII:3631105-3631106\nIII\t8245810\t8245811\nchrIV\t2263659\t2263660");}
       else {
         jQuery('#pasteInput').val("2L:10345..12409");}
       return false;
     }
 
    function orgNameChanged(org) {
+
+     // Reset textarea and file input
+     resetInputs();
 
      // Show the tree of selected organism
      loadOrgTree(org);
@@ -103,7 +108,7 @@
          if(ftHTMLArray.join("") != "") {
              jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id)\"/>Select Feature Types:"); }
            else {
-             jQuery("#selectFeatureTypes").html("Select Feature Types:"); }
+             jQuery("#selectFeatureTypes").html("Select Feature Types:<br><i>Please select some experiments first</i>"); }
      })
      .jstree({
          "themes" : {
@@ -117,7 +122,6 @@
    }
 
    jQuery(document).ready(function(){
-
      // store expriments with feature types in an array
        expArray = [];
 
@@ -132,7 +136,7 @@
      // Build experiment tree and featureType checkbox
      <c:forEach var="orgName" items="${orgList}" varStatus="counter">
        var treeHTMLArray = [];
-       treeHTMLArray.push("<p id='selectExperiments'>Select Experiments:</p>");
+       treeHTMLArray.push("<p id='selectExperiments' style='padding-bottom: 5px;'>Select Experiments:</p>");
        treeHTMLArray.push("<div id='tree' style='width:780px;'>");
        treeHTMLArray.push("<ul id='${orgName}'>");
 
@@ -221,6 +225,43 @@
          "plugins" : [ "themes", "html_data", "checkbox" ]
      });
 
+     // qtip configuration
+     jQuery("#baseCorRadioSpan").qtip({
+       content: 'e.g. BLAST, GFF/GFF3',
+       style: {
+         border: {
+           width: 3,
+           radius: 8,
+           color: '#6699CC'
+         },
+         tip: 'bottomLeft',
+         name: 'cream'
+       },
+        position: {
+          corner: {
+             target: 'topMiddle',
+             tooltip: 'bottomLeft'
+          }
+        },
+       show: 'mouseover',
+       hide: 'mouseout'
+     });
+
+     jQuery("#interBaseCorRadioSpan").qtip({
+       content: 'e.g. UCSC BED, Chado',
+       style: {
+         border: {
+           width: 3,
+           radius: 8,
+           color: '#6699CC'
+         },
+         tip: 'topLeft',
+         name: 'cream'
+       },
+       show: 'mouseover',
+       hide: 'mouseout'
+     });
+
    });
 
    function loadOrgTree(org) {
@@ -233,7 +274,50 @@
 
    function beforeSubmit() {
      var checked_ids = getCheckedNodeIds();
-     jQuery("#hiddenExpFiled").val(checked_ids.join(","))
+     jQuery("#hiddenExpField").val(checked_ids.join(","))
+
+     var checkedFeatureTypes = [];
+     jQuery(".featureType").each(function() {
+         if (this.checked) { checkedFeatureTypes.push(this.value); }
+       });
+     var checkedFeatureTypesToString = checkedFeatureTypes.join(",");
+
+     // validation
+     if (jQuery("#hiddenExpField").val() == "") {
+       alert("Please select some experiments...");
+       return false;
+     }
+
+     if (jQuery(".featureType").val() == null || checkedFeatureTypesToString == "") {
+       alert("Please select some feature types...");
+       return false;
+     }
+
+     if (jQuery("#pasteInput").val() == "" && jQuery("#fileInput").val() == "") {
+       alert("Please type/paste/upload some genome regions...");
+       return false;
+     }
+
+     if (jQuery("#pasteInput").val() != "") {
+       // Regex validation
+       var ddotsRegex = /[^:]+:\d+\.\.\d+$/;
+       var tabRegex = /[^\t]+\t\d+\t\d+$/;
+       var dashRegex = /[^:]+:\d+\-\d+$/;
+
+       var spanArray = jQuery.trim(jQuery("#pasteInput").val()).split("\n");
+       var lineNum;
+       for (i=0;i<spanArray.length;i++) {
+         lineNum = i + 1;
+         if (spanArray[i] == "") {
+           alert("Line " + lineNum + " is empty...");
+           return false;
+         }
+         if (!spanArray[i].match(ddotsRegex) && !spanArray[i].match(tabRegex) && !spanArray[i].match(dashRegex)) {
+           alert(spanArray[i] + " doesn't match any supported format...");
+           return false;
+         }
+       }
+     }
    }
 
    function getCheckedNodeIds() {
@@ -305,32 +389,30 @@
  //]]>-->
 </script>
 
-<html:xhtml />
-<c:set var="exampleSpans" value="${exampleSpans}"/>
-
-<div align="center">
-<im:boxarea titleKey="spanUpload.makeNewSpan" stylename="plainbox" fixedWidth="85%" htmlId="spanUploadOptions">
+<div align="center" style="padding-top: 20px;">
+<im:boxarea titleKey="spanUpload.makeNewSpan" stylename="plainbox" fixedWidth="85%" titleStyle="font-size: 1.2em; text-align: center;">
   <div class="body">
-    <html:form action="/spanUploadAction" method="POST" enctype="multipart/form-data">
+    <html:form styleId="spanForm" action="/spanUploadAction" method="POST" enctype="multipart/form-data">
 
       <p><fmt:message key="spanUpload.spanUploadFormCaption"/></p>
       <br/>
       <ul>
-         <li>Spans in the following formats are accepted:
-          <ul>
-            <li><strong>chr:start..end</strong></li>
-            <li><strong>chr:start-end</strong></li>
-            <li>Simple <strong>tab delimited</strong> BED format as <strong>chr   start   end</strong></li>
-          </ul>
-        </li>
-        <li>Each span needs to take a <strong>new line</strong>.</li>
-        <li>Only experiments with features are displayed.</li>
-        <li>Right click <strong>a experiment</strong> in the tree to go to experiment report page.</li>
+         <li>Genome regions in the following formats are accepted:
+           <ul>
+            <li><b>chromosome:start..end</b>, e.g. <i>2L:11334..12296</i></li>
+            <li><b>chromosome:start-end</b>, e.g. <i>2R:5866746-5868284</i> or <i>chrII:14646344-14667746</i></li>
+            <li><b>tab delimited</b></li>
+           </ul>
+        <li>Both <b>base coordinate</b> (e.g. BLAST, GFF/GFF3) and <b>interbase coordinate</b> (e.g. UCSC BED, Chado) systems are supported, users need to explicitely select one. By default, the base coordinate is selected.</li>
+        <li>Each genome region needs to take a <b>new line</b>.</li>
+        <li>Only experiments with features are listed below.</li>
+        <li>Right click <ba experiment</b> in the tree to go to experiment report page.</li>
       </ul>
       <br/>
 
     <ol id="spanUploadlist">
 
+   <%-- organism --%>
    <li>
       <label>
         <fmt:message key="spanUpload.spanConstraint">
@@ -343,11 +425,13 @@
       </c:forEach>
       </html:select>
    </li>
+   <%-- organism --%>
+   <br/>
 
    <%-- experiments tree and feature types --%>
     <li>
       <div id='exp'></div>
-      <input type="hidden" id="hiddenExpFiled" name='experiments' value="">
+      <input type="hidden" id="hiddenExpField" name='experiments' value="">
     </li>
     <br/>
 
@@ -357,27 +441,28 @@
         <div id='featureType'></div>
       </table>
     </li>
+   <%-- experiments tree and feature types --%>
     <br/>
 
    <li>
    <%-- textarea --%>
-   <label><fmt:message key="spanUpload.spanPaste"/></label>
+   <label><fmt:message key="spanUpload.spanPaste"/></label> in
+   <span id="baseCorRadioSpan"><html:radio property="isInterBaseCoordinate" value="isNotInterBaseCoordinate"> base coordinate</html:radio></span>
+   <span id="interBaseCorRadioSpan"><html:radio property="isInterBaseCoordinate" value="isInterBaseCoordinate"> interbase coordinate</html:radio></span>
 
    <%-- example span --%>
-     <c:if test="${!empty exampleSpans}">
-         <div style="text-align:left;">
-           <html:link href=""
-                      onclick="javascript:loadExample('${exampleSpans}');return false;">
-             (click to see an example)<img src="images/disclosed.gif" title="Click to Show example"/>
-           </html:link>
-         </div>
-     </c:if>
-     <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="if (this.value != '') switchInputs('paste','file');" onkeypress="switchInputs('paste','file');" />
-   </li>
+     <div style="text-align:left;">
+       <html:link href=""
+                  onclick="javascript:loadExample();return false;">
+         (click to see an example)<img src="images/disclosed.gif" title="Click to Show example"/>
+       </html:link>
+     </div>
+     <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onclick="if(this.value != ''){switchInputs('paste','file');}else{openInputs();}" onkeyup="if(this.value != ''){switchInputs('paste','file');}else{openInputs();}" />
 
+   <br>
    <%-- file input --%>
-   <li>
-     <label><fmt:message key="spanUpload.spanFromFile"/></label>
+
+     <label><fmt:message key="spanUpload.spanFromFile"/></label><br>
      <html:file styleId="fileInput" property="formFile" onchange="switchInputs('file','paste');" onkeydown="switchInputs('file','paste');" size="28" />
      <html:hidden styleId="whichInput" property="whichInput" />
    </li>
@@ -387,7 +472,7 @@
     <div align="right">
        <%-- reset button --%>
        <input type="button" onClick="resetInputs()" value="Reset" />
-       <html:submit styleId="submitSpan" onclick="beforeSubmit();"><fmt:message key="spanBuild.search"/></html:submit>
+       <html:submit styleId="submitSpan" onclick="javascript: return beforeSubmit();"><fmt:message key="spanBuild.search"/></html:submit>
     </div>
 
     </html:form>
