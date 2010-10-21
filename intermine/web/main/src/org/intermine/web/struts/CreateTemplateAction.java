@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.TagManager;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
@@ -160,12 +162,23 @@ public class CreateTemplateAction extends InterMineAction
 
         // Replace template if needed
         if (!isNewTemplate) {
-            String templateName = (prevTemplateName != null)
+            String oldTemplateName = (prevTemplateName != null)
                 ? prevTemplateName : template.getName();
-            profile.deleteTemplate(templateName);
+            profile.deleteTemplate(oldTemplateName);
             session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
+            //upload tags
+            TagManager tagManager = im.getTagManager();
+            String userName = profile.getUsername();
+            Set<String> tagNames =
+                tagManager.getObjectTagNames(oldTemplateName, "template", userName);
+            for (String tagName : tagNames) {
+                tagManager.deleteTag(tagName, oldTemplateName, "template", userName);
+                tagManager.addTag(tagName, template.getName(), "template", userName);
+            }
         }
+
         profile.saveTemplate(template.getName(), template);
+
         // If superuser then rebuild shared templates
         if (SessionMethods.isSuperUser(session)) {
             ServletContext servletContext = session.getServletContext();
