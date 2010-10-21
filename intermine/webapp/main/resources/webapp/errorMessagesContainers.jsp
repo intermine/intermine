@@ -19,7 +19,7 @@
 
     <noscript>
       <div class="topBar errors">
-        <fmt:message key="errors.noscript"/>
+        <p></p><fmt:message key="errors.noscript"/></p>
       </div>
       <br/>
     </noscript>

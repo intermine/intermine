@@ -14,6 +14,16 @@
 <div id="corner">&nbsp;</div>
 <div id="help"><a href="#" onclick="showContactForm();return false;" title="Need help?">&nbsp;</a></div>
 
+<script type="text/javascript">
+	// specify what happens to element in a small browser window (better add class than modify from here)
+	if ($(window).width() < '1205') {
+		$('#corner').addClass('smallScreen');
+		if ($(window).width() < '1125') {
+			$('#help').addClass('smallScreen');
+		}
+	}
+</script>
+
 <!-- BluePrint CSS container -->
 <div class="container">
 
@@ -369,7 +379,6 @@
 			            var feed = new DOMParser().parseFromString(data, "text/xml");
 			            var items = feed.getElementsByTagName("item"); // ATOM!!!
 			            for (var i = 0; i < items.length; ++i) {
-						//$(data).find('item').each(function() {
 							// early bath
 							if (i > maxEntries) return;
 	
