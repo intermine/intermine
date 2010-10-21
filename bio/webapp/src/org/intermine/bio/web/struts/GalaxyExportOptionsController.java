@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -36,6 +37,7 @@ import org.intermine.model.FastPathObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintBag;
@@ -55,6 +57,9 @@ import org.intermine.web.util.URLGenerator;
 
 public class GalaxyExportOptionsController extends TilesAction
 {
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(GalaxyExportOptionsController.class);
+
     /**
      * {@inheritDoc}
      */
@@ -65,69 +70,87 @@ public class GalaxyExportOptionsController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        String tableName = request.getParameter("table");
+
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        PagedTable pt = SessionMethods.getResultsTable(session, tableName);
+        Model model = im.getModel();
+        PathQuery query = new PathQuery(model);
 
-        LinkedHashMap<Path, Integer> exportClassPathsMap = getExportClassPaths(pt);
-        List<Path> exportClassPaths = new ArrayList<Path>(exportClassPathsMap.keySet());
+        // Build Span pathquery
+        if (request.getParameter("value") != null) {
+            String value = request.getParameter("value");
 
-        Map<String, String> pathMap = new LinkedHashMap<String, String>();
-        for (Path path: exportClassPaths) {
-            String pathString = path.toStringNoConstraints();
-            String displayPath = pathString.replace(".", " &gt; ");
-            pathMap.put(pathString, displayPath);
-        }
+            String path = "SequenceFeature";
+            query.addView(path + ".primaryIdentifier");
+            query.addView(path + ".chromosomeLocation.locatedOn.primaryIdentifier");
+            query.addView(path + ".chromosomeLocation.start");
+            query.addView(path + ".chromosomeLocation.end");
+            query.addView(path + ".organism.name");
 
-        Map<String, Integer> pathIndexMap = new LinkedHashMap<String, Integer>();
-        for (int index = 0; index < exportClassPaths.size(); index++) {
-            String pathString = exportClassPaths.get(index).toStringNoConstraints();
-            Integer idx = exportClassPathsMap.get(exportClassPaths.get(index));
-            pathIndexMap.put(pathString, idx);
-        }
 
-        request.setAttribute("exportClassPaths", pathMap);
-        request.setAttribute("pathIndexMap", pathIndexMap);
-
-        // If can export feature
-        if (request.getParameter("exportAsBED") != null) {
-            request.setAttribute("exportAsBED", request.getParameter("exportAsBED"));
+            query.addConstraint(Constraints.lookup(path, value, null));
         } else {
-            request.setAttribute("exportAsBED", false);
-        }
+            String tableName = request.getParameter("table");
+            PagedTable pt = SessionMethods.getResultsTable(session, tableName);
 
-        // Build webservice URL
+            LinkedHashMap<Path, Integer> exportClassPathsMap = getExportClassPaths(pt);
+            List<Path> exportClassPaths = new ArrayList<Path>(exportClassPathsMap.keySet());
 
-        // Support export public and private lists to Galaxy
-        PathQuery query = pt.getWebTable().getPathQuery();
-        ObjectStore os = im.getObjectStore();
+            Map<String, String> pathMap = new LinkedHashMap<String, String>();
+            for (Path path: exportClassPaths) {
+                String pathString = path.toStringNoConstraints();
+                String displayPath = pathString.replace(".", " &gt; ");
+                pathMap.put(pathString, displayPath);
+            }
 
-        Map<PathConstraint, String> constrains = query.getConstraints();
-        for (PathConstraint constraint : constrains.keySet()) {
-            if (constraint instanceof PathConstraintBag) {
-                String bagName = ((PathConstraintBag) constraint).getBag();
-                InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(
-                        SessionMethods.getProfile(session), bagName);
+            Map<String, Integer> pathIndexMap = new LinkedHashMap<String, Integer>();
+            for (int index = 0; index < exportClassPaths.size(); index++) {
+                String pathString = exportClassPaths.get(index).toStringNoConstraints();
+                Integer idx = exportClassPathsMap.get(exportClassPaths.get(index));
+                pathIndexMap.put(pathString, idx);
+            }
 
-                // find the classKeys
-                Set<String> classKeySet = new LinkedHashSet<String>();
-                for (Integer id : imBag.getContentsAsIds()) {
-                    String classKey =
-                        pt.findClassKeyValue(im.getClassKeys(), os.getObjectById(id));
-                    classKeySet.add(classKey);
+            request.setAttribute("exportClassPaths", pathMap);
+            request.setAttribute("pathIndexMap", pathIndexMap);
+
+            // If can export feature
+            if (request.getParameter("exportAsBED") != null) {
+                request.setAttribute("exportAsBED", request.getParameter("exportAsBED"));
+            } else {
+                request.setAttribute("exportAsBED", false);
+            }
+
+            // Build webservice URL
+
+            // Support export public and private lists to Galaxy
+            query = pt.getWebTable().getPathQuery();
+            ObjectStore os = im.getObjectStore();
+
+            Map<PathConstraint, String> constrains = query.getConstraints();
+            for (PathConstraint constraint : constrains.keySet()) {
+                if (constraint instanceof PathConstraintBag) {
+                    String bagName = ((PathConstraintBag) constraint).getBag();
+                    InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(
+                            SessionMethods.getProfile(session), bagName);
+
+                    // find the classKeys
+                    Set<String> classKeySet = new LinkedHashSet<String>();
+                    for (Integer id : imBag.getContentsAsIds()) {
+                        String classKey =
+                            pt.findClassKeyValue(im.getClassKeys(), os.getObjectById(id));
+                        classKeySet.add(classKey);
+                    }
+
+                    String path = ((PathConstraintBag) constraint).getPath();
+                    // replace constraint in the pathquery
+                    PathConstraintLookup newConstraint = new PathConstraintLookup(
+                            path, classKeySet.toString().substring(1,
+                                    classKeySet.toString().length() - 1), null);
+                    query.replaceConstraint(constraint, newConstraint);
                 }
-
-                String path = ((PathConstraintBag) constraint).getPath();
-                // replace constraint in the pathquery
-                PathConstraintLookup newConstraint = new PathConstraintLookup(
-                        path, classKeySet.toString().substring(1,
-                                classKeySet.toString().length() - 1), null);
-                query.replaceConstraint(constraint, newConstraint);
             }
         }
 
-        Model model = im.getModel();
         String queryXML = PathQueryBinding.marshal(query, "tmpName", model.getName(),
                                                    PathQuery.USERPROFILE_VERSION);
         String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");

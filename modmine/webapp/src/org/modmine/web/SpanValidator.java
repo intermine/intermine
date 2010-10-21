@@ -23,9 +23,6 @@ import java.util.Map;
  */
 public class SpanValidator
 {
-    private static String PASS = "pass";
-    private static String  ERROR = "error";
-
     /**
      *
      * @param orgName organism name
@@ -48,7 +45,6 @@ public class SpanValidator
         // make passedSpanList
         for (Span aSpan : spanList) {
             for (ChromosomeInfo chrInfo : chrInfoList) {
-
                 if (aSpan.getChr().equals(chrInfo.getChrPID())) {
                     if ((aSpan.getStart() >= 0 && aSpan.getStart() <= chrInfo
                             .getChrLength())
@@ -76,8 +72,8 @@ public class SpanValidator
             }
         }
 
-        resultMap.put(SpanValidator.PASS, passedSpanList);
-        resultMap.put(SpanValidator.ERROR, errorSpanList);
+        resultMap.put("pass", passedSpanList);
+        resultMap.put("error", errorSpanList);
 
         return resultMap;
     }

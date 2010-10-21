@@ -40,7 +40,7 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class ExportOptionsController extends TilesAction
 {
-    private static final Logger LOG = Logger.getLogger(TableController.class);
+    private static final Logger LOG = Logger.getLogger(ExportOptionsController.class);
 
     /**
      * Set up the exportOptions tile.
@@ -62,7 +62,7 @@ public class ExportOptionsController extends TilesAction
         String type = request.getParameter("type");
         String table = request.getParameter("table");
         PagedTable pt = SessionMethods.getResultsTable(session, table);
-        if (pt == null) {
+        if (pt == null  && !"galaxy".equals(type)) {
             LOG.error("PagedTable for " + table + " is null");
             return null;
         }

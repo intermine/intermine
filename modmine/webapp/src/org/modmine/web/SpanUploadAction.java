@@ -14,7 +14,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -33,9 +32,9 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
-import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
+import org.modmine.web.GBrowseParser.GBrowseTrack;
 
 /**
  * @author Fengyuan Hu
@@ -45,13 +44,14 @@ public class SpanUploadAction extends InterMineAction
 {
     private static final int READ_AHEAD_CHARS = 10000;
 
-    private static String PASS = "pass";
-    private static String ERROR = "error";
+    private static final String PASS = "pass";
+    private static final String ERROR = "error";
 
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(SpanUploadAction.class);
 
     /**
-     * Action for querying overlap experimental features against uploaded spans
+     * Action for querying overlap experimental features against uploaded spans (genome regions)
      * from either a text area or a file in certain formats.
      *
      * @param mapping
@@ -71,25 +71,23 @@ public class SpanUploadAction extends InterMineAction
             HttpServletRequest request, HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
-        // > Step 1 - Data preparation >>>>>
-        // >> 1.1 Parse all the fields of SpanUploadForm
         SpanUploadForm spanUploadForm = (SpanUploadForm) form;
         String orgName = spanUploadForm.getOrgName();
+        String isInterBaseCoordinate = spanUploadForm.getIsInterBaseCoordinate();
         String whichInput = spanUploadForm.getWhichInput();
         FormFile formFile = spanUploadForm.getFormFile();
 
-        // >>> Parse experiments strings
-        // Due to jsTree, the checkbox values regarding to experiments is in one
-        // string
+        // Parse experiments strings
+        // Due to jsTree, the checkbox values regarding to experiments is in one string
         spanUploadForm.setExperiments(spanUploadForm.getExperiments()[0]
                 .split(","));
 
-        // >>> Check if experiment or feature type is empty
-        if (spanUploadForm.getExperiments()[0].equals("")
-                || spanUploadForm.getExperiments()[0] == null) {
+        // Check if experiment or feature type is empty
+        if (spanUploadForm.getExperiments()[0] == null
+                || "".equals(spanUploadForm.getExperiments()[0])) {
 
-            // TODO message is not shown in the spanUploadOptions page?
             recordError(new ActionMessage("spanBuild.spanFieldSelection",
                     "experiments"), request);
             return mapping.findForward("spanUploadOptions");
@@ -101,7 +99,7 @@ public class SpanUploadAction extends InterMineAction
             return mapping.findForward("spanUploadOptions");
         }
 
-        // >> 1.2 Get pasted text or uploaded file
+        // Get pasted text or uploaded file
         BufferedReader reader = null;
 
         /*
@@ -111,7 +109,7 @@ public class SpanUploadAction extends InterMineAction
          * invalid file path, like file path not starting at '/' then
          * formFile.getFileName() returns empty string.
          */
-        if (whichInput.equals("paste")) {
+        if ("paste".equals(whichInput)) {
             if (spanUploadForm.getText() != null
                     && spanUploadForm.getText().length() != 0) {
                 String trimmedText = spanUploadForm.getText().trim();
@@ -127,12 +125,12 @@ public class SpanUploadAction extends InterMineAction
                 return mapping.findForward("spanUploadOptions");
             }
 
-        } else if (whichInput.equals("file")) {
+        } else if ("file".equals(whichInput)) {
             if (formFile != null && formFile.getFileName() != null
                     && formFile.getFileName().length() > 0) {
 
                 String mimetype = formFile.getContentType();
-                if (!mimetype.equals("application/octet-stream")
+                if (!"application/octet-stream".equals(mimetype)
                         && !mimetype.startsWith("text")) {
                     recordError(new ActionMessage("spanBuild.notText",
                         mimetype), request);
@@ -151,7 +149,7 @@ public class SpanUploadAction extends InterMineAction
             return mapping.findForward("spanUploadOptions");
         }
 
-        // >>> Validate text format
+        // Validate text format
         reader.mark(READ_AHEAD_CHARS);
 
         char buf[] = new char[READ_AHEAD_CHARS];
@@ -167,12 +165,9 @@ public class SpanUploadAction extends InterMineAction
         }
 
         reader.reset();
-        // <<<
 
-        // >>> Parse uploaded spans to an arraylist; handle empty content and
-        // non-integer spans
-        // BED format: "chr(tab)start(tab)end" or "chr:start..end"
-        // TODO is there a maxSize for spans?
+        // Parse uploaded spans to an arraylist; handle empty content and non-integer spans
+        // Tab delimited format: "chr(tab)start(tab)end" or "chr:start..end"
         Set<Span> spanSet = new LinkedHashSet<Span>();
         String thisLine;
         while ((thisLine = reader.readLine()) != null) {
@@ -184,27 +179,38 @@ public class SpanUploadAction extends InterMineAction
             // [^:]+:\d+\-\d+
             // span in the form of "chr(tab)start(tab)end" as in a pattern
             // [^\t]+\t\d+\t\d+
-            String tabRegex = "[^:]+:\\d+\\.\\.\\d+";
-            String bedRegex = "[^\\t]+\\t\\d+\\t\\d+";
+            String ddotsRegex = "[^:]+:\\d+\\.\\.\\d+";
+            String tabRegex = "[^\\t]+\\t\\d+\\t\\d+";
             String dashRegex = "[^:]+:\\d+\\-\\d+";
 
-            if (Pattern.matches(tabRegex, thisLine)) {
+            if (Pattern.matches(ddotsRegex, thisLine)) {
                 aSpan.setChr((thisLine.split(":"))[0]);
                 String[] spanItems = (thisLine.split(":"))[1].split("\\..");
-                aSpan.setStart(Integer.valueOf(spanItems[0]));
+                if ("isInterBaseCoordinate".equals(isInterBaseCoordinate)) {
+                    aSpan.setStart(Integer.valueOf(spanItems[0]) + 1);
+                } else {
+                    aSpan.setStart(Integer.valueOf(spanItems[0]));
+                }
                 aSpan.setEnd(Integer.valueOf(spanItems[1]));
-            } else if (Pattern.matches(bedRegex, thisLine)) {
+            } else if (Pattern.matches(tabRegex, thisLine)) {
                 String[] spanItems = thisLine.split("\t");
                 aSpan.setChr(spanItems[0]);
-                aSpan.setStart(Integer.valueOf(spanItems[1]));
+                if ("isInterBaseCoordinate".equals(isInterBaseCoordinate)) {
+                    aSpan.setStart(Integer.valueOf(spanItems[1]) + 1);
+                } else {
+                    aSpan.setStart(Integer.valueOf(spanItems[1]));
+                }
                 aSpan.setEnd(Integer.valueOf(spanItems[2]));
             } else if (Pattern.matches(dashRegex, thisLine)) {
                 aSpan.setChr((thisLine.split(":"))[0]);
                 String[] spanItems = (thisLine.split(":"))[1].split("-");
-                aSpan.setStart(Integer.valueOf(spanItems[0]));
+                if ("isInterBaseCoordinate".equals(isInterBaseCoordinate)) {
+                    aSpan.setStart(Integer.valueOf(spanItems[0]) + 1);
+                } else {
+                    aSpan.setStart(Integer.valueOf(spanItems[0]));
+                }
                 aSpan.setEnd(Integer.valueOf(spanItems[1]));
             } else {
-                // redirect to the option page with error msg
                 recordError(new ActionMessage("spanBuild.spanInWrongformat",
                         thisLine), request);
                 return mapping.findForward("spanUploadOptions");
@@ -213,28 +219,26 @@ public class SpanUploadAction extends InterMineAction
         }
         List<Span> spanList = new ArrayList<Span>(spanSet);
 
-        // ******
-        // Refer to code from BuildBagAction.java
-        // ******
-
-        // > Step 2 - Logic >>>>>
-        // >> 2.1 Query chromosome info for span validation purpose
-
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-
-
+        // Query chromosome info to validate span
         Map<String, List<ChromosomeInfo>> chrInfoMap = SpanOverlapQueryRunner
                 .runSpanValidationQuery(im);
 
-        Map<Span, Results> spanOverlapResultDisplayMap = new LinkedHashMap<Span, Results>();
-        if (chrInfoMap.isEmpty()) {
-            // >> 2.3 Query the overlapped features
-            spanOverlapResultDisplayMap = SpanOverlapQueryRunner
+        // Chromesome starts with "chr" - UCSC formats
+        for (Span aSpan : spanList) {
+            if (aSpan.getChr().startsWith("chr")) {
+                aSpan.setChr(aSpan.getChr().substring(3));
+            }
+        }
+
+        Map<Span, List<SpanQueryResultRow>> spanOverlapResultMap =
+            new LinkedHashMap<Span, List<SpanQueryResultRow>>();
+        if (chrInfoMap == null || chrInfoMap.size() < 1) {
+            // Query the overlapped features
+            spanOverlapResultMap = SpanOverlapQueryRunner
              .runSpanOverlapQuery(spanUploadForm, spanList, im);
 
         } else {
-
-            // >> 2.2 Validate the spans (parse and validate by AJAX???)
+            // Validate spans
             Map<String, List<Span>> resultMap = SpanValidator.runSpanValidation(
                     orgName, spanList, chrInfoMap);
 
@@ -252,31 +256,102 @@ public class SpanUploadAction extends InterMineAction
                 errorMsg = "Invalid spans: " + spanString.substring(0, spanString.lastIndexOf(","));
             }
 
-            // >> 2.3 Query the overlapped features
-            spanOverlapResultDisplayMap = SpanOverlapQueryRunner
+            // Query the overlapped features
+            spanOverlapResultMap = SpanOverlapQueryRunner
                     .runSpanOverlapQuery(spanUploadForm, resultMap
                             .get(SpanUploadAction.PASS), im);
 
-            session.setAttribute("errorMsg", errorMsg);
+            request.setAttribute("errorMsg", errorMsg);
         }
 
+        // ------------ GBrowse tracks ------------ //
+        // first key - Span; second key - DCCid
+        LinkedHashMap<Span, LinkedHashMap<Integer, LinkedHashSet<GBrowseTrackInfo>>> track =
+            new LinkedHashMap<Span, LinkedHashMap<Integer, LinkedHashSet<GBrowseTrackInfo>>>();
+        for (Map.Entry<Span, List<SpanQueryResultRow>> entry : spanOverlapResultMap
+                .entrySet()) {
+            LinkedHashMap<Integer, LinkedHashSet<GBrowseTrackInfo>> subGTrack =
+                new LinkedHashMap<Integer, LinkedHashSet<GBrowseTrackInfo>>();
+            if (entry.getValue() != null) {
+                for (SpanQueryResultRow aRow : entry.getValue()) {
+                    if (MetadataCache.getTracksByDccId(aRow.getSubDCCid()).size() > 0) {
+                        List<GBrowseTrack> trackList =
+                            MetadataCache.getTracksByDccId(aRow.getSubDCCid());
+                        LinkedHashSet<GBrowseTrackInfo> trackInfoList =
+                            new LinkedHashSet<GBrowseTrackInfo>();
+                        for (GBrowseTrack aTrack : trackList) {
+                            GBrowseTrackInfo aTrackInfo = new GBrowseTrackInfo(
+                                    aTrack.getOrganism(), aTrack.getTrack(),
+                                    aTrack.getSubTrack(), aTrack.getDCCid());
+                            trackInfoList.add(aTrackInfo);
+                        }
+                        subGTrack.put(aRow.getSubDCCid(), trackInfoList);
+                    }
+                }
+                track.put(entry.getKey(), subGTrack);
+            }
+        }
+        request.setAttribute("spanTrackMap", track);
 
-        // > Step3 - Session data preparation >>>>>
+        String gbrowseDefaultUrl = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
+        String gbrowseBaseUrl = GBrowseParser.getGBrowsePrefix();
+
+        if (gbrowseBaseUrl == null || gbrowseBaseUrl.isEmpty()) {
+            request.setAttribute("GBROWSE_BASE_URL", gbrowseDefaultUrl);
+        } else {
+            request.setAttribute("GBROWSE_BASE_URL", gbrowseBaseUrl);
+        }
+        // ------------ GBrowse tracks ------------ //
+
         String expString = "";
         for (String aExperiment : spanUploadForm.getExperiments()) {
             expString = expString + aExperiment + ",";
         }
-        session.setAttribute("selectedExp", "Selected experiments: "
+        request.setAttribute("selectedExp", "Selected experiments: "
                 + expString.substring(0, expString.lastIndexOf(",")));
         String ftString = "";
         for (String aFeaturetype : spanUploadForm.getFeatureTypes()) {
             ftString = ftString + aFeaturetype + ",";
         }
-        session.setAttribute("selectedFt", "Selected feature types: "
+        request.setAttribute("selectedFt", "Selected feature types: "
                 + ftString.substring(0, ftString.lastIndexOf(",")));
 
-        session.setAttribute("results", spanOverlapResultDisplayMap);
+//        request.setAttribute("spanOverlapResultMap", spanOverlapResultMap);
 
+        //----- Extra information about spans without overlap features -----//
+        StringBuffer strBuf = new StringBuffer();
+        // Save entries with value in a new map called spanOverlapResultDisplayMap
+        Map<Span, List<SpanQueryResultRow>> spanOverlapResultDisplayMap =
+            new LinkedHashMap<Span, List<SpanQueryResultRow>>();
+        for (Map.Entry<Span, List<SpanQueryResultRow>> entry : spanOverlapResultMap
+                .entrySet()) {
+            if (entry.getValue() == null || entry.getValue().isEmpty()) {
+                strBuf.append(entry.getKey().toString());
+                strBuf.append(", ");
+            } else {
+                spanOverlapResultDisplayMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        if (strBuf.length() > 1) {
+            String spanWithNoFtStr = "No overlap features found for "
+                    + strBuf.delete(strBuf.lastIndexOf(","),
+                            strBuf.length() - 1).toString();
+            request.setAttribute("spanWithNoFt", spanWithNoFtStr);
+        }
+        else {
+            request.setAttribute("spanWithNoFt", null);
+        }
+
+        request.setAttribute("spanOverlapResultDisplayMap", spanOverlapResultDisplayMap);
+       //----- Extra information about spans without overlap features -----//
+
+        request.setAttribute("spanOrg", orgName);
+
+        // Set <forward name="spanUploadResults" path="/spanUploadResults.do" redirect="false"/>
+        // instead of redirect="true"; here it is doing a forward, not redirecting. Redirecting
+        // causes the browser to make a new request, and that's why the things I put in the
+        // request aren't there anymore.
         return mapping.findForward("spanUploadResults");
     }
 }

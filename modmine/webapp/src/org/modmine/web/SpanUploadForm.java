@@ -24,7 +24,6 @@ import org.apache.struts.upload.FormFile;
  */
 public class SpanUploadForm extends ActionForm
 {
-
     private static final long serialVersionUID = 1L;
 
     private String orgName;
@@ -34,6 +33,8 @@ public class SpanUploadForm extends ActionForm
     private FormFile formFile;
     private String whichInput;
     private Integer[] submissions; // DCCid
+    // by default, intermine use base coordinate
+    private String isInterBaseCoordinate;
 
     /**
      *
@@ -148,6 +149,20 @@ public class SpanUploadForm extends ActionForm
     }
 
     /**
+     * @return the isInterBaseCoordinate
+     */
+    public String getIsInterBaseCoordinate() {
+        return isInterBaseCoordinate;
+    }
+
+    /**
+     * @param isInterBaseCoordinate the isInterBaseCoordinate to set
+     */
+    public void setIsInterBaseCoordinate(String isInterBaseCoordinate) {
+        this.isInterBaseCoordinate = isInterBaseCoordinate;
+    }
+
+    /**
      *
      */
     public SpanUploadForm() {
@@ -178,8 +193,6 @@ public class SpanUploadForm extends ActionForm
         formFile = null;
         whichInput = "";
         submissions = null;
-
+        isInterBaseCoordinate = "isNotInterBaseCoordinate";
     }
-
 }
-
