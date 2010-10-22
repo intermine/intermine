@@ -324,8 +324,7 @@ public class UniprotConverter extends BioDirectoryConverter
             } else if (qName.equals("comment") && getAttrValue(attrs, "type") != null
                     && !getAttrValue(attrs, "type").equals("")) {
                 entry.setCommentType(getAttrValue(attrs, "type"));
-            } else if (qName.equals("text") && stack.peek().equals("comment")
-                    && entry.processing()) {
+            } else if (qName.equals("text") && stack.peek().equals("comment")) {
                 attName = "text";
             } else if (qName.equals("keyword")) {
                 attName = "keyword";
@@ -363,18 +362,18 @@ public class UniprotConverter extends BioDirectoryConverter
             throws SAXException {
             super.endElement(uri, localName, qName);
             stack.pop();
-            if (attName == null || attValue.toString() == null) {
+            if (attName == null && attValue.toString() == null) {
                 return;
             }
             if (qName.equals("sequence")) {
                 entry.setSequence(attValue.toString().replaceAll("\n", ""));
-            } else if (attName.equals("proteinName")) {
+            } else if (StringUtils.isNotEmpty(attName) && attName.equals("proteinName")) {
                 entry.setName(attValue.toString());
-            } else if (attName.equals("synonym")) {
+            } else if (StringUtils.isNotEmpty(attName) && attName.equals("synonym")) {
                 entry.addProteinName(attValue.toString());
-            } else if (qName.equals("text") && stack.peek().equals("comment")) {
+            } else if ("text".equals(qName) && "comment".equals(stack.peek())) {
                 String commentText = attValue.toString();
-                if (commentText != null  & !commentText.equals("")) {
+                if (StringUtils.isNotEmpty(commentText)) {
                     entry.addCommentRefId(getComment(entry.getCommentType(), commentText));
                     entry.setCommentType(null);
                 }
@@ -386,13 +385,15 @@ public class UniprotConverter extends BioDirectoryConverter
                 entry.addGene(type, name);
             } else if (qName.equals("keyword")) {
                 entry.addKeyword(getKeyword(attValue.toString()));
-            } else if (attName.equals("primaryIdentifier")) {
+            } else if (StringUtils.isNotEmpty(attName)
+                    && attName.equals("primaryIdentifier")) {
                 entry.setPrimaryIdentifier(attValue.toString());
             } else if (qName.equals("accession")) {
                 entry.addAccession(attValue.toString());
-            } else if (attName.equals("component") && qName.equals("fullName")
-                            && stack.peek().equals("recommendedName")
-                            && stack.search("component") == 2) {
+            } else if (StringUtils.isNotEmpty(attName) && attName.equals("component")
+                    && qName.equals("fullName")
+                    && stack.peek().equals("recommendedName")
+                    && stack.search("component") == 2) {
                 entry.addComponent(attValue.toString());
             } else if (qName.equals("id") && stack.peek().equals("isoform")) {
                 String accession = attValue.toString();
