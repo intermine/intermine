@@ -18,7 +18,7 @@
 <tiles:importAttribute name="showSearchBox" ignore="true"/>
 
 <html:xhtml/>
-<im:boxarea titleImage="templates.png" titleKey="menu.templates" stylename="gradientbox" minWidth="800px" htmlId="templatetop">
+<im:boxarea titleImage="templates-64.png" titleKey="menu.templates" stylename="gradientbox" minWidth="800px" htmlId="templatetop">
 <div style=""><fmt:message key="templates.intro"/></div>
 <div class="" id="ws_${wsListId}_template">
 <tiles:insert name="wsFilterList.tile">
