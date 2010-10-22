@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -81,6 +82,10 @@ public class MgiIdentifiersConverter extends BioFileConverter
             String name = line[3];
             String entrez = line[10];
             String ensembl = line[15];
+
+            if (StringUtils.isEmpty(identifier)) {
+                throw new RuntimeException("null MGI identifier: " + symbol);
+            }
 
             if (!identifier.equals(NULL_STRING) && identifiers.contains(identifier)) {
                 throw new RuntimeException("duplicate MGI identifier");
