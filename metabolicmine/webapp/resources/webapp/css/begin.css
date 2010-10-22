@@ -23,7 +23,7 @@ div.container input[type=text],input[type=password],input.text,input.title,texta
 form#contactForm input, form#contactForm textarea { border:1px solid #DFDFDF; padding:4px 6px; font-family:"Sans"; font-size:12px; }
 form#contactForm input[type="submit"] { font-family:"Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif;
 	font-size:13px; text-transform:uppercase; background:url("../themes/metabolic/buttons/gray-button.png") no-repeat center;
-	text-decoration:none; font-weight:bold; color:#505050; padding:8px 38px; float:left; border:none; cursor:pointer; }
+	text-decoration:none; font-weight:bold; color:#505050; padding:2px 40px; float:left; border:none; cursor:pointer; height:30px; }
 form#contactForm table td { font-size:13px; }
 /*#pagecontent #navtrail p a { text-decoration:underline; color:#656565; font-size:10px; }
 div#navtrail a:link, div#navtrail a:visited { border-bottom:none; }
@@ -95,7 +95,7 @@ div.container input.button { font-family:"Myriad Pro", Arial, Garuda, Helvetica,
 
 #corner { position:absolute; top:0px; left:0; z-index:2000; background:url("../themes/metabolic/img/preview-corner.gif") no-repeat top; font-size:0;
 	height:100px; line-height:0; overflow:hidden; width:100px; padding:0; }
-#help a { position:absolute; top:180px; left:0; z-index:2000; background:url("../themes/metabolic/icons/small/help-float.png") no-repeat top;
+#help a { position:absolute; top:180px; left:0; z-index:2000; background:url("../themes/metabolic/icons/help-float.png") no-repeat top;
 	font-size:0; height:46px; line-height:0; overflow:hidden; width:47px; padding:0; cursor:pointer; }
 #corner.smallScreen { left:auto; right:0; background:url("../themes/metabolic/img/preview-corner-right-small.gif") no-repeat top; height:56px;
 	width:56px; }
@@ -196,7 +196,7 @@ div.wide-blue div.bottom { background:url("../themes/metabolic/img/box-wide-blue
 
 #welcome #thumb { margin:0; background:url("../themes/metabolic/thumbs/welcome-thumb.png") no-repeat top; height:205px; }
     #welcome #thumb img { margin:2px 36px; }
-#welcome a.close { background:url("../themes/metabolic/icons/small/close-ico.png") no-repeat top; height:16px; width:16px; font-size:0;
+#welcome a.close { background:url("../themes/metabolic/icons/close-ico.png") no-repeat top; height:16px; width:16px; font-size:0;
     line-height:0; position:absolute; right:6px; top:6px; z-index:1000; }
 
 #welcome a.button.blue { float:left; margin-right:10px; }
@@ -211,7 +211,7 @@ div.wide-yellow div.bottom { background:url("../themes/metabolic/img/box-wide-ye
 
 #search-box #ribbon { background:url("../themes/metabolic/img/start-ribbon.png") no-repeat scroll 0 0 transparent; font-size:0;
     height:100px; left:0; line-height:0; overflow:hidden; position:absolute; top:-5px; width:100px; z-index:10; }
-#search-box #magnifier { background:url("../themes/metabolic/icons/magnifier-on-yellow.jpg") no-repeat 64px 20px; line-height:100px; }
+#search-box #magnifier { background:url("../themes/metabolic/icons/search-and-shade.png") no-repeat 64px 14px; line-height:100px; }
 
 #search-box h3 { margin-left:6px; margin-bottom:0; }
 #search-box p { margin-right:16px; font-size:13px; }
@@ -219,6 +219,7 @@ div.wide-yellow div.bottom { background:url("../themes/metabolic/img/box-wide-ye
 form#search div.input { background:url("../themes/metabolic/img/search-box-wide.png") no-repeat top; margin-top:10px; height:36px; }
 form#search input.input { border:none; background:none; width:284px; padding:4px 20px 4px 20px; margin-bottom:10px;
 	/* IE7 */ *margin-bottom:-10px; /*line-height:34px;*/ }
+form#search input.input.eg { color:#888; }
 
 #search-box input.orange { background:url("../themes/metabolic/buttons/orange-button-on-yellow.png") no-repeat bottom; color:#FFFFFF;
     padding:4px 40px; /* IE7 */ *padding:4px 20px; float:right; }
@@ -238,21 +239,21 @@ div.half-violet div.center { background:url("../themes/metabolic/img/box-half-vi
 div.half-violet div.bottom { background:url("../themes/metabolic/img/box-half-violet-bottom.png") no-repeat bottom; width:488px;
     height:5px; font-size:0; line-height:0; overflow:hidden; }
 
-#lists div.text div.image, #template div.text div.image { float:left; padding:0 8px 20px 16px;
+div.half-green div.text div.image, div.half-violet div.text div.image { float:left; padding:0 8px 20px 16px;
 	background:url("../themes/metabolic/icons/shade.png") no-repeat 18px 62px; }
-#lists p, #template p { padding-left:16px; }
-#lists div.thumb, #template div.thumb { background:url("../themes/metabolic/thumbs/small-browser-thumb.png") no-repeat 252px 2px; }
-    #lists div.thumb, #template div.thumb img { float:none; padding-top:18px; padding-bottom:20px; }
+div.half-green p, div.half-violet p { padding-left:16px; }
+div.half-green div.thumb, div.half-violet div.thumb { background:url("../themes/metabolic/thumbs/small-browser-thumb.png") no-repeat 252px 2px; }
+    div.half-green div.thumb, div.half-violet div.thumb img { float:none; padding-top:18px; padding-bottom:20px; }
 
-#lists h3 { color:#009900; margin-bottom:12px; }
-#lists strong { color:#009900; }
+div.half-green h3 { color:#009900; margin-bottom:12px; }
+div.half-green strong { color:#009900; }
 
-#lists a.button.green { float:right; }
+div.half-green a.button.green { float:right; }
 
-#template h3 { color:#8047d1; margin-bottom:12px; }
-#template strong { color:#8047d1; }
+div.half-violet h3 { color:#8047d1; margin-bottom:12px; }
+div.half-violet strong { color:#8047d1; }
 
-#template a.button.violet { float:right; }
+div.half-violet a.button.violet { float:right; }
 
 div.wide-gray div.top { background:url("../themes/metabolic/img/box-wide-gray-top.png") no-repeat top; height:5px; width:1000px;
     font-size:0; line-height:0; overflow:hidden; margin-top:20px; }
@@ -262,7 +263,7 @@ div.wide-gray div.bottom { background:url("../themes/metabolic/img/box-wide-gray
     height:5px; font-size:0; line-height:0; overflow:hidden; }
 
 #actions { position:relative; }
-#actions a.more { background:url("../themes/metabolic/icons/small/more-corner.png") no-repeat top; font-size:0; height:58px; line-height:0;
+#actions a.more { background:url("../themes/metabolic/icons/more-corner.png") no-repeat top; font-size:0; height:58px; line-height:0;
     overflow:hidden; position:absolute; bottom:-2px; right:-1px; width:54px; z-index:10; padding:0; cursor:pointer; }
 
 #actions div.search, #actions div.lists, #actions div.templates { position:relative; }
@@ -279,7 +280,8 @@ div.wide-gray div.bottom { background:url("../themes/metabolic/img/box-wide-gray
     padding:2px 40px; /* IE7 */ *padding:4px 20px; float:right; margin-right:30%; /* IE7 */ *margin-right:25%; }
 
 #actions div.search div.input { background:url("../themes/metabolic/img/search-box-medium.png") no-repeat top; margin:0px 0px 20px 8px;
-	height:36px; }
+	height:36px; color:#888; }
+#actionsInput.eg { color:#888; }
 #actions div.search input.input { border:none; background:none; width:255px; padding:6px 20px 6px 30px; }
 
 #actions div.lists h3 { background:#20A900; }
@@ -342,7 +344,7 @@ div.white div.more { background:url("../themes/metabolic/img/box-third-white-gra
 div.white-half div.more { background:url("../themes/metabolic/img/box-half-white-gray-bottom.png") no-repeat bottom; width:488px;
     height:36px; }
 
-div.white div.more a.more, div.white-half div.more a.more { background:url("../themes/metabolic/icons/small/more-button.png") no-repeat top;
+div.white div.more a.more, div.white-half div.more a.more { background:url("../themes/metabolic/icons/more-button.png") no-repeat top;
 	overflow:hidden; text-decoration:none; padding:8px 30px; float:right; margin:4px; }
 
 div.blue div.top { background:url("../themes/metabolic/img/box-third-blue-top.png") no-repeat top; height:5px; width:320px;

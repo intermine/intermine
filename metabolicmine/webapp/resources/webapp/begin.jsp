@@ -22,6 +22,10 @@
 			$('#help').addClass('smallScreen');
 		}
 	}
+	// placeholder value for search boxes
+	var placeholder = 'e.g. PPARG, diabetes, ENSG00000108753';
+	// class used when toggling placeholder
+	var inputToggleClass = 'eg';
 </script>
 
 <!-- BluePrint CSS container -->
@@ -98,7 +102,9 @@
             <div class="span-4">
                 <h3>Search for gene identifiers</h3>
                 <form action="<c:url value="/keywordSearchResults.do" />" id="search" name="search" method="get">
-                    <div class="input"><input class="input" type="text" name="searchTerm" value="e.g. SCU49845" /></div>
+                    <div class="input">
+                    	<input id="searchBoxInput" class="input" type="text" name="searchTerm" value="e.g. PPARG, diabetes, ENSG00000108753" />
+                    </div>
                     <br />
                     <input class="button orange" type="submit" value="SEARCH" />
                 </form>
@@ -114,18 +120,18 @@
         <div class="bottom span-12 last"></div>
     </div>
 
-    <div id="lists" class="span-6 half-green">
+    <div id="lists" class="span-6 half-violet">
         <div class="top"></div>
         <div class="center span-6 last">
             <div class="span-3 text">
             	<div class="image">
-                	<img src="/metabolicmine/themes/metabolic/icons/table-and-charts.png" alt="lists" />
+                	<img src="images/icons/lists-64.png" alt="lists" />
                	</div>
                 <h3>Lists</h3>
 				<p>You can run queries on whole <strong>lists of data</strong>. Create lists from the results of a query or
 				by uploading identifiers. Click on a list to view graphs and summaries in a list analysis page, if you log
 				in you can save lists permanently.</p>
-                <a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" class="button green">
+                <a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" class="button violet">
                 	<div><span>Query lists</span></div>
                 </a>
             </div>
@@ -133,17 +139,17 @@
         </div>
         <div class="bottom span-6 last"></div>
     </div>
-    <div id="template" class="span-6 last half-violet">
+    <div id="templates" class="span-6 last half-green">
         <div class="top"></div>
         <div class="center span-6 last">
             <div class="span-3 text">
                 <div class="image">
-                	<img src="/metabolicmine/themes/metabolic/icons/templates.png" alt="templates" />
+                	<img src="images/icons/templates-64.png" alt="templates" />
                 </div>
                 <h3>Templates</h3>
 				<p>Templates are <strong>predefined queries</strong>, each has a simple form and a description. You can edit
 	                templates in the QueryBuilder, if you log in you can create new templates yourself.</p>
-                <a href="/${WEB_PROPERTIES['webapp.path']}/templates.do" class="button violet">
+                <a href="/${WEB_PROPERTIES['webapp.path']}/templates.do" class="button green">
                 	<div><span>Templates</span></div>
                 </a>
             </div>
@@ -161,17 +167,19 @@
 	        <div class="center span-12 last">
 	            <div class="span-4 search">
 	            	<div class="image">
-	                	<img src="/metabolicmine/themes/metabolic/icons/search-left.png" alt="Search" />
+	                	<img src="images/icons/search-64.png" alt="Search" />
 	                </div>
 	                <h3>Search for gene identifiers</h3>
 	                <div style="clear:both;"> </div>
 	                <p><strong>Search for gene identifiers</strong> in our exhaustive et, you can use lorem ipsum here too.
 	                    Vestibulum at purus a odio malesuada thoncus. Ut ut magna lectus.</p>
-						<div class="input"><input class="input" type="text" name="searchTerm" value="e.g. SCU49845" /></div>
+						<div class="input">
+							<input id="actionsInput" class="input" type="text" name="searchTerm" value="e.g. PPARG, diabetes, ENSG00000108753" />
+						</div>
 	            </div>
 	            <div class="span-4 lists">
 	            	<div class="image">
-	                	<img src="/metabolicmine/themes/metabolic/icons/table-and-charts.png" alt="Lists" />
+	                	<img src="images/icons/lists-64.png" alt="Lists" />
 	                </div>
 	                <h3>Query lists of data</h3>
 	                <div style="clear:both;"> </div>
@@ -181,7 +189,7 @@
 	            </div>
 	            <div class="span-4 last templates">
 	                <div class="image">
-	                	<img src="/metabolicmine/themes/metabolic/icons/templates.png" alt="Templates" />
+	                	<img src="images/icons/templates-64.png" alt="Templates" />
 	                </div>
 	                <h3>Work with template queries</h3>
 	                <div style="clear:both;"> </div>
@@ -207,16 +215,16 @@
         </form>
         
         <div id="more-actions" class="center span-12 last" style="display:none;">
-            <div class="span-4 lists">
-                <img src="/metabolicmine/themes/metabolic/icons/lists-1.png" alt="Lists" />
+            <div class="span-4 search">
+                <img src="images/icons/search-64.png" alt="Search" />
                 <h3>Query lists of data and some more 1</h3>
                 <div style="clear:both;"> </div>
                 <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
                     dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
                     nunc aliquam.</p>
             </div>
-            <div class="span-4 lists">
-                <img src="/metabolicmine/themes/metabolic/icons/lists-2.png" alt="Lists" />
+            <div class="span-4 templates">
+                <img src="images/icons/templates-64.png" alt="Templates" />
                 <h3>Query lists of data and some more 2</h3>
                 <div style="clear:both;"> </div>
                 <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
@@ -224,112 +232,8 @@
                     nunc aliquam.</p>
             </div>
             <div class="span-4 last lists">
-                <img src="/metabolicmine/themes/metabolic/icons/lists-3.png" alt="Lists" />
+                <img src="images/icons/lists-64.png" alt="Lists" />
                 <h3>Query lists of data and some more 3</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 lists">
-                <img src="/metabolicmine/themes/metabolic/icons/lists-4.png" alt="Lists" />
-                <h3>Query lists of data and some more 4</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 lists">
-                <img src="/metabolicmine/themes/metabolic/icons/lists-5.png" alt="Lists" />
-                <h3>Query lists of data and some more 5</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 last lists">
-                <img src="/metabolicmine/themes/metabolic/icons/lists-6.png" alt="Lists" />
-                <h3>Query lists of data and some more 6</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 templates">
-                <img src="/metabolicmine/themes/metabolic/icons/templates-1.png" alt="Templates" />
-                <h3>Work with template queries 1</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 templates">
-                <img src="/metabolicmine/themes/metabolic/icons/templates-2.png" alt="Templates" />
-                <h3>Work with template queries 2</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 last templates">
-                <img src="/metabolicmine/themes/metabolic/icons/templates-3.png" alt="Templates" />
-                <h3>Work with template queries 3</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 templates">
-                <img src="/metabolicmine/themes/metabolic/icons/templates-4.png" alt="Templates" />
-                <h3>Work with template queries 4</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 templates">
-                <img src="/metabolicmine/themes/metabolic/icons/templates-5.png" alt="Templates" />
-                <h3>Work with template queries 5</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 last templates">
-                <img src="/metabolicmine/themes/metabolic/icons/templates-6.png" alt="Templates" />
-                <h3>Work with template queries 6</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 templates">
-                <img src="/metabolicmine/themes/metabolic/icons/templates-7.png" alt="Templates" />
-                <h3>Work with template queries 7</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 templates">
-                <img src="/metabolicmine/themes/metabolic/icons/templates-8.png" alt="Templates" />
-                <h3>Work with template queries 8</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 last templates">
-                <img src="/metabolicmine/themes/metabolic/icons/templates-9.png" alt="Templates" />
-                <h3>Work with template queries 9</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 templates">
-                <img src="/metabolicmine/themes/metabolic/icons/templates-10.png" alt="Templates" />
-                <h3>Work with template queries 10</h3>
                 <div style="clear:both;"> </div>
                 <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
                     dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
@@ -461,15 +365,48 @@
         </div>
         <div class="span-4 last">
             <a href="http://nih.gov/" title="National Institutes of Health">
-            	<img src="/metabolicmine/themes/metabolic/icons/small/nih-ico.png" alt="National Institutes of Health" />
+            	<img src="/metabolicmine/themes/metabolic/icons/nih-ico.png" alt="National Institutes of Health" />
            	</a>
            	<a href="http://www.gen.cam.ac.uk/" title="Department of Genetics">
-           		<img src="/metabolicmine/themes/metabolic/icons/small/genetics-ico.gif" alt="Department of Genetics" />
+           		<img src="/metabolicmine/themes/metabolic/icons/genetics-ico.gif" alt="Department of Genetics" />
            	</a>
            	<a href="http://www.cam.ac.uk/" title="University of Cambridge">
-            	<img src="/metabolicmine/themes/metabolic/icons/small/cam-ico.gif" alt="University of Cambridge" />
+            	<img src="/metabolicmine/themes/metabolic/icons/cam-ico.gif" alt="University of Cambridge" />
             </a>
         </div>
     </div>
 
  </div>
+ 
+ <script type="text/javascript">
+ 	// e.g. values only available when JavaScript is on
+	$('input#searchBoxInput').toggleClass(inputToggleClass);
+	$('input#actionsInput').toggleClass(inputToggleClass);
+
+	// register input elements with blur & focus
+	$('input#searchBoxInput').blur(function() {
+		if ($(this).val() == '') {
+			$(this).toggleClass(inputToggleClass);
+			$(this).val(placeholder);
+		}
+	});
+	$('input#searchBoxInput').focus(function() {
+		if ($(this).hasClass(inputToggleClass)) {
+			$(this).toggleClass(inputToggleClass);
+			$(this).val('');
+		}			
+	});
+
+	$('input#actionsInput').blur(function() {
+		if ($(this).val() == '') {
+			$(this).toggleClass(inputToggleClass);
+			$(this).val(placeholder);
+		}
+	});
+	$('input#actionsInput').focus(function() {
+		if ($(this).hasClass(inputToggleClass)) {
+			$(this).toggleClass(inputToggleClass);
+			$(this).val('');
+		}			
+	});
+</script>

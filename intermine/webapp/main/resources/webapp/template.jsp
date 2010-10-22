@@ -39,7 +39,7 @@
 <%-- object trail --%>
 <tiles:get name="objectTrail.tile"/>
 <div class="body" align="center">
-<im:boxarea titleImage="templates.png" stylename="plainbox" fixedWidth="90%">
+<im:boxarea titleImage="templates-64.png" stylename="plainbox" fixedWidth="90%">
 <html:form action="/templateAction">
     <%-- template title --%>
     <h2 class="templateTitle">
@@ -313,7 +313,7 @@
           <html:submit property="skipBuilder" styleId="showResultsButton"><fmt:message key="template.submitToResults"/></html:submit>
           <html:submit property="editQuery" styleClass="queryBuilder" styleId="editQueryButton"><fmt:message key="template.submitToQuery"/></html:submit>
           <c:if test="${IS_SUPERUSER}">
-          <html:submit property="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
+          <html:submit property="editTemplate" styleClass="edit"><fmt:message key="template.submitToQueryEdit"/></html:submit>
           </c:if>
        </td>
     </tr>

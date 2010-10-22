@@ -513,7 +513,9 @@ div.plainbox div.templateFormContainer { margin-top:34px; padding-left:14px; }
 input[type="submit"], input[type="button"] { cursor:pointer; border:outset 1px #CCCCCC; background:#999999; background-repeat:repeat-x;
 	padding:1px 2px; background-image:url("../images/buttons/button-bg.gif"); background-position:left top; height:23px; vertical-align:middle; }
 input[type="submit"].queryBuilder { background-image:url("../images/buttons/button-bg-query-builder.gif"); background-repeat:repeat-none;
-	background-position:left top; padding-left:26px; height:23px; vertical-align:middle; }
+	background-position:left top; padding-left:25px; height:23px; vertical-align:middle; }
+input[type="submit"].edit { background-image:url("../images/buttons/button-bg-edit.gif"); background-repeat:repeat-none;
+	background-position:left top; padding-left:25px; height:23px; vertical-align:middle; }
 	
 /* templates listing header submenu */
 #filter_tool_bar { text-align:left !important; }
@@ -544,3 +546,23 @@ form#loginForm a { vertical-align:bottom; }
 
 /* homepage news ticker */
 ol#news a { font-weight:bold; }
+
+/* hints */
+#hints { margin:10px 10px 0 10px; padding:6px; font-size:12px; background-repeat:no-repeat; background-position:10px 6px; }
+	#hints p { display:inline; padding-left:34px; }
+	#hints a { float:right; }
+	#hints.information { background-color:#E6F7FE; background-image:url("../images/icons/information.png"); border:1px solid #BEDCE4; }
+
+/* error messages */	
+.topBar { margin:5px 10px 10px 10px; padding:6px; background:#FFF; font-size:13px; }
+  
+.messages { background:#D5FFCE url("../images/icons/success.png") no-repeat 10px 6px; border:1px solid #9ADF8F; }
+.errors, .topBar.lookupWarn, .topBar.lookupError, .topBar.lookupReport { background:#FFFBCC url("../images/icons/alert.png") no-repeat 10px 6px;
+	border:1px solid #E6DB55; color:#000 !important; }
+.messages p, .errors p, .topBar.lookupWarn p, .topBar.lookupError p, .topBar.lookupReport p { display:inline; padding-left:34px; }
+.messages a, .errors a, .topBar.lookupWarn a, .topBar.lookupError a, .topBar.lookupReport a { float:right; }
+
+/* breadcrumbs */
+p#crumbs { ; }
+	p#crumbs span { color:#E2E1E6; font-size:9px; margin:0 2px 0 1px; }
+	#contextHelp { display:inline; float:right; }

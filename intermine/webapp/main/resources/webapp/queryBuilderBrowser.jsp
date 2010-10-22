@@ -59,7 +59,7 @@
 	</div>
 	<div class="body" id="browserbody">
 	  <div>
-	    <img class="icon" src="images/icons/query-builder.png" alt="query builder icon" />
+	    <img class="icon" src="images/icons/queries-64.png" alt="query builder icon" />
 	    <fmt:message key="query.currentclass.detail"/>
 	  </div>
 	  <br/>
