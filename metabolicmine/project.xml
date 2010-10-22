@@ -10,12 +10,15 @@
     <source name="hgnc" type="hgnc">
      <property name="src.data.dir" location="/shared/data/hgnc/current"/>
     </source>
+    <source name="so" type="so">
+      <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
+    </source> 
     <source name="ensembl-human" type="ensembl" dump="true">
      <property name="src.data.dir" location="/shared/data/ensembl/metabolic/current"/>
     </source>
     <source name="uniprot-human" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="9606"/>
-      <property name="create.interpro" value="true"/>
+      <property name="createinterpro" value="true"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
     </source>
     <source name="uniprot-fasta" type="fasta" dump="true">
@@ -37,10 +40,12 @@
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
+<!--    <source name="omim" type="omim" dump="true">
+     <property name="src.data.dir" location="/shared/data/metabolic/omim/test"/>
+    </source> -->
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
     </source>
-
     <source name="go" type="go" dump="true">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
