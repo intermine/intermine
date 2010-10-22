@@ -116,6 +116,7 @@ public class GoConverter extends BioFileConverter
             }
             if (!("symbol".equals(identifier)
                             || "primaryIdentifier".equals(identifier)
+                            || "secondaryIdentifier".equals(identifier)
                             || "primaryAccession".equals(identifier)
                             )) {
                 throw new IllegalArgumentException("Invalid identifier value for taxon: "
