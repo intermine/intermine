@@ -8,3 +8,5 @@
 7227	2222	CG3777	Dmel_CG3777	CK01670|EG:125H10.1	FLYBASE:FBgn002	X	1A1-1A5 CG3777	protein-coding
 7227	9999	CG3777	Dmel_CG3777	CK01670|EG:125H10.1	FLYBASE:FBgn004	X	1A1-1A5 CG3777	protein-coding
 7227	5740175	CG34160	Dmel_CG34160	-	FLYBASE:FBgn0085189	2L	-	CG34160 gene product from transcript CG34160-RA protein-coding  -       -       -       CG34160-PA      20080515
+10090	567890	mouse_symbol	Dmel_CG34160	-	MGI:895149|Ensembl:ENSMUSG0000001857	2L	-	CG34160 gene product from transcript CG34160-RA protein-coding  -       -       -       CG34160-PA      20080515
+

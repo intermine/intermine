@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.DataConverter;
 import org.intermine.objectstore.ObjectStoreException;
@@ -195,7 +196,7 @@ public class GenesFileProcessor
         if (publications != null && !"-".equals(primIdentifier)) {
             if (setPrimaryIdentifier(organismId.toString())) {
                 primIdentifier = removeDatabasePrefix(primIdentifier);
-                if (!isValidPrimIdentifier(primIdentifier)) {
+                if (StringUtils.isEmpty(primIdentifier) || !isValidPrimIdentifier(primIdentifier)) {
                     return;
                 }
 
@@ -232,7 +233,7 @@ public class GenesFileProcessor
 
     // don't set primaryidentifier for mouse or people
     private boolean setPrimaryIdentifier(String taxonId) {
-        return !isHomoSapiens(taxonId) && !isMouse(taxonId);
+        return !isHomoSapiens(taxonId);
     }
 
     private boolean isValidPrimIdentifier(String primIdentifier) {
@@ -253,10 +254,6 @@ public class GenesFileProcessor
 
     private boolean isHomoSapiens(String taxonId) {
         return "9606".equals(taxonId);
-    }
-
-    private boolean isMouse(String taxonId) {
-        return "10090".equals(taxonId);
     }
 
     private Item createGene(Integer ncbiGeneId, String primaryIdentifier, Item organism) {
@@ -280,6 +277,20 @@ public class GenesFileProcessor
             dbId = dbId.substring(8);
         } else if (dbId.toUpperCase().startsWith("VECTORBASE:")) {
             dbId = dbId.substring(11);
+        } else if (dbId.toUpperCase().startsWith("MGI:")) {
+            String[] bits = dbId.split(":");
+            if (bits.length == 0) {
+                LOG.warn("Not using mouse identifier in pubmed gene file:" + id);
+                return null;
+            }
+            //MGI:895149|Ensembl:ENSMUSG0000001857
+            for (String bit : bits) {
+                if (bit.toUpperCase().startsWith("ENSMUSG")) {
+                    return bit;
+                }
+            }
+            LOG.warn("Not using mouse identifier in pubmed gene file:" + id);
+            return null;
         }
         return dbId;
     }
