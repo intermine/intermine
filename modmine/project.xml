@@ -16,9 +16,9 @@
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.GenomeDBConverter"/>
     </source>
-    <source name="chado-db-flybase-dpse" type="chado-db">
+    <source name="chado-db-flybase-dpse-dmoj" type="chado-db">
         <property name="source.db.name" value="flybase"/>
-        <property name="organisms" value="7237"/>
+        <property name="organisms" value="7237 7230"/>
         <property name="dataSourceName" value="FlyBase"/>
         <property name="processors" value="org.intermine.bio.dataconversion.FlyBaseProcessor"/>
         <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -33,7 +33,7 @@
                 value="org.intermine.bio.dataconversion.GenomeDBConverter"/>
     </source>
     <source name="uniprot" type="uniprot">
-      <property name="uniprot.organisms" value="7227 6239"/>
+      <property name="uniprot.organisms" value="7227 6239 7237 7230"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
       <property name="createinterpro" value="true"/>
     </source>
@@ -52,12 +52,12 @@
     </source>
     <source name="psi-intact" type="psi">
         <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
-        <property name="intact.organisms" value="7227 6239"/>
+        <property name="intact.organisms" value="7227 6239 7237 7230"/>
     </source>
     <source name="biogrid" type="biogrid">
         <property name="src.data.dir" location="/shared/data/psi/biogrid/current"/>
         <property name="src.data.dir.includes" value="*psi25.xml"/>
-        <property name="biogrid.organisms" value="7227 6239"/>
+        <property name="biogrid.organisms" value="7227 6239 7237 7230"/>
     </source>
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/modmine/sources/go-annotation/gene_ontology.obo"/>
@@ -83,11 +83,20 @@
     </source>
     <source name="flybase-dpse-gene-fasta" type="fasta">
         <property name="fasta.taxonId" value="7237"/>
-        <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila pseudoobscura pseudoobscura"/>
+        <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila pseudoobscura"/>
         <property name="fasta.dataSourceName" value="FlyBase"/>
         <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
         <property name="fasta.classAttribute" value="primaryIdentifier"/>
         <property name="fasta.includes" value="dpse-all-gene-*.fasta"/>
+        <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dmoj-gene-fasta" type="fasta">
+        <property name="fasta.taxonId" value="7230"/>
+        <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila mojavensis"/>
+        <property name="fasta.dataSourceName" value="FlyBase"/>
+        <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
+        <property name="fasta.classAttribute" value="primaryIdentifier"/>
+        <property name="fasta.includes" value="dmoj-all-gene-*.fasta"/>
         <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
     <source name="flybase-dmel-cds-fasta" type="fasta">
@@ -107,7 +116,17 @@
         <property name="fasta.className" value="org.intermine.model.bio.CDS"/>
         <property name="fasta.classAttribute" value="primaryIdentifier"/>
         <property name="fasta.includes" value="dpse-all-CDS-*.fasta"/>
-        <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila pseudoobscura pseudoobscura"/>
+        <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila pseudoobscura"/>
+        <property name="fasta.dataSourceName" value="FlyBase"/>
+        <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dmoj-cds-fasta" type="fasta">
+        <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+        <property name="fasta.taxonId" value="7230"/>
+        <property name="fasta.className" value="org.intermine.model.bio.CDS"/>
+        <property name="fasta.classAttribute" value="primaryIdentifier"/>
+        <property name="fasta.includes" value="dmoj-all-CDS-*.fasta"/>
+        <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila mojavensis"/>
         <property name="fasta.dataSourceName" value="FlyBase"/>
         <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
@@ -121,6 +140,16 @@
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
+    <source name="flybase-dpse-5prime-utr-fasta" type="fasta">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7237"/>
+      <property name="fasta.className" value="org.intermine.model.bio.FivePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dpse-all-five_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila pseudoobscura"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
     <source name="flybase-dmel-3prime-utr-fasta" type="fasta">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
@@ -128,6 +157,16 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-three_prime_UTR-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+    </source>
+    <source name="flybase-dpse-3prime-utr-fasta" type="fasta">
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7237"/>
+      <property name="fasta.className" value="org.intermine.model.bio.ThreePrimeUTR"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="dpse-all-three_prime_UTR-*.fasta"/>
+      <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila pseudoobscura"/>
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
@@ -144,7 +183,7 @@
     </source>
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
         <property name="src.data.dir" location="/shared/data/modmine/sources/pubmed/current"/>
-        <property name="pubmed.organisms" value="7227 6239"/>
+        <property name="pubmed.organisms" value="7227 6239 7237 7230"/>
         <property name="src.data.dir.includes" value="gene2pubmed"/>
         <property name="infoFile" location="/shared/data/modmine/sources/pubmed/current/gene_info"/>
     </source>
@@ -200,7 +239,7 @@
             <property name="converter.class"
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
-        <!-- LAI -->
+        <!-- LAI NOW WITH CELNIKER 
         <source name="modencode-lai-metadata" type="chado-db" >
             <property name="organisms" value="7227"/>
             <property name="dataSourceName" value="modENCODE"/>
@@ -211,6 +250,7 @@
             <property name="converter.class"
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
+        -->
         <!-- LIEB -->
         <source name="modencode-lieb-metadata" type="chado-db" dump="true">
             <property name="organisms" value="6239"/>
@@ -233,7 +273,18 @@
             <property name="converter.class"
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
-        <!-- PIANO -->
+        <!-- OLIVER -->
+        <source name="modencode-oliver-metadata" type="chado-db">
+            <property name="organisms" value="7227 7230 7237"/>
+            <property name="dataSourceName" value="modENCODE"/>
+            <property name="dataSetTitle" value="modENCODE submission"/>
+            <property name="source.db.name" value="modencode-oliver-metadata"/>
+            <property name="processors"
+                                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
+            <property name="converter.class"
+                                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+        </source>
+        <!-- PIANO NOW WITH WATERSTON
         <source name="modencode-piano-metadata" type="chado-db" dump="true">
             <property name="organisms" value="6239"/>
             <property name="dataSourceName" value="modENCODE"/>
@@ -242,6 +293,7 @@
             <property name="processors" value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
             <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
+        -->
         <!-- SNYDER -->
         <source name="modencode-snyder-metadata" type="chado-db" >
             <property name="organisms" value="6239"/>
@@ -275,7 +327,7 @@
             <property name="converter.class"
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
-        <!-- CELNIKER -->
+        <!-- CELNIKER NOW WITH LAI
         <source name="modencode-celniker-metadata" type="chado-db" dump="true">
             <property name="organisms" value="7227"/>
             <property name="dataSourceName" value="modENCODE"/>
@@ -286,7 +338,20 @@
             <property name="converter.class"
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
-        <!-- WATERSTON -->
+        -->
+
+        <!-- CELNIKERLAI -->
+        <source name="modencode-celnikerlai-metadata" type="chado-db" dump="true">
+            <property name="organisms" value="7227"/>
+            <property name="dataSourceName" value="modENCODE"/>
+            <property name="dataSetTitle" value="modENCODE submission"/>
+            <property name="source.db.name" value="modencode-celnikerlai-metadata"/>
+            <property name="processors"
+                                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
+            <property name="converter.class"
+                                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+        </source>
+        <!-- WATERSTON NOW WITH PIANO
         <source name="modencode-waterston-metadata" type="chado-db" dump="true">
             <property name="organisms" value="6239"/>
             <property name="dataSourceName" value="modENCODE"/>
@@ -297,6 +362,20 @@
             <property name="converter.class"
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
+        -->
+        <!-- WATERSTONPIANO -->
+        <source name="modencode-waterstonpiano-metadata" type="chado-db" dump="true">
+            <property name="organisms" value="6239"/>
+            <property name="dataSourceName" value="modENCODE"/>
+            <property name="dataSetTitle" value="modENCODE submission"/>
+            <property name="source.db.name" value="modencode-waterstonpiano-metadata"/>
+            <property name="processors"
+                                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
+            <property name="converter.class"
+                                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+        </source>
+
+
         <source name="update-publications" type="update-publications">
             <!-- this source finds the publication ids (pubmed ids) in the
                      objectstore, retrieves the details of the publication from Entrez
