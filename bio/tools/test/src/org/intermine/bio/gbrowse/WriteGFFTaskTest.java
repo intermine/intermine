@@ -35,8 +35,6 @@ import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.query.ClobAccess;
-import org.intermine.objectstore.query.PendingClob;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
@@ -105,8 +103,10 @@ public class WriteGFFTaskTest extends TestCase
     }
 
     public void testWriteGFF() throws Exception {
-        WriteGFFTask task = new WriteGFFTask();
-        task.writeGFF(osw.getObjectStore());
+        // TODO FIXME
+        assertTrue(false);
+//        WriteGFFTask task = new WriteGFFTask();
+//        task.writeGFF(osw.getObjectStore());
     }
 
     public void testStringifyAttributes() throws Exception {
@@ -129,11 +129,12 @@ public class WriteGFFTaskTest extends TestCase
         threeValues.add("v5");
         attMap.put("k3", threeValues);
 
-        String stringifiedAttributes = WriteGFFTask.stringifyAttributes(attMap);
+        // TODO FIXME
+//        String stringifiedAttributes = WriteGFFTask.stringifyAttributes(attMap);
         String expected =
             "empty_key; k1 \"v1\"; k2 \"v2\"; k2 \"v3\"; k3 \"v4\"; k3 \"\"; k3 \"v5\"";
 
-        assertEquals(expected, stringifiedAttributes);
+        assertEquals(expected, "FIXME");
     }
 
     private void createData() throws Exception {
