@@ -8,6 +8,7 @@ transcript
 five_prime_UTR
 three_prime_UTR
 CDS
+SNP
 
 # many-to-many part_of relationships (default is many-to-one)
 exon.transcript
