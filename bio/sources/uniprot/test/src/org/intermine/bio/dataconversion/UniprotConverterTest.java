@@ -15,12 +15,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
+import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.dataconversion.MockItemsTestCase;
 import org.intermine.metadata.Model;
 
-public class UniprotConverterTest extends MockItemsTestCase
+public class UniprotConverterTest extends ItemsTestCase
 {
     private UniprotConverter converter;
     private MockItemWriter itemWriter;
