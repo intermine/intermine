@@ -9,18 +9,18 @@
   width:100%;text-align: center;}
 
 #bagDescriptionDiv{
-  padding:0 10px 10px 10px;
+  padding:10px;
   overflow: auto;
-  height:110px;
-  width:100%;
-  text-align:left;}
+  text-align:left;position:relative;}
+
+#bagDescriptionDiv h3 { display:inline; }
 
 #textarea {
   padding:5px; margin:0;
-  width:100%;height:50px;}
+  width:900px;height:25px;margin-bottom:4px;}
 
 #emptyDesc{
-  text-align:center;font-style: italic;}
+  text-align:center;font-style: italic;display:inline; position:absolute; left:40%;margin-top:4px;}
 
 table tr td.tableleftcol {
     padding:0 15px 0 0;

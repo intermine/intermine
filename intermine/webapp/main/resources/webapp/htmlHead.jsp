@@ -43,15 +43,20 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 	<c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'objectDetails'}">
 	  <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
 	</c:if>
+<!--
 	<c:if test="${pageName == 'begin'}">
 	  <script type="text/javascript" src="<html:rewrite page='/js/jQuery.roundCorners-1.1.1.js'/>"></script>
 	  <script type="text/javascript" src="<html:rewrite page='/js/excanvas.js'/>"></script>
 	</c:if>
+-->
 	<c:if test="${pageName == 'results' || pageName == 'query' || pageName == 'templates' || pageName == 'bagDetails' || pageName == 'objectDetails' || pageName == 'bag' || pageName == 'mymine'}">
 	  <script type="text/javascript" src="<html:rewrite page='/js/jquery.boxy.js'/>"></script>
 	  <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/boxy.css'/>"/>
 	  <script type="text/javascript" src="<html:rewrite page='/js/jquery.dimensions.min.js'/>"></script>
 	  <script type="text/javascript" src="<html:rewrite page='/js/jquery.center.js'/>"></script>
+	  <c:if test="${pageName == 'bagDetails'}">
+	  	<script type="text/javascript" src="<html:rewrite page='/js/textarea-resize.js'/>"></script>
+	  </c:if>
 	</c:if>
 	
 	<c:if test="${pageName == 'query' || pageName == 'exportOptions'}">
