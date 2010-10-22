@@ -41,6 +41,21 @@
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
+    <source name="uniprot-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7227 7237 6239 7230"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
+      <property name="fasta.classAttribute" value="primaryAccession"/>
+      <property name="fasta.dataSetTitle" value="UniProt data set"/>
+      <property name="fasta.dataSourceName" value="UniProt"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/current"/>
+      <property name="fasta.includes" value="uniprot_sprot_varsplic.fasta"/>
+      <property name="fasta.sequenceType" value="protein" />
+      <property name="fasta.loaderClassName"
+                value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
+    </source>
+    <source name="rnai" type="rnai">
+      <property name="src.data.dir" location="/shared/data/wormbase-rnai/current"/>
+    </source>
     <source name="interpro" type="interpro" dump="true">
       <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
@@ -58,6 +73,9 @@
         <property name="src.data.dir" location="/shared/data/psi/biogrid/current"/>
         <property name="src.data.dir.includes" value="*psi25.xml"/>
         <property name="biogrid.organisms" value="7227 6239 7237 7230"/>
+    </source>
+    <source name="so" type="so">
+      <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source>
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/modmine/sources/go-annotation/gene_ontology.obo"/>
