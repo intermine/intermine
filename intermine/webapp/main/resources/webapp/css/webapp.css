@@ -498,7 +498,7 @@ div#ui-datepicker-control {
 
 /* templates.do etc box header (we expect a 64x64 image)  */
 div.gradientbox dt img { float:left; padding:0 10px 0 0; /*background:url("../images/icons/shade.png") no-repeat 4px 58px;*/ }
-div.gradientbox dd { /*margin-top:16px;*/ }
+div.gradientbox dd { margin-top:6px; }
 div.gradientbox h1#templatetop { font-size:22px; }
 
 /* template.do etc box header (we expect a 64x64 image)  */
@@ -561,6 +561,8 @@ ol#news a { font-weight:bold; }
 	border:1px solid #E6DB55; color:#000 !important; }
 .messages p, .errors p, .topBar.lookupWarn p, .topBar.lookupError p, .topBar.lookupReport p { display:inline; padding-left:34px; }
 .messages a, .errors a, .topBar.lookupWarn a, .topBar.lookupError a, .topBar.lookupReport a { float:right; }
+
+#error_msg, #msg, #lookup_msg { padding-left:34px; }
 
 /* breadcrumbs */
 p#crumbs { ; }

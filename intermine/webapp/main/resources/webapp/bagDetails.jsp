@@ -39,7 +39,23 @@
         jQuery(".tb_button").click(function () {
             toggleToolBarMenu(this);
         });
-    })
+
+    	// textarea resizer
+    	javascript:jQuery('textarea#textarea').autoResize({
+    	    // on resize:
+    	    onResize : function() {
+    	    	javascript:jQuery(this).css({opacity:0.8});
+    	    },
+    	    // after resize:
+    	    animateCallback : function() {
+    	    	javascript:jQuery(this).css({opacity:1});
+    	    },
+    	    // quite slow animation:
+    	    animateDuration : 300,
+    	    // more extra space:
+    	    extraSpace : 10
+    	});
+    });
 </script>
 <div id="tool_bar_div">
     <ul id="button_bar">
@@ -165,7 +181,7 @@
 <%-- Bag Description --%>
 <c:choose>
     <c:when test="${myBag == 'true'}">
-      <div id="bagDescriptionDiv" style="height:65px;" onclick="jQuery('#bagDescriptionDiv').toggle();jQuery('#bagDescriptionTextarea').toggle();jQuery('#textarea').focus()">
+      <div id="bagDescriptionDiv" onclick="jQuery('#bagDescriptionDiv').toggle();jQuery('#bagDescriptionTextarea').toggle();jQuery('#textarea').focus()">
         <h3><img src="images/icons/description.png" title="Description of your list"/>&nbsp;Description</h3>
         <c:choose>
           <c:when test="${! empty bag.description}">
@@ -179,9 +195,9 @@
       <div id="bagDescriptionTextarea" style="display:none">
         <textarea id="textarea"><c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if></textarea>
         <div align="right">
-          <button onclick="jQuery('#bagDescriptionTextarea').toggle();
-              jQuery('#bagDescriptionDiv').toggle(); return false;"><fmt:message key="confirm.cancel"/></button>
-          <button onclick="saveBagDescription('${bag.name}'); return false;"><fmt:message key="button.save"/></button>
+          <input type="button" onclick="jQuery('#bagDescriptionTextarea').toggle();
+              jQuery('#bagDescriptionDiv').toggle(); return false;" value='<fmt:message key="confirm.cancel"/>' />
+          <input type="button" onclick="saveBagDescription('${bag.name}'); return false;" value='<fmt:message key="button.save"/>' />
         </div>
       </div>
       </c:when>
