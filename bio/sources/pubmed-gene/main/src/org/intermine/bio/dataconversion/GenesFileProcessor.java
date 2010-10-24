@@ -193,8 +193,8 @@ public class GenesFileProcessor
         // If there is a gene in gene information file that doesn't have
         // any publication then the gene is skipped
         // if there isn't primary identifier gene is skipped
-        if (publications != null && !"-".equals(primIdentifier)) {
-            if (setPrimaryIdentifier(organismId.toString())) {
+        if (publications != null) {
+            if (setPrimaryIdentifier(organismId.toString()) && !"-".equals(primIdentifier)) {
                 primIdentifier = removeDatabasePrefix(primIdentifier);
                 if (StringUtils.isEmpty(primIdentifier) || !isValidPrimIdentifier(primIdentifier)) {
                     return;
@@ -226,6 +226,8 @@ public class GenesFileProcessor
                 } else {
                     genesToRemove.add(primIdentifier);
                 }
+            } else if (!setPrimaryIdentifier(organismId.toString())) {
+                genes.put("" + ncbiGeneId, gene);
             }
             alreadyProcessedGenes.add(ncbiGeneId);
         }
