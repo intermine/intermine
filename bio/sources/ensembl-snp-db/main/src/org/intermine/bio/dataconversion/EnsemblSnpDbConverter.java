@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -34,14 +35,15 @@ import org.intermine.xml.full.Item;
  */
 public class EnsemblSnpDbConverter extends BioDBConverter
 {
-    private static final String DATASET_TITLE = "Add DataSet.title here";
-    private static final String DATA_SOURCE_NAME = "Add DataSource.name here";
+    private static final String DATASET_TITLE = "Ensembl SNP data";
+    private static final String DATA_SOURCE_NAME = "Ensembl";
 
     private Map<String, String> sources = new HashMap<String, String>();
     private Map<String, String> states = new HashMap<String, String>();
     private Map<String, String> transcripts = new HashMap<String, String>();
     private Map<String, String> noTranscriptConsequences = new HashMap<String, String>();
 
+    private static final Logger LOG = Logger.getLogger(EnsemblSnpDbConverter.class);
     /**
      * Construct a new EnsemblSnpDbConverter.
      * @param database the database to read from
@@ -65,6 +67,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         int taxonId = 9606;
 
         int counter = 0;
+        int snpCounter = 0;
         Item currentSnp = null;
         String currentRsNumber = null;
         Set<String> consequenceIdentifiers = new HashSet<String>();
@@ -77,7 +80,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 if (currentSnp != null) {
                     storeSnp(currentSnp, consequenceIdentifiers);
                 }
-
                 currentRsNumber = rsNumber;
                 consequenceIdentifiers = new HashSet<String>();
                 String chrName = res.getString("sr.name");
@@ -114,6 +116,11 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 List<String> validationStates = getValidationStateCollection(validationStatus);
                 if (!validationStates.isEmpty()) {
                     currentSnp.setCollection("validations", validationStates);
+                }
+                
+                snpCounter++;
+                if (snpCounter % 10000 == 0) {
+                    LOG.info("Read " + snpCounter + " SNPs, " + counter + " rows total.");
                 }
             }
             // CONSEQUENCE TYPES
