@@ -143,7 +143,9 @@
               </td>
                <c:if test="${IS_SUPERUSER}">
                <td class="sorting">
-                   ${templateRank[savedTemplate.value.name]}
+                   <c:if test="${!empty templateRank}">
+                       ${templateRank[savedTemplate.value.name]}
+                   </c:if>
                </td>
                </c:if>
               <td class="sorting" align="center" nowrap>
