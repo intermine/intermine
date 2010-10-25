@@ -286,7 +286,7 @@
 							// early bath
 							if (i > maxEntries) return;
 	
-				            feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 40);
+				            feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 70);
 				            feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 70);
 				            feedDate = new Date(items[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue);
 				            feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
@@ -344,7 +344,7 @@
     -->
 
     <div id="footer" class="span-12 last">
-        <div class="span-8">
+        <div class="span-6">
             <a href="#">Contact Us</a>
             <span>|</span>
             <a href="#">Privacy Policy</a>
@@ -363,9 +363,9 @@
             
             <p>&copy; 2010 Department of Genetics, University of Cambridge, Downing Street, Cambridge CB2 3EH, United Kingdom</p>
         </div>
-        <div class="span-4 last">
-            <a href="http://nih.gov/" title="National Institutes of Health">
-            	<img src="/metabolicmine/themes/metabolic/icons/nih-ico.png" alt="National Institutes of Health" />
+        <div class="span-6 last">
+            <a href="http://wellcome.ac.uk/" title="Wellcome Trust">
+            	<img src="/metabolicmine/themes/metabolic/icons/wellcome-ico.png" alt="Wellcome Trust" />
            	</a>
            	<a href="http://www.gen.cam.ac.uk/" title="Department of Genetics">
            		<img src="/metabolicmine/themes/metabolic/icons/genetics-ico.gif" alt="Department of Genetics" />
