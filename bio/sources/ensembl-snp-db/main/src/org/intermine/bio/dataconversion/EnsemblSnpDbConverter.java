@@ -62,6 +62,28 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         // a database has been initialised from properties starting with db.ensembl-snp-db
 
         Connection connection = getDatabase().getConnection();
+        Set<String> chrNames = new HashSet<String>();
+
+        for (int i = 1; i<=22; i++) {
+            chrNames.add("" + i);
+        }
+        chrNames.add("X");
+        chrNames.add("Y");
+
+        for (String chrName : chrNames) {
+            processChromosome(connection, chrName);
+        }
+        connection.close();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void processChromosome(Connection connection, String chrName) throws Exception {
+        // a database has been initialised from properties starting with db.ensembl-snp-db
+
+        System.out.println("Starting to process chromosome " + chrName);
+        LOG.info("Starting to process chromosome " + chrName);
 
         // TODO move this to a parser arguement
         int taxonId = 9606;
@@ -71,7 +93,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Item currentSnp = null;
         String currentRsNumber = null;
         Set<String> consequenceIdentifiers = new HashSet<String>();
-        ResultSet res = queryVariation(connection);
+        ResultSet res = queryVariation(connection, chrName);
         while (res.next()) {
             counter++;
             String rsNumber = res.getString("variation_name");
@@ -82,7 +104,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 }
                 currentRsNumber = rsNumber;
                 consequenceIdentifiers = new HashSet<String>();
-                String chrName = res.getString("sr.name");
+                //String chrName = res.getString("sr.name");
                 String alleles = res.getString("allele_string");
 
                 currentSnp = createItem("SNP");
@@ -117,9 +139,9 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 if (!validationStates.isEmpty()) {
                     currentSnp.setCollection("validations", validationStates);
                 }
-                
+
                 snpCounter++;
-                if (snpCounter % 10000 == 0) {
+                if (snpCounter % 1000 == 0) {
                     LOG.info("Read " + snpCounter + " SNPs, " + counter + " rows total.");
                 }
             }
@@ -151,6 +173,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         if (currentSnp != null) {
             storeSnp(currentSnp, consequenceIdentifiers);
         }
+
+        LOG.info("Finished chromosome " + chrName + " stored " + snpCounter + " SNPs.");
     }
 
     private void storeSnp(Item snp, Set<String> consequenceIdentifiers)
@@ -219,7 +243,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return consequenceIdentifier;
     }
 
-    private ResultSet queryVariation(Connection connection) throws SQLException {
+    private ResultSet queryVariation(Connection connection, String chrName) throws SQLException {
         String query = "SELECT vf.variation_name, vf.allele_string, "
             + " sr.name, vf.seq_region_start, vf.seq_region_end, vf.seq_region_strand, "
             + " s.name,"
@@ -231,7 +255,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " ON (vf.variation_feature_id = tv.variation_feature_id"
             + " AND tv.peptide_allele_string is not null)"
             + " WHERE vf.seq_region_id = sr.seq_region_id"
-            + " AND vf.source_id = s.source_id";
+            + " AND vf.source_id = s.source_id"
+            + " AND sr.name = '" + chrName + "'";
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
