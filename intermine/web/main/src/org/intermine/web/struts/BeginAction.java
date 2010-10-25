@@ -20,6 +20,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.search.Scope;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.tracker.TemplateTrack;
 import org.intermine.api.tracker.TrackerManager;
 import org.intermine.web.logic.session.SessionMethods;
@@ -82,7 +85,11 @@ public class BeginAction extends InterMineAction
         if (trackerManager != null) {
             TemplateTrack tt = trackerManager.getMostPopularTemplate();
             if (tt != null) {
-                request.setAttribute("mostPopularTemplate", tt.getTemplateName());
+                String templateName = tt.getTemplateName();
+                Profile profile = SessionMethods.getProfile(session);
+                TemplateQuery template = im.getTemplateManager()
+                                         .getTemplate(profile, templateName, Scope.ALL);
+                request.setAttribute("mostPopularTemplate", template.getTitle());
             }
         }
 
