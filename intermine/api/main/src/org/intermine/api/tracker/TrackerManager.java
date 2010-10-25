@@ -77,4 +77,10 @@ public class TrackerManager
         }
         return null;
     }
+
+    public void updateTemplateName(String oldTemplateName, String newTemplateName) {
+        if (templateTracker != null) {
+            templateTracker.updateTemplateName(oldTemplateName, newTemplateName);
+        }
+    }
 }
