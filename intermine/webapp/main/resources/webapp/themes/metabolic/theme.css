@@ -62,3 +62,15 @@ body { background:url("img/top-gradient.jpg") repeat-x scroll center top transpa
 input#quickSearchInput { background:url("img/quick-search-alt-bg.png") no-repeat top; border:none; padding:5px 2px 0 6px;
 	font-size:12px; margin-top:1px; }
 #submenudiv #quicksearch { color:#4B3F4B; }
+
+#pagecontentcontainer { background:#FEFEFE; }
+
+/* main boxes */
+div.gradientbox { border:1px solid #E3D85A; background:/*#FFFEF2*/url("img/yellow-bg.jpg") repeat-x top; }
+div.plainbox { border:1px solid #BEDCE4 !important; background:#E6F7FE; }
+
+/* box filter bars */
+div.filterBar { background:#FFFCD9; border-color:#E3D85A; }
+div#filter_tool_bar { border-color:#E3D85A; }
+
+div .gradientbox h1, div .plainbox h1 { color:#4D5154; font-size:22px; }
