@@ -568,3 +568,11 @@ ol#news a { font-weight:bold; }
 p#crumbs { ; }
 	p#crumbs span { color:#E2E1E6; font-size:9px; margin:0 2px 0 1px; }
 	#contextHelp { display:inline; float:right; }
+
+/* bagDetails.do widget list links overriding bagDetails.css to be more obvious */
+p#toggleWidgets { padding:0; margin:0; margin-left:10px; display:inline; float:left;  }
+ol.widgetList { padding-left:0 !important; float:left; }
+ol.widgetList li a, ol.widgetList li a.active, ol.widgetList li a:hover { background-color:#EEEEEE; background-repeat: no-repeat;
+	background-position:left; color:#000; text-decoration:none; padding:4px 6px 4px 26px; border:1px solid #D2D2D2; }
+ol.widgetList li a { background-image:url('../images/icons/toggle_plus.png'); }
+ol.widgetList li a.active { background-image:url('../images/icons/toggle_minus.png'); }

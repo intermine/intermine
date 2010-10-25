@@ -276,13 +276,13 @@
   }
 </script>
 
-<ol class="widgetList">
-<li>Click to select widgets you would like to display:</li>
-<c:forEach items="${widgets}" var="widget">
-  <li><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}')" id="togglelink${widget.id}" class="active">${widget.title}</a>&nbsp;|&nbsp;</li>
-</c:forEach>
-</ol>
-<div style="clear:both;">&nbsp;</div>
+<p id="toggleWidgets">Click to select widgets you would like to display:
+	<ol class="widgetList">
+	<c:forEach items="${widgets}" var="widget">
+	  <li><a title="toggle widget" href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}')" id="togglelink${widget.id}" class="active">${widget.title}</a></li>
+	</c:forEach>
+	</ol>
+</p>
 
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
 <c:forEach items="${widgets}" var="widget">

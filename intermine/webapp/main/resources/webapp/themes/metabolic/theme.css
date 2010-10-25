@@ -1,5 +1,5 @@
-#bagDescriptionDiv,#textarea{background-color:#F5F0FF;}
-#bagDescriptionDiv:hover{background-color:#E6FFB3;}
+#bagDescriptionDiv,#textarea{background-color:#E6F7FE;}
+/*#bagDescriptionDiv:hover{background-color:#FEFEF2;}*/
 #headercontainer #header h1 a{padding-top:2px;}
 #headercontainer #header p{padding-top:6px;}
 #headercontainer #header p#version{margin-left:4px;margin-right:8px;padding-top:6px;}
@@ -74,3 +74,6 @@ div.filterBar { background:#FFFCD9; border-color:#E3D85A; }
 div#filter_tool_bar { border-color:#E3D85A; }
 
 div .gradientbox h1, div .plainbox h1 { color:#4D5154; font-size:22px; }
+
+/* bagDetails.do textarea edit */
+#bagDescriptionDiv { cursor:pointer; }
