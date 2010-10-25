@@ -152,8 +152,9 @@ public class TemplateTracker extends TrackerAbstract
         Statement stm = null;
         try {
             stm = connection.createStatement();
-            String sql = "UPDATE " + trackTableName + " SET templatename = " + newTemplateName
-                        + " WHERE templatename = " + oldTemplateName;
+            String sql = "UPDATE " + trackTableName
+                        + " SET templatename = '" + newTemplateName + "'"
+                        + " WHERE templatename = '" + oldTemplateName + "'";
             stm.executeUpdate(sql);
         } catch (SQLException sqe) {
             if (stm != null) {
