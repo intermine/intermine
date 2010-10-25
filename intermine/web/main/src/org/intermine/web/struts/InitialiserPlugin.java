@@ -44,6 +44,9 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
+import org.intermine.api.tracker.Tracker;
+import org.intermine.api.tracker.TrackerFactory;
+import org.intermine.api.tracker.TrackerManager;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -59,9 +62,6 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.Database;
-import org.intermine.tracker.Tracker;
-import org.intermine.tracker.TrackerFactory;
-import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
@@ -121,9 +121,9 @@ public class InitialiserPlugin implements PlugIn
         final ObjectStoreSummary oss = summariseObjectStore(servletContext, os);
         final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
-        Map<String, Tracker> trackers = getTrackers(webProperties, userprofileOSW);
+        TrackerManager trackerManager = getTrackerManager(webProperties, userprofileOSW);
         final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
-                oss, trackers);
+                oss, trackerManager);
         SessionMethods.setInterMineAPI(servletContext, im);
 
         // need a global reference to ProfileManager so it can be closed cleanly on destroy
@@ -469,7 +469,14 @@ public class InitialiserPlugin implements PlugIn
         }
     }
 
-    private Map<String, Tracker> getTrackers(Properties webProperties, ObjectStoreWriter userprofileOSW) {
+    /**
+     * Returns the tracker manager of all trackers defined into the webapp configuration properties
+     * @param webProperties the webapp configuration properties where the trackers are defined
+     * @param userprofileOSW the object store writer to retrieve the database connection
+     * @return TrackerManager the trackers manager
+     */
+    private TrackerManager getTrackerManager(Properties webProperties,
+            ObjectStoreWriter userprofileOSW) {
         Map<String, Tracker> trackers = new HashMap<String, Tracker>();
         String trackerList = (String) webProperties.get("webapp.trackers");
         LOG.warn("initializeTrackers: trackerList is" + trackerList);
@@ -484,10 +491,11 @@ public class InitialiserPlugin implements PlugIn
                     tracker = TrackerFactory.getTracker(trackerClassName, con);
                     trackers.put(tracker.getName(), tracker);
                 } catch (Exception e) {
-                    LOG.warn("Tracker " + trackerClassName + " hasn't been instatiate", e);
+                    LOG.warn("Tracker " + trackerClassName + " hasn't been instatiated", e);
                 }
             }
         }
-        return trackers;
+        TrackerManager tm = new TrackerManager(trackers);
+        return tm;
     }
 }

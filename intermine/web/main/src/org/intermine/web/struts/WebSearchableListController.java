@@ -39,9 +39,9 @@ import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.tracker.TrackerManager;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.util.StringUtil;
-import org.intermine.util.TrackerManager;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.stringtree.json.JSONWriter;
@@ -185,12 +185,16 @@ public class WebSearchableListController extends TilesAction
     private Map<String, WebSearchable> sortListByMostPopular(final Map<String, WebSearchable>
     filteredWebSearchables, HttpSession session) {
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        TrackerManager tm = TrackerManager.getInstance(im);
+        TrackerManager tm = im.getTrackerManager();
+        Profile profile = SessionMethods.getProfile(session);
         List<String> mostPopulareTemplateNames;
         if (SessionMethods.getProfile(session).isLoggedIn()) {
-            mostPopulareTemplateNames = tm.getMostPopularTemplateOrder(session);
+            mostPopulareTemplateNames = tm.getMostPopularTemplateOrder(profile, session.getId());
         } else {
             mostPopulareTemplateNames = tm.getMostPopularTemplateOrder();
+        }
+        if (mostPopulareTemplateNames == null) {
+            return sortList(filteredWebSearchables);
         }
         MostPopularTemplateComparator comparator = new MostPopularTemplateComparator(
             mostPopulareTemplateNames, filteredWebSearchables);

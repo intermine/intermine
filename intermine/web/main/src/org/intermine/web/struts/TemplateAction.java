@@ -34,6 +34,7 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateValue;
+import org.intermine.api.tracker.TrackerManager;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
@@ -45,7 +46,6 @@ import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
-import org.intermine.util.TrackerManager;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
@@ -209,9 +209,10 @@ public class TemplateAction extends InterMineAction
 
         String qid = SessionMethods.startQueryWithTimeout(request, saveQuery, populatedTemplate);
         Thread.sleep(200);
-        TrackerManager.getInstance(im).trackTemplate(populatedTemplate.getName(), session);
-        String trail = "";
+        //tracks the templates
+        im.getTrackerManager().trackTemplate(populatedTemplate.getName(), profile, session.getId());
 
+        String trail = "";
         // only put query on the trail if we are saving the query
         // otherwise its a "super top secret" query, e.g. quick search
         // also, note we are not saving any previous trails. trail resets at

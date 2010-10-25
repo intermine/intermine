@@ -21,7 +21,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.util.TrackerManager;
+import org.intermine.api.tracker.TrackerManager;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
