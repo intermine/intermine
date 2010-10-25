@@ -21,24 +21,22 @@ import org.intermine.pathquery.PathQuery;
 public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
 {
     /**
-     * This method will generate web service source code from a path query.
+     * This method will generate web service source code in Perl from a path query.
      *
      * @param query a PathQuery
      * @return web service source code in a string
      */
-    @Override
     public String generate(PathQuery query) {
         // TODO Auto-generated method stub
         return null;
     }
 
     /**
-     * This method will generate web service source code from a template query.
+     * This method will generate web service source code in Perl from a template query.
      *
      * @param query a TemplateQuery
      * @return web service source code in a string
      */
-    @Override
     public String generate(TemplateQuery query) {
         // TODO Auto-generated method stub
         return null;
