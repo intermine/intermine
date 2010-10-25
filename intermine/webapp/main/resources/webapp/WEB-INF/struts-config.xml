@@ -98,6 +98,8 @@
     </action>
     <action path="/bag" forward="bag.page">
     </action>
+    <action path="/api" forward="api.page">
+    </action>
     <action path="/bagDetails" forward="bagDetails.page">
     </action>
     <action path="/getAttributeAsFile" type="org.intermine.web.struts.GetAttributeAsFileAction">
@@ -250,6 +252,7 @@
       <forward name="template" path="template.page"/>
       <forward name="serviceLink" path="/serviceLink.do" redirect="false"/>
       <forward name="export" path="/exportTemplates.do" redirect="false"/>
+      <forward name="codeGen" path="/wsCodeGen.do" redirect="false"/>
     </action>
     <action path="/importTemplates" name="importTemplatesForm" type="org.intermine.web.struts.TemplatesImportAction" scope="request" input="import">
       <forward name="import" path="importTemplates.page"/>
@@ -411,6 +414,10 @@
     </action>
     <action path="/initBagDetails" type="org.intermine.web.struts.BagDetailsController">
     </action>
+     <action path="/initApiPerl" type="org.intermine.web.struts.ApiPerlController">
+    </action>
+     <action path="/initApiJava" type="org.intermine.web.struts.ApiJavaController">
+    </action>
     <action path="/initExternalLinks" type="org.intermine.web.struts.ExternalLinksController">
     </action>
     <action path="/initClassChooser" type="org.intermine.web.struts.ClassChooserController">
@@ -432,11 +439,16 @@
     <action path="/initPasswordReset" type="org.intermine.web.struts.PasswordResetController"/>
     <action path="/initHints" type="org.intermine.web.struts.HintsController"/>
 
-    <action path="/initObjectView" type="org.intermine.web.struts.ObjectViewController"/>
+    <action path="/initObjectView" type="org.intermine.web.struts.ObjectViewController">
+      <forward name="begin" redirect="true" path="/begin.do"/>
+    </action>
 
+    <action path="/initKeywordSearchResults" type="org.intermine.web.struts.KeywordSearchResultsController" />
+    <action path="/keywordSearchResults" forward="keywordsearchresults.page" />
 
-  <action path="/initKeywordSearchResults" type="org.intermine.web.struts.KeywordSearchResultsController" />
-  <action path="/keywordSearchResults" forward="keywordsearchresults.page" />
+    <action path="/fileDownload" type="org.intermine.web.struts.FileDownloadAction"/>
+
+    <action path="/wsCodeGen" type="org.intermine.web.struts.WebserviceCodeGenAction"/>
 
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
