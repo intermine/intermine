@@ -1,5 +1,14 @@
-package org.intermine.tracker;
+package org.intermine.api.tracker;
 
+/*
+ * Copyright (C) 2002-2010 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.apache.log4j.Logger;
@@ -7,7 +16,6 @@ import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.writebatch.Batch;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.Shutdownable;
-
 
 public abstract class TrackerAbstract implements Tracker, Shutdownable
 {

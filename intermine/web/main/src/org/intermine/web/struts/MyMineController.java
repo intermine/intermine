@@ -31,11 +31,11 @@ import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateSummariser;
+import org.intermine.api.tracker.TrackerManager;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.util.TrackerManager;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.SessionMethods;
@@ -66,7 +66,10 @@ public class MyMineController extends TilesAction
         Profile profile = SessionMethods.getProfile(session);
 
         if (SessionMethods.isSuperUser(session)) {
-            request.setAttribute("templateRank", TrackerManager.getInstance(im).getRank());
+            Map<String, Integer> templateRank = im.getTrackerManager().getRank();
+            if (templateRank != null) {
+                request.setAttribute("templateRank", templateRank);
+            }
         }
 
         /* if the user is on a restricted page and they are not logged in, send them to the bags

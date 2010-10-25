@@ -20,8 +20,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
-import org.intermine.tracker.TemplateTrack;
-import org.intermine.util.TrackerManager;
+import org.intermine.api.tracker.TemplateTrack;
+import org.intermine.api.tracker.TrackerManager;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -78,9 +78,9 @@ public class BeginAction extends InterMineAction
                 .getTemplateManager().getGlobalTemplates().size()));
 
         /*most popular template*/
-        TrackerManager trackerManager = TrackerManager.getInstance(im);
+        TrackerManager trackerManager = im.getTrackerManager();
         if (trackerManager != null) {
-            TemplateTrack tt =trackerManager.getMostPopularTemplate();
+            TemplateTrack tt = trackerManager.getMostPopularTemplate();
             if (tt != null) {
                 request.setAttribute("mostPopularTemplate", tt.getTemplateName());
             }
