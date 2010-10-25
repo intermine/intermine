@@ -32,6 +32,7 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.tracker.TrackerManager;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathConstraint;
@@ -166,14 +167,10 @@ public class CreateTemplateAction extends InterMineAction
                 ? prevTemplateName : template.getName();
             profile.deleteTemplate(oldTemplateName);
             session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
-            //upload tags
-            TagManager tagManager = im.getTagManager();
-            String userName = profile.getUsername();
-            Set<String> tagNames =
-                tagManager.getObjectTagNames(oldTemplateName, "template", userName);
-            for (String tagName : tagNames) {
-                tagManager.deleteTag(tagName, oldTemplateName, "template", userName);
-                tagManager.addTag(tagName, template.getName(), "template", userName);
+            if (prevTemplateName != null && !prevTemplateName.equals(template.getName())) {
+                updateTags(im.getTagManager(), profile.getUsername(),
+                       oldTemplateName, template.getName());
+                updateTrackers(im.getTrackerManager(), oldTemplateName, template.getName());
             }
         }
 
@@ -193,5 +190,19 @@ public class CreateTemplateAction extends InterMineAction
         session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
         return new ForwardParameters(mapping.findForward("mymine"))
             .addParameter("subtab", "templates").forward();
+    }
+
+    private void updateTags(TagManager tagManager, String userName,
+                           String oldTemplateName, String newTemplateName) {
+        Set<String> tagNames =
+            tagManager.getObjectTagNames(oldTemplateName, "template", userName);
+        for (String tagName : tagNames) {
+            tagManager.deleteTag(tagName, oldTemplateName, "template", userName);
+            tagManager.addTag(tagName, newTemplateName, "template", userName);
+        }
+    }
+
+    private void updateTrackers(TrackerManager trackerManager, String oldTemplateName, String newTemplateName) {
+        trackerManager.updateTemplateName(oldTemplateName, newTemplateName);
     }
 }
