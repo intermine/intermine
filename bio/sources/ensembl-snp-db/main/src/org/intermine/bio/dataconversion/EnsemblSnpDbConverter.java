@@ -116,12 +116,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 currentSnp.setReference("chromosome", chr);
 
                 // LOCATION
-                String chrStart = "" + res.getInt("seq_region_start");
-                String chrEnd = "" + res.getInt("seq_region_end");
+                int chrStart = res.getInt("seq_region_start");
+                int chrEnd = res.getInt("seq_region_end");
                 String chrStrand = "" + res.getInt("seq_region_strand");
                 Item loc = createItem("Location");
-                loc.setAttribute("start", chrStart);
-                loc.setAttribute("end", chrEnd);
+                loc.setAttribute("start", "" + Math.min(chrStart, chrEnd));
+                loc.setAttribute("end", "" + Math.max(chrStart, chrEnd));
                 loc.setAttribute("strand", chrStrand);
                 loc.setReference("locatedOn", chr);
                 loc.setReference("feature", currentSnp);
