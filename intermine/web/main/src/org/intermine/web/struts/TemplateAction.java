@@ -173,6 +173,13 @@ public class TemplateAction extends InterMineAction
             return mapping.findForward("export");
         }
 
+        if (!editQuery && !skipBuilder && !editTemplate && codeGenTemplate(request)) {
+            SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
+            return new ForwardParameters(mapping.findForward("codeGen")).addParameter("method",
+                request.getParameter("actionType")).addParameter("source", "templateQuery")
+                .forward();
+        }
+
         // We're editing the query: load as a PathQuery
         if (!skipBuilder && !editTemplate) {
             SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
@@ -244,6 +251,16 @@ public class TemplateAction extends InterMineAction
         String exportTemplate = request.getParameter("actionType");
         if (exportTemplate != null
                && "exportTemplate".equalsIgnoreCase(exportTemplate)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean codeGenTemplate(HttpServletRequest request) {
+        String codeGenTemplate = request.getParameter("actionType");
+        if (codeGenTemplate != null
+                && ("perl".equalsIgnoreCase(codeGenTemplate) || "java"
+                        .equalsIgnoreCase(codeGenTemplate))) {
             return true;
         }
         return false;

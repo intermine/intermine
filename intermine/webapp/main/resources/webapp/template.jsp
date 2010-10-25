@@ -25,13 +25,13 @@
   var previousConstraintsOrder = '';
 
   jQuery(document).ready(function(){
-	  jQuery('#constraintList').sortable({dropOnEmpty:true,update:function() {
-    	      reorderConstraintsOnServer();
+    jQuery('#constraintList').sortable({dropOnEmpty:true,update:function() {
+            reorderConstraintsOnServer();
           }
-	  });
+    });
       recordCurrentConstraintsOrder();
   });
-  
+
 </script>
 </c:if>
 <c:choose>
@@ -61,7 +61,7 @@
                 <li id="constraintElement${index}_${index}">
                 <%-- builder=yes means we are in template preview --%>
                 <c:if test="${!empty builder && builder=='yes'}">
-                <div style="border: 1px solid #bbb;" onmouseover="this.style.border='1px solid #444';this.style.cursor='move';" 
+                <div style="border: 1px solid #bbb;" onmouseover="this.style.border='1px solid #444';this.style.cursor='move';"
                     onmouseout="this.style.border='1px solid #bbb';this.style.cursor='default';">
                 </c:if>
                 <%-- constraint name --%>
@@ -72,7 +72,7 @@
                 <c:if test="${dec.disabled}">
                     <c:set var="constraintHeadingClass" value="constraintHeadingDisabled"/>
                 </c:if>
-                
+
                 <td><div class="constraint_${index} ${constraintHeadingClass}"><span class="templateConstraintPath"> <c:out value="${dec.title}" />
                 </span> <c:if test="${not empty dec.description}">
                   <span class="templateConstraintDescription"><c:out value=" - ${dec.description}" /></span>
@@ -81,7 +81,7 @@
             </table>
             <c:set var="valignExternalTd" value="top"/>
             <c:set var="rowspanExternalTd" value="1"/>
-            <%--if the bag constraint is displayed the helpLink and the optional sections have different valign and rowspan --%> 
+            <%--if the bag constraint is displayed the helpLink and the optional sections have different valign and rowspan --%>
             <c:if test="${!empty dec.bags && !dec.nullSelected}">
               <c:set var="valignExternalTd" value="middle"/>
               <c:set var="rowspanExternalTd" value="2"/>
@@ -97,13 +97,13 @@
                       <c:set var="clickToEnable" value="javascript:;"/>
                       <c:set var="clickToDisable" value="javascript:;"/>
                     </c:if>
-                    
+
                     <span class="optionalText">optional</span><br />
-                    
+
                     <c:choose>
                       <c:when test="${dec.enabled}">
                          <html:hidden property="switchOff(${index})" value="ON" styleId="switchOff(${index})" />
-                        
+
                         <div id="optionalEnabled_${index}" class="optionalOnOff" style="display:inline">
                           <span class="optionalSelected">ON</span>&nbsp;|&nbsp;<span><a href="${clickToDisable}" title="Disable constraint">OFF</a></span>
                         </div>
@@ -129,16 +129,16 @@
                 <c:if test="${dec.disabled}">
                     <c:set var="constraintBodyClass" value="constraintHeadingDisabled"/>
                 </c:if>
-                
+
               <%-- if Boolean --%>
               <td class="constraint_${index}">
               <c:choose>
               <c:when test="${dec.boolean}">
               <html:hidden property="attributeOps(${index})" value="0" disabled="false" />
               <html:radio property="attributeValues(${index})" value="true"/>
-              <fmt:message key="query.constraint.true" /> 
+              <fmt:message key="query.constraint.true" />
               <html:radio property="attributeValues(${index})" value="false"/>
-              <fmt:message key="query.constraint.false" /> 
+              <fmt:message key="query.constraint.false" />
               </c:when>
               <%-- if null or not null value --%>
               <c:when test="${dec.nullSelected}">
@@ -179,26 +179,26 @@
                   <c:choose>
                   <%-- inputfield for an autocompletion --%>
                   <c:when test="${!empty dec.autoCompleter}">
-                    <input name="attributeValues(${index})" id="attributeId_${index}" size="45" 
-                      style="background: #ffffc8" 
+                    <input name="attributeValues(${index})" id="attributeId_${index}" size="45"
+                      style="background: #ffffc8"
                       value="${dec.selectedValue}"
                       onKeyDown="getId(this.id); isEnter(event);"
                       onKeyUp="readInput(event, '${dec.path.lastClassName}', '${dec.path.fieldName}');"
-                      onMouseOver="setMouseOver(${index});" 
+                      onMouseOver="setMouseOver(${index});"
                       onMouseOut="setMouseOver(0);"
                       onBlur="if(MOUSE_OVER != ${index}) { removeList(); }" />
                     <iframe width="100%" height="0" id="attributeId_${index}_IEbugFixFrame"
                       marginheight="0" marginwidth="0" frameborder="0" style="position: absolute;"> </iframe>
                     <div class="auto_complete" id="attributeId_${index}_display"
-                      onMouseOver="setMouseOver(${index});" 
+                      onMouseOver="setMouseOver(${index});"
                       onMouseOut="setMouseOver(0);"
                       onBlur="if(MOUSE_OVER != ${index}) { removeList(); }"></div>
                     <div class="error_auto_complete" id="attributeId_${index}_error"></div>
                   </c:when>
-                 
+
                   <%-- normal inputfield, no auto completer exists --%>
                   <c:otherwise>
-                     <im:dateInput attributeType="${dec.path.type}" property="attributeValues(${index})" 
+                     <im:dateInput attributeType="${dec.path.type}" property="attributeValues(${index})"
                        styleId="attribute6" value="${(dec.possibleValuesDisplayed && dec.selectedValue == null) ? dec.possibleValues[0] : dec.selectedValue}"/>
                    </c:otherwise>
                 </c:choose>
@@ -215,8 +215,8 @@
                 </c:otherwise>
                 </c:choose>
 
-          
-         
+
+
          <%-- dropdown (probably organism) --%>
          <c:choose>
           <c:when test="${dec.extraConstraint}">
@@ -226,7 +226,7 @@
                     <fmt:param value="${dec.extraConstraintClassName}"/>
                   </fmt:message>
                 </label>
-            
+
             <html:select property="extraValues(${index})" value="${dec.selectedExtraValue}">
               <html:option value="">Any</html:option>
                <!-- this should set to extraValue if editing existing constraint -->
@@ -243,7 +243,7 @@
           </c:otherwise>
         </c:choose>
         </td>
-        
+
         <%-- help link --%>
         <td rowspan="${rowspanExternalTd}" valign="${valignExternalTd}">
           <c:if test="${!empty dec.helpMessage}">
@@ -263,7 +263,7 @@
                   <c:out value="${bagOp.label}" />
                 </option>
               </c:forEach>
-            </html:select> 
+            </html:select>
             <fmt:message key="template.constraintobelist"><fmt:param value="${dec.bagType}"/></fmt:message>
             <html:select property="bag(${index})" disabled="true">
               <c:forEach items="${dec.bags}" var="bag">
@@ -271,16 +271,16 @@
                   <c:out value="${bag}" />
                 </option>
               </c:forEach>
-            </html:select> 
-          </c:if> 
+            </html:select>
+          </c:if>
         </td>
 
         <%-- AND and OR button --%>
-       <%--  
+       <%--
          <td valign="middle">
            <a id="orButton(${index})" style="text-decoration:none;" href="javascript:addOR(${index})" title="Add OR constraint">
              <span style="font-size: 12px;color: #477b46;font-weight: bold;margin-left: 15px;margin-right: 5px">OR+</span>
-           </a> 
+           </a>
            <a id="andButton(${index})" style="text-decoration:none;" href="javascript:addAND(${index})" title="Add AND constraint">
              <span style="font-size: 12px;color: #477b46;font-weight: bold;margin-right: 5px">AND+</span>
            </a>
@@ -294,7 +294,7 @@
       </div>
     </c:if>
   </li>
-        
+
        <script type="text/javascript">
          initConstraints(${index});
        </script>
@@ -334,7 +334,22 @@
     <td>
       <a href="${webserviceLink}" title="Get a URL to run this template from the command line or a script">web service URL</a>
     </td>
-    <td></td>
+    <td>
+      <c:choose>
+        <c:when test="${empty builder}">
+          <a href="javascript:codeGenTemplate('perl')" target="_blank">Perl</a>
+          <span>|</span>
+          <a href="javascript:codeGenTemplate('java')" target="_blank">Java</a>
+          <a href="/${WEB_PROPERTIES['webapp.path']}/api.do" target="_blank"><span>[help]</span></a>
+        </c:when>
+        <c:otherwise>
+          <a href="javascript:;">Perl</a>
+          <span>|</span>
+          <a href="javascript:;">Java</a>
+          <a href="/${WEB_PROPERTIES['webapp.path']}/api.do" target="_blank"><span>[help]</span></a>
+        </c:otherwise>
+      </c:choose>
+    </td>
     <td>
       <c:choose>
         <c:when test="${empty builder}">
