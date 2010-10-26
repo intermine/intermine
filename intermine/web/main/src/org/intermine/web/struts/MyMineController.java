@@ -31,7 +31,6 @@ import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateSummariser;
-import org.intermine.api.tracker.TrackerManager;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
@@ -66,7 +65,7 @@ public class MyMineController extends TilesAction
         Profile profile = SessionMethods.getProfile(session);
 
         if (SessionMethods.isSuperUser(session)) {
-            Map<String, Integer> templateRank = im.getTrackerManager().getRank();
+            Map<String, Integer> templateRank = im.getTrackerDelegate().getRank();
             if (templateRank != null) {
                 request.setAttribute("templateRank", templateRank);
             }

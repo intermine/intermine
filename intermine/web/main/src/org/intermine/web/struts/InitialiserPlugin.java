@@ -46,7 +46,7 @@ import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tracker.Tracker;
 import org.intermine.api.tracker.TrackerFactory;
-import org.intermine.api.tracker.TrackerManager;
+import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -121,9 +121,9 @@ public class InitialiserPlugin implements PlugIn
         final ObjectStoreSummary oss = summariseObjectStore(servletContext, os);
         final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
-        TrackerManager trackerManager = getTrackerManager(webProperties, userprofileOSW);
+        TrackerDelegate trackerDelegate = getTrackerDelegate(webProperties, userprofileOSW);
         final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
-                oss, trackerManager);
+                oss, trackerDelegate);
         SessionMethods.setInterMineAPI(servletContext, im);
 
         // need a global reference to ProfileManager so it can be closed cleanly on destroy
@@ -475,7 +475,7 @@ public class InitialiserPlugin implements PlugIn
      * @param userprofileOSW the object store writer to retrieve the database connection
      * @return TrackerManager the trackers manager
      */
-    private TrackerManager getTrackerManager(Properties webProperties,
+    private TrackerDelegate getTrackerDelegate(Properties webProperties,
             ObjectStoreWriter userprofileOSW) {
         Map<String, Tracker> trackers = new HashMap<String, Tracker>();
         String trackerList = (String) webProperties.get("webapp.trackers");
@@ -495,7 +495,7 @@ public class InitialiserPlugin implements PlugIn
                 }
             }
         }
-        TrackerManager tm = new TrackerManager(trackers);
+        TrackerDelegate tm = new TrackerDelegate(trackers);
         return tm;
     }
 }

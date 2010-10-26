@@ -24,7 +24,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.tracker.TemplateTrack;
-import org.intermine.api.tracker.TrackerManager;
+import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -81,9 +81,9 @@ public class BeginAction extends InterMineAction
                 .getTemplateManager().getGlobalTemplates().size()));
 
         /*most popular template*/
-        TrackerManager trackerManager = im.getTrackerManager();
-        if (trackerManager != null) {
-            String templateName = trackerManager.getMostPopularTemplate();
+        TrackerDelegate trackerDelegate = im.getTrackerDelegate();
+        if (trackerDelegate != null) {
+            String templateName = trackerDelegate.getMostPopularTemplate();
             if (templateName != null) {
                 Profile profile = SessionMethods.getProfile(session);
                 TemplateQuery template = im.getTemplateManager()
