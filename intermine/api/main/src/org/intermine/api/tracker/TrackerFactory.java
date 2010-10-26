@@ -12,11 +12,22 @@ package org.intermine.api.tracker;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 
+/**
+ * Factory to instantiate the trackers with the reflection
+ * @author dbutano
+ */
 public class TrackerFactory
 {
     private TrackerFactory() {
     }
 
+    /**
+     * Return the tracker instantiated with the reflection
+     * @param className name of the class to instantiate
+     * @param con connection to the database
+     * @return the tracker instantiated
+     * @throws Exception
+     */
     public static Tracker getTracker(String className, Connection con) throws Exception {
         Class<?> cls = null;
         try {

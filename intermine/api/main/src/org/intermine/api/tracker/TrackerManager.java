@@ -15,12 +15,21 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
 
+/**
+ * Intermediate class which decouples the tracker components from the code that uses them.
+ * @author dbutano
+ *
+ */
 public class TrackerManager
 {
     protected Map<String, Tracker> trackers;
     protected TemplateTracker templateTracker;
     private static final Logger LOG = Logger.getLogger(TrackerManager.class);
 
+    /**
+     * Create the tracker manager managing the trackers specified in input
+     * @param trackers the trackers
+     */
     public TrackerManager(Map<String, Tracker> trackers) {
         this.trackers = trackers;
         if (!trackers.isEmpty()) {
@@ -28,34 +37,41 @@ public class TrackerManager
         }
     }
 
+    /**
+     * Return the trackers saved in the TrackerManager
+     * @return map containing names and trackers
+     */
     public Map<String, Tracker> getTrackers() {
         return trackers;
     }
 
-    public TemplateTracker getTemplateTracker() {
-        return templateTracker;
-    }
-
+    /**
+     * Store into the database the template execution by the user specified in input
+     * @param templateName the template name
+     * @param profile the user profile
+     * @param sessionIdentifier the session id
+     */
     public void trackTemplate(String templateName, Profile profile, String sessionIdentifier) {
-        TemplateTrack templateTrack = new TemplateTrack(templateName, sessionIdentifier,
-                                              System.currentTimeMillis());
-        if (profile != null && profile.getUsername() != null) {
-            templateTrack.setUserName(profile.getUsername());
-        }
-        if (templateTracker  != null) {
-            templateTracker.storeTrack(templateTrack);
-        } else {
-            LOG.warn("Template not tracked. Check if the TemplateTracker has ben configured");
+        if (templateTracker != null) {
+            templateTracker.trackTemplate(templateName, profile, sessionIdentifier);
         }
     }
 
-    public TemplateTrack getMostPopularTemplate() {
+    /**
+     * Return the template name associated to the public template with the highest rank
+     * @return String the template name
+     */
+    public String getMostPopularTemplate() {
         if (templateTracker != null) {
             return templateTracker.getMostPopularTemplate();
         }
         return null;
     }
 
+    /**
+     * Return the list of public templates ordered by rank descendant.
+     * @return List of template names
+     */
     public List<String> getMostPopularTemplateOrder() {
         if (templateTracker != null) {
             return templateTracker.getMostPopularTemplateOrder();
@@ -63,6 +79,12 @@ public class TrackerManager
         return null;
     }
 
+    /**
+     * Return the template list ordered by rank descendant for the user specified in input
+     * @param profile the user profile
+     * @param sessionIdentifier the session id
+     * @return List of template names
+     */
     public List<String> getMostPopularTemplateOrder(Profile profile, String sessionIdentifier) {
         if (profile != null && templateTracker != null) {
             return templateTracker.getMostPopularTemplateOrder(profile.getUsername(),
@@ -71,6 +93,10 @@ public class TrackerManager
         return null;
     }
 
+    /**
+     * Return the rank associated to the templates
+     * @return map with key the template name and value the rank associated
+     */
     public Map<String, Integer> getRank() {
         if (templateTracker != null) {
             return templateTracker.getRank();
@@ -78,6 +104,11 @@ public class TrackerManager
         return null;
     }
 
+    /**
+     * Update the template name value into the database
+     * @param oldTemplateName the old name
+     * @param newTemplateName the new name
+     */
     public void updateTemplateName(String oldTemplateName, String newTemplateName) {
         if (templateTracker != null) {
             templateTracker.updateTemplateName(oldTemplateName, newTemplateName);

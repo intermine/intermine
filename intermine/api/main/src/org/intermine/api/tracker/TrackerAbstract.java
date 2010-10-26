@@ -17,6 +17,11 @@ import org.intermine.sql.writebatch.Batch;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.Shutdownable;
 
+/**
+ * Abstract interface for creating trackers objects.
+ * @author dbutano
+ *
+ */
 public abstract class TrackerAbstract implements Tracker, Shutdownable
 {
     private static final Logger LOG = Logger.getLogger(TrackerAbstract.class);
@@ -25,10 +30,18 @@ public abstract class TrackerAbstract implements Tracker, Shutdownable
     protected String[] trackTableColumns;
     protected Batch trackerBatch = null;
 
+    /**
+     * Return the table's name associated to the tracker
+     * @return String table's name
+     */
     public String getTrackTableName() {
         return trackTableName;
     }
 
+    /**
+     * Create the table where the tracker saves data
+     * @throws Exception when a database error access is verified
+     */
     public void createTrackerTable() throws Exception {
         try {
             if (trackTableName != null && !"".equals(trackTableName)) {
@@ -45,7 +58,11 @@ public abstract class TrackerAbstract implements Tracker, Shutdownable
         }
     }
 
-    public synchronized void storeTrack(TrackerInput track) {
+    /**
+     * Save into the table the track object representing the user activity
+     * @param track the object saved into the database
+     */
+    public synchronized void storeTrack(Track track) {
         if (trackTableName != null) {
             if (track.validate()) {
                 try {
@@ -62,9 +79,23 @@ public abstract class TrackerAbstract implements Tracker, Shutdownable
         }
     }
 
+    /**
+     * Generate the sql statement to create the table used by the tracker
+     * @return String sql statement
+     */
     public abstract String getStatementCreatingTable();
-    public abstract Object[] getFormattedTrack(TrackerInput track);
 
+    /**
+     * Format a track into an array of Objects to be saved in the database
+     * @param track the track to format
+     * @return Object[] an array of Objects
+     */
+    public abstract Object[] getFormattedTrack(Track track);
+
+    /**
+     * Release the database connection
+     * @param conn the connection to release
+     */
     public void releaseConnection(Connection conn) {
         if (conn != null) {
             try {
@@ -83,6 +114,9 @@ public abstract class TrackerAbstract implements Tracker, Shutdownable
         }
     }
 
+    /**
+     * Flush the track table and release the database connection
+     */
     public void close() {
         flushTrackTable();
         try {
@@ -120,9 +154,9 @@ public abstract class TrackerAbstract implements Tracker, Shutdownable
     }
 
     /**
-     * override finalise method to release the connection .
+     * Override finalise method to flush the track table and release the connection
+     * @throws Throwable
      */
-
     @Override
     protected synchronized void finalize() throws Throwable {
         super.finalize();
