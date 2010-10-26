@@ -77,3 +77,8 @@ div .gradientbox h1, div .plainbox h1 { color:#4D5154; font-size:22px; }
 
 /* bagDetails.do textarea edit */
 #bagDescriptionDiv { cursor:pointer; }
+
+/* bagDetails.do sidebar */
+#convertList.listtoolbox, #linkOuts.listtoolbox { padding:0; border:1px solid #D2D2D2; }
+	#convertList.listtoolbox h3, #linkOuts.listtoolbox h3 { padding:4px 10px; margin:0; margin-bottom:10px; background:#EEE; }
+	#convertList.listtoolbox p { margin-bottom:10px; }

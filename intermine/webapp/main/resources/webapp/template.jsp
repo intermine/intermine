@@ -43,7 +43,7 @@
 <html:form action="/templateAction">
     <%-- template title --%>
     <h2 class="templateTitle">
-        <c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />
+        <c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-24.png\" style=\"vertical-align:middle\">&nbsp;')}" />
         ${templateTitle}
         <tiles:insert name="setFavourite.tile">
             <tiles:put name="name" value="${templateQuery.name}"/>
@@ -303,21 +303,18 @@
 </div>
 <%-- edit/submit buttons --%>
 <c:if test="${empty builder}">
-    <br/>
-     <table width="100%">
-     <tr>
-       <td>
+    <div id="templateButtons">
           <html:hidden property="name"/>
           <html:hidden property="scope"/>
           <html:hidden property="actionType" value="" styleId="actionType"/>
-          <html:submit property="skipBuilder" styleId="showResultsButton"><fmt:message key="template.submitToResults"/></html:submit>
-          <html:submit property="editQuery" styleClass="queryBuilder" styleId="editQueryButton"><fmt:message key="template.submitToQuery"/></html:submit>
+          <html:submit property="editQuery" styleClass="editQueryBuilder" styleId="editQueryButton"><fmt:message key="template.submitToQuery"/></html:submit>
           <c:if test="${IS_SUPERUSER}">
-          <html:submit property="editTemplate" styleClass="edit"><fmt:message key="template.submitToQueryEdit"/></html:submit>
+          	<html:submit property="editTemplate" styleClass="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
           </c:if>
-       </td>
-    </tr>
-    </table>
+          <html:submit property="skipBuilder" styleClass="next" styleId="showResultsButton">
+          	<fmt:message key="template.submitToResults"/>
+          </html:submit>
+	</div>
 </c:if>
 </html:form>
 

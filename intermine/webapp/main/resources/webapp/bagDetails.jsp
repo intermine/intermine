@@ -25,8 +25,29 @@
 <div class="body">
 <c:choose>
 <c:when test="${!empty bag}">
-<div class="heading">
-     <fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">for <b>${bag.name}</b> (${bag.size} ${bag.type}s)</span>
+<div class="heading results">
+	<img src="images/icons/lists-64.png" alt="lists icon"/>
+	<h1>
+		<fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">for <b>${bag.name}</b> (${bag.size} ${bag.type}s)</span>
+	</h1>
+	<div id="tool_bar_div">
+	    <ul id="button_bar">
+	        <li id="tool_bar_li_display"class="tb_button"><img src="images/display.png" width="13" height="13" alt="Display related templates or widgets"><html:link linkName="#">Related</html:link></li>
+	        <li id="tool_bar_li_export"class="tb_button"><img src="images/export.png" width="13" height="13" alt="Export this list"><html:link linkName="#">Export</html:link></li>
+	        <li id="tool_bar_li_use"class="tb_button"><img src="images/use.png" width="13" height="13" alt="Use this list in a template or a query"><html:link linkName="#">Use</html:link></li>
+	        <c:if test="${myBag == 'true'}">
+	          <li id="tool_bar_li_edit"class="tb_button"><img src="images/edit.png" width="13" height="13" alt="Edit my list"><html:link linkName="#">Edit</html:link></li>
+	    </c:if>
+	    </ul>
+		<html:form styleId="findInListForm" action="/findInList">
+	    	<input type="text" name="textToFind" id="textToFind"/>
+	        <input type="hidden" name="bagName" value="${bag.name}"/>
+	        <html:submit>
+	        	<fmt:message key="bagDetails.findInList"/>
+	        </html:submit>
+		</html:form>
+	</div>
+	<div style="clear:both;"></div>
 </div>
 
 <table cellspacing="0" width="100%">
@@ -57,25 +78,6 @@
     	});
     });
 </script>
-<div id="tool_bar_div">
-    <ul id="button_bar">
-        <li id="tool_bar_li_display"class="tb_button"><img src="images/display.png" width="13" height="13" alt="Display related templates or widgets"><html:link linkName="#">Related</html:link></li>
-        <li id="tool_bar_li_export"class="tb_button"><img src="images/export.png" width="13" height="13" alt="Export this list"><html:link linkName="#">Export</html:link></li>
-        <li id="tool_bar_li_use"class="tb_button"><img src="images/use.png" width="13" height="13" alt="Use this list in a template or a query"><html:link linkName="#">Use</html:link></li>
-        <c:if test="${myBag == 'true'}">
-          <li id="tool_bar_li_edit"class="tb_button"><img src="images/edit.png" width="13" height="13" alt="Edit my list"><html:link linkName="#">Edit</html:link></li>
-    </c:if>
-        <li class="tool_bar_link">
-           <html:form action="/findInList">
-            <input type="text" name="textToFind" id="textToFind"/>
-            <input type="hidden" name="bagName" value="${bag.name}"/>
-            <html:submit>
-              <fmt:message key="bagDetails.findInList"/>
-            </html:submit>
-          </html:form>
-        </li>
-    </ul>
-</div>
 
 <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
 <html:hidden property="bagName" value="${bag.name}"/>
