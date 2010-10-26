@@ -64,7 +64,9 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Connection connection = getDatabase().getConnection();
         Set<String> chrNames = new HashSet<String>();
 
-        for (int i = 1; i <= 22; i++) {
+        //int MIN_CHROMOSOME = 1;
+        int MIN_CHROMOSOME = 21;
+        for (int i = MIN_CHROMOSOME; i <= 22; i++) {
             chrNames.add("" + i);
         }
         chrNames.add("X");
