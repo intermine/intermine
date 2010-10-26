@@ -13,7 +13,7 @@
 <c:if test="${!templateQuery.valid}">
   <html:link action="/templateProblems?name=${templateQuery.name}&amp;scope=${scope}" styleClass="brokenTmplLink">
     <strike><span class="templateTitle"><c:out value="${templateQuery.title}"/></span></strike>
-    <img border="0" class="arrow" src="images/template_t.gif" title="This is an invalid template."/>
+    <img border="0" class="arrow" src="images/icons/templates-16.png" title="This is an invalid template."/>
   </html:link>
 </c:if>
 <c:if test="${templateQuery.valid}">
@@ -60,7 +60,7 @@
   
   <%-- (t) img.  trail isn't used here because queries always reset the trail --%>
   <html:link action="${runTemplateActionLink}" title="${linkTitle}">
-    <img border="0" class="arrow" src="images/template_t.gif" title="Click here to go to the template form"/>
+    <img border="0" class="arrow" src="images/icons/templates-16.png" title="Click here to go to the template form"/>
   </html:link>
   <%-- description --%>
   <c:if test="${! empty descr}">
