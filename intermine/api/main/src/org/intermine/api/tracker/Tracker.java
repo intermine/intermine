@@ -9,11 +9,29 @@ package org.intermine.api.tracker;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+/**
+ * Interface to represent a Tracker, an object tracking the users activities in the webapp
+ * into the database
+ * @author dbutano
+ */
 public interface Tracker
 {
-    void createTrackerTable() throws Exception ;
+    /**
+     * Create the table where the tracker saves data
+     * @throws Exception when a database error access is verified
+     */
+    void createTrackerTable() throws Exception;
 
-    void storeTrack(TrackerInput track);
+    /**
+     * Save into the table a Track
+     * @param track the object saved into the database representing the user activity
+     */
+    void storeTrack(Track track);
 
+    /**
+     * Return the tracker's name
+     * @return String representing the tracker's name
+     */
     String getName();
 }

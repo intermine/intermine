@@ -9,58 +9,99 @@ package org.intermine.api.tracker;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-public class TemplateTrack implements TrackerInput
+/**
+ * Class to represent the track for the templates objects.
+ * The track contains the template name, the access time, the session identifier
+ * and the user name (if the user is logged in)
+ * @author dbutano
+ */
+public class TemplateTrack implements Track
 {
     private String userName;
     private String templateName;
     private long timestamp;
     private String sessionIdentifier;
-    private int accessCounter;
 
+    /**
+     * Create a template track
+     * @param templateName template name
+     * @param sessionIdentifier session id
+     * @param timestamp access time
+     */
     public TemplateTrack(String templateName, String sessionIdentifier, long timestamp) {
         this.templateName = templateName;
         this.sessionIdentifier = sessionIdentifier;
         this.timestamp = timestamp;
     }
 
-    public TemplateTrack(String templateName, String userName, int accessCounter) {
-        this.templateName = templateName;
-        this.userName = userName;
-        this.accessCounter = accessCounter;
-    }
-
+    /**
+     * Return the user name
+     * @return String user name
+     */
     public String getUserName() {
         return userName;
     }
 
+    /**
+     * Set the user name
+     * @param userName the user name
+     */
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
+    /**
+     * Return the template name
+     * @return String template name
+     */
     public String getTemplateName() {
         return templateName;
     }
 
+    /**
+     * Set the template name
+     * @param templateName the template name
+     */
     public void setTemplateName(String templateName) {
         this.templateName = templateName;
     }
 
+    /**
+     * Return the time of access
+     * @return long the time of access
+     */
     public long getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * Set the time of access to the template
+     * @param timestamp the time of access
+     */
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
+    /**
+     * Return the session id
+     * @return String session id
+     */
     public String getSessionIdentifier() {
         return sessionIdentifier;
     }
 
+    /**
+     * Set the session id
+     * @param sessionIdentifier the session id
+     */
     public void setSessionIdentifier(String sessionIdentifier) {
         this.sessionIdentifier = sessionIdentifier;
     }
 
+    /**
+     * Validate the template track before saving into the database
+     * @return true if the template track is valid
+     */
     public boolean validate() {
         if (templateName != null && !"".equals(templateName) && sessionIdentifier != null) {
             return true;
