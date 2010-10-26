@@ -34,7 +34,6 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateValue;
-import org.intermine.api.tracker.TrackerManager;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
@@ -217,7 +216,8 @@ public class TemplateAction extends InterMineAction
         String qid = SessionMethods.startQueryWithTimeout(request, saveQuery, populatedTemplate);
         Thread.sleep(200);
         //tracks the templates
-        im.getTrackerManager().trackTemplate(populatedTemplate.getName(), profile, session.getId());
+        im.getTrackerDelegate().trackTemplate(populatedTemplate.getName(),
+                                              profile, session.getId());
 
         String trail = "";
         // only put query on the trail if we are saving the query

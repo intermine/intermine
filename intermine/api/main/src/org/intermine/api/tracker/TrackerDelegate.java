@@ -20,17 +20,17 @@ import org.intermine.api.profile.Profile;
  * @author dbutano
  *
  */
-public class TrackerManager
+public class TrackerDelegate
 {
     protected Map<String, Tracker> trackers;
     protected TemplateTracker templateTracker;
-    private static final Logger LOG = Logger.getLogger(TrackerManager.class);
+    private static final Logger LOG = Logger.getLogger(TrackerDelegate.class);
 
     /**
      * Create the tracker manager managing the trackers specified in input
      * @param trackers the trackers
      */
-    public TrackerManager(Map<String, Tracker> trackers) {
+    public TrackerDelegate(Map<String, Tracker> trackers) {
         this.trackers = trackers;
         if (!trackers.isEmpty()) {
             templateTracker = (TemplateTracker) trackers.get(TemplateTracker.getTrackerName());

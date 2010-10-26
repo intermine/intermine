@@ -32,7 +32,7 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.api.tracker.TrackerManager;
+import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathConstraint;
@@ -170,7 +170,7 @@ public class CreateTemplateAction extends InterMineAction
             if (prevTemplateName != null && !prevTemplateName.equals(template.getName())) {
                 updateTags(im.getTagManager(), profile.getUsername(),
                        oldTemplateName, template.getName());
-                updateTrackers(im.getTrackerManager(), oldTemplateName, template.getName());
+                updateTrackers(im.getTrackerDelegate(), oldTemplateName, template.getName());
             }
         }
 
@@ -202,7 +202,8 @@ public class CreateTemplateAction extends InterMineAction
         }
     }
 
-    private void updateTrackers(TrackerManager trackerManager, String oldTemplateName, String newTemplateName) {
-        trackerManager.updateTemplateName(oldTemplateName, newTemplateName);
+    private void updateTrackers(TrackerDelegate trackerDelegate,
+                                String oldTemplateName, String newTemplateName) {
+        trackerDelegate.updateTemplateName(oldTemplateName, newTemplateName);
     }
 }

@@ -24,7 +24,7 @@ import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
-import org.intermine.api.tracker.TrackerManager;
+import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -50,7 +50,7 @@ public class InterMineAPI
     protected TemplateSummariser templateSummariser;
     protected ObjectStoreSummary oss;
     protected BagQueryRunner bagQueryRunner;
-    protected TrackerManager trackerManager;
+    protected TrackerDelegate trackerDelegate;
 
     // query executors are cached per profile
     private Map<Profile, WebResultsExecutor> wreCache =
@@ -67,11 +67,11 @@ public class InterMineAPI
      * @param classKeys the class keys
      * @param bagQueryConfig configured bag queries used by BagQueryRunner
      * @param oss summary information for the ObjectStore
-     * @param trackerManager the trackers manager
+     * @param trackerDelegate the trackers delegate
      */
     public InterMineAPI(ObjectStore objectStore, ObjectStoreWriter userProfileWriter,
             Map<String, List<FieldDescriptor>> classKeys, BagQueryConfig bagQueryConfig,
-            ObjectStoreSummary oss, TrackerManager trackerManager) {
+            ObjectStoreSummary oss, TrackerDelegate trackerDelegate) {
         this.objectStore = objectStore;
         this.model = objectStore.getModel();
         this.classKeys = classKeys;
@@ -84,7 +84,7 @@ public class InterMineAPI
                 profileManager.getProfileObjectStoreWriter());
         this.bagQueryRunner =
             new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
-        this.trackerManager = trackerManager;
+        this.trackerDelegate = trackerDelegate;
     }
 
     /**
@@ -194,9 +194,9 @@ public class InterMineAPI
     }
 
     /**
-     * @return the trackers manager
+     * @return the trackers delegate
      */
-    public TrackerManager getTrackerManager() {
-        return trackerManager;
+    public TrackerDelegate getTrackerDelegate() {
+        return trackerDelegate;
     }
 }
