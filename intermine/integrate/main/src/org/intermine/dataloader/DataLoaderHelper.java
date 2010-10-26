@@ -199,9 +199,15 @@ public final class DataLoaderHelper
                                         ClassDescriptor tableMaster = schema.getTableMaster(cld);
                                         String tableName = DatabaseUtil.getTableName(tableMaster);
                                         List<String> fields = new ArrayList<String>();
+
                                         for (String field : pk.getFieldNames()) {
-                                            fields.add(DatabaseUtil
-                                                    .generateSqlCompatibleName(field));
+                                            String colName =
+                                                DatabaseUtil.generateSqlCompatibleName(field);
+                                            if (tableMaster.getReferenceDescriptorByName(field,
+                                                    true) != null) {
+                                                colName += "id";
+                                            }
+                                            fields.add(colName);
                                         }
                                         String sql = "CREATE INDEX " + tableName + "__" + keyName
                                             + " ON " + tableName + " (" + StringUtil.join(fields,
