@@ -64,7 +64,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Connection connection = getDatabase().getConnection();
         Set<String> chrNames = new HashSet<String>();
 
-        for (int i = 1; i<=22; i++) {
+        for (int i = 1; i <= 22; i++) {
             chrNames.add("" + i);
         }
         chrNames.add("X");
@@ -166,6 +166,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     consequenceItem.setReference("transcript",
                             getTranscriptIdentifier(transcriptStableId));
                 }
+                consequenceIdentifiers.add(consequenceItem.getIdentifier());
                 store(consequenceItem);
             }
 
