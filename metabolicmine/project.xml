@@ -76,6 +76,15 @@
       <property name="src.data.dir.includes" value="gene2pubmed"/>
       <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/>
     </source>
+    <source name="ensembl-human-chr-fasta" type="fasta">
+      <property name="fasta.taxonId" value="9606"/>
+      <property name="fasta.dataSetTitle" value="Ensembl human chromosome sequence"/>
+      <property name="fasta.dataSourceName" value="Ensembl"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="*.fa"/>
+      <property name="src.data.dir" location="/shared/data/ensembl/homo_sapiens/current_core/fasta"/>
+    </source>
 
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>
