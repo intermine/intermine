@@ -17,7 +17,8 @@
     </div>
     <div class="body actions" align="right">
       <p><html:form action="/queryBuilderViewAction" styleId="submitform">
-        <input type="submit" value="<fmt:message key="view.showresults"/>" disabled="${fn:length(viewStrings) <= 0}" />
+        <%-- <input type="submit" value="<fmt:message key="view.showresults"/>" disabled="${fn:length(viewStrings) <= 0}" /> --%>
+        <input type="submit" value="<fmt:message key="view.showresults"/>"/>
       </html:form><p/>
 	  <c:if test="${PROFILE.loggedIn && (NEW_TEMPLATE == null && EDITING_TEMPLATE == null) && fn:length(viewStrings) > 0}">
 	      <p><form action="<html:rewrite action="/queryBuilderChange"/>" method="post">
