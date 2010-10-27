@@ -28,6 +28,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 
 /**
+ * This Class generates source code of web service client for path query and template query
  *
  * @author Fengyuan Hu
  *
@@ -181,7 +182,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
                 }
 
                 // Add constraintLogic
-                if (query.getConstraintLogic() != null && !query.getConstraintLogic().isEmpty()) {
+                if (query.getConstraintLogic() != null && !"".equals(query.getConstraintLogic())) {
                     sb.append(INDENT + INDENT + "// Add constraintLogic" + ENDL);
                     sb.append(INDENT + INDENT + "query.setConstraintLogic(\""
                             + query.getConstraintLogic() + "\");"
@@ -231,7 +232,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 
         sb.append("}" + ENDL);
 
-        if (!sb.toString().isEmpty()) {
+        if (!"".equals(sb.toString())) {
             return pac.toString() + impJava.toString() + ENDL
                     + impIM.toString() + ENDL + sb.toString();
         } else {
@@ -327,7 +328,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         sb.append(INDENT + "}" + ENDL)
             .append("}" + ENDL);
 
-        if (!sb.toString().isEmpty()) {
+        if (!"".equals(sb.toString())) {
             return pac.toString() + impJava.toString() + ENDL
                 + impIM.toString() + ENDL + sb.toString();
         } else {
@@ -336,7 +337,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
     }
 
     /**
-     * Say something???
+     * This method helps to generate constraint source code for PathQuery
      * @param pc PathConstraint object
      * @return a string like "Constraints.lessThan(\"Gene.length\", \"1000\")"
      */
@@ -437,7 +438,8 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
     }
 
     /**
-     *
+     * This method helps to generate Template Parameters (predefined constraints) source code for
+     * TemplateQuery
      * @param pc PathConstraint object
      * @return a line of source code
      */
