@@ -446,9 +446,13 @@
     <action path="/initKeywordSearchResults" type="org.intermine.web.struts.KeywordSearchResultsController" />
     <action path="/keywordSearchResults" forward="keywordsearchresults.page" />
 
-    <action path="/fileDownload" type="org.intermine.web.struts.FileDownloadAction"/>
+    <action path="/fileDownload" type="org.intermine.web.struts.FileDownloadAction">
+      <forward name="begin" redirect="true" path="/begin.do"/>
+    </action>
 
-    <action path="/wsCodeGen" type="org.intermine.web.struts.WebserviceCodeGenAction"/>
+    <action path="/wsCodeGen" type="org.intermine.web.struts.WebserviceCodeGenAction">
+      <forward name="begin" redirect="true" path="/begin.do"/>
+    </action>
 
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->

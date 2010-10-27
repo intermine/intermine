@@ -23,6 +23,10 @@
 This is the Java API page...
 <br>
 <a href="javascript: jQuery('#apiJavaForm').submit();">Download WS Client jar</a>
+<br>
+<div>
+Notes: package name, service base url, etc...
+</div>
 
 </im:boxarea>
 <!-- /apiPerl.jsp -->

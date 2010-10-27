@@ -115,25 +115,25 @@ public final class Constraints
 
 
     /**
-     * Creates a constraint for a path to be IN a collection of values.
+     * Creates a constraint for a path to be ONE OF a collection of values.
      *
      * @param path the path to apply the constraint to
      * @param values the Collection of values to constrain to
      * @return a new PathConstraint object
      */
-    public static PathConstraintMultiValue inValues(String path, Collection<String> values) {
-        return new PathConstraintMultiValue(path, ConstraintOp.IN, values);
+    public static PathConstraintMultiValue oneOfValues(String path, Collection<String> values) {
+        return new PathConstraintMultiValue(path, ConstraintOp.ONE_OF, values);
     }
 
     /**
-     * Creates a constraint for a path to be NOT IN a collection of values.
+     * Creates a constraint for a path to be NOT ONE OF a collection of values.
      *
      * @param path the path to apply the constraint to
      * @param values the Collection of values to constrain to
      * @return a new PathConstraint object
      */
-    public static PathConstraintMultiValue notInValues(String path, Collection<String> values) {
-        return new PathConstraintMultiValue(path, ConstraintOp.NOT_IN, values);
+    public static PathConstraintMultiValue noneOfValues(String path, Collection<String> values) {
+        return new PathConstraintMultiValue(path, ConstraintOp.NONE_OF, values);
     }
 
     /**
