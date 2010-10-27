@@ -19,7 +19,6 @@
 <link rel="stylesheet" href="css/autocompleter.css" type="text/css"/>
 <link rel="stylesheet" href="css/template.css" type="text/css"/>
 
-
 <c:if test="${!empty builder && builder=='yes'}">
   <script language="javascript">
   var previousConstraintsOrder = '';
@@ -32,6 +31,11 @@
       recordCurrentConstraintsOrder();
   });
 
+    function codeGenTemplate(method) {
+        jQuery('#actionType').val(method);
+        jquery('#templateForm').submit();
+    }
+
 </script>
 </c:if>
 <c:choose>
@@ -40,7 +44,7 @@
 <tiles:get name="objectTrail.tile"/>
 <div class="body" align="center">
 <im:boxarea titleImage="templates-64.png" stylename="plainbox" fixedWidth="90%">
-<html:form action="/templateAction">
+<html:form styleId="templateForm" action="/templateAction">
     <%-- template title --%>
     <h2 class="templateTitle">
         <c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-24.png\" style=\"vertical-align:middle\">&nbsp;')}" />
@@ -334,9 +338,9 @@
     <td>
       <c:choose>
         <c:when test="${empty builder}">
-          <a href="javascript:codeGenTemplate('perl')" target="_blank">Perl</a>
+          <a href="javascript:codeGenTemplate('perl');">Perl</a>
           <span>|</span>
-          <a href="javascript:codeGenTemplate('java')" target="_blank">Java</a>
+          <a href="javascript:codeGenTemplate('java');">Java</a>
           <a href="/${WEB_PROPERTIES['webapp.path']}/api.do" target="_blank"><span>[help]</span></a>
         </c:when>
         <c:otherwise>

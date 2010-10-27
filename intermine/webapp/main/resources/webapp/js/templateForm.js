@@ -43,8 +43,9 @@ function exportTemplate() {
 }
 
 function codeGenTemplate(method) {
-    document.getElementById('actionType').value = method;
-    document.templateForm.submit();
+    jQuery('#actionType').val(method);
+    jQuery('#templateForm').attr('target', '_blank');
+    jQuery('#templateForm').submit();
 }
 
 function isBagUsed() {

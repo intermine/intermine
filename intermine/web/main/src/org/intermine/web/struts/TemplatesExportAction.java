@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -36,6 +37,8 @@ import org.intermine.web.logic.template.TemplateHelper;
  */
 public class TemplatesExportAction extends TemplateAction
 {
+    protected static final Logger LOG = Logger.getLogger(TemplatesExportAction.class);
+
     /**
      * {@inheritDoc}
      * @param mapping not used

@@ -59,6 +59,7 @@ public class ExportQueryAction extends InterMineAction
 
         String type = request.getParameter("type");
         String name = request.getParameter("name");
+
         PathQuery query = null;
 
         if (StringUtils.isEmpty(type) || StringUtils.isEmpty(name)) {
