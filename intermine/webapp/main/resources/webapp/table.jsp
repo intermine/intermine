@@ -110,8 +110,8 @@
 </script>
 <div id="tool_bar_div">
 <ul id="button_bar">
-    <li id="tool_bar_li_createlist"class="tb_button"><img src="images/create.png" width="13" height="13" alt="Create"><html:link linkName="#">Create List</html:link></li>
-    <li id="tool_bar_li_addtolist"class="tb_button"><img src="images/add.png" width="15" height="13" alt="Add"><html:link linkName="#">Add to List</html:link></li>
+    <li id="tool_bar_li_createlist" class="tb_button"><img src="images/icons/lists-16.png" width="16" height="16" alt="Create"><html:link linkName="#">Create List</html:link></li>
+    <li id="tool_bar_li_addtolist" class="tb_button"><img src="images/add.png" width="15" height="13" alt="Add"><html:link linkName="#">Add to List</html:link></li>
     <li id="tool_bar_li_addcolumn" class="tb_button"><img src="images/addcol.png" width="9" height="13" alt="Addcol"><html:link linkName="#">Add Column</html:link></li>
     <li id="tool_bar_li_export" class="tb_button"><img src="images/export.png" width="12" height="13" alt="Export"><html:link linkName="#">Export</html:link></li>
 

@@ -89,9 +89,6 @@ ul#nav li.activelink {
 ul#submenulist li#subactive_bag {
 	font-weight:bold;color:#FFF;background:url('submenu_indent.png') no-repeat bottom center;}
 
-ul#submenulist li#subactive_api {
-	font-weight:bold;color:#FFF;background:url('submenu_indent.png') no-repeat bottom center;}
-
 ul#submenulist li#subactive_mymine {
 	font-weight:bold;color:#FFF;background:url('submenu_my.png') no-repeat bottom center;}
 
@@ -237,4 +234,3 @@ table.results tr td.highlightObject {
 /*    .columnHeader {
       background: #353B40;
     }*/
-

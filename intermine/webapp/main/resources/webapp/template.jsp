@@ -39,11 +39,11 @@
 <%-- object trail --%>
 <tiles:get name="objectTrail.tile"/>
 <div class="body" align="center">
-<im:boxarea stylename="plainbox" fixedWidth="90%">
+<im:boxarea titleImage="templates-64.png" stylename="plainbox" fixedWidth="90%">
 <html:form action="/templateAction">
     <%-- template title --%>
     <h2 class="templateTitle">
-        <c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />
+        <c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-24.png\" style=\"vertical-align:middle\">&nbsp;')}" />
         ${templateTitle}
         <tiles:insert name="setFavourite.tile">
             <tiles:put name="name" value="${templateQuery.name}"/>
@@ -150,7 +150,7 @@
                   <c:choose>
                   <c:when test="${!dec.lookup}">
                     <div style="float:left;margin-right:5px;">
-                    <html:select property="attributeOps(${index})" style="padding-right: 10px" onchange="onChangeAttributeOps(${index});">
+                    <html:select property="attributeOps(${index})" onchange="onChangeAttributeOps(${index});">
                       <c:forEach items="${dec.validOps}" var="op">
                       <option value="${op.property}"
                         <c:if test="${!empty dec.selectedOp && dec.selectedOp.property == op.property}">selected</c:if>>
@@ -168,7 +168,7 @@
                    <%-- if can be multi value --%>
                <c:if test="${!empty dec.possibleValues}">
                    <html:hidden property="multiValueAttribute(${index})"/>
-                   <html:select property="multiValues(${index})" multiple="true" size="4" style="padding-right: 10px" onchange="updateMultiValueAttribute(${index});">
+                   <html:select property="multiValues(${index})" multiple="true" size="4" onchange="updateMultiValueAttribute(${index});">
                    <c:forEach items="${dec.possibleValues}" var="multiValue">
                    <html:option value="${multiValue}"><c:out value="${multiValue}"/></html:option>
                    </c:forEach>
@@ -303,21 +303,18 @@
 </div>
 <%-- edit/submit buttons --%>
 <c:if test="${empty builder}">
-    <br/>
-     <table width="100%">
-     <tr>
-       <td>
+    <div id="templateButtons">
           <html:hidden property="name"/>
           <html:hidden property="scope"/>
           <html:hidden property="actionType" value="" styleId="actionType"/>
-          <html:submit property="skipBuilder" styleId="showResultsButton"><fmt:message key="template.submitToResults"/></html:submit>
-          <html:submit property="editQuery"><fmt:message key="template.submitToQuery"/></html:submit>
+          <html:submit property="editQuery" styleClass="editQueryBuilder" styleId="editQueryButton"><fmt:message key="template.submitToQuery"/></html:submit>
           <c:if test="${IS_SUPERUSER}">
-            <html:submit property="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
+          	<html:submit property="editTemplate" styleClass="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
           </c:if>
-       </td>
-    </tr>
-    </table>
+          <html:submit property="skipBuilder" styleClass="next" styleId="showResultsButton">
+          	<fmt:message key="template.submitToResults"/>
+          </html:submit>
+	</div>
 </c:if>
 </html:form>
 

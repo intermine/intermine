@@ -25,8 +25,29 @@
 <div class="body">
 <c:choose>
 <c:when test="${!empty bag}">
-<div class="heading">
-     <fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">for <b>${bag.name}</b> (${bag.size} ${bag.type}s)</span>
+<div class="heading results">
+	<img src="images/icons/lists-64.png" alt="lists icon"/>
+	<h1>
+		<fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">for <b>${bag.name}</b> (${bag.size} ${bag.type}s)</span>
+	</h1>
+	<div id="tool_bar_div">
+	    <ul id="button_bar">
+	        <li id="tool_bar_li_display"class="tb_button"><img src="images/display.png" width="13" height="13" alt="Display related templates or widgets"><html:link linkName="#">Related</html:link></li>
+	        <li id="tool_bar_li_export"class="tb_button"><img src="images/export.png" width="13" height="13" alt="Export this list"><html:link linkName="#">Export</html:link></li>
+	        <li id="tool_bar_li_use"class="tb_button"><img src="images/use.png" width="13" height="13" alt="Use this list in a template or a query"><html:link linkName="#">Use</html:link></li>
+	        <c:if test="${myBag == 'true'}">
+	          <li id="tool_bar_li_edit"class="tb_button"><img src="images/edit.png" width="13" height="13" alt="Edit my list"><html:link linkName="#">Edit</html:link></li>
+	    </c:if>
+	    </ul>
+		<html:form styleId="findInListForm" action="/findInList">
+	    	<input type="text" name="textToFind" id="textToFind"/>
+	        <input type="hidden" name="bagName" value="${bag.name}"/>
+	        <html:submit>
+	        	<fmt:message key="bagDetails.findInList"/>
+	        </html:submit>
+		</html:form>
+	</div>
+	<div style="clear:both;"></div>
 </div>
 
 <table cellspacing="0" width="100%">
@@ -39,27 +60,24 @@
         jQuery(".tb_button").click(function () {
             toggleToolBarMenu(this);
         });
-    })
+
+    	// textarea resizer
+    	javascript:jQuery('textarea#textarea').autoResize({
+    	    // on resize:
+    	    onResize : function() {
+    	    	javascript:jQuery(this).css({opacity:0.8});
+    	    },
+    	    // after resize:
+    	    animateCallback : function() {
+    	    	javascript:jQuery(this).css({opacity:1});
+    	    },
+    	    // quite slow animation:
+    	    animateDuration : 300,
+    	    // more extra space:
+    	    extraSpace : 10
+    	});
+    });
 </script>
-<div id="tool_bar_div">
-    <ul id="button_bar">
-        <li id="tool_bar_li_display"class="tb_button"><img src="images/display.png" width="13" height="13" alt="Display related templates or widgets"><html:link linkName="#">Related</html:link></li>
-        <li id="tool_bar_li_export"class="tb_button"><img src="images/export.png" width="13" height="13" alt="Export this list"><html:link linkName="#">Export</html:link></li>
-        <li id="tool_bar_li_use"class="tb_button"><img src="images/use.png" width="13" height="13" alt="Use this list in a template or a query"><html:link linkName="#">Use</html:link></li>
-        <c:if test="${myBag == 'true'}">
-          <li id="tool_bar_li_edit"class="tb_button"><img src="images/edit.png" width="13" height="13" alt="Edit my list"><html:link linkName="#">Edit</html:link></li>
-    </c:if>
-        <li class="tool_bar_link">
-           <html:form action="/findInList">
-            <input type="text" name="textToFind" id="textToFind"/>
-            <input type="hidden" name="bagName" value="${bag.name}"/>
-            <html:submit>
-              <fmt:message key="bagDetails.findInList"/>
-            </html:submit>
-          </html:form>
-        </li>
-    </ul>
-</div>
 
 <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
 <html:hidden property="bagName" value="${bag.name}"/>
@@ -165,7 +183,7 @@
 <%-- Bag Description --%>
 <c:choose>
     <c:when test="${myBag == 'true'}">
-      <div id="bagDescriptionDiv" style="height:65px;" onclick="jQuery('#bagDescriptionDiv').toggle();jQuery('#bagDescriptionTextarea').toggle();jQuery('#textarea').focus()">
+      <div id="bagDescriptionDiv" onclick="jQuery('#bagDescriptionDiv').toggle();jQuery('#bagDescriptionTextarea').toggle();jQuery('#textarea').focus()">
         <h3><img src="images/icons/description.png" title="Description of your list"/>&nbsp;Description</h3>
         <c:choose>
           <c:when test="${! empty bag.description}">
@@ -179,9 +197,9 @@
       <div id="bagDescriptionTextarea" style="display:none">
         <textarea id="textarea"><c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if></textarea>
         <div align="right">
-          <button onclick="jQuery('#bagDescriptionTextarea').toggle();
-              jQuery('#bagDescriptionDiv').toggle(); return false;"><fmt:message key="confirm.cancel"/></button>
-          <button onclick="saveBagDescription('${bag.name}'); return false;"><fmt:message key="button.save"/></button>
+          <input type="button" onclick="jQuery('#bagDescriptionTextarea').toggle();
+              jQuery('#bagDescriptionDiv').toggle(); return false;" value='<fmt:message key="confirm.cancel"/>' />
+          <input type="button" onclick="saveBagDescription('${bag.name}'); return false;" value='<fmt:message key="button.save"/>' />
         </div>
       </div>
       </c:when>
@@ -260,13 +278,13 @@
   }
 </script>
 
-<ol class="widgetList">
-<li>Click to select widgets you would like to display:</li>
-<c:forEach items="${widgets}" var="widget">
-  <li><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}')" id="togglelink${widget.id}" class="active">${widget.title}</a>&nbsp;|&nbsp;</li>
-</c:forEach>
-</ol>
-<div style="clear:both;">&nbsp;</div>
+<p id="toggleWidgets">Click to select widgets you would like to display:
+	<ol class="widgetList">
+	<c:forEach items="${widgets}" var="widget">
+	  <li><a title="toggle widget" href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}')" id="togglelink${widget.id}" class="active">${widget.title}</a></li>
+	</c:forEach>
+	</ol>
+</p>
 
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
 <c:forEach items="${widgets}" var="widget">

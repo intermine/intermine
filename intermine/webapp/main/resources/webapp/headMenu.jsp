@@ -91,10 +91,10 @@
     </ul>
   </div>
 
-    <!-- Logged in section -->
+  <!-- Logged in section -->
   <c:set var="loggedin" value="${PROFILE.loggedIn}"/>
 
-    <!-- Submenu section -->
+  <!-- Submenu section -->
   <c:set var="itemList" value="bag:lists.upload.tab.title:upload:0 bag:lists.view.tab.title:view:0 api:api.perl.tab.title:perl:0 api:api.java.tab.title:java:0 mymine:mymine.bags.tab.title:lists:0 mymine:mymine.history.tab.title:history:0 mymine:mymine.savedqueries.tab.title:saved:1 mymine:mymine.savedtemplates.tab.title:templates:1 mymine:mymine.password.tab.title:password:1" />
   <fmt:message key="${pageName}.tab" var="tab" />
   <c:choose>
@@ -122,20 +122,38 @@
         <c:forTokens items="${itemList}" delims=" " var="item" varStatus="counter">
           <c:set var="tabArray" value="${fn:split(item, ':')}" />
           <c:if test="${tabArray[0] == tab}">
-          <c:if test="${count>0}">
-            <li>&nbsp;|&nbsp;</li>
-          </c:if>
           <c:choose>
             <c:when test="${((empty subtabs[subtabName] && count == 0)||(subtabs[subtabName] == tabArray[2])) && (tab == pageName)}">
-              <li id="subactive_${tab}"><fmt:message key="${tabArray[1]}" /></li>
+              <li id="subactive_${tab}"
+              	<c:choose>
+              		<c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
+              		<c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
+              	</c:choose>
+              >
+              	<span><fmt:message key="${tabArray[1]}" /></span>
+              </li>
             </c:when>
             <c:when test="${(tabArray[3] == '1') && (loggedin == false)}">
-              <li>
-                <span onclick="alert('You need to log in'); return false;"><fmt:message key="${tabArray[1]}"/></span>
+              <li
+              	<c:choose>
+              		<c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
+              		<c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
+              	</c:choose>>
+                <span onclick="alert('You need to log in'); return false;">
+                	<fmt:message key="${tabArray[1]}"/>
+                </span>
               </li>
             </c:when>
             <c:otherwise>
-              <li><a href="/${WEB_PROPERTIES['webapp.path']}/${tab}.do?subtab=${tabArray[2]}"><fmt:message key="${tabArray[1]}"/></a></li>
+              <li
+              	<c:choose>
+              		<c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
+              		<c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
+              	</c:choose>>
+              	<a href="/${WEB_PROPERTIES['webapp.path']}/${tab}.do?subtab=${tabArray[2]}">
+              		<fmt:message key="${tabArray[1]}"/>
+              	</a>
+              </li>
             </c:otherwise>
           </c:choose>
           <c:set var="count" value="${count+1}"/>

@@ -17,16 +17,14 @@
     </div>
     <div class="body actions" align="right">
       <p><html:form action="/queryBuilderViewAction" styleId="submitform">
-        <html:image property="action" src="images/show_results.png" disabled="${fn:length(viewStrings) <= 0}">
-          <fmt:message key="view.showresults"/>
-        </html:image>
+        <input type="submit" value="<fmt:message key="view.showresults"/>" disabled="${fn:length(viewStrings) <= 0}" />
       </html:form><p/>
-    <c:if test="${PROFILE.loggedIn && (NEW_TEMPLATE == null && EDITING_TEMPLATE == null) && fn:length(viewStrings) > 0}">
-        <p><form action="<html:rewrite action="/queryBuilderChange"/>" method="post">
-          or...&nbsp;<input type="hidden" name="method" value="startTemplateBuild"/>
-          <input type="submit" value="Start building a template query" />
-        </form><p/>
-    </c:if>
+	  <c:if test="${PROFILE.loggedIn && (NEW_TEMPLATE == null && EDITING_TEMPLATE == null) && fn:length(viewStrings) > 0}">
+	      <p><form action="<html:rewrite action="/queryBuilderChange"/>" method="post">
+	        or...&nbsp;<input type="hidden" name="method" value="startTemplateBuild"/>
+	        <input class="template" type="submit" value="Start building a template query" />
+	      </form><p/>
+	  </c:if>
         <p>
           <tiles:insert page="queryBuilderSaveQuery.jsp"/>
         </p>
