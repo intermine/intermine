@@ -183,7 +183,6 @@
   <class className="org.intermine.model.bio.Transcript">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="exonCount"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false"/>
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
