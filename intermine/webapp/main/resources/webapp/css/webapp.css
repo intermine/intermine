@@ -1,4 +1,4 @@
-/*
+	/*
 CSS MUST FOLLOW THE PATTERN:
  style {
     list of positioning attributes;
@@ -11,8 +11,9 @@ CSS MUST FOLLOW THE PATTERN:
 --------------------------*/
 
 *{
-    padding:0px;
+    /*padding:0px;*/	/* creating more trouble for us than its worth... */
     margin:0px;}
+ul { padding-left:0; }
 
 .alignleft {
 float: left;
@@ -494,3 +495,127 @@ div#ui-datepicker-div {
 div#ui-datepicker-control {
     background: #655;
 }
+
+/* templates.do etc box header (we expect a 64x64 image)  */
+div.gradientbox dt img { float:left; padding:0 10px 0 0; /*background:url("../images/icons/shade.png") no-repeat 4px 58px;*/ }
+div.gradientbox dd { margin-top:6px; }
+div.gradientbox h1#templatetop { font-size:22px; }
+
+/* template.do etc box header (we expect a 64x64 image)  */
+div.plainbox dt img { float:left; padding:0 10px 0 0; /*background:url("../images/icons/shade.png") no-repeat 4px 58px;*/ }
+div.plainbox h2.templateTitle { /*padding-top:16px;*/ }
+div.plainbox div.templateFormContainer { margin-top:34px; padding-left:14px; }
+
+/* templateAction.do query builder model browser icon (we expect a 64x64 image) */
+#queryBuilderBrowser #browserbody img.icon { float:left; display:inline-block; padding:0 10px; }
+
+/* button styling */
+input[type="submit"], input[type="button"] { cursor:pointer; border:outset 1px #CCCCCC; background:#999999; background-repeat:repeat-x;
+	padding:1px 2px; background-image:url("../images/buttons/button-bg.gif"); background-position:left top; height:23px; vertical-align:middle; }
+input[type="submit"].queryBuilder { background-image:url("../images/buttons/button-bg-query-builder.gif"); background-repeat:repeat-none;
+	background-position:left top; padding-left:25px; height:23px; vertical-align:middle; }
+input[type="submit"].template { background-image:url("../images/buttons/button-bg-template.gif"); background-repeat:repeat-none;
+	background-position:left top; padding-left:25px; height:23px; vertical-align:middle; }
+input[type="submit"].edit { background-image:url("../images/buttons/button-bg-edit.gif"); background-repeat:repeat-none;
+	background-position:left top; padding-left:25px; height:23px; vertical-align:middle; }
+input[type="submit"].editTemplate { background-image:url("../images/buttons/button-bg-edit-template.gif"); background-repeat:repeat-none;
+	background-position:left top; padding-left:32px; height:23px; vertical-align:middle; }
+input[type="submit"].editQueryBuilder { background-image:url("../images/buttons/button-bg-edit-query-builder.gif"); background-repeat:repeat-none;
+	background-position:left top; padding-left:32px; height:23px; vertical-align:middle; }
+input[type="submit"].next { background-image:url("../images/buttons/button-bg-next.gif"); background-repeat:repeat-none;
+	background-position:left top; padding-left:25px; height:23px; vertical-align:middle; }
+	
+/* templates listing header submenu */
+#filter_tool_bar { text-align:left !important; }
+	#filter_tool_bar strong { color:#004499; }
+		#filter_tool_bar strong.pad { margin-left:25px; }
+	#filter_tool_bar * { padding-right:2px; vertical-align:middle; }
+
+/* customQuery.do */
+input#submitClassSelect { margin-top:5px; }
+
+/* WebKit lists display fix */
+#all_template_template_container.wsListContainer, #all_bag_bag_container.wsListContainer,
+	#all_templates_template_container.wsListContainer { display:inline; }
+
+/* bagBuild.jsp create a new list table */
+table#buildbaglist { width:89%; margin-bottom:10px; }
+table#buildbaglist td { width:50%; padding-bottom:8px; vertical-align:top; }
+table#buildbaglist td.label { padding-right:14px; width:auto; }
+table#buildbaglist td label { font-size:1.2em; font-weight:bold; }
+table#buildbaglist select { width:100%; }
+table#buildbaglist textarea { width:98.5%; }
+table#buildbaglist a /* desc top of textarea */ { float:right; }
+
+/* IE7 hints div height fix */
+#hints { *height:16px; }
+
+form#loginForm a { vertical-align:bottom; }
+
+/* homepage news ticker */
+ol#news a { font-weight:bold; }
+
+/* hints */
+#hints { margin:10px 10px 0 10px; padding:6px 6px 6px 0; font-size:12px; background-repeat:no-repeat; background-position:10px 6px; }
+	#hints p { display:inline; padding-left:34px; }
+	#hints a { float:right; }
+	#hints.information { background-color:#E6F7FE; background-image:url("../images/icons/information.png"); border:1px solid #BEDCE4; }
+
+/* error messages */	
+.topBar { margin:5px 10px 10px 10px; padding:6px; background:#FFF; font-size:13px; }
+  
+.messages { background:#D5FFCE url("../images/icons/success.png") no-repeat 10px 6px; border:1px solid #9ADF8F; }
+.errors, .topBar.lookupWarn, .topBar.lookupError, .topBar.lookupReport { background:#FFFBCC url("../images/icons/alert.png") no-repeat 10px 6px;
+	border:1px solid #E6DB55; color:#000 !important; }
+.messages p, .errors p, .topBar.lookupWarn p, .topBar.lookupError p, .topBar.lookupReport p { display:inline; padding-left:34px; }
+.messages a, .errors a, .topBar.lookupWarn a, .topBar.lookupError a, .topBar.lookupReport a { float:right; }
+
+#error_msg, #msg, #lookup_msg { padding-left:34px; }
+
+/* breadcrumbs */
+p#crumbs { ; }
+	p#crumbs span { color:#E2E1E6; font-size:9px; margin:0 2px 0 1px; }
+	#contextHelp { display:inline; float:right; }
+
+/* bagDetails.do widget list links overriding bagDetails.css to be more obvious */
+p#toggleWidgets { padding:0; margin:0; margin-left:10px; display:inline; float:left;  }
+ol.widgetList { padding-left:0 !important; float:left; }
+ol.widgetList li a, ol.widgetList li a.active, ol.widgetList li a:hover { background-color:#EEEEEE; background-repeat: no-repeat;
+	background-position:left; color:#000; text-decoration:none; padding:4px 6px 4px 26px; border:1px solid #D2D2D2; }
+ol.widgetList li a { background-image:url('../images/icons/toggle_plus.png'); }
+ol.widgetList li a.active { background-image:url('../images/icons/toggle_minus.png'); }
+
+/* template.do buttons */
+#templateButtons { margin:14px 0 0 84px; }
+
+/* query builder constraints */
+label { vertical-align:top; padding-left:2px; }
+
+/* mymine menu */
+#menucontainer ul#nav li#mymine a{background:url(../images/icons/person-ico.png) no-repeat left;margin-left:10px;padding-left:20px;}
+
+/* mymine submenu */
+ul#submenulist li { margin-right:5px; padding-left:6px; border-left:1px solid #DADADA; }
+ul#submenulist li span { margin-left:6px; text-decoration:underline; }
+ul#submenulist li.first, ul#submenulist li a, ul#submenulist li.first a { border:none; }
+#submenu.submenu_mymine ul#submenulist li#subactive_mymine, ul#submenulist li#subactive_bag { text-decoration:none !important; }
+
+ul#submenulist li.myminebagstabtitle { background:url('../images/icons/lists-16.png') no-repeat 6px; padding-left:20px; }
+ul#submenulist li.myminesavedqueriestabtitle { background:url('../images/icons/queries-16.png') no-repeat 6px; padding-left:20px; }
+ul#submenulist li.myminesavedtemplatestabtitle { padding-left:21px;	background:url('../images/icons/templates-16.png') no-repeat 6px;  padding-left:20px; }
+
+/* lists analysis (bagDetails.do) */
+div.heading.results { border:1px solid #BEDCE4; background:#E6F7FE; margin-left:0; }
+div.heading.results h1 { color:#4D5154; font-size:22px; margin-bottom:10px; }
+div.heading.results img { float:left; display:inline; margin-right:16px; }
+div.heading.results #tool_bar_div { float:left; background:#E6F7FE !important; }
+div.heading.results #tool_bar_div li { border:1px solid #D2D2D2; background:#EEEEEE; margin-right:10px; padding:4px; font-weight:normal; }
+div.heading.results #tool_bar_div ul#button_bar, div.heading.results #tool_bar_div ul#button_bar li { font-variant:normal; }
+div.heading.results #tool_bar_div form#findInListForm { float:left; }
+
+/* query builder */
+.actions p { margin-top:10px; }
+
+/* footer */
+#funding-footer p { color:#4D5154; font-family:"Lucida Grande",Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif; margin:0; padding:0; }
+#funding-footer img { padding-left:6px; }

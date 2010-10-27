@@ -1,6 +1,7 @@
 <%@ tag body-content="scriptless"  %>
 <%@ attribute name="title" required="false" %>
 <%@ attribute name="titleKey" required="false" %>
+<%@ attribute name="titleImage" required="false" %> <!-- pass in an image filename that resides in images/icons/ -->
 <%@ attribute name="titleLink" required="false" %>
 <%@ attribute name="stylename" required="true" %>
 <%@ attribute name="minWidth" required="false" %>
@@ -24,7 +25,11 @@
 </c:set>
  <div class="${stylename}" style="${extraStyle}" >
   <dl>
-    <dt><h1 id="${htmlId}" style="${titleStyle}" >
+    <dt>
+    	<c:if test="${!empty titleImage}">
+    		<img src="images/icons/${titleImage}" alt="action icon" />
+    	</c:if>
+    	<h1 id="${htmlId}">
       <c:choose>
         <c:when test="${!empty titleLink}">
           <a href="${titleLink}" rel="NOFOLLOW">${title}</a>

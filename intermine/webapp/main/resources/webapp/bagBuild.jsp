@@ -59,64 +59,81 @@
 </script>
 
 
-<im:boxarea titleKey="bagBuild.makeNewBag" stylename="plainbox" fixedWidth="60%">
+<im:boxarea titleImage="lists-64.png" titleKey="bagBuild.makeNewBag" stylename="plainbox" fixedWidth="60%">
   <div class="body">
     <html:form action="/buildBag" method="post" enctype="multipart/form-data" >
       <p><fmt:message key="bagBuild.bagFormText1"/></p>
       <br/>
       <p><fmt:message key="bagBuild.helpText"/></p>
       <br/>
-<ol id="buildbaglist">
-  <li>
-      <label><fmt:message key="bagBuild.bagType"/></label>
-      <html:select styleId="typeSelector" property="type" onchange="typeChanged();">
-      <c:forEach items="${preferredTypeList}" var="type">
-          <html:option value="${type}" style="font-weight:bold">${type}</html:option>
-      </c:forEach>
-        <html:option value="" style="text-align:center">----------------</html:option>
-        <c:forEach items="${typeList}" var="type">
-          <html:option value="${type}">${type}</html:option>
-        </c:forEach>
-      </html:select>
-  </li>
-  <li>
-      <c:if test="${!empty extraBagQueryClass}">
-       <label>
-         <fmt:message key="bagBuild.extraConstraint">
-           <fmt:param value="${extraBagQueryClass}"/>
-         </fmt:message>
-       </label>
-         <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
-           <html:option value="">Any</html:option>
-           <c:forEach items="${extraClassFieldValues}" var="value">
-             <html:option value="${value}">${value}</html:option>
-           </c:forEach>
-         </html:select>
-      </c:if>
-   </li>
-   <li>
-   <%-- textarea --%>
-   <label><fmt:message key="bagBuild.bagPaste"/></label>
-   <span>
-   <%-- example bag --%>
-     <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
-     <c:if test="${!empty bagExampleIdentifiers}">
-         <div style="text-align:right;width:87%;">
-           <html:link href=""
-                      onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
-             (click to see an example)<img src="images/disclosed.gif" title="Click to Show example"/>
-           </html:link>
-         </div>
-     </c:if>
-   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onclick="if(this.value != ''){switchInputs('paste','file');}else{openInputs();}" onkeyup="if(this.value != ''){switchInputs('paste','file');}else{openInputs();}" />
-   </span>
-   </li>
-     <%-- file input --%>
-    <li>
-      <label><fmt:message key="bagBuild.or"/></label>
-      <html:file styleId="fileInput" property="formFile" onchange="switchInputs('file','paste');" onkeydown="switchInputs('file','paste');" size="28" />
-    </li>
-    </ol>
+      
+	<!-- create a new list table -->
+	<table id="buildbaglist">
+		<tr>
+			<td align="right" class="label">
+				<label><fmt:message key="bagBuild.bagType"/></label>
+			</td>
+			<td>
+	      		<html:select styleId="typeSelector" property="type" onchange="typeChanged();">
+		      		<c:forEach items="${preferredTypeList}" var="type">
+		          		<html:option value="${type}" style="font-weight:bold">${type}</html:option>
+		      		</c:forEach>
+		        	<html:option value="" style="text-align:center">----------------</html:option>
+		        	<c:forEach items="${typeList}" var="type">
+		          		<html:option value="${type}">${type}</html:option>
+		        	</c:forEach>
+	      		</html:select>
+			</td>
+  		</tr>
+		<c:if test="${!empty extraBagQueryClass}">
+			<tr>
+				<td align="right" class="label">
+       				<label>
+         				<fmt:message key="bagBuild.extraConstraint">
+           					<fmt:param value="${extraBagQueryClass}"/>
+         				</fmt:message>
+       				</label>
+       			</td>
+       			<td>
+         			<html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
+           				<html:option value="">Any</html:option>
+           				<c:forEach items="${extraClassFieldValues}" var="value">
+             				<html:option value="${value}">${value}</html:option>
+           				</c:forEach>
+         			</html:select>
+         		</td>
+			</tr>
+		</c:if>
+   		<tr>
+   			<%-- textarea --%>
+   			<td align="right" class="label">
+   				<label><fmt:message key="bagBuild.bagPaste"/></label>
+   			</td>
+   			<td>
+     			<c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
+     			<c:if test="${!empty bagExampleIdentifiers}">
+           			<html:link href="" onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
+             			(click to see an example)<img src="images/disclosed.gif" title="Click to Show example"/>
+           			</html:link>
+     			</c:if>
+   				<html:textarea styleId="pasteInput" property="text" rows="10" cols="60"
+   				onclick="if(this.value != ''){switchInputs('paste','file');}else{openInputs();}"
+   				onkeyup="if(this.value != ''){switchInputs('paste','file');}else{openInputs();}" />
+   			</td>
+   		</tr>
+   		<tr>
+   			<%-- file input --%>
+   			<td align="right" class="label">
+   				<label><fmt:message key="bagBuild.or"/></label>
+   			</td>
+   			<td>
+   				<html:file styleId="fileInput" property="formFile"
+   				onchange="switchInputs('file','paste');"
+   				onkeydown="switchInputs('file','paste');" size="28" />
+   			</td>
+   		</tr>
+   	</table>
+   	
     <div align="right">
        <%-- reset button --%>
        <input type="button" onClick="resetInputs()" value="Reset" />

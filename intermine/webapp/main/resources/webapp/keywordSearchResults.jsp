@@ -481,7 +481,7 @@ input.submit {
                                          <html:link action="/template?name=${template.value.name}&amp;scope=global&amp;idForLookup=${searchResult.id}"
                                                title="Click here to go to the template form">
                                            <span class="templateTitle">${template.value.title}</span>
-                         <img border="0" class="arrow" src="images/template_t.gif"/>
+                         <img border="0" class="arrow" src="images/icons/templates-16.png"/>
                     </html:link>
                   </div>
                   </c:if>

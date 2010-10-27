@@ -95,15 +95,21 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                   value="0" disabled="false" /> 
                   <input type="radio" name="attributeValue" id="attribute2" value="true" 
                   <c:if test="${selectedValue == 'true'}">checked</c:if>/>
-                  <fmt:message key="query.constraint.true" /> 
+                  <label for="attribute2">
+                  	<fmt:message key="query.constraint.true" />
+                  </label> 
                   <input type="radio" name="attributeValue" id="attribute3" value="false"
                   <c:if test="${selectedValue == 'false'}">checked</c:if>/>
-                  <fmt:message key="query.constraint.false" /> 
+                  <label for="attribute2">
+                  	<fmt:message key="query.constraint.false" />
+                  </label> 
                   <c:choose>
                       <c:when test="${dec.path.type == 'Boolean'}">
                       <input type="radio" name="attributeValue" id="attribute4" value="NULL"
                       <c:if test="${selectedValue == 'NULL'}">checked</c:if>/>
-                      <fmt:message key="query.constraint.null" />
+                      <label for="attribute4">
+                      	<fmt:message key="query.constraint.null" />
+                      </label>
                       </c:when>
                   </c:choose>
                 </td><br/>
@@ -344,8 +350,14 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
         <c:if test="${dec.nullSelected}">
           <c:set var="selectedValue" value="${dec.selectedValue}" />
         </c:if>
-        <input type="radio" name="nullConstraint" id="empty1" value="NULL" disabled <c:if test="${selectedValue == 'IS NULL'}">checked</c:if>/><fmt:message key="query.constraint.null"/>
-        <input type="radio" name="nullConstraint" id="empty2" value="NotNULL" disabled <c:if test="${selectedValue == 'IS NOT NULL'}">checked</c:if>/><fmt:message key="query.constraint.notnull"/>
+        <input type="radio" name="nullConstraint" id="empty1" value="NULL" disabled <c:if test="${selectedValue == 'IS NULL'}">checked</c:if>/>
+        	<label for="empty1">
+        		<fmt:message key="query.constraint.null"/>
+        	</label>
+        <input type="radio" name="nullConstraint" id="empty2" value="NotNULL" disabled <c:if test="${selectedValue == 'IS NOT NULL'}">checked</c:if>/>
+        	<label for="empty2">
+        		<fmt:message key="query.constraint.notnull"/>
+        	</label>
         &nbsp;
         <html:submit property="nullnotnull" styleId="emptySubmit" disabled="true">
         <fmt:message key="query.submitConstraint"/><%--Add to query--%>

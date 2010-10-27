@@ -8,7 +8,6 @@
 
 <!-- convertBag.jsp -->
 <tiles:importAttribute />
-
     <c:forEach items="${conversionTypes}" var="type">
       <script type="text/javascript" charset="utf-8">
         getConvertCountForBag('${bag.name}','${type}','${idname}');

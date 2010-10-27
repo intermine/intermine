@@ -12,7 +12,7 @@
 
 <div class="body">
     <div id="leftCol">
-      <im:boxarea title="QueryBuilder" stylename="plainbox" >
+      <im:boxarea titleImage="queries-64.png" title="QueryBuilder" stylename="plainbox" >
       <p><fmt:message key="customQuery.intro"/></p><br>
            <html:link action="/tree">
               Browse data model

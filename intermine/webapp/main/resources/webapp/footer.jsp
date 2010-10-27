@@ -25,7 +25,13 @@
       </c:if>
 
 <br/>
-<div><fmt:message key="funding"/></div>
+<div id="funding-footer">
+	<!-- <fmt:message key="funding"/> -->
+	<p>Powered by</p>
+	<a target="new" href="http://intermine.org" title="InterMine">
+		<img src="images/icons/intermine-footer-logo.png" alt="InterMine logo" />
+	</a>
+</div>
 
 </div>
 

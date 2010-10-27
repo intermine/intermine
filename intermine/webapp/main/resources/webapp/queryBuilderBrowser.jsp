@@ -54,15 +54,16 @@
   //-->
 </script>
 
-<div class="heading">
-  <fmt:message key="query.currentclass"/>
-</div>
-<div class="body" id="browserbody">
-  <div>
-    <fmt:message key="query.currentclass.detail"/>
-  </div>
-  <br/>
-  <tiles:insert page="/queryBuilderBrowserLines.jsp"/>
-</div>
+	<div class="heading">
+	  <fmt:message key="query.currentclass"/>
+	</div>
+	<div class="body" id="browserbody">
+	  <div>
+	    <img class="icon" src="images/icons/queries-64.png" alt="query builder icon" />
+	    <fmt:message key="query.currentclass.detail"/>
+	  </div>
+	  <br/>
+	  <tiles:insert page="/queryBuilderBrowserLines.jsp"/>
+	</div>
 
 <!-- /queryBuilderBrowser.jsp -->

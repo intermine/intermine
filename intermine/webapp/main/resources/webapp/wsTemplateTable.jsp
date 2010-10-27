@@ -19,8 +19,7 @@
 <tiles:importAttribute name="templatesPublicPage" ignore="true"/>
 
 <html:xhtml/>
-
-<im:boxarea titleKey="menu.templates" stylename="gradientbox" minWidth="800px" htmlId="templatetop">
+<im:boxarea titleImage="templates-64.png" titleKey="menu.templates" stylename="gradientbox" minWidth="800px" htmlId="templatetop">
 <div style="">
 <fmt:message key="templates.intro"/>
 <%-- 

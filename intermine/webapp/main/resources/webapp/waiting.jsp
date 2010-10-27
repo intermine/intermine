@@ -23,7 +23,7 @@
     <div class="waitmsg">
       <fmt:message key="waiting.message"/>
       <p>
-        <img border="0" src="model/images/progress${imgnum}.gif" title="Please wait, your query is running..."/>
+        <img border="0" src="model/images/progress-${imgnum}.png" title="Please wait, your query is running..."/>
       </p>
     </div>
     </div>

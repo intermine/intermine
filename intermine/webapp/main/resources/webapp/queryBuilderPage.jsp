@@ -5,6 +5,7 @@
 
 <!-- queryBuilderPage.jsp -->
 <im:viewablejs idPrefixes="nav,browser,query,showing"/>
+
 <tiles:get name="queryBuilder"/>
 <tiles:insert page="templateSettings.jsp"/>
 <tiles:insert page="queryBuilderTemplatePreview.jsp"/>
