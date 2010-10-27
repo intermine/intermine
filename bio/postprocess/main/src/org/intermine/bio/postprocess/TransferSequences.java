@@ -18,6 +18,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.ClobAccessReverseComplement;
 import org.intermine.bio.util.Constants;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Gene;
@@ -299,6 +300,14 @@ public class TransferSequences
      */
     public void transferToTranscripts()
         throws Exception {
+
+        try {
+            String message = "Not performing TransferSequences.transferToTranscripts ";
+            PostProcessUtil.checkFieldExists(model, "Transcript", "exons", message);
+            PostProcessUtil.checkFieldExists(model, "Exon", null, message);
+        } catch (MetaDataException e) {
+            return;
+        }
 
         long startTime = System.currentTimeMillis();
 
