@@ -13,22 +13,19 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import org.apache.log4j.Logger;
 import org.intermine.sql.DatabaseUtil;
-import org.intermine.sql.writebatch.Batch;
-import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
-import org.intermine.util.Shutdownable;
 
 /**
  * Abstract interface for creating trackers objects.
  * @author dbutano
  *
  */
-public abstract class TrackerAbstract implements Tracker, Shutdownable
+public abstract class TrackerAbstract implements Tracker
 {
     private static final Logger LOG = Logger.getLogger(TrackerAbstract.class);
     protected Connection connection = null;
     protected String trackTableName;
     protected String[] trackTableColumns;
-    protected Batch trackerBatch = null;
+    protected TrackerLogger trackerLogger = null;
 
     /**
      * Return the table's name associated to the tracker
@@ -48,12 +45,12 @@ public abstract class TrackerAbstract implements Tracker, Shutdownable
                 if (!DatabaseUtil.tableExists(connection, trackTableName)) {
                     connection.createStatement().execute(getStatementCreatingTable());
                 }
-                trackerBatch = new Batch(new BatchWriterPostgresCopyImpl());
+                trackerLogger = new TrackerLogger(connection, trackTableName, trackTableColumns);
             } else {
                 LOG.warn("trackTableName is null or empty");
             }
         } catch (SQLException e) {
-            trackerBatch = null;
+            trackerLogger = null;
             throw e;
         }
     }
@@ -62,16 +59,13 @@ public abstract class TrackerAbstract implements Tracker, Shutdownable
      * Save into the table the track object representing the user activity
      * @param track the object saved into the database
      */
-    public synchronized void storeTrack(Track track) {
+    public void storeTrack(Track track) {
         if (trackTableName != null) {
             if (track.validate()) {
-                try {
-                    trackerBatch.addRow(connection, trackTableName, null, trackTableColumns,
-                                       getFormattedTrack(track));
-                    //TODO I shuldn't need to call flush method...
-                    flushTrackTable();
-                } catch (SQLException e) {
-                    LOG.error("Failed to write to track table: " + e);
+                Object[] values = getFormattedTrack(track);
+                synchronized (values) {
+                    trackerLogger.setValues(values);
+                    new Thread(trackerLogger).start();
                 }
             } else {
                 LOG.error("Failed to write to track table: input non valid");
@@ -86,7 +80,7 @@ public abstract class TrackerAbstract implements Tracker, Shutdownable
     public abstract String getStatementCreatingTable();
 
     /**
-     * Format a track into an array of Objects to be saved in the database
+     * Format a track into an array of String to be saved in the database
      * @param track the track to format
      * @return Object[] an array of Objects
      */
@@ -115,54 +109,15 @@ public abstract class TrackerAbstract implements Tracker, Shutdownable
     }
 
     /**
-     * Flush the track table and release the database connection
-     */
-    public void close() {
-        flushTrackTable();
-        try {
-            trackerBatch.close(connection);
-        } catch (SQLException e) {
-            LOG.error("Could not close tha Batch" + trackerBatch, e);
-        }
-        releaseConnection(connection);
-    }
-
-    /**
-     * Allows the track table to be flushed, guaranteeing that all templates accesses
-     * are committed to the database.
-     */
-    public synchronized void flushTrackTable() {
-        if (trackTableName  != null) {
-            try {
-                trackerBatch.flush(connection);
-            } catch (SQLException e) {
-                LOG.warn("Failed to flush log entries to log table: " + e);
-            }
-        }
-    }
-
-    /**
-     * Called by the ShutdownHook on shutdown.
-     */
-    public synchronized void shutdown() {
-        LOG.info("Shutting down Tracker " + getClass().getName());
-        try {
-            close();
-        } catch (RuntimeException e) {
-            LOG.warn("Exception caught while shutting down Tracker: " + e);
-        }
-    }
-
-    /**
      * Override finalise method to flush the track table and release the connection
      * @throws Throwable
      */
     @Override
     protected synchronized void finalize() throws Throwable {
         super.finalize();
-        LOG.error("Garbage collecting Tracker " + getClass().getName());
+        LOG.warn("Garbage collecting Tracker " + getClass().getName());
         try {
-            close();
+            releaseConnection(connection);
         } catch (RuntimeException e) {
             LOG.error("Exception while garbage-collecting Tracker: " + e);
         }
