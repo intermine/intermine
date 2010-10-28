@@ -9,7 +9,6 @@ package org.intermine.api.tracker;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,10 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
-import org.intermine.util.ShutdownHook;
 
 /**
  * Class for tracking the accesses to the templates by the users.
@@ -42,7 +39,6 @@ public class TemplateTracker extends TrackerAbstract
         trackTableName = "templatetrack";
         trackTableColumns =
             new String[] {"templatename", "username", "timestamp", "sessionidentifier"};
-        ShutdownHook.registerObject(new WeakReference<Object>(this));
         LOG.info("Creating new " + getClass().getName() + " tracker");
     }
 
@@ -72,9 +68,10 @@ public class TemplateTracker extends TrackerAbstract
     public void trackTemplate(String templateName, Profile profile, String sessionIdentifier) {
         TemplateTrack templateTrack = new TemplateTrack(templateName, sessionIdentifier,
                                               System.currentTimeMillis());
-        if (profile != null && profile.getUsername() != null) {
-            templateTrack.setUserName(profile.getUsername());
-        }
+        String userName = (profile != null && profile.getUsername() != null)
+                          ? profile.getUsername()
+                          : "";
+        templateTrack.setUserName(userName);
         if (templateTracker  != null) {
             templateTracker.storeTrack(templateTrack);
         } else {
