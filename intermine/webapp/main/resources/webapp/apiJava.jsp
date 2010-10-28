@@ -11,6 +11,14 @@
 <script type="text/javascript">
 <!--//<![CDATA[
 
+  jQuery(document).ready(function() {
+     jQuery("p").hide();
+  });
+
+  function showText(pid) {
+    jQuery("#" + pid).slideToggle("slow");
+  }
+
 //]]>-->
 </script>
 
@@ -22,10 +30,23 @@
 
 This is the Java API page...
 <br>
-<a href="javascript: jQuery('#apiJavaForm').submit();">Download WS Client jar</a>
 <br>
 <div>
-Notes: package name, service base url, etc...
+  <div>FAQ:</div>
+  <ol>
+    <li>
+      <div onclick="javascript:showText('prerequisite')"><span class="fakelink">What is the prerequisite to use web service API in Java?</span></div>
+      <p id="prerequisite">Blablabla...<a href="javascript: jQuery('#apiJavaForm').submit();">Download WS Client jar</a></p>
+    </li>
+    <li>
+      <div onclick="javascript:showText('codegen')"><span class="fakelink">How to use web service code generation?</span></div>
+      <p id="codegen">Blablabla...</p>
+    </li>
+    <li>
+      <div onclick="javascript:showText('editsrc')"><span class="fakelink">How to edit the source code to make sure it works?</span></div>
+      <p id="editsrc">Blablabla...</p>
+    </li>
+  </ol>
 </div>
 
 </im:boxarea>
