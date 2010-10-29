@@ -291,3 +291,5 @@ table.internal td {
 .body, .disclosure {
   margin:5px 6px 5x 6px;
   font-size: 12px; color: #333;}
+  
+#listTags { background-color: #F5F0FF; margin-left: 10px; padding: 3px 10px; }

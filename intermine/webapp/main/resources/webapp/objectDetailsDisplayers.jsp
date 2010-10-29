@@ -29,7 +29,7 @@
       <c:set var="object_bk" value="${object}"/>
       <c:set var="object" value="${displayObject.object}" scope="request"/>
       <c:set var="cld" value="${cld}" scope="request"/>
-      <tiles:insert beanName="displayer" beanProperty="src"/><br/>
+      <tiles:insert beanName="displayer" beanProperty="src"/>
       <c:set var="object" value="${object_bk}" scope="request"/>
   </c:if>
 

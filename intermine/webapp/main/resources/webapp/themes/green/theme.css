@@ -234,3 +234,5 @@ table.results tr td.highlightObject {
 /*    .columnHeader {
       background: #353B40;
     }*/
+
+#listTags { background-color: #F5F0FF; margin-left: 10px; padding: 3px 10px; }

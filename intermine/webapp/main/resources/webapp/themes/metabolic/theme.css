@@ -12,7 +12,7 @@
 #submenudiv{font-size:12px;}
 #tool_bar_div,table.results tr.even TD{background-color:#CACACA;}
 #topnav{background-color:#000;}
-.blueBg{background-color:#F5F0FF;text-align:center;width:350px;margin:20px;padding:20px;}
+.blueBg{background-color:#E6F7FE;border:1px solid #BEDCE4;text-align:center;width:350px;margin:20px;padding:20px;}
 .box .title{background:#eee;clear:both;font-size:14px;font-weight:700;text-align:left;padding:5px;}
 .gradientbox{background:url(gray_grad.png) repeat-x;border:1px solid #000;padding:10px;}
 .imbox{background:#000;border-bottom:solid 1px #888;border-top:solid 1px #888;color:#FFF;font-size:.8em;height:1.2em;padding:5px 5px 10px;}
@@ -34,10 +34,6 @@ div#header h1,div#header h1 a,div#header h1 a:link,div#header h1 a:visited,div#h
 div.filterBar{background:#D3D3D3;color:#4B3F4B;border:1px solid #000;border-bottom:0;}
 h1 a:hover,h1 a:visited:hover{color:#333;text-decoration:underline;}
 html,body{background-color:#FFF;color:#000;font-family:"Lucida Grande",Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif;}
-table.dbsources{margin:10px 20px;padding:0;}
-table.dbsources td{background:#fff;border-bottom:1px solid #000;border-right:1px solid #000;padding:6px 6px 6px 12px;}
-table.dbsources td.leftcol{border-left:1px solid #000;}
-table.dbsources th{background-color:#000;border-right:1px solid #FFF;color:#FFF;font-weight:700;text-align:left;padding:6px 6px 6px 12px;}
 table.results tfoot tr td{background-color:#000;color:#FFF;}
 table.results tr td.highlightCell,table.results tr.even td.highlightCell{background-color:#888;border-right:1px solid #FFF;}
 table.results tr td.highlightObject{background-color:#888;}
@@ -52,7 +48,7 @@ ul#nav li.activelink{background:url(img/menu-orange-left.png) repeat-x top;}
 ul#submenulist{color:#EF5900;}
 ul#submenulist li a{color:#4B3F4B;font-weight:700;text-decoration:none;padding:0 6px;}
 ul#submenulist li a:hover{color:#4B3F4B;font-weight:700;text-decoration:underline;}
-ul#submenulist li#subactive_bag{color:#4B3F4B;font-weight:700;text-decoration:underline;padding:0 6px;}
+ul#submenulist li#subactive_bag, ul#submenulist li#subactive_api{color:#4B3F4B;font-weight:700;padding:0 6px;}
 
 /* background */
 body { background:url("img/top-gradient.jpg") repeat-x scroll center top transparent; }
@@ -81,3 +77,44 @@ div .gradientbox h1, div .plainbox h1 { color:#4D5154; font-size:22px; }
 #convertList.listtoolbox, #linkOuts.listtoolbox { padding:0; border:1px solid #D2D2D2; }
 	#convertList.listtoolbox h3, #linkOuts.listtoolbox h3 { padding:4px 10px; margin:0; margin-bottom:10px; background:#EEE; }
 	#convertList.listtoolbox p { margin-bottom:10px; }
+
+/* lists results page when logged in */
+#listTags { background-color: #E6F7FE; border:1px solid #BEDCE4; margin-left: 10px; padding: 3px 10px; }
+
+/* keyword search results */
+.keywordSearchResults .facets { background:#E6F7FE !important; 1px solid #BEDCE4 !important; color:#333333 !important; }
+.keywordSearchResults .facets a { color:#333333 !important; }
+.keywordSearchResults .resultTableContainer table.dbsources { padding:0; border:1px solid #E3D85A; border-right:none;
+	border-bottom:none; }
+	.keywordSearchResults .resultTableContainer table.dbsources th { background:#FFFCD9; color:#4B3F4B;
+	padding:6px 6px 6px 12px; border-right:1px solid #E3D85A; border-bottom:1px solid #E3D85A; font-size:13px; }
+	.keywordSearchResults .resultTableContainer table.dbsources td { border-right:1px solid #E3D85A; border-bottom:1px solid #E3D85A;
+	padding:6px 12px; } 
+	.keywordSearchResults .resultTableContainer table.dbsources td.leftcol { border-left:1px solid #000; }
+.keywordSearchResults h1.title { margin-top:20px; margin-bottom:10px; }
+.keywordSearchResults h2.sub { margin-top:10px; margin-bottom:10px; }
+.keywordSearchResults ul { list-style:square; }
+
+h3.facetHeader { text-decoration:none !important; }
+
+/* keyword search index */
+div.keywordSearchIndex { border:1px solid #C1DAD7 !important; background:#E6F7FE !important; color:#333; }
+	div.keywordSearchIndex h2, div.keywordSearchIndex a { color:#333; }
+	div.keywordSearchIndex a:hover { color:#000; }
+
+/* keyword search form */
+div.keywordSearch { margin-left:250px; }
+div.keywordSearch div.form { background:url("img/yellow-bg.jpg") repeat-x top; border:1px solid #E3D85A;
+	width:500px; float:left; }
+	div.keywordSearch div.form h2 { color:#4D5154; font-size:22px; padding:10px; }
+	div.keywordSearch div.form a { margin-top:20px; }
+	div.keywordSearch div.examples { border:1px solid #C1DAD7; background:#E6F7FE; padding:10px; padding-left:24px; float:left;
+	margin:0 0 0 20px; width:400px; }
+	div.keywordSearch div.examples h3 { background:url("../../images/icons/information.png") no-repeat 0 1px; padding-left:20px;
+		margin:0; margin-bottom:10px; }
+	div.keywordSearch div.examples ul { list-style:square; margin-left:14px; }
+	div.keywordSearch div.examples ul li { margin-bottom:6px; }
+
+/* further information */
+div.geneInformation table { border-top:1px solid #BEDCE4; border-left:1px solid #BEDCE4; margin-bottom:2px; }
+div.geneInformation table td { border-bottom:1px solid #BEDCE4; border-right:1px solid #BEDCE4; background:#E6F7FE; padding:4px; }

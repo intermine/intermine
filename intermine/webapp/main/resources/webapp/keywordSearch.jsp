@@ -17,60 +17,34 @@
 <html:xhtml />
 
 <div class="keywordSearch">
-  <h2>
-     <c:if test="${!empty searchBag}">
-         List Search: ${searchBag}
-     </c:if>
-     <c:if test="${empty searchBag}">
-         Keyword Search
-     </c:if>
-  </h2>
-  <p><i>Search <c:if test="${!empty searchBag}"><b>the list "${searchBag}"</b></c:if><c:if test="${empty searchBag}">our database</c:if> by keyword</i></p>
-    <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
-        <c:forEach items="${searchFacetValues}" var="facetValue">
-            <input type="hidden" name="facet_${facetValue.key}" value="${facetValue.value}" />
-        </c:forEach>
-        <c:if test="${!empty searchBag}">
-            <input type="hidden" name="searchBag" value="${searchBag}" />
-        </c:if>
-        <div>
-          <c:if test="${!empty searchTerm || !empty searchFacetValues}">
-	          <a href="<c:url value="/keywordSearchResults.do"><c:param name="searchBag" value="${searchBag}" /></c:url>">
-	             &laquo; Back to index</a>
-          </c:if>
-		  <input type="text" name="searchTerm" value="<c:out value="${searchTerm}"></c:out>" style="width: 350px;" /> 
-          <c:if test="${!empty searchFacetValues}">
-              <!-- <select name="searchKeepRestrictions">
-                <option value="on">
-                  <c:if test="${empty searchTerm}">
-                    in this list
-                  </c:if>
-                  <c:if test="${!empty searchTerm}">
-                        restricted to 
-				        <c:forEach items="${searchFacetValues}" var="facetValue" varStatus="facetValueStatus">
-				            ${facetValue.value}<c:if test="${!facetValueStatus.last}">,</c:if>
-				        </c:forEach>
-                  </c:if>
-                </option>
-                <option value="">
-                    in entire database
-                </option>
-              </select>
-              
-              <input type="submit" name="searchSubmitRestricted"
-                value="Search (only <c:forEach items="${searchFacetValues}" var="facetValue" varStatus="facetValueStatus">${facetValue.value}<c:if test="${!facetValueStatus.last}">, </c:if></c:forEach>)" />
-               -->
-              <input type="submit" name="searchSubmitRestricted"
-                value="Search (with current restrictions)" />
-          </c:if>
-          <input type="submit" name="searchSubmit" value="Search entire <c:if test="${!empty searchBag}">list</c:if><c:if test="${empty searchBag}">database</c:if>" />
-		</div>
-    </form>
+	<div class="form">
+		<h2>Search <c:if test="${!empty searchBag}">the list "${searchBag}"</c:if><c:if test="${empty searchBag}">our database</c:if> by keyword</h2>
+		<form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
+			<c:forEach items="${searchFacetValues}" var="facetValue">
+	        	<input type="hidden" name="facet_${facetValue.key}" value="${facetValue.value}" />
+	        </c:forEach>
+	        <c:if test="${!empty searchBag}">
+				<input type="hidden" name="searchBag" value="${searchBag}" />
+	        </c:if>
+	        <input type="text" name="searchTerm" value="<c:out value="${searchTerm}"></c:out>" style="width: 350px;" />
+	        <input type="submit" name="searchSubmit" value="Search" />
+			<c:if test="${!empty searchTerm || !empty searchFacetValues}">
+			<br />
+		    	<a href="<c:url value="/keywordSearchResults.do"><c:param name="searchBag" value="${searchBag}" /></c:url>">
+		        	Back to index
+		        </a>
+	        </c:if>
+			<c:if test="${!empty searchFacetValues}">
+	        	<input type="submit" name="searchSubmitRestricted" value="Search (with current restrictions)" />
+			</c:if>
+		</form>
+	</div>
     
     <div class="examples">
-	    <ul>
+    	<h3>Examples</h3>
+		<ul>
             <li>
-                Search this entire website. Enter identifiers, names or keywords for
+                Search this entire website. Enter <strong>identifiers</strong>, <strong>names</strong> or <strong>keywords</strong> for
 				genes, pathways, authors, ontology terms, etc.  (e.g. <i>eve</i>, <i>embryo</i>,
 				<i>zen</i>, <i>allele</i>)
             </li>
@@ -79,10 +53,12 @@
                 or quotation marks to search for phrases  (e.g. <i>"dna binding"</i>)
             </li>
             <li>
-                Boolean search syntax is supported: e.g. <i>dros*</i> for partial matches or <i>fly AND NOT embryo</i> to exclude a term
+                <strong>Boolean search syntax</strong> is supported: e.g. <i>dros*</i> for partial matches or <i>fly AND NOT embryo</i> to exclude a term
             </li>
 	    </ul>
     </div>
 </div>
+
+<div style="clear:both;"></div>
 
 <!-- /keywordSearch.jsp -->
