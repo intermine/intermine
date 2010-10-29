@@ -259,7 +259,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " AND tv.peptide_allele_string is not null)"
             + " WHERE vf.seq_region_id = sr.seq_region_id"
             + " AND vf.source_id = s.source_id"
-            + " AND sr.name = '" + chrName + "'";
+            + " AND sr.name = '" + chrName + "'"
+            + " ORDER BY vf.variation_name";
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
