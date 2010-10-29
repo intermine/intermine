@@ -179,44 +179,31 @@ href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=resul
 
 <td>
 <im:querylink text="Fly" showArrow="true" skipBuilder="true">
-  <query name="" model="genomic"
-    view="Submission.title Submission.DCCid Submission.design Submission.publicReleaseDate"
-    sortOrder="Submission.title">
-  <node path="Submission" type="Submission">
-  </node>
-  <node path="Submission.organism" type="Organism">
-  <constraint op="LOOKUP" value="Drosophila melanogaster" description=""
-    identifier="" code="A" extraValue="">
-  </constraint>
-  </node>
-  </query>
+ <query name="" model="genomic" 
+   view="Submission.title Submission.DCCid Submission.experimentType " 
+   sortOrder="Submission.experimentType asc">
+  <constraint path="Submission.organism.shortName" op="=" value="D. melanogaster"/>
+</query>
+
 </im:querylink>
     </td>
 
 <td>
 <im:querylink text="Worm" showArrow="true" skipBuilder="true">
-  <query name="" model="genomic"
-    view="Submission.title Submission.DCCid Submission.design Submission.publicReleaseDate"
-    sortOrder="Submission.title">
-  <node path="Submission" type="Submission">
-  </node>
-  <node path="Submission.organism" type="Organism">
-  <constraint op="LOOKUP" value="Caenorhabditis elegans" description=""
-    identifier="" code="A" extraValue="">
-  </constraint>
-  </node>
-  </query>
+ <query name="" model="genomic" 
+   view="Submission.title Submission.DCCid Submission.experimentType " 
+   sortOrder="Submission.experimentType asc">
+  <constraint path="Submission.organism.shortName" op="=" value="C. elegans"/>
+</query>
 </im:querylink>
 </td>
 
 <td>
 <im:querylink text="All submissions" showArrow="true" skipBuilder="true">
-  <query name="" model="genomic"
-    view="Submission.title Submission.DCCid Submission.design Submission.publicReleaseDate"
-    sortOrder="Submission.title">
-  <node path="Submission" type="Submission">
-  </node>
-  </query>
+ <query name="" model="genomic" 
+   view="Submission.title Submission.DCCid Submission.experimentType " 
+   sortOrder="Submission.experimentType asc">
+</query>
 </im:querylink>
     </td>
 
