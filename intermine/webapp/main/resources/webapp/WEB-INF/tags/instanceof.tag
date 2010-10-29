@@ -1,3 +1,5 @@
+
+<%@tag import="org.intermine.util.DynamicUtil"%>
 <%@ tag body-content="empty" %>
 <%@ attribute name="instanceofObject" required="true" type="java.lang.Object"%>
 <%@ attribute name="instanceofClass" required="true" %>
@@ -12,9 +14,9 @@
         Object o = jspContext.getAttribute("instanceofObject");
         String c = (String) jspContext.getAttribute("instanceofClass");
 
-        Class clazz = Class.forName(c);
+        Class<?> clazz = Class.forName(c);
 
-        if (clazz.isInstance(o)) {
+        if (DynamicUtil.isInstance(o, clazz)) {
             request.setAttribute(variable, "true");
         } else {
             request.setAttribute(variable, "false");
