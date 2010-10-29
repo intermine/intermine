@@ -522,8 +522,8 @@ input[type="submit"].editTemplate { background-image:url("../images/buttons/butt
 	background-position:left top; padding-left:32px; height:23px; vertical-align:middle; }
 input[type="submit"].editQueryBuilder { background-image:url("../images/buttons/button-bg-edit-query-builder.gif"); background-repeat:repeat-none;
 	background-position:left top; padding-left:32px; height:23px; vertical-align:middle; }
-input[type="submit"].next { background-image:url("../images/buttons/button-bg-next.gif"); background-repeat:repeat-none;
-	background-position:left top; padding-left:25px; height:23px; vertical-align:middle; }
+/*input[type="submit"].next { background-image:url("../images/buttons/button-bg-next.gif"); background-repeat:repeat-none;
+	background-position:left top; padding-left:25px; height:23px; vertical-align:middle; }*/
 	
 /* templates listing header submenu */
 #filter_tool_bar { text-align:left !important; }
@@ -619,3 +619,6 @@ div.heading.results #tool_bar_div form#findInListForm { float:left; }
 /* footer */
 #funding-footer p { color:#4D5154; font-family:"Lucida Grande",Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif; margin:0; padding:0; }
 #funding-footer img { padding-left:6px; }
+
+/* template input h2 */
+h2.templateTitle img { vertical-align:baseline; }

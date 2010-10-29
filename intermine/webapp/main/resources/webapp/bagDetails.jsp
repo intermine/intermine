@@ -157,7 +157,7 @@
       <tiles:put name="bag" beanName="bag" />
     </tiles:insert></td>
     <c:if test="${PROFILE.loggedIn}">
-      <td><div style="background-color: #F5F0FF; margin-left: 10px; padding-top: 3px; padding-bottom: 3px; padding-left: 10px; padding-right: 10px;">
+      <td><div id="listTags">
         <table>
           <tr>
             <td><b>Tags&nbsp;&nbsp;</b></td>

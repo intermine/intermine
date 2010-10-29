@@ -220,3 +220,5 @@ table.results tfoot tr td {
 .columnHeader {
   background: #927F97;
 }
+
+#listTags { background-color: #F5F0FF; margin-left: 10px; padding: 3px 10px; }

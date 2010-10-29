@@ -19,5 +19,4 @@
   </p>
   </c:if>
 </c:forEach>
-
 <!--  /geneMicroArrayDisplayer.jsp -->
