@@ -37,7 +37,7 @@ public class ${camel-case-source-name}Converter extends BioDBConverter
      * @param model the Model used by the object store we will write to with the ItemWriter
      * @param writer an ItemWriter used to handle Items created
      */
-    public ${camel-case-source-name}Converter(Database database, ItemWriter writer, Model model) {
+    public ${camel-case-source-name}Converter(Database database, Model model, ItemWriter writer) {
         super(database, model, writer, DATA_SOURCE_NAME, DATASET_TITLE);
     }
 
