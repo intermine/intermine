@@ -147,12 +147,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     LOG.info("Read " + snpCounter + " SNPs, " + counter + " rows total.");
                 }
             }
-            
-            String fs = res.getString("tv.consequence_type");
-            if ("FRAMESHIFT_CODING".equals(fs)) {
-                LOG.info("FRAMESHIFT_CODING " + currentRsNumber + " transcript: " + res.getString("transcript_stable_id"));
-            }
-            
+
             // CONSEQUENCE TYPES
             String cdnaStart = res.getString("cdna_start");
             if (StringUtils.isBlank(cdnaStart)) {
@@ -188,8 +183,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private void storeSnp(Item snp, Set<String> consequenceIdentifiers)
         throws ObjectStoreException {
         if (!consequenceIdentifiers.isEmpty()) {
-            LOG.info("Storing SNP " + snp.getAttribute("primaryIdentifier") + " with "
-                    + consequenceIdentifiers.size() + " consequences.");
             snp.setCollection("consequences", new ArrayList<String>(consequenceIdentifiers));
         }
         store(snp);
@@ -262,7 +255,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " tv.cdna_start, tv.consequence_type,tv.peptide_allele_string,tv.transcript_stable_id"
             + " FROM seq_region sr, source s, variation_feature vf "
             + " LEFT JOIN (transcript_variation tv)"
-            + " ON (vf.variation_feature_id = tv.variation_feature_id)"
+            + " ON (vf.variation_feature_id = tv.variation_feature_id"
+            + " AND tv.cdna_start is not null)"
             + " WHERE vf.seq_region_id = sr.seq_region_id"
             + " AND vf.source_id = s.source_id"
             + " AND sr.name = '" + chrName + "'"
