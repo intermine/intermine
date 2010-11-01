@@ -65,12 +65,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Set<String> chrNames = new HashSet<String>();
 
         //int MIN_CHROMOSOME = 1;
-        int MIN_CHROMOSOME = 21;
+        int MIN_CHROMOSOME = 22;
         for (int i = MIN_CHROMOSOME; i <= 22; i++) {
             chrNames.add("" + i);
         }
-        chrNames.add("X");
-        chrNames.add("Y");
+        //chrNames.add("X");
+        //chrNames.add("Y");
 
         for (String chrName : chrNames) {
             processChromosome(connection, chrName);
@@ -147,6 +147,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     LOG.info("Read " + snpCounter + " SNPs, " + counter + " rows total.");
                 }
             }
+            
+            String fs = res.getString("tv.consequence_type");
+            if ("FRAMESHIFT_CODING".equals(fs)) {
+                LOG.info("FRAMESHIFT_CODING " + currentRsNumber + " transcript: " + res.getString("transcript_stable_id"));
+            }
+            
             // CONSEQUENCE TYPES
             String cdnaStart = res.getString("cdna_start");
             if (StringUtils.isBlank(cdnaStart)) {
@@ -171,7 +177,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 consequenceIdentifiers.add(consequenceItem.getIdentifier());
                 store(consequenceItem);
             }
-
         }
         if (currentSnp != null) {
             storeSnp(currentSnp, consequenceIdentifiers);
@@ -183,6 +188,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private void storeSnp(Item snp, Set<String> consequenceIdentifiers)
         throws ObjectStoreException {
         if (!consequenceIdentifiers.isEmpty()) {
+            LOG.info("Storing SNP " + snp.getAttribute("primaryIdentifier") + " with "
+                    + consequenceIdentifiers.size() + " consequences.");
             snp.setCollection("consequences", new ArrayList<String>(consequenceIdentifiers));
         }
         store(snp);
@@ -203,10 +210,10 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private String getTranscriptIdentifier(String transcriptStableId) throws ObjectStoreException {
         String transcriptIdentifier = transcripts.get(transcriptStableId);
         if (transcriptIdentifier == null) {
-            Item source = createItem("Transcript");
-            source.setAttribute("primaryIdentifier", transcriptStableId);
-            store(source);
-            transcriptIdentifier = source.getIdentifier();
+            Item transcript = createItem("Transcript");
+            transcript.setAttribute("primaryIdentifier", transcriptStableId);
+            store(transcript);
+            transcriptIdentifier = transcript.getIdentifier();
             transcripts.put(transcriptStableId, transcriptIdentifier);
         }
         return transcriptIdentifier;
