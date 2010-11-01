@@ -1385,15 +1385,17 @@ public final class MetadataCache
         } catch (Exception e) {
             LOG.error(e);
         }
-        long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed GBrowse tracks cache, took: " + timeTaken + "ms  size = "
-                + tracks.size());
 
         if (flyTracks != null && wormTracks != null) {
             tracks.putAll(flyTracks);
             tracks.putAll(wormTracks);
             setGBrowseTracks(tracks);
         }
+
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed GBrowse tracks cache, took: " + timeTaken + "ms  size = "
+                + tracks.size());
+
     }
 
 
