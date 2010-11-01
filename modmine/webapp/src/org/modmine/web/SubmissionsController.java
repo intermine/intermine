@@ -74,8 +74,6 @@ public class SubmissionsController extends TilesAction
         // apparently an outer join was not possible since there would be the need
         // for 2 outer joins.
         // at the moment it is useful only when there are only submissions without features:
-        // in case some is present, all the submissions will get the chromosome
-        // feature, and this is dealt anyway. This will change.
         //
         // code marked with CHECK
 
@@ -95,7 +93,6 @@ public class SubmissionsController extends TilesAction
             Submission s = (Submission) row.get(0);
             all.add(s);
         }
-        // CHECK END
 
         // get the classes and the counts
         q = new Query();
