@@ -281,7 +281,9 @@ input.submit {
 
 				<div style="clear: both;">
 
-				<div class="facets"><c:forEach items="${searchFacets}"
+				<div class="facets">
+				<h4>Stats</h4>
+				<c:forEach items="${searchFacets}"
 					var="facet">
 					<c:if test="${facet.items != null && !empty facet.items}">
 						<c:choose>
@@ -362,12 +364,17 @@ input.submit {
 								onclick="checkAll()" /></th>
 						</c:if>
 
-						<th>Type</th>
+						<th class="type">Type</th>
 						<th>Details</th>
-						<th>Search score</th>
+						<th>Score</th>
 					</tr>
-					<c:forEach items="${searchResults}" var="searchResult">
-						<tr class="keywordSearchResult">
+					<c:forEach items="${searchResults}" var="searchResult" varStatus="status">
+						<tr class="keywordSearchResult
+						<c:choose>
+							<c:when test="${status.count mod 2 == 0}"> odd</c:when>
+							<c:otherwise> even</c:otherwise>
+						</c:choose>
+						">
 
 							<c:if test="${!empty searchFacetValues['Category']}">
 								<td><input type="checkbox" class="item"
@@ -410,28 +417,26 @@ input.submit {
                           -
                         </c:otherwise>
 									</c:choose> </span>
-									<c:if test="${! status.last }">
-										<span class="objectKey">|</span>
-									</c:if>
-								</c:forEach>
-							</html:link></div>
+									<c:if test="${! status.last }"><span class="divider">|</span></c:if></c:forEach></html:link></div>
 
-							<%-- print each field configured for this object --%> <c:forEach
+							<%-- print each field configured for this object --%>
+							<table class="inner">
+							<c:forEach
 								items="${searchResult.additionalFields}" var="field">
 								<c:set var="fieldConfig"
 									value="${searchResult.fieldConfigs[field]}" />
-								<div class="objectField"><c:choose>
+								<tr class="objectField"><c:choose>
 									<%-- print each field configured for this object --%>
 									<c:when
 										test="${!empty fieldConfig && !empty fieldConfig.displayer}">
-										<span class="objectFieldName"><c:out value="${field}" />:</span>
+										<td class="objectFieldName"><c:out value="${field}" />:</td>
 
 										<c:set var="interMineObject" value="${searchResult.object}"
 											scope="request" />
-										<span class="value"> <tiles:insert
+										<td class="value"> <tiles:insert
 											page="${fieldConfig.displayer}">
 											<tiles:put name="expr" value="${fieldConfig.fieldExpr}" />
-										</tiles:insert> </span>
+										</tiles:insert> </td>
 									</c:when>
 
 									<c:when
@@ -439,10 +444,10 @@ input.submit {
 										<c:set var="outVal"
 											value="${searchResult.fieldValues[fieldConfig.fieldExpr]}" />
 										<c:if test="${!empty outVal}">
-											<span class="objectFieldName"><c:out value="${field}" />:</span>
+											<td class="objectFieldName"><c:out value="${field}" />:</td>
 										</c:if>
 
-										<span class="value" style="font-weight: bold;">${outVal}</span>
+										<td class="value" style="font-weight: bold;">${outVal}</td>
 										<c:if test="${empty outVal}">
                           &nbsp;<%--for IE--%>
 										</c:if>
@@ -450,7 +455,7 @@ input.submit {
 									<c:otherwise>
                         &nbsp;<%--for IE--%>
 									</c:otherwise>
-								</c:choose></div>
+								</c:choose></tr>
 							</c:forEach> <c:if
 								test="${searchResult.templates != null && !empty searchResult.templates}">
 								<c:forEach items="${searchResult.templates}" var="template">
@@ -464,11 +469,35 @@ input.submit {
 										</html:link></div>
 									</c:if>
 								</c:forEach>
-							</c:if></td>
-							<td><img height="10" width="${searchResult.points * 5}"
+							</c:if>
+							</table>
+							</td>
+							<td class="relevance">
+							<!-- relevancy counter -->
+							<!--
+							<img height="10" width="${searchResult.points * 5}"
 								src="images/heat${searchResult.points}.gif"
 								alt="${searchResult.points}/10"
 								title="${searchResult.points}/10" /></td>
+							-->							
+							<c:choose>
+								<c:when test="${searchResult.points mod 2 == 0}">
+									<c:forEach var="i" begin="1" end="${searchResult.points div 2}">
+										<div class="bullet full">&bull;</div>
+									</c:forEach>
+									<c:forEach var="i" begin="1" end="${5-(searchResult.points div 2)}">
+										<div class="bullet empty">&bull;</div>
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+									<c:forEach var="i" begin="1" end="${(searchResult.points div 2)+0.5}">
+										<div class="bullet full">&bull;</div>
+									</c:forEach>
+									<c:forEach var="i" begin="1" end="${5-((searchResult.points div 2)+0.5)}">
+										<div class="bullet empty">&bull;</div>
+									</c:forEach>
+								</c:otherwise> 
+							</c:choose>
 						</tr>
 					</c:forEach>
 				</table>
