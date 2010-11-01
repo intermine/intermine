@@ -50,7 +50,6 @@ public class TrackerLogger implements Runnable
         this.values = values;
     }
 
-    @Override
     public void run() {
         Statement stm = null;
         StringBuffer colNamesBuffer = new StringBuffer();
