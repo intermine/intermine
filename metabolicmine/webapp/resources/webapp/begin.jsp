@@ -23,7 +23,7 @@
 		}
 	}
 	// placeholder value for search boxes
-	var placeholder = 'e.g. PPARG, diabetes, ENSG00000108753';
+	var placeholder = 'e.g. PPARG, Insulin, rs876498';
 	// class used when toggling placeholder
 	var inputToggleClass = 'eg';
 </script>
@@ -70,14 +70,17 @@
             </div>
             <div class="span-12 last">
             	<ul id="switcher">
+            	<!--
             		<li id="switcher-1" class="switcher current"><a onclick="switchBochs(1);return false;" href="#">1</a></li>
             		<li id="switcher-2" class="switcher"><a onclick="switchBochs(2);return false;" href="#">2</a></li>
+            	-->
             	</ul>
             </div>
         </div>
         <div class="bottom span-12 last"></div>
     </div>
     
+    <!--
     <script type="text/javascript">
 		/* div switcher for welcome bochs using jQuery */
 		function switchBochs(newDivId) {
@@ -91,90 +94,50 @@
 			javascript:jQuery('#bochs-'+newDivId).fadeIn();
 		}
 	</script>
-    
-    <div id="search-box" class="span-12 last wide-yellow">
-        <div class="top"></div>
-        <div class="center span-12 last">
-            <div id="magnifier" class="span-2">
-                <div id="ribbon"></div>
-                &nbsp;
-            </div>
-            <div class="span-4">
-                <h3>Search for gene identifiers</h3>
-                <form action="<c:url value="/keywordSearchResults.do" />" id="search" name="search" method="get">
-                    <div class="input">
-                    	<input id="searchBoxInput" class="input" type="text" name="searchTerm" value="e.g. PPARG, diabetes, ENSG00000108753" />
-                    </div>
-                    <br />
-                    <input class="button orange" type="submit" value="SEARCH" />
-                </form>
-            </div>
-            <div class="span-6 last">
-                <p><strong>Search for gene identifiers</strong> in our exhaustive et, you can use lorem ipsum here too.
-                    Vestibulum at purus a odio malesuada thoncus. Ut ut magna lectus. Nulla accumsan purus caplbus mi
-                    venenatis mattis. Carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui dui. Etiam
-                    ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed nunc aliquam
-                    fermentum. Ut faucibus gravida eros, et dictum tellus dictum a. Cuarbitu</p>
-            </div>
-        </div>
-        <div class="bottom span-12 last"></div>
-    </div>
-
-    <div id="lists" class="span-6 half-violet">
-        <div class="top"></div>
-        <div class="center span-6 last">
-            <div class="span-3 text">
-            	<div class="image">
-                	<img src="images/icons/lists-64.png" alt="lists" />
-               	</div>
-                <h3>Lists</h3>
-				<p>You can run queries on whole <strong>lists of data</strong>. Create lists from the results of a query or
-				by uploading identifiers. Click on a list to view graphs and summaries in a list analysis page, if you log
-				in you can save lists permanently.</p>
-                <a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" class="button violet">
-                	<div><span>Query lists</span></div>
-                </a>
-            </div>
-            <div class="last thumb"><img src="/metabolicmine/themes/metabolic/thumbs/thumb-1.gif" alt="thumbnail 1" /></div>
-        </div>
-        <div class="bottom span-6 last"></div>
-    </div>
-    <div id="templates" class="span-6 last half-green">
-        <div class="top"></div>
-        <div class="center span-6 last">
-            <div class="span-3 text">
-                <div class="image">
-                	<img src="images/icons/templates-64.png" alt="templates" />
-                </div>
-                <h3>Templates</h3>
-				<p>Templates are <strong>predefined queries</strong>, each has a simple form and a description. You can edit
-	                templates in the QueryBuilder, if you log in you can create new templates yourself.</p>
-                <a href="/${WEB_PROPERTIES['webapp.path']}/templates.do" class="button green">
-                	<div><span>Templates</span></div>
-                </a>
-            </div>
-            <div class="last thumb"><img src="/metabolicmine/themes/metabolic/thumbs/thumb-2.gif" alt="thumbnail 2" /></div>
-        </div>
-        <div class="bottom span-6 last"></div>
-    </div>
+	-->
 
     <div id="actions" class="span-12 last wide-gray">
     
     	<form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
+	        <!--
 	        <a class="more" title="Want to see more?"
 	           onclick="javascript:jQuery('#more-actions').slideToggle(); return false;">&nbsp;</a>
+	        -->
 	        <div class="top"></div>
 	        <div class="center span-12 last">
 	            <div class="span-4 search">
+		            <script type="text/javascript">
+		            	/* pre-fill search input with a term */
+		            	function preFillInput(term) {
+		            		var e = $("input#actionsInput");
+		            		e.val(term);
+							if (e.hasClass(inputToggleClass)) e.toggleClass(inputToggleClass);
+							e.focus();
+		            	}
+		            </script>
 	            	<div class="image">
 	                	<img src="images/icons/search-64.png" alt="Search" />
 	                </div>
 	                <h3>Search for gene identifiers</h3>
 	                <div style="clear:both;"> </div>
-	                <p><strong>Search for gene identifiers</strong> in our exhaustive et, you can use lorem ipsum here too.
-	                    Vestibulum at purus a odio malesuada thoncus. Ut ut magna lectus.</p>
+	                <p>Enter a gene, protein, SNP or other identifier [eg.
+	                <a onclick="preFillInput('PPARG');return false;" title="Search for PPARG"
+	                	href="keywordSearchResults.do?searchTerm=PPARG"><strong>PPARG</strong></a>,
+	                <a onclick="preFillInput('Insulin');return false;" title="Search for Insulin"
+	                	href="keywordSearchResults.do?searchTerm=Insulin"><strong>Insulin</strong></a>,
+	                <a onclick="preFillInput('rs876498');return false;" title="Search for rs876498"
+	                	href="keywordSearchResults.do?searchTerm=rs876498"><strong>rs876498</strong></a>].
+	                <br />Alternatively, search for disease, keywords or publications [eg.
+	                <a onclick="preFillInput('Diabetes');return false;" title="Search for Diabetes"
+	                	href="keywordSearchResults.do?searchTerm=Diabetes"><strong>Diabetes</strong></a>,
+	                <a onclick="preFillInput('GWAS');return false;" title="Search for GWAS"
+	                	href="keywordSearchResults.do?searchTerm=GWAS"><strong>GWAS</strong></a>,
+	                <a onclick="preFillInput('Nature');return false;" title="Search for Nature"
+	                	href="keywordSearchResults.do?searchTerm=Nature"><strong>Nature</strong></a>
+	                ]</p>
+	                <p>[Supports Boolean and wildcard*]</p>
 						<div class="input">
-							<input id="actionsInput" class="input" type="text" name="searchTerm" value="e.g. PPARG, diabetes, ENSG00000108753" />
+							<input id="actionsInput" class="input" type="text" name="searchTerm" value="e.g. PPARG, Insulin, rs876498" />
 						</div>
 	            </div>
 	            <div class="span-4 lists">
@@ -183,9 +146,8 @@
 	                </div>
 	                <h3>Query lists of data</h3>
 	                <div style="clear:both;"> </div>
-					<p>You can run queries on whole <strong>lists of data</strong>. Create lists from the results of a query or
-					by uploading identifiers. Click on a list to view graphs and summaries in a list analysis page, if you log
-					in you can save lists permanently.</p>
+					<p><strong>Explore</strong>, <strong>Analyse</strong> &amp; <strong>Enrich</strong>. Upload your own data or browse our Public
+					sets. Covering Pathways to Publications, Search for hidden relationships with our <strong>widgets library</strong>.</p>
 	            </div>
 	            <div class="span-4 last templates">
 	                <div class="image">
@@ -193,8 +155,9 @@
 	                </div>
 	                <h3>Work with template queries</h3>
 	                <div style="clear:both;"> </div>
-	                <p>Templates are <strong>predefined queries</strong>, each has a simple form and a description. You can edit
-	                templates in the QueryBuilder, if you log in you can create new templates yourself.</p>
+	                <p>Get started with complex queries using our <strong>pre-defined searches</strong>. These customizable templates have been
+	                designed around common tasks performed by our <strong>biologist community</strong>. To see how they work, why not try a
+	                template from our examples page?</p>
 	            </div>
 	            <div class="span-12 last">
 	                <div class="span-4 search">
@@ -212,35 +175,8 @@
 	                </div>
 	            </div>
         	</div>
+        	<div class="bottom"></div>
         </form>
-        
-        <div id="more-actions" class="center span-12 last" style="display:none;">
-            <div class="span-4 search">
-                <img src="images/icons/search-64.png" alt="Search" />
-                <h3>Query lists of data and some more 1</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 templates">
-                <img src="images/icons/templates-64.png" alt="Templates" />
-                <h3>Query lists of data and some more 2</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-            <div class="span-4 last lists">
-                <img src="images/icons/lists-64.png" alt="Lists" />
-                <h3>Query lists of data and some more 3</h3>
-                <div style="clear:both;"> </div>
-                <p><strong>Call to action</strong> carabitur ullamcorper varius sapien id viverra. Quisque feugiat dui
-                    dui. Etiam ultricies metus non dui facilisis vitae egestas lacus porttitor. Sed luctus massa sed
-                    nunc aliquam.</p>
-            </div>
-        </div>
-        <div class="bottom span-12 last"></div>
     </div>
 
     <div id="api" class="span-6 white-half">
@@ -260,7 +196,7 @@
     <div id="rss" class="span-6 last white-half" style="display:none;">
     	<script type="text/javascript">
 			// feed URL
-			var feedURL = "http://blog.flymine.org/feed/";
+			var feedURL = "http://blog.metabolicmine.org/?feed=rss2";
 			// limit number of entries displayed
 			var maxEntries = 2;
 			// where are we appending entries? (jQuery syntax)
@@ -271,7 +207,7 @@
 
 			$(document).ready(function() {
 				// DWR fetch, see AjaxServices.java
-				AjaxServices.getNewsPreview('http://blog.flymine.org/feed/', function(data) {
+				AjaxServices.getNewsPreview(feedURL, function(data) {
 					if (data) {
 						// show us
 						$('#rss').slideToggle('slow');
@@ -326,7 +262,7 @@
             	<!-- append babies here -->
             </table>
         </div>
-        <div class="more span-6 last"><a target="new" href="http://blog.flymine.org/" class="more">&nbsp;</a></div>
+        <div class="more span-6 last"><a target="new" href="http://blog.metabolicmine.org/" class="more">&nbsp;</a></div>
     </div>
     
     <!-- 
@@ -380,23 +316,9 @@
  
  <script type="text/javascript">
  	// e.g. values only available when JavaScript is on
-	$('input#searchBoxInput').toggleClass(inputToggleClass);
 	$('input#actionsInput').toggleClass(inputToggleClass);
 
 	// register input elements with blur & focus
-	$('input#searchBoxInput').blur(function() {
-		if ($(this).val() == '') {
-			$(this).toggleClass(inputToggleClass);
-			$(this).val(placeholder);
-		}
-	});
-	$('input#searchBoxInput').focus(function() {
-		if ($(this).hasClass(inputToggleClass)) {
-			$(this).toggleClass(inputToggleClass);
-			$(this).val('');
-		}			
-	});
-
 	$('input#actionsInput').blur(function() {
 		if ($(this).val() == '') {
 			$(this).toggleClass(inputToggleClass);
@@ -407,6 +329,6 @@
 		if ($(this).hasClass(inputToggleClass)) {
 			$(this).toggleClass(inputToggleClass);
 			$(this).val('');
-		}			
+		}
 	});
 </script>

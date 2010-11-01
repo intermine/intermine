@@ -41,7 +41,7 @@
 	</div>
     
     <div class="examples">
-    	<h3>Examples</h3>
+    	<h4>Examples</h4>
 		<ul>
             <li>
                 Search this entire website. Enter <strong>identifiers</strong>, <strong>names</strong> or <strong>keywords</strong> for

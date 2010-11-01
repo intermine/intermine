@@ -293,3 +293,9 @@ table.internal td {
   font-size: 12px; color: #333;}
   
 #listTags { background-color: #F5F0FF; margin-left: 10px; padding: 3px 10px; }
+
+/* keyword search results relevancy */
+div.resultTableContainer td.relevance { width:40px; }
+	div.resultTableContainer td.relevance div.bullet { letter-spacing:0.5px; font-size:14px; display:inline; }
+	div.resultTableContainer td.relevance div.full { color:#ff0000; }
+	div.resultTableContainer td.relevance div.empty { color:#999999; }
