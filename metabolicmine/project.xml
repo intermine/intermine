@@ -19,6 +19,9 @@
     <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
      <property name="source.db.name" value="ensembl.9606.variation"/>
     </source>
+    <source name="ensembl-gwas-db-human" type="ensembl-gwas-db" dump="true">
+     <property name="source.db.name" value="ensembl.9606.variation"/>
+    </source>
     <source name="uniprot" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="9606"/>
       <property name="createinterpro" value="true"/>
