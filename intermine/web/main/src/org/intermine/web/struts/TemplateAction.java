@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +30,8 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
+import org.intermine.api.tag.TagNames;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
@@ -215,8 +218,19 @@ public class TemplateAction extends InterMineAction
 
         String qid = SessionMethods.startQueryWithTimeout(request, saveQuery, populatedTemplate);
         Thread.sleep(200);
-        //tracks the templates
-        im.getTrackerDelegate().trackTemplate(populatedTemplate.getName(),
+
+        //tracks the template execution
+        boolean isTemplatePublic = false;
+        if (!profile.isLoggedIn()) {
+            isTemplatePublic = true;
+        } else {
+            Set<String> tagNames = im.getTagManager().getObjectTagNames(populatedTemplate.getName(),
+                                                          TagTypes.TEMPLATE, profile.getUsername());
+            if (tagNames.contains(TagNames.IM_PUBLIC)) {
+                isTemplatePublic = true;
+            }
+        }
+        im.getTrackerDelegate().trackTemplate(populatedTemplate.getName(), isTemplatePublic,
                                               profile, session.getId());
 
         String trail = "";
