@@ -53,6 +53,8 @@ public class GenesFileProcessor
     private IdResolver resolver;
     private static final Logger LOG = Logger.getLogger(GenesFileProcessor.class);
     private String datasetRefId;
+    private static final Integer YEAST_STRAIN = new Integer(559292);
+    private static final Integer YEAST_TAXONID = new Integer(4932);
 
     /**
      * Constructor.
@@ -101,6 +103,9 @@ public class GenesFileProcessor
             Integer organismId, ncbiGeneId;
             try {
                 organismId = new Integer(parts[0].trim());
+                if (YEAST_STRAIN.equals(organismId)) {
+                    organismId = YEAST_TAXONID;
+                }
                 ncbiGeneId = new Integer(parts[1].trim());
             } catch (NumberFormatException ex) {
                 throw new GenesProcessorException("Invalid identifiers at line " + line);
