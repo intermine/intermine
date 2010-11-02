@@ -58,6 +58,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> keywords = new HashMap<String, String>();
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> goterms = new HashMap<String, String>();
+    private Map<String, String> evidence = new HashMap<String, String>();
 
     // don't allow duplicate identifiers
     private Set<String> geneIdentifiers = new HashSet<String>();
@@ -250,7 +251,7 @@ public class UniprotConverter extends BioDirectoryConverter
 //                    isFragment = "true";
 //                }
 //                entry.setFragment(isFragment);
-            } else if (qName.equals("fullName") && stack.search("protein") == 2
+            } else if ("fullName".equals(qName) && stack.search("protein") == 2
                     &&  (stack.peek().equals("recommendedName")
                             || stack.peek().equals("submittedName"))) {
                 attName = "proteinName";
@@ -321,8 +322,8 @@ public class UniprotConverter extends BioDirectoryConverter
             } else if (qName.equals("dbReference") && stack.peek().equals("citation")
                     && getAttrValue(attrs, "type").equals("PubMed")) {
                 entry.addPub(getPub(getAttrValue(attrs, "id")));
-            } else if (qName.equals("comment") && getAttrValue(attrs, "type") != null
-                    && !getAttrValue(attrs, "type").equals("")) {
+            } else if (qName.equals("comment")
+                    && StringUtils.isNotEmpty(getAttrValue(attrs, "type"))) {
                 entry.setCommentType(getAttrValue(attrs, "type"));
             } else if (qName.equals("text") && stack.peek().equals("comment")) {
                 attName = "text";
@@ -342,6 +343,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 }
             } else if (qName.equals("name") && stack.peek().equals("gene")) {
                 attName = getAttrValue(attrs, "type");
+            } else if (evidence.equals(qName) && "entry".equals(stack.peek())) {
+                setEvidence(getAttrValue(attrs, "key"), getAttrValue(attrs, "attribute"));
             } else if (qName.equals("dbreference") || qName.equals("comment")
                     || qName.equals("isoform")
                     || qName.equals("gene")) {
@@ -414,7 +417,7 @@ public class UniprotConverter extends BioDirectoryConverter
                     // second <id> value is ignored and added as a synonym
                     entry.addIsoformSynonym(accession);
                 }
-            } else if (qName.equals("entry")) {
+            } else if ("entry".equals(qName)) {
                 try {
                     Set<UniprotEntry> isoforms = processEntry(entry);
 
@@ -682,12 +685,12 @@ public class UniprotConverter extends BioDirectoryConverter
                 List<String> values = dbref.getValue();
 
                 for (String identifier : values) {
-                    if (key.equals("EC")) {
+                    if ("EC".equals(key)) {
                         protein.setAttribute("ecNumber", identifier);
                         return;
                     }
                     setCrossReference(protein.getIdentifier(), identifier, key, false);
-                    if (creatego && key.equals("GO")) {
+                    if (creatego && "GO".equals(key)) {
                         uniprotEntry.addGOTerm(getGoTerm(identifier));
                     }
                 }
@@ -969,6 +972,23 @@ public class UniprotConverter extends BioDirectoryConverter
             }
         }
         return refId;
+    }
+
+    // putting publications in map for later use
+    // key = EC1, value = reference to publication
+    // used by comments
+    private void setEvidence(String key, String attribute) throws SAXException {
+        if (!evidence.containsKey(key)) {
+            if (attribute.contains("=")) {
+                String[] bits = attribute.split("=");
+                for (String pubMedId : bits) {
+                    if (StringUtils.isNotEmpty(pubMedId)) {
+                        String pubRefId = getPub(pubMedId);
+                        evidence.put(key, pubRefId);
+                    }
+                }
+            }
+        }
     }
 
     private String getComment(String commentType, String text)
