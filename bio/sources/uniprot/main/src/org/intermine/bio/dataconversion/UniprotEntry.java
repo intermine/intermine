@@ -315,6 +315,10 @@ public class UniprotEntry
      * @return list of accessions
      */
     public List<String> getAccessions() {
+        List<String> accessions = collections.get("accessions");
+        if (accessions == null) {
+            return Collections.EMPTY_LIST;
+        }
         return collections.get("accessions");
     }
 
@@ -525,6 +529,9 @@ public class UniprotEntry
      * @return list of isoform synonyms
      */
     public List<String> getIsoformSynonyms() {
+        if (collections.get("isoformSynonyms") == null) {
+            return Collections.EMPTY_LIST;
+        }
         return collections.get("isoformSynonyms");
     }
 
@@ -543,6 +550,9 @@ public class UniprotEntry
      * @return list of isoform synonyms
      */
     public List<String> getProteinNames() {
+        if (collections.get("proteinNames") == null) {
+            return Collections.EMPTY_LIST;
+        }
         return collections.get("proteinNames");
     }
 
