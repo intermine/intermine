@@ -3,8 +3,7 @@
    <class name="SNP" is-interface="true">
      <attribute name="alleles" type="java.lang.String"/>
      <attribute name="type" type="java.lang.String"/>
-     <attribute name="referenceAllele" type="java.lang.String"/>
-     <attribute name="variantAllele" type="java.lang.String"/>
+     <attribute name="mapWeight" type="java.lang.Integer"/>
      <collection name="validations" referenced-type="ValidationState" />
      <collection name="consequences" referenced-type="Consequence"/>
     <reference name="source" referenced-type="Source"/>
@@ -17,7 +16,6 @@
      <attribute name="type" type="java.lang.String"/>
      <attribute name="peptideAlleles" type="java.lang.String"/>
    </class>
-
   <class name="Source" is-interface="true">
      <attribute name="name" type="java.lang.String"/>
    </class>
