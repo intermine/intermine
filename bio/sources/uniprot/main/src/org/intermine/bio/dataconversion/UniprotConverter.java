@@ -541,14 +541,14 @@ public class UniprotConverter extends BioDirectoryConverter
                 }
 
                 /* interpro */
-                if (createInterpro && !uniprotEntry.getDomains().isEmpty()) {
+                if (createInterpro && uniprotEntry.getDomains() != null) {
                     protein.setCollection("proteinDomains", uniprotEntry.getDomains());
                 }
 
                 protein.setReference("organism", getOrganism(uniprotEntry.getTaxonId()));
 
                 /* publications */
-                if (!uniprotEntry.getPubs().isEmpty()) {
+                if (uniprotEntry.getPubs() != null) {
                     protein.setCollection("publications", uniprotEntry.getPubs());
                 }
 
@@ -559,7 +559,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 }
 
                 /* keywords */
-                if (!uniprotEntry.getKeywords().isEmpty()) {
+                if (uniprotEntry.getKeywords() != null) {
                     protein.setCollection("keywords", uniprotEntry.getKeywords());
                 }
 
