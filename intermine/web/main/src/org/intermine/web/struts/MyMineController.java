@@ -65,7 +65,11 @@ public class MyMineController extends TilesAction
         Profile profile = SessionMethods.getProfile(session);
 
         if (SessionMethods.isSuperUser(session)) {
-            Map<String, Integer> templateRank = im.getTrackerDelegate().getRank();
+            Map<String, Integer> templateCounter = im.getTrackerDelegate().getAccessCounter();
+            if (templateCounter != null) {
+                request.setAttribute("templateCounter", templateCounter);
+            }
+            Map<String, Integer> templateRank = im.getTrackerDelegate().getRank(profile.getUsername());
             if (templateRank != null) {
                 request.setAttribute("templateRank", templateRank);
             }
