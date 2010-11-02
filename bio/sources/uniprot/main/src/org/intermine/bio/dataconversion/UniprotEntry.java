@@ -423,8 +423,6 @@ public class UniprotEntry
     public List<String> getSynonyms() {
         List<String> synonyms = new ArrayList<String>();
         synonyms.addAll(accessions);
-        synonyms.add(primaryAccession);
-        synonyms.add(name);
         return synonyms;
     }
 
