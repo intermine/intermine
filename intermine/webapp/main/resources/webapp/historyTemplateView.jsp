@@ -72,6 +72,9 @@
 	            <th align="left" class="sortable-numeric">
 	              <fmt:message key="history.rankheader"/>
 	            </th>
+	            <th align="left" class="sortable-numeric">
+                  <fmt:message key="history.counterheader"/>
+                </th>
 	        </c:if>
             <th align="center">
               <fmt:message key="history.actionscolumnheader"/>
@@ -142,9 +145,25 @@
                 &nbsp;
               </td>
                <c:if test="${IS_SUPERUSER}">
+               <c:set var="minRank" value="minRank"/>
                <td class="sorting">
                    <c:if test="${!empty templateRank}">
-                       ${templateRank[savedTemplate.value.name]}
+                       <c:choose>
+                       <c:when test="${!empty templateRank[savedTemplate.value.name]}">
+                           ${templateRank[savedTemplate.value.name]}
+                       </c:when>
+                       <c:otherwise>${templateRank[minRank]}</c:otherwise>
+                       </c:choose>
+                   </c:if>
+               </td>
+               <td class="sorting">
+                   <c:if test="${!empty templateCounter}">
+                       <c:choose>
+                       <c:when test="${!empty templateCounter[savedTemplate.value.name]}">
+                           ${templateCounter[savedTemplate.value.name]}
+                       </c:when>
+                       <c:otherwise>0</c:otherwise>
+                       </c:choose>
                    </c:if>
                </td>
                </c:if>
