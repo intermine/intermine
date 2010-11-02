@@ -99,7 +99,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             counter++;
             String rsNumber = res.getString("variation_name");
             String chrName = res.getString("sr.name");
-            
+
             if (chrs.contains(chrName)) {
                 keepSnp = true;
             }
@@ -124,6 +124,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     snpCounter++;
                 }
                 keepSnp = false;
+                multipleLocations = false;
                 currentRsNumber = rsNumber;
                 currentLocStr = null;
                 consequenceIdentifiers = new HashSet<String>();
@@ -305,7 +306,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " WHERE vf.seq_region_id = sr.seq_region_id"
             + " AND vf.source_id = s.source_id"
             + " ORDER BY vf.variation_id"
-            + " LIMIT 10000";
+            + " LIMIT 100000";
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
