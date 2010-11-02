@@ -195,10 +195,10 @@ public class CreateTemplateAction extends InterMineAction
     private void updateTags(TagManager tagManager, String userName,
                            String oldTemplateName, String newTemplateName) {
         Set<String> tagNames =
-            tagManager.getObjectTagNames(oldTemplateName, "template", userName);
+            tagManager.getObjectTagNames(oldTemplateName, TagTypes.TEMPLATE, userName);
         for (String tagName : tagNames) {
-            tagManager.deleteTag(tagName, oldTemplateName, "template", userName);
-            tagManager.addTag(tagName, newTemplateName, "template", userName);
+            tagManager.deleteTag(tagName, oldTemplateName, TagTypes.TEMPLATE, userName);
+            tagManager.addTag(tagName, newTemplateName, TagTypes.TEMPLATE, userName);
         }
     }
 
