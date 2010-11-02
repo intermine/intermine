@@ -19,19 +19,40 @@ public class TemplateTrack implements Track
 {
     private String userName;
     private String templateName;
+    boolean isTemplatePublic;
     private long timestamp;
     private String sessionIdentifier;
 
     /**
      * Create a template track
      * @param templateName template name
+     * @param isTemplatePublic true if the template has the tag public
+     * @param username the user name
      * @param sessionIdentifier session id
      * @param timestamp access time
      */
-    public TemplateTrack(String templateName, String sessionIdentifier, long timestamp) {
+    public TemplateTrack(String templateName, boolean isTemplatePublic, String username,
+                        String sessionIdentifier, long timestamp) {
         this.templateName = templateName;
+        this.isTemplatePublic = isTemplatePublic;
+        this.userName = username;
         this.sessionIdentifier = sessionIdentifier;
         this.timestamp = timestamp;
+    }
+
+    /**
+     * Create a template track
+     * @param templateName template name
+     * @param isTemplatePublic true if the template has the tag public
+     * @param username the user name
+     * @param sessionIdentifier session id
+     */
+    public TemplateTrack(String templateName, boolean isTemplatePublic, String username,
+                         String sessionIdentifier) {
+        this.templateName = templateName;
+        this.isTemplatePublic = isTemplatePublic;
+        this.userName = username;
+        this.sessionIdentifier = sessionIdentifier;
     }
 
     /**
@@ -64,6 +85,22 @@ public class TemplateTrack implements Track
      */
     public void setTemplateName(String templateName) {
         this.templateName = templateName;
+    }
+
+    /**
+     * Return true if the template has the public tag
+     * @return true if the template has the public tag
+     */
+    public boolean isTemplatePublic() {
+        return isTemplatePublic;
+    }
+
+    /**
+     * Set if the template has a public tag or not
+     * @param isTemplatePublic the flag
+     */
+    public void setTemplatePublic(boolean isTemplatePublic) {
+        this.isTemplatePublic = isTemplatePublic;
     }
 
     /**
