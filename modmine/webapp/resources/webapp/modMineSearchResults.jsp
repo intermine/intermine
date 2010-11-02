@@ -157,7 +157,7 @@ Search Term: <c:out value="${searchTerm}"/>
   <c:set var="sub" value="${subResult.key}"/>
   <tr>
       <td><input type="checkbox" class="aSub" value="${sub.dCCid}" onclick="updateCheckStatus(this.checked)"/></td>
-      <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.id}"><c:out value="${sub.dCCid}"></c:out></html:link></td>
+      <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.id}"><c:out value="modENCODE_${sub.dCCid}"></c:out></html:link></td>
       <td>
       <c:if test="${sub.organism.genus eq 'Drosophila'}">
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/>
