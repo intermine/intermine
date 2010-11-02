@@ -10,9 +10,9 @@ package org.modmine.web;
  *
  */
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,8 +62,8 @@ public class ProjectsSummaryController extends TilesAction
 
             // using the categories form experiment.category (chado)
             Map<String, List<DisplayExperiment>> categoriesNew = 
-                new HashMap<String, List<DisplayExperiment>>();
-
+                new TreeMap<String, List<DisplayExperiment>>();
+            
             for (List<DisplayExperiment> expList : experiments.values()) {
                 for (DisplayExperiment exp : expList) {
                     BioConverterUtil.addToListMap(categoriesNew, exp.getExperimentCategory(), exp);
