@@ -31,6 +31,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -49,7 +50,6 @@ public class UniprotConverter extends BioDirectoryConverter
     private static final UniprotConfig CONFIG = new UniprotConfig();
     private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
     private Map<String, String> pubs = new HashMap<String, String>();
-    private Map<String, String> comments = new HashMap<String, String>();
     private Set<Item> synonymsAndXrefs = new HashSet<Item>();
     private Map<String, String> domains = new HashMap<String, String>();
     // taxonId -> [md5Checksum -> stored protein identifier]
@@ -58,7 +58,6 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> keywords = new HashMap<String, String>();
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> goterms = new HashMap<String, String>();
-    private Map<String, String> evidence = new HashMap<String, String>();
 
     // don't allow duplicate identifiers
     private Set<String> geneIdentifiers = new HashSet<String>();
@@ -239,8 +238,12 @@ public class UniprotConverter extends BioDirectoryConverter
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
 
+            String previousQName = null;
+            if (!stack.isEmpty()) {
+                previousQName = stack.peek();
+            }
             attName = null;
-            if (qName.equals("entry")) {
+            if ("entry".equals(qName)) {
                 entry = new UniprotEntry();
                 String dataSetTitle = getAttrValue(attrs, "dataset") + " data set";
                 entry.setDatasetRefId(getDataSet(dataSetTitle, datasourceRefId));
@@ -252,36 +255,36 @@ public class UniprotConverter extends BioDirectoryConverter
 //                }
 //                entry.setFragment(isFragment);
             } else if ("fullName".equals(qName) && stack.search("protein") == 2
-                    &&  (stack.peek().equals("recommendedName")
-                            || stack.peek().equals("submittedName"))) {
+                    &&  ("recommendedName".equals(previousQName)
+                            || "submittedName".equals(previousQName))) {
                 attName = "proteinName";
-            } else if ((qName.equals("fullName") || qName.equals("shortName"))
+            } else if (("fullName".equals(qName) || "shortName".equals(qName))
                     && stack.search("protein") == 2
-                    && (stack.peek().equals("alternativeName")
-                            || stack.peek().equals("recommendedName")
-                            || stack.peek().equals("submittedName"))) {
+                    && ("alternativeName".equals(previousQName)
+                            || "recommendedName".equals(previousQName)
+                            || "submittedName".equals(previousQName))) {
                 attName = "synonym";
-            } else if (qName.equals("fullName")
-                    && stack.peek().equals("recommendedName")
+            } else if ("fullName".equals(qName)
+                    && "recommendedName".equals(previousQName)
                     && stack.search("component") == 2) {
                 attName = "component";
-            } else if (qName.equals("name") && stack.peek().equals("entry")) {
+            } else if ("name".equals(qName) && "entry".equals(previousQName)) {
                 attName = "primaryIdentifier";
-            } else if (qName.equals("accession")) {
+            } else if ("accession".equals(qName)) {
                 attName = "value";
-            } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
+            } else if ("dbReference".equals(qName) && "organism".equals(previousQName)) {
                 entry.setTaxonId(getAttrValue(attrs, "id"));
-            } else if (qName.equals("id")  && stack.peek().equals("isoform")) {
+            } else if ("id".equals(qName)  && "isoform".equals(previousQName)) {
                 attName = "isoform";
-            } else if (qName.equals("sequence")  && stack.peek().equals("isoform")) {
+            } else if ("sequence".equals(qName)  && "isoform".equals(previousQName)) {
                 String sequenceType = getAttrValue(attrs, "type");
                 // ignore "external" types
-                if (sequenceType.equals("displayed")) {
+                if ("displayed".equals(sequenceType)) {
                     entry.setCanonicalIsoform(entry.getAttribute());
-                } else if (sequenceType.equals("described")) {
+                } else if ("described".equals(sequenceType)) {
                     entry.addIsoform(entry.getAttribute());
                 }
-            } else if (qName.equals("sequence")) {
+            } else if ("sequence".equals(qName)) {
                 String strLength = getAttrValue(attrs, "length");
                 String strMass = getAttrValue(attrs, "mass");
                 if (strLength != null) {
@@ -297,57 +300,63 @@ public class UniprotConverter extends BioDirectoryConverter
                     isFragment = "true";
                 }
                 entry.setFragment(isFragment);
-            } else if (qName.equals("feature") && getAttrValue(attrs, "type") != null) {
+            } else if ("feature".equals(qName) && getAttrValue(attrs, "type") != null) {
                 Item feature = getFeature(getAttrValue(attrs, "type"), getAttrValue(attrs,
                     "description"), getAttrValue(attrs, "status"));
                 entry.addFeature(feature);
-            } else if ((qName.equals("begin") || qName.equals("end"))
+            } else if (("begin".equals(qName) || "end".equals(qName))
                     && entry.processingFeature()
                     && getAttrValue(attrs, "position") != null) {
                 entry.addFeatureLocation(qName, getAttrValue(attrs, "position"));
-            } else if (qName.equals("position") && entry.processingFeature()
+            } else if ("position".equals(qName) && entry.processingFeature()
                     && getAttrValue(attrs, "position") != null) {
                 entry.addFeatureLocation("begin", getAttrValue(attrs, "position"));
                 entry.addFeatureLocation("end", getAttrValue(attrs, "position"));
-            } else if (createInterpro && qName.equals("dbReference")
-                    && getAttrValue(attrs, "type").equals("InterPro")) {
+            } else if (createInterpro && "dbReference".equals(qName)
+                    && "InterPro".equals(getAttrValue(attrs, "type"))) {
                 entry.addAttribute(getAttrValue(attrs, "id"));
-            } else if (createInterpro && qName.equals("property") && entry.processing()
-                    && stack.peek().equals("dbReference")
-                    && getAttrValue(attrs, "type").equals("entry name")) {
+            } else if (createInterpro && "property".equals(qName) && entry.processing()
+                    && "dbReference".equals(previousQName)
+                    && "entry name".equals(getAttrValue(attrs, "type"))) {
                 String domain = entry.getAttribute();
                 if (domain.startsWith("IPR")) {
                     entry.addDomainRefId(getInterpro(domain, getAttrValue(attrs, "value")));
                 }
-            } else if (qName.equals("dbReference") && stack.peek().equals("citation")
-                    && getAttrValue(attrs, "type").equals("PubMed")) {
+            } else if ("dbReference".equals(qName) && "citation".equals(previousQName)
+                    && "PubMed".equals(getAttrValue(attrs, "type"))) {
                 entry.addPub(getPub(getAttrValue(attrs, "id")));
-            } else if (qName.equals("comment")
+            } else if ("comment".equals(qName)
                     && StringUtils.isNotEmpty(getAttrValue(attrs, "type"))) {
                 entry.setCommentType(getAttrValue(attrs, "type"));
-            } else if (qName.equals("text") && stack.peek().equals("comment")) {
+            } else if ("text".equals(qName) && "comment".equals(previousQName)) {
                 attName = "text";
-            } else if (qName.equals("keyword")) {
+                String commentEvidence = getAttrValue(attrs, "evidence");
+                if (StringUtils.isNotEmpty(commentEvidence)) {
+                    entry.setCommentEvidence(commentEvidence);
+                }
+            } else if ("keyword".equals(qName)) {
                 attName = "keyword";
-            } else if (qName.equals("dbReference") && stack.peek().equals("entry")) {
+            } else if ("dbReference".equals(qName) && "entry".equals(previousQName)) {
                 entry.addDbref(getAttrValue(attrs, "type"), getAttrValue(attrs, "id"));
-            } else if (qName.equals("property") && stack.peek().equals("dbReference")) {
+            } else if ("property".equals(qName) && "dbReference".equals(previousQName)) {
                 // if the dbref has no gene designation value, it is discarded.
                 // without the gene designation, it's impossible to match up identifiers with the
                 // correct genes
                 String type = getAttrValue(attrs, "type");
                 // TODO put text in config file
-                if (type != null && type.equals("gene designation")) {
+                if (type != null && "gene designation".equals(type)) {
                     String value = getAttrValue(attrs, "value");
                     entry.addGeneDesignation(value);
                 }
-            } else if (qName.equals("name") && stack.peek().equals("gene")) {
+            } else if ("name".equals(qName) && "gene".equals(previousQName)) {
                 attName = getAttrValue(attrs, "type");
-            } else if (evidence.equals(qName) && "entry".equals(stack.peek())) {
-                setEvidence(getAttrValue(attrs, "key"), getAttrValue(attrs, "attribute"));
-            } else if (qName.equals("dbreference") || qName.equals("comment")
-                    || qName.equals("isoform")
-                    || qName.equals("gene")) {
+            } else if ("evidence".equals(qName) && "entry".equals(previousQName)) {
+                String evidenceCode = getAttrValue(attrs, "key");
+                String pubRefId = getEvidence(getAttrValue(attrs, "attribute"));
+                entry.addEvidence(evidenceCode, pubRefId);
+            } else if ("dbreference".equals(qName) || "comment".equals(qName)
+                    || "isoform".equals(qName)
+                    || "gene".equals(qName)) {
                 // set temporary holder variables to null
                 entry.reset();
             }
@@ -368,37 +377,51 @@ public class UniprotConverter extends BioDirectoryConverter
             if (attName == null && attValue.toString() == null) {
                 return;
             }
-            if (qName.equals("sequence")) {
+
+            String previousQName = null;
+            if (!stack.isEmpty()) {
+                previousQName = stack.peek();
+            }
+
+            if ("sequence".equals(qName)) {
                 entry.setSequence(attValue.toString().replaceAll("\n", ""));
-            } else if (StringUtils.isNotEmpty(attName) && attName.equals("proteinName")) {
+            } else if (StringUtils.isNotEmpty(attName) && "proteinName".equals(attName)) {
                 entry.setName(attValue.toString());
-            } else if (StringUtils.isNotEmpty(attName) && attName.equals("synonym")) {
+            } else if (StringUtils.isNotEmpty(attName) && "synonym".equals(attName)) {
                 entry.addProteinName(attValue.toString());
-            } else if ("text".equals(qName) && "comment".equals(stack.peek())) {
+            } else if ("text".equals(qName) && "comment".equals(previousQName)) {
                 String commentText = attValue.toString();
                 if (StringUtils.isNotEmpty(commentText)) {
-                    entry.addCommentRefId(getComment(entry.getCommentType(), commentText));
-                    entry.setCommentType(null);
+                    Item item = createItem("Comment");
+                    item.setAttribute("type", entry.getCommentType());
+                    item.setAttribute("text", commentText);
+                    String refId = item.getIdentifier();
+                    try {
+                        Integer objectId = store(item);
+                        entry.addCommentRefId(refId, objectId);
+                    } catch (ObjectStoreException e) {
+                        throw new SAXException(e);
+                    }
                 }
-            } else if (qName.equals("name") && stack.peek().equals("gene")) {
+            } else if ("name".equals(qName) && "gene".equals(previousQName)) {
                 String type = attName;
                 String name = attValue.toString();
                 // See #1199 - remove organism prefixes ("AgaP_" or "Dmel_")
                 name = name.replaceAll("^[A-Z][a-z][a-z][A-Za-z]_", "");
                 entry.addGene(type, name);
-            } else if (qName.equals("keyword")) {
+            } else if ("keyword".equals(qName)) {
                 entry.addKeyword(getKeyword(attValue.toString()));
             } else if (StringUtils.isNotEmpty(attName)
-                    && attName.equals("primaryIdentifier")) {
+                    && "primaryIdentifier".equals(attName)) {
                 entry.setPrimaryIdentifier(attValue.toString());
-            } else if (qName.equals("accession")) {
+            } else if ("accession".equals(qName)) {
                 entry.addAccession(attValue.toString());
-            } else if (StringUtils.isNotEmpty(attName) && attName.equals("component")
-                    && qName.equals("fullName")
-                    && stack.peek().equals("recommendedName")
+            } else if (StringUtils.isNotEmpty(attName) && "component".equals(attName)
+                    && "fullName".equals(qName)
+                    && "recommendedName".equals(previousQName)
                     && stack.search("component") == 2) {
                 entry.addComponent(attValue.toString());
-            } else if (qName.equals("id") && stack.peek().equals("isoform")) {
+            } else if ("id".equals(qName) && "isoform".equals(previousQName)) {
                 String accession = attValue.toString();
 
                 // 119 isoforms have commas in their IDs
@@ -419,6 +442,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 }
             } else if ("entry".equals(qName)) {
                 try {
+                    processCommentEvidence(entry);
                     Set<UniprotEntry> isoforms = processEntry(entry);
 
                     for (UniprotEntry isoform : isoforms) {
@@ -529,8 +553,9 @@ public class UniprotConverter extends BioDirectoryConverter
                 }
 
                 /* comments */
-                if (!uniprotEntry.getComments().isEmpty()) {
+                if (uniprotEntry.hasComments()) {
                     protein.setCollection("comments", uniprotEntry.getComments());
+                    processCommentEvidence(uniprotEntry);
                 }
 
                 /* keywords */
@@ -542,7 +567,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 processFeatures(protein, uniprotEntry);
 
                 /* components */
-                if (!uniprotEntry.getComponents().isEmpty()) {
+                if (uniprotEntry.getComponents() != null
+                        && !uniprotEntry.getComponents().isEmpty()) {
                     processComponents(protein, uniprotEntry);
                 }
 
@@ -568,6 +594,29 @@ public class UniprotConverter extends BioDirectoryConverter
                 synonymsAndXrefs = new HashSet<Item>();
             }
             return isoforms;
+        }
+
+        private void processCommentEvidence(UniprotEntry uniprotEntry)
+            throws ObjectStoreException {
+            Map<Integer, List<String>> commentEvidence = uniprotEntry.getCommentEvidence();
+            for (Map.Entry<Integer, List<String>> e : commentEvidence.entrySet()) {
+                Integer intermineObjectId = e.getKey();
+                List<String> evidenceCodes = e.getValue();
+                List<String> pubRefIds = new ArrayList();
+                for (String code : evidenceCodes) {
+                    String pubRefId = uniprotEntry.getPubRefId(code);
+                    if (pubRefId != null) {
+                        pubRefIds.add(pubRefId);
+                    } else {
+                        throw new RuntimeException("bad code:" + code);
+                    }
+                }
+                if (!pubRefIds.isEmpty()) {
+                    ReferenceList publications = new ReferenceList("publications",
+                        new ArrayList<String>(pubRefIds));
+                    store(publications, intermineObjectId);
+                }
+            }
         }
 
         private void processSequence(Item protein, UniprotEntry uniprotEntry) {
@@ -660,7 +709,7 @@ public class UniprotConverter extends BioDirectoryConverter
 
             // isoforms with extra identifiers
             List<String> isoformSynonyms = uniprotEntry.getIsoformSynonyms();
-            if (!isoformSynonyms.isEmpty()) {
+            if (isoformSynonyms != null && !isoformSynonyms.isEmpty()) {
                 for (String identifier : isoformSynonyms) {
                     createSynonym(proteinRefId, identifier, true);
                 }
@@ -683,7 +732,6 @@ public class UniprotConverter extends BioDirectoryConverter
 
                 String key = dbref.getKey();
                 List<String> values = dbref.getValue();
-
                 for (String identifier : values) {
                     if ("EC".equals(key)) {
                         protein.setAttribute("ecNumber", identifier);
@@ -977,37 +1025,17 @@ public class UniprotConverter extends BioDirectoryConverter
     // putting publications in map for later use
     // key = EC1, value = reference to publication
     // used by comments
-    private void setEvidence(String key, String attribute) throws SAXException {
-        if (!evidence.containsKey(key)) {
-            if (attribute.contains("=")) {
-                String[] bits = attribute.split("=");
-                for (String pubMedId : bits) {
-                    if (StringUtils.isNotEmpty(pubMedId)) {
-                        String pubRefId = getPub(pubMedId);
-                        evidence.put(key, pubRefId);
-                    }
+    private String getEvidence(String attribute) throws SAXException {
+        if (attribute.contains("=")) {
+            String[] bits = attribute.split("=");
+            if (bits.length == 2) {
+                String pubMedId = bits[1];
+                if (StringUtils.isNotEmpty(pubMedId)) {
+                    return getPub(pubMedId);
                 }
             }
         }
-    }
-
-    private String getComment(String commentType, String text)
-        throws SAXException {
-        String key = commentType + text;
-        String refId = comments.get(key);
-        if (refId == null) {
-            Item item = createItem("Comment");
-            item.setAttribute("type", commentType);
-            item.setAttribute("text", text);
-            refId = item.getIdentifier();
-            comments.put(key, refId);
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-        }
-        return refId;
+        return null;
     }
 
     private String getInterpro(String identifier, String shortName)
