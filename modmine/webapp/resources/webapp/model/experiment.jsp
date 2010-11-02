@@ -140,6 +140,7 @@ input.submit {
 <c:set var="flyTracksCounter" value="0"/>
 <c:set var="project" value="${exp.piSurname}"/>
 <c:set var="proGFF" value="PianoWaterstonCelniker"/>
+<c:set var="ANTIBODY" value="antibody"/>
 
   <im:boxarea title="${exp.name}" stylename="gradientbox">
 
@@ -625,11 +626,12 @@ All GBrowse tracks generated for this experiment:
                     </query>
                   </im:querylink>
                   </span>
-                  
 
-
-
-
+<%--if antibody add target gene --%>
+  								<c:if test="${factor.type == ANTIBODY}">
+                  <br></br>
+                  target: ${factor.property.targetName}
+                  </c:if>
                   
                    </c:when>
                   <c:when test="${thisTypeCount > 5 && status.last}">
