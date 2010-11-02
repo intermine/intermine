@@ -136,7 +136,7 @@ public class EnsemblGwasDbConverter extends BioDBConverter
         // 10^-5 > p > 10^-6  -->  10E-5
         if (!StringUtils.isBlank(input)) {
             if (input.indexOf('>') > 0) {
-                input = input.substring(0, input.indexOf('>')).trim();                
+                input = input.substring(0, input.indexOf('>')).trim();
             }
             if (input.indexOf('^') > 0) {
                 input = input.replace("^", "E");
