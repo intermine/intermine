@@ -35,4 +35,7 @@
 <class name="Gene" is-interface="true">
   <collection name="goAnnotation" referenced-type="GOAnnotation"/>
 </class>
+<class name="Comment" is-interface="true">
+  <collection name="publications" referenced-type="Publication"/>
+</class>
 </classes>
