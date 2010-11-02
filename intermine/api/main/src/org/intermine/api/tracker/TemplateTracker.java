@@ -28,7 +28,8 @@ import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 
 /**
- * Class for tracking the accesses to the templates by the users.
+ * Class for tracking the templates execution by the users. When a user executes a template,
+ * a new track is saved into the database and saved into the memory too.
  * @author dbutano
  */
 public class TemplateTracker extends TrackerAbstract
@@ -69,6 +70,9 @@ public class TemplateTracker extends TrackerAbstract
         return templateTracker;
     }
 
+    /**
+     * Load the tracks retrieved from the database into TemplateExecutionMap object, object containi
+     */
     private void loadTemplatesExecutionCache() {
         Statement stm = null;
         ResultSet rs = null;
@@ -78,14 +82,15 @@ public class TemplateTracker extends TrackerAbstract
                          + "FROM templatetrack tt LEFT JOIN tag t "
                          + "ON tt.templatename = t.objectidentifier "
                          + "AND t.type='" + TagTypes.TEMPLATE + "' "
-                         + "AND t.tagname='" + TagNames.IM_PUBLIC+ "'";
+                         + "AND t.tagname='" + TagNames.IM_PUBLIC + "'";
             rs = stm.executeQuery(sql);
             TemplateTrack tt;
             while (rs.next()) {
                 tt =  new TemplateTrack(rs.getString(1),
-                                        (rs.getString(4) != null && rs.getString(4).equals(TagNames.IM_PUBLIC)) ? true : false,
-                                        rs.getString(2),
-                                        rs.getString(3));
+                          (rs.getString(4) != null && rs.getString(4).equals(TagNames.IM_PUBLIC))
+                          ? true : false,
+                          rs.getString(2),
+                          rs.getString(3));
                 templatesExecutionCache.addExecution(tt);
             }
         } catch (SQLException sqle) {
@@ -96,7 +101,8 @@ public class TemplateTracker extends TrackerAbstract
     }
 
     /**
-     * Store into the database the template execution by the user and by session id
+     * Store into the database the template execution by the user or if the user is not logged
+     * during a specific http session. Update the cache.
      * @param templateName the template name
      * @param isPublic true if the template has the tag public
      * @param profile the user profile
@@ -105,10 +111,10 @@ public class TemplateTracker extends TrackerAbstract
     public void trackTemplate(String templateName, boolean isPublic, Profile profile,
                               String sessionIdentifier) {
         String userName = (profile != null && profile.getUsername() != null)
-        ? profile.getUsername()
-        : "";
-        TemplateTrack templateTrack = new TemplateTrack(templateName, isPublic, userName, sessionIdentifier,
-                                              System.currentTimeMillis());
+                          ? profile.getUsername()
+                          : "";
+        TemplateTrack templateTrack = new TemplateTrack(templateName, isPublic,
+                                      userName, sessionIdentifier, System.currentTimeMillis());
         if (templateTracker  != null) {
             templateTracker.storeTrack(templateTrack);
             templatesExecutionCache.addExecution(templateTrack);
@@ -138,7 +144,8 @@ public class TemplateTracker extends TrackerAbstract
     }
 
     /**
-     * Return the template list ordered by rank descendant for the user/sessionid specified in the input
+     * Return the template list ordered by rank descendant for the user/sessionid specified
+     * in the input
      * @param userName the user name
      * @param sessionId the session id
      * @return List of template names
@@ -190,15 +197,18 @@ public class TemplateTracker extends TrackerAbstract
 
     /**
      * Return the rank for each template. The rank represents a relationship between the templates
-     * execution; a template with rank 1 has been executed more than a template with rank 2. The
-     * rank is calculated by summing the ln of the template execution launched by the user (if
-     * logged in) or (if the user is not logged in) during the to the same http session
-     * @return map with key the template name and executions number
+     * executions; a template with rank 1 has been executed more than a template with rank 2. The
+     * rank is calculated by summing the logarithm of the templates executions launched by the user
+     * if the user is logged in, or otherwise, by summing the ln of the templates executions during
+     * the same http session. The function is called only by the super user
+     * @param userName the super user name
+     * @return map with key the template name and rank
      */
     public Map<String, Integer> getRank(String userName) {
         Map<String, Integer> templateRank = new HashMap<String, Integer>();
         Map<String, Double> templateMergedRank = getLnMap(userName, null, true);
-        //prepare templateRank
+
+        //order the templateMergedRank by value descending
         List<Entry<String, Double>> listOrdered =
             new LinkedList<Entry<String, Double>>(templateMergedRank.entrySet());
         Collections.sort(listOrdered, new Comparator<Entry<String, Double>>() {
@@ -207,6 +217,7 @@ public class TemplateTracker extends TrackerAbstract
             }
         });
 
+        //assign rank 1 to the template with higher value
         int rankDisplayed = 0;
         Double prevValue = 0.0;
         for (Entry<String, Double> entry : listOrdered) {
@@ -220,18 +231,33 @@ public class TemplateTracker extends TrackerAbstract
         return templateRank;
     }
 
+    /**
+     * Return a map containing the logarithm of accesses for each template. The map is obtained
+     * merging the map of logarithm of accesses for user and the map of logarithm of accesses for
+     * the same session
+     * @param userName the user name
+     * @param sessionId the http session identifier
+     * @param isSuperUser true if the superUser is logged
+     * @return map of logarithm of accesses
+     */
     public Map<String, Double> getLnMap(String userName, String sessionId, boolean isSuperUser) {
         Map<String, Double> templateUserLn = new HashMap<String, Double>();
         Map<String, Double> templateAnonymousLn = new HashMap<String, Double>();
         templateUserLn = templatesExecutionCache.getLnUserMap(userName, isSuperUser);
         templateAnonymousLn = templatesExecutionCache.getLnAnonymousMap(sessionId);
 
-        //merge the templateAnonymousRank and the templateUserRank (summing the ln for each
-        //tempalte) into a templateMergedRank
         Map<String, Double> templateMergedLn = mergeMap(templateUserLn, templateAnonymousLn);
         return templateMergedLn;
     }
 
+    /**
+     * Return a map obtained merging the two maps specified in input. If the two maps have an entry
+     * with the same key (template name), the result will be an entry with the same key and value
+     * the sum of the two values.
+     * @param map1 the map to merge
+     * @param map2 the map to merge
+     * @return a map containing the map1 and map2 merged
+     */
     private Map<String, Double> mergeMap (Map<String, Double> map1, Map<String, Double> map2) {
         Map<String, Double> mergedMap = new HashMap<String, Double>();
         Map<String, Double> tempMap = new HashMap<String, Double>(map2);
@@ -254,9 +280,9 @@ public class TemplateTracker extends TrackerAbstract
     }
 
     /**
-     * Close the result set and statement objects in input
-     * @param rs
-     * @param stm
+     * Close the result set and statement objects specified in input
+     * @param rs the ResultSet object to close
+     * @param stm the STatement object to close
      */
     private void releaseResources(ResultSet rs, Statement stm) {
         if (rs != null) {
