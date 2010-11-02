@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,22 +34,13 @@ public class UniprotEntry
     private String datasetRefId = null;
     private String length, molecularWeight;
     private Set<Item> features = new HashSet<Item>();
-    private List<String> domains = new ArrayList<String>();
-    private List<String> pubs = new ArrayList<String>();
-    private List<String> comments = new ArrayList<String>();
-    private List<String> keywords = new ArrayList<String>();
-    private List<String> accessions = new ArrayList<String>();
-    private List<String> isoforms = new ArrayList<String>();
-    private List<String> isoformSynonyms = new ArrayList<String>();
-    private List<String> components = new ArrayList<String>();
-    private List<String> proteinNames = new ArrayList<String>();
-    private List<String> goTerms = new ArrayList<String>();
+    private Map<Integer, List<String>> commentEvidence = new HashMap<Integer, List<String>>();
     private boolean isIsoform = false;
     private String taxonId, name, isFragment;
     private String primaryAccession, uniprotAccession, primaryIdentifier;
     private String sequence, md5checksum;
-    private String commentType;
-
+    private Map<String, List<String>> collections = new HashMap<String, List<String>>();
+    private Map<String, String> evidenceCodeToRef = new HashMap<String, String>();
 
     private List<UniprotGene> geneEntries = new ArrayList<UniprotGene>();
     private Map<String, List<String>> dbrefs = new HashMap<String, List<String>>();
@@ -64,6 +56,7 @@ public class UniprotEntry
     private Item feature = null;
     private UniprotGene geneEntry = null; // <gene><name> ... being processed
     private Dbref dbref = null;
+    private Comment comment = null; //<comment><text> ... being processed
 
     /**
      * constructor used for non-isoform entries
@@ -129,38 +122,82 @@ public class UniprotEntry
         dbref = null;
     }
 
-    private void addRefId(List<String> list, String refId) {
-        list.add(refId);
+    private void addRefId(String collectionName, String refId) {
+        addToCollection(collectionName, refId);
         reset();
+    }
+
+    private void addToCollection(String collectionName, String value) {
+        List<String> values = collections.get(collectionName);
+        if (values == null) {
+            values = new ArrayList();
+            collections.put(collectionName, values);
+        }
+        values.add(value);
     }
 
     /**
      * @param refId id representing protein domain intermine object
      */
     public void addDomainRefId(String refId) {
-        addRefId(domains, refId);
-        reset();
+        addRefId("domains", refId);
     }
 
     /**
      * @return the domains
      */
     public List<String> getDomains() {
-        return domains;
+        return collections.get("domains");
     }
 
     /**
      * @param refId id representing comment intermine object
+     * @param objectId id representing the object in the database.  used later to add pub collection
      */
-    public void addCommentRefId(String refId) {
-        addRefId(comments, refId);
+    public void addCommentRefId(String refId, Integer objectId) {
+        commentEvidence.put(objectId, new ArrayList(comment.evidence));
+        addRefId("comments", refId);
     }
 
     /**
-     * @return the comments
+     * Creates a new temporary object to hold the type and later the publications for this comment.
+     *
+     * @param type "type" of comment
      */
-    public List<String> getComments() {
-        return comments;
+    public void setCommentType(String type) {
+        comment = new Comment(type);
+    }
+
+    /**
+     * @return type "type" of comment
+     */
+    public String getCommentType() {
+        return comment.type;
+    }
+
+    /**
+     *
+     * @param evidence space delimited list of evidence codes
+     */
+    public void setCommentEvidence(String evidence) {
+        String[] bits = evidence.split(" ");
+        for (String bit : bits) {
+            comment.addEvidence(bit);
+        }
+    }
+
+    /**
+     * @return map from commentRefId to evidence codes
+     */
+    public Map<Integer, List<String>> getCommentEvidence() {
+        return commentEvidence;
+    }
+
+    /**
+     * @return true if this entry has comments
+     */
+    public boolean hasComments() {
+        return collections.get("comments") != null;
     }
 
     /**
@@ -193,7 +230,7 @@ public class UniprotEntry
      */
     public Item getFeature() {
         Item currentFeature = feature;
-        feature = null; // we are storing this feature, so reset temp var
+        reset();
         return currentFeature;
     }
 
@@ -216,42 +253,42 @@ public class UniprotEntry
      * @return list of refIds representing the publication objects
      */
     public List<String> getPubs() {
-        return pubs;
+        return collections.get("pubs");
     }
 
     /**
      * @param pubmedId the id for the pub
      */
     public void addPub(String pubmedId) {
-        pubs.add(pubmedId);
+        addToCollection("pubs", pubmedId);
     }
 
     /**
      * @return list of refIds representing the keyword objects
      */
     public List<String> getKeywords() {
-        return keywords;
+        return collections.get("keywords");
     }
 
     /**
      * @param keyword keyword refId
      */
     public void addKeyword(String keyword) {
-        keywords.add(keyword);
+        addToCollection("keywords", keyword);
     }
 
     /**
      * @return list of refIds representing the keyword objects
      */
     public List<String> getComponents() {
-        return components;
+        return collections.get("components");
     }
 
     /**
      * @param component name of component
      */
     public void addComponent(String component) {
-        components.add(component);
+        addToCollection("components", component);
     }
 
     /**
@@ -267,7 +304,7 @@ public class UniprotEntry
      */
     public void addAccession(String accession) {
         if (primaryAccession != null) {
-            accessions.add(accession);
+            addToCollection("accessions", accession);
         } else {
             primaryAccession = accession;
             uniprotAccession = accession;
@@ -278,7 +315,7 @@ public class UniprotEntry
      * @return list of accessions
      */
     public List<String> getAccessions() {
-        return accessions;
+        return collections.get("accessions");
     }
 
     /**
@@ -422,7 +459,7 @@ public class UniprotEntry
      */
     public List<String> getSynonyms() {
         List<String> synonyms = new ArrayList<String>();
-        synonyms.addAll(accessions);
+        collections.get("synonyms").addAll(collections.get("accessions"));
         return synonyms;
     }
 
@@ -444,7 +481,7 @@ public class UniprotEntry
      */
     public void setCanonicalIsoform(String accession) {
         isIsoform = false;
-        accessions.add(accession);
+        addToCollection("accessions", accession);
     }
 
     /**
@@ -458,14 +495,19 @@ public class UniprotEntry
      * @param accession of the isoform
      */
     public void addIsoform(String accession) {
-        isoforms.add(accession);
+        addToCollection("isoforms", accession);
     }
 
     /**
      * @return list of isoform accessions for this uniprot entry
      */
     public List<String> getIsoforms() {
-        return isoforms;
+        List<String> isoforms = collections.get("isoforms");
+        if (isoforms == null) {
+            return Collections.EMPTY_LIST;
+        } else {
+            return collections.get("isoforms");
+        }
     }
 
     /**
@@ -474,7 +516,7 @@ public class UniprotEntry
      * @param accession of the isoform
      */
     public void addIsoformSynonym(String accession) {
-        isoformSynonyms.add(accession);
+        addToCollection("isoformSynonyms", accession);
     }
 
     /**
@@ -483,7 +525,7 @@ public class UniprotEntry
      * @return list of isoform synonyms
      */
     public List<String> getIsoformSynonyms() {
-        return isoformSynonyms;
+        return collections.get("isoformSynonyms");
     }
 
     /**
@@ -492,7 +534,7 @@ public class UniprotEntry
      * @param proteinName name for the protein, eg. recommendedName, alternateName, etc
      */
     public void addProteinName(String proteinName) {
-        proteinNames.add(proteinName);
+        addToCollection("proteinNames", proteinName);
     }
 
     /**
@@ -501,14 +543,14 @@ public class UniprotEntry
      * @return list of isoform synonyms
      */
     public List<String> getProteinNames() {
-        return proteinNames;
+        return collections.get("proteinNames");
     }
 
     /**
      * @param proteinNames the proteinNames to set
      */
     public void setProteinNames(List<String> proteinNames) {
-        this.proteinNames = proteinNames;
+        collections.put("proteinNames", proteinNames);
     }
 
     /**
@@ -537,72 +579,79 @@ public class UniprotEntry
      * @param domains the domains to set
      */
     public void setDomains(List<String> domains) {
-        this.domains = domains;
+        collections.put("domains", domains);
     }
 
     /**
      * @param pubs the pubs to set
      */
     public void setPubs(List<String> pubs) {
-        this.pubs = pubs;
+        collections.put("pubs", pubs);
     }
 
     /**
      * @param comments the comments to set
      */
-    public void setComments(List<String> comments) {
-        this.comments = comments;
+    protected void setComments(List<String> comments) {
+        collections.put("comments", comments);
+    }
+
+    /**
+     * @return list of comment RefIds
+     */
+    public List<String> getComments() {
+        return collections.get("comments");
     }
 
     /**
      * @param keywords the keywords to set
      */
     public void setKeywords(List<String> keywords) {
-        this.keywords = keywords;
+        collections.put("keywords", keywords);
     }
 
     /**
      * @param accessions the accessions to set
      */
     public void setAccessions(List<String> accessions) {
-        this.accessions = accessions;
-    }
-
-    /**
-     * @return the commentType
-     */
-    public String getCommentType() {
-        return commentType;
-    }
-
-    /**
-     * @param commentType the commentType to set
-     */
-    public void setCommentType(String commentType) {
-        this.commentType = commentType;
+        collections.put("accessions", accessions);
     }
 
     /**
      * @return the goterms
      */
     public List<String> getGOTerms() {
-        return goTerms;
+        return collections.get("goTerms");
     }
 
     /**
      * @param refId id representing a go term object
      */
     public void addGOTerm(String refId) {
-        if (!goTerms.contains(refId)) {
-            goTerms.add(refId);
-        }
+        addToCollection("goTerms", refId);
+    }
+
+    /**
+     * @param code the evidence code
+     * @param pubRefId id representing publication object
+     */
+    public void addEvidence(String code, String pubRefId) {
+        evidenceCodeToRef.put(code, pubRefId);
+    }
+
+    /**
+     * @param code evidence code, eg. EC1
+     * @return the refId for publication associated with this evidence code
+     */
+    public String getPubRefId(String code) {
+        return evidenceCodeToRef.get(code);
     }
 
     /**
      * @param goterms list of go term refIds for this protein
      */
     public void setGOTerms(List<String> goterms) {
-        this.goTerms = goterms;
+        collections.put("goTerms", goterms);
     }
 
     /**
@@ -760,6 +809,32 @@ public class UniprotEntry
     }
 
     /**
+     * Class representing a comment in a uniprot entry.
+     */
+    public class Comment
+    {
+        protected String type;
+        // list of evidence, eg EC1.  to be replaced with pubRefIds when evidence is processed
+        protected List<String> evidence = new ArrayList<String>();
+
+        /**
+         * @param type of comment
+         */
+        protected Comment(String type) {
+            this.type = type;
+        }
+
+        /**
+         * Will be replaced later with publication
+         *
+         * @param code evidence code, eg. "EC1"
+         */
+        protected void addEvidence(String code) {
+            evidence.add(code);
+        }
+    }
+
+    /**
      * class representing a dbref entry in a uniprot entry
      */
     public class Dbref
@@ -886,7 +961,7 @@ public class UniprotEntry
             // set gene names
             entry.setGeneNames(gene.getGeneNames());
 
-            entry.setGOTerms(goTerms);
+            entry.setGOTerms(collections.get("goTerms"));
 
             // add to list
             dummyEntries.add(entry);
@@ -917,15 +992,18 @@ public class UniprotEntry
         entry.setFragment(isFragment);
         entry.setUniprotAccession(uniprotAccession);
         entry.setDbrefs(dbrefs);
-        entry.setAccessions(accessions);
-        entry.setComments(comments);
-        entry.setDomains(domains);
-        entry.setPubs(pubs);
-        entry.setKeywords(keywords);
-        entry.setProteinNames(proteinNames);
+        entry.setAccessions(collections.get("accessions"));
+        entry.setComments(collections.get("comments"));
+//        entry.setCommentEvidence(commentEvidence);
+        entry.setDomains(collections.get("domains"));
+        entry.setPubs(collections.get("pubs"));
+        entry.setKeywords(collections.get("keywords"));
+        entry.setProteinNames(collections.get("proteinNames"));
         entry.setGeneEntries(geneEntries);
         entry.setGeneDesignations(geneDesignationToDbref);
-        entry.setGOTerms(goTerms);
+        entry.setGOTerms(collections.get("goTerms"));
         return entry;
     }
+
+
 }

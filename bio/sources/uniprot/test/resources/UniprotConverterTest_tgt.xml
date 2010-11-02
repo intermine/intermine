@@ -46,6 +46,11 @@
 <reference name="feature" ref_id="5_4"/>
 <reference name="protein" ref_id="8_1"/>
 </item>
+<item id="4_3" class="Comment">
+<attribute name="text" value="Contains 1 homeobox DNA-binding domain."/>
+<attribute name="type" value="similarity"/>
+<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
+</item>
 <item id="5_3" class="OntologyTerm">
 <attribute name="name" value="DNA-binding"/>
 <reference name="ontology" ref_id="0_2"/>
@@ -104,10 +109,6 @@
 <reference name="ontology" ref_id="0_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_1" class="Comment">
-<attribute name="text" value="Nucleus."/>
-<attribute name="type" value="subcellular location"/>
-</item>
 <item id="1_2" class="DataSource">
 <attribute name="name" value="RefSeq"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -153,10 +154,6 @@
 <reference name="ontologyTerm" ref_id="13_1"/>
 <reference name="subject" ref_id="14_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="4_3" class="Comment">
-<attribute name="text" value="Contains 1 homeobox DNA-binding domain."/>
-<attribute name="type" value="similarity"/>
 </item>
 <item id="7_3" class="UniProtFeature">
 <attribute name="begin" value="111"/>
@@ -218,6 +215,11 @@
 <attribute name="value" value="Q1234-1"/>
 <reference name="subject" ref_id="8_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="Comment">
+<attribute name="text" value="Nucleus."/>
+<attribute name="type" value="subcellular location"/>
+<collection name="publications"><reference ref_id="3_1"/></collection>
 </item>
 <item id="12_1" class="CrossReference">
 <attribute name="identifier" value="NP_523670.2"/>
