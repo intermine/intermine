@@ -38,6 +38,10 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private static final String DATASET_TITLE = "Ensembl SNP data";
     private static final String DATA_SOURCE_NAME = "Ensembl";
 
+    // TODO move this to a parser argument
+    int taxonId = 9606;
+
+
     private Map<String, String> sources = new HashMap<String, String>();
     private Map<String, String> states = new HashMap<String, String>();
     private Map<String, String> transcripts = new HashMap<String, String>();
@@ -65,46 +69,63 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Set<String> chrNames = new HashSet<String>();
 
         //int MIN_CHROMOSOME = 1;
-        int MIN_CHROMOSOME = 21;
+        int MIN_CHROMOSOME = 22;
         for (int i = MIN_CHROMOSOME; i <= 22; i++) {
             chrNames.add("" + i);
         }
         //chrNames.add("X");
         //chrNames.add("Y");
 
-        for (String chrName : chrNames) {
-            processChromosome(connection, chrName);
-        }
+        process(connection, chrNames);
         connection.close();
     }
 
     /**
      * {@inheritDoc}
      */
-    public void processChromosome(Connection connection, String chrName) throws Exception {
-        // a database has been initialised from properties starting with db.ensembl-snp-db
-
-        System.out.println("Starting to process chromosome " + chrName);
-        LOG.info("Starting to process chromosome " + chrName);
-
-        // TODO move this to a parser arguement
-        int taxonId = 9606;
+    public void process(Connection connection, Set<String> chrs) throws Exception {
 
         int counter = 0;
         int snpCounter = 0;
+        boolean multipleLocations = false;
+        boolean keepSnp = false;
+        String currentLocStr = null;
         Item currentSnp = null;
+        ChrLoc currentLoc = null;
         String currentRsNumber = null;
         Set<String> consequenceIdentifiers = new HashSet<String>();
-        ResultSet res = queryVariation(connection, chrName);
+        ResultSet res = queryVariation(connection);
         while (res.next()) {
             counter++;
             String rsNumber = res.getString("variation_name");
-
-            if (!rsNumber.equals(currentRsNumber)) {
-                if (currentSnp != null) {
-                    storeSnp(currentSnp, consequenceIdentifiers);
+            String chrName = res.getString("sr.name");
+            
+            if (chrs.contains(chrName)) {
+                keepSnp = true;
+            }
+            
+            // even if we don't want this chromosome we need to check for multiple locations
+            if (rsNumber.equals(currentRsNumber)) {
+                int start = res.getInt("seq_region_start");
+                int end = res.getInt("seq_region_end");
+            
+                int chrStart = Math.min(start, end);
+            
+                String chrLoc = chrName + ":" + chrStart;
+                if (!chrLoc.equals(currentLocStr)) {
+                    multipleLocations = true;
+                    currentLoc = null;
+                    LOG.info("Found duplicate locations for SNP: " + rsNumber + " this: " + chrLoc + " previous " + currentLocStr);
                 }
+            }
+            if (!rsNumber.equals(currentRsNumber)) {
+                if (currentSnp != null && keepSnp) {
+                    storeSnp(currentSnp, consequenceIdentifiers, currentLoc, multipleLocations);
+                    snpCounter++;
+                }
+                keepSnp = false;
                 currentRsNumber = rsNumber;
+                currentLocStr = null;
                 consequenceIdentifiers = new HashSet<String>();
                 //String chrName = res.getString("sr.name");
                 String alleles = res.getString("allele_string");
@@ -114,23 +135,17 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 currentSnp.setAttribute("alleles", alleles);
                 currentSnp.setReference("organism", getOrganismItem(taxonId));
 
-                Item chr = getChromosome(chrName, taxonId);
-                currentSnp.setReference("chromosome", chr);
-
+                // CHROMOSOME AND LOCATION
+                // if SNP is mapped to multiple locations don't set chromosome and
+                // chromosomeLocation references
                 // LOCATION
                 int chrStart = res.getInt("seq_region_start");
                 int chrEnd = res.getInt("seq_region_end");
-                String chrStrand = "" + res.getInt("seq_region_strand");
-                Item loc = createItem("Location");
-                loc.setAttribute("start", "" + Math.min(chrStart, chrEnd));
-                loc.setAttribute("end", "" + Math.max(chrStart, chrEnd));
-                loc.setAttribute("strand", chrStrand);
-                loc.setReference("locatedOn", chr);
-                loc.setReference("feature", currentSnp);
-                store(loc);
-
-                currentSnp.setReference("chromosomeLocation", loc);
-
+                int chrStrand = res.getInt("seq_region_strand");
+                
+                currentLoc = new ChrLoc(chrName, chrStart, chrEnd, chrStrand);
+                currentLocStr = chrName + ":" + chrStart;
+                
                 // SOURCE
                 String source = res.getString("s.name");
                 currentSnp.setReference("source", getSourceIdentifier(source));
@@ -142,10 +157,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     currentSnp.setCollection("validations", validationStates);
                 }
 
-                snpCounter++;
-                if (snpCounter % 1000 == 0) {
-                    LOG.info("Read " + snpCounter + " SNPs, " + counter + " rows total.");
-                }
             }
 
             // CONSEQUENCE TYPES
@@ -172,16 +183,50 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 consequenceIdentifiers.add(consequenceItem.getIdentifier());
                 store(consequenceItem);
             }
-        }
-        if (currentSnp != null) {
-            storeSnp(currentSnp, consequenceIdentifiers);
+            snpCounter++;
+            if (counter % 1000 == 0) {
+                LOG.info("Read " + counter + " rows total, stored " + snpCounter + " SNPs.");
+            }
         }
 
-        LOG.info("Finished chromosome " + chrName + " stored " + snpCounter + " SNPs.");
+        if (currentSnp != null) {
+            storeSnp(currentSnp, consequenceIdentifiers, currentLoc, multipleLocations);
+        }
     }
 
-    private void storeSnp(Item snp, Set<String> consequenceIdentifiers)
-        throws ObjectStoreException {
+    private class ChrLoc
+    {
+        final String chrName;
+        final int start;
+        final int end;
+        final int strand;
+        
+        ChrLoc(String chrName, int start, int end, int strand) {
+            this.chrName = chrName;
+            this.start = start;
+            this.end = end;
+            this.strand = strand;
+            
+        }
+    }
+    
+    private void storeSnp(Item snp, Set<String> consequenceIdentifiers, ChrLoc chrLoc,
+            boolean multipleLocations) throws ObjectStoreException {
+        
+        if (!multipleLocations) {
+            Item chr = getChromosome(chrLoc.chrName, taxonId);
+            
+            Item loc = createItem("Location");
+            loc.setAttribute("start", "" + chrLoc.start);
+            loc.setAttribute("end", "" + chrLoc.end);
+            loc.setAttribute("strand", "" + chrLoc.strand);
+            loc.setReference("locatedOn", chr);
+            loc.setReference("feature", snp);
+            store(loc);
+
+            snp.setReference("chromosome", chr);
+            snp.setReference("chromosomeLocation", loc);
+        }
         if (!consequenceIdentifiers.isEmpty()) {
             snp.setCollection("consequences", new ArrayList<String>(consequenceIdentifiers));
         }
@@ -246,21 +291,21 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return consequenceIdentifier;
     }
 
-    private ResultSet queryVariation(Connection connection, String chrName) throws SQLException {
+    private ResultSet queryVariation(Connection connection) throws SQLException {
         String query = "SELECT vf.variation_name, vf.allele_string, "
             + " sr.name, vf.seq_region_start, vf.seq_region_end, vf.seq_region_strand, "
             + " s.name,"
             + " vf.validation_status,"
             + " vf.consequence_type,"
-            + " tv.cdna_start, tv.consequence_type,tv.peptide_allele_string,tv.transcript_stable_id"
+            + " tv.cdna_start,tv.consequence_type,tv.peptide_allele_string,tv.transcript_stable_id"
             + " FROM seq_region sr, source s, variation_feature vf "
             + " LEFT JOIN (transcript_variation tv)"
             + " ON (vf.variation_feature_id = tv.variation_feature_id"
-            + " AND tv.cdna_start is not null)"
+            + "     AND tv.cdna_start is not null)"
             + " WHERE vf.seq_region_id = sr.seq_region_id"
             + " AND vf.source_id = s.source_id"
-            + " AND sr.name = '" + chrName + "'"
-            + " ORDER BY vf.variation_name";
+            + " ORDER BY vf.variation_id"
+            + " LIMIT 10000";
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
