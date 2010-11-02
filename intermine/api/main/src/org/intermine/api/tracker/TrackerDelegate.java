@@ -48,12 +48,14 @@ public class TrackerDelegate
     /**
      * Store into the database the template execution by the user specified in input
      * @param templateName the template name
+     * @param isPublic true if the template has the tag public
      * @param profile the user profile
      * @param sessionIdentifier the session id
      */
-    public void trackTemplate(String templateName, Profile profile, String sessionIdentifier) {
+    public void trackTemplate(String templateName, boolean isPublic, Profile profile,
+                             String sessionIdentifier) {
         if (templateTracker != null) {
-            templateTracker.trackTemplate(templateName, profile, sessionIdentifier);
+            templateTracker.trackTemplate(templateName, isPublic, profile, sessionIdentifier);
         }
     }
 
@@ -97,9 +99,20 @@ public class TrackerDelegate
      * Return the rank associated to the templates
      * @return map with key the template name and value the rank associated
      */
-    public Map<String, Integer> getRank() {
+    public Map<String, Integer> getAccessCounter() {
         if (templateTracker != null) {
-            return templateTracker.getRank();
+            return templateTracker.getAccessCounter();
+        }
+        return null;
+    }
+
+    /**
+     * Return the rank associated to the templates
+     * @return map with key the template name and value the rank associated
+     */
+    public Map<String, Integer> getRank(String userName) {
+        if (templateTracker != null) {
+            return templateTracker.getRank(userName);
         }
         return null;
     }
