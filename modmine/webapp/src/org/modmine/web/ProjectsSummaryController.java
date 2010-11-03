@@ -64,9 +64,22 @@ public class ProjectsSummaryController extends TilesAction
             Map<String, List<DisplayExperiment>> categoriesNew = 
                 new TreeMap<String, List<DisplayExperiment>>();
             
+            // added to reduce the number of fields and to deal temporarily with
+            // sub 2675
+            // TODO remove first ||
             for (List<DisplayExperiment> expList : experiments.values()) {
                 for (DisplayExperiment exp : expList) {
-                    BioConverterUtil.addToListMap(categoriesNew, exp.getExperimentCategory(), exp);
+                    String ourCat = null;
+                    String cat = exp.getExperimentCategory();
+                    if (cat.startsWith("Gene Structure") 
+                            || cat == null) {
+                        ourCat = "Gene Structure";
+                    } else if (cat.startsWith("Replication") || cat.endsWith("Replication")) {
+                        ourCat = "Replication";
+                    } else {
+                        ourCat = cat;
+                    }
+                    BioConverterUtil.addToListMap(categoriesNew, ourCat, exp);
                 }
             }
             request.setAttribute("catExp", categoriesNew);
