@@ -627,16 +627,15 @@ All GBrowse tracks generated for this experiment:
                   </im:querylink>
                   </span>
 
-<%--if antibody add target gene 
-                  target: ${factor.property.targetName}
-                  
-
---%>
-  								<c:if test="${factor.type == ANTIBODY}">
+<%--if antibody add target gene --%>
+  								<c:if test="${factor.type == ANTIBODY && !fn:contains(factor.name, 'oldid')}">
                   <br></br>
 <c:choose>
 <c:when test="${fn:length(factor.property.target.symbol) > 1}">
-                  target: ${factor.property.target.symbol}
+target:<html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${factor.property.target.id}"
+ title="More about this target">
+<c:out value="${factor.property.target.symbol}"/></html:link>
+
 </c:when>
 <c:otherwise>
                   target: ${factor.property.targetName}
