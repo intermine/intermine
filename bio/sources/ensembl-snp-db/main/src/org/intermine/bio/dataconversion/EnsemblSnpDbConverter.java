@@ -69,12 +69,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
         Set<String> chrNames = new HashSet<String>();
         //int MIN_CHROMOSOME = 1;
-        int MIN_CHROMOSOME = 21;
+        int MIN_CHROMOSOME = 20;
         for (int i = MIN_CHROMOSOME; i <= 22; i++) {
             chrNames.add("" + i);
         }
-        //chrNames.add("X");
-        //chrNames.add("Y");
+        chrNames.add("X");
+        chrNames.add("Y");
 
         process(connection, chrNames);
         connection.close();
@@ -136,13 +136,16 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 consequenceIdentifiers = new HashSet<String>();
                 String alleles = res.getString("allele_string");
 
-                int mapWeight = res.getInt("map_weight");
                 currentSnp = createItem("SNP");
                 currentSnp.setAttribute("primaryIdentifier", rsNumber);
                 currentSnp.setAttribute("alleles", alleles);
-                currentSnp.setAttribute("mapWeight", "" + mapWeight);
                 currentSnp.setReference("organism", getOrganismItem(taxonId));
 
+                int mapWeight = res.getInt("map_weight");
+                boolean uniqueLocation = (mapWeight == 1) ? true : false;
+                currentSnp.setAttribute("mapWeight", "" + uniqueLocation);
+
+                
                 // CHROMOSOME AND LOCATION
                 // if SNP is mapped to multiple locations don't set chromosome and
                 // chromosomeLocation references
@@ -163,7 +166,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 store(loc);
 
                 // if mapWeight is 1 there is only one chromosome location, so set shortcuts
-                if (mapWeight == 1) {
+                if (uniqueLocation) {
                     currentSnp.setReference("chromosome", getChromosome(chrName, taxonId));
                     currentSnp.setReference("chromosomeLocation", loc);
                 }
