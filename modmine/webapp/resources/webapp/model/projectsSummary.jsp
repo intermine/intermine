@@ -96,12 +96,15 @@ Labs:
      <c:if test="${fc_status.count > 1 }"><br> </c:if>
       ${fc.featureType}:&nbsp;${fc.featureCounts}
 
+<%-- too crowded: rm here, still available in the experiment page
       <c:if test="${!empty fc.uniqueFeatureCounts && fc.uniqueFeatureCounts != fc.featureCounts}">
       <br>
       <i style="font-size:0.9em;">
       (${fc.uniqueFeatureCounts} unique ${fc.featureType}s)
       </i>
       </c:if>
+      
+--%>      
      <c:if test="${fc_status.last }"><br> </c:if>
       </c:forEach>
 
