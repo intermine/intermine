@@ -219,8 +219,9 @@ public class WebConfig
                     + "Please correct the entry in the webconfig-model.xml for the "
                     + widget.getId() + " widget.";
                 LOG.warn(msg);
+            } else {
+                type.addWidget(widget);
             }
-            type.addWidget(widget);
         }
     }
 
