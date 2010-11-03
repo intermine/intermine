@@ -143,7 +143,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
                 int mapWeight = res.getInt("map_weight");
                 boolean uniqueLocation = (mapWeight == 1) ? true : false;
-                currentSnp.setAttribute("mapWeight", "" + uniqueLocation);
+                currentSnp.setAttribute("uniqueLocation", "" + uniqueLocation);
 
                 
                 // CHROMOSOME AND LOCATION
