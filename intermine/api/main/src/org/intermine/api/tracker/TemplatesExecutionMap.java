@@ -12,28 +12,44 @@ package org.intermine.api.tracker;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TemplatesExecutionMap {
+/**
+ * Class for saving the template executions into the memory
+ * @author dbutano
+ */
+public class TemplatesExecutionMap
+{
     private Map<String, Map<String, Integer>> executionMapByUser =
                                               new HashMap<String, Map<String, Integer>>();
     private Map<String, Map<String, Integer>> privateExecutionMapByUser =
                                               new HashMap<String, Map<String, Integer>>();
     private Map<String, Map<String, Integer>> executionMapByAnonymous =
                                               new HashMap<String, Map<String, Integer>>();
-
+    /**
+     * Add a new template track into the memory
+     * @param templateTrack the template track to add
+     */
     public void addExecution(TemplateTrack templateTrack) {
         if (!"".equals(templateTrack.getUserName())) {
             if (templateTrack.isTemplatePublic()) {
                 addExecutionByUser(templateTrack.getTemplateName(), templateTrack.getUserName());
             } else {
-                addPrivateExecutionByUser(templateTrack.getTemplateName(), templateTrack.getUserName());
+                addPrivateExecutionByUser(templateTrack.getTemplateName(),
+                                          templateTrack.getUserName());
             }
         }
         else {
-            addExecutionBySessionIdentifier(templateTrack.getTemplateName(), templateTrack.getSessionIdentifier());
+            addExecutionBySessionIdentifier(templateTrack.getTemplateName(),
+                                            templateTrack.getSessionIdentifier());
         }
     }
 
-    public synchronized void addExecutionByUser(String template, String userName) {
+    /**
+     * Add a new template track corresponding to an execution of a public template launched
+     * by a logged user.
+     * @param template the template's name executed
+     * @param userName the user's name logged
+     */
+    private synchronized void addExecutionByUser(String template, String userName) {
         Map<String, Integer> executionByUser;
         if (!executionMapByUser.containsKey(template)) {
             executionByUser = new HashMap<String, Integer>();
@@ -50,7 +66,13 @@ public class TemplatesExecutionMap {
         }
     }
 
-    public synchronized void addPrivateExecutionByUser(String template, String userName) {
+    /**
+     * Add a new template track corresponding to an execution of a private template launched
+     * by a logged user.
+     * @param template the template's name executed
+     * @param userName the user's name logged
+     */
+    private synchronized void addPrivateExecutionByUser(String template, String userName) {
         Map<String, Integer> executionByUser;
         if (!privateExecutionMapByUser.containsKey(template)) {
             executionByUser = new HashMap<String, Integer>();
@@ -67,7 +89,13 @@ public class TemplatesExecutionMap {
         }
     }
 
-    public synchronized void addExecutionBySessionIdentifier(String template, String sessionId) {
+    /**
+     * Add a new template track corresponding to an execution of a template launched
+     * by an user not logged.
+     * @param sessionId the http session identifier within the template is executed
+     * @param userName the user's name logged
+     */
+    private synchronized void addExecutionBySessionIdentifier(String template, String sessionId) {
         Map<String, Integer> executionBySessionIdentifier;
         if (!executionMapByAnonymous.containsKey(template)) {
             executionBySessionIdentifier = new HashMap<String, Integer>();
@@ -85,6 +113,13 @@ public class TemplatesExecutionMap {
         }
     }
 
+    /**
+     * Return a map containing the logarithm's sum of the templates executions launched by
+     * the same users. If the user name is specified, we only consider the templates executed by
+     * the user.
+     * @param userName the user's name
+     * @return map having as key the template's name and as value the logarithm sum
+     */
     public Map<String, Double> getLnUserMap(String userName, boolean isSuperUser) {
         Map<String, Double> lnUserMap = new HashMap<String, Double>();
         if (userName == null || (userName != null && isSuperUser)) {
@@ -115,6 +150,13 @@ public class TemplatesExecutionMap {
         return lnUserMap;
     }
 
+    /**
+     * Return a map containing the logarithm's sum of the templates executed during
+     * the same sessions. Id the sessionId is specified, we only consider the template
+     * executed during that session.
+     * @param sessionId the session id
+     * @return map having as key the template's name and as value the logarithm sum
+     */
     public Map<String, Double> getLnAnonymousMap(String sessionId) {
         Map<String, Double> lnAnonymousMap = new HashMap<String, Double>();
         if (sessionId == null) {
