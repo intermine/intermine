@@ -271,7 +271,7 @@ public class SourcePriorityComparator implements Comparator<InterMineObject>
                 +  value1 + "\""
                 + (o1 != defObj ? " in database with ID " + o1.getId()
                         : " being stored") + ") and " + source2.getName() + " (value \""
-                        + value2
+                        + value2 + "\""
                         + (o2 != defObj ? " in database with ID " + o2.getId()
                                 : " being stored") + "). This field needs configuring in the "
                                 + iw.getModel().getName() + "_priorities.properties file");
