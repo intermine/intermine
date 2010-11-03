@@ -3,7 +3,7 @@
    <class name="SNP" is-interface="true">
      <attribute name="alleles" type="java.lang.String"/>
      <attribute name="type" type="java.lang.String"/>
-     <attribute name="mapWeight" type="java.lang.Integer"/>
+     <attribute name="uniqueLocation" type="java.lang.Boolean"/>
      <collection name="validations" referenced-type="ValidationState" />
      <collection name="consequences" referenced-type="Consequence"/>
     <reference name="source" referenced-type="Source"/>
