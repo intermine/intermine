@@ -84,6 +84,7 @@
 "GOAnnotation.name" : ontologyTerm.name
 "GOAnnotation.actualGoTerms" : ontologyTerm
 "GOAnnotation.identifier" : ontologyTerm.identifier
+"GOAnnotation.goEvidenceCodes" : "evidence.code"
 "GOEvidence" : GOEvidenceCode
 "Gene.geneticInteractions" : interactions
 "Gene.chromosomeLocation" : locations
