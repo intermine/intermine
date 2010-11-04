@@ -133,7 +133,10 @@ sub update_path {
     my $current_field = undef;
 
     my @path_so_far = ($class_name);
+
+    my $skip_continue;
   FIELD: while ( my $bit = shift @bits ) {
+      $skip_continue = 0;
 
         if ( $bit eq 'id' and not @bits ) {
 
@@ -161,8 +164,8 @@ sub update_path {
                     if ( $new =~ /\w+\.\w+/ )
                     {    # Translation is not one, but two steps or more
                         unshift @bits, split( /\./, $new );
-                        $bit = shift @bits;
-                        redo FIELD;
+                        $skip_continue = 1;
+                        next FIELD;
                     } elsif ( $current_field =
                         $current_class->get_field_by_name($new) )
                     {
@@ -182,12 +185,14 @@ qq{Unexpected deletion of field "$bit" from "$current_class" in "$so_far", while
             return;
         }
     } continue {
-        push @new_bits,    $current_field;
-        push @path_so_far, $bit;
-        confess "Type dictionary is not a hash ref"
-          if ( ($type_dict) and ( not ref $type_dict eq 'HASH' ) );
-        my $type = $type_dict->{ join( '.', @path_so_far ) };
-        $current_class = next_class( $current_field, $self->model, $type );
+        unless ($skip_continue) {
+            push @new_bits,    $current_field;
+            push @path_so_far, $bit;
+            confess "Type dictionary is not a hash ref"
+            if ( ($type_dict) and ( not ref $type_dict eq 'HASH' ) );
+            my $type = $type_dict->{ join( '.', @path_so_far ) };
+            $current_class = next_class( $current_field, $self->model, $type );
+        }
     }
     my $new_path = join( '.', @new_bits );
 
