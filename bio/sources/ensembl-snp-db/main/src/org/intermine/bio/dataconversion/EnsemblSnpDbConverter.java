@@ -129,7 +129,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     storeSnp(currentSnp, consequenceIdentifiers);
                     snpCounter++;
                 }
-                
+
                 // START NEW SNP
                 currentRsNumber = rsNumber;
                 seenLocsForSnp = new HashSet<String>();
@@ -145,18 +145,16 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 boolean uniqueLocation = (mapWeight == 1) ? true : false;
                 currentSnp.setAttribute("uniqueLocation", "" + uniqueLocation);
 
-                
                 // CHROMOSOME AND LOCATION
                 // if SNP is mapped to multiple locations don't set chromosome and
                 // chromosomeLocation references
-                // LOCATION
                 int start = res.getInt("seq_region_start");
                 int end = res.getInt("seq_region_end");
                 int chrStrand = res.getInt("seq_region_strand");
-                
+
                 int chrStart = Math.min(start, end);
                 int chrEnd = Math.max(start, end);
-                
+
                 Item loc = createItem("Location");
                 loc.setAttribute("start", "" + chrStart);
                 loc.setAttribute("end", "" + chrEnd);
@@ -171,7 +169,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     currentSnp.setReference("chromosomeLocation", loc);
                 }
                 seenLocsForSnp.add(chrName + ":" + chrStart);
-                
+
                 // SOURCE
                 String source = res.getString("s.name");
                 currentSnp.setReference("source", getSourceIdentifier(source));
@@ -217,13 +215,10 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         if (currentSnp != null) {
             storeSnp(currentSnp, consequenceIdentifiers);
         }
-        
         LOG.info("Finished " + counter + " rows total, stored " + snpCounter + " SNPs.");
-        
     }
 
 
-    
     private void storeSnp(Item snp, Set<String> consequenceIdentifiers)
         throws ObjectStoreException {
         if (!consequenceIdentifiers.isEmpty()) {
@@ -290,7 +285,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return consequenceIdentifier;
     }
 
-    private ResultSet queryVariation(Connection connection, Set<String> chrNames) throws SQLException {
+    private ResultSet queryVariation(Connection connection, Set<String> chrNames)
+        throws SQLException {
 
         StringBuffer chrNameStr = new StringBuffer();
         for (String chrName : chrNames) {
@@ -299,7 +295,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             }
             chrNameStr.append("'" + chrName + "'");
         }
-        
+
         String query = "SELECT vf.variation_name, vf.allele_string, "
             + " sr.name,"
             + " vf.map_weight, vf.seq_region_start, vf.seq_region_end, vf.seq_region_strand, "
