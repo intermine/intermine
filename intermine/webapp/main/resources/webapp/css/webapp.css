@@ -605,11 +605,7 @@ ul#submenulist li.myminesavedqueriestabtitle { background:url('../images/icons/q
 ul#submenulist li.myminesavedtemplatestabtitle { padding-left:21px;	background:url('../images/icons/templates-16.png') no-repeat 6px;  padding-left:20px; }
 
 /* lists analysis (bagDetails.do) */
-div.heading.results { border:1px solid #BEDCE4; background:#E6F7FE; margin-left:0; }
-div.heading.results h1 { color:#4D5154; font-size:22px; margin-bottom:10px; }
 div.heading.results img { float:left; display:inline; margin-right:16px; }
-div.heading.results #tool_bar_div { float:left; background:#E6F7FE !important; }
-div.heading.results #tool_bar_div li { border:1px solid #D2D2D2; background:#EEEEEE; margin-right:10px; padding:4px; font-weight:normal; }
 div.heading.results #tool_bar_div ul#button_bar, div.heading.results #tool_bar_div ul#button_bar li { font-variant:normal; }
 div.heading.results #tool_bar_div form#findInListForm { float:left; }
 
@@ -622,3 +618,7 @@ div.heading.results #tool_bar_div form#findInListForm { float:left; }
 
 /* template input h2 */
 h2.templateTitle img { vertical-align:baseline; }
+
+/* keyword search results */
+h2.facetRestriction { margin-bottom:10px; }
+input#keywordSearch.eg { color:#888888; }

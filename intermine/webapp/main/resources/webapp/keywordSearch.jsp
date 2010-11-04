@@ -26,7 +26,7 @@
 	        <c:if test="${!empty searchBag}">
 				<input type="hidden" name="searchBag" value="${searchBag}" />
 	        </c:if>
-	        <input type="text" name="searchTerm" value="<c:out value="${searchTerm}"></c:out>" style="width: 350px;" />
+	        <input type="text" id="keywordSearch" name="searchTerm" value="<c:out value="${searchTerm}"></c:out>" style="width: 350px;" />
 	        <input type="submit" name="searchSubmit" value="Search" />
 			<c:if test="${!empty searchTerm || !empty searchFacetValues}">
 			<br />
@@ -39,7 +39,6 @@
 			</c:if>
 		</form>
 	</div>
-    
     <div class="examples">
     	<h4>Examples</h4>
 		<ul>

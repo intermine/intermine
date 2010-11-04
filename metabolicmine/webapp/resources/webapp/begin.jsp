@@ -146,8 +146,10 @@
 	                </div>
 	                <h3>Query lists of data</h3>
 	                <div style="clear:both;"> </div>
-					<p><strong>Explore</strong>, <strong>Analyse</strong> &amp; <strong>Enrich</strong>. Upload your own data or browse our Public
-					sets. Covering Pathways to Publications, Search for hidden relationships with our <strong>widgets library</strong>.</p>
+					<p>
+					<img src="/metabolicmine/themes/metabolic/thumbs/widget-charts-3.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:10px;" />
+					<strong>Explore</strong>, <strong>Analyse</strong> &amp; <strong>Enrich</strong>. Upload your own data or browse our Public
+					sets.Covering Pathways to Publications, Search for hidden relationships with our <strong>widgets library</strong>.</p>
 	            </div>
 	            <div class="span-4 last templates">
 	                <div class="image">
@@ -156,7 +158,7 @@
 	                <h3>Work with template queries</h3>
 	                <div style="clear:both;"> </div>
 	                <p>Get started with complex queries using our <strong>pre-defined searches</strong>. These customizable templates have been
-	                designed around common tasks performed by our <strong>biologist community</strong>. To see how they work, why not try a
+	                designed around common tasks performed by our <strong>biologist community</strong>.To see how they work, why not try a
 	                template from our examples page?</p>
 	            </div>
 	            <div class="span-12 last">
