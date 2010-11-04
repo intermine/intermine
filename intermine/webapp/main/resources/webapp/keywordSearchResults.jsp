@@ -182,7 +182,7 @@ input.submit {
 
 			<div><c:forEach items="${searchFacets}" var="facet">
 				<c:if test="${facet.value != null && facet.value != ''}">
-					<div class="facetRestriction">${facet.name} restricted to <b>${facet.value}</b>
+					<h2 class="facetRestriction">${facet.name} restricted to <b>${facet.value}</b>
 					<a
 						href="<c:url value="/keywordSearchResults.do">
                      <c:param name="searchTerm" value="${searchTerm}" />
@@ -194,7 +194,7 @@ input.submit {
                      </c:forEach>
               </c:url>">
 					<img border="0" src="images/cross.gif" alt="(x)"
-						title="Remove restriction" /> </a></div>
+						title="Remove restriction" /> </a></h2>
 				</c:if>
 			</c:forEach> <c:if test="${!empty searchBag}">
 				<div class="facetRestriction">Searching only in list <b>${searchBag}</b>
@@ -282,7 +282,7 @@ input.submit {
 				<div style="clear: both;">
 
 				<div class="facets">
-				<h4>Stats</h4>
+				<h4>Categories</h4>
 				<c:forEach items="${searchFacets}"
 					var="facet">
 					<c:if test="${facet.items != null && !empty facet.items}">
@@ -508,3 +508,30 @@ input.submit {
 		</c:otherwise>
 	</c:choose>
 </c:if></div>
+
+<script type="text/javascript">
+	// placeholder value for search boxes
+	var placeholder = 'e.g. PPARG, Insulin, rs876498';
+	// class used when toggling placeholder
+	var inputToggleClass = 'eg';
+
+	if (jQuery('input#keywordSearch').val() == '') {
+		jQuery('input#keywordSearch').val(placeholder);
+	 	// e.g. values only available when JavaScript is on
+		jQuery('input#keywordSearch').toggleClass(inputToggleClass);
+	}
+ 	
+	// register input elements with blur & focus
+	jQuery('input#keywordSearch').blur(function() {
+		if (jQuery(this).val() == '') {
+			jQuery(this).toggleClass(inputToggleClass);
+			jQuery(this).val(placeholder);
+		}
+	});
+	jQuery('input#keywordSearch').focus(function() {
+		if (jQuery(this).hasClass(inputToggleClass)) {
+			jQuery(this).toggleClass(inputToggleClass);
+			jQuery(this).val('');
+		}
+	});
+</script>

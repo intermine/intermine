@@ -84,7 +84,7 @@ div .gradientbox h1, div .plainbox h1 { color:#4D5154; font-size:22px; }
 /* keyword search results */
 .keywordSearchResults .facets { background:/*#E6F7FE*/#FFF !important; border:1px solid /*#BEDCE4*/#DFDFDF !important; color:#333333 !important; }
 .keywordSearchResults .facets a { color:#333333 !important; }
-.keywordSearchResults .facets h4 { color:#FB641E; font-size:16px; background:url('../../images/icons/lightbulb-32.png') no-repeat left;
+.keywordSearchResults .facets h4 { color:#FB641E; font-size:16px; background:url('../../images/icons/categories-32.png') no-repeat left;
 	padding-left:40px; line-height:40px; border-bottom:1px solid #DFDFDF; }
 .keywordSearchResults .resultTableContainer table.dbsources { padding:0; /*border:1px solid #E3D85A; */border-right:none;
 	border-bottom:none; }
@@ -122,8 +122,8 @@ div .gradientbox h1, div .plainbox h1 { color:#4D5154; font-size:22px; }
 	color:#1F7492; }
 
 /* keyword search results relevancy */
-div.resultTableContainer td.relevance { width:40px; }
-	div.resultTableContainer td.relevance div.bullet { letter-spacing:0.5px; font-size:14px; display:inline; }
+div.resultTableContainer td.relevance { width:60px; }
+	div.resultTableContainer td.relevance div.bullet { letter-spacing:0.3px; font-size:14px; display:inline; }
 	div.resultTableContainer td.relevance div.full { color:#E94F00; }
 	div.resultTableContainer td.relevance div.empty { color:#999999; }
 
@@ -150,3 +150,13 @@ div.keywordSearch div.form { background:#FFFBD8; border:1px solid #E3D85A; width
 /* further information */
 div.geneInformation table { border-top:1px solid #BEDCE4; border-left:1px solid #BEDCE4; margin-bottom:2px; }
 div.geneInformation table td { border-bottom:1px solid #BEDCE4; border-right:1px solid #BEDCE4; background:#E6F7FE; padding:4px; }
+
+form#saveFromIdsToBagForm input.submit { background-image:url("../../images/buttons/button-bg-lists.gif"); background-repeat:repeat-none;
+	background-position:left top; border:1px outset #CCCCCC; cursor:pointer; height:23px; padding:1px 2px 1px 32px; vertical-align:middle;
+	color:#101010; }
+
+/* lists analysis (bagDetails.do) */
+div.heading.results { border:1px solid #BEDCE4; background:#E6F7FE; margin-left:0; }
+div.heading.results h1 { color:#4D5154; font-size:22px; margin-bottom:10px; }
+div.heading.results #tool_bar_div { float:left; background:#E6F7FE !important; }
+div.heading.results #tool_bar_div li { border:1px solid #D2D2D2; background:#EEEEEE; margin-right:10px; padding:4px; font-weight:normal; }
