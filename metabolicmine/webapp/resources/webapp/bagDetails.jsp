@@ -102,7 +102,7 @@
 </div>
 
 <!--link outs -->
-<div class="bochs last">
+<div class="bochs">
 	<h4 class="links">Linkouts</h4>
     <p>
   		<tiles:insert name="attributeLinkDisplayer.tile">
@@ -110,6 +110,18 @@
   		</tiles:insert>
   	</p>
 </div>
+
+<!-- tags -->
+<c:if test="${PROFILE.loggedIn}">
+	<div class="bochs">
+    	<c:set var="taggable" value="${bag}"/>
+        <tiles:insert name="inlineTagEditor.tile">
+        	<tiles:put name="taggable" beanName="taggable"/>
+            <tiles:put name="vertical" value="true"/>
+            <tiles:put name="show" value="true"/>
+		</tiles:insert>
+	</div>
+</c:if>
 
 <div style="clear:both;"></div>
 
@@ -134,35 +146,31 @@
 	<div id="toolbox" class="bochs last" <c:if test="${myBag == 'false'}">style="display:none;"</c:if>>
 		<html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
 			<html:hidden property="bagName" value="${bag.name}"/>
-			<table>
-				<tr>
-					<th><h5>Add records to another list</h5></th>
-					<th><h5>Remove records from results</h5></th>
-				</tr>
-				<tr>
-					<td>
-						<c:choose>
-			   				<c:when test="${!empty PROFILE.savedBags && fn:length(PROFILE.savedBags) > 1}">
-			        			<html:select property="existingBagName">
-				            		<c:forEach items="${PROFILE.savedBags}" var="entry">
-				              			<c:if test="${param.bagName != entry.key}">
-				                			<html:option value="${entry.key}">${entry.key} [${entry.value.type}]</html:option>
-				              			</c:if>
-				             		</c:forEach>
-			          			</html:select>
-			     				<input type="submit" name="addToBag" id="addToBag" value="Add" />
-			     				<script type="text/javascript" charset="utf-8">
-			          				jQuery('#addToBag').attr('disabled','disabled');
-			        			</script>
-			    			</c:when>
-			    			<c:otherwise>
-			      				<em>Login to add records to another list.</em>
-			    			</c:otherwise>
-			    		</c:choose>
-					</td>
-					<td><input type="submit" name="removeFromBag" id="removeFromBag" value="Remove selected from list" disabled="true" /></td>
-				</tr>
-			</table>
+			<div class="tool">
+				<h5>Add records to another list</h5>
+				<c:choose>
+					<c:when test="${!empty PROFILE.savedBags && fn:length(PROFILE.savedBags) > 1}">
+				    	<html:select property="existingBagName">
+							<c:forEach items="${PROFILE.savedBags}" var="entry">
+						    	<c:if test="${param.bagName != entry.key}">
+						        	<html:option value="${entry.key}">${entry.key} [${entry.value.type}]</html:option>
+								</c:if>
+							</c:forEach>
+						</html:select>
+				     	<input type="submit" name="addToBag" id="addToBag" value="Add" />
+				     	<script type="text/javascript" charset="utf-8">
+				        	jQuery('#addToBag').attr('disabled','disabled');
+				        </script>
+				    </c:when>
+				    <c:otherwise>
+				    	<em>Login to add records to another list.</em>
+				    </c:otherwise>
+				</c:choose>
+			</div>
+			<div class="tool">
+				<h5>Remove records from results</h5>
+				<input type="submit" name="removeFromBag" id="removeFromBag" value="Remove selected from list" disabled="true" />
+			</div>
 		</html:form>
 	</div>
 	
@@ -193,18 +201,6 @@
 	<div style="clear:both;"></div>
 
 </div>
-
-<!-- tags -->
-<c:if test="${PROFILE.loggedIn}">
-	<div class="bochs">
-    	<c:set var="taggable" value="${bag}"/>
-        <tiles:insert name="inlineTagEditor.tile">
-        	<tiles:put name="taggable" beanName="taggable"/>
-            <tiles:put name="vertical" value="true"/>
-            <tiles:put name="show" value="true"/>
-		</tiles:insert>
-	</div>
-</c:if>
 
 <div style="clear:both;"></div>
 
