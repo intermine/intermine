@@ -87,11 +87,12 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
 
         <table cellspacing="2" cellpadding="1" class="noborder">
           <tr>
+            <td>
             <!--  constraint op -->
             <c:choose>
               <c:when test="${dec.boolean}">
                 <!--  boolean doesn't have a separate op dropdown -->
-                <td valign="top"><html:hidden property="attributeOp" styleId="attribute1"
+                <html:hidden property="attributeOp" styleId="attribute1"
                   value="0" disabled="false" /> 
                   <input type="radio" name="attributeValue" id="attribute2" value="true" 
                   <c:if test="${selectedValue == 'true'}">checked</c:if>/>
@@ -112,14 +113,13 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                       </label>
                       </c:when>
                   </c:choose>
-                </td><br/>
+                <br/>
               </c:when>
               <c:otherwise>
                 <!-- dropdown to select constraint op or label for lookup-->
                 
                 <c:choose>
 	                <c:when test="${dec.path.attribute}">
-	                <td valign="top">
 	                  <html:select property="attributeOp" styleId="attribute5"
 	                      onchange="onChangeAttributeOp();">
 	                    <c:forEach items="${dec.validOps}" var="op">
@@ -129,20 +129,16 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
 	                      </option>
 	                    </c:forEach>
 	                  </html:select>
-	                  </td>
 	                  </c:when>
                   <c:otherwise>
                    <html:hidden property="attributeOp" styleId="attribute5" value="${dec.lookupOp.property}" disabled="false" />
-                   <td>
                    <fmt:message key="query.lookupConstraintLabel" /><%-- LOOKUP: --%>
-                   </td>
                   </c:otherwise>
                  </c:choose>
                 
               
             
               <!-- constraint value -->
-            <td valign="top">
               <c:if test="${!empty dec.possibleValues}">
                 <c:set var="possibleValuesDisplay" value="display:none;"/>
                 <c:if test="${dec.possibleValuesDisplayed}">
@@ -205,11 +201,9 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                         visible="${dec.inputFieldDisplayed}"/>
                   </c:otherwise>
                 </c:choose> 
-                </td>
-                <td>
                 <c:choose>
                 <c:when test="${dec.lookup && dec.extraConstraint}">
-                    <p style="text-align: left;"><fmt:message key="bagBuild.extraConstraint">
+                    <fmt:message key="bagBuild.extraConstraint">
                       <fmt:param value="${dec.extraConstraintClassName}" />
                      </fmt:message> <html:select property="extraValue" styleId="extraValue1" value="${dec.selectedExtraValue}">
                       <html:option value="">Any</html:option>
@@ -219,15 +213,15 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                           <c:out value="${value}" />
                          </html:option>
                       </c:forEach>
-                    </html:select></p>
+                    </html:select>
                   </c:when>
                   <c:otherwise>
                     <html:hidden property="extraValue" value="" />
                   </c:otherwise>
                 </c:choose>
-                </td>
             </c:otherwise>
             </c:choose>
+            </td>
             <c:set var="valignSubmitBtn" value="top"/>
             <c:set var="rowspanSubmitBtn" value="1"/>
             <c:if test="${!empty dec.bags}">
@@ -242,7 +236,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
             </html:submit></td>
           </tr>
           <tr>
-          <td colspan="3">
+          <td>
           <!--  
           BAGS CONSTRAINT 
          --> 
