@@ -109,7 +109,8 @@ public class ModifyDetails extends DispatchAction
 
         return new ForwardParameters(mapping.findForward("results"))
             .addParameter("templateQueryTitle", template.getTitle())
-            .addParameter("templateQueryDescription", template.getDescription())
+            .addParameter("templateQueryDescription",
+                (template.getDescription() != null) ? template.getDescription() : "")
             .addParameter("table", identifier).addParameter("trail", trail).forward();
     }
 
