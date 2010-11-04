@@ -60,7 +60,7 @@
   </c:choose>
 </c:if>
 <c:if test="${showTitles}">
-    <html:link action="/template?name=${webSearchable.name}&amp;scope=${scope}"
+    <html:link styleClass="templateTitle" action="/template?name=${webSearchable.name}&amp;scope=${scope}"
                  titleKey="history.action.execute.hover">${webSearchable.title}</html:link>
 </c:if>
 

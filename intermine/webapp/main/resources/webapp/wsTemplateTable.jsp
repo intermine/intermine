@@ -52,7 +52,7 @@
   <tiles:put name="loginMessageKey" value="template.notlogged"/>
   <tiles:put name="showCount" value="false"/>
 </tiles:insert>
-<html:link anchor="templatetop" action="templates"><img src="images/go_to_top.png" title="Click here to jump to the top of this page">top</html:link>
+<html:link anchor="templatetop" action="templates" styleClass="anchor"><img src="images/go_to_top.png" title="Click here to jump to the top of this page">top</html:link>
 </div>
 </im:boxarea>
 

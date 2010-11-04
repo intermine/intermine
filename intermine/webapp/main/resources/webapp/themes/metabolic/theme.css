@@ -177,3 +177,24 @@ div.resultsPage table.results { border:1px solid #DFDFDF; border-left:0; margin-
 #tool_bar_div { background:none; }
 	#tool_bar_div ul#button_bar li.tb_button { cursor:pointer; border:outset 1px #CCCCCC; background-image:url("../../images/buttons/button-bg.gif");
 	background-position:left top; background-color:#999999; background-repeat:repeat-x; vertical-align:middle; margin-right:2px; }
+
+/* my templates */
+#all_templates_template_container.wsListContainer #all_templates_template_ws_list.wsList div.wsLine_my,
+#all_templates_template_container.wsListContainer #all_templates_template_ws_list.wsList div.wsLine_my_act {
+	background:#FFFFFC url("../../images/icons/briefcase-brown-16.png") no-repeat 910px 10px; border-bottom:1px solid #E3DFC3; }
+#all_templates_template_container.wsListContainer #all_templates_template_ws_list.wsList div.wsLine_my a.templateTitle,
+#all_templates_template_container.wsListContainer #all_templates_template_ws_list.wsList div.wsLine_my_act a.templateTitle { color:#E94F00 !important; }
+#all_templates_template_container.wsListContainer #all_templates_template_ws_list.wsList div.wsLine_my_act {
+	background-color:#FFFBD8; border-bottom:1px solid #E3D85A; }
+#all_templates_template_container.wsListContainer u { text-decoration:none; } /* haha */
+
+/* bochs theme */
+div.gradientbox { border:1px solid #DFDFDF; background:url("gray_grad.png") repeat-x scroll 0 0 transparent; }
+div.gradientbox a, div.gradientbox a:hover { color:#1F7492 !important; }
+
+div.filterBar { border:none !important; background:none !important; }
+#filter_tool_bar { border:none !important; border-bottom:1px solid #DFDFDF !important; }
+	#filter_tool_bar strong { color:#333; }
+
+#ws_all_templates_template a.anchor { background:url("../../images/icons/go-top-16.png") no-repeat left; padding-left:20px; line-height:40px; }
+	#ws_all_templates_template a.anchor img { display:none; }
