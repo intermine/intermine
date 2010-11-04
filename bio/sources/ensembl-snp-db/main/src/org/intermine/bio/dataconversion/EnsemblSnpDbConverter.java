@@ -119,8 +119,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     loc.setReference("feature", currentSnp);
                     loc.setReference("locatedOn", getChromosome(chrName, taxonId));
                     store(loc);
-                    LOG.info("Found duplicate locations for SNP: " + rsNumber + " this: "
-                            + chrLocStr + " previous " + seenLocsForSnp);
                 }
             }
             if (!rsNumber.equals(currentRsNumber)) {
