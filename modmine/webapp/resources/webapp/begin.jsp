@@ -16,11 +16,14 @@
 <div align="center">
 
 <table cellpadding="0" cellspacing="0" border="0" class="topBar hints">
-<tr><th align="center"><h2>Try out <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do?">SpanUpload</a><h2></th></tr>
+<tr><th align="center"><h3>Try out the new <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do?">Genomic Regions Search</a><h3></th></tr>
 </table>
-<br>
+
 
 <!--
+<h4>Try out the new <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do?">Genomic Regions Search</a>
+</h4>
+
 <table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
 <tr><th align="center">modMine 18 contains the 15 February 2010 data freeze</th></tr>
 </table>
