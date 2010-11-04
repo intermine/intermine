@@ -177,7 +177,7 @@ public final class MetadataCache
     public static synchronized Map<Integer, Integer>
     getSubmissionExpressionLevelCounts(ObjectStore os) {
         if (submissionExpressionLevelCounts == null) {
-            readSubmissionCollections(os);
+            readSubmissionExpressionLevelCounts(os);
         }
         return submissionExpressionLevelCounts;
     }
@@ -536,43 +536,43 @@ public final class MetadataCache
         return experimentELevel;
     }
 
-    /**
-    *
-    * @param os objectStore
-    * @return map exp-repository entries
-    */
-    public static Map<String, Map<String, Long>>
-    readExperimentFeatureExpressionLevels(ObjectStore os) {
-        Map<String, Map<String, Long>> expELevels = new HashMap<String, Map<String, Long>>();
-//TODO
-        Map<Integer, Map<String, Long>> subELevels = getSubmissionFeatureExpressionLevelCounts(os);
-
-        for (DisplayExperiment exp : getExperiments(os)) {
-            for (Submission sub : exp.getSubmissions()) {
-                Map<String, Long> subFeat = subELevels.get(sub.getdCCid());
-                if (subFeat != null) {
-                    // get the experiment feature map
-                    Map<String, Long> expFeat =
-                        expELevels.get(exp.getName());
-                    if (expFeat == null) {
-                        expELevels.put(exp.getName(), subFeat);
-                    } else {
-                        for (String feat : subFeat.keySet()) {
-                            Long subCount = subFeat.get(feat);
-                            Long expCount = subCount;
-                            if (expFeat.get(feat) != null) {
-                                expCount = expCount + expFeat.get(feat);
-                            }
-                            expFeat.put(feat, expCount);
-                            expCount = Long.valueOf(0);
-                        }
-                        expELevels.put(exp.getName(), expFeat);
-                    }
-                }
-            }
-        }
-        return expELevels;
-    }
+//    /**
+//    *
+//    * @param os objectStore
+//    * @return map exp-repository entries
+//    */
+//    public static Map<String, Map<String, Long>>
+//    readExperimentFeatureExpressionLevels(ObjectStore os) {
+//        Map<String, Map<String, Long>> expELevels = new HashMap<String, Map<String, Long>>();
+////TODO
+//        Map<Integer, Map<String, Long>> subELevels = getSubmissionFeatureExpressionLevelCounts(os);
+//
+//        for (DisplayExperiment exp : getExperiments(os)) {
+//            for (Submission sub : exp.getSubmissions()) {
+//                Map<String, Long> subFeat = subELevels.get(sub.getdCCid());
+//                if (subFeat != null) {
+//                    // get the experiment feature map
+//                    Map<String, Long> expFeat =
+//                        expELevels.get(exp.getName());
+//                    if (expFeat == null) {
+//                        expELevels.put(exp.getName(), subFeat);
+//                    } else {
+//                        for (String feat : subFeat.keySet()) {
+//                            Long subCount = subFeat.get(feat);
+//                            Long expCount = subCount;
+//                            if (expFeat.get(feat) != null) {
+//                                expCount = expCount + expFeat.get(feat);
+//                            }
+//                            expFeat.put(feat, expCount);
+//                            expCount = Long.valueOf(0);
+//                        }
+//                        expELevels.put(exp.getName(), expFeat);
+//                    }
+//                }
+//            }
+//        }
+//        return expELevels;
+//    }
 
     /**
      * Fetch a map from project name to experiment.
@@ -1167,22 +1167,126 @@ public final class MetadataCache
 
     }
 
+    private static void readSubmissionExpressionLevelCounts(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+
+        submissionExpressionLevelCounts = new HashMap<Integer, Integer>();
+        Query q = new Query();
+        q.setDistinct(false);
+
+        QueryClass qcSub = new QueryClass(Submission.class);
+        QueryClass qcEL = new QueryClass(ExpressionLevel.class);
+        QueryField qfDccid = new QueryField(qcSub, "DCCid");
+
+        q.addFrom(qcSub);
+        q.addFrom(qcEL);
+
+        q.addToSelect(qfDccid);
+        q.addToSelect(new QueryFunction());
+
+        q.addToGroupBy(qcSub);
+        q.addToOrderBy(qfDccid);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        QueryCollectionReference el = new QueryCollectionReference(qcSub, "expressionLevels");
+        ContainsConstraint ccEl = new ContainsConstraint(el, ConstraintOp.CONTAINS, qcEL);
+        cs.addConstraint(ccEl);
+
+        q.setConstraint(cs);
+
+        Results results = os.execute(q);
+
+        // for each classes set the values for jsp
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+            (Iterator) results.iterator();
+        while (iter.hasNext()) {
+            ResultsRow<?> row = iter.next();
+            Integer dccId = (Integer) row.get(0);
+            Long count = (Long) row.get(1);
+            
+            submissionExpressionLevelCounts.put(dccId, count.intValue());
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed submissionExpressionLevelCounts cache, took: " + timeTaken
+                + "ms size = " + submissionExpressionLevelCounts.size());
+
+        LOG.info("submissionELCounts " + submissionExpressionLevelCounts);
+    }
+
+
+    
+    private static void readSubmissionExpressionLevelCounts2(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+        submissionExpressionLevelCounts = new HashMap<Integer, Integer>();
+        if (submissionIdCache == null) {
+            readSubmissionFeatureCounts(os);
+        }
+
+        if (submissionFeatureExpressionLevelCounts == null) {
+            readSubmissionFeatureExpressionLevelCounts(os);
+        }
+        
+        for (Integer dccId : submissionIdCache.keySet()) {
+            Integer count = 0;
+            Map<String, Long> featureCounts =
+                submissionFeatureExpressionLevelCounts.get(dccId);
+            if (featureCounts == null) {
+                continue;
+            }
+            if (!featureCounts.isEmpty()) {
+                for (String feat : featureCounts.keySet()) {
+                    count = count + featureCounts.get(feat).intValue();
+                }
+            }
+            submissionExpressionLevelCounts.put(dccId, count);
+        }
+        
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed submissionExpressionLevelCounts cache, took: " + timeTaken
+                + "ms size = " + submissionExpressionLevelCounts.size());
+        LOG.debug("submissionELCounts " + submissionExpressionLevelCounts);
+    }
+
+    
+    
     private static void readSubmissionCollections(ObjectStore os) {
         //
         long startTime = System.currentTimeMillis();
         try {
+
+//            Query q = new Query();
+//            QueryClass qcSubmission = new QueryClass(Submission.class);
+//            QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
+//            q.addFrom(qcSubmission);
+//            q.addToSelect(qcSubmission);
+//
+//            q.addToOrderBy(qfDCCid);
+
             Query q = new Query();
             QueryClass qcSubmission = new QueryClass(Submission.class);
             QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
             q.addFrom(qcSubmission);
-            q.addToSelect(qcSubmission);
+            q.addToSelect(qfDCCid);
 
+            QueryClass qcFile = new QueryClass(ResultFile.class);
+            q.addFrom(qcFile);
+            q.addToSelect(qcFile);
+
+            QueryCollectionReference subFiles = new QueryCollectionReference(qcSubmission,
+                "resultFiles");
+            ContainsConstraint cc = new ContainsConstraint(subFiles, ConstraintOp.CONTAINS,
+                    qcFile);
+
+            q.setConstraint(cc);
             q.addToOrderBy(qfDCCid);
 
-            submissionFilesCache = new HashMap<Integer, Set<ResultFile>>();
-            submissionExpressionLevelCounts = new HashMap<Integer, Integer>();
-            Results results = os.executeSingleton(q);
+            Results results = os.execute(q);
 
+            submissionFilesCache = new HashMap<Integer, Set<ResultFile>>();
+//            submissionExpressionLevelCounts = new HashMap<Integer, Integer>();
+            
+            /*
+            Results results = os.executeSingleton(q);
             // for submission, get result files and expression level count
             Iterator<?> i = results.iterator();
             while (i.hasNext()) {
@@ -1192,16 +1296,83 @@ public final class MetadataCache
                 Set<ExpressionLevel> el = sub.getExpressionLevels();
                 submissionExpressionLevelCounts.put(sub.getdCCid(), el.size());
             }
+            */
 
+            @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+                (Iterator) results.iterator();
+            
+            while (iter.hasNext()) {
+                ResultsRow<?> row = (ResultsRow<?>) iter.next();
+                
+                Integer dccId = (Integer) row.get(0);
+                ResultFile file = (ResultFile) row.get(1);
+                
+                addToMap(submissionFilesCache, dccId, file);
+            }
+            
         } catch (Exception err) {
             err.printStackTrace();
         }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed submission collections caches, took: " + timeTaken + "ms    size: files = "
-                + submissionFilesCache.size() + ", expression levels = "
-                + submissionExpressionLevelCounts.size());
+                + submissionFilesCache.size());
+                
+               //+ ", expression levels = "
+               // + submissionExpressionLevelCounts.size());
+//        LOG.info("Primed submission collections caches, XXXX: " + submissionFilesCache);
+    
     }
 
+//    private static void readSubmissionExpressionLevels(ObjectStore os) {
+//        //
+//        long startTime = System.currentTimeMillis();
+//        try {
+//
+//            Query q = new Query();
+//            QueryClass qcSubmission = new QueryClass(Submission.class);
+//            QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
+//            q.addFrom(qcSubmission);
+//            q.addToSelect(qfDCCid);
+//
+//            QueryClass qcEL = new QueryClass(ExpressionLevel.class);
+//            q.addFrom(qcEL);
+//            q.addToSelect(qcEL);
+//
+//            QueryCollectionReference subFiles = new QueryCollectionReference(qcSubmission,
+//                "expressionLevels");
+//            ContainsConstraint cc = new ContainsConstraint(subFiles, ConstraintOp.CONTAINS,
+//                    qcEL);
+//
+//            q.setConstraint(cc);
+//            q.addToOrderBy(qfDCCid);
+//
+//            Results results = os.execute(q);
+//            submissionExpressionLevelCounts = new HashMap<Integer, Integer>();
+//            
+//            @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+//                (Iterator) results.iterator();
+//            
+//            while (iter.hasNext()) {
+//                ResultsRow<?> row = (ResultsRow<?>) iter.next();
+//                
+//                Integer dccId = (Integer) row.get(0);
+//                ResultFile file = (ResultFile) row.get(1);
+//                
+//                addToMap(submissionExpressionLevelCounts, dccId, file.);
+//            }
+//            
+//        } catch (Exception err) {
+//            err.printStackTrace();
+//        }
+//        long timeTaken = System.currentTimeMillis() - startTime;
+//        LOG.info("Primed submission collections caches, took: " + timeTaken + "ms    size: files = "
+//                + submissionFilesCache.size() + ", expression levels = "
+//                + submissionExpressionLevelCounts.size());
+////        LOG.info("Primed submission collections caches, XXXX: " + submissionFilesCache);
+//    
+//    }
+
+    
     private static void readSubmissionLocatedFeature(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         submissionLocatedFeatureTypes = new LinkedHashMap<Integer, List<String>>();
@@ -1341,7 +1512,7 @@ public final class MetadataCache
 
     /**
      * adds an element to a list which is the value of a map
-     * @param m       the map (<String, List<String>>)
+     * @param m       the map (<Integer, List<String>>)
      * @param key     the key for the map
      * @param value   the list
      */
@@ -1355,6 +1526,25 @@ public final class MetadataCache
         if (!ids.contains(value)) {
             ids.add(value);
             m.put(key, ids);
+        }
+    }
+
+    /**
+     * adds an element to a set of ResultFile which is the value of a map
+     * @param m       the map (<Integer, Set<ResultFile>>)
+     * @param key     the key for the map
+     * @param value   the list
+     */
+    private static void addToMap(Map<Integer, Set<ResultFile>> m, Integer key, ResultFile value) {
+
+        Set<ResultFile> files = new HashSet<ResultFile>();
+
+        if (m.containsKey(key)) {
+            files = m.get(key);
+        }
+        if (!files.contains(value)) {
+            files.add(value);
+            m.put(key, files);
         }
     }
 
