@@ -82,12 +82,14 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         QueryClass qcGoAnnotation = null;
         QueryClass qcGoChild = null;
         QueryClass qcGoParent = null;
+        QueryClass qcSNP = null;
 
         try {
             qcGoAnnotation = new QueryClass(Class.forName(model.getPackageName()
                     + ".GOAnnotation"));
             qcGoParent = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
             qcGoChild = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
+            qcSNP = new QueryClass(Class.forName(model.getPackageName() + ".SNP"));
         } catch (ClassNotFoundException e) {
             LOG.error("Error rendering GO enrichment widget", e);
             // don't throw an exception, return NULL instead.  The widget will display 'no results'.
@@ -105,8 +107,11 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         QueryField qfPrimaryIdentifier = null;
         QueryField qfId = null;
 
-        if (bagType.equals("Protein")) {
+        if ("Protein".equals(bagType)) {
             qfPrimaryIdentifier = new QueryField(qcProtein, "primaryIdentifier");
+            qfId = qfProteinId;
+        } else if ("SNP".equals(bagType)) {
+            qfPrimaryIdentifier = new QueryField(qcSNP, "primaryIdentifier");
             qfId = qfProteinId;
         } else {
             qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
@@ -176,8 +181,12 @@ public class GoStatLdr extends EnrichmentWidgetLdr
             cs.addConstraint(new BagConstraint(qfId, ConstraintOp.IN, bag.getOsb()));
         }
 
-        if (bagType.equals("Protein")) {
+        if ("Protein".equals(bagType)) {
             QueryCollectionReference c10 = new QueryCollectionReference(qcProtein, "genes");
+            cs.addConstraint(new ContainsConstraint(c10, ConstraintOp.CONTAINS, qcGene));
+        } else if ("SNP".equals(bagType)) {
+            QueryCollectionReference c10
+                = new QueryCollectionReference(qcSNP, "overlappingFeatures");
             cs.addConstraint(new ContainsConstraint(c10, ConstraintOp.CONTAINS, qcGene));
         }
 
@@ -189,14 +198,16 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         q.addFrom(qcGoParent);
         q.addFrom(qcGoChild);
 
-        if (bagType.equals("Protein")) {
+        if ("Protein".equals(bagType)) {
             q.addFrom(qcProtein);
+        } else if ("SNP".equals(bagType)) {
+            q.addFrom(qcSNP);
         }
         q.setConstraint(cs);
 
-        if (action.equals("analysed")) {
+        if ("analysed".equals(action)) {
             q.addToSelect(qfId);
-        } else if (action.equals("export")) {
+        } else if ("export".equals(action)) {
             q.addToSelect(qfParentGoIdentifier);
             q.addToSelect(qfPrimaryIdentifier);
             q.addToOrderBy(qfParentGoIdentifier);
@@ -223,7 +234,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
             subq.addToSelect(qfParentGoIdentifier);
 
             QueryField qfName = null;
-            if (action.equals("sample")) {
+            if ("sample".equals(action)) {
                 subq.addToSelect(qfParentGoName);
                 qfName = new QueryField(subq, qfParentGoName);
             }
@@ -237,7 +248,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
             q.addFrom(subq);
             q.addToSelect(qfIdentifier);
             q.addToSelect(new QueryFunction());
-            if (action.equals("sample")) {
+            if ("sample".equals(action)) {
                 q.addToSelect(qfName);
                 q.addToGroupBy(qfName);
             }
