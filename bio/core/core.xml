@@ -21,7 +21,7 @@
     <collection name="crossReferences" referenced-type="CrossReference" reverse-reference="subject"/>
   </class>
 
-  <class name="Chromosome"  extends="BioEntity" is-interface="true"/>
+  <class name="Chromosome"  extends="SequenceFeature" is-interface="true"/>
 
   <class name="Comment" is-interface="true">
     <attribute name="text" type="java.lang.String"/>
@@ -51,7 +51,7 @@
     <collection name="bioEntities" referenced-type="BioEntity" reverse-reference="dataSets"/>
   </class>
 
-  <class name="Gene" extends="BioEntity" is-interface="true">
+  <class name="Gene" extends="SequenceFeature" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
     <attribute name="ncbiGeneNumber" type="java.lang.String"/>
     <collection name="proteins" referenced-type="Protein" reverse-reference="genes"/>
