@@ -64,8 +64,7 @@ div.bochs.wide { width:93.5%; }
 /* toolbox bochs box */
 #toolbox { padding:6px; }
 	#toolbox h5 { background-repeat:no-repeat; background-position:left; border-bottom:1px solid #DFDFDF; color:#FB641E; font-size:14px; line-height:24px; margin-bottom:4px; }
-	#toolbox table { margin-left:auto; margin-right:auto; }
-		#toolbox table th, #toolbox table td { padding:0 12px; }
+	#toolbox div.tool { float:left; }
 
 /* pagin */
 div.pagination { margin:0 auto; float:left; vertical-align:bottom; }
@@ -77,8 +76,9 @@ div.table table.results { border:1px solid #DFDFDF; border-left:0; margin-bottom
 	div.table table.results th { border:none; border-left:1px solid #DFDFDF !important; font-size:16px; background:#F5F5F5; color:#4B3F4B; }
 	div.table table.results tr.odd td, div.table table.results tr.even td { border:none; border-left:1px solid #DFDFDF !important; }
 	div.table table.results tr.even td { background:#E6F7FE; border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; }
-	div.table table.results tr.odd td.highlightCell { background:#FFFBD8; }
-	div.table table.results tr.even td.highlightCell { background:#FFFBD8; border-top:1px solid #E3D85A; border-bottom:1px solid #E3D85A; }
+	div.table table.results tr.odd td.highlightCell, div.table table.results tr.odd td.highlightObject { background:#FFFBD8; }
+	div.table table.results tr.even td.highlightCell, div.table table.results tr.even td.highlightObject { background:#FFFBD8;
+		border-top:1px solid #E3D85A; border-bottom:1px solid #E3D85A; }
 	div.table table.results tfoot tr td { background:#FFF; color:#333; }
 	div.table table.results input { vertical-align:middle; }
 	div.table table.results b { padding-right:3px; }
