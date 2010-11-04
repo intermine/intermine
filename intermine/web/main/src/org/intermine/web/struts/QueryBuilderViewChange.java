@@ -51,24 +51,9 @@ public class QueryBuilderViewChange extends DispatchAction
         PathQuery query = SessionMethods.getQuery(session);
 
         if (path != null) {
-            // remove from view and from order by if present
+            // remove from teh view
             query.removeView(path);
-            boolean contains = false;
-            for (OrderElement order : query.getOrderBy()) {
-                if (path.equals(order.getOrderPath())) {
-                    contains = true;
-                    break;
-                }
-            }
-            if (contains) {
-                query.removeOrderBy(path);
-            }
-            for (String view : query.getView()) {
-                if (query.isPathCompletelyInner(view)) {
-                    query.addOrderBy(view, OrderDirection.ASC);
-                    break;
-                }
-            }
+            query.removeAllIrrelevant();
         } else {
             query.clearView();
             query.clearOrderBy();
