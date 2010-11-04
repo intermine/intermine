@@ -51,7 +51,7 @@ public class QueryBuilderViewChange extends DispatchAction
         PathQuery query = SessionMethods.getQuery(session);
 
         if (path != null) {
-            // remove from teh view
+            // remove from the view
             query.removeView(path);
             query.removeAllIrrelevant();
         } else {
