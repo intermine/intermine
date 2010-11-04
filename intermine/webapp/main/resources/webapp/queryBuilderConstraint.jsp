@@ -230,7 +230,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
             </c:choose>
             <c:set var="valignSubmitBtn" value="top"/>
             <c:set var="rowspanSubmitBtn" value="1"/>
-            <c:if test="${!dec.path.attribute && !empty dec.bags}">
+            <c:if test="${!empty dec.bags}">
               <c:set var="valignSubmitBtn" value="middle"/>
               <c:set var="rowspanSubmitBtn" value="2"/>
             </c:if>
@@ -246,7 +246,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
           <!--  
           BAGS CONSTRAINT 
          --> 
-          <c:if test="${!dec.path.attribute && !empty dec.bags}">
+          <c:if test="${!empty dec.bags}">
           <strong><fmt:message key="query.or" /></strong>
           <input type="checkbox" id="checkBoxBag" onclick="swapInputs('bag');" />
            <%--
