@@ -45,7 +45,6 @@ public class IdResolver
         new HashMap<String, Map<String, Set<String>>>();
     private Map<String, Map<String, Set<String>>> orgIdSynMaps =
         new HashMap<String, Map<String, Set<String>>>();
-
     /**
      * Construct and empty IdResolver
      * @param clsName the class to resolve identifiers for
@@ -111,18 +110,8 @@ public class IdResolver
      */
     public int countResolutions(String taxonId, String id) {
         checkTaxonId(taxonId);
-        if (orgIdMaps.get(taxonId).containsKey(id)) {
-            return 1;
-        }
-        if (orgMainMaps.containsKey(taxonId)
-            && orgMainMaps.get(taxonId).containsKey(id)) {
-            return orgMainMaps.get(taxonId).get(id).size();
-        }
-        if (orgSynMaps.containsKey(taxonId)
-            && orgSynMaps.get(taxonId).containsKey(id)) {
-            return orgSynMaps.get(taxonId).get(id).size();
-        }
-        return 0;
+        Set<String> resolvedIds = resolveId(taxonId, id);
+        return resolvedIds == null ? 0 : resolvedIds.size();
     }
 
     /**
