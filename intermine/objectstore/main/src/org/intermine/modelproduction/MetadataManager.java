@@ -114,6 +114,11 @@ public final class MetadataManager
     public static final String NO_NOTXML = "noNotXml";
 
     /**
+     * The name of the key used to store the modMine MetaData cache
+     */
+    public static final String MODMINE_METADATA_CACHE = "modMine_metadata_cache";
+
+    /**
      * Store a (key, value) pair in the metadata table of the database
      * @param database the database
      * @param key the key
