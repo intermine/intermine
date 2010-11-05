@@ -81,72 +81,6 @@ div .gradientbox h1, div .plainbox h1 { color:#4D5154; font-size:22px; }
 /* lists results page when logged in */
 #listTags { background-color: #E6F7FE; border:1px solid #BEDCE4; margin-left: 10px; padding: 3px 10px; }
 
-/* keyword search results */
-.keywordSearchResults .facets { background:/*#E6F7FE*/#FFF !important; border:1px solid /*#BEDCE4*/#DFDFDF !important; color:#333333 !important; }
-.keywordSearchResults .facets a { color:#333333 !important; }
-.keywordSearchResults .facets h4 { color:#FB641E; font-size:16px; background:url('../../images/icons/categories-32.png') no-repeat left;
-	padding-left:40px; line-height:40px; border-bottom:1px solid #DFDFDF; }
-.keywordSearchResults .resultTableContainer table.dbsources { padding:0; /*border:1px solid #E3D85A; */border-right:none;
-	border-bottom:none; }
-	.keywordSearchResults .resultTableContainer table.dbsources th { /*background:#FFFCD9;*/ color:#4B3F4B;
-	padding:6px 6px 6px 12px; /*border-right:1px solid #E3D85A; border-bottom:1px solid #E3D85A;*/ font-size:13px; background:#F5F5F5; }
-	.keywordSearchResults .resultTableContainer table.dbsources td { /*border-right:1px solid #E3D85A; border-bottom:1px solid #E3D85A;*/
-	padding:6px 12px; } 
-	.keywordSearchResults .resultTableContainer table.dbsources td.leftcol { border-left:1px solid #000; }
-.keywordSearchResults h1.title { margin-top:20px; margin-bottom:10px; }
-.keywordSearchResults h2.sub { margin-top:10px; margin-bottom:10px; }
-.keywordSearchResults ul { list-style:square; }
-.keywordSearch .examples li { font-size:1em !important; }
-
-.keywordSearchResults .resultTableContainer table.dbsources th { font-size:16px; border:1px solid #DFDFDF; border-left:none; border-right:none; }
-.keywordSearchResults .resultTableContainer table.dbsources th.type { width:100px; }
-.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult { color:#1F7492; }
-.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult.odd td { background:#E6F7FE; border-bottom:1px solid #C1DAD7;
-	border-top:1px solid #C1DAD7; }
-.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult div { margin-bottom:4px; }
-.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult span.value { font-size:14px;
-	font-family:"Lucida Grande",Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif; }
-.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult a span.value { font-size:16px; color:#E94F00; }
-
-.keywordSearchResults .resultTableContainer table.dbsources table.inner { border:0; margin:0; padding:0; }
-.keywordSearchResults .resultTableContainer table.dbsources table.inner td { border:0 !important; margin:0; padding:0; }
-.keywordSearchResults .resultTableContainer table.dbsources table.inner td.objectFieldName { width:130px; }
-.keywordSearchResults .resultTableContainer table.dbsources table.inner td.value {
-		font-family:"Lucida Grande",Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif; }
-.keywordSearchResults .resultTableContainer table.dbsources table.inner td.value img.fasta { vertical-align:top !important; margin-top:1px !important; }
-.keywordSearchResults .resultTableContainer table.dbsources table.inner tr { border:0; margin:0; padding:0; }
-
-.keywordSearchResults .resultTableContainer table.dbsources div.objectKeys a { color:#E94F00; font-size:16px; }
-.keywordSearchResults .resultTableContainer table.dbsources div.objectKeys span.objectKey { margin:0 !important; }
-.keywordSearchResults .resultTableContainer table.dbsources div.objectKeys span.divider { margin:0 4px; font-size:8px; vertical-align:middle;
-	color:#1F7492; }
-
-/* keyword search results relevancy */
-div.resultTableContainer td.relevance { width:60px; }
-	div.resultTableContainer td.relevance div.bullet { letter-spacing:0.3px; font-size:14px; display:inline; }
-	div.resultTableContainer td.relevance div.full { color:#E94F00; }
-	div.resultTableContainer td.relevance div.empty { color:#999999; }
-
-h3.facetHeader { text-decoration:none !important; }
-
-/* keyword search index */
-div.keywordSearchIndex { border:1px solid #C1DAD7 !important; background:#E6F7FE !important; color:#333; }
-	div.keywordSearchIndex h2, div.keywordSearchIndex a { color:#333; }
-	div.keywordSearchIndex a:hover { color:#000; }
-
-/* keyword search form */
-div.keywordSearch { margin-left:250px; }
-div.keywordSearch div.form { background:#FFFBD8; border:1px solid #E3D85A; width:500px; float:left; }
-	div.keywordSearch div.form h2 { /*color:#4D5154;*/ font-size:22px; padding:10px; }
-	div.keywordSearch div.form a { margin-top:20px; }
-	div.keywordSearch div.examples { border:1px solid /*#C1DAD7*/#DFDFDF; background:/*#E6F7FE*/#FFF; padding:0 6px 0 10px;
-	float:left;	margin:0 0 0 20px; width:400px; }
-	div.keywordSearch div.examples h4 { background:url("../../images/icons/information-32.png") no-repeat left; padding-left:40px;
-		margin:0; margin-bottom:10px; color:#FB641E; border-bottom:1px solid #DFDFDF; line-height:40px; font-size:16px; }
-	div.keywordSearch div.examples ul { list-style:square; margin-left:14px; }
-	div.keywordSearch div.examples ul li { margin-bottom:6px; }
-	div.keywordSearch div.form form input[type="text"] { padding:4px 2px; font-size:14px; }
-
 /* further information */
 div.geneInformation table { border-top:1px solid #BEDCE4; border-left:1px solid #BEDCE4; margin-bottom:2px; }
 div.geneInformation table td { border-bottom:1px solid #BEDCE4; border-right:1px solid #BEDCE4; background:#E6F7FE; padding:4px; }
@@ -173,6 +107,8 @@ div.resultsPage table.results { border:1px solid #DFDFDF; border-left:0; margin-
 	div.resultsPage table.results tfoot tr td { background:#FFF; color:#333; }
 	div.resultsPage table.results input { vertical-align:middle; }
 	div.resultsPage table.results b { padding-right:3px; }
+
+#convertList.bochs form#bagDetailsForm { margin-bottom:0 !important; } /* why the */
 
 #tool_bar_div { background:none; }
 	#tool_bar_div ul#button_bar li.tb_button { cursor:pointer; border:outset 1px #CCCCCC; background-image:url("../../images/buttons/button-bg.gif");

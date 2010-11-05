@@ -64,7 +64,11 @@ div.bochs.wide { width:93.5%; }
 /* toolbox bochs box */
 #toolbox { padding:6px; }
 	#toolbox h5 { background-repeat:no-repeat; background-position:left; border-bottom:1px solid #DFDFDF; color:#FB641E; font-size:14px; line-height:24px; margin-bottom:4px; }
-	#toolbox div.tool { float:left; }
+	#toolbox div.tool { float:left; padding-right:20px; *padding-right:6px; /* IE7 only */ }
+
+/* results */
+#results { *margin-top:90px; /* IE7 only */; }
+#results { /* IE8 only */ margin-top /*\**/:90px\9 }
 
 /* pagin */
 div.pagination { margin:0 auto; float:left; vertical-align:bottom; }

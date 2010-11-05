@@ -77,7 +77,7 @@
       </li>
       <li id="mymine"  <c:if test="${tab == 'mymine'}">class="activelink"</c:if>>
         <a href="/${WEB_PROPERTIES['webapp.path']}/mymine.do">
-          <fmt:message key="menu.mymine"/>
+          <span><fmt:message key="menu.mymine"/></span>
         </a>
       </li>
     </ul>
