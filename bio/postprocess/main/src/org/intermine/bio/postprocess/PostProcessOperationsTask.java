@@ -278,6 +278,8 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 bit.createIndex();
             } else if ("link-ins".equals(operation)) {
                 CreateFlyBaseLinkIns.createLinkInFile(getObjectStoreWriter().getObjectStore());
+            } else if ("modmine-metadata-cache".equals(operation)) {
+                CreateModMineMetaDataCache.createCache(getObjectStoreWriter().getObjectStore());
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
