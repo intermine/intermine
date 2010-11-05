@@ -1072,7 +1072,7 @@ public class KeywordSearch
                                     MetadataManager.SEARCH_INDEX_DIRECTORY);
 
                     ZipOutputStream zipOut =
-                            new ZipOutputStream(new BufferedOutputStream(streamOut));
+                            new ZipOutputStream(streamOut);
 
                     byte[] data = new byte[bufferSize];
 
@@ -1083,6 +1083,8 @@ public class KeywordSearch
                     for (int i = 0; i < files.length; i++) {
                         File file =
                                 new File(fsDirectory.getAbsolutePath() + File.separator + files[i]);
+                        LOG.info("Getting length of file: " + file.getName());
+                        long fileLength = file.length();
                         LOG.info("Zipping file: " + file.getName() + " (" + file.length() / 1024
                                 / 1024 + " MB)");
 
@@ -1093,13 +1095,23 @@ public class KeywordSearch
                             ZipEntry entry = new ZipEntry(files[i]);
                             zipOut.putNextEntry(entry);
 
+                            long total = fileLength / bufferSize;
+                            long progress = 0;
+
                             int count;
                             while ((count = fileInput.read(data, 0, bufferSize)) != -1) {
                                 zipOut.write(data, 0, count);
+                                progress++;
+                                if (progress % 1000 == 0) {
+                                    LOG.info("Written " + progress + " of " + total
+                                            + " batches for file: " + file.getName());
+                                }
                             }
                         } finally {
+                            LOG.info("Closing file: " + file.getName() + "...");
                             fileInput.close();
                         }
+                        LOG.info("Finished storing file: " + file.getName());
                     }
 
                     zipOut.close();
