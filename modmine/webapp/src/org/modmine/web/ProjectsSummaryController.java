@@ -69,17 +69,8 @@ public class ProjectsSummaryController extends TilesAction
             // TODO remove first ||
             for (List<DisplayExperiment> expList : experiments.values()) {
                 for (DisplayExperiment exp : expList) {
-                    String ourCat = null;
-                    String cat = exp.getExperimentCategory();
-                    if (cat.startsWith("Gene Structure") 
-                            || cat == null) {
-                        ourCat = "Gene Structure";
-                    } else if (cat.startsWith("Replication") || cat.endsWith("Replication")) {
-                        ourCat = "Replication";
-                    } else {
-                        ourCat = cat;
-                    }
-                    BioConverterUtil.addToListMap(categoriesNew, ourCat, exp);
+                    String cat = adaptCategory(exp);
+                    BioConverterUtil.addToListMap(categoriesNew, cat, exp);
                 }
             }
             request.setAttribute("catExp", categoriesNew);
@@ -88,5 +79,23 @@ public class ProjectsSummaryController extends TilesAction
             err.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * @param exp the DisplayExperiment
+     * @return the category for the front page
+     */
+    private String adaptCategory(DisplayExperiment exp) {
+        String cat = exp.getExperimentCategory();
+        if (cat == null) {
+            return "Gene Structure";  
+        }                    
+        if (cat.startsWith("Gene Structure")) { 
+            return "Gene Structure";
+        } 
+        if (cat.startsWith("Replication") || cat.endsWith("Replication")) {
+            return "Replication";
+        } 
+        return cat;
     }
 }
