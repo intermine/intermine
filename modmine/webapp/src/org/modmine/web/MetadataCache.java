@@ -80,6 +80,8 @@ public final class MetadataCache
     private static Map<Integer, List<String>> submissionUnlocatedFeatureTypes = null;
     private static Map<Integer, List<String[]>> submissionRepositedCache = null;
     private static Map<String, String> featDescriptionCache = null;
+    private static Map<String, List<DisplayExperiment>> projectExperiments = null;
+    
 
     private static long lastTrackCacheRefresh = 0;
     private static final long TWO_HOUR = 7200000;
@@ -98,7 +100,22 @@ public final class MetadataCache
         }
         return new ArrayList<DisplayExperiment>(experimentCache.values());
     }
-
+    
+    /**
+     * Fetch experiment details for display.
+     * @param os the production objectStore
+     * @return a list of experiments
+     */
+    public static synchronized Map<String, List<DisplayExperiment>> getProjectExperiments(ObjectStore os) {
+        if (projectExperiments == null) {
+            readProjectExperiments(os);
+        }
+        return projectExperiments;
+    }
+   
+    
+    
+    
     /**
      * Fetch GBrowse tracks per submission for display. This updates automatically from the GBrowse
      * server and refreshes periodically (according to threshold).  When refreshing another process
@@ -286,33 +303,6 @@ public final class MetadataCache
         }
         return submissionFeatureCounts.get(dccId);
     }
-
-//    /**
-//     * Fetch the number of expression levels for a given submission.
-//     * @param os the objectStore
-//     * @param dccId the modENCODE submission id
-//     * @return a map from submission to count
-//     */
-//    public static synchronized Integer getSubmissionExpressionLevelCount(ObjectStore os,
-//            Integer dccId) {
-//        if (submissionExpressionLevelCounts == null) {
-//            getSubmissionExpressionLevelCounts(os);
-//        }
-//        return submissionExpressionLevelCounts.get(dccId);
-//    }
-
-//    /**
-//     * Fetch the number of expression levels for a given submission.
-//     * @param os the objectStore
-//     * @return a map from submission to count
-//     */
-//    public static synchronized Map<String, Map<String, Long>>
-//    getExperimentFeatureExpressionLevels(ObjectStore os) {
-//        if (experimentFeatureExpressionLevelCounts == null) {
-//           readExperimentFeatureExpressionLevelCounts(os);
-//        }
-//        return experimentFeatureExpressionLevelCounts;
-//    }
 
     /**
      * Fetch a submission by the modENCODE submission ids
@@ -514,7 +504,7 @@ public final class MetadataCache
     /**
      *
      * @param os objectStore
-     * @return map exp-repository entries
+     * @return map experiment expression levels
     */
     public static Map<String, Integer> getExperimentExpressionLevels(ObjectStore os) {
         Map<String, Integer> experimentELevel = new HashMap<String, Integer>();
@@ -580,10 +570,9 @@ public final class MetadataCache
      * @return a map from project name to experiment
      */
     public static Map<String, List<DisplayExperiment>>
-    getProjectExperiments(ObjectStore os) {
+    readProjectExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-        Map<String, List<DisplayExperiment>> projectExperiments
-            = new TreeMap<String, List<DisplayExperiment>>();
+        projectExperiments = new TreeMap<String, List<DisplayExperiment>>();
         for (DisplayExperiment exp : getExperiments(os)) {
             List<DisplayExperiment> exps = projectExperiments.get(exp.getProjectName());
             if (exps == null) {
