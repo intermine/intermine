@@ -58,7 +58,6 @@ public final class TemplatePopulator
         TemplateQuery template = origTemplate.clone();
         template.setEdited(true);
 
-        
         for (String editablePath : template.getEditablePaths()) {
             List<PathConstraint> constraints = template.getEditableConstraints(editablePath);
             List<TemplateValue> values = newConstraints.get(editablePath);
@@ -68,7 +67,7 @@ public final class TemplatePopulator
             if (values == null) {
                 values = new ArrayList<TemplateValue>();
             }
-            
+
             if (constraints.size() < values.size()) {
                 throw new TemplatePopulatorException("There were more values provided than "
                         + "  there are editable constraints on the path " + editablePath);
