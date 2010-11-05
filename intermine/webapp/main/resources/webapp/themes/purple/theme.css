@@ -121,6 +121,7 @@ div#filter_tool_bar {
 .listtoolbox {
   background-image: url('grad_box.png');
   border:1px solid #D0B5D7;
+  background-color: #FEFDFF;
 }
 
 #tool_bar_div {
@@ -146,7 +147,7 @@ div#filter_tool_bar {
 
 .widgetcontainer {
   border:1px solid #D0B5D7;
-  background: #FFF url('grad_box.png') repeat-x top;
+  background: #feffff url('grad_box.png') repeat-x top;
 }
 
 .widget {
@@ -223,11 +224,25 @@ table.results tfoot tr td {
 
 #listTags { background-color: #F5F0FF; margin-left: 10px; padding: 3px 10px; }
 
+/* keyword search results */
+.keywordSearchResults .resultTableContainer table.dbsources { border-left: 1px solid #F5F0FF; }
+	.keywordSearchResults .resultTableContainer table.dbsources th { background:#5C0075; color:#FFF; font-size:13px; padding:2px 8px;
+		text-transform:none; }
+	.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult { color:#882FA8; }
+		.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult td { line-height:12px; }
+		.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult div { margin:0; }
+		.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult.odd td { border-bottom:1px solid #F5F0FF;
+	border-top:1px solid #F5F0FF; background:#FEFAFF; }
+	.keywordSearchResults .resultTableContainer table.dbsources td { border-right: 1px solid #F5F0FF; border-bottom:none; padding:4px 8px 2px 8px; }
+
+.keywordSearchResults .resultTableContainer table.dbsources table.inner td { color:#882FA8; }
+
+.keywordSearchResults .resultTableContainer table.dbsources div.objectKeys a,
+.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult a span.value { font-size:14px; }
+
 /* keyword search results relevancy */
-div.resultTableContainer td.relevance { width:60px; }
-	div.resultTableContainer td.relevance div.bullet { letter-spacing:0.3px; font-size:14px; display:inline; }
-	div.resultTableContainer td.relevance div.full { color:#ff0000; }
-	div.resultTableContainer td.relevance div.empty { color:#999999; }
+div.resultTableContainer td.relevance div.full { color:#ff0000; }
+div.resultTableContainer td.relevance div.empty { color:#999999; }
 
 /* lists analysis (bagDetails.do) */
 div.heading.results { border:1px solid #9E68AE; background:#F5F0FF; margin-left:0; }

@@ -209,6 +209,7 @@ table.results tr.odd-alt TD{
 .listtoolbox {
   background-image: url('grad_box.png');
   border:1px solid #D0B5D7;
+  background-color: #feffff;
 }
 
 #tool_bar_div {
@@ -311,11 +312,25 @@ table.internal td {
 
 #listTags { background-color: #F5F0FF; margin-left: 10px; padding: 3px 10px; }
 
+/* keyword search results */
+.keywordSearchResults .resultTableContainer table.dbsources { border-left: 1px solid #63B7DE; }
+	.keywordSearchResults .resultTableContainer table.dbsources th { background:#192F39; color:#FFF; font-size:13px; padding:2px 8px;
+		text-transform:none; }
+	.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult { color:#192F39; }
+		.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult td { line-height:12px; }
+		.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult div { margin:0; }
+		.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult.odd td { border-bottom:1px solid #63B7DE;
+	border-top:1px solid #63B7DE; background:#E0F5FF; }
+	.keywordSearchResults .resultTableContainer table.dbsources td { border-right: 1px solid #63B7DE; border-bottom:none; padding:4px 8px 2px 8px; }
+
+.keywordSearchResults .resultTableContainer table.dbsources table.inner td { color:#192F39; }
+
+.keywordSearchResults .resultTableContainer table.dbsources div.objectKeys a,
+.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult a span.value { font-size:14px; }
+
 /* keyword search results relevancy */
-div.resultTableContainer td.relevance { width:60px; }
-	div.resultTableContainer td.relevance div.bullet { letter-spacing:0.3px; font-size:14px; display:inline; }
-	div.resultTableContainer td.relevance div.full { color:#ff0000; }
-	div.resultTableContainer td.relevance div.empty { color:#999999; }
+div.resultTableContainer td.relevance div.full { color:#ff0000; }
+div.resultTableContainer td.relevance div.empty { color:#999999; }
 
 /* lists analysis (bagDetails.do) */
 div.heading.results { border:1px solid #BEDCE4; background:#E6F7FE; margin-left:0; }
