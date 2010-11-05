@@ -12,6 +12,7 @@ package org.modmine.web;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import java.util.TreeMap;
 import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.filters.StringInputStream;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DatabaseRecord;
 import org.intermine.model.bio.Experiment;
@@ -37,8 +39,10 @@ import org.intermine.model.bio.Project;
 import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Submission;
+import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -52,6 +56,8 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.sql.Database;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 import org.modmine.web.GBrowseParser.GBrowseTrack;
 
@@ -81,7 +87,7 @@ public final class MetadataCache
     private static Map<Integer, List<String[]>> submissionRepositedCache = null;
     private static Map<String, String> featDescriptionCache = null;
     private static Map<String, List<DisplayExperiment>> projectExperiments = null;
-    
+    private static Properties metadataProperties = null;
 
     private static long lastTrackCacheRefresh = 0;
     private static final long TWO_HOUR = 7200000;
@@ -106,15 +112,28 @@ public final class MetadataCache
      * @param os the production objectStore
      * @return a list of experiments
      */
-    public static synchronized Map<String, List<DisplayExperiment>> getProjectExperiments(ObjectStore os) {
+    public static synchronized Map<String, List<DisplayExperiment>>
+    getProjectExperiments(ObjectStore os) {
         if (projectExperiments == null) {
             readProjectExperiments(os);
         }
         return projectExperiments;
     }
-   
-    
-    
+
+    /**
+     * Fetch the metadata properties from database.
+     * @param os the production objectStore
+     * @return the metadata properties
+     */
+    public static synchronized Properties getProperties(ObjectStore os) 
+    throws SQLException, IOException {
+        if (metadataProperties == null) {
+            readProperties(os);
+        }
+
+        return metadataProperties;
+    }
+
     
     /**
      * Fetch GBrowse tracks per submission for display. This updates automatically from the GBrowse
@@ -950,7 +969,7 @@ public final class MetadataCache
         return featureCounts;
     }
 
-    private static void readSubmissionFeatureCounts(ObjectStore os) {
+    private static void readSubmissionFeatureCountsO(ObjectStore os) {
         long startTime = System.currentTimeMillis();
 
         submissionFeatureCounts = new LinkedHashMap<Integer, Map<String, Long>>();
@@ -1010,6 +1029,63 @@ public final class MetadataCache
                 + submissionFeatureCounts.size());
     }
 
+    private static Properties readProperties(ObjectStore os) throws SQLException, IOException {
+        Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+        String objectSummaryString =
+            MetadataManager.retrieve(db, MetadataManager.MODMINE_METADATA_CACHE);
+
+        metadataProperties = new Properties();
+        InputStream objectStoreSummaryPropertiesStream =
+            new StringInputStream(objectSummaryString);
+
+        metadataProperties.load(objectStoreSummaryPropertiesStream);
+        return metadataProperties;
+    }
+
+    private static void readSubmissionFeatureCounts(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+
+        String tt = "submissionFeatureCount";
+
+        submissionFeatureCounts = new LinkedHashMap<Integer, Map<String, Long>>();
+        submissionIdCache = new HashMap<Integer, Integer>();
+ 
+//        Properties props = new Properties(PropertiesUtil.stripStart(tt, getProperties(os)));
+ 
+        Properties props = new Properties();
+        try {
+            props = PropertiesUtil.stripStart(tt, getProperties(os));
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            throw new RuntimeException("Some SQL error happened. ", e);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            throw new RuntimeException("Some IO error happened. ", e);
+        }
+
+        final String SEPARATOR = "\\.";
+
+        for (Object key : props.keySet()) {
+                String keystring = (String) key;
+                
+                String qq = key.toString();
+                
+                String[] token = qq.split(SEPARATOR);
+                Integer dccId = Integer.parseInt(token[0]);
+                String feature = token[1];
+                Long count = Long.parseLong((String) props.get(key));
+
+                Map<String, Long> featureCounts = submissionFeatureCounts.get(dccId);
+                if (featureCounts == null) {
+                    featureCounts = new HashMap<String, Long>();
+                    submissionFeatureCounts.put(dccId, featureCounts);
+                }
+                featureCounts.put(feature, count);
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed submissionFeatureCounts cache, took: " + timeTaken + "ms size = "
+                + submissionFeatureCounts.size());
+    }
 
     private static void readSubmissionFeatureExpressionLevelCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
@@ -1243,14 +1319,6 @@ public final class MetadataCache
         long startTime = System.currentTimeMillis();
         try {
 
-//            Query q = new Query();
-//            QueryClass qcSubmission = new QueryClass(Submission.class);
-//            QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
-//            q.addFrom(qcSubmission);
-//            q.addToSelect(qcSubmission);
-//
-//            q.addToOrderBy(qfDCCid);
-
             Query q = new Query();
             QueryClass qcSubmission = new QueryClass(Submission.class);
             QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
@@ -1272,20 +1340,6 @@ public final class MetadataCache
             Results results = os.execute(q);
 
             submissionFilesCache = new HashMap<Integer, Set<ResultFile>>();
-//            submissionExpressionLevelCounts = new HashMap<Integer, Integer>();
-            
-            /*
-            Results results = os.executeSingleton(q);
-            // for submission, get result files and expression level count
-            Iterator<?> i = results.iterator();
-            while (i.hasNext()) {
-                Submission sub = (Submission) i.next();
-                Set<ResultFile> files = sub.getResultFiles();
-                submissionFilesCache.put(sub.getdCCid(), files);
-                Set<ExpressionLevel> el = sub.getExpressionLevels();
-                submissionExpressionLevelCounts.put(sub.getdCCid(), el.size());
-            }
-            */
 
             @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
                 (Iterator) results.iterator();
@@ -1306,9 +1360,6 @@ public final class MetadataCache
         LOG.info("Primed submission collections caches, took: " + timeTaken + "ms    size: files = "
                 + submissionFilesCache.size());
                 
-               //+ ", expression levels = "
-               // + submissionExpressionLevelCounts.size());
-//        LOG.info("Primed submission collections caches, XXXX: " + submissionFilesCache);
     
     }
 
