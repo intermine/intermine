@@ -631,6 +631,10 @@ public class UniprotEntry
      * @return the goterms
      */
     public List<String> getGOTerms() {
+    	List<String> goterms = collections.get("goTerms");
+    	if (goterms == null) {
+    		return Collections.emptyList();
+    	}
         return collections.get("goTerms");
     }
 
