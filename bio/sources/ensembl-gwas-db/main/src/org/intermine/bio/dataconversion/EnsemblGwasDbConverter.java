@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2009 FlyMine
+ * Copyright (C) 2002-2010 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -35,13 +35,12 @@ import org.intermine.xml.full.Item;
  */
 public class EnsemblGwasDbConverter extends BioDBConverter
 {
-    // 
     private static final String DATASET_TITLE = "Ensembl GWAS data";
     private static final String DATA_SOURCE_NAME = "Ensembl";
 
     private Map<String, String> snps = new HashMap<String, String>();
     private Map<String, String> genes = new HashMap<String, String>();
-    private Map<String, String> pubs = new HashMap<String, String>();
+    private Map<String, String> studies = new HashMap<String, String>();
     private Map<String, String> sources = new HashMap<String, String>();
     private int taxonId = 9606;
 
@@ -88,13 +87,13 @@ public class EnsemblGwasDbConverter extends BioDBConverter
             String snpIdentifier = getSNPIdentifier(rsNumber);
             result.setReference("SNP", snpIdentifier);
 
-            // PUBLICATION
+            // STUDY
             String study = res.getString("study");
-            String pubIdentifier = getPubIdentifier(study);
-            if (pubIdentifier != null) {
-                result.setReference("publication", pubIdentifier);
+            String studyIdentifier = getStudyIdentifier(study);
+            if (studyIdentifier != null) {
+                result.setReference("study", studyIdentifier);
             }
-            
+
             // SOURCE
             String source = res.getString("s.name");
             result.setReference("source", getSourceIdentifier(source));
@@ -131,7 +130,7 @@ public class EnsemblGwasDbConverter extends BioDBConverter
         }
         return null;
     }
-    
+
     private String parsePValueDouble(String input) {
         // 10^-5 > p > 10^-6  -->  10E-5
         if (!StringUtils.isBlank(input)) {
@@ -167,7 +166,7 @@ public class EnsemblGwasDbConverter extends BioDBConverter
         }
         return input;
     }
-    
+
     private String getSNPIdentifier(String rsNumber) throws ObjectStoreException {
         String snpIdentifier = snps.get(rsNumber);
         if (snpIdentifier == null) {
@@ -180,20 +179,23 @@ public class EnsemblGwasDbConverter extends BioDBConverter
         return snpIdentifier;
     }
 
-    private String getPubIdentifier(String study) throws ObjectStoreException {
-        String pubmedIdentifier = null;
+    private String getStudyIdentifier(String study) throws ObjectStoreException {
+        String studyIdentifier = null;
         if (!StringUtils.isBlank(study)) {
-            pubmedIdentifier = pubs.get(study);
-            if (pubmedIdentifier == null) {
+            studyIdentifier = studies.get(study);
+            if (studyIdentifier == null) {
                 String pubmedId = study.substring("pubmed/".length());
                 Item pub = createItem("Publication");
                 pub.setAttribute("pubMedId", pubmedId);
                 store(pub);
-                pubmedIdentifier = pub.getIdentifier();
-                pubs.put(study, pubmedIdentifier);
+                Item gwas = createItem("GWAS");
+                gwas.setReference("publication", pub);
+                store(gwas);
+                studyIdentifier = gwas.getIdentifier();
+                studies.put(study, studyIdentifier);
             }
         }
-        return pubmedIdentifier;
+        return studyIdentifier;
     }
 
     private List<String> getGeneCollection(String input) throws ObjectStoreException {
