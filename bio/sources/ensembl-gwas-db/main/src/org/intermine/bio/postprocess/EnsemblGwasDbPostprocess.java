@@ -10,32 +10,25 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.model.bio.GOAnnotation;
-import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.Protein;
-import org.intermine.bio.util.Constants;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.postprocess.PostProcessor;
 
 /**
- * Take any GOAnnotation objects assigned to proteins and copy them to corresponding genes.
+ * Update GWAS objects with name and firstAuthor from referenced publication.
  *
  * @author Richard Smith
  */
@@ -45,17 +38,16 @@ public class EnsemblGwasDbPostprocess extends PostProcessor
     protected ObjectStore os;
 
     /**
-     * Create a new UpdateOrthologes object from an ObjectStoreWriter
-     * @param osw writer on genomic ObjectStore
+     * Create a new GWAS post processor from an ObjectStoreWriter
+     * @param osw writer on production ObjectStore
      */
     public EnsemblGwasDbPostprocess(ObjectStoreWriter osw) {
         super(osw);
         this.os = osw.getObjectStore();
     }
 
-
     /**
-     * Copy all GO annotations from the Protein objects to the corresponding Gene(s)
+     * Set names and firstAuthors on GWAS objects from the referenced publication.
      * @throws ObjectStoreException if anything goes wrong
      */
     public void postProcess()
@@ -73,117 +65,53 @@ public class EnsemblGwasDbPostprocess extends PostProcessor
         q.addToSelect(qcGwas);
         q.addToOrderBy(qcGwas);
 
-        QueryClass qcProtein = new QueryClass(Protein.class);
-        q.addFrom(qcProtein);
+        QueryClass qcPub =
+            new QueryClass(os.getModel().getClassDescriptorByName("Publication").getType());
+        q.addFrom(qcPub);
+        q.addToSelect(qcPub);
 
-        QueryClass qcAnnotation = new QueryClass(GOAnnotation.class);
-        q.addFrom(qcAnnotation);
-        q.addToSelect(qcAnnotation);
+        QueryObjectReference pubRef = new QueryObjectReference(qcGwas, "publication");
+        ContainsConstraint cc = new ContainsConstraint(pubRef, ConstraintOp.CONTAINS, qcPub);
 
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        q.setConstraint(cc);
 
-        QueryCollectionReference geneProtRef = new QueryCollectionReference(qcProtein, "genes");
-        cs.addConstraint(new ContainsConstraint(geneProtRef, ConstraintOp.CONTAINS, qcGene));
-
-        QueryObjectReference annSubjectRef =
-            new QueryObjectReference(qcAnnotation, "subject");
-        cs.addConstraint(new ContainsConstraint(annSubjectRef, ConstraintOp.CONTAINS, qcProtein));
-
-        q.setConstraint(cs);
-
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q, 5000, true, true, true);
-        return res.iterator();
         osw.beginTransaction();
-
-
-
-        Iterator<?> resIter = findProteinProperties(false);
+        Iterator resIter = res.iterator();
 
         int count = 0;
-        Gene lastGene = null;
-        Set<GOAnnotation> goCollection = new HashSet<GOAnnotation>();
 
         while (resIter.hasNext()) {
             ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
-            Gene thisGene = (Gene) rr.get(0);
-            GOAnnotation thisAnnotation = (GOAnnotation) rr.get(1);
-
-            GOAnnotation tempAnnotation;
+            InterMineObject gwas = (InterMineObject) rr.get(0);
+            InterMineObject pub = (InterMineObject) rr.get(1);
+            
+            InterMineObject tempGwas;
             try {
-                tempAnnotation = PostProcessUtil.copyInterMineObject(thisAnnotation);
+                tempGwas = PostProcessUtil.cloneInterMineObject(gwas);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-            tempAnnotation.setSubject(thisGene);
-            if (lastGene != null && !(lastGene.equals(thisGene))) {
-                lastGene.setGoAnnotation(goCollection);
-                LOG.debug("store gene " + lastGene.getSecondaryIdentifier() + " with "
-                        + lastGene.getGoAnnotation().size() + " GO.");
-                osw.store(lastGene);
-
-                lastGene = thisGene;
-                goCollection = new HashSet<GOAnnotation>();
+            try {
+                String pubTitle = (String) pub.getFieldValue("title");
+                if (!StringUtils.isBlank(pubTitle)) {
+                    tempGwas.setFieldValue("name", pubTitle);
+                }
+                
+                String pubAuthor = (String) pub.getFieldValue("firstAuthor");
+                if (!StringUtils.isBlank(pubAuthor)) {
+                    tempGwas.setFieldValue("firstAuthor", pubAuthor);
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
             }
-            goCollection.add(tempAnnotation);
-
-            osw.store(tempAnnotation);
-
-            lastGene = thisGene;
+            
+            osw.store(tempGwas);
             count++;
         }
 
-        if (lastGene != null) {
-            lastGene.setGoAnnotation(goCollection);
-            LOG.debug("store gene " + lastGene.getSecondaryIdentifier() + " with "
-                    + lastGene.getGoAnnotation().size() + " GO.");
-            osw.store(lastGene);
-        }
-
-        LOG.info("Created " + count + " new GOAnnotation objects for Genes"
+        LOG.info("Set " + count + " GWAS names and authors"
                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
         osw.commitTransaction();
-    }
-
-
-    /**
-     * Query Gene->Protein->Annotation->GOTerm and return an iterator over the Gene,
-     *  Protein and GOTerm.
-     *
-     * @param restrictToPrimaryGoTermsOnly Only get primary Annotation items linking the gene
-     *  and the go term.
-     */
-    private Iterator<?> findProteinProperties(boolean restrictToPrimaryGoTermsOnly)
-        throws ObjectStoreException {
-        Query q = new Query();
-
-        q.setDistinct(false);
-
-        QueryClass qcGene = new QueryClass(Gene.class);
-        q.addFrom(qcGene);
-        q.addToSelect(qcGene);
-        q.addToOrderBy(qcGene);
-
-        QueryClass qcProtein = new QueryClass(Protein.class);
-        q.addFrom(qcProtein);
-
-        QueryClass qcAnnotation = new QueryClass(GOAnnotation.class);
-        q.addFrom(qcAnnotation);
-        q.addToSelect(qcAnnotation);
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        QueryCollectionReference geneProtRef = new QueryCollectionReference(qcProtein, "genes");
-        cs.addConstraint(new ContainsConstraint(geneProtRef, ConstraintOp.CONTAINS, qcGene));
-
-        QueryObjectReference annSubjectRef =
-            new QueryObjectReference(qcAnnotation, "subject");
-        cs.addConstraint(new ContainsConstraint(annSubjectRef, ConstraintOp.CONTAINS, qcProtein));
-
-        q.setConstraint(cs);
-
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q, 5000, true, true, true);
-        return res.iterator();
     }
 }
