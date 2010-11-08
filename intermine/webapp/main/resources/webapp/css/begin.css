@@ -34,7 +34,6 @@ ol#news li {
 
 #newsbox {
   height:100px;
-  width:50%;
   overflow-y: auto;
   border-bottom:1px solid #CCC;
 }

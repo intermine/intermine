@@ -71,8 +71,7 @@
       	   var tmp = document.createElement("DIV"); tmp.innerHTML = html; return tmp.textContent || tmp.innerText;
       	}
 </script>
-   <div class="gradientbox" >
-      <tiles:insert name="tipWrapper.tile"/>
+   <div class="plainbox" fixedWidth="300px">
       <h1 style="display:inline">News</h1>
       <div id="newsbox">
       	<div id="spinner" align="center"><br/><br/><br/><img src="images/wait18.gif" title="Getting news..."/></div>

@@ -17,24 +17,27 @@
 <td>
      <im:boxarea title="Search" stylename="plainbox" floatValue="left" fixedWidth="300px">
      <em><p>Enter identifiers to search for genes, proteins etc.</p></em>
-        <html:form action="/keywordSearchResults" focus="searchTerm">
-            <input name="searchTerm" type="text" class="qs_input">
-            <html:submit>Go</html:submit>
-        </html:form>
+        <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
+            <input type="text" id="keywordSearch" name="searchTerm" value="" style="width: 200px;" />
+            <input type="submit" name="searchSubmit" value="Search" />
+        </form>
     </im:boxarea>
 </td>
 <td>
-     <im:boxarea title="Analyse" stylename="plainbox" ixedWidth="300px">
+     <im:boxarea title="Analyse" stylename="plainbox" fixedWidth="300px">
      <em><p>Enter lists of identifiers to analyse</p></em>
-        <html:form action="/keywordSearchResults" focus="searchTerm">
-            <input name="searchTerm" type="text" class="qs_input">
-            <html:submit>Go</html:submit>
+        <html:form action="/buildBag" focus="pasteInput">
+
+                <html:select styleId="typeSelector" property="type">
+                        <html:option value="Gene">Gene</html:option>
+                        <html:option value="Protein">Protein</html:option>
+                </html:select>
+            <html:textarea styleId="pasteInput" property="text" rows="2" cols="30" />
+            <html:submit styleId="submitBag"><fmt:message key="bagBuild.makeBag"/></html:submit>
         </html:form>
     </im:boxarea>
 </td>
 </tr>
-
-
 
 <tr>
 <td>
