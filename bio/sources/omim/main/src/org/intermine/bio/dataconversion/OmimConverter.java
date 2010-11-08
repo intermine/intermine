@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2009 FlyMine
+ * Copyright (C) 2002-2010 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,14 +12,16 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +37,7 @@ import org.intermine.xml.full.Item;
  *
  * @author
  */
-public class OmimConverter extends BioFileConverter
+public class OmimConverter extends BioDirectoryConverter
 {
     //
     private static final String DATASET_TITLE = "OMIM diseases";
@@ -45,11 +47,12 @@ public class OmimConverter extends BioFileConverter
     private Map<String, Item> diseases = new HashMap<String, Item>();
 
     private String organism;
-    private boolean readOmimTxt = false;
-    private boolean readMorbidMap = false;
-    private boolean readPubmedCited = false;
     private HgncIdResolverFactory hgncGeneResolverFactory = null;
     private IdResolver geneResolver = null;
+
+    private static final String OMIM_TXT_FILE = "omim.txt";
+    private static final String MORBIDMAP_FILE = "morbidmap";
+    private static final String PUBMED_FILE = "pubmed_cited";
 
     private static final Logger LOG = Logger.getLogger(OmimConverter.class);
 
@@ -65,10 +68,6 @@ public class OmimConverter extends BioFileConverter
 
     @Override
     public void close() throws Exception {
-        // TODO if we haven't seen all files throw an error
-//        if (!readOmimTxt || !readMorbidMap | !readPubmedCited) {
-//            throw new RuntimeException("Did not read all three files!");
-//        }
         store(diseases.values());
         super.close();
     }
@@ -80,38 +79,98 @@ public class OmimConverter extends BioFileConverter
      *
      * {@inheritDoc}
      */
-    public void process(Reader reader) throws Exception {
+    public void process(File dataDir) throws Exception {
+        Map<String, File> files = readFilesInDir(dataDir);
+
         organism = getOrganism("9606");
-        File currentFile = getCurrentFile();
-        if ("omim.txt".equals(currentFile.getName())) {
-            //processOmimTxtFile(reader);
-            readOmimTxt = true;
-        } else if ("morbidmap".equals(currentFile.getName())) {
-            processMorbidMapFile(reader);
-            readMorbidMap = true;
-        } else if ("pubmed_cited".equals(currentFile.getName())) {
-            processPubmedCitedFile(reader);
-            //readPubmedCited = true;
-        } else {
-            throw new IllegalArgumentException("Unexpected file: " + currentFile.getName());
+
+        String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE};
+        Set<String> missingFiles = new HashSet<String>();
+        for (String requiredFile : requiredFiles) {
+            if (!files.containsKey(requiredFile)) {
+                missingFiles.add(requiredFile);
+            }
         }
+
+        if (!missingFiles.isEmpty()) {
+            throw new RuntimeException("Not all required files for the OMIM sources were found in: "
+                    + dataDir.getAbsolutePath() + ", was missing " + missingFiles);
+        }
+
+        processMorbidMapFile(new FileReader(files.get(MORBIDMAP_FILE)));
+        processOmimTxtFile(new FileReader(files.get(OMIM_TXT_FILE)));
+        processPubmedCitedFile(new FileReader(files.get(PUBMED_FILE)));
+    }
+
+    private Map<String, File> readFilesInDir(File dir) {
+        Map<String, File> files = new HashMap<String, File>();
+        for (File file : dir.listFiles()) {
+            files.put(file.getName(), file);
+        }
+        return files;
     }
 
     private void processOmimTxtFile(Reader reader) throws IOException {
         final BufferedReader br = new BufferedReader(reader);
 
+        // TODO disease name isn't always on a single line
         String line = null;
-        while ((line = br.readLine()) != null) {
-            if (line.startsWith("%")) {
-                System.out.println(line);
-                String[] parts = line.split(" ", 2);
-                System.out.println(Arrays.asList(parts));
-                String mimNumber = parts[0].substring(1);
-                String name = parts[1];
 
-                Item disease = getDisease(mimNumber);
-                disease.setAttribute("name", name);
+        StringBuilder sb = new StringBuilder();
+        boolean readingTitle = false;
+        while ((line = br.readLine()) != null) {
+            if (readingTitle) {
+                sb.append(line);
             }
+            if (line.startsWith("*FIELD* TI")) {
+                readingTitle = true;
+            } else if (line.startsWith("*FIELD* TX")) {
+                readingTitle = false;
+
+                // so contains line after start of TI and includes TX header line
+                String s = sb.toString();
+                // check if this is a deprecated entry
+                System.out.println(s);
+                //                if (!s.startsWith("^")) {
+
+
+                // if first character is not a digit, remove it
+                if (!Character.isDigit(s.charAt(0))) {
+                    s = s.substring(1);
+                }
+
+                // MIM number is now first thing on line
+                String[] parts = s.split(" ", 2);
+                String mimNumber = parts[0];
+                String text = parts[1];
+
+                System.out.println(mimNumber);
+
+                // if this isn't a disease we need we can just ignore
+                if (diseases.containsKey(mimNumber)) {
+                    int terminateAt = s.length();
+                    for (int i = 0; i < s.length(); i++) {
+                        if (text.charAt(i) == '*'
+                            || (text.charAt(i) == ';' && text.charAt(i + 1) == ';')) {
+                            terminateAt = i;
+                            break;
+                        }
+                    }
+                    // title is text until ;; or the terminating *
+                    String title = text.substring(0, terminateAt);
+                    Item disease = getDisease(mimNumber);
+                    disease.setAttribute("name", name);
+                }
+
+                sb = new StringBuilder();
+            }
+            //                String[] parts = line.split(" ", 2);
+            //                System.out.println(Arrays.asList(parts));
+            //                String mimNumber = parts[0].substring(1);
+            //                String name = parts[1];
+            //
+            //                if (diseases.containsKey(mimNumber)) {
+            //                }
         }
     }
 
@@ -127,28 +186,24 @@ public class OmimConverter extends BioFileConverter
             protected int total = 0;
         }
         Map<String, CountPair> counts = new HashMap<String, CountPair>();
-        counts.put("(1)", new CountPair());
-        counts.put("(2)", new CountPair());
-        counts.put("(3)", new CountPair());
-        counts.put("(4)", new CountPair());
+        List<String> diseaseNumbers = new ArrayList<String>();
 
         int noMapType = 0;
         int diseaseMatches = 0;
-        
+
         // extract e.g. (3)
         Pattern matchNumberInBrackets = Pattern.compile("(\\(.\\))$");
-        
+
         // pull out OMIM id of disease
         Pattern matchMajorDiseaseNumber = Pattern.compile("(\\d{6})");
-        
+
         while (lineIter.hasNext()) {
             lineCount++;
-            
+
             String[] bits = lineIter.next();
             if (bits.length == 0) {
                 continue;
             }
-            System.out.println(Arrays.asList(bits));
 
             String first = bits[0].trim();
 
@@ -172,24 +227,23 @@ public class OmimConverter extends BioFileConverter
             String symbol = resolveGene(symbolFromFile);
             if (symbol != null) {
                 resolvedCount++;
-                String gene = getGeneId(symbol);
+                //String gene = getGeneId(symbol);
                 if (geneMapType != null) {
                     counts.get(geneMapType).resolved++;
                 }
             }
-
+            String geneId = getGeneId(symbolFromFile);
             m = matchMajorDiseaseNumber.matcher(first);
-            List<String> diseaseNumbers = new ArrayList<String>();
+            String diseaseMimId = null;
             while (m.find()) {
                 diseaseMatches++;
-                diseaseNumbers.add(m.group(1));
-                System.out.println("matched: " + m.group(1) + " in string: " + first);
+                diseaseMimId = m.group(1);
             }
 
-//            String diseaseName = bits[7];
-//            Item disease = createItem("Disease");
-//            disease.setAttribute("name", diseaseName);
-//            disease.setAttribute("source", "OMIM");
+            if (diseaseMimId != null) {
+                Item disease = getDisease(diseaseMimId);
+                disease.addToCollection("genes", geneId);
+            }
 
             // start with basic rules and count how many columns are parsed
             // if gene is an HGNC symbol - create a gene
@@ -205,7 +259,7 @@ public class OmimConverter extends BioFileConverter
             mapTypesMessage += pair.getKey() + ": " + pair.getValue().resolved + " / " + pair.getValue().total + "  ";
         }
         LOG.info(mapTypesMessage);
-        LOG.info("Found " + diseaseMatches + " disease matches from " + lineCount + " line file.");
+        LOG.info("Found " + diseaseMatches + " to " + diseaseNumbers.size() + " unique diseases from " + lineCount + " line file.");
     }
 
     private String resolveGene(String fromFile) {
@@ -223,6 +277,7 @@ public class OmimConverter extends BioFileConverter
 
     private void processPubmedCitedFile(Reader reader) throws IOException, ObjectStoreException {
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+
         List<String> currentPubs = new ArrayList<String>();
         String mimNumber = null;
         while (lineIter.hasNext()) {
@@ -230,13 +285,19 @@ public class OmimConverter extends BioFileConverter
             mimNumber = bits[0];
             String pos = bits[1];
             String pubmedId = bits[2];
-            if ("1".equals(pos)) {
-                addPubCollection(mimNumber, currentPubs);
-                currentPubs = new ArrayList<String>();
+            // all the diseases we need are already create from morbidmap file
+            if (diseases.containsKey(mimNumber)) {
+                // are we on the first row for a particular MIM number
+                if ("1".equals(pos)) {
+                    addPubCollection(mimNumber, currentPubs);
+                    currentPubs = new ArrayList<String>();
+                }
+                currentPubs.add(getPubId(pubmedId));
             }
-            currentPubs.add(getPubId(pubmedId));
         }
-        addPubCollection(mimNumber, currentPubs);
+        if (diseases.containsKey(mimNumber)) {
+            addPubCollection(mimNumber, currentPubs);
+        }
     }
 
     private void addPubCollection(String mimNumber, List<String> pubs) {
