@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -23,7 +24,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.api.tracker.TemplateTrack;
+import org.intermine.api.tracker.TemplateTracker;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -34,7 +35,8 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class BeginAction extends InterMineAction
 {
-    /**
+    private static final Logger LOG = Logger.getLogger(TemplateTracker.class);
+     /**
      * Either display the query builder or redirect to project.sitePrefix.
      *
      * @param mapping
@@ -82,13 +84,18 @@ public class BeginAction extends InterMineAction
 
         /*most popular template*/
         TrackerDelegate trackerDelegate = im.getTrackerDelegate();
+        trackerDelegate.setTemplateManager(im.getTemplateManager());
         if (trackerDelegate != null) {
             String templateName = trackerDelegate.getMostPopularTemplate();
             if (templateName != null) {
                 Profile profile = SessionMethods.getProfile(session);
                 TemplateQuery template = im.getTemplateManager()
                                          .getTemplate(profile, templateName, Scope.ALL);
-                request.setAttribute("mostPopularTemplate", template.getTitle());
+                if (template != null) {
+                    request.setAttribute("mostPopularTemplate", template.getTitle());
+                } else {
+                    LOG.error("The most popular template " + templateName + "is not a public");
+                }
             }
         }
 
