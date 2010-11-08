@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
+import org.intermine.api.template.TemplateManager;
 
 /**
  * Class for tracking the templates execution by the users. When a user executes a template,
@@ -38,6 +39,7 @@ public class TemplateTracker extends TrackerAbstract
     private static TemplateTracker templateTracker = null;
     private static final String TRACKER_NAME = "TemplateTracker";
     private static TemplatesExecutionMap templatesExecutionCache;
+    private TemplateManager templateManager;
 
     /**
      * Build a template tracker
@@ -71,7 +73,7 @@ public class TemplateTracker extends TrackerAbstract
     }
 
     /**
-     * Load the tracks retrieved from the database into TemplateExecutionMap object, object containi
+     * Load the tracks retrieved from the database into TemplateExecutionMap object
      */
     private void loadTemplatesExecutionCache() {
         Statement stm = null;
@@ -87,8 +89,6 @@ public class TemplateTracker extends TrackerAbstract
             TemplateTrack tt;
             while (rs.next()) {
                 tt =  new TemplateTrack(rs.getString(1),
-                          (rs.getString(4) != null && rs.getString(4).equals(TagNames.IM_PUBLIC))
-                          ? true : false,
                           rs.getString(2),
                           rs.getString(3));
                 templatesExecutionCache.addExecution(tt);
@@ -98,6 +98,14 @@ public class TemplateTracker extends TrackerAbstract
         } finally {
             releaseResources(rs, stm);
         }
+    }
+
+    /**
+     * Set the TemplateManager used to retrieve the global templates
+     * @param templateManager the template manager
+     */
+    public void setTemplateManager(TemplateManager templateManager) {
+        this.templateManager = templateManager;
     }
 
     /**
@@ -113,7 +121,7 @@ public class TemplateTracker extends TrackerAbstract
         String userName = (profile != null && profile.getUsername() != null)
                           ? profile.getUsername()
                           : "";
-        TemplateTrack templateTrack = new TemplateTrack(templateName, isPublic,
+        TemplateTrack templateTrack = new TemplateTrack(templateName,
                                       userName, sessionIdentifier, System.currentTimeMillis());
         if (templateTracker  != null) {
             templateTracker.storeTrack(templateTrack);
@@ -152,7 +160,7 @@ public class TemplateTracker extends TrackerAbstract
      */
     public List<String> getMostPopularTemplateOrder(String userName, String sessionId) {
         List<String> mostPopularTemplateOrder = new ArrayList<String>();
-        Map<String, Double> templateLnRank = getLnMap(userName, sessionId, false);
+        Map<String, Double> templateLnRank = getLogarithmMap(userName, sessionId);
         //create an entry list ordered
         List<Entry<String, Double>> listOrdered =
             new LinkedList<Entry<String, Double>>(templateLnRank.entrySet());
@@ -198,15 +206,16 @@ public class TemplateTracker extends TrackerAbstract
     /**
      * Return the rank for each template. The rank represents a relationship between the templates
      * executions; a template with rank 1 has been executed more than a template with rank 2. The
-     * rank is calculated by summing the logarithm of the templates executions launched by the user
-     * if the user is logged in, or otherwise, by summing the ln of the templates executions during
-     * the same http session. The function is called only by the super user
-     * @param userName the super user name
+     * rank is calculated by summing the logarithm of the templates executions launched by the
+     * single users, if the user is logged in, or otherwise, by summing the logarithm of the
+     * templates executions during the same http session. The function is called only by the
+     * super user
      * @return map with key the template name and rank
      */
-    public Map<String, Integer> getRank(String userName) {
+    public Map<String, Integer> getRank() {
         Map<String, Integer> templateRank = new HashMap<String, Integer>();
-        Map<String, Double> templateMergedRank = getLnMap(userName, null, true);
+        Map<String, Double> templateMergedRank = templatesExecutionCache.getLogarithmMap(null,
+                                                                              templateManager);
 
         //order the templateMergedRank by value descending
         List<Entry<String, Double>> listOrdered =
@@ -233,21 +242,25 @@ public class TemplateTracker extends TrackerAbstract
 
     /**
      * Return a map containing the logarithm of accesses for each template. The map is obtained
-     * merging the map of logarithm of accesses for user and the map of logarithm of accesses for
-     * the same session
+     * merging the map of logarithm of accesses for single users and the map of logarithm of
+     * accesses for the single sessions
      * @param userName the user name
      * @param sessionId the http session identifier
-     * @param isSuperUser true if the superUser is logged
      * @return map of logarithm of accesses
      */
-    public Map<String, Double> getLnMap(String userName, String sessionId, boolean isSuperUser) {
-        Map<String, Double> templateUserLn = new HashMap<String, Double>();
-        Map<String, Double> templateAnonymousLn = new HashMap<String, Double>();
-        templateUserLn = templatesExecutionCache.getLnUserMap(userName, isSuperUser);
-        templateAnonymousLn = templatesExecutionCache.getLnAnonymousMap(sessionId);
-
-        Map<String, Double> templateMergedLn = mergeMap(templateUserLn, templateAnonymousLn);
-        return templateMergedLn;
+    public Map<String, Double> getLogarithmMap(String userName, String sessionId) {
+        Map<String, Double> logarithmMap;
+        if (userName == null && sessionId == null) {
+            logarithmMap = templatesExecutionCache.getLogarithmMap(null, templateManager);
+        } else {
+            Map<String, Double> executionsByUser = new HashMap<String, Double>();
+            Map<String, Double> executionsBySessionId = new HashMap<String, Double>();
+            executionsByUser = templatesExecutionCache.getLogarithmMap(userName, templateManager);
+            executionsBySessionId = templatesExecutionCache.getLogarithmMap(sessionId,
+                                                                            templateManager);
+            logarithmMap = mergeMap(executionsByUser, executionsBySessionId);
+        }
+        return logarithmMap;
     }
 
     /**
