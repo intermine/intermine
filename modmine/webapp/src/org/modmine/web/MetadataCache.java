@@ -203,7 +203,7 @@ public final class MetadataCache
      */
     public static synchronized Map<Integer, Set<ResultFile>> getSubmissionFiles(ObjectStore os) {
         if (submissionFilesCache == null) {
-            readSubmissionCollections(os);
+            readSubmissionFiles(os);
         }
         return submissionFilesCache;
     }
@@ -254,7 +254,7 @@ public final class MetadataCache
      */
     public static synchronized Map<Integer, Integer> getFilesPerSubmission(ObjectStore os) {
         if (submissionFilesCache == null) {
-            readSubmissionCollections(os);
+            readSubmissionFiles(os);
         }
         filesPerSubmissionCache = new HashMap<Integer, Integer>();
 
@@ -277,7 +277,7 @@ public final class MetadataCache
     public static synchronized List<ResultFile> getFilesByDccId(ObjectStore os,
             Integer dccId) {
         if (submissionFilesCache == null) {
-            readSubmissionCollections(os);
+            readSubmissionFiles(os);
         }
         return new ArrayList<ResultFile>(submissionFilesCache.get(dccId));
     }
@@ -1320,7 +1320,7 @@ public final class MetadataCache
 
 
     // TODO GIVE THIS METHOD A BETTER NAME
-    private static void readSubmissionCollections(ObjectStore os) {
+    private static void readSubmissionFiles(ObjectStore os) {
         //
         long startTime = System.currentTimeMillis();
         try {
@@ -1590,6 +1590,15 @@ public final class MetadataCache
             files = m.get(key);
         }
         if (!files.contains(value)) {
+            
+            // check if same name
+            for (ResultFile file : files) {
+                if (file.getName().equals(value.getName())) {
+                    LOG.info("DUPLICATED FILE " + value.getName() + " - ids: in " + value.getId()
+                            + " dup " + file.getId());                    
+                    return;
+                }
+            }
             files.add(value);
             m.put(key, files);
         }
