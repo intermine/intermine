@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.template.TemplateManager;
 
 /**
  * Intermediate class which decouples the tracker components from the code that uses them.
@@ -45,6 +46,11 @@ public class TrackerDelegate
         return trackers;
     }
 
+    public void setTemplateManager(TemplateManager templateManager) {
+        if (templateTracker != null) {
+            templateTracker.setTemplateManager(templateManager);
+        }
+    }
     /**
      * Store into the database the template execution by the user specified in input
      * @param templateName the template name
@@ -110,9 +116,9 @@ public class TrackerDelegate
      * Return the rank associated to the templates
      * @return map with key the template name and value the rank associated
      */
-    public Map<String, Integer> getRank(String userName) {
+    public Map<String, Integer> getRank() {
         if (templateTracker != null) {
-            return templateTracker.getRank(userName);
+            return templateTracker.getRank();
         }
         return null;
     }

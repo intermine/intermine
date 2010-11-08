@@ -12,171 +12,78 @@ package org.intermine.api.tracker;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplateQuery;
+
 /**
- * Class for saving the template executions into the memory
+ * Class for saving the template executions into the memory. The template executions are saved into
+ * an Map containing as a value an hashmap having as a key the user's name (or the session
+ * identifier) and as a value the number of executions for that user's name (or session identifier)
  * @author dbutano
  */
 public class TemplatesExecutionMap
 {
-    private Map<String, Map<String, Integer>> executionMapByUser =
+    private Map<String, Map<String, Integer>> templateExecutions =
                                               new HashMap<String, Map<String, Integer>>();
-    private Map<String, Map<String, Integer>> privateExecutionMapByUser =
-                                              new HashMap<String, Map<String, Integer>>();
-    private Map<String, Map<String, Integer>> executionMapByAnonymous =
-                                              new HashMap<String, Map<String, Integer>>();
+
     /**
-     * Add a new template track into the memory
+     * Add a new template track into the map
      * @param templateTrack the template track to add
      */
     public void addExecution(TemplateTrack templateTrack) {
-        if (!"".equals(templateTrack.getUserName())) {
-            if (templateTrack.isTemplatePublic()) {
-                addExecutionByUser(templateTrack.getTemplateName(), templateTrack.getUserName());
-            } else {
-                addPrivateExecutionByUser(templateTrack.getTemplateName(),
-                                          templateTrack.getUserName());
-            }
+        String executionKey = (templateTrack.getUserName() != null &&
+                              !"".equals(templateTrack.getUserName()))
+                              ? templateTrack.getUserName()
+                              : templateTrack.getSessionIdentifier();
+        String templateName = templateTrack.getTemplateName();
+        Map<String, Integer> execution;
+        if (!templateExecutions.containsKey(templateName)) {
+            execution = new HashMap<String, Integer>();
+            execution.put(executionKey, 1);
+            templateExecutions.put(templateName, execution);
         }
         else {
-            addExecutionBySessionIdentifier(templateTrack.getTemplateName(),
-                                            templateTrack.getSessionIdentifier());
-        }
-    }
-
-    /**
-     * Add a new template track corresponding to an execution of a public template launched
-     * by a logged user.
-     * @param template the template's name executed
-     * @param userName the user's name logged
-     */
-    private synchronized void addExecutionByUser(String template, String userName) {
-        Map<String, Integer> executionByUser;
-        if (!executionMapByUser.containsKey(template)) {
-            executionByUser = new HashMap<String, Integer>();
-            executionByUser.put(userName, 1);
-            executionMapByUser.put(template, executionByUser);
-        }
-        else {
-            executionByUser = executionMapByUser.get(template);
-            if (!executionByUser.containsKey(userName)) {
-                executionByUser.put(userName, 1);
+            execution = templateExecutions.get(templateName);
+            if (!execution.containsKey(executionKey)) {
+                execution.put(executionKey, 1);
             } else {
-                executionByUser.put(userName, executionByUser.get(userName).intValue() + 1);
-            }
-        }
-    }
-
-    /**
-     * Add a new template track corresponding to an execution of a private template launched
-     * by a logged user.
-     * @param template the template's name executed
-     * @param userName the user's name logged
-     */
-    private synchronized void addPrivateExecutionByUser(String template, String userName) {
-        Map<String, Integer> executionByUser;
-        if (!privateExecutionMapByUser.containsKey(template)) {
-            executionByUser = new HashMap<String, Integer>();
-            executionByUser.put(userName, 1);
-            privateExecutionMapByUser.put(template, executionByUser);
-        }
-        else {
-            executionByUser = privateExecutionMapByUser.get(template);
-            if (!executionByUser.containsKey(userName)) {
-                executionByUser.put(userName, 1);
-            } else {
-                executionByUser.put(userName, executionByUser.get(userName).intValue() + 1);
-            }
-        }
-    }
-
-    /**
-     * Add a new template track corresponding to an execution of a template launched
-     * by an user not logged.
-     * @param sessionId the http session identifier within the template is executed
-     * @param userName the user's name logged
-     */
-    private synchronized void addExecutionBySessionIdentifier(String template, String sessionId) {
-        Map<String, Integer> executionBySessionIdentifier;
-        if (!executionMapByAnonymous.containsKey(template)) {
-            executionBySessionIdentifier = new HashMap<String, Integer>();
-            executionBySessionIdentifier.put(sessionId, 1);
-            executionMapByAnonymous.put(template, executionBySessionIdentifier);
-        }
-        else {
-            executionBySessionIdentifier = executionMapByAnonymous.get(template);
-            if (!executionBySessionIdentifier.containsKey(sessionId)) {
-                executionBySessionIdentifier.put(sessionId, 1);
-            } else {
-                executionBySessionIdentifier.put(sessionId,
-                    executionBySessionIdentifier.get(sessionId).intValue() + 1);
+                execution.put(executionKey, execution.get(executionKey).intValue() + 1);
             }
         }
     }
 
     /**
      * Return a map containing the logarithm's sum of the templates executions launched by
-     * the same users. If the user name is specified, we only consider the templates executed by
-     * the user.
-     * @param userName the user's name
+     * the same users or during the same sessions. If the user name is specified, we only
+     * consider the templates executed by the user specified.
+     * @param executionKey the user's name or the session identifier
+     * @param templateManager the template manager used to retrieve the global templates
      * @return map having as key the template's name and as value the logarithm sum
      */
-    public Map<String, Double> getLnUserMap(String userName, boolean isSuperUser) {
-        Map<String, Double> lnUserMap = new HashMap<String, Double>();
-        if (userName == null || (userName != null && isSuperUser)) {
-            for (String templateName : executionMapByUser.keySet()) {
-                Map<String, Integer> execution = executionMapByUser.get(templateName);
-                double accessLn = 0;
-                for (String user : execution.keySet()) {
-                    accessLn = accessLn + Math.log(execution.get(user) + 1);
+    public Map<String, Double> getLogarithmMap(String executionKey,
+                                               TemplateManager templateManager) {
+        Map<String, Double> logarithmMap = new HashMap<String, Double>();
+        if (executionKey == null) {
+            Map<String, TemplateQuery> publicTemplates = templateManager.getValidGlobalTemplates();
+            for (String templateName : templateExecutions.keySet()) {
+                if (publicTemplates.containsKey(templateName)) {
+                    Map<String, Integer> execution = templateExecutions.get(templateName);
+                    double accessLn = 0;
+                    for (String key : execution.keySet()) {
+                        accessLn = accessLn + Math.log(execution.get(key) + 1);
+                    }
+                    logarithmMap.put(templateName, accessLn);
                 }
-                lnUserMap.put(templateName, accessLn);
             }
         } else {
-            for (String templateName : executionMapByUser.keySet()) {
-                Map<String, Integer> execution = executionMapByUser.get(templateName);
-                if (execution.containsKey(userName)) {
-                    double accessLn = Math.log(execution.get(userName) + 1);
-                    lnUserMap.put(templateName, accessLn);
-                }
-            }
-            for (String templateName : privateExecutionMapByUser.keySet()) {
-                Map<String, Integer> execution = privateExecutionMapByUser.get(templateName);
-                if (execution.containsKey(userName)) {
-                    double accessLn = Math.log(execution.get(userName) + 1);
-                    lnUserMap.put(templateName, accessLn);
+            for (String templateName : templateExecutions.keySet()) {
+                Map<String, Integer> execution = templateExecutions.get(templateName);
+                if (execution.containsKey(executionKey)) {
+                    double accessLn = Math.log(execution.get(executionKey) + 1);
+                    logarithmMap.put(templateName, accessLn);
                 }
             }
         }
-        return lnUserMap;
-    }
-
-    /**
-     * Return a map containing the logarithm's sum of the templates executed during
-     * the same sessions. Id the sessionId is specified, we only consider the template
-     * executed during that session.
-     * @param sessionId the session id
-     * @return map having as key the template's name and as value the logarithm sum
-     */
-    public Map<String, Double> getLnAnonymousMap(String sessionId) {
-        Map<String, Double> lnAnonymousMap = new HashMap<String, Double>();
-        if (sessionId == null) {
-            for (String templateName : executionMapByAnonymous.keySet()) {
-                Map<String, Integer> execution = executionMapByAnonymous.get(templateName);
-                double accessLn = 0;
-                for (String session : execution.keySet()) {
-                    accessLn = accessLn + Math.log(execution.get(session) + 1);
-                }
-                lnAnonymousMap.put(templateName, accessLn);
-            }
-        } else {
-            for (String templateName : executionMapByAnonymous.keySet()) {
-                Map<String, Integer> execution = executionMapByAnonymous.get(templateName);
-                if (execution.containsKey(sessionId)) {
-                    double accessLn = Math.log(execution.get(sessionId) + 1);
-                    lnAnonymousMap.put(templateName, accessLn);
-                }
-            }
-        }
-        return lnAnonymousMap;
+        return logarithmMap;
     }
 }
