@@ -88,6 +88,7 @@
 
     <source name="ensembl" type="ensembl">
      <property name="src.data.dir" location="/shared/data/ensembl/current"/>
+     <property name="src.data.dir.includes" value="7165.xml"/>
     </source>
 
     <source name="interpro" type="interpro">
@@ -473,7 +474,7 @@
 
     <source name="reactome" type="biopax">
       <property name="src.data.dir" location="/shared/data/biopax/reactome/current/not-curated"/>
-      <property name="biopax.organisms" value="7227 6239"/>
+      <property name="biopax.organisms" value="7227 6239 4932"/>
       <property name="biopax.datasourcename" value="Reactome"/>
       <property name="biopax.datasetname" value="Reactome data set"/>
       <property name="biopax.curated" value="false"/>
@@ -481,26 +482,12 @@
 
     <source name="reactome-curated" type="biopax">
       <property name="src.data.dir" location="/shared/data/biopax/reactome/current/curated"/>
-      <property name="biopax.organisms" value="7227 6239"/>
+      <property name="biopax.organisms" value="7227 6239 4932"/>
       <property name="biopax.datasourcename" value="Reactome"/>
       <property name="biopax.datasetname" value="FlyReactome data set"/>
       <property name="biopax.curated" value="true"/>
     </source>
 
-    <source name="reactome-yeast" type="biopax">
-      <property name="src.data.dir" location="/shared/data/biopax/reactome/current/not-curated"/>
-      <property name="biopax.organisms" value="4932"/>
-      <property name="biopax.datasourcename" value="Reactome"/>
-      <property name="biopax.datasetname" value="Reactome data set"/>
-      <property name="biopax.curated" value="false"/>
-    </source>
-    <source name="reactome-yeast-curated" type="biopax">
-      <property name="src.data.dir" location="/shared/data/biopax/reactome/current/curated"/>
-      <property name="biopax.organisms" value="4932"/>
-      <property name="biopax.datasourcename" value="Reactome"/>
-      <property name="biopax.datasetname" value="FlyReactome data set"/>
-      <property name="biopax.curated" value="true"/>
-    </source>
     <source name="bdgp-insitu" type="bdgp-insitu">
       <property name="src.data.dir" location="/shared/data/bdgp-insitu/current"/>
       <property name="src.data.dir.includes" value="*annot.csv"/>
