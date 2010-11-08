@@ -46,8 +46,8 @@ ul#nav li#mymine{background:url(img/menu-gray-hover-left.png) repeat-x top;}
 ul#nav li#mymine a,ul#nav a:hover,#submenu.submenu_mymine form{color:#FFF;}
 ul#nav li.activelink{background:url(img/menu-orange-left.png) repeat-x top;}
 ul#submenulist{color:#EF5900;}
-ul#submenulist li a{color:#4B3F4B;font-weight:700;text-decoration:none;padding:0 6px;}
-ul#submenulist li a:hover{color:#4B3F4B;font-weight:700;text-decoration:underline;}
+ul#submenulist li a{color:#4B3F4B;font-weight:bold;text-decoration:none;padding:0 6px;}
+ul#submenulist li a:hover{color:#4B3F4B;font-weight:bold;text-decoration:underline;}
 ul#submenulist li#subactive_bag, ul#submenulist li#subactive_api{color:#4B3F4B;font-weight:700;padding:0 6px;}
 
 /* background */
@@ -124,6 +124,16 @@ div.resultsPage table.results { border:1px solid #DFDFDF; border-left:0; margin-
 	background-color:#FFFBD8; border-bottom:1px solid #E3D85A; }
 #all_templates_template_container.wsListContainer u { text-decoration:none; } /* haha */
 
+/* my lists */
+#all_bag_bag_container.wsListContainer #all_bag_bag_ws_list.wsList div.wsLine_my,
+#all_bag_bag_container.wsListContainer #all_bag_bag_ws_list.wsList div.wsLine_my_act {
+	background:#FFFFFC url("../../images/icons/briefcase-brown-16.png") no-repeat 910px 10px; border-bottom:1px solid #E3DFC3; }
+#all_bag_bag_container.wsListContainer #all_bag_bag_ws_list.wsList div.wsLine_my a.listTitle,
+#all_bag_bag_container.wsListContainer #all_bag_bag_ws_list.wsList div.wsLine_my_act a.listTitle { color:#E94F00 !important; }
+#all_bag_bag_container.wsListContainer #all_bag_bag_ws_list.wsList div.wsLine_my_act {
+	background-color:#FFFBD8; border-bottom:1px solid #E3D85A; }
+#all_bag_bag_container.wsListContainer u { text-decoration:none; } /* haha */
+
 /* bochs theme */
 div.gradientbox { border:1px solid #DFDFDF; background:url("gray_grad.png") repeat-x scroll 0 0 transparent; }
 div.gradientbox a, div.gradientbox a:hover { color:#1F7492 !important; }
@@ -134,3 +144,8 @@ div.filterBar { border:none !important; background:none !important; }
 
 #ws_all_templates_template a.anchor { background:url("../../images/icons/go-top-16.png") no-repeat left; padding-left:20px; line-height:40px; }
 	#ws_all_templates_template a.anchor img { display:none; }
+
+/* context help "?" */
+a.contextHelpSmall { background:url("icons/help.png") no-repeat left; padding:6px 5px 6px 25px !important; }
+	p.alignright a.contextHelpSmall { display:none; } /* hide context help in breadcrumbs */
+	#navtrail p.alignright { margin-right:-10px; }

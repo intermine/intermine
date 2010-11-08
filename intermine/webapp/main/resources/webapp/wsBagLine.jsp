@@ -42,7 +42,7 @@
     <c:otherwise>
         <c:set var="nameForURL"/>
         <str:encodeUrl var="nameForURL">${webSearchable.name}</str:encodeUrl>
-       <html:link action="/bagDetails?scope=${scope}&amp;bagName=${nameForURL}">
+       <html:link styleClass="listTitle" action="/bagDetails?scope=${scope}&amp;bagName=${nameForURL}">
          <%--  <img src="images/bag_ico.png" width="13" height="13" alt="View Bag"> --%>
           <c:out value="${webSearchable.name}"/>
         </html:link>
