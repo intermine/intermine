@@ -309,7 +309,6 @@ public final class MetadataCache
         return featDescriptionCache;
     }
 
-
     /**
      * Fetch a map from feature type to count for a given submission.
      * @param os the objectStore
@@ -324,8 +323,6 @@ public final class MetadataCache
         return submissionFeatureCounts.get(dccId);
     }
 
-    // TODO ADD A NEW METHOD TO RUN A QUERY FOR ALL SUBMISSIONS AND POPULATE submissionIdCache, CALL
-    // THAT METHOD HERE INSTEAD OF readSubmissionFeatureCounts
     /**
      * Fetch a submission by the modENCODE submission ids
      * @param os the objectStore
@@ -336,7 +333,7 @@ public final class MetadataCache
     public static synchronized Submission getSubmissionByDccId(ObjectStore os, Integer dccId)
         throws ObjectStoreException {
         if (submissionIdCache == null) {
-            readSubmissionFeatureCounts(os);
+            readSubmissionIds(os);
         }
         return (Submission) os.getObjectById(submissionIdCache.get(dccId));
     }
@@ -356,6 +353,16 @@ public final class MetadataCache
         return experimentCache.get(name);
     }
 
+    
+    /**
+     * Set the map of GBrowse tracks.
+     *
+     * @param tracks map of dccId:GBrowse tracks
+     */
+    public static synchronized void setGBrowseTracks(Map<Integer, List<GBrowseTrack>> tracks) {
+        MetadataCache.class.notifyAll();
+        submissionTracksCache = tracks;
+    }
 
     //======================
 
@@ -365,15 +372,6 @@ public final class MetadataCache
             readGBrowseTracks();
             lastTrackCacheRefresh = System.currentTimeMillis();
         }
-    }
-    /**
-     * Set the map of GBrowse tracks.
-     *
-     * @param tracks map of dccId:GBrowse tracks
-     */
-    public static synchronized void setGBrowseTracks(Map<Integer, List<GBrowseTrack>> tracks) {
-        MetadataCache.class.notifyAll();
-        submissionTracksCache = tracks;
     }
 
     /**
@@ -1050,13 +1048,10 @@ public final class MetadataCache
         return metadataProperties;
     }
 
-    // TODO submissionIdCache CAN'T BE POPULATED FROM THIS METHOD, ADD A NEW METHOD TO QUERY FOR
-    // SUBMISSIONS AND CACHE THEIR IDS
     private static void readSubmissionFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
 
         submissionFeatureCounts = new LinkedHashMap<Integer, Map<String, Long>>();
-        submissionIdCache = new HashMap<Integer, Integer>();
 
         Properties props = new Properties();
         try {
@@ -1087,6 +1082,36 @@ public final class MetadataCache
         LOG.info("Primed submissionFeatureCounts cache, took: " + timeTaken + "ms size = "
                 + submissionFeatureCounts.size());
     }
+    
+    
+    private static void readSubmissionIds(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+
+        submissionIdCache = new HashMap<Integer, Integer>();
+        
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qcSub = new QueryClass(Submission.class);
+        q.addFrom(qcSub);
+        q.addToSelect(qcSub);
+        q.addToOrderBy(qcSub);
+
+        Results results = os.execute(q);
+
+        // for each classes set the values for jsp
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+            (Iterator) results.iterator();
+        while (iter.hasNext()) {
+            ResultsRow<?> row = iter.next();
+            Submission sub = (Submission) row.get(0);
+            submissionIdCache.put(sub.getdCCid(), sub.getId());
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed submissions cache, took: " + timeTaken
+                + "ms size = " + submissionIdCache.size());
+    }
+
+    
 
     // TODO REPLACE THIS, READ FROM PROPS WITH ModMineCacheKeys.SUB_FEATURE_EXPRESSION_LEVEL_COUNT
     private static void readSubmissionFeatureExpressionLevelCounts(ObjectStore os) {
