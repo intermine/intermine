@@ -211,7 +211,7 @@ public final class CreateModMineMetaDataCache
             (Iterator) results.iterator();
         while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
-            String expName = (String) row.get(0);
+            String expName = fixSpaces((String) row.get(0));
             Class<?> feat = (Class<?>) row.get(1);
             Long count = (Long) row.get(2);
 
@@ -221,6 +221,16 @@ public final class CreateModMineMetaDataCache
         }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Read experiment feature counts, took: " + timeTaken + "ms");
+    }
+
+    /**
+     * to escape spaces in the key of a property file
+     * @param expName
+     * @return exp name with spaces escaped
+     */
+    private static String fixSpaces(String expName) {
+        String expNameFixed=expName.replace(" " , "\\ ");
+        return expNameFixed;
     }
 
     private static void readSubmissionFeatureExpressionLevelCounts(ObjectStore os,
@@ -360,7 +370,7 @@ public final class CreateModMineMetaDataCache
         @SuppressWarnings("unchecked") Iterator<ResultsRow> iter = (Iterator) results.iterator();
         while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
-            String expName = (String) row.get(0);
+            String expName = fixSpaces((String) row.get(0));
             Class<?> feat = (Class<?>) row.get(1);
             Long count = (Long) row.get(2);
 
