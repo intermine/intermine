@@ -116,7 +116,7 @@
              			(click to see an example)<img src="images/disclosed.gif" title="Click to Show example"/>
            			</html:link>
      			</c:if>
-   				<html:textarea styleId="pasteInput" property="text" rows="10" cols="60"
+   				<html:textarea styleId="pasteInput" property="text" rows="10"
    				onclick="if(this.value != ''){switchInputs('paste','file');}else{openInputs();}"
    				onkeyup="if(this.value != ''){switchInputs('paste','file');}else{openInputs();}" />
    			</td>

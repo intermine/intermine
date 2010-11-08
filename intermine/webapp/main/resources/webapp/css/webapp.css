@@ -539,7 +539,7 @@ input#submitClassSelect { margin-top:5px; }
 	#all_templates_template_container.wsListContainer { display:inline; }
 
 /* bagBuild.jsp create a new list table */
-table#buildbaglist { width:89%; margin-bottom:10px; }
+table#buildbaglist { width:500px; margin-bottom:10px; }
 table#buildbaglist td { width:50%; padding-bottom:8px; vertical-align:top; }
 table#buildbaglist td.label { padding-right:14px; width:auto; }
 table#buildbaglist td label { font-size:1.2em; font-weight:bold; }
@@ -596,8 +596,8 @@ label { vertical-align:top; padding-left:2px; }
 #menucontainer ul#nav li#mymine a span { background:url(../images/icons/person-ico.png) no-repeat left;padding-left:20px; }
 
 /* mymine submenu */
-ul#submenulist li { margin-right:5px; padding-left:6px; border-left:1px solid #DADADA; }
-ul#submenulist li span { margin-left:6px; text-decoration:underline; }
+ul#submenulist li { margin-right:5px; padding-left:6px; }
+ul#submenulist li span { margin-left:6px; }
 ul#submenulist li.first, ul#submenulist li a, ul#submenulist li.first a { border:none; }
 #submenu.submenu_mymine ul#submenulist li#subactive_mymine, ul#submenulist li#subactive_bag { text-decoration:none !important; }
 
@@ -690,3 +690,12 @@ div.keywordSearch div.form { background:#FFFBD8; border:1px solid #E3D85A; width
 	div.keywordSearch div.examples ul { list-style:square; margin-left:14px; }
 	div.keywordSearch div.examples ul li { margin-bottom:6px; }
 	div.keywordSearch div.form form input[type="text"] { padding:4px 2px; font-size:14px; }
+
+/* lists view */
+select#extraConstraintSelect { vertical-align:middle; }
+
+/* context messages */
+.topBar.info { background:#E6F7FE url("../images/icons/information.png") no-repeat 10px 6px; border:1px solid #BEDCE4; margin:10px 10px 0 10px;
+	padding:6px 6px 6px 34px; }
+	.topBar.info #ctxHelpTxt { display:inline; }
+	.topBar.info a { float:right; }

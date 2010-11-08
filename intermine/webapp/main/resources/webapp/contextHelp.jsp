@@ -9,22 +9,10 @@
     style="display:none"
   </c:if>
 >
-  <div class="topBar contextHelp"> <%-- IE table width bug --%>
-    <table width="100%" cellspacing="0" border="0" cellpadding="0">
-    <tr>
-      <td valign="top">
-        <div id="ctxHelpTxt">${param['ctxHelpTxt']}</div>
-      </td>
-      <td align="right" valign="top">
-        <c:if test="${empty param['ctxHelpTxt']}">
-          <a href="#" onclick="javascript:jQuery('#ctxHelpDiv').hide('slow');return false">
-            <img border="0" src="images/cross.gif" title="x"/>
-          </a>
-        </c:if>
-      </td>
-    </tr>
-    </table>
-  </div>
-  <br/>
+
+	<div class="topBar info">
+		<div id="ctxHelpTxt">${param['ctxHelpTxt']}</div>
+		<a href="#" onclick="javascript:jQuery('#ctxHelpDiv').hide('slow');return false">Close</a>
+	</div>
+
 </div>
-<!-- /contextHelp.jsp -->

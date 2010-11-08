@@ -12,7 +12,6 @@
 <!--[if lt IE 8]><link rel="stylesheet" href="/metabolicmine/model/public/css/ie.css" type="text/css" media="screen, projection"/><![endif]-->
 
 <div id="corner">&nbsp;</div>
-<div id="help"><a href="#" onclick="showContactForm();return false;" title="Need help?">&nbsp;</a></div>
 
 <script type="text/javascript">
 	// specify what happens to element in a small browser window (better add class than modify from here)
@@ -41,10 +40,9 @@
 	            </div>
 	            <div class="span-8 last">
 			        <h2>First time here?</h2>
-			        <p>Welcome to metabolicMine a place to explore the relation between genes and <u>metabolic diseases</u>.
-			        	Check out lorem ipsum dolor sit if you want to do a tour element sit. You can create a <strong>MyMine
-			            account</strong> and log in to save queries and lists permanently.<br />Dolor sit element rex pitus
-			            grgalis relation if you lorem.</p>
+			        <p>Welcome to <strong>metabolicMine</strong>, an integrated web resource of Data & Tools to support the <u>Metabolic
+			        Disease</u> research community <br>For a basic overview of the site and its features try the <strong>Mini-Tour</strong>
+			        - it takes about ten minutes. If you're short of time, just navigate through our set of <strong>Feature Hints</strong>.</p>
 			        <br />
 			        <a class="button blue" href="<c:url value="/help/begin.html" />"
 			        		onclick="javascript:window.open('<c:url value="/help/begin.html" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
@@ -118,7 +116,7 @@
 	            	<div class="image">
 	                	<img src="images/icons/search-64.png" alt="Search" />
 	                </div>
-	                <h3>Search for gene identifiers</h3>
+	                <h3><a href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=">Search for gene identifiers</a></h3>
 	                <div style="clear:both;"> </div>
 	                <p>Enter a gene, protein, SNP or other identifier [eg.
 	                <a onclick="preFillInput('PPARG');return false;" title="Search for PPARG"
@@ -144,7 +142,7 @@
 	            	<div class="image">
 	                	<img src="images/icons/lists-64.png" alt="Lists" />
 	                </div>
-	                <h3>Query lists of data</h3>
+	                <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">Query lists of data</a></h3>
 	                <div style="clear:both;"> </div>
 					<p>
 					<img src="/metabolicmine/themes/metabolic/thumbs/widget-charts-3.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:10px;" />
@@ -155,7 +153,7 @@
 	                <div class="image">
 	                	<img src="images/icons/templates-64.png" alt="Templates" />
 	                </div>
-	                <h3>Work with template queries</h3>
+	                <h3><a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">Work with template queries</a></h3>
 	                <div style="clear:both;"> </div>
 	                <p>Get started with complex queries using our <strong>pre-defined searches</strong>. These customizable templates have been
 	                designed around common tasks performed by our <strong>biologist community</strong>.To see how they work, why not try a

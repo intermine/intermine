@@ -88,6 +88,11 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <meta content="${WEB_PROPERTIES['meta.description']}" name="description"/>
 <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
 
+<!-- print stylesheet -->
+<c:if test="${pageName == 'bagDetails' || pageName == 'results'}">
+	<link rel="stylesheet" href="<html:rewrite page='/css/print.css'/>" type="text/css" media="print" />
+</c:if>
+
 <title>
   <c:choose>
     <c:when test="${empty pageName}">
