@@ -60,9 +60,9 @@ public final class CreateModMineMetaDataCache
      * Run queries to generate summary information for the modMine database and store resulting
      * properties file in the database.
      * @param os the ObjectStore to query
-     * @throws IllegalAccessException
-     * @throws SQLException
-     * @throws IOException
+     * @throws IllegalAccessException if fields don't exist in data model
+     * @throws SQLException if failure to write properties file to database
+     * @throws IOException if failure serialising properties file
      */
     public static void createCache(ObjectStore os)
         throws IllegalAccessException, SQLException, IOException {
@@ -77,8 +77,6 @@ public final class CreateModMineMetaDataCache
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
         MetadataManager.store(db, MetadataManager.MODMINE_METADATA_CACHE,
                 PropertiesUtil.serialize(props));
-
-        System.out.println(props.toString());
     }
 
     private static void readSubmissionFeatureCounts(ObjectStore os, Properties props)

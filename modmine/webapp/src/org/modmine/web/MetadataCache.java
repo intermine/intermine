@@ -30,6 +30,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.filters.StringInputStream;
+import org.intermine.bio.constants.ModMineCacheKeys;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DatabaseRecord;
 import org.intermine.model.bio.Experiment;
@@ -95,6 +96,8 @@ public final class MetadataCache
     private MetadataCache() {
     }
 
+    // TODO SEPARATE PUBLIC AND PRIVATE METHODS, ALL PUBLIC METHODS SHOULD COME FIRST
+
     /**
      * Fetch experiment details for display.
      * @param os the production objectStore
@@ -106,7 +109,7 @@ public final class MetadataCache
         }
         return new ArrayList<DisplayExperiment>(experimentCache.values());
     }
-    
+
     /**
      * Fetch experiment details for display.
      * @param os the production objectStore
@@ -125,8 +128,8 @@ public final class MetadataCache
      * @param os the production objectStore
      * @return the metadata properties
      */
-    public static synchronized Properties getProperties(ObjectStore os) 
-    throws SQLException, IOException {
+    public static synchronized Properties getProperties(ObjectStore os)
+        throws SQLException, IOException {
         if (metadataProperties == null) {
             readProperties(os);
         }
@@ -134,7 +137,7 @@ public final class MetadataCache
         return metadataProperties;
     }
 
-    
+
     /**
      * Fetch GBrowse tracks per submission for display. This updates automatically from the GBrowse
      * server and refreshes periodically (according to threshold).  When refreshing another process
@@ -222,10 +225,9 @@ public final class MetadataCache
      * Fetch the collection of Expression Level Counts per submission.
      * @param os the production objectStore
      * @return map
-0     */
+     */
     public static synchronized Map<Integer, Map<String, Long>>
     getSubmissionFeatureExpressionLevelCounts(ObjectStore os) {
-
         if (submissionFeatureExpressionLevelCounts == null) {
             readSubmissionFeatureExpressionLevelCounts(os);
         }
@@ -239,7 +241,6 @@ public final class MetadataCache
      */
     public static synchronized Map<String, Map<String, Long>>
     getExperimentFeatureExpressionLevelCounts(ObjectStore os) {
-
         if (experimentFeatureExpressionLevelCounts == null) {
             readExperimentFeatureExpressionLevelCounts(os);
         }
@@ -323,6 +324,8 @@ public final class MetadataCache
         return submissionFeatureCounts.get(dccId);
     }
 
+    // TODO ADD A NEW METHOD TO RUN A QUERY FOR ALL SUBMISSIONS AND POPULATE submissionIdCache, CALL
+    // THAT METHOD HERE INSTEAD OF readSubmissionFeatureCounts
     /**
      * Fetch a submission by the modENCODE submission ids
      * @param os the objectStore
@@ -545,7 +548,9 @@ public final class MetadataCache
         return experimentELevel;
     }
 
-//    /**
+
+    // TODO DELETE THIS, WAS ALREADY COMMENTED OUT
+    //    /**
 //    *
 //    * @param os objectStore
 //    * @return map exp-repository entries
@@ -553,7 +558,6 @@ public final class MetadataCache
 //    public static Map<String, Map<String, Long>>
 //    readExperimentFeatureExpressionLevels(ObjectStore os) {
 //        Map<String, Map<String, Long>> expELevels = new HashMap<String, Map<String, Long>>();
-////TODO
 //        Map<Integer, Map<String, Long>> subELevels = getSubmissionFeatureExpressionLevelCounts(os);
 //
 //        for (DisplayExperiment exp : getExperiments(os)) {
@@ -680,6 +684,8 @@ public final class MetadataCache
                 + experimentCache.size());
     }
 
+
+    // TODO REPLACE THIS, READ FROM PROPS WITH KEY ModMineCacheKeys.EXP_FEATURE_COUNT
     /**
      * The counts are duplicated in the method, see getUniqueExperimentFeatureCounts
      */
@@ -764,6 +770,7 @@ public final class MetadataCache
         return featureCounts;
     }
 
+    // TODO REPLACE THIS METHOD, READ FROM PROPERTIES WITH ModMineCacheKeys.UNIQUE_EXP_FEATURE_COUNT
     /**
      * Method equivalent to getExperimentFeatureCounts but return Unique counts
      *
@@ -869,6 +876,7 @@ public final class MetadataCache
     }
 
 
+    // TODO DELETE THIS, IT ISN'T USED
     /**
      * Method equivalent to getUniqueExperimentFeatureCountsByExpNameSlow but much faster
      *
@@ -969,6 +977,7 @@ public final class MetadataCache
         return featureCounts;
     }
 
+    // TODO DELETE THIS, IT ISN'T USED
     private static void readSubmissionFeatureCountsO(ObjectStore os) {
         long startTime = System.currentTimeMillis();
 
@@ -1035,58 +1044,51 @@ public final class MetadataCache
             MetadataManager.retrieve(db, MetadataManager.MODMINE_METADATA_CACHE);
 
         metadataProperties = new Properties();
-        InputStream objectStoreSummaryPropertiesStream =
-            new StringInputStream(objectSummaryString);
+        InputStream objectStoreSummaryPropertiesStream = new StringInputStream(objectSummaryString);
 
         metadataProperties.load(objectStoreSummaryPropertiesStream);
         return metadataProperties;
     }
 
+    // TODO submissionIdCache CAN'T BE POPULATED FROM THIS METHOD, ADD A NEW METHOD TO QUERY FOR
+    // SUBMISSIONS AND CACHE THEIR IDS
     private static void readSubmissionFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
 
-        String tt = "submissionFeatureCount";
-
         submissionFeatureCounts = new LinkedHashMap<Integer, Map<String, Long>>();
         submissionIdCache = new HashMap<Integer, Integer>();
- 
-//        Properties props = new Properties(PropertiesUtil.stripStart(tt, getProperties(os)));
- 
+
         Properties props = new Properties();
         try {
-            props = PropertiesUtil.stripStart(tt, getProperties(os));
+            props =
+                PropertiesUtil.stripStart(ModMineCacheKeys.SUB_FEATURE_COUNT, getProperties(os));
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             throw new RuntimeException("Some SQL error happened. ", e);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             throw new RuntimeException("Some IO error happened. ", e);
         }
 
-        final String SEPARATOR = "\\.";
-
         for (Object key : props.keySet()) {
-                String keystring = (String) key;
-                
-                String qq = key.toString();
-                
-                String[] token = qq.split(SEPARATOR);
-                Integer dccId = Integer.parseInt(token[0]);
-                String feature = token[1];
-                Long count = Long.parseLong((String) props.get(key));
+            String keyString = (String) key;
 
-                Map<String, Long> featureCounts = submissionFeatureCounts.get(dccId);
-                if (featureCounts == null) {
-                    featureCounts = new HashMap<String, Long>();
-                    submissionFeatureCounts.put(dccId, featureCounts);
-                }
-                featureCounts.put(feature, count);
+            String[] token = keyString.split("\\.");
+            Integer dccId = Integer.parseInt(token[0]);
+            String feature = token[1];
+            Long count = Long.parseLong((String) props.get(key));
+
+            Map<String, Long> featureCounts = submissionFeatureCounts.get(dccId);
+            if (featureCounts == null) {
+                featureCounts = new HashMap<String, Long>();
+                submissionFeatureCounts.put(dccId, featureCounts);
+            }
+            featureCounts.put(feature, count);
         }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed submissionFeatureCounts cache, took: " + timeTaken + "ms size = "
                 + submissionFeatureCounts.size());
     }
 
+    // TODO REPLACE THIS, READ FROM PROPS WITH ModMineCacheKeys.SUB_FEATURE_EXPRESSION_LEVEL_COUNT
     private static void readSubmissionFeatureExpressionLevelCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
 
@@ -1157,6 +1159,8 @@ public final class MetadataCache
 
     }
 
+    // TODO REMOVE THIS METHOD, ADD NEW METHOD THAT ITERATES THROUGH SUBMISSIONS PER EXPERIMENT AND
+    // SUMS EXPRESSION LEVEL COUNTS PER FEATURE TYPE FROM getSubmissionFeatureExpressionLevelCounts
     private static void readExperimentFeatureExpressionLevelCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
 
@@ -1232,6 +1236,8 @@ public final class MetadataCache
 
     }
 
+    // TODO REPLACE THIS METHOD WITH ONE THAT ITERATES getSubmissionFeatureExpressionLevelCounts
+    // AND SUMS EXPRESSION LEVEL COUNTS FOR THE WHOLE SUBMISSION
     private static void readSubmissionExpressionLevelCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
 
@@ -1268,7 +1274,7 @@ public final class MetadataCache
             ResultsRow<?> row = iter.next();
             Integer dccId = (Integer) row.get(0);
             Long count = (Long) row.get(1);
-            
+
             submissionExpressionLevelCounts.put(dccId, count.intValue());
         }
         long timeTaken = System.currentTimeMillis() - startTime;
@@ -1279,7 +1285,7 @@ public final class MetadataCache
     }
 
 
-    
+    // TODO DELETE THIS, IT'S NEVER CALLED
     private static void readSubmissionExpressionLevelCounts2(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         submissionExpressionLevelCounts = new HashMap<Integer, Integer>();
@@ -1290,7 +1296,7 @@ public final class MetadataCache
         if (submissionFeatureExpressionLevelCounts == null) {
             readSubmissionFeatureExpressionLevelCounts(os);
         }
-        
+
         for (Integer dccId : submissionIdCache.keySet()) {
             Integer count = 0;
             Map<String, Long> featureCounts =
@@ -1305,15 +1311,15 @@ public final class MetadataCache
             }
             submissionExpressionLevelCounts.put(dccId, count);
         }
-        
+
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed submissionExpressionLevelCounts cache, took: " + timeTaken
                 + "ms size = " + submissionExpressionLevelCounts.size());
         LOG.debug("submissionELCounts " + submissionExpressionLevelCounts);
     }
 
-    
-    
+
+    // TODO GIVE THIS METHOD A BETTER NAME
     private static void readSubmissionCollections(ObjectStore os) {
         //
         long startTime = System.currentTimeMillis();
@@ -1343,26 +1349,27 @@ public final class MetadataCache
 
             @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
                 (Iterator) results.iterator();
-            
+
             while (iter.hasNext()) {
                 ResultsRow<?> row = (ResultsRow<?>) iter.next();
-                
+
                 Integer dccId = (Integer) row.get(0);
                 ResultFile file = (ResultFile) row.get(1);
-                
+
                 addToMap(submissionFilesCache, dccId, file);
             }
-            
+
         } catch (Exception err) {
             err.printStackTrace();
         }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed submission collections caches, took: " + timeTaken + "ms    size: files = "
                 + submissionFilesCache.size());
-                
-    
+
+
     }
 
+    // TODO DELETE THIS, WAS ALREADY COMMENTED OUT
 //    private static void readSubmissionExpressionLevels(ObjectStore os) {
 //        //
 //        long startTime = System.currentTimeMillis();
@@ -1388,19 +1395,19 @@ public final class MetadataCache
 //
 //            Results results = os.execute(q);
 //            submissionExpressionLevelCounts = new HashMap<Integer, Integer>();
-//            
+//
 //            @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
 //                (Iterator) results.iterator();
-//            
+//
 //            while (iter.hasNext()) {
 //                ResultsRow<?> row = (ResultsRow<?>) iter.next();
-//                
+//
 //                Integer dccId = (Integer) row.get(0);
 //                ResultFile file = (ResultFile) row.get(1);
-//                
+//
 //                addToMap(submissionExpressionLevelCounts, dccId, file.);
 //            }
-//            
+//
 //        } catch (Exception err) {
 //            err.printStackTrace();
 //        }
@@ -1409,10 +1416,10 @@ public final class MetadataCache
 //                + submissionFilesCache.size() + ", expression levels = "
 //                + submissionExpressionLevelCounts.size());
 ////        LOG.info("Primed submission collections caches, XXXX: " + submissionFilesCache);
-//    
+//
 //    }
 
-    
+    // TODO MOVE THIS QUERY TO CreateModMineMetaDataCache and add value to ModMineCacheKeys
     private static void readSubmissionLocatedFeature(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         submissionLocatedFeatureTypes = new LinkedHashMap<Integer, List<String>>();
@@ -1625,7 +1632,6 @@ public final class MetadataCache
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed GBrowse tracks cache, took: " + timeTaken + "ms  size = "
                 + tracks.size());
-
     }
 
 

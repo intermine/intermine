@@ -40,6 +40,4 @@ public final class ModMineCacheKeys
      */
     public static final String SUB_FEATURE_EXPRESSION_LEVEL_COUNT
         = "submissionFeatureExpressionLevelCount";
-
-
 }
