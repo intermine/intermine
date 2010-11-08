@@ -69,7 +69,7 @@ public class MyMineController extends TilesAction
             if (templateCounter != null) {
                 request.setAttribute("templateCounter", templateCounter);
             }
-            Map<String, Integer> templateRank = im.getTrackerDelegate().getRank(profile.getUsername());
+            Map<String, Integer> templateRank = im.getTrackerDelegate().getRank();
             if (templateRank != null) {
                 request.setAttribute("templateRank", templateRank);
             }
