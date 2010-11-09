@@ -80,13 +80,22 @@
         </a>
       </li>
     </ul>
-    <ul id="loginbar">
+	<ul id="loginbar">
         <li><im:popupHelp pageName="tour/start">Take a tour</im:popupHelp></li>
-        <li>|</li>
-        <c:if test="${!empty PROFILE.username}">
-            <li>${PROFILE.username}&nbsp;|&nbsp;</li>
+        <c:if test="${PROFILE.loggedIn}">
+            <li>
+	            <!-- display (optionally trimmed) username -->
+	            <c:choose>
+	            	<c:when test="${fn:length(PROFILE.username) > 20}">
+	            		<c:out value="${fn:substring(PROFILE.username,0,20)}"/>&hellip;
+	            	</c:when>
+	            	<c:otherwise>
+	            		${PROFILE.username}
+	            	</c:otherwise>
+	            </c:choose>            
+            </li>
         </c:if>
-        <li><im:login/></li>
+        <li class="last"><im:login/></li>
     </ul>
   </div>
 
@@ -120,30 +129,58 @@
         <c:forTokens items="${itemList}" delims=" " var="item" varStatus="counter">
           <c:set var="tabArray" value="${fn:split(item, ':')}" />
           <c:if test="${tabArray[0] == tab}">
-          <c:if test="${count>0}">
-            <li>&nbsp;|&nbsp;</li>
-          </c:if>
           <c:choose>
             <c:when test="${((empty subtabs[subtabName] && count == 0)||(subtabs[subtabName] == tabArray[2])) && (tab == pageName)}">
-              <li id="subactive_${tab}"><fmt:message key="${tabArray[1]}" /></li>
+              <li id="subactive_${tab}"
+              	<c:choose>
+              		<c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
+              		<c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
+              	</c:choose>
+              >
+              <div>
+              	<span><fmt:message key="${tabArray[1]}" /></span>
+              </div>
+              </li>
             </c:when>
             <c:when test="${(tabArray[3] == '1') && (loggedin == false)}">
-              <li>
-                <span onclick="alert('You need to log in'); return false;"><fmt:message key="${tabArray[1]}"/></span>
+              <li
+              	<c:choose>
+              		<c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
+              		<c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
+              	</c:choose>>
+              	<div>
+                <span onclick="alert('You need to log in'); return false;">
+                	<fmt:message key="${tabArray[1]}"/>
+                </span>
+                </div>
               </li>
             </c:when>
             <c:otherwise>
-              <li><a href="/${WEB_PROPERTIES['webapp.path']}/${tab}.do?subtab=${tabArray[2]}"><fmt:message key="${tabArray[1]}"/></a></li>
+              <li
+              	<c:choose>
+              		<c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
+              		<c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
+              	</c:choose>>
+              	<div>
+              	<a href="/${WEB_PROPERTIES['webapp.path']}/${tab}.do?subtab=${tabArray[2]}">
+              		<fmt:message key="${tabArray[1]}"/>
+              	</a>
+              	</div>
+              </li>
             </c:otherwise>
           </c:choose>
           <c:set var="count" value="${count+1}"/>
           </c:if>
         </c:forTokens>
+        <!--
         <c:if test="${pageName == 'begin'}">
           <li>
-            <a href="http://blog.modencode.org/modmine/help">${WEB_PROPERTIES['project.title']} help</a>
+          <div>
+            <a href="${WEB_PROPERTIES['project.sitePrefix']}/what.shtml">What is ${WEB_PROPERTIES['project.title']}?</a>
+           </div>
           </li>
         </c:if>
+         -->
         </ul>
     </div>
   </div>

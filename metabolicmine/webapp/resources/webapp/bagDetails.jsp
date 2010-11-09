@@ -135,7 +135,14 @@
 	<html:form styleId="findInListForm" action="/findInList">
 		<input type="text" name="textToFind" id="textToFind"/>
 		<input type="hidden" name="bagName" value="${bag.name}"/>
-		<html:submit>Go</html:submit>
+		<script type="text/javascript">
+			function showTable() {
+				if (!jQuery(#results).is(":visible")) {
+					jQuery('#results').toggle('slow');
+				}
+			}
+		</script>
+		<html:submit onclick="showTable();return false;">Go</html:submit>
 	</html:form>
 </div>
 
