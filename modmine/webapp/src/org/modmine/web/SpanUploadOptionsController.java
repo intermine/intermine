@@ -63,15 +63,13 @@ public class SpanUploadOptionsController extends TilesAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ObjectStore os = im.getObjectStore();
 
-        final ServletContext servletContext = servlet.getServletContext();
-
         // >>>>> Get data from MetadataCache and CategoryExperiments <<<<<
         Set<String> orgSet = new HashSet<String>();
 
         // Category-Experiment Map
         // Category is ordered
-        Map<String, List<DisplayExperiment>> cagExpMap = CategoryExperiments
-                .getCategoryExperiments(servletContext, os);
+        Map<String, List<DisplayExperiment>> cagExpMap = MetadataCache
+                .getCategoryExperiments(os);
 
         // Experiment-Category Map
         // One experiment can belong to different categories, make cag a list here
