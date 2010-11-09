@@ -52,7 +52,7 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
 
-            if (line.length != 3 || line[0].startsWith("#")) {
+            if (line.length < 3 || line[0].startsWith("#")) {
                 continue;
             }
 
