@@ -37,6 +37,7 @@ public class NcbiGeneConverter extends BioFileConverter
     private Set<String> taxonIds = null;
     
     protected static final Logger LOG = Logger.getLogger(NcbiGeneConverter.class);
+    private Set<String> assignedEnsemblIds = new HashSet<String>();
     
     /**
      * Constructor
@@ -113,7 +114,13 @@ public class NcbiGeneConverter extends BioFileConverter
             // ENSEMBL ID become primaryIdentifier or CrossReference
             Set<String> ensemblIds = parseXrefs(xrefs, "Ensembl");
             if (ensemblIds.size() == 1) {
-                gene.setAttribute("primaryIdentifier", ensemblIds.iterator().next());
+                String ensemblId = ensemblIds.iterator().next();
+                if (assignedEnsemblIds.contains(ensemblId)) {
+                    LOG.info("Ensembl id: " + ensemblId + " is assigned to more than one gene");
+                } else {
+                    gene.setAttribute("primaryIdentifier", ensemblId);
+                    assignedEnsemblIds.add(ensemblId);
+                }
             } else {
                 // we don't want the primaryIdentifier to be blank
                 //gene.setAttribute("primaryIdentifier", gene.getAttribute("symbol").getValue());
