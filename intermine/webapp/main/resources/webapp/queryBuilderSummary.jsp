@@ -128,8 +128,10 @@
                 <c:otherwise>
                   <html:link action="/queryBuilderChange?method=removeNode&amp;path=${path.pathString}"
                            title="${removeNodeTitle}">
-                    <img border="0" src="images/cross.gif" width="13" height="13"
-                       title="${removeNodeTitle}"/>
+                    <c:if test="${path.indentation != 0}">
+	                    <img border="0" src="images/cross.gif" width="13" height="13"
+	                       title="${removeNodeTitle}"/>
+	                </c:if>
                   </html:link>
                 </c:otherwise>
               </c:choose>
