@@ -7,8 +7,9 @@
 
 
   <sources>
-    <source name="hgnc" type="hgnc">
-     <property name="src.data.dir" location="/shared/data/hgnc/current"/>
+    <source name="ncbi-gene" type="ncbi-gene">
+     <property name="src.data.dir" location="/shared/data/metabolic/ncbi/current/"/>
+     <property name="organisms" value="9606"/>
     </source>
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
@@ -110,6 +111,7 @@
 
     <!-- this runs the postprocessing steps in all sources -->
     <post-process name="do-sources" dump="true"/>
+    <post-process name="create-gene-flanking-features"/>
 
     <post-process name="create-bioseg-location-index"/>
     <post-process name="create-overlap-view" />

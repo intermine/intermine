@@ -22,6 +22,7 @@
     <class name="GeneFlankingRegion" extends="SequenceFeature" is-interface="true">
       <attribute name="distance" type="java.lang.String"/>
       <attribute name="direction" type="java.lang.String"/>
+      <attribute name="includeGene" type="java.lang.Boolean"/>
       <reference name="gene" referenced-type="Gene" reverse-reference="flankingRegions"/>
     </class>
 
