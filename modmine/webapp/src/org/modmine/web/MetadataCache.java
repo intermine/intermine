@@ -62,7 +62,7 @@ import org.modmine.web.GBrowseParser.GBrowseTrack;
 public final class MetadataCache
 {
     private static final Logger LOG = Logger.getLogger(MetadataCache.class);
-
+    
     private static Map<String, DisplayExperiment> experimentCache = null;
     private static Map<Integer, Map<String, Long>> submissionFeatureCounts = null;
     private static Map<String, Map<String, Long>> experimentFeatureCounts = null;
@@ -72,7 +72,7 @@ public final class MetadataCache
     private static Map<Integer, Integer> submissionExpressionLevelCounts = null;
     private static Map<Integer, Integer> submissionIdCache = null;
     private static Map<Integer, List<GBrowseTrack>> submissionTracksCache = null;
-
+    
     private static Map<Integer, Set<ResultFile>> submissionFilesCache = null;
     private static Map<Integer, Integer> filesPerSubmissionCache = null;
     private static Map<Integer, List<String>> submissionLocatedFeatureTypes = null;
@@ -81,17 +81,17 @@ public final class MetadataCache
     private static Map<String, String> featDescriptionCache = null;
     private static Map<String, List<DisplayExperiment>> projectExperiments = null;
     private static Map<String, List<DisplayExperiment>> categoryExperiments = null;
-
+    
     private static Properties metadataProperties = null;
-
+    
     private static long lastTrackCacheRefresh = 0;
     private static final long TWO_HOUR = 7200000;
-
+    
     private MetadataCache() {
     }
-
-    // TODO SEPARATE PUBLIC AND PRIVATE METHODS, ALL PUBLIC METHODS SHOULD COME FIRST
-
+    
+    // TODO check for duplication of queries
+    
     /**
      * Fetch experiment details for display.
      * @param os the production objectStore
@@ -103,7 +103,7 @@ public final class MetadataCache
         }
         return new ArrayList<DisplayExperiment>(experimentCache.values());
     }
-
+    
     /**
      * Fetch experiment details for display.
      * @param os the production objectStore
@@ -116,7 +116,7 @@ public final class MetadataCache
         }
         return projectExperiments;
     }
-
+    
     /**
      * Fetch experiment details for display.
      * @param os the production objectStore
@@ -129,23 +129,23 @@ public final class MetadataCache
         }
         return categoryExperiments;
     }
-
+    
     /**
      * Fetch the metadata properties from database.
      * @param os the production objectStore
      * @return the metadata properties
-     * @throws the exceptions
+     * @throws SQLException exception
+     * @throws IOException exception
      */
     public static synchronized Properties getProperties(ObjectStore os)
-        throws SQLException, IOException {
+    throws SQLException, IOException {
         if (metadataProperties == null) {
             readProperties(os);
         }
-
         return metadataProperties;
     }
-
-
+    
+    
     /**
      * Fetch GBrowse tracks per submission for display. This updates automatically from the GBrowse
      * server and refreshes periodically (according to threshold).  When refreshing another process
@@ -163,8 +163,8 @@ public final class MetadataCache
         }
         return submissionTracksCache;
     }
-
-
+    
+    
     /**
      * Fetch unlocated feature types per submission.
      * @param os the production objectStore
@@ -176,7 +176,7 @@ public final class MetadataCache
         }
         return submissionLocatedFeatureTypes;
     }
-
+    
     /**
      * Fetch unlocated feature types per submission.
      * @param os the production objectStore
@@ -188,7 +188,7 @@ public final class MetadataCache
         }
         return submissionUnlocatedFeatureTypes;
     }
-
+    
     /**
      * Fetch unlocated feature types per submission.
      * @param os the production objectStore
@@ -203,7 +203,7 @@ public final class MetadataCache
         Set<String> uf = new HashSet<String>(submissionUnlocatedFeatureTypes.get(dccId));
         return uf;
     }
-
+    
     /**
      * Fetch the collection of ResultFiles per submission.
      * @param os the production objectStore
@@ -215,7 +215,7 @@ public final class MetadataCache
         }
         return submissionFilesCache;
     }
-
+    
     /**
      * Fetch the collection of Expression Level Counts per submission.
      * @param os the production objectStore
@@ -228,7 +228,7 @@ public final class MetadataCache
         }
         return submissionExpressionLevelCounts;
     }
-
+    
     /**
      * Fetch the collection of Expression Level Counts per submission.
      * @param os the production objectStore
@@ -241,7 +241,7 @@ public final class MetadataCache
         }
         return submissionFeatureExpressionLevelCounts;
     }
-
+    
     /**
      * Fetch the collection of Expression Level Counts per submission.
      * @param os the production objectStore
@@ -254,7 +254,7 @@ public final class MetadataCache
         }
         return experimentFeatureExpressionLevelCounts;
     }
-
+    
     /**
      * Fetch number of input/output file per submission.
      * @param os the production objectStore
@@ -265,7 +265,7 @@ public final class MetadataCache
             readSubmissionFiles(os);
         }
         filesPerSubmissionCache = new HashMap<Integer, Integer>();
-
+        
         Iterator<Integer> dccId = submissionFilesCache.keySet().iterator();
         while (dccId.hasNext()) {
             Integer thisSub = dccId.next();
@@ -274,8 +274,8 @@ public final class MetadataCache
         }
         return filesPerSubmissionCache;
     }
-
-
+    
+    
     /**
      * Fetch a list of file names for a given submission.
      * @param os the objectStore
@@ -289,7 +289,7 @@ public final class MetadataCache
         }
         return new ArrayList<ResultFile>(submissionFilesCache.get(dccId));
     }
-
+    
     /**
      * Fetch a list of GBrowse tracks for a given submission.
      * @param dccId the modENCODE submission id
@@ -303,7 +303,7 @@ public final class MetadataCache
             return new ArrayList<GBrowseTrack>();
         }
     }
-
+    
     /**
      * Fetch a list of file names for a given submission.
      * @param servletContext servletContext
@@ -316,7 +316,7 @@ public final class MetadataCache
         }
         return featDescriptionCache;
     }
-
+    
     /**
      * Fetch a map from feature type to count for a given submission.
      * @param os the objectStore
@@ -330,7 +330,7 @@ public final class MetadataCache
         }
         return submissionFeatureCounts.get(dccId);
     }
-
+    
     /**
      * Fetch a submission by the modENCODE submission ids
      * @param os the objectStore
@@ -339,13 +339,13 @@ public final class MetadataCache
      * @throws ObjectStoreException if error reading database
      */
     public static synchronized Submission getSubmissionByDccId(ObjectStore os, Integer dccId)
-        throws ObjectStoreException {
+    throws ObjectStoreException {
         if (submissionIdCache == null) {
             readSubmissionIds(os);
         }
         return (Submission) os.getObjectById(submissionIdCache.get(dccId));
     }
-
+    
     /**
      * Get experiment information by name
      * @param os the objectStore
@@ -354,132 +354,37 @@ public final class MetadataCache
      * @throws ObjectStoreException if error reading database
      */
     public static synchronized DisplayExperiment getExperimentByName(ObjectStore os, String name)
-        throws ObjectStoreException {
+    throws ObjectStoreException {
         if (experimentCache == null) {
             readExperiments(os);
         }
         return experimentCache.get(name);
     }
-
-    /**
-     * Set the map of GBrowse tracks.
-     *
-     * @param tracks map of dccId:GBrowse tracks
-     */
-    public static synchronized void setGBrowseTracks(Map<Integer, List<GBrowseTrack>> tracks) {
-        MetadataCache.class.notifyAll();
-        submissionTracksCache = tracks;
-    }
-
-    //======================
-
-    private static void fetchGBrowseTracks() {
-        long timeSinceLastRefresh = System.currentTimeMillis() - lastTrackCacheRefresh;
-        if (timeSinceLastRefresh > TWO_HOUR) {
-            readGBrowseTracks();
-            lastTrackCacheRefresh = System.currentTimeMillis();
-        }
-    }
-
-    /**
-     * Method to obtain the map of unlocated feature types by submission id
-     *
-     * @param os the objectStore
-     * @return submissionUnlocatedFeatureTypes
-     */
-    private static Map<Integer, List<String>> readUnlocatedFeatureTypes(ObjectStore os) {
-        long startTime = System.currentTimeMillis();
-        try {
-
-            if (submissionUnlocatedFeatureTypes != null) {
-                return submissionUnlocatedFeatureTypes;
-            }
-
-            submissionUnlocatedFeatureTypes = new HashMap<Integer, List<String>>();
-
-            if (submissionLocatedFeatureTypes == null) {
-                readSubmissionLocatedFeature(os);
-            }
-
-            if (submissionFeatureCounts == null) {
-                readSubmissionFeatureCounts(os);
-            }
-
-
-            for (Integer subId : submissionFeatureCounts.keySet()) {
-
-                Set<String> allFeatures = submissionFeatureCounts.get(subId).keySet();
-                Set<String> difference = new HashSet<String>(allFeatures);
-                if (submissionLocatedFeatureTypes.get(subId) != null) {
-                    difference.removeAll(submissionLocatedFeatureTypes.get(subId));
-                }
-
-                if (!difference.isEmpty()) {
-                    List<String> thisUnlocated = new ArrayList<String>();
-
-                    for (String fType : difference) {
-                        thisUnlocated.add(fType);
-                    }
-                    submissionUnlocatedFeatureTypes.put(subId, thisUnlocated);
-                }
-            }
-        } catch (Exception err) {
-            err.printStackTrace();
-        }
-        long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed unlocated feature cache, took: " + timeTaken + "ms size = "
-                + submissionUnlocatedFeatureTypes.size());
-        return submissionUnlocatedFeatureTypes;
-    }
-
+    
     /**
      *
      * @param os objectStore
-     * @return map exp-tracks
+     * @return map experiment expression levels
      */
-    public static Map<String, List<GBrowseTrack>> getExperimentGBrowseTracks(ObjectStore os) {
-        Map<String, List<GBrowseTrack>> tracks = new HashMap<String, List<GBrowseTrack>>();
-
-        Map<Integer, List<GBrowseTrack>> subTracksMap = getGBrowseTracks();
-
+    public static Map<String, Integer> getExperimentExpressionLevels(ObjectStore os) {
+        Map<String, Integer> experimentELevel = new HashMap<String, Integer>();
+        
+        Map<Integer, Integer> subELevelMap = getSubmissionExpressionLevelCounts(os);
+        
         for (DisplayExperiment exp : getExperiments(os)) {
-            List<GBrowseTrack> expTracks = new ArrayList<GBrowseTrack>();
-            tracks.put(exp.getName(), expTracks);
+            Integer expCount = 0;
             for (Submission sub : exp.getSubmissions()) {
-
-                if (subTracksMap.get(sub.getdCCid()) != null) {
-                    List<GBrowseTrack> subTracks = subTracksMap.get(sub.getdCCid());
-                    if (subTracks != null) {
-                        // check so it is unique
-                        // expTracks.addAll(subTracks);
-                        addToList(expTracks, subTracks);
-                    } else {
-                        continue;
-                    }
+                Integer subCount = subELevelMap.get(sub.getdCCid());
+                if (subCount != null) {
+                    expCount = expCount + subCount;
                 }
             }
+            experimentELevel.put(exp.getName(), expCount);
         }
-        return tracks;
+        return experimentELevel;
     }
-
-
-    /**
-     * adds the elements of a list i to a list l only if they are not yet
-     * there
-     * @param l the receiving list
-     * @param i the donating list
-     */
-    private static void addToList(List<GBrowseTrack> l, List<GBrowseTrack> i) {
-        Iterator<GBrowseTrack> it  = i.iterator();
-        while (it.hasNext()) {
-            GBrowseTrack thisId = it.next();
-            if (!l.contains(thisId)) {
-                l.add(thisId);
-            }
-        }
-    }
-
-    // TODO : mv up
+    
+    
     /**
      *
      * @param os objectStore
@@ -487,9 +392,9 @@ public final class MetadataCache
      */
     public static Map<String, Set<String[]>> getExperimentRepositoryEntries(ObjectStore os) {
         Map<String, Set<String[]>> reposited = new HashMap<String, Set<String[]>>();
-
+        
         Map<Integer, List<String[]>> subRepositedMap = getRepositoryEntries(os);
-
+        
         for (DisplayExperiment exp : getExperiments(os)) {
             Set<String[]> expReps = new HashSet<String[]>();
             for (Submission sub : exp.getSubmissions()) {
@@ -505,7 +410,129 @@ public final class MetadataCache
         }
         return reposited;
     }
-
+    
+    
+    /**
+     *
+     * @param os objectStore
+     * @return map exp-tracks
+     */
+    public static Map<String, List<GBrowseTrack>> getExperimentGBrowseTracks(ObjectStore os) {
+        Map<String, List<GBrowseTrack>> tracks = new HashMap<String, List<GBrowseTrack>>();
+        
+        Map<Integer, List<GBrowseTrack>> subTracksMap = getGBrowseTracks();
+        
+        for (DisplayExperiment exp : getExperiments(os)) {
+            List<GBrowseTrack> expTracks = new ArrayList<GBrowseTrack>();
+            tracks.put(exp.getName(), expTracks);
+            for (Submission sub : exp.getSubmissions()) {
+                
+                if (subTracksMap.get(sub.getdCCid()) != null) {
+                    List<GBrowseTrack> subTracks = subTracksMap.get(sub.getdCCid());
+                    if (subTracks != null) {
+                        // check so it is unique
+                        // expTracks.addAll(subTracks);
+                        addToList(expTracks, subTracks);
+                    } else {
+                        continue;
+                    }
+                }
+            }
+        }
+        return tracks;
+    }
+    
+    
+    /**
+     * Set the map of GBrowse tracks.
+     *
+     * @param tracks map of dccId:GBrowse tracks
+     */
+    public static synchronized void setGBrowseTracks(Map<Integer, List<GBrowseTrack>> tracks) {
+        MetadataCache.class.notifyAll();
+        submissionTracksCache = tracks;
+    }
+    
+    /*==========================
+    PRIVATE METHODS
+============================*/
+    
+    private static void fetchGBrowseTracks() {
+        long timeSinceLastRefresh = System.currentTimeMillis() - lastTrackCacheRefresh;
+        if (timeSinceLastRefresh > TWO_HOUR) {
+            readGBrowseTracks();
+            lastTrackCacheRefresh = System.currentTimeMillis();
+        }
+    }
+    
+    /**
+     * Method to obtain the map of unlocated feature types by submission id
+     *
+     * @param os the objectStore
+     * @return submissionUnlocatedFeatureTypes
+     */
+    private static Map<Integer, List<String>> readUnlocatedFeatureTypes(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+        try {
+            
+            if (submissionUnlocatedFeatureTypes != null) {
+                return submissionUnlocatedFeatureTypes;
+            }
+            
+            submissionUnlocatedFeatureTypes = new HashMap<Integer, List<String>>();
+            if (submissionLocatedFeatureTypes == null) {
+                readSubmissionLocatedFeature(os);
+            }
+            
+            if (submissionFeatureCounts == null) {
+                readSubmissionFeatureCounts(os);
+            }
+            
+            for (Integer subId : submissionFeatureCounts.keySet()) {
+                
+                Set<String> allFeatures = submissionFeatureCounts.get(subId).keySet();
+                Set<String> difference = new HashSet<String>(allFeatures);
+                if (submissionLocatedFeatureTypes.get(subId) != null) {
+                    difference.removeAll(submissionLocatedFeatureTypes.get(subId));
+                }
+                
+                if (!difference.isEmpty()) {
+                    List<String> thisUnlocated = new ArrayList<String>();
+                    
+                    for (String fType : difference) {
+                        thisUnlocated.add(fType);
+                    }
+                    submissionUnlocatedFeatureTypes.put(subId, thisUnlocated);
+                }
+            }
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed unlocated feature cache, took: " + timeTaken + "ms size = "
+                + submissionUnlocatedFeatureTypes.size());
+        return submissionUnlocatedFeatureTypes;
+    }
+    
+    
+    
+    /**
+     * adds the elements of a list i to a list l only if they are not yet
+     * there
+     * @param l the receiving list
+     * @param i the donating list
+     */
+    private static void addToList(List<GBrowseTrack> l, List<GBrowseTrack> i) {
+        Iterator<GBrowseTrack> it  = i.iterator();
+        while (it.hasNext()) {
+            GBrowseTrack thisId = it.next();
+            if (!l.contains(thisId)) {
+                l.add(thisId);
+            }
+        }
+    }
+    
+    
     private static Set<String[]> removeDuplications(Set<String[]> expReps) {
         // removing the same repository entry coming from different submissions
         // in the given experiment
@@ -527,71 +554,8 @@ public final class MetadataCache
         uniques.removeAll(dup);
         return uniques;
     }
-
-
-    // TODO mv up
-    /**
-     *
-     * @param os objectStore
-     * @return map experiment expression levels
-    */
-    public static Map<String, Integer> getExperimentExpressionLevels(ObjectStore os) {
-        Map<String, Integer> experimentELevel = new HashMap<String, Integer>();
-
-        Map<Integer, Integer> subELevelMap = getSubmissionExpressionLevelCounts(os);
-
-        for (DisplayExperiment exp : getExperiments(os)) {
-            Integer expCount = 0;
-            for (Submission sub : exp.getSubmissions()) {
-                Integer subCount = subELevelMap.get(sub.getdCCid());
-                if (subCount != null) {
-                    expCount = expCount + subCount;
-                }
-            }
-            experimentELevel.put(exp.getName(), expCount);
-        }
-        return experimentELevel;
-    }
-
-
-    // TODO DELETE THIS, WAS ALREADY COMMENTED OUT
-    //    /**
-//    *
-//    * @param os objectStore
-//    * @return map exp-repository entries
-//    */
-//    public static Map<String, Map<String, Long>>
-//    readExperimentFeatureExpressionLevels(ObjectStore os) {
-//        Map<String, Map<String, Long>> expELevels = new HashMap<String, Map<String, Long>>();
-//        Map<Integer, Map<String, Long>> subELevels = getSubmissionFeatureExpressionLevelCounts(os);
-//
-//        for (DisplayExperiment exp : getExperiments(os)) {
-//            for (Submission sub : exp.getSubmissions()) {
-//                Map<String, Long> subFeat = subELevels.get(sub.getdCCid());
-//                if (subFeat != null) {
-//                    // get the experiment feature map
-//                    Map<String, Long> expFeat =
-//                        expELevels.get(exp.getName());
-//                    if (expFeat == null) {
-//                        expELevels.put(exp.getName(), subFeat);
-//                    } else {
-//                        for (String feat : subFeat.keySet()) {
-//                            Long subCount = subFeat.get(feat);
-//                            Long expCount = subCount;
-//                            if (expFeat.get(feat) != null) {
-//                                expCount = expCount + expFeat.get(feat);
-//                            }
-//                            expFeat.put(feat, expCount);
-//                            expCount = Long.valueOf(0);
-//                        }
-//                        expELevels.put(exp.getName(), expFeat);
-//                    }
-//                }
-//            }
-//        }
-//        return expELevels;
-//    }
-
+    
+    
     /**
      * Fetch a map from project name to experiment.
      * @param os the production ObjectStore
@@ -600,7 +564,7 @@ public final class MetadataCache
     private static Map<String, List<DisplayExperiment>>
     readProjectExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-
+        
         projectExperiments = new TreeMap<String, List<DisplayExperiment>>();
         for (DisplayExperiment exp : getExperiments(os)) {
             List<DisplayExperiment> exps = projectExperiments.get(exp.getProjectName());
@@ -615,7 +579,7 @@ public final class MetadataCache
                 + " took: " + totalTime + " ms.");
         return projectExperiments;
     }
-
+    
     /**
      * Fetch a map from project name to experiment.
      * @param os the production ObjectStore
@@ -626,7 +590,7 @@ public final class MetadataCache
         long startTime = System.currentTimeMillis();
         projectExperiments = getProjectExperiments(os);
         categoryExperiments = new TreeMap<String, List<DisplayExperiment>>();
-
+        
         for (List<DisplayExperiment> expList : projectExperiments.values()) {
             for (DisplayExperiment exp : expList) {
                 String cat = adaptCategory(exp);
@@ -638,7 +602,7 @@ public final class MetadataCache
                 + " took: " + totalTime + " ms.");
         return categoryExperiments;
     }
-
+    
     /**
      * to reduce the number of fields and to deal temporarily with
      * sub 2675
@@ -659,54 +623,54 @@ public final class MetadataCache
         }
         return cat;
     }
-
+    
     private static void readExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         experimentFeatureCounts = readExperimentFeatureCounts(os);
         experimentUniqueFeatureCounts = readUniqueExperimentFeatureCounts(os);
-
+        
         try {
             Query q = new Query();
             QueryClass qcProject = new QueryClass(Project.class);
             QueryField qcName = new QueryField(qcProject, "name");
-
+            
             q.addFrom(qcProject);
             q.addToSelect(qcProject);
-
+            
             QueryClass qcExperiment = new QueryClass(Experiment.class);
             q.addFrom(qcExperiment);
             q.addToSelect(qcExperiment);
-
+            
             QueryCollectionReference projExperiments = new QueryCollectionReference(qcProject,
-                "experiments");
+            "experiments");
             ContainsConstraint cc = new ContainsConstraint(projExperiments, ConstraintOp.CONTAINS,
                     qcExperiment);
-
+            
             q.setConstraint(cc);
             q.addToOrderBy(qcName);
-
+            
             Results results = os.execute(q);
-
+            
             experimentCache = new HashMap<String, DisplayExperiment>();
-
+            
             @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
                 (Iterator) results.iterator();
-
+            
             while (iter.hasNext()) {
                 ResultsRow<?> row = (ResultsRow<?>) iter.next();
-
+                
                 Project project = (Project) row.get(0);
                 Experiment experiment = (Experiment) row.get(1);
-
+                
                 // expFeatureUniqueCounts is a subset of expFeatureCounts
                 Map<String, Long> expFeatureCounts =
                     experimentFeatureCounts.get(experiment.getName());
                 Map<String, Long> expFeatureUniqueCounts = experimentUniqueFeatureCounts
-                        .get(experiment.getName());
-
+                .get(experiment.getName());
+                
                 Set<FeatureCountsRecord> featureCountsRecords =
                     new LinkedHashSet<FeatureCountsRecord>();
-
+                
                 if (expFeatureCounts != null) {
                     for (Map.Entry<String, Long> entry : expFeatureCounts.entrySet()) {
                         String ft = entry.getKey();
@@ -715,12 +679,12 @@ public final class MetadataCache
                         if (expFeatureUniqueCounts.get(ft) != null) {
                             ufc = expFeatureUniqueCounts.get(ft);
                         }
-
+                        
                         FeatureCountsRecord fcr = new FeatureCountsRecord(ft, fc, ufc);
                         featureCountsRecords.add(fcr);
                     }
                 } else { featureCountsRecords = null; }
-
+                
                 DisplayExperiment displayExp = new DisplayExperiment(experiment, project,
                         featureCountsRecords, os);
                 experimentCache.put(displayExp.getName(), displayExp);
@@ -732,25 +696,25 @@ public final class MetadataCache
         LOG.info("Primed experiment cache, took: " + timeTaken + "ms size = "
                 + experimentCache.size());
     }
-
-
+    
+    
     /**
      * The counts are duplicated in the method, see getUniqueExperimentFeatureCounts
      */
     private static Map<String, Map<String, Long>> readExperimentFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-
+        
         experimentFeatureCounts = new LinkedHashMap<String, Map<String, Long>>();
         Properties props = extractProperties(os, ModMineCacheKeys.EXP_FEATURE_COUNT);
-
+        
         for (Object key : props.keySet()) {
             String keyString = (String) key;
             String[] token = keyString.split("\\.");
-
+            
             String exp = getName(token);
             String feature = token[token.length - 1];
             Long count = Long.parseLong((String) props.get(key));
-
+            
             Map<String, Long> featureCounts = experimentFeatureCounts.get(exp);
             if (featureCounts == null) {
                 featureCounts = new HashMap<String, Long>();
@@ -760,10 +724,10 @@ public final class MetadataCache
         }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Read experiment feature counts, took: " + timeTaken + "ms");
-
+        
         return experimentFeatureCounts;
     }
-
+    
     /**
      * to deal with experiment with (1) dot in the name
      * e.g. "Changes in expression of small RNAs during aging in C. elegans"
@@ -779,7 +743,7 @@ public final class MetadataCache
         exp = token[0];
         return exp;
     }
-
+    
     /**
      * Method equivalent to getExperimentFeatureCounts but return Unique counts
      *
@@ -790,17 +754,17 @@ public final class MetadataCache
     readUniqueExperimentFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         experimentUniqueFeatureCounts = new LinkedHashMap<String, Map<String, Long>>();
-
+        
         Properties props = extractProperties(os, ModMineCacheKeys.UNIQUE_EXP_FEATURE_COUNT);
-
+        
         for (Object key : props.keySet()) {
             String keyString = (String) key;
-
+            
             String[] token = keyString.split("\\.");
             String exp = stripDash(getName(token));
             String feature = token[token.length - 1];
             Long count = Long.parseLong((String) props.get(key));
-
+            
             Map<String, Long> featureCounts = experimentUniqueFeatureCounts.get(exp);
             if (featureCounts == null) {
                 featureCounts = new HashMap<String, Long>();
@@ -810,10 +774,10 @@ public final class MetadataCache
         }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Read experiment unique feature counts, took: " + timeTaken + "ms");
-
+        
         return experimentUniqueFeatureCounts;
     }
-
+    
     /**
      * to extract the required properties from the db
      * @param os
@@ -832,7 +796,7 @@ public final class MetadataCache
         }
         return props;
     }
-
+    
     /**
      * @param exp
      */
@@ -840,33 +804,33 @@ public final class MetadataCache
         String fixed = exp.replace("\\", "");
         return fixed;
     }
-
+    
     private static Properties readProperties(ObjectStore os) throws SQLException, IOException {
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
         String objectSummaryString =
             MetadataManager.retrieve(db, MetadataManager.MODMINE_METADATA_CACHE);
-
+        
         metadataProperties = new Properties();
         InputStream objectStoreSummaryPropertiesStream = new StringInputStream(objectSummaryString);
-
+        
         metadataProperties.load(objectStoreSummaryPropertiesStream);
         return metadataProperties;
     }
-
+    
     private static void readSubmissionFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-
+        
         submissionFeatureCounts = new LinkedHashMap<Integer, Map<String, Long>>();
         Properties props = extractProperties(os, ModMineCacheKeys.SUB_FEATURE_COUNT);
-
+        
         for (Object key : props.keySet()) {
             String keyString = (String) key;
-
+            
             String[] token = keyString.split("\\.");
             Integer dccId = Integer.parseInt(token[0]);
             String feature = token[1];
             Long count = Long.parseLong((String) props.get(key));
-
+            
             Map<String, Long> featureCounts = submissionFeatureCounts.get(dccId);
             if (featureCounts == null) {
                 featureCounts = new HashMap<String, Long>();
@@ -878,19 +842,19 @@ public final class MetadataCache
         LOG.info("Primed submissionFeatureCounts cache, took: " + timeTaken + "ms size = "
                 + submissionFeatureCounts.size());
     }
-
+    
     private static void readSubmissionIds(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-
+        
         submissionIdCache = new HashMap<Integer, Integer>();
-
+        
         Query q = new Query();
         q.setDistinct(false);
         QueryClass qcSub = new QueryClass(Submission.class);
         q.addFrom(qcSub);
         q.addToSelect(qcSub);
         q.addToOrderBy(qcSub);
-
+        
         Results results = os.execute(q);
         // for each classes set the values for jsp
         @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
@@ -904,22 +868,22 @@ public final class MetadataCache
         LOG.info("Primed submissions cache, took: " + timeTaken
                 + "ms size = " + submissionIdCache.size());
     }
-
+    
     private static void readSubmissionFeatureExpressionLevelCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-
+        
         submissionFeatureExpressionLevelCounts = new LinkedHashMap<Integer, Map<String, Long>>();
         Properties props =
             extractProperties(os, ModMineCacheKeys.SUB_FEATURE_EXPRESSION_LEVEL_COUNT);
-
+        
         for (Object key : props.keySet()) {
             String keyString = (String) key;
-
+            
             String[] token = keyString.split("\\.");
             Integer dccId = Integer.parseInt(token[0]);
             String feature = token[1];
             Long count = Long.parseLong((String) props.get(key));
-
+            
             Map<String, Long> featureCounts = submissionFeatureExpressionLevelCounts.get(dccId);
             if (featureCounts == null) {
                 featureCounts = new HashMap<String, Long>();
@@ -933,7 +897,7 @@ public final class MetadataCache
                 + submissionFeatureExpressionLevelCounts.size());
         LOG.debug("submissionFeatureELCounts " + submissionFeatureExpressionLevelCounts);
     }
-
+    
     private static void readExperimentFeatureExpressionLevelCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         submissionFeatureExpressionLevelCounts = getSubmissionFeatureExpressionLevelCounts(os);
@@ -949,7 +913,7 @@ public final class MetadataCache
                 }
                 for (String feat : subFeatCount.keySet()) {
                     Long count = null;
-                    if (featCount.containsKey(feat)){
+                    if (featCount.containsKey(feat)) {
                         count = featCount.get(feat) + subFeatCount.get(feat);
                     } else {
                         count = subFeatCount.get(feat);
@@ -957,14 +921,14 @@ public final class MetadataCache
                     featCount.put(feat, count);
                 }
             }
-            experimentFeatureExpressionLevelCounts.put(exp.getName(), featCount);   
-        }        
+            experimentFeatureExpressionLevelCounts.put(exp.getName(), featCount);
+        }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed experimentFeatureExpressionLevelCounts cache, took: " + timeTaken
                 + "ms size = " + experimentFeatureExpressionLevelCounts.size());
         LOG.debug("experimentFeatureELCounts " + experimentFeatureExpressionLevelCounts);
     }
-        
+    
     
     private static void readSubmissionExpressionLevelCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
@@ -972,11 +936,11 @@ public final class MetadataCache
         if (submissionIdCache == null) {
             readSubmissionIds(os);
         }
-
+        
         if (submissionFeatureExpressionLevelCounts == null) {
             readSubmissionFeatureExpressionLevelCounts(os);
         }
-
+        
         for (Integer dccId : submissionIdCache.keySet()) {
             Integer count = 0;
             Map<String, Long> featureCounts =
@@ -991,53 +955,53 @@ public final class MetadataCache
             }
             submissionExpressionLevelCounts.put(dccId, count);
         }
-
+        
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed submissionExpressionLevelCounts cache, took: " + timeTaken
                 + "ms size = " + submissionExpressionLevelCounts.size());
         LOG.debug("submissionELCounts " + submissionExpressionLevelCounts);
     }
-
-
+    
+    
     private static void readSubmissionFiles(ObjectStore os) {
         //
         long startTime = System.currentTimeMillis();
         try {
-
+            
             Query q = new Query();
             QueryClass qcSubmission = new QueryClass(Submission.class);
             QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
             q.addFrom(qcSubmission);
             q.addToSelect(qfDCCid);
-
+            
             QueryClass qcFile = new QueryClass(ResultFile.class);
             q.addFrom(qcFile);
             q.addToSelect(qcFile);
-
+            
             QueryCollectionReference subFiles = new QueryCollectionReference(qcSubmission,
-                "resultFiles");
+            "resultFiles");
             ContainsConstraint cc = new ContainsConstraint(subFiles, ConstraintOp.CONTAINS,
                     qcFile);
-
+            
             q.setConstraint(cc);
             q.addToOrderBy(qfDCCid);
-
+            
             Results results = os.execute(q);
-
+            
             submissionFilesCache = new HashMap<Integer, Set<ResultFile>>();
-
+            
             @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
                 (Iterator) results.iterator();
-
+            
             while (iter.hasNext()) {
                 ResultsRow<?> row = (ResultsRow<?>) iter.next();
-
+                
                 Integer dccId = (Integer) row.get(0);
                 ResultFile file = (ResultFile) row.get(1);
-
+                
                 addToMap(submissionFilesCache, dccId, file);
             }
-
+            
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -1045,29 +1009,28 @@ public final class MetadataCache
         LOG.info("Primed submission collections caches, took: " + timeTaken + "ms    size: files = "
                 + submissionFilesCache.size());
     }
-
-
+    
+    
     private static void readSubmissionLocatedFeature(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         submissionLocatedFeatureTypes = new LinkedHashMap<Integer, List<String>>();
         Properties props = extractProperties(os, ModMineCacheKeys.SUB_LOCATED_FEATURE_TYPE);
-
+        
         for (Object key : props.keySet()) {
             String keyString = (String) key;
-
+            
             String[] token = keyString.split("\\.");
             Integer dccId = Integer.parseInt(token[0]);
             String feature = (String) props.get(key);
-
-            addToMap(submissionLocatedFeatureTypes, dccId, feature);            
+            
+            addToMap(submissionLocatedFeatureTypes, dccId, feature);
         }
-        
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed located features cache, took: " + timeTaken + "ms size = "
                 + submissionLocatedFeatureTypes.size());
     }
-
-
+    
+    
     /**
      * Fetch reposited (GEO/SRA/AE..) entries per submission.
      * @param os the production objectStore
@@ -1079,8 +1042,8 @@ public final class MetadataCache
         }
         return submissionRepositedCache;
     }
-
-
+    
+    
     private static void readSubmissionRepositoryEntries(ObjectStore os) {
         //
         long startTime = System.currentTimeMillis();
@@ -1090,7 +1053,7 @@ public final class MetadataCache
             QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
             q.addFrom(qcSubmission);
             q.addToSelect(qfDCCid);
-
+            
             QueryClass qcRepositoryEntry = new QueryClass(DatabaseRecord.class);
             QueryField qfDatabase = new QueryField(qcRepositoryEntry, "database");
             QueryField qfAccession = new QueryField(qcRepositoryEntry, "accession");
@@ -1099,36 +1062,36 @@ public final class MetadataCache
             q.addToSelect(qfDatabase);
             q.addToSelect(qfAccession);
             q.addToSelect(qfUrl);
-
+            
             // join the tables
             QueryCollectionReference ref1 =
                 new QueryCollectionReference(qcSubmission, "databaseRecords");
             ContainsConstraint cc = new ContainsConstraint(ref1, ConstraintOp.CONTAINS,
                     qcRepositoryEntry);
-
+            
             q.setConstraint(cc);
             q.addToOrderBy(qfDCCid);
             q.addToOrderBy(qfDatabase);
-
+            
             Results results = os.execute(q);
-
+            
             submissionRepositedCache = new HashMap<Integer, List<String[]>>();
-
+            
             Integer counter = 0;
-
+            
             Integer prevSub = new Integer(-1);
             List<String[]> subRep = new ArrayList<String[]>();
             Iterator<?> i = results.iterator();
             while (i.hasNext()) {
                 ResultsRow<?> row = (ResultsRow<?>) i.next();
-
+                
                 counter++;
                 Integer dccId = (Integer) row.get(0);
                 String db = (String) row.get(1);
                 String acc = (String) row.get(2);
                 String url = (String) row.get(3);
                 String[] thisRecord = {db, acc, url};
-
+                
                 if (!dccId.equals(prevSub) || counter.equals(results.size())) {
                     if (prevSub > 0) {
                         if (counter.equals(results.size())) {
@@ -1151,8 +1114,8 @@ public final class MetadataCache
         LOG.info("Primed Repository entries cache, took: " + timeTaken + "ms size = "
                 + submissionRepositedCache.size());
     }
-
-
+    
+    
     /**
      * adds an element to a list which is the value of a map
      * @param m       the map (<Integer, List<String>>)
@@ -1160,9 +1123,9 @@ public final class MetadataCache
      * @param value   the list
      */
     private static void addToMap(Map<Integer, List<String>> m, Integer key, String value) {
-
+        
         List<String> ids = new ArrayList<String>();
-
+        
         if (m.containsKey(key)) {
             ids = m.get(key);
         }
@@ -1171,7 +1134,7 @@ public final class MetadataCache
             m.put(key, ids);
         }
     }
-
+    
     /**
      * adds an element to a set of ResultFile which is the value of a map
      * @param m       the map (<Integer, Set<ResultFile>>)
@@ -1179,9 +1142,9 @@ public final class MetadataCache
      * @param value   the list
      */
     private static void addToMap(Map<Integer, Set<ResultFile>> m, Integer key, ResultFile value) {
-
+        
         Set<ResultFile> files = new HashSet<ResultFile>();
-
+        
         if (m.containsKey(key)) {
             files = m.get(key);
         }
@@ -1198,7 +1161,7 @@ public final class MetadataCache
             m.put(key, files);
         }
     }
-
+    
     /**
      * Method to fill the cached map of submissions (ddcId) to list of
      * GBrowse tracks
@@ -1213,10 +1176,10 @@ public final class MetadataCache
         Thread t = new Thread(r);
         t.start();
     }
-
+    
     private static void threadedReadGBrowseTracks() {
         long startTime = System.currentTimeMillis();
-
+        
         Map<Integer, List<GBrowseTrack>> tracks = new HashMap<Integer, List<GBrowseTrack>>();
         Map<Integer, List<GBrowseTrack>> flyTracks = null;
         Map<Integer, List<GBrowseTrack>> wormTracks = null;
@@ -1226,20 +1189,18 @@ public final class MetadataCache
         } catch (Exception e) {
             LOG.error(e);
         }
-
+        
         if (flyTracks != null && wormTracks != null) {
             tracks.putAll(flyTracks);
             tracks.putAll(wormTracks);
             setGBrowseTracks(tracks);
         }
-
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed GBrowse tracks cache, took: " + timeTaken + "ms  size = "
                 + tracks.size());
     }
-
-
-
+    
+    
     /**
      * This method get the feature descriptions from a property file.
      *
@@ -1247,13 +1208,13 @@ public final class MetadataCache
      */
     private static Map<String, String> readFeatTypeDescription(ServletContext servletContext) {
         long startTime = System.currentTimeMillis();
-
+        
         featDescriptionCache = new HashMap<String, String>();
-
+        
         Properties props = new Properties();
-
+        
         InputStream is
-            = servletContext.getResourceAsStream("/WEB-INF/featureTypeDescr.properties");
+        = servletContext.getResourceAsStream("/WEB-INF/featureTypeDescr.properties");
         if (is == null) {
             LOG.info("Unable to find /WEB-INF/featureTypeDescr.properties, "
                     + "there will be no feature type descriptions");
