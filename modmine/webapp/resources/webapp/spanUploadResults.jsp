@@ -80,30 +80,49 @@
 
 </script>
 
+<style type="text/css">
+#selectionInfo.information {
+  background-color:#E6F7FE;
+  border:1px solid #BEDCE4;
+}
+
+#selectionInfo {
+  background-position:10px 6px;
+  background-repeat:no-repeat;
+  font-size:13px;
+  margin:10px 10px 0;
+  padding:6px 6px 6px 0;
+}
+
+#selectionInfo table td {
+  font-size:13px;
+}
+
+#spanWithNoFt a {
+  float:none;
+}
+</style>
+
 <%-- Error Messages --%>
 <c:if test="${!empty errorMsg}">
-    <div id="errorMsg" class="topBar errors">
-      <span style="float: right; padding: 0pt; margin: 0pt;">
-        <img onclick="javascript:jQuery('#errorMsg').hide('slow');" style="cursor: pointer;" title="Dismiss" alt="Dismiss" src="images/close.png">
-      </span>
+    <div id="errorMsg" class="topBar errors" style="padding-left:34px;">
+        <a href="#" onclick="javascript:jQuery('#errorMsgs').hide('slow');return false">Hide</a>
         ${errorMsg}<br>
     </div>
 </c:if>
 
 <%-- Information about ... --%>
 <c:if test="${(!empty selectedFt)&&(!empty selectedExp)}">
-    <div id="selectionInfo" class="topBar hints">
+    <div id="selectionInfo" class="information">
         <table cellspacing="0" cellpadding="0" border="0" width="100%">
         <tbody><tr>
-          <td width="30px" valign="middle"><img border="0" align="middle" width="20px" height="20px" title="hint" src="images/tick.png"></td>
+          <td width="30px" valign="middle"><img border="0" width="16px" height="16px" src="images/icons/information.png" style="padding:10px;"></td>
           <td valign="middle">
           ${selectedFt}<br>
           ${selectedExp}<br>
           </td>
           <td align="right" valign="middle">
-              <a onclick="javascript:jQuery('#selectionInfo').hide('slow');return false" href="#">
-                Hide
-              </a>
+              <a onclick="javascript:jQuery('#selectionInfo').hide('slow');return false" href="#">Hide</a>
           </td>
         </tr>
         </tbody></table>
@@ -112,10 +131,8 @@
 
 <%-- Extra information about spans without overlap features --%>
 <c:if test="${!empty spanWithNoFt}">
-    <div id="extraInfo" class="topBar lookupReport">
-      <span style="float: right; padding: 0pt; margin: 0pt;">
-        <img onclick="javascript:jQuery('#extraInfo').hide('slow');" style="cursor: pointer;" title="Dismiss" alt="Dismiss" src="images/close.png">
-      </span>
+    <div id="extraInfo" class="topBar errors" style="padding-left:34px;">
+      <a href="#" onclick="javascript:jQuery('#errorMsgs').hide('slow');return false">Hide</a>
       <span id="spanWithNoFt">
         ${spanWithNoFt}
       </span>
