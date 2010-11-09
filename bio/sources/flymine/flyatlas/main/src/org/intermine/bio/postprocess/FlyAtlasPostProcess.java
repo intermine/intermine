@@ -110,7 +110,7 @@ public class FlyAtlasPostProcess extends PostProcessor
                     // clone so we don't change the ObjectStore cache
                     Gene tempGene;
                     try {
-                        tempGene = (Gene) PostProcessUtil.cloneInterMineObject(lastGene);
+                        tempGene = PostProcessUtil.cloneInterMineObject(lastGene);
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException("Failed to clone InterMineObject: "
                                                    + lastGene, e);
@@ -131,7 +131,7 @@ public class FlyAtlasPostProcess extends PostProcessor
             // clone so we don't change the ObjectStore cache
             Gene tempGene;
             try {
-                tempGene = (Gene) PostProcessUtil.cloneInterMineObject(lastGene);
+                tempGene = PostProcessUtil.cloneInterMineObject(lastGene);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("Failed to clone InterMineObject: " + lastGene, e);
             }
