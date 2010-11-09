@@ -13,6 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -72,11 +73,7 @@ public class OmimConverter extends BioDirectoryConverter
         super.close();
     }
 
-
-
     /**
-     *
-     *
      * {@inheritDoc}
      */
     public void process(File dataDir) throws Exception {
@@ -113,26 +110,29 @@ public class OmimConverter extends BioDirectoryConverter
     private void processOmimTxtFile(Reader reader) throws IOException {
         final BufferedReader br = new BufferedReader(reader);
 
-        // TODO disease name isn't always on a single line
         String line = null;
 
         StringBuilder sb = new StringBuilder();
         boolean readingTitle = false;
         while ((line = br.readLine()) != null) {
             if (readingTitle) {
-                sb.append(line);
+                if (sb.length() > 0) {
+                    sb.append(" ");
+                }
+                sb.append(line.trim());
             }
             if (line.startsWith("*FIELD* TI")) {
                 readingTitle = true;
             } else if (line.startsWith("*FIELD* TX")) {
                 readingTitle = false;
 
-                // so contains line after start of TI and includes TX header line
+                // s contains line after start of TI and includes TX header line
                 String s = sb.toString();
                 // check if this is a deprecated entry
-                System.out.println(s);
-                //                if (!s.startsWith("^")) {
-
+                if (s.startsWith("^")) {
+                    sb = new StringBuilder();
+                    continue;
+                }
 
                 // if first character is not a digit, remove it
                 if (!Character.isDigit(s.charAt(0))) {
@@ -143,8 +143,6 @@ public class OmimConverter extends BioDirectoryConverter
                 String[] parts = s.split(" ", 2);
                 String mimNumber = parts[0];
                 String text = parts[1];
-
-                System.out.println(mimNumber);
 
                 // if this isn't a disease we need we can just ignore
                 if (diseases.containsKey(mimNumber)) {
@@ -158,23 +156,15 @@ public class OmimConverter extends BioDirectoryConverter
                     }
                     // title is text until ;; or the terminating *
                     String title = text.substring(0, terminateAt);
-                    Item disease = getDisease(mimNumber);
-                    disease.setAttribute("name", name);
-                }
 
+                    Item disease = getDisease(mimNumber);
+                    disease.setAttribute("name", title);
+                }
+                
                 sb = new StringBuilder();
             }
-            //                String[] parts = line.split(" ", 2);
-            //                System.out.println(Arrays.asList(parts));
-            //                String mimNumber = parts[0].substring(1);
-            //                String name = parts[1];
-            //
-            //                if (diseases.containsKey(mimNumber)) {
-            //                }
         }
     }
-
-
 
     private void processMorbidMapFile(Reader reader) throws IOException, ObjectStoreException {
         Iterator<String[]> lineIter = FormattedTextParser.parseDelimitedReader(reader, '|');
@@ -191,6 +181,9 @@ public class OmimConverter extends BioDirectoryConverter
         int noMapType = 0;
         int diseaseMatches = 0;
 
+        File f = new File("build/omim_not_loaded.txt");
+        FileWriter fw = new FileWriter(f);
+        
         // extract e.g. (3)
         Pattern matchNumberInBrackets = Pattern.compile("(\\(.\\))$");
 
@@ -199,7 +192,7 @@ public class OmimConverter extends BioDirectoryConverter
 
         while (lineIter.hasNext()) {
             lineCount++;
-
+            
             String[] bits = lineIter.next();
             if (bits.length == 0) {
                 continue;
@@ -243,8 +236,18 @@ public class OmimConverter extends BioDirectoryConverter
             if (diseaseMimId != null) {
                 Item disease = getDisease(diseaseMimId);
                 disease.addToCollection("genes", geneId);
+            } else {
+                StringBuilder sb = new StringBuilder();
+                for (String bit : bits) {
+                    if (sb.length() > 0) {
+                        sb.append("|");
+                    }
+                    sb.append(bit);
+                }
+                sb.append(System.getProperty("line.separator"));
+                fw.write(sb.toString());
             }
-
+            
             // start with basic rules and count how many columns are parsed
             // if gene is an HGNC symbol - create a gene
 
@@ -253,6 +256,8 @@ public class OmimConverter extends BioDirectoryConverter
             // if not create a region
 
         }
+        fw.flush();
+        fw.close();
         LOG.info("Resolved " + resolvedCount + " of " + lineCount + " gene symbols from file.");
         String mapTypesMessage = "Counts of resolved genes/ total for each map type: ";
         for (Map.Entry<String, CountPair> pair : counts.entrySet()) {
