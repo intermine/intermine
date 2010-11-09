@@ -27,18 +27,53 @@
 	var inputToggleClass = 'eg';
 </script>
 
+<!-- faux context help -->
+<div id="ctxHelpDiv" class="welcome" style="display:none;">
+	<div class="topBar info">
+		<div id="ctxHelpTxt" class="welcome"></div>
+		<a href="#" onclick="toggleWelcome();return false">Show more</a>
+	</div>
+</div>
+
 <!-- BluePrint CSS container -->
 <div class="container">
 
+	<script type="text/javascript">
+		// minimize big welcome box into an info message
+		function toggleWelcome() {
+			// minimizing?
+			if ($("#welcome").is(':visible')) {
+				// hide the big box
+				$('#welcome').slideUp();
+				// do we have words to say?
+				var welcomeText = $("#welcome-content.current").text();
+				if (welcomeText.length > 0) {
+					$("#ctxHelpDiv.welcome").slideDown("slow", function() {
+						// ...display a notification with an appropriate text
+						if (welcomeText.length > 150) {
+							// ... substr
+							$("#ctxHelpTxt.welcome").html(welcomeText.substring(0, 150) + '&hellip;');
+						} else {
+							$("#ctxHelpTxt.welcome").html(welcomeText);
+						}
+	  				});
+				}
+			} else {
+				$("#ctxHelpDiv.welcome").slideUp(function() {
+					$("#welcome").slideDown("slow");
+				});
+			}
+		}
+	</script>
 	<div id="welcome" class="span-12 last wide-blue">
-		<a class="close" href="#" title="Close" onclick="javascript:jQuery('#welcome').slideUp();return false;">&nbsp;</a>
+		<a class="close" href="#" title="Close" onclick="toggleWelcome();return false;">&nbsp;</a>
         <div class="top"></div>
         <div class="center span-12 last">
         	<div class="bochs" id="bochs-1">
 	            <div id="thumb" class="span-4">
 	                <img src="/metabolicmine/themes/metabolic/thumbs/thumb-image.png" alt="metabolicMine interface" />
 	            </div>
-	            <div class="span-8 last">
+	            <div id="welcome-content" class="span-8 last current">
 			        <h2>First time here?</h2>
 			        <p>Welcome to <strong>metabolicMine</strong>, an integrated web resource of Data & Tools to support the <u>Metabolic
 			        Disease</u> research community <br>For a basic overview of the site and its features try the <strong>Mini-Tour</strong>
@@ -57,7 +92,7 @@
 	            <div id="thumb" class="span-4">
 	                <img src="/metabolicmine/themes/metabolic/thumbs/thumb-image.png" alt="metabolicMine interface" />
 	            </div>
-	            <div class="span-8 last">
+	            <div id="welcome-content" class="span-8 last">
 			        <h2>More text goes here</h2>
 			        <p>Lorem ipsum dolor sit.</p>
 			        <br />
@@ -90,6 +125,10 @@
 			javascript:jQuery(".bochs").each (function() { javascript:jQuery(this).hide(); });
 			// then show our baby
 			javascript:jQuery('#bochs-'+newDivId).fadeIn();
+			
+			// apply active class
+			$("#welcome-content").each (function() { javascript:jQuery(this).removeClass('current'); });
+			$('#bochs-'+newDivId+' > #welcome-content').addClass('current');
 		}
 	</script>
 	-->

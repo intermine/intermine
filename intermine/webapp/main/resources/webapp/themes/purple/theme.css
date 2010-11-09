@@ -74,7 +74,7 @@ ul#nav li#mymine {
 ul#nav li.activelink {
 	background:#5C0075 url('corner_act_t_l.png') no-repeat;}
 
-ul#submenulist li#subactive_bag {
+ul#submenulist li#subactive_bag, ul#submenulist li#subactive_api {
 	font-weight:bold;color:#FFF;background:url('submenu_indent.png') no-repeat bottom center;}
 
 ul#submenulist li#subactive_mymine {
@@ -249,3 +249,9 @@ div.heading.results { border:1px solid #9E68AE; background:#F5F0FF; margin-left:
 div.heading.results h1 { color:#5C0075; font-size:22px; margin-bottom:10px; }
 div.heading.results #tool_bar_div { float:left; background:#F5F0FF !important; }
 div.heading.results #tool_bar_div li { border:1px solid #D2D2D2; background:#EEEEEE; margin-right:10px; padding:4px; font-weight:normal; }
+
+/* submenu border */
+ul#submenulist li div { border-left-color:#FFF; }
+
+/* login bar */
+ul#loginbar li { border-right-color:#5C0075; }

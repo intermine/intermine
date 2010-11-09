@@ -3,7 +3,7 @@
 #headercontainer #header h1 a{padding-top:2px;}
 #headercontainer #header p{padding-top:6px;}
 #headercontainer #header p#version{margin-left:4px;margin-right:8px;padding-top:6px;}
-#loginbar{font-family:"Lucida Grande",Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif;line-height:25px;}
+#loginbar{font-family:"Lucida Grande",Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif;/*line-height:25px;*/}
 #quickSearch form,ul#nav li.activelink a{color:#4B3F4B;}
 #submenu.submenu_mymine{background:#A7A7A7;}
 #submenu.submenu_mymine ul#submenulist{color:#DADADA;}
@@ -48,7 +48,7 @@ ul#nav li.activelink{background:url(img/menu-orange-left.png) repeat-x top;}
 ul#submenulist{color:#EF5900;}
 ul#submenulist li a{color:#4B3F4B;font-weight:bold;text-decoration:none;padding:0 6px;}
 ul#submenulist li a:hover{color:#4B3F4B;font-weight:bold;text-decoration:underline;}
-ul#submenulist li#subactive_bag, ul#submenulist li#subactive_api{color:#4B3F4B;font-weight:700;padding:0 6px;}
+ul#submenulist li#subactive_bag, ul#submenulist li#subactive_api{color:#4B3F4B;font-weight:700;}
 
 /* background */
 body { background:url("img/top-gradient.jpg") repeat-x scroll center top transparent; }
@@ -149,3 +149,10 @@ div.filterBar { border:none !important; background:none !important; }
 a.contextHelpSmall { background:url("icons/help.png") no-repeat left; padding:6px 5px 6px 25px !important; }
 	p.alignright a.contextHelpSmall { display:none; } /* hide context help in breadcrumbs */
 	#navtrail p.alignright { margin-right:-10px; }
+
+/* submenu border */
+ul#submenulist li div { border-left-color:#FEF9F3; }
+
+/* login bar */
+ul#loginbar { margin-top:15px !important; }
+ul#loginbar li { border-right-color:#004499; }
