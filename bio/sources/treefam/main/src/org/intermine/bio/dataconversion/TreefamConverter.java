@@ -45,6 +45,7 @@ public class TreefamConverter extends BioFileConverter
     private static final Logger LOG = Logger.getLogger(TreefamConverter.class);
     private Set<String> taxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();
+    private Set<Item> genesToStore = new HashSet<Item>();
     protected File geneFile;
     private Map<String, GeneHolder> idsToGenes = new HashMap<String, GeneHolder>();
     private Map<String, Item> identifiersToGenes = new HashMap<String, Item>();
@@ -143,7 +144,7 @@ public class TreefamConverter extends BioFileConverter
         while (lineIter.hasNext()) {
             String[] bits = lineIter.next();
             if (bits.length < 9) {
-                throw new IllegalArgumentException("bad data file, couldn't process:" + bits);
+                throw new IllegalArgumentException("bad data file, couldn't process:" + bits[0]);
             }
             String id = bits[0];
             String identifier = bits[4];
@@ -184,8 +185,7 @@ public class TreefamConverter extends BioFileConverter
         }
     }
 
-    private Item getGene(String identifierType, String id, String taxonId)
-        throws ObjectStoreException {
+    private Item getGene(String identifierType, String id, String taxonId) {
         String identifier = id;
         if ("7227".equals(taxonId)) {
             identifier = resolveGene(identifier);
@@ -201,12 +201,13 @@ public class TreefamConverter extends BioFileConverter
             identifiersToGenes.put(identifier, item);
             // only store if this is an organism of interest.  homologues will be stored later
             if (taxonIds.contains(taxonId)) {
-                store(item);
+                genesToStore.add(item);
             }
         }
         return item;
     }
 
+    
     /**
      * Process the text file
      * @param reader the Reader
@@ -244,11 +245,18 @@ public class TreefamConverter extends BioFileConverter
             GeneHolder holder1 = idsToGenes.get(gene1id);
             GeneHolder holder2 = idsToGenes.get(gene2id);
             // one of the genes has to be from an organism of interest
-            if (holder1 != null && holder2 != null
-                    && (holder1.validGene() || holder2.validGene())) {
-                processHomologues(holder1, holder2, bootstrap);
-                processHomologues(holder2, holder1, bootstrap);
+            if (holder1 != null && holder2 != null) {
+
+                if (holder1.validGene() && (holder2.validGene() || holder2.validHomologue())) {
+                    processHomologues(holder1, holder2, bootstrap);
+                }
+                if (holder2.validGene() && (holder1.validGene() || holder1.validHomologue())) {
+                    processHomologues(holder2, holder1, bootstrap);
+                }
             }
+        }
+        for (Item item : genesToStore) {
+            store(item);
         }
     }
 
@@ -269,19 +277,16 @@ public class TreefamConverter extends BioFileConverter
         }
         homologue.setAttribute("type", type);
 
-        storeHomologueGene(holder1);
+        storeHomologueGene(holder2);
         store(homologue);
     }
 
-    // now that we know this gene is a homologue, store
-    private void storeHomologueGene(GeneHolder holder)
-        throws ObjectStoreException {
+    private void storeHomologueGene(GeneHolder holder) {
         Item gene = holder.getGene();
         if (gene == null) {
             return;
         }
-        store(gene);
-        holder.storedGene();
+        genesToStore.add(gene);
     }
 
     private String getEvidence()
@@ -363,18 +368,17 @@ public class TreefamConverter extends BioFileConverter
         }
 
         /**
-         * Only genes from the organisms of interest are stored.  Once the gene is confirmed as
-         * a homologue for a gene from an organism of interest, it's stored.
-         */
-        protected void storedGene() {
-            gene = null;
-        }
-
-        /**
          * @return true of this organism is in list of organisms of interest
          */
         protected boolean validGene() {
             return taxonIds.contains(taxonId);
+        }
+        
+        /**
+         * @return true of this organism is in the homologues list
+         */
+        protected boolean validHomologue() {
+            return homologues.contains(taxonId);
         }
     }
 
@@ -390,6 +394,8 @@ public class TreefamConverter extends BioFileConverter
         }
         return identifier;
     }
+    
+
 
     private String resolveGene(String identifier) {
         // we only have a resolver for dmel for now
