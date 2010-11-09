@@ -46,9 +46,6 @@
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
-<!--    <source name="omim" type="omim" dump="true">
-     <property name="src.data.dir" location="/shared/data/metabolic/omim/test"/>
-    </source> -->
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
     </source>
@@ -62,6 +59,13 @@
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/shared/data/metabolic/kegg"/>
       <property name="kegg.organisms" value="9606"/>
+    </source>
+    <source name="reactome" type="biopax">
+      <property name="src.data.dir" location="/shared/data/metabolic/biopax/reactome/current/not-curated"/>
+      <property name="biopax.organisms" value="9606"/>
+      <property name="biopax.datasourcename" value="Reactome"/>
+      <property name="biopax.datasetname" value="Reactome data set"/>
+      <property name="biopax.curated" value="false"/>
     </source>
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
@@ -78,6 +82,9 @@
       <property name="pubmed.organisms" value="9606"/>
       <property name="src.data.dir.includes" value="gene2pubmed"/>
       <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/>
+    </source>
+    <source name="omim" type="omim" dump="true">
+     <property name="src.data.dir" location="/shared/data/metabolic/omim/test"/>
     </source>
     <source name="ensembl-human-chr-fasta" type="fasta">
       <property name="fasta.taxonId" value="9606"/>
