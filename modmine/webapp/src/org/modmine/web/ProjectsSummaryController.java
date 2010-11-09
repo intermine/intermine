@@ -61,41 +61,14 @@ public class ProjectsSummaryController extends TilesAction
 
 
             // using the categories form experiment.category (chado)
-            Map<String, List<DisplayExperiment>> categoriesNew = 
-                new TreeMap<String, List<DisplayExperiment>>();
-            
-            // added to reduce the number of fields and to deal temporarily with
-            // sub 2675
-            // TODO remove first ||
-            for (List<DisplayExperiment> expList : experiments.values()) {
-                for (DisplayExperiment exp : expList) {
-                    String cat = adaptCategory(exp);
-                    BioConverterUtil.addToListMap(categoriesNew, cat, exp);
-                }
-            }
+            Map<String, List<DisplayExperiment>> categoriesNew =
+                MetadataCache.getCategoryExperiments(os);
+
             request.setAttribute("catExp", categoriesNew);
 
         } catch (Exception err) {
             err.printStackTrace();
         }
         return null;
-    }
-
-    /**
-     * @param exp the DisplayExperiment
-     * @return the category for the front page
-     */
-    private String adaptCategory(DisplayExperiment exp) {
-        String cat = exp.getExperimentCategory();
-        if (cat == null) {
-            return "Gene Structure";  
-        }                    
-        if (cat.startsWith("Gene Structure")) { 
-            return "Gene Structure";
-        } 
-        if (cat.startsWith("Replication") || cat.endsWith("Replication")) {
-            return "Replication";
-        } 
-        return cat;
     }
 }

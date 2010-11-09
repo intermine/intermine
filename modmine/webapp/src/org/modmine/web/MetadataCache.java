@@ -31,6 +31,7 @@ import javax.servlet.ServletContext;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.filters.StringInputStream;
 import org.intermine.bio.constants.ModMineCacheKeys;
+import org.intermine.bio.util.BioConverterUtil;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DatabaseRecord;
 import org.intermine.model.bio.Experiment;
@@ -90,6 +91,9 @@ public final class MetadataCache
     private static Map<Integer, List<String[]>> submissionRepositedCache = null;
     private static Map<String, String> featDescriptionCache = null;
     private static Map<String, List<DisplayExperiment>> projectExperiments = null;
+    private static Map<String, List<DisplayExperiment>> categoryExperiments = null;
+
+    
     private static Properties metadataProperties = null;
 
     private static long lastTrackCacheRefresh = 0;
@@ -123,6 +127,19 @@ public final class MetadataCache
             readProjectExperiments(os);
         }
         return projectExperiments;
+    }
+
+    /**
+     * Fetch experiment details for display.
+     * @param os the production objectStore
+     * @return a list of experiments
+     */
+    public static synchronized Map<String, List<DisplayExperiment>>
+    getCategoryExperiments(ObjectStore os) {
+        if (categoryExperiments == null) {
+            readCategoryExperiments(os);
+        }
+        return categoryExperiments;
     }
 
     /**
@@ -595,6 +612,7 @@ public final class MetadataCache
     public static Map<String, List<DisplayExperiment>>
     readProjectExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
+        
         projectExperiments = new TreeMap<String, List<DisplayExperiment>>();
         for (DisplayExperiment exp : getExperiments(os)) {
             List<DisplayExperiment> exps = projectExperiments.get(exp.getProjectName());
@@ -610,6 +628,55 @@ public final class MetadataCache
         return projectExperiments;
     }
 
+    /**
+     * Fetch a map from project name to experiment.
+     * @param os the production ObjectStore
+     * @return a map from project name to experiment
+     */
+    private static Map<String, List<DisplayExperiment>>
+    readCategoryExperiments(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+        
+        projectExperiments = getProjectExperiments(os);
+        
+        categoryExperiments = new TreeMap<String, List<DisplayExperiment>>();
+       
+        for (List<DisplayExperiment> expList : projectExperiments.values()) {
+            for (DisplayExperiment exp : expList) {
+                String cat = adaptCategory(exp);
+                BioConverterUtil.addToListMap(categoryExperiments, cat, exp);
+            }
+        }
+        long totalTime = System.currentTimeMillis() - startTime;
+        LOG.info("Made category map: " + categoryExperiments.size()
+                + " took: " + totalTime + " ms.");
+        return categoryExperiments;
+    }
+
+    
+    /**
+     * to reduce the number of fields and to deal temporarily with
+     * sub 2675
+     * TODO remove first ||
+     * @param exp the DisplayExperiment
+     * @return the category for the front page
+     */
+    private static String adaptCategory(DisplayExperiment exp) {
+        String cat = exp.getExperimentCategory();
+        if (cat == null) {
+            return "Gene Structure";
+        }
+        if (cat.startsWith("Gene Structure")) {
+            return "Gene Structure";
+        }
+        if (cat.startsWith("Replication") || cat.endsWith("Replication")) {
+            return "Replication";
+        }
+        return cat;
+    }
+    
+    
+    
 
     private static void readExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
