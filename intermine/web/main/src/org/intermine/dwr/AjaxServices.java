@@ -1038,29 +1038,29 @@ public class AjaxServices
 
     /**
      * Work as a proxy for fetching remote file (RSS)
-     * @param rssURL
+     * @param rssURL the url
      * @return String representation of a file
      */
     public static String getNewsPreview(String rssURL) {
-    	try {
-    		URL url = new URL(rssURL);
-            
-    		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-    		String str;
-    		StringBuffer sb = new StringBuffer();
-    		// append to string buffer
+        try {
+            URL url = new URL(rssURL);
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+            String str;
+            StringBuffer sb = new StringBuffer();
+            // append to string buffer
             while ((str = in.readLine()) != null) {
-              sb.append(str);
+                sb.append(str);
             }
             in.close();
             return sb.toString();
-    	} catch (MalformedURLException e) {
-    		return "";
-    	} catch (IOException e) {
-    		return "";
-    	}
+        } catch (MalformedURLException e) {
+            return "";
+        } catch (IOException e) {
+            return "";
+        }
     }
-    
+
     /**
      * Get the news
      * @param rssURI the URI of the rss feed
