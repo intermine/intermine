@@ -75,6 +75,8 @@ public final class MetadataCache
 
     private static Map<String, DisplayExperiment> experimentCache = null;
     private static Map<Integer, Map<String, Long>> submissionFeatureCounts = null;
+    private static Map<String, Map<String, Long>> experimentFeatureCounts = null;
+    private static Map<String, Map<String, Long>> experimentUniqueFeatureCounts = null;
     private static Map<Integer, Map<String, Long>> submissionFeatureExpressionLevelCounts = null;
     private static Map<String, Map<String, Long>> experimentFeatureExpressionLevelCounts = null;
     private static Map<Integer, Integer> submissionExpressionLevelCounts = null;
@@ -611,8 +613,8 @@ public final class MetadataCache
 
     private static void readExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-        Map<String, Map<String, Long>> featureCounts = getExperimentFeatureCounts(os);
-        Map<String, Map<String, Long>> uniqueFeatureCounts = getUniqueExperimentFeatureCounts(os);
+        experimentFeatureCounts = readExperimentFeatureCounts(os);
+        experimentUniqueFeatureCounts = readUniqueExperimentFeatureCounts(os);
 
 
         try {
@@ -649,8 +651,8 @@ public final class MetadataCache
                 Experiment experiment = (Experiment) row.get(1);
 
                 // expFeatureUniqueCounts is a subset of expFeatureCounts
-                Map<String, Long> expFeatureCounts = featureCounts.get(experiment.getName());
-                Map<String, Long> expFeatureUniqueCounts = uniqueFeatureCounts
+                Map<String, Long> expFeatureCounts = experimentFeatureCounts.get(experiment.getName());
+                Map<String, Long> expFeatureUniqueCounts = experimentUniqueFeatureCounts
                         .get(experiment.getName());
 
                 Set<FeatureCountsRecord> featureCountsRecords =
@@ -687,85 +689,55 @@ public final class MetadataCache
     /**
      * The counts are duplicated in the method, see getUniqueExperimentFeatureCounts
      */
-    private static Map<String, Map<String, Long>> getExperimentFeatureCounts(ObjectStore os) {
+    private static Map<String, Map<String, Long>> readExperimentFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
 
-        // NB: example of query (with group by) enwrapping a subquery that gets rids of
-        // duplications
+        experimentFeatureCounts = new LinkedHashMap<String, Map<String, Long>>();
 
-        Query q = new Query();
-
-        QueryClass qcExp = new QueryClass(Experiment.class);
-        QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
-
-        QueryField qfName = new QueryField(qcExp, "name");
-        QueryField qfClass = new QueryField(qcLsf, "class");
-
-        q.addFrom(qcSub);
-        q.addFrom(qcLsf);
-        q.addFrom(qcExp);
-
-        q.addToSelect(qcExp);
-        q.addToSelect(qcLsf);
-        q.addToSelect(qfName);
-        q.addToSelect(qfClass);
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        QueryCollectionReference submissions = new QueryCollectionReference(qcExp, "submissions");
-        ContainsConstraint ccSubs = new ContainsConstraint(submissions, ConstraintOp.CONTAINS,
-                qcSub);
-        cs.addConstraint(ccSubs);
-
-        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
-        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
-        cs.addConstraint(ccFeats);
-
-        q.setConstraint(cs);
-
-        q.setDistinct(true);
-
-        Query superQ = new Query();
-        superQ.addFrom(q);
-        QueryField superQfName = new QueryField(q, qfName);
-        QueryField superQfClass = new QueryField(q, qfClass);
-
-        superQ.addToSelect(superQfName);
-        superQ.addToSelect(superQfClass);
-        superQ.addToOrderBy(superQfName);
-        superQ.addToOrderBy(superQfClass);
-        superQ.addToGroupBy(superQfName);
-        superQ.addToGroupBy(superQfClass);
-
-        superQ.addToSelect(new QueryFunction());
-        superQ.setDistinct(false);
-
-        Results results = os.execute(superQ);
-
-        Map<String, Map<String, Long>> featureCounts =
-            new LinkedHashMap<String, Map<String, Long>>();
-
-        // for each classes set the values for jsp
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
-            (Iterator) results.iterator();
-        while (iter.hasNext()) {
-            ResultsRow<?> row = iter.next();
-            String expName = (String) row.get(0);
-            Class<?> feat = (Class<?>) row.get(1);
-            Long count = (Long) row.get(2);
-
-            Map<String, Long> expFeatureCounts = featureCounts.get(expName);
-            if (expFeatureCounts == null) {
-                expFeatureCounts = new HashMap<String, Long>();
-                featureCounts.put(expName, expFeatureCounts);
-            }
-            expFeatureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
+        Properties props = new Properties();
+        try {
+            props =
+                PropertiesUtil.stripStart(ModMineCacheKeys.EXP_FEATURE_COUNT, getProperties(os));
+        } catch (SQLException e) {
+            throw new RuntimeException("Some SQL error happened. ", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Some IO error happened. ", e);
         }
+
+        for (Object key : props.keySet()) {
+            String keyString = (String) key;
+            String[] token = keyString.split("\\.");
+            
+            String exp = getName(token);
+            String feature = token[token.length - 1];
+            Long count = Long.parseLong((String) props.get(key));
+
+            Map<String, Long> featureCounts = experimentFeatureCounts.get(exp);
+            if (featureCounts == null) {
+                featureCounts = new HashMap<String, Long>();
+                experimentFeatureCounts.put(exp, featureCounts);
+            }
+            featureCounts.put(feature, count);
+        }
+
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Read experiment feature counts, took: " + timeTaken + "ms");
 
-        return featureCounts;
+        return experimentFeatureCounts;
+    }
+
+    /**
+     * to deal with experiment with (1) dot in the name 
+     * e.g. "Changes in expression of small RNAs during aging in C. elegans"
+     * @param token
+     * @return the experiment name
+     */
+    private static String getName(String[] token) {
+        String exp = null;
+        if (token.length > 2) {
+            return exp = token[0] + "." + token[1];    
+        } 
+        return exp = token[0];
     }
 
     // TODO REPLACE THIS METHOD, READ FROM PROPERTIES WITH ModMineCacheKeys.UNIQUE_EXP_FEATURE_COUNT
@@ -775,266 +747,57 @@ public final class MetadataCache
      * @param os
      * @return Map<String: expName, Map<String: feature type, Long: count>>
      */
-    private static Map<String, Map<String, Long>> getUniqueExperimentFeatureCounts(ObjectStore os) {
+    private static Map<String, Map<String, Long>> readUniqueExperimentFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
 
-        Query q = new Query();
+        experimentUniqueFeatureCounts = new LinkedHashMap<String, Map<String, Long>>();
 
-        QueryClass qcExp = new QueryClass(Experiment.class);
-        QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
-        QueryClass qcChr = new QueryClass(Chromosome.class);
-        QueryClass qcLoc = new QueryClass(Location.class);
-
-
-        QueryField qfExpName = new QueryField(qcExp, "name");
-        QueryField qfFT = new QueryField(qcLsf, "class");
-        QueryField qfChrID = new QueryField(qcChr, "primaryIdentifier");
-        QueryField qfStart = new QueryField(qcLoc, "start");
-        QueryField qfEnd = new QueryField(qcLoc, "end");
-
-        q.addFrom(qcSub);
-        q.addFrom(qcLsf);
-        q.addFrom(qcExp);
-        q.addFrom(qcChr);
-        q.addFrom(qcLoc);
-
-        q.addToSelect(qfExpName);
-        q.addToSelect(qfFT);
-        q.addToSelect(qfChrID);
-        q.addToSelect(qfStart);
-        q.addToSelect(qfEnd);
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        QueryCollectionReference submissions = new QueryCollectionReference(qcExp, "submissions");
-        ContainsConstraint ccSubs = new ContainsConstraint(submissions, ConstraintOp.CONTAINS,
-                qcSub);
-        cs.addConstraint(ccSubs);
-
-        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
-        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
-        cs.addConstraint(ccFeats);
-
-        QueryObjectReference chromosome = new QueryObjectReference(qcLsf, "chromosome");
-        ContainsConstraint ccChr = new ContainsConstraint(chromosome,
-                ConstraintOp.CONTAINS, qcChr);
-        cs.addConstraint(ccChr);
-
-        QueryObjectReference chromosomeLocation = new QueryObjectReference(qcLsf,
-            "chromosomeLocation");
-        ContainsConstraint ccChrLoc = new ContainsConstraint(chromosomeLocation,
-                ConstraintOp.CONTAINS, qcLoc);
-        cs.addConstraint(ccChrLoc);
-
-        q.setConstraint(cs);
-
-        q.setDistinct(true);
-
-        Query superQ = new Query();
-        superQ.addFrom(q);
-        QueryField superQfName = new QueryField(q, qfExpName);
-        QueryField superQfFT = new QueryField(q, qfFT);
-
-        superQ.addToSelect(superQfName);
-        superQ.addToSelect(superQfFT);
-
-        superQ.addToOrderBy(superQfName);
-        superQ.addToOrderBy(superQfFT);
-        superQ.addToGroupBy(superQfName);
-        superQ.addToGroupBy(superQfFT);
-
-        superQ.addToSelect(new QueryFunction());
-        superQ.setDistinct(false);
-
-        Results results = os.execute(superQ);
-
-        Map<String, Map<String, Long>> featureCounts =
-            new LinkedHashMap<String, Map<String, Long>>();
-
-        // for each classes set the values for jsp
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter = (Iterator) results.iterator();
-        while (iter.hasNext()) {
-            ResultsRow<?> row = iter.next();
-            String expName = (String) row.get(0);
-            Class<?> feat = (Class<?>) row.get(1);
-            Long count = (Long) row.get(2);
-
-            Map<String, Long> expFeatureCounts = featureCounts.get(expName);
-            if (expFeatureCounts == null) {
-                expFeatureCounts = new HashMap<String, Long>();
-                featureCounts.put(expName, expFeatureCounts);
-            }
-            expFeatureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
-        }
-        long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Read experiment feature counts, took: " + timeTaken + "ms");
-
-        return featureCounts;
-    }
-
-
-    // TODO DELETE THIS, IT ISN'T USED
-    /**
-     * Method equivalent to getUniqueExperimentFeatureCountsByExpNameSlow but much faster
-     *
-     * @param expName name of an experiment
-     * @param os
-     * @return featureCounts Map<String: feature type, Long: feature count>
-     */
-    private static Map<String, Long> getUniqueExperimentFeatureCountsByExpNameFast(
-            String expName, ObjectStore os) {
-        long startTime = System.currentTimeMillis();
-
-        Query q = new Query();
-
-        QueryClass qcExp = new QueryClass(Experiment.class);
-        QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
-        QueryClass qcChr = new QueryClass(Chromosome.class);
-        QueryClass qcLoc = new QueryClass(Location.class);
-
-
-        QueryField qfExpName = new QueryField(qcExp, "name");
-        QueryField qfFT = new QueryField(qcLsf, "class");
-        QueryField qfChrID = new QueryField(qcChr, "primaryIdentifier");
-        QueryField qfStart = new QueryField(qcLoc, "start");
-        QueryField qfEnd = new QueryField(qcLoc, "end");
-
-        q.addFrom(qcSub);
-        q.addFrom(qcLsf);
-        q.addFrom(qcExp);
-        q.addFrom(qcChr);
-        q.addFrom(qcLoc);
-
-        q.addToSelect(qfFT);
-        q.addToSelect(qfChrID);
-        q.addToSelect(qfStart);
-        q.addToSelect(qfEnd);
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        SimpleConstraint scExpName = new SimpleConstraint(qfExpName,
-                ConstraintOp.EQUALS, new QueryValue(expName));
-        cs.addConstraint(scExpName);
-
-        QueryCollectionReference submissions = new QueryCollectionReference(qcExp, "submissions");
-        ContainsConstraint ccSubs = new ContainsConstraint(submissions, ConstraintOp.CONTAINS,
-                qcSub);
-        cs.addConstraint(ccSubs);
-
-        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
-        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
-        cs.addConstraint(ccFeats);
-
-        QueryObjectReference chromosome = new QueryObjectReference(qcLsf, "chromosome");
-        ContainsConstraint ccChr = new ContainsConstraint(chromosome,
-                ConstraintOp.CONTAINS, qcChr);
-        cs.addConstraint(ccChr);
-
-        QueryObjectReference chromosomeLocation = new QueryObjectReference(qcLsf,
-            "chromosomeLocation");
-        ContainsConstraint ccChrLoc = new ContainsConstraint(chromosomeLocation,
-                ConstraintOp.CONTAINS, qcLoc);
-        cs.addConstraint(ccChrLoc);
-
-        q.setConstraint(cs);
-
-        q.setDistinct(true);
-
-        Query superQ = new Query();
-        superQ.addFrom(q);
-        QueryField superQfFT = new QueryField(q, qfFT);
-
-        superQ.addToSelect(superQfFT);
-
-        superQ.addToOrderBy(superQfFT);
-        superQ.addToGroupBy(superQfFT);
-
-        superQ.addToSelect(new QueryFunction());
-        superQ.setDistinct(false);
-
-        Results results = os.execute(superQ);
-
-        Map<String, Long> featureCounts = new LinkedHashMap<String, Long>();
-
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
-            (Iterator) results.iterator();
-        while (iter.hasNext()) {
-            ResultsRow<?> row = iter.next();
-
-            Class<?> feat = (Class<?>) row.get(0);
-            Long count = (Long) row.get(1);
-
-            featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
+        Properties props = new Properties();
+        try {
+            props =
+                PropertiesUtil.stripStart(ModMineCacheKeys.UNIQUE_EXP_FEATURE_COUNT, getProperties(os));
+        } catch (SQLException e) {
+            throw new RuntimeException("Some SQL error happened. ", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Some IO error happened. ", e);
         }
 
-        long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Read experiment feature counts, took: " + timeTaken + "ms");
+        for (Object key : props.keySet()) {
+            String keyString = (String) key;
 
-        return featureCounts;
-    }
+            String[] token = keyString.split("\\.");
+            
+            String exp = stripDash(getName(token));
+            String feature = token[token.length - 1];
+            Long count = Long.parseLong((String) props.get(key));
 
-    // TODO DELETE THIS, IT ISN'T USED
-    private static void readSubmissionFeatureCountsO(ObjectStore os) {
-        long startTime = System.currentTimeMillis();
+            LOG.info("ZZZ: " + exp + ":" + count);
 
-        submissionFeatureCounts = new LinkedHashMap<Integer, Map<String, Long>>();
-        submissionIdCache = new HashMap<Integer, Integer>();
-
-        Query q = new Query();
-        q.setDistinct(false);
-
-        QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
-
-        QueryField qfClass = new QueryField(qcLsf, "class");
-
-        q.addFrom(qcSub);
-        q.addFrom(qcLsf);
-
-        q.addToSelect(qcSub);
-        q.addToSelect(qfClass);
-        q.addToSelect(new QueryFunction());
-
-        q.addToGroupBy(qcSub);
-        q.addToGroupBy(qfClass);
-
-        q.addToOrderBy(qcSub);
-        q.addToOrderBy(qfClass);
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
-        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
-        cs.addConstraint(ccFeats);
-
-        q.setConstraint(cs);
-
-        Results results = os.execute(q);
-
-        // for each classes set the values for jsp
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
-            (Iterator) results.iterator();
-        while (iter.hasNext()) {
-            ResultsRow<?> row = iter.next();
-            Submission sub = (Submission) row.get(0);
-            Class<?> feat = (Class<?>) row.get(1);
-            Long count = (Long) row.get(2);
-
-            submissionIdCache.put(sub.getdCCid(), sub.getId());
-
-            Map<String, Long> featureCounts = submissionFeatureCounts.get(sub.getdCCid());
+            Map<String, Long> featureCounts = experimentUniqueFeatureCounts.get(exp);
             if (featureCounts == null) {
                 featureCounts = new HashMap<String, Long>();
-                submissionFeatureCounts.put(sub.getdCCid(), featureCounts);
+                experimentUniqueFeatureCounts.put(exp, featureCounts);
             }
-            featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
+            featureCounts.put(feature, count);
         }
+
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed submissionFeatureCounts cache, took: " + timeTaken + "ms size = "
-                + submissionFeatureCounts.size());
+        LOG.info("Read experiment unique feature counts, took: " + timeTaken + "ms");
+
+        return experimentUniqueFeatureCounts;
+
     }
+
+    /**
+     * @param exp
+     */
+    private static String stripDash(String exp) {
+        String fixed = exp.replace("\\", "");
+        return fixed;
+    }
+
+
+
 
     private static Properties readProperties(ObjectStore os) throws SQLException, IOException {
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
@@ -1118,67 +881,35 @@ public final class MetadataCache
         long startTime = System.currentTimeMillis();
 
         submissionFeatureExpressionLevelCounts = new LinkedHashMap<Integer, Map<String, Long>>();
-        //submissionIdCache = new HashMap<Integer, Integer>();
 
-        Query q = new Query();
-        q.setDistinct(false);
+        Properties props = new Properties();
+        try {
+            props =
+                PropertiesUtil.stripStart(ModMineCacheKeys.SUB_FEATURE_EXPRESSION_LEVEL_COUNT, getProperties(os));
+        } catch (SQLException e) {
+            throw new RuntimeException("Some SQL error happened. ", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Some IO error happened. ", e);
+        }
 
-        QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
-        QueryClass qcEL = new QueryClass(ExpressionLevel.class);
+        for (Object key : props.keySet()) {
+            String keyString = (String) key;
 
-        QueryField qfClass = new QueryField(qcLsf, "class");
+            String[] token = keyString.split("\\.");
+            Integer dccId = Integer.parseInt(token[0]);
+            String feature = token[1];
+            Long count = Long.parseLong((String) props.get(key));
 
-        q.addFrom(qcSub);
-        q.addFrom(qcLsf);
-        q.addFrom(qcEL);
-
-        q.addToSelect(qcSub);
-        q.addToSelect(qfClass);
-        q.addToSelect(new QueryFunction());
-
-        q.addToGroupBy(qcSub);
-        q.addToGroupBy(qfClass);
-
-        q.addToOrderBy(qcSub);
-        q.addToOrderBy(qfClass);
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
-        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
-        cs.addConstraint(ccFeats);
-        QueryCollectionReference el = new QueryCollectionReference(qcLsf, "expressionLevels");
-        ContainsConstraint ccEl = new ContainsConstraint(el, ConstraintOp.CONTAINS, qcEL);
-        cs.addConstraint(ccEl);
-
-        q.setConstraint(cs);
-
-        Results results = os.execute(q);
-
-        // for each classes set the values for jsp
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
-            (Iterator) results.iterator();
-        while (iter.hasNext()) {
-            ResultsRow<?> row = iter.next();
-            Submission sub = (Submission) row.get(0);
-            Class<?> feat = (Class<?>) row.get(1);
-            Long count = (Long) row.get(2);
-
-            //submissionIdCache.put(sub.getdCCid(), sub.getId());
-
-            Map<String, Long> featureCounts =
-                submissionFeatureExpressionLevelCounts.get(sub.getdCCid());
+            Map<String, Long> featureCounts = submissionFeatureExpressionLevelCounts.get(dccId);
             if (featureCounts == null) {
                 featureCounts = new HashMap<String, Long>();
-                submissionFeatureExpressionLevelCounts.put(sub.getdCCid(), featureCounts);
+                submissionFeatureExpressionLevelCounts.put(dccId, featureCounts);
             }
-            featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
+            featureCounts.put(feature, count);
         }
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed submissionFeatureExpressionLevelCounts cache, took: " + timeTaken
-                + "ms size = " + submissionFeatureExpressionLevelCounts.size()
-                + "<->" + submissionFeatureCounts.size());
+        LOG.info("Primed submissionFeatureExpressionLevelCounts cache, took: " + timeTaken + "ms size = "
+                + submissionFeatureExpressionLevelCounts.size());
 
         LOG.info("submissionFeatureELCounts " + submissionFeatureExpressionLevelCounts);
 
@@ -1192,67 +923,26 @@ public final class MetadataCache
         experimentFeatureExpressionLevelCounts = new LinkedHashMap<String, Map<String, Long>>();
         //submissionIdCache = new HashMap<Integer, Integer>();
 
-        Query q = new Query();
-        q.setDistinct(false);
-
-        QueryClass qcExp = new QueryClass(Experiment.class);
-        QueryClass qcSub = new QueryClass(Submission.class);
-        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
-        QueryClass qcEL = new QueryClass(ExpressionLevel.class);
-
-        QueryField qfClass = new QueryField(qcLsf, "class");
-
-        q.addFrom(qcExp);
-        q.addFrom(qcSub);
-        q.addFrom(qcLsf);
-        q.addFrom(qcEL);
-
-        q.addToSelect(qcExp);
-        q.addToSelect(qfClass);
-        q.addToSelect(new QueryFunction());
-
-        q.addToGroupBy(qcExp);
-        q.addToGroupBy(qfClass);
-
-        q.addToOrderBy(qcExp);
-        q.addToOrderBy(qfClass);
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        QueryCollectionReference submissions = new QueryCollectionReference(qcExp, "submissions");
-        ContainsConstraint ccSubs =
-            new ContainsConstraint(submissions, ConstraintOp.CONTAINS, qcSub);
-        cs.addConstraint(ccSubs);
-        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
-        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
-        cs.addConstraint(ccFeats);
-        QueryCollectionReference el = new QueryCollectionReference(qcLsf, "expressionLevels");
-        ContainsConstraint ccEl = new ContainsConstraint(el, ConstraintOp.CONTAINS, qcEL);
-        cs.addConstraint(ccEl);
-
-        q.setConstraint(cs);
-
-        Results results = os.execute(q);
-
-        // for each classes set the values for jsp
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
-            (Iterator) results.iterator();
-        while (iter.hasNext()) {
-            ResultsRow<?> row = iter.next();
-            Experiment exp = (Experiment) row.get(0);
-            Class<?> feat = (Class<?>) row.get(1);
-            Long count = (Long) row.get(2);
-
-            //submissionIdCache.put(sub.getdCCid(), sub.getId());
-
-            Map<String, Long> featureCounts =
-                experimentFeatureExpressionLevelCounts.get(exp.getName());
-            if (featureCounts == null) {
-                featureCounts = new HashMap<String, Long>();
-                experimentFeatureExpressionLevelCounts.put(exp.getName(), featureCounts);
-            }
-            featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
-        }
+//
+//        // for each classes set the values for jsp
+//        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+//            (Iterator) results.iterator();
+//        while (iter.hasNext()) {
+//            ResultsRow<?> row = iter.next();
+//            Experiment exp = (Experiment) row.get(0);
+//            Class<?> feat = (Class<?>) row.get(1);
+//            Long count = (Long) row.get(2);
+//
+//            //submissionIdCache.put(sub.getdCCid(), sub.getId());
+//
+//            Map<String, Long> featureCounts =
+//                experimentFeatureExpressionLevelCounts.get(exp.getName());
+//            if (featureCounts == null) {
+//                featureCounts = new HashMap<String, Long>();
+//                experimentFeatureExpressionLevelCounts.put(exp.getName(), featureCounts);
+//            }
+//            featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
+//        }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed experimentFeatureExpressionLevelCounts cache, took: " + timeTaken
                 + "ms size = " + experimentFeatureExpressionLevelCounts.size());
@@ -1344,7 +1034,6 @@ public final class MetadataCache
     }
 
 
-    // TODO GIVE THIS METHOD A BETTER NAME
     private static void readSubmissionFiles(ObjectStore os) {
         //
         long startTime = System.currentTimeMillis();
@@ -1615,12 +1304,11 @@ public final class MetadataCache
             files = m.get(key);
         }
         if (!files.contains(value)) {
-            
             // check if same name
             for (ResultFile file : files) {
                 if (file.getName().equals(value.getName())) {
-                    LOG.info("DUPLICATED FILE " + value.getName() + " - ids: in " + value.getId()
-                            + " dup " + file.getId());                    
+                    LOG.debug("DUPLICATED FILE " + value.getName() + " - ids: in " + value.getId()
+                            + " dup " + file.getId());
                     return;
                 }
             }
