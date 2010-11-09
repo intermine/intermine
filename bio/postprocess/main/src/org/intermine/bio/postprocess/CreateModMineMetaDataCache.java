@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.intermine.bio.constants.ModMineCacheKeys;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.SequenceFeature;
@@ -50,11 +51,7 @@ import org.intermine.util.TypeUtil;
  */
 public final class CreateModMineMetaDataCache
 {
-
     private static final Logger LOG = Logger.getLogger(CreateModMineMetaDataCache.class);
-
-    private CreateModMineMetaDataCache() {
-    }
 
     /**
      * Run queries to generate summary information for the modMine database and store resulting
@@ -73,6 +70,7 @@ public final class CreateModMineMetaDataCache
         readExperimentFeatureCounts(os, props);
         readSubmissionFeatureExpressionLevelCounts(os, props);
         readUniqueExperimentFeatureCounts(os, props);
+        readSubmissionLocatedFeature(os, props);
 
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
         MetadataManager.store(db, MetadataManager.MODMINE_METADATA_CACHE,
@@ -381,4 +379,62 @@ public final class CreateModMineMetaDataCache
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Read experiment feature counts, took: " + timeTaken + "ms");
     }
+    
+    // TODO MOVE THIS QUERY TO CreateModMineMetaDataCache and add value to ModMineCacheKeys
+    private static void readSubmissionLocatedFeature(ObjectStore os, Properties props) {
+
+        long startTime = System.currentTimeMillis();
+
+        Model model = os.getModel();
+        
+        Query q = new Query();
+        q.setDistinct(true);
+
+        QueryClass qcSub = new QueryClass(model.getClassDescriptorByName("Submission").getType());
+        QueryClass qcLsf = new QueryClass(SequenceFeature.class);
+        QueryClass qcLoc = new QueryClass(Location.class);
+
+        QueryField qfDccId = new QueryField(qcSub, "DCCid");
+        QueryField qfClass = new QueryField(qcLsf, "class");
+
+        q.addFrom(qcSub);
+        q.addFrom(qcLsf);
+        q.addFrom(qcLoc);
+
+        q.addToSelect(qfDccId);
+        q.addToSelect(qfClass);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
+        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
+        cs.addConstraint(ccFeats);
+
+        QueryObjectReference location = new QueryObjectReference(qcLsf, "chromosomeLocation");
+        ContainsConstraint ccLocs = new ContainsConstraint(location, ConstraintOp.CONTAINS, qcLoc);
+        cs.addConstraint(ccLocs);
+
+        q.setConstraint(cs);
+
+        Results results = os.execute(q);
+
+        // for each classes set the values for jsp
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+            (Iterator) results.iterator();
+        while (iter.hasNext()) {
+            ResultsRow<?> row = iter.next();
+            Integer dccId = (Integer) row.get(0);
+            Class<?> feat = (Class<?>) row.get(1);
+
+            String key = ModMineCacheKeys.SUB_LOCATED_FEATURE_TYPE + "." + dccId;
+            
+            props.put(key, "" + TypeUtil.unqualifiedName(feat.getName()));
+
+            LOG.info("ZZ: " + key + "||" + TypeUtil.unqualifiedName(feat.getName()));
+
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Read located features types, took: " + timeTaken + " ms.");
+    }
+    
 }
