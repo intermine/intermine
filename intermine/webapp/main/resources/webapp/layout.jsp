@@ -79,6 +79,9 @@
     <a href="#" onclick="showContactForm();return false;"><fmt:message key="feedback.link"/></a>
     </p>
 
+    <p id="takeATourLink" style="display:none;" class="alignleft">
+    <im:popupHelp pageName="tour/start">Take a tour</im:popupHelp>
+    </p>
 
     <!-- Nav trail -->
   <fmt:message key="${pageName}.tab" var="tab" />
