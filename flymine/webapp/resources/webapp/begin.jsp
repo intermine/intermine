@@ -16,16 +16,30 @@
 <tr>
 <td>
      <im:boxarea title="Search" stylename="plainbox" floatValue="left" fixedWidth="300px">
-     <em><p>Enter identifiers to search for genes, proteins etc.</p></em>
+     <em><p>Search FlyMine. Enter <strong>identifiers</strong>, <strong>names</strong> or <strong>keywords</strong> for
+                genes, pathways, authors, ontology terms, etc.  (e.g. <i>eve</i>, <i>embryo</i>,
+                <i>zen</i>, <i>allele</i>)
+     </p></em>
         <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
             <input type="text" id="keywordSearch" name="searchTerm" value="" style="width: 200px;" />
             <input type="submit" name="searchSubmit" value="Search" />
         </form>
     </im:boxarea>
+    
+    
+</td>
+<td>
+     <im:boxarea title="Java/Perl API" stylename="plainbox" fixedWidth="300px">
+We support programatic access to our data through Application Programming Interface too! Choose from options below:
+<ul>
+<li>Java
+<li>Perl
+</ul> 
+    </im:boxarea>
 </td>
 <td>
      <im:boxarea title="Analyse" stylename="plainbox" fixedWidth="300px">
-     <em><p>Enter lists of identifiers to analyse</p></em>
+     <em><p>Enter a list of identifiers to be forwarded to the list analysis page.  Click here to view an example.</p></em>
         <html:form action="/buildBag" focus="pasteInput">
 
                 <html:select styleId="typeSelector" property="type">
@@ -33,27 +47,26 @@
                         <html:option value="Protein">Protein</html:option>
                 </html:select>
             <html:textarea styleId="pasteInput" property="text" rows="2" cols="30" />
-            <html:submit styleId="submitBag"><fmt:message key="bagBuild.makeBag"/></html:submit>
+            <html:submit styleId="submitBag">Analyse</html:submit>
         </html:form>
     </im:boxarea>
 </td>
 </tr>
 
 <tr>
-<td>
+<td colspan=3>
 	   <div>
         <c:if test="${!empty WEB_PROPERTIES['project.rss']}">
           <tiles:insert name="news.tile" />
         </c:if>
       </div>   
 </td>
-<td>
-     <im:boxarea title="Java/Perl API" stylename="plainbox" fixedWidth="300px">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam a sapien nisi. Aenean quam velit, hendrerit eget molestie porta, porta eget elit. Praesent at massa ac odio imperdiet pellentesque. Integer venenatis lacinia erat a viverra. Nulla facilisi. Fusce quis massa id purus blandit lacinia. Nullam mattis tortor eget augue accumsan tincidunt. Duis vestibulum rutrum euismod. Sed a ligula leo, eget volutpat nulla. Donec cursus lorem a turpis pellentesque et aliquam augue mattis. Sed porttitor massa tortor. In hac habitasse platea dictumst. 
-    </im:boxarea>
-</td>
 </tr>
 </table>
 </div>
-
+<script language="javascript">
+<!--//<![CDATA[
+    document.getElementById("takeATourLink").style.display="block";
+//]]>-->
+</script>
 <!-- /begin.jsp -->
