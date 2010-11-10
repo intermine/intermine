@@ -10,7 +10,8 @@
     <div class="topBar errors" id="error_msg" style="display:none">
     	<a onclick="javascript:jQuery('#error_msg').hide('slow');return false" href="#">Hide</a>
     </div>
-    <div class="topBar messages" id="msg" style="display:none">
+    <!-- the fail class is added on list analysis search results -->
+    <div class="topBar messages <c:if test="${not empty param.foundItem}">fail</c:if>" id="msg" style="display:none">
     	<a onclick="javascript:jQuery('#msg').hide('slow');return false" href="#">Hide</a>
     </div>
     <div class="topBar lookupReport" id="lookup_msg" style="display:none">

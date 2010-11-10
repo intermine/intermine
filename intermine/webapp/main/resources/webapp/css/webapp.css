@@ -576,8 +576,12 @@ ol#news a { font-weight:bold; }
 .topBar { margin:5px 10px 10px 10px; padding:6px; background:#FFF; font-size:13px; }
   
 .messages { background:#D5FFCE url("../images/icons/success.png") no-repeat 10px 6px; border:1px solid #9ADF8F; }
-.errors, .topBar.lookupWarn, .topBar.lookupError, .topBar.lookupReport { background:#FFFBCC url("../images/icons/alert.png") no-repeat 10px 6px;
-	border:1px solid #E6DB55; color:#000 !important; }
+.errors,
+.topBar.lookupWarn,
+.topBar.lookupError,
+.topBar.lookupReport,
+#msg.topBar.messages.fail
+{ background:#FFFBCC url("../images/icons/alert.png") no-repeat 10px 6px; border:1px solid #E6DB55; color:#000 !important; }
 .messages p, .errors p, .topBar.lookupWarn p, .topBar.lookupError p, .topBar.lookupReport p { display:inline; padding-left:34px; }
 .messages a, .errors a, .topBar.lookupWarn a, .topBar.lookupError a, .topBar.lookupReport a { float:right; }
 
