@@ -611,7 +611,7 @@ public final class MetadataCache
      * @return the category for the front page
      */
     private static String adaptCategory(DisplayExperiment exp) {
-        String cat = exp.getExperimentCategory();
+        String cat = exp.getCategory();
         if (cat == null) {
             return "Gene Structure";
         }
