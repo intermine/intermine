@@ -102,6 +102,8 @@ public class FindInListAction extends InterMineAction
             if (foundId == -1) {
                 SessionMethods.recordMessage("Cannot find \"" + textToFind + "\" in " + bagName,
                                              session);
+                // radek: so we can apply a style based on failed search results
+                forwardParameters.addParameter("foundItem", "false");
             } else {
                 forwardParameters.addParameter("highlightId", foundId + "");
                 forwardParameters.addParameter("gotoHighlighted", "true");

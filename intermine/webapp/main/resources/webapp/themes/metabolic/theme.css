@@ -11,7 +11,6 @@
 #submenu.submenu_mymine ul#submenulist li#subactive_mymine{color:#FFF;font-weight:700;text-decoration:underline;}
 #submenudiv{font-size:12px;}
 #tool_bar_div,table.results tr.even TD{background-color:#CACACA;}
-#topnav{background-color:#000;}
 .blueBg{background-color:#E6F7FE;border:1px solid #BEDCE4;text-align:center;width:350px;margin:20px;padding:20px;}
 .box .title{background:#eee;clear:both;font-size:14px;font-weight:700;text-align:left;padding:5px;}
 .gradientbox{background:url(gray_grad.png) repeat-x;border:1px solid #000;padding:10px;}
@@ -156,3 +155,9 @@ ul#submenulist li div { border-left-color:#FEF9F3; }
 /* login bar */
 ul#loginbar { margin-top:10px !important; }
 ul#loginbar li { border-right-color:#004499; }
+
+/* topnav */
+ul#topnav { font-size:0.7em; margin:0; position:absolute; right:0; top:0; white-space:nowrap; list-style:none; }
+	ul#topnav li { display:inline; border-right:1px solid #505050; padding:0 6px 0 3px; margin:0; }
+		ul#topnav li.last { border:none; }
+	ul#topnav a:link, ul#topnav a:visited { color:#505050; }

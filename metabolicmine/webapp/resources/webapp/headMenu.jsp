@@ -19,20 +19,19 @@
 
   <c:if test="${fn:length(headerLinks) > 0}">
     <%-- Menu appearing at the top right (about, etc..) --%>
-    <div id="topnav">
+    <ul id="topnav">
       <c:forEach var="entry" items="${headerLinks}" varStatus="status">
-        <c:if test="${status.count != 1}">&nbsp;|&nbsp;</c:if>
         <c:set value="header.links.${entry}" var="linkProp"/>
         <c:choose>
           <c:when test="${!empty WEB_PROPERTIES[linkProp]}">
-                  <a href="${WEB_PROPERTIES[linkProp]}">${entry}</a>
+			<li <c:if test="${status.last}">class="last"</c:if>><a href="${WEB_PROPERTIES[linkProp]}">${entry}</a></li>
           </c:when>
           <c:otherwise>
-            <a href="${WEB_PROPERTIES['project.sitePrefix']}/${entry}.shtml">${entry}</a>
+			<li <c:if test="${status.last}">class="last"</c:if>><a href="${WEB_PROPERTIES['project.sitePrefix']}/${entry}.shtml">${entry}</a></li>
           </c:otherwise>
         </c:choose>
       </c:forEach>
-    </div>
+    </ul>
   </c:if>
   <div id="header">
     <a href="${WEB_PROPERTIES['project.sitePrefix']}" alt="Home" rel="NOFOLLOW"><img id="logo" src="model/images/logo.png" width="45px" height="43px" alt="Logo" /></a>
