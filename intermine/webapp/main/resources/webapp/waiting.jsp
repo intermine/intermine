@@ -28,14 +28,12 @@
     </div>
     </div>
     <script language="JavaScript">
-  <!--
     function timedredirect()
     {
-      window.location.replace("<html:rewrite action="${POLL_ACTION_NAME}?qid=${param.qid}&trail=${param.trail}"/>");
+      window.location.replace("<html:rewrite action="${POLL_ACTION_NAME}?qid=${param.qid}&trail=${param.trail}&queryBuilder=${queryBuilder}"/>");
     }
     setTimeout("timedredirect()", ${POLL_REFRESH_SECONDS}*1000 );
     window.status = '';
-  //-->
     </script>
   </body>
 </html>
