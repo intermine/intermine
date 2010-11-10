@@ -46,7 +46,6 @@ public class QueryBuilderViewAction extends InterMineAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-
         ChangeTableSizeForm resultsForm =
             (ChangeTableSizeForm) session.getAttribute("changeTableForm");
         if (resultsForm != null) {
@@ -60,6 +59,7 @@ public class QueryBuilderViewAction extends InterMineAction
 
         return new ForwardParameters(mapping.findForward("waiting"))
                             .addParameter("trail", "|query")
-                            .addParameter("qid", qid).forward();
+                            .addParameter("qid", qid)
+                            .addParameter("queryBuilder", "true").forward();
     }
 }
