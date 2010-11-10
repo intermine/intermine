@@ -60,9 +60,10 @@ public class PollQueryAction extends InterMineAction
         HttpSession session = request.getSession();
         String qid = request.getParameter("qid");
         String trail = request.getParameter("trail");
-
+        String queryBuilder = request.getParameter("queryBuilder");
         boolean followSingleResult = "followSingleResult".equals(mapping.getParameter());
         request.setAttribute("trail", trail);
+        request.setAttribute("queryBuilder", queryBuilder);
         if (StringUtils.isEmpty(qid)) {
             recordError(new ActionMessage("errors.pollquery.emptyqid", qid), request);
             return mapping.findForward("error");
@@ -130,14 +131,14 @@ public class PollQueryAction extends InterMineAction
             } else {
                 trail = "|results." + qid;
             }
-
-            return new ForwardParameters(mapping.findForward("results"))
-                            .addParameter("trail", trail)
-                            .addParameter("table", "results." + qid)
-                            .forward();
+            ForwardParameters fp =  new ForwardParameters(mapping.findForward("results"))
+                                    .addParameter("trail", trail)
+                                    .addParameter("table", "results." + qid);
+            if (queryBuilder != null) {
+                fp.addParameter("queryBuilder", queryBuilder);
+            }
+            return fp.forward();
         } else {
-
-            LOG.debug("query qid " + qid + " still running, making client wait");
             request.setAttribute("qid", qid);
             request.setAttribute("trail", trail);
             if (controller.getTickleCount() < 4) {

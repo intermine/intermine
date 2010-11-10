@@ -65,6 +65,7 @@ public class ObjectTrailController extends TilesAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ObjectStore os = im.getObjectStore();
         String trail = request.getParameter("trail");
+        String queryBuilder = request.getParameter("queryBuilder");
 
         String[] ids = (!StringUtils.isEmpty(trail)) ? StringUtils.split(trail.substring(1), '|')
                 : new String[0];
@@ -142,6 +143,10 @@ public class ObjectTrailController extends TilesAction
             }
         }
         request.setAttribute("trailElements", elements);
+
+        if (queryBuilder != null) {
+            request.setAttribute("queryBuilder", queryBuilder);
+        }
         return null;
     }
 
