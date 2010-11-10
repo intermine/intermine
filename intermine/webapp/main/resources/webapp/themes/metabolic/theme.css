@@ -154,5 +154,5 @@ a.contextHelpSmall { background:url("icons/help.png") no-repeat left; padding:6p
 ul#submenulist li div { border-left-color:#FEF9F3; }
 
 /* login bar */
-ul#loginbar { margin-top:15px !important; }
+ul#loginbar { margin-top:10px !important; }
 ul#loginbar li { border-right-color:#004499; }
