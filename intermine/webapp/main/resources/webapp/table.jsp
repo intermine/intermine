@@ -73,7 +73,7 @@
      </c:if>
 
      <c:if test="${!empty param.bagName}">
-       <div>Results for list:  <c:out value="${param.bagName}"/></div>
+       <div><strong>${resultsTable.estimatedSize}</strong> results for list:  <c:out value="${param.bagName}"/></div>
      </c:if>
 
        </div>

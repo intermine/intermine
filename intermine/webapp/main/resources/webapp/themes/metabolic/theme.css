@@ -147,7 +147,7 @@ div.filterBar { border:none !important; background:none !important; }
 /* context help "?" */
 a.contextHelpSmall { background:url("icons/help.png") no-repeat left; padding:6px 5px 6px 25px !important; }
 	p.alignright a.contextHelpSmall { display:none; } /* hide context help in breadcrumbs */
-	#navtrail p.alignright { margin-right:-10px; }
+	#navtrail p.alignright { margin:0 -10px 10px 0; }
 
 /* submenu border */
 ul#submenulist li div { border-left-color:#FEF9F3; }
@@ -158,6 +158,7 @@ ul#loginbar li { border-right-color:#004499; }
 
 /* topnav */
 ul#topnav { font-size:0.7em; margin:0; position:absolute; right:0; top:0; white-space:nowrap; list-style:none; }
+	ul#topnav.smallScreen { right:40px; }
 	ul#topnav li { display:inline; border-right:1px solid #505050; padding:0 6px 0 3px; margin:0; }
 		ul#topnav li.last { border:none; }
 	ul#topnav a:link, ul#topnav a:visited { color:#505050; }
