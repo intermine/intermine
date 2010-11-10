@@ -7,6 +7,7 @@
 <%@ attribute name="minWidth" required="false" %>
 <%@ attribute name="fixedWidth" required="false" %>
 <%@ attribute name="floatValue" required="false" %>
+<%@ attribute name="height" required="false" %>
 <%@ attribute name="htmlId" required="false" %>
 <%@ attribute name="titleStyle" required="false" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -22,14 +23,15 @@
   <c:if test="${! empty minWidth}">min-width:${minWidth};</c:if>
   <c:if test="${! empty fixedWidth}">width:${fixedWidth};</c:if>
   <c:if test="${! empty floatValue}">float:${floatValue};</c:if>
+  <c:if test="${! empty height}">height:${height};</c:if>
 </c:set>
  <div class="${stylename}" style="${extraStyle}" >
   <dl>
     <dt>
-    	<c:if test="${!empty titleImage}">
-    		<img src="images/icons/${titleImage}" alt="action icon" />
-    	</c:if>
-    	<h1 id="${htmlId}">
+        <c:if test="${!empty titleImage}">
+            <img src="images/icons/${titleImage}" alt="action icon" />
+        </c:if>
+        <h1 id="${htmlId}">
       <c:choose>
         <c:when test="${!empty titleLink}">
           <a href="${titleLink}" rel="NOFOLLOW">${title}</a>
