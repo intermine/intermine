@@ -62,12 +62,12 @@
       <fmt:message key="menu.experiment"/>
     </a>
   </li>
---%>
       <li id="experiments"  <c:if test="${tab == 'experiments'}">class="activelink"</c:if>>
         <a href="/${WEB_PROPERTIES['webapp.path']}/projects.do">
           <fmt:message key="menu.projects"/>
         </a>
       </li>
+--%>
       <li id="spanUpload"  <c:if test="${tab == 'spanUpload'}">class="activelink"</c:if>>
         <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">
           <fmt:message key="menu.spanUpload"/>
