@@ -203,11 +203,34 @@ public final class Constraints
     /**
      * Creates a constraint for a path to be a particular subclass (type).  The type should be
      * an unqualified class name that is a valid subclass of the end element of the path.
+     *
      * @param path the path to apply the constraint to
      * @param type an unqualified class name of the subclass
      * @return a new PathConstraint object
      */
     public static PathConstraintSubclass type(String path, String type) {
         return new PathConstraintSubclass(path, type);
+    }
+
+    /**
+     * Creates a constraint for a path to be equal to a loopPath.
+     *
+     * @param path the path that the constraint is attached to
+     * @param loopPath the path that the constraint is looped onto
+     * @return a new PathConstraint object
+     */
+    public static PathConstraintLoop equalToLoop(String path, String loopPath) {
+        return new PathConstraintLoop(path, ConstraintOp.EQUALS, loopPath);
+    }
+
+    /**
+     * Creates a constraint for a path to be not equal to a loopPath.
+     *
+     * @param path the path that the constraint is attached to
+     * @param loopPath the path that the constraint is looped onto
+     * @return a new PathConstraint object
+     */
+    public static PathConstraintLoop notEqualToLoop(String path, String loopPath) {
+        return new PathConstraintLoop(path, ConstraintOp.NOT_EQUALS, loopPath);
     }
 }
