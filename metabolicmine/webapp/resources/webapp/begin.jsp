@@ -16,6 +16,9 @@
 <script type="text/javascript">
 	// specify what happens to element in a small browser window (better add class than modify from here)
 	if ($(window).width() < '1205') {
+		// cite etc
+		$('ul#topnav').addClass('smallScreen');
+		// corners
 		$('#corner').addClass('smallScreen');
 		if ($(window).width() < '1125') {
 			$('#help').addClass('smallScreen');
@@ -184,7 +187,7 @@
 	                <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">Query lists of data</a></h3>
 	                <div style="clear:both;"> </div>
 					<p>
-					<img src="/metabolicmine/themes/metabolic/thumbs/widget-charts-3.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:10px;" />
+					<img src="/metabolicmine/themes/metabolic/thumbs/widget-charts-5.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:10px;" />
 					<strong>Explore</strong>, <strong>Analyse</strong> &amp; <strong>Enrich</strong>. Upload your own data or browse our Public
 					sets.Covering Pathways to Publications, Search for hidden relationships with our <strong>widgets library</strong>.</p>
 	            </div>
