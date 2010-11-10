@@ -63,15 +63,24 @@
     </a>
   </li>
 --%>
-  <li id="experiments"  <c:if test="${tab == 'experiments'}">class="activelink"</c:if>>
-    <a href="/${WEB_PROPERTIES['webapp.path']}/projects.do">
-      <fmt:message key="menu.projects"/>
-    </a>
-  </li>
-
+      <li id="experiments"  <c:if test="${tab == 'experiments'}">class="activelink"</c:if>>
+        <a href="/${WEB_PROPERTIES['webapp.path']}/projects.do">
+          <fmt:message key="menu.projects"/>
+        </a>
+      </li>
+      <li id="spanUpload"  <c:if test="${tab == 'spanUpload'}">class="activelink"</c:if>>
+        <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">
+          <fmt:message key="menu.spanUpload"/>
+        </a>
+      </li>
       <li id="category"  <c:if test="${tab == 'dataCategories'}">class="activelink"</c:if>>
         <a href="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do">
           <fmt:message key="menu.dataCategories"/>
+        </a>
+      </li>
+      <li id="api"  <c:if test="${tab == 'api'}">class="activelink"</c:if>>
+        <a href="/${WEB_PROPERTIES['webapp.path']}/api.do">
+          <fmt:message key="menu.api"/>
         </a>
       </li>
       <li id="mymine"  <c:if test="${tab == 'mymine'}">class="activelink"</c:if>>
@@ -80,19 +89,19 @@
         </a>
       </li>
     </ul>
-	<ul id="loginbar">
+  <ul id="loginbar">
         <li><im:popupHelp pageName="tour/start">Take a tour</im:popupHelp></li>
         <c:if test="${PROFILE.loggedIn}">
             <li>
-	            <!-- display (optionally trimmed) username -->
-	            <c:choose>
-	            	<c:when test="${fn:length(PROFILE.username) > 20}">
-	            		<c:out value="${fn:substring(PROFILE.username,0,20)}"/>&hellip;
-	            	</c:when>
-	            	<c:otherwise>
-	            		${PROFILE.username}
-	            	</c:otherwise>
-	            </c:choose>            
+              <!-- display (optionally trimmed) username -->
+              <c:choose>
+                <c:when test="${fn:length(PROFILE.username) > 20}">
+                  <c:out value="${fn:substring(PROFILE.username,0,20)}"/>&hellip;
+                </c:when>
+                <c:otherwise>
+                  ${PROFILE.username}
+                </c:otherwise>
+              </c:choose>
             </li>
         </c:if>
         <li class="last"><im:login/></li>
@@ -102,7 +111,7 @@
   <c:set var="loggedin" value="${PROFILE.loggedIn}"/>
 
     <!-- Submenu section -->
-  <c:set var="itemList" value="bag:lists.upload.tab.title:upload:0 bag:lists.view.tab.title:view:0 mymine:mymine.bags.tab.title:lists:0 mymine:mymine.history.tab.title:history:0 mymine:mymine.savedqueries.tab.title:saved:1 mymine:mymine.savedtemplates.tab.title:templates:1 mymine:mymine.password.tab.title:password:1" />
+  <c:set var="itemList" value="bag:lists.upload.tab.title:upload:0 bag:lists.view.tab.title:view:0 api:api.perl.tab.title:perl:0 api:api.java.tab.title:java:0 mymine:mymine.bags.tab.title:lists:0 mymine:mymine.history.tab.title:history:0 mymine:mymine.savedqueries.tab.title:saved:1 mymine:mymine.savedtemplates.tab.title:templates:1 mymine:mymine.password.tab.title:password:1" />
   <fmt:message key="${pageName}.tab" var="tab" />
   <c:choose>
     <c:when test="${tab == 'mymine'}">
@@ -132,40 +141,40 @@
           <c:choose>
             <c:when test="${((empty subtabs[subtabName] && count == 0)||(subtabs[subtabName] == tabArray[2])) && (tab == pageName)}">
               <li id="subactive_${tab}"
-              	<c:choose>
-              		<c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
-              		<c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
-              	</c:choose>
+                <c:choose>
+                  <c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
+                  <c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
+                </c:choose>
               >
               <div>
-              	<span><fmt:message key="${tabArray[1]}" /></span>
+                <span><fmt:message key="${tabArray[1]}" /></span>
               </div>
               </li>
             </c:when>
             <c:when test="${(tabArray[3] == '1') && (loggedin == false)}">
               <li
-              	<c:choose>
-              		<c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
-              		<c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
-              	</c:choose>>
-              	<div>
+                <c:choose>
+                  <c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
+                  <c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
+                </c:choose>>
+                <div>
                 <span onclick="alert('You need to log in'); return false;">
-                	<fmt:message key="${tabArray[1]}"/>
+                  <fmt:message key="${tabArray[1]}"/>
                 </span>
                 </div>
               </li>
             </c:when>
             <c:otherwise>
               <li
-              	<c:choose>
-              		<c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
-              		<c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
-              	</c:choose>>
-              	<div>
-              	<a href="/${WEB_PROPERTIES['webapp.path']}/${tab}.do?subtab=${tabArray[2]}">
-              		<fmt:message key="${tabArray[1]}"/>
-              	</a>
-              	</div>
+                <c:choose>
+                  <c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
+                  <c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
+                </c:choose>>
+                <div>
+                <a href="/${WEB_PROPERTIES['webapp.path']}/${tab}.do?subtab=${tabArray[2]}">
+                  <fmt:message key="${tabArray[1]}"/>
+                </a>
+                </div>
               </li>
             </c:otherwise>
           </c:choose>
