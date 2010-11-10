@@ -126,7 +126,26 @@
 <div style="clear:both;"></div>
 
 <div class="callout bochs alien">
-	<h3><a onclick="jQuery('#results').toggle('slow');return false;" href="#">Show results table</a></h3>
+	<script type="text/javascript">
+		// will show/hide the results table and toolbox & change the link appropriately (text, ico)
+		function toggleResults() {
+			// expanding or contracting?
+			if (jQuery('#results').is(":visible")) {
+				jQuery("a#toggleLink").text("Show results table");
+			} else {
+				jQuery("a#toggleLink").text("Hide results table");
+			}
+			// toggle class
+			jQuery("a#toggleLink").toggleClass('active');
+			// toggle results
+			jQuery('#results').toggle('slow');
+		}
+		// let us not forget that results will be shown on successful search
+		<c:if test="${not empty param.gotoHighlighted}">
+			jQuery(document).ready(function() { toggleResults(); });
+		</c:if>
+	</script>
+	<h3><a id="toggleLink" onclick="toggleResults();return false;" href="#">Show results table</a></h3>
 </div>
 
 <!-- list search -->
@@ -140,7 +159,7 @@
 </div>
 
 <!-- results table, pagin etc. -->
-<div id="results"<c:if test="${empty param.gotoHighlighted}">style="display:none;"</c:if>>
+<div id="results" style="display:none;">
 	
 	<!-- modify list -->
 	<div id="toolbox" class="bochs last" <c:if test="${myBag == 'false'}">style="display:none;"</c:if>>

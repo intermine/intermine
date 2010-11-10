@@ -56,7 +56,8 @@ div.bochs.yellow { border:1px solid #E3D85A; background:#FFFBD8; }
 div.bochs.callout { margin:margin-right:0; padding-top:4px; }
 	div.bochs.callout.alien { background:#E6FEEA; border:1px solid #9cc740; }
 	div.bochs.callout h3 { border:0; margin:0; }
-	div.bochs.callout a { background:url("../images/icons/expand-32.png") no-repeat left; padding:8px 0 8px 40px; display:block; color:#FB641E; }
+	div.bochs.callout a { background:url("../themes/metabolic/icons/toggle-expand.png") no-repeat 10px; padding:8px 0 8px 35px; display:block; color:#FB641E; }
+		div.bochs.callout a.active { background-image:url("../themes/metabolic/icons/toggle-minus.png"); }
 
 /* wide box */
 div.bochs.wide { width:93.5%; }
