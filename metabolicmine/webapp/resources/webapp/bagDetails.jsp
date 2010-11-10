@@ -135,19 +135,12 @@
 	<html:form styleId="findInListForm" action="/findInList">
 		<input type="text" name="textToFind" id="textToFind"/>
 		<input type="hidden" name="bagName" value="${bag.name}"/>
-		<script type="text/javascript">
-			function showTable() {
-				if (!jQuery(#results).is(":visible")) {
-					jQuery('#results').toggle('slow');
-				}
-			}
-		</script>
-		<html:submit onclick="showTable();return false;">Go</html:submit>
+		<html:submit>Go</html:submit>
 	</html:form>
 </div>
 
 <!-- results table, pagin etc. -->
-<div id="results" style="display:none;">
+<div id="results"<c:if test="${empty param.gotoHighlighted}">style="display:none;"</c:if>>
 	
 	<!-- modify list -->
 	<div id="toolbox" class="bochs last" <c:if test="${myBag == 'false'}">style="display:none;"</c:if>>
