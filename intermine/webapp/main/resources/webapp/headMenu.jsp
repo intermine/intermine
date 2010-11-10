@@ -81,19 +81,19 @@
         </a>
       </li>
     </ul>
-	<ul id="loginbar">
+  <ul id="loginbar">
         <li><im:popupHelp pageName="tour/start">Take a tour</im:popupHelp></li>
         <c:if test="${PROFILE.loggedIn}">
             <li>
-	            <!-- display (optionally trimmed) username -->
-	            <c:choose>
-	            	<c:when test="${fn:length(PROFILE.username) > 20}">
-	            		<c:out value="${fn:substring(PROFILE.username,0,20)}"/>&hellip;
-	            	</c:when>
-	            	<c:otherwise>
-	            		${PROFILE.username}
-	            	</c:otherwise>
-	            </c:choose>            
+              <!-- display (optionally trimmed) username -->
+              <c:choose>
+                <c:when test="${fn:length(PROFILE.username) > 20}">
+                  <c:out value="${fn:substring(PROFILE.username,0,20)}"/>&hellip;
+                </c:when>
+                <c:otherwise>
+                  ${PROFILE.username}
+                </c:otherwise>
+              </c:choose>
             </li>
         </c:if>
         <li class="last"><im:login/></li>
@@ -134,37 +134,37 @@
           <c:choose>
             <c:when test="${((empty subtabs[subtabName] && count == 0)||(subtabs[subtabName] == tabArray[2])) && (tab == pageName)}">
               <li id="subactive_${tab}"
-              	<c:choose>
-              		<c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
-              		<c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
-              	</c:choose>
+                <c:choose>
+                  <c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
+                  <c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
+                </c:choose>
               >
-              	<div><span><fmt:message key="${tabArray[1]}" /></span></div>
+                <div><span><fmt:message key="${tabArray[1]}" /></span></div>
               </li>
             </c:when>
             <c:when test="${(tabArray[3] == '1') && (loggedin == false)}">
               <li
-              	<c:choose>
-              		<c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
-              		<c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
-              	</c:choose>><div>
+                <c:choose>
+                  <c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
+                  <c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
+                </c:choose>><div>
                 <span onclick="alert('You need to log in'); return false;">
-                	<fmt:message key="${tabArray[1]}"/>
+                  <fmt:message key="${tabArray[1]}"/>
                 </span>
                 </div>
               </li>
             </c:when>
             <c:otherwise>
               <li
-              	<c:choose>
-              		<c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
-              		<c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
-              	</c:choose>>
-              	<div>
-              	<a href="/${WEB_PROPERTIES['webapp.path']}/${tab}.do?subtab=${tabArray[2]}">
-              		<fmt:message key="${tabArray[1]}"/>
-              	</a>
-              	</div>
+                <c:choose>
+                  <c:when test="${count == 0}">class="first ${fn:replace(tabArray[1], ".", "")}"</c:when>
+                  <c:otherwise>class="${fn:replace(tabArray[1], ".", "")}"</c:otherwise>
+                </c:choose>>
+                <div>
+                <a href="/${WEB_PROPERTIES['webapp.path']}/${tab}.do?subtab=${tabArray[2]}">
+                  <fmt:message key="${tabArray[1]}"/>
+                </a>
+                </div>
               </li>
             </c:otherwise>
           </c:choose>
