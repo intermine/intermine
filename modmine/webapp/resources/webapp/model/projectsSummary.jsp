@@ -14,7 +14,6 @@
 <html:xhtml />
 
 <div class="body">
-
 <table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
 <tr><a name="index">
 <c:forEach items="${catExp}" var="catInd" varStatus="catInd_status">
@@ -157,27 +156,14 @@ Labs:
 </c:forEach>
 </table>
 
-
-
-
 </div>
 
-
-<%--
-     <c:if test="${fn:length(exp.featureCountsRecords) > 0 }">
-It generates
-      <c:forEach items="${exp.featureCountsRecords}" var="fc" varStatus="status">
-     <c:if test="${status.count > 1 && !status.last }">, </c:if>
-     <c:if test="${status.count > 1 && status.last }"> and </c:if>
-     <html:link
-href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.featureType}">${fc.featureCounts} ${fc.featureType}s
-</html:link>
-      </c:forEach>.
---%>
+<table cellpadding="0" cellspacing="0" border="0" class="topBar hints" width="95%">
+<tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/projects.do?">Switch to Projects View</a></td></tr>
+</table>
 
 
 <!-- links to all subs -->
-
 <table cellspacing="4"><tr>
 
 <td>
@@ -209,7 +195,5 @@ href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=resul
 </query>
 </im:querylink>
     </td>
-
-
   </tr></table>
 
