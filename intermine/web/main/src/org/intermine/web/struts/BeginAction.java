@@ -84,8 +84,8 @@ public class BeginAction extends InterMineAction
 
         /*most popular template*/
         TrackerDelegate trackerDelegate = im.getTrackerDelegate();
-        trackerDelegate.setTemplateManager(im.getTemplateManager());
         if (trackerDelegate != null) {
+            trackerDelegate.setTemplateManager(im.getTemplateManager());
             String templateName = trackerDelegate.getMostPopularTemplate();
             if (templateName != null) {
                 Profile profile = SessionMethods.getProfile(session);
