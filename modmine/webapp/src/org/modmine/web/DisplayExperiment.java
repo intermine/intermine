@@ -10,6 +10,8 @@ package org.modmine.web;
  *
  */
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -312,14 +314,14 @@ public class DisplayExperiment
     /**
      * @return the experimentType
      */
-    public String getExperimentType() {
+    public String getType() {
         return experimentType;
     }
 
     /**
      * @return the experimentType
      */
-    public String getExperimentCategory() {
+    public String getCategory() {
         return experimentCategory;
     }
 

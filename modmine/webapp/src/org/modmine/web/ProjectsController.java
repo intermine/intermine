@@ -82,33 +82,20 @@ public class ProjectsController extends TilesAction
             Map<String, String> expFeatureDescription =
                 MetadataCache.getFeatTypeDescription(servletContext);
             request.setAttribute("expFeatDescription", expFeatureDescription);
-
-            Properties props = new Properties();
-            InputStream is =
-                servletContext.getResourceAsStream("/WEB-INF/experimentCategory.properties");
-            if (is == null) {
-                LOG.info("Unable to find /WEB-INF/experimentCategory.properties!");
-            } else {
-                try {
-                    props.load(is);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            Map <String, List<String>> expCat = new HashMap<String, List<String>>();
-
-            Set ugo = props.keySet();
-            for (Object exp : ugo){
-                String cats = props.getProperty(exp.toString());
-                // an experiment can be associated to more than 1 category
-                String[] cat = cats.split("#");
-                List<String> catList = new ArrayList<String>();
-                for (String c : cat){
-                    catList.add(c);
-                }
-                expCat.put(exp.toString(), catList);
-            }
-            request.setAttribute("expCats", expCat);
+            
+//            Map<String, List<DisplayExperiment>> categories =
+//                MetadataCache.getCategoryExperiments(os);
+//
+//            Map <String, List<String>> expCat = new HashMap<String, List<String>>();
+//            for (String cat : categories.keySet()) {
+//                List<String> exps = new ArrayList<String>();
+//                for (DisplayExperiment de : categories.get(cat)) {
+//                    exps.add(de.getName());
+//                }
+//                expCat.put(cat, exps);
+//            }
+//
+//            request.setAttribute("expCats", expCat);
         } catch (Exception err) {
             err.printStackTrace();
         }
