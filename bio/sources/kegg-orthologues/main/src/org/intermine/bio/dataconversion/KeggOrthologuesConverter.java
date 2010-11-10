@@ -100,9 +100,9 @@ public class KeggOrthologuesConverter extends BioFileConverter
                 configs[1] = "primaryIdentifier";
                 config.put(organism, configs);
             }
-            if (attributes[1].equals("taxonId")) {
+            if ("taxonId".equals(attributes[1])) {
                 config.get(organism)[0] = value;
-            } else if (attributes[1].equals("identifier")) {
+            } else if ("identifier".equals(attributes[1])) {
                 config.get(organism)[1] = value;
             } else {
                 String msg = "Problem processing properties '" + PROP_FILE + "' on line " + key
@@ -211,7 +211,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
     private String getGene(String identifierType, String id, String taxonId)
         throws ObjectStoreException {
         String identifier = id;
-        if (taxonId.equals("7227")) {
+        if ("7227".equals(taxonId)) {
             identifier = resolveGene(identifier);
             if (identifier == null) {
                 return null;
