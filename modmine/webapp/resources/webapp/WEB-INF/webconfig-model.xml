@@ -354,7 +354,6 @@
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="modmineGBrowse.tile"/>
       <displayer src="cytoscapeInteractionsDisplayer.tile"/>
-      <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
    <bagdisplayers>
       <displayer src="orthologueLinkDisplayer.tile" showOnLeft="false" />
