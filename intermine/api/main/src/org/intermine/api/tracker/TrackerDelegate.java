@@ -54,14 +54,13 @@ public class TrackerDelegate
     /**
      * Store into the database the template execution by the user specified in input
      * @param templateName the template name
-     * @param isPublic true if the template has the tag public
      * @param profile the user profile
      * @param sessionIdentifier the session id
      */
-    public void trackTemplate(String templateName, boolean isPublic, Profile profile,
+    public void trackTemplate(String templateName, Profile profile,
                              String sessionIdentifier) {
         if (templateTracker != null) {
-            templateTracker.trackTemplate(templateName, isPublic, profile, sessionIdentifier);
+            templateTracker.trackTemplate(templateName, profile, sessionIdentifier);
         }
     }
 
