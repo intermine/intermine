@@ -370,24 +370,24 @@ public class FeaturesAction extends InterMineAction
         gffPiano.add("Gene");
         gffPiano.add("Gene.UTRs");
         gffPiano.add("Gene.transcripts");
-        gffPiano.add("Gene.mRNA");
+//        gffPiano.add("Gene.transcripts.mRNA");
 
         final LinkedList<String> gffCelniker = new LinkedList<String>();
 
         gffCelniker.add("Gene.transcripts.CDSs");
-        gffCelniker.add("Gene.UTRs.PolyASites");
-        gffCelniker.add("Gene.mRNA.startCodon");
-        gffCelniker.add("Gene.mRNA.stopCodon");
-        gffCelniker.add("Gene.mRNA.CDSs");
-        gffCelniker.add("Gene.mRNA.fivePrimeUTR");
-        gffCelniker.add("Gene.mRNA.threePrimeUTR");
+//        gffCelniker.add("Gene.UTRs.transcripts.PolyASites");
+        gffCelniker.add("Gene.transcripts.startCodon");
+        gffCelniker.add("Gene.transcripts.stopCodon");
+        gffCelniker.add("Gene.transcripts.CDSs");
+        gffCelniker.add("Gene.transcripts.fivePrimeUTR");
+        gffCelniker.add("Gene.transcripts.threePrimeUTR");
 
         final LinkedList<String> gffWaterston = new LinkedList<String>();
-        gffWaterston.add("Transcript.TSS");
-        gffWaterston.add("Transcript.SL1AcceptorSite");
-        gffWaterston.add("Transcript.SL2AcceptorSite");
-        gffWaterston.add("Transcript.transcriptionEndSite");
-        gffWaterston.add("Transcript.polyASite");
+        gffWaterston.add("Transcript.TSSs");
+        gffWaterston.add("Transcript.SL1AcceptorSites");
+        gffWaterston.add("Transcript.SL2AcceptorSites");
+        gffWaterston.add("Transcript.transcriptionEndSites");
+        gffWaterston.add("Transcript.polyASites");
         gffWaterston.add("Transcript.introns");
         gffWaterston.add("Transcript.exons");
 
