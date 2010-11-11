@@ -130,10 +130,9 @@ public class PdbConverter extends BioDirectoryConverter
         if (StringUtils.isNotEmpty(idCode)) {
             proteinStructure.setAttribute("identifier", idCode);
         } else {
-            LOG.warn("No value for title in structure: " + idCode);
-            return;
+            throw new RuntimeException("No value for title in structure: " + idCode);
         }
-        
+
         List<String> dbrefs = pdbBuffReader.getDbrefs();
         for (String accnum: dbrefs) {
             String proteinRefId = getProtein(accnum, taxonId);
