@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,12 +24,15 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.query.codegen.WebserviceCodeGenInfo;
+import org.intermine.api.query.codegen.WebserviceCodeGenerator;
 import org.intermine.api.query.codegen.WebserviceJavaCodeGenerator;
 import org.intermine.api.query.codegen.WebservicePerlCodeGenerator;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.util.URLGenerator;
 
 /**
  * Action to handle the web service code generation.
@@ -48,34 +52,51 @@ public class WebserviceCodeGenAction extends InterMineAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
+        // Ref to OrthologueLinkController and OrthologueLinkManager
+        Properties webProperties = SessionMethods.getWebProperties(request.getSession()
+                .getServletContext());
+
+        String serviceBaseURL = new URLGenerator(request).getPermanentBaseURL();
+        String projectTitle = webProperties.getProperty("project.title");
 
         try {
             String method = request.getParameter("method");
             String source = request.getParameter("source");
 
             if ("perl".equals(method)) {
-                WebservicePerlCodeGenerator wsPerlCG = new WebservicePerlCodeGenerator();
+                WebserviceCodeGenerator wsPerlCG = new WebservicePerlCodeGenerator();
 
                 if ("templateQuery".equals(source)) {
-                    String sc = wsPerlCG.generate(getTemplateQuery(im, profile, request, session));
+                    String sc = wsPerlCG.generate(setWebserviceCodeGenInfo(
+                            getTemplateQuery(im, profile, request, session),
+                            serviceBaseURL, projectTitle));
                     output(sc, method, source, response);
                 } else if ("pathQuery".equals(source)) {
-                    String sc = wsPerlCG.generate(getPathQuery(session));
+                    String sc = wsPerlCG
+                            .generate(setWebserviceCodeGenInfo(
+                                    getPathQuery(session), serviceBaseURL,
+                                    projectTitle));
                     output(sc, method, source, response);
                 }
             } else if ("java".equals(method)) {
-                WebserviceJavaCodeGenerator wsJavaCG = new WebserviceJavaCodeGenerator();
+                WebserviceCodeGenerator wsJavaCG = new WebserviceJavaCodeGenerator();
 
                 if ("templateQuery".equals(source)) {
-                    String sc = wsJavaCG.generate(getTemplateQuery(im, profile, request, session));
+                    String sc = wsJavaCG.generate(setWebserviceCodeGenInfo(
+                            getTemplateQuery(im, profile, request, session),
+                            serviceBaseURL, projectTitle));
                     output(sc, method, source, response);
                 } else if ("pathQuery".equals(source)) {
-                    String sc = wsJavaCG.generate(getPathQuery(session));
+                    String sc = wsJavaCG
+                            .generate(setWebserviceCodeGenInfo(
+                                    getPathQuery(session), serviceBaseURL,
+                                    projectTitle));
                     output(sc, method, source, response);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+            output(e.toString(), "exception", "e", response);
             return mapping.findForward("begin");
         }
 
@@ -128,6 +149,21 @@ public class WebserviceCodeGenAction extends InterMineAction
         } else {
             throw new IllegalArgumentException("Cannot find a query");
         }
+    }
+
+    /**
+     * Method to set a new WebserviceCodeGenInfo object.
+     * @param query a PathQuery or TemplateQuery object
+     * @param serviceRootURL the base url of web service
+     * @param projectName the InterMine project name
+     * @return a WebserviceCodeGenInfo object with query, serviceRootURL and projectName set
+     */
+    private WebserviceCodeGenInfo setWebserviceCodeGenInfo(PathQuery query,
+            String serviceRootURL, String projectTitle) {
+
+        WebserviceCodeGenInfo wsCodeGenInfo =
+            new WebserviceCodeGenInfo(query, serviceRootURL, projectTitle);
+        return wsCodeGenInfo;
     }
 
     /**
