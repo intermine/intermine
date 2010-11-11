@@ -272,17 +272,18 @@ public class BioGridConverter extends BioFileConverter
                 if (ih == null) {
                     holder.validActors = false;
                     LOG.error("invalid participant ID: " + participantId);
-                }
-                // TODO make sure this is necessary.  interactor id is reused?
-                ih.role = null;
-                // resolver didn't return valid identifier
-                if (ih.refId == null) {
-                    ih.valid = false;
-                    holder.validActors = false;
                 } else {
-                    holder.refIds.add(ih.refId);
-                    holder.identifiers.add(ih.identifier);
-                    holder.addInteractor(participantId, ih);
+                	// TODO make sure this is necessary.  interactor id is reused?
+                	ih.role = null;
+                	// resolver didn't return valid identifier
+                	if (ih.refId == null) {
+                		ih.valid = false;
+                		holder.validActors = false;
+                	} else {
+                		holder.refIds.add(ih.refId);
+                		holder.identifiers.add(ih.identifier);
+                		holder.addInteractor(participantId, ih);
+                	}
                 }
             //<interactionList><interaction><interactionType><xref><primaryRef>
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
