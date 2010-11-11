@@ -140,7 +140,7 @@
     </div>
 </c:if>
 
-<div id="resultDiv" align="left" style="font-size:0.8em;">
+<div id="resultDiv" align="left" style="font-size:0.8em; padding-top:10px;">
     <%-- Pagination --%>
     <div style="float: right; margin-right: 35px;">Page size
     <select id="pageSizeList" onchange="changePageSize()" name="pageSize">
