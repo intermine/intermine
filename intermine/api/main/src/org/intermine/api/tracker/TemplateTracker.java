@@ -112,11 +112,10 @@ public class TemplateTracker extends TrackerAbstract
      * Store into the database the template execution by the user or if the user is not logged
      * during a specific http session. Update the cache.
      * @param templateName the template name
-     * @param isPublic true if the template has the tag public
      * @param profile the user profile
      * @param sessionIdentifier the session id
      */
-    public void trackTemplate(String templateName, boolean isPublic, Profile profile,
+    public void trackTemplate(String templateName, Profile profile,
                               String sessionIdentifier) {
         String userName = (profile != null && profile.getUsername() != null)
                           ? profile.getUsername()

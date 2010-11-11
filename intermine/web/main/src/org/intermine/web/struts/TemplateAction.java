@@ -220,18 +220,8 @@ public class TemplateAction extends InterMineAction
         Thread.sleep(200);
 
         //tracks the template execution
-        boolean isTemplatePublic = false;
-        if (!profile.isLoggedIn()) {
-            isTemplatePublic = true;
-        } else {
-            Set<String> tagNames = im.getTagManager().getObjectTagNames(populatedTemplate.getName(),
-                                                          TagTypes.TEMPLATE, profile.getUsername());
-            if (tagNames.contains(TagNames.IM_PUBLIC)) {
-                isTemplatePublic = true;
-            }
-        }
-        im.getTrackerDelegate().trackTemplate(populatedTemplate.getName(), isTemplatePublic,
-                                              profile, session.getId());
+        im.getTrackerDelegate().trackTemplate(populatedTemplate.getName(), profile,
+                                              session.getId());
 
         String trail = "";
         // only put query on the trail if we are saving the query
