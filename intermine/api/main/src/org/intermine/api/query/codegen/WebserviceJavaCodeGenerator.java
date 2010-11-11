@@ -22,13 +22,14 @@ import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathConstraintIds;
 import org.intermine.pathquery.PathConstraintLookup;
+import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 
 /**
- * This Class generates source code of web service client for path query and template query
+ * This Class generates Java source code of web service client for path query and template query.
  *
  * @author Fengyuan Hu
  *
@@ -37,125 +38,116 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 {
     protected static final String TEST_STRING = "This is a Java test string...";
     protected static final String INVALID_QUERY = "Invalid query. No fields selected for output...";
+    protected static final String NULL_QUERY = "Invalid query. Query can not be null...";
 
     protected static final String INDENT = "    ";
     protected static final String SPACE = " ";
     protected static final String ENDL = System.getProperty("line.separator");
 
     /**
-     * This method will generate web service source code in Java from a path query.
+     * This method will generate web service source code in Java from a path query
+     * or template query.
      *
-     * @param query a PathQuery
+     * @param wsCodeGenInfo a WebserviceCodeGenInfo object
      * @return web service source code in a string
      */
-    public String generate(PathQuery query) {
+    public String generate(WebserviceCodeGenInfo wsCodeGenInfo) {
+
+        PathQuery query = wsCodeGenInfo.getQuery();
+        String serviceBaseURL = wsCodeGenInfo.getServiceBaseURL();
+        String projectTitle = wsCodeGenInfo.getProjectTitle();
+
+        // query is null
+        if (query == null) {
+            return NULL_QUERY;
+        }
+
+        String queryClassName = TypeUtil.unqualifiedName(query.getClass().toString());
         StringBuffer pac = new StringBuffer();
         StringBuffer impJava = new StringBuffer();
         StringBuffer impIM = new StringBuffer();
         StringBuffer sb = new StringBuffer();
 
-        // Add package and import
-        pac.append("package ")
-            .append("your.foo.bar.package.name")
-            .append(";" + ENDL + ENDL);
+        if ("PathQuery".equals(queryClassName)) {
 
-        impJava.append("import java.io.IOException;" + ENDL)
-            .append("import java.util.List;" + ENDL);
+            // Add package and import
+            pac.append("package ")
+                .append(projectTitle.toLowerCase())
+                .append(";" + ENDL + ENDL);
 
-        impIM.append("import org.intermine.metadata.Model;" + ENDL)
-            .append("import org.intermine.webservice.client.core.ServiceFactory;" + ENDL)
-            .append("import org.intermine.webservice.client.services.ModelService;" + ENDL)
-            .append("import org.intermine.webservice.client.services.QueryService;" + ENDL)
-            .append("import org.intermine.pathquery.PathQuery;" + ENDL);
+            impJava.append("import java.io.IOException;" + ENDL)
+                .append("import java.util.List;" + ENDL);
 
-        // Add class comments
-        sb.append("/**" + ENDL)
-            .append(SPACE + "*" + SPACE + "Add some description to the class..." + ENDL)
-            .append(SPACE + "*" + ENDL)
-            .append(SPACE + "*" + SPACE + "@auther auther name" + ENDL)
-            .append(SPACE + "**/" + ENDL);
+            impIM.append("import org.intermine.metadata.Model;" + ENDL)
+                .append("import org.intermine.webservice.client.core.ServiceFactory;" + ENDL)
+                .append("import org.intermine.webservice.client.services.ModelService;" + ENDL)
+                .append("import org.intermine.webservice.client.services.QueryService;" + ENDL)
+                .append("import org.intermine.pathquery.PathQuery;" + ENDL);
 
-        // Add class code
-        sb.append("public class PathQueryClient" + ENDL)
-            .append("{" + ENDL + INDENT)
-            .append("private static String serviceRootUrl "
-                    + "= \"http://<your webapp base url>/service\";" + ENDL + ENDL);
+            // Add class comments
+            sb.append("/**" + ENDL)
+                    .append(SPACE + "*" + SPACE
+                            + "This is an automatically generated Java program to run the "
+                            + projectTitle + " query." + ENDL)
+                .append(SPACE + "*" + ENDL)
+                .append(SPACE + "*" + SPACE + "@auther " + projectTitle + ENDL)
+                .append(SPACE + "*" + ENDL)
+                .append(SPACE + "*/" + ENDL);
 
-        // Add methods code
-        // Add Main method
-        sb.append(INDENT + "/**" + ENDL)
-            .append(INDENT + SPACE + "*" + SPACE + "@param args command line arguments" + ENDL)
-            .append(INDENT + SPACE + "*" + SPACE + "@throws IOException" + ENDL)
-            .append(INDENT + SPACE + "*/" + ENDL);
+            // Add class code
+            sb.append("public class QueryClient" + ENDL)
+                .append("{" + ENDL + INDENT)
+                .append("private static String serviceRootUrl "
+                        + "= \"" + serviceBaseURL + "/service\";" + ENDL + ENDL);
 
-        sb.append(INDENT + "public static void main(String[] args) {" + ENDL)
-            .append(INDENT + INDENT + "QueryService service =" + ENDL)
-                .append(INDENT + INDENT + INDENT + "new ServiceFactory(serviceRootUrl,"
-                        + " \"QueryService\").getQueryService();" + ENDL)
-            .append(INDENT + INDENT + "Model model = getModel();" + ENDL)
-            .append(INDENT + INDENT + "PathQuery query = new PathQuery(model);" + ENDL + ENDL);
+            // Add methods code
+            // Add Main method
+            sb.append(INDENT + "/**" + ENDL)
+                .append(INDENT + SPACE + "*" + SPACE + "@param args command line arguments" + ENDL)
+                .append(INDENT + SPACE + "*" + SPACE + "@throws IOException" + ENDL)
+                .append(INDENT + SPACE + "*/" + ENDL);
 
-        // Add views
-        if (query.getView() == null || query.getView().isEmpty()) {
-            return INVALID_QUERY;
-        } else {
-            sb.append(INDENT + INDENT + "// Add views" + ENDL);
-            for (String pathString : query.getView()) {
-                sb.append(INDENT + INDENT + "query.addView(\"" + pathString + "\");" + ENDL);
-            }
-        }
+            sb.append(INDENT + "public static void main(String[] args) {" + ENDL)
+                .append(INDENT + INDENT + "QueryService service =" + ENDL)
+                    .append(INDENT + INDENT + INDENT + "new ServiceFactory(serviceRootUrl,"
+                            + " \"QueryService\").getQueryService();" + ENDL)
+                .append(INDENT + INDENT + "Model model = getModel();" + ENDL)
+                // In this case, path query will always have a model, no need to valid it
+                .append(INDENT + INDENT + "PathQuery query = new PathQuery(model);" + ENDL + ENDL);
 
-        sb.append(ENDL);
-
-        // Add orderby
-        if (query.getOrderBy() != null && !query.getOrderBy().isEmpty()) {
-            impIM.append("import org.intermine.pathquery.OrderDirection;" + ENDL);
-            sb.append(INDENT + INDENT + "// Add orderby" + ENDL);
-            for (OrderElement oe : query.getOrderBy()) {
-                sb.append(INDENT + INDENT + "query.addOrderBy(\""
-                        + oe.getOrderPath() + "\", OrderDirection." + oe.getDirection() + ");"
-                        + ENDL);
+            // Add views
+            if (query.getView() == null || query.getView().isEmpty()) {
+                return INVALID_QUERY;
+            } else {
+                sb.append(INDENT + INDENT + "// Add views" + ENDL);
+                for (String pathString : query.getView()) {
+                    sb.append(INDENT + INDENT + "query.addView(\"" + pathString + "\");" + ENDL);
+                }
             }
 
             sb.append(ENDL);
-        }
 
-        // Add constraints
-        if (query.getConstraints() != null && !query.getConstraints().isEmpty()) {
-            impIM.append("import org.intermine.pathquery.Constraints;" + ENDL);
-            sb.append(INDENT + INDENT + "// Add constraints" + ENDL);
-            if (query.getConstraints().size() == 1) {
-                PathConstraint pc = query.getConstraints().entrySet().iterator().next().getKey();
-                String className = TypeUtil.unqualifiedName(pc.getClass().toString());
-                if ("PathConstraintMultiValue".equals(className)) {
-                    impJava.append("import java.util.ArrayList;" + ENDL);
-                    sb.append(INDENT + INDENT
-                            + "List<String> values = new ArrayList<String>();"
-                            + ENDL);
-                    for (String value : ((PathConstraintMultiValue) pc).getValues()) {
-                        sb.append(INDENT + INDENT + "values.add(\"" + value + "\");" + ENDL);
-                    }
-                }
-                if ("PathConstraintIds".equals(className)) {
-                    impJava.append("import java.util.ArrayList;" + ENDL);
-                    sb.append(INDENT + INDENT
-                            + "List<String> values = new ArrayList<String>();"
-                            + ENDL);
-                    for (Integer id : ((PathConstraintIds) pc).getIds()) {
-                        sb.append(INDENT + INDENT + "ids.add(" + id + ");" + ENDL);
-                    }
-                }
-                if ("PathConstraintBag".equals(className)) {
-                    sb.append(INDENT + INDENT
-                            + "// Only public lists are supported"
+            // Add orderby
+            if (query.getOrderBy() != null && !query.getOrderBy().isEmpty()) {
+                impIM.append("import org.intermine.pathquery.OrderDirection;" + ENDL);
+                sb.append(INDENT + INDENT + "// Add orderby" + ENDL);
+                for (OrderElement oe : query.getOrderBy()) {
+                    sb.append(INDENT + INDENT + "query.addOrderBy(\""
+                            + oe.getOrderPath() + "\", OrderDirection." + oe.getDirection() + ");"
                             + ENDL);
                 }
-                sb.append(INDENT + INDENT + "query.addConstraint("
-                        + pathContraintUtil(pc) + ");"
-                        + ENDL);
-            } else {
-                for (Entry<PathConstraint, String> entry : query.getConstraints().entrySet()) {
-                    PathConstraint pc = entry.getKey();
+
+                sb.append(ENDL);
+            }
+
+            // Add constraints
+            if (query.getConstraints() != null && !query.getConstraints().isEmpty()) {
+                impIM.append("import org.intermine.pathquery.Constraints;" + ENDL);
+                sb.append(INDENT + INDENT
+                        + "// Add constraints and you can edit the constraint values below" + ENDL);
+                if (query.getConstraints().size() == 1) {
+                    PathConstraint pc = query.getConstraints().entrySet()
+                            .iterator().next().getKey();
                     String className = TypeUtil.unqualifiedName(pc.getClass().toString());
                     if ("PathConstraintMultiValue".equals(className)) {
                         impJava.append("import java.util.ArrayList;" + ENDL);
@@ -175,162 +167,198 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
                             sb.append(INDENT + INDENT + "ids.add(" + id + ");" + ENDL);
                         }
                     }
+                    if ("PathConstraintBag".equals(className)) {
+                        sb.append(INDENT + INDENT
+                                + "// Only public lists are supported"
+                                + ENDL);
+                    }
                     sb.append(INDENT + INDENT + "query.addConstraint("
-                            + pathContraintUtil(pc) + ", \"" + entry.getValue() + "\");"
+                            + pathContraintUtil(pc) + ");"
                             + ENDL);
-                    sb.append(ENDL);
+                } else {
+                    for (Entry<PathConstraint, String> entry : query.getConstraints().entrySet()) {
+                        PathConstraint pc = entry.getKey();
+                        String className = TypeUtil.unqualifiedName(pc.getClass().toString());
+                        if ("PathConstraintMultiValue".equals(className)) {
+                            impJava.append("import java.util.ArrayList;" + ENDL);
+                            sb.append(INDENT + INDENT
+                                    + "List<String> values = new ArrayList<String>();"
+                                    + ENDL);
+                            for (String value : ((PathConstraintMultiValue) pc).getValues()) {
+                                sb.append(INDENT + INDENT + "values.add(\""
+                                        + value + "\");" + ENDL);
+                            }
+                        }
+                        if ("PathConstraintIds".equals(className)) {
+                            impJava.append("import java.util.ArrayList;" + ENDL);
+                            sb.append(INDENT + INDENT
+                                    + "List<String> values = new ArrayList<String>();"
+                                    + ENDL);
+                            for (Integer id : ((PathConstraintIds) pc).getIds()) {
+                                sb.append(INDENT + INDENT + "ids.add(" + id + ");" + ENDL);
+                            }
+                        }
+                        sb.append(INDENT + INDENT + "query.addConstraint("
+                                + pathContraintUtil(pc) + ", \"" + entry.getValue() + "\");"
+                                + ENDL);
+                        sb.append(ENDL);
+                    }
+
+                    // Add constraintLogic
+                    if (query.getConstraintLogic() != null
+                            && !"".equals(query.getConstraintLogic())) {
+                        sb.append(INDENT + INDENT + "// Add constraintLogic" + ENDL);
+                        sb.append(INDENT + INDENT + "query.setConstraintLogic(\""
+                                + query.getConstraintLogic() + "\");"
+                                + ENDL);
+                    }
                 }
 
-                // Add constraintLogic
-                if (query.getConstraintLogic() != null && !"".equals(query.getConstraintLogic())) {
-                    sb.append(INDENT + INDENT + "// Add constraintLogic" + ENDL);
-                    sb.append(INDENT + INDENT + "query.setConstraintLogic(\""
-                            + query.getConstraintLogic() + "\");"
+                sb.append(ENDL);
+            }
+
+            // Add join status
+            if (query.getOuterJoinStatus() != null && !query.getOuterJoinStatus().isEmpty()) {
+                impIM.append("import org.intermine.pathquery.OuterJoinStatus;" + ENDL);
+                sb.append(INDENT + INDENT + "// Add join status" + ENDL);
+                for (Entry<String, OuterJoinStatus> entry : query.getOuterJoinStatus().entrySet()) {
+                    sb.append(INDENT + INDENT + "query.setOuterJoinStatus(\""
+                            + entry.getKey() + "\", OuterJoinStatus." + entry.getValue() + ");"
                             + ENDL);
                 }
+
+                sb.append(ENDL);
             }
 
-            sb.append(ENDL);
-        }
+            // Add description?
 
-        // Add join status
-        if (query.getOuterJoinStatus() != null && !query.getOuterJoinStatus().isEmpty()) {
-            impIM.append("import org.intermine.pathquery.OuterJoinStatus;" + ENDL);
-            sb.append(INDENT + INDENT + "// Add join status" + ENDL);
-            for (Entry<String, OuterJoinStatus> entry : query.getOuterJoinStatus().entrySet()) {
-                sb.append(INDENT + INDENT + "query.setOuterJoinStatus(\""
-                        + entry.getKey() + "\", OuterJoinStatus." + entry.getValue() + ");"
-                        + ENDL);
+            // Add display results code
+            sb.append(INDENT + INDENT + "// Number of results are fetched" + ENDL)
+                .append(INDENT + INDENT + "int maxCount = 10000;" + ENDL)
+                    .append(INDENT + INDENT
+                            + "List<List<String>> result = service.getResult(query, maxCount);"
+                            + ENDL)
+                .append(INDENT + INDENT + "System.out.println(\"Results: \");" + ENDL)
+                .append(INDENT + INDENT + "for (List<String> row : result) {" + ENDL)
+                .append(INDENT + INDENT + INDENT + "for (String cell : row) {" + ENDL)
+                .append(INDENT + INDENT + INDENT + INDENT + "System.out.print(cell + \" \");" + ENDL)
+                .append(INDENT + INDENT + INDENT + "}" + ENDL)
+                .append(INDENT + INDENT + INDENT + "System.out.println();" + ENDL)
+                .append(INDENT + INDENT  + "}" + ENDL)
+                .append(INDENT + "}" + ENDL + ENDL);
+
+            // Add getModel method
+            sb.append(INDENT + "private static Model getModel() {" + ENDL)
+                .append(INDENT + INDENT + "ModelService service = new ServiceFactory("
+                        + "serviceRootUrl, \"ModelService\").getModelService();" + ENDL)
+                .append(INDENT + INDENT + "return service.getModel();" + ENDL)
+                .append(INDENT + "}" + ENDL);
+
+            sb.append("}" + ENDL);
+
+        } else if ("TemplateQuery".equals(queryClassName)) {
+
+            String templateName = ((TemplateQuery) query).getName();
+            String description = ((TemplateQuery) query).getDescription();
+            String srcClassName = TypeUtil.javaiseClassName(templateName);
+
+            // Add package and import
+            pac.append("package ")
+                .append(projectTitle.toLowerCase())
+                .append(";" + ENDL + ENDL);
+
+            impJava.append("import java.util.ArrayList;" + ENDL)
+                .append("import java.util.List;" + ENDL);
+
+            impIM.append("import org.intermine.webservice.client.core.ServiceFactory;" + ENDL)
+                .append("import org.intermine.webservice.client.services.TemplateService;" + ENDL)
+                    .append("import org.intermine.webservice.client.template.TemplateParameter;"
+                            + ENDL);
+
+            // Add class comments
+            sb.append("/**" + ENDL)
+                .append(SPACE + "*" + SPACE
+                        + "This is an automatically generated Java program to run the "
+                        + projectTitle + " template." + ENDL)
+                .append(SPACE + "*" + SPACE + "template name - " + templateName);
+            if (description == null || "".equals(description)) {
+                sb.append(ENDL);
+            } else {
+                sb.append(ENDL);
+                sb.append(SPACE + "*" + SPACE + "template description - " + description + ENDL);
             }
+            sb.append(SPACE + "*" + ENDL)
+                .append(SPACE + "*" + SPACE + "@auther " + projectTitle + ENDL)
+                .append(SPACE + "*" + ENDL)
+                .append(SPACE + "*/" + ENDL);
 
-            sb.append(ENDL);
-        }
+            // Add class code
+            sb.append("public class Template" + srcClassName + ENDL)
+                .append("{" + ENDL + INDENT)
+                .append("private static String serviceRootUrl "
+                        + "= \"" + serviceBaseURL + "/service\";" + ENDL + ENDL);
 
-        // Add description?
+            // Add methods code
+            // Add Main method
+            sb.append(INDENT + "/**" + ENDL)
+                .append(INDENT + SPACE + "*" + SPACE + "@param args command line arguments" + ENDL)
+                .append(INDENT + SPACE + "*/" + ENDL);
 
-        // Add display results code
-        sb.append(INDENT + INDENT + "// Number of results are fetched" + ENDL)
-            .append(INDENT + INDENT + "int maxCount = 100;" + ENDL)
+            sb.append(INDENT + "public static void main(String[] args) {" + ENDL + ENDL)
                 .append(INDENT + INDENT
-                        + "List<List<String>> result = service.getResult(query, maxCount);"
+                        + "TemplateService service =" + "new ServiceFactory(serviceRootUrl,"
+                            + " \"TemplateService\").getTemplateService();" + ENDL + ENDL)
+                .append(INDENT + INDENT
+                        + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();"
+                        + ENDL + ENDL)
+                .append(INDENT + INDENT + "// You can edit the constraint values below" + ENDL);
+
+            // Only editable constraints will be generated
+            for (PathConstraint pc : ((TemplateQuery) query).getEditableConstraints()) {
+                String className = TypeUtil.unqualifiedName(pc.getClass().toString());
+                if ("PathConstraintBag".equals(className)) {
+                    return "This template contains a list constraint, which is currently not "
+                        + "supported. Remove the list constraint and try again...";
+                } else {
+                    String constraintDes = ((TemplateQuery) query).getConstraintDescription(pc);
+                    if (constraintDes == null || "".equals(constraintDes)) {
+                    } else {
+                        sb.append(INDENT + INDENT + "// Constraint description - "
+                                + constraintDes + ENDL);
+                    }
+                    sb.append(INDENT + INDENT + templateConstraintUtil(pc) + ENDL);
+                }
+            }
+
+            sb.append(ENDL);
+
+            // Add display results code
+            sb.append(INDENT + INDENT
+                            + "// Name of a public template, "
+                            + "private templates are not supported at the moment"
+                            + ENDL)
+                .append(INDENT + INDENT + "String templateName = \"" + templateName + "\";" + ENDL)
+                .append(ENDL + INDENT + INDENT + "// Number of results are fetched" + ENDL)
+                .append(INDENT + INDENT + "int maxCount = 10000;" + ENDL)
+                .append(INDENT + INDENT
+                        + "List<List<String>> result = "
+                        + "service.getResult(templateName, parameters, maxCount);"
                         + ENDL)
-            .append(INDENT + INDENT + "System.out.println(\"Results: \");" + ENDL)
-            .append(INDENT + INDENT + "for (List<String> row : result) {" + ENDL)
-            .append(INDENT + INDENT + INDENT + "for (String cell : row) {" + ENDL)
-            .append(INDENT + INDENT + INDENT + INDENT + "System.out.print(cell + \" \");" + ENDL)
-            .append(INDENT + INDENT + INDENT + "}" + ENDL)
-            .append(INDENT + INDENT + INDENT + "System.out.println();" + ENDL)
-            .append(INDENT + INDENT  + "}" + ENDL)
-            .append(INDENT + "}" + ENDL + ENDL);
+                .append(INDENT + INDENT + "System.out.println(\"Results: \");" + ENDL)
+                .append(INDENT + INDENT + "for (List<String> row : result) {" + ENDL)
+                .append(INDENT + INDENT + INDENT + "for (String cell : row) {" + ENDL)
+                .append(INDENT + INDENT + INDENT + INDENT + "System.out.print(cell + \" \");" + ENDL)
+                .append(INDENT + INDENT + INDENT + "}" + ENDL)
+                .append(INDENT + INDENT + INDENT + "System.out.println();" + ENDL)
+                .append(INDENT + INDENT  + "}" + ENDL);
 
-        // Add getModel method
-        sb.append(INDENT + "private static Model getModel() {" + ENDL)
-            .append(INDENT + INDENT + "ModelService service = new ServiceFactory(serviceRootUrl,"
-                    + " \"ModelService\").getModelService();" + ENDL)
-            .append(INDENT + INDENT + "return service.getModel();" + ENDL)
-            .append(INDENT + "}" + ENDL);
-
-        sb.append("}" + ENDL);
+            sb.append(INDENT + "}" + ENDL)
+                .append("}" + ENDL);
+        }
 
         if (!"".equals(sb.toString())) {
             return pac.toString() + impJava.toString() + ENDL
                     + impIM.toString() + ENDL + sb.toString();
-        } else {
-            return TEST_STRING;
-        }
-    }
-
-    /**
-     * This method will generate web service source code in Java from a template query.
-     *
-     * @param query a TemplateQuery
-     * @return web service source code in a string
-     */
-    public String generate(TemplateQuery query) {
-        StringBuffer pac = new StringBuffer();
-        StringBuffer impJava = new StringBuffer();
-        StringBuffer impIM = new StringBuffer();
-        StringBuffer sb = new StringBuffer();
-
-        // Add package and import
-        pac.append("package ")
-            .append("your.foo.bar.package.name")
-            .append(";" + ENDL + ENDL);
-
-        impJava.append("import java.util.ArrayList;" + ENDL)
-            .append("import java.util.List;" + ENDL);
-
-        impIM.append("import org.intermine.webservice.client.core.ServiceFactory;" + ENDL)
-            .append("import org.intermine.webservice.client.services.TemplateService;" + ENDL)
-            .append("import org.intermine.webservice.client.template.TemplateParameter;" + ENDL);
-
-        // Add class comments
-        sb.append("/**" + ENDL)
-            .append(SPACE + "*" + SPACE + "Add some description to the class..." + ENDL)
-            .append(SPACE + "*" + ENDL)
-            .append(SPACE + "*" + SPACE + "@auther auther name" + ENDL)
-            .append(SPACE + "**/" + ENDL);
-
-        // Add class code
-        sb.append("public class TemplateQueryClient" + ENDL)
-            .append("{" + ENDL + INDENT)
-            .append("private static String serviceRootUrl "
-                    + "= \"http://<your webapp base url>/service\";" + ENDL + ENDL);
-
-        // Add methods code
-        // Add Main method
-        sb.append(INDENT + "/**" + ENDL)
-            .append(INDENT + SPACE + "*" + SPACE + "@param args command line arguments" + ENDL)
-            .append(INDENT + SPACE + "*/" + ENDL);
-
-        sb.append(INDENT + "public static void main(String[] args) {" + ENDL + ENDL)
-            .append(INDENT + INDENT
-                    + "TemplateService service =" + "new ServiceFactory(serviceRootUrl,"
-                        + " \"TemplateService\").getTemplateService();" + ENDL + ENDL)
-            .append(INDENT + INDENT
-                    + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();"
-                    + ENDL + ENDL);
-
-        for (PathConstraint pc : query.getConstraints().keySet()) {
-            String className = TypeUtil.unqualifiedName(pc.getClass().toString());
-            if ("PathConstraintBag".equals(className)) {
-                return "This template contains a list constraint, which is currently not supported."
-                    + " Remove the list constraint and try again...";
-            } else {
-                sb.append(INDENT + INDENT + templateConstraintUtil(pc) + ENDL);
-            }
-        }
-
-        sb.append(ENDL);
-
-        String templateName = query.getName();
-
-        // Add display results code
-        sb.append(INDENT + INDENT
-                        + "// Name of a public template, "
-                        + "private templates are not supported at the moment"
-                        + ENDL)
-            .append(INDENT + INDENT + "String templateName = \"" + templateName + "\";" + ENDL)
-            .append(ENDL + INDENT + INDENT + "// Number of results are fetched" + ENDL)
-            .append(INDENT + INDENT + "int maxCount = 100;" + ENDL)
-            .append(INDENT + INDENT
-                    + "List<List<String>> result = "
-                    + "service.getResult(templateName, parameters, maxCount);"
-                    + ENDL)
-            .append(INDENT + INDENT + "System.out.println(\"Results: \");" + ENDL)
-            .append(INDENT + INDENT + "for (List<String> row : result) {" + ENDL)
-            .append(INDENT + INDENT + INDENT + "for (String cell : row) {" + ENDL)
-            .append(INDENT + INDENT + INDENT + INDENT + "System.out.print(cell + \" \");" + ENDL)
-            .append(INDENT + INDENT + INDENT + "}" + ENDL)
-            .append(INDENT + INDENT + INDENT + "System.out.println();" + ENDL)
-            .append(INDENT + INDENT  + "}" + ENDL);
-
-        sb.append(INDENT + "}" + ENDL)
-            .append("}" + ENDL);
-
-        if (!"".equals(sb.toString())) {
-            return pac.toString() + impJava.toString() + ENDL
-                + impIM.toString() + ENDL + sb.toString();
         } else {
             return TEST_STRING;
         }
@@ -434,6 +462,18 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             String type = ((PathConstraintSubclass) pc).getType();
             return "Constraints.type(\"" + path + "\", \"" + type + "\")";
         }
+
+        if ("PathConstraintLoop".equals(className)) {
+            String loopPath = ((PathConstraintLoop) pc).getLoopPath();
+            if (op.equals(ConstraintOp.EQUALS)) {
+                return "Constraints.equalToLoop(\"" + path + "\", \"" + loopPath + "\")";
+            }
+
+            if (op.equals(ConstraintOp.NOT_EQUALS)) {
+                return "Constraints.notEqualToLoop(\"" + path + "\", \"" + loopPath + "\")";
+            }
+        }
+
         return null;
     }
 
@@ -506,6 +546,13 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         if ("PathConstraintSubclass".equals(className)) {
             // not handled
         }
+
+        if ("PathConstraintLoop".equals(className)) {
+            String loopPath = ((PathConstraintLoop) pc).getLoopPath();
+            return "parameters.add(new TemplateParameter(\"" + path + "\", \""
+                + op + "\", \"" + loopPath + "\"));";
+        }
+
         return null;
     }
 }

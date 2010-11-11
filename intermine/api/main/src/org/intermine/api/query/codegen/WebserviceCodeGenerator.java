@@ -10,10 +10,9 @@ package org.intermine.api.query.codegen;
  *
  */
 
-import org.intermine.api.template.TemplateQuery;
-import org.intermine.pathquery.PathQuery;
 
 /**
+ * Interface for web service code generation.
  *
  * @author Fengyuan Hu
  *
@@ -22,19 +21,11 @@ public interface WebserviceCodeGenerator
 {
 
     /**
-     * This method will generate web service source code from a path query.
+     * This method will generate web service source code from a path query or template query.
      *
-     * @param query a PathQuery
+     * @param wsCodeGeninfo a WebserviceCodeGenInfo object
      * @return web service source code in a string
      */
-    String generate(PathQuery query);
-
-    /**
-    * This method will generate web service source code from a template query.
-    *
-    * @param query a TemplateQuery
-    * @return web service source code in a string
-    */
-    String generate(TemplateQuery query);
+    String generate(WebserviceCodeGenInfo wsCodeGeninfo);
 
 }
