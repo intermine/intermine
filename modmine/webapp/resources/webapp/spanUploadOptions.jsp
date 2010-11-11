@@ -137,7 +137,7 @@
      <c:forEach var="orgName" items="${orgList}" varStatus="counter">
        var treeHTMLArray = [];
        treeHTMLArray.push("<p id='selectExperiments' style='padding-bottom: 5px;'>Select Experiments:</p>");
-       treeHTMLArray.push("<div id='tree' style='width:700px;'>");
+       treeHTMLArray.push("<div id='tree' style='width:740px;'>");
        treeHTMLArray.push("<ul id='${orgName}'>");
 
        <c:forEach var="orgMap" items="${orgMap}">
