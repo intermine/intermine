@@ -121,7 +121,7 @@ value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>
                 <c:choose>
 	                <c:when test="${dec.path.attribute}">
 	                  <html:select property="attributeOp" styleId="attribute5"
-	                      onchange="onChangeAttributeOp();">
+	                      onchange="onChangeAttributeOp();" style="float:left;">
 	                    <c:forEach items="${dec.validOps}" var="op">
 	                      <option value="${op.property}"
 	                        <c:if test="${!empty dec.selectedOp && dec.selectedOp.property == op.property}">selected</c:if>>
