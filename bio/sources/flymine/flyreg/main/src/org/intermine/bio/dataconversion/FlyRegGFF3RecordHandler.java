@@ -60,15 +60,11 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         Pattern p = Pattern.compile(".*:REDFLY:(.*)");
         Matcher m = p.matcher(name);
 
-        String primaryIdentifier = null;
-
-        if (m.matches()) {
-            primaryIdentifier = m.group(1);
-        } else {
-            throw new RuntimeException("can't find identifier in " + name
-                                       + " - pattern doesn't match");
+        if (!m.matches()) {
+            LOG.warn("Binding site identifier didn't match pattern: " + name);
         }
-        bindingSite.setAttribute("primaryIdentifier", primaryIdentifier);
+
+        bindingSite.setAttribute("primaryIdentifier", m.group(1));
         bindingSite.setAttribute("name", name);
 
         if (record.getAttributes().containsKey("Evidence")) {
