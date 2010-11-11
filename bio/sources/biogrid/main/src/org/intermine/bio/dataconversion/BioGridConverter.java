@@ -371,8 +371,13 @@ public class BioGridConverter extends BioFileConverter
                             && stack.search("experimentalRole") == 2) {
                 String role = attValue.toString();
                 if (role != null) {
-                    interactors.get(participantId).role = role;
-                }
+                	InteractorHolder ih = interactors.get(participantId);
+                	if (ih == null) {
+                		holder.validActors = false;
+                	} else {
+                		ih.role = role;
+                	}
+            }
             //<interactionList><interaction><experimentList><experimentRef>
             } else if (attName != null && attName.equals("experimentRef")
                             && qName.equals("experimentRef")
