@@ -62,9 +62,10 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 
         if (!m.matches()) {
             LOG.warn("Binding site identifier didn't match pattern: " + name);
+            bindingSite.setAttribute("primaryIdentifier", name);
+        } else  {
+            bindingSite.setAttribute("primaryIdentifier", m.group(1));
         }
-
-        bindingSite.setAttribute("primaryIdentifier", m.group(1));
         bindingSite.setAttribute("name", name);
 
         if (record.getAttributes().containsKey("Evidence")) {
