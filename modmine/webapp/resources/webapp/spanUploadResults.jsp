@@ -132,7 +132,7 @@
 <%-- Extra information about spans without overlap features --%>
 <c:if test="${!empty spanWithNoFt}">
     <div id="extraInfo" class="topBar errors" style="padding-left:34px;">
-      <a href="#" onclick="javascript:jQuery('#errorMsgs').hide('slow');return false">Hide</a>
+      <a href="#" onclick="javascript:jQuery('#extraInfo').hide('slow');return false">Hide</a>
       <span id="spanWithNoFt">
         ${spanWithNoFt}
       </span>

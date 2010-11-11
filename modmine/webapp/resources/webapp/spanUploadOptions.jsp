@@ -137,7 +137,7 @@
      <c:forEach var="orgName" items="${orgList}" varStatus="counter">
        var treeHTMLArray = [];
        treeHTMLArray.push("<p id='selectExperiments' style='padding-bottom: 5px;'>Select Experiments:</p>");
-       treeHTMLArray.push("<div id='tree' style='width:780px;'>");
+       treeHTMLArray.push("<div id='tree' style='width:700px;'>");
        treeHTMLArray.push("<ul id='${orgName}'>");
 
        <c:forEach var="orgMap" items="${orgMap}">
@@ -414,11 +414,11 @@
 
    <%-- organism --%>
    <li>
-      <label>
+      <span>
         <fmt:message key="spanUpload.spanConstraint">
         <fmt:param value="${spanConstraint}"/>
         </fmt:message>
-      </label>
+      </span>
       <html:select styleId="orgSelector" property="orgName" onchange="orgNameChanged(this.value);">
       <c:forEach items="${orgList}" var="orgName">
           <html:option value="${orgName}">${orgName}</html:option>
@@ -446,7 +446,7 @@
 
    <li>
    <%-- textarea --%>
-   <label><fmt:message key="spanUpload.spanPaste"/></label> in
+   <span><fmt:message key="spanUpload.spanPaste"/></span> in
    <span id="baseCorRadioSpan"><html:radio property="isInterBaseCoordinate" value="isNotInterBaseCoordinate"> base coordinate</html:radio></span>
    <span id="interBaseCorRadioSpan"><html:radio property="isInterBaseCoordinate" value="isInterBaseCoordinate"> interbase coordinate</html:radio></span>
 
@@ -462,7 +462,7 @@
    <br>
    <%-- file input --%>
 
-     <label><fmt:message key="spanUpload.spanFromFile"/></label><br>
+     <span><fmt:message key="spanUpload.spanFromFile"/></span><br>
      <html:file styleId="fileInput" property="formFile" onchange="switchInputs('file','paste');" onkeydown="switchInputs('file','paste');" size="28" />
      <html:hidden styleId="whichInput" property="whichInput" />
    </li>
