@@ -10,6 +10,9 @@
 <action path="/initSequenceExportOptions"
         type="org.intermine.bio.web.struts.SequenceExportOptionsController"/>
 
+<action path="/initUniProtCommentsDisplayer"
+        type="org.metabolicmine.web.struts.UniProtCommentsDisplayerController"/>
+
 <action path="/sequenceExportAction" name="sequenceExportForm"
         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
 

@@ -29,6 +29,7 @@ div.description #bagDescriptionDiv { padding:4px !important; color:#1F7492; heig
 		width:97.5% !important; height:15px; padding:4px; }
 div.description #emptyDesc { margin:0 !important; position:relative !important; left:auto; }
 
+
 /* gray boxes */div.bochs { border:1px solid #DFDFDF; color:#333; padding:0 6px 6px 6px; width:29%; float:left; margin-right:2%; margin-bottom:10px; }
 	div.bochs.last { margin-right:0 !important; }
 	div.bochs a { color:#1F7492; }
@@ -60,7 +61,12 @@ div.bochs.callout { margin:margin-right:0; padding-top:4px; }
 		div.bochs.callout a.active { background-image:url("../themes/metabolic/icons/toggle-minus.png"); }
 
 /* wide box */
-div.bochs.wide { width:93.5%; }
+div.bochs.wide { width:93%; }
+div.bochs.wide h1, h2, h3 { border-bottom:none; line-height:40px; margin-top:8px; }
+div.bochs.wide div.description { font-size:12px; line-height:15px; font-weight:normal; }
+		div.bochs.wide div.description #bagDescriptionTextarea { text-align:left; }
+		div.bochs.wide div.description #bagDescriptionTextarea textarea#textarea { width:86% !important; }
+		div.bochs.wide div.description #bagDescriptionTextarea div.buttons { display:inline; float:right; }
 
 /* toolbox bochs box */
 #toolbox { padding:6px; }
@@ -70,6 +76,9 @@ div.bochs.wide { width:93.5%; }
 /* results */
 #results { *margin-top:90px; /* IE7 only */; }
 #results { /* IE8 only */ margin-top /*\**/:90px\9 }
+
+/* result toggle link */
+a#toggleLink span { text-transform:lowercase; } /* save us calling JSTL fn */
 
 /* pagin */
 div.pagination { margin:0 auto; float:left; vertical-align:bottom; }
@@ -103,6 +112,11 @@ a.ext_link img { display:none; }
 	#convertList.bochs form#bagDetailsForm { margin-bottom:-20px; }
 	div.lookupReport a { float:left; margin-right:10px; }
 a.ext_link { background:url("../images/icons/external-link-8.png") no-repeat top right; padding-right:7px; }
+
+/* other mines */
+#otherMines.bochs h3 { background-repeat:no-repeat; background-position:left; border-bottom:1px solid #DFDFDF; color:#FB641E; font-size:16px;
+	line-height:40px; margin-bottom:4px; }
+	#otherMines.bochs h3 { background-image:url("../images/icons/link-24.png"); padding-left:30px; margin-top:0; }
 
 /* widget togglers */
 div.bochs ol.widgetList li { margin:0; margin-right:20px; }

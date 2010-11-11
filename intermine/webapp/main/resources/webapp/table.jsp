@@ -73,7 +73,7 @@
      </c:if>
 
      <c:if test="${!empty param.bagName}">
-       <div><strong>${resultsTable.estimatedSize}</strong> results for list:  <c:out value="${param.bagName}"/></div>
+       <div><strong id="numberOfResults">${resultsTable.estimatedSize}</strong> results for list:  <c:out value="${param.bagName}"/></div>
      </c:if>
 
        </div>
@@ -218,5 +218,17 @@
 
   </c:otherwise>
 </c:choose>
+
+<script type="text/javascript">
+	// exists function
+	jQuery.fn.exists = function(){ return jQuery(this).length>0; }
+	// set the actual number of results on top of the table
+	jQuery(document).ready(function() {
+		if (document.resultsCountText && jQuery("strong#numberOfResults").exists()) {
+			// get only the digits
+			jQuery("strong#numberOfResults").text(document.resultsCountText.replace(/[^\d]/g, ""));
+		}
+	});
+</script>
 
 <!-- /table.jsp -->

@@ -81,8 +81,16 @@ div .gradientbox h1, div .plainbox h1 { color:#4D5154; font-size:22px; }
 #listTags { background-color: #E6F7FE; border:1px solid #BEDCE4; margin-left: 10px; padding: 3px 10px; }
 
 /* further information */
-div.geneInformation table { border-top:1px solid #BEDCE4; border-left:1px solid #BEDCE4; margin-bottom:2px; }
-div.geneInformation table td { border-bottom:1px solid #BEDCE4; border-right:1px solid #BEDCE4; background:#E6F7FE; padding:4px; }
+div.geneInformation table { border-width:1px 0 1px 1px; border-style:solid; border-color:#DFDFDF; margin-bottom:2px; }
+	div.geneInformation table tr.odd td { background:#E6F7FE; }
+		div.geneInformation table td { border-right:1px solid #DFDFDF; padding:4px; }
+		div.geneInformation table th { background:#F5F5F5; border-right:1px solid #DFDFDF; padding:4px; color:#4B3F4B; }
+		div.geneInformation table th.type { width:10%; }
+		div.geneInformation table th.comment { ; }
+div.geneInformation h3 { color:#008000; font-size:13px; margin:0; margin-bottom:10px; }
+	div.geneInformation h3.uniprot { background:url('icons/uniprot.png') no-repeat right; padding:16px 28px 16px 0; color:#4896B2;
+	display:inline; }
+	div.geneInformation h4 { background:#F5F5F5; border:1px solid #DFDFDF; padding:4px; }
 
 form#saveFromIdsToBagForm input.submit { background-image:url("../../images/buttons/button-bg-lists.gif"); background-repeat:repeat-none;
 	background-position:left top; border:1px outset #CCCCCC; cursor:pointer; height:23px; padding:1px 2px 1px 32px; vertical-align:middle;
@@ -162,3 +170,16 @@ ul#topnav { font-size:0.7em; margin:0; position:absolute; right:0; top:0; white-
 	ul#topnav li { display:inline; border-right:1px solid #505050; padding:0 6px 0 3px; margin:0; }
 		ul#topnav li.last { border:none; }
 	ul#topnav a:link, ul#topnav a:visited { color:#505050; }
+
+/* results table on objectDetails? */
+table.results { border:1px solid #DFDFDF; border-left:0; margin-bottom:10px; width:93.5%; }
+	table.results a { color:#1F7492; }
+	table.results th { border:none; border-left:1px solid #DFDFDF !important; font-size:16px; background:#F5F5F5; color:#4B3F4B; }
+	table.results tr.odd td, div.table table.results tr.even td { border:none; border-left:1px solid #DFDFDF !important; }
+	table.results tr.even td { background:#E6F7FE; border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; }
+	table.results tr.odd td.highlightCell, div.table table.results tr.odd td.highlightObject { background:#FFFBD8; }
+	table.results tr.even td.highlightCell, div.table table.results tr.even td.highlightObject { background:#FFFBD8;
+		border-top:1px solid #E3D85A; border-bottom:1px solid #E3D85A; }
+	table.results tfoot tr td { background:#FFF; color:#333; }
+	table.results input { vertical-align:middle; }
+	table.results b { padding-right:3px; }
