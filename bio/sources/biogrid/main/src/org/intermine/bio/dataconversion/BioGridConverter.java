@@ -269,6 +269,10 @@ public class BioGridConverter extends BioFileConverter
             } else if (qName.equals("participant") && stack.peek().equals("participantList")) {
                 participantId = attrs.getValue("id");
                 InteractorHolder ih = interactors.get(participantId);
+                if (ih == null) {
+                    holder.validActors = false;
+                    LOG.error("invalid participant ID: " + participantId);
+                }
                 // TODO make sure this is necessary.  interactor id is reused?
                 ih.role = null;
                 // resolver didn't return valid identifier
