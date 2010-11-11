@@ -8,20 +8,19 @@
 
 <!-- bagDisplayers.jsp -->
 
-<c:set var="showOnLeft" value="${showOnLeft}" />
-
 <html:xhtml/>
 <tiles:importAttribute name="bag"/>
+<tiles:importAttribute name="showOnLeft"/>
 <c:forEach items="${bag.classDescriptors}" var="cld">
     <c:if test="${fn:length(WEBCONFIG.types[cld.name].bagDisplayers) > 0}">
         <c:forEach items="${WEBCONFIG.types[cld.name].bagDisplayers}" var="displayer">
-            <%-- See #2371 <c:if test="${displayer.showOnLeft == showOnLeft}"> --%>
-                <h3>Orthologues in other Mines</h3>
+            <c:if test="${displayer.showOnLeft == showOnLeft}">
+                <!-- Disable for modMine <h3>Orthologues in other Mines</h3> -->
                 <p>
                     <c:set var="bag" value="${bag}" scope="request"/>
                     <tiles:insert beanName="displayer" beanProperty="src"/><br/>
                 </p>
-             <%-- See #2371 </c:if> --%>
+            </c:if>
         </c:forEach>
     </c:if>
 </c:forEach>

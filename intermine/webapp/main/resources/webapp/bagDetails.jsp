@@ -26,28 +26,28 @@
 <c:choose>
 <c:when test="${!empty bag}">
 <div class="heading results">
-	<img src="images/icons/lists-64.png" alt="lists icon"/>
-	<h1>
-		<fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">for <b>${bag.name}</b> (${bag.size} ${bag.type}s)</span>
-	</h1>
-	<div id="tool_bar_div">
-	    <ul id="button_bar">
-	        <li id="tool_bar_li_display"class="tb_button"><img src="images/display.png" width="13" height="13" alt="Display related templates or widgets"><html:link linkName="#">Related</html:link></li>
-	        <li id="tool_bar_li_export"class="tb_button"><img src="images/export.png" width="13" height="13" alt="Export this list"><html:link linkName="#">Export</html:link></li>
-	        <li id="tool_bar_li_use"class="tb_button"><img src="images/use.png" width="13" height="13" alt="Use this list in a template or a query"><html:link linkName="#">Use</html:link></li>
-	        <c:if test="${myBag == 'true'}">
-	          <li id="tool_bar_li_edit"class="tb_button"><img src="images/edit.png" width="13" height="13" alt="Edit my list"><html:link linkName="#">Edit</html:link></li>
-	    </c:if>
-	    </ul>
-		<html:form styleId="findInListForm" action="/findInList">
-	    	<input type="text" name="textToFind" id="textToFind"/>
-	        <input type="hidden" name="bagName" value="${bag.name}"/>
-	        <html:submit>
-	        	<fmt:message key="bagDetails.findInList"/>
-	        </html:submit>
-		</html:form>
-	</div>
-	<div style="clear:both;"></div>
+  <img src="images/icons/lists-64.png" alt="lists icon"/>
+  <h1>
+    <fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">for <b>${bag.name}</b> (${bag.size} ${bag.type}s)</span>
+  </h1>
+  <div id="tool_bar_div">
+      <ul id="button_bar">
+          <li id="tool_bar_li_display"class="tb_button"><img src="images/display.png" width="13" height="13" alt="Display related templates or widgets"><html:link linkName="#">Related</html:link></li>
+          <li id="tool_bar_li_export"class="tb_button"><img src="images/export.png" width="13" height="13" alt="Export this list"><html:link linkName="#">Export</html:link></li>
+          <li id="tool_bar_li_use"class="tb_button"><img src="images/use.png" width="13" height="13" alt="Use this list in a template or a query"><html:link linkName="#">Use</html:link></li>
+          <c:if test="${myBag == 'true'}">
+            <li id="tool_bar_li_edit"class="tb_button"><img src="images/edit.png" width="13" height="13" alt="Edit my list"><html:link linkName="#">Edit</html:link></li>
+      </c:if>
+      </ul>
+    <html:form styleId="findInListForm" action="/findInList">
+        <input type="text" name="textToFind" id="textToFind"/>
+          <input type="hidden" name="bagName" value="${bag.name}"/>
+          <html:submit>
+            <fmt:message key="bagDetails.findInList"/>
+          </html:submit>
+    </html:form>
+  </div>
+  <div style="clear:both;"></div>
 </div>
 
 <table cellspacing="0" width="100%">
@@ -61,21 +61,21 @@
             toggleToolBarMenu(this);
         });
 
-    	// textarea resizer
-    	javascript:jQuery('textarea#textarea').autoResize({
-    	    // on resize:
-    	    onResize : function() {
-    	    	javascript:jQuery(this).css({opacity:0.8});
-    	    },
-    	    // after resize:
-    	    animateCallback : function() {
-    	    	javascript:jQuery(this).css({opacity:1});
-    	    },
-    	    // quite slow animation:
-    	    animateDuration : 300,
-    	    // more extra space:
-    	    extraSpace : 10
-    	});
+      // textarea resizer
+      javascript:jQuery('textarea#textarea').autoResize({
+          // on resize:
+          onResize : function() {
+            javascript:jQuery(this).css({opacity:0.8});
+          },
+          // after resize:
+          animateCallback : function() {
+            javascript:jQuery(this).css({opacity:1});
+          },
+          // quite slow animation:
+          animateDuration : 300,
+          // more extra space:
+          extraSpace : 10
+      });
     });
 </script>
 
@@ -212,12 +212,12 @@
 <small>Date Created:  <im:dateDisplay date="${bag.dateCreated}" /></small>
 </div>
 
-<%-- BagDisplayers -- temporarily removed, see #2371
+<%-- BagDisplayers on Left --%>
     <tiles:insert page="/bagDisplayers.jsp">
        <tiles:put name="bag" beanName="bag"/>
        <tiles:put name="showOnLeft" value="true"/>
     </tiles:insert>
---%>
+
 </TD>
 
 <TD align="left" valign="top" width="40%">
@@ -243,7 +243,6 @@
        <tiles:put name="bag" beanName="bag"/>
        <tiles:put name="showOnLeft" value="false"/>
     </tiles:insert>
-
 
 </div>
 
@@ -279,11 +278,11 @@
 </script>
 
 <p id="toggleWidgets">Click to select widgets you would like to display:
-	<ol class="widgetList">
-	<c:forEach items="${widgets}" var="widget">
-	  <li><a title="toggle widget" href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}')" id="togglelink${widget.id}" class="active">${widget.title}</a></li>
-	</c:forEach>
-	</ol>
+  <ol class="widgetList">
+  <c:forEach items="${widgets}" var="widget">
+    <li><a title="toggle widget" href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}')" id="togglelink${widget.id}" class="active">${widget.title}</a></li>
+  </c:forEach>
+  </ol>
 </p>
 
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
