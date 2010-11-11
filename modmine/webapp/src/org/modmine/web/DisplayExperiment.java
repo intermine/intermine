@@ -86,6 +86,7 @@ public class DisplayExperiment
             }
             submissions.add(submission);
             labs.add(submission.getLab().getName());
+            organisms.add(submission.getOrganism().getShortName());
             for (ExperimentalFactor factor : submission.getExperimentalFactors()) {
                 factorTypes.add(factor.getType());
             }
@@ -99,9 +100,9 @@ public class DisplayExperiment
 
         this.experimentCategory = exp.getCategory();
 
-        for (Organism organism : proj.getOrganisms()) {
-            organisms.add(organism.getShortName());
-        }
+//        for (Organism organism : proj.getOrganisms()) {
+//            organisms.add(organism.getShortName());
+//        }
     }
 
     private class FactorTypeComparator implements Comparator<String>
@@ -314,7 +315,7 @@ public class DisplayExperiment
     /**
      * @return the experimentType
      */
-    public String getType() {
+    public String getExperimentType() {
         return experimentType;
     }
 
