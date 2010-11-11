@@ -166,11 +166,17 @@ public class SpanUploadAction extends InterMineAction
 
         reader.reset();
 
-        // Parse uploaded spans to an arraylist; handle empty content and non-integer spans
-        // Tab delimited format: "chr(tab)start(tab)end" or "chr:start..end"
-        Set<Span> spanSet = new LinkedHashSet<Span>();
+        // Remove duplication
+        Set<String> spanStringSet = new LinkedHashSet<String>();
         String thisLine;
         while ((thisLine = reader.readLine()) != null) {
+            spanStringSet.add(thisLine);
+        }
+
+        // Parse uploaded spans to an arraylist; handle empty content and non-integer spans
+        // Tab delimited format: "chr(tab)start(tab)end" or "chr:start..end"
+        List<Span> spanList = new ArrayList<Span>();
+        for (String spanStr : spanStringSet) {
             Span aSpan = new Span();
             // >>> Use regular expression to validate user's input
             // span in the form of "chr:start..end" as in a pattern
@@ -183,17 +189,17 @@ public class SpanUploadAction extends InterMineAction
             String tabRegex = "[^\\t]+\\t\\d+\\t\\d+";
             String dashRegex = "[^:]+:\\d+\\-\\d+";
 
-            if (Pattern.matches(ddotsRegex, thisLine)) {
-                aSpan.setChr((thisLine.split(":"))[0]);
-                String[] spanItems = (thisLine.split(":"))[1].split("\\..");
+            if (Pattern.matches(ddotsRegex, spanStr)) {
+                aSpan.setChr((spanStr.split(":"))[0]);
+                String[] spanItems = (spanStr.split(":"))[1].split("\\..");
                 if ("isInterBaseCoordinate".equals(isInterBaseCoordinate)) {
                     aSpan.setStart(Integer.valueOf(spanItems[0]) + 1);
                 } else {
                     aSpan.setStart(Integer.valueOf(spanItems[0]));
                 }
                 aSpan.setEnd(Integer.valueOf(spanItems[1]));
-            } else if (Pattern.matches(tabRegex, thisLine)) {
-                String[] spanItems = thisLine.split("\t");
+            } else if (Pattern.matches(tabRegex, spanStr)) {
+                String[] spanItems = spanStr.split("\t");
                 aSpan.setChr(spanItems[0]);
                 if ("isInterBaseCoordinate".equals(isInterBaseCoordinate)) {
                     aSpan.setStart(Integer.valueOf(spanItems[1]) + 1);
@@ -201,9 +207,9 @@ public class SpanUploadAction extends InterMineAction
                     aSpan.setStart(Integer.valueOf(spanItems[1]));
                 }
                 aSpan.setEnd(Integer.valueOf(spanItems[2]));
-            } else if (Pattern.matches(dashRegex, thisLine)) {
-                aSpan.setChr((thisLine.split(":"))[0]);
-                String[] spanItems = (thisLine.split(":"))[1].split("-");
+            } else if (Pattern.matches(dashRegex, spanStr)) {
+                aSpan.setChr((spanStr.split(":"))[0]);
+                String[] spanItems = (spanStr.split(":"))[1].split("-");
                 if ("isInterBaseCoordinate".equals(isInterBaseCoordinate)) {
                     aSpan.setStart(Integer.valueOf(spanItems[0]) + 1);
                 } else {
@@ -212,12 +218,11 @@ public class SpanUploadAction extends InterMineAction
                 aSpan.setEnd(Integer.valueOf(spanItems[1]));
             } else {
                 recordError(new ActionMessage("spanBuild.spanInWrongformat",
-                        thisLine), request);
+                        spanStr), request);
                 return mapping.findForward("spanUploadOptions");
             }
-            spanSet.add(aSpan);
+            spanList.add(aSpan);
         }
-        List<Span> spanList = new ArrayList<Span>(spanSet);
 
         // Query chromosome info to validate span
         Map<String, List<ChromosomeInfo>> chrInfoMap = SpanOverlapQueryRunner

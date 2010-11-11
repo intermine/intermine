@@ -12,18 +12,17 @@ package org.modmine.web;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
@@ -70,6 +69,13 @@ public class SpanUploadOptionsController extends TilesAction
         // Category is ordered
         Map<String, List<DisplayExperiment>> cagExpMap = MetadataCache
                 .getCategoryExperiments(os);
+
+        for (Entry e : cagExpMap.entrySet()) {
+            LOG.info("cagExpMap >>>>> key >>>>> " + e.getKey());
+            for (DisplayExperiment exp : (List<DisplayExperiment>)e.getValue()) {
+                LOG.info("cagExpMap >>>>> values >>>>> " + exp.getName());
+            }
+        }
 
         // Experiment-Category Map
         // One experiment can belong to different categories, make cag a list here
