@@ -127,8 +127,13 @@ public class PdbConverter extends BioDirectoryConverter
         String atm = structure.toPDB();
 
         String idCode = (String) structure.getHeader().get("idCode");
-        proteinStructure.setAttribute("identifier", idCode);
-
+        if (StringUtils.isNotEmpty(idCode)) {
+            proteinStructure.setAttribute("identifier", idCode);
+        } else {
+            LOG.warn("No value for title in structure: " + idCode);
+            return;
+        }
+        
         List<String> dbrefs = pdbBuffReader.getDbrefs();
         for (String accnum: dbrefs) {
             String proteinRefId = getProtein(accnum, taxonId);
