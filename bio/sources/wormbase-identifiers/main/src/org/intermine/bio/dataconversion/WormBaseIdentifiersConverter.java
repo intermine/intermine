@@ -44,7 +44,7 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        Iterator<?> lineIter = FormattedTextParser.parseCsvDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         // data is in format:
         // primaryIdentifier | identifier | symbol
@@ -61,22 +61,22 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
 //                                           + Arrays.asList(line));
 //            }
             String primaryidentifier = line[0];
-            String identifier = line[2];
             String symbol = line[1];
+            String identifier = line[2];
+
 
             Item gene = createItem("Gene");
             if (!StringUtils.isEmpty(primaryidentifier)) {
                 gene.setAttribute("primaryIdentifier", primaryidentifier);
-            }
-            if (!StringUtils.isEmpty(identifier)) {
-                gene.setAttribute("secondaryIdentifier", identifier);
             }
             if (!StringUtils.isEmpty(symbol)) {
                 gene.setAttribute("symbol", symbol);
                 // per Rachel.  We can't seem to get the gene names out of wormmart.
                 gene.setAttribute("name", symbol);
             }
-
+            if (!StringUtils.isEmpty(identifier)) {
+                gene.setAttribute("secondaryIdentifier", identifier);
+            }
             gene.setReference("organism", getOrganism("6239"));
             store(gene);
         }
