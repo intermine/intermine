@@ -19,3 +19,6 @@
 
 <definition name="cytoscapeInteractionsDisplayer.tile" path="/model/cytoscapeInteractionsDisplayer.jsp"
         controllerUrl="/initCytoscapeInteractionsDisplayer.do"/>
+		
+<definition name="uniProtCommentsDisplayer.tile" path="/model/uniProtCommentsDisplayer.jsp"
+        controllerUrl="/initUniProtCommentsDisplayer.do"/>

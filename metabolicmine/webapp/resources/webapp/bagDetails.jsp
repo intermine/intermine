@@ -34,44 +34,51 @@
 
 
 
-<div class="bochs">
-	<h1><fmt:message key="bagDetails.title"/></h1>
-	<div class="description">
-		<c:choose>
-			<c:when test="${myBag == 'true'}">
-		    	<div id="bagDescriptionDiv" onclick="jQuery('#bagDescriptionDiv').toggle();jQuery('#bagDescriptionTextarea').toggle();jQuery('#textarea').focus()">
-			        <c:choose>
-			        	<c:when test="${! empty bag.description}">
-			            	<p><c:out value="${bag.description}" escapeXml="false" /></p>
-			          	</c:when>
-			         	<c:otherwise>
-			            	<div id="emptyDesc"><fmt:message key="bagDetails.bagDescr"/></div>
-			          	</c:otherwise>
-			        </c:choose>
-		      	</div>
-		      	<div id="bagDescriptionTextarea" style="display:none">
-		        	<textarea id="textarea"><c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if></textarea>
-		        	<div align="right">
-		          		<input type="button" onclick="jQuery('#bagDescriptionTextarea').toggle();
-		              		jQuery('#bagDescriptionDiv').toggle(); return false;" value='<fmt:message key="confirm.cancel"/>' />
-		          		<input type="button" onclick="saveBagDescription('${bag.name}'); return false;" value='<fmt:message key="button.save"/>' />
-		        	</div>
-		      	</div>
-			</c:when>
-		    <c:when test="${! empty bag.description}">
-		    	<div id="bagDescriptionDiv">
-		        	<b>Description:</b> ${bag.description}
-		      	</div>
-			</c:when>
-		</c:choose>
-	</div>
+<div class="bochs wide">
+	<h1>
+		<fmt:message key="bagDetails.title"/> "${bag.name}"
+		of ${bag.size} ${bag.type}<c:if test="${bag.size != 1}">s</c:if>
+		created  <fmt:formatDate dateStyle="full" timeStyle="full" value="${bag.dateCreated}" />
+		<div class="description">
+			<c:choose>
+				<c:when test="${myBag == 'true'}">
+			    	<div id="bagDescriptionDiv" onclick="jQuery('#bagDescriptionDiv').toggle();jQuery('#bagDescriptionTextarea').toggle();jQuery('#textarea').focus()">
+				        <c:choose>
+				        	<c:when test="${! empty bag.description}">
+				            	<p><c:out value="${bag.description}" escapeXml="false" /></p>
+				          	</c:when>
+				         	<c:otherwise>
+				            	<div id="emptyDesc"><fmt:message key="bagDetails.bagDescr"/></div>
+				          	</c:otherwise>
+				        </c:choose>
+			      	</div>
+			      	<div id="bagDescriptionTextarea" style="display:none">
+			        	<textarea id="textarea"><c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if></textarea>
+			        	<div class="buttons">
+			          		<input type="button" onclick="jQuery('#bagDescriptionTextarea').toggle();
+			              		jQuery('#bagDescriptionDiv').toggle(); return false;" value='<fmt:message key="confirm.cancel"/>' />
+			          		<input type="button" onclick="saveBagDescription('${bag.name}'); return false;" value='<fmt:message key="button.save"/>' />
+			        	</div>
+			      	</div>
+				</c:when>
+			    <c:when test="${! empty bag.description}">
+			    	<div id="bagDescriptionDiv">
+			        	<b>Description:</b> ${bag.description}
+			      	</div>
+				</c:when>
+			</c:choose>
+		</div>
+	</h1>
+	<!--
 	<table>
 		<tr><td>Name:</td><td><strong>${bag.name}</strong></td></tr>
 		<tr><td>Created:</td><td><im:dateDisplay date="${bag.dateCreated}"/></td></tr>
-		<tr><td>Type:</td><td>${bag.type}<c:if test="${bag.size != 1}">s</c:if></td></tr>
 		<tr><td>Size:</td><td>${bag.size} record<c:if test="${bag.size != 1}">s</c:if></td></tr>
 	</table>
+	-->
 </div>
+
+<div style="clear:both;"></div>
 
 <!-- convert -->
 <div id="convertList" class="bochs">
@@ -85,20 +92,7 @@
 	     		<tiles:put name="orientation" value="h" />
 			</tiles:insert>
 		</p>
-	
-		<tiles:insert page="/bagDisplayers.jsp">
-	    	<tiles:put name="bag" beanName="bag"/>
-	       	<tiles:put name="showOnLeft" value="false"/>
-		</tiles:insert>
 	</html:form>
-</div>
-
-<!-- export list -->
-<div class="bochs last">
-	<h4 class="export">Download</h4>
-	<c:set var="tableName" value="bag.${bag.name}" scope="request"/>
-	<c:set var="pagedTable" value="${pagedResults}" scope="request"/>
-	<tiles:get name="export.tile"/>
 </div>
 
 <!--link outs -->
@@ -109,6 +103,25 @@
        		<tiles:put name="bag" beanName="bag" />
   		</tiles:insert>
   	</p>
+</div>
+
+<!-- orthologues in other mines -->
+<div id="otherMines" class="bochs last">
+	<html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
+	<html:hidden property="bagName" value="${bag.name}"/>
+		<tiles:insert page="/bagDisplayers.jsp">
+	    	<tiles:put name="bag" beanName="bag"/>
+	       	<tiles:put name="showOnLeft" value="false"/>
+		</tiles:insert>
+	</html:form>
+</div>
+
+<!-- export list -->
+<div class="bochs">
+	<h4 class="export">Download</h4>
+	<c:set var="tableName" value="bag.${bag.name}" scope="request"/>
+	<c:set var="pagedTable" value="${pagedResults}" scope="request"/>
+	<tiles:get name="export.tile"/>
 </div>
 
 <!-- tags -->
@@ -131,9 +144,9 @@
 		function toggleResults() {
 			// expanding or contracting?
 			if (jQuery('#results').is(":visible")) {
-				jQuery("a#toggleLink").text("Show results table");
+				jQuery("a#toggleLink").text("Show Result ${bag.type}<c:if test="${bag.size != 1}">s</c:if>");
 			} else {
-				jQuery("a#toggleLink").text("Hide results table");
+				jQuery("a#toggleLink").text("Hide Result ${bag.type}<c:if test="${bag.size != 1}">s</c:if>");
 			}
 			// toggle class
 			jQuery("a#toggleLink").toggleClass('active');
@@ -145,7 +158,11 @@
 			jQuery(document).ready(function() { toggleResults(); });
 		</c:if>
 	</script>
-	<h3><a id="toggleLink" onclick="toggleResults();return false;" href="#">Show results table</a></h3>
+	<h3>
+		<a id="toggleLink" onclick="toggleResults();return false;" href="#">
+			Show Result ${bag.type}<c:if test="${bag.size != 1}">s</c:if>
+		</a>
+	</h3>
 </div>
 
 <!-- list search -->

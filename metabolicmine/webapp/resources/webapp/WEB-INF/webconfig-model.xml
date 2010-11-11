@@ -83,8 +83,7 @@
       <!-- attribute links can now be configured for gene report pages -->
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="geneMicroArrayDisplayer.tile"/>
-      <!-- display comments for a selected gene on objectDetails.do, find JSP in bio-webapp/resources/webapp/model/ -->
-      <displayer src="/model/commentsGeneDisplayer.jsp"/>
+      <displayer src="uniProtCommentsDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
       <!-- attribute links can now be configured for gene list analysis pages -->
