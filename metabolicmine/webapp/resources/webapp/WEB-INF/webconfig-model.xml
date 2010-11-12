@@ -159,9 +159,8 @@
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
     <longdisplayers>
-	  <!-- display comments for a selected gene on objectDetails.do, find JSP in bio-webapp/resources/webapp/model/ -->
-      <displayer src="/model/commentsProteinDisplayer.jsp"/>
       <displayer src="attributeLinkDisplayer.tile"/>
+	  <displayer src="uniProtCommentsDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
     </bagdisplayers>
