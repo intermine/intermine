@@ -96,12 +96,6 @@ public final class TemplatePopulator
                     }
                 }
                 if (!found) {
-                    if (template.getSwitchOffAbility(con).equals(SwitchOffAbility.LOCKED)) {
-                        throw new TemplatePopulatorException("No value provided for constraint on"
-                                + " path: " + con.getPath() + ", code: "
-                                + template.getConstraints().get(con)
-                                + " but this constraint is not optional.");
-                    }
                     template.removeConstraint(con);
                 }
             }
