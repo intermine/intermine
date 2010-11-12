@@ -7,7 +7,7 @@
 <template-queries>
 <template name="Organism_Protein" title="Organism --&gt; All proteins." longDescription="Show all the proteins from a particular organism." comment="">
   <query name="Organism_Protein" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession" longDescription="Show all the proteins from a particular organism." sortOrder="Protein.primaryIdentifier asc">
-    <constraint path="Protein.organism.name" editable="true" description="Show all the proteins from the organism:" op="=" value="Drosophila melanogaster"/>
+    <constraint path="Protein.organism.name" editable="true" description="Show all the proteins from the organism:" op="=" value="Plasmodium falciparum 3D7"/>
   </query>
 </template>
 <template name="Gene_Protein" title="Gene --&gt; Proteins." longDescription="Show the proteins for a particular gene." comment="06.06.07 updated to work from gene class - Philip">
@@ -26,7 +26,7 @@
 </template>
 <template name="All_Genes_In_Organism_To_Publications" title="All genes in organism --&gt; Publications." longDescription="Show the publications for each gene in one organism. References are loaded from FlyBase for all Drosophila species, and from NCBI for D. melanogaster, C. elegans and S. cerevisiae." comment="">
   <query name="All_Genes_In_Organism_To_Publications" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.publications.pubMedId Gene.publications.firstAuthor Gene.publications.journal Gene.publications.year Gene.organism.name" longDescription="Show the publications for each gene in one organism. References are loaded from FlyBase for all Drosophila species, and from NCBI for D. melanogaster, C. elegans and S. cerevisiae." sortOrder="Gene.primaryIdentifier asc">
-    <constraint path="Gene.organism.name" editable="true" description="Organism.name" op="=" value="Saccharomyces cerevisiae"/>
+    <constraint path="Gene.organism.name" editable="true" description="Organism.name" op="=" value="Plasmodium falciparum 3D7"/>
   </query>
 </template>
 <template name="Gene_Identifiers" title="Gene --&gt; All identifiers." longDescription="Show all identifiers for a gene, given an identifier." comment="07:02:07:Updated to work from gene identifier - Rachel.">
