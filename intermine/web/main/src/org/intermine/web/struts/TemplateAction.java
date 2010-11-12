@@ -126,11 +126,19 @@ public class TemplateAction extends InterMineAction
         TemplateManager templateManager = im.getTemplateManager();
 
         TemplateQuery template = templateManager.getTemplate(profile, templateName, scope);
-        //If I' browsing from the history or from saved query the template is in the session
+        //If I'm browsing from the history or from saved query the template is in the session
+        //with the values edited by the user, from this template we retrieve the original name
+        //that we use to call the TemplateManager
         if (template == null) {
             PathQuery query = SessionMethods.getQuery(session);
             if (query instanceof TemplateQuery) {
-                template = (TemplateQuery) query;
+                TemplateQuery currentTemplate = (TemplateQuery) query;
+                template = templateManager.getTemplate(profile, currentTemplate.getName(), scope);
+            } else {
+            //from the template click edit query and then back (in this case in the session
+            //there is a pathquery)
+                template = templateManager.getTemplate(profile,
+                                           (String) session.getAttribute("templateName"), scope);
             }
         }
         TemplateQuery populatedTemplate = TemplatePopulator.getPopulatedTemplate(
@@ -184,7 +192,9 @@ public class TemplateAction extends InterMineAction
 
         // We're editing the query: load as a PathQuery
         if (!skipBuilder && !editTemplate) {
-            SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
+            SessionMethods.loadQuery(new PathQuery(populatedTemplate), request.getSession(),
+                                     response);
+            session.setAttribute("templateName", populatedTemplate.getName());
             session.removeAttribute(Constants.NEW_TEMPLATE);
             session.removeAttribute(Constants.EDITING_TEMPLATE);
             form.reset(mapping, request);
