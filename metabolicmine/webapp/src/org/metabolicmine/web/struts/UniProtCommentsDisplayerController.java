@@ -23,11 +23,25 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Comment;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Protein;
 
 public class UniProtCommentsDisplayerController extends TilesAction {
+
+	// allowed comment types
+	private String allowedCommentTypes[] = new String []{
+			"similarity",
+			"function",
+			"tissue specificity",
+			"subcellular location",
+			"catalytic activity",
+			"disease",
+			"developmental stage",
+			"pathway",
+			"pharmaceutical"
+			};
 	
     /**
      * {@inheritDoc}
@@ -40,59 +54,104 @@ public class UniProtCommentsDisplayerController extends TilesAction {
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         try {
-        	// get the gene in question from the request
-        	Gene gene = (Gene) request.getAttribute("object");
-        	
-        	// allowed comment types
-      	  	String sArray[] = new String []{"similarity", "function", "tissue specificity", "subcellular location", "catalytic activity",
-      	  			"disease", "developmental stage", "pathway", "pharmaceutical"};
-      	  	//convert array to list
-      	  	List allowedCommentTypes = Arrays.asList(sArray);
+        	// get the gene/protein in question from the request
+        	InterMineObject object = (InterMineObject) request.getAttribute("object");
+        	// wrapper for the result so we can say what type it is
+        	HashMap<String, Object> result = new HashMap();
 
-      	  	// resulting HashMap
-        	HashMap<String, HashMap> result = new HashMap();
-        	
-        	// traverse proteins in a gene
-        	for (Protein protein : gene.getProteins()) {
-        		// traverse comments in a protein
-        		for (Comment comment : protein.getComments()) {
-        			// is the comment allowed?
-        			if (allowedCommentTypes.contains(comment.getType())) {
-        				// is it in the map already?
-        				String commentText = comment.getText();
-        				if (result.containsKey(commentText)) {
-        					// ...add to the list of proteins
-        					HashMap<String, Object> values = (HashMap)result.get(commentText);
-        					// ...fetch the proteins
-        					ArrayList<String> proteins = (ArrayList)values.get("proteins");
-        					// add the new protein primary identifier
-        					proteins.add(protein.getPrimaryIdentifier());
-        					// save the proteins
-        					values.put("proteins", proteins);
-        					// save the new values
-        					result.put(commentText, values);
-        				} else {
-        					// new map for all values
-        					HashMap<String, Object> values = new HashMap<String, Object>();
-        					// ...add new key and list as a value
-        					ArrayList<String> proteins = new ArrayList<String>();
-        					// save add protein to the list
-        					proteins.add(protein.getPrimaryIdentifier());
-        					// save the new values
-        					values.put("proteins", proteins);
-        					// save the type
-        					values.put("type", comment.getType());
-        					// save the shebang
-        					result.put(commentText, values);
-        				}
-        			}
-        		}
+        	// dealing with genes...
+        	if (object instanceof Gene) {
+        		// cast me Gene
+        		Gene gene = (Gene)object;
+        		result.put("gene", geneComments(gene));
+        	} else if (object instanceof Protein) {
+        		// cast me Protein
+        		Protein protein = (Protein)object;
+        		result.put("protein", proteinComments(protein));
+        	} else {
+        		// big fat fail
         	}
-        	request.setAttribute("comments", result);
+        	
+        	request.setAttribute("response", result);
         } catch (Exception err) {
             err.printStackTrace();
         }
-
         return null;
     }
+    
+    /**
+     * Return a HashMap of comments retrieved for gene's proteins.
+     * @author radek
+     * 
+     * @param gene passed from a request
+     * @return HashMap
+     */
+    private HashMap<String, HashMap> geneComments(Gene gene) {
+  	  	// resulting HashMap
+    	HashMap<String, HashMap> result = new HashMap();
+    	
+    	// traverse proteins in a gene
+    	for (Protein protein : gene.getProteins()) {
+    		// traverse comments in a protein
+    		for (Comment comment : protein.getComments()) {
+    			// is the comment allowed?
+    			String commentType = comment.getType();
+    			if (Arrays.asList(allowedCommentTypes).contains(commentType)) {
+    				// is it in the map already?
+    				String commentText = comment.getText();
+    				if (result.containsKey(commentText)) {
+    					// ...add to the list of proteins
+    					HashMap<String, Object> values = (HashMap)result.get(commentText);
+    					// ...fetch the proteins
+    					HashMap<String, Integer> proteins = (HashMap)values.get("proteins");
+    					// add the new protein under primary identifier => id
+    					proteins.put(protein.getPrimaryIdentifier(), protein.getId());
+    					// save the proteins
+    					values.put("proteins", proteins);
+    					// save the new values
+    					result.put(commentText, values);
+    				} else {
+    					// new map for all values
+    					HashMap<String, Object> values = new HashMap<String, Object>();
+    					// ...add new key and list as a value
+    					HashMap<String, Integer> proteins = new HashMap<String, Integer>();
+    					// add the new protein under primary identifier => id
+    					proteins.put(protein.getPrimaryIdentifier(), protein.getId());
+    					// save the new values
+    					values.put("proteins", proteins);
+    					// save the type
+    					values.put("type", commentType);
+    					// save the shebang
+    					result.put(commentText, values);
+    				}
+    			}
+    		}
+    	}
+    	
+    	return result;
+    }
+
+    /**
+     * Return a HashMap of comments retrieved for protein.
+     * @author radek
+     * 
+     * @param gene passed from a request
+     * @return HashMap
+     */
+    private Object proteinComments(Protein protein) {
+  	  	// resulting HashMap: text => type
+    	HashMap<String, String> result = new HashMap();
+    	
+		// traverse comments in a protein
+		for (Comment comment : protein.getComments()) {
+			// is the comment allowed?
+			String commentType = comment.getType();
+			if (Arrays.asList(allowedCommentTypes).contains(commentType)) {
+				result.put(comment.getText(), commentType);
+			}
+		}
+		
+		return result;
+    }
+    
 }

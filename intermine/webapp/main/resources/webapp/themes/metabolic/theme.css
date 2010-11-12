@@ -86,7 +86,7 @@ div.geneInformation table { border-width:1px 0 1px 1px; border-style:solid; bord
 		div.geneInformation table td { border-right:1px solid #DFDFDF; padding:4px; }
 		div.geneInformation table th { background:#F5F5F5; border-right:1px solid #DFDFDF; padding:4px; color:#4B3F4B; }
 		div.geneInformation table th.type { width:10%; }
-		div.geneInformation table th.comment { ; }
+		div.geneInformation table th.comment { width:100%; }
 div.geneInformation h3 { color:#008000; font-size:13px; margin:0; margin-bottom:10px; }
 	div.geneInformation h3.uniprot { background:url('icons/uniprot.png') no-repeat right; padding:16px 28px 16px 0; color:#4896B2;
 	display:inline; }
