@@ -160,7 +160,7 @@ public class OmimConverter extends BioDirectoryConverter
                     Item disease = getDisease(mimNumber);
                     disease.setAttribute("name", title);
                 }
-                
+
                 sb = new StringBuilder();
             }
         }
@@ -183,7 +183,7 @@ public class OmimConverter extends BioDirectoryConverter
 
         File f = new File("build/omim_not_loaded.txt");
         FileWriter fw = new FileWriter(f);
-        
+
         // extract e.g. (3)
         Pattern matchNumberInBrackets = Pattern.compile("(\\(.\\))$");
 
@@ -192,7 +192,7 @@ public class OmimConverter extends BioDirectoryConverter
 
         while (lineIter.hasNext()) {
             lineCount++;
-            
+
             String[] bits = lineIter.next();
             if (bits.length == 0) {
                 continue;
@@ -247,7 +247,7 @@ public class OmimConverter extends BioDirectoryConverter
                 sb.append(System.getProperty("line.separator"));
                 fw.write(sb.toString());
             }
-            
+
             // start with basic rules and count how many columns are parsed
             // if gene is an HGNC symbol - create a gene
 
@@ -338,7 +338,7 @@ public class OmimConverter extends BioDirectoryConverter
         String geneId = genes.get(symbol);
         if (geneId == null) {
             Item gene = createItem("Gene");
-            gene.setAttribute("primaryIdentifier", symbol);
+            gene.setAttribute("symbol", symbol);
             gene.setReference("organism", organism);
             geneId = gene.getIdentifier();
             genes.put(symbol, geneId);
