@@ -12,6 +12,7 @@ package org.intermine.api.query.codegen;
 
 import java.util.Collection;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -72,7 +73,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 
             // Add package and import
             pac.append("package ")
-                .append(projectTitle.toLowerCase())
+                .append(javaisePackageName(projectTitle))
                 .append(";" + ENDL + ENDL);
 
             impJava.append("import java.io.IOException;" + ENDL)
@@ -264,7 +265,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 
             // Add package and import
             pac.append("package ")
-                .append(projectTitle.toLowerCase())
+                .append(javaisePackageName(projectTitle))
                 .append(";" + ENDL + ENDL);
 
             impJava.append("import java.util.ArrayList;" + ENDL)
@@ -554,5 +555,27 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         }
 
         return null;
+    }
+
+    /**
+     * Filter projectTitle to remove illegal characters.
+     * @param projectTitle e.g. modMine_TEST-2.r
+     * @return a string with no special character such as space, "_" or others, e.g. modminetest2r
+     */
+    private String javaisePackageName(String projectTitle) {
+
+        String normalRegex = "[A-Za-z0-9]*";
+        String illRegex = "[. _#$%&()*+,\"'/:;<=>?@\\^`{|}~-]";
+
+        if (Pattern.matches(normalRegex, projectTitle)) {
+            return projectTitle.toLowerCase();
+        } else {
+            String[] splitedStr = projectTitle.split(illRegex);
+            StringBuffer sb = new StringBuffer();
+            for (String s : splitedStr) {
+                sb.append(s.toLowerCase());
+            }
+            return sb.toString();
+        }
     }
 }
