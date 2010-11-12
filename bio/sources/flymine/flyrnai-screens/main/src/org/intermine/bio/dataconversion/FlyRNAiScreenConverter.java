@@ -132,7 +132,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
     }
 
     private void processHits(Reader reader)
-        throws ObjectStoreException, SAXException {
+        throws ObjectStoreException {
 
         boolean readingData = false;
         int headerLength = 0;
@@ -149,7 +149,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
             lineNumber++;
             String [] line = (String[]) tsvIter.next();
             if (!readingData) {
-                if (line[0].trim().equals("Amplicon")) {
+                if ("Amplicon".equals(line[0].trim())) {
                     readingData = true;
                     headerLength = line.length;
                     screens = new Item[headerLength - 2];
