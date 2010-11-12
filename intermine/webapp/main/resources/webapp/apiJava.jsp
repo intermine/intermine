@@ -67,10 +67,10 @@
               Unzip the distribution package.
             </li>
             <li>
-              Under the package directory, create a directory with the same name as the package name in the java source code. Copy the source file to the new directory.
+              Create a directory with the same name as the package name in the java source code under the package directory. Copy the source file to the new directory.
             </li>
             <li>
-              Run the script under the package directory from the command line, as <span><i>compile-run.sh [package_name]/[class_name]</i></span>.
+              Run the script from the command line under the package directory , as <span><i>./compile-run.sh [package_name]/[class_name]</i></span>.
             </li>
           </ol>
       </div>
