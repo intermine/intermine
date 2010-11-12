@@ -70,3 +70,8 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that th
 	padding: 20px;
 	font-size: 1.2em;
 }
+
+/* page columns */
+#left.column, #right.column { float:left; }
+#left.column { width:330px; }
+#right.column { width:645px; }
