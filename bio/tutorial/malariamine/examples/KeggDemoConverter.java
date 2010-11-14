@@ -97,15 +97,6 @@ public class KeggDemoConverter extends BioFileConverter
             // line is an array with one element for each tab separated value in the current line
             String[] line = (String[]) lineIter.next();
             
-            String pathwayId = line[0];
-            String pathwayName = line[1];
-            
-            // create or fetch the pathway item and add the name
-            Item pathway = getPathway(pathwayId);
-            pathway.setAttribute("name", pathwayName);
-
-            // we've now finished with the pathway so we can store it
-            store(pathway);
         }
     }
 
@@ -125,20 +116,6 @@ public class KeggDemoConverter extends BioFileConverter
             // line is an array with one element for each tab separated value in the current line
             String[] line = (String[]) lineIter.next();
             
-            String geneId = line[0];
-            Item gene = createItem("Gene");
-            gene.setAttribute("primaryIdentifier", geneId);
-            gene.setReference("organism", getOrganism());
-
-            String[] pathwayIds = line[1].split(" ");
-            
-            // add each pathway to the Gene.pathways collection
-            for (String pathwayId : pathwayIds) {
-              // getPathway() will create a new pathway or fetch it from a map if already seen
-              Item pathway = getPathway(pathwayId);
-              gene.addToCollection("pathways", pathway);
-            }
-            store(gene);
         }
     }
 
@@ -154,15 +131,5 @@ public class KeggDemoConverter extends BioFileConverter
             store(organism);
         }
         return organism;
-    }
-    
-    private Item getPathway(String pathwayId) {
-        Item pathway = pathwayMap.get(pathwayId);
-        if (pathway == null) {
-            pathway = createItem("Pathway");
-            pathway.setAttribute("identifier", pathwayId);
-            pathwayMap.put(pathwayId, pathway);
-        }
-        return pathway;
     }
 }
