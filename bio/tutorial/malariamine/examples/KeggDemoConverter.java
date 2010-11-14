@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -26,8 +27,6 @@ import org.intermine.xml.full.Item;
 
 /**
  * DataConverter to load Kegg Pathways and link them to Genes
- *
- * @author Richard Smith
  */
 public class KeggDemoConverter extends BioFileConverter
 {
@@ -50,22 +49,24 @@ public class KeggDemoConverter extends BioFileConverter
      * Set the taxon id to process.
      * @param taxonId the id
      */
-    public void setTaxonId(String taxonId) {
+    public void setOrganism(String taxonId) {
         this.taxonId = taxonId;
     }
-
+    
     /**
      * Called for each file found by ant.
      *
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
+        // the organism we are processing is set by the project.xml file with an entry like:
+        //      <property name="organism" value="36329"/>
         if (taxonId == null || taxonId.equals("")) {
-                throw new IllegalArgumentException("No taxonId provided: " + taxonId);
+            throw new IllegalArgumentException("No taxonId provided: " + taxonId);
         }
 
         // There are two files:
-        //              map_title.tab - pathway ids and their names
+        //      map_title.tab - pathway ids and their names
         //      xxx_gene_map.tab - genes and the pathways they are involved in
         // The following code works out which file we are reading and calls the corresponding method
         File currentFile = getCurrentFile();
@@ -87,15 +88,24 @@ public class KeggDemoConverter extends BioFileConverter
      * @throws ObjectStoreException
      */
     private void processMapTitleFile(Reader reader) throws IOException, ObjectStoreException {
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
-
         // this file has data of the format:
         // pathway id | pathway name
-        while (lineIter.hasNext()) {
-                // line is a string array with the one element for each tab separated value
-                // on the next line of the file
-                String[] line = (String[]) lineIter.next();
 
+        Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+
+        while (lineIter.hasNext()) {
+            // line is an array with one element for each tab separated value in the current line
+            String[] line = (String[]) lineIter.next();
+            
+            String pathwayId = line[0];
+            String pathwayName = line[1];
+            
+            // create or fetch the pathway item and add the name
+            Item pathway = getPathway(pathwayId);
+            pathway.setAttribute("name", pathwayName);
+
+            // we've now finished with the pathway so we can store it
+            store(pathway);
         }
     }
 
@@ -109,13 +119,26 @@ public class KeggDemoConverter extends BioFileConverter
         // this file has data of the format:
         // gene id | pathway ids (space separated)
 
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         while (lineIter.hasNext()) {
-                // line is a string array with the one element for each tab separated value
-                // on the next line of the file
-                String[] line = (String[]) lineIter.next();
+            // line is an array with one element for each tab separated value in the current line
+            String[] line = (String[]) lineIter.next();
+            
+            String geneId = line[0];
+            Item gene = createItem("Gene");
+            gene.setAttribute("primaryIdentifier", geneId);
+            gene.setReference("organism", getOrganism());
 
+            String[] pathwayIds = line[1].split(" ");
+            
+            // add each pathway to the Gene.pathways collection
+            for (String pathwayId : pathwayIds) {
+              // getPathway() will create a new pathway or fetch it from a map if already seen
+              Item pathway = getPathway(pathwayId);
+              gene.addToCollection("pathways", pathway);
+            }
+            store(gene);
         }
     }
 
@@ -132,5 +155,14 @@ public class KeggDemoConverter extends BioFileConverter
         }
         return organism;
     }
-
+    
+    private Item getPathway(String pathwayId) {
+        Item pathway = pathwayMap.get(pathwayId);
+        if (pathway == null) {
+            pathway = createItem("Pathway");
+            pathway.setAttribute("identifier", pathwayId);
+            pathwayMap.put(pathwayId, pathway);
+        }
+        return pathway;
+    }
 }
