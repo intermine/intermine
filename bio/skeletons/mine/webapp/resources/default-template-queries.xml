@@ -16,22 +16,9 @@
     <constraint path="Gene" editable="true" op="LOOKUP" value="ABRA"/>
   </query>
 </template>
-<template name="Protein_GeneChromosomeLength" title="Protein --&gt; Gene." longDescription="Show the gene that codes for the following protein, with its chromosomal location and length." comment="06.06.07 updated to work from protein class - Philip">
-  <query name="Protein_GeneChromosomeLength" model="genomic" view="Protein.primaryAccession Protein.genes.primaryIdentifier Protein.genes.symbol Protein.genes.chromosome.primaryIdentifier Protein.genes.chromosomeLocation.start Protein.genes.chromosomeLocation.end Protein.genes.chromosomeLocation.strand Protein.genes.length" longDescription="Show the gene that codes for the following protein, with its chromosomal location and length." sortOrder="Protein.primaryAccession asc">
-    <pathDescription pathString="Protein.genes.chromosome" description="Chromosome"/>
-    <pathDescription pathString="Protein.genes" description="Gene"/>
-    <pathDescription pathString="Protein.genes.chromosomeLocation" description="Chromosome location"/>
-    <constraint path="Protein" editable="true" op="LOOKUP" value="ABRA"/>
-  </query>
-</template>
-<template name="All_Genes_In_Organism_To_Publications" title="All genes in organism --&gt; Publications." longDescription="Show the publications for each gene in one organism. References are loaded from FlyBase for all Drosophila species, and from NCBI for D. melanogaster, C. elegans and S. cerevisiae." comment="">
-  <query name="All_Genes_In_Organism_To_Publications" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.publications.pubMedId Gene.publications.firstAuthor Gene.publications.journal Gene.publications.year Gene.organism.name" longDescription="Show the publications for each gene in one organism. References are loaded from FlyBase for all Drosophila species, and from NCBI for D. melanogaster, C. elegans and S. cerevisiae." sortOrder="Gene.primaryIdentifier asc">
-    <constraint path="Gene.organism.name" editable="true" description="Organism.name" op="=" value="Plasmodium falciparum 3D7"/>
-  </query>
-</template>
-<template name="Gene_Identifiers" title="Gene --&gt; All identifiers." longDescription="Show all identifiers for a gene, given an identifier." comment="07:02:07:Updated to work from gene identifier - Rachel.">
-  <query name="Gene_Identifiers" model="genomic" view="Gene.secondaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.name" longDescription="Show all identifiers for a gene, given an identifier." sortOrder="Gene.secondaryIdentifier asc">
-    <constraint path="Gene" op="LOOKUP" value="ABRA" extraValue=""/>
+<template name="All_Proteins_In_Organism_To_Publications" title="All proteins in organism --&gt; Publications." longDescription="Show the publications for each gene in one organism. References are loaded from FlyBase for all Drosophila species, and from NCBI for D. melanogaster, C. elegans and S. cerevisiae." comment="">
+  <query name="All_Proteins_In_Organism_To_Publications" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.organism.name Protein.publications.firstAuthor Protein.publications.title Protein.publications.year Protein.publications.journal Protein.publications.volume Protein.publications.pages Protein.publications.pubMedId" sortOrder="Protein.primaryIdentifier asc">
+    <constraint path="Protein.organism.name" editable="true" description="Organism.name" op="=" value="Plasmodium falciparum 3D7"/>
   </query>
 </template>
 </template-queries>
