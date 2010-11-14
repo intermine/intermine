@@ -978,7 +978,8 @@ public class KeywordSearch
                 loadIndexFromDatabase(im.getObjectStore(), path);
 
                 if (index == null) {
-                    throw new RuntimeException("lucene index missing!");
+                    LOG.error("lucene index missing!");
+                    return;
                 }
             }
 
@@ -1206,7 +1207,10 @@ public class KeywordSearch
      */
     public static BrowseResult runBrowseSearch(String searchString, int offset,
             Map<String, String> facetValues, List<Integer> ids) {
-        BrowseResult result = null;
+    	BrowseResult result = null;
+        if (index == null) {
+        	return result;
+        }
         long time = System.currentTimeMillis();
 
         String queryString = parseQueryString(searchString);
@@ -1221,6 +1225,7 @@ public class KeywordSearch
             // pass entire list of field names to the multi-field parser
             // => search through all fields
             String[] fieldNamesArray = new String[index.getFieldNames().size()];
+
             index.getFieldNames().toArray(fieldNamesArray);
             QueryParser queryParser =
                     new MultiFieldQueryParser(Version.LUCENE_30, fieldNamesArray, analyzer);
