@@ -13,7 +13,7 @@
 <template name="Gene_Protein" title="Gene --&gt; Proteins." longDescription="Show the proteins for a particular gene." comment="06.06.07 updated to work from gene class - Philip">
   <query name="Gene_Protein" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.proteins.primaryIdentifier Gene.proteins.primaryAccession" longDescription="Show the proteins for a particular gene." sortOrder="Gene.primaryIdentifier asc">
     <pathDescription pathString="Gene.proteins" description="Protein"/>
-    <constraint path="Gene" editable="true" op="LOOKUP" value="CG1046"/>
+    <constraint path="Gene" editable="true" op="LOOKUP" value="ABRA"/>
   </query>
 </template>
 <template name="Protein_GeneChromosomeLength" title="Protein --&gt; Gene." longDescription="Show the gene that codes for the following protein, with its chromosomal location and length." comment="06.06.07 updated to work from protein class - Philip">
@@ -21,7 +21,7 @@
     <pathDescription pathString="Protein.genes.chromosome" description="Chromosome"/>
     <pathDescription pathString="Protein.genes" description="Gene"/>
     <pathDescription pathString="Protein.genes.chromosomeLocation" description="Chromosome location"/>
-    <constraint path="Protein" editable="true" op="LOOKUP" value="P19107"/>
+    <constraint path="Protein" editable="true" op="LOOKUP" value="ABRA"/>
   </query>
 </template>
 <template name="All_Genes_In_Organism_To_Publications" title="All genes in organism --&gt; Publications." longDescription="Show the publications for each gene in one organism. References are loaded from FlyBase for all Drosophila species, and from NCBI for D. melanogaster, C. elegans and S. cerevisiae." comment="">
@@ -31,7 +31,7 @@
 </template>
 <template name="Gene_Identifiers" title="Gene --&gt; All identifiers." longDescription="Show all identifiers for a gene, given an identifier." comment="07:02:07:Updated to work from gene identifier - Rachel.">
   <query name="Gene_Identifiers" model="genomic" view="Gene.secondaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.name" longDescription="Show all identifiers for a gene, given an identifier." sortOrder="Gene.secondaryIdentifier asc">
-    <constraint path="Gene.secondaryIdentifier" editable="true" description="Gene.secondaryIdentifier" op="=" value="CG1046"/>
+    <constraint path="Gene" op="LOOKUP" value="ABRA" extraValue=""/>
   </query>
 </template>
 </template-queries>
