@@ -25,9 +25,15 @@
 <tags>
   <tag name="im:public" objectIdentifier="Gene_Protein" type="template">
   </tag>
-  <tag name="im:public" objectIdentifier="GO_name_Gene" type="template">
+  <tag name="im:public" objectIdentifier="Organism_Protein" type="template">
   </tag>
-  <tag name="im:public" objectIdentifier="GOname_GOidentifier" type="template">
+  <tag name="im:public" objectIdentifier="All_Proteins_In_Organism_To_Publications" type="template">
+  </tag>
+    <tag name="im:frontpage" objectIdentifier="Gene_Protein" type="template">
+  </tag>
+  <tag name="im:frontpage" objectIdentifier="Organism_Protein" type="template">
+  </tag>
+  <tag name="im:frontpage" objectIdentifier="All_Proteins_In_Organism_To_Publications" type="template">
   </tag>
   <tag name="im:public" objectIdentifier="GOtermidentifier_name" type="template">
   </tag>
