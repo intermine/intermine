@@ -310,16 +310,14 @@ public class SpanUploadAction extends InterMineAction
 
         String expString = "";
         for (String aExperiment : spanUploadForm.getExperiments()) {
-            expString = expString + aExperiment + ",";
+            expString = expString + aExperiment + ", ";
         }
-        request.setAttribute("selectedExp", "Selected experiments: "
-                + expString.substring(0, expString.lastIndexOf(",")));
+        request.setAttribute("selectedExp", expString.substring(0, expString.lastIndexOf(", ")));
         String ftString = "";
         for (String aFeaturetype : spanUploadForm.getFeatureTypes()) {
-            ftString = ftString + aFeaturetype + ",";
+            ftString = ftString + aFeaturetype + ", ";
         }
-        request.setAttribute("selectedFt", "Selected feature types: "
-                + ftString.substring(0, ftString.lastIndexOf(",")));
+        request.setAttribute("selectedFt", ftString.substring(0, ftString.lastIndexOf(", ")));
 
 //        request.setAttribute("spanOverlapResultMap", spanOverlapResultMap);
 

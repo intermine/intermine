@@ -118,8 +118,8 @@
         <tbody><tr>
           <td width="30px" valign="middle"><img border="0" width="16px" height="16px" src="images/icons/information.png" style="padding:10px;"></td>
           <td valign="middle">
-          ${selectedFt}<br>
-          ${selectedExp}<br>
+          <b>Selected feature types: </b>${selectedFt}<br>
+          <b>Selected experiments: </b>${selectedExp}<br>
           </td>
           <td align="right" valign="middle">
               <a onclick="javascript:jQuery('#selectionInfo').hide('slow');return false" href="#">Hide</a>
