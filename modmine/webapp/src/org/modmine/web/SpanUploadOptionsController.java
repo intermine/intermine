@@ -18,7 +18,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,13 +68,6 @@ public class SpanUploadOptionsController extends TilesAction
         // Category is ordered
         Map<String, List<DisplayExperiment>> cagExpMap = MetadataCache
                 .getCategoryExperiments(os);
-
-        for (Entry e : cagExpMap.entrySet()) {
-            LOG.info("cagExpMap >>>>> key >>>>> " + e.getKey());
-            for (DisplayExperiment exp : (List<DisplayExperiment>)e.getValue()) {
-                LOG.info("cagExpMap >>>>> values >>>>> " + exp.getName());
-            }
-        }
 
         // Experiment-Category Map
         // One experiment can belong to different categories, make cag a list here
@@ -175,8 +167,16 @@ public class SpanUploadOptionsController extends TilesAction
 //            orgMap.put(org, buildHtmlTree(theMap, org));
 //        }
 
+        // Only organisms with experiments (which must have features) will be shown
+        Set<String> orgWithFTSet = new LinkedHashSet<String>();
+        for (DisplayExperiment exp : expWithFtSet) {
+            orgWithFTSet.addAll(exp.getOrganisms());
+        }
+        List<String> orgWithFTList = new ArrayList<String>(orgWithFTSet);
+        Collections.sort(orgList);
         // >>>>> Setup request <<<<<
-        request.setAttribute("orgList", orgList);
+//        request.setAttribute("orgList", orgList);
+        request.setAttribute("orgList", orgWithFTList);
         request.setAttribute("expFTMap", expFTMap);
 //        request.setAttribute("theMap", theMap);
         request.setAttribute("orgMap", orgMap);
