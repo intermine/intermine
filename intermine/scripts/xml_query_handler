@@ -1,0 +1,55 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use URI;
+use LWP::UserAgent;
+use HTTP::Request;
+use Scalar::Util qw(looks_like_number);
+
+my ($xml_file, $url, $max_results) = @ARGV;
+
+sub usage() {
+    return "$0 query.xml url [max_results]\n";
+}
+
+die "No xml supplied as input!\n" . usage()
+    if (@ARGV < 1);
+die "No url supplied to querying!\n". usage()
+    if (@ARGV < 2);
+die "Too many arguments!\n" . usage()
+    if (@ARGV > 3);
+if (@ARGV == 3 and not looks_like_number($max_results)) {
+    die "Max_results must be a number, not $max_results\n" . usage();
+}
+
+my $xml;
+open(my $XML_FH, '<', $xml_file)
+    or die "Cannot open $xml_file, $!";
+$xml = join('', <$XML_FH>);
+close($XML_FH) 
+    or die "Cannot close $xml_file, $!";
+my ($query) = $xml =~ m!(<query.*?</query>)!sg;
+die "No query found in $xml"
+    unless $query;
+
+my $uri = URI->new($url);
+my %params = (
+    query => $query,
+    format => 'tab'
+);
+$params{size} = $max_results if $max_results;
+$uri->query_form(%params);
+
+my $ua = LWP::UserAgent->new;
+$ua->agent("InterMineXMLHandler/0.1");
+my $req = HTTP::Request->new(GET => $uri);
+
+my $res = $ua->request($req);
+if ($res->is_success) {
+    print $res->content;
+} else {
+    print '[ERROR] ', $res->status_line, "\n";
+}
+exit;
