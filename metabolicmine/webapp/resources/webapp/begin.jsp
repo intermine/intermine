@@ -30,6 +30,14 @@
 	var inputToggleClass = 'eg';
 </script>
 
+<!-- preview div -->
+<div id="ctxHelpDiv" class="preview">
+	<div class="topBar info">
+		<div id="ctxHelpTxt" class="preview">You are looking at our latest preview site. Enjoy and <a href="#" onclick="showContactForm();return false;">
+		let us know</a> if events do not turn out as expected. Thank you!</div>
+	</div>
+</div>
+
 <!-- faux context help -->
 <div id="ctxHelpDiv" class="welcome" style="display:none;">
 	<div class="topBar info">
@@ -187,9 +195,9 @@
 	                <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">Query lists of data</a></h3>
 	                <div style="clear:both;"> </div>
 					<p>
-					<img src="/metabolicmine/themes/metabolic/thumbs/widget-charts-5.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:10px;" />
+					<img src="/metabolicmine/themes/metabolic/thumbs/widget-charts-5.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:4px;" />
 					<strong>Explore</strong>, <strong>Analyse</strong> &amp; <strong>Enrich</strong>. Upload your own data or browse our Public
-					sets.Covering Pathways to Publications, Search for hidden relationships with our <strong>widgets library</strong>.</p>
+					sets. Covering Pathways to Publications, Search for hidden relationships with our <strong>widgets library</strong>.</p>
 	            </div>
 	            <div class="span-4 last templates">
 	                <div class="image">
@@ -325,9 +333,13 @@
         <div class="span-6">
             <a href="#">Contact Us</a>
             <span>|</span>
-            <a href="#">Privacy Policy</a>
+            <a href="#">FAQ</a>
             <span>|</span>
-            <a href="#">Section 508 Statement</a>
+            <a href="#">About</a>
+			<span>|</span>
+            <a href="#">Cite</a>
+			<span>|</span>
+            <a href="#">Software</a>
             <br />
             <a href="#">ModMine</a>
             <span>|</span>
@@ -336,8 +348,6 @@
             <a href="#">FlyMine</a>
             <span>|</span>
             <a href="#">MalariaMine</a>
-            <span>|</span>
-            <a href="#">GoldMine</a>
             
             <p>&copy; 2010 Department of Genetics, University of Cambridge, Downing Street, Cambridge CB2 3EH, United Kingdom</p>
         </div>

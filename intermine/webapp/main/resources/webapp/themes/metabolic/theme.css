@@ -165,7 +165,7 @@ ul#loginbar { margin-top:10px !important; }
 ul#loginbar li { border-right-color:#004499; }
 
 /* topnav */
-ul#topnav { font-size:0.7em; margin:0; position:absolute; right:0; top:0; white-space:nowrap; list-style:none; }
+ul#topnav { font-size:0.7em; margin:0; position:absolute; right:0; top:0; white-space:nowrap; list-style:none; text-transform:capitalize; }
 	ul#topnav.smallScreen { right:40px; }
 	ul#topnav li { display:inline; border-right:1px solid #505050; padding:0 6px 0 3px; margin:0; }
 		ul#topnav li.last { border:none; }
@@ -183,3 +183,13 @@ table.results { border:1px solid #DFDFDF; border-left:0; margin-bottom:10px; wid
 	table.results tfoot tr td { background:#FFF; color:#333; }
 	table.results input { vertical-align:middle; }
 	table.results b { padding-right:3px; }
+
+/* external links on objectDetails (and bagDetails!!!) */
+div.externalLinks { margin-bottom:10px; }
+	div.externalLinks h3 { color:#4896B2; margin-bottom:4px; font-size:13px; }
+	div.externalLinks ul { list-style:none; }
+		div.externalLinks ul li { display:inline; margin:0; margin-right:6px; }
+			div.externalLinks ul li a { line-height:27px; height:27px; }
+			div.externalLinks ul li a.ext_link { display:none; }
+			div.externalLinks ul li a.ext_link.image { display:inline; background:url("../../images/icons/external-link-8.png") no-repeat top right;
+				padding:15px 10px 0 0; }

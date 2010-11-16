@@ -28,14 +28,14 @@
 
   <fmt:message key="templateBuilder.saveIntro"/>
 
-  <html:form action="/templateSettingsAction">
+  <html:form styleId="queryBuilderTemplateSettings" action="/templateSettingsAction">
     <div align="center">
     <p>
     <table border="0" width="10%">
       <tr>
         <td width="1%" align="right" valign="top" nowrap><fmt:message key="templateBuilder.shortName"/>
           <c:if test="${empty QUERY.name}">
-            <span class="errors"> (Required)</span>
+            <span class="errors">(Required)</span>
           </c:if>        
         </td>
         <td nowrap>

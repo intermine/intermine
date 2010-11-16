@@ -105,18 +105,27 @@ ul.inline { margin-left:0 !important; }
 	ul.inline li { float:left; padding-left:0px; margin-right:15px; }
 	ul.inline li.first { list-style:none; margin-left:0px; }
 	ul.inline a { color:#1F7492; }
-a.ext_link img { display:none; }
 
 /* convert to a different type */
 #convertList.bochs { padding:0 6px 6px 6px; }
 	#convertList.bochs form#bagDetailsForm { margin-bottom:-20px; }
 	div.lookupReport a { float:left; margin-right:10px; }
-a.ext_link { background:url("../images/icons/external-link-8.png") no-repeat top right; padding-right:7px; }
+
+/* external links (resetting from theme.css) attributeLinkDisplayer.jsp */
+a.ext_link { display:none; }
+a.ext_link.image { display:inline; }
+div.bochs div.externalLinks { margin:0; }
+	div.bochs div.externalLinks h3 { display:none; }
+	div.bochs div.externalLinks ul li { display:inline; margin:0; }
+	div.bochs div.externalLinks ul li a { line-height:auto; height:auto; }
+		div.bochs div.externalLinks ul li a.ext_link.image { background:none; padding:0; padding-right:6px; }
+/*a.ext_link { background:url("../images/icons/external-link-8.png") no-repeat top right; padding-right:7px; }*/
 
 /* other mines */
 #otherMines.bochs h3 { background-repeat:no-repeat; background-position:left; border-bottom:1px solid #DFDFDF; color:#FB641E; font-size:16px;
-	line-height:40px; margin-bottom:4px; }
+	line-height:40px; margin-bottom:4px; display:block; }
 	#otherMines.bochs h3 { background-image:url("../images/icons/link-24.png"); padding-left:30px; margin-top:0; }
+	#otherMines.bochs form { margin-bottom:-15px; } /* loose <br /> */
 
 /* widget togglers */
 div.bochs ol.widgetList li { margin:0; margin-right:20px; }

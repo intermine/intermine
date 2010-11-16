@@ -3,11 +3,16 @@
 
 <!-- attributeLinkDisplayer.jsp -->
 
-<div class="lookupReport">
-  <c:forEach var="confMapEntry" items="${attributeLinkConfiguration}">
+<div class="externalLinks">
+	<h3>External links</h3>
+  	<ul>
+  	
+  	<c:forEach var="confMapEntry" items="${attributeLinkConfiguration}">
+  	<li>
     <c:set var="href" value="${confMapEntry.value.url}"/>
     <c:set var="imageName" value="${confMapEntry.value.imageName}"/>
     <c:set var="text" value="${confMapEntry.value.text}"/>
+    <c:set var="foot" value="${confMapEntry.value.foot}"/>
     <c:set var="parameters" value="${confMapEntry.value.parameters}"/>
     <c:set var="usePost" value="${confMapEntry.value.usePost}"/>
     <c:set var="linkId" value="${confMapEntry.value.linkId}"/>
@@ -18,18 +23,30 @@
 
           <%-- GET form --%>
           <c:when test="${empty usePost}">
-			<c:if test="${!empty imageName}">
-            	<a href="${href}" target="_new"><html:img src="model/images/${imageName}" title="${text}"/></a>
-			</c:if>
+	          <c:if test="${!empty imageName}">
+	          	<a href="${href}" class="ext_link image" target="_new">
+	          		<html:img src="model/images/${imageName}" title="${text}"/>
+	          	</a>
+	          </c:if>
+	          <a href="${href}" class="ext_link" target="_new">${text}</a>
           </c:when>
 
           <%-- POST form --%>
           <c:otherwise>
-			<c:if test="${!empty imageName}">
-            	<a href="javascript:document.getElementById('${linkId}Form').submit();" >
-                	<html:img src="model/images/${imageName}" title="${text}" />
-				</a>
-			</c:if>
+                <td align="right">
+                  <c:if test="${!empty imageName}">
+                    <a href="javascript:document.getElementById('${linkId}Form').submit();" class="ext_link" >
+                             <html:img src="model/images/${imageName}" title="${text}" />
+                    </a>
+                  </c:if>
+              </td>
+                <td>
+                  <c:if test="${!empty text}">
+                    <a href="javascript:document.getElementById('${linkId}Form').submit();" class="ext_link" >
+                          ${text}&nbsp;<img src="images/ext_link.png" title="${text}"/>
+                    </a>
+                  </c:if>
+                </td>
 
                 <form action="${href}" method="post" id="${linkId}Form" target="_blank" enctype="${enctype}">
                      <c:forEach var="par" items="${parameters}">
@@ -39,7 +56,9 @@
           </c:otherwise>
         </c:choose>
     </c:if>
+    </li>
   </c:forEach>
+  </ul>
 </div>
 
 <%-- show xrefs --%>

@@ -176,6 +176,13 @@ form#quick-search { float:right; margin-right:12px; }
     #crumbs p span { color:#e2e1e6; font-size:7px; }
 */
 
+/* preview msg */
+#ctxHelpDiv.preview { margin-bottom:10px; }
+#ctxHelpDiv.preview div.topBar.info { margin:0 !important; background-image:url("../themes/metabolic/icons/construction.png");
+	background-color:#F5F5F5; border-color:#DFDFDF; }
+#ctxHelpDiv.preview div.topBar.info a { float:none; }
+
+/* welcome faux div */
 #ctxHelpDiv.welcome div.topBar.info { margin:0 !important; }
 #ctxHelpDiv.welcome div.topBar.info a { background:url("../themes/metabolic/icons/toggle-expand.png") no-repeat left;
 	padding-left:20px; }
@@ -267,10 +274,11 @@ div.wide-gray div.bottom { background:url("../themes/metabolic/img/box-wide-gray
 #actions a.more { background:url("../themes/metabolic/icons/more-corner.png") no-repeat top; font-size:0; height:58px; line-height:0;
     overflow:hidden; position:absolute; bottom:-2px; right:-1px; width:54px; z-index:10; padding:0; cursor:pointer; }
 
-#actions div.search, #actions div.lists, #actions div.templates { position:relative; }
+#actions div.search, #actions div.lists, #actions div.templates { position:relative; margin-right:0; width:326px; /* override framework */ }
+#actions div.search p, #actions div.lists p, #actions div.templates p { padding-right:0; }
 
 #actions h3 { color:#FFFFFF; padding:18px 10px 18px 55px; margin:0 16px 10px 26px; line-height:26px; height:52px;
-	position:absolute; top:0px; left:0px; width:63%; }
+	position:absolute; top:0px; left:0px; width:71%; }
 #actions div.image { float:left; background:url("../themes/metabolic/icons/shade.png") no-repeat bottom; float:left; margin-top:6px;
 	margin-left:14px; z-index:10; position:relative; padding-bottom:18px; }
 #actions p { padding:0 16px 0 24px; margin:20px 0 13px 0; font-size:13px; }
