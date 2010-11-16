@@ -54,7 +54,7 @@ public class DisplayObjectFactoryTest extends MockStrutsTestCase
     }
 
     public void testDisplayObjectCache() throws Exception {
-        InterMineAPI im = new InterMineAPI(os, null, null, null, null);
+        InterMineAPI im = new InterMineAPI(os, null, null, null, null, null);
         SessionMethods.setInterMineAPI(getSession().getServletContext(), im);
         Map webProperties = new HashMap();
         getSession().getServletContext().setAttribute(Constants.WEB_PROPERTIES, webProperties);
