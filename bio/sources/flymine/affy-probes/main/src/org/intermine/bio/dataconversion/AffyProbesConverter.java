@@ -14,6 +14,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +41,7 @@ public class AffyProbesConverter extends BioFileConverter
     private static final String DATASET_PREFIX = "Affymetrix array: ";
     private Map<String, String> chromosomes = new HashMap<String, String>();
     private Map<String, ProbeSetHolder> holders = new HashMap<String, ProbeSetHolder>();
-    List<Item> delayedItems = new ArrayList<Item>();
+    private List<Item> delayedItems = new LinkedList<Item>();
 
     /**
      * Constructor
