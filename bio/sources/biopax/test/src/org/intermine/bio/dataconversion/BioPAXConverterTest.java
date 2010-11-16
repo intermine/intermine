@@ -12,17 +12,16 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.StringReader;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.dataconversion.MockItemsTestCase;
 import org.intermine.metadata.Model;
 
 
-public class BioPAXConverterTest extends ItemsTestCase
+public class BioPAXConverterTest extends MockItemsTestCase
 {
     private BioPAXConverter converter;
     private MockItemWriter itemWriter;
