@@ -100,8 +100,12 @@
             </im:viewableSpan>
             <span class="type">
               <c:if test="${!path.attribute}">
+                <fmt:message var="changePath" key="query.changePath">
+                    <fmt:param value="${path.type}"/>
+                </fmt:message>
                 <im:viewableSpan path="${path.pathString}" viewPaths="${viewPaths}" test="${empty path.fieldName}" idPrefix="query"> 
-                  <span class="type"><c:out value="${path.type}"/></span> 
+                  <html:link action="/queryBuilderChange?method=changePath&amp;path=${path.pathString}" 
+                   title="${changePath}"><span class="type"><c:out value="${path.type}"/></span></html:link> 
                 </im:viewableSpan> 
                 <c:if test="${path.collection}">
                   <fmt:message key="query.collection"/>
