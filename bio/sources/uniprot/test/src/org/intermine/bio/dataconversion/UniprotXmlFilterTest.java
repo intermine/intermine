@@ -52,6 +52,7 @@ public class UniprotXmlFilterTest extends XMLTestCase
 
         InputStreamReader expectedReader = new InputStreamReader(getClass().getClassLoader()
                                       .getResourceAsStream("test/UniprotXmlFilterTest_tgt.xml"));
+//         java.lang.NoClassDefFoundError: org/apache/xml/serializer/SerializerTrace
 //        XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(expectedReader, new FileReader(tmpFile));
     }
