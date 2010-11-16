@@ -161,8 +161,24 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 
         // Add views
         sb.append(INDENT + INDENT + "// Add views" + ENDL);
-        for (String pathString : query.getView()) {
-            sb.append(INDENT + INDENT + "query.addView(\"" + pathString + "\");" + ENDL);
+        if (query.getView().size() > 1) {
+            int idx = 1;
+            for (String pathString : query.getView()) {
+                if (idx == 1) {
+                    sb.append(INDENT + INDENT + "query.addViews(\"" + pathString + "\"," + ENDL);
+                    idx++;
+                    continue;
+                }
+                if (idx == query.getView().size()) {
+                    sb.append(INDENT + INDENT + INDENT + "\"" + pathString + "\");" + ENDL);
+                    break;
+                }
+                sb.append(INDENT + INDENT + INDENT + "\"" + pathString + "\"," + ENDL);
+                idx++;
+            }
+        } else {
+            sb.append(INDENT + INDENT + "query.addView(\""
+                    + query.getView().iterator().next() + "\");" + ENDL);
         }
 
         sb.append(ENDL);
