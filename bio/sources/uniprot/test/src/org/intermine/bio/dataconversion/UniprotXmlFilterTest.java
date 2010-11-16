@@ -52,7 +52,7 @@ public class UniprotXmlFilterTest extends XMLTestCase
 
         InputStreamReader expectedReader = new InputStreamReader(getClass().getClassLoader()
                                       .getResourceAsStream("test/UniprotXmlFilterTest_tgt.xml"));
-        XMLUnit.setIgnoreWhitespace(true);
+//        XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(expectedReader, new FileReader(tmpFile));
     }
 
@@ -61,7 +61,7 @@ public class UniprotXmlFilterTest extends XMLTestCase
 
         String out = StringUtil.escapeBackslash(in);
         String expected = "Novel protein/n/";
-        System.out.println("escapeOut " + out);
+        //System.out.println("escapeOut " + out);
         assertEquals(expected, out);
     }
 
