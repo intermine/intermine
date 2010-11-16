@@ -137,13 +137,13 @@ public class CreateFlankingRegions
             try {
                 source = (String) gene.getFieldValue("source");
             } catch (IllegalAccessException e) {
-                // This shouldn't happen 
+                // This shouldn't happen
                 return;
             }
             if (!(source.equals("FlyBase") || source.equals("WormBase"))) {
                 return;
             }
-            
+
             // HACK if modMine don't include genes in regions
             includeGenes = new boolean[] {false};
         }
@@ -152,35 +152,35 @@ public class CreateFlankingRegions
             for (String direction : directions) {
                 for (boolean includeGene : includeGenes) {
                     String strand = geneLoc.getStrand();
-                    
+
                     // TODO what do we do if strand not set?
                     int geneStart = geneLoc.getStart().intValue();
                     int geneEnd = geneLoc.getEnd().intValue();
                     int chrLength = chr.getLength().intValue();
-                    
+
                     // gene touches a chromosome end so there isn't a flanking region
                     if ((geneStart <= 1) || (geneEnd >= chrLength)) {
                         continue;
                     }
-                    
+
                     GeneFlankingRegion region = (GeneFlankingRegion) DynamicUtil
                     .createObject(Collections.singleton(GeneFlankingRegion.class));
                     Location location = (Location) DynamicUtil
                     .createObject(Collections.singleton(Location.class));
-                    
+
                     region.setDistance("" + distance + "kb");
                     region.setDirection(direction);
-                    region.setIncludeGene(new Boolean(includeGene));
+                    region.setIncludeGene(includeGene);
                     region.setGene(gene);
                     region.setChromosome(chr);
                     region.setChromosomeLocation(location);
                     region.setOrganism(gene.getOrganism());
                     region.setPrimaryIdentifier(gene.getPrimaryIdentifier() + " " + distance + "kb "
                             + direction);
-                    
+
                     // this should be some clever algorithm
                     int start, end;
-                    
+
                     if ("upstream".equals(direction) && "1".equals(strand)) {
                         start = geneStart - (int) Math.round(distance * 1000);
                         end = includeGene ? geneEnd : geneStart - 1;
@@ -194,20 +194,20 @@ public class CreateFlankingRegions
                         start = geneStart - (int) Math.round(distance * 1000);
                         end = includeGene ? geneEnd : geneStart - 1;
                     }
-                    
+
                     // if the region hangs off the start or end of a chromosome set it to finish
                     // at the end of the chromosome
                     location.setStart(new Integer(Math.max(start, 1)));
                     int e = Math.min(end, chr.getLength().intValue());
                     location.setEnd(new Integer(e));
-                    
+
                     location.setStrand(strand);
                     location.setLocatedOn(chr);
                     location.setFeature(region);
-                    
+
                     region.setLength(new Integer((location.getEnd().intValue()
                             - location.getStart().intValue()) + 1));
-                    
+
                     osw.store(location);
                     osw.store(region);
                 }
