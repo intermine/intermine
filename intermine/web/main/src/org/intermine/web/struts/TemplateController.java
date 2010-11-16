@@ -105,7 +105,8 @@ public class TemplateController extends TilesAction
                 }
             }
             templateName = modifiedTemplate.getName();
-            template = modifiedTemplate;            originalTemplate = templateManager.getTemplate(profile, templateName, scope);
+            template = modifiedTemplate;
+            originalTemplate = templateManager.getTemplate(profile, templateName, scope);
         }
 
         template = templateManager.getTemplate(profile, templateName, scope);
