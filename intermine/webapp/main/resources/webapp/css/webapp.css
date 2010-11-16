@@ -724,3 +724,7 @@ select#extraConstraintSelect { vertical-align:middle; }
 /* login bar */
 ul#loginbar li { border-right-style:solid; border-right-width:1px; }
 	ul#loginbar li.last { border:none; }
+
+/* queryBuilder template settings */
+form#queryBuilderTemplateSettings span.errors { border:1px solid #DF8F8F; background:#FFCECE url("../images/icons/exclamation.png") no-repeat 1px;
+	font-size:11px; padding:1px 0 1px 20px; }

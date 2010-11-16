@@ -308,8 +308,15 @@ input.submit {
 									<c:forEach items="${facet.items}" var="facetItem"
 										varStatus="facetItemStat">
 										<c:if test="${facetItemStat.index == 10}">
-											<li class="facetMoreLink"><a href="javascript:{}"
-												onclick="jQuery(this).parent('li').next('ul').slideToggle('fast');">
+											<script type="text/javascript">
+												// will show content of the next ul and destroy itself
+												function showMore(e) {
+													jQuery(e).parent('li').toggle ();
+													jQuery(e).parent('li').parent('ul').next('ul').slideToggle('fast');
+												}
+											</script>
+											<li class="facetMoreLink"><a href="#"
+												onclick="showMore(this);return false;">
 											... and <b>${fn:length(facet.items) - facetItemStat.index
 											}</b> more values &raquo; </a></li>
 											</ul>
