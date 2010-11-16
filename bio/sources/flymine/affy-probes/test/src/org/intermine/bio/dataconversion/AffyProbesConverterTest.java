@@ -19,21 +19,21 @@ import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 
-public class Drosophila2ProbeConverterTest extends ItemsTestCase
+public class AffyProbesConverterTest extends ItemsTestCase
 {
     private String ENDL = System.getProperty("line.separator");
     Model model = Model.getInstanceByName("genomic");
-    Drosophila2ProbeConverter converter;
+    AffyProbesConverter converter;
     MockItemWriter itemWriter;
 
-    public Drosophila2ProbeConverterTest(String arg) {
+    public AffyProbesConverterTest(String arg) {
         super(arg);
     }
 
     public void setUp() throws Exception {
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap());
-        converter = new Drosophila2ProbeConverter(itemWriter, model);
+        converter = new AffyProbesConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn00158291"));
         resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("FBgn0033159"));
@@ -49,14 +49,14 @@ public class Drosophila2ProbeConverterTest extends ItemsTestCase
     public void testProcess() throws Exception {
 
         Reader reader = new InputStreamReader(getClass().getClassLoader()
-                                              .getResourceAsStream("Drosophila2ProbeConverterTest_src.txt"));
+                                              .getResourceAsStream("AffyProbeConverterTest_src.txt"));
         converter.process(reader);
         converter.close();
 
         // uncomment to write out a new target items file
         //writeItemsFile(itemWriter.getItems(), "affy-probes-tgt-items.xml");
 
-        assertEquals(readItemSet("Drosophila2ProbeConverterTest_tgt.xml"), itemWriter.getItems());
+        assertEquals(readItemSet("AffyProbeConverterTest_tgt.xml"), itemWriter.getItems());
     }
 
 }

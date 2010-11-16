@@ -28,9 +28,9 @@ import org.intermine.xml.full.Item;
  *
  * @author Julie Sullivan
  */
-public class Drosophila2ProbeConverter extends BioFileConverter
+public class AffyProbesConverter extends BioFileConverter
 {
-    protected static final Logger LOG = Logger.getLogger(Drosophila2ProbeConverter.class);
+    protected static final Logger LOG = Logger.getLogger(AffyProbesConverter.class);
 
     protected String dataSource, dataSet;
     private String orgRefId;
@@ -48,7 +48,7 @@ public class Drosophila2ProbeConverter extends BioFileConverter
      * @param model the data model
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public Drosophila2ProbeConverter(ItemWriter writer, Model model)
+    public AffyProbesConverter(ItemWriter writer, Model model)
         throws ObjectStoreException {
         super(writer, model, null, null);
 
