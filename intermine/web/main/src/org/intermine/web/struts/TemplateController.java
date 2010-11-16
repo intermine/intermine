@@ -84,6 +84,9 @@ public class TemplateController extends TilesAction
 
         TemplateForm tf = (TemplateForm) form;
         tf.setScope(scope);
+        if (scope == null) {
+            scope = Scope.ALL;
+        }
         // FIXME see #2239
         // If the template has been modified and uses an object bag constraint
         // it will be missing one of its original constraints (which will have been
@@ -102,23 +105,17 @@ public class TemplateController extends TilesAction
                 }
             }
             templateName = modifiedTemplate.getName();
-            template = modifiedTemplate;
-            if (scope == null) {
-                scope = Scope.ALL;
-            }
-            originalTemplate = templateManager.getTemplate(profile, templateName, scope);
-        }
-        // we're in querybuilder with queryBuilderTemplatePreview.jsp
-        if (context.getAttribute("builder") != null
-            || session.getAttribute(Constants.NEW_TEMPLATE) != null) {
-            template = (TemplateQuery) SessionMethods.getQuery(session);
+            template = modifiedTemplate;            originalTemplate = templateManager.getTemplate(profile, templateName, scope);
         }
 
+        template = templateManager.getTemplate(profile, templateName, scope);
+
         if (template == null) {
-            if (scope == null) {
-                scope = Scope.ALL;
+            // we're in querybuilder with queryBuilderTemplatePreview.jsp
+            if (context.getAttribute("builder") != null
+                || session.getAttribute(Constants.NEW_TEMPLATE) != null) {
+                template = (TemplateQuery) SessionMethods.getQuery(session);
             }
-            template = templateManager.getTemplate(profile, templateName, scope);
         }
 
         TemplateQuery displayTemplate = null;
