@@ -12,7 +12,7 @@
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="client-build" />
 	<property name="javadoc.author" value="InterMine team" />
-	<property name="version" value="1.0" />
+	<property name="version" value="1.1" />
 	
 	<target name="clean">
 		<delete dir="${dist.dir}" failonerror="false"/>
@@ -51,6 +51,8 @@
 		<!-- stax-api-1.0.jar and stax-ri-1.0.jar is needed when java 1.5 is used for pathquery XML serialization and deserialization -->
 		<copyfile dest="${build.dir}/lib/stax-api-1.0.jar" src="../../../pathquery/main/lib/stax-api-1.0.jar"/>
 		<copyfile dest="${build.dir}/lib/stax-ri-1.0.jar" src="../../../pathquery/main/lib/stax-ri-1.0.jar"/>
+		<copyfile dest="${build.dir}/lib/commons-lang-2.3.jar" src="../../../objectstore/main/lib/commons-lang-2.3.jar"/>
+		<copyfile dest="${build.dir}/lib/antlr-2.7.6-caching.jar" src="../../../objectstore/main/lib/antlr-2.7.6-caching.jar"/>
 	    <copydir dest="${build.dir}/samples" src="../samples" excludes=".*, bin/**"></copydir>
 		<copyfile dest="${build.dir}/README.txt" src="README.txt"/>
 	</target>

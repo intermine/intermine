@@ -42,16 +42,12 @@ public class QueryClient
         QueryService service = new ServiceFactory(serviceRootUrl, "QueryClient").getQueryService();
         // XML representation of PathQuery, XML representation can be downloaded from InterMine
         // website for your query or template following query fetches genes shorter than 1000 bases
-        String queryXml = 
-          "<query model=\"genomic\" view=\"Gene.primaryIdentifier Gene.secondaryIdentifier " 
-          + "Gene.symbol Gene.name Gene.organism.shortName\" sortOrder=\"Gene.primaryIdentifier\">"
-          + "<node path=\"Gene\" type=\"Gene\">"
-          + "</node>"
-          + "<node path=\"Gene.length\" type=\"Integer\">"
-          +  "<constraint op=\"&lt;\" value=\"1000\" code=\"A\">"
-          +  "</constraint>"
-          + "</node>"
-          + "</query>";
+        String queryXml = "<query name=\"\" model=\"genomic\""
+            + " view=\"Gene.primaryIdentifier Gene.symbol Gene.length\""
+            + " sortOrder=\"Gene.primaryIdentifier asc\">"
+            + " <constraint path=\"Gene.length\" op=\"&lt;\" value=\"1000\"/>"
+            + "</query>";
+
         // first 100 results are fetched
         List<List<String>> result = service.getResult(queryXml, 100);
         System.out.println("First 100 genes shorter than 1kB sorted according to the identifier: ");

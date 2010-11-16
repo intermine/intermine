@@ -12,6 +12,9 @@ package samples;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
@@ -20,18 +23,20 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.services.ModelService;
 import org.intermine.webservice.client.services.QueryService;
+import org.intermine.webservice.client.services.TemplateService;
+import org.intermine.webservice.client.template.TemplateParameter;
 
 /**
- * The QueryAPIClient is an example of query client fetching results of query from InterMine web
- * service.  It demonstrates using InterMine query API.
+ * An example web service query to be extended in the !InterMine workshop tutorial. 
  **/
-public class QueryAPIClient
+public class WorkshopExample
 {
-    private static String serviceRootUrl = "http://localhost:8080/query/service";
+    private static String serviceRootUrl = "http://preview.flymine.org/preview/service";
 
     private static final int MAX_ROWS = 10000;
 
     /**
+     * 
      * @param args command line arguments
      * @throws IOException
      */
@@ -39,16 +44,21 @@ public class QueryAPIClient
         QueryService service =
             new ServiceFactory(serviceRootUrl, "QueryAPIClient").getQueryService();
         Model model = getModel();
-        
-        // Create a query
+
         PathQuery query = new PathQuery(model);
-        query.addViews("Organism.name", "Organism.taxonId");
-        query.addOrderBy("Organism.name", OrderDirection.ASC);
+        query.addViews("Protein.primaryIdentifier", "Protein.proteinDomains.name");
+        query.addOrderBy("Protein.primaryIdentifier", OrderDirection.ASC);
+        query.addConstraint(Constraints.eq("Protein.proteinDomains.name", "Homeobox"));
+        query.addConstraint(Constraints.eq("Protein.organism.shortName", "D. melanogaster"));
 
         // Run the query
         List<List<String>> result = service.getResult(query, MAX_ROWS);
-        
+
         // Output results
+        printResults(result);
+    }
+
+    private static void printResults(List<List<String>> result) {
         int count = 0;
         for (List<String> row : result) {
             for (String cell : row) {
@@ -58,6 +68,17 @@ public class QueryAPIClient
             count++;
         }
         System.out.println(System.getProperty("line.separator") + count + " results");
+    }
+
+    private static String makeCommaSeparatedString(Collection<String> elements) {
+        StringBuilder sb = new StringBuilder();
+        for (String element : elements) {
+            if (sb.length() > 0) {
+                sb.append(",");
+            }
+            sb.append(element);
+        }
+        return sb.toString();
     }
 
     private static Model getModel() {
