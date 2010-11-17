@@ -227,7 +227,7 @@ public final class CreateModMineMetaDataCache
      * @return exp name with spaces escaped
      */
     private static String fixSpaces(String expName) {
-        String expNameFixed=expName.replace(" " , "\\ ");
+        String expNameFixed = expName.replace(" " , "\\ ");
         return expNameFixed;
     }
 
@@ -426,11 +426,9 @@ public final class CreateModMineMetaDataCache
             Integer dccId = (Integer) row.get(0);
             Class<?> feat = (Class<?>) row.get(1);
 
-            String key = ModMineCacheKeys.SUB_LOCATED_FEATURE_TYPE + "." + dccId;
-            
+            String key = ModMineCacheKeys.SUB_LOCATED_FEATURE_TYPE
+            + "." + dccId + "." + TypeUtil.unqualifiedName(feat.getName());
             props.put(key, "" + TypeUtil.unqualifiedName(feat.getName()));
-
-            LOG.info("ZZ: " + key + "||" + TypeUtil.unqualifiedName(feat.getName()));
 
         }
         long timeTaken = System.currentTimeMillis() - startTime;
