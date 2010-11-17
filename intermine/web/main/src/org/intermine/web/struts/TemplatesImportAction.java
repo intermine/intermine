@@ -31,6 +31,9 @@ import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.util.NameUtil;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
@@ -74,7 +77,7 @@ public class TemplatesImportAction extends InterMineAction
                     deleted++;
                 }
             }
-
+            boolean validConstraints = true;
             for (TemplateQuery template : templates.values()) {
                 String templateName = template.getName();
 
@@ -83,8 +86,12 @@ public class TemplatesImportAction extends InterMineAction
                 if (!templateName.equals(updatedName)) {
                     template = renameTemplate(updatedName, template);
                 }
-                profile.saveTemplate(template.getName(), template);
-                imported++;
+                if (validateLookupConstraints(template)) {
+                    profile.saveTemplate(template.getName(), template);
+                    imported++;
+                } else {
+                    validConstraints = false;
+                }
             }
 
             if (SessionMethods.isSuperUser(session)) {
@@ -94,6 +101,9 @@ public class TemplatesImportAction extends InterMineAction
 
             recordMessage(new ActionMessage("importTemplates.done", new Integer(deleted),
                         new Integer(imported), new Integer(renamed)), request);
+            if (!validConstraints) {
+                recordError(new ActionMessage("importTemplates.error.noneditablelookup"), request);
+            }
 
             return new ForwardParameters(mapping.findForward("mymine"))
                 .addParameter("subtab", "templates").forward();
@@ -108,5 +118,22 @@ public class TemplatesImportAction extends InterMineAction
         TemplateQuery newTemplate = template.clone();
         newTemplate.setName(newName);
         return newTemplate;
+    }
+
+    /**
+     * Verify templates don't contain non-editable lookup constraints
+     * @param template to validate
+     * @return true id the tempalte is valid
+     */
+    private boolean validateLookupConstraints(TemplateQuery template) {
+        Map<PathConstraint, String> pathConstraints = template.getConstraints();
+
+        for (PathConstraint constraint : pathConstraints.keySet()) {
+            if (constraint instanceof PathConstraintLookup
+                && !template.getEditableConstraints().contains(constraint)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
