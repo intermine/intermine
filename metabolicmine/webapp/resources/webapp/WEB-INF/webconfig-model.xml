@@ -52,6 +52,7 @@
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="url" doNotTruncate="true"/>
+      <fieldconfig fieldExpr="dataSource.name"/>
     </fields>
   </class>
 
@@ -90,6 +91,80 @@
       <displayer src="attributeLinkDisplayer.tile"/>
     </bagdisplayers>
   </class>
+
+  <class className="org.intermine.model.bio.GOAnnotation">
+    <fields>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
+      <fieldconfig fieldExpr="ontologyTerm.identifier" />
+      <fieldconfig fieldExpr="ontologyTerm.name" />
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.GOEvidenceCode">
+    <fields>
+      <fieldconfig fieldExpr="code"/>
+    </fields>
+  </class>
+
+    <class className="org.intermine.model.bio.GOTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description" showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.GWAS">
+    <fields>
+      <fieldconfig fieldExpr="firstAuthor"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.GWASResult">
+    <fields>
+      <fieldconfig fieldExpr="SNP.primaryIdentifier"/>
+      <fieldconfig fieldExpr="phenotype"/>
+      <fieldconfig fieldExpr="pValue"/>
+      <fieldconfig fieldExpr="study.firstAuthor"/>
+      <fieldconfig fieldExpr="soure.name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Homologue">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false" />
+      <fieldconfig fieldExpr="inParanoidScore"/>
+      <fieldconfig fieldExpr="homologue.primaryIdentifier"/>
+      <fieldconfig fieldExpr="homologue.organism.shortName"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Interaction">
+   <fields>
+     <fieldconfig fieldExpr="gene.primaryIdentifier"/>
+     <fieldconfig fieldExpr="shortName"/>
+     <fieldconfig fieldExpr="confidenceText"/>
+     <fieldconfig fieldExpr="confidence"/>
+     <fieldconfig fieldExpr="role"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.InteractionExperiment">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.InteractionTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
 
  <class className="org.intermine.model.bio.Location">
     <fields>
@@ -166,6 +241,15 @@
     </bagdisplayers>
   </class>
 
+  <class className="org.intermine.model.bio.ProteinDomain">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="shortName"/>
+      <fieldconfig fieldExpr="type"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.Publication">
     <fields>
       <fieldconfig fieldExpr="firstAuthor"/>
@@ -205,6 +289,12 @@
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
+  </class>
+
+  <class className="org.intermine.model.bio.Source">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
   </class>
 
   <class className="org.intermine.model.bio.Synonym">
