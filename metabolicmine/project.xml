@@ -96,7 +96,15 @@
       <property name="fasta.includes" value="*.fa"/>
       <property name="src.data.dir" location="/shared/data/ensembl/homo_sapiens/current_core/fasta"/>
     </source>
-
+    <source name="treefam" type="treefam">
+      <property name="src.data.dir" location="/shared/data/treefam/current"/>
+      <property name="src.data.dir.includes" value="ortholog.txt.table"/>
+      <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
+      <!-- will load all genes for human, rat and mouse -->
+      <property name="treefam.organisms" value="9606 10090 10116"/>
+      <!-- will only load gene if it is a homologue for human, rat or mouse -->
+      <property name="treefam.homologues" value="9606 10090 10116"/>
+    </source>
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>
     </source>
