@@ -86,13 +86,13 @@
         jQuery(".frontpage_sections div").bg(['10px', '10px', '10px', '10px']);
     });
 </script>
-
+<%--
 <table cellpadding="0" cellspacing="0" border="0">
 <tr><td align="center"><b>modMine web services let you query modENCODE data directly
 from Perl scripts <a href="http://blog.modencode.org/modmine-perl-api">more information and examples</a></b></td></tr>
 </table>
 <br/>
-
+--%>
 <!-- The projects section -->
 <tiles:insert name="projectsSummary.tile" />
 </div>
