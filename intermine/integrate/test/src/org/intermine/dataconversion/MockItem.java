@@ -2,10 +2,11 @@ package org.intermine.dataconversion;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
@@ -21,10 +22,11 @@ public class MockItem {
     private String identifier = "DUMMY";
     private String className = "";
     private String implementations = "";
-    private Map<String, String> attributes = new HashMap();
+    private Map<String, String> attributes = new LinkedHashMap();
     private Map<String, MockItem> references = new LinkedHashMap();
     private Map<String, List<MockItem>> collections = new LinkedHashMap();
     private static final String ENDL = System.getProperty("line.separator");
+    private static Comparator<MockItem> itemComparator, referenceComparator;
 
     /**
      * Constructor
@@ -37,6 +39,22 @@ public class MockItem {
         for (Attribute a : item.getAttributes()) {
             attributes.put(a.getName(), a.getValue());
         }
+
+        itemComparator = new Comparator<MockItem>() {
+            public int compare(MockItem o1, MockItem o2) {
+                String fieldName1 = o1.toString();
+                String fieldName2 = o2.toString();
+                return fieldName1.compareTo(fieldName2);
+            }
+        };
+
+        referenceComparator = new Comparator<MockItem>() {
+            public int compare(MockItem o1, MockItem o2) {
+                String fieldName1 = o1.referencedItemXML();
+                String fieldName2 = o2.referencedItemXML();
+                return fieldName1.compareTo(fieldName2);
+            }
+        };
     }
 
     /**
@@ -227,7 +245,11 @@ public class MockItem {
         for (int i = 0; i < key.length; i++) {
             List<MockItem> c = collections.get(key[i]);
             xml += "\t<collection name=\"" + key[i] + "\">";
-            for (MockItem item : c) {
+
+            TreeSet<MockItem> sortedItems = new TreeSet<MockItem>(referenceComparator);
+            sortedItems.addAll(c);
+
+            for (MockItem item : sortedItems) {
                 if (item == null) {
                    xml = "\t<item id=\"DUMMY\" class=\"" + className + "\">" + ENDL;
                    xml += "item in collection doesn't exist";
@@ -254,6 +276,7 @@ public class MockItem {
     }
 
 
+
     /**
      * used for displaying collections
      * @return the references to display
@@ -262,15 +285,15 @@ public class MockItem {
         String xml = "";
         for (Map.Entry<String, MockItem> entry : references.entrySet()) {
             if (entry.getValue() != null) {
-                xml += "\t<reference name=\"" + entry.getKey() 
+                xml += "\t<reference name=\"" + entry.getKey()
                     + "\" ref_id=\"" + entry.getValue().getIdentifier() + "\"/>"
                     + ENDL;
             } else {
 
-                xml += "\t<reference name=\"" + entry.getKey() 
+                xml += "\t<reference name=\"" + entry.getKey()
                 + "\" ref_id=\"" + entry.getValue() + "\"/>"
                 + ENDL;
-    
+
             }
         }
         return xml;
@@ -311,6 +334,45 @@ public class MockItem {
        xml += getPrettyCollections();
        xml += "</item>" + ENDL;
        return xml;
+   }
+
+   /**
+   *
+   * @return string representing an item for comparison only
+   */
+  public String toString() {
+      String s = "<item id=\"" + identifier + "\" class=\"" + className + "\">" + ENDL;
+      s += getMockAttributes();
+      s += getMockReferences();
+      s += getMockCollections();
+      s += "</item>" + ENDL;
+      return s;
+  }
+
+   /**
+    * Compares two objects and returns a list of what is different.
+    *
+    * @param o object to test
+    * @return msg specifying what exactly is different between the two objects
+    */
+   public String diff(Object o) {
+       MockItem i = (MockItem) o;
+       StringBuffer sb = new StringBuffer();
+       if (!className.equals(i.getMockClassName())) {
+           //sb.append("Classname " + className + " not equal to " + i.getMockClassName());
+       } else if (!getMockImplementations().equals(i.getMockImplementations())) {
+//           sb.append("Implementations " + getMockImplementations() + " not equal to "
+//                   + i.getMockImplementations() + ENDL);
+       } else if (!attributes.equals(i.attributes)) {
+//           sb.append("Attributes " + attributes + " not equal to " + i.attributes + ENDL);
+       } else if (!getMockReferences().equals(i.getMockReferences())) {
+           sb.append("References " + getMockReferences() + " not equal to " + i.getMockReferences() + ENDL);
+       } else if (!getMockCollections().equals(i.getMockCollections())) {
+           sb.append("Collections do not match between these two objects: " + ENDL);
+           sb.append(this.toString());
+           sb.append(i.toString());
+       }
+       return sb.toString();
    }
 
     public boolean equals(Object o) {
