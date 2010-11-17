@@ -152,6 +152,8 @@ public class FeaturesAction extends InterMineAction
                 if ("results".equals(action)) {
                     // we don't want this field on exports
                     q.addView(featureType + ".scoreProtocol.name");
+                    q.setOuterJoinStatus(featureType + ".scoreProtocol",
+                            OuterJoinStatus.OUTER);   
                 }
                 q.addConstraint(Constraints.eq(featureType + ".submissions.experiment.name",
                         experimentName));
