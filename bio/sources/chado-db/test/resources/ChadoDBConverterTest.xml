@@ -39,7 +39,7 @@
 </item>
 <item id="12_2" class="Allele">
 <attribute name="primaryIdentifier" value="FBal0060667"/>
-<attribute name="secondaryIdentifier" value="Scer\GAL4[sd-SG29.1]"/>
+<attribute name="symbol" value="Scer\GAL4[sd-SG29.1]"/>
 <reference name="organism" ref_id="2_1"/>
 <reference name="sequenceOntologyTerm" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="5_1"/></collection>
@@ -431,7 +431,7 @@
 <item id="12_1" class="Allele">
 <attribute name="alleleClass" value="hypomorph"/>
 <attribute name="primaryIdentifier" value="FBal0198867"/>
-<attribute name="secondaryIdentifier" value="CG10006[GD2461]"/>
+<attribute name="symbol" value="CG10006[GD2461]"/>
 <reference name="gene" ref_id="1_2"/>
 <reference name="organism" ref_id="2_1"/>
 <reference name="sequenceOntologyTerm" ref_id="3_1"/>
