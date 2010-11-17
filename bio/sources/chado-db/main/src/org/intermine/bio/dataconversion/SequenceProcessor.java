@@ -569,12 +569,13 @@ public class SequenceProcessor extends ChadoProcessor
     protected void finishedProcessing(Connection connection,
                                     Map<Integer, FeatureData> featureDataMap)
         throws SQLException {
-        // override and add additional processing if necessary, but method should call parent
-
-        String query = "DROP TABLE " + tempFeatureTableName;
-        Statement stmt = connection.createStatement();
-        LOG.info("executing: " + query);
-        stmt.execute(query);
+        // connection will be null for tests
+        if (connection != null) {
+            String query = "DROP TABLE " + tempFeatureTableName;
+            Statement stmt = connection.createStatement();
+            LOG.info("executing: " + query);
+            stmt.execute(query);
+        }
     }
 
     /**
