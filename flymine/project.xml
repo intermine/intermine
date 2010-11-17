@@ -101,12 +101,6 @@
       <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
       <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
     </source>
-
-    <source name="tiling-path" type="tiling-path">
-      <property name="gff3.taxonId" value="7227"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="src.data.dir" location="/shared/data/tiling-path-liftover/tiling-reordered/"/>
-   </source>
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/shared/data/kegg/current"/>
       <property name="kegg.organisms" value="7227 9606"/>
