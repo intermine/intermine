@@ -26,7 +26,7 @@ public class MockItem {
     private Map<String, MockItem> references = new LinkedHashMap();
     private Map<String, List<MockItem>> collections = new LinkedHashMap();
     private static final String ENDL = System.getProperty("line.separator");
-    private static Comparator<MockItem> itemComparator, referenceComparator;
+    private static Comparator<MockItem> comparator;
 
     /**
      * Constructor
@@ -40,15 +40,7 @@ public class MockItem {
             attributes.put(a.getName(), a.getValue());
         }
 
-        itemComparator = new Comparator<MockItem>() {
-            public int compare(MockItem o1, MockItem o2) {
-                String fieldName1 = o1.toString();
-                String fieldName2 = o2.toString();
-                return fieldName1.compareTo(fieldName2);
-            }
-        };
-
-        referenceComparator = new Comparator<MockItem>() {
+        comparator = new Comparator<MockItem>() {
             public int compare(MockItem o1, MockItem o2) {
                 String fieldName1 = o1.referencedItemXML();
                 String fieldName2 = o2.referencedItemXML();
@@ -246,7 +238,7 @@ public class MockItem {
             List<MockItem> c = collections.get(key[i]);
             xml += "\t<collection name=\"" + key[i] + "\">";
 
-            TreeSet<MockItem> sortedItems = new TreeSet<MockItem>(referenceComparator);
+            TreeSet<MockItem> sortedItems = new TreeSet<MockItem>(comparator);
             sortedItems.addAll(c);
 
             for (MockItem item : sortedItems) {
