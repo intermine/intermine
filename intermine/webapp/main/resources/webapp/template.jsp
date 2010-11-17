@@ -313,12 +313,12 @@
           <html:hidden property="actionType" value="" styleId="actionType"/>
           <html:submit property="editQuery" styleClass="editQueryBuilder" styleId="editQueryButton"><fmt:message key="template.submitToQuery"/></html:submit>
           <c:if test="${IS_SUPERUSER}">
-          	<html:submit property="editTemplate" styleClass="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
+            <html:submit property="editTemplate" styleClass="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
           </c:if>
           <html:submit property="skipBuilder" styleClass="next" styleId="showResultsButton">
-          	<fmt:message key="template.submitToResults"/>
+            <fmt:message key="template.submitToResults"/>
           </html:submit>
-	</div>
+  </div>
 </c:if>
 </html:form>
 
@@ -336,6 +336,7 @@
       <a href="${webserviceLink}" title="Get a URL to run this template from the command line or a script">web service URL</a>
     </td>
     <td>
+      <%-- Hide API tab as it is not ready for a new modMine release 11-17-2010
       <c:choose>
         <c:when test="${empty builder}">
           <a href="javascript:codeGenTemplate('perl');">Perl</a>
@@ -350,6 +351,7 @@
           <a href="/${WEB_PROPERTIES['webapp.path']}/api.do" target="_blank"><span>[help]</span></a>
         </c:otherwise>
       </c:choose>
+      --%>
     </td>
     <td>
       <c:choose>
