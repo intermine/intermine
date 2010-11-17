@@ -26,7 +26,7 @@ import java.util.TreeMap;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
@@ -41,12 +41,25 @@ import org.intermine.xml.full.ReferenceList;
  */
 public abstract class MockItemsTestCase extends TestCase
 {
+
+    private static Logger LOG = Logger.getLogger(MockItemsTestCase.class);
+    /**
+     *
+     */
     public static final String ENDL = System.getProperty("line.separator");
 
+    /**
+     * @param arg
+     */
     public MockItemsTestCase(String arg) {
         super(arg);
     }
 
+    /**
+     * @param a
+     * @param b
+     * @throws Exception
+     */
     public static void assertEquals(Set a, Set b) throws Exception
     {
         Set<MockItem> mockA = createMockItems(a);
@@ -92,6 +105,7 @@ public abstract class MockItemsTestCase extends TestCase
                 for (String refId : refIds) {
                     collectedItems.add(identifiers.get(refId));
                 }
+
                 mockItem.addMockCollection(collection.getName(), collectedItems);
             }
         }
@@ -99,6 +113,7 @@ public abstract class MockItemsTestCase extends TestCase
     }
 
     private static String compareItemSets(Set a, Set b) {
+
         // now have compatible collections of items, compare them
         StringBuffer message = new StringBuffer();
 
@@ -163,9 +178,11 @@ public abstract class MockItemsTestCase extends TestCase
             Iterator j = b.iterator();
             while (j.hasNext()) {
                 MockItem itemB = (MockItem) j.next();
-                if (itemA.equals(itemB)) {
+
+                if (itemA.equals(itemB))
                     diff.remove(itemA);
-                }
+                else
+                    LOG.error(itemA.diff(itemB));
             }
         }
         return diff;
@@ -197,32 +214,37 @@ public abstract class MockItemsTestCase extends TestCase
         return sb.toString();
     }
 
+//  // fail with helpful message if e.g. we are asserting a Set .equals a List
+//  private static void compatibleCollections(Collection a, Collection b) {
+//      if (a.getClass().isAssignableFrom(b.getClass())
+//          || b.getClass().isAssignableFrom(a.getClass())) {
+//          TestCase.assertEquals(a, b);
+//      } else {
+//          TestCase.fail("Collections are of incompatible types: "
+//                        + a.getClass() + " (" + a.toString() + ") and "
+//                        + b.getClass() + " (" + b.toString() + ").");
+//      }
+//  }
+//
 
-    // fail with helpful message if e.g. we are asserting a Set .equals a List
-    private static void compatibleCollections(Collection a, Collection b) {
-        if (a.getClass().isAssignableFrom(b.getClass())
-            || b.getClass().isAssignableFrom(a.getClass())) {
-            TestCase.assertEquals(a, b);
-        } else {
-            TestCase.fail("Collections are of incompatible types: "
-                          + a.getClass() + " (" + a.toString() + ") and "
-                          + b.getClass() + " (" + b.toString() + ").");
-        }
-    }
-
+    /**
+     * @param fileName
+     * @return set of items from XML file
+     * @throws Exception
+     */
     public Set<Item> readItemSet(String fileName) throws Exception {
         return new LinkedHashSet<Item>(FullParser.parse(getClass().getClassLoader()
                                                   .getResourceAsStream(fileName)));
     }
 
+    /**
+     * @param items
+     * @param fileName
+     * @throws IOException
+     */
     public void writeItemsFile(Collection<Item> items, String fileName) throws IOException {
         FileWriter fw = new FileWriter(new File(fileName));
         fw.write(FullRenderer.render(items));
         fw.close();
     }
-
-
-
 }
-
-
