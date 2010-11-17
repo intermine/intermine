@@ -102,6 +102,7 @@ public class MyMineController extends TilesAction
         if ((request.getParameter("subtab") != null && "templates".equals(request
                 .getParameter("subtab"))) || (webState.getSubtab("subtabmymine") != null
                         && "templates".equals(webState.getSubtab("subtabmymine")))) {
+            session.removeAttribute(Constants.NEW_TEMPLATE);
             getPrecomputedSummarisedInfo(profile, session, request);
         }
         return null;
