@@ -30,7 +30,7 @@
         border-right-style:none;
         border-left-style:none;
         border-top-style:none;
-        margin-right:7px;
+        margin-right:12px;
         color: white;
         position: relative;
         left: 10px;
@@ -43,6 +43,7 @@
         border-right-style:none;
         border-top-style:none;
         border-bottom-style:none;
+        margin-right:6px;
         padding-top:1px;
         padding-bottom:8px;
         position: relative;
@@ -71,7 +72,7 @@
         border-right-style:none;
         border-left-style:none;
         border-top-style:none;
-        margin-right:7px;
+        margin-right:12px;
         color: white;
         position: relative;
         left: 10px;
@@ -90,7 +91,7 @@
          background-color: #ffffff;
          font-size: 1px;
          color: #ffffff;
-         padding-right:4px;
+         padding-right:13px;
      }
 
      .toggle
@@ -108,7 +109,7 @@
           <!-- <img src="images/tree_${structure}.png" align="top" height="16" width="15"/> -->
           <span class="tree_${structure}">
             <span class="ver"></span>
-            <span class="hor">.</span>
+            <span class="hor">-</span>
           </span>
 
         </c:forEach>
