@@ -13,6 +13,10 @@
 
 <html:xhtml />
 
+<table cellpadding="0" cellspacing="0" border="0" class="topBar hints" width="95%">
+<tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/projects.do?">Switch to Projects View</a></td></tr>
+</table>
+
 <div class="body">
 <table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
 <tr><a name="index">
