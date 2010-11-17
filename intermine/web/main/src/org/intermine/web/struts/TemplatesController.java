@@ -20,6 +20,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.profile.Profile;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -41,6 +42,7 @@ public class TemplatesController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        session.removeAttribute(Constants.NEW_TEMPLATE);
         Profile profile = SessionMethods.getProfile(session);
         MyMineController.getPrecomputedSummarisedInfo(profile, session, request);
         return null;
