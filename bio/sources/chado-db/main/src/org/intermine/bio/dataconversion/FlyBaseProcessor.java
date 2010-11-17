@@ -586,6 +586,8 @@ public class FlyBaseProcessor extends SequenceProcessor
             map.put(new MultiKey("relationship", "Allele", "alleleof", "Gene"),
                     Arrays.asList(new SetFieldConfigAction("gene")));
 
+
+
             // Set the protein reference in the MRNA - "rev_relationship" means that the
             // relationship table actually has Protein, producedby, MRNA.  We configure like
             // this so we can set a reference in MRNA rather than protein
@@ -641,6 +643,9 @@ public class FlyBaseProcessor extends SequenceProcessor
             // set the Gene.symbol to be the "name" field from the chado feature
             map.put(new MultiKey("feature", "Exon", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(new SetFieldConfigAction("symbol")));
+            map.put(new MultiKey("feature", "Allele", FLYBASE_DB_NAME, "name"),
+                    Arrays.asList(new SetFieldConfigAction("symbol")));
+
             // DO_NOTHING_ACTION means skip the name from this feature
             map.put(new MultiKey("feature", "Chromosome", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(DO_NOTHING_ACTION));
@@ -1398,37 +1403,37 @@ public class FlyBaseProcessor extends SequenceProcessor
      * Return the item identifiers of the alleles metioned in the with clauses of the argument.
      * Currently unused because flybase with clauses are wrong - see ticket #889
      */
-    @SuppressWarnings("unused")
-    private List<String> findWithAllele(String value) {
-        Pattern p = Pattern.compile("with @(FBal\\d+):");
-        Matcher m = p.matcher(value);
-
-        List<String> foundIdentifiers = new ArrayList<String>();
-
-        while (m.find()) {
-            String identifier = m.group(1);
-            if (identifier.startsWith("FBal")) {
-                foundIdentifiers.add(identifier);
-            } else {
-                throw new RuntimeException("identifier in a with must start: \"FBal\" not: "
-                                           + identifier);
-            }
-        }
-
-        List<String> alleleItemIdentifiers = new ArrayList<String>();
-
-        for (String foundIdentifier: foundIdentifiers) {
-            if (alleleIdMap.containsKey(foundIdentifier)) {
-                alleleItemIdentifiers.add(alleleIdMap.get(foundIdentifier));
-            } else {
-                // this allele wasn't stored so probably it didn't have the right organism - some
-                // GAL4 alleles have cerevisiae as organism, eg. FBal0060667:Scer\GAL4[sd-SG29.1]
-                // referenced by FBal0038994 Rac1[N17.Scer\UAS]
-            }
-        }
-
-        return alleleItemIdentifiers;
-    }
+//    @SuppressWarnings("unused")
+//    private List<String> findWithAllele(String value) {
+//        Pattern p = Pattern.compile("with @(FBal\\d+):");
+//        Matcher m = p.matcher(value);
+//
+//        List<String> foundIdentifiers = new ArrayList<String>();
+//
+//        while (m.find()) {
+//            String identifier = m.group(1);
+//            if (identifier.startsWith("FBal")) {
+//                foundIdentifiers.add(identifier);
+//            } else {
+//                throw new RuntimeException("identifier in a with must start: \"FBal\" not: "
+//                                           + identifier);
+//            }
+//        }
+//
+//        List<String> alleleItemIdentifiers = new ArrayList<String>();
+//
+//        for (String foundIdentifier: foundIdentifiers) {
+//            if (alleleIdMap.containsKey(foundIdentifier)) {
+//                alleleItemIdentifiers.add(alleleIdMap.get(foundIdentifier));
+//            } else {
+//                // this allele wasn't stored so probably it didn't have the right organism - some
+//                // GAL4 alleles have cerevisiae as organism, eg. FBal0060667:Scer\GAL4[sd-SG29.1]
+//                // referenced by FBal0038994 Rac1[N17.Scer\UAS]
+//            }
+//        }
+//
+//        return alleleItemIdentifiers;
+//    }
 
     /**
      * phenotype annotation creates and stores anatomy terms.  so does librarycvterm
