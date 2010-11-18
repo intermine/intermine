@@ -17,16 +17,16 @@
     <source name="ensembl-human" type="ensembl" dump="true">
      <property name="src.data.dir" location="/shared/data/ensembl/metabolic/current"/>
     </source>
+    <source name="ensembl-gwas-db-human" type="ensembl-gwas-db">
+     <property name="source.db.name" value="ensembl.9606.variation"/>
+    </source>
     <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
      <property name="source.db.name" value="ensembl.9606.variation"/>
     </source>
-    <source name="ensembl-gwas-db-human" type="ensembl-gwas-db" dump="true">
-     <property name="source.db.name" value="ensembl.9606.variation"/>
-    </source>
-    <source name="uniprot" type="uniprot" dump="true">
+    <source name="uniprot" type="uniprot">
       <property name="uniprot.organisms" value="9606"/>
       <property name="createinterpro" value="true"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/2010_09/split/"/>
     </source>
     <source name="uniprot-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="9606"/>
@@ -34,7 +34,7 @@
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
       <property name="fasta.dataSourceName" value="UniProt"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/current"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/2010_09/"/>
       <property name="fasta.includes" value="uniprot_sprot_varsplic.fasta"/>
       <property name="fasta.sequenceType" value="protein" />
       <property name="fasta.loaderClassName"
@@ -77,7 +77,6 @@
       <property name="src.data.dir.includes" value="*psi25.xml"/>
       <property name="biogrid.organisms" value="9606"/>
     </source>
-
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
       <property name="src.data.dir" location="/shared/data/pubmed/current"/>
       <property name="pubmed.organisms" value="9606"/>
