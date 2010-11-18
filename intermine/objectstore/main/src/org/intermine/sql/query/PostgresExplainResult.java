@@ -155,16 +155,19 @@ public class PostgresExplainResult extends ExplainResult
     void parseWarningString(String text) {
         int nextToken = text.indexOf("(cost=") + 6;
         if (nextToken < 6) {
-            throw (new IllegalArgumentException("Invalid EXPLAIN string: no \"(cost=\""));
+            throw (new IllegalArgumentException("Invalid EXPLAIN string: no \"(cost=\" bad string: "
+                    + text));
         }
         int endOfString = text.indexOf(')', nextToken);
         if (endOfString < 0) {
-            throw (new IllegalArgumentException("Invalid EXPLAIN string: no \")\""));
+            throw (new IllegalArgumentException("Invalid EXPLAIN string: no \")\" bad string "
+                    + text));
         }
         text = text.substring(nextToken, endOfString);
         nextToken = text.indexOf("..");
         if (nextToken < 0) {
-            throw (new IllegalArgumentException("Invalid EXPLAIN string: no \"..\""));
+            throw (new IllegalArgumentException("Invalid EXPLAIN string: no \"..\" bad string: "
+                    + text));
         }
         String toParse = text.substring(0, text.indexOf('.'))
             + text.substring(text.indexOf('.') + 1, text.indexOf('.') + 2);
@@ -188,7 +191,8 @@ public class PostgresExplainResult extends ExplainResult
         text = text.substring(nextToken + 6);
         nextToken = text.indexOf(" width=");
         if (nextToken < 0) {
-            throw (new IllegalArgumentException("Invalid EXPLAIN string: no \" width=\""));
+            throw (new IllegalArgumentException("Invalid EXPLAIN string: no \" width=\" bad string:"
+                    + text));
         }
         try {
             rows = Long.parseLong(text.substring(0, nextToken));
