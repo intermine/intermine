@@ -15,7 +15,8 @@ has 'extra_value' => (
 
 override to_string => sub {
     my $self = shift;
-    return join( ' ', super(), 'IN "' . $self->extra_value . '"' );
+    my $ev = (defined $self->extra_value) ? $self->extra_value : 'NULL';
+    return join( ' ', super(), 'IN', qq{"$ev"} );
 };
 
 override to_hash => sub {
