@@ -14,8 +14,8 @@ use LWP::Simple qw(get);
 
 use List::MoreUtils qw(uniq zip);
 
-use lib '/home/alex/svn/dev/intermine/perl/lib';
-use InterMine;
+use Webservice::InterMine;
+use InterMine::Model;
 
 my $cache_file = dirname($ENV{SCRIPT_FILENAME}).'/../cached_data/models';
 my $cache = eval{retrieve($cache_file)} || {};
@@ -92,7 +92,7 @@ while (<DATA>) {
 	if ($cache->{version_of}{$service_name} eq $version_of{$service_name}
 	    and defined $cache->{model_from});
     next if ((param('submitted')) and (not param($service_name)));
-    $model_from->{$service_name} = InterMine->get_service($_.'/service')->model;
+    $model_from->{$service_name} = Webservice::InterMine->get_service($_.'/service')->model;
 }
 
 store {model_from => $model_from, version_of => \%version_of,}, $cache_file;
@@ -120,6 +120,7 @@ my %classes;
 my $toprow =       {Class => 'Total Number of Classes'};
 for my $service (@services) {
     my $model = $model_from->{$service};
+    next unless $model;
     my $count;
     for my $class ($model->get_all_classdescriptors) {
 	$classes{$class->name}++;
@@ -182,10 +183,28 @@ my $dt   = DateTime->now;
 $dt->set_time_zone('Europe/London');
 my $date =  $dt->dmy('/');
 my $time =  $dt->time;
-my $title = 'Model Comparison Tables';
+my $title = 'Model Comparison';
 
 my $main_table_link = a({-href => '#maintable'}, 'main table');
 my $sub_table_link  = a({-href => '#subtables'}, 'sub-table');
+my $options_table = HTML::Table->new(-rows => 1, -cols => 2, -class => 'list', -oddrowclass => 'odd');
+$options_table->setCell(1, 1,
+	  radio_group(
+		      -name      => 'wanted',
+		      -values    => \@wanted_values,
+		      -default   => 'get_own_fields',
+		      -linebreak => 1,
+		      -labels    => \%label_hash,
+		     ) .
+	  checkbox(
+		   -name    => 'only_differences',
+		   -checked => 0,
+		   -value   => 'ON',
+		   -label   => 'Hide rows without differences',
+		  )
+      );
+$options_table->setCell(1, 2, $service_table);
+
 print(
       header,
       start_html( -title => $title,
@@ -196,8 +215,8 @@ print(
 	       id => 'logo',
 	       src => '/chrome/intermine_logo.png',
 	       alt => 'Logo',
-	       width => 100,
-	       height => 100,
+	       width => 600,
+	       height => 75,
 	      }),
 	  div({class => 'clearall'}, ''),
 	 ),
@@ -207,7 +226,7 @@ print(
 	      ul(li({-type => 'disc'},
 		    [
 		     a({-href => '/webreports'}, 'All Reports'),
-		     a({-href => '/webreports/analytics'}, 'Google Analytics for Templates'),
+#		     a({-href => '/webreports/analytics'}, 'Google Analytics for Templates'),
 		     a({-href => '/webreports/models'},    'Model Comparison'),
 		     a({-href => '/webreports/templates'}, 'Template Collection Comparison'),
 		    ]
@@ -226,24 +245,10 @@ ENDQUOTE
 To further investigate classes with differences you can click on the class name, which is a link that will take you to a $sub_table_link, showing which fields are present or absent in a particular model. Only classes that are present in more than one model, and where at least one model declares fields in that class, will have a sub-table, and thus a link.
 ENDQUOTE
 	  start_form,
-	  $service_table,
 	  br,
 	  strong('Analyse differences in'),
 	  br,
-	  radio_group(
-		      -name      => 'wanted',
-		      -values    => \@wanted_values,
-		      -default   => 'get_own_fields',
-		      -linebreak => 1,
-		      -labels    => \%label_hash,
-		     ),
-	  checkbox(
-		   -name    => 'only_differences',
-		   -checked => 0,
-		   -value   => 'ON',
-		   -label   => 'Hide rows without differences',
-		  ),
-	  br,
+      $options_table,
 	  submit('submitted', 'reanalyse'),
 	  end_form,
 	 ),
@@ -268,8 +273,8 @@ else {
 print end_html;
 
 __DATA__
-http://yeastmine.yeastgenome.org:8080/yeastmine
+http://dough.stanford.edu:8080/yeastmine-dev
 http://ratmine.mcw.edu/ratmine
-http://www.flymine.org/query
+http://preview.flymine.org/preview
 http://intermine.modencode.org/query
-http://moxy.uoregon.edu/zfinmine
+http://zmine.cs.uoregon.edu:8080/dev-zfinmine
