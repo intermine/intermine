@@ -21,8 +21,7 @@ img {
   border-width: 0px;
 }
 
-#heading a {
-}
+#heading a {;}
 #heading {
   padding: 5px;
   position: relative;
@@ -31,6 +30,10 @@ img {
   box-shadow: 0px 3px 3px #666;
   border-bottom-style: solid;
   border-bottom-width: 1px;
+}
+#heading h1 {
+    font-family: "FreeSerif", "Times New Roman", sans-serif;
+    font-size: 36px;
 }
 #banner {
   float: left;
@@ -76,12 +79,13 @@ div#footer .sponsor {
 #menu {
   right: 0px;
   top: 0px;
+  float: right;
 }
 #menu a {
   background-color: #333;
 }
 #menu {
-  font-size: 90%;
+  font-size: 120%;
 }
 #menu .networkaddress {
   margin: 0; padding: 0;
@@ -108,8 +112,8 @@ div#footer .sponsor {
   color: white;
 }
 #menu ul li a:hover, .menu ul li .current {
-  color: #fff;
-  background-color:#0b75b2;
+  color: #000;
+  background-color:#bdd73c;
 }
 
 #content {
@@ -142,7 +146,7 @@ table.list {
   border-style: outset;
   border-color: gray;
   border-collapse: collapse;
-  font-size: 75%;
+  font-size: 90%;
 }
 table.list thead tr td {
   padding: 3px;
