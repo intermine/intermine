@@ -14,21 +14,25 @@ my $factory = Webservice::InterMine::ConstraintFactory->new;
 my $unary_con = $factory->make_constraint(
     path => 'Some.path',
     op   => 'IS NULL',
+    code => 'A',
 );
 my $binary_con =  $factory->make_constraint(
     path => 'Some.other.path',
     op   => '=',
     value => 500,
+    code => 'B',
 );
 my $ternary_con = $factory->make_constraint(
     path => 'Yet.another.path',
     op   => 'LOOKUP',
     value => 500,
+    code => 'C',
     extra_value => 'Foo',
 );
 my $multi_constraint = $factory->make_constraint(
     path => 'And.yet.another.path',
     op   => 'ONE OF',
+    code => 'D', 
     values => [qw/one two three/],
 );
 my $subclass_constraint = $factory->make_constraint(
