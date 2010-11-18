@@ -343,8 +343,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 // without the gene designation, it's impossible to match up identifiers with the
                 // correct genes
                 String type = getAttrValue(attrs, "type");
-                // TODO put text in config file
-                if (type != null && "gene designation".equals(type)) {
+                String geneDesignation = CONFIG.getGeneDesignation();
+                if (type != null && geneDesignation.equals(type)) {
                     String value = getAttrValue(attrs, "value");
                     entry.addGeneDesignation(value);
                 }

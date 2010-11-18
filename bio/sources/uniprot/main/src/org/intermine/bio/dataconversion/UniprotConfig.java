@@ -32,6 +32,7 @@ public class UniprotConfig
     private List<String> featureTypes = new ArrayList<String>();
     private List<String> xrefs = new ArrayList<String>();
     private Map<String, ConfigEntry> entries = new HashMap<String, ConfigEntry>();
+    private String geneDesignation = "gene designation";
 
     /**
      * read configuration file
@@ -160,6 +161,25 @@ public class UniprotConfig
             return null;
         }
         return configEntry.getIdentifierValue(identifier);
+    }
+
+    /**
+     * Set the gene designation string.
+     *
+     * @param geneDesignation string to use to get the gene identifier
+     */
+    public void setGeneDesignation(String geneDesignation) {
+        this.geneDesignation = geneDesignation;
+    }
+
+    /**
+     * Get the gene designation for this gene.  Default value is "gene designation".  Worm uses
+     * "gene ID".
+     *
+     * @return the gene designation string
+     */
+    public String getGeneDesignation() {
+        return geneDesignation;
     }
 
     /**
