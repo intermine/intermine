@@ -55,6 +55,7 @@ under the same terms as Perl itself.
 =cut
 
 use strict;
+use Carp qw(confess);
 
 use XML::Writer;
 
@@ -74,14 +75,14 @@ sub new {
   my %opts = @_;
 
   if (!defined $opts{id}) {
-    die "no id argument in $class constructor\n";
+    confess "no id argument in $class constructor\n";
   }
   if (!defined $opts{model}) {
-    die "no model argument in $class constructor\n";
+    confess "no model argument in $class constructor\n";
   }
   for my $key (keys %opts) {
     if ($key ne "model" && $key ne "id" && $key ne "classname" && $key ne "implements") {
-      die "unknown argument to $class->new(): $key\n";
+      confess "unknown argument to $class->new(): $key\n";
     }
   }
 
@@ -111,13 +112,13 @@ sub new {
   my @implements_classdescs = map {
     my $imp_classdesc = $self->{':model'}->get_classdescriptor_by_name($_);
     if (!defined $imp_classdesc) {
-      die "interface '$_' is not in the model\n";
+      confess "interface '$_' is not in the model\n";
     }
     $imp_classdesc;
   } @implements;
 
   if ($classname eq '' and scalar(@implements_classdescs) == 0) {
-    die "no '$classname' and no implementations for object\n";
+    confess "no '$classname' and no implementations for object\n";
   }
 
   $self->{':implements'} = $implements_arg;
@@ -161,19 +162,19 @@ sub set {
   my $value = shift;
 
   if (!defined $value) {
-    die "value undefined while setting $name\n";
+    confess "value undefined while setting $name\n";
   }
 
   my $field = $self->_get_object_field_by_name($name);
 
   if (!defined $field) {
-    die "object ", $self->to_string(), " does not have a field called: $name\n";
+    confess "object ", $self->to_string(), " does not have a field called: $name\n";
   }
 
   if (ref $value) {
     if (ref $value eq 'ARRAY') {
       if ( not $field->isa('InterMine::Model::Collection') ) {
-        die "tried to set field '$name' in class '",
+        confess "tried to set field '$name' in class '",
 	    $self->to_string(),
             "' to something other than type: ",
 	    ref $field, "\n";
@@ -203,7 +204,7 @@ sub set {
             }
           }
         } else {
-          die "collection '$name' in class '", $self->to_string(),
+          confess "collection '$name' in class '", $self->to_string(),
             "' must contain items of type: ", $field->referenced_type_name(),
             " not: ", $self->to_string();
         }
@@ -211,8 +212,8 @@ sub set {
 
     } else {
       if (ref $field ne 'InterMine::Model::Reference') {
-        die "tried to set field '$name' in class '", $self->to_string(),
-           "' to something other than type: ", $field->type(), "\n";
+        confess "tried to set field '$name' in class '", $self->to_string(),
+           "' to something other than type: ", $field->attribute_type(), "\n";
       }
 
       if (!defined $self->{$name} || $self->{$name} != $value) {
@@ -221,8 +222,8 @@ sub set {
     }
   } else {
     if (ref $field ne 'InterMine::Model::Attribute') {
-      die "tried to set field '$name' in class '", $self->to_string(),
-          "' to something other than type: ", $field->type(), "\n";
+      confess "tried to set field '$name' in class '", $self->to_string(),
+          "' to something other than type: ", $field->referenced_type_name(), "\n";
     }
 
     $self->{$name} = $value;
@@ -245,7 +246,7 @@ sub get {
     my $field = $self->_get_object_field_by_name($fieldname);
 
     if (!defined $field) {
-	die qq(object ") .
+	confess qq(object ") .
 	    $self->to_string() .
 	    qq(" doesn't have a field named: $fieldname\n);
     }
@@ -277,12 +278,12 @@ sub _add_to_collection
   my $field = $self->_get_object_field_by_name($name);
 
   if (ref $field ne 'InterMine::Model::Collection') {
-    die "can't add $value to a field ($name in " . $self->to_string() .
+    confess "can't add $value to a field ($name in " . $self->to_string() .
         ") that isn't a collection\n";
   }
 
   if (ref $value ne 'InterMine::Item') {
-    die qq(can't add value "$value" to a collection $name in ) . $self->to_string() .
+    confess qq(can't add value "$value" to a collection $name in ) . $self->to_string() .
         qq(as it isn't an Item\n);
   }
 
@@ -455,7 +456,8 @@ sub as_xml
     if ($key ne 'id' && $key ne 'class') {
       my $val = $self->{$key};
 
-      die unless defined $val; #causes script to die if $val == undef
+      confess "Item is invalid - it has an undefined field value"
+        unless defined $val; #causes script to die if $val == undef
 
       if (ref $val) {
         if (ref $val eq 'ARRAY') {
