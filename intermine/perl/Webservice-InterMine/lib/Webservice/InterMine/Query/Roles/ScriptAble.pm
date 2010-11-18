@@ -53,6 +53,7 @@ sub to_script {
             $script_buffer .=
               '$query->add_' . substr( $elems, 0, -1 ) . '(';
             while ( my ( $key, $value ) = each %$elem ) {
+                next if ($key =~ /^_/);
                 $script_buffer .=
                   $TAB . $key . ' => ' . single_quoted($value) . $COMMA;
             }
