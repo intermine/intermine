@@ -26,7 +26,6 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.TagManager;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
@@ -96,8 +95,6 @@ public class ModifyTemplateAction extends InterMineAction
                 }
 
                 profile.deleteTemplate(template);
-                TagManager tm = SessionMethods.getInterMineAPI(session).getTagManager();
-                tm.deleteObjectTags(template, null, profile.getUsername());
             }
 
             if (SessionMethods.isSuperUser(session)) {
