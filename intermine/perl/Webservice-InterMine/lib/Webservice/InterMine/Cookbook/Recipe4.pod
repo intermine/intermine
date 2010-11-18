@@ -11,7 +11,7 @@ Webservice::InterMine::Cookbook::Recipe4 - Other Query Features
 
   use Webservice::InterMine ('www.flymine.org');
 
-  my $query = Webservice::InterMine->new_query;
+  my $query = Webservice::InterMine->new_query();
 
   # Specifying a name and a description is purely optional
   $query->name('Tutorial 4 Query');
@@ -26,8 +26,8 @@ Webservice::InterMine::Cookbook::Recipe4 - Other Query Features
 
   $query->add_constraint(
      path  => 'Gene.goAnnotation.ontologyTerm.name',
-     op    => 'CONTAINS',
-     value => 'biosynthetic process',
+     op    => '=',
+     value => '*biosynthetic process*',
   );
 
   $query->add_pathdescription(

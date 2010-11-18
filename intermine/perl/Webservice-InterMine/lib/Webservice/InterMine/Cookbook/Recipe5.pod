@@ -12,7 +12,7 @@ Webservice::InterMine::Cookbook::Recipe5 - Dealing with Results
 
   use Webservice::InterMine ('www.flymine.org');
 
-  my $query = Webservice::InterMine->new_query;
+  my $query = Webservice::InterMine->new_query();
 
   # Specifying a name and a description is purely optional
   $query->name('Tutorial 5 Query');

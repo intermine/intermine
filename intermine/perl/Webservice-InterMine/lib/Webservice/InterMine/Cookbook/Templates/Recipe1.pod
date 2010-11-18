@@ -8,12 +8,12 @@ Webservice::InterMine::Cookbook::Templates::Recipe1 - Accessing Templates
 
   use Webservice::InterMine 'www.flymine.org/query/service';
 
-  my $template = Webservice::InterMine->template('All_Genes_In_Organism_To_Publications);
+  my $template = Webservice::InterMine->template('All_Genes_In_Organism_To_Publications)
       or die "Could not find template";
 
   my $results  = $template->results_with(
-      opA    => 'CONTAINS',
-      valueA => 'Drosophila'
+      opA    => '=',
+      valueA => 'Drosophila*'
   );
 
 =head1 DESCRIPTION
