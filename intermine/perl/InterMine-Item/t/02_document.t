@@ -30,7 +30,7 @@ lives_ok(
     'Can add an item',
 );
 my $exp = '<items>
-   <item id="0_1" class="" implements="Employee">
+   <item id="0_1" class="Employee" implements="">
       <attribute name="name" value="Fred" />
       <attribute name="age" value="17" />
    </item>';
@@ -44,7 +44,7 @@ $autowriter->add_item(
 );
 
 $exp .= '
-   <item id="0_2" class="" implements="Employee">
+   <item id="0_2" class="Employee" implements="">
       <attribute name="name" value="Ginger" />
       <attribute name="age" value="43" />
    </item>';
