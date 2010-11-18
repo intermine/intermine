@@ -10,7 +10,7 @@ Webservice::InterMine::Cookbook::Recipe2 - Adding Constraints
 
   use Webservice::InterMine ('www.flymine.org');
 
-  my $query = Webservice::InterMine->new_query;
+  my $query = Webservice::InterMine->new_query();
 
   # Specifying a name and a description is purely optional
   $query->name('Tutorial 2 Query');
@@ -19,8 +19,8 @@ Webservice::InterMine::Cookbook::Recipe2 - Adding Constraints
 
   $query->add_constraint(
      path  => 'Organism.name',
-     op    => 'CONTAINS',
-     value => 'Drosophila'
+     op    => '=',
+     value => 'Drosophila*'
   );
 
   print query->results(as => 'string');
@@ -28,7 +28,7 @@ Webservice::InterMine::Cookbook::Recipe2 - Adding Constraints
   # Get the authors, titles and PubMed IDs of all publications on drosophilid
   # genes between 2004 and 2010
 
-  my $query2 = Webservice::InterMine->new_query;
+  my $query2 = Webservice::InterMine->new_query();
 
   $query2->add_view(qw/
       Gene.publications.firstAuthor
@@ -39,7 +39,7 @@ Webservice::InterMine::Cookbook::Recipe2 - Adding Constraints
   $query2->add_constraint(
       path  => 'Gene.organism.name',
       op    => '=',
-      value => '*Drosophila*',
+      value => 'Drosophila*',
   );
   $query2->add_constraint(
       path  => 'Gene.publications.year',

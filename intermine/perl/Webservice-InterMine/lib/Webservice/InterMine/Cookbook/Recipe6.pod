@@ -11,7 +11,7 @@ Webservice::InterMine::Cookbook::Recipe6 - Advanced Results Management
 
   use Webservice::InterMine ('www.flymine.org');
 
-  my $query = Webservice::InterMine->new_query;
+  my $query = Webservice::InterMine->new_query();
 
   # Specifying a name and a description is purely optional
   $query->name('Tutorial 6 Query');
@@ -24,9 +24,9 @@ Webservice::InterMine::Cookbook::Recipe6 - Advanced Results Management
 
   $query->add_view($subj, $obj, $evalue);
 
-  $query->sort_order($evalue => 'desc');
+  $query->set_sort_order($evalue => 'desc');
 
-  my $ri = $query->results_iterator;
+  my $ri = $query->results_iterator();
 
   # We need to check for errors here ourselves
   die $ri->status_line unless $ri->is_success;
@@ -38,7 +38,7 @@ Webservice::InterMine::Cookbook::Recipe6 - Advanced Results Management
       }
   }
 
-  $ri->close; # good hygiene, as the iterator represents an open connection
+  $ri->close(); # good hygiene, as the iterator represents an open connection
 
 =head1 DESCRIPTION
 
