@@ -273,6 +273,11 @@ system ("ant -Drelease=r$current_version stop-webapp >> $LOG_FILENAME 2>&1") == 
 }
 
 #################
+
+warn "***** exiting to run manually the userprofile update *******\n";
+exit 0;
+
+
 warn "write-userprofile-xml for current version\n";
 
 system ("ant -Drelease=r$current_version -v write-userprofile-xml >> $LOG_FILENAME 2>&1") == 0
