@@ -20,7 +20,7 @@
 
 BEGIN {
   my $DIR = ($0 =~ m:(.*)/.*:)[0];
-  push (@INC, $DIR . '/../../intermine/perl/lib');
+  push (@INC, $DIR . '/../../intermine/perl/IterMine-Util/lib');
   push (@INC, $DIR . '/lib');
 }
 
