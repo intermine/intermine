@@ -126,7 +126,11 @@ sub get_constraint {
       . "the code of the constraint you want - "
       . "and it must be one or two alphabetic characters"
       unless ( $code and $code =~ /^[A-Z]{1,2}$/ );
-    my $criterion = sub { $_->code eq $code };
+    my $criterion = sub { 
+        $_->does('Webservice::InterMine::Constraint::Role::Operator')
+        &&
+        $_->code eq $code 
+    };
     my @matches = $self->find_constraints($criterion);
     if ( @matches > 1 ) {
         confess
