@@ -56,6 +56,7 @@ sub results_with {
     my $format = $args{as} and delete $args{as} if ( $args{as} );
     my %new_value_for;
     my %new_op_for;
+    my %new_extra_value_for;
     my $error_format = "'%s' is not a valid parameter to run_with";
     for ( keys %args ) {
         if (/^value/) {
@@ -66,6 +67,10 @@ sub results_with {
             my ($code) = /^op([A-Z]{1,2})$/;
             confess sprintf( $error_format, $_ ) unless $code;
             $new_op_for{$code} = $args{$_};
+        } elsif (/^extra_value/) {
+            my ($code) = /^op([A-Z]{1,2})$/;
+            confess sprintf( $error_format, $_ ) unless $code;
+            $new_extra_value_for{$code} = $args{$_};
         } else {
             confess sprintf( $error_format, $_ );
         }
@@ -82,6 +87,8 @@ sub results_with {
               if ( exists $new_value_for{$code} );
             $attr{op} = $new_op_for{$code}
               if ( exists $new_op_for{$code} );
+            $attr{extra_value} = $new_extra_value_for{$code} 
+              if ( exists $new_extra_value_for{$code} );
             $clone->remove($con);
             $clone->add_constraint(%attr);
         } else {
