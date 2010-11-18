@@ -89,7 +89,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
                     + ".GOAnnotation"));
             qcGoParent = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
             qcGoChild = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
-            qcSNP = new QueryClass(Class.forName(model.getPackageName() + ".SNP"));
+//            qcSNP = new QueryClass(Class.forName(model.getPackageName() + ".SNP"));
         } catch (ClassNotFoundException e) {
             LOG.error("Error rendering GO enrichment widget", e);
             // don't throw an exception, return NULL instead.  The widget will display 'no results'.
