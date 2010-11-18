@@ -23,6 +23,7 @@ import org.apache.struts.action.ActionMapping;
 public class ImportTagsForm extends ActionForm
 {
     private String xml;
+    private boolean overwriting = false;
 
     /**
      * Creates a new instance of ImportTagsForm.
@@ -48,6 +49,23 @@ public class ImportTagsForm extends ActionForm
     }
 
     /**
+     * Get the overwrite flag.
+     * @return  true to overwrite existing template, false to add
+     */
+    public boolean isOverwriting() {
+        return overwriting;
+    }
+
+    /**
+     * Set the overwriting flag.
+     * @param overwriting true to overwrite existing templates, false to add
+     */
+    public void setOverwriting(boolean overwriting) {
+        this.overwriting = overwriting;
+    }
+
+
+    /**
      * {@inheritDoc}
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
@@ -60,5 +78,6 @@ public class ImportTagsForm extends ActionForm
      */
     protected void reset() {
         xml = "";
+        overwriting = false;
     }
 }

@@ -99,6 +99,21 @@ public class TagManager
         }
     }
 
+    /**
+     * Deletes tags object from the database. Any null arguments will be treated as
+     * wildcards.
+     * @param tagName tag name
+     * @param taggedObject object id of tagged object
+     * @param type tag type
+     * @param userName user name
+     */
+    public void deleteTags(String tagName, String taggedObject, String type, String userName) {
+        List<Tag> tags = getTags(tagName, taggedObject, type, userName);
+        for (Tag tag : tags) {
+            deleteTag(tag);
+        } 
+    }
+
     private static Set<String> tagsToTagNames(List<Tag> tags) {
         Set<String> ret = new TreeSet<String>();
         for (Tag tag : tags) {

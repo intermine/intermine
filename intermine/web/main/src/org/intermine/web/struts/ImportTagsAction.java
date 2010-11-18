@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.io.StringReader;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.TagManager;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
@@ -62,6 +64,10 @@ public class ImportTagsAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         ProfileManager pm = im.getProfileManager();
+        if (f.isOverwriting()) {
+            TagManager tm = im.getTagManager();
+            tm.deleteTags(null, null, null, profile.getUsername());
+        }
         StringReader reader = new StringReader(f.getXml());
         int count = 0;
         if (!StringUtils.isEmpty(f.getXml())) {
