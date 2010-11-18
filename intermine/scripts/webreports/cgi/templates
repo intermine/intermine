@@ -14,8 +14,11 @@ use LWP::Simple qw(get);
 
 use List::MoreUtils qw(uniq zip);
 
-use lib '/home/alex/svn/dev/intermine/perl/lib';
-use InterMine::WebService::Service::TemplateService;
+use Webservice::InterMine;
+use Webservice::InterMine::Service;
+
+$Storable::Deparse = 1;
+$Storable::Eval = 1;
 
 my ($changed, %link_to, %version_of, @services);
 
@@ -25,16 +28,16 @@ my $data        = eval{retrieve($data_file)} || {};
 my $order = sub {lc($a) cmp lc($b)};
 
 #The two different methods used in an analysis, and things that change depending on them
-my @wanted_values = ('get_all_constraints', 'get_views');
-my @wanted_labels = ('Constraints', 'Views');
+my @wanted_values = ('all_constraints', 'views', 'editable_constraints');
+my @wanted_labels = ('All Constraints', 'Views', 'Editable Constraints');
 my %label_hash    = zip(@wanted_values, @wanted_labels);
-my @column_headers = ('Constraints', 'View Columns');
+my @column_headers = ('All Constraints', 'View Columns', 'Editable Constraints');
 my %col_header_for = zip(@wanted_values, @column_headers);
 
 my $wanted = 
     (param('submitted'))
     ? param('wanted')   # User's choice
-    : 'get_all_constraints'; # default starting state
+    : $wanted_values[0]; # default starting state
 
 sub make_table_from_rows {
     my ($rows_ref, $row_order) = @_;
@@ -88,14 +91,13 @@ while (<DATA>) {
     ($service_name) = /intermine\.(\w+)/ if ($service_name eq 'intermine');
     push @services, $service_name;
     $link_to{$service_name}       = $_;
-    $version_of{$service_name}    = get($_ . '/service/version/release');
+    my $service = Webservice::InterMine->get_service($_ . '/service');
+    $version_of{$service_name}    = $service->release;
     next unless ($version_of{$service_name});
-    next 
-	if ($data->{version_of}{$service_name} eq $version_of{$service_name}
-	and defined $data->{ts_from}{$service_name});
+    next if ($data->{version_of}{$service_name} eq $version_of{$service_name}
+        and defined $data->{service_from}{$service_name});
     next if ((param('submitted')) and (not param($service_name)));
-    $data->{ts_from}{$service_name} =
-	InterMine::WebService::Service::TemplateService->new($_ . '/service', APP);
+    $data->{service_from}{$service_name} = $service;
     $data->{version_of}{$service_name} = $version_of{$service_name};
     $changed++;
 }
@@ -126,35 +128,31 @@ my (@templates, %want, %problems_with);
 # Parse the template for date, unless that's been done already
 unless (exists $data->{$data_key}) {
     for my $service (@services) {
-	for my $template ($data->{ts_from}{$service}->get_templates) {
-	    push @templates, (my $name = $template->get_name);
-	    if ($template->is_invalid) {
-		push @{$problems_with{$name}}, map {$service.':'.$_} $template->problems;
-	    }
-	    for my $w (map {(ref $_)?$_->as_string:$_} $template->$wanted) {
-		$want{$service}{$name}{$w}++;
-		$want{$name}{$w}++;
-	    }
-	}
+        warn "getting templates for $service";
+        for my $template ($data->{service_from}->{$service}->get_templates) {
+            push @templates, (my $name = $template->name);
+            for my $w (map {(ref $_)?$_->to_string:$_} $template->$wanted) {
+                $want{$service}{$name}{$w}++;
+                $want{$name}{$w}++;
+            }
+        }
     }
     $data->{$data_key} = {
-			  templates  => [uniq sort($order @templates)],
-			  want       => {%want},
-			  problems   => {%problems_with},
-			 };
+            templates  => [uniq sort($order @templates)],
+            want       => {%want},
+            problems   => {%problems_with},
+            };
     $changed++;
-
-}
-else {
+} else {
     @templates     = @{$data->{$data_key}{templates}};
     %want          = %{$data->{$data_key}{want}};
     %problems_with = %{$data->{$data_key}{problems}};
 }
 
-store($data, $data_file) if $changed;
+#store($data, $data_file) if $changed;
 
 ### Write main table
-my @rows = map { {Template => $_} } @templates;
+my @rows = map { {Template => $_} } uniq(sort {$a cmp $b} @templates);
 for my $row (@rows) {
     my $name = $row->{Template};
     for my $service (@services) {
@@ -170,14 +168,14 @@ for my $row (@rows) {
     # If more than one value is non-'NO' (ie, there is something to compare)
     # And they aren't all '0'
     # Or if there is a problem to report
-    if ( ((grep({$_ ne 'NO'} @values) > 1) and (grep({$_ eq '0'} @values) != @values)) or ($problem_str) ) {
+#    if ( ((grep({$_ ne 'NO'} @values) > 1) and (grep({$_ eq '0'} @values) != @values)) or ($problem_str) ) {
 	$row->{Template} = strong(a({
 				     href  => '#'.$name,
 				     title => $problem_str,
 				     @style,
 				    },
 				    $name));
-    }
+#    }
 }
 unshift @rows, {map {($_ => scalar(keys %{$want{$_}}) || 'Total')} (Template => @services)}; # header row
 my $row_order = ['Template', sort($order grep {$_ ne 'Template'} keys %{$rows[0]})];
@@ -192,8 +190,8 @@ for my $template_name (@templates) {
     for my $row (@rows) {
 	for my $service (@services) {
 	    $row->{$service} = (exists $want{$service}{$template_name}{$row->{$col1_name}})
-		               ? 'YES'
-			       : 'NO';
+		        ? 'YES'
+			    : 'NO';
 	}
     }
     my $row_order      = [$col1_name, sort($order grep {$_ ne $col1_name} keys %{$rows[0]})];
@@ -206,10 +204,32 @@ for my $template_name (@templates) {
 my $now   = DateTime->now->set_time_zone('Europe/London');
 my $date =  $now->dmy('/');
 my $time =  $now->time;
-my $title = 'Template Comparison Tables';
+my $title = 'Template Comparison';
 
 my $main_table_link = a({-href => '#maintable'}, 'main table');
 my $sub_table_link  = a({-href => '#subtables'}, 'sub-table');
+my $table = HTML::Table->new( -rows  => 1, 
+                            -cols => 2,
+                            -class => 'list',
+                            -oddrowclass => 'odd');
+$table->setCell(1, 1, 
+radio_group(
+        -name      => 'wanted',
+        -values    => \@wanted_values,
+        -default   => 'get_all_constraints',
+        -linebreak => 1,
+        -labels    => \%label_hash,
+        ) .
+checkbox(
+    -name    => 'only_differences',
+    -checked => 0,
+    -value   => 'ON',
+    -label   => 'Hide rows without differences',
+    ),
+);
+$table->setCell(1, 2,
+	  $service_table,
+);
 print(
       header,
       start_html( -title => $title,
@@ -220,8 +240,8 @@ print(
 	       id => 'logo',
 	       src => '/chrome/intermine_logo.png',
 	       alt => 'Logo',
-	       width => 100,
-	       height => 100,
+	       width => 600,
+	       height => 75,
 	      }),
 	  div({class => 'clearall'}, ''),
 	 ),
@@ -230,7 +250,7 @@ print(
 	      ul(li({-type => 'disc'},
 		    [
 		     a({-href => '/webreports'}, 'All Reports'),
-		     a({-href => '/webreports/analytics'}, 'Google Analytics for Templates'),
+#		     a({-href => '/webreports/analytics'}, 'Google Analytics for Templates'),
 		     a({-href => '/webreports/models'},    'Model Comparison'),
 		     a({-href => '/webreports/templates'}, 'Template Collection Comparison'),
 		    ]
@@ -249,24 +269,10 @@ ENDQUOTE
 To further investigate templates with differences you can click on the template name, which is a link that will take you to a $sub_table_link, showing which constraints are present or absent in a particular model. Only templates that are present in more than one model, and where at least one model declares constraints in that template, will have a sub-table, and thus a link. If a template is invalid in one of the mines, it will be highlighted in red, and holding the mouse over its name will bring up a box with a list of the specific problems with the template, preprepended with the mine in which the template is broken. This list of problems can also be viewed by visiting the individual table for this template.
 ENDQUOTE
 	  start_form,
-	  $service_table,
 	  br,
 	  strong('Analyse differences in'),
 	  br,
-	  radio_group(
-		      -name      => 'wanted',
-		      -values    => \@wanted_values,
-		      -default   => 'get_all_constraints',
-		      -linebreak => 1,
-		      -labels    => \%label_hash,
-		     ),
-	  checkbox(
-		   -name    => 'only_differences',
-		   -checked => 0,
-		   -value   => 'ON',
-		   -label   => 'Hide rows without differences',
-		  ),
-	  br,
+      $table,
 	  submit('submitted', 'reanalyse'),
 	  end_form,
 	 ),
@@ -294,8 +300,8 @@ else {
 print end_html;
 
 __DATA__
-#http://yeastmine.yeastgenome.org:8080/yeastmine
+http://dough.stanford.edu:8080/yeastmine-dev
 #http://ratmine.mcw.edu/ratmine
-http://www.flymine.org/query
+http://preview.flymine.org/preview
 http://intermine.modencode.org/query
-#http://moxy.uoregon.edu/zfinmine
+http://zmine.cs.uoregon.edu:8080/dev-zfinmine
