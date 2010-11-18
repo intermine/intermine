@@ -153,7 +153,7 @@ div.filterBar { border:none !important; background:none !important; }
 	#ws_all_templates_template a.anchor img { display:none; }
 
 /* context help "?" */
-a.contextHelpSmall { background:url("icons/help.png") no-repeat left; padding:6px 5px 6px 25px !important; }
+a.contextHelpSmall { background:url("icons/help.png") no-repeat left; padding:6px 0 6px 25px !important; }
 	p.alignright a.contextHelpSmall { display:none; } /* hide context help in breadcrumbs */
 	#navtrail p.alignright { margin:0 -10px 10px 0; }
 
@@ -185,11 +185,14 @@ table.results { border:1px solid #DFDFDF; border-left:0; margin-bottom:10px; wid
 	table.results b { padding-right:3px; }
 
 /* external links on objectDetails (and bagDetails!!!) */
-div.externalLinks { margin-bottom:10px; }
+div.externalLinks { ; }
 	div.externalLinks h3 { color:#4896B2; margin-bottom:4px; font-size:13px; }
 	div.externalLinks ul { list-style:none; }
-		div.externalLinks ul li { display:inline; margin:0; margin-right:6px; }
+		div.externalLinks ul li { display:inline; margin:0; margin-right:6px; float:left; }
 			div.externalLinks ul li a { line-height:27px; height:27px; }
 			div.externalLinks ul li a.ext_link { display:none; }
-			div.externalLinks ul li a.ext_link.image { display:inline; background:url("../../images/icons/external-link-8.png") no-repeat top right;
-				padding:15px 10px 0 0; }
+			div.externalLinks ul li a.ext_link.image { display:inline; /*background:url("../../images/icons/external-link-8.png") no-repeat top right;
+				padding:34px 10px 0 0;*/ }
+				div.externalLinks ul li a.ext_link.image img { background:url("../../images/icons/external-link-8.png") no-repeat top right; padding-right:10px; }
+				div.externalLinks ul li a span { float:left; display:inline; font-size:9px; line-height:20px; }
+#externalLinksClear { clear:both; margin-bottom:10px; }

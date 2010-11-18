@@ -38,7 +38,7 @@ jQuery(document).ready(function(){
       <span id="constraintLogic" title="Click to Edit" alt="Click to Edit">${constraintLogicExpr}</span>
       <span id="editConstraintLogic" style="display: none">
         <input type="test" name="expr" id="expr" size="20" value="${constraintLogicExpr}"/>
-          <button id="editconstraintlogic" type="button" style="font-size: 11px"><fmt:message key="query.logicUpdate"/></button>
+          <input id="editconstraintlogic" type="button" style="font-size: 11px" value="<fmt:message key="query.logicUpdate"/>" />
       </span>
     </c:otherwise>
   </c:choose>

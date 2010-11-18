@@ -71,21 +71,30 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that th
 	font-size: 1.2em;
 }
 
-/* clearer */
-div.clear { clear:both; }
-
 /* page columns */
 #left.column, #right.column { float:left; }
 #left.column { width:330px; }
 #right.column { width:645px; }
 
-/* homepage action buttons */
-a.fp_button.templates,
-a.fp_button.viewLists,
-a.fp_button.createLists,
-a.fp_button.queries { display:block; background-position:top left; background-repeat:no-repeat; height:35px; width:146px; margin-top:8px; }
-
-a.fp_button.templates { background-image:url('../images/icons/templates-home-bt.png'); }
-a.fp_button.viewLists { background-image:url('../images/icons/view-lists-home-bt.png'); }
-a.fp_button.createLists { background-image:url('../images/icons/create-lists-home-bt.png'); }
-a.fp_button.queries { background-image:url('../images/icons/query-home-bt.png'); }
+/* main boxes */
+#actions .plainbox { float:left; width:299px; height:216px; }
+	#actions .plainbox.last { width:297px; margin-right:0; padding-right:0; }
+	#actions .plainbox dl { padding-bottom:10px; }
+	#actions .plainbox h1 { background-position:left center; background-repeat:no-repeat; padding-left:70px; line-height:64px; margin-bottom:10px; }
+	#actions .plainbox ul, #actions .plainbox form { margin-top:6px; }
+	#actions .plainbox textarea { width:282px; }
+	
+	#actions .plainbox.search { ; }
+		#actions .plainbox.search h1 { background-image:url('../images/icons/search-64.png'); }
+		#actions .plainbox.search input#keywordSearch { width:230px; }
+	#actions .plainbox.api { ; }
+		#actions .plainbox.api h1 { background-image:url('../themes/metabolic/icons/perl-java-ico.gif'); }
+	#actions .plainbox.analyse { ; }
+		#actions .plainbox.analyse h1 { background-image:url('../images/icons/lists-64.png'); padding-left:80px; }
+		#actions .plainbox.analyse input#submitBag { float:right; margin-right:10px; }
+	
+/* news */
+#rss div.plainbox { ; }
+	#rss div.plainbox h1 { background:url(../themes/purple/icons/rss-32.png) no-repeat left; padding-left:40px; line-height:32px;
+		display:block !important; margin-bottom:6px; }
+	#rss div.plainbox #newsbox { padding-bottom:2px; }

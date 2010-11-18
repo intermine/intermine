@@ -153,8 +153,8 @@
 			// toggle results
 			jQuery('#results').toggle('slow');
 		}
-		// let us not forget that results will be shown on successful search
-		<c:if test="${not empty param.gotoHighlighted}">
+		// let us not forget that results will be shown on successful search and when paginating that requires synchronous call
+		<c:if test="${not empty param.gotoHighlighted || not empty param.page}">
 			jQuery(document).ready(function() { toggleResults(); });
 		</c:if>
 	</script>

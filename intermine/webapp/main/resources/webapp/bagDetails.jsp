@@ -284,6 +284,7 @@
   </c:forEach>
   </ol>
 </p>
+<div style="clear:both;"></div>
 
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
 <c:forEach items="${widgets}" var="widget">
@@ -293,7 +294,7 @@
     <tiles:put name="widget2extraAttrs" beanName="widget2extraAttrs" />
   </tiles:insert>
 </c:forEach>
-<div style="clear:both;">&nbsp;</div>
+<div style="clear:both;"></div>
 
 <!-- templates -->
 

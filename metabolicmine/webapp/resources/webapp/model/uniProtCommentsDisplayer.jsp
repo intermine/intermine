@@ -2,7 +2,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <html:xhtml/>
-<c:if test="${not empty response}">
+<c:if test="${not empty response.value}">
 	<div class="geneInformation">
 		<h3 class="uniprot">Curated comments from UniProt</h3>
 		<br /><br />
@@ -12,13 +12,11 @@
 				<c:choose>
 					<%-- displayer for gene page --%>
 					<c:when test="${type.key == 'gene'}">
-						<tr><th class="comment">Comment</th><th class="type">Type</th><th class="proteins">Proteins</th></tr>
+						<tr><th class="type">Type</th><th class="comment">Comment</th><th class="proteins">Proteins</th></tr>
 						
 						<%-- traverse the comments --%>
 						<c:forEach var="comment" items="${type.value}" varStatus="status">
 							<tr class="${status.count mod 2 == 0 ? 'odd' : 'even'}">
-								<td class="text">${comment.key}</td>
-								
 								<%-- comment type and proteins objects --%>
 								<c:forEach var="bag" items="${comment.value}">
 									<c:choose>
@@ -27,6 +25,7 @@
 											<td class="type">
 												${bag.value}
 											</td>
+											<td class="text">${comment.key}</td>
 										</c:when>
 										<c:when test="${bag.key == 'proteins'}">
 											<!-- comment 'proteins' HashMap -->
@@ -36,7 +35,7 @@
 													<html:link action="/objectDetails?id=${protein.value}&amp;trail=|${protein.value}">
 														${protein.key}
 													</html:link>
-													${!looptyLoop.last ? ', ' : ''}
+													<!-- ${!looptyLoop.last ? ', ' : ''} -->
 												</c:forEach>
 											</td>
 										</c:when>
@@ -53,11 +52,11 @@
 					
 					<%-- displayer for protein page --%>
 					<c:when test="${type.key == 'protein'}">
-						<tr><th class="comment">Comment</th><th class="type">Type</th></tr>
+						<tr><th class="type">Type</th><th class="comment">Comment</th></tr>
 						<c:forEach var="comment" items="${type.value}" varStatus="status">
 							<tr class="${status.count mod 2 == 0 ? 'odd' : 'even'}">
-								<td>${comment.key}</td>
 								<td class="type">${comment.value}</td>
+								<td>${comment.key}</td>
 							</tr>
 						</c:forEach>						
 					</c:when>

@@ -26,7 +26,7 @@
 	        <c:if test="${!empty searchBag}">
 				<input type="hidden" name="searchBag" value="${searchBag}" />
 	        </c:if>
-	        <input type="text" id="keywordSearch" name="searchTerm" value="<c:out value="${searchTerm}"></c:out>" style="width: 350px;" />
+	        <input type="text" id="keywordSearch" name="searchTerm" value="<c:out value="${searchTerm}"></c:out>" />
 	        <input type="submit" name="searchSubmit" value="Search" />
 			<c:if test="${!empty searchTerm || !empty searchFacetValues}">
 			<br />
@@ -35,6 +35,7 @@
 		        </a>
 	        </c:if>
 			<c:if test="${!empty searchFacetValues}">
+				<span>- or -</span>
 	        	<input type="submit" name="searchSubmitRestricted" value="Search (with current restrictions)" />
 			</c:if>
 		</form>
@@ -56,8 +57,7 @@
             </li>
 	    </ul>
     </div>
+    <div style="clear:both;"></div>
 </div>
-
-<div style="clear:both;"></div>
 
 <!-- /keywordSearch.jsp -->

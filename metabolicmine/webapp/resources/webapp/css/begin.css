@@ -42,6 +42,9 @@ ul#loginbar { font-size:0.8em; }
 #header, ul#nav, #submenufixed, #submenudiv, #quicksearch, #navtrail { font-family:"Lucida Grande",Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif;
 	font-size:75%; }
 ul#nav { font-size:13px; }
+p.alignright { display:none; }
+p#contactUsLink { margin-bottom:10px; }
+#navtrail { padding-top:0 !important; }
 
 /* ======== new metabolicMine ======== */
 body { background:url("../themes/metabolic/img/top-gradient.jpg") repeat-x top; /*font-family:"Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif; color:#404040;*/ }
@@ -187,7 +190,7 @@ form#quick-search { float:right; margin-right:12px; }
 #ctxHelpDiv.welcome div.topBar.info a { background:url("../themes/metabolic/icons/toggle-expand.png") no-repeat left;
 	padding-left:20px; }
 
-#welcome { margin:0 0 20px 0; position:relative; }
+#welcome { margin:0; position:relative; }
 	#welcome p { font-size:14px; line-height:24px; }
 	
 	#welcome ul#switcher { list-style:none; float:right; margin:0; margin-right:10px; }
