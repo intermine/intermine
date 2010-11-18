@@ -58,6 +58,61 @@ public final class Constraints
     }
 
     /**
+     * Creates a constraint for a path to be NOT LIKE a value.
+     *
+     * @param path the path to apply the constraint to
+     * @param value the value to constrain to
+     * @return a new PathConstraint object
+     */
+    public static PathConstraintAttribute notLike(String path, String value) {
+        return new PathConstraintAttribute(path, ConstraintOp.DOES_NOT_MATCH, value);
+    }
+
+    /**
+     * Creates a constraint for a path to be less than a value.
+     *
+     * @param path the path to apply the constraint to
+     * @param value the value to constrain to
+     * @return a new PathConstraint object
+     */
+    public static PathConstraintAttribute lessThan(String path, String value) {
+        return new PathConstraintAttribute(path, ConstraintOp.LESS_THAN, value);
+    }
+
+    /**
+     * Creates a constraint for a path to be less than or equal to a value.
+     *
+     * @param path the path to apply the constraint to
+     * @param value the value to constrain to
+     * @return a new PathConstraint object
+     */
+    public static PathConstraintAttribute lessThanEqualTo(String path, String value) {
+        return new PathConstraintAttribute(path, ConstraintOp.LESS_THAN_EQUALS, value);
+    }
+
+    /**
+     * Creates a constraint for a path to be greater than a value.
+     *
+     * @param path the path to apply the constraint to
+     * @param value the value to constrain to
+     * @return a new PathConstraint object
+     */
+    public static PathConstraintAttribute greaterThan(String path, String value) {
+        return new PathConstraintAttribute(path, ConstraintOp.GREATER_THAN, value);
+    }
+
+    /**
+     * Creates a constraint for a path to be greater than or equal to a value.
+     *
+     * @param path the path to apply the constraint to
+     * @param value the value to constrain to
+     * @return a new PathConstraint object
+     */
+    public static PathConstraintAttribute greaterThanEqualTo(String path, String value) {
+        return new PathConstraintAttribute(path, ConstraintOp.GREATER_THAN_EQUALS, value);
+    }
+
+    /**
      * Creates a constraint for a path with the LOOKUP operator.
      *
      * @param path the path to apply the constraint to
@@ -154,50 +209,6 @@ public final class Constraints
      */
     public static PathConstraintNull isNotNull(String path) {
         return new PathConstraintNull(path, ConstraintOp.IS_NOT_NULL);
-    }
-
-    /**
-     * Creates a constraint for a path to be less than a value.
-     *
-     * @param path the path to apply the constraint to
-     * @param value the value to constrain to
-     * @return a new PathConstraint object
-     */
-    public static PathConstraintAttribute lessThan(String path, String value) {
-        return new PathConstraintAttribute(path, ConstraintOp.LESS_THAN, value);
-    }
-
-    /**
-     * Creates a constraint for a path to be less than or equal to a value.
-     *
-     * @param path the path to apply the constraint to
-     * @param value the value to constrain to
-     * @return a new PathConstraint object
-     */
-    public static PathConstraintAttribute lessThanEqualTo(String path, String value) {
-        return new PathConstraintAttribute(path, ConstraintOp.LESS_THAN_EQUALS, value);
-    }
-
-    /**
-     * Creates a constraint for a path to be greater than a value.
-     *
-     * @param path the path to apply the constraint to
-     * @param value the value to constrain to
-     * @return a new PathConstraint object
-     */
-    public static PathConstraintAttribute greaterThan(String path, String value) {
-        return new PathConstraintAttribute(path, ConstraintOp.GREATER_THAN, value);
-    }
-
-    /**
-     * Creates a constraint for a path to be greater than or equal to a value.
-     *
-     * @param path the path to apply the constraint to
-     * @param value the value to constrain to
-     * @return a new PathConstraint object
-     */
-    public static PathConstraintAttribute greaterThanEqualTo(String path, String value) {
-        return new PathConstraintAttribute(path, ConstraintOp.GREATER_THAN_EQUALS, value);
     }
 
     /**
