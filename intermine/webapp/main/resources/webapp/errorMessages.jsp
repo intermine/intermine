@@ -19,7 +19,7 @@ var hasmessages=0;
 <!-- ERRORS -->
 <logic:messagesPresent>
     <html:messages id="error">
-      new Insertion.Bottom('error_msg','<imutil:treatString><c:out value="${error}" escapeXml="false"/></imutil:treatString>');
+      new Insertion.Bottom('error_msg','<imutil:treatString><c:out value="${error}" escapeXml="false"/></imutil:treatString><br />');
       haserrors=1;
     </html:messages>
 </logic:messagesPresent>
@@ -42,7 +42,7 @@ var hasmessages=0;
 <!-- ERRORS II -->
 <c:if test="${!empty ERRORS}">
     <c:forEach items="${ERRORS}" var="error">
-      new Insertion.Bottom('error_msg','<imutil:treatString><c:out value="${error}" escapeXml="false"/></imutil:treatString>');
+      new Insertion.Bottom('error_msg','<imutil:treatString><c:out value="${error}" escapeXml="false"/></imutil:treatString><br />');
       haserrors=1;
     </c:forEach>
   <c:remove var="ERRORS" scope="session"/>
@@ -59,7 +59,7 @@ var hasmessages=0;
 <!-- MESSAGES II -->
 <c:if test="${!empty MESSAGES}">
     <c:forEach items="${MESSAGES}" var="message">
-      new Insertion.Bottom('msg','<imutil:treatString><c:out value="${message}" escapeXml="false"/></imutil:treatString>');
+      new Insertion.Bottom('msg','<imutil:treatString><c:out value="${message}" escapeXml="false"/></imutil:treatString><br />');
       hasmessages=1;
     </c:forEach>
   <c:remove var="MESSAGES" scope="session"/>

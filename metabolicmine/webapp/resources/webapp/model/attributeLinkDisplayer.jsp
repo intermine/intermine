@@ -12,6 +12,7 @@
     <c:set var="href" value="${confMapEntry.value.url}"/>
     <c:set var="imageName" value="${confMapEntry.value.imageName}"/>
     <c:set var="text" value="${confMapEntry.value.text}"/>
+    <c:set var="title" value="${confMapEntry.value.title}"/>
     <c:set var="foot" value="${confMapEntry.value.foot}"/>
     <c:set var="parameters" value="${confMapEntry.value.parameters}"/>
     <c:set var="usePost" value="${confMapEntry.value.usePost}"/>
@@ -25,7 +26,8 @@
           <c:when test="${empty usePost}">
 	          <c:if test="${!empty imageName}">
 	          	<a href="${href}" class="ext_link image" target="_new">
-	          		<html:img src="model/images/${imageName}" title="${text}"/>
+	          		<center><html:img src="model/images/${imageName}" title="${text}"/><br /></center>
+	          		<span>${title}</span>
 	          	</a>
 	          </c:if>
 	          <a href="${href}" class="ext_link" target="_new">${text}</a>
@@ -60,6 +62,7 @@
   </c:forEach>
   </ul>
 </div>
+<div id="externalLinksClear"></div>
 
 <%-- show xrefs --%>
 <table id="xrefTable" class="lookupReport" cellspacing="5" cellpadding="0">

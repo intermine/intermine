@@ -10,13 +10,12 @@
 <html:xhtml/>
 
 <div class="body">
+<div id="actions">
 
 
-
-     <im:boxarea title="Search" stylename="plainbox" floatValue="left" fixedWidth="275px" height="150px">
-     <br/>
+     <im:boxarea title="Search" stylename="search plainbox">
         <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
-            <input type="text" id="keywordSearch" name="searchTerm" value="" style="width: 200px;" />
+            <input type="text" id="keywordSearch" name="searchTerm" value="" />
             <input type="submit" name="searchSubmit" value="Search" />
         </form>
 <br/>
@@ -27,7 +26,7 @@
 
     </im:boxarea>
 
-     <im:boxarea title="Java/Perl API" floatValue="left" stylename="plainbox" fixedWidth="275px" height="150px">
+     <im:boxarea title="Java/Perl API" stylename="api plainbox">
 We support programatic access to our data through Application Programming Interface too! Choose from options below:
 <ul>
 <li>Java
@@ -35,7 +34,7 @@ We support programatic access to our data through Application Programming Interf
 </ul>
     </im:boxarea>
 
-     <im:boxarea title="Analyse" floatValue="left" stylename="plainbox" fixedWidth="275px" height="150px">
+     <im:boxarea title="Analyse" stylename="analyse plainbox last">
      <em><p>Enter a list of identifiers to be forwarded to the list analysis page.  Click here to view an example.</p></em>
         <html:form action="/buildBag" focus="pasteInput">
 
@@ -47,8 +46,9 @@ We support programatic access to our data through Application Programming Interf
             <html:submit styleId="submitBag">Analyse</html:submit>
         </html:form>
     </im:boxarea>
+</div>
 
- <br style="clear: left;" />
+<div style="clear:both;"></div>
 
 
 <ul class="tabs">
@@ -213,7 +213,7 @@ We support programatic access to our data through Application Programming Interf
  <br style="clear: left;" />
  <br style="clear: both;" />
 
-       <div>
+       <div id="rss">
         <c:if test="${!empty WEB_PROPERTIES['project.rss']}">
           <tiles:insert name="news.tile" />
         </c:if>

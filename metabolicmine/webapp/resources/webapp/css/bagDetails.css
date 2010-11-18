@@ -81,7 +81,7 @@ div.bochs.wide div.description { font-size:12px; line-height:15px; font-weight:n
 a#toggleLink span { text-transform:lowercase; } /* save us calling JSTL fn */
 
 /* pagin */
-div.pagination { margin:0 auto; float:left; vertical-align:bottom; }
+div.pagination { margin:0 auto; float:left; vertical-align:bottom; margin-bottom:5px; }
 	div.pagination a { color:#1F7492 !important; }
 
 /* results table */
@@ -116,9 +116,9 @@ a.ext_link { display:none; }
 a.ext_link.image { display:inline; }
 div.bochs div.externalLinks { margin:0; }
 	div.bochs div.externalLinks h3 { display:none; }
-	div.bochs div.externalLinks ul li { display:inline; margin:0; }
+	div.bochs div.externalLinks ul li { display:inline; margin:0; margin-right:4px; }
 	div.bochs div.externalLinks ul li a { line-height:auto; height:auto; }
-		div.bochs div.externalLinks ul li a.ext_link.image { background:none; padding:0; padding-right:6px; }
+			div.bochs div.externalLinks ul li a span { display:none; }
 /*a.ext_link { background:url("../images/icons/external-link-8.png") no-repeat top right; padding-right:7px; }*/
 
 /* other mines */

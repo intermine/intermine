@@ -76,13 +76,13 @@ ul#nav a:hover,ul#nav li#mymine a:hover{
 	color:#333;}
 
 ul#nav li#mymine a{
-	color:white;background:url('corner_my_t_r.png') no-repeat top right;}
+	color:#000;background:url('corner_my_t_r.png') no-repeat top right;}
 
 ul#nav li.activelink a{
 	color:white;background:url('corner_act_t_r.png') no-repeat top right;}
 
 ul#nav li#mymine {
-	background:#9B89A7 url('corner_my_t_l.png') no-repeat;}
+	background:#D2CEBF url('corner_my_t_l.png') no-repeat;}
 
 ul#nav li.activelink {
 	background:#000 url('corner_act_t_l.png') no-repeat;}
@@ -91,7 +91,9 @@ ul#submenulist li#subactive_bag {
 	font-weight:bold;color:#FFF;background:url('submenu_indent.png') no-repeat bottom center;}
 
 ul#submenulist li#subactive_mymine {
-	font-weight:bold;color:#FFF;background:url('submenu_my.png') no-repeat bottom center;}
+	font-weight:bold;color:#CCC;background:url('submenu_my.png') no-repeat bottom center;}
+
+ul#submenulist li#subactive_mymine span { color:#000 !important; }
 
 ul#nav li{
 	text-align: center;background:#9E9E9E url('corner_t_l.png') no-repeat;}
@@ -102,13 +104,16 @@ ul#nav li{
 	border-right:1px solid #000;}
 
 .submenu_mymine{
-	background:#9B89A7;}
+	background:#D2CEBF;}
 
 ul#submenulist li a {
 	color:#FFF;text-decoration: none;font-weight: bold;}
 
 ul#submenulist li a:hover {
 	color:#FFF;text-decoration: underline;font-weight: bold;}
+
+ul#submenulist li.myminebagstabtitle a, ul#submenulist li.myminehistorytabtitle a, ul#submenulist li.myminesavedqueriestabtitle a,
+ul#submenulist li.myminesavedtemplatestabtitle a, ul#submenulist li.myminepasswordtabtitle a { color:#000; }
 
 /* =MEGATILE SEARCH
 --------------------------*/
@@ -162,7 +167,7 @@ div#filter_tool_bar {
 
 .widget {
     max-height:400px;width: 450px;padding:15px;
-    text-align: center; background-color: #F5F0FF;}
+    text-align: center; background-color: #D2CEBF;}
 
 .widget p {
 	font-size:10px;	}
@@ -172,17 +177,17 @@ div#filter_tool_bar {
     overflow-x:none;overflow-y:auto;overflow: auto;}
 
 #bagDescriptionDiv{
-    background-color: #F5F0FF;}
+    background-color: #D2CEBF;}
 
 #bagDescriptionDiv:hover{
 	background-color: #E6FFB3;}
 
 #textarea {
-    background-color: #F5F0FF;}
+    background-color: #D2CEBF;}
 
 .blueBg {
 	padding: 20px;margin:20px;width:350px;
-	background-color:#F5F0FF;text-align:center;}
+	background-color:#D2CEBF;text-align:center;}
 
 table.dbsources {
     padding:0px;
@@ -233,7 +238,7 @@ table.results tr td.highlightObject {
       background: #353B40;
     }*/
 
-#listTags { background-color: #F5F0FF; margin-left: 10px; padding: 3px 10px; }
+#listTags { background-color: #D2CEBF; margin-left: 10px; padding: 3px 10px; }
 
 /* keyword search results */
 .keywordSearchResults .resultTableContainer table.dbsources { border-left: 1px solid #DFDFDF; }
@@ -250,12 +255,20 @@ table.results tr td.highlightObject {
 .keywordSearchResults .resultTableContainer table.dbsources div.objectKeys a,
 .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult a span.value { font-size:14px; }
 
+div.keywordSearch div.examples h4 { color:#333; }
+
 /* keyword search results relevancy */
 div.resultTableContainer td.relevance div.full { color:#ff0000; }
 div.resultTableContainer td.relevance div.empty { color:#999999; }
 
+/* submenu */
+#submenu { color:#7A7A7A !important; }
+
 /* lists analysis (bagDetails.do) */
-div.heading.results { border:1px solid #BEDCE4; background:#E6F7FE; margin-left:0; }
+div.heading.results { border:1px solid #888; background:url("gray_grad.png") repeat-x scroll center top #FFFFFF; margin-left:0; }
 div.heading.results h1 { color:#4D5154; font-size:22px; margin-bottom:10px; }
-div.heading.results #tool_bar_div { float:left; background:#E6F7FE !important; }
+div.heading.results #tool_bar_div { float:left; background:transparent !important; }
 div.heading.results #tool_bar_div li { border:1px solid #D2D2D2; background:#EEEEEE; margin-right:10px; padding:4px; font-weight:normal; }
+
+/* submenu form on mymine */
+#submenu.submenu_mymine #submenudiv #quicksearch form { color:#000 !important; }
