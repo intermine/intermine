@@ -16,11 +16,25 @@ has 'op' => (
     required => 1,
 );
 
+has '_next_code' => (
+    is => 'rw',
+    isa => Str,
+    default => "A",
+);
+
+sub getNextCode {
+    my $self = shift;
+    my $nextcode = $self->_next_code;
+    my $thiscode = $nextcode++;
+    $self->_next_code($nextcode);
+    return $thiscode;
+}
+
 has 'code' => (
     is          => 'ro',
     writer      => 'set_code',
     isa         => ConstraintCode,
-    default     => sub { $next_code++ },
+    default     => sub { my $self = shift; return $self->getNextCode; },
     initializer => 'set_code',
 );
 
