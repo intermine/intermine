@@ -66,27 +66,22 @@ We support programatic access to our data through Application Programming Interf
 <div class="tab_container">
     <div id="tab1" class="tab_content">
         The gene structure and other genome annotation in FlyMine are provided by a variety of source databases including: FlyBase, UniProt, Ensembl and over 30 other data sources.  <a href="dataCategories.do">Read more...</a>
-
+        <br/><br/>
+        Query for genes:
         <br/>
-
-        <table width="50%" cellpadding="10"><tr><td>
-        Query for genes,  using:
         <ul>
-            <li><a href="template.do?name=ChromLocation_Gene">locations</a></li>
-            <li><a href="template.do?name=Publication_Genes">publications</a></li>
-            <li><a href="template.do?name=Pathway_Genes">pathways</a></li>
+        <c:forEach var="entry" items="${aspectQueries}">
+            <c:set var="aspect" value="${entry.key}"/>
+            <c:set var="templates" value="${entry.value}"/>
+            <c:if test="${aspect == 'Genomics'}">
+                <c:forEach var="template" items="${templates}" varStatus="status">
+                    <li><a href="template.do?name=${template.name}">${template.title}</a></li>
+                </c:forEach>
+            </c:if>
+        </c:forEach>
         </ul>
-        </td>
-        <td>
-        Query using gene identifier(s), returning a list of:
-        <ul>
-            <li><a href="template.do?name=Gene_Interaction">interactions</a></li>
-            <li><a href="template.do?name=Gene%20_adjacent%20genes">adjacent genes</a></li>
-            <li><a href="template.do?name=Gene_OverlapppingGenes">overlapping genes</a></li>
-        </ul>
-        </td></tr></table>
-
-        <a href="templates.do">Click here</a> for more queries.
+        <br/><br/>
+        <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
     <div id="tab2" class="tab_content">
         FlyMine loads proteins from UniProt and protein domains from InterPro.  <a href="aspect.do?name=Proteins">Read more...</a>
@@ -104,6 +99,8 @@ We support programatic access to our data through Application Programming Interf
             </c:if>
         </c:forEach>
         </ul>
+        <br/><br/>
+        <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
     <div id="tab3" class="tab_content">
         FlyMine loads interactions from IntAct and BioGRID  <a href="aspect.do?name=Interactions">Read more</a>
@@ -121,11 +118,13 @@ We support programatic access to our data through Application Programming Interf
             </c:if>
         </c:forEach>
         </ul>
+        <br/><br/>
+        <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
     <div id="tab4" class="tab_content">
-        FlyMine loads publication data from over 30 sources.  <a href="aspect.do?name=Literature">Read more</a>
+        FlyMine loads publication data from over 30 sources.  <a href="aspect.do?name=Literature">Read more..</a>
         <br/><br/>
-        Query for publications:
+        Popular queries:
         <br/>
         <ul>
         <c:forEach var="entry" items="${aspectQueries}">
@@ -138,6 +137,8 @@ We support programatic access to our data through Application Programming Interf
             </c:if>
         </c:forEach>
         </ul>
+        <br/><br/>
+        <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
     <div id="tab5" class="tab_content">
         FlyMine loads homologues from InParanoid, KEGG and TreeFam.  <a href="aspect.do?name=Comparative+Genomics">Read more</a>
@@ -155,6 +156,8 @@ We support programatic access to our data through Application Programming Interf
             </c:if>
         </c:forEach>
         </ul>
+        <br/><br/>
+        <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
     <div id="tab6" class="tab_content">
         FlyMine loads gene ontology from MGI, FlyBase, WormBase, UniProt, SGD, and InterPro.  <a href="aspect.do?name=Gene+Ontology">Read more</a>
@@ -172,6 +175,8 @@ We support programatic access to our data through Application Programming Interf
             </c:if>
         </c:forEach>
         </ul>
+        <br/><br/>
+        <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
     <div id="tab7" class="tab_content">
         FlyMine loads gene expression data for Drosophila melanogaster and Anopheles gambiae from FlyAtlas, BDGP, ArrayExpress and Fly-FISH.  <a href="aspect.do?name=Gene+Expression">Read more...</a>
@@ -189,6 +194,8 @@ We support programatic access to our data through Application Programming Interf
             </c:if>
         </c:forEach>
         </ul>
+        <br/><br/>
+        <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
 
 </div>

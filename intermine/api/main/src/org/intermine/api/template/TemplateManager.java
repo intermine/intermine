@@ -207,11 +207,26 @@ public class TemplateManager
      * @return a list of template queries
      */
     public List<TemplateQuery> getAspectTemplates(String aspect) {
-        List<TemplateQuery> aspectTemplates = new ArrayList<TemplateQuery>();
-        if (AspectTagUtil.isAspectTag(aspect)) {
-            aspect = AspectTagUtil.getAspect(aspect);
+        return getAspectTemplates(aspect, null);
+    }
+
+
+    /**
+     * Get public templates for a particular aspect.
+     *
+     * @param size maximum number of templates to return.
+     * @param aspectTag name of aspect tag
+     * @return a list of template queries
+     */
+    public List<TemplateQuery> getAspectTemplates(String aspectTag, Integer size) {
+
+        int i = 0;
+        String aspect = aspectTag;
+        if (AspectTagUtil.isAspectTag(aspectTag)) {
+            aspect = AspectTagUtil.getAspect(aspectTag);
         }
 
+        List<TemplateQuery> aspectTemplates = new ArrayList<TemplateQuery>();
         Map<String, TemplateQuery> globalTemplates = getValidGlobalTemplates();
 
         List<Tag> tags = tagManager.getTags(null, null, TagTypes.TEMPLATE,
@@ -221,6 +236,10 @@ public class TemplateManager
                 if (StringUtils.equals(aspect, AspectTagUtil.getAspect(tag.getTagName()))) {
                     if (globalTemplates.containsKey(tag.getObjectIdentifier())) {
                         aspectTemplates.add(globalTemplates.get(tag.getObjectIdentifier()));
+                        i++;
+                        if (size != null && i >= size.intValue()) {
+                            break;
+                        }
                     }
                 }
             }
