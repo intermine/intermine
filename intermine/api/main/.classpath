@@ -19,7 +19,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/lucene-queries-3.0.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bobo-browse-2.5.0.jar" sourcepath="/net/fileserver1/export/home/nils/git/bobo-trunk/bobo-browse/src">
 		<attributes>
-			<attribute name="javadoc_location" value="file:/net/fileserver1/export/home/nils/git/bobo-trunk/doc/"/>
+			<attribute name="javadoc_location" value="file:///net/fileserver1/export/home/nils/git/bobo-trunk/doc"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/fastutil.jar"/>

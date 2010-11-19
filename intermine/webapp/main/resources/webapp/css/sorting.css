@@ -66,8 +66,7 @@ td[class~="alt"]{
   background-color: #e7F1E7;border: 1px solid #bbb;font-size: 10px;font-weight: bold;}
 
 .historySummaryShowing {
-  padding:0 2px 1px 2px;
-  background-color: #E7F1FB;border: 1px solid #bbb;font-size: 10px;
+  padding:0 2px 1px 2px; background-color: #E7F1FB; border:1px solid #bbb; font-size:10px; line-height:20px;
 }
 
 

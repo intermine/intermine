@@ -53,15 +53,18 @@ We support programatic access to our data through Application Programming Interf
 <div style="clear:both;"></div>
 
 
+<div>
 <ul class="tabs">
-    <li><a href="#tab1">Genes</a></li>
-    <li><a href="#tab2">Proteins</a></li>
-    <li><a href="#tab3">Interactions</a></li>
-    <li><a href="#tab4">Publications</a></li>
-    <li><a href="#tab5">Homologues</a></li>
-    <li><a href="#tab6">Gene Ontology</a></li>
-    <li><a href="#tab7">Gene Expression</a></li>
+    <li class="tab"><a href="#tab1">Genes</a></li>
+    <li class="tab"><a href="#tab2">Proteins</a></li>
+    <li class="tab"><a href="#tab3">Interactions</a></li>
+    <li class="tab"><a href="#tab4">Publications</a></li>
+    <li class="tab"><a href="#tab5">Homologues</a></li>
+    <li class="tab"><a href="#tab6">Gene Ontology</a></li>
+    <li class="tab"><a href="#tab7">Gene Expression</a></li>
+    <li class="link"><a href="#">More</a></li>
 </ul>
+</div>
 
 <div class="tab_container">
     <div id="tab1" class="tab_content">
@@ -197,7 +200,6 @@ We support programatic access to our data through Application Programming Interf
         <br/><br/>
         <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
-
 </div>
 
  <br style="clear: left;" />
@@ -222,8 +224,7 @@ We support programatic access to our data through Application Programming Interf
     $(".tab_content:first").show(); //Show first tab content
 
     //On Click Event
-    $("ul.tabs li").click(function() {
-
+    $("ul.tabs li.tab").click(function() {
         $("ul.tabs li").removeClass("active"); //Remove any "active" class
         $(this).addClass("active"); //Add "active" class to selected tab
         $(".tab_content").hide(); //Hide all tab content
