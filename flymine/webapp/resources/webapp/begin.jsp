@@ -27,15 +27,17 @@
     </im:boxarea>
 
      <im:boxarea title="Java/Perl API" stylename="api plainbox">
+     <br/>
 We support programatic access to our data through Application Programming Interface too! Choose from options below:
+<br/>
 <ul>
-<li>Java
-<li>Perl
+<li><a href="/api.do?subtab=java">Java</a>
+<li><a href="/api.do">Perl</a>
 </ul>
     </im:boxarea>
 
      <im:boxarea title="Analyse" stylename="analyse plainbox last">
-     <em><p>Enter a list of identifiers to be forwarded to the list analysis page.  Click here to view an example.</p></em>
+     <em><p>Enter a list of identifiers to be forwarded to the list analysis page.</p></em>
         <html:form action="/buildBag" focus="pasteInput">
 
                 <html:select styleId="typeSelector" property="type">
