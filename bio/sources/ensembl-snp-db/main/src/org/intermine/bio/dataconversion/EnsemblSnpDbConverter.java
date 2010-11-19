@@ -368,7 +368,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + "     AND tv.cdna_start is not null)"
             + " WHERE vf.seq_region_id = sr.seq_region_id"
             + " AND vf.source_id = s.source_id"
-            + " AND sr.name = " + chrName
+            + " AND sr.name = '" + chrName + "'"
             + " ORDER BY vf.variation_id";
 
         Statement stmt = connection.createStatement();
