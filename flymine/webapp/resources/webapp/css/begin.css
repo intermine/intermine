@@ -77,8 +77,9 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that th
 #right.column { width:645px; }
 
 /* main boxes */
-#actions .plainbox { float:left; width:299px; height:216px; }
-	#actions .plainbox.last { width:297px; margin-right:0; padding-right:0; }
+#actions .plainbox { float:left; width:300px; height:216px; }
+	#actions .plainbox { margin:0 10px 10px 0; }
+	#actions .plainbox.last { margin-right:0; padding-right:0; }
 	#actions .plainbox dl { padding-bottom:10px; }
 	#actions .plainbox h1 { background-position:left center; background-repeat:no-repeat; padding-left:70px; line-height:64px; margin-bottom:10px; }
 	#actions .plainbox ul, #actions .plainbox form { margin-top:6px; }
