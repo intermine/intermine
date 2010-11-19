@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="src" path="/intermine-objectstore-main"/>
-	<classpathentry exported="true" kind="src" path="/userprofile"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/userprofile"/>
 	<classpathentry exported="true" kind="lib" path="lib/standard-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-2.5-final-20040302.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jstl-1.1.jar"/>

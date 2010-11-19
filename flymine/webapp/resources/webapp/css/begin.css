@@ -21,11 +21,11 @@ ul.tabs {
 	padding: 0;
 	float: left;
 	list-style: none;
-	height: 32px; /*--Set height of tabs--*/
-	border-bottom: 1px solid #999;
-	border-left: 1px solid #999;
-	width: 100%;
-
+	height: 32px; /*--Set height of tabs (does nothing) --*/
+	border-bottom: 0;
+	border-left: 1px solid #9E68AE;
+	width: 977px;
+	*height: 22px; /*(required for manky IE7)*/
 }
 ul.tabs li {
 	float: left;
@@ -33,7 +33,7 @@ ul.tabs li {
 	padding: 0;
 	height: 31px; /*--Subtract 1px from the height of the unordered list--*/
 	line-height: 31px; /*--Vertically aligns the text within the tab--*/
-	border: 1px solid #999;
+	border: 1px solid #9E68AE;
 	border-left: none;
 	margin-bottom: -1px; /*--Pull the list item down 1px--*/
 	overflow: hidden;
@@ -49,17 +49,18 @@ ul.tabs li a {
 	padding: 0 20px;
 	border: 1px solid #fff; /*--Gives the bevel look with a 1px white border inside the list item--*/
 	outline: none;
+	margin:0;
 }
 ul.tabs li a:hover {
 	background: #5C0075;
 }
 html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that the active tab does not listen to the hover properties--*/
    background: #F5F0FF;
-	border-bottom: 1px solid #fff; /*--Makes the active tab look like it's connected with its content--*/
+	border-bottom: 1px solid #F5F0FF; /*--Makes the active tab look like it's connected with its content--*/
 }
 
 .tab_container {
-	border: 1px solid #999;
+	border: 1px solid #9E68AE;
 	border-top: none;
 	overflow: hidden;
 	clear: both;
@@ -69,6 +70,7 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that th
 .tab_content {
 	padding: 20px;
 	font-size: 1.2em;
+	border-top: 1px solid #9E68AE;
 }
 
 /* page columns */
@@ -95,7 +97,11 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that th
 		#actions .plainbox.analyse input#submitBag { float:right; margin-right:10px; }
 	
 /* news */
-#rss div.plainbox { ; }
+#rss div.plainbox { margin:0; width:956px; }
 	#rss div.plainbox h1 { background:url(../themes/purple/icons/rss-32.png) no-repeat left; padding-left:40px; line-height:32px;
 		display:block !important; margin-bottom:6px; }
 	#rss div.plainbox #newsbox { padding-bottom:2px; }
+
+/* tabbed menu */
+ul.tabs li.link, ul.tabs li.link.active { border:0; background:#FFF; }
+	ul.tabs li.link a:hover { background:#FFF; }
