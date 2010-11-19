@@ -285,6 +285,15 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                     + ");" + ENDL;
             }
 
+            if (op.equals(ConstraintOp.DOES_NOT_MATCH)) {
+                return
+                    "$query->add_constraint(" + ENDL
+                    + INDENT + "path  => '" + path + "'," + ENDL
+                    + INDENT + "op    => 'NOT LIKE'," + ENDL
+                    + INDENT + "value => '" + value + "'," + ENDL
+                    + ");" + ENDL;
+            }
+
             if (op.equals(ConstraintOp.LESS_THAN)) {
                 return
                     "$query->add_constraint(" + ENDL
