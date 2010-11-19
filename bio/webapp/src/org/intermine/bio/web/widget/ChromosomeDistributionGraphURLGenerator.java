@@ -77,12 +77,6 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         if (organism != null) {
             q.addConstraint(Constraints.eq(bagType + ".organism.name", organism));
         }
-        q.addOrderBy(bagType + ".chromosomeLocation.start", OrderDirection.ASC);
-        q.addOrderBy(bagType + ".secondaryIdentifier", OrderDirection.ASC);
-        q.addOrderBy(bagType + ".primaryIdentifier", OrderDirection.ASC);
-        q.addOrderBy(bagType + ".organism.name", OrderDirection.ASC);
-        q.addOrderBy(bagType + ".chromosome.primaryIdentifier", OrderDirection.ASC);
-
         return q;
     }
 }

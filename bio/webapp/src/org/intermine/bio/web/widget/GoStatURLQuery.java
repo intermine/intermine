@@ -10,6 +10,8 @@ package org.intermine.bio.web.widget;
  *
  */
 
+import java.util.Arrays;
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
@@ -67,9 +69,9 @@ public class GoStatURLQuery implements WidgetURLQuery
         q.addConstraint(Constraints.isNull(prefix + ".goAnnotation.qualifier"));
 
         if (!showAll) {
-            //  go term
-            q.addConstraint(Constraints.lookup(prefix + ".goAnnotation.ontologyTerm.parents",
-                    key, "GOTerm"));
+            String[] keys = key.split(",");
+            q.addConstraint(Constraints.oneOfValues(prefix + ".goAnnotation.ontologyTerm.parents",
+                    Arrays.asList(keys)));
         }
         return q;
     }

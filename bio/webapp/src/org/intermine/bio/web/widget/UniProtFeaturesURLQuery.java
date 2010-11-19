@@ -10,6 +10,8 @@ package org.intermine.bio.web.widget;
  *
  */
 
+import java.util.Arrays;
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
@@ -50,11 +52,12 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
                 "Protein.features.begin", "Protein.features.end");
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
-            q.addConstraint(Constraints.lookup("Protein.features.feature", key, ""));
+            String[] keys = key.split(",");
+            q.addConstraint(Constraints.oneOfValues("Protein.features.feature",
+                    Arrays.asList(keys)));
         }
         q.addOrderBy("Protein.features.feature.name", OrderDirection.ASC);
         q.addOrderBy("Protein.primaryAccession", OrderDirection.ASC);
-
         return q;
     }
 }

@@ -10,6 +10,8 @@ package org.flymine.web.widget;
  *
  */
 
+import java.util.Arrays;
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
@@ -44,9 +46,10 @@ public class MirandaURLQuery implements WidgetURLQuery
         q.addViews("Gene.symbol", "Gene.miRNAtargets.target.gene.symbol");
         q.addConstraint(Constraints.in("Gene.miRNAtargets.target.gene",  bag.getName()));
         if (!showAll) {
+            String[] keys = key.split(",");
+            q.addConstraint(Constraints.oneOfValues("Gene", Arrays.asList(keys)));
             q.addConstraint(Constraints.lookup("Gene", key, ""));
         }
-
         return q;
     }
 }

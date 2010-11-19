@@ -10,6 +10,8 @@ package org.intermine.bio.web.widget;
  *
  */
 
+import java.util.Arrays;
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
@@ -48,8 +50,9 @@ public class PrideExperimentURLQuery implements WidgetURLQuery
                 "Protein.primaryIdentifier", "Protein.primaryAccession", "Protein.name");
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
-            q.addConstraint(Constraints.eq("Protein.proteinIdentifications.prideExperiment.title",
-                        key));
+            String[] keys = key.split(",");
+            q.addConstraint(Constraints.oneOfValues(
+                    "Protein.proteinIdentifications.prideExperiment", Arrays.asList(keys)));
         }
         q.addOrderBy("Protein.proteinIdentifications.prideExperiment.title", OrderDirection.ASC);
 

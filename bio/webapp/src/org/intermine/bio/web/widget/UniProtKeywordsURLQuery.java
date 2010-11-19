@@ -10,6 +10,8 @@ package org.intermine.bio.web.widget;
  *
  */
 
+import java.util.Arrays;
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
@@ -47,7 +49,9 @@ public class UniProtKeywordsURLQuery implements WidgetURLQuery
             "Protein.organism.name", "Protein.keywords.name", "Protein.keywords.description");
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
-            q.addConstraint(Constraints.lookup("Protein.keywords", key, ""));
+            String[] keys = key.split(",");
+            q.addConstraint(Constraints.oneOfValues("Protein.keywords",
+                    Arrays.asList(keys)));
         }
         return q;
     }

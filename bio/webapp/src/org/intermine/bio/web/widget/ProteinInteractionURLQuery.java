@@ -10,10 +10,11 @@ package org.intermine.bio.web.widget;
  *
  */
 
+import java.util.Arrays;
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
@@ -53,13 +54,10 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
                   "Protein.proteinInteractions.experiment.publication.pubMedId");
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
-            q.addConstraint(Constraints.lookup("Protein.proteinInteractions.interactingProteins",
-                            key, ""));
+            String[] keys = key.split(",");
+            q.addConstraint(Constraints.oneOfValues(
+                    "Protein.proteinInteractions.interactingProteins", Arrays.asList(keys)));
         }
-        q.addOrderBy("Protein.primaryIdentifier", OrderDirection.ASC);
-        q.addOrderBy("Protein.primaryAccession", OrderDirection.ASC);
-        q.addOrderBy("Protein.proteinInteractions.interactingProteins.name", OrderDirection.ASC);
-
         return q;
     }
 }

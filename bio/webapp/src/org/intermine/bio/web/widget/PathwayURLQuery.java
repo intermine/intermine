@@ -10,6 +10,8 @@ package org.intermine.bio.web.widget;
  *
  */
 
+import java.util.Arrays;
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
@@ -50,7 +52,9 @@ public class PathwayURLQuery implements WidgetURLQuery
                 "Gene.pathways.dataSets.name");
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
-            q.addConstraint(Constraints.lookup("Gene.pathways", key, ""));
+            String[] keys = key.split(",");
+            q.addConstraint(Constraints.oneOfValues("Gene.pathways",
+                    Arrays.asList(keys)));
         }
         q.addOrderBy("Gene.pathways.identifier", OrderDirection.ASC);
         q.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);

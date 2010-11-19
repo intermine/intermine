@@ -10,6 +10,8 @@ package org.intermine.bio.web.widget;
  *
  */
 
+import java.util.Arrays;
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -57,10 +59,9 @@ public class OMIMDiseaseURLQuery implements WidgetURLQuery
 
         q.addConstraint(Constraints.in(bagType, bag.getName()));
         if (!showAll) {
-            q.addConstraint(Constraints.lookup("Gene.ominDiseases", key, ""));
+            q.addConstraint(Constraints.oneOfValues("Gene.ominDiseases", Arrays.asList(key)));
         }
         q.addOrderBy("Gene.symbol", OrderDirection.ASC);
-
         return q;
     }
 }
