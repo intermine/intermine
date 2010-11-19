@@ -61,7 +61,6 @@ public class TiffinURLQuery implements WidgetURLQuery
         if (!showAll) {
             String[] keys = key.split(",");
             q.addConstraint(Constraints.oneOfValues(motifPath, Arrays.asList(keys)));
-            q.addConstraint(Constraints.eq (motifPath, key));
         }
         return q;
     }
