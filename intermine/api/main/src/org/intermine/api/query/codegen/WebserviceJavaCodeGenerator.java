@@ -170,10 +170,11 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
                     continue;
                 }
                 if (idx == query.getView().size()) {
-                    sb.append(INDENT + INDENT + INDENT + "\"" + pathString + "\");" + ENDL);
+                    sb.append(INDENT + INDENT + INDENT + INDENT + "\""
+                            + pathString + "\");" + ENDL);
                     break;
                 }
-                sb.append(INDENT + INDENT + INDENT + "\"" + pathString + "\"," + ENDL);
+                sb.append(INDENT + INDENT + INDENT + INDENT + "\"" + pathString + "\"," + ENDL);
                 idx++;
             }
         } else {
@@ -451,6 +452,10 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
                 return "Constraints.like(\"" + path + "\", \"" + value + "\")";
             }
 
+            if (op.equals(ConstraintOp.DOES_NOT_MATCH)) {
+                return "Constraints.notLike(\"" + path + "\", \"" + value + "\")";
+            }
+
             if (op.equals(ConstraintOp.LESS_THAN)) {
                 return "Constraints.lessThan(\"" + path + "\", \"" + value + "\")";
             }
@@ -568,8 +573,9 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
                 + op + "\", \"" + value + "\", \"" + extraValue + "\"));";
         }
 
+        // Bag constraint is not supported
         if ("PathConstraintBag".equals(className)) {
-            // not supported
+
         }
 
         if ("PathConstraintIds".equals(className)) {
@@ -608,6 +614,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             // not handled
         }
 
+        // Loop constraint is uneditable
         if ("PathConstraintLoop".equals(className)) {
             String loopPath = ((PathConstraintLoop) pc).getLoopPath();
             return "parameters.add(new TemplateParameter(\"" + path + "\", \""
