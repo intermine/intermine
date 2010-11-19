@@ -1,0 +1,19 @@
+<project name="intermine-webservice-download" default="build" basedir=".">
+  
+  <description>build, test, package intermine-webservice-client</description>
+  <import file="../../../../imbuild/library.xml"/>
+
+  <property name="dist.dir" value="dist" />
+
+  <target name="clean">
+    <delete dir="${dist.dir}" failonerror="false"/>
+  </target>
+
+  <target name="build" depends="clean">
+    <mkdir dir="${dist.dir}"/>
+    <ant antfile="../main/develop.xml" target="dist" dir="../main" inheritall="false"/>
+    <copydir dest="${dist.dir}" src="../main/client-dist/"/>
+  </target>
+    
+</project>
+
