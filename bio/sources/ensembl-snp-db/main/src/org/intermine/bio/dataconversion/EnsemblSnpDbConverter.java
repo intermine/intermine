@@ -87,6 +87,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
      */
     public void process(Connection connection, String chrName) throws Exception {
 
+        LOG.info("Starting to process chromosome " + chrName);
+        
         ResultSet res = queryVariation(connection, chrName);
 
         int counter = 0;
@@ -144,6 +146,11 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 boolean uniqueLocation = (mapWeight == 1) ? true : false;
                 currentSnp.setAttribute("uniqueLocation", "" + uniqueLocation);
 
+                String type = determineType(alleles);
+                if (type != null) {
+                    currentSnp.setAttribute("type", type);
+                }
+                
                 // CHROMOSOME AND LOCATION
                 // if SNP is mapped to multiple locations don't set chromosome and
                 // chromosomeLocation references
@@ -207,14 +214,16 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             }
 
             if (counter % 1000 == 0) {
-                LOG.info("Read " + counter + " rows total, stored " + snpCounter + " SNPs.");
+                LOG.info("Read " + counter + " rows total, stored " + snpCounter + " SNPs. for chr"
+                        + chrName);
             }
         }
 
         if (currentSnp != null) {
             storeSnp(currentSnp, consequenceIdentifiers);
         }
-        LOG.info("Finished " + counter + " rows total, stored " + snpCounter + " SNPs.");
+        LOG.info("Finished " + counter + " rows total, stored " + snpCounter + " SNPs for chr"
+                + chrName);
     }
 
 
@@ -226,6 +235,32 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         store(snp);
     }
 
+    private String determineType(String alleleStr) {
+        String type = null;
+        
+        if (!StringUtils.isBlank(alleleStr)) {
+            // snp if e.g. A/C or A|C
+            if (alleleStr.matches("/^[ACGTN]([\\|\\\\\\/][ACGTN])+$/i")) {
+                type = "snp";
+            } else if ("cnv".equalsIgnoreCase(alleleStr)) {
+                type = alleleStr.toLowerCase();
+            } else if ("cnv_probe".equalsIgnoreCase(alleleStr)) {
+                type = alleleStr.toLowerCase();
+            } else if ("hgmd_mutation".equalsIgnoreCase(alleleStr)) {
+                type = alleleStr.toLowerCase();
+            } else {
+                String[] alleles = alleleStr.split("[\\|\\/\\\\]");
+                
+//                if (alleles.length == 1) {
+//                   type = "het";
+//                }
+            }
+        }
+
+        
+        return type;
+    }
+    
     private String getSourceIdentifier(String name) throws ObjectStoreException {
         String sourceIdentifier = sources.get(name);
         if (sourceIdentifier == null) {
