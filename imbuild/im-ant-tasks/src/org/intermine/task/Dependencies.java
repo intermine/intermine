@@ -310,7 +310,8 @@ public class Dependencies extends Task
             dirset.setIncludes("build/classes");
             compilePath.addDirset(dirset);
 
-            executeIncludes += depName + "/dist/*.jar " + depName + "/dist/*.war ";
+            executeIncludes += depName + "/dist/*.jar " + depName + "/dist/*.war "
+                + depName + "/dist/*.zip ";
 
             // Add lib/*.jar
             FileSet libFileSet = new FileSet();
