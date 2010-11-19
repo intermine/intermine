@@ -8,7 +8,7 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
     prefix="str"%>
 
-
+<!--  modMineSearchResults.jsp -->
 <tiles:importAttribute />
 
 <html:xhtml />
@@ -38,7 +38,7 @@ input.submit {
 
         if (ids.length < 1)
         { alert("Please select some submissions...");
-          return false;
+          return false;dCC
         } else {
           jQuery("#ids").val(ids);
           return true;
@@ -56,7 +56,7 @@ input.submit {
      function checkAll()
      {
          jQuery(".aSub").attr('checked', jQuery('#allSub').is(':checked'));
-         jQuery('#allSub').css("opacity", 1);
+         jQuery('#allSub').css("opacity", 1);dCC
      }
 
      /* function updateCheckStatus(status)
@@ -156,7 +156,7 @@ Search Term: <c:out value="${searchTerm}"/>
 <c:forEach items="${submissions}" var="subResult">
   <c:set var="sub" value="${subResult.key}"/>
   <tr>
-      <td><input type="checkbox" class="aSub" value="${sub.dCCid}" onclick="updateCheckStatus(this.checked)"/></td>
+      <td><input type="checkbox" class="aSub" value="${sub.id}" onclick="updateCheckStatus(this.checked)"/></td>
       <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.id}"><c:out value="modENCODE_${sub.dCCid}"></c:out></html:link></td>
       <td>
       <c:if test="${sub.organism.genus eq 'Drosophila'}">
@@ -222,3 +222,4 @@ Search Term: <c:out value="${searchTerm}"/>
 </div>
 
 </div>
+<!--  /modMineSearchResults.jsp -->
