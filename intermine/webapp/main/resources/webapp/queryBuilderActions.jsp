@@ -8,14 +8,12 @@
 <!-- queryBuilderActions.jsp -->
     <div class="heading">
       <fmt:message key="view.actions"/>
-      <%-- Hide API tab as it is not ready for a new modMine release 11-17-2010
       <span style="font-size: 0.8em; font-weight:100; padding: 0px 10px 0px 10px">
         <a href="/${WEB_PROPERTIES['webapp.path']}/wsCodeGen.do?method=perl&source=pathQuery" target="_blank">Perl</a>
         <span>|</span>
         <a href="/${WEB_PROPERTIES['webapp.path']}/wsCodeGen.do?method=java&source=pathQuery" target="_blank">Java</a>
         <a href="/${WEB_PROPERTIES['webapp.path']}/api.do" target="_blank"><span>[help]</span></a>
       </span>
-      --%>
     </div>
     <div class="body actions" align="right">
       <p><html:form action="/queryBuilderViewAction" styleId="submitform">
