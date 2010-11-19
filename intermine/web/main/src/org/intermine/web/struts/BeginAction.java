@@ -43,6 +43,8 @@ import org.intermine.web.logic.session.SessionMethods;
 public class BeginAction extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(TemplateTracker.class);
+    private static final Integer MAX_TEMPLATES = new Integer(10);
+
      /**
      * Either display the query builder or redirect to project.sitePrefix.
      *
@@ -106,12 +108,14 @@ public class BeginAction extends InterMineAction
                 }
             }
         }
+
         List<TemplateQuery> templates = null;
         TemplateManager templateManager = im.getTemplateManager();
         Map<String, Aspect> aspects = SessionMethods.getAspects(servletContext);
         Map<String, List<TemplateQuery>> aspectQueries = new HashMap<String, List<TemplateQuery>>();
         for (String aspect : aspects.keySet()) {
-            templates = templateManager.getAspectTemplates(TagNames.IM_ASPECT_PREFIX + aspect);
+            templates = templateManager.getAspectTemplates(TagNames.IM_ASPECT_PREFIX + aspect,
+                    MAX_TEMPLATES);
             aspectQueries.put(aspect, templates);
         }
 
