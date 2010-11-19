@@ -73,7 +73,7 @@ We support programatic access to our data through Application Programming Interf
         Query for genes,  using:
         <ul>
             <li><a href="template.do?name=ChromLocation_Gene">locations</a></li>
-             <li><a href="template.do?name=Publication_Genes">publications</a></li>
+            <li><a href="template.do?name=Publication_Genes">publications</a></li>
             <li><a href="template.do?name=Pathway_Genes">pathways</a></li>
         </ul>
         </td>
@@ -90,124 +90,105 @@ We support programatic access to our data through Application Programming Interf
     </div>
     <div id="tab2" class="tab_content">
         FlyMine loads proteins from UniProt and protein domains from InterPro.  <a href="aspect.do?name=Proteins">Read more...</a>
+        <br/><br/>
+        Query for proteins:
         <br/>
-        <table width="50%" cellpadding="10"><tr><td>
-        Query for genes,  using:
         <ul>
-            <li><a href="template.do?name=ChromLocation_Gene">locations</a></li>
-            <li><a href="template.do?name=Probe_Gene">Affymetrix probesets</a></li>
-            <li><a href="template.do?name=Pathway_Genes">pathways</a></li>
+        <c:forEach var="entry" items="${aspectQueries}">
+            <c:set var="aspect" value="${entry.key}"/>
+            <c:set var="templates" value="${entry.value}"/>
+            <c:if test="${aspect == 'Proteins'}">
+                <c:forEach var="template" items="${templates}">
+                    <li><a href="template.do?name=${template.name}">${template.title}</a></li>
+                </c:forEach>
+            </c:if>
+        </c:forEach>
         </ul>
-        </td>
-        <td>
-        Query using gene identifier(s), returning a list of:
-        <ul>
-            <li><a href="template.do?name=Gene_Interaction">interactions</a></li>
-            <li><a href="template.do?name=Gene%20_adjacent%20genes">adjacent genes</a></li>
-            <li><a href="template.do?name=Gene_OverlapppingGenes">overlapping genes</a></li>
-        </ul>
-        </td></tr></table>
-
     </div>
-        <div id="tab3" class="tab_content">
+    <div id="tab3" class="tab_content">
         FlyMine loads interactions from IntAct and BioGRID  <a href="aspect.do?name=Interactions">Read more</a>
+        <br/><br/>
+        Query for interactions:
         <br/>
-        <table width="50%" cellpadding="10"><tr><td>
-        Query for genes,  using:
         <ul>
-            <li><a href="template.do?name=ChromLocation_Gene">locations</a></li>
-            <li><a href="template.do?name=Probe_Gene">Affymetrix probesets</a></li>
-            <li><a href="template.do?name=Pathway_Genes">pathways</a></li>
+        <c:forEach var="entry" items="${aspectQueries}">
+            <c:set var="aspect" value="${entry.key}"/>
+            <c:set var="templates" value="${entry.value}"/>
+            <c:if test="${aspect == 'Interactions'}">
+                <c:forEach var="template" items="${templates}">
+                    <li><a href="template.do?name=${template.name}">${template.title}</a></li>
+                </c:forEach>
+            </c:if>
+        </c:forEach>
         </ul>
-        </td>
-        <td>
-        Query using gene identifier(s), returning a list of:
-        <ul>
-            <li><a href="template.do?name=Gene_Interaction">interactions</a></li>
-            <li><a href="template.do?name=Gene%20_adjacent%20genes">adjacent genes</a></li>
-            <li><a href="template.do?name=Gene_OverlapppingGenes">overlapping genes</a></li>
-        </ul>
-        </td></tr></table>
     </div>
-        <div id="tab4" class="tab_content">
+    <div id="tab4" class="tab_content">
         FlyMine loads publication data from over 30 sources.  <a href="aspect.do?name=Literature">Read more</a>
+        <br/><br/>
+        Query for publications:
         <br/>
-        <table width="50%" cellpadding="10"><tr><td>
-        Query for genes,  using:
         <ul>
-            <li><a href="template.do?name=ChromLocation_Gene">locations</a></li>
-            <li><a href="template.do?name=Probe_Gene">Affymetrix probesets</a></li>
-            <li><a href="template.do?name=Pathway_Genes">pathways</a></li>
+        <c:forEach var="entry" items="${aspectQueries}">
+            <c:set var="aspect" value="${entry.key}"/>
+            <c:set var="templates" value="${entry.value}"/>
+            <c:if test="${aspect == 'Literature'}">
+                <c:forEach var="template" items="${templates}">
+                    <li><a href="template.do?name=${template.name}">${template.title}</a></li>
+                </c:forEach>
+            </c:if>
+        </c:forEach>
         </ul>
-        </td>
-        <td>
-        Query using gene identifier(s), returning a list of:
-        <ul>
-            <li><a href="template.do?name=Gene_Interaction">interactions</a></li>
-            <li><a href="template.do?name=Gene%20_adjacent%20genes">adjacent genes</a></li>
-            <li><a href="template.do?name=Gene_OverlapppingGenes">overlapping genes</a></li>
-        </ul>
-        </td></tr></table>
     </div>
-        <div id="tab5" class="tab_content">
+    <div id="tab5" class="tab_content">
         FlyMine loads homologues from InParanoid, KEGG and TreeFam.  <a href="aspect.do?name=Comparative+Genomics">Read more</a>
+        <br/><br/>
+        Query for homologues:
         <br/>
-        <table width="50%" cellpadding="10"><tr><td>
-        Query for genes,  using:
         <ul>
-            <li><a href="template.do?name=ChromLocation_Gene">locations</a></li>
-            <li><a href="template.do?name=Probe_Gene">Affymetrix probesets</a></li>
-            <li><a href="template.do?name=Pathway_Genes">pathways</a></li>
+        <c:forEach var="entry" items="${aspectQueries}">
+            <c:set var="aspect" value="${entry.key}"/>
+            <c:set var="templates" value="${entry.value}"/>
+            <c:if test="${aspect == 'Comparative Genomics'}">
+                <c:forEach var="template" items="${templates}">
+                    <li><a href="template.do?name=${template.name}">${template.title}</a></li>
+                </c:forEach>
+            </c:if>
+        </c:forEach>
         </ul>
-        </td>
-        <td>
-        Query using gene identifier(s), returning a list of:
-        <ul>
-            <li><a href="template.do?name=Gene_Interaction">interactions</a></li>
-            <li><a href="template.do?name=Gene%20_adjacent%20genes">adjacent genes</a></li>
-            <li><a href="template.do?name=Gene_OverlapppingGenes">overlapping genes</a></li>
-        </ul>
-        </td></tr></table>
     </div>
-        <div id="tab6" class="tab_content">
+    <div id="tab6" class="tab_content">
         FlyMine loads gene ontology from MGI, FlyBase, WormBase, UniProt, SGD, and InterPro.  <a href="aspect.do?name=Gene+Ontology">Read more</a>
+        <br/><br/>
+        Query for GO:
         <br/>
-        <table width="50%" cellpadding="10"><tr><td>
-        Query for genes,  using:
         <ul>
-            <li><a href="template.do?name=ChromLocation_Gene">locations</a></li>
-            <li><a href="template.do?name=Probe_Gene">Affymetrix probesets</a></li>
-            <li><a href="template.do?name=Pathway_Genes">pathways</a></li>
+        <c:forEach var="entry" items="${aspectQueries}">
+            <c:set var="aspect" value="${entry.key}"/>
+            <c:set var="templates" value="${entry.value}"/>
+            <c:if test="${aspect == 'Gene Ontology'}">
+                <c:forEach var="template" items="${templates}">
+                    <li><a href="template.do?name=${template.name}">${template.title}</a></li>
+                </c:forEach>
+            </c:if>
+        </c:forEach>
         </ul>
-        </td>
-        <td>
-        Query using gene identifier(s), returning a list of:
-        <ul>
-            <li><a href="template.do?name=Gene_Interaction">interactions</a></li>
-            <li><a href="template.do?name=Gene%20_adjacent%20genes">adjacent genes</a></li>
-            <li><a href="template.do?name=Gene_OverlapppingGenes">overlapping genes</a></li>
-        </ul>
-        </td></tr></table>
     </div>
-        <div id="tab7" class="tab_content">
+    <div id="tab7" class="tab_content">
         FlyMine loads gene expression data for Drosophila melanogaster and Anopheles gambiae from FlyAtlas, BDGP, ArrayExpress and Fly-FISH.  <a href="aspect.do?name=Gene+Expression">Read more...</a>
+        <br/><br/>
+        Query for gene expression:
         <br/>
-        <table width="50%" cellpadding="10"><tr><td>
-        Query for genes,  using:
         <ul>
-            <li><a href="template.do?name=ChromLocation_Gene">locations</a></li>
-            <li><a href="template.do?name=Publication_Genes">publications</a></li>
-            <li><a href="template.do?name=Pathway_Genes">pathways</a></li>
+        <c:forEach var="entry" items="${aspectQueries}">
+            <c:set var="aspect" value="${entry.key}"/>
+            <c:set var="templates" value="${entry.value}"/>
+            <c:if test="${aspect == 'Gene Expression'}">
+                <c:forEach var="template" items="${templates}">
+                    <li><a href="template.do?name=${template.name}">${template.title}</a></li>
+                </c:forEach>
+            </c:if>
+        </c:forEach>
         </ul>
-        </td>
-        <td>
-        Query using gene identifier(s), returning a list of:
-        <ul>
-            <li><a href="template.do?name=Gene_Interaction">interactions</a></li>
-            <li><a href="template.do?name=Gene%20_adjacent%20genes">adjacent genes</a></li>
-            <li><a href="template.do?name=Gene_OverlapppingGenes">overlapping genes</a></li>
-        </ul>
-        </td></tr></table>
     </div>
 
 </div>
