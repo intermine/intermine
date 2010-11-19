@@ -11,6 +11,9 @@
      <property name="src.data.dir" location="/shared/data/metabolic/ncbi/current/"/>
      <property name="organisms" value="9606"/>
     </source>
+    <source name="mgi-identifiers" type="mgi-identifiers">
+      <property name="src.data.dir" location="/shared/data/mgi/current"/>
+    </source>
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source> 
@@ -24,12 +27,12 @@
      <property name="source.db.name" value="ensembl.9606.variation"/>
     </source>
     <source name="uniprot" type="uniprot">
-      <property name="uniprot.organisms" value="9606"/>
+      <property name="uniprot.organisms" value="9606 10090"/>
       <property name="createinterpro" value="true"/>
       <property name="src.data.dir" location="/shared/data/uniprot/2010_09/split/"/>
     </source>
     <source name="uniprot-fasta" type="fasta" dump="true">
-      <property name="fasta.taxonId" value="9606"/>
+      <property name="fasta.taxonId" value="9606 10090"/>
       <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
@@ -55,11 +58,12 @@
     </source>
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/go-annotation/human/2010-10-04"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/metabolic/"/>
+      <property name="src.data.includes" value="**/gene_association*"/>
     </source>
     <source name="kegg-pathway" type="kegg-pathway">
-      <property name="src.data.dir" location="/shared/data/metabolic/kegg"/>
-      <property name="kegg.organisms" value="9606"/>
+      <property name="src.data.dir" location="/shared/data/kegg/2010-10-20"/>
+      <property name="kegg.organisms" value="9606 10090"/>
     </source>
     <source name="reactome" type="biopax">
       <property name="src.data.dir" location="/shared/data/metabolic/biopax/reactome/current/not-curated"/>
@@ -70,21 +74,25 @@
     </source>
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
-      <property name="intact.organisms" value="9606"/>
+      <property name="intact.organisms" value="9606 10090"/>
     </source>
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/shared/data/metabolic/biogrid"/>
       <property name="src.data.dir.includes" value="*psi25.xml"/>
-      <property name="biogrid.organisms" value="9606"/>
+      <property name="biogrid.organisms" value="9606 10090"/>
     </source>
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
       <property name="src.data.dir" location="/shared/data/pubmed/current"/>
-      <property name="pubmed.organisms" value="9606"/>
+      <property name="pubmed.organisms" value="9606 10090"/>
       <property name="src.data.dir.includes" value="gene2pubmed"/>
       <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/>
     </source>
     <source name="omim" type="omim" dump="true">
-     <property name="src.data.dir" location="/shared/data/metabolic/omim/test"/>
+      <property name="src.data.dir" location="/shared/data/metabolic/omim/test"/>
+    </source>
+    <source name="ensembl-mouse" type="ensembl" dump="true">
+      <property name="src.data.dir" location="/shared/data/ensembl/current"/>     
+      <property name="src.data.dir.includes" value="10090.xml"/>
     </source>
     <source name="ensembl-human-chr-fasta" type="fasta">
       <property name="fasta.taxonId" value="9606"/>
