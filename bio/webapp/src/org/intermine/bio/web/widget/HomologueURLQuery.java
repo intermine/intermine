@@ -10,6 +10,8 @@ package org.intermine.bio.web.widget;
  *
  */
 
+import java.util.Arrays;
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
@@ -53,7 +55,9 @@ public class HomologueURLQuery implements WidgetURLQuery
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         q.addConstraint(Constraints.eq("Gene.homologues.type", "orthologue"));
         if (!showAll) {
-            q.addConstraint(Constraints.lookup("Gene.homologues.homologue.organism", key, ""));
+            String[] keys = key.split(",");
+            q.addConstraint(Constraints.oneOfValues("Gene.homologues.homologue.organism",
+                    Arrays.asList(keys)));
         }
         q.addOrderBy("Gene.organism.shortName", OrderDirection.ASC);
         q.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);

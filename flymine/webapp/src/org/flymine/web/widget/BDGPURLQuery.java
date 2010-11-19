@@ -61,8 +61,9 @@ public class BDGPURLQuery implements WidgetURLQuery
                 Boolean.TRUE.toString()));
         q.addConstraint(Constraints.eq("Gene.mRNAExpressionResults.dataSet.name", DATASET));
         if (!showAll) {
-            q.addConstraint(Constraints.lookup("Gene.mRNAExpressionResults.mRNAExpressionTerms",
-                    key, ""));
+            String[] keys = key.split(",");
+            q.addConstraint(Constraints.oneOfValues(
+                    "Gene.mRNAExpressionResults.mRNAExpressionTerms", Arrays.asList(keys)));
         }
         for (String orderPath : expressionStrings) {
             q.addOrderBy(orderPath, OrderDirection.ASC);
