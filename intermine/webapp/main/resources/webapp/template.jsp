@@ -347,7 +347,6 @@
       <a href="${webserviceLink}" title="Get a URL to run this template from the command line or a script">web service URL</a>
     </td>
     <td>
-      <%-- Hide API tab as it is not ready for a new modMine release 11-17-2010
       <c:choose>
         <c:when test="${empty builder}">
           <a href="javascript:codeGenTemplate('perl');">Perl</a>
@@ -362,7 +361,6 @@
           <a href="/${WEB_PROPERTIES['webapp.path']}/api.do" target="_blank"><span>[help]</span></a>
         </c:otherwise>
       </c:choose>
-      --%>
     </td>
     <td>
       <c:choose>
