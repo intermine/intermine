@@ -76,16 +76,18 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         chrNames.add("X");
         chrNames.add("Y");
 
-        process(connection, chrNames);
+        for (String chrName : chrNames) {
+            process(connection, chrName);
+        }
         connection.close();
     }
 
     /**
      * {@inheritDoc}
      */
-    public void process(Connection connection, Set<String> chrNames) throws Exception {
+    public void process(Connection connection, String chrName) throws Exception {
 
-        ResultSet res = queryVariation(connection, chrNames);
+        ResultSet res = queryVariation(connection, chrName);
 
         int counter = 0;
         int snpCounter = 0;
@@ -97,7 +99,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         while (res.next()) {
             counter++;
             String rsNumber = res.getString("variation_name");
-            String chrName = res.getString("sr.name");
 
             if (rsNumber.equals(currentRsNumber)) {
                 int start = res.getInt("seq_region_start");
@@ -283,16 +284,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return consequenceIdentifier;
     }
 
-    private ResultSet queryVariation(Connection connection, Set<String> chrNames)
+    private ResultSet queryVariation(Connection connection, String chrName)
         throws SQLException {
-
-        StringBuffer chrNameStr = new StringBuffer();
-        for (String chrName : chrNames) {
-            if (chrNameStr.length() > 0) {
-                chrNameStr.append(",");
-            }
-            chrNameStr.append("'" + chrName + "'");
-        }
 
         String query = "SELECT vf.variation_name, vf.allele_string, "
             + " sr.name,"
@@ -307,7 +300,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + "     AND tv.cdna_start is not null)"
             + " WHERE vf.seq_region_id = sr.seq_region_id"
             + " AND vf.source_id = s.source_id"
-            + " AND sr.name IN (" + chrNameStr.toString() + ")"
+            + " AND sr.name = " + chrName
             + " ORDER BY vf.variation_id";
 
         Statement stmt = connection.createStatement();
