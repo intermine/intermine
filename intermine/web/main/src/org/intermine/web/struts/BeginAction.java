@@ -10,8 +10,12 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,9 +27,12 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
+import org.intermine.api.tag.TagNames;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.tracker.TemplateTracker;
 import org.intermine.api.tracker.TrackerDelegate;
+import org.intermine.web.logic.aspects.Aspect;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -59,8 +66,9 @@ public class BeginAction extends InterMineAction
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ServletContext servletContext = session.getServletContext();
 
-        Properties properties = SessionMethods.getWebProperties(session.getServletContext());
+        Properties properties = SessionMethods.getWebProperties(servletContext);
 
         // If GALAXY_URL is sent from a Galaxy server, then save it in the session; if not, read
         // the default value from web.properties and save it in the session
@@ -98,10 +106,21 @@ public class BeginAction extends InterMineAction
                 }
             }
         }
+        List<TemplateQuery> templates = null;
+        TemplateManager templateManager = im.getTemplateManager();
+        Map<String, Aspect> aspects = SessionMethods.getAspects(servletContext);
+        Map<String, List<TemplateQuery>> aspectQueries = new HashMap<String, List<TemplateQuery>>();
+        for (String aspect : aspects.keySet()) {
+            templates = templateManager.getAspectTemplates(TagNames.IM_ASPECT_PREFIX + aspect);
+            aspectQueries.put(aspect, templates);
+        }
+
+        request.setAttribute("aspectQueries", aspectQueries);
 
         String[] beginQueryClasses = (properties.get("begin.query.classes").toString())
             .split("[ ,]+");
         request.setAttribute("beginQueryClasses", beginQueryClasses);
+
         return mapping.findForward("begin");
     }
 }
