@@ -67,7 +67,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
         Connection connection = getDatabase().getConnection();
 
-        Set<String> chrNames = new HashSet<String>();
+        List<String> chrNames = new ArrayList<String>();
         //int MIN_CHROMOSOME = 1;
         int MIN_CHROMOSOME = 20;
         for (int i = MIN_CHROMOSOME; i <= 22; i++) {
@@ -214,7 +214,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             }
 
             if (counter % 1000 == 0) {
-                LOG.info("Read " + counter + " rows total, stored " + snpCounter + " SNPs. for chr"
+                LOG.info("Read " + counter + " rows total, stored " + snpCounter + " SNPs. for chr "
                         + chrName);
             }
         }
@@ -222,7 +222,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         if (currentSnp != null) {
             storeSnp(currentSnp, consequenceIdentifiers);
         }
-        LOG.info("Finished " + counter + " rows total, stored " + snpCounter + " SNPs for chr"
+        LOG.info("Finished " + counter + " rows total, stored " + snpCounter + " SNPs for chr "
                 + chrName);
     }
 
@@ -251,9 +251,42 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             } else {
                 String[] alleles = alleleStr.split("[\\|\\/\\\\]");
                 
-//                if (alleles.length == 1) {
-//                   type = "het";
-//                }
+                if (alleles.length == 1) {
+                   type = "het";
+                } else if (alleles.length == 2) {
+                    if ((StringUtils.containsOnly(alleles[0], "ACTGN") && "-".equals(alleles[1]))
+                            || (StringUtils.containsOnly(alleles[1], "ACTGN")
+                                    && "-".equals(alleles[0]))) {
+                        type = "in-del";
+                    } else if (alleles[0].matches("/LARGE|INS|DEL/")
+                            || alleles[1].matches("/LARGE|INS|DEL/")) {
+                        type = "named";
+                    } else if (1 == 0) {
+                        // TODO substitution
+//                      elsif (($alleles[0] =~ tr/ACTG//) > 1 || ($alleles[1] =~ tr/ACTG//) > 1){
+//                      #AA/GC 2 alleles
+//                      $class = 'substitution'
+//                  }
+                    } else {
+                        LOG.warn("Failed to work out allele type for: " + alleleStr);
+                    }
+                }
+//                elsif (@alleles > 2) {
+//                    
+//                    if ($alleles[0] =~ /\d+/) { 
+//                        #(CA)14/15/16/17 > 2 alleles, all of them contain the number of repetitions of the allele
+//                        $class = 'microsat'
+//                    }
+//             
+//                    elsif ((grep {/-/} @alleles) > 0) {
+//                        #-/A/T/TTA > 2 alleles
+//                        $class = 'mixed'
+//                    }
+//                    else {
+//                        #  warning("not possible to determine class of alleles " . @alleles);
+//                        $class = '';
+//                    }
+//                 }
             }
         }
 
