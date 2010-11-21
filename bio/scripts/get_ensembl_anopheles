@@ -7,9 +7,9 @@ use Net::FTP;
 
 BEGIN {
   # find the lib directory by looking at the path to this script
-  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/InterMine-Util/lib/');
 }
-use InterMine::DataDownloader;
+use InterMine::Util::DataDownloader;
 
 
 #Define ARGVs
