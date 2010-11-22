@@ -190,8 +190,8 @@ public class GoConverter extends BioFileConverter
 
             // Wormbase has some proteins with UniProt accessions and some with WB:WP ids,
             // hack here to get just the UniProt ones.
-            if ("protein".equalsIgnoreCase(type) && !array[0].startsWith("UniProt")
-                    && !("FB").equals(array[0])) {
+            if (("protein".equalsIgnoreCase(type) && !array[0].startsWith("UniProt"))
+                    || (!"protein".equalsIgnoreCase(type) && array[0].startsWith("UniProt"))) {
                 continue;
             }
 
