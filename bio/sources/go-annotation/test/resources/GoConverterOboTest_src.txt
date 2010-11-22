@@ -1,6 +1,6 @@
 !testing the parent coversion
-FB	FBgn0015567	&agr;-Adaptin		GO:0000004	FB:FBrf0124164	NAS	FLYBASE:Grip84;	C	alpha-Adaptin	CG7807|AP2|&agr; adaptin	gene	taxon:7227	20040228	FB
-FB	FBgn0015567	&agr;-Adaptin		GO:0000005	FB:FBrf0124165	NAS		C	alpha-Adaptin	CG7808|AP3|&agr; adaptin	gene	taxon:7227	20040229	FB
-FB	FBgn0015567	&agr;-Adaptin		GO:0000011	FB:FBrf0124166	NAS	FB:FBgn0020002	C	alpha-Adaptin	CG7809|AP4|&agr; adaptin	gene	taxon:7227	20040230	FB
+FB	FBgn0015567	&agr;-Adaptin		GO:0000004	PMID:12345	NAS	FLYBASE:Grip84;	C	alpha-Adaptin	CG7807|AP2|&agr; adaptin	gene	taxon:7227	20040228	FB
+FB	FBgn0015567	&agr;-Adaptin		GO:0000005	PMID:12345	NAS		C	alpha-Adaptin	CG7808|AP3|&agr; adaptin	gene	taxon:7227	20040229	FB
+FB	FBgn0015567	&agr;-Adaptin		GO:0000011	PMID:12345	NAS	FB:FBgn0020002	C	alpha-Adaptin	CG7809|AP4|&agr; adaptin	gene	taxon:7227	20040230	FB
 FB	FBgn0020002	&agr;-Adaptin		GO:0000001	FB:FBrf0124166	NAS		C	alpha-Adaptin	CG4000|ALC|&agr; monkey	gene	taxon:7227	20040228	FB
-FB	FBgn0020002	&agr;-Adaptin		GO:9999999	FB:FBrf0124166	NAS		C	alpha-Adaptin	CG4000|ALC|&agr; monkey	gene	taxon:7227	20040228	FB
+SGD	S000007288	21s		GO:0042244	SGD_REF:S000073372|PMID:6759872	IMP		C	alxxxptin	Cxx000|ALC|&agr; mxxxnkey	gene	taxon:4932	20040228	SGD
