@@ -15,6 +15,8 @@ use constant {
     DIFFERENCES => 'only_differences',
     CSS_FILE    => '../css/style.css',
     LOGO_FILE   => '../icons/intermine_logo.png',
+    CONTACT_FAIL => 'Could not contact webservice',
+    TEMPLATE_FAIL => 'Could not download templates',
 };
 use constant WANTED_VALUES => qw(
     all_constraints views editable_constraints
@@ -106,7 +108,7 @@ while (<DATA>) {
 }
 @services = keys(%link_to);
 
-unless ($data->{$todays_date} || param(REFRESH)) {
+if (param(REFRESH) or not $data->{$todays_date}) {
 
     my $todays_data = {};
     $todays_data->{update_time} = $now->time();
@@ -115,9 +117,11 @@ unless ($data->{$todays_date} || param(REFRESH)) {
         $service_from{$mine} = eval{
             Webservice::InterMine->get_service($url.'/service');
         };
-        next if $@;
         $todays_data->{version_of}->{$mine} = eval{
             $service_from{$mine}->release();
+        };
+        if ($@) {
+            $todays_data->{version_of}{$mine} = CONTACT_FAIL;
         }
     }
 
@@ -126,12 +130,18 @@ unless ($data->{$todays_date} || param(REFRESH)) {
     my %template_data;
     while (my ($service_name, $service) = each %service_from) {
         warn "getting templates for $service_name";
-        for my $template (eval {$service->get_templates}) {
-            push @templates, (my $title = $template->title);
-            for my $wanted (WANTED_VALUES) {
-                for my $value (map {(ref $_)?$_->to_string:$_} $template->$wanted) {
-                    $template_data{$service_name}{$title}{$wanted}{$value}++;
-                    $template_data{$title}{$wanted}{$value}++;
+        my @template_list = eval {$service->get_templates};
+        if ($@) {
+            $todays_data->{version_of}{$service_name} = TEMPLATE_FAIL;
+        } else {
+            for my $template (@template_list) {
+                $template_data{total_for}{$service_name}++;
+                push @templates, (my $title = $template->title);
+                for my $wanted (WANTED_VALUES) {
+                    for my $value (map {(ref $_)?$_->to_string:$_} $template->$wanted) {
+                        $template_data{$service_name}{$title}{$wanted}{$value}++;
+                        $template_data{$title}{$wanted}{$value}++;
+                    }
                 }
             }
         }
@@ -148,11 +158,13 @@ unless ($data->{$todays_date} || param(REFRESH)) {
 
 ### Write Service table
 my %active = map 
-    {($_ => (param('submitted'))
+    {($_ => (param(SUBMITTED))
             ? defined param($_)
             : 1)}
     @services;
-@services = grep {$active{$_}} @services;
+
+# We only want to display data for services that the user wants and actually have data
+@services = grep {$data->{$todays_date}{version_of}{$_} !~ /^(@{[CONTACT_FAIL]}|@{[TEMPLATE_FAIL]})$/} grep {$active{$_}} @services;
 
 my $service_table = HTML::Table->new();
 while (my ($service, $url) = each %link_to) {
@@ -164,7 +176,7 @@ while (my ($service, $url) = each %link_to) {
         -label   => '',
 	),
 	strong(a({-href => $url},$service)),
-	"Version: " . $data->{version_of}{$service});
+	"Version: " . $data->{$todays_date}{version_of}{$service});
 }
 
 # Parse the template for data, unless that's been done already
@@ -192,7 +204,7 @@ for my $row (@rows) {
         a({href  => '#'.$title,}, $title)
     );
 }
-unshift @rows, {map {($_ => scalar(keys %{$template_data{$_}}) || 'Total')} (Template => @services)}; # header row
+unshift @rows, {map {($_ => ($template_data{total_for}{$_} || 'Total') )} (Template => @services)}; # header row
 my $row_order = ['Template', sort($order grep {$_ ne 'Template'} keys %{$rows[0]})];
 my $overview_table = make_table_from_rows(\@rows, $row_order);
 
@@ -203,13 +215,19 @@ for my $title (@templates) {
     my @rows  = map { {$col1_name => $_} } 
                     sort($order 
                         keys %{$template_data{$title}{$wanted}});
+    # Don't show a table if there is nothing to show
     next unless @rows;
-    for my $row (@rows) {
-        for my $service (@services) {
-            $row->{$service} = 
-                (exists $template_data{$service}{$title}{$wanted}{$row->{$col1_name}})
-                    ? 'YES'
-                    : 'NO';
+    # Don't show a column of NO's for services that don't even have the template
+    my @services_with_this_template = grep {$template_data{$_}{$title}{$wanted}} @services;
+    # Only show YES/NO boxes if the template is in more than one service
+    if (@services_with_this_template > 1) {
+        for my $row (@rows) {
+            for my $service (@services_with_this_template) {
+                $row->{$service} = 
+                    (exists $template_data{$service}{$title}{$wanted}{$row->{$col1_name}})
+                        ? 'YES'
+                        : 'NO';
+            }
         }
     }
     my $row_order = [
@@ -243,7 +261,7 @@ $table->setCell(1, 1,
         -checked => 0,
         -value   => 'ON',
         -label   => 'Hide rows without differences',
-    ) .
+    ) . br() .
     checkbox(
         -name => REFRESH,
         -checked => 0,
