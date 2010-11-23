@@ -32,8 +32,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     private String SPACE = WebserviceJavaCodeGenerator.SPACE;
     private String ENDL = WebserviceJavaCodeGenerator.ENDL;
 
-    private String INVALID_QUERY = "Invalid query. No fields selected for output...";
-    private String NULL_QUERY = "Invalid query. Query can not be null...";
+    private String INVALID_QUERY = WebserviceJavaCodeGenerator.INVALID_QUERY;
+    private String NULL_QUERY = WebserviceJavaCodeGenerator.NULL_QUERY;
     private String TEMPLATE_BAG_CONSTRAINT = WebserviceJavaCodeGenerator.TEMPLATE_BAG_CONSTRAINT;
 
     private String serviceRootURL = "http://newt.flymine.org:8080/modminepreview";
@@ -50,7 +50,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
      * (Called before every test case method.)
      */
     public void setUp() {
-
+        cg = new WebserviceJavaCodeGenerator();
     }
 
     /**
@@ -71,7 +71,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         WebserviceCodeGenInfo wsCodeGenInfo =
             new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
 
-        String expected = this.NULL_QUERY;
+        String expected = NULL_QUERY;
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
 
