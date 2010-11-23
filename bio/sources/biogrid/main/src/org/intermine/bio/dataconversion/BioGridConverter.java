@@ -266,25 +266,9 @@ public class BioGridConverter extends BioFileConverter
                 attName = "experimentRef";
                 holder = new InteractionHolder();
            //<interactionList><interaction>   <participantList><participant id="68259">
-            } else if (qName.equals("participant") && stack.peek().equals("participantList")) {
-                participantId = attrs.getValue("id");
-                InteractorHolder ih = interactors.get(participantId);
-                if (ih == null) {
-                    holder.validActors = false;
-                    LOG.error("invalid participant ID: " + participantId);
-                } else {
-                	// TODO make sure this is necessary.  interactor id is reused?
-                	ih.role = null;
-                	// resolver didn't return valid identifier
-                	if (ih.refId == null) {
-                		ih.valid = false;
-                		holder.validActors = false;
-                	} else {
-                		holder.refIds.add(ih.refId);
-                		holder.identifiers.add(ih.identifier);
-                		holder.addInteractor(participantId, ih);
-                	}
-                }
+                // <interactorRef>
+            } else if (qName.equals("interactorRef") && stack.peek().equals("participant")) {
+                attName = "participant";
             //<interactionList><interaction><interactionType><xref><primaryRef>
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                             && stack.search("interactionType") == 2) {
@@ -352,6 +336,8 @@ public class BioGridConverter extends BioFileConverter
                 storeExperiments();
 
             /********************************* GENES ***********************************/
+
+
             // <interactorList><interactor id="4"><names><shortLabel>YFL039C</shortLabel>
             } else if (attName != null && attName.equals("shortLabel")
                             && qName.equals("shortLabel") && stack.search("interactor") == 2) {
@@ -364,20 +350,41 @@ public class BioGridConverter extends BioFileConverter
                 interactorHolder.shortLabel = shortLabel;
 
             /******************* INTERACTIONS ***************************************************/
-
+                //<interactionList><interaction>   <participantList><participant id="68259">
+                //<interactorRef>1</interactorRef>
+            } else if (attName != null && attName.equals("participant")
+                    && qName.equals("interactorRef")) {
+                participantId = attValue.toString();
+                InteractorHolder ih = interactors.get(participantId);
+                if (ih == null) {
+                    holder.validActors = false;
+                    LOG.error("invalid participant ID: " + participantId);
+                } else {
+                    // TODO make sure this is necessary.  interactor id is reused?
+                    ih.role = null;
+                    // resolver didn't return valid identifier
+                    if (ih.refId == null) {
+                        ih.valid = false;
+                        holder.validActors = false;
+                    } else {
+                        holder.refIds.add(ih.refId);
+                        holder.identifiers.add(ih.identifier);
+                        holder.addInteractor(participantId, ih);
+                    }
+                }
             //<participant><interactorRef>
             //<experimentalRoleList><experimentalRole><names><shortLabel>
             } else if (attName != null && attName.equals("role") && qName.equals("shortLabel")
                             && stack.search("experimentalRole") == 2) {
                 String role = attValue.toString();
                 if (role != null) {
-                	InteractorHolder ih = interactors.get(participantId);
-                	if (ih == null) {
-                		holder.validActors = false;
-                	} else {
-                		ih.role = role;
-                	}
-            }
+                    InteractorHolder ih = interactors.get(participantId);
+                    if (ih == null) {
+                        holder.validActors = false;
+                    } else {
+                        ih.role = role;
+                    }
+                }
             //<interactionList><interaction><experimentList><experimentRef>
             } else if (attName != null && attName.equals("experimentRef")
                             && qName.equals("experimentRef")
