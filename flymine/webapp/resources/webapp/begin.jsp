@@ -28,7 +28,7 @@
 
      <im:boxarea title="Java/Perl API" stylename="api plainbox">
      <br/>
-We support programatic access to our data through Application Programming Interface too! Choose from options below:
+We support programatic access to our data through Application Programming Interface too.  Choose from options below:
 <br/>
 <ul>
 <li><a href="/api.do?subtab=java">Java</a>
@@ -62,7 +62,7 @@ We support programatic access to our data through Application Programming Interf
     <li class="tab"><a href="#tab5">Homologues</a></li>
     <li class="tab"><a href="#tab6">Gene Ontology</a></li>
     <li class="tab"><a href="#tab7">Gene Expression</a></li>
-    <li class="link"><a href="#">More</a></li>
+    <li class="link"><a href="/dataCategories.do">more ...</a></li>
 </ul>
 </div>
 
@@ -78,7 +78,8 @@ We support programatic access to our data through Application Programming Interf
             <c:set var="templates" value="${entry.value}"/>
             <c:if test="${aspect == 'Genomics'}">
                 <c:forEach var="template" items="${templates}" varStatus="status">
-                    <li><a href="template.do?name=${template.name}">${template.title}</a></li>
+                   <c:set var="templateTitle" value="${fn:replace(template.title,'-->','&nbsp;<img src=\"images/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />
+                   <li><a href="template.do?name=${template.name}">${templateTitle}</a></li>
                 </c:forEach>
             </c:if>
         </c:forEach>
