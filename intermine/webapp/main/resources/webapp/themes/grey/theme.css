@@ -272,3 +272,5 @@ div.heading.results #tool_bar_div li { border:1px solid #D2D2D2; background:#EEE
 
 /* submenu form on mymine */
 #submenu.submenu_mymine #submenudiv #quicksearch form { color:#000 !important; }
+
+ul#submenulist li div { border-left-color:#7A7A7A; }

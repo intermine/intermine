@@ -67,7 +67,6 @@
 .keywordSearchResult .objectKeys {
 	font-weight: bold;
 	margin-bottom: 0.5em;
-    white-space: nowrap;
 }
 
 .keywordSearchResult .objectKeys span.objectKey {

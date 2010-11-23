@@ -53,21 +53,11 @@
               <input type="checkbox" id="selected_bag"
                      onclick="selectColumnCheckbox(this.form, 'bag')">
             </th>
-            <th align="left" nowrap class="sortable">
-              <fmt:message key="query.savedbags.namecolumnheader"/>
-            </th>
-            <th align="left" nowrap class="sortable">
-              <fmt:message key="query.savedbags.descriptioncolumnheader"/>
-            </th>
-            <th align="left" nowrap class="sortable">
-              <fmt:message key="query.savedbags.typecolumnheader"/>
-            </th>
-            <th align="right" nowrap class="sortable-numeric">
-              <fmt:message key="query.savedbags.countcolumnheader"/>
-            </th>
-            <th align="left" nowrap class="sortable">
-              <fmt:message key="query.savedbags.datecreatedcolumnheader"/>
-            </th>
+            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.namecolumnheader"/></th>
+            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.descriptioncolumnheader"/></th>
+            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.typecolumnheader"/></th>
+            <th align="right" nowrap class="sortable-numeric"><fmt:message key="query.savedbags.countcolumnheader"/></th>
+            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.datecreatedcolumnheader"/></th>
           </tr>
           <c:forEach items="${PROFILE.savedBags}" var="savedBag" varStatus="status">
             <tr>

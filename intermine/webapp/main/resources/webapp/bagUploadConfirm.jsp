@@ -161,7 +161,7 @@ function toggleForm(matchCount) {
         </fmt:message>
       </p>
       <p style="font-weight: bold">
-        <c:forEach items="${unresolved}" var="unresolvedIdentifer">${unresolvedIdentifer.key} </c:forEach>
+        <c:forEach items="${unresolved}" var="unresolvedIdentifer"><c:out value="${unresolvedIdentifer.key}" escapeXml="true" /></c:forEach>
       </p>
     </div>
     <div class="body">
