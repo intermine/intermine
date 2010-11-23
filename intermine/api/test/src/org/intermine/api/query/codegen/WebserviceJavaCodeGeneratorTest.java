@@ -1975,7 +1975,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + INDENT + INDENT + "System.out.print(\"\\n\");" + ENDL +
         INDENT + INDENT + "}" + ENDL +
         INDENT + "}" + ENDL +
-        " }" + ENDL;
+        "}" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
