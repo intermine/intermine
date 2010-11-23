@@ -17,7 +17,6 @@ import junit.framework.TestCase;
 
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.xml.TemplateQueryBinding;
-import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 
@@ -1976,7 +1975,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + INDENT + INDENT + "System.out.print(\"\\n\");" + ENDL +
         INDENT + INDENT + "}" + ENDL +
         INDENT + "}" + ENDL +
-        "}" + ENDL;
+        " }" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
