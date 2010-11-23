@@ -62,7 +62,7 @@ We support programatic access to our data through Application Programming Interf
     <li class="tab"><a href="#tab5">Homologues</a></li>
     <li class="tab"><a href="#tab6">Gene Ontology</a></li>
     <li class="tab"><a href="#tab7">Gene Expression</a></li>
-    <li class="link"><a href="/dataCategories.do">more ...</a></li>
+    <li class="link"><a href="dataCategories.do">more ...</a></li>
 </ul>
 </div>
 
@@ -72,18 +72,10 @@ We support programatic access to our data through Application Programming Interf
         <br/><br/>
         Query for genes:
         <br/>
-        <ul>
-        <c:forEach var="entry" items="${aspectQueries}">
-            <c:set var="aspect" value="${entry.key}"/>
-            <c:set var="templates" value="${entry.value}"/>
-            <c:if test="${aspect == 'Genomics'}">
-                <c:forEach var="template" items="${templates}" varStatus="status">
-                   <c:set var="templateTitle" value="${fn:replace(template.title,'-->','&nbsp;<img src=\"images/icons/arrows/4.png\" style=\"vertical-align:middle\">&nbsp;')}" />
-                   <li><a href="template.do?name=${template.name}">${templateTitle}</a></li>
-                </c:forEach>
-            </c:if>
-        </c:forEach>
-        </ul>
+    <tiles:insert name="aspectTemplates.jsp">
+      <tiles:put name="aspectQueries" beanName="aspectQueries" />
+      <tiles:put name="aspectTitle" value="Genomics" />
+    </tiles:insert>
         <br/><br/>
         <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
@@ -92,36 +84,22 @@ We support programatic access to our data through Application Programming Interf
         <br/><br/>
         Query for proteins:
         <br/>
-        <ul>
-        <c:forEach var="entry" items="${aspectQueries}">
-            <c:set var="aspect" value="${entry.key}"/>
-            <c:set var="templates" value="${entry.value}"/>
-            <c:if test="${aspect == 'Proteins'}">
-                <c:forEach var="template" items="${templates}">
-                    <li><a href="template.do?name=${template.name}">${template.title}</a></li>
-                </c:forEach>
-            </c:if>
-        </c:forEach>
-        </ul>
+    <tiles:insert name="aspectTemplates.jsp">
+      <tiles:put name="aspectQueries" beanName="aspectQueries" />
+      <tiles:put name="aspectTitle" value="Proteins" />
+    </tiles:insert>
         <br/><br/>
         <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
     <div id="tab3" class="tab_content">
-        FlyMine loads interactions from IntAct and BioGRID  <a href="aspect.do?name=Interactions">Read more</a>
+        FlyMine loads interactions from IntAct and BioGRID.  <a href="aspect.do?name=Interactions">Read more</a>
         <br/><br/>
         Query for interactions:
         <br/>
-        <ul>
-        <c:forEach var="entry" items="${aspectQueries}">
-            <c:set var="aspect" value="${entry.key}"/>
-            <c:set var="templates" value="${entry.value}"/>
-            <c:if test="${aspect == 'Interactions'}">
-                <c:forEach var="template" items="${templates}">
-                    <li><a href="template.do?name=${template.name}">${template.title}</a></li>
-                </c:forEach>
-            </c:if>
-        </c:forEach>
-        </ul>
+    <tiles:insert name="aspectTemplates.jsp">
+      <tiles:put name="aspectQueries" beanName="aspectQueries" />
+      <tiles:put name="aspectTitle" value="Interactions" />
+    </tiles:insert>
         <br/><br/>
         <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
@@ -130,17 +108,10 @@ We support programatic access to our data through Application Programming Interf
         <br/><br/>
         Popular queries:
         <br/>
-        <ul>
-        <c:forEach var="entry" items="${aspectQueries}">
-            <c:set var="aspect" value="${entry.key}"/>
-            <c:set var="templates" value="${entry.value}"/>
-            <c:if test="${aspect == 'Literature'}">
-                <c:forEach var="template" items="${templates}">
-                    <li><a href="template.do?name=${template.name}">${template.title}</a></li>
-                </c:forEach>
-            </c:if>
-        </c:forEach>
-        </ul>
+    <tiles:insert name="aspectTemplates.jsp">
+      <tiles:put name="aspectQueries" beanName="aspectQueries" />
+      <tiles:put name="aspectTitle" value="Literature" />
+    </tiles:insert>
         <br/><br/>
         <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
@@ -149,17 +120,10 @@ We support programatic access to our data through Application Programming Interf
         <br/><br/>
         Query for homologues:
         <br/>
-        <ul>
-        <c:forEach var="entry" items="${aspectQueries}">
-            <c:set var="aspect" value="${entry.key}"/>
-            <c:set var="templates" value="${entry.value}"/>
-            <c:if test="${aspect == 'Comparative Genomics'}">
-                <c:forEach var="template" items="${templates}">
-                    <li><a href="template.do?name=${template.name}">${template.title}</a></li>
-                </c:forEach>
-            </c:if>
-        </c:forEach>
-        </ul>
+    <tiles:insert name="aspectTemplates.jsp">
+      <tiles:put name="aspectQueries" beanName="aspectQueries" />
+      <tiles:put name="aspectTitle" value="Comparative Genomics" />
+    </tiles:insert>
         <br/><br/>
         <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
@@ -168,17 +132,10 @@ We support programatic access to our data through Application Programming Interf
         <br/><br/>
         Query for GO:
         <br/>
-        <ul>
-        <c:forEach var="entry" items="${aspectQueries}">
-            <c:set var="aspect" value="${entry.key}"/>
-            <c:set var="templates" value="${entry.value}"/>
-            <c:if test="${aspect == 'Gene Ontology'}">
-                <c:forEach var="template" items="${templates}">
-                    <li><a href="template.do?name=${template.name}">${template.title}</a></li>
-                </c:forEach>
-            </c:if>
-        </c:forEach>
-        </ul>
+    <tiles:insert name="aspectTemplates.jsp">
+      <tiles:put name="aspectQueries" beanName="aspectQueries" />
+      <tiles:put name="aspectTitle" value="Gene Ontology" />
+    </tiles:insert>
         <br/><br/>
         <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
@@ -187,17 +144,10 @@ We support programatic access to our data through Application Programming Interf
         <br/><br/>
         Query for gene expression:
         <br/>
-        <ul>
-        <c:forEach var="entry" items="${aspectQueries}">
-            <c:set var="aspect" value="${entry.key}"/>
-            <c:set var="templates" value="${entry.value}"/>
-            <c:if test="${aspect == 'Gene Expression'}">
-                <c:forEach var="template" items="${templates}">
-                    <li><a href="template.do?name=${template.name}">${template.title}</a></li>
-                </c:forEach>
-            </c:if>
-        </c:forEach>
-        </ul>
+    <tiles:insert name="aspectTemplates.jsp">
+      <tiles:put name="aspectQueries" beanName="aspectQueries" />
+      <tiles:put name="aspectTitle" value="Gene Expression" />
+    </tiles:insert>
         <br/><br/>
         <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
