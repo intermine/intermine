@@ -17,7 +17,7 @@ ol#news li {
 
 
 ul.tabs {
-	margin: 0;
+	margin-top: 10px;
 	padding: 0;
 	float: left;
 	list-style: none;
@@ -38,7 +38,7 @@ ul.tabs li {
 	margin-bottom: -1px; /*--Pull the list item down 1px--*/
 	overflow: hidden;
 	position: relative;
-	background: #F5F0FF;
+	background: #FFF;
 	color:#5C0075;
 }
 ul.tabs li a {
@@ -55,8 +55,8 @@ ul.tabs li a:hover {
 	background: #5C0075;
 }
 html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that the active tab does not listen to the hover properties--*/
-   background: #F5F0FF;
-	border-bottom: 1px solid #F5F0FF; /*--Makes the active tab look like it's connected with its content--*/
+   background: #FCFAFF;
+	border-bottom: 1px solid #FCFAFF; /*--Makes the active tab look like it's connected with its content--*/
 }
 
 .tab_container {
@@ -65,11 +65,11 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that th
 	overflow: hidden;
 	clear: both;
 	float: left; width: 100%;
-	background: #F5F0FF;
+	background: #FCFAFF;
 }
 .tab_content {
 	padding: 20px;
-	font-size: 1.2em;
+	font-size: 12px;
 	border-top: 1px solid #9E68AE;
 }
 
@@ -97,7 +97,7 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that th
 		#actions .plainbox.analyse input#submitBag { float:right; margin-right:10px; }
 	
 /* news */
-#rss div.plainbox { margin:0; width:956px; }
+#rss div.plainbox { margin:0; margin-top:5px; width:956px; border:1px solid #B8D9E2; background:#F1FAFE; }
 	#rss div.plainbox h1 { background:url(../themes/purple/icons/rss-32.png) no-repeat left; padding-left:40px; line-height:32px;
 		display:block !important; margin-bottom:6px; }
 	#rss div.plainbox #newsbox { padding-bottom:2px; }
