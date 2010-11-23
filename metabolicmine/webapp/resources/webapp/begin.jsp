@@ -86,17 +86,20 @@
 	            </div>
 	            <div id="welcome-content" class="span-8 last current">
 			        <h2>First time here?</h2>
-			        <p>Welcome to <strong>metabolicMine</strong>, an integrated web resource of Data & Tools to support the <u>Metabolic
-			        Disease</u> research community <br>For a basic overview of the site and its features try the <strong>Mini-Tour</strong>
-			        - it takes about ten minutes. If you're short of time, just navigate through our set of <strong>Feature Hints</strong>.</p>
-			        <br />
+			        <p>Welcome to <strong>metabolicMine</strong>, an integrated web resource of Data &amp; Tools to support the Metabolic
+			        Disease research community.</p>
+			        
+			        <p>If you are short of time, just navigate through our set of <strong>Feature Hints</strong>. For a basic overview of
+			        the site and its features try the <strong>Quick Tour</strong>, it takes about ten minutes.</p>
 			        <a class="button blue" href="<c:url value="/help/begin.html" />"
 			        		onclick="javascript:window.open('<c:url value="/help/begin.html" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
 			        			<div><span>Take a tour</span></div>
 					</a>
+					<!--
 					<a class="button gray" href="#" onclick="showContactForm();return false;">
-			        	<div><span>Contact team</span></div>
+			        	<div><span>Help</span></div>
 					</a>
+					-->
 	            </div>
             </div>
             <div class="bochs" id="bochs-2" style="display:none;">
@@ -166,7 +169,7 @@
 	            	<div class="image">
 	                	<img src="images/icons/search-64.png" alt="Search" />
 	                </div>
-	                <h3><a href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=">Search for gene identifiers</a></h3>
+	                <h3><a href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=">Search</a></h3>
 	                <div style="clear:both;"> </div>
 	                <p>Enter a gene, protein, SNP or other identifier [eg.
 	                <a onclick="preFillInput('PPARG');return false;" title="Search for PPARG"
@@ -180,10 +183,12 @@
 	                	href="keywordSearchResults.do?searchTerm=Diabetes"><strong>Diabetes</strong></a>,
 	                <a onclick="preFillInput('GWAS');return false;" title="Search for GWAS"
 	                	href="keywordSearchResults.do?searchTerm=GWAS"><strong>GWAS</strong></a>,
-	                <a onclick="preFillInput('Nature');return false;" title="Search for Nature"
-	                	href="keywordSearchResults.do?searchTerm=Nature"><strong>Nature</strong></a>
+	                <a onclick="preFillInput('PMID');return false;" title="Search for PMID"
+	                	href="keywordSearchResults.do?searchTerm=PMID"><strong>PMID</strong></a>,
+					<a onclick="preFillInput('Author');return false;" title="Search for Author"
+	                	href="keywordSearchResults.do?searchTerm=Author"><strong>Author</strong></a>
 	                ]</p>
-	                <p>[Supports Boolean and wildcard*]</p>
+	                <p>[Supports AND, OR, NOT and wildcard*]</p>
 						<div class="input">
 							<input id="actionsInput" class="input" type="text" name="searchTerm" value="e.g. PPARG, Insulin, rs876498" />
 						</div>
@@ -192,22 +197,22 @@
 	            	<div class="image">
 	                	<img src="images/icons/lists-64.png" alt="Lists" />
 	                </div>
-	                <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">Query lists of data</a></h3>
+	                <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">Query Lists of Data</a></h3>
 	                <div style="clear:both;"> </div>
 					<p>
 					<img src="/metabolicmine/themes/metabolic/thumbs/widget-charts-5.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:4px;" />
 					<strong>Explore</strong>, <strong>Analyse</strong> &amp; <strong>Enrich</strong>. Upload your own data or browse our Public
-					sets. Covering Pathways to Publications, Search for hidden relationships with our <strong>widgets library</strong>.</p>
+					sets. Covering Pathways to Publications, search for hidden relationships with our analysis widgets.</p>
 	            </div>
 	            <div class="span-4 last templates">
 	                <div class="image">
 	                	<img src="images/icons/templates-64.png" alt="Templates" />
 	                </div>
-	                <h3><a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">Work with template queries</a></h3>
+	                <h3><a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">Use Template Queries</a></h3>
 	                <div style="clear:both;"> </div>
-	                <p>Get started with complex queries using our <strong>pre-defined searches</strong>. These customizable templates have been
-	                designed around common tasks performed by our <strong>biologist community</strong>.To see how they work, why not try a
-	                template from our examples page?</p>
+	                <p>Get started with <strong>powerful queries</strong> using our predefined searches. These customizable templates have been
+	                designed around common tasks performed by our biologist community. To see how they work, why not try a template from our
+	                <strong>examples page</strong>?</p>
 	            </div>
 	            <div class="span-12 last">
 	                <div class="span-4 search">

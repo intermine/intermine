@@ -280,7 +280,7 @@ div.wide-gray div.bottom { background:url("../themes/metabolic/img/box-wide-gray
 #actions div.search, #actions div.lists, #actions div.templates { position:relative; margin-right:0; width:326px; /* override framework */ }
 #actions div.search p, #actions div.lists p, #actions div.templates p { padding-right:0; }
 
-#actions h3 { color:#FFFFFF; padding:18px 10px 18px 55px; margin:0 16px 10px 26px; line-height:26px; height:52px;
+#actions h3 { color:#FFFFFF; padding:29px 1px 7px 64px; margin:0 16px 10px 26px; line-height:26px; height:52px;
 	position:absolute; top:0px; left:0px; width:71%; }
 #actions div.image { float:left; background:url("../themes/metabolic/icons/shade.png") no-repeat bottom; float:left; margin-top:6px;
 	margin-left:14px; z-index:10; position:relative; padding-bottom:18px; }

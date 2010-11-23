@@ -3,6 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<!-- escapeXml -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 
 <!-- templateSettings.jsp -->
@@ -15,7 +17,7 @@
   <c:choose>
     <c:when test="${EDITING_TEMPLATE != null}">
       <fmt:message key="templateBuilder.editingTemplate">
-        <fmt:param value="${QUERY.name}"/>
+        <fmt:param value="${fn:escapeXml(QUERY.name)}"/>
       </fmt:message>
     </c:when>
     <c:otherwise>      
@@ -30,16 +32,15 @@
 
   <html:form styleId="queryBuilderTemplateSettings" action="/templateSettingsAction">
     <div align="center">
-    <p>
-    <table border="0" width="10%">
+    <table>
       <tr>
-        <td width="1%" align="right" valign="top" nowrap><fmt:message key="templateBuilder.shortName"/>
+        <td align="right" valign="top" nowrap><fmt:message key="templateBuilder.shortName"/>
           <c:if test="${empty QUERY.name}">
             <span class="errors">(Required)</span>
-          </c:if>        
+          </c:if>
         </td>
         <td nowrap>
-          <html:text property="name" size="32"/>
+          <input type="text" value="<c:if test="${not empty QUERY.name}"><c:out value="${QUERY.name}" escapeXml="true"/></c:if>" size="32" name="name">
           <br/>
           <small><i><fmt:message key="templateBuilder.nameHelp"/></i></small>
         </td>
@@ -51,7 +52,7 @@
           </c:if>
         </td>
         <td nowrap>
-          <html:text property="title" size="55"/>
+          <input type="text" value="<c:if test="${not empty QUERY.title}"><c:out value="${QUERY.title}" escapeXml="true"/></c:if>" size="55" name="title">
           <br/>
           <small><i><fmt:message key="templateBuilder.titleHelp"/></i></small>
         </td>
@@ -59,13 +60,13 @@
       <tr>
         <td align="right"><fmt:message key="templateBuilder.templateDescription"/></td>
         <td nowrap>
-          <html:textarea property="description" cols="55" rows="3"/>
+          <textarea rows="3" cols="55" name="description"><c:if test="${not empty QUERY.description}"><c:out value="${QUERY.description}" escapeXml="true"/></c:if></textarea>
         </td>
       </tr>
       <tr>
         <td align="right"><fmt:message key="templateBuilder.templateComment"/></td>
         <td nowrap>
-          <html:text property="comment" size="55"/>
+          <input type="text" value="<c:if test="${not empty QUERY.comment}"><c:out value="${QUERY.comment}" escapeXml="true"/></c:if>" size="55" name="comment">
         </td>
       </tr>
       <tr>
@@ -74,7 +75,6 @@
         </td>
       </tr>
     </table>
-    </p>
     </div>
   </html:form>
   </div>
