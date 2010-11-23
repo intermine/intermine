@@ -1614,6 +1614,9 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
      * <query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName" sortOrder="Gene.primaryIdentifier asc">
      *   <constraint path="Gene.proteins.genes" op="=" loopPath="Gene"/>
      * </query>
+     *
+     * loopPath equals to "InterMineObject", otherwise thrown java.lang.RuntimeException: Can't find class for class descriptor, Caused by: java.lang.ClassNotFoundException: org.intermine.model.bio.Gene.
+     *
      */
     public void testPathQueryCodeGenerationWithConstraintEqualToLoop() {
         String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
