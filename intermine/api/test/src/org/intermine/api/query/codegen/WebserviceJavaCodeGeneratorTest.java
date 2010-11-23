@@ -17,6 +17,7 @@ import junit.framework.TestCase;
 
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.xml.TemplateQueryBinding;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 
@@ -1288,7 +1289,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     public void testPathQueryCodeGenerationWithConstraintOneOfValues() {
         String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
         "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
-        "sortOrder=\"Gene.primaryIdentifier asc\"><constraint path=\"Gene.organism.commonName\" op=\"ONE OF\"><value>fruit fly</value><value>honey bee</value></constraint>" +
+        "sortOrder=\"Gene.primaryIdentifier asc\">" +
+        "<constraint path=\"Gene.organism.commonName\" op=\"ONE OF\"><value>fruit fly</value><value>honey bee</value></constraint>" +
         "</query>";
         // Parse xml to PathQuery - PathQueryBinding
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
@@ -1297,7 +1299,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         WebserviceCodeGenInfo wsCodeGenInfo =
             new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
 
-        String expected = "package modminetest2m;" + ENDL + ENDL +
+        String expected = "ackage modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
         "import java.util.List;" + ENDL +
         "import java.util.ArrayList;" + ENDL + ENDL +
@@ -1617,11 +1619,14 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     public void testPathQueryCodeGenerationWithConstraintEqualToLoop() {
         String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
         "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
-        "sortOrder=\"Gene.primaryIdentifier asc\"><constraint path=\"Gene.proteins.genes\" op=\"=\" loopPath=\"InterMineObject\"/>" +
+        "sortOrder=\"Gene.primaryIdentifier asc\">" +
+        "<constraint path=\"Gene.proteins.genes\" op=\"=\" loopPath=\"InterMineObject\"/>" +
         "</query>";
         // Parse xml to PathQuery - PathQueryBinding
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
+
+//        pathQuery.addConstraint(Constraints.equalToLoop("Gene.proteins.genes", "Gene"));
 
         WebserviceCodeGenInfo wsCodeGenInfo =
             new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
@@ -1696,11 +1701,14 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     public void testPathQueryCodeGenerationWithConstraintNotEqualToLoop() {
         String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
         "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
-        "sortOrder=\"Gene.primaryIdentifier asc\"><constraint path=\"Gene.proteins.genes\" op=\"!=\" loopPath=\"Gene\"/>" +
+        "sortOrder=\"Gene.primaryIdentifier asc\">" +
+        "<constraint path=\"Gene.proteins.genes\" op=\"!=\" loopPath=\"InterMineObject\"/>" +
         "</query>";
         // Parse xml to PathQuery - PathQueryBinding
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
+
+//        pathQuery.addConstraint(Constraints.notEqualToLoop("Gene.proteins.genes", "Gene"));
 
         WebserviceCodeGenInfo wsCodeGenInfo =
             new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
@@ -1742,7 +1750,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + INDENT + "// Add orderby" + ENDL +
         INDENT + INDENT + "query.addOrderBy(\"Gene.primaryIdentifier\", OrderDirection.ASC);" + ENDL + ENDL +
         INDENT + INDENT + "// Add constraints and you can edit the constraint values below" + ENDL +
-        INDENT + INDENT + "query.addConstraint(Constraints.notEqualToLoop(\"Gene.proteins.genes\", \"Gene\"));" + ENDL + ENDL +
+        INDENT + INDENT + "query.addConstraint(Constraints.notEqualToLoop(\"Gene.proteins.genes\", \"InterMineObject\"));" + ENDL + ENDL +
         INDENT + INDENT + "// Number of results are fetched" + ENDL +
         INDENT + INDENT + "int maxCount = 10000;" + ENDL +
         INDENT + INDENT + "List<List<String>> result = service.getResult(query, maxCount);" + ENDL +
@@ -1782,13 +1790,16 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
         "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
         "sortOrder=\"Gene.primaryIdentifier asc\" constraintLogic=\"(A or B) and C\">" +
-        "<constraint path=\"Gene.proteins.genes\" code=\"A\" op=\"!=\" loopPath=\"Gene\"/>" +
+        "<constraint path=\"Gene.proteins.genes\" code=\"A\" op=\"!=\" loopPath=\"InterMineObject\"/>" +
         "<constraint path=\"Gene\" code=\"B\" op=\"LOOKUP\" value=\"zen\" extraValue=\"\"/>" +
         "<constraint path=\"Gene.organism.commonName\" code=\"C\" op=\"ONE OF\"><value>fruit fly</value><value>honey bee</value></constraint>" +
         "</query>";
         // Parse xml to PathQuery - PathQueryBinding
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
+
+//        pathQuery.addConstraint(Constraints.notEqualToLoop("Gene.proteins.genes", "Gene"), "A");
+//        pathQuery.setConstraintLogic("(A or B) and C");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
             new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
@@ -1831,7 +1842,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + INDENT + "// Add orderby" + ENDL +
         INDENT + INDENT + "query.addOrderBy(\"Gene.primaryIdentifier\", OrderDirection.ASC);" + ENDL + ENDL +
         INDENT + INDENT + "// Add constraints and you can edit the constraint values below" + ENDL +
-        INDENT + INDENT + "query.addConstraint(Constraints.notEqualToLoop(\"Gene.proteins.genes\", \"Gene\"), \"A\");" + ENDL + ENDL +
+        INDENT + INDENT + "query.addConstraint(Constraints.notEqualToLoop(\"Gene.proteins.genes\", \"InterMineObject\"), \"A\");" + ENDL + ENDL +
         INDENT + INDENT + "query.addConstraint(Constraints.lookup(\"Gene\", \"zen\", \"\"), \"B\");" + ENDL + ENDL +
         INDENT + INDENT + "List<String> values = new ArrayList<String>();" + ENDL +
         INDENT + INDENT + "values.add(\"fruit fly\");" + ENDL +
@@ -1934,7 +1945,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
         "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - im_available_organisms" + ENDL +
         SPACE + "* template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL +
         SPACE + "*" + ENDL +
@@ -1994,7 +2005,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
         "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - im_available_organisms" + ENDL +
         SPACE + "* template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL +
         SPACE + "*" + ENDL +
@@ -2054,7 +2065,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
         "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - im_available_organisms" + ENDL +
         SPACE + "* template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL +
         SPACE + "*" + ENDL +
@@ -2114,7 +2125,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
         "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - im_available_organisms" + ENDL +
         SPACE + "* template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL +
         SPACE + "*" + ENDL +
@@ -2174,7 +2185,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
         "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - im_available_organisms" + ENDL +
         SPACE + "* template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL +
         SPACE + "*" + ENDL +
@@ -2234,7 +2245,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
         "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - im_available_organisms" + ENDL +
         SPACE + "* template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL +
         SPACE + "*" + ENDL +
@@ -2294,7 +2305,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
         "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - Organism_Gene" + ENDL +
         SPACE + "* template description - Show all the genes for a particular organism." + ENDL +
         SPACE + "*" + ENDL +
@@ -2355,7 +2366,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
         "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - Organism_Gene" + ENDL +
         SPACE + "* template description - Show all the genes for a particular organism." + ENDL +
         SPACE + "*" + ENDL +
@@ -2417,7 +2428,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
         "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - Clone_gene" + ENDL +
         SPACE + "* template description - For a cDNA clone or list of clones give the corresponding gene identifiers." + ENDL +
         SPACE + "*" + ENDL +
@@ -2531,7 +2542,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
         "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - Organism_Gene" + ENDL +
         SPACE + "* template description - Show all the genes for a particular organism." + ENDL +
         SPACE + "*" + ENDL +
@@ -2595,7 +2606,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
         "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - Organism_Gene" + ENDL +
         SPACE + "* template description - Show all the genes for a particular organism." + ENDL +
         SPACE + "*" + ENDL +
@@ -2656,7 +2667,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
         "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - AAANotNull" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
@@ -2715,7 +2726,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
         "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - AAANotNull" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
@@ -2779,7 +2790,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
         "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - Gene_OrthologueOrganism_new" + ENDL +
         SPACE + "* template description - For a particular gene, show predicted orthologues in one particular organism.  " + ENDL +
         SPACE + "*" + ENDL +
