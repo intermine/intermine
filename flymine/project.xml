@@ -122,8 +122,8 @@
       <property name="src.data.dir" location="/shared/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
       <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
-      <property name="treefam.organisms" value="7227 6239 7165 4932 9606 10090 10116 7955"/>
-      <property name="treefam.homologues" value="7227 6239 7165 4932 9606 10090 10116 7955"/>
+      <property name="treefam.organisms" value="7227 6239 7165 4932"/>
+      <property name="treefam.homologues" value="9606 10090 10116 7955"/>
     </source>
 
     <source name="tiffin" type="tiffin">
