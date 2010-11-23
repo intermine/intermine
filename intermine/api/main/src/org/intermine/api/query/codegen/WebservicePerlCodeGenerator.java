@@ -233,7 +233,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 .append(INDENT + "or die 'Could not find template';" + ENDL)
                 .append(ENDL)
                 .append(constraintComments.toString() + ENDL)
-                .append("my $results  = $template->results_with(" + ENDL)
+                .append("my $results = $template->results_with(" + ENDL)
                 .append(INDENT + "as     => 'string'," + ENDL)
                 .append(constraints.toString())
                 .append(");" + ENDL)

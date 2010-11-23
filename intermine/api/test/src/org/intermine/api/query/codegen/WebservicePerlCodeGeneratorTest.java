@@ -1127,12 +1127,12 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "or die 'Could not find template';" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "# A    Gene.primaryIdentifier    no constraint description" + ENDL + ENDL +
-        "my $results  = $template->results_with(" + ENDL +
+        "my $results = $template->results_with(" + ENDL +
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => '='," + ENDL +
         INDENT + "valueA => 'zen'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $result s;" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1162,7 +1162,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "or die 'Could not find template';" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "# A    Gene.primaryIdentifier    no constraint description" + ENDL + ENDL +
-        "my $results  = $template->results_with(" + ENDL +
+        "my $results = $template->results_with(" + ENDL +
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => '!='," + ENDL +
         INDENT + "valueA => 'zen'," + ENDL +
@@ -1197,7 +1197,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "or die 'Could not find template';" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "# A    Gene.primaryIdentifier    no constraint description" + ENDL + ENDL +
-        "my $results  = $template->results_with(" + ENDL +
+        "my $results = $template->results_with(" + ENDL +
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => '<'," + ENDL +
         INDENT + "valueA => 'zen'," + ENDL +
@@ -1232,7 +1232,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "or die 'Could not find template';" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "# A    Gene.primaryIdentifier    no constraint description" + ENDL + ENDL +
-        "my $results  = $template->results_with(" + ENDL +
+        "my $results = $template->results_with(" + ENDL +
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => '<='," + ENDL +
         INDENT + "valueA => 'zen'," + ENDL +
@@ -1267,7 +1267,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "or die 'Could not find template';" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "# A    Gene.primaryIdentifier    no constraint description" + ENDL + ENDL +
-        "my $results  = $template->results_with(" + ENDL +
+        "my $results = $template->results_with(" + ENDL +
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => '>'," + ENDL +
         INDENT + "valueA => 'zen'," + ENDL +
@@ -1302,7 +1302,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "or die 'Could not find template';" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "# A    Gene.primaryIdentifier    no constraint description" + ENDL + ENDL +
-        "my $results  = $template->results_with(" + ENDL +
+        "my $results = $template->results_with(" + ENDL +
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => '>='," + ENDL +
         INDENT + "valueA => 'zen'," + ENDL +
@@ -1337,7 +1337,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "or die 'Could not find template';" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "# A    Gene.organism.name    Show all the genes from organism:" + ENDL + ENDL +
-        "my $results  = $template->results_with(" + ENDL +
+        "my $results = $template->results_with(" + ENDL +
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => 'LIKE'," + ENDL +
         INDENT + "valueA => 'Drosophila melanogas*'," + ENDL +
@@ -1372,7 +1372,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "or die 'Could not find template';" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "# A    Gene.organism.name    Show all the genes from organism:" + ENDL + ENDL +
-        "my $results  = $template->results_with(" + ENDL +
+        "my $results = $template->results_with(" + ENDL +
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => 'NOT LIKE'," + ENDL +
         INDENT + "valueA => 'Drosophila melanogas*'," + ENDL +
@@ -1408,7 +1408,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "or die 'Could not find template';" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "# A    CDNAClone    Show corresponding genes for clone(s):" + ENDL + ENDL +
-        "my $results  = $template->results_with(" + ENDL +
+        "my $results = $template->results_with(" + ENDL +
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => 'LOOKUP'," + ENDL +
         INDENT + "valueA => 'LD14383'," + ENDL +
@@ -1497,7 +1497,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "or die 'Could not find template';" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "# A    Gene.organism.name    Show all the genes from organism:" + ENDL + ENDL +
-        "my $results  = $template->results_with(" + ENDL +
+        "my $results = $template->results_with(" + ENDL +
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => 'ONE OF'," + ENDL +
         INDENT + "valueA => [" + ENDL +
@@ -1538,7 +1538,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "or die 'Could not find template';" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "# A    Gene.organism.name    Show all the genes from organism:" + ENDL + ENDL +
-        "my $results  = $template->results_with(" + ENDL +
+        "my $results = $template->results_with(" + ENDL +
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => 'NONE OF'," + ENDL +
         INDENT + "valueA => [" + ENDL +
@@ -1576,7 +1576,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "or die 'Could not find template';" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "# A    Gene.primaryIdentifier    no constraint description" + ENDL + ENDL +
-        "my $results  = $template->results_with(" + ENDL +
+        "my $results = $template->results_with(" + ENDL +
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => 'IS NOT NULL'," + ENDL +
         ");" + ENDL + ENDL +
@@ -1610,7 +1610,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "or die 'Could not find template';" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "# A    Gene.primaryIdentifier    no constraint description" + ENDL + ENDL +
-        "my $results  = $template->results_with(" + ENDL +
+        "my $results = $template->results_with(" + ENDL +
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => 'IS NULL'," + ENDL +
         ");" + ENDL + ENDL +
@@ -1650,11 +1650,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         "# You can edit the constraint values below" + ENDL +
         "# D    Gene    no constraint description" + ENDL +
         "# A    Gene.homologues.homologue.organism.name    In organism:" + ENDL + ENDL +
-        "my $results  = $template->results_with(" + ENDL +
+        "my $results = $template->results_with(" + ENDL +
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opD    => 'LOOKUP'," + ENDL +
         INDENT + "valueD => 'lin-28'," + ENDL +
-        INDENT + "extra_valueD => 'D. melanogaster',," + ENDL +
+        INDENT + "extra_valueD => 'D. melanogaster'," + ENDL +
         INDENT + "opA    => 'NONE OF'," + ENDL +
         INDENT + "valueA => [" + ENDL +
         INDENT + INDENT + "'Homo sapiens'," + ENDL +
