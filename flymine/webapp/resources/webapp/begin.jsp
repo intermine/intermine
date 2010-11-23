@@ -78,7 +78,7 @@ We support programatic access to our data through Application Programming Interf
             <c:set var="templates" value="${entry.value}"/>
             <c:if test="${aspect == 'Genomics'}">
                 <c:forEach var="template" items="${templates}" varStatus="status">
-                   <c:set var="templateTitle" value="${fn:replace(template.title,'-->','&nbsp;<img src=\"images/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />
+                   <c:set var="templateTitle" value="${fn:replace(template.title,'-->','&nbsp;<img src=\"images/icons/arrows/4.png\" style=\"vertical-align:middle\">&nbsp;')}" />
                    <li><a href="template.do?name=${template.name}">${templateTitle}</a></li>
                 </c:forEach>
             </c:if>
