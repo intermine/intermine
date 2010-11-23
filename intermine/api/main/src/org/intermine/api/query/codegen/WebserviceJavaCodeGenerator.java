@@ -380,7 +380,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 
         sb.append(INDENT + "public static void main(String[] args) {" + ENDL + ENDL)
             .append(INDENT + INDENT
-                    + "TemplateService service =" + "new ServiceFactory(serviceRootUrl,"
+                    + "TemplateService service = new ServiceFactory(serviceRootUrl,"
                         + " \"TemplateService\").getTemplateService();" + ENDL + ENDL)
             .append(INDENT + INDENT
                     + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();"
