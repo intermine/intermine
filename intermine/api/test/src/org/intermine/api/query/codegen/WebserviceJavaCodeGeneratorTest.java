@@ -2649,65 +2649,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     public void testTemplateQueryCodeGenerationWithConstraintIsNotNull() {
         String queryXml = "<template name=\"AAANotNull\" title=\"AAANotNull\" longDescription=\"\" comment=\"\">" +
             "<query name=\"AAANotNull\" model=\"genomic\" view=\"Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" longDescription=\"\" sortOrder=\"Gene.primaryIdentifier asc\">" +
-            "<constraint path=\"Gene.primaryIdentifier\" editable=\"true\" op=\"IS NULL\"/>" +
-            "</query>" +
-            "</template>";
-        // Parse xml to TemplateQuery - TemplateQueryBinding
-        Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.get("AAANotNull");
-
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
-
-        String expected = "package modminetest2m;" + ENDL + ENDL +
-        "import java.util.ArrayList;" + ENDL +
-        "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
-        "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
-        "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
-        "/**" + ENDL +
-        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
-        SPACE + "* template name - AAANotNull" + ENDL +
-        SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
-        SPACE + "*" + ENDL +
-        SPACE + "*/" + ENDL +
-        "public class TemplateAAANotNull" + ENDL +
-        "{" + ENDL +
-        INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
-        INDENT + "/**" + ENDL +
-        INDENT + SPACE + "* @param args command line arguments" + ENDL +
-        INDENT + SPACE + "*/" + ENDL +
-        INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
-        INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
-        INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
-        INDENT + INDENT + "parameters.add(new TemplateParameter(\"Gene.primaryIdentifier\", \"IS NULL\", \"IS NULL\"));" + ENDL + ENDL +
-        INDENT + INDENT + "// Name of a public template, private templates are not supported at the moment" + ENDL +
-        INDENT + INDENT + "String templateName = \"AAANotNull\";" + ENDL + ENDL +
-        INDENT + INDENT + "// Number of results are fetched" + ENDL +
-        INDENT + INDENT + "int maxCount = 10000;" + ENDL +
-        INDENT + INDENT + "List<List<String>> result = service.getResult(templateName, parameters, maxCount);" + ENDL +
-        INDENT + INDENT + "System.out.print(\"Results: \\n\");" + ENDL +
-        INDENT + INDENT + "for (List<String> row : result) {" + ENDL +
-        INDENT + INDENT + INDENT + "for (String cell : row) {" + ENDL +
-        INDENT + INDENT + INDENT + INDENT + "System.out.print(cell + \" \");" + ENDL +
-        INDENT + INDENT + INDENT + "}" + ENDL +
-        INDENT + INDENT + INDENT + "System.out.print(\"\\n\");" + ENDL +
-        INDENT + INDENT + "}" + ENDL +
-        INDENT + "}" + ENDL +
-        "}" + ENDL;
-
-        assertEquals(expected, cg.generate(wsCodeGenInfo));
-    }
-
-    /**
-     * This method tests when a path template has one constraint - PathConstraintNull
-     * ConstraintOp.IS_NULL
-     */
-    public void testTemplateQueryCodeGenerationWithConstraintIsNull() {
-        String queryXml = "<template name=\"AAANotNull\" title=\"AAANotNull\" longDescription=\"\" comment=\"\">" +
-            "<query name=\"AAANotNull\" model=\"genomic\" view=\"Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" longDescription=\"\" sortOrder=\"Gene.primaryIdentifier asc\">" +
             "<constraint path=\"Gene.primaryIdentifier\" editable=\"true\" op=\"IS NOT NULL\"/>" +
             "</query>" +
             "</template>";
@@ -2742,6 +2683,65 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "parameters.add(new TemplateParameter(\"Gene.primaryIdentifier\", \"IS NOT NULL\", \"IS NOT NULL\"));" + ENDL + ENDL +
+        INDENT + INDENT + "// Name of a public template, private templates are not supported at the moment" + ENDL +
+        INDENT + INDENT + "String templateName = \"AAANotNull\";" + ENDL + ENDL +
+        INDENT + INDENT + "// Number of results are fetched" + ENDL +
+        INDENT + INDENT + "int maxCount = 10000;" + ENDL +
+        INDENT + INDENT + "List<List<String>> result = service.getResult(templateName, parameters, maxCount);" + ENDL +
+        INDENT + INDENT + "System.out.print(\"Results: \\n\");" + ENDL +
+        INDENT + INDENT + "for (List<String> row : result) {" + ENDL +
+        INDENT + INDENT + INDENT + "for (String cell : row) {" + ENDL +
+        INDENT + INDENT + INDENT + INDENT + "System.out.print(cell + \" \");" + ENDL +
+        INDENT + INDENT + INDENT + "}" + ENDL +
+        INDENT + INDENT + INDENT + "System.out.print(\"\\n\");" + ENDL +
+        INDENT + INDENT + "}" + ENDL +
+        INDENT + "}" + ENDL +
+        "}" + ENDL;
+
+        assertEquals(expected, cg.generate(wsCodeGenInfo));
+    }
+
+    /**
+     * This method tests when a path template has one constraint - PathConstraintNull
+     * ConstraintOp.IS_NULL
+     */
+    public void testTemplateQueryCodeGenerationWithConstraintIsNull() {
+        String queryXml = "<template name=\"AAANotNull\" title=\"AAANotNull\" longDescription=\"\" comment=\"\">" +
+            "<query name=\"AAANotNull\" model=\"genomic\" view=\"Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" longDescription=\"\" sortOrder=\"Gene.primaryIdentifier asc\">" +
+            "<constraint path=\"Gene.primaryIdentifier\" editable=\"true\" op=\"IS NULL\"/>" +
+            "</query>" +
+            "</template>";
+        // Parse xml to TemplateQuery - TemplateQueryBinding
+        Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(queryXml), null, PathQuery.USERPROFILE_VERSION);
+        TemplateQuery templateQuery = (TemplateQuery) tqs.get("AAANotNull");
+
+        WebserviceCodeGenInfo wsCodeGenInfo =
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+
+        String expected = "package modminetest2m;" + ENDL + ENDL +
+        "import java.util.ArrayList;" + ENDL +
+        "import java.util.List;" + ENDL + ENDL +
+        "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
+        "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
+        "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
+        "/**" + ENDL +
+        SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
+        SPACE + "* template name - AAANotNull" + ENDL +
+        SPACE + "*" + ENDL +
+        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "*" + ENDL +
+        SPACE + "*/" + ENDL +
+        "public class TemplateAAANotNull" + ENDL +
+        "{" + ENDL +
+        INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
+        INDENT + "/**" + ENDL +
+        INDENT + SPACE + "* @param args command line arguments" + ENDL +
+        INDENT + SPACE + "*/" + ENDL +
+        INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
+        INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
+        INDENT + INDENT + "parameters.add(new TemplateParameter(\"Gene.primaryIdentifier\", \"IS NULL\", \"IS NULL\"));" + ENDL + ENDL +
         INDENT + INDENT + "// Name of a public template, private templates are not supported at the moment" + ENDL +
         INDENT + INDENT + "String templateName = \"AAANotNull\";" + ENDL + ENDL +
         INDENT + INDENT + "// Number of results are fetched" + ENDL +
