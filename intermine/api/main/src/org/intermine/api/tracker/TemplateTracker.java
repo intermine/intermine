@@ -184,7 +184,7 @@ public class TemplateTracker extends TrackerAbstract
         Map<String, Integer> templateRank = new HashMap<String, Integer>();
         try {
             stm = connection.createStatement();
-            String sql = "SELECT tt.templatename, COUNT(tt.templatename) accessnumbers "
+            String sql = "SELECT tt.templatename, COUNT(tt.templatename) as accessnumbers "
                         + "FROM templatetrack tt, tag t "
                         + "WHERE tt.templatename=t.objectidentifier "
                         + "AND t.tagname LIKE '%public' AND t.type='template' "
