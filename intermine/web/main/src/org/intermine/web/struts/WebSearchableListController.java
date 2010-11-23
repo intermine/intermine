@@ -185,6 +185,7 @@ public class WebSearchableListController extends TilesAction
     filteredWebSearchables, HttpSession session) {
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
         TrackerDelegate td = im.getTrackerDelegate();
+        td.setTemplateManager(im.getTemplateManager());
         Profile profile = SessionMethods.getProfile(session);
         List<String> mostPopulareTemplateNames;
         if (SessionMethods.getProfile(session).isLoggedIn()) {

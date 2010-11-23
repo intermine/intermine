@@ -64,15 +64,18 @@ public class TemplatesExecutionMap
                                                TemplateManager templateManager) {
         Map<String, Double> logarithmMap = new HashMap<String, Double>();
         if (executionKey == null) {
-            Map<String, TemplateQuery> publicTemplates = templateManager.getValidGlobalTemplates();
-            for (String templateName : templateExecutions.keySet()) {
-                if (publicTemplates.containsKey(templateName)) {
-                    Map<String, Integer> execution = templateExecutions.get(templateName);
-                    double accessLn = 0;
-                    for (String key : execution.keySet()) {
-                        accessLn = accessLn + Math.log(execution.get(key) + 1);
+            if (templateManager != null) {
+                Map<String, TemplateQuery> publicTemplates =
+                    templateManager.getValidGlobalTemplates();
+                for (String templateName : templateExecutions.keySet()) {
+                    if (publicTemplates.containsKey(templateName)) {
+                        Map<String, Integer> execution = templateExecutions.get(templateName);
+                        double accessLn = 0;
+                        for (String key : execution.keySet()) {
+                            accessLn = accessLn + Math.log(execution.get(key) + 1);
+                        }
+                        logarithmMap.put(templateName, accessLn);
                     }
-                    logarithmMap.put(templateName, accessLn);
                 }
             }
         } else {
