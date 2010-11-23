@@ -11,6 +11,6 @@ if [ $1 ]; then
     exit
 fi
 files=$(find . -type f -name '*.java' -exec grep -l '.equals("' {} +)
-if [ $files ]; then
-    perl -nlp -i.orig -e 's/((?:\w|\.|_|\w\(.*?\))+)\.equals\((".*?")/$2.equals($1/' $files
-fi
+for f in $files; do
+    perl -nlp -i.orig -e 's/((?:\w|\.|_|\w\(.*?\))+)\.equals\((".*?")/$2.equals($1/' $f
+done
