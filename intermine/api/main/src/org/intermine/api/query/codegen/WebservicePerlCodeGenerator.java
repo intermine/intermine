@@ -151,7 +151,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                         // Insert "code => 'A'"
                         StringBuffer constStr = new StringBuffer(pathContraintUtil(pc));
                         int idx = pathContraintUtil(pc).indexOf(");");
-                        constStr.insert(idx, INDENT + "code => '" + entry.getValue() + "'" + ENDL);
+                        constStr.insert(idx, INDENT + "code => '" + entry.getValue() + "'," + ENDL);
                         sb.append(constStr.toString() + ENDL);
                     }
 
