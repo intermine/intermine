@@ -17,7 +17,6 @@ import junit.framework.TestCase;
 
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.xml.TemplateQueryBinding;
-import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 
@@ -137,7 +136,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -208,7 +207,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -287,7 +286,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -362,7 +361,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -437,7 +436,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -516,7 +515,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -595,7 +594,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -674,7 +673,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -753,7 +752,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -832,7 +831,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -911,7 +910,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -990,7 +989,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -1069,7 +1068,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -1148,7 +1147,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -1228,7 +1227,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -1314,7 +1313,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -1402,7 +1401,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -1484,7 +1483,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -1563,7 +1562,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -1618,7 +1617,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     public void testPathQueryCodeGenerationWithConstraintEqualToLoop() {
         String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
         "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
-        "sortOrder=\"Gene.primaryIdentifier asc\"><constraint path=\"Gene.proteins.genes\" op=\"=\" loopPath=\"Gene\"/>" +
+        "sortOrder=\"Gene.primaryIdentifier asc\"><constraint path=\"Gene.proteins.genes\" op=\"=\" loopPath=\"InterMineObject\"/>" +
         "</query>";
         // Parse xml to PathQuery - PathQueryBinding
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
@@ -1642,7 +1641,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -1664,7 +1663,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + INDENT + "// Add orderby" + ENDL +
         INDENT + INDENT + "query.addOrderBy(\"Gene.primaryIdentifier\", OrderDirection.ASC);" + ENDL + ENDL +
         INDENT + INDENT + "// Add constraints and you can edit the constraint values below" + ENDL +
-        INDENT + INDENT + "query.addConstraint(Constraints.equalToLoop(\"Gene.proteins.genes\", \"Gene\"));" + ENDL + ENDL +
+        INDENT + INDENT + "query.addConstraint(Constraints.equalToLoop(\"Gene.proteins.genes\", \"InterMineObject\"));" + ENDL + ENDL +
         INDENT + INDENT + "// Number of results are fetched" + ENDL +
         INDENT + INDENT + "int maxCount = 10000;" + ENDL +
         INDENT + INDENT + "List<List<String>> result = service.getResult(query, maxCount);" + ENDL +
@@ -1721,7 +1720,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -1810,7 +1809,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -1931,7 +1930,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
         "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.metadata.Model;" + ENDL +
         "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
@@ -1942,7 +1940,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class TemplateImAvailableOrganisms" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -1992,7 +1990,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
         "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.metadata.Model;" + ENDL +
         "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
@@ -2003,7 +2000,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class TemplateImAvailableOrganisms" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -2053,7 +2050,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
         "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.metadata.Model;" + ENDL +
         "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
@@ -2064,7 +2060,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class TemplateImAvailableOrganisms" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -2114,7 +2110,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
         "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.metadata.Model;" + ENDL +
         "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
@@ -2125,7 +2120,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class TemplateImAvailableOrganisms" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -2175,7 +2170,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
         "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.metadata.Model;" + ENDL +
         "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
@@ -2186,7 +2180,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class TemplateImAvailableOrganisms" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -2236,7 +2230,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
         "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.metadata.Model;" + ENDL +
         "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
@@ -2247,7 +2240,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class TemplateImAvailableOrganisms" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -2297,7 +2290,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
         "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.metadata.Model;" + ENDL +
         "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
@@ -2308,7 +2300,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class TemplateOrganismGene" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -2359,7 +2351,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
         "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.metadata.Model;" + ENDL +
         "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
@@ -2370,7 +2361,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class TemplateOrganismGene" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -2422,7 +2413,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
         "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.metadata.Model;" + ENDL +
         "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
@@ -2433,7 +2423,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class TemplateCloneGene" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -2537,7 +2527,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
         "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.metadata.Model;" + ENDL +
         "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
@@ -2548,7 +2537,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class TemplateOrganismGene" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -2602,7 +2591,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
         "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.metadata.Model;" + ENDL +
         "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
@@ -2613,7 +2601,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class TemplateOrganismGene" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -2664,7 +2652,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
         "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.metadata.Model;" + ENDL +
         "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
@@ -2674,7 +2661,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class TemplateAAANotNull" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -2724,7 +2711,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
         "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.metadata.Model;" + ENDL +
         "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
@@ -2734,7 +2720,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class TemplateAAANotNull" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
@@ -2789,7 +2775,6 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
         "import java.util.List;" + ENDL + ENDL +
-        "import org.intermine.metadata.Model;" + ENDL +
         "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL +
         "import org.intermine.webservice.client.services.TemplateService;" + ENDL +
         "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL + ENDL +
@@ -2800,7 +2785,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "*" + ENDL +
         SPACE + "* @auther modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "**/" + ENDL +
+        SPACE + "*/" + ENDL +
         "public class TemplateGeneOrthologueOrganismNew" + ENDL +
         "{" + ENDL +
         INDENT + "private static String serviceRootUrl = \"http://newt.flymine.org:8080/modminepreview/service\";" + ENDL + ENDL +
