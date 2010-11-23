@@ -417,7 +417,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             .append(INDENT + INDENT + INDENT + "for (String cell : row) {" + ENDL)
             .append(INDENT + INDENT + INDENT + INDENT + "System.out.print(cell + \" \");" + ENDL)
             .append(INDENT + INDENT + INDENT + "}" + ENDL)
-            .append(INDENT + INDENT + INDENT + "System.out .print(\"\\n\");" + ENDL)
+            .append(INDENT + INDENT + INDENT + "System.out.print(\"\\n\");" + ENDL)
             .append(INDENT + INDENT  + "}" + ENDL);
 
         sb.append(INDENT + "}" + ENDL)
