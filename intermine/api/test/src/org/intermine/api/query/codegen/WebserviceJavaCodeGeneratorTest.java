@@ -1299,7 +1299,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         WebserviceCodeGenInfo wsCodeGenInfo =
             new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
 
-        String expected = "ackage modminetest2m;" + ENDL + ENDL +
+        String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
         "import java.util.List;" + ENDL +
         "import java.util.ArrayList;" + ENDL + ENDL +
@@ -1340,7 +1340,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + INDENT + "List<String> values = new ArrayList<String>();" + ENDL +
         INDENT + INDENT + "values.add(\"fruit fly\");" + ENDL +
         INDENT + INDENT + "values.add(\"honey bee\");" + ENDL +
-        INDENT + INDENT + " query.addConstraint(Constraints.oneOfValues(\"Gene.organism.commonName\", values));" + ENDL + ENDL +
+        INDENT + INDENT + "query.addConstraint(Constraints.oneOfValues(\"Gene.organism.commonName\", values));" + ENDL + ENDL +
         INDENT + INDENT + "// Number of results are fetched" + ENDL +
         INDENT + INDENT + "int maxCount = 10000;" + ENDL +
         INDENT + INDENT + "List<List<String>> result = service.getResult(query, maxCount);" + ENDL +
@@ -1428,7 +1428,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + INDENT + "List<String> values = new ArrayList<String>();" + ENDL +
         INDENT + INDENT + "values.add(\"fruit fly\");" + ENDL +
         INDENT + INDENT + "values.add(\"honey bee\");" + ENDL +
-        INDENT + INDENT + " query.addConstraint(Constraints.noneOfValues(\"Gene.organism.commonName\", values));" + ENDL + ENDL +
+        INDENT + INDENT + "query.addConstraint(Constraints.noneOfValues(\"Gene.organism.commonName\", values));" + ENDL + ENDL +
         INDENT + INDENT + "// Number of results are fetched" + ENDL +
         INDENT + INDENT + "int maxCount = 10000;" + ENDL +
         INDENT + INDENT + "List<List<String>> result = service.getResult(query, maxCount);" + ENDL +
@@ -1847,7 +1847,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + INDENT + "List<String> values = new ArrayList<String>();" + ENDL +
         INDENT + INDENT + "values.add(\"fruit fly\");" + ENDL +
         INDENT + INDENT + "values.add(\"honey bee\");" + ENDL +
-        INDENT + INDENT + " query.addConstraint(Constraints.oneOfValues(\"Gene.organism.commonName\", values));" + ENDL + ENDL +
+        INDENT + INDENT + "query.addConstraint(Constraints.oneOfValues(\"Gene.organism.commonName\", values), \"C\");" + ENDL + ENDL +
         INDENT + INDENT + "// Add constraintLogic" + ENDL +
         INDENT + INDENT + "query.setConstraintLogic(\"(A or B) and C\");" + ENDL + ENDL +
         INDENT + INDENT + "// Number of results are fetched" + ENDL +
@@ -1959,7 +1959,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + SPACE + "* @param args command line arguments" + ENDL +
         INDENT + SPACE + "*/" + ENDL +
         INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service =new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "parameters.add(new TemplateParameter(\"Gene.primaryIdentifier\", \"eq\", \"zen\"));" + ENDL + ENDL +
@@ -2019,7 +2019,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + SPACE + "* @param args command line arguments" + ENDL +
         INDENT + SPACE + "*/" + ENDL +
         INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service =new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "parameters.add(new TemplateParameter(\"Gene.primaryIdentifier\", \"ne\", \"zen\"));" + ENDL + ENDL +
@@ -2079,7 +2079,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + SPACE + "* @param args command line arguments" + ENDL +
         INDENT + SPACE + "*/" + ENDL +
         INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service =new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "parameters.add(new TemplateParameter(\"Gene.primaryIdentifier\", \"lt\", \"zen\"));" + ENDL + ENDL +
@@ -2139,7 +2139,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + SPACE + "* @param args command line arguments" + ENDL +
         INDENT + SPACE + "*/" + ENDL +
         INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service =new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "parameters.add(new TemplateParameter(\"Gene.primaryIdentifier\", \"le\", \"zen\"));" + ENDL + ENDL +
@@ -2199,7 +2199,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + SPACE + "* @param args command line arguments" + ENDL +
         INDENT + SPACE + "*/" + ENDL +
         INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service =new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "parameters.add(new TemplateParameter(\"Gene.primaryIdentifier\", \"gt\", \"zen\"));" + ENDL + ENDL +
@@ -2259,7 +2259,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + SPACE + "* @param args command line arguments" + ENDL +
         INDENT + SPACE + "*/" + ENDL +
         INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service =new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "parameters.add(new TemplateParameter(\"Gene.primaryIdentifier\", \"ge\", \"zen\"));" + ENDL + ENDL +
@@ -2319,7 +2319,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + SPACE + "* @param args command line arguments" + ENDL +
         INDENT + SPACE + "*/" + ENDL +
         INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service =new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "// Constraint description - Show all the genes from organism:" + ENDL +
@@ -2380,7 +2380,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + SPACE + "* @param args command line arguments" + ENDL +
         INDENT + SPACE + "*/" + ENDL +
         INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service =new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "// Constraint description - Show all the genes from organism:" + ENDL +
@@ -2442,7 +2442,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + SPACE + "* @param args command line arguments" + ENDL +
         INDENT + SPACE + "*/" + ENDL +
         INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service =new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "// Constraint description - Show corresponding genes for clone(s):" + ENDL +
@@ -2556,7 +2556,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + SPACE + "* @param args command line arguments" + ENDL +
         INDENT + SPACE + "*/" + ENDL +
         INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service =new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "// Constraint description - Show all the genes from organism:" + ENDL +
@@ -2620,7 +2620,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + SPACE + "* @param args command line arguments" + ENDL +
         INDENT + SPACE + "*/" + ENDL +
         INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service =new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "// Constraint description - Show all the genes from organism:" + ENDL +
@@ -2680,7 +2680,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + SPACE + "* @param args command line arguments" + ENDL +
         INDENT + SPACE + "*/" + ENDL +
         INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service =new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "parameters.add(new TemplateParameter(\"Gene.primaryIdentifier\", \"IS NULL\", \"IS NULL\"));" + ENDL + ENDL +
@@ -2739,7 +2739,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + SPACE + "* @param args command line arguments" + ENDL +
         INDENT + SPACE + "*/" + ENDL +
         INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service =new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "parameters.add(new TemplateParameter(\"Gene.primaryIdentifier\", \"IS NOT NULL\", \"IS NOT NULL\"));" + ENDL + ENDL +
@@ -2804,7 +2804,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         INDENT + SPACE + "* @param args command line arguments" + ENDL +
         INDENT + SPACE + "*/" + ENDL +
         INDENT + "public static void main(String[] args) {" + ENDL + ENDL +
-        INDENT + INDENT + "TemplateService service =new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
+        INDENT + INDENT + "TemplateService service = new ServiceFactory(serviceRootUrl, \"TemplateService\").getTemplateService();" + ENDL + ENDL +
         INDENT + INDENT + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL + ENDL +
         INDENT + INDENT + "// You can edit the constraint values below" + ENDL +
         INDENT + INDENT + "parameters.add(new TemplateParameter(\"Gene\", \"LOOKUP\", \"lin-28\", \"D. melanogaster\"));" + ENDL +
