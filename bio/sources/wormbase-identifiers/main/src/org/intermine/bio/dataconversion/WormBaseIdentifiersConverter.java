@@ -28,6 +28,7 @@ import org.intermine.xml.full.Item;
 public class WormBaseIdentifiersConverter extends BioFileConverter
 {
     protected Item worm;
+    private static final String HEADER_LINE = "Gene WB ID";
 
     /**
      * Constructor
@@ -52,19 +53,12 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
 
-            if (line.length < 3 || line[0].startsWith("#")) {
+            if (line.length < 3 || line[0].startsWith("#") || line[0].startsWith(HEADER_LINE)) {
                 continue;
             }
-
-//            if (line.length < 3) {
-//                throw new RuntimeException("Line does not have enough elements: "
-//                                           + Arrays.asList(line));
-//            }
             String primaryidentifier = line[0];
             String symbol = line[1];
             String identifier = line[2];
-
-
             Item gene = createItem("Gene");
             if (!StringUtils.isEmpty(primaryidentifier)) {
                 gene.setAttribute("primaryIdentifier", primaryidentifier);
