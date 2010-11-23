@@ -937,7 +937,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
     public void testPathQueryCodeGenerationWithConstraintEqualToLoop() {
         String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
         "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
-        "sortOrder=\"Gene.primaryIdentifier asc\"><constraint path=\"Gene.proteins.genes\" op=\"=\" loopPath=\"Gene\"/>" +
+        "sortOrder=\"Gene.primaryIdentifier asc\"><constraint path=\"Gene.proteins.genes\" op=\"=\" loopPath=\"InterMineObject\"/>" +
         "</query>";
         // Parse xml to PathQuery - PathQueryBinding
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
@@ -963,7 +963,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
     public void testPathQueryCodeGenerationWithConstraintNotEqualToLoop() {
         String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
         "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
-        "sortOrder=\"Gene.primaryIdentifier asc\"><constraint path=\"Gene.proteins.genes\" op=\"!=\" loopPath=\"Gene\"/>" +
+        "sortOrder=\"Gene.primaryIdentifier asc\"><constraint path=\"Gene.proteins.genes\" op=\"!=\" loopPath=\"InterMineObject\"/>" +
         "</query>";
         // Parse xml to PathQuery - PathQueryBinding
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
