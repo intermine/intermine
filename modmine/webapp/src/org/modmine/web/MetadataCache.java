@@ -287,7 +287,10 @@ public final class MetadataCache
         if (submissionFilesCache == null) {
             readSubmissionFiles(os);
         }
-        return new ArrayList<ResultFile>(submissionFilesCache.get(dccId));
+        if (submissionFilesCache.get(dccId) != null) {
+            return new ArrayList<ResultFile>(submissionFilesCache.get(dccId));
+        }
+        return new ArrayList<ResultFile>();
     }
     
     /**
