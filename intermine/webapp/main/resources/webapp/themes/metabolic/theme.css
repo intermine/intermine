@@ -45,7 +45,7 @@ ul#nav li#mymine{background:url(img/menu-gray-hover-left.png) repeat-x top;}
 ul#nav li#mymine a,ul#nav a:hover,#submenu.submenu_mymine form{color:#FFF;}
 ul#nav li.activelink{background:url(img/menu-orange-left.png) repeat-x top;}
 ul#submenulist{color:#EF5900;}
-ul#submenulist li a{color:#4B3F4B;font-weight:bold;text-decoration:none;padding:0 6px;}
+ul#submenulist li a{color:#4B3F4B;text-decoration:none;padding:0 6px;}
 ul#submenulist li a:hover{color:#4B3F4B;font-weight:bold;text-decoration:underline;}
 ul#submenulist li#subactive_bag, ul#submenulist li#subactive_api{color:#4B3F4B;font-weight:700;}
 
