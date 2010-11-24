@@ -53,6 +53,13 @@
     <copyfile dest="${build.dir}/lib/stax-ri-1.0.jar" src="../../../pathquery/main/lib/stax-ri-1.0.jar"/>
     <copyfile dest="${build.dir}/lib/commons-lang-2.3.jar" src="../../../objectstore/main/lib/commons-lang-2.3.jar"/>
     <copyfile dest="${build.dir}/lib/antlr-2.7.6-caching.jar" src="../../../objectstore/main/lib/antlr-2.7.6-caching.jar"/>
+
+    <antcall target="copy-samples"/>
+
+  </target>
+
+  <target name="copy-samples" unless="exclude.samples">
+    <echo message="COPYING SAMPLES!"/>
     <copydir dest="${build.dir}/samples" src="../samples" excludes=".*, bin/**"></copydir>
     <copyfile dest="${build.dir}/README.txt" src="README.txt"/>
   </target>
