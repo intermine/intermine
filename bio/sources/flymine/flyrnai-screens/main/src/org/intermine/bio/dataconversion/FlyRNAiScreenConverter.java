@@ -249,7 +249,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
             }
             String pubmedId = line[0].trim();
 
-            if (pubmedId.equals("Pubmed_ID")) {
+            if ("Pubmed_ID".equals(pubmedId)) {
                 // skip header
                 continue;
             }
