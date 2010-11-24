@@ -14,7 +14,7 @@
             <c:set var="templates" value="${entry.value}"/>
             <c:if test="${aspect == aspectTitle}">
                 <c:forEach var="template" items="${templates}">
-                   <c:set var="templateTitle" value="${fn:replace(template.title,'-->','&nbsp;<img src=\"images/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />
+                   <c:set var="templateTitle" value="${fn:replace(template.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-16.png\" style=\"vertical-align:bottom\">&nbsp;')}" />
                    <li><a href="template.do?name=${template.name}">${templateTitle}</a></li>
                 </c:forEach>
             </c:if>
@@ -22,3 +22,4 @@
         </ul>
 
 <!-- /aspectTemplates.jsp -->
+tmpl
