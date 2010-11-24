@@ -11,7 +11,9 @@
 
   <target name="build" depends="clean">
     <mkdir dir="${dist.dir}"/>
-    <ant antfile="../main/develop.xml" target="dist" dir="../main" inheritall="false"/>
+    <ant antfile="../main/develop.xml" target="dist" dir="../main" inheritall="false">
+      <property name="exclude.samples" value="true"/>
+    </ant>
     <copydir dest="${dist.dir}" src="../main/client-dist/"/>
   </target>
     
