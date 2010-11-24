@@ -1132,7 +1132,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "opA    => '='," + ENDL +
         INDENT + "valueA => 'zen'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $result s;" + ENDL;
+        "print $results;" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1655,7 +1655,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "opD    => 'LOOKUP'," + ENDL +
         INDENT + "valueD => 'lin-28'," + ENDL +
         INDENT + "extra_valueD => 'D. melanogaster'," + ENDL +
-        INDENT + "opA    => 'NONE OF'," + ENDL +
+        INDENT + "opA    => 'ONE OF'," + ENDL +
         INDENT + "valueA => [" + ENDL +
         INDENT + INDENT + "'Homo sapiens'," + ENDL +
         INDENT + INDENT + "'Mus musculus'," + ENDL +

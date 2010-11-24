@@ -238,8 +238,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 .append(constraints.toString())
                 .append(");" + ENDL)
                 .append(ENDL)
-                .append("print $results;" + ENDL)
-                .append(ENDL);
+                .append("print $results;" + ENDL);
         }
 
         return sb.toString();
