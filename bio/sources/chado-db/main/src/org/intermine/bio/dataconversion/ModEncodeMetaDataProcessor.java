@@ -362,7 +362,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private void extractGenesFromSubFeatureMap(ModEncodeFeatureProcessor processor,
             Map<Integer, FeatureData> subFeatureMap) {
         for (FeatureData fData : subFeatureMap.values()) {
-            if (fData.getInterMineType().equals("Gene")) {
+            if ("Gene".equals(fData.getInterMineType())) {
                 String geneIdentifier = processor.fixIdentifier(fData, fData.getUniqueName());
                 geneToItemIdentifier.put(geneIdentifier, fData.getItemIdentifier());
             }
@@ -790,7 +790,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String value = res.getString("value");
             submissionOrganismMap.put(submissionId, value);
             LOG.info("TAXID " + submissionId + "|" + value);
-           count++;
+            count++;
         }
         res.close();
         LOG.info("found an organism for " + submissionOrganismMap.size() + " submissions.");
@@ -1159,12 +1159,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             } else if (fieldName == NOT_TO_BE_LOADED) {
                 continue;
             }
-            if (fieldName.equals("DCCid")) {
+            if ("DCCid".equals(fieldName)) {
                 LOG.info("DCC: " + submissionId + ", " + value);
                 dccIdMap.put(submissionId, value);
             }
 
-            if (fieldName.equals("category")) {
+            if ("category".equals(fieldName)) {
                 // Data Type, stored in experiment
                 submissionExpCatMap.put(submissionId, value);
                 continue;
@@ -1183,12 +1183,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
 
-            if (fieldName.equals("experimentType")) {
+            if ("experimentType".equals(fieldName)) {
                 // Assay Type
                 submissionWithExpTypeSet.add(submissionId);
             }
 
-            if (fieldName.equals("pubMedId")) {
+            if ("pubMedId".equals(fieldName)) {
                 // sometime in the form PMID:16938558
                 if (value.contains(":")) {
                     value = value.substring(value.indexOf(':') + 1);
@@ -1391,7 +1391,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
             setAttribute(getProtocolInterMineId(protocolId), fieldName, value);
-            if (fieldName.equals("type")) {
+            if ("type".equals(fieldName)) {
                 protocolTypesMap.put(protocolId, value);
             }
             count++;
@@ -1542,11 +1542,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // For some data types we don't want to replace with official name - e.g. file names and
     // database record ids.  It looks like the official name shouldn't actually be present.
     private boolean doReplaceWithOfficialName(String heading, String type) {
-        if (heading.equals("Result File")) {
+        if ("Result File".equals(heading)) {
             return false;
         }
 
-        if (heading.equals("Result Value") && DB_RECORD_TYPES.contains(type)) {
+        if ("Result Value".equals(heading) && DB_RECORD_TYPES.contains(type)) {
             return false;
         }
         return true;
@@ -1629,7 +1629,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String value = res.getString("value");
             String type  = res.getString("name");
             Item dataAttribute = getChadoDBConverter().createItem("SubmissionDataAttribute");
-            if (name != null && !name.equals("")) {
+            if (name != null && !"".equals(name)) {
                 dataAttribute.setAttribute("name", name);
             }
             if (!StringUtils.isEmpty(value)) {
@@ -2249,7 +2249,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 propItem = createSubmissionProperty(clsName, officialName);
                 propItem.setAttribute("type", getPreferredSynonym(prop.type));
                 propItem.setAttribute("wikiLink", WIKI_URL + prop.wikiPageUrl);
-                if (clsName.equals("DevelopmentalStage")) {
+                if ("DevelopmentalStage".equals(clsName)) {
                     setAttributeOnProp(prop, propItem, "sex", "sex");
 
                     List<String> devStageValues = prop.details.get("developmental stage");
@@ -2262,16 +2262,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         LOG.error("METADATA FAIL: no 'developmental stage' values for wiki page: "
                                 + prop.wikiPageUrl);
                     }
-                } else if (clsName.equals("Antibody")) {
+                } else if ("Antibody".equals(clsName)) {
                     setAttributeOnProp(prop, propItem, "antigen", "antigen");
                     setAttributeOnProp(prop, propItem, "host", "hostOrganism");
                     setAttributeOnProp(prop, propItem, "target name", "targetName");
                     setGeneItem(dccId, prop, propItem, "Antibody");
-                } else if (clsName.equals("Array")) {
+                } else if ("Array".equals(clsName)) {
                     setAttributeOnProp(prop, propItem, "platform", "platform");
                     setAttributeOnProp(prop, propItem, "resolution", "resolution");
                     setAttributeOnProp(prop, propItem, "genome", "genome");
-                } else if (clsName.equals("CellLine")) {
+                } else if ("CellLine".equals(clsName)) {
                     setAttributeOnProp(prop, propItem, "sex", "sex");
                     setAttributeOnProp(prop, propItem, "short description",
                         "description");
@@ -2280,7 +2280,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     setAttributeOnProp(prop, propItem, "cell type", "cellType");
                     setAttributeOnProp(prop, propItem, "target name", "targetName");
                     setGeneItem(dccId, prop, propItem, "CellLine");
-                } else if (clsName.equals("Strain")) {
+                } else if ("Strain".equals(clsName)) {
                     setAttributeOnProp(prop, propItem, "species", "species");
                     setAttributeOnProp(prop, propItem, "source", "source");
                     // the following 2 should be mutually exclusive
@@ -2290,7 +2290,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     setAttributeOnProp(prop, propItem, "reference", "reference");
                     setAttributeOnProp(prop, propItem, "target name", "targetName");
                     setGeneItem(dccId, prop, propItem, "Strain");
-                }  else if (clsName.equals("Tissue")) {
+                }  else if ("Tissue".equals(clsName)) {
                     setAttributeOnProp(prop, propItem, "species", "species");
                     setAttributeOnProp(prop, propItem, "sex", "sex");
                     setAttributeOnProp(prop, propItem, "organismPart", "organismPart");
@@ -2397,9 +2397,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
 
         IdResolver resolver = null;
-        if (taxonId.equals("7227")) {
+        if ("7227".equals(taxonId)) {
             resolver = flyResolverFactory.getIdResolver();
-        } else if (taxonId.equals("6239")) {
+        } else if ("6239".equals(taxonId)) {
             resolver = wormResolverFactory.getIdResolver();
         } else {
             LOG.info("RESOLVER: unable to work out organism for target id text: "
@@ -2500,7 +2500,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Item createNonWikiSubmissionPropertyItem(String dccId, String clsName, String type,
             String name)
         throws ObjectStoreException {
-        if (clsName.equals("DevelopmentalStage")) {
+        if ("DevelopmentalStage".equals(clsName)) {
             name = correctDevStageTerm(name);
         }
 
@@ -2559,7 +2559,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             return null;
         }
 
-        if (type.equals("developmental stage")) {
+        if ("developmental stage".equals(type)) {
             name = name.replace("_", " ");
             name = name.replaceFirst("embryo", "Embryo");
             name = name.replaceFirst("Embyro", "Embryo");
@@ -2637,7 +2637,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         String ontologyName = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         String genus = or.getOrganismDataByTaxon(Integer.parseInt(taxonId)).getGenus();
-        if (genus.equals("Drosophila")) {
+        if ("Drosophila".equals(genus)) {
             ontologyName = "Fly Development";
         } else {
             ontologyName = "Worm Development";
