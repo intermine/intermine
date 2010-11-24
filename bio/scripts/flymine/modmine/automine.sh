@@ -207,6 +207,8 @@ else
 SOURCES=modmine-static,modencode-metadata
 fi
 
+
+
 echo
 echo "==================================="
 echo "Building modmine-$REL on $MINEHOST."
@@ -446,19 +448,21 @@ $DBPW -noupdate cvterm,dbxref,db,cv,feature $1
 exitstatus=$?
 
 if [ "$exitstatus" = "0" ]
-then # insertion of embargo date: temporary until all subs have it
+then 
 psql -h $DBHOST -d $CHADODB -U $DBUSER -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'dcc_id', '$DCCID', 1292 from experiment_prop;"
 
-DBDATE=`psql -h modprod1 -d modchado-dev -U modmine -q -t -c "select value from experiment_prop where name = 'Embargo Date' and  experiment_id=(select max(experiment_id) from experiment_prop);"`
+# insertion of embargo date: temporary until all subs have it
+DBDATE=`psql -h $DBHOST -d $CHADODB -U $DBUSER -q -t -c "select value from experiment_prop where name = 'Embargo Date' and  experiment_id=(select max(experiment_id) from experiment_prop);"`
 
 if [ -z "$DBDATE" ]
 then
 echo "Adding Embargo Date: $EDATE.."
-psql -h  modprod1 -d modchado-dev -U modmine -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'Embargo Date', '$EDATE', 1305 from experiment_prop;"
+CVDATE=`psql -h $DBHOST -d $CHADODB -U $DBUSER -q -t -c "select cvterm_id from cvterm where name = 'date';"`
+
+psql -h $DBHOST -d $CHADODB -U $DBUSER -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'Embargo Date', '$EDATE', $CVDATE from experiment_prop;"
 
 echo -n "  added embargo date: $EDATE " >> $LOG
 fi
-
 
 if [ -e "$PATCHDIR/applied_patches_$DCCID.chadoxml" ]
 then
@@ -846,16 +850,17 @@ then
 
 if [ "$FULL" = "y" ]
 then
-loadChadoSubs celniker
 loadChadoSubs henikoff
 loadChadoSubs karpen
 loadChadoSubs lai
 loadChadoSubs lieb
 loadChadoSubs macalpine
 loadChadoSubs piano
+loadChadoSubs oliver
 loadChadoSubs snyder
-loadChadoSubs waterston
 loadChadoSubs white
+loadChadoSubs celniker
+loadChadoSubs waterston
 elif [ -n "$P" ]
 then
 loadChadoSubs $P
