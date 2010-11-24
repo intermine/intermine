@@ -1661,7 +1661,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + INDENT + "'Mus musculus'," + ENDL +
         INDENT + "]," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results;" + ENDL + ">>>>>";
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
