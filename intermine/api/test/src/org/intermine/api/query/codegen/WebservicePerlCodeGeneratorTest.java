@@ -1644,7 +1644,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
         "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
         "# template name - Gene_OrthologueOrganism_new" + ENDL +
-        "# template description - For a particular gene, show predicted orthologues in one particular organism." + ENDL + ENDL +
+        "# template description - For a particular gene, show predicted orthologues in one particular organism.  " + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('Gene_OrthologueOrganism_new')" + ENDL +
         INDENT + "or die 'Could not find template';" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
@@ -1661,7 +1661,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + INDENT + "'Mus musculus'," + ENDL +
         INDENT + "]," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL + ">>>>>";
+        "print $results;" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
