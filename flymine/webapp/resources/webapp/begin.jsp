@@ -45,6 +45,7 @@ We support programatic access to our data through Application Programming Interf
                         <html:option value="Protein">Protein</html:option>
                 </html:select>
             <html:textarea styleId="pasteInput" property="text" rows="2" cols="30" />
+            <a href="bag.do?subtab=upload">Upload a file</a>.
             <html:submit styleId="submitBag">Analyse</html:submit>
         </html:form>
     </im:boxarea>
