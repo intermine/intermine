@@ -520,7 +520,7 @@
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
-
+  <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Gene versus publications</td>
     <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 10th November 2010</td>

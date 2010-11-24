@@ -59,7 +59,7 @@ We support programatic access to our data through Application Programming Interf
     <li class="tab"><a href="#tab1">Genes</a></li>
     <li class="tab"><a href="#tab2">Proteins</a></li>
     <li class="tab"><a href="#tab3">Interactions</a></li>
-    <li class="tab"><a href="#tab4">Publications</a></li>
+    <li class="tab"><a href="#tab4">Pathways</a></li>
     <li class="tab"><a href="#tab5">Homologues</a></li>
     <li class="tab"><a href="#tab6">Gene Ontology</a></li>
     <li class="tab"><a href="#tab7">Gene Expression</a></li>
@@ -105,13 +105,13 @@ We support programatic access to our data through Application Programming Interf
         <small><a href="templates.do">Click here</a> for more queries.</small>
     </div>
     <div id="tab4" class="tab_content">
-        FlyMine loads publication data from over 30 sources.  <a href="aspect.do?name=Literature">Read more..</a>
+        FlyMine loads pathway data.  <a href="aspect.do?name=Pathways">Read more..</a>
         <br/><br/>
         Popular queries:
         <br/>
     <tiles:insert name="aspectTemplates.jsp">
       <tiles:put name="aspectQueries" beanName="aspectQueries" />
-      <tiles:put name="aspectTitle" value="Literature" />
+      <tiles:put name="aspectTitle" value="Pathways" />
     </tiles:insert>
         <br/><br/>
         <small><a href="templates.do">Click here</a> for more queries.</small>
