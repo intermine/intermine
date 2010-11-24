@@ -84,7 +84,8 @@
     </ul>
     
 	<ul id="loginbar">
-        <li><im:popupHelp pageName="tour/start">Take a tour</im:popupHelp></li>
+		<li><im:contextHelp/></li>
+        <!-- <li><im:popupHelp pageName="tour/start">Take a tour</im:popupHelp></li> -->
         <c:if test="${PROFILE.loggedIn}">
             <li>
 	            <!-- display (optionally trimmed) username -->
