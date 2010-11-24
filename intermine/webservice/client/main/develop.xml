@@ -28,7 +28,9 @@
   
   <target name="javadoc">
     <ant antfile="../../pathquery/main/build.xml" target="javadoc" dir="../../../pathquery/main" inheritall="false"/>
-    <copydir dest="${build.dir}/doc/javadoc-pathquery" src="../../../pathquery/main/build/javadoc"></copydir>
+    <copy todir="${build.dir}/doc/javadoc-pathquery">
+      <fileset dir="../../../pathquery/main/build/javadoc"/>
+    </copy>
     <javadoc destdir="${build.dir}/doc/javadoc-client" source="${src.dir}" notree="true" use="false" nonavbar="false" noindex="false" 
 	     splitindex="false" author="${javadoc.author}" version="false" failonerror="false">
       <sourcepath>
@@ -39,29 +41,37 @@
   
   <target name="build" depends="clean, compile">
     <mkdir dir="${build.dir}"/>
-    <copydir dest="${build.dir}/src" src="src" />
-    <copydir dest="${build.dir}/lib" src="lib" />
+    <copy todir="${build.dir}/src">
+      <fileset dir="src"/>
+    </copy>
+    <copy todir="${build.dir}/lib">
+      <fileset dir="lib"/>
+    </copy>
     <!--intermine-webservice-client.jar was created before by calling InterMine build script  -->
     <jar destfile="${build.dir}/lib/intermine-client.jar">
       <zipfileset src="dist/intermine-webservice-client.jar" />
       <fileset file="${src.dir}/log4j.properties" />
     </jar>
-    <copyfile dest="${build.dir}/lib/intermine-pathquery.jar" src="../../../pathquery/main/dist/intermine-pathquery.jar"/> 
-    <copyfile dest="${build.dir}/lib/intermine-objectstore.jar" src="../../../objectstore/main/dist/intermine-objectstore.jar"/>
+    <copy file="../../../pathquery/main/dist/intermine-pathquery.jar" todir="${build.dir}/lib/"/> 
+    <copy file="../../../objectstore/main/dist/intermine-objectstore.jar" todir="${build.dir}/lib/"/>
     <!-- stax-api-1.0.jar and stax-ri-1.0.jar is needed when java 1.5 is used for pathquery XML serialization and deserialization -->
-    <copyfile dest="${build.dir}/lib/stax-api-1.0.jar" src="../../../pathquery/main/lib/stax-api-1.0.jar"/>
-    <copyfile dest="${build.dir}/lib/stax-ri-1.0.jar" src="../../../pathquery/main/lib/stax-ri-1.0.jar"/>
-    <copyfile dest="${build.dir}/lib/commons-lang-2.3.jar" src="../../../objectstore/main/lib/commons-lang-2.3.jar"/>
-    <copyfile dest="${build.dir}/lib/antlr-2.7.6-caching.jar" src="../../../objectstore/main/lib/antlr-2.7.6-caching.jar"/>
+    <copy file="../../../pathquery/main/lib/stax-api-1.0.jar" todir="${build.dir}/lib/"/>
+    <copy file="../../../pathquery/main/lib/stax-ri-1.0.jar" todir="${build.dir}/lib/"/>
+    <copy file="../../../objectstore/main/lib/commons-lang-2.3.jar" todir="${build.dir}/lib/"/>
+    <copy file="../../../objectstore/main/lib/antlr-2.7.6-caching.jar" todir="${build.dir}/lib/"/>
+    <copy file="compile-run.sh" todir="${build.dir}"/>
 
     <antcall target="copy-samples"/>
 
   </target>
 
   <target name="copy-samples" unless="exclude.samples">
-    <echo message="COPYING SAMPLES!"/>
-    <copydir dest="${build.dir}/samples" src="../samples" excludes=".*, bin/**"></copydir>
-    <copyfile dest="${build.dir}/README.txt" src="README.txt"/>
+    <copy todir="${build.dir}/samples">
+      <fileset dir="../samples">
+        <exclude name=".*, bin/**"/>
+      </fileset>
+    </copy>
+    <copy file="README.txt" todir="${build.dir}"/>
   </target>
 
   <target name="dist" depends="build, javadoc">
