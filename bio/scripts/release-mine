@@ -274,9 +274,8 @@ system ("ant -Drelease=r$current_version stop-webapp >> $LOG_FILENAME 2>&1") == 
 
 #################
 
-warn "***** exiting to run manually the userprofile update *******\n";
-exit 0;
-
+#warn "***** exiting to run manually the userprofile update *******\n";
+#exit 0;
 
 warn "write-userprofile-xml for current version\n";
 
@@ -299,7 +298,7 @@ warn "release new webapp r$new_version\n";
 
 my @TARGETS = qw(remove-webapp release-webapp);
 system ("ant -Drelease=r$new_version @TARGETS >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "can't write userprofile XML: $?";
+  or die_with_log "can't release webapp r$new_version: $?";
 
 #exit 0;
 }
