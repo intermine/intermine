@@ -3,7 +3,7 @@
   <class className="org.intermine.model.bio.Allele">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="alleleClass"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
