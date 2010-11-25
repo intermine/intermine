@@ -50,7 +50,7 @@ public class UniProtKeywordsURLQuery implements WidgetURLQuery
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
             String[] keys = key.split(",");
-            q.addConstraint(Constraints.oneOfValues("Protein.keywords",
+            q.addConstraint(Constraints.oneOfValues("Protein.keywords.name",
                     Arrays.asList(keys)));
         }
         return q;

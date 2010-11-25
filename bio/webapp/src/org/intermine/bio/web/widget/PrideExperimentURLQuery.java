@@ -52,7 +52,7 @@ public class PrideExperimentURLQuery implements WidgetURLQuery
         if (!showAll) {
             String[] keys = key.split(",");
             q.addConstraint(Constraints.oneOfValues(
-                    "Protein.proteinIdentifications.prideExperiment", Arrays.asList(keys)));
+                    "Protein.proteinIdentifications.prideExperiment.title", Arrays.asList(keys)));
         }
         q.addOrderBy("Protein.proteinIdentifications.prideExperiment.title", OrderDirection.ASC);
 

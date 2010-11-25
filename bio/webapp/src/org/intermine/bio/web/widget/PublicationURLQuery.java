@@ -53,7 +53,7 @@ public class PublicationURLQuery implements WidgetURLQuery
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
             String[] keys = key.split(",");
-            q.addConstraint(Constraints.oneOfValues("Gene.publications",
+            q.addConstraint(Constraints.oneOfValues("Gene.publications.pubMedId",
                     Arrays.asList(keys)));
         }
         q.addOrderBy("Gene.publications.pubMedId", OrderDirection.ASC);

@@ -56,7 +56,8 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
         if (!showAll) {
             String[] keys = key.split(",");
             q.addConstraint(Constraints.oneOfValues(
-                    "Protein.proteinInteractions.interactingProteins", Arrays.asList(keys)));
+                    "Protein.proteinInteractions.interactingProteins.primaryAccession",
+                    Arrays.asList(keys)));
         }
         return q;
     }

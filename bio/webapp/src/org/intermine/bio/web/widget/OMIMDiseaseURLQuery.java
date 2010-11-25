@@ -59,7 +59,8 @@ public class OMIMDiseaseURLQuery implements WidgetURLQuery
 
         q.addConstraint(Constraints.in(bagType, bag.getName()));
         if (!showAll) {
-            q.addConstraint(Constraints.oneOfValues("Gene.ominDiseases", Arrays.asList(key)));
+            q.addConstraint(Constraints.oneOfValues("Gene.ominDiseases.omimId",
+                    Arrays.asList(key)));
         }
         q.addOrderBy("Gene.symbol", OrderDirection.ASC);
         return q;

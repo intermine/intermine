@@ -61,7 +61,7 @@ public class GWASEnrichmentURLQuery implements WidgetURLQuery
         q.addConstraint(Constraints.in(bagType, bag.getName()));
         if (!showAll) {
             String[] keys = key.split(",");
-            q.addConstraint(Constraints.oneOfValues(prefix + ".GWASResults",
+            q.addConstraint(Constraints.oneOfValues(prefix + ".GWASResults.phenotype",
                     Arrays.asList(keys)));
         }
         return q;
