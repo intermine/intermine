@@ -6,6 +6,6 @@ S	A Strong Hit
 M	A Medium Hit
 W	A Weak Hit
 NS	Not Screened
-Amplicon	Gene	Cell Growth and Viability	DCV Screen
-DRSC00001		N	S
-DRSC00003	CG31973, eve	W	N
+Amplicon	Gene	Cell Growth and Viability	DCV Screen	Bad Screen
+DRSC00001		N	S	Y
+DRSC00003	CG31973, eve	W	N	Y
