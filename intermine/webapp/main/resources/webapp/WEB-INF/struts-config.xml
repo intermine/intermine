@@ -448,6 +448,7 @@
 
     <action path="/fileDownload" type="org.intermine.web.struts.FileDownloadAction">
       <forward name="begin" redirect="true" path="/begin.do"/>
+      <forward name="api" redirect="true" path="/api.do?subtab=java"/>
     </action>
 
     <action path="/wsCodeGen" type="org.intermine.web.struts.WebserviceCodeGenAction">
