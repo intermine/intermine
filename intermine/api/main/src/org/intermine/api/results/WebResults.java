@@ -485,8 +485,17 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
      *
      * @return the columns
      */
-    public List getColumns() {
+    public List<Column> getColumns() {
         return columns;
+    }
+
+    /**
+     * Returns the columns path.
+     *
+     * @return the columns path
+     */
+    public List<Path> getColumnsPath() {
+        return columnPaths;
     }
 
     /**
