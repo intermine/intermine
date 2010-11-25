@@ -155,7 +155,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                     for (int i = 2; i < line.length; i++) {
                         // create an array of screen item identifiers (first two slots empty)
                         String screenName = line[i].trim();
-                        if (StringUtils.isEmpty(screenName)) {
+                        if (StringUtils.isEmpty(screenName) || screenMap.get(screenName) == null) {
                             continue;
                         }
                         hitScreenNames.add(screenName);
