@@ -469,11 +469,16 @@ then
 echo "$DCCID: adding patch file."
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
 $DBPW -noupdate cvterm,dbxref,db,cv,feature $PATCHDIR/applied_patches_$DCCID.chadoxml
+
+exitstatus=$?
+if [ "$exitstatus" != "0" ]
+then 
+echo -n "  ** ERROR loading patch file **" >> $LOG
+fi
 else
 echo -n " no patch file " >> $LOG
 echo "$DCCID: no patch file."
 fi
-
 
 else
 echo
