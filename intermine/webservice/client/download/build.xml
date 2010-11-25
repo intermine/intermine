@@ -1,7 +1,6 @@
-<project name="intermine-webservice-download" default="build" basedir=".">
+<project name="intermine-webservice-download" default="jar" basedir=".">
   
   <description>build, test, package intermine-webservice-client</description>
-  <import file="../../../../imbuild/library.xml"/>
 
   <property name="dist.dir" value="dist" />
 
@@ -9,7 +8,8 @@
     <delete dir="${dist.dir}" failonerror="false"/>
   </target>
 
-  <target name="build" depends="clean">
+  <!-- jar target actually produces a zip for this project -->
+  <target name="jar" depends="clean">
     <mkdir dir="${dist.dir}"/>
     <ant antfile="../main/develop.xml" target="dist" dir="../main" inheritall="false">
       <property name="exclude.samples" value="true"/>
