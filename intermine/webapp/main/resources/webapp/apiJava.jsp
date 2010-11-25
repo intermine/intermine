@@ -26,6 +26,8 @@
   <form id="apiJavaForm" action="fileDownload.do" method="post">
     <input type="hidden" value="${path}" name="path" />
     <input type="hidden" value="${fileName}" name="fileName" />
+    <input type="hidden" value="${mimeType}" name="mimeType" />
+    <input type="hidden" value="${mimeExtension}" name="mimeExtension" />
   </form>
 <div>
   Web Service Java API makes it easy for users to query data from a Java program.

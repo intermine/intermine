@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 
 /**
  * This is a generic action to download file from any given directory.
@@ -41,6 +42,8 @@ public class FileDownloadAction extends InterMineAction
         try {
             String path = request.getParameter("path");
             String fileName = request.getParameter("fileName");
+            String mimeType = request.getParameter("mimeType");
+            String mimeExtension = request.getParameter("mimeExtension");
 
 //          String contextPath = getServlet().getServletContext().getRealPath("/");
 //          String filePath = contextPath + path + fileName;
@@ -51,8 +54,8 @@ public class FileDownloadAction extends InterMineAction
             InputStream is = getServlet().getServletContext().getResourceAsStream(path + fileName);
 
             // MIME type
-            if (fileName.endsWith("jar")) {
-                response.setContentType("application/java-archive"); // or application/x-jar
+            if (fileName.endsWith(mimeExtension)) {
+                response.setContentType(mimeType);
                 response.setHeader("Content-disposition",
                         "attachment; filename=" + fileName);
             }
@@ -70,8 +73,8 @@ public class FileDownloadAction extends InterMineAction
             sos.close();
         } catch (Exception e) {
             e.printStackTrace();
-            // TODO error message...
-            return mapping.findForward("begin");
+            recordError(new ActionMessage("api.fileDownloadFailed"), request);
+            return mapping.findForward("api");
         }
 
         return null;
