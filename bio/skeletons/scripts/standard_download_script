@@ -1,0 +1,68 @@
+#!/usr/bin/perl
+
+package skeleton_download_script;    # <-- exactly the same as the script name
+
+# A description of what this script does.
+# This script downloads the file FILE from SERVER to MAIN_DIR/YEAR-MONTH-DAY/FILE,
+# and links it to CURRENT_LINK
+
+use strict;
+use warnings;
+use File::Basename;
+
+use lib dirname($0) . '/../../intermine/perl/InterMine-Util/lib';
+use InterMine::Util::DataDownloader;
+
+use constant TITLE       => 'Skeleton Download Script';          # <-- Put the name of your source here
+use constant DESCRIPTION => 'DATA FROM A SOURCE' . "\n" . 'URL'; # <-- Put the description of your source here
+use constant SERVER      => "http://some.server.com/some/path";  # <-- The url to fetch, minus the file name
+use constant FILE        => "somefile.data";                     # <-- The name of the file to fetch
+
+# As a rule: the file to fetch = File::Spec->catfile(SERVER, FILE)
+
+my ( $logger, $base_data_dir );
+
+#data source
+
+sub run {
+    get_data(@_);
+    exit(0);
+}
+
+#Define ARGVs
+sub get_data {
+    my ( $class, @args ) = @_;
+
+    ( $base_data_dir, $logger ) = parse_args(@args);
+
+    log_start(TITLE);
+
+    my %args = (
+        server         => SERVER, 
+        file           => FILE,  
+        title          => TITLE,
+        description    => DESCRIPTION,
+        main_dir       => 'FILL ME IN', # <-- The main data directory for this source type
+        temp_file      => 'FILL ME IN', # <-- Temp destination (a standard temp file will be created if undef)
+        current_link   => 'FILL ME IN', # <-- The location of the link to the current data
+        old_file       => 'FILL ME IN', # <-- The last downloaded file
+        post_processor => undef,        # <-- If your source needs post-processing, supply a code-ref here
+    );
+
+    eval {
+
+        standard_http_download(%args);
+
+    };
+
+    if ( my $e = $@ ) {
+        log_result_error( TITLE, $e );
+    } else {
+        log_result_success(TITLE);
+    }
+
+}
+
+__PACKAGE__->run(@ARGV) unless caller;
+
+1;
