@@ -103,7 +103,7 @@ public class HomophilaConverter extends BioFileConverter
         StringBuffer descBuff = new StringBuffer();
         String omim = "";
         while ((line = br.readLine()) != null) {
-            String fields[] = StringUtils.split(line, '\t');
+            String[] fields = StringUtils.split(line, '\t');
             if (omim.equals(fields[0])) {
                 descBuff.append("; ");
                 descBuff.append(fields[1]);
@@ -133,7 +133,7 @@ public class HomophilaConverter extends BioFileConverter
         String line;
         int done = 1;
         while ((line = br.readLine()) != null) {
-            String fields[] = StringUtils.split(line, '\t');
+            String[] fields = StringUtils.split(line, '\t');
             if (fields.length == 2) {
                 proteinToGene.put(fields[0], fields[1]);
             } else {
@@ -194,7 +194,7 @@ public class HomophilaConverter extends BioFileConverter
         String line;
         int done = 0;
         while ((line = br.readLine()) != null) {
-            String array[] = StringUtils.split(line, '\t');
+            String[] array = StringUtils.split(line, '\t');
             newBlastMatch(array);
             if (++done % 10000 == 0) {
                 LOG.info("Processed " + done + " homophila matches");
@@ -210,7 +210,7 @@ public class HomophilaConverter extends BioFileConverter
      * @throws ObjectStoreException if something goes wrong
      * @throws SAXException if something goes wrong
      */
-    protected Item newBlastMatch(String array[])
+    protected Item newBlastMatch(String[] array)
         throws ObjectStoreException, SAXException {
         Item drosophilaProtein = findTranslation(array);
         if (drosophilaProtein != null) {
@@ -232,7 +232,7 @@ public class HomophilaConverter extends BioFileConverter
      * @return Translation Item
      * @throws ObjectStoreException if something goes wrong
      */
-    protected Item findTranslation(String array[]) throws ObjectStoreException {
+    protected Item findTranslation(String[] array) throws ObjectStoreException {
         String proteinCG = array[TRANSLATION_ID];
         IdResolver resolver = resolverFactory.getIdResolver();
         int resCount = resolver.countResolutions("7227", proteinCG);
@@ -265,7 +265,7 @@ public class HomophilaConverter extends BioFileConverter
      * @throws ObjectStoreException if something goes wrong
      * @throws SAXException if storing the protein synonym fails
      */
-    protected Item findProtein(String array[])
+    protected Item findProtein(String[] array)
         throws ObjectStoreException, SAXException {
         Item protein = proteins.get(array[PROTEIN_ID]);
         if (protein == null) {
@@ -291,7 +291,7 @@ public class HomophilaConverter extends BioFileConverter
      * @throws ObjectStoreException if something goes wrong
      * @throws SAXException if storing the protein synonym fails
      */
-    protected Item findGene(String array[])
+    protected Item findGene(String[] array)
         throws ObjectStoreException, SAXException {
         String geneId = proteinToGene.get(array[PROTEIN_ID]);
         if (geneId == null) {
@@ -317,7 +317,7 @@ public class HomophilaConverter extends BioFileConverter
      * @return Disease Item
      * @throws ObjectStoreException if something goes wrong
      */
-    protected Item findDisease(String array[]) throws ObjectStoreException {
+    protected Item findDisease(String[] array) throws ObjectStoreException {
         Item disease = diseases.get(array[OMIM_ID]);
         if (disease == null) {
             disease = createItem("Disease");
