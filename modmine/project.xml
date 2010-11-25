@@ -53,17 +53,48 @@
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
     </source>
-<!--    
-<source name="rnai" type="rnai">
+
+<!--    ADDED FOR r20 -->
+    <source name="rnai" type="rnai">
       <property name="src.data.dir" location="/shared/data/wormbase-rnai/current"/>
     </source>
--->    
+    <source name="treefam" type="treefam">
+      <property name="src.data.dir" location="/shared/data/treefam/current"/>
+      <property name="src.data.dir.includes" value="ortholog.txt.table"/>
+      <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
+      <property name="treefam.organisms" value="7227 6239"/>
+      <property name="treefam.homologues" value="9606 10090 10116 4932 7955"/>
+    </source>
+    <source name="reactome" type="biopax">
+      <property name="src.data.dir" location="/shared/data/biopax/reactome/current/not-curated"/>
+      <property name="biopax.organisms" value="7227 6239"/>
+      <property name="biopax.datasourcename" value="Reactome"/>
+      <property name="biopax.datasetname" value="Reactome data set"/>
+      <property name="biopax.curated" value="false"/>
+    </source>
+    <source name="reactome-curated" type="biopax">
+      <property name="src.data.dir" location="/shared/data/biopax/reactome/current/curated"/>
+      <property name="biopax.organisms" value="7227 6239"/>
+      <property name="biopax.datasourcename" value="Reactome"/>
+      <property name="biopax.datasetname" value="FlyReactome data set"/>
+      <property name="biopax.curated" value="true"/>
+    </source>
+<!-- NEEDS MODIFICATION TO ACCEPT LIST OF TAXIDS
+    <source name="drosophila-homology" type="drosophila-homology">
+      <property name="src.data.dir" location="/shared/data/flybase/current/homology"/>
+      <property name="src.data.dir.includes" value="*.tsv"/>
+    </source>
+-->
+<!-- END -->
+
     <source name="interpro" type="interpro" dump="true">
       <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
+<!-- REMOVED FOR treefam
     <source name="inparanoid-orthologue" type="orthologue">
       <property name="src.data.dir" location="/shared/data/modmine/sources/orthologues/inparanoid/current/"/>
     </source>
+-->
     <source name="psi-mi-ontology" type="psi-mi-ontology">
         <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
     </source>
