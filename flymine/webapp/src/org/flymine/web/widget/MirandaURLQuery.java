@@ -47,7 +47,7 @@ public class MirandaURLQuery implements WidgetURLQuery
         q.addConstraint(Constraints.in("Gene.miRNAtargets.target.gene",  bag.getName()));
         if (!showAll) {
             String[] keys = key.split(",");
-            q.addConstraint(Constraints.oneOfValues("Gene", Arrays.asList(keys)));
+            q.addConstraint(Constraints.oneOfValues("Gene.symbol", Arrays.asList(keys)));
         }
         return q;
     }

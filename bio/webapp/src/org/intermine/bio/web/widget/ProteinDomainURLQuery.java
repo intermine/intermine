@@ -54,7 +54,8 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
                 prefix + ".proteinDomains.name");
         q.addConstraint(Constraints.in(bagType,  bag.getName()));
         if (!showAll) {
-            q.addConstraint(Constraints.lookup(prefix + ".proteinDomains",  key, ""));
+            q.addConstraint(Constraints.lookup(prefix + ".proteinDomains.primaryIdentifier",
+                    key, ""));
         }
         return q;
     }

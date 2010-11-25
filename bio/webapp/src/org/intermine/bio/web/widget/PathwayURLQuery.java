@@ -53,12 +53,11 @@ public class PathwayURLQuery implements WidgetURLQuery
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
             String[] keys = key.split(",");
-            q.addConstraint(Constraints.oneOfValues("Gene.pathways",
+            q.addConstraint(Constraints.oneOfValues("Gene.pathways.identifier",
                     Arrays.asList(keys)));
         }
         q.addOrderBy("Gene.pathways.identifier", OrderDirection.ASC);
         q.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
-
         return q;
     }
 }
