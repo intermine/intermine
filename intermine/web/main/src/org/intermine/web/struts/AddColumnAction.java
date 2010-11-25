@@ -75,8 +75,10 @@ public class AddColumnAction extends InterMineAction
         Model model = im.getModel();
 
         List<Path> paths = new ArrayList<Path>();
-        paths.add(new Path(model, columnToAdd));
+        Path path = new Path(model, columnToAdd);
+        paths.add(path);
         WebResults webResults = (WebResults) table;
+        webResults.getColumnsPath().add(path);
         webResults.addColumns(paths);
 
         // add to path query as well
