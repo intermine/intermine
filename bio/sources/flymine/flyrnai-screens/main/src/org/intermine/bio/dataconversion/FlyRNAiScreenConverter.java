@@ -10,6 +10,9 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,7 +30,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
-import org.xml.sax.SAXException;
 
 /**
  * DataConverter to create items from DRSC RNAi screen date files.
@@ -39,14 +41,12 @@ public class FlyRNAiScreenConverter extends BioFileConverter
 {
     protected Item organism, hfaSource;
 
-    private Map<String, Item> genes = new HashMap<String, Item>();
-    private Map<String, Item> publications = new HashMap<String, Item>();
-    private Map<String, Item> screenMap = new HashMap<String, Item>();
+    private Map<String, String> genes = new HashMap<String, String>();
+    private Map<String, String> publications = new HashMap<String, String>();
+    private Map<String, String> screenMap = new HashMap<String, String>();
     private static final String TAXON_ID = "7227";
-    // access to current file for error messages
-    private String fileName;
+    private File screenDetailsFile;
     private Set<String> hitScreenNames = new HashSet<String>();
-    private Set<String> detailsScreenNames = new HashSet<String>();
     protected IdResolverFactory resolverFactory;
 
     protected static final Logger LOG = Logger.getLogger(FlyRNAiScreenConverter.class);
@@ -57,8 +57,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
      */
     public FlyRNAiScreenConverter(ItemWriter writer, Model model) {
         super(writer, model, "DRSC", "DRSC data set");
-
-        // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
     private static final Map<String, String> RESULTS_KEY = new HashMap<String, String>();
@@ -73,23 +71,31 @@ public class FlyRNAiScreenConverter extends BioFileConverter
     }
 
     /**
+     * Set the screen details input file. This file contains the details for each screen, only hits
+     * from screens in this file will be processed
+     *
+     * @param screenDetailsFile screen input file
+     */
+    public void setScreenDetailsFile(File screenDetailsFile) {
+        this.screenDetailsFile = screenDetailsFile;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public void process(Reader reader) throws Exception {
-        // set up common items
         if (organism == null) {
             organism = createItem("Organism");
             organism.setAttribute("taxonId", TAXON_ID);
             store(organism);
         }
-
-        fileName = getCurrentFile().getName();
-        if (fileName.startsWith("RNAi_all_hits")) {
-            processHits(reader);
-        } else if (fileName.startsWith("RNAi_screen_details")) {
-            processScreenDetails(reader);
+        try {
+            readScreenDetails(new FileReader(screenDetailsFile));
+        } catch (IOException err) {
+            throw new RuntimeException("error reading screen details", err);
         }
+        processHits(reader);
     }
 
     /**
@@ -99,34 +105,30 @@ public class FlyRNAiScreenConverter extends BioFileConverter
     @Override
     public void close() throws Exception {
 
-        for (Item screen : screenMap.values()) {
-            store(screen);
-        }
-
         Set<String> noDetails = new HashSet<String>();
         for (String screenName : hitScreenNames) {
-            if (!detailsScreenNames.contains(screenName)) {
+            if (screenMap.get(screenName) == null) {
                 noDetails.add(screenName);
             }
         }
 
         Set<String> noHits = new HashSet<String>();
-        for (String screenName : detailsScreenNames) {
+        for (String screenName : screenMap.keySet()) {
             if (!hitScreenNames.contains(screenName)) {
                 noHits.add(screenName);
             }
         }
 
-        if (!noHits.isEmpty() || !noDetails.isEmpty()) {
+        if (!noDetails.isEmpty()) {
             String msg = "Screen names from hits file and details file did not match."
-                    + (noHits.isEmpty()
-                       ? ""
-                       : "  No hits found for screen detail: '" + noHits + "'")
-                    + (noDetails.isEmpty()
-                       ? ""
-                       : "  No details found for screen hit: '" + noDetails + "'");
+                    + "  No hits found for screen detail: '" + noHits + "'";
             throw new RuntimeException(msg);
-            //LOG.error(msg);
+        }
+
+        if (!noHits.isEmpty()) {
+            String msg = "Screen names from hits file and details file did not match."
+                    + "  No details found for screen hit: '" + noDetails + "'";
+            LOG.error(msg);
         }
         super.close();
     }
@@ -136,8 +138,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
 
         boolean readingData = false;
         int headerLength = 0;
-        Item[] screens = null;
-
         Iterator<?> tsvIter;
         try {
             tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -152,11 +152,12 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                 if ("Amplicon".equals(line[0].trim())) {
                     readingData = true;
                     headerLength = line.length;
-                    screens = new Item[headerLength - 2];
                     for (int i = 2; i < line.length; i++) {
                         // create an array of screen item identifiers (first two slots empty)
                         String screenName = line[i].trim();
-                        screens[i - 2] = getScreen(screenName);
+                        if (StringUtils.isEmpty(screenName)) {
+                            continue;
+                        }
                         hitScreenNames.add(screenName);
                     }
                 }
@@ -169,7 +170,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                     throw new RuntimeException(msg);
                 }
 
-                Set<Item> ampliconGenes = new LinkedHashSet<Item>();
+                Set<String> ampliconGenes = new LinkedHashSet<String>();
 
                 String ampliconIdentifier = line[0].trim();
                 Item amplicon = createItem("PCRProduct");
@@ -182,57 +183,51 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                     String [] geneNames = line[1].split(",");
                     for (int i = 0; i < geneNames.length; i++) {
                         String geneSymbol = geneNames[i].trim();
-                        Item gene = newGene(geneSymbol);
-                        if (gene != null) {
-                            ampliconGenes.add(gene);
-                            amplicon.addToCollection("genes", gene);
+                        String geneRefId = getGene(geneSymbol);
+                        if (geneRefId != null) {
+                            ampliconGenes.add(geneRefId);
+                            amplicon.addToCollection("genes", geneRefId);
                         }
                     }
                 }
-
+                int i = 1;
                 // loop over screens to create results
-                for (int j = 0; j < screens.length; j++) {
-                    String resultValue = RESULTS_KEY.get(line[j + 2].trim());
+                for (String screenName : hitScreenNames) {
+                    String resultValue = RESULTS_KEY.get(line[i + 1].trim());
                     if (resultValue == null) {
-                        throw new RuntimeException("Unrecogised result symbol '" + line[j + 2]
+                        throw new RuntimeException("Unrecogised result symbol '" + line[i + 1]
                             + "' in line: " + Arrays.asList(line));
                     }
 
                     if (genes.isEmpty()) {
                         // create a hit that doesn't reference a gene
-                        Item screenHit = createItem("RNAiScreenHit");
-                        String refId = screenHit.getIdentifier();
-                        screenHit.setReference("rnaiScreen", screens[j]);
-                        screenHit.setAttribute("result", resultValue);
-                        screenHit.setReference("pcrProduct", amplicon);
-                        screens[j].addToCollection("rnaiScreenHits", refId);
-                        store(screenHit);
+                        storeScreen(screenName, amplicon.getIdentifier(), resultValue, null);
                     } else {
                         // create one hit for each gene targeted
-                        for (Item gene : ampliconGenes) {
-                            Item screenHit = createItem("RNAiScreenHit");
-                            String refId = screenHit.getIdentifier();
-                            screenHit.setReference("rnaiScreen", screens[j]);
-                            screenHit.setReference("gene", gene);
-                            screenHit.setAttribute("result", resultValue);
-                            screenHit.setReference("pcrProduct", amplicon);
-                            //screens[j].getCollection("genes").addRefId(gene.getIdentifier());
-                            gene.addToCollection("rnaiResults", screenHit.getIdentifier());
-                            screens[j].addToCollection("rnaiScreenHits", refId);
-                            store(screenHit);
+                        for (String geneRefId : ampliconGenes) {
+                            storeScreen(screenName, amplicon.getIdentifier(), resultValue,
+                                    geneRefId);
                         }
                     }
                 }
                 store(amplicon);
             }
         }
-
-        for (Item gene : genes.values()) {
-            store(gene);
-        }
     }
 
-    private void processScreenDetails(Reader reader) throws ObjectStoreException {
+    private void storeScreen(String screenName, String amplicon, String resultValue,
+            String geneRefId) throws ObjectStoreException {
+        Item screenHit = createItem("RNAiScreenHit");
+        if (geneRefId != null) {
+            screenHit.setReference("gene", geneRefId);
+        }
+        screenHit.setAttribute("result", resultValue);
+        screenHit.setReference("pcrProduct", amplicon);
+        screenHit.setReference("rnaiScreen", screenMap.get(screenName));
+        store(screenHit);
+    }
+
+    private void readScreenDetails(Reader reader) throws ObjectStoreException {
         Iterator<?> tsvIter;
         try {
             tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -253,56 +248,39 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                 // skip header
                 continue;
             }
-            Item publication = getPublication(pubmedId);
+            String publicationRefId = getPublication(pubmedId);
 
             String screenName = line[2].trim();
-            detailsScreenNames.add(screenName);
-            Item screen = getScreen(screenName);
+            if (StringUtils.isEmpty(screenName)) {
+                continue;
+            }
+            Item screen = createItem("RNAiScreen");
             screen.setAttribute("name", screenName);
             screen.setAttribute("cellLine", line[3].trim());
             String analysisDescr = line[4].trim();
             if (StringUtils.isNotEmpty(analysisDescr)) {
-                screen.setAttribute("analysisDescription", line[4].trim());
+                screen.setAttribute("analysisDescription", analysisDescr);
             }
             screen.setReference("organism", organism);
-            screen.setReference("publication", publication);
-
-            // the hits file may be processed first
-            screenMap.remove(screenName);
-            screenMap.put(screenName, screen);
+            screen.setReference("publication", publicationRefId);
+            store(screen);
+            screenMap.put(screenName, screen.getIdentifier());
         }
     }
 
-
-    // Fetch or create a Publication
-    private Item getPublication(String pubmedId) throws ObjectStoreException {
-        Item publication = publications.get(pubmedId);
-        if (publication == null) {
-            publication = createItem("Publication");
+    private String getPublication(String pubmedId) throws ObjectStoreException {
+        String refId = publications.get(pubmedId);
+        if (refId == null) {
+            Item publication = createItem("Publication");
             publication.setAttribute("pubMedId", pubmedId);
-            publications.put(pubmedId, publication);
+            refId = publication.getIdentifier();
+            publications.put(pubmedId, refId);
             store(publication);
         }
-        return publication;
+        return refId;
     }
 
-    // Fetch of create an RNAiScreen
-    private Item getScreen(String screenName) {
-        Item screen = screenMap.get(screenName);
-        if (screen == null) {
-            screen = createItem("RNAiScreen");
-            screenMap.put(screenName, screen);
-        }
-        return screen;
-    }
-
-
-    /**
-     * Convenience method to create a new gene Item
-     * @param geneSymbol the gene symbol
-     * @return a new gene Item
-     */
-    protected Item newGene(String geneSymbol) {
+    private String getGene(String geneSymbol) throws ObjectStoreException {
         if (geneSymbol == null) {
             throw new RuntimeException("geneSymbol can't be null");
         }
@@ -315,14 +293,15 @@ public class FlyRNAiScreenConverter extends BioFileConverter
             return null;
         }
         String primaryIdentifier = resolver.resolveId(TAXON_ID, geneSymbol).iterator().next();
-        Item item = genes.get(primaryIdentifier);
-        if (item == null) {
-            item = createItem("Gene");
+        String refId = genes.get(primaryIdentifier);
+        if (refId == null) {
+            Item item = createItem("Gene");
             item.setAttribute("primaryIdentifier", primaryIdentifier);
             item.setReference("organism", organism);
-            genes.put(primaryIdentifier, item);
+            refId = item.getIdentifier();
+            store(item);
+            genes.put(primaryIdentifier, refId);
         }
-        return item;
+        return refId;
     }
 }
-

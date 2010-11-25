@@ -42,8 +42,8 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
 
     public void testProcess() throws Exception {
         File srcFile = new File(getClass().getClassLoader().getResource("RNAi_screen_details").toURI());
-        converter.setCurrentFile(srcFile);
-        converter.process(new FileReader(srcFile));
+        converter.setScreenDetailsFile(srcFile);
+
 
         srcFile = new File(getClass().getClassLoader().getResource("RNAi_all_hits.txt").toURI());
         converter.setCurrentFile(srcFile);

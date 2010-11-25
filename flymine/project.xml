@@ -187,8 +187,9 @@
       <property name="gene.peptide.files" value="/shared/data/orthologues/inparanoid/geneid2peptideid/"/>
     </source>
     <source name="flyrnai-screens" type="flyrnai-screens">
-      <property name="taxonId" value="7227"/>
       <property name="src.data.dir" location="/shared/data/drsc/current"/>
+      <property name="src.data.dir.includes" value="RNAi_all_hits*"/>
+      <property name="screenDetailsFile" location="/shared/data/drsc/current/RNAi_screen_details*"/>
     </source>
     <source name="fly-fish" type="fly-fish">
       <property name="src.data.dir" location="/shared/data/flyfish"/>
