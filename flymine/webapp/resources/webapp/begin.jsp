@@ -9,6 +9,154 @@
 <!-- begin.jsp -->
 <html:xhtml/>
 
+<div id="content-wrap">
+	<div id="boxes">
+		<div id="search-bochs">
+			<img class="title" src="themes/purple/homepage/search-ico-right.png" title="search"/>
+			<div class="inner">
+				<h3>Search</h3>
+				<span class="ugly-hack">&nbsp;</span>
+				<p>Search FlyMine. Enter <strong>names</strong>, <strong>identifiers</strong> or <strong>keywords</strong> for pathways, genes, authors,
+				ontology terms, etc. (e.g. <em>eve</em>, <em>embryo</em>, <em>zen</em>, <em>allele</em>)</p>
+				<div class="input"><input class="input" type="text" value="e.g. Example identifier"></div>
+				<input class="button violet" type="submit" value="search"/>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div id="lists-bochs">
+			<img class="title" src="images/icons/lists-64.png" title="lists"/>
+			<div class="inner">
+				<h3>Query Lists</h3>
+				<p>Enter a <strong>list</strong> of search terms.</p>
+				<select>
+					<option>Gene</option>
+				</select>
+				<textarea></textarea>
+				<input class="button plush" type="submit" value="analyse"/>
+				<span>-or-</span>
+				<a href="#">Upload a list</a>
+			</div>
+		</div>
+		<div id="welcome-bochs">
+			<div class="inner">
+				<h3>First Time Here?</h3>
+				<p>Lorem Ipsum is simply <strong>dummy text</strong> of the my printing and typesetting industry. Lorem Ipsum has been the
+				<a href="#">industry's standard dummy text</a> ever since the 1500s, when an unknown and printer took a galley of type and
+				scrambled it.</p>
+				<a class="button gray" href="#">
+					<div><span>take a tour</span></div>
+				</a>
+			</div>
+		</div>
+	</div>
+	
+	<div style="clear:both"></div>
+	
+	<div id="bottom-wrap">
+		<div id="templates">
+			
+		</div>
+		<div id="low">
+			<div id="api">
+	            <h4>Perl<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
+	            <img src="/metabolicmine/themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
+	            <p>We support programatic access to our data through Application Programming Interface too! Choose from options below:</p>
+	            <ul>
+	                <li><a href="#">Perl API</a></li>
+	                <li><a href="#">Java API</a></li>
+	            </ul>				
+			</div>
+			<div id="rss" style="display:none;">
+				<h4>News<span>&nbsp;&amp;&nbsp;</span>Updates</h4>
+				<table id="articles"></table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+		// feed URL
+		var feedURL = "${WEB_PROPERTIES['project.rss']}";
+		// limit number of entries displayed
+		var maxEntries = 2;
+		// where are we appending entries? (jQuery syntax)
+		var target = 'table#articles';
+
+		var months = new Array(12); months[0]="Jan"; months[1]="Feb"; months[2]="Mar"; months[3]="Apr"; months[4]="May"; months[5]="Jun";
+		months[6]="Jul"; months[7]="Aug"; months[8]="Sep"; months[9]="Oct"; months[10]="Nov"; months[11]="Dec";
+
+		$(document).ready(function() {
+			// DWR fetch, see AjaxServices.java
+			AjaxServices.getNewsPreview(feedURL, function(data) {
+				if (data) {
+					// show us
+					$('#rss').slideToggle('slow');
+				
+					// declare
+					var feedTitle, feedDescription, feedDate, feedLink, row;
+
+					// convert to XML, jQuery manky...
+		            var feed = new DOMParser().parseFromString(data, "text/xml");
+		            var items = feed.getElementsByTagName("item"); // ATOM!!!
+		            for (var i = 0; i < items.length; ++i) {
+						// early bath
+						if (i > maxEntries) return;
+
+			            feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 70);
+			            feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 70);
+			            feedDate = new Date(items[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue);
+			            feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
+
+    					// build table row
+    					row = '<tr>'
+        	                    + '<td class="date">'
+        	                    	+ '<a target="new" href="' + feedLink + '">' + feedDate.getDate()
+        	                    	+ '<br /><span>' + months[feedDate.getMonth()] + '</span></a></td>'
+        	                    + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
+    	                	+ '</tr>';
+    					// append, done
+    					$(target).append(row);
+    					i++;
+	            	}
+	            } 
+			});
+		});
+       	
+       	// trim text to a specified length
+		function trimmer(grass, length) {
+			if (!grass) return;
+			grass = stripHTML(grass);
+			if (grass.length > length) return grass.substring(0, length) + '...';
+			return grass;
+		}
+
+		// strip HTML
+       	function stripHTML(html) {
+       	   var tmp = document.createElement("DIV"); tmp.innerHTML = html; return tmp.textContent || tmp.innerText;
+       	}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div style="background:red">
+
 <div class="body">
 <div id="actions">
 
@@ -159,7 +307,6 @@ We support programatic access to our data through Application Programming Interf
 
        <div id="rss">
         <c:if test="${!empty WEB_PROPERTIES['project.rss']}">
-          <tiles:insert name="news.tile" />
         </c:if>
       </div>
 
@@ -191,4 +338,6 @@ We support programatic access to our data through Application Programming Interf
 
 //]]>-->
 </script>
+
+</div>
 <!-- /begin.jsp -->

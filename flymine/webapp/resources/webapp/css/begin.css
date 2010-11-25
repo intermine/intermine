@@ -105,3 +105,83 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that th
 /* tabbed menu */
 ul.tabs li.link, ul.tabs li.link.active { border:0; background:#FFF; }
 	ul.tabs li.link a:hover { background:#FFF; }
+
+	
+	
+	
+	
+
+	
+/* newer FlyMine */
+/*body { background:#dfdfdf url('../themes/purple/homepage/page-bg-gradient.png') repeat-x top !important; }*/
+
+#content-wrap { padding:16px; background:url('../themes/purple/homepage/content-grad-top.png') repeat-x top; }
+	#content-wrap p { color:#535353; font-size:13px; }
+	
+	#search-bochs, #lists-bochs, #welcome-bochs { width:280px; float:left; margin-right:40px; position:relative;
+		background:url('../themes/purple/homepage/main-bochs-transparent-gradient.png') no-repeat top; padding:0 6px; } 
+		#welcome-bochs { margin-right:0; }
+		#boxes div.inner { background:#FFF; min-height:200px; border-bottom:1px solid #dfdfdf; margin-bottom:2px; padding-bottom:14px; }
+		
+		#boxes div.inner h3 { color:#FFF; font-family:"Myriad Pro",Arial,Garuda,Helvetica,Tahoma,sans-serif; padding:4px 0 4px 80px;
+		font-size:24px; font-weight:normal; }
+			#search-bochs div.inner h3 { background:#5c0075; }
+			#lists-bochs div.inner h3 { background:#9f67ad; }
+			#welcome-bochs div.inner h3 { background:#c3c3c3; color:#535353; padding-left:10px; }
+		
+		#boxes div.inner p { padding:0 12px; line-height:20px; }
+		
+		#search-bochs img.title { position:absolute; top:6px; left:18px; }
+		#lists-bochs img.title { position:absolute; top:6px; left:18px; }
+		
+		#search-bochs div.inner span.ugly-hack { float:left; width:82px; }
+		#search-bochs div.inner p { margin-top:10px; }
+		#lists-bochs div.inner p { margin:10px 0 0 70px; }
+		#welcome-bochs div.inner p { margin:10px 0 0 0px; line-height:21px; }
+			#welcome-bochs div.inner p a { color:inherit; text-decoration:underline; }
+		
+		#lists-bochs div.inner select { margin:10px 0 0 12px; width:256px; }
+		#lists-bochs div.inner textarea { background:url('../themes/purple/homepage/textarea.png') no-repeat top; border:none; width:240px;
+		margin:12px 0 10px 10px; padding:6px 10px; height:50px; }
+		
+		#boxes div.input { background:url("../themes/purple/homepage/input-bg.png") no-repeat scroll center top transparent;
+			color:#888; height:38px; margin:10px 0; }
+		
+		#boxes input[type="submit"].button { border:medium none; cursor:pointer; font-family:"Myriad Pro",Arial,Garuda,Helvetica,Tahoma,
+			sans-serif; font-size:13px; font-weight:bold; height:30px; text-transform:uppercase; vertical-align:middle; }
+		#boxes input[type="submit"].violet { background:url("../themes/purple/homepage/button-violet-dark.png") no-repeat scroll center bottom transparent;
+			color:#FFFFFF; float:right; margin-right:30%; padding:2px 40px; }
+		#search-bochs input[type="text"].input { background:none repeat scroll 0 0 transparent; border:medium none; padding:12px 20px 6px 30px;
+			width:255px; color:#888; font-size:12px; }
+
+		#boxes input[type="submit"].plush { background:url("../themes/purple/homepage/button-plush.png") no-repeat scroll center bottom transparent;
+			color:#FFFFFF; float:left; padding:2px 40px; }
+
+		#lists-bochs div.inner span { color:#7a7a7a; font-weight:bold; font-size:12px; letter-spacing:0px; text-transform:uppercase;
+			line-height:30px; margin-right:6px; }
+		
+		#lists-bochs div.inner a { text-decoration:underline; color:#5c0075; font-size:13px; letter-spacing:0.5px; }
+
+		#welcome-bochs a.button, #welcome-bochs a.button div, #welcome-bochs a.button div span { font-size:13px; text-transform:uppercase;
+			font-family:"Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif; text-decoration:none; font-weight:bold;
+			background-repeat:no-repeat; }
+		#welcome-bochs a.button { line-height:20px; }
+		#welcome-bochs a.button:hover { text-decoration:underline; }
+		#welcome-bochs a.button div { background-position:top left; padding-left:18px; height:30px; position:relative; cursor:pointer; }
+		#welcome-bochs a.button div span { background-position:top right; display:block; height:30px; padding:6px 18px 0 0; cursor:pointer;
+			width:90px; }
+		
+		#welcome-bochs input.button { font-family:"Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif; font-size:13px; height:30px;
+			/* Opera 9 does not uppercase input elements */ text-transform:uppercase; font-weight:bold; border:none; cursor:pointer; }
+		
+		#welcome-bochs a.button.gray { color:#505050; }
+		#welcome-bochs a.button.gray div { background-image:url("../themes/metabolic/buttons/btn-gray-left.png"); width:90px; margin-left:25%;
+			margin-top:12px; }
+		#welcome-bochs a.button.gray span { background-image:url("../themes/metabolic/buttons/btn-gray-right.png"); }
+
+#articles { margin-bottom:0; }
+    #articles td { padding:0 0 6px 0; }
+		#articles td { padding-right:30px; }
+        #articles td.date { padding-right:16px; }
+    #articles .date a { text-decoration:none; font-weight:bold; font-size:18px; line-height:14px; }
+        #articles .date a span { font-size:12px; font-weight:normal; }
