@@ -337,6 +337,17 @@ warn "new tomcat host: $tomcat_host\n";
    		$line =~ s/release-$current_version/release-$new_version/;
 	}
 
+#====  UNTESTED
+  if ($line =~ m:ProxyPass(.*)/release-$current_version:) {
+  # added to change the host for current release
+      $line =~ s/$tomcat_host/modalone/;
+  }
+
+  if ($line =~ m:ProxyPassReverse(.*)/release-$current_version:) {
+  # added to change the host for current release
+      $line =~ s/$tomcat_host/modalone/;
+  }
+#====
     if ($line =~ m:</VirtualHost>:i) {
       $apache_config .= <<CONF;
     ProxyPass /release-$new_version ajp://$tomcat_host:8009/release-$new_version timeout=600
