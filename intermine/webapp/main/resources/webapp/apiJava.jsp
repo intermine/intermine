@@ -72,7 +72,7 @@
               Create a directory with the same name as the package name in the java source code under the package directory. Copy the source file to the new directory.
             </li>
             <li>
-              Run the script from the command line under the package directory , as <span><i>./compile-run.sh [package_name]/[class_name]</i></span>.
+              Run the script from the command line under the package directory. Firstly make sure you have the permission to execute by using the command <span><i>chmod +x compile-run.sh</i></span>, then run <span><i>./compile-run.sh <package name>/<class name></i></span>.
             </li>
           </ol>
       </div>
