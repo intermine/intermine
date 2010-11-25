@@ -47,7 +47,7 @@
 <html:form styleId="templateForm" action="/templateAction">
     <%-- template title --%>
     <h2 class="templateTitle">
-        <c:out value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-24.png\" style=\"vertical-align:middle\">&nbsp;')}" escapeXml="true"/>
+        <c:out value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-24.png\" style=\"vertical-align:middle\">&nbsp;')}" escapeXml="false"/>
         <tiles:insert name="setFavourite.tile">
             <tiles:put name="name" value="${templateQuery.name}"/>
             <tiles:put name="type" value="template"/>
