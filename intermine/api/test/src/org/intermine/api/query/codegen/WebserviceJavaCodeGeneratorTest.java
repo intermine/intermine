@@ -68,7 +68,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = null;
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = NULL_QUERY;
         assertEquals(expected, cg.generate(wsCodeGenInfo));
@@ -95,7 +95,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         // Mock up
         pathQuery.clearView();
@@ -120,7 +120,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -134,7 +134,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -191,7 +191,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -205,7 +205,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -269,7 +269,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -284,7 +284,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -346,7 +346,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -359,7 +359,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -419,7 +419,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -434,7 +434,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -498,7 +498,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -513,7 +513,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -577,7 +577,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -592,7 +592,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -656,7 +656,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -671,7 +671,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -735,7 +735,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -750,7 +750,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -814,7 +814,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -829,7 +829,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -893,7 +893,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -908,7 +908,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -972,7 +972,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -987,7 +987,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -1051,7 +1051,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1066,7 +1066,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -1130,7 +1130,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1145,7 +1145,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -1210,7 +1210,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1225,7 +1225,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -1296,7 +1296,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1312,7 +1312,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -1384,7 +1384,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1400,7 +1400,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -1467,7 +1467,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1482,7 +1482,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -1546,7 +1546,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1561,7 +1561,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -1631,7 +1631,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
 //        pathQuery.addConstraint(Constraints.equalToLoop("Gene.proteins.genes", "Gene"));
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1646,7 +1646,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -1713,7 +1713,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
 //        pathQuery.addConstraint(Constraints.notEqualToLoop("Gene.proteins.genes", "Gene"));
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1728,7 +1728,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -1804,7 +1804,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
 //        pathQuery.setConstraintLogic("(A or B) and C");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.io.IOException;" + ENDL +
@@ -1820,7 +1820,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         "/**" + ENDL +
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M query." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class QueryClient" + ENDL +
@@ -1916,7 +1916,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = null;
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = NULL_QUERY;
 
@@ -1938,7 +1938,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -1951,7 +1951,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "* template name - im_available_organisms" + ENDL +
         SPACE + "* template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class TemplateImAvailableOrganisms" + ENDL +
@@ -1998,7 +1998,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2011,7 +2011,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "* template name - im_available_organisms" + ENDL +
         SPACE + "* template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class TemplateImAvailableOrganisms" + ENDL +
@@ -2058,7 +2058,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2071,7 +2071,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "* template name - im_available_organisms" + ENDL +
         SPACE + "* template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class TemplateImAvailableOrganisms" + ENDL +
@@ -2118,7 +2118,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2131,7 +2131,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "* template name - im_available_organisms" + ENDL +
         SPACE + "* template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class TemplateImAvailableOrganisms" + ENDL +
@@ -2178,7 +2178,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2191,7 +2191,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "* template name - im_available_organisms" + ENDL +
         SPACE + "* template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class TemplateImAvailableOrganisms" + ENDL +
@@ -2238,7 +2238,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2251,7 +2251,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "* template name - im_available_organisms" + ENDL +
         SPACE + "* template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class TemplateImAvailableOrganisms" + ENDL +
@@ -2298,7 +2298,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Organism_Gene");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2311,7 +2311,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "* template name - Organism_Gene" + ENDL +
         SPACE + "* template description - Show all the genes for a particular organism." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class TemplateOrganismGene" + ENDL +
@@ -2359,7 +2359,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Organism_Gene");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2372,7 +2372,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "* template name - Organism_Gene" + ENDL +
         SPACE + "* template description - Show all the genes for a particular organism." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class TemplateOrganismGene" + ENDL +
@@ -2421,7 +2421,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Clone_gene");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2434,7 +2434,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "* template name - Clone_gene" + ENDL +
         SPACE + "* template description - For a cDNA clone or list of clones give the corresponding gene identifiers." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class TemplateCloneGene" + ENDL +
@@ -2485,7 +2485,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Gene_ExonLocation2");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = TEMPLATE_BAG_CONSTRAINT;
 
@@ -2510,7 +2510,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Gene_ExonLocation2");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = TEMPLATE_BAG_CONSTRAINT;
 
@@ -2535,7 +2535,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Organism_Gene");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2548,7 +2548,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "* template name - Organism_Gene" + ENDL +
         SPACE + "* template description - Show all the genes for a particular organism." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class TemplateOrganismGene" + ENDL +
@@ -2599,7 +2599,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Organism_Gene");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2612,7 +2612,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "* template name - Organism_Gene" + ENDL +
         SPACE + "* template description - Show all the genes for a particular organism." + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class TemplateOrganismGene" + ENDL +
@@ -2660,7 +2660,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("AAANotNull");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2672,7 +2672,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - AAANotNull" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class TemplateAAANotNull" + ENDL +
@@ -2719,7 +2719,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("AAANotNull");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2731,7 +2731,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "* This is an automatically generated Java program to run the modMine_Test-2.M template." + ENDL +
         SPACE + "* template name - AAANotNull" + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class TemplateAAANotNull" + ENDL +
@@ -2783,7 +2783,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Gene_OrthologueOrganism_new");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, null);
 
         String expected = "package modminetest2m;" + ENDL + ENDL +
         "import java.util.ArrayList;" + ENDL +
@@ -2796,7 +2796,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         SPACE + "* template name - Gene_OrthologueOrganism_new" + ENDL +
         SPACE + "* template description - For a particular gene, show predicted orthologues in one particular organism.  " + ENDL +
         SPACE + "*" + ENDL +
-        SPACE + "* @auther modMine_Test-2.M" + ENDL +
+        SPACE + "* @author modMine_Test-2.M" + ENDL +
         SPACE + "*" + ENDL +
         SPACE + "*/" + ENDL +
         "public class TemplateGeneOrthologueOrganismNew" + ENDL +

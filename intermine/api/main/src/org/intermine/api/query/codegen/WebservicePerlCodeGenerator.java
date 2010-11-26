@@ -59,6 +59,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         PathQuery query = wsCodeGenInfo.getQuery();
         String serviceBaseURL = wsCodeGenInfo.getServiceBaseURL();
         String projectTitle = wsCodeGenInfo.getProjectTitle();
+        String perlWSModuleVer = wsCodeGenInfo.getPerlWSModuleVer();
 
         // query is null
         if (query == null) {
@@ -71,9 +72,13 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
 
         if ("PathQuery".equals(queryClassName)) {
             // Add use Webservice::InterMine
-            sb.append("use Webservice::InterMine '" + serviceBaseURL + "/service';" + ENDL + ENDL)
+            sb.append("use Webservice::InterMine " + perlWSModuleVer + " '"
+                            + serviceBaseURL + "/service';" + ENDL + ENDL)
                 .append("# This is an automatically generated script to run the " + projectTitle
-                        + " query" + ENDL + ENDL);
+                        + " query" + ENDL)
+                    .append("# You should install the Webservice::InterMine modules to run this "
+                            + "example, e.g. sudo cpan Webservice::InterMine"
+                            + ENDL + ENDL);
 
             if (query.getDescription() == null || "".equals(query.getDescription())) {
                 sb.append("# query description - no description" + ENDL);
@@ -114,7 +119,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             if (query.getOrderBy() != null && !query.getOrderBy().isEmpty()) {
                 sb.append("# Sort by" + ENDL);
                 for (OrderElement oe : query.getOrderBy()) {
-                    sb.append("$query->sort_order('"
+                    sb.append("$query->set_sort_order('"
                             + oe.getOrderPath() + "' => '" + oe.getDirection() + "');"
                             + ENDL);
                 }
@@ -181,7 +186,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             }
 
             // Add print results
-            sb.append("print $query->results(as => 'string');");
+            sb.append("print $query->results(as => 'string').\"\\n\";");
             sb.append(ENDL);
 
         } else if ("TemplateQuery".equals(queryClassName)) {
@@ -218,10 +223,13 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 constraints.append(templateConstraintUtil(pc, opCode));
             }
 
-            sb.append("use Webservice::InterMine '" + serviceBaseURL + "/service';" + ENDL)
-                .append(ENDL)
+            sb.append("use Webservice::InterMine " + perlWSModuleVer + " '"
+                    + serviceBaseURL + "/service';" + ENDL + ENDL)
                 .append("# This is an automatically generated script to run the " + projectTitle
-                        + " template" + ENDL + ENDL)
+                    + " query" + ENDL)
+                .append("# You should install the Webservice::InterMine modules to run this "
+                        + "example, e.g. sudo cpan Webservice::InterMine"
+                        + ENDL + ENDL)
                 .append("# template name - " + templateName + ENDL);
             if (description == null || "".equals(description)) {
                 sb.append("# template description - no description" + ENDL + ENDL);
@@ -238,7 +246,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 .append(constraints.toString())
                 .append(");" + ENDL)
                 .append(ENDL)
-                .append("print $results;" + ENDL);
+                .append("print $results.\"\\n\";" + ENDL);
         }
 
         return sb.toString();
