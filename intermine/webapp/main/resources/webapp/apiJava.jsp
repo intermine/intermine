@@ -17,13 +17,13 @@
   });
 
   function showText(pid) {
-    jQuery("#" + pid).slideToggle("slow");
+    // jQuery("#" + pid).slideToggle("slow");
   }
 
 //]]>-->
 </script>
 
-<im:boxarea titleKey="api.java.titleKey" stylename="gradientbox" minWidth="800px" htmlId="apiJava">
+<im:boxarea titleKey="api.java.titleKey" stylename="gradientbox" fixedWidth="90%" htmlId="apiJava">
   <form id="apiJavaForm" action="fileDownload.do" method="post">
     <input type="hidden" value="${path}" name="path" />
     <input type="hidden" value="${fileName}" name="fileName" />
@@ -38,13 +38,13 @@
 <div>
   <ul>
     <li>
-      <div onclick="javascript:showText('prerequisite')"><span style="font-weight: bold;">Prerequisites</span></div>
+      <div onclick="javascript:showText('prerequisite')"><h3 style="font-weight: bold;">Prerequisites</h3></div>
       <div id="prerequisite" style="padding: 5px">
         All you need is to <a href="javascript: jQuery('#apiJavaForm').submit();">download</a> the distribution package which contains all libraries required to run the program.
       </div>
     </li>
     <li>
-      <div onclick="javascript:showText('codegen')"><span style="font-weight: bold;">Start to use</span></div>
+      <div onclick="javascript:showText('codegen')"><h3 style="font-weight: bold;">Start to use</h3></div>
       <div id="codegen" style="padding: 5px">
         <span>You can get example Java web service API code either from a Template Query or the QueryBuilder:</span>
           <ul style="padding:0px">
@@ -58,7 +58,7 @@
       </div>
     </li>
     <li>
-      <div onclick="javascript:showText('editsrc')"><span style="font-weight: bold;">Run the program</span></div>
+      <div onclick="javascript:showText('editsrc')"><h3 style="font-weight: bold;">Run the program</h3></div>
       <div id="editsrc" style="padding: 5px">
         <span>You can run the program either from command line or within an IDE (e.g. Eclipse). To run the program in your favorite IDE, make sure to import all the libs from the distribution package. To run from command line:</span>
            <ol style="padding:0px">

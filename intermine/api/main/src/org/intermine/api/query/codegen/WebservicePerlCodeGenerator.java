@@ -226,7 +226,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             sb.append("use Webservice::InterMine " + perlWSModuleVer + " '"
                     + serviceBaseURL + "/service';" + ENDL + ENDL)
                 .append("# This is an automatically generated script to run the " + projectTitle
-                    + " query" + ENDL)
+                    + " template" + ENDL)
                 .append("# You should install the Webservice::InterMine modules to run this "
                         + "example, e.g. sudo cpan Webservice::InterMine"
                         + ENDL + ENDL)
