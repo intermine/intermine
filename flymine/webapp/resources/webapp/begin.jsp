@@ -16,9 +16,9 @@
 			<div class="inner">
 				<h3>Search</h3>
 				<span class="ugly-hack">&nbsp;</span>
-				<p>Search FlyMine. Enter <strong>names</strong>, <strong>identifiers</strong> or <strong>keywords</strong> for pathways, genes, authors,
-				ontology terms, etc. (e.g. <em>eve</em>, <em>embryo</em>, <em>zen</em>, <em>allele</em>)</p>
-				<div class="input"><input class="input" type="text" value="e.g. Example identifier"></div>
+				<p>Search FlyMine. Enter <strong>names</strong>, <strong>identifiers</strong> or <strong>keywords</strong> for genes, pathways, authors,
+				ontology terms, etc. (e.g. <em>eve</em>, <em>embryo</em>, <em>zen allele</em>)</p>
+				<div class="input"><input class="input" type="text" value="e.g. eve"></div>
 				<input class="button violet" type="submit" value="search"/>
 				<div style="clear:both;"></div>
 			</div>
@@ -26,10 +26,10 @@
 		<div id="lists-bochs">
 			<img class="title" src="images/icons/lists-64.png" title="lists"/>
 			<div class="inner">
-				<h3>Query Lists</h3>
-				<p>Enter a <strong>list</strong> of search terms.</p>
+				<h3>Analyse Lists</h3>
+				<p>Enter a comma separated <strong>list</strong> of identifiers.</p>
 				<select>
-					<option>Gene</option>
+                    <option>Gene</option>
 				</select>
 				<textarea></textarea>
 				<input class="button plush" type="submit" value="analyse"/>
@@ -40,21 +40,21 @@
 		<div id="welcome-bochs">
 			<div class="inner">
 				<h3>First Time Here?</h3>
-				<p>Lorem Ipsum is simply <strong>dummy text</strong> of the my printing and typesetting industry. Lorem Ipsum has been the
-				<a href="#">industry's standard dummy text</a> ever since the 1500s, when an unknown and printer took a galley of type and
-				scrambled it.</p>
+				<p>FlyMine integrates many types of data for <em>Drosophila</em> and other organisms.
+				You can run flexible queries, export results and work with lists of data.
+				</p>
 				<a class="button gray" href="#">
 					<div><span>take a tour</span></div>
 				</a>
 			</div>
 		</div>
 	</div>
-	
+
 	<div style="clear:both"></div>
-	
+
 	<div id="bottom-wrap">
 		<div id="templates">
-			
+
 		</div>
 		<div id="low">
 			<div id="api">
@@ -64,7 +64,7 @@
 	            <ul>
 	                <li><a href="#">Perl API</a></li>
 	                <li><a href="#">Java API</a></li>
-	            </ul>				
+	            </ul>
 			</div>
 			<div id="rss" style="display:none;">
 				<h4>News<span>&nbsp;&amp;&nbsp;</span>Updates</h4>
@@ -91,7 +91,7 @@
 				if (data) {
 					// show us
 					$('#rss').slideToggle('slow');
-				
+
 					// declare
 					var feedTitle, feedDescription, feedDate, feedLink, row;
 
@@ -118,10 +118,10 @@
     					$(target).append(row);
     					i++;
 	            	}
-	            } 
+	            }
 			});
 		});
-       	
+
        	// trim text to a specified length
 		function trimmer(grass, length) {
 			if (!grass) return;
