@@ -17,7 +17,7 @@
 				<h3>Search</h3>
 				<span class="ugly-hack">&nbsp;</span>
 				<p>Search FlyMine. Enter <strong>names</strong>, <strong>identifiers</strong> or <strong>keywords</strong> for genes,
-				pathways, authors, ontology terms, etc. (e.g. <em>eve</em>, <em>embryo</em>, <em>zen allele</em>)</p>
+				proteins, pathways, ontology terms, authors, etc. (e.g. <em>eve</em>, HIPPO_DROME, glycolysis, <em>hb</em> allele).</p>
 				
 				<form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
 					<div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value=""></div>
@@ -33,31 +33,33 @@
 			<img class="title" src="images/icons/lists-64.png" title="lists"/>
 			<div class="inner">
 				<h3>Analyse Lists</h3>
-				<p>Enter a comma separated <strong>list</strong> of identifiers.</p>
+				<p>Enter a <strong>list</strong> of identifiers.</p>
 				
-				<html:form action="/buildBag" focus="pasteInput">
-	                <html:select property="type">
-	                    <html:option value="Gene">Gene</html:option>
-	                	<html:option value="Protein">Protein</html:option>
-	                </html:select>
-					<html:textarea property="text" />
+				<form name="buildBagForm" method="post" action="<c:url value="/buildBag.do" />">
+					<select name="type">
+						<option value="Gene">Gene</option>
+	                	<option value="Protein">Protein</option>
+	                </select>
+					<textarea name="text"></textarea>
 					<div class="bottom">
 						<input class="button plush" type="submit" value="analyse"/>
-						<span>-or-</span>
-						<a href="bag.do?subtab=upload">Upload a list</a>
+						<!-- <span>-or-</span> -->
+						<br />
+						<a class="advanced" href="bag.do?subtab=upload">advanced upload</a>
 					</div>
-				</html:form>
+				</form>
 			</div>
 		</div>
 		<div id="welcome-bochs">
 			<div class="inner">
 				<h3>First Time Here?</h3>
-				<p>FlyMine integrates many types of data for <em>Drosophila</em> and other organisms. You can run flexible queries, export
-				results and work with lists of data.</p>
-				<div class="bottom">			
+				<p>FlyMine integrates many types of data for <em>Drosophila</em>, <em>Anopheles</em> and other organisms. These include: orthologues, protein domains, interactions,
+				pathways, gene expression, and gene ontology. You can run flexible queries, export results and work with lists of data.</p>
+				<div class="bottom">
 					<a class="button gray" href="http://www.flymine.org/help/tour/start.html"
 					onclick="javascript:window.open('http://www.flymine.org/help/tour/start.html','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
-					<div><span>take a tour</span></div></a>
+					take a tour
+					</a>
 				</div>
 			</div>
 		</div>
@@ -69,20 +71,21 @@
 		<div id="templates">
 			<table id="menu" border="0" cellspacing="0">
                 <tr>
-                    <td><a href="#tab1">Genes</a></td>
-                    <td><a href="#tab2">Proteins</a></td>
-                    <td><a href="#tab3">Interactions</a></td>
-                    <td><a href="#tab4">Pathways</a></td>
-                    <td><a href="#tab5">Homologues</a></td>
-                    <td><a href="#tab6">Gene Ontology</a></td>
-                    <td><a href="#tab7">Gene Expression</a></td>
+                    <td><span id="tab1">Genes</span></td>
+                    <td><span id="tab2">Proteins</span></td>
+                    <td><span id="tab3">Interactions</span></td>
+                    <td><span id="tab4">Pathways</span></td>
+                    <td><span id="tab5">Homologues</span></td>
+                    <td><span id="tab6">Gene Ontology</span></td>
+                    <td><span id="tab7">Gene Expression</span></td>
                 </tr>
 			</table>
 			
 			<div id="tab-content">
-			    <div id="tab1" class="content">
-			        <p>The gene structure and other genome annotation in FlyMine are provided by a variety of source databases including:
-			        FlyBase, UniProt, Ensembl and over 30 other data sources.  <a href="dataCategories.do">Read more...</a></p>
+				<div id="ribbon"></div>
+			    <div id="content1" class="content">
+			        <p>The gene models and other genome annotation in FlyMine are provided by a variety of source databases including: FlyBase, UniProt, Ensembl and over
+			        30 other data sources. <a href="dataCategories.do">Read more...</a></p>
 			        <p>Query for genes:</p>
 				    <tiles:insert name="aspectTemplates.jsp">
 				    	<tiles:put name="aspectQueries" beanName="aspectQueries" />
@@ -90,22 +93,22 @@
 				    </tiles:insert>
 				    
 				    <ul>
-						<li><a href="#">EST clone [A. gambiae] <img src="themes/purple/homepage/arrow-gray-ico.png" /> EST clusters.</a></li>
-    					<li><a href="#">Protein <img src="themes/purple/homepage/arrow-gray-ico.png" /> Gene.</a></li>
-    					<li><a href="#">Chromosome [D. melanogaster] <img src="themes/purple/homepage/arrow-gray-ico.png" /> All genes with insertions.</a></li>
-    					<li><a href="#">Chromosomal location <img src="themes/purple/homepage/arrow-gray-ico.png" /> All genes + Transcripts + Exons.</a></li>
-    					<li><a href="#">Chromosome <img src="themes/purple/homepage/arrow-gray-ico.png" /> All genes.</a></li>
-    					<li><a href="#">Pathway <img src="themes/purple/homepage/arrow-gray-ico.png" /> genes.</a></li>
-    					<li><a href="#">Organism <img src="themes/purple/homepage/arrow-gray-ico.png" /> All intergenic regions.</a></li>
-    					<li><a href="#">Chromosome <img src="themes/purple/homepage/arrow-gray-ico.png" /> All intergenic regions.</a></li>
-    					<li><a href="#">Organism <img src="themes/purple/homepage/arrow-gray-ico.png" /> All 5' UTRs.</a></li>
-    					<li><a href="#">Chromosomal location <img src="themes/purple/homepage/arrow-gray-ico.png" /> All genes.</a></li>
+						<li><a href="#">EST clone [A. gambiae] <img src="images/icons/green-arrow-16.png" /> EST clusters.</a></li>
+    					<li><a href="#">Protein <img src="images/icons/green-arrow-16.png" /> Gene.</a></li>
+    					<li><a href="#">Chromosome [D. melanogaster] <img src="images/icons/green-arrow-16.png" /> All genes with insertions.</a></li>
+    					<li><a href="#">Chromosomal location <img src="images/icons/green-arrow-16.png" /> All genes + Transcripts + Exons.</a></li>
+    					<li><a href="#">Chromosome <img src="images/icons/green-arrow-16.png" /> All genes.</a></li>
+    					<li><a href="#">Pathway <img src="images/icons/green-arrow-16.png" /> genes.</a></li>
+    					<li><a href="#">Organism <img src="images/icons/green-arrow-16.png" /> All intergenic regions.</a></li>
+    					<li><a href="#">Chromosome <img src="images/icons/green-arrow-16.png" /> All intergenic regions.</a></li>
+    					<li><a href="#">Organism <img src="images/icons/green-arrow-16.png" /> All 5' UTRs.</a></li>
+    					<li><a href="#">Chromosomal location <img src="images/icons/green-arrow-16.png" /> All genes.</a></li>
 				    </ul>
 				    
 			        <p class="more"><a href="templates.do">More queries</a></p>
 			    </div>
-			    <div id="tab2" class="content">
-			        <p>FlyMine loads proteins from UniProt and protein domains from InterPro.  <a href="aspect.do?name=Proteins">Read
+			    <div id="content2" class="content">
+			        <p>FlyMine loads proteins from UniProt and FlyBase, and protein domains from InterPro. <a href="aspect.do?name=Proteins">Read
 			        more...</a></p>
 			        <p>Query for proteins:</p>
 			    	<tiles:insert name="aspectTemplates.jsp">
@@ -114,8 +117,8 @@
 			    	</tiles:insert>
 			        <p class="more"><a href="templates.do">More queries</a></p>
 			    </div>
-			    <div id="tab3" class="content">
-			        <p>FlyMine loads interactions from IntAct and BioGRID.  <a href="aspect.do?name=Interactions">Read more</a></p>
+			    <div id="content3" class="content">
+			        <p>FlyMine loads physical interactions from IntAct and BioGRID, and genetic interaction from FlyBase. <a href="aspect.do?name=Interactions">Read more</a></p>
 			        <p>Query for interactions:</p>
 			    	<tiles:insert name="aspectTemplates.jsp">
 			      		<tiles:put name="aspectQueries" beanName="aspectQueries" />
@@ -123,8 +126,8 @@
 			    	</tiles:insert>
 			        <p class="more"><a href="templates.do">More queries</a></p>
 			    </div>
-			    <div id="tab4" class="content">
-			        <p>FlyMine loads pathway data.  <a href="aspect.do?name=Pathways">Read more..</a></p>
+			    <div id="content4" class="content">
+			        <p>FlyMine loads pathway data from KEGG, Reactome and FlyReactome. <a href="aspect.do?name=Pathways">Read more..</a></p>
 			        <p>Popular queries:</p>
 			    	<tiles:insert name="aspectTemplates.jsp">
 			      		<tiles:put name="aspectQueries" beanName="aspectQueries" />
@@ -132,8 +135,8 @@
 			    	</tiles:insert>
 			        <p class="more"><a href="templates.do">More queries</a></p>
 			    </div>
-			    <div id="tab5" class="content">
-			        <p>FlyMine loads homologues from InParanoid, KEGG and TreeFam.  <a href="aspect.do?name=Comparative+Genomics">
+			    <div id="content5" class="content">
+			        <p>FlyMine loads homologue predictions from InParanoid, KEGG and TreeFam. <a href="aspect.do?name=Comparative+Genomics">
 			        Read more</a></p>
 			        <p>Query for homologues:</p>
 			    	<tiles:insert name="aspectTemplates.jsp">
@@ -142,8 +145,8 @@
 			    	</tiles:insert>
 			        <p class="more"><a href="templates.do">More queries</a></p>
 			    </div>
-			    <div id="tab6" class="content">
-			        <p>FlyMine loads gene ontology from MGI, FlyBase, WormBase, UniProt, SGD, and InterPro.
+			    <div id="content6" class="content">
+			        <p>FlyMine loads Gene Ontology annotation from MGI, FlyBase, WormBase, UniProt, SGD, and InterPro.
 			        <a href="aspect.do?name=Gene+Ontology">Read more</a></p>
 			        <p>Query for GO:</p>
 			    	<tiles:insert name="aspectTemplates.jsp">
@@ -152,9 +155,9 @@
 			    	</tiles:insert>
 			        <p class="more"><a href="templates.do">More queries</a></p>
 			    </div>
-			    <div id="tab7" class="content">
-			        <p>FlyMine loads gene expression data for Drosophila melanogaster and Anopheles gambiae from FlyAtlas, BDGP,
-			        ArrayExpress and Fly-FISH.  <a href="aspect.do?name=Gene+Expression">Read more...</a></p>
+			    <div id="content7" class="content">
+			        <p>FlyMine loads gene expression data for Drosophila melanogaster and Anopheles gambiae from FlyAtlas, BDGP, ArrayExpress and Fly-FISH.
+			        <a href="aspect.do?name=Gene+Expression">Read more...</a></p>
 			        <p>Query for gene expression:</p>
 			    	<tiles:insert name="aspectTemplates.jsp">
 			      		<tiles:put name="aspectQueries" beanName="aspectQueries" />
@@ -174,11 +177,11 @@
 			
 			<div id="api">
 	            <h4>Perl<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
-	            <img src="/metabolicmine/themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
+	            <img src="themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
 	            <p>We support programatic access to our data through Application Programming Interface too! Choose from options below:</p>
 	            <ul>
-	                <li><a href="/api.do">Perl API</a>
-	                <li><a href="/api.do?subtab=java">Java API</a>
+	                <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do">Perl API</a>
+	                <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=java">Java API</a>
 	            </ul>
 			</div>
 			
@@ -188,23 +191,30 @@
 </div>
 
 <script type="text/javascript">
-	$(document).ready(function() {
-	    $("#tab-content div.content").hide();
-	    $("#templates table#menu td:first").addClass("active").append('<div class="right"></div><div class="left"></div>').show();
-	    $("#tab-content div.content:first").show();
-	
-	    $("#templates table#menu td").click(function() {
-	        $("#templates table#menu td").removeClass("active");
-	        $("#templates table#menu td div").remove('.right').remove('.left')
-	        
-	        $(this).addClass("active").append('<div class="right"></div><div class="left"></div>');
-	        $("#tab-content .content").hide();
-	
-	        var activeTab = $(this).find("a").attr("href");
-	        $(activeTab).fadeIn();
-	        return false;
+	jQuery(document).ready(function() {
+	    jQuery("#tab-content .content").each(function() {
+	    	jQuery(this).hide();
 	    });
-	
+	    
+	    jQuery("table#menu td:first").addClass("active").append('<div class="right"></div><div class="left"></div>').show();
+	    jQuery("div.content:first").show();
+	    
+	    jQuery("table#menu td").click(function() {
+	    	jQuery("table#menu td").removeClass("active");
+	    	jQuery("table#menu td div").remove('.right').remove('.left')
+	         
+	        jQuery(this).addClass("active").append('<div class="right"></div><div class="left"></div>');
+	    	jQuery("#tab-content .content").hide();
+
+	    	if (jQuery(this).is('span')) {
+	    		var activeTab = jQuery(this).attr("id").substring(3);
+	    	} else {
+	    		var activeTab = jQuery(this).find("span").attr("id").substring(3);
+	    	}
+	        jQuery('#content' + activeTab).fadeIn();
+	        
+	        return false;
+		});
 	});
 
 
@@ -218,12 +228,12 @@
 	var months = new Array(12); months[0]="Jan"; months[1]="Feb"; months[2]="Mar"; months[3]="Apr"; months[4]="May"; months[5]="Jun";
 	months[6]="Jul"; months[7]="Aug"; months[8]="Sep"; months[9]="Oct"; months[10]="Nov"; months[11]="Dec";
 
-	$(document).ready(function() {
+	jQuery(document).ready(function() {
 		// DWR fetch, see AjaxServices.java
 		AjaxServices.getNewsPreview(feedURL, function(data) {
 			if (data) {
 				// show us
-				$('#rss').slideToggle('slow');
+				jQuery('#rss').slideToggle('slow');
 			
 				// declare
 				var feedTitle, feedDescription, feedDate, feedLink, row;
@@ -235,8 +245,8 @@
 					// early bath
 					if (i > maxEntries) return;
 
-		            feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 70);
-		            feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 70);
+		            feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 80);
+		            feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 80);
 		            feedDate = new Date(items[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue);
 		            feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
 
@@ -248,7 +258,7 @@
        	                    + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
    	                	+ '</tr>';
    					// append, done
-   					$(target).append(row);
+   					jQuery(target).append(row);
    					i++;
             	}
             } 
@@ -269,31 +279,31 @@
     }
 
 	// placeholder value for search boxes
-	var placeholder = 'e.g. PPARG, eve, Schmidt 2009';
+	var placeholder = 'e.g. zen, Q9V4E1';
 	// class used when toggling placeholder
 	var inputToggleClass = 'eg';
 
 	function preFillInput(term) {
-		var e = $("input#actionsInput");
+		var e = jQuery("input#actionsInput");
 		e.val(term);
 		if (e.hasClass(inputToggleClass)) e.toggleClass(inputToggleClass);
 		e.focus();
 	}
 
  	// e.g. values only available when JavaScript is on
-	$('input#actionsInput').toggleClass(inputToggleClass);
+	jQuery('input#actionsInput').toggleClass(inputToggleClass);
 
 	// register input elements with blur & focus
-	$('input#actionsInput').blur(function() {
-		if ($(this).val() == '') {
-			$(this).toggleClass(inputToggleClass);
-			$(this).val(placeholder);
+	jQuery('input#actionsInput').blur(function() {
+		if (jQuery(this).val() == '') {
+			jQuery(this).toggleClass(inputToggleClass);
+			jQuery(this).val(placeholder);
 		}
 	});
-	$('input#actionsInput').focus(function() {
-		if ($(this).hasClass(inputToggleClass)) {
-			$(this).toggleClass(inputToggleClass);
-			$(this).val('');
+	jQuery('input#actionsInput').focus(function() {
+		if (jQuery(this).hasClass(inputToggleClass)) {
+			jQuery(this).toggleClass(inputToggleClass);
+			jQuery(this).val('');
 		}
 	});
 </script>
