@@ -179,6 +179,11 @@ public class TypeUtilTest extends TestCase
         assertEquals("OneTwo", TypeUtil.javaiseClassName("one two"));
         assertEquals("OneTwo", TypeUtil.javaiseClassName("one_two"));
         assertEquals("OneTwo", TypeUtil.javaiseClassName("one (two)"));
+
+        assertEquals("", TypeUtil.javaisePackageName(""));
+        assertEquals("modmine123", TypeUtil.javaisePackageName("modMine123"));
+        assertEquals("modminetest", TypeUtil.javaisePackageName("modMine TEST"));
+        assertEquals("modminetest2r", TypeUtil.javaisePackageName("modMine_TEST-2.r"));
     }
 
     public void testIsInstanceOf() throws Exception {
