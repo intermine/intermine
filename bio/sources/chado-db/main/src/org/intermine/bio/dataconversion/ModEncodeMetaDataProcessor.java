@@ -2878,11 +2878,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         for (Integer submissionId : submissionDataMap.keySet()) {
+            Set<String> subFiles = new HashSet<String>(); 
             for (Integer dataId : submissionDataMap.get(submissionId)) {
                 AppliedData ad = appliedDataMap.get(dataId);
                 if (ad.type.equalsIgnoreCase("Result File")) {
-                    if (!StringUtils.isBlank(ad.value)) {
+                    if (!StringUtils.isBlank(ad.value) && 
+                            !subFiles.contains(ad.value)) {
                         createResultFile(ad.value, ad.name, submissionId);
+                        subFiles.add(ad.value);
                     }
                 }
             }
