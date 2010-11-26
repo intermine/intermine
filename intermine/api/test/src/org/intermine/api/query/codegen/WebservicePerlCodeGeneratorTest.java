@@ -38,6 +38,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
 
     private String serviceRootURL = "http://newt.flymine.org:8080/modminepreview";
     private String projectTitle = "modMine_Test-2.M";
+    private String perlWSModuleVer = "0.9412";
 
     private WebservicePerlCodeGenerator cg;
 
@@ -69,7 +70,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         PathQuery pathQuery = null;
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
         String expected = NULL_QUERY;
         assertEquals(expected, cg.generate(wsCodeGenInfo));
@@ -96,7 +97,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
         // Mock up
         pathQuery.clearView();
@@ -121,10 +122,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -132,8 +134,8 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.primaryIdentifier" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -156,10 +158,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -171,8 +174,8 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -198,10 +201,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -213,13 +217,13 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# Join status" + ENDL +
         "$query->add_join(" + ENDL +
         INDENT + "path => 'Gene.organism'," + ENDL +
         INDENT + "style => 'OUTER'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -241,10 +245,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -255,7 +260,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.name" + ENDL +
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -279,10 +284,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -294,14 +300,14 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "$query->add_constraint(" + ENDL +
         INDENT + "path  => 'Gene.secondaryIdentifier'," + ENDL +
         INDENT + "op    => '='," + ENDL +
         INDENT + "value => 'zen'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -325,10 +331,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -340,14 +347,14 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "$query->add_constraint(" + ENDL +
         INDENT + "path  => 'Gene.secondaryIdentifier'," + ENDL +
         INDENT + "op    => '!='," + ENDL +
         INDENT + "value => 'zen'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -371,10 +378,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -386,14 +394,14 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "$query->add_constraint(" + ENDL +
         INDENT + "path  => 'Gene.organism.commonName'," + ENDL +
         INDENT + "op    => 'LIKE'," + ENDL +
         INDENT + "value => 'D.*'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -417,10 +425,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -432,14 +441,14 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "$query->add_constraint(" + ENDL +
         INDENT + "path  => 'Gene.organism.commonName'," + ENDL +
         INDENT + "op    => 'NOT LIKE'," + ENDL +
         INDENT + "value => 'D.*'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -463,10 +472,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -478,14 +488,14 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "$query->add_constraint(" + ENDL +
         INDENT + "path  => 'Gene.length'," + ENDL +
         INDENT + "op    => '>'," + ENDL +
         INDENT + "value => '1024'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -509,10 +519,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -524,14 +535,14 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "$query->add_constraint(" + ENDL +
         INDENT + "path  => 'Gene.length'," + ENDL +
         INDENT + "op    => '>='," + ENDL +
         INDENT + "value => '1024'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -555,10 +566,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -570,14 +582,14 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "$query->add_constraint(" + ENDL +
         INDENT + "path  => 'Gene.length'," + ENDL +
         INDENT + "op    => '<'," + ENDL +
         INDENT + "value => '1024'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -601,10 +613,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -616,14 +629,14 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "$query->add_constraint(" + ENDL +
         INDENT + "path  => 'Gene.length'," + ENDL +
         INDENT + "op    => '<='," + ENDL +
         INDENT + "value => '1024'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -647,10 +660,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -662,7 +676,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "$query->add_constraint(" + ENDL +
         INDENT + "path  => 'Gene'," + ENDL +
@@ -670,7 +684,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "value => 'zen'," + ENDL +
         INDENT + "extra_value => 'C. elegans'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -694,7 +708,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
         String expected = PATH_BAG_CONSTRAINT;
 
@@ -720,7 +734,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
         String expected = PATH_BAG_CONSTRAINT;
 
@@ -751,10 +765,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -766,7 +781,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "$query->add_constraint(" + ENDL +
         INDENT + "path  => 'Gene.organism.commonName'," + ENDL +
@@ -776,7 +791,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + INDENT + "'honey bee'," + ENDL +
         INDENT + "]," + ENDL +
         ");" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -805,10 +820,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -820,7 +836,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "$query->add_constraint(" + ENDL +
         INDENT + "path  => 'Gene.organism.commonName'," + ENDL +
@@ -830,7 +846,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + INDENT + "'honey bee'," + ENDL +
         INDENT + "]," + ENDL +
         ");" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -854,10 +870,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -869,13 +886,13 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "$query->add_constraint(" + ENDL +
         INDENT + "path  => 'Gene.primaryIdentifier'," + ENDL +
         INDENT + "op    => 'IS NOT NULL'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -899,10 +916,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -914,13 +932,13 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "$query->add_constraint(" + ENDL +
         INDENT + "path  => 'Gene.primaryIdentifier'," + ENDL +
         INDENT + "op    => 'IS NULL'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -944,7 +962,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
         String expected = LOOP_CONSTRAINT;
 
@@ -970,7 +988,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
         String expected = LOOP_CONSTRAINT;
 
@@ -1005,10 +1023,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
                 new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(pathQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M query" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# query description - no description" + ENDL +
         "my $query = Webservice::InterMine->new_query;" + ENDL + ENDL +
         "# The view specifies the output columns" + ENDL +
@@ -1020,7 +1039,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "Gene.organism.shortName" + ENDL +
         "/);" + ENDL + ENDL +
         "# Sort by" + ENDL +
-        "$query->sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
+        "$query->set_sort_order('Gene.primaryIdentifier' => 'ASC');" + ENDL + ENDL +
         "# You can edit the constraint values below" + ENDL +
         "$query->add_constraint(" + ENDL +
         INDENT + "path  => 'Gene.organism.shortName'," + ENDL +
@@ -1046,7 +1065,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         ");" + ENDL + ENDL +
         "# Constraint Logic" + ENDL +
         "$query->logic('(A or B) and C');" + ENDL + ENDL +
-        "print $query->results(as => 'string');" + ENDL;
+        "print $query->results(as => 'string').\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1095,7 +1114,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = null;
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
         String expected = NULL_QUERY;
 
@@ -1117,10 +1136,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# template name - im_available_organisms" + ENDL +
         "# template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('im_available_organisms')" + ENDL +
@@ -1132,7 +1152,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "opA    => '='," + ENDL +
         INDENT + "valueA => 'zen'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results.\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1152,10 +1172,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# template name - im_available_organisms" + ENDL +
         "# template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('im_available_organisms')" + ENDL +
@@ -1167,7 +1188,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "opA    => '!='," + ENDL +
         INDENT + "valueA => 'zen'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results.\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1187,10 +1208,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# template name - im_available_organisms" + ENDL +
         "# template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('im_available_organisms')" + ENDL +
@@ -1202,7 +1224,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "opA    => '<'," + ENDL +
         INDENT + "valueA => 'zen'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results.\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1222,10 +1244,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# template name - im_available_organisms" + ENDL +
         "# template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('im_available_organisms')" + ENDL +
@@ -1237,7 +1260,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "opA    => '<='," + ENDL +
         INDENT + "valueA => 'zen'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results.\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1257,10 +1280,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# template name - im_available_organisms" + ENDL +
         "# template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('im_available_organisms')" + ENDL +
@@ -1272,7 +1296,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "opA    => '>'," + ENDL +
         INDENT + "valueA => 'zen'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results.\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1292,10 +1316,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("im_available_organisms");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# template name - im_available_organisms" + ENDL +
         "# template description - For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines." + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('im_available_organisms')" + ENDL +
@@ -1307,7 +1332,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "opA    => '>='," + ENDL +
         INDENT + "valueA => 'zen'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results.\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1327,10 +1352,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Organism_Gene");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# template name - Organism_Gene" + ENDL +
         "# template description - Show all the genes for a particular organism." + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('Organism_Gene')" + ENDL +
@@ -1342,7 +1368,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "opA    => 'LIKE'," + ENDL +
         INDENT + "valueA => 'Drosophila melanogas*'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results.\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1362,10 +1388,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Organism_Gene");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# template name - Organism_Gene" + ENDL +
         "# template description - Show all the genes for a particular organism." + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('Organism_Gene')" + ENDL +
@@ -1377,7 +1404,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "opA    => 'NOT LIKE'," + ENDL +
         INDENT + "valueA => 'Drosophila melanogas*'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results.\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1398,10 +1425,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Clone_gene");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# template name - Clone_gene" + ENDL +
         "# template description - For a cDNA clone or list of clones give the corresponding gene identifiers." + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('Clone_gene')" + ENDL +
@@ -1414,7 +1442,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "valueA => 'LD14383'," + ENDL +
         INDENT + "extra_valueA => 'H. sapiens'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results.\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1437,7 +1465,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Gene_ExonLocation2");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
         String expected = TEMPLATE_BAG_CONSTRAINT;
 
@@ -1462,7 +1490,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Gene_ExonLocation2");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
         String expected = TEMPLATE_BAG_CONSTRAINT;
 
@@ -1487,10 +1515,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Organism_Gene");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# template name - Organism_Gene" + ENDL +
         "# template description - Show all the genes for a particular organism." + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('Organism_Gene')" + ENDL +
@@ -1505,7 +1534,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + INDENT + "'Drosophila melanogaster'," + ENDL +
         INDENT + "]," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results.\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1528,10 +1557,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Organism_Gene");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# template name - Organism_Gene" + ENDL +
         "# template description - Show all the genes for a particular organism." + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('Organism_Gene')" + ENDL +
@@ -1546,7 +1576,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + INDENT + "'Drosophila melanogaster'," + ENDL +
         INDENT + "]," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results.\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1566,10 +1596,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("AAANotNull");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# template name - AAANotNull" + ENDL +
         "# template description - no description" + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('AAANotNull')" + ENDL +
@@ -1580,7 +1611,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => 'IS NOT NULL'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results.\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1600,10 +1631,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("AAANotNull");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# template name - AAANotNull" + ENDL +
         "# template description - no description" + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('AAANotNull')" + ENDL +
@@ -1614,7 +1646,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + "as     => 'string'," + ENDL +
         INDENT + "opA    => 'IS NULL'," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results.\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -1639,10 +1671,11 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         TemplateQuery templateQuery = (TemplateQuery) tqs.get("Gene_OrthologueOrganism_new");
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(templateQuery, serviceRootURL, projectTitle, perlWSModuleVer);
 
-        String expected = "use Webservice::InterMine 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
-        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL + ENDL +
+        String expected = "use Webservice::InterMine 0.9412 'http://newt.flymine.org:8080/modminepreview/service';" + ENDL + ENDL +
+        "# This is an automatically generated script to run the modMine_Test-2.M template" + ENDL +
+        "# You should install the Webservice::InterMine modules to run this example, e.g. sudo cpan Webservice::InterMine" + ENDL + ENDL +
         "# template name - Gene_OrthologueOrganism_new" + ENDL +
         "# template description - For a particular gene, show predicted orthologues in one particular organism.  " + ENDL + ENDL +
         "my $template = Webservice::InterMine->template('Gene_OrthologueOrganism_new')" + ENDL +
@@ -1661,7 +1694,7 @@ public class WebservicePerlCodeGeneratorTest extends TestCase {
         INDENT + INDENT + "'Mus musculus'," + ENDL +
         INDENT + "]," + ENDL +
         ");" + ENDL + ENDL +
-        "print $results;" + ENDL;
+        "print $results.\"\\n\";" + ENDL;
 
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }

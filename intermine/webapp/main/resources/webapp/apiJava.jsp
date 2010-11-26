@@ -38,14 +38,14 @@
 <div>
   <ul>
     <li>
-      <div onclick="javascript:showText('prerequisite')"><span class="fakelink">Prerequisites</span></div>
-      <div id="prerequisite"  style="padding: 5px">
+      <div onclick="javascript:showText('prerequisite')"><span style="font-weight: bold;">Prerequisites</span></div>
+      <div id="prerequisite" style="padding: 5px">
         All you need is to <a href="javascript: jQuery('#apiJavaForm').submit();">download</a> the distribution package which contains all libraries required to run the program.
       </div>
     </li>
     <li>
-      <div onclick="javascript:showText('codegen')"><span class="fakelink">Start to use</span></div>
-      <div id="codegen"  style="padding: 5px">
+      <div onclick="javascript:showText('codegen')"><span style="font-weight: bold;">Start to use</span></div>
+      <div id="codegen" style="padding: 5px">
         <span>You can get example Java web service API code either from a Template Query or the QueryBuilder:</span>
           <ul style="padding:0px">
             <li>
@@ -58,8 +58,8 @@
       </div>
     </li>
     <li>
-      <div onclick="javascript:showText('editsrc')"><span class="fakelink">Run the program</span></div>
-      <div id="editsrc"  style="padding: 5px">
+      <div onclick="javascript:showText('editsrc')"><span style="font-weight: bold;">Run the program</span></div>
+      <div id="editsrc" style="padding: 5px">
         <span>You can run the program either from command line or within an IDE (e.g. Eclipse). To run the program in your favorite IDE, make sure to import all the libs from the distribution package. To run from command line:</span>
            <ol style="padding:0px">
             <li>
@@ -69,7 +69,7 @@
               Unzip the distribution package (see above).
             </li>
             <li>
-              <c:set var="dirName" value="${fn:toLowerCase(WEB_PROPERTIES['project.title'])}"/>
+              <c:set var="dirName" value="${javasieProjectTitle}"/>
 
               In the intermine-client-x.x directory created make a new directory called
               <c:out value="${dirName}"/> (this is the package name in the generated Java).

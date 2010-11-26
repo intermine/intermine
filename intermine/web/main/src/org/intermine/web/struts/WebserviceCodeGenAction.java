@@ -57,7 +57,10 @@ public class WebserviceCodeGenAction extends InterMineAction
                 .getServletContext());
 
         String serviceBaseURL = new URLGenerator(request).getPermanentBaseURL();
+        // set in project properties
         String projectTitle = webProperties.getProperty("project.title");
+        // set in global.web.properties
+        String perlWSModuleVer = webProperties.getProperty("perl.wsModuleVer");
 
         try {
             String method = request.getParameter("method");
@@ -69,13 +72,13 @@ public class WebserviceCodeGenAction extends InterMineAction
                 if ("templateQuery".equals(source)) {
                     String sc = wsPerlCG.generate(setWebserviceCodeGenInfo(
                             getTemplateQuery(im, profile, request, session),
-                            serviceBaseURL, projectTitle));
+                            serviceBaseURL, projectTitle, perlWSModuleVer));
                     output(sc, method, source, response);
                 } else if ("pathQuery".equals(source)) {
                     String sc = wsPerlCG
                             .generate(setWebserviceCodeGenInfo(
                                     getPathQuery(session), serviceBaseURL,
-                                    projectTitle));
+                                    projectTitle, perlWSModuleVer));
                     output(sc, method, source, response);
                 }
             } else if ("java".equals(method)) {
@@ -84,13 +87,13 @@ public class WebserviceCodeGenAction extends InterMineAction
                 if ("templateQuery".equals(source)) {
                     String sc = wsJavaCG.generate(setWebserviceCodeGenInfo(
                             getTemplateQuery(im, profile, request, session),
-                            serviceBaseURL, projectTitle));
+                            serviceBaseURL, projectTitle, null));
                     output(sc, method, source, response);
                 } else if ("pathQuery".equals(source)) {
                     String sc = wsJavaCG
                             .generate(setWebserviceCodeGenInfo(
                                     getPathQuery(session), serviceBaseURL,
-                                    projectTitle));
+                                    projectTitle, null));
                     output(sc, method, source, response);
                 }
             }
@@ -159,10 +162,10 @@ public class WebserviceCodeGenAction extends InterMineAction
      * @return a WebserviceCodeGenInfo object with query, serviceRootURL and projectName set
      */
     private WebserviceCodeGenInfo setWebserviceCodeGenInfo(PathQuery query,
-            String serviceRootURL, String projectTitle) {
+            String serviceRootURL, String projectTitle, String perlWSModuleVer) {
 
         WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(query, serviceRootURL, projectTitle);
+            new WebserviceCodeGenInfo(query, serviceRootURL, projectTitle, perlWSModuleVer);
         return wsCodeGenInfo;
     }
 
