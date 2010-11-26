@@ -13,7 +13,6 @@ package org.intermine.api.config;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -50,8 +49,7 @@ public final class ClassKeyHelper
      */
     public static Map<String, List<FieldDescriptor>> readKeys(Model model, Properties props) {
         Map<String, List<FieldDescriptor>> classKeys = new HashMap<String, List<FieldDescriptor>>();
-        for (Iterator i = props.entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
+        for (Map.Entry<Object, Object> entry : props.entrySet()) {
             String clsName = (String) entry.getKey();
             String pkg = model.getPackageName();
             ClassDescriptor cld = model.getClassDescriptorByName(pkg + "."
