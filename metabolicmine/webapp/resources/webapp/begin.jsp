@@ -268,10 +268,25 @@
 						$('#rss').slideToggle('slow');
 					
 						// declare
-						var feedTitle, feedDescription, feedDate, feedLink, row;
-	
+						var feedTitle, feedDescription, feedDate, feedLink, row, feed;
+							
 						// convert to XML, jQuery manky...
-			            var feed = new DOMParser().parseFromString(data, "text/xml");
+						try {
+							// Internet Explorer
+							feed = new ActiveXObject("Microsoft.XMLDOM");
+							feed.async="false";
+							feed.loadXML(data);					
+						} catch(e) {
+							try {
+								// ...the good browsers
+								feed = new DOMParser().parseFromString(data, "text/xml");
+							} catch(e) {
+								// ... BFF
+								alert(e.message);
+								return;
+							}
+						}
+						
 			            var items = feed.getElementsByTagName("item"); // ATOM!!!
 			            for (var i = 0; i < items.length; ++i) {
 							// early bath
@@ -370,6 +385,10 @@
     </div>
 
  </div>
+ 
+<jsp:include page="/support.jsp">
+	<jsp:param name="page" value="home" />
+</jsp:include>
  
  <script type="text/javascript">
  	// e.g. values only available when JavaScript is on

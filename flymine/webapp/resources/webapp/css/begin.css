@@ -228,7 +228,7 @@ body { background:#dfdfdf url('../themes/purple/homepage/page-bg-gradient.png') 
 					#templates #tab-content #ribbon { position:absolute; right:0; bottom:0; width:155px; height:153px; display:block;
 						background:url("../themes/purple/homepage/ribbon-forest.png") no-repeat top right; }
 					#templates #tab-content #try { position:absolute; right:130px; top:100px; width:266px; height:36px; display:block;
-						background:url("../themes/purple/homepage/try-these.png") no-repeat top right; }
+						background:url("../themes/purple/homepage/try-these.png") no-repeat top right; display:none; }
 				#templates ul { font-size:13px; color:#292727; line-height:20px; margin-top:10px; }
 					#templates ul a { text-decoration:none; }
 					#templates ul img { vertical-align:middle; }
