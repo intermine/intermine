@@ -319,4 +319,11 @@
     <attribute name="organismPart" type="java.lang.String"/>
   </class>
 
+  <class name="FlyExpressionScore" is-interface="true">
+    <attribute name="score" type="java.lang.Double" />
+    <reference name="subject" referenced-type="BioEntity" />
+    <reference name="cellLine" referenced-type="CellLine" />
+    <reference name="developmentalStage" referenced-type="DevelopmentalStage" />
+  </class>
+
 </classes>
