@@ -439,6 +439,11 @@
             <property name="src.data.file" location="build/publications.xml"/>
         </source>
 
+        <!-- Flyscore on modENCODE -->
+        <source name="fly-expression-score" type="fly-expression-score">
+            <property name="src.data.dir" location="/shared/data/fly-expression-score"/>
+        </source>
+
   </sources>
   <post-processing>
     <post-process name="create-utr-references"/>
