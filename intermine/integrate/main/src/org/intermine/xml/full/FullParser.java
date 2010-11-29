@@ -37,6 +37,7 @@ import org.xml.sax.InputSource;
 public final class FullParser
 {
     private FullParser() {
+        //disable external instantiation
     }
 
     private static final Logger LOG = Logger.getLogger(FullParser.class);
@@ -174,8 +175,15 @@ public final class FullParser
                     if (ClobAccess.class.equals(attrClass)) {
                         obj.setFieldValue(attr.getName(), new PendingClob(attr.getValue()));
                     } else {
-                        obj.setFieldValue(attr.getName(),
-                                TypeUtil.stringToObject(attrClass, attr.getValue()));
+                        String value = attr.getValue();
+                        if (value != null) {
+                            obj.setFieldValue(attr.getName(), TypeUtil.stringToObject(attrClass,
+                                    value));
+                        } else {
+                            String message = "Field '" + attr.getName() + "' has NULL value in "
+                                + DynamicUtil.getFriendlyName(obj.getClass());
+                            throw new IllegalArgumentException(message);
+                        }
                     }
                 }
             }
