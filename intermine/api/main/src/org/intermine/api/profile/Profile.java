@@ -10,6 +10,8 @@ package org.intermine.api.profile;
  *
  */
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -28,6 +30,9 @@ import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.sql.writebatch.Batch;
+import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 
 /**
  * Class to represent a user of the webapp
@@ -356,6 +361,39 @@ public class Profile
         moveTagsToNewObject(oldName, newName, TagTypes.BAG);
     }
 
+    /**
+     * Save the primary identifiers associated to the bag into bagvalues table
+     * @param savedBagId bag identifier
+     * @param values primari identifiers list to add
+     */
+    public void addBagValues(int savedBagId, List<String> values) {
+        ObjectStoreWriterInterMineImpl uosw =
+            (ObjectStoreWriterInterMineImpl) manager.getProfileObjectStoreWriter();
+        Connection conn = null;
+        try {
+            conn = uosw.getConnection();
+            if (conn.getAutoCommit()) {
+                conn.setAutoCommit(false);
+                Batch batch = new Batch(new BatchWriterPostgresCopyImpl());
+                String[] colNames = new String[] {"savedbagid", "value"};
+                for (String value : values) {
+                    batch.addRow(conn, "bagvalues", null, colNames,
+                                new Object[] {savedBagId, value});
+                }
+                batch.flush(conn);
+                conn.commit();
+                conn.setAutoCommit(true);
+                uosw.releaseConnection(conn);
+            }
+        } catch (SQLException sqle) {
+            try {
+                conn.rollback();
+                conn.setAutoCommit(true);
+            } catch(SQLException sqlex) {
+                throw new RuntimeException("Error aborting transaction", sqlex);
+            }
+        }
+    }
 
     private void moveTagsToNewObject(String oldTaggedObj, String newTaggedObj, String type) {
         TagManager tagManager = getTagManager();
