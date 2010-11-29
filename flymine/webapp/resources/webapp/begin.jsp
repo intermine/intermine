@@ -22,7 +22,9 @@
                 <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
                     <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value=""></div>
                     <div class="bottom">
-                        <input name="searchSubmit" class="button violet" type="submit" value="search"/>
+                        <center>
+                            <input name="searchSubmit" class="button violet" type="submit" value="search"/>
+                        </center>
                     </div>
                 </form>
 
@@ -40,11 +42,13 @@
                         <option value="Gene">Gene</option>
                         <option value="Protein">Protein</option>
                     </select>
-                    <textarea name="text"></textarea>
+                    <div class="textarea"><textarea name="text"></textarea></div>
                     <div class="bottom">
-                        <input class="button plush" type="submit" value="analyse"/>
-                        <br />
-                        <a class="advanced" href="bag.do?subtab=upload">advanced</a>
+                        <center>
+                            <input class="button plush" type="submit" value="analyse"/>
+                            <br />
+                            <a class="advanced" href="bag.do?subtab=upload">advanced upload</a>
+                        </center>
                     </div>
                 </form>
             </div>
@@ -55,10 +59,12 @@
                 <p>FlyMine integrates many types of data for <em>Drosophila</em>, <em>Anopheles</em> and other organisms. These include: orthologues, protein domains, interactions,
                 pathways, gene expression, and gene ontology. You can run flexible queries, export results and work with lists of data.</p>
                 <div class="bottom">
-                    <a class="button gray" href="http://www.flymine.org/help/tour/start.html"
-                    onclick="javascript:window.open('http://www.flymine.org/help/tour/start.html','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
-                    take a tour
-                    </a>
+                    <center>
+                        <a class="button gray" href="http://www.flymine.org/help/tour/start.html"
+                        onclick="javascript:window.open('http://www.flymine.org/help/tour/start.html','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
+                        take a tour
+                        </a>
+                    </center>
                 </div>
             </div>
         </div>
@@ -70,25 +76,26 @@
         <div id="templates">
             <table id="menu" border="0" cellspacing="0">
                 <tr>
-                    <td><span id="tab1">Genes</span></td>
-                    <td><span id="tab2">Proteins</span></td>
-                    <td><span id="tab3">Interactions</span></td>
-                    <td><span id="tab4">Pathways</span></td>
-                    <td><span id="tab5">Homologues</span></td>
-                    <td><span id="tab6">Gene Ontology</span></td>
-                    <td><span id="tab7">Gene Expression</span></td>
+                    <td><div class="container"><span id="tab1">Genes</span></div></td>
+                    <td><div class="container"><span id="tab2">Proteins</span></div></td>
+                    <td><div class="container"><span id="tab3">Interactions</span></div></td>
+                    <td><div class="container"><span id="tab4">Pathways</span></div></td>
+                    <td><div class="container"><span id="tab5">Homologues</span></div></td>
+                    <td><div class="container"><span id="tab6">Gene Ontology</span></div></td>
+                    <td><div class="container"><span id="tab7">Gene Expression</span></div></td>
                 </tr>
             </table>
 
             <div id="tab-content">
                 <div id="ribbon"></div>
+                <div id="try"></div>
                 <div id="content1" class="content">
                     <p>The gene models and other genome annotation in FlyMine are provided by a variety of source databases including: FlyBase, UniProt, Ensembl and over
                     30 other data sources. <a href="dataCategories.do">Read more...</a></p>
                     <p>Query for genes:</p>
                     <tiles:insert name="aspectTemplates.jsp">
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                          <tiles:put name="aspectTitle" value="Genomics" />
+                        <tiles:put name="aspectTitle" value="Genomics" />
                     </tiles:insert>
                     <p class="more"><a href="templates.do">More queries</a></p>
                 </div>
@@ -97,8 +104,8 @@
                     more...</a></p>
                     <p>Query for proteins:</p>
                     <tiles:insert name="aspectTemplates.jsp">
-                          <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                          <tiles:put name="aspectTitle" value="Proteins" />
+                        <tiles:put name="aspectQueries" beanName="aspectQueries" />
+                        <tiles:put name="aspectTitle" value="Proteins" />
                     </tiles:insert>
                     <p class="more"><a href="templates.do">More queries</a></p>
                 </div>
@@ -106,8 +113,8 @@
                     <p>FlyMine loads physical interactions from IntAct and BioGRID, and genetic interaction from FlyBase. <a href="aspect.do?name=Interactions">Read more</a></p>
                     <p>Query for interactions:</p>
                     <tiles:insert name="aspectTemplates.jsp">
-                          <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                          <tiles:put name="aspectTitle" value="Interactions" />
+                        <tiles:put name="aspectQueries" beanName="aspectQueries" />
+                        <tiles:put name="aspectTitle" value="Interactions" />
                     </tiles:insert>
                     <p class="more"><a href="templates.do">More queries</a></p>
                 </div>
@@ -115,8 +122,8 @@
                     <p>FlyMine loads pathway data from KEGG, Reactome and FlyReactome. <a href="aspect.do?name=Pathways">Read more..</a></p>
                     <p>Popular queries:</p>
                     <tiles:insert name="aspectTemplates.jsp">
-                          <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                          <tiles:put name="aspectTitle" value="Pathways" />
+                        <tiles:put name="aspectQueries" beanName="aspectQueries" />
+                        <tiles:put name="aspectTitle" value="Pathways" />
                     </tiles:insert>
                     <p class="more"><a href="templates.do">More queries</a></p>
                 </div>
@@ -125,8 +132,8 @@
                     Read more</a></p>
                     <p>Query for homologues:</p>
                     <tiles:insert name="aspectTemplates.jsp">
-                          <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                          <tiles:put name="aspectTitle" value="Comparative Genomics" />
+                        <tiles:put name="aspectQueries" beanName="aspectQueries" />
+                        <tiles:put name="aspectTitle" value="Comparative Genomics" />
                     </tiles:insert>
                     <p class="more"><a href="templates.do">More queries</a></p>
                 </div>
@@ -135,8 +142,8 @@
                     <a href="aspect.do?name=Gene+Ontology">Read more</a></p>
                     <p>Query for GO:</p>
                     <tiles:insert name="aspectTemplates.jsp">
-                          <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                          <tiles:put name="aspectTitle" value="Gene Ontology" />
+                        <tiles:put name="aspectQueries" beanName="aspectQueries" />
+                        <tiles:put name="aspectTitle" value="Gene Ontology" />
                     </tiles:insert>
                     <p class="more"><a href="templates.do">More queries</a></p>
                 </div>
@@ -145,8 +152,8 @@
                     <a href="aspect.do?name=Gene+Expression">Read more...</a></p>
                     <p>Query for gene expression:</p>
                     <tiles:insert name="aspectTemplates.jsp">
-                          <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                          <tiles:put name="aspectTitle" value="Gene Expression" />
+                        <tiles:put name="aspectQueries" beanName="aspectQueries" />
+                        <tiles:put name="aspectTitle" value="Gene Expression" />
                     </tiles:insert>
                     <p class="more"><a href="templates.do">More queries</a></p>
                 </div>
@@ -181,19 +188,22 @@
             jQuery(this).hide();
         });
 
-        jQuery("table#menu td:first").addClass("active").append('<div class="right"></div><div class="left"></div>').show();
+        jQuery("table#menu td:first").addClass("active").find("div").append('<span class="right"></span><span class="left"></span>').show();
         jQuery("div.content:first").show();
 
         jQuery("table#menu td").click(function() {
+            jQuery("table#menu td.active").find("div").find('.left').remove();
+            jQuery("table#menu td.active").find("div").find('.right').remove();
             jQuery("table#menu td").removeClass("active");
-            jQuery("table#menu td div").remove('.right').remove('.left')
 
-            jQuery(this).addClass("active").append('<div class="right"></div><div class="left"></div>');
+            jQuery(this).addClass("active").find("div").append('<span class="right"></span><span class="left"></span>');
             jQuery("#tab-content .content").hide();
 
             if (jQuery(this).is('span')) {
+                // span
                 var activeTab = jQuery(this).attr("id").substring(3);
             } else {
+                // td, div (IE)
                 var activeTab = jQuery(this).find("span").attr("id").substring(3);
             }
             jQuery('#content' + activeTab).fadeIn();
@@ -221,10 +231,25 @@
                 jQuery('#rss').slideToggle('slow');
 
                 // declare
-                var feedTitle, feedDescription, feedDate, feedLink, row;
+                var feedTitle, feedDescription, feedDate, feedLink, row, feed;
 
                 // convert to XML, jQuery manky...
-                var feed = new DOMParser().parseFromString(data, "text/xml");
+                try {
+                    // Internet Explorer
+                    feed = new ActiveXObject("Microsoft.XMLDOM");
+                    feed.async="false";
+                    feed.loadXML(data);
+                } catch(e) {
+                    try {
+                        // ...the good browsers
+                        feed = new DOMParser().parseFromString(data, "text/xml");
+                    } catch(e) {
+                        // ... BFF
+                        alert(e.message);
+                        return;
+                    }
+                }
+
                 var items = feed.getElementsByTagName("item"); // ATOM!!!
                 for (var i = 0; i < items.length; ++i) {
                     // early bath
@@ -235,22 +260,22 @@
                     feedDate = new Date(items[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue);
                     feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
 
-                       // build table row
-                       row = '<tr>'
-                               + '<td class="date">'
-                                   + '<a target="new" href="' + feedLink + '">' + feedDate.getDate()
-                                   + '<br /><span>' + months[feedDate.getMonth()] + '</span></a></td>'
-                               + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
-                           + '</tr>';
-                       // append, done
-                       jQuery(target).append(row);
-                       i++;
+                    // build table row
+                    row = '<tr>'
+                            + '<td class="date">'
+                                + '<a target="new" href="' + feedLink + '">' + feedDate.getDate()
+                                + '<br /><span>' + months[feedDate.getMonth()] + '</span></a></td>'
+                            + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
+                        + '</tr>';
+                    // append, done
+                    jQuery(target).append(row);
+                    i++;
                 }
             }
         });
     });
 
-          // trim text to a specified length
+        // trim text to a specified length
     function trimmer(grass, length) {
         if (!grass) return;
         grass = stripHTML(grass);
@@ -275,7 +300,7 @@
         e.focus();
     }
 
-     // e.g. values only available when JavaScript is on
+    // e.g. values only available when JavaScript is on
     jQuery('input#actionsInput').toggleClass(inputToggleClass);
 
     // register input elements with blur & focus

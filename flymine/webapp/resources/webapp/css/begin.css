@@ -123,7 +123,7 @@ body { background:#dfdfdf url('../themes/purple/homepage/page-bg-gradient.png') 
 	margin-top:10px; }
 	#content-wrap p { color:#535353; font-size:13px; }
 	
-	#search-bochs, #lists-bochs, #welcome-bochs { width:280px; float:left; margin-right:40px; position:relative;
+	#search-bochs, #lists-bochs, #welcome-bochs { width:280px; float:left; margin-right:46px; position:relative;
 		background:url('../themes/purple/homepage/main-bochs-transparent-gradient.png') no-repeat top; padding:0 6px; } 
 		#welcome-bochs { margin-right:0; }
 		#boxes div.inner { background:#FFF; min-height:235px; border-bottom:1px solid #dfdfdf; margin-bottom:2px; padding-bottom:14px; }
@@ -147,8 +147,9 @@ body { background:#dfdfdf url('../themes/purple/homepage/page-bg-gradient.png') 
 			#welcome-bochs div.inner p a { color:inherit; text-decoration:underline; }
 		
 		#lists-bochs div.inner select { margin:10px 0 0 12px; width:256px; }
-		#lists-bochs div.inner textarea { background:url('../themes/purple/homepage/textarea.png') no-repeat top; border:none; width:240px;
-		margin:12px 0 10px 10px; padding:6px 10px; height:50px; }
+		#lists-bochs div.inner .textarea { background:url('../themes/purple/homepage/textarea.png') no-repeat top left transparent;
+			margin:12px 0 10px 11px; }
+		#lists-bochs div.inner textarea { padding:6px 8px 4px 8px; height:50px; width:240px; border:none; background:transparent; }
 		
 		#boxes div.input { background:url("../themes/purple/homepage/input-bg.png") no-repeat scroll center top transparent;
 			color:#888; height:38px; margin:10px 0; }
@@ -156,20 +157,20 @@ body { background:#dfdfdf url('../themes/purple/homepage/page-bg-gradient.png') 
 		#boxes input[type="submit"].button { border:medium none; cursor:pointer; font-family:"Myriad Pro",Arial,Garuda,Helvetica,Tahoma,
 			sans-serif; font-size:13px; font-weight:bold; height:30px; text-transform:uppercase; vertical-align:middle; }
 		#boxes input[type="submit"].violet { background:url("../themes/purple/homepage/button-violet-dark.png") no-repeat scroll center bottom transparent;
-			color:#FFFFFF; float:right; margin-right:30%; padding:2px 36px; }
-		#search-bochs input[type="text"].input { background:none repeat scroll 0 0 transparent; border:medium none; padding:12px 20px 6px 30px;
-			width:255px; font-size:12px; }
+			color:#FFFFFF; /*float:right; margin-right:30%;*/ padding:2px 36px; }
+		#search-bochs input[type="text"].input { background:none repeat scroll 0 0 transparent; border:medium none; padding:12px 20px 6px 24px;
+			width:230px; font-size:12px; }
 
 		#search-bochs input[type="text"].input.eg { color:#888; }
 
 		#boxes input[type="submit"].plush { background:url("../themes/purple/homepage/button-plush.png") no-repeat scroll center bottom transparent;
-			color:#FFFFFF; float:left; padding:2px 34px; float:right; margin-right:30%; }
+			color:#FFFFFF; padding:2px 34px; /*float:right; margin-right:30%;*/ margin-bottom:8px; }
 
 		#lists-bochs div.inner span { color:#7a7a7a; font-weight:bold; font-size:12px; letter-spacing:0px; text-transform:uppercase;
 			line-height:30px; margin:0 4px 0 8px; }
 		
 		#lists-bochs div.inner a { text-decoration:underline; color:#5c0075; font-size:12px; letter-spacing:0.5px; }
-			#lists-bochs div.inner a.advanced { float:right; margin:10px 37% 0 0; font-size:10px; }
+			#lists-bochs div.inner a.advanced { /*float:right; margin:10px 37% 0 0;*/ font-size:10px; }
 
 		#welcome-bochs a.button { font-size:13px; text-transform:uppercase; font-family:"Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif;
 			text-decoration:none; font-weight:bold; background-repeat:no-repeat; padding:8px 22px; text-align:center; }
@@ -186,7 +187,7 @@ body { background:#dfdfdf url('../themes/purple/homepage/page-bg-gradient.png') 
 		#welcome-bochs input.button { font-family:"Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif; font-size:13px; height:30px;
 			/* Opera 9 does not uppercase input elements */ text-transform:uppercase; font-weight:bold; border:none; cursor:pointer; }
 		
-		#welcome-bochs a.button.gray { color:#505050; margin-right:30%; float:right; }
+		#welcome-bochs a.button.gray { color:#505050; /*margin-right:30%; float:right;*/ line-height:29px; }
 		#welcome-bochs a.button.gray div { background-image:url("../themes/metabolic/buttons/btn-gray-left.png"); width:90px; margin-top:12px; }
 		#welcome-bochs a.button.gray span { background-image:url("../themes/metabolic/buttons/btn-gray-right.png"); }
 
@@ -196,16 +197,21 @@ body { background:#dfdfdf url('../themes/purple/homepage/page-bg-gradient.png') 
             #templates table#menu td { background:#e5e5e5 url("../themes/purple/homepage/tabs-gradient-bottom.png") repeat-x bottom;
                 border:0; margin:0; padding:0; font-size:13px; color:#292727; border-top:6px solid #FEFEFE;
                 text-align:center; }
+				#templates table#menu td div.container { position:relative; } /* FF 3.6 bug */
 				#templates table#menu td:hover { cursor:pointer; }
                 #templates table#menu td.active { background:#FFF url("../themes/purple/homepage/tabs-gradient-top.png") repeat-x top;
-                    border:0; }
-                    #templates table#menu td.active div.left { display:inline-block; float:left; width:10px; height:45px;
-                        background:url("../themes/purple/homepage/tabs-gradient-left.png") no-repeat top left; }
-                    #templates table#menu td.active div.right { display:inline-block; float:right; width:14px; height:45px;
-                        background:url("../themes/purple/homepage/tabs-gradient-right.png") no-repeat top right; }
-                #templates table#menu td span { ; }
+                    border:0; position:relative; }
+					
+                    #templates table#menu td.active span.left { display:inline-block; width:10px; height:45px; position:absolute;
+                        background:url("../themes/purple/homepage/tabs-gradient-left.png") no-repeat top left; top:0px; left:0px; }
+                    #templates table#menu td.active span.right { display:inline-block; width:10px; height:45px; position:absolute;
+                        background:url("../themes/purple/homepage/tabs-gradient-right.png") no-repeat top right; top:0px; right:0px; }
+						
+				#templates table#menu td span { line-height:39px; display:inline-block; }
                 #templates table#menu td span, #templates table#menu td.active span { color:#292727; color:#292727; }
-                    #templates table#menu td.active span { line-height:39px; display:inline-block; padding-top:6px; }
+					#templates table#menu td.active span { line-height:39px; display:inline-block; padding-top:6px; } /* IE 8 */
+					#templates table#menu td.active span, x:-moz-any-link { line-height:44px; } /* FF 2.0 */
+                    #templates table#menu td.active span, x:-moz-any-link, x:default { line-height:39px; display:inline-block; padding-top:6px; }
                     #templates table#menu td:hover span { color:#000; text-decoration:underline; }
 				
 				#templates #tab-content { position:relative; }
@@ -221,6 +227,8 @@ body { background:#dfdfdf url('../themes/purple/homepage/page-bg-gradient.png') 
 								#templates div.content p.more a:hover { ; }
 					#templates #tab-content #ribbon { position:absolute; right:0; bottom:0; width:155px; height:153px; display:block;
 						background:url("../themes/purple/homepage/ribbon-forest.png") no-repeat top right; }
+					#templates #tab-content #try { position:absolute; right:130px; top:100px; width:266px; height:36px; display:block;
+						background:url("../themes/purple/homepage/try-these.png") no-repeat top right; }
 				#templates ul { font-size:13px; color:#292727; line-height:20px; margin-top:10px; }
 					#templates ul a { text-decoration:none; }
 					#templates ul img { vertical-align:middle; }
@@ -250,4 +258,4 @@ body { background:#dfdfdf url('../themes/purple/homepage/page-bg-gradient.png') 
 			    #articles .date a { text-decoration:none; font-weight:bold; font-size:18px; line-height:14px; }
 			        #articles .date a span { font-size:12px; font-weight:normal; }
 
-		#bottom-wrap { background:url("../themes/purple/homepage/content-grad-bottom.png") repeat-x bottom; padding:0 18px 25px 18px; }
+		#bottom-wrap { background:url("../themes/purple/homepage/content-grad-bottom.png") repeat-x bottom; padding:0 18px 25px 18px; margin-top:10px !important; }
