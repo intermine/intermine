@@ -10,6 +10,7 @@ package org.intermine.api.profile;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -29,8 +30,17 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryClassBag;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.TypeUtil;
 
@@ -160,6 +170,28 @@ public class InterMineBag implements WebSearchable, Cloneable
         q.setDistinct(false);
         SingletonResults res = os.executeSingleton(q, 1000, false, true, true);
         return (List<Integer>) ((List) res);
+    }
+    
+    /**
+     * Returns a List which contains the primaryIdentifiers of the content of this bag.
+     *
+     * @return a List of Integers
+     */
+    public List<String> getContentsASPrimaryIdentifier(String primaryIdentifierField) {
+        Query q = new Query();
+        q.setDistinct(false);
+        try {
+	        QueryClass qc = new QueryClass(Class.forName(getQualifiedType()));
+	        q.addFrom(qc);
+	        q.addToSelect(new QueryField(qc, primaryIdentifierField));
+	        QueryField idField = new QueryField(qc, "id");
+	        BagConstraint c = new BagConstraint(idField, ConstraintOp.IN, osb);
+	        q.setConstraint(c);
+	        SingletonResults res = os.executeSingleton(q, 1000, false, true, true);
+	        return (List<String>) ((List) res);
+        } catch (ClassNotFoundException cne) {
+        	return new ArrayList<String>();
+        }
     }
 
     /**
