@@ -47,7 +47,7 @@
                         <center>
                             <input class="button plush" type="submit" value="analyse"/>
                             <br />
-                            <a class="advanced" href="bag.do?subtab=upload">advanced upload</a>
+                            <a class="advanced" href="bag.do?subtab=upload">advanced</a>
                         </center>
                     </div>
                 </form>
