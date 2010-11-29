@@ -10,6 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -19,8 +22,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -106,13 +111,20 @@ public class SaveBagAction extends InterMineAction
             recordError(actionMessage, request);
             return mapping.findForward("results");
         }
-
+        
         try {
             if (bag == null) {
                 bag = profile.createBag(bagName, pt.getSelectedClass(), "");
             }
-
+            InterMineAPI im = SessionMethods.getInterMineAPI(session);
+            Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
+            FieldDescriptor fieldDescriptor = classKeys.get(pt.getSelectedClass()).get(0);
+            String primaryIdentifierField = fieldDescriptor.getName();
+            
             pt.addSelectedToBag(bag);
+            List<String> primaryIdentifierList = bag.getContentsASPrimaryIdentifier(primaryIdentifierField);
+            profile.addBagValues(bag.getOsb().getBagId(), primaryIdentifierList);
+            
             recordMessage(new ActionMessage("bag.saved", bagName), request);
             SessionMethods.invalidateBagTable(session, bagName);
         } catch (ObjectStoreException e) {
