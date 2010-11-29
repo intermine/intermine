@@ -43,7 +43,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class BeginAction extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(TemplateTracker.class);
-    private static final Integer MAX_TEMPLATES = new Integer(10);
+    private static final Integer MAX_TEMPLATES = new Integer(8);
 
      /**
      * Either display the query builder or redirect to project.sitePrefix.
