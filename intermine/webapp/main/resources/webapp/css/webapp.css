@@ -1392,3 +1392,7 @@ ol#constraintList.templateForm select { height:25px; }
   background-repeat:no-repeat; background-position:97%; }
 #constraintLogicContainer span#editConstraintLogic { ; }
   #constraintLogicContainer span#editConstraintLogic input#expr { font-size:12px; border:1px solid #CACACA; padding:2px; margin-left:10px; }
+
+/* buildBag unresolved identifiers */
+ul.unresolvedIdentifiers { list-style-type:none; margin:0; padding:0; font-weight:bold; }
+  ul.unresolvedIdentifiers li { display:inline; margin:0 10px 0 0; }
