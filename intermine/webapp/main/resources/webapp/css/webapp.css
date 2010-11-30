@@ -1407,3 +1407,6 @@ a#permalink { float:right; background:url('../images/icons/permalink-blue.png') 
            background:url("../images/icons/close.png") no-repeat top right; cursor:pointer; }
        div.heading div.popup p { font-size:12px; font-weight:normal; margin-bottom:6px; }
        div.heading div.popup input { width:392px; }
+
+/* Cytoscape interactions */
+h3.interactions { font-size:16px; color:#333; }

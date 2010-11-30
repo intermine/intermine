@@ -85,11 +85,23 @@
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="geneMicroArrayDisplayer.tile"/>
       <displayer src="uniProtCommentsDisplayer.tile"/>
+      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
       <!-- attribute links can now be configured for gene list analysis pages -->
       <displayer src="attributeLinkDisplayer.tile"/>
     </bagdisplayers>
+  </class>
+
+  <class className="org.intermine.model.bio.Protein">
+    <fields>
+        <fieldconfig fieldExpr="primaryIdentifier"/>
+        <fieldconfig fieldExpr="primaryAccession"/>
+        <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.GOAnnotation">
@@ -235,7 +247,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-	  <displayer src="uniProtCommentsDisplayer.tile"/>
+    <displayer src="uniProtCommentsDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
     </bagdisplayers>
