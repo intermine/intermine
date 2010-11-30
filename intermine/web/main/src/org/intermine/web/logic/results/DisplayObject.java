@@ -367,10 +367,7 @@ public class DisplayObject
             fieldValues = new HashMap<String, Object>();
             for (Iterator<String> i = fieldExprs.iterator(); i.hasNext();) {
                 String expr = i.next();
-                String className = DynamicUtil.getSimpleClassName(object.getClass());
-                if (className.indexOf('.') != -1) {
-                    className = TypeUtil.unqualifiedName(className);
-                }
+                String className = DynamicUtil.getSimpleClass(object.getClass()).getSimpleName();
                 String pathString = className + "." + expr;
                 try {
                     Path path = new Path(model, pathString);
