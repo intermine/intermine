@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -105,7 +106,8 @@ public class PathQueryHandler extends DefaultHandler
                 }
                 query.addViewSpaceSeparated(view);
             }
-            if (attrs.getValue("sortOrder") != null) {
+            if (attrs.getValue("sortOrder") != null
+                    && !StringUtils.isBlank(attrs.getValue("sortOrder"))) {
                 query.addOrderBySpaceSeparated(attrs.getValue("sortOrder"));
             }
             constraintLogic = attrs.getValue("constraintLogic");
