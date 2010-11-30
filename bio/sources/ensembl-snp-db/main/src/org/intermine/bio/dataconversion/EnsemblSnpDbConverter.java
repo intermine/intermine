@@ -28,6 +28,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ReferenceList;
 
 /**
  * Read Ensembl SNP data directly from MySQL variarion database.
@@ -37,6 +38,9 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 {
     private static final String DATASET_TITLE = "Ensembl SNP data";
     private static final String DATA_SOURCE_NAME = "Ensembl";
+    private final Map<String, Set<String>> pendingSnpConsequences =
+        new HashMap<String, Set<String>>();
+    private final Map<String, Integer> storedSnpIds = new HashMap<String, Integer>();
 
     // TODO move this to a parser argument
     int taxonId = 9606;
@@ -82,13 +86,27 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         connection.close();
     }
 
+
+
+    @Override
+    public void close() throws Exception {
+        for (String rsNumber : storedSnpIds.keySet()) {
+            Integer storedSnpId = storedSnpIds.get(rsNumber);
+            Set<String> consequenceIdentifiers = pendingSnpConsequences.get(rsNumber);
+            ReferenceList col =
+                new ReferenceList("consequences", new ArrayList<String>(consequenceIdentifiers));
+            store(col, storedSnpId);
+        }
+    }
+
+
     /**
      * {@inheritDoc}
      */
     public void process(Connection connection, String chrName) throws Exception {
 
         LOG.info("Starting to process chromosome " + chrName);
-        
+
         ResultSet res = queryVariation(connection, chrName);
 
         int counter = 0;
@@ -97,6 +115,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Set<String> seenLocsForSnp = new HashSet<String>();
         String currentRsNumber = null;
         Set<String> consequenceIdentifiers = new HashSet<String>();
+        boolean storeSnp = true;
 
         while (res.next()) {
             counter++;
@@ -127,68 +146,96 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             if (!rsNumber.equals(currentRsNumber)) {
                 // STORE PREVIOUS SNP
                 if (currentSnp != null) {
-                    storeSnp(currentSnp, consequenceIdentifiers);
-                    snpCounter++;
+                    Boolean uniqueLocation =
+                        Boolean.parseBoolean(currentSnp.getAttribute("uniqueLocation").getValue());
+
+                    if (storeSnp) {
+                        Integer storedSnpId = storeSnp(currentSnp, consequenceIdentifiers);
+                        snpCounter++;
+                        if (!uniqueLocation) {
+                            storedSnpIds.put(rsNumber, storedSnpId);
+                        }
+                    }
+
+                    if (!uniqueLocation) {
+                        Set<String> snpConsequences = pendingSnpConsequences.get(rsNumber);
+                        if (snpConsequences == null) {
+                            snpConsequences = new HashSet<String>();
+                            pendingSnpConsequences.put(rsNumber, snpConsequences);
+                        }
+                        snpConsequences.addAll(consequenceIdentifiers);
+                    }
                 }
 
                 // START NEW SNP
                 currentRsNumber = rsNumber;
                 seenLocsForSnp = new HashSet<String>();
                 consequenceIdentifiers = new HashSet<String>();
-                String alleles = res.getString("allele_string");
 
-                currentSnp = createItem("SNP");
-                currentSnp.setAttribute("primaryIdentifier", rsNumber);
-                currentSnp.setAttribute("alleles", alleles);
-                currentSnp.setReference("organism", getOrganismItem(taxonId));
-
+                // map weight is the number of chromosome locations for the SNP, in practice there
+                // are sometimes fewer locations than the map_weight indicates
                 int mapWeight = res.getInt("map_weight");
                 boolean uniqueLocation = (mapWeight == 1) ? true : false;
                 currentSnp.setAttribute("uniqueLocation", "" + uniqueLocation);
 
-                String type = determineType(alleles);
-                if (type != null) {
-                    currentSnp.setAttribute("type", type);
+                // if not a unique location and we've seen the SNP before, don't store
+                if (!uniqueLocation && pendingSnpConsequences.containsKey(rsNumber)) {
+                    storeSnp = false;
                 }
-                
-                // CHROMOSOME AND LOCATION
-                // if SNP is mapped to multiple locations don't set chromosome and
-                // chromosomeLocation references
-                int start = res.getInt("seq_region_start");
-                int end = res.getInt("seq_region_end");
-                int chrStrand = res.getInt("seq_region_strand");
 
-                int chrStart = Math.min(start, end);
-                int chrEnd = Math.max(start, end);
+                if (storeSnp) {
+                    currentSnp = createItem("SNP");
+                    currentSnp.setAttribute("primaryIdentifier", rsNumber);
+                    currentSnp.setReference("organism", getOrganismItem(taxonId));
 
-                Item loc = createItem("Location");
-                loc.setAttribute("start", "" + chrStart);
-                loc.setAttribute("end", "" + chrEnd);
-                loc.setAttribute("strand", "" + chrStrand);
-                loc.setReference("locatedOn", getChromosome(chrName, taxonId));
-                loc.setReference("feature", currentSnp);
-                store(loc);
+                    String alleles = res.getString("allele_string");
+                    currentSnp.setAttribute("alleles", alleles);
 
-                // if mapWeight is 1 there is only one chromosome location, so set shortcuts
-                if (uniqueLocation) {
-                    currentSnp.setReference("chromosome", getChromosome(chrName, taxonId));
-                    currentSnp.setReference("chromosomeLocation", loc);
-                }
-                seenLocsForSnp.add(chrName + ":" + chrStart);
+                    String type = determineType(alleles);
+                    if (type != null) {
+                        currentSnp.setAttribute("type", type);
+                    }
 
-                // SOURCE
-                String source = res.getString("s.name");
-                currentSnp.setReference("source", getSourceIdentifier(source));
+                    // CHROMOSOME AND LOCATION
+                    // if SNP is mapped to multiple locations don't set chromosome and
+                    // chromosomeLocation references
+                    int start = res.getInt("seq_region_start");
+                    int end = res.getInt("seq_region_end");
+                    int chrStrand = res.getInt("seq_region_strand");
 
-                // VALIDATION STATES
-                String validationStatus = res.getString("validation_status");
-                List<String> validationStates = getValidationStateCollection(validationStatus);
-                if (!validationStates.isEmpty()) {
-                    currentSnp.setCollection("validations", validationStates);
+                    int chrStart = Math.min(start, end);
+                    int chrEnd = Math.max(start, end);
+
+                    Item loc = createItem("Location");
+                    loc.setAttribute("start", "" + chrStart);
+                    loc.setAttribute("end", "" + chrEnd);
+                    loc.setAttribute("strand", "" + chrStrand);
+                    loc.setReference("locatedOn", getChromosome(chrName, taxonId));
+                    loc.setReference("feature", currentSnp);
+                    store(loc);
+
+                    // if mapWeight is 1 there is only one chromosome location, so set shortcuts
+                    if (uniqueLocation) {
+                        currentSnp.setReference("chromosome", getChromosome(chrName, taxonId));
+                        currentSnp.setReference("chromosomeLocation", loc);
+                    }
+                    seenLocsForSnp.add(chrName + ":" + chrStart);
+
+                    // SOURCE
+                    String source = res.getString("s.name");
+                    currentSnp.setReference("source", getSourceIdentifier(source));
+
+                    // VALIDATION STATES
+                    String validationStatus = res.getString("validation_status");
+                    List<String> validationStates = getValidationStateCollection(validationStatus);
+                    if (!validationStates.isEmpty()) {
+                        currentSnp.setCollection("validations", validationStates);
+                    }
                 }
             }
-
             // CONSEQUENCE TYPES
+            // for SNPs without a uniqueLocation there will be different consequences at each one.
+            // some consequences will need to stored a the end
             String cdnaStart = res.getString("cdna_start");
             if (StringUtils.isBlank(cdnaStart)) {
                 String typeStr = res.getString("vf.consequence_type");
@@ -227,17 +274,17 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     }
 
 
-    private void storeSnp(Item snp, Set<String> consequenceIdentifiers)
+    private Integer storeSnp(Item snp, Set<String> consequenceIdentifiers)
         throws ObjectStoreException {
         if (!consequenceIdentifiers.isEmpty()) {
             snp.setCollection("consequences", new ArrayList<String>(consequenceIdentifiers));
         }
-        store(snp);
+        return store(snp);
     }
 
     private String determineType(String alleleStr) {
         String type = null;
-        
+
         if (!StringUtils.isBlank(alleleStr)) {
             // snp if e.g. A/C or A|C
             if (alleleStr.matches("/^[ACGTN]([\\|\\\\\\/][ACGTN])+$/i")) {
@@ -250,7 +297,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 type = alleleStr.toLowerCase();
             } else {
                 String[] alleles = alleleStr.split("[\\|\\/\\\\]");
-                
+
                 if (alleles.length == 1) {
                    type = "het";
                 } else if (alleles.length == 2) {
@@ -272,12 +319,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     }
                 }
 //                elsif (@alleles > 2) {
-//                    
-//                    if ($alleles[0] =~ /\d+/) { 
+//
+//                    if ($alleles[0] =~ /\d+/) {
 //                        #(CA)14/15/16/17 > 2 alleles, all of them contain the number of repetitions of the allele
 //                        $class = 'microsat'
 //                    }
-//             
+//
 //                    elsif ((grep {/-/} @alleles) > 0) {
 //                        #-/A/T/TTA > 2 alleles
 //                        $class = 'mixed'
@@ -290,10 +337,10 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             }
         }
 
-        
+
         return type;
     }
-    
+
     private String getSourceIdentifier(String name) throws ObjectStoreException {
         String sourceIdentifier = sources.get(name);
         if (sourceIdentifier == null) {
