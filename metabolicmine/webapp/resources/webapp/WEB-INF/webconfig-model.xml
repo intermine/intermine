@@ -341,7 +341,7 @@
         label="GO Term"
         filters="biological_process,cellular_component,molecular_function"
         filterLabel="Ontology"
-        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
+        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein,org.intermine.model.bio.SNP"
         externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
 
     <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
@@ -360,6 +360,14 @@
         externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
         typeClass="org.intermine.model.bio.Gene"
         externalLinkLabel="PubMed:" />
+
+    <enrichmentwidgetdisplayer id="gwas_enrichment" title="GWAS Phenotype Enrichment"
+        link="org.intermine.bio.web.widget.GWASEnrichmentURLQuery"
+        dataSetLoader="org.intermine.bio.web.widget.GWASEnrichmentLdr"
+        label="Phenotype"
+        description="Phenotypes enriched for SNPs in this list."
+        typeClass="org.intermine.model.bio.SNP" />
+
 
     <enrichmentwidgetdisplayer id="pathway_enrichment" title="Pathway Enrichment"
         link="org.intermine.bio.web.widget.PathwayURLQuery"
@@ -389,6 +397,7 @@
 
     <bagtabledisplayer id="snp_consequence_types" title="SNP Consequence Types"
         pathStrings="SNP.consequences"
+        link="org.intermine.bio.web.widget.InteractionURLQuery"
         description="Consequence types for SNPs in this list"
         displayFields="type"
         exportField="primaryIdentifier"
