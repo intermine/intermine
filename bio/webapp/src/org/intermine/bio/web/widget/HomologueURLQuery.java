@@ -56,7 +56,7 @@ public class HomologueURLQuery implements WidgetURLQuery
         q.addConstraint(Constraints.eq("Gene.homologues.type", "orthologue"));
         if (!showAll) {
             String[] keys = key.split(",");
-            q.addConstraint(Constraints.oneOfValues("Gene.homologues.homologue.organism",
+            q.addConstraint(Constraints.oneOfValues("Gene.homologues.homologue.organism.name",
                     Arrays.asList(keys)));
         }
         q.addOrderBy("Gene.organism.shortName", OrderDirection.ASC);

@@ -70,7 +70,8 @@ public class GoStatURLQuery implements WidgetURLQuery
 
         if (!showAll) {
             String[] keys = key.split(",");
-            q.addConstraint(Constraints.oneOfValues(prefix + ".goAnnotation.ontologyTerm.parents",
+            q.addConstraint(Constraints.oneOfValues(prefix
+                    + ".goAnnotation.ontologyTerm.parents.identifier",
                     Arrays.asList(keys)));
         }
         return q;

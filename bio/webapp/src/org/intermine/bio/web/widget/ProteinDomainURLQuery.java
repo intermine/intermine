@@ -10,6 +10,8 @@ package org.intermine.bio.web.widget;
  *
  */
 
+import java.util.Arrays;
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
@@ -54,8 +56,9 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
                 prefix + ".proteinDomains.name");
         q.addConstraint(Constraints.in(bagType,  bag.getName()));
         if (!showAll) {
-            q.addConstraint(Constraints.lookup(prefix + ".proteinDomains.primaryIdentifier",
-                    key, ""));
+            String[] keys = key.split(",");
+            q.addConstraint(Constraints.oneOfValues(prefix + ".proteinDomains.primaryIdentifier",
+                    Arrays.asList(keys)));
         }
         return q;
     }
