@@ -199,3 +199,6 @@ div.externalLinks { ; }
 
 /* object details cytoscape (override webapp) */
 h3.interactions { color:#4896B2; font-size:13px; margin:10px 0 10px; }
+
+/* object details further information tables */
+table.results tr th.columnHeader { font-size:16px; background:#F5F5F5 !important; color:#4B3F4B !important; }
