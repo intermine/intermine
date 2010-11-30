@@ -16,6 +16,7 @@ import java.io.Reader;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -26,25 +27,30 @@ import org.intermine.xml.full.Item;
 /**
  * DataConverter to create items from modENCODE fly expression score files.
  *
- * @author Sergio Contrino
  * @author Fengyuan Hu
  */
 public class FlyExpressionScoreConverter extends BioFileConverter
 {
+    private static final Logger LOG = Logger.getLogger(FlyExpressionScoreConverter.class);
+
     //
-    private static final String DATASET_TITLE = "Add DataSet.title here";
-    private static final String DATA_SOURCE_NAME = "Add DataSource.name here";
+    private Item sub;
+    private static final String DATASET_TITLE =
+        "Drosophila Cell Line and Developmental Stage Gene and Exon Scores";
+    private static final String DATA_SOURCE_NAME = "Peter Cherbas";
 
     private static final String CELL_LINE = "cell line";
     private static final String DEVELOPMENTAL_STAGE = "developmental stage";
+    private static final String DCCID = "3305";
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
-    public FlyExpressionScoreConverter(ItemWriter writer, Model model) {
+    public FlyExpressionScoreConverter(ItemWriter writer, Model model) throws ObjectStoreException{
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        createSubmissionItem();
     }
 
     /**
@@ -63,14 +69,14 @@ public class FlyExpressionScoreConverter extends BioFileConverter
 
         if ("Drosophila_Cell_Lines_and_Developmental_Stages_Gene_Scores.txt"
                 .equals(currentFile.getName())) {
-            processGeneScoreFile(reader);
+            processGeneScoreFile(reader, sub);
         } else if ("Drosophila_Cell_Lines_and_Developmental_Stages_Exon_Scores.txt"
                 .equals(currentFile.getName())) {
-            processExonScoreFile(reader);
+            processExonScoreFile(reader, sub);
         } else {
             throw new IllegalArgumentException("Unexpected file: "
                     + currentFile.getName());
-        }
+        }        
     }
 
     /**
@@ -84,7 +90,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
      * @throws IOException
      * @throws ObjectStoreException
      */
-    private void processGeneScoreFile(Reader reader) throws IOException, ObjectStoreException {
+    private void processGeneScoreFile(Reader reader, Item submission) throws IOException, ObjectStoreException {
         Iterator<?> tsvIter;
         try {
             tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -95,9 +101,11 @@ public class FlyExpressionScoreConverter extends BioFileConverter
         int lineNumber = 0;
         while (tsvIter.hasNext()) {
             String[] line = (String[]) tsvIter.next();
+            LOG.info("SCOREg " + line[0] );
+            
             if (lineNumber == 0) {
                 // column headers - strip off any extra columns - FlyAtlas
-                // not neccessary for FlyExpressionScore, but OK to keep the code
+                // not necessary for FlyExpressionScore, but OK to keep the code
                 int end = 0;
                 for (int i = 0; i < line.length; i++) {
                     if (StringUtils.isEmpty(line[i])) {
@@ -125,10 +133,11 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                     score.setReference("subject", gene);
                     score.setReference("cellLine", cellLine);
                     // TODO Not set reference for Developmental Stage, will it matter?
+                    score.setReference("submission", submission);
                     store(score);
                 }
 
-                // Developemtal stage starts from column 31 till the end
+                // Developmental stage starts from column 31 till the end
                 for (int i = 30; i < headers.length; i++) {
                     String col = headers[i];
                     col = correctOfficialName(col, DEVELOPMENTAL_STAGE);
@@ -138,6 +147,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                     score.setReference("subject", gene);
                     score.setReference("developmentalStage", developmentalStage);
                     // TODO Not set reference for Cell Line, will it matter?
+                    score.setReference("submission", submission);
                     store(score);
                 }
             }
@@ -156,7 +166,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
      * @throws IOException
      * @throws ObjectStoreException
      */
-    private void processExonScoreFile(Reader reader) throws IOException, ObjectStoreException {
+    private void processExonScoreFile(Reader reader, Item submission) throws IOException, ObjectStoreException {
         Iterator<?> tsvIter;
         try {
             tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -167,9 +177,11 @@ public class FlyExpressionScoreConverter extends BioFileConverter
         int lineNumber = 0;
         while (tsvIter.hasNext()) {
             String[] line = (String[]) tsvIter.next();
+            LOG.info("SCOREe " + line[0] );
+
             if (lineNumber == 0) {
                 // column headers - strip off any extra columns - FlyAtlas
-                // not neccessary for FlyExpressionScore, but OK to keep the code
+                // not necessary for FlyExpressionScore, but OK to keep the code
                 int end = 0;
                 for (int i = 0; i < line.length; i++) {
                     if (StringUtils.isEmpty(line[i])) {
@@ -196,11 +208,12 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                     Item score = createFlyExpressionScore(line[i]);
                     score.setReference("subject", exon);
                     score.setReference("cellLine", cellLine);
+                    score.setReference("submission", submission);
                     // Not set reference for Developmental Stage
                     store(score);
                 }
 
-                // Developemtal stage starts from column 33 till the end
+                // Developmental stage starts from column 33 till the end
                 for (int i = 32; i < headers.length; i++) {
                     String col = headers[i];
                     col = correctOfficialName(col, DEVELOPMENTAL_STAGE);
@@ -209,6 +222,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                     Item score = createFlyExpressionScore(line[i]);
                     score.setReference("subject", exon);
                     score.setReference("developmentalStage", developmentalStage);
+                    score.setReference("submission", submission);
                     // Not set reference for Cell Line
                     store(score);
                 }
@@ -303,6 +317,32 @@ public class FlyExpressionScoreConverter extends BioFileConverter
         return bioentity;
     }
 
+    /**
+     * Create and store a Submission item on the first time called.
+     *
+     * @param DCCid the submission id
+     * @return an Item representing the Submission
+     */
+    private Item createSubmission(String DCCid) throws ObjectStoreException {
+        Item submission = createItem("Submission");
+        submission.setAttribute("DCCid", DCCid);
+        store(submission);
+
+        return submission;
+    }
+
+    /**
+     * Create and store a Submission item on the first time called.
+     *
+     * @throws ObjectStoreException 
+     */
+    protected void createSubmissionItem() throws ObjectStoreException {
+        sub = createItem("Submission");
+        sub.setAttribute("DCCid", DCCID);
+        store(sub);
+    }
+    
+    
     /**
      * Create and store a CellLine item on the first time called.
      *
