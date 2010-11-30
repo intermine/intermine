@@ -11,16 +11,19 @@ package org.intermine.api.config;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -49,16 +52,13 @@ public final class ClassKeyHelper
      */
     public static Map<String, List<FieldDescriptor>> readKeys(Model model, Properties props) {
         Map<String, List<FieldDescriptor>> classKeys = new HashMap<String, List<FieldDescriptor>>();
-        for (Map.Entry<Object, Object> entry : props.entrySet()) {
-            String clsName = (String) entry.getKey();
-            String pkg = model.getPackageName();
-            ClassDescriptor cld = model.getClassDescriptorByName(pkg + "."
-                    + clsName);
-            if (cld != null) {
-                String keys = (String) entry.getValue();
+        for (ClassDescriptor cld : model.getLevelOrderTraversal()) {
+            String clsName = cld.getUnqualifiedName();
+            if (props.containsKey(cld.getUnqualifiedName())) {
+                String keys = (String) props.get(clsName);
                 String[] tokens = keys.split(",");
-                for (int o = 0; o < tokens.length; o++) {
-                    String keyString = tokens[o].trim();
+                for (String token : tokens) {
+                    String keyString = token.trim();
                     FieldDescriptor fld = cld.getFieldDescriptorByName(keyString);
                     if (fld != null) {
                         ClassKeyHelper.addKey(classKeys, clsName, fld);
@@ -95,7 +95,9 @@ public final class ClassKeyHelper
             keyList = new ArrayList<FieldDescriptor>();
             classKeys.put(clsName, keyList);
         }
-        keyList.add(key);
+        if (!keyList.contains(key)) {
+            keyList.add(key);
+        }
     }
 
     /**
@@ -168,7 +170,7 @@ public final class ClassKeyHelper
      * @param clsName the class name to look up
      * @return the names of fields that are class keys for the class
      */
-    public static Collection<String> getKeyFieldNames(Map<String, List<FieldDescriptor>> classKeys,
+    public static List<String> getKeyFieldNames(Map<String, List<FieldDescriptor>> classKeys,
             String clsName) {
         String className = TypeUtil.unqualifiedName(clsName);
 
@@ -180,5 +182,32 @@ public final class ClassKeyHelper
             }
         }
         return fieldNames;
+    }
+
+    /**
+     * Get a key field value for the given object.  This will return null if there are no key fields
+     * for the object's class or if there are no non-null values for the key fields.  The key fields
+     * are kept in a consistent order with inherited fields appearing before those defined in a
+     * subclass.
+     * @param obj an object from the model
+     * @param classKeys the key field definition for this model
+     * @return the first available key field value or null
+     */
+    public static Object getKeyFieldValue(FastPathObject obj,
+            Map<String, List<FieldDescriptor>> classKeys) {
+        String clsName = DynamicUtil.getSimpleClass(obj).getSimpleName();
+
+        try {
+            for (String keyField : getKeyFieldNames(classKeys, clsName)) {
+                Object valueFromObject = obj.getFieldValue(keyField);
+                if (valueFromObject != null) {
+                    return valueFromObject;
+                }
+            }
+        } catch (IllegalAccessException e) {
+            // this shouldn't happen because objects conform to the model
+            LOG.error("Error fetching a key field value from object: " + obj);
+        }
+        return null;
     }
 }

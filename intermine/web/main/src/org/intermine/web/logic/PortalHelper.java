@@ -13,24 +13,35 @@ package org.intermine.web.logic;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.model.FastPathObject;
+import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.util.URLGenerator;
 
 
 /**
  * Util methods for the portal
  * @author Julie Sullivan
  **/
-public class PortalHelper
+public final class PortalHelper
 {
-    private static Map<String, BagConverter> bagConverters = new HashMap();
+    private static Map<String, BagConverter> bagConverters = new HashMap<String, BagConverter>();
+    private static String portalBaseUrl = null;
+
+    private PortalHelper() {
+    }
 
     /**
      * If the given param is present in the comma-separated list in the first element of the given
@@ -110,5 +121,48 @@ public class PortalHelper
             bagConverters.put(converterClassName, bagConverter);
         }
         return bagConverter;
+    }
+
+    /**
+     * Generate a stable link to a report page for the given object, this will create a portal link
+     * with the correct class and a value from a non-null class key field of the object.  Will
+     * return null if there is no non-null value or class key available.
+     * @param obj the object to link to
+     * @param im the InterMineApi
+     * @param request the request object
+     * @return a portal URL to the object or null
+     */
+    public static String generatePortalLink(FastPathObject obj, InterMineAPI im,
+            HttpServletRequest request) {
+        String url = null;
+        Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
+        String externalId = ClassKeyHelper.getKeyFieldValue(obj, classKeys).toString();
+        if (externalId != null) {
+            String baseUrl = getBaseUrl(request);
+            String clsName = DynamicUtil.getSimpleClass(obj).getSimpleName();
+            StringBuilder sb = new StringBuilder();
+            sb.append(baseUrl);
+            sb.append("/portal.do?class=");
+            sb.append(clsName);
+            sb.append("&externalids=");
+            sb.append(encode(externalId));
+            url = sb.toString();
+        }
+        return url;
+    }
+
+    private static String getBaseUrl(HttpServletRequest request) {
+        if (portalBaseUrl == null) {
+            portalBaseUrl = new URLGenerator(request).getPermanentBaseURL();
+        }
+        return portalBaseUrl;
+    }
+
+    private static String encode(String s) {
+        try {
+            return URLEncoder.encode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return s;
+        }
     }
 }

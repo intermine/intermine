@@ -37,6 +37,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
+import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayObject;
@@ -123,6 +124,10 @@ public class ObjectDetailsController extends InterMineAction
         String type = DynamicUtil.getSimpleClass(object.getClass()).getCanonicalName();
         request.setAttribute("objectType", type);
 
+        String stableLink = PortalHelper.generatePortalLink(object, im, request);
+        if (stableLink != null) {
+            request.setAttribute("stableLink", stableLink);
+        }
         return null;
     }
 
