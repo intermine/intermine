@@ -11,12 +11,15 @@ package org.intermine.metadata;
  */
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -49,6 +52,8 @@ public class Model
         = new HashMap<Class<?>, Map<String, FieldDescriptor>>();
     private final Map<Class<?>, Map<String, Class<?>>> classToCollectionsMap
         = new HashMap<Class<?>, Map<String, Class<?>>>();
+    private final ClassDescriptor rootCld;
+    private List<ClassDescriptor> levelOrderClasses = null;
 
     private boolean generatedClassesAvailable = true;
 
@@ -112,6 +117,7 @@ public class Model
                 Collections.singleton(new AttributeDescriptor("id", "java.lang.Integer")),
                 emptyRefs, emptyCols);
         orderedClds.add(intermineObject);
+        rootCld = intermineObject;
 
         // 1. Put all ClassDescriptors in model.
         for (ClassDescriptor cld : orderedClds) {
@@ -429,6 +435,32 @@ public class Model
 
             return Class.forName("java.lang." + className).getName();
         }
+    }
+
+    /**
+     * Return the classes in the model in level order from shallowest to deepest, the order of nodes
+     * at any given level is undefined.  The list does not include InterMineObject.
+     * @return ClassDescriptors from the model in depth order
+     */
+    public synchronized List<ClassDescriptor> getLevelOrderTraversal() {
+        if (levelOrderClasses == null) {
+            levelOrderClasses = new ArrayList<ClassDescriptor>();
+
+            // start from InterMineObject which is the root
+            LinkedList<ClassDescriptor> queue = new LinkedList<ClassDescriptor>();
+            queue.add(rootCld);
+            while (!queue.isEmpty()) {
+                ClassDescriptor node = queue.remove();
+                if (!node.equals(rootCld) && !levelOrderClasses.contains(node)) {
+                    levelOrderClasses.add(node);
+                }
+                // add direct subclasses to the queue
+                if (node.getSubDescriptors() != null) {
+                    queue.addAll(node.getSubDescriptors());
+                }
+            }
+        }
+        return levelOrderClasses;
     }
 
     /**
