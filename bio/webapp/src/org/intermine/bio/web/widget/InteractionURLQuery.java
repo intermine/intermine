@@ -55,7 +55,8 @@ public class InteractionURLQuery implements WidgetURLQuery
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
             String[] keys = key.split(",");
-            q.addConstraint(Constraints.oneOfValues("Gene.interactions.interactingGenes",
+            q.addConstraint(Constraints.oneOfValues(
+                    "Gene.interactions.interactingGenes.primaryIdentifier",
                     Arrays.asList(keys)));
         }
         q.addOrderBy("Gene.organism.shortName", OrderDirection.ASC);
