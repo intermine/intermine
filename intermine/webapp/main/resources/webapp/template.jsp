@@ -171,7 +171,7 @@
                    <%-- if can be multi value --%>
                <c:if test="${!empty dec.possibleValues}">
                    <html:hidden property="multiValueAttribute(${index})"/>
-                   <html:select property="multiValues(${index})" multiple="true" size="4" onchange="updateMultiValueAttribute(${index});">
+                   <html:select property="multiValues(${index})" multiple="true" size="4" onchange="updateMultiValueAttribute(${index});" style="height:auto">
                    <c:forEach items="${dec.possibleValues}" var="multiValue">
                    <html:option value="${multiValue}"><c:out value="${multiValue}"/></html:option>
                    </c:forEach>
