@@ -351,7 +351,7 @@ public final class DynamicUtil
 
     /**
      * Returns the simple class name for the given class or throws an exception if
-     * there are more than one
+     * there are more than one.
      * @param clazz the class
      * @return the simple class name
      */
@@ -369,6 +369,16 @@ public final class DynamicUtil
 
         }
         return retval;
+    }
+
+    /**
+     * Returns the simple class name for the given object or throws an exception if
+     * there are more than one.
+     * @param obj an object from the model
+     * @return the simple class name
+     */
+    public static synchronized String getSimpleClassName(FastPathObject obj) {
+        return getSimpleClassName(obj.getClass());
     }
 
     /**
@@ -422,5 +432,17 @@ public final class DynamicUtil
             throw new IllegalArgumentException("No simple class for " + getFriendlyName(clazz));
         }
         return (Class) decomposed.iterator().next();
+    }
+
+    /**
+     * For the given objet returns the result of decomposeClass if that is a single class, or throws
+     * an exception if there are more than one class.
+     *
+     * @param obj an object from the model
+     * @return the corresponding non-dynamic class
+     */
+    @SuppressWarnings("unchecked")
+    public static Class<? extends FastPathObject> getSimpleClass(FastPathObject obj) {
+        return getSimpleClass(obj.getClass());
     }
 }
