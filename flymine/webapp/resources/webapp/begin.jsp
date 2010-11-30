@@ -91,7 +91,8 @@
                 <div id="try"></div>
                 <div id="content1" class="content">
                     <p>The gene models and other genome annotation in FlyMine are provided by a variety of source databases including: FlyBase, UniProt, Ensembl and over
-                    30 other data sources. <a href="dataCategories.do">Read more...</a></p>
+                    30 other data sources. <a href="dataCategories.do">Read more</a></p>
+                    <br/>
                     <p>Query for genes:</p>
                     <tiles:insert name="aspectTemplates.jsp">
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
@@ -101,7 +102,8 @@
                 </div>
                 <div id="content2" class="content">
                     <p>FlyMine loads proteins from UniProt and FlyBase, and protein domains from InterPro. <a href="aspect.do?name=Proteins">Read
-                    more...</a></p>
+                    more</a></p>
+                    <br/>
                     <p>Query for proteins:</p>
                     <tiles:insert name="aspectTemplates.jsp">
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
@@ -111,6 +113,7 @@
                 </div>
                 <div id="content3" class="content">
                     <p>FlyMine loads physical interactions from IntAct and BioGRID, and genetic interaction from FlyBase. <a href="aspect.do?name=Interactions">Read more</a></p>
+                    <br/>
                     <p>Query for interactions:</p>
                     <tiles:insert name="aspectTemplates.jsp">
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
@@ -120,7 +123,8 @@
                 </div>
                 <div id="content4" class="content">
                     <p>FlyMine loads pathway data from KEGG, Reactome and FlyReactome. <a href="aspect.do?name=Pathways">Read more..</a></p>
-                    <p>Popular queries:</p>
+                    <br/>
+                    <p>Query for pathways:</p>
                     <tiles:insert name="aspectTemplates.jsp">
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
                         <tiles:put name="aspectTitle" value="Pathways" />
@@ -130,6 +134,7 @@
                 <div id="content5" class="content">
                     <p>FlyMine loads homologue predictions from InParanoid, KEGG and TreeFam. <a href="aspect.do?name=Comparative+Genomics">
                     Read more</a></p>
+                    <br/>
                     <p>Query for homologues:</p>
                     <tiles:insert name="aspectTemplates.jsp">
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
@@ -140,7 +145,8 @@
                 <div id="content6" class="content">
                     <p>FlyMine loads Gene Ontology annotation from MGI, FlyBase, WormBase, UniProt, SGD, and InterPro.
                     <a href="aspect.do?name=Gene+Ontology">Read more</a></p>
-                    <p>Query for GO:</p>
+                    <br/>
+                    <p>Query using gene ontology:</p>
                     <tiles:insert name="aspectTemplates.jsp">
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
                         <tiles:put name="aspectTitle" value="Gene Ontology" />
@@ -149,7 +155,8 @@
                 </div>
                 <div id="content7" class="content">
                     <p>FlyMine loads gene expression data for Drosophila melanogaster and Anopheles gambiae from FlyAtlas, BDGP, ArrayExpress and Fly-FISH.
-                    <a href="aspect.do?name=Gene+Expression">Read more...</a></p>
+                    <a href="aspect.do?name=Gene+Expression">Read more</a></p>
+                    <br/>
                     <p>Query for gene expression:</p>
                     <tiles:insert name="aspectTemplates.jsp">
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
