@@ -4,7 +4,7 @@
  list of positioning attributes;
  list of size/padding/margin;
  list of anything affecting the content;}
- 
+
  */
 /* =Tag Redefinition
  --------------------------*/ * {
@@ -666,11 +666,11 @@ hr.seperator {
 /*.roundcorners dl {
  margin:0; padding:0 0 0 5px;
  background: url('../images/roundcorner_t_l.png') no-repeat top left; }
- 
+
  .roundcorners dt {
  padding:0 0 5px 10px; margin:0;
  background: url('../images/roundcorner_t_r.png') no-repeat top right; }
- 
+
  .roundcorners dd {
  padding:10px; margin:0;
  background: url('../images/roundcorner_b_r.png') no-repeat bottom right;}
@@ -907,6 +907,7 @@ ol#news a {
     padding: 6px;
     background: #FFF;
     font-size: 13px;
+  border:1px dashed #777777;
 }
 
 .messages {
@@ -1265,8 +1266,8 @@ div.keywordSearchIndex a:hover {
 
 /* keyword search form */
 div.keywordSearch {
-	margin-left:auto; margin-right:auto;
-	width:940px;
+  margin-left:auto; margin-right:auto;
+  width:940px;
 }
 
 div.keywordSearch div.form {
@@ -1318,8 +1319,8 @@ div.keywordSearch div.form form input[type =
 "text"] {
     padding: 4px 2px;
     font-size: 14px;
-	width:460px;
-	margin-bottom:4px;
+  width:460px;
+  margin-bottom:4px;
 }
 
 div.keywordSearch div.form form input[type = "submit"] {
@@ -1347,7 +1348,7 @@ select#extraConstraintSelect {
 
 .topBar.info #ctxHelpTxt {
     display: inline;
-	width: 90%;
+  width: 90%;
 }
 
 .topBar.info a {
@@ -1370,8 +1371,8 @@ form#queryBuilderTemplateSettings span.errors {
     background: #FFCECE url("../images/icons/exclamation.png") no-repeat 1px;
     font-size: 11px;
     padding: 1px 0 1px 20px;
-	display:inline-block;
-	margin-top:3px;
+  display:inline-block;
+  margin-top:3px;
 }
 
 form#queryBuilderTemplateSettings table input[type="text"], form#queryBuilderTemplateSettings table textarea { width:500px; }
@@ -1388,6 +1389,6 @@ ol#constraintList.templateForm select { height:25px; }
 
 /* constraint logic (query.do) */
 #constraintLogicContainer span#constraintLogic { cursor:pointer; padding-right:14px; background-image:url('../images/icons/edit-8.png');
-	background-repeat:no-repeat; background-position:97%; }
+  background-repeat:no-repeat; background-position:97%; }
 #constraintLogicContainer span#editConstraintLogic { ; }
-	#constraintLogicContainer span#editConstraintLogic input#expr { font-size:12px; border:1px solid #CACACA; padding:2px; margin-left:10px; }
+  #constraintLogicContainer span#editConstraintLogic input#expr { font-size:12px; border:1px solid #CACACA; padding:2px; margin-left:10px; }
