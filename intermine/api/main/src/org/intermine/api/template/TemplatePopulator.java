@@ -73,14 +73,6 @@ public final class TemplatePopulator
                         + "  there are editable constraints on the path " + editablePath);
             }
 
-//            if (values.size() == 0) {
-//                for (PathConstraint con : constraints) {
-//                    template.removeConstraint(con);
-//                }
-//                continue;
-//            }
-
-
             for (PathConstraint con : constraints) {
                 boolean found = false;
                 for (TemplateValue templateValue : values) {
