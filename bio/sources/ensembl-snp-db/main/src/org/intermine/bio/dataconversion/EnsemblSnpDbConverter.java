@@ -176,7 +176,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 // are sometimes fewer locations than the map_weight indicates
                 int mapWeight = res.getInt("map_weight");
                 boolean uniqueLocation = (mapWeight == 1) ? true : false;
-                currentSnp.setAttribute("uniqueLocation", "" + uniqueLocation);
 
                 // if not a unique location and we've seen the SNP before, don't store
                 if (!uniqueLocation && pendingSnpConsequences.containsKey(rsNumber)) {
@@ -187,6 +186,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     currentSnp = createItem("SNP");
                     currentSnp.setAttribute("primaryIdentifier", rsNumber);
                     currentSnp.setReference("organism", getOrganismItem(taxonId));
+                    currentSnp.setAttribute("uniqueLocation", "" + uniqueLocation);
 
                     String alleles = res.getString("allele_string");
                     currentSnp.setAttribute("alleles", alleles);
