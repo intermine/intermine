@@ -38,11 +38,26 @@
     <tr>
       <td valign="top" width="30%">
 
-          <div class="heading">Summary for selected
+          <div class="heading">
+          <a target="new" href="${stableLink}" onclick="jQuery('div.popup').show().find('input').select();return false;" id="permalink">
+            Link
+          </a>
+          <div class="popup" style="display:none;">
+            <span class="close" onclick="jQuery('div.popup').hide();return false;"></span>
+               <p>Paste the following link</p>
+               <input type="text" value="${stableLink}" />
+          </div>
+          Summary for selected
           <c:forEach items="${object.clds}" var="cld">
             ${cld.unqualifiedName}
           </c:forEach>
           </div>
+          <script type="text/javascript">
+            // open a permanent link popup window
+            function permalinkPopup(target) {
+              alert(jQuery(target).text());
+            }
+          </script>
 
         <im:body id="summary">
           <table cellpadding="5" border="0" cellspacing="0" class="objSummary">
