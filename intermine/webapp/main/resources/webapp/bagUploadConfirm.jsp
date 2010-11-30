@@ -160,9 +160,11 @@ function toggleForm(matchCount) {
           <fmt:param value="${bagUploadConfirmForm.extraFieldValue}"/>
         </fmt:message>
       </p>
-      <p style="font-weight: bold">
-        <c:forEach items="${unresolved}" var="unresolvedIdentifer"><c:out value="${unresolvedIdentifer.key}" escapeXml="true" /></c:forEach>
-      </p>
+      <ul class="unresolvedIdentifiers">
+        <c:forEach items="${unresolved}" var="unresolvedIdentifer">
+          <li><c:out value="${unresolvedIdentifer.key}" escapeXml="true" /></li>
+        </c:forEach>
+      </ul>
     </div>
     <div class="body">
     <html:submit property="goBack">
