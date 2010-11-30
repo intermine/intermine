@@ -74,8 +74,8 @@ ul#nav li#mymine {
 ul#nav li.activelink {
     background:#5C0075 url('corner_act_t_l.png') no-repeat;}
 
-ul#submenulist li#subactive_bag, ul#submenulist li#subactive_api {
-    font-weight:bold;color:#FFF;background:url('submenu_indent.png') no-repeat bottom center;}
+ul#submenulist li#subactive_bag, ul#submenulist li#subactive_api { height:37px;
+    font-weight:bold;color:#FFF;background:url('submenu_indent.png') no-repeat bottom center; }
 
 ul#submenulist li#subactive_mymine {
     font-weight:bold;color:#FFF;background:url('submenu_my.png') no-repeat bottom center;}

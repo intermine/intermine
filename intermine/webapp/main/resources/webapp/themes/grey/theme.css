@@ -3,9 +3,9 @@ html, body {
 
 a {
     color: #333;}
-    
+
 body {
-	background:#FFF url('top_gradient.png') repeat-x;
+  background:#FFF url('top_gradient.png') repeat-x;
 }
 
 h1, h2, h3, h1 a, h1 a:visited, label {
@@ -19,10 +19,10 @@ h1 a:hover,h1 a:visited:hover  {
 
 /* =HEADER
 --------------------------*/
-div#header h1, 
-div#header h1 a, 
+div#header h1,
+div#header h1 a,
 div#header h1 a:link,
-div#header h1 a:visited, 
+div#header h1 a:visited,
 div#header p {
     color:#000;
 }
@@ -50,67 +50,67 @@ div#header p {
 }
 
 #loginbar  a:link, #loginbar a:visited, #loginbar{
-	color:#000;}
+  color:#000;}
 
 /* =BODY
 --------------------------*/
 
 .plainbox {
     border:1px solid #000;
-	background:#F0F0F0;
-	padding:10px;}
+  background:#F0F0F0;
+  padding:10px;}
 
 .gradientbox {
-	padding:10px; 
-	border:1px solid #000;
-	background: url('gray_grad.png') repeat-x;}
+  padding:10px;
+  border:1px solid #000;
+  background: url('gray_grad.png') repeat-x;}
 
 
 /* =NAVIGATION
 --------------------------*/
 
 ul#nav a{
-	text-decoration:none; color: #FFF; font-weight:bold;	background-image:url('corner_t_r.png'); background-repeat: no-repeat;	background-position: right top;	color:white;}
+  text-decoration:none; color: #FFF; font-weight:bold;	background-image:url('corner_t_r.png'); background-repeat: no-repeat;	background-position: right top;	color:white;}
 
 ul#nav a:hover,ul#nav li#mymine a:hover{
-	color:#333;}
+  color:#333;}
 
 ul#nav li#mymine a{
-	color:#000;background:url('corner_my_t_r.png') no-repeat top right;}
+  color:#000;background:url('corner_my_t_r.png') no-repeat top right;}
 
 ul#nav li.activelink a{
-	color:white;background:url('corner_act_t_r.png') no-repeat top right;}
+  color:white;background:url('corner_act_t_r.png') no-repeat top right;}
 
 ul#nav li#mymine {
-	background:#D2CEBF url('corner_my_t_l.png') no-repeat;}
+  background:#D2CEBF url('corner_my_t_l.png') no-repeat;}
 
 ul#nav li.activelink {
-	background:#000 url('corner_act_t_l.png') no-repeat;}
+  background:#000 url('corner_act_t_l.png') no-repeat;}
 
-ul#submenulist li#subactive_bag {
-	font-weight:bold;color:#FFF;background:url('submenu_indent.png') no-repeat bottom center;}
+ul#submenulist li#subactive_bag {height:37px;
+  font-weight:bold;color:#FFF;background:url('submenu_indent.png') no-repeat bottom center;}
 
 ul#submenulist li#subactive_mymine {
-	font-weight:bold;color:#CCC;background:url('submenu_my.png') no-repeat bottom center;}
+  font-weight:bold;color:#CCC;background:url('submenu_my.png') no-repeat bottom center;}
 
 ul#submenulist li#subactive_mymine span { color:#000 !important; }
 
 ul#nav li{
-	text-align: center;background:#9E9E9E url('corner_t_l.png') no-repeat;}
+  text-align: center;background:#9E9E9E url('corner_t_l.png') no-repeat;}
 
 .submenu{
-	background:#000;
-	border-left:1px solid #000;
-	border-right:1px solid #000;}
+  background:#000;
+  border-left:1px solid #000;
+  border-right:1px solid #000;}
 
 .submenu_mymine{
-	background:#D2CEBF;}
+  background:#D2CEBF;}
 
 ul#submenulist li a {
-	color:#FFF;text-decoration: none;font-weight: bold;}
+  color:#FFF;text-decoration: none;font-weight: bold;}
 
 ul#submenulist li a:hover {
-	color:#FFF;text-decoration: underline;font-weight: bold;}
+  color:#FFF;text-decoration: underline;font-weight: bold;}
 
 ul#submenulist li.myminebagstabtitle a, ul#submenulist li.myminehistorytabtitle a, ul#submenulist li.myminesavedqueriestabtitle a,
 ul#submenulist li.myminesavedtemplatestabtitle a, ul#submenulist li.myminepasswordtabtitle a { color:#000; }
@@ -170,53 +170,53 @@ div#filter_tool_bar {
     text-align: center; background-color: #D2CEBF;}
 
 .widget p {
-	font-size:10px;	}
+  font-size:10px;	}
 
 .widget_slide {
-	margin-top:10px; max-height:350px;
+  margin-top:10px; max-height:350px;
     overflow-x:none;overflow-y:auto;overflow: auto;}
 
 #bagDescriptionDiv{
     background-color: #D2CEBF;}
 
 #bagDescriptionDiv:hover{
-	background-color: #E6FFB3;}
+  background-color: #E6FFB3;}
 
 #textarea {
     background-color: #D2CEBF;}
 
 .blueBg {
-	padding: 20px;margin:20px;width:350px;
-	background-color:#D2CEBF;text-align:center;}
+  padding: 20px;margin:20px;width:350px;
+  background-color:#D2CEBF;text-align:center;}
 
 table.dbsources {
     padding:0px;
-	margin:10px 20px 10px 20px;}
+  margin:10px 20px 10px 20px;}
 
 table.dbsources th  {
-	padding: 6px 6px 6px 12px;
-	text-align: left;
-	font-weight: bold;
-	border-right:1px solid #FFF;
-	color: white;
-	background-color: #000;}
+  padding: 6px 6px 6px 12px;
+  text-align: left;
+  font-weight: bold;
+  border-right:1px solid #FFF;
+  color: white;
+  background-color: #000;}
 
 table.dbsources td {
-	padding: 6px 6px 6px 12px;
-	border-right: 1px solid #000;
-	border-bottom: 1px solid #000;
-	background: #fff;}
+  padding: 6px 6px 6px 12px;
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000;
+  background: #fff;}
 
 table.dbsources td.leftcol {
-	border-left: 1px solid #000;}
-	
+  border-left: 1px solid #000;}
+
 /* =RESULTS TABLES
 -----------------------*/
 table.results tr th {
     background-color: #000;font-size: 12px;color:#FFF;
 }
 table.results tr td.highlightCell, table.results tr.even td.highlightCell {
- 	border-right:1px solid #FFF;background-color: #888;}
+   border-right:1px solid #FFF;background-color: #888;}
 
 table.results tfoot tr td {
   color:#FFF;
@@ -242,13 +242,13 @@ table.results tr td.highlightObject {
 
 /* keyword search results */
 .keywordSearchResults .resultTableContainer table.dbsources { border-left: 1px solid #DFDFDF; }
-	.keywordSearchResults .resultTableContainer table.dbsources th { background:#000; color:#FFF; font-size:13px; padding:2px 8px; }
-	.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult { color:#000; }
-		.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult td { line-height:12px; }
-		.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult div { margin:0; }
-		.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult.odd td { border-bottom:1px solid #DFDFDF;
-			border-top:1px solid #DFDFDF; background:#FCFCFC; }
-	.keywordSearchResults .resultTableContainer table.dbsources td { border-right: 1px solid #DFDFDF; border-bottom:none; padding:4px 8px 2px 8px; }
+  .keywordSearchResults .resultTableContainer table.dbsources th { background:#000; color:#FFF; font-size:13px; padding:2px 8px; }
+  .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult { color:#000; }
+    .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult td { line-height:12px; }
+    .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult div { margin:0; }
+    .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult.odd td { border-bottom:1px solid #DFDFDF;
+      border-top:1px solid #DFDFDF; background:#FCFCFC; }
+  .keywordSearchResults .resultTableContainer table.dbsources td { border-right: 1px solid #DFDFDF; border-bottom:none; padding:4px 8px 2px 8px; }
 
 .keywordSearchResults .resultTableContainer table.dbsources table.inner td { color:#000; }
 
