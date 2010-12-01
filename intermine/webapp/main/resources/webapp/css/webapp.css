@@ -1410,3 +1410,6 @@ a#permalink { float:right; background:url('../images/icons/permalink-blue.png') 
 
 /* Cytoscape interactions */
 h3.interactions { font-size:16px; color:#333; }
+
+/* template button pos */
+div.floatRight { float:right; }
