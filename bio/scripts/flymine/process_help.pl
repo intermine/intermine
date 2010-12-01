@@ -113,18 +113,33 @@ sub make_name
 
 sub make_chapter_item {
     my $page = shift;
-    my $chapter = $html->a(href => make_name($page), text => $page->{title});
+    (my $chapter_id = $page->{title}) =~ s/\s//g;
+    my $link = ($page->{tabs} && @{$page->{tabs}} > 1)
+        ? "javascript:toggleDiv('$chapter_id-tab-box');"
+        : make_name($page);
+    my $chapter = $html->a(
+        href => $link, 
+        text => $page->{title},
+        class => 'chapter-item',
+        id => $chapter_id,
+    );
     if ($page->{tabs}) {
-        $chapter .= $html->ol($html->li_group([map {make_tab_item($page, $_)} @{$page->{tabs}}]));
+        $chapter .= $html->div(
+            {class => 'chapter-tab-box',
+            id => $chapter_id . '-tab-box',
+            style => 'display: none;'},
+            $html->ol($html->li_group([map {make_tab_item($page, $_, $chapter_id)} @{$page->{tabs}}])));
     }
     return $chapter;
 }
-
 sub make_tab_item {
-    my ($page, $tab) = @_;
+    my ($page, $tab, $chapter_id) = @_;
+    (my $tab_id = $chapter_id . '-' . $tab->{title}) =~ s/\s//g;
     return $html->a(
         href => make_name($page) . '#' . $tab->{id},
         text => $tab->{title},
+        class => 'tab-item',
+        id => $tab_id,
     );
 }
 
@@ -239,6 +254,7 @@ TEXT
     <script type="text/javascript" src="$js_path/addcss.js"></script>
     <script type="text/javascript" src="$js_path/tabtastic.js"></script>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
   </head>
   <body>
     <div class="genhelp">
@@ -278,9 +294,15 @@ $next_title
         </table>
       </div>
       <div class="sidebar">
+
         <ol>
             $chapter_list
         </ol>
+    <script language="javascript">
+        function toggleDiv(divid) {
+            \$('#' + divid).slideToggle('fast', function() {});
+        }
+    </script>
      </div>
       <div style="padding-top: 20px" class="content">
         <div $onclick>
