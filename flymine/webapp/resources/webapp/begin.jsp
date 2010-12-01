@@ -20,7 +20,7 @@
                 proteins, pathways, ontology terms, authors, etc. (e.g. <em>eve</em>, HIPPO_DROME, glycolysis, <em>hb</em> allele).</p>
 
                 <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
-                    <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value=""></div>
+                    <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="eg. zen"></div>
                     <div class="bottom">
                         <center>
                             <input name="searchSubmit" class="button violet" type="submit" value="search"/>
@@ -42,7 +42,7 @@
                         <option value="Gene">Gene</option>
                         <option value="Protein">Protein</option>
                     </select>
-                    <div class="textarea"><textarea name="text"></textarea></div>
+                    <div class="textarea"><textarea name="text">eg. zen, adh, CG2328, FBgn0000099</textarea></div>
                     <div class="bottom">
                         <center>
                             <a class="advanced" href="bag.do?subtab=upload">advanced</a>
@@ -56,7 +56,7 @@
         <div id="welcome-bochs">
             <div class="inner">
                 <h3>First Time Here?</h3>
-                <br /><br />
+                <br />
                 <p>FlyMine integrates many types of data for <em>Drosophila</em>, <em>Anopheles</em> and other organisms. You can run flexible queries, export results and analyse lists of data.</p>
                 <div class="bottom">
                     <center>
