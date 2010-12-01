@@ -13,7 +13,9 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -43,6 +45,9 @@ public class FlyExpressionScoreConverter extends BioFileConverter
     private static final String DEVELOPMENTAL_STAGE = "developmental stage";
     private static final String DCCID = "3305";
 
+    private static Map<String, String> cellLines = null;
+    private static Map<String, String> devStages = null;
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -72,7 +77,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
             processGeneScoreFile(reader, sub);
         } else if ("Drosophila_Cell_Lines_and_Developmental_Stages_Exon_Scores.txt"
                 .equals(currentFile.getName())) {
-            processExonScoreFile(reader, sub);
+            //processExonScoreFile(reader, sub);
         } else {
             throw new IllegalArgumentException("Unexpected file: "
                     + currentFile.getName());
@@ -99,6 +104,10 @@ public class FlyExpressionScoreConverter extends BioFileConverter
         }
         String [] headers = null;
         int lineNumber = 0;
+        
+        cellLines = new HashMap<String, String>();
+        devStages = new HashMap<String, String>();
+                
         while (tsvIter.hasNext()) {
             String[] line = (String[]) tsvIter.next();
             LOG.info("SCOREg " + line[0] );
@@ -128,11 +137,13 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                     String col = headers[i];
                     col = correctOfficialName(col, CELL_LINE);
 
-                    Item cellLine = createCellLine(col);
+                    if (!cellLines.containsKey(col)) {                    
+                        Item cellLine = createCellLine(col);
+                        cellLines.put(col, cellLine.getIdentifier());
+                    }
                     Item score = createFlyExpressionScore(line[i]);
                     score.setReference("subject", gene);
-                    score.setReference("cellLine", cellLine);
-                    // TODO Not set reference for Developmental Stage, will it matter?
+                    score.setReference("cellLine", cellLines.get(col));
                     score.setReference("submission", submission);
                     store(score);
                 }
@@ -142,11 +153,13 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                     String col = headers[i];
                     col = correctOfficialName(col, DEVELOPMENTAL_STAGE);
 
-                    Item developmentalStage = createDevelopmentalStage(col);
+                    if (!devStages.containsKey(col)) {                    
+                        Item developmentalStage = createDevelopmentalStage(col);
+                        devStages.put(col, developmentalStage.getIdentifier());
+                    }
                     Item score = createFlyExpressionScore(line[i]);
                     score.setReference("subject", gene);
-                    score.setReference("developmentalStage", developmentalStage);
-                    // TODO Not set reference for Cell Line, will it matter?
+                    score.setReference("developmentalStage", devStages.get(col));
                     score.setReference("submission", submission);
                     store(score);
                 }
@@ -199,7 +212,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                 }
                 Item exon = createBioEntity(primaryId, "Exon");
 
-                // Cell line starts from column 8 and ends at 32 which is hearder[7-31]
+                // Cell line starts from column 8 and ends at 32 which is header[7-31]
                 for (int i = 7; i < 32; i++) {
                     String col = headers[i];
                     col = correctOfficialName(col, CELL_LINE);
