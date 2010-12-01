@@ -1,10 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
-
 
 <!-- templates.jsp -->
 <html:xhtml/>
@@ -19,7 +15,7 @@
           <tiles:put name="showTitles" value="true"/>
           <tiles:put name="showDescriptions" value="true"/>
           <tiles:put name="showSearchBox" value="true"/>
-          <tiles:put name="initialFilterText" value="${initialFilterText}"/>
+          <tiles:put name="filter" value="<%=request.getParameter("filter")%>"/>
           <tiles:put name="templatesPublicPage" value="true"/>
         </tiles:insert>
       </html:form>
