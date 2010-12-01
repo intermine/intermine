@@ -1,17 +1,20 @@
 #!/usr/bin/perl -w
 
 use strict;
+use HTML::EasyTags;
 
 my @pages = ();
 
 if (@ARGV != 3) {
   die <<USAGE;
-Wrong number of argument
+Wrong number of arguments
 
 usage:
   $0 input_file "Some title" destination_directory
 USAGE
 }
+
+my $html = HTML::EasyTags->new();
 
 my $help_file_name = shift;
 my $help_title = shift;
@@ -131,6 +134,9 @@ sub make_html
     $prev_link = qq[<a href="$prev_url">previous</a>];
     $prev_title = $pages[$num - 1]{title};
   }
+
+  my $chapter_list = $html->li_group([
+      map {$html->a(href => make_name($_), text => $_->{title})} @pages]);
 
   my $next_url = '';
   my $next_link = '';
@@ -255,6 +261,11 @@ $next_title
           </tr>
         </table>
       </div>
+      <div class="sidebar">
+        <ol>
+            $chapter_list
+        </ol>
+     </div>
       <div style="padding-top: 20px" class="content">
         <div $onclick>
 $tab_list
