@@ -20,5 +20,5 @@
             </c:if>
         </c:forEach>
         </ul>
-
+        <p class="more"><a href="templates.do?filter=${aspectTitle}">More queries</a></p>
 <!-- /aspectTemplates.jsp -->

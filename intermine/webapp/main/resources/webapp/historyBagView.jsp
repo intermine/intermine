@@ -32,19 +32,19 @@
     </c:when>
     <c:otherwise>
 
-	<table>
-	<c:if test="${PROFILE.loggedIn}">
-		<tr><td align="right">
-			Filter:&nbsp;
-			<tiles:insert name="tagSelect.tile">
-			        <tiles:put name="type" value="bag" />
-			        <tiles:put name="selectId" value="mainSelect" />
-			        <tiles:put name="onChangeFunction" value="filterByTag" />
-			</tiles:insert>
-		</td></tr>
-	</c:if>
-	<tr><td>
-	  
+    <table>
+    <c:if test="${PROFILE.loggedIn}">
+        <tr><td align="right">
+            Filter:&nbsp;
+            <tiles:insert name="tagSelect.tile">
+                    <tiles:put name="type" value="bag" />
+                    <tiles:put name="selectId" value="mainSelect" />
+                    <tiles:put name="onChangeFunction" value="filterByTag" />
+            </tiles:insert>
+        </td></tr>
+    </c:if>
+    <tr><td>
+
       <html:form action="/modifyBag">
 
         <table class="sortable-onload-2 rowstyle-alt no-arrow" cellspacing="0" id="bagTable">
@@ -79,13 +79,13 @@
                     </tiles:insert>
 
                      <c:if test="${PROFILE.loggedIn}">
-	                 	 <c:set var="taggable" value="${savedBag.value}"/>
-	                     <tiles:insert name="inlineTagEditor.tile">
-	                       <tiles:put name="taggable" beanName="taggable"/>
-	                       <tiles:put name="vertical" value="true"/>
-	                       <tiles:put name="show" value="true"/>
-	                       <tiles:put name="onChangeCode" value="refreshTagSelect('mainSelect', 'bag')"/>
-	                     </tiles:insert>
+                          <c:set var="taggable" value="${savedBag.value}"/>
+                         <tiles:insert name="inlineTagEditor.tile">
+                           <tiles:put name="taggable" beanName="taggable"/>
+                           <tiles:put name="vertical" value="true"/>
+                           <tiles:put name="show" value="true"/>
+                           <tiles:put name="onChangeCode" value="refreshTagSelect('mainSelect', 'bag')"/>
+                         </tiles:insert>
                      </c:if>
 
               </td>
