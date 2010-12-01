@@ -34,7 +34,7 @@
         <div id="lists-bochs">
             <img class="title" src="images/icons/lists-64.png" title="lists"/>
             <div class="inner">
-                <h3>Analyse Lists</h3>
+                <h3>Analyse</h3>
                 <p>Enter a <strong>list</strong> of identifiers.</p>
 
                 <form name="buildBagForm" method="post" action="<c:url value="/buildBag.do" />">
@@ -45,9 +45,9 @@
                     <div class="textarea"><textarea name="text"></textarea></div>
                     <div class="bottom">
                         <center>
-                            <input class="button plush" type="submit" value="analyse"/>
-                            <br />
                             <a class="advanced" href="bag.do?subtab=upload">advanced</a>
+                            <br />
+                            <input class="button plush" type="submit" value="analyse"/>
                         </center>
                     </div>
                 </form>
@@ -56,8 +56,7 @@
         <div id="welcome-bochs">
             <div class="inner">
                 <h3>First Time Here?</h3>
-                <p>FlyMine integrates many types of data for <em>Drosophila</em>, <em>Anopheles</em> and other organisms. These include: orthologues, protein domains, interactions,
-                pathways, gene expression, and gene ontology. You can run flexible queries, export results and work with lists of data.</p>
+                <p>FlyMine integrates many types of data for <em>Drosophila</em>, <em>Anopheles</em> and other organisms. You can run flexible queries, export results and analyse lists of data.</p>
                 <div class="bottom">
                     <center>
                         <a class="button gray" href="http://www.flymine.org/help/tour/start.html"
