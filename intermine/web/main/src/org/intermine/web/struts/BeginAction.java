@@ -119,7 +119,7 @@ public class BeginAction extends InterMineAction
         List<String> mostPopulareTemplateNames;
         for (String aspect : aspects.keySet()) {
             templates = templateManager.getAspectTemplates(TagNames.IM_ASPECT_PREFIX + aspect,
-                    MAX_TEMPLATES);
+                                                          null);
             if (SessionMethods.getProfile(session).isLoggedIn()) {
                 mostPopulareTemplateNames = trackerDelegate.getMostPopularTemplateOrder(
                                             SessionMethods.getProfile(session), session.getId());
@@ -129,6 +129,9 @@ public class BeginAction extends InterMineAction
             if (mostPopulareTemplateNames != null) {
                 Collections.sort(templates,
                     new MostPopularTemplateComparator(mostPopulareTemplateNames));
+            }
+            if (templates.size() > MAX_TEMPLATES) {
+                templates.subList(0, MAX_TEMPLATES - 1);
             }
             aspectQueries.put(aspect, templates);
         }
