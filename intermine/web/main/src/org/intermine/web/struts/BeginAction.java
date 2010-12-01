@@ -131,7 +131,7 @@ public class BeginAction extends InterMineAction
                     new MostPopularTemplateComparator(mostPopulareTemplateNames));
             }
             if (templates.size() > MAX_TEMPLATES) {
-                templates = templates.subList(0, MAX_TEMPLATES - 1);
+                templates = templates.subList(0, MAX_TEMPLATES);
             }
             aspectQueries.put(aspect, templates);
         }
