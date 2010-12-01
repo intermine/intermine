@@ -20,7 +20,7 @@
                 proteins, pathways, ontology terms, authors, etc. (e.g. <em>eve</em>, HIPPO_DROME, glycolysis, <em>hb</em> allele).</p>
 
                 <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
-                    <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="eg. zen"></div>
+                    <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="e.g. zen, Q9V4E1"></div>
                     <div class="bottom">
                         <center>
                             <input name="searchSubmit" class="button violet" type="submit" value="search"/>
@@ -42,11 +42,11 @@
                         <option value="Gene">Gene</option>
                         <option value="Protein">Protein</option>
                     </select>
-                    <div class="textarea"><textarea name="text">eg. zen, adh, CG2328, FBgn0000099</textarea></div>
+                    <div class="textarea"><textarea id="listInput" name="text">e.g. zen, adh, CG2328, FBgn0000099</textarea></div>
                     <div class="bottom">
                         <center>
                             <a class="advanced" href="bag.do?subtab=upload">advanced</a>
-                            <br /><br />
+                            <br />
                             <input class="button plush" type="submit" value="analyse"/>
                         </center>
                     </div>
@@ -288,20 +288,22 @@
         var tmp = document.createElement("DIV"); tmp.innerHTML = html; return tmp.textContent || tmp.innerText;
     }
 
-    // placeholder value for search boxes
     var placeholder = 'e.g. zen, Q9V4E1';
-    // class used when toggling placeholder
+    var placeholderTextarea = 'e.g. zen, adh, CG2328, FBgn0000099';
     var inputToggleClass = 'eg';
 
-    function preFillInput(term) {
+    /*
+    function preFillInput(target, term) {
         var e = jQuery("input#actionsInput");
         e.val(term);
         if (e.hasClass(inputToggleClass)) e.toggleClass(inputToggleClass);
         e.focus();
     }
+    */
 
     // e.g. values only available when JavaScript is on
     jQuery('input#actionsInput').toggleClass(inputToggleClass);
+    jQuery('textarea#listInput').toggleClass(inputToggleClass);
 
     // register input elements with blur & focus
     jQuery('input#actionsInput').blur(function() {
@@ -310,7 +312,19 @@
             jQuery(this).val(placeholder);
         }
     });
+    jQuery('textarea#listInput').blur(function() {
+        if (jQuery(this).val() == '') {
+            jQuery(this).toggleClass(inputToggleClass);
+            jQuery(this).val(placeholderTextarea);
+        }
+    });
     jQuery('input#actionsInput').focus(function() {
+        if (jQuery(this).hasClass(inputToggleClass)) {
+            jQuery(this).toggleClass(inputToggleClass);
+            jQuery(this).val('');
+        }
+    });
+    jQuery('textarea#listInput').focus(function() {
         if (jQuery(this).hasClass(inputToggleClass)) {
             jQuery(this).toggleClass(inputToggleClass);
             jQuery(this).val('');
