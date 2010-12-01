@@ -10,6 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
+import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
@@ -113,9 +116,20 @@ public class BeginAction extends InterMineAction
         TemplateManager templateManager = im.getTemplateManager();
         Map<String, Aspect> aspects = SessionMethods.getAspects(servletContext);
         Map<String, List<TemplateQuery>> aspectQueries = new HashMap<String, List<TemplateQuery>>();
+        List<String> mostPopulareTemplateNames;
         for (String aspect : aspects.keySet()) {
             templates = templateManager.getAspectTemplates(TagNames.IM_ASPECT_PREFIX + aspect,
                     MAX_TEMPLATES);
+            if (SessionMethods.getProfile(session).isLoggedIn()) {
+                mostPopulareTemplateNames = trackerDelegate.getMostPopularTemplateOrder(
+                                            SessionMethods.getProfile(session), session.getId());
+            } else {
+                mostPopulareTemplateNames = trackerDelegate.getMostPopularTemplateOrder();
+            }
+            if (mostPopulareTemplateNames != null) {
+                Collections.sort(templates,
+                    new MostPopularTemplateComparator(mostPopulareTemplateNames));
+            }
             aspectQueries.put(aspect, templates);
         }
 
@@ -126,5 +140,34 @@ public class BeginAction extends InterMineAction
         request.setAttribute("beginQueryClasses", beginQueryClasses);
 
         return mapping.findForward("begin");
+    }
+
+    private class MostPopularTemplateComparator implements Comparator<TemplateQuery>
+    {
+        private List<String> mostPopulareTemplateNames;
+
+        public MostPopularTemplateComparator(List<String> mostPopulareTemplateNames) {
+            this.mostPopulareTemplateNames = mostPopulareTemplateNames;
+        }
+        public int compare(TemplateQuery template1, TemplateQuery template2) {
+            String templateName1 = template1.getName();
+            String templateName2 = template2.getName();
+            if (!mostPopulareTemplateNames.contains(templateName1)
+                && !mostPopulareTemplateNames.contains(templateName2)) {
+                if (template1.getTitle().equals(template2.getTitle())) {
+                    return template1.getName().compareTo(template2.getName());
+                } else {
+                    return template1.getTitle().compareTo(template2.getTitle());
+                }
+            }
+            if (!mostPopulareTemplateNames.contains(templateName1)) {
+                return +1;
+            }
+            if (!mostPopulareTemplateNames.contains(templateName2)) {
+                return -1;
+            }
+            return (mostPopulareTemplateNames.indexOf(templateName1)
+                   < mostPopulareTemplateNames.indexOf(templateName2)) ? -1 : 1;
+        }
     }
 }
