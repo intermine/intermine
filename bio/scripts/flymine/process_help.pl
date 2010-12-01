@@ -111,6 +111,23 @@ sub make_name
   return $name;
 }
 
+sub make_chapter_item {
+    my $page = shift;
+    my $chapter = $html->a(href => make_name($page), text => $page->{title});
+    if ($page->{tabs}) {
+        $chapter .= $html->ol($html->li_group([map {make_tab_item($page, $_)} @{$page->{tabs}}]));
+    }
+    return $chapter;
+}
+
+sub make_tab_item {
+    my ($page, $tab) = @_;
+    return $html->a(
+        href => make_name($page) . '#' . $tab->{id},
+        text => $tab->{title},
+    );
+}
+
 sub make_html
 {
   my $page = shift;
@@ -135,8 +152,7 @@ sub make_html
     $prev_title = $pages[$num - 1]{title};
   }
 
-  my $chapter_list = $html->li_group([
-      map {$html->a(href => make_name($_), text => $_->{title})} @pages]);
+  my $chapter_list = $html->li_group([map {make_chapter_item($_)} @pages]);
 
   my $next_url = '';
   my $next_link = '';
