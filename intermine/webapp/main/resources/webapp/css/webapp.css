@@ -1108,7 +1108,7 @@ input#keywordSearch.eg {
 .keywordSearchResults .resultTableContainer table.dbsources {
     padding: 0; /*border:1px solid #E3D85A; */
     border-right: none;
-    border-bottom: none;
+    /*border-bottom: none;*/
 }
 
 .keywordSearchResults .resultTableContainer table.dbsources th { /*background:#FFFCD9;*/
