@@ -46,7 +46,7 @@
                     <div class="bottom">
                         <center>
                             <a class="advanced" href="bag.do?subtab=upload">advanced</a>
-                            <br />
+                            <br /><br />
                             <input class="button plush" type="submit" value="analyse"/>
                         </center>
                     </div>
@@ -56,6 +56,7 @@
         <div id="welcome-bochs">
             <div class="inner">
                 <h3>First Time Here?</h3>
+                <br /><br />
                 <p>FlyMine integrates many types of data for <em>Drosophila</em>, <em>Anopheles</em> and other organisms. You can run flexible queries, export results and analyse lists of data.</p>
                 <div class="bottom">
                     <center>
@@ -97,7 +98,6 @@
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
                         <tiles:put name="aspectTitle" value="Genomics" />
                     </tiles:insert>
-                    <p class="more"><a href="templates.do">More queries</a></p>
                 </div>
                 <div id="content2" class="content">
                     <p>FlyMine loads proteins from UniProt and FlyBase, and protein domains from InterPro. <a href="aspect.do?name=Proteins">Read
@@ -108,7 +108,6 @@
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
                         <tiles:put name="aspectTitle" value="Proteins" />
                     </tiles:insert>
-                    <p class="more"><a href="templates.do">More queries</a></p>
                 </div>
                 <div id="content3" class="content">
                     <p>FlyMine loads physical interactions from IntAct and BioGRID, and genetic interaction from FlyBase. <a href="aspect.do?name=Interactions">Read more</a></p>
@@ -118,7 +117,6 @@
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
                         <tiles:put name="aspectTitle" value="Interactions" />
                     </tiles:insert>
-                    <p class="more"><a href="templates.do">More queries</a></p>
                 </div>
                 <div id="content4" class="content">
                     <p>FlyMine loads pathway data from KEGG, Reactome and FlyReactome. <a href="aspect.do?name=Pathways">Read more..</a></p>
@@ -128,7 +126,6 @@
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
                         <tiles:put name="aspectTitle" value="Pathways" />
                     </tiles:insert>
-                    <p class="more"><a href="templates.do">More queries</a></p>
                 </div>
                 <div id="content5" class="content">
                     <p>FlyMine loads homologue predictions from InParanoid, KEGG and TreeFam. <a href="aspect.do?name=Comparative+Genomics">
@@ -139,7 +136,6 @@
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
                         <tiles:put name="aspectTitle" value="Comparative Genomics" />
                     </tiles:insert>
-                    <p class="more"><a href="templates.do">More queries</a></p>
                 </div>
                 <div id="content6" class="content">
                     <p>FlyMine loads Gene Ontology annotation from MGI, FlyBase, WormBase, UniProt, SGD, and InterPro.
@@ -150,7 +146,6 @@
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
                         <tiles:put name="aspectTitle" value="Gene Ontology" />
                     </tiles:insert>
-                    <p class="more"><a href="templates.do">More queries</a></p>
                 </div>
                 <div id="content7" class="content">
                     <p>FlyMine loads gene expression data for Drosophila melanogaster and Anopheles gambiae from FlyAtlas, BDGP, ArrayExpress and Fly-FISH.
@@ -161,7 +156,6 @@
                         <tiles:put name="aspectQueries" beanName="aspectQueries" />
                         <tiles:put name="aspectTitle" value="Gene Expression" />
                     </tiles:insert>
-                    <p class="more"><a href="templates.do">More queries</a></p>
                 </div>
             </div>
         </div>
