@@ -311,22 +311,24 @@
           <html:hidden property="scope"/>
           <html:hidden property="actionType" value="" styleId="actionType"/>
           <!-- Twisted by the Dark Side young Skywalker has become... -->
+          <div class="floatRight">
           <input type="button" onclick="jQuery('input#editQueryButton').click();" class="editQueryBuilder" value="<fmt:message key="template.submitToQuery"/>" />
           <c:if test="${IS_SUPERUSER}">
             <input type="button" onclick="jQuery('input#editTemplateButton').click();" class="editTemplate" value="<fmt:message key="template.submitToQueryEdit"/>" />
           </c:if>
+          </div>
           <!-- default action, if you do not care about submit button ordering -->
           <html:submit property="skipBuilder" styleClass="next" styleId="showResultsButton">
             <fmt:message key="template.submitToResults"/>
           </html:submit>
-          
-          
+
+
           <!-- these are not the drones you are looking for... -->
-		  <html:submit property="editQuery" styleId="editQueryButton" style="display:none;">
-          	<fmt:message key="template.submitToQuery"/>
+      <html:submit property="editQuery" styleId="editQueryButton" style="display:none;">
+            <fmt:message key="template.submitToQuery"/>
           </html:submit>
           <html:submit property="editTemplate" styleId="editTemplateButton" style="display:none;">
-          	<fmt:message key="template.submitToQueryEdit"/>
+            <fmt:message key="template.submitToQueryEdit"/>
           </html:submit>
   </div>
 </c:if>
