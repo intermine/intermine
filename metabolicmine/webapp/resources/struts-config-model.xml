@@ -13,6 +13,9 @@
 <action path="/initUniProtCommentsDisplayer"
         type="org.metabolicmine.web.struts.UniProtCommentsDisplayerController"/>
 
+<action path="/initSnpToGeneDisplayer"
+        type="org.metabolicmine.web.struts.SnpToGeneDisplayerController"/>
+
 <action path="/sequenceExportAction" name="sequenceExportForm"
         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
 
