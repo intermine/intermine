@@ -164,13 +164,15 @@ html, body { font-family:'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-seri
     #search-bochs input[type="text"].input.eg { color:#888; }
 
     #boxes input[type="submit"].plush { background:url("../themes/purple/homepage/button-plush.png") no-repeat scroll center bottom transparent;
-      color:#FFFFFF; padding:2px 34px; /*float:right; margin-right:30%;*/ margin-bottom:8px; }
+      color:#FFFFFF; padding:2px 34px; /*float:right; margin-right:30%; margin-bottom:8px;*/ }
 
     #lists-bochs div.inner span { color:#7a7a7a; font-weight:bold; font-size:12px; letter-spacing:0px; text-transform:uppercase;
       line-height:30px; margin:0 4px 0 8px; }
 
+    #lists-bochs textarea.eg { color:#888; }
+
     #lists-bochs div.inner a { text-decoration:underline; color:#5c0075; font-size:12px; letter-spacing:0.5px; }
-      #lists-bochs div.inner a.advanced { /*float:right; margin:10px 37% 0 0;*/ font-size:10px; }
+      #lists-bochs div.inner a.advanced { /*float:right; margin:10px 37% 0 0;*/ font-size:10px; margin-bottom:8px; display:inline-block; }
 
     #welcome-bochs a.button { font-size:13px; text-transform:uppercase; font-family:"Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif;
       text-decoration:none; font-weight:bold; background-repeat:no-repeat; padding:8px 22px; text-align:center; }
