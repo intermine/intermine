@@ -13,6 +13,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -101,7 +102,8 @@ public class UniprotKeywordConverter extends BioFileConverter
         public void endElement(String uri, String localName, String qName)
             throws SAXException {
             super.endElement(uri, localName, qName);
-            if ("".equals(qName.equals("name")  && attValue != null && !attValue.toString())) {
+            if ("name".equals(qName)  && attValue != null
+                    && StringUtils.isNotEmpty(attValue.toString())) {
                 String synonym = attValue.toString();
                 if (name == null) {
                     name = synonym;
