@@ -89,7 +89,7 @@ public class BDGPInsituConverter extends BioFileConverter
 
         while (it.hasNext()) {
 
-            String lineBits[] = it.next();
+            String[] lineBits = it.next();
             String geneCG = lineBits[0];
 
             if (!geneCG.startsWith("CG")) {
@@ -202,6 +202,8 @@ public class BDGPInsituConverter extends BioFileConverter
                 stagesColl.addRefId(stages[15]);
                 stagesColl.addRefId(stages[16]);
                 break;
+            default:
+                throw new IllegalArgumentException("bad stage value " + stageNumber.intValue());
         }
 
         result.addCollection(stagesColl);
