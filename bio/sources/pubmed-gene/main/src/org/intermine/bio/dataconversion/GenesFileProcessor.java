@@ -240,7 +240,10 @@ public class GenesFileProcessor
 
     // don't set primaryidentifier for mouse or people
     private boolean setPrimaryIdentifier(String taxonId) {
-        return !isHomoSapiens(taxonId);
+        if (isHomoSapiens(taxonId) || isMusMusculus(taxonId)) {
+            return false;
+        }
+        return true;
     }
 
     private boolean isValidPrimIdentifier(String primIdentifier) {
@@ -263,6 +266,10 @@ public class GenesFileProcessor
         return "9606".equals(taxonId);
     }
 
+    private boolean isMusMusculus(String taxonId) {
+        return "10090".equals(taxonId);
+    }
+    
     private Item createGene(Integer ncbiGeneId, String primaryIdentifier, Item organism) {
         Item gene = createItem("Gene");
         gene.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
