@@ -110,7 +110,7 @@ public class StitchConverter extends BioFileConverter
 
 				String itema=getItem(tmp[0],0);
 				String itemb=getItem(tmp[1],hasProteins);
-				if (!itemb.equals("") && tmp.length==3)
+				if (!"".equals(itemb) && tmp.length==3)
 				{
 					if (allItemArray.get(itema+"_"+itemb)!=null || allItemArray.get(itemb+"_"+itema)!=null)
 					{

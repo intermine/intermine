@@ -90,7 +90,7 @@ public class GenesFinder
             br = new BufferedReader(new FileReader(fileName));
             String line;
             while ((line = br.readLine()) != null) {
-                if (line.trim().equals("")) {
+                if ("".equals(line.trim())) {
                     continue;
                 }
                 String[] parts = line.split("\t");

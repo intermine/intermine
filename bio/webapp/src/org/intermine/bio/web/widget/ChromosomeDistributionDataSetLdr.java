@@ -252,7 +252,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         q.addFrom(organismQC);
         q.setConstraint(cs);
 
-        if (!resultsType.equals("total")) {
+        if (!"total".equals(resultsType)) {
             q.setDistinct(false);
             q.addToSelect(chromoQF);
             q.addToSelect(countQF);

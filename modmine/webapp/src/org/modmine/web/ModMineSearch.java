@@ -222,9 +222,9 @@ public class ModMineSearch
                 }
                 addToDocument(doc, subId, "organism", sub.getOrganism().getName());
                 String genus = sub.getOrganism().getGenus();
-                if (genus != null && genus.equals("Drosophila")) {
+                if (genus != null && "Drosophila".equals(genus)) {
                     addToDocument(doc, subId, "genus", "fly");
-                } else if (genus != null && genus.equals("Caenorhabditis")) {
+                } else if (genus != null && "Caenorhabditis".equals(genus)) {
                     addToDocument(doc, subId, "genus", "worm");
                 }
 

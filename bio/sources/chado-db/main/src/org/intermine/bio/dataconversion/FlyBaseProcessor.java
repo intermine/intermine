@@ -739,11 +739,11 @@ public class FlyBaseProcessor extends SequenceProcessor
                                int seqlen, int taxonId) {
         String realInterMineType = interMineType;
 
-        if (chadoFeatureType.equals("protein") && !uniqueName.startsWith("FBpp")) {
+        if ("protein".equals(chadoFeatureType) && !uniqueName.startsWith("FBpp")) {
             return null;
         }
 
-        if (chadoFeatureType.equals("gene")) {
+        if ("gene".equals(chadoFeatureType)) {
             if (uniqueName.startsWith("FBal")) {
                 // fix type of allele "gene" features
                 realInterMineType = "Allele";
@@ -760,21 +760,21 @@ public class FlyBaseProcessor extends SequenceProcessor
             return null;
         }
 
-        if (taxonId != 7227 && chadoFeatureType.equals("chromosome_arm")) {
+        if (taxonId != 7227 && "chromosome_arm".equals(chadoFeatureType)) {
             // nothing is located on a chromosome_arm
             return null;
         }
 
-        if (chadoFeatureType.equals("chromosome")
-            && !uniqueName.equals("dmel_mitochondrion_genome")) {
+        if ("chromosome".equals(chadoFeatureType)
+            && !"dmel_mitochondrion_genome".equals(uniqueName)) {
             // ignore Chromosomes from flybase - features are located on ChromosomeArms except
             // for mitochondrial features
             return null;
         }
 
-        if (chadoFeatureType.equals("chromosome_arm")
-                        || chadoFeatureType.equals("ultra_scaffold")) {
-            if (uniqueName.equals("dmel_mitochondrion_genome")) {
+        if ("chromosome_arm".equals(chadoFeatureType)
+                        || "ultra_scaffold".equals(chadoFeatureType)) {
+            if ("dmel_mitochondrion_genome".equals(uniqueName)) {
                 // ignore - all features are on the Chromosome object with uniqueName
                 // "dmel_mitochondrion_genome"
                 return null;
@@ -782,7 +782,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             realInterMineType = "Chromosome";
         }
 
-        if (chadoFeatureType.equals("golden_path_region")) {
+        if ("golden_path_region".equals(chadoFeatureType)) {
             // For organisms other than D. melanogaster sometimes we can convert a
             // golden_path_region to an actual chromosome: if name is 2L, 4, etc
             if (taxonId == 7237) {
@@ -813,19 +813,19 @@ public class FlyBaseProcessor extends SequenceProcessor
             }
         }
 
-        if (chadoFeatureType.equals("transposable_element_insertion_site")
+        if ("transposable_element_insertion_site".equals(chadoFeatureType)
                         && name == null && !uniqueName.startsWith("FBti")) {
             // ignore this feature as it doesn't have an FBti identifier and there will be
             // another feature for the same transposable_element_insertion_site that does have
             // the FBti identifier
             return null;
         }
-        if (chadoFeatureType.equals("mRNA") && seqlen == 0) {
+        if ("mRNA".equals(chadoFeatureType) && seqlen == 0) {
             // flybase has > 7000 mRNA features that have no sequence and don't appear in their
             // webapp so we filter them out
             return null;
         }
-        if (chadoFeatureType.equals("protein") && seqlen == 0) {
+        if ("protein".equals(chadoFeatureType) && seqlen == 0) {
             // flybase has ~ 2100 protein features that don't appear in their webapp so we
             // filter them out
             return null;
@@ -833,7 +833,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
         Item feature = getChadoDBConverter().createItem(realInterMineType);
 
-        if (realInterMineType.equals("Allele")) {
+        if ("Allele".equals(realInterMineType)) {
             alleleIdMap.put(uniqueName, feature.getIdentifier());
         }
 
@@ -1073,7 +1073,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             Integer insId = new Integer(res.getInt("insertion_feature_id"));
             String breakType = res.getString("breakpoint_type");
             Reference reference = new Reference();
-            if (breakType.equals("bk1")) {
+            if ("bk1".equals(breakType)) {
                 reference.setName("element1");
             } else {
                 reference.setName("element2");
@@ -1175,13 +1175,13 @@ public class FlyBaseProcessor extends SequenceProcessor
             String alleleItemIdentifier = alleleFeatureData.getItemIdentifier();
 
             Item phenotypeAnnotation = null;
-            if (propType.equals("derived_pheno_manifest")) {
+            if ("derived_pheno_manifest".equals(propType)) {
                 phenotypeAnnotation =
                     makePhenotypeAnnotation(alleleItemIdentifier, value,
                                             dataSetItem, annotationPubMap.get(featurePropId));
                 phenotypeAnnotation.setAttribute("annotationType", "manifest in");
             } else {
-                if (propType.equals("derived_pheno_class")) {
+                if ("derived_pheno_class".equals(propType)) {
                     phenotypeAnnotation =
                         makePhenotypeAnnotation(alleleItemIdentifier, value,
                                                 dataSetItem, annotationPubMap.get(featurePropId));
@@ -1215,7 +1215,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             Set<ChadoCVTerm> parents = cvterm.getAllParents();
 
             for (ChadoCVTerm parent: parents) {
-                if (parent.getName().equals("origin of mutation")) {
+                if ("origin of mutation".equals(parent.getName())) {
                     String fixedName = XmlUtil.fixEntityNames(cvterm.getName());
                     List<String> mutagens;
                     if (retMap.containsKey(featureId)) {
@@ -1691,7 +1691,7 @@ public class FlyBaseProcessor extends SequenceProcessor
                                           String name, String md5checksum, int seqlen,
                                           int organismId) throws ObjectStoreException {
 
-        if (type.equals("protein")) {
+        if ("protein".equals(type)) {
             if (!uniqueName.startsWith("FBpp")) {
                 return null;
             }
@@ -1716,7 +1716,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             return fdat;
         }
 
-        if (type.equals("cDNA_clone")) {
+        if ("cDNA_clone".equals(type)) {
 
             // flybase has duplicates.  to merge with BDGP we need to discard duplicates and
             // make a synonym
@@ -1751,10 +1751,10 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     private void processItem(Item item, Integer taxonId) {
         String className = item.getClassName();
-        if (className.equals("DataSource")
-            || className.equals("DataSet")
-            || className.equals("Organism")
-            || className.equals("Sequence")) {
+        if ("DataSource".equals(className)
+            || "DataSet".equals(className)
+            || "Organism".equals(className)
+            || "Sequence".equals(className)) {
             return;
         }
 

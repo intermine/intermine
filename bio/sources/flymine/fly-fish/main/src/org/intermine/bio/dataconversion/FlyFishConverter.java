@@ -155,7 +155,7 @@ public class FlyFishConverter extends BioFileConverter
 
             for (int column = 1; column < lineBits.length; column++) {
                 String value = lineBits[column];
-                if (value.equals("1")) {
+                if ("1".equals(value)) {
                     int configIndex = column - 1;
                     if (configIndex >= config.length) {
                         throw new RuntimeException("line too long: " + line);

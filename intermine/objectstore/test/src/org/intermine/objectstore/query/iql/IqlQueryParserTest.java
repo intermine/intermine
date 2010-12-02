@@ -61,7 +61,7 @@ public class IqlQueryParserTest extends IqlQueryTestCase
         if (res instanceof IqlQuery) {
             IqlQuery fq = (IqlQuery) res;
             Query parsed = IqlQueryParser.parse(fq);
-            if (type.equals("SubQuery") || type.equals("OrderByAnomaly")) {
+            if ("SubQuery".equals(type) || type.equals("OrderByAnomaly")) {
                 // These two queries CANNOT be generated properly by IQL (as they contain 5 in the SELECT list).
                 // Therefore, we must merely check that they are regenerated back into IQL.
                 IqlQuery fqNew = parsed.getIqlQuery();

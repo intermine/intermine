@@ -26,7 +26,7 @@ public abstract class Action
      * @param userProperty the property
      */
     public void addUserProperty(UserProperty userProperty) {
-        if (userProperty.getName().equals("src.data.dir.includes")
+        if ("src.data.dir.includes".equals(userProperty.getName())
             && userProperty.getValue() == null) {
             throw new RuntimeException(userProperty.getName()
                                        + " property must have a value attribute");

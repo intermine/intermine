@@ -64,7 +64,7 @@ public class SubListGBrowseTrackController extends TilesAction
             return null;
         }
 
-        if (!bag.getType().equals("Submission")) { return null; }
+        if (!"Submission".equals(bag.getType())) { return null; }
 
         // Logic 1: query all the DccId for the list of submission in the bag, refer to
         //          OrthologueLinkController and BioUtil

@@ -45,14 +45,14 @@ public class DiseaseEnrichURLQuery implements WidgetURLQuery
     public PathQuery generatePathQuery() {
         PathQuery q = new PathQuery(os.getModel());
         String bagType = bag.getType();
-        String prefix = (bagType.equals("Gene") ? "Gene" : "Disease.associatedGenes");
+        String prefix = ("Gene".equals(bagType) ? "Gene" : "Disease.associatedGenes");
 
         String paths = "";
 
-        if (bagType.equals("Disease")) {
+        if ("Disease".equals(bagType)) {
             paths += "Disease.diseaseId,";
         }
-        if (bagType.equals("Gene")) {
+        if ("Gene".equals(bagType)) {
         	paths += "Gene.diseases.diseaseId,";
         }
 

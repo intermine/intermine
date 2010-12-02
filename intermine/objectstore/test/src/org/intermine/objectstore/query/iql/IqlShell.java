@@ -135,9 +135,9 @@ public class IqlShell
         //BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         do {
             //currentQuery += in.readLine();
-            String line = Readline.readline(currentQuery.equals("") ? "> " : ": ", false);
+            String line = Readline.readline("".equals(currentQuery) ? "> " : ": ", false);
             currentQuery += (line == null ? "" : line);
-            if (!(currentQuery.equals("") || currentQuery.equals("quit;"))) {
+            if (!("".equals(currentQuery) || currentQuery.equals("quit;"))) {
                 if (currentQuery.endsWith(";")) {
                     if (!currentQuery.equals(lastQuery)) {
                         Readline.addToHistory(currentQuery);
@@ -244,7 +244,7 @@ public class IqlShell
             iql = iql.substring(11);
             doPrecompute = true;
         }
-        if (iql.toUpperCase().equals("MAKEEMPLOYEES")) {
+        if ("MAKEEMPLOYEES".equals(iql.toUpperCase())) {
             if (os instanceof ObjectStoreInterMineImpl) {
                 out.println("Storing 1,000,000 Employees");
                 long startTime = System.currentTimeMillis();
@@ -268,7 +268,7 @@ public class IqlShell
             }
             return;
         }
-        if (iql.toUpperCase().equals("MAKECOMPANIES")) {
+        if ("MAKECOMPANIES".equals(iql.toUpperCase())) {
             if (os instanceof ObjectStoreInterMineImpl) {
                 out.println("Storing 1,000,000 Companies");
                 long startTime = System.currentTimeMillis();

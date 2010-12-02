@@ -140,7 +140,7 @@ public class CreateFlankingRegions
                 // This shouldn't happen
                 return;
             }
-            if (!(source.equals("FlyBase") || source.equals("WormBase"))) {
+            if (!("FlyBase".equals(source) || source.equals("WormBase"))) {
                 return;
             }
 
@@ -190,7 +190,7 @@ public class CreateFlankingRegions
                     } else if ("downstream".equals(direction) && "1".equals(strand)) {
                         start = includeGene ? geneStart : geneEnd + 1;
                         end = geneEnd + (int) Math.round(distance * 1000);
-                    } else {  // direction.equals("downstream") && strand.equals("-1")
+                    } else {  // "downstream".equals(direction) && strand.equals("-1")
                         start = geneStart - (int) Math.round(distance * 1000);
                         end = includeGene ? geneEnd : geneStart - 1;
                     }

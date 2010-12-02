@@ -247,7 +247,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 entry = new UniprotEntry();
                 String dataSetTitle = getAttrValue(attrs, "dataset") + " data set";
                 entry.setDatasetRefId(getDataSet(dataSetTitle, datasourceRefId));
-//            } else if (qName.equals("protein")) {
+//            } else if ("protein".equals(qName)) {
 //                String isFragment = "false";
 //                if (getAttrValue(attrs, "type") != null
 //                       && getAttrValue(attrs, "type").startsWith("fragment")) {

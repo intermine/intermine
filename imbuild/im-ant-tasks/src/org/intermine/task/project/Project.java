@@ -219,7 +219,7 @@ public class Project
     public List<String> getSourceLocations() {
         List<String> sourceLocations = new ArrayList<String>();
         for (UserProperty up : properties) {
-            if (up.getName().equals("source.location")) {
+            if ("source.location".equals(up.getName())) {
                 if (up.getLocation() == null) {
                     throw new BuildException("Error in project.xml: no 'location' attribute"
                             + " given for a 'source.location' property element.  You must specify"

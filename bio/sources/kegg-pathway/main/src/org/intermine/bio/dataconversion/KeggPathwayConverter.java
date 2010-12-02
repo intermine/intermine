@@ -155,7 +155,7 @@ public class KeggPathwayConverter extends BioFileConverter
 
                     // There are some strange ids for D. melanogaster, the rest start with Dmel_,
                     // ignore any D. melanogaster ids without Dmel_ and strip this off the rest
-                    if (taxonId.equals("7227") && !geneName.startsWith("Dmel_")) {
+                    if ("7227".equals(taxonId) && !geneName.startsWith("Dmel_")) {
                         continue;
                     }
 
@@ -201,7 +201,7 @@ public class KeggPathwayConverter extends BioFileConverter
         String identifier = null;
         IdResolver resolver = resolverFactory.getIdResolver(false);
         String taxonId = config.get(organism)[0];
-        if (taxonId.equals("7227") && resolver != null) {
+        if ("7227".equals(taxonId) && resolver != null) {
             int resCount = resolver.countResolutions(taxonId, geneCG);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "

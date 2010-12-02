@@ -527,10 +527,10 @@ public class SequenceProcessor extends ChadoProcessor
      * @return the fixed type
      */
     protected String fixFeatureType(String type) {
-        if (type.equals("five_prime_untranslated_region")) {
+        if ("five_prime_untranslated_region".equals(type)) {
             return "five_prime_UTR";
         }
-        if (type.equals("three_prime_untranslated_region")) {
+        if ("three_prime_untranslated_region".equals(type)) {
             return "three_prime_UTR";
         }
         return type;
@@ -621,7 +621,7 @@ public class SequenceProcessor extends ChadoProcessor
                     }
                     if (SequenceFeature.class.isAssignableFrom(featureClass)) {
                         Integer featureIntermineObjectId = featureData.getIntermineObjectId();
-                        if (srcFeatureData.getInterMineType().equals("Chromosome")) {
+                        if ("Chromosome".equals(srcFeatureData.getInterMineType())) {
                             Reference chrReference = new Reference();
                             chrReference.setName("chromosome");
                             chrReference.setRefId(srcFeatureData.getItemIdentifier());
@@ -1034,7 +1034,7 @@ public class SequenceProcessor extends ChadoProcessor
                                              newFieldValue);
                                 existingAttributes.add(setAction.getFieldName());
                                 fieldsSet.add(newFieldValue);
-                                if (setAction.getFieldName().equals("primaryIdentifier")) {
+                                if ("primaryIdentifier".equals(setAction.getFieldName())) {
                                     fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
                                 }
                             }
@@ -1104,7 +1104,7 @@ public class SequenceProcessor extends ChadoProcessor
                                          newFieldValue);
                             fieldsSet.add(newFieldValue);
 
-                            if (setAction.getFieldName().equals("primaryIdentifier")) {
+                            if ("primaryIdentifier".equals(setAction.getFieldName())) {
                                 fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
                             }
                         }
@@ -1173,7 +1173,7 @@ public class SequenceProcessor extends ChadoProcessor
                             setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
                                          newFieldValue);
                             fieldsSet.add(newFieldValue);
-                            if (setAction.getFieldName().equals("primaryIdentifier")) {
+                            if ("primaryIdentifier".equals(setAction.getFieldName())) {
                                 fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
                             }
                         }
@@ -1295,7 +1295,7 @@ public class SequenceProcessor extends ChadoProcessor
                                      newFieldValue);
 
                         fieldsSet.add(newFieldValue);
-                        if (setAction.getFieldName().equals("primaryIdentifier")) {
+                        if ("primaryIdentifier".equals(setAction.getFieldName())) {
                             fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
                         }
                     }
@@ -1423,9 +1423,9 @@ public class SequenceProcessor extends ChadoProcessor
             String synonymTypeName = res.getString("type_name");
 
             // change type so synonyms will merge correctly
-            if (synonymTypeName.equals("primaryAccession")) {
+            if ("primaryAccession".equals(synonymTypeName)) {
                 synonymTypeName = "accession";
-            } else if (synonymTypeName.equals("primaryIdentifier")) {
+            } else if ("primaryIdentifier".equals(synonymTypeName)) {
                 synonymTypeName = "identifier";
             }
 
@@ -1469,7 +1469,7 @@ public class SequenceProcessor extends ChadoProcessor
                             setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
                                          newFieldValue);
                             existingAttributes.add(setAction.getFieldName());
-                            if (setAction.getFieldName().equals("primaryIdentifier")) {
+                            if ("primaryIdentifier".equals(setAction.getFieldName())) {
                                 fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
                             }
                         }

@@ -40,7 +40,7 @@ public class CDNAClonesGFF3RecordHandler extends GFF3RecordHandler
         // the key.
         //
         Item feature = getFeature();
-        if (record.getType().equals("cDNA_match")) {
+        if ("cDNA_match".equals(record.getType())) {
             feature.setClassName("CDNA");
             String[] target = record.getTarget().split("\\s");
             feature.setAttribute("primaryIdentifier", target[0]);

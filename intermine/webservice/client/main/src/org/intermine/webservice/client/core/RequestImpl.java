@@ -180,7 +180,7 @@ public class RequestImpl implements Request
         for (String parName : parameters.keySet()) {
             for (String value : parameters.get(parName)) {
                 sb.append(separator);
-                if (separator.equals("?")) {
+                if ("?".equals(separator)) {
                     separator = "&";
                 }
                 sb.append(parName);

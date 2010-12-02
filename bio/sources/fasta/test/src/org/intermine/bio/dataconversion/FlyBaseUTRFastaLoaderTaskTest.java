@@ -72,7 +72,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
             assertEquals(dataSetTitle, dataSet.getName());
 
             assertNotNull(utr.getChromosomeLocation());
-            if (utr.getPrimaryIdentifier().equals("FBtr0112632-5-prime-utr")) {
+            if ("FBtr0112632-5-prime-utr".equals(utr.getPrimaryIdentifier())) {
                 seenFBtr0112632 = true;
                 Location loc = utr.getChromosomeLocation();
                 assertEquals(10258903, loc.getStart().intValue());
@@ -83,7 +83,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                 assertEquals("FBtr0112632", transcript.getPrimaryIdentifier());
                 assertEquals(36329, utr.getOrganism().getTaxonId().intValue());
             } else {
-                if (utr.getPrimaryIdentifier().equals("FBtr0100521-5-prime-utr")) {
+                if ("FBtr0100521-5-prime-utr".equals(utr.getPrimaryIdentifier())) {
                     seenFBtr0100521 = true;
                     Location loc = utr.getChromosomeLocation();
                     assertEquals(18024494, loc.getStart().intValue());
@@ -122,7 +122,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
             assertEquals(dataSetTitle, dataSet.getName());
 
             assertNotNull(utr.getChromosomeLocation());
-            if (utr.getPrimaryIdentifier().equals("FBtr0071764-3-prime-utr")) {
+            if ("FBtr0071764-3-prime-utr".equals(utr.getPrimaryIdentifier())) {
                 seenFBtr0071764 = true;
                 Location loc = utr.getChromosomeLocation();
                 assertEquals(18060033, loc.getStart().intValue());
@@ -132,7 +132,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                 assertEquals("FBtr0071764", transcript.getPrimaryIdentifier());
                 assertEquals(36329, utr.getOrganism().getTaxonId().intValue());
             } else {
-                if (utr.getPrimaryIdentifier().equals("FBtr0082533-3-prime-utr")) {
+                if ("FBtr0082533-3-prime-utr".equals(utr.getPrimaryIdentifier())) {
                     seenFBtr0082533 = true;
                     Location loc = utr.getChromosomeLocation();
                     assertEquals(7594335, loc.getStart().intValue());

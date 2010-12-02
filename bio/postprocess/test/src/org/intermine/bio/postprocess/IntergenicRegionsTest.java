@@ -180,7 +180,7 @@ public class IntergenicRegionsTest extends TestCase
 
                         Set adjacentGenes = new HashSet(ir.getAdjacentGenes());
                         assertTrue(adjacentGenes.contains(prevGene));
-                        if (loc.getStrand().equals("1")) {
+                        if ("1".equals(loc.getStrand())) {
                             IntergenicRegion nextIntergenicRegion =
                                 prevGene.getDownstreamIntergenicRegion();
                             Integer id = nextIntergenicRegion.getId();
@@ -206,7 +206,7 @@ public class IntergenicRegionsTest extends TestCase
                     while (nextGeneIdsIter.hasNext()) {
                         Gene nextGene = (Gene) os.getObjectById((Integer) nextGeneIdsIter.next());
 
-                        if (loc.getStrand().equals("1")) {
+                        if ("1".equals(loc.getStrand())) {
                             assertTrue(ir.getAdjacentGenes().contains(nextGene));
                             assertEquals(nextGene.getUpstreamIntergenicRegion().getId(), ir.getId());
                         } else {
