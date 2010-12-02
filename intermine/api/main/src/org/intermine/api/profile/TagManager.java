@@ -111,7 +111,7 @@ public class TagManager
         List<Tag> tags = getTags(tagName, taggedObject, type, userName);
         for (Tag tag : tags) {
             deleteTag(tag);
-        } 
+        }
     }
 
     private static Set<String> tagsToTagNames(List<Tag> tags) {
@@ -247,8 +247,8 @@ public class TagManager
 
         ObjectStore userprofileOS = osWriter.getObjectStore();
         SingletonResults results = userprofileOS.executeSingleton(q);
-        addToCache(cache, key, (List<Tag>) ((List) results));
-        return (List<Tag>) ((List) results);
+        addToCache(cache, key, ((List) results));
+        return ((List) results);
     }
 
     private MultiKey makeKey(String tagName, String objectIdentifier, String type,
