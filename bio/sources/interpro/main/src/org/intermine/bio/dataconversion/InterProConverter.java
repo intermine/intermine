@@ -86,12 +86,12 @@ public class InterProConverter extends BioFileConverter
 
             // descriptions span multiple lines
             // so don't reset temp var when processing descriptions
-            if (attName != null && !"description".equals(attName)) {
+            if (attName != null && !attName.equals("description")) {
                 attName = null;
             }
 
             // <interpro id="IPR000002" type="Domain" short_name="Fizzy" protein_count="256">
-            if ("interpro".equals(qName)) {
+            if (qName.equals("interpro")) {
                 String identifier = attrs.getValue("id");
                 proteinDomain = getDomain(identifier);
                 String name = attrs.getValue("short_name");
@@ -101,17 +101,17 @@ public class InterProConverter extends BioFileConverter
                 // reset
                 description = new StringBuffer();
             // <publication><db_xref db="PUBMED" dbkey="8606774" />
-            }  else if ("publication".equals(qName.equals("db_xref") && stack.peek())) {
+            }  else if (qName.equals("db_xref") && stack.peek().equals("publication")) {
                 String refId = getPub(attrs.getValue("dbkey"));
                 proteinDomain.addToCollection("publications", refId);
             // <interpro><name>
-            } else if ("interpro".equals(qName.equals("name") && stack.peek())) {
+            } else if (qName.equals("name") && stack.peek().equals("interpro")) {
                 attName = "name";
             // <interpro><abstract>
-            } else if ("interpro".equals(qName.equals("abstract") && stack.peek())) {
+            } else if (qName.equals("abstract") && stack.peek().equals("interpro")) {
                 attName = "description";
            //<member_list><db_xref db="PFAM" dbkey="PF01167" name="SUPERTUBBY" />
-            } else if ("member_list".equals(qName.equals("db_xref") && stack.peek())) {
+            } else if (qName.equals("db_xref") && stack.peek().equals("member_list")) {
                 String dbkey = attrs.getValue("dbkey");
 //                String name = attrs.getValue("name");
                 String db = attrs.getValue("db");
@@ -125,23 +125,23 @@ public class InterProConverter extends BioFileConverter
                     throw new SAXException(e);
                 }
                 //<interpro><foundin><rel_ref ipr_ref="IPR300000" /></foundin>
-            } else if ("found_in".equals(qName.equals("rel_ref") && (stack.peek())
-                            || "contains".equals(stack.peek())
-                            || "child_list".equals(stack.peek())
-                            || "parent_list".equals(stack.peek()))) {
+            } else if (qName.equals("rel_ref") && (stack.peek().equals("found_in")
+                            || stack.peek().equals("contains")
+                            || stack.peek().equals("child_list")
+                            || stack.peek().equals("parent_list"))) {
 
                 String domainRelationship = stack.peek().toString();
                 String interproId = attrs.getValue("ipr_ref");
                 Item relative = getDomain(interproId);
                 String relationCollection = null;
 
-                if ("found_in".equals(domainRelationship)) {
+                if (domainRelationship.equals("found_in")) {
                     relationCollection = "foundIn";
-                } else if ("contains".equals(domainRelationship)) {
+                } else if (domainRelationship.equals("contains")) {
                     relationCollection = "contains";
-                } else if ("parent_list".equals(domainRelationship)) {
+                } else if (domainRelationship.equals("parent_list")) {
                     relationCollection = "parentFeatures";
-                } else if ("child_list".equals(domainRelationship)) {
+                } else if (domainRelationship.equals("child_list")) {
                     relationCollection = "childFeatures";
                 }
                 proteinDomain.addToCollection(relationCollection, relative);
@@ -160,7 +160,7 @@ public class InterProConverter extends BioFileConverter
 
             stack.pop();
             // finished processing file, store all domains
-            if ("interprodb".equals(qName)) {
+            if (qName.equals("interprodb")) {
                 for (Item item : proteinDomains.values()) {
                     try {
                         store(item);
@@ -176,12 +176,12 @@ public class InterProConverter extends BioFileConverter
                     }
                 }
             // <interpro><name>
-            } else if ("interpro".equals(qName.equals("name") && stack.peek())
+            } else if (qName.equals("name") && stack.peek().equals("interpro")
                             && attName != null) {
                 String name = attValue.toString();
                 proteinDomain.setAttribute("name", name);
             // <interpro><abstract>
-            } else if ("interpro".equals(qName.equals("abstract") && stack.peek())) {
+            } else if (qName.equals("abstract") && stack.peek().equals("interpro")) {
                 proteinDomain.setAttribute("description", description.toString());
                 attName = null;
             }
@@ -247,7 +247,7 @@ public class InterProConverter extends BioFileConverter
                     StringBuffer s = new StringBuffer();
                     s.append(ch, st, l);
                     attValue.append(s);
-                    if ("description".equals(attName)) {
+                    if (attName.equals("description")) {
                         description.append(s);
                     }
                 }
