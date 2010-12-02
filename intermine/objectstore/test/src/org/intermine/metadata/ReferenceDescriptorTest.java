@@ -90,7 +90,7 @@ public class ReferenceDescriptorTest extends TestCase
         try {
             ClassDescriptor refCld = rfd1.getReferencedClassDescriptor();
             assertTrue("ClassDescriptor was null", refCld != null);
-            "package.name.Class2".equals(assertTrue("Expected ClassDescriptor to be Class2", refCld.getName()));
+            assertTrue("Expected ClassDescriptor to be Class2", refCld.getName().equals("package.name.Class2"));
         } catch (IllegalStateException e) {
             fail("Should have returned a ClassDescriptor");
         }
