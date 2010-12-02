@@ -86,9 +86,9 @@ public class UniprotKeywordConverter extends BioFileConverter
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
-            if (qName.equals("name")) {
+            if ("name".equals(qName)) {
                 attName = "name";
-            } else if (qName.equals("description")) {
+            } else if ("description".equals(qName)) {
                 attName = "description";
             }
             super.startElement(uri, localName, qName, attrs);
@@ -101,7 +101,7 @@ public class UniprotKeywordConverter extends BioFileConverter
         public void endElement(String uri, String localName, String qName)
             throws SAXException {
             super.endElement(uri, localName, qName);
-            if (qName.equals("name")  && attValue != null && !attValue.toString().equals("")) {
+            if ("".equals(qName.equals("name")  && attValue != null && !attValue.toString())) {
                 String synonym = attValue.toString();
                 if (name == null) {
                     name = synonym;
@@ -109,7 +109,7 @@ public class UniprotKeywordConverter extends BioFileConverter
                     String refId = getItem(synonyms, "OntologyTermSynonym", "name", synonym);
                     synRefIds.addRefId(refId);
                 }
-            } else if (qName.equals("description")) {
+            } else if ("description".equals(qName)) {
                 String descr = attValue.toString();
                 Item keyword = getKeyword(name);
                 if (keyword != null) {
@@ -124,7 +124,7 @@ public class UniprotKeywordConverter extends BioFileConverter
                         throw new SAXException("failed storing", e);
                     }
                 }
-            } else if (qName.equals("keyword")) {
+            } else if ("keyword".equals(qName)) {
                 // new keyword, reset
                 synRefIds = new ReferenceList("synonyms");
                 name = null;

@@ -61,7 +61,7 @@ public class KeggExampleConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
         // the organism we are processing is set by the project.xml file with an entry like:
         //      <property name="organism" value="36329"/>
-        if (taxonId == null || taxonId.equals("")) {
+        if (taxonId == null || "".equals(taxonId)) {
             throw new IllegalArgumentException("No taxonId provided: " + taxonId);
         }
 
@@ -71,7 +71,7 @@ public class KeggExampleConverter extends BioFileConverter
         // The following code works out which file we are reading and calls the corresponding method
         File currentFile = getCurrentFile();
 
-        if (currentFile.getName().equals("map_title.tab")) {
+        if ("map_title.tab".equals(currentFile.getName())) {
                 processMapTitleFile(reader);
         } else if (currentFile.getName().endsWith("gene_map.tab")) {
                 processGeneMapFile(reader);

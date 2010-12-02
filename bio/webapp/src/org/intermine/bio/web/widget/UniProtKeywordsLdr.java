@@ -111,9 +111,9 @@ public class UniProtKeywordsLdr extends EnrichmentWidgetLdr
         q.addFrom(qcOntoTerm);
         q.setConstraint(cs);
 
-        if (action.equals("analysed")) {
+        if ("analysed".equals(action)) {
             q.addToSelect(qfProtId);
-        } else if (action.equals("export")) {
+        } else if ("export".equals(action)) {
             q.addToSelect(qfName);
             q.addToSelect(qfPrimaryIdentifier);
             q.addToOrderBy(qfName);
@@ -126,7 +126,7 @@ public class UniProtKeywordsLdr extends EnrichmentWidgetLdr
         } else {
             q.addToSelect(qfName);
             q.addToSelect(new QueryFunction()); // protein count
-            if (action.equals("sample")) {
+            if ("sample".equals(action)) {
                 q.addToSelect(qfName);
             }
             q.addToGroupBy(qfName);

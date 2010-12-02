@@ -72,7 +72,7 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
             assertNotNull(cds.getChromosomeLocation());
             DataSet dataSet = cds.getDataSets().iterator().next();
             assertEquals(dataSetTitle, dataSet.getName());
-            if (cds.getPrimaryIdentifier().equals("CG4027-PB_CDS")) {
+            if ("CG4027-PB_CDS".equals(cds.getPrimaryIdentifier())) {
                 seenCG4027PB = true;
                 Location loc = cds.getChromosomeLocation();
                 assertEquals(5796731, loc.getStart().intValue());
@@ -82,7 +82,7 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
                 assertEquals("FBtr0070823", cds.getTranscript().getPrimaryIdentifier());
                 assertEquals(36329, cds.getOrganism().getTaxonId().intValue());
             } else {
-                if (cds.getPrimaryIdentifier().equals("CG6844-PB_CDS")) {
+                if ("CG6844-PB_CDS".equals(cds.getPrimaryIdentifier())) {
                     seenCG6844PB = true;
                     Location loc = cds.getChromosomeLocation();
                     assertEquals(20311671, loc.getStart().intValue());

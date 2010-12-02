@@ -152,7 +152,7 @@ public class PathQueryUnitTest extends TestCase
         assertFalse(oe1.equals(oe2));
         assertTrue(oe1.equals(oe1));
         assertFalse(oe1.hashCode() == oe2.hashCode());
-        assertFalse(oe1.equals("Fred"));
+        assertFalse("Fred".equals(oe1));
         assertTrue(oe1.equals(new OrderElement("Employee.name", OrderDirection.ASC)));
         assertFalse(oe1.equals(new OrderElement("Employee.name", OrderDirection.DESC)));
         q.removeOrderBy("Employee.name");

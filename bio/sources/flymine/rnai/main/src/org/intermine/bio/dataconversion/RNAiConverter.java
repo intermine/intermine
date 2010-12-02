@@ -128,7 +128,7 @@ public class RNAiConverter extends BioFileConverter
         if (!StringUtils.isEmpty(penetranceTo)) {
             rnaiPhenotype.setAttribute("penetranceTo", penetranceTo);
         }
-        if (comment != null && !comment.equals("")) {
+        if (comment != null && !"".equals(comment)) {
             rnaiPhenotype.setAttribute("comment", comment);
         }
 

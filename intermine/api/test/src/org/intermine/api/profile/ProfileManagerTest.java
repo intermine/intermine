@@ -339,7 +339,7 @@ public class ProfileManagerTest extends StoreDataTestCase
                 if (actualTag.getTagName().equals(expectedTag.getTagName())
                     && actualTag.getObjectIdentifier().equals(expectedTag.getObjectIdentifier())
                     && actualTag.getType().equals(expectedTag.getType())
-                    && actualTag.getUserProfile().getUsername().equals("bob")) {
+                    && "bob".equals(actualTag.getUserProfile().getUsername())) {
                     continue ACTUAL;
                 }
             }

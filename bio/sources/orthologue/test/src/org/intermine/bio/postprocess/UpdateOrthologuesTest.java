@@ -177,7 +177,7 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         subProtein.addGenes(subGene);
 
         String clsName = TypeUtil.unqualifiedName(relClass.getName());
-        if (clsName.equals("Homologue")) {
+        if ("Homologue".equals(clsName)) {
             if (startsOnSubGene) {
                 // in this case one end of the orthologue already references a Gene
                 ((Homologue) io).setProtein(objProtein);

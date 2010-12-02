@@ -111,7 +111,7 @@ public class PrecomputeTemplatesTask extends Task
      * @param summarise if true, summarise while precomputing
      */
     public void setSummarise(String summarise) {
-        if (summarise.equals("false")) {
+        if ("false".equals(summarise)) {
             doSummarise = false;
         } else {
             doSummarise = true;
@@ -132,7 +132,7 @@ public class PrecomputeTemplatesTask extends Task
             throw new BuildException("minRows attribute is not set");
         }
 
-        if (ignore != null && !ignore.equals("")) {
+        if (ignore != null && !"".equals(ignore)) {
             String[] bits = ignore.split(",");
             for (int i = 0; i < bits.length; i++) {
                 ignoreNames.add(bits[i].trim());

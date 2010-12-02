@@ -96,11 +96,11 @@ public class DiseaseEnrichLdr extends EnrichmentWidgetLdr
         q.setConstraint(cs);
         
         // needed for the 'not analysed' number
-        if (action.equals("analysed")) {
+        if ("analysed".equals(action)) {
             q.addToSelect(qfGeneId);
         // export query
         // needed for export button on widget
-        } else if (action.equals("export")) {
+        } else if ("export".equals(action)) {
         	
             q.addToSelect(qfDiseaseName);
             q.addToSelect(qfGeneName);
@@ -121,7 +121,7 @@ public class DiseaseEnrichLdr extends EnrichmentWidgetLdr
             q.addToSelect(qfDiseaseName);
             q.addToGroupBy(qfDiseaseName);
             q.addToSelect(new QueryFunction()); // disease count
-            if (action.equals("sample")) {
+            if ("sample".equals(action)) {
                 q.addToSelect(qfDiseaseName);
                 q.addToGroupBy(qfDiseaseName);
             }

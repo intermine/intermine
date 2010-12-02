@@ -203,7 +203,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                     }
                 }
 
-                if (propType.equals("url")) {
+                if ("url".equals(propType)) {
                     if (attrValue != null) {
                         String url;
                         if (value.contains(ATTR_MARKER_RE)) {
@@ -213,15 +213,15 @@ public class AttributeLinkDisplayerController extends TilesAction
                         }
                         config.put("url", url);
                     }
-                } else if (propType.equals("imageName")) {
+                } else if ("imageName".equals(propType)) {
                     config.put("imageName", value);
-                } else if (propType.equals("usePost")) {
+                } else if ("usePost".equals(propType)) {
                     config.put("usePost", value);
-                } else if (propType.equals("delimiter")) {
+                } else if ("delimiter".equals(propType)) {
                     config.put("delimiter", value);
-                } else if (propType.equals("enctype")) {
+                } else if ("enctype".equals(propType)) {
                     config.put("enctype", value);
-                } else if (propType.equals("text")) {
+                } else if ("text".equals(propType)) {
                     // parse out the title of the external link, e.g. "blabla: <>" => "blabla"
                     config.put("title", value.replaceAll("[^A-Za-z0-9 ]", "").replaceFirst("attributeValue", ""));
                     
@@ -295,7 +295,7 @@ public class AttributeLinkDisplayerController extends TilesAction
 
         String idString = (String) config.get("attributeValue");
 
-        if (delim.equals("NEWLINE")) {
+        if ("NEWLINE".equals(delim)) {
             urlString = urlString.replace(",", System.getProperty("line.separator"));
             idString = idString.replace(",", System.getProperty("line.separator"));
         } else {

@@ -446,7 +446,7 @@ public class Dependencies extends Task
         File projDir = getProjectBaseDir(projName);
         Properties properties = loadProjectProperties(projDir);
         String projectType = type;
-        if (projectType.equals("project")) {
+        if ("project".equals(projectType)) {
             projectType = "compile";
         }
 

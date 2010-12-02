@@ -182,7 +182,7 @@ class ProfileManagerHandler extends DefaultHandler
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
-        if (qName.equals("userprofiles")) {
+        if ("userprofiles".equals(qName)) {
             String value = attrs.getValue(MetadataManager.PROFILE_FORMAT_VERSION);
             if (value == null) {
                 version = 0;
@@ -190,7 +190,7 @@ class ProfileManagerHandler extends DefaultHandler
                 version = Integer.parseInt(value);
             }
         }
-        if (qName.equals("userprofile")) {
+        if ("userprofile".equals(qName)) {
             startTime = System.currentTimeMillis();
             profileHandler = new ProfileHandler(profileManager, idUpgrader, osw, abortOnError,
                     version);
@@ -206,7 +206,7 @@ class ProfileManagerHandler extends DefaultHandler
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
-        if (qName.equals("userprofile")) {
+        if ("userprofile".equals(qName)) {
             Profile profile = profileHandler.getProfile();
             profileManager.createProfile(profile);
             Set<Tag> tags = profileHandler.getTags();

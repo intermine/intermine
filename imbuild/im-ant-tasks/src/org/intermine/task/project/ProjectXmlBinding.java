@@ -95,17 +95,17 @@ public class ProjectXmlBinding
                 } else {
                     project.setType(attrs.getValue("type"));
                 }
-            } else if (qName.equals("post-process")) {
+            } else if ("post-process".equals(qName)) {
                 PostProcess postProcess = new PostProcess();
                 action = postProcess;
                 project.addPostProcess(attrs.getValue("name"), postProcess);
-            } else if (qName.equals("source")) {
+            } else if ("source".equals(qName)) {
                 Source source = new Source();
                 source.setType(attrs.getValue("type"));
                 source.setName(attrs.getValue("name"));
                 project.addSource(attrs.getValue("name"), source);
                 action = source;
-            } else if (qName.equals("property")) {
+            } else if ("property".equals(qName)) {
                 UserProperty property = new UserProperty();
                 property.setName(attrs.getValue("name"));
                 property.setValue(attrs.getValue("value"));
@@ -127,7 +127,7 @@ public class ProjectXmlBinding
         	if (qName == null) {
     			return;
         	}
-            if (qName.equals("source") || qName.equals("post-process")) {
+            if ("source".equals(qName) || qName.equals("post-process")) {
                 action = null;
             }
         }

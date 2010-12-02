@@ -105,7 +105,7 @@ public class UniProtFastaLoaderTaskTest extends TestCase
 
         assertEquals("Q9V8R9-2", protein.getPrimaryAccession());
 
-        protein.getOrganism().getTaxonId().equals("7227");
+        "7227".equals(protein.getOrganism().getTaxonId());
 
         DataSet dataSet = protein.getDataSets().iterator().next();
         assertEquals(dataSetTitle, dataSet.getName());

@@ -39,23 +39,23 @@ public class CytoscapeNetworkExportAction extends Action
 
         String type = request.getParameter("type");
 
-        if (type.equals("sif")) {
+        if ("sif".equals(type)) {
             response.setContentType("text/plain");
             response.setHeader("Content-Disposition", "attachment; filename=\"network.sif\"");
         }
-        else if (type.equals("pdf")) {
+        else if ("pdf".equals(type)) {
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment; filename=\"network.pdf\"");
         }
-        else if (type.equals("xgmml")) {
+        else if ("xgmml".equals(type)) {
             response.setContentType("text/xml");
             response.setHeader("Content-Disposition", "attachment; filename=\"network.xgmml\"");
         }
-        else if (type.equals("png")) {
+        else if ("png".equals(type)) {
             response.setContentType("image/png");
             response.setHeader("Content-Disposition", "attachment; filename=\"network.png\"");
         }
-        else if (type.equals("graphml")) {
+        else if ("graphml".equals(type)) {
             response.setContentType("text/xml");
             response.setHeader("Content-Disposition", "attachment; filename=\"network.graphml\"");
         }

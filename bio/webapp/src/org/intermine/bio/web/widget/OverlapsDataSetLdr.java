@@ -136,9 +136,9 @@ public class OverlapsDataSetLdr implements DataSetLdr
             Integer geneEnd = (java.lang.Integer) resRow.get(4);
 
             Integer distance = null;
-            if (seriesName.equals("downstream")) {
+            if ("downstream".equals(seriesName)) {
                 distance = featureStart - geneEnd;
-            } else if (seriesName.equals("upstream")) {
+            } else if ("upstream".equals(seriesName)) {
                 distance = geneStart - featureEnd;
             }
             if (distance.compareTo(new Integer(0)) < 0) {

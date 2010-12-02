@@ -251,7 +251,7 @@ public class AffyProbeHumanConverter extends FileConverter
             Item bioentity = createItem(type);
             bioentity.setAttribute("primaryIdentifier", identifier);
             bioentity.setReference("organism", org.getIdentifier());
-            if (type.equals("Transcript")) {
+            if ("Transcript".equals(type)) {
                 bioentity.setReference("gene", geneRefId);
             }
             //bioentity.addToCollection("dataSets", dataSet);

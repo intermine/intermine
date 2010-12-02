@@ -89,13 +89,13 @@ public class chebiDataConverter extends DirectoryConverter
 			BufferedReader in = new BufferedReader(new FileReader(file));
 			in.readLine(); //first line always junk
 			while ((readString = in.readLine()) != null) {
-				if (file.getName().equals("compounds.tsv"))
+				if ("compounds.tsv".equals(file.getName()))
 					parseCompoundLine(readString);
-				if (file.getName().equals("comments.tsv"))
+				if ("comments.tsv".equals(file.getName()))
 					parseCommentsLine(readString);
-				if (file.getName().equals("chebiId_inchi.tsv"))
+				if ("chebiId_inchi.tsv".equals(file.getName()))
 					parseInchiLine(readString);
-				if (file.getName().equals("names.tsv"))
+				if ("names.tsv".equals(file.getName()))
 					parseNamesLine(readString);
 			}
 		} catch (Exception e) {
@@ -189,7 +189,7 @@ public class chebiDataConverter extends DirectoryConverter
 
 		public Item getChemical(String ChebiId)
 		{
-			if ( ChebiId.length()>2 && !ChebiId.substring(0,3).equals("CHE") )
+			if ( "CHE".equals(ChebiId.length()>2 && !ChebiId.substring(0,3)) )
 			{
 				ChebiId="CHEBI:"+ChebiId;
 			}

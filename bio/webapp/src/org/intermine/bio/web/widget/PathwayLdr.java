@@ -120,9 +120,9 @@ public class PathwayLdr extends EnrichmentWidgetLdr
 
         Query q = new Query();
 
-        if (dataset.equals("KEGG") || dataset.equals("Reactome")) {
+        if ("KEGG".equals(dataset) || dataset.equals("Reactome")) {
 
-            String datasetTitle = (dataset.equals("KEGG") ? KEGG : REACTOME);
+            String datasetTitle = ("KEGG".equals(dataset) ? KEGG : REACTOME);
 
             QueryClass qcDataset = new QueryClass(DataSet.class);
             QueryField qfDataset = new QueryField(qcDataset, "title");
@@ -146,9 +146,9 @@ public class PathwayLdr extends EnrichmentWidgetLdr
 
         q.setConstraint(cs);
 
-        if (action.equals("analysed")) {
+        if ("analysed".equals(action)) {
             q.addToSelect(qfGeneId);
-        } else if (action.equals("export")) {
+        } else if ("export".equals(action)) {
             q.addToSelect(qfPathwayIdentifier);
             q.addToSelect(qfPrimaryIdentifier);
             q.addToOrderBy(qfPathwayIdentifier);
@@ -163,7 +163,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
             q.addToSelect(qfPathwayIdentifier);
             q.addToGroupBy(qfPathwayIdentifier);
             q.addToSelect(new QueryFunction()); // gene count
-            if (action.equals("sample")) {
+            if ("sample".equals(action)) {
                 q.addToSelect(qfPathwayName);
                 q.addToGroupBy(qfPathwayName);
             }

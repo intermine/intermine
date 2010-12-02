@@ -154,7 +154,7 @@ class ProfileHandler extends DefaultHandler
      */
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
-        if (qName.equals("userprofile")) {
+        if ("userprofile".equals(qName)) {
             if (attrs.getValue("username") != null) {
                 username = attrs.getValue("username");
             }
@@ -162,23 +162,23 @@ class ProfileHandler extends DefaultHandler
                 password = attrs.getValue("password");
             }
         }
-        if (qName.equals("items")) {
+        if ("items".equals(qName)) {
             subHandler = new FullHandler();
         }
-        if (qName.equals("bags")) {
+        if ("bags".equals(qName)) {
             savedBags = new LinkedHashMap();
             subHandler = new InterMineBagHandler(profileManager.getProfileObjectStoreWriter(),
                     osw, savedBags, null, idObjectMap, idUpgrader);
         }
-        if (qName.equals("template-queries")) {
+        if ("template-queries".equals(qName)) {
             savedTemplates = new LinkedHashMap();
             subHandler = new TemplateQueryHandler(savedTemplates, savedBags, version);
         }
-        if (qName.equals("queries")) {
+        if ("queries".equals(qName)) {
             savedQueries = new LinkedHashMap();
             subHandler = new SavedQueryHandler(savedQueries, savedBags, version);
         }
-        if (qName.equals("tags")) {
+        if ("tags".equals(qName)) {
             subHandler = new TagHandler(username, tags);
         }
         if (subHandler != null) {
@@ -191,7 +191,7 @@ class ProfileHandler extends DefaultHandler
      */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
-        if (qName.equals("items")) {
+        if ("items".equals(qName)) {
             items = ((FullHandler) subHandler).getItems();
             //idObjectMap = new HashMap<Integer, InterMineObject>();
             for (Item item : items) {
@@ -213,8 +213,8 @@ class ProfileHandler extends DefaultHandler
                 }
             }
         }
-        if (qName.equals("bags") || qName.equals("template-queries")
-            || qName.equals("queries") || qName.equals("items") || qName.equals("tags")) {
+        if ("bags".equals(qName) || qName.equals("template-queries")
+            || "queries".equals(qName) || qName.equals("items") || qName.equals("tags")) {
             subHandler = null;
         }
 

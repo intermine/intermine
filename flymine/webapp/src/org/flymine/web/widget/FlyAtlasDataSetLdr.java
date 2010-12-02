@@ -72,18 +72,18 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
             String identifier = (String) resRow.get(2);
             if (affyCall != null) {
                 if (callTable.get(tissue) != null) {
-                    if (affyCall.equals("Up")) {
+                    if ("Up".equals(affyCall)) {
                         (callTable.get(tissue))[0]++;
-                    } else if (affyCall.equals("Down")) {
+                    } else if ("Down".equals(affyCall)) {
                         (callTable.get(tissue))[1]--;
                     }
                 } else {
                     int[] count = new int[2];
                     ArrayList<String> genesArray = new ArrayList<String>();
                     genesArray.add(identifier);
-                    if (affyCall.equals("Up")) {
+                    if ("Up".equals(affyCall)) {
                         count[0]++;
-                    } else if (affyCall.equals("Down")) {
+                    } else if ("Down".equals(affyCall)) {
                         count[1]--;
                     }
                     callTable.put(tissue, count);

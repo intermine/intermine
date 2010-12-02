@@ -114,7 +114,7 @@ public class UpdateOrthologues extends PostProcessor
         int created = 0;
 
         // set gene or [orthologue|paralogue]
-        String newRef = refType.equals("protein") ? "gene"
+        String newRef = "protein".equals(refType) ? "gene"
             : refType.substring(0, refType.indexOf('P'));
 
         Iterator<?> resIter = res.iterator();

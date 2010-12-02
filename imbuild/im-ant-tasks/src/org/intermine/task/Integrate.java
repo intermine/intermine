@@ -82,14 +82,14 @@ public class Integrate extends Task
         if (projectXml == null) {
             throw new BuildException("no projectXml specified");
         }
-        if (sourceAttribute == null || sourceAttribute.trim().equals("")) {
+        if (sourceAttribute == null || "".equals(sourceAttribute.trim())) {
             throw new BuildException("no source set, try \"ant -Dsource=all\" or "
                                      + "\"ant -Dsource=source1,source2\"");
         }
 
         System.err.print("action: " + action + ENDL);
 
-        if (action != null && !action.equals("") && !possibleActions.contains(action)) {
+        if (action != null && !"".equals(action) && !possibleActions.contains(action)) {
             StringBuffer sb = new StringBuffer();
             sb.append("Unknown action: ").append(action).append("  possible actions: ");
             for (int i = 0; i < possibleActionsArray.length - 1; i++) {
@@ -105,7 +105,7 @@ public class Integrate extends Task
 
         List<String> sourceNames = new ArrayList<String>();
 
-        if (sourceAttribute.equals("") || sourceAttribute.equals("all")) {
+        if ("".equals(sourceAttribute) || sourceAttribute.equals("all")) {
             for (String thisSource : intermineProject.getSources().keySet()) {
                 sourceNames.add(thisSource);
             }
@@ -123,7 +123,7 @@ public class Integrate extends Task
                                          + thisSourceName);
             }
 
-            if (action.equals("")) {
+            if ("".equals(action)) {
                 performAction(thisSourceName, sourceObject.getType());
             } else {
                 performAction(action, thisSourceName, sourceObject.getType());

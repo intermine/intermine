@@ -461,8 +461,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             String name, String uniqueName, int seqlen, int taxonId) {
         String realInterMineType = interMineType;
 
-        if (chadoFeatureType.equals("chromosome_arm")
-                || chadoFeatureType.equals("ultra_scaffold")) {
+        if ("chromosome_arm".equals(chadoFeatureType)
+                || "ultra_scaffold".equals(chadoFeatureType)) {
             realInterMineType = "Chromosome";
 
             if (uniqueName.startsWith("chr")) {

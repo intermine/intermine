@@ -85,7 +85,7 @@ public class OMIMConverter extends FileConverter
             }
 
             Item disease = createItem("Disease");
-            if (omimId != null && !omimId.equals("")) {
+            if (omimId != null && !"".equals(omimId)) {
                 disease.setAttribute("omimId", omimId);
 
                 disease.setAttribute("status", status);

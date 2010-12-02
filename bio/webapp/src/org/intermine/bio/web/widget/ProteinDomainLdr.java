@@ -91,7 +91,7 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
         QueryField qfId = new QueryField(qcProteinFeature, "primaryIdentifier");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
         QueryField qfPrimaryIdentifier = null;
-        if (bagType.equals("Protein")) {
+        if ("Protein".equals(bagType)) {
             qfPrimaryIdentifier = new QueryField(qcProtein, "primaryIdentifier");
         } else {
             qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
@@ -112,14 +112,14 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
         cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.MATCHES, new QueryValue("ipr%")));
 
         if (!action.startsWith("population")) {
-            if (bagType.equals("Protein")) {
+            if ("Protein".equals(bagType)) {
                 cs.addConstraint(new BagConstraint(qfProteinId, ConstraintOp.IN, bag.getOsb()));
             } else {
                 cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
             }
         }
 
-        if (bagType.equals("Protein")) {
+        if ("Protein".equals(bagType)) {
             QueryObjectReference qr1 = new QueryObjectReference(qcProtein, "organism");
             cs.addConstraint(new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism));
         } else {
@@ -139,20 +139,20 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
         subQ.addFrom(qcProtein);
         subQ.addFrom(qcOrganism);
         subQ.addFrom(qcProteinFeature);
-        if (bagType.equals("Gene")) {
+        if ("Gene".equals(bagType)) {
             subQ.addFrom(qcGene);
         }
         subQ.setConstraint(cs);
 
-        if (bagType.equals("Protein")) {
+        if ("Protein".equals(bagType)) {
             subQ.addToSelect(qfProteinId);
         } else {
             subQ.addToSelect(qfGeneId);
         }
 
-        if (action.equals("analysed")) {
+        if ("analysed".equals(action)) {
             return subQ;
-        } else  if (action.equals("export")) {
+        } else  if ("export".equals(action)) {
             subQ.clearSelect();
             subQ.addToSelect(qfId);
             subQ.addToSelect(qfPrimaryIdentifier);
@@ -172,7 +172,7 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
             q.addToSelect(qfInterProId);
             q.addToGroupBy(qfInterProId);
             q.addToSelect(new QueryFunction());
-            if (action.equals("sample")) {
+            if ("sample".equals(action)) {
                 q.addToSelect(qfInterProName);
                 q.addToGroupBy(qfInterProName);
             }

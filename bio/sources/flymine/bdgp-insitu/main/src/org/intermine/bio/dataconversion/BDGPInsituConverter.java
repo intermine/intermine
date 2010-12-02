@@ -110,7 +110,7 @@ public class BDGPInsituConverter extends BioFileConverter
 
             if (lineBits.length > 2) {
                 String image = lineBits[2];
-                if (image != null && !image.equals("")) {
+                if (image != null && !"".equals(image)) {
                     setImage(result, URL + image);
                 }
             }
