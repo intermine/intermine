@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use Carp qw(carp croak confess);
 
+use encoding 'latin1';
+
 # We want all warnings to be very very fatal
 $SIG{__WARN__} = sub {
     confess @_;
@@ -12,6 +14,7 @@ $SIG{__DIE__} = sub {
 };
 ## Modules to be installed
 use XML::Rules;
+use XML::DOM;
 use XML::Writer;
 use Log::Handler;
 use AppConfig qw(:expand :argcount);
@@ -132,9 +135,9 @@ sub translate_query { # takes in xml, returns xml
     if ($q) {
         $q->suspend_validation;
         ($new_q, $is_broken) = $updater->update_query($q, $origin);
-        unless ($is_broken) {
+#        unless ($is_broken) {
             $ret_xml  = eval {$new_q->to_xml}; # it still might break
-        }
+#        }
         if ($@) {
             $is_broken = $@;
             $log->warning('broken query:', $is_broken, $origin);
@@ -224,60 +227,65 @@ sub check_bag_type {
     return dress($type, $naked), ($changed) ? 0 : undef;
 }
 
+my $dom_parser = XML::DOM::Parser->new();
+
 sub translate_item { # takes in xml, returns xml
     my ($type, $xml, $origin) = @_;
-    my $hash_ref = undress($type, $xml);
-    delete($hash_ref->{_content});
-    my ($class_name, $id, $class, $changed); 
+    my $doc = $dom_parser->parsestring($xml);
+    my $root = $doc->getDocumentElement();
+    my ($class_name, $class_key, $id, $id_key, $class, $changed); 
 
     if ($type eq 'item') {
-        $class_name = \$hash_ref->{implements};
-        $id         = $hash_ref->{id};
+	$class_key = 'implements';
+	$id_key = 'id';
     }
     elsif ($type eq 'class') {
-        $class_name = \$hash_ref->{className};
-        $id         = $hash_ref->{className};
+        $class_key = "className";
+        $id_key         = "className";
     }
     else {
         croak "This sub doesn't only does classes and items: I got $type";
     }
+    $class_name = $root->getAttribute($class_key);
+    $id         = $root->getAttribute($id_key);
 
-    unless ($class = $updater->get_class($$class_name)) {
-        my $translation = $updater->update_path($$class_name);
+    unless ($class = $updater->get_class($class_name)) {
+        my $translation = $updater->update_path($class_name);
 
         if ($translation and $class = $updater->get_class($translation)) {
-            $log->info($CHANGE, $origin, $type, $id, ':', $$class_name, '=>', $translation);
-            $$class_name = $translation;
+            $log->info($CHANGE, $origin, $type, $id, ':', $class_name, '=>', $translation);
+	    $root->setAttribute($class_key, $translation);
             $changed++;
         }
         else {
-            if ($updater->knows_about_deletion_of($$class_name)) {
+            if ($updater->knows_about_deletion_of($class_name)) {
                 $log->info($DEL, $origin, 'anticipated deletion of', $type, $id, 
-                    ': could not find', $$class_name);
+                    ': could not find', $class_name);
             }
             else {
                 $log->warning($DEL, $origin, 'unexpected deletion of', $type, $id, 
-                    ': could not find', $$class_name);
+                    ': could not find', $class_name);
             }
+	    $doc->dispose();
             return $nothing, $broken;
         }
     }
 
-    foreach my $field (@{$hash_ref->{attribute}}, 
-        @{$hash_ref->{reference}},
-        @{$hash_ref->{fields}[0]{fieldconfig}}) {
-        my $field_ref = ($field->{name}) ? \$field->{name} : \$field->{fieldExpr};
-        my $path = join '.', $class, $$field_ref;
+    foreach my $field ($root->getChildNodes()) {
+	next unless ($field->getNodeType() == ELEMENT_NODE);
+	my $field_name = $field->getAttribute("name");
+#        my $field_ref = ($field->{name}) ? \$field->{name} : \$field->{fieldExpr};
+        my $path = join '.', $class->name, $field_name;
         my $translation = $updater->update_path($path);
         if (defined $translation) {
             my $cn = $class->name;
             $translation =~ s/$cn\.//; # strip off the classname
-            unless ($translation eq $$field_ref) {
+            unless ($translation eq $field_name) {
                 $log->info($CHANGE, $origin, $type, $id, ':', 
                     "$path => $translation");
                 $changed++;
             }
-            $$field_ref   = $translation;
+            $field->setAttribute("name", $translation);
         }
         else {
             $log->warning($DEL, $origin, $type, $id, 
@@ -285,7 +293,9 @@ sub translate_item { # takes in xml, returns xml
             return $nothing, $broken;
         }
     }
-    return dress($type,$hash_ref), ($changed)? 0 : undef;
+    my $string = $doc->toString();
+    $doc->dispose();
+    return $string, ($changed)? 0 : undef;
 }	
 
 my $parser = XML::Rules->new(rules => [_default => 'no content array']);
