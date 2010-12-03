@@ -149,7 +149,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             }
             if (!rsNumber.equals(previousRsNumber)) {
                 // starting a new SNP, store the previous one
-                
+
                 if (currentSnp != null) {
                     Boolean uniqueLocation =
                         Boolean.parseBoolean(currentSnp.getAttribute("uniqueLocation").getValue());
@@ -179,7 +179,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 seenLocsForSnp = new HashSet<String>();
                 consequenceIdentifiers = new HashSet<String>();
                 storeSnp = true;
-                
+
                 // map weight is the number of chromosome locations for the SNP, in practice there
                 // are sometimes fewer locations than the map_weight indicates
                 int mapWeight = res.getInt("map_weight");
@@ -190,7 +190,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     LOG.info("Not storing SNP second time: " + rsNumber);
                     storeSnp = false;
                 }
-                
+
                 if (!uniqueLocation) {
                     LOG.info("Not a unique location: " + rsNumber + " storeSnp = " + storeSnp);
                 }
@@ -295,24 +295,25 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return store(snp);
     }
 
-    private String determineType(String alleleStr) {
+    protected String determineType(String alleleStr) {
         String type = null;
 
+        alleleStr = alleleStr.toUpperCase();
         if (!StringUtils.isBlank(alleleStr)) {
             // snp if e.g. A/C or A|C
-            if (alleleStr.matches("/^[ACGTN]([\\|\\\\\\/][ACGTN])+$/i")) {
+            if (alleleStr.matches("^[ACGTN]([\\/\\|\\\\][ACGTN])+$")) {
                 type = "snp";
-            } else if ("cnv".equalsIgnoreCase(alleleStr)) {
+            } else if ("CNV".equals(alleleStr)) {
                 type = alleleStr.toLowerCase();
-            } else if ("cnv_probe".equalsIgnoreCase(alleleStr)) {
+            } else if ("CNV_PROBE".equals(alleleStr)) {
                 type = alleleStr.toLowerCase();
-            } else if ("hgmd_mutation".equalsIgnoreCase(alleleStr)) {
+            } else if ("HGMD_MUTATION".equals(alleleStr)) {
                 type = alleleStr.toLowerCase();
             } else {
                 String[] alleles = alleleStr.split("[\\|\\/\\\\]");
 
                 if (alleles.length == 1) {
-                   type = "het";
+                    type = "het";
                 } else if (alleles.length == 2) {
                     if ((StringUtils.containsOnly(alleles[0], "ACTGN") && "-".equals(alleles[1]))
                             || (StringUtils.containsOnly(alleles[1], "ACTGN")
