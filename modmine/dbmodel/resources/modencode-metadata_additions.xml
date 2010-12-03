@@ -28,6 +28,7 @@
   <attribute name="tss" type="java.lang.String" />
   <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="exons" />
   <collection name="transcriptRegions" referenced-type="TranscriptRegion" reverse-reference="exons" />
+  <collection name="expressionScores" referenced-type="ExonExpressionScore" reverse-reference="exon"/>
 </class>
 
 <class name="ExonRegion" is-interface="true">
@@ -40,6 +41,7 @@
 
 <class name="Gene" is-interface="true">
   <attribute name="source" type="java.lang.String" />
+  <collection name="expressionScores" referenced-type="GeneExpressionScore" reverse-reference="gene"/>
 </class>
 
 <class name="MRNA" is-interface="true">
@@ -316,6 +318,25 @@
   <attribute name="organismPart" type="java.lang.String"/>
 </class>
 
+<class name="GeneExpressionScore" is-interface="true">
+  <attribute name="score" type="java.lang.Double" />
+  <reference name="gene" referenced-type="Gene" reverse-reference="expressionScores" />
+  <reference name="cellLine" referenced-type="CellLine" />
+  <reference name="developmentalStage" referenced-type="DevelopmentalStage" />
+  <reference name="submission" referenced-type="Submission" />
+  <reference name="organism" referenced-type="Organism" />
+</class>
+
+<class name="ExonExpressionScore" is-interface="true">
+  <attribute name="score" type="java.lang.Double" />
+  <reference name="exon" referenced-type="Exon" reverse-reference="expressionScores" />
+  <reference name="cellLine" referenced-type="CellLine" />
+  <reference name="developmentalStage" referenced-type="DevelopmentalStage" />
+  <reference name="submission" referenced-type="Submission" />
+  <reference name="organism" referenced-type="Organism" />
+</class>
+
+<!--
 <class name="FlyExpressionScore" is-interface="true">
   <attribute name="score" type="java.lang.Double" />
   <reference name="subject" referenced-type="BioEntity" />
@@ -323,5 +344,6 @@
   <reference name="developmentalStage" referenced-type="DevelopmentalStage" />
   <reference name="submission" referenced-type="Submission" />
 </class>
+-->
 
 </classes>
