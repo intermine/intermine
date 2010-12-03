@@ -12689,7 +12689,7 @@ creation_date: 2009-11-10T11:03:37Z
 
 [Term]
 id: SO:0001485
-name: Y_prime_ element
+name: Y_prime_element
 def: "A Y' element is a repeat region (SO:0000657) located adjacent to telomeric repeats or X element combinatorial repeats, either as a single copy or tandem repeat of two to four copies." [http:http\://www.yeastgenome.org/help/glossary.html]
 comment: This term was requested 2009-10-16 by Michel Dumontier, tracker id 2880747.
 synonym: "Y' element" EXACT []
