@@ -47,8 +47,8 @@ public class KeggOrthologuesConverter extends BioFileConverter
     //eg.             HSA: 7358(UGDH)
     private static final String REGULAR_EXPRESSION = "\\w\\w\\w[:]\\s.+";
     private static final Pattern HOMOLOGUE_PATTERN = Pattern.compile(REGULAR_EXPRESSION);
-    protected IdResolverFactory resolverFactory;
-    private IdResolver flyResolver;
+    protected IdResolverFactory flyResolverFactory, wormResolverFactory;
+    protected IdResolver flyResolver, wormResolver;
     private Map<String, String[]> config = new HashMap<String, String[]>();
     private Set<String> taxonIds = new HashSet<String>();
     private Map<String, String> identifiersToGenes = new HashMap<String, String>();
@@ -62,7 +62,11 @@ public class KeggOrthologuesConverter extends BioFileConverter
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
         // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
+        flyResolverFactory = new FlyBaseIdResolverFactory("gene");
+        wormResolverFactory = new WormBaseChadoIdResolverFactory("gene");
+
+        flyResolver = flyResolverFactory.getIdResolver(false);
+        wormResolver = wormResolverFactory.getIdResolver(false);
     }
 
     /**
@@ -101,9 +105,11 @@ public class KeggOrthologuesConverter extends BioFileConverter
                 config.put(organism, configs);
             }
             if ("taxonId".equals(attributes[1])) {
-                config.get(organism)[0] = value;
+                String[] bits = config.get(organism);
+                bits[0] = value;
             } else if ("identifier".equals(attributes[1])) {
-                config.get(organism)[1] = value;
+                String[] bits = config.get(organism);
+                bits[1] = value;
             } else {
                 String msg = "Problem processing properties '" + PROP_FILE + "' on line " + key
                     + ".  This line has not been processed.";
@@ -211,8 +217,8 @@ public class KeggOrthologuesConverter extends BioFileConverter
     private String getGene(String identifierType, String id, String taxonId)
         throws ObjectStoreException {
         String identifier = id;
-        if ("7227".equals(taxonId)) {
-            identifier = resolveGene(identifier);
+        if ("7227".equals(taxonId) || "6239".equals(taxonId)) {
+            identifier = resolveGene(identifier, taxonId);
             if (identifier == null) {
                 return null;
             }
@@ -261,21 +267,24 @@ public class KeggOrthologuesConverter extends BioFileConverter
         return evidenceRefId;
     }
 
-    private String resolveGene(String identifier) {
-        // we only have a resolver for dmel for now
-        String taxonId = "7227";
-        flyResolver = resolverFactory.getIdResolver(false);
-        if (flyResolver == null) {
+    private String resolveGene(String identifier, String taxonId) {
+        IdResolver resolver = null;
+        if ("7227".equals(taxonId)) {
+            resolver = flyResolver;
+        } else if ("6329".equals(taxonId)) {
+            resolver = wormResolver;
+        }
+        if (resolver == null) {
             // no id resolver available, so return the original identifier
             return identifier;
         }
-        int resCount = flyResolver.countResolutions(taxonId, identifier);
+        int resCount = resolver.countResolutions(taxonId, identifier);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                      + identifier + " count: " + resCount + " FBgn: "
-                     + flyResolver.resolveId(taxonId, identifier));
+                     + resolver.resolveId(taxonId, identifier));
             return null;
         }
-        return flyResolver.resolveId(taxonId, identifier).iterator().next();
+        return resolver.resolveId(taxonId, identifier).iterator().next();
     }
 }
