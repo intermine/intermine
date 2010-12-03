@@ -67,7 +67,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(String action, List<String> keys) {
+    public Query getQuery(String action, @SuppressWarnings("unused") List<String> keys) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcPathway = null;
@@ -120,12 +120,12 @@ public class PathwayLdr extends EnrichmentWidgetLdr
 
         Query q = new Query();
 
-        if ("KEGG".equals(dataset) || dataset.equals("Reactome")) {
+        if ("KEGG".equals(dataset) || "Reactome".equals(dataset)) {
 
             String datasetTitle = ("KEGG".equals(dataset) ? KEGG : REACTOME);
 
             QueryClass qcDataset = new QueryClass(DataSet.class);
-            QueryField qfDataset = new QueryField(qcDataset, "title");
+            QueryField qfDataset = new QueryField(qcDataset, "name");
 
             QueryCollectionReference c2 = new QueryCollectionReference(qcPathway, "dataSets");
             cs.addConstraint(new ContainsConstraint(c2, ConstraintOp.CONTAINS, qcDataset));
@@ -185,6 +185,3 @@ public class PathwayLdr extends EnrichmentWidgetLdr
         this.namespace = namespace;
     }
 }
-
-
-
