@@ -69,13 +69,13 @@
               <fmt:message key="history.commentheader"/>
             </th>
             <c:if test="${IS_SUPERUSER}">
-	            <th align="left" class="sortable-numeric">
-	              <fmt:message key="history.rankheader"/>
-	            </th>
-	            <th align="left" class="sortable-numeric">
+                <th align="left" class="sortable-numeric">
+                  <fmt:message key="history.rankheader"/>
+                </th>
+                <th align="left" class="sortable-numeric">
                   <fmt:message key="history.counterheader"/>
                 </th>
-	        </c:if>
+            </c:if>
             <th align="center">
               <fmt:message key="history.actionscolumnheader"/>
             </th>
@@ -228,14 +228,6 @@
         <br/>
       </c:otherwise>
     </c:choose>
-  <c:if test="${IS_SUPERUSER}">
-    <span class="smallnote">
-      <html:link action="/summariseTemplates" titleKey="history.summariseTemplates">
-        <fmt:message key="history.summariseTemplates"/>
-      </html:link>
-    </span>
-    <BR/>
-    </c:if>
     <span class="smallnote">
       <html:link action="/import" titleKey="history.importTemplatesDesc">
         <fmt:message key="history.importTemplates"/>
