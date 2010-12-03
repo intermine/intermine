@@ -204,7 +204,8 @@ elif [ -n "$PLIST" ]
 then
 SOURCES=modmine-static,"$PLIST"
 else
-SOURCES=modmine-static,modencode-metadata
+SOURCES=modmine-static,modencode-metadata,fly-expression-score
+#SOURCES=modmine-static,modencode-metadata
 fi
 
 
@@ -215,6 +216,7 @@ echo "Building modmine-$REL on $MINEHOST."
 echo "==================================="
 echo "current directory: $MINEDIR"
 echo "Log: $LOG"
+echo "Sources: $SOURCES"
 echo
 
 if [ -n "$1" ]
@@ -676,6 +678,12 @@ cd $PATCHDIR
  wget -t3 -N $FTPURL/get_file/$sub/extracted/applied_patches_$sub.chadoxml --progress=dot:mega 2>&1 | tee -a $LOGDIR/wget.log$WLOGDATE
 # it gets the html if nothing there
 rm -vf *extracted*
+# new style: if nothinbg there the file is an html file
+FILETYPE=`file -b applied_patches_$sub.chadoxml | awk '{print $1}'`
+if [ "$FILETYPE" = "HTML" ]
+then
+rm applied_patches_$sub.chadoxml
+fi
 cd $MIRROR/new
 
 done
@@ -918,6 +926,8 @@ echo "SOURCES: $SOURCES"
 cd postprocess
 ant -v -Daction=set-missing-chromosome-locations -Drelease=$REL\
 || { printf "%b" "\n modMine build (only metadata) FAILED while setting locations.\n" ; exit 1 ; }
+ant -v -Daction=modmine-metadata-cache -Drelease=$REL\
+|| { printf "%b" "\n modMine build (only metadata) FAILED while building cache.\n" ; exit 1 ; }
 else
 # new build, all the sources
 # get the most up to date sources ..
