@@ -32,8 +32,13 @@ import org.apache.log4j.Logger;
 import org.apache.tools.ant.filters.StringInputStream;
 import org.intermine.bio.constants.ModMineCacheKeys;
 import org.intermine.bio.util.BioConverterUtil;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.CellLine;
 import org.intermine.model.bio.DatabaseRecord;
+import org.intermine.model.bio.DevelopmentalStage;
 import org.intermine.model.bio.Experiment;
+import org.intermine.model.bio.ExonExpressionScore;
+import org.intermine.model.bio.GeneExpressionScore;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
@@ -47,6 +52,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.sql.Database;
@@ -1220,4 +1226,75 @@ public final class MetadataCache
                 + featDescriptionCache.size());
         return featDescriptionCache;
     }
+    
+    
+    private static void readFlyScores(ObjectStore os) {
+        // TODO
+        long startTime = System.currentTimeMillis();
+        try {
+            
+            Query q = new Query();
+            QueryClass qcFlyScore = new QueryClass(GeneExpressionScore.class);
+            QueryField qfSubject = new QueryField(qcFlyScore, "subject");
+            q.addFrom(qcFlyScore);
+            q.addToSelect(qfSubject);
+
+            QueryClass qcCellLine = new QueryClass(CellLine.class);
+            q.addFrom(qcCellLine);
+            q.addToSelect(qcCellLine);
+
+            QueryClass qcDevStage = new QueryClass(DevelopmentalStage.class);
+            q.addFrom(qcDevStage);
+            q.addToSelect(qcDevStage);
+
+            QueryClass qcBioEnt = new QueryClass(BioEntity.class);
+            q.addFrom(qcBioEnt);
+            q.addToSelect(qcBioEnt);
+            
+
+            // join the tables
+//            QueryObjectReference ref1 =
+//                new QueryCollectionReference(qcSubmission, "databaseRecords");
+//            ContainsConstraint cc = new ContainsConstraint(ref1, ConstraintOp.CONTAINS,
+//                    qcRepositoryEntry);
+//            
+//            q.setConstraint(cc);
+//            q.addToOrderBy(qfDCCid);
+//            q.addToOrderBy(qfDatabase);
+
+            
+//            QueryCollectionReference subFiles = new QueryCollectionReference(qcSubmission,
+//            "resultFiles");
+//            ContainsConstraint cc = new ContainsConstraint(subFiles, ConstraintOp.CONTAINS,
+//                    qcFile);
+//            
+//            q.setConstraint(cc);
+            q.addToOrderBy(qfSubject);
+            
+            Results results = os.execute(q);
+            
+            submissionFilesCache = new HashMap<Integer, Set<ResultFile>>();
+            
+            @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+                (Iterator) results.iterator();
+            
+            while (iter.hasNext()) {
+                ResultsRow<?> row = (ResultsRow<?>) iter.next();
+                
+                Integer dccId = (Integer) row.get(0);
+                ResultFile file = (ResultFile) row.get(1);
+                
+                addToMap(submissionFilesCache, dccId, file);
+            }
+            
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed submission collections caches, took: " + timeTaken + "ms    size: files = "
+                + submissionFilesCache.size());
+    }
+
+    
+    
 }
