@@ -38,7 +38,8 @@ public class KeggOrthologuesConverterTest extends ItemsTestCase
         resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG18814"));
         resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG3481"));
         resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("CG3763"));
-        converter.resolverFactory = resolverFactory;
+        converter.flyResolverFactory = resolverFactory;
+        converter.flyResolver = resolverFactory.getIdResolver(false);
     }
 
     public void testProcess() throws Exception {
