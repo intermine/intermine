@@ -63,7 +63,7 @@
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
       <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
       <property name="treefam.organisms" value="7227 6239"/>
-      <property name="treefam.homologues" value="9606 10090 10116 4932 7955"/>
+<!--  <property name="treefam.homologues" value="9606 10090 10116 4932 7955"/> -->
     </source>
     <source name="reactome" type="biopax">
       <property name="src.data.dir" location="/shared/data/biopax/reactome/current/not-curated"/>
@@ -114,12 +114,12 @@
       <property name="src.data.file" location="/shared/data/modmine/sources/go-annotation/gene_ontology.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation" dump="true">
-      <property name="ontologyfile" location="/shared/data/modmine/sources/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/modmine/sources/go-annotation/current/"/>
+      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/modmine/"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
-      <property name="src.data.file" location="/shared/data/modmine/sources/ontologies/fly-anatomy/current/fly_anatomy.obo"/>
+      <property name="src.data.file" location="/shared/data/ontologies/fly-anatomy/current/fly_anatomy.obo"/>
     </source>
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
       <property name="src.data.file" location="/shared/data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
@@ -237,10 +237,10 @@
         <property name="src.data.dir" location="/shared/data/go-annotation/interpro/current"/>
     </source>
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
-        <property name="src.data.dir" location="/shared/data/modmine/sources/pubmed/current"/>
+        <property name="src.data.dir" location="/shared/data/pubmed/current"/>
         <property name="pubmed.organisms" value="7227 6239 7237 7230"/>
         <property name="src.data.dir.includes" value="gene2pubmed"/>
-        <property name="infoFile" location="/shared/data/modmine/sources/pubmed/current/gene_info"/>
+        <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/>
     </source>
     <source name="fly-development-ontology" type="fly-development-ontology">
         <property name="src.data.file" location="/shared/data/ontologies/fly-development/current/fly_development.obo"/>
