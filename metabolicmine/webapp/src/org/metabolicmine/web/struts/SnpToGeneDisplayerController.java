@@ -11,6 +11,9 @@ package org.metabolicmine.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +51,7 @@ public class SnpToGeneDisplayerController extends TilesAction {
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
 
-        //try {
+        try {
             HttpSession session = request.getSession();
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             Model model = im.getModel();
@@ -64,28 +67,104 @@ public class SnpToGeneDisplayerController extends TilesAction {
                 PathQueryExecutor executor = im.getPathQueryExecutor(profile);
                 ExportResultsIterator result = executor.execute(query);
 
-                List<List<ResultElement>> stuff = new ArrayList<List<ResultElement>>();
-                while (result.hasNext()) {
-                    List<ResultElement> row = result.next();
-                    stuff.add(row);
-                }
+                ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
+                int size = 0; String lastID = "";
 
-                request.setAttribute("response", stuff);
+                listing:
+                    while (result.hasNext()) {
+                        // bags
+                        List<ResultElement> row = result.next();
+                        ArrayList<String> columns = new ArrayList<String>();
+
+                        // locations
+                        int snpStart = 0, geneStart = 0, geneEnd = 0; String direction = null, currentID = null;
+
+                        // traverse columns returned (query.addViews)
+                        if (size == 0) size = row.size();
+                        for (int i=1; i<size; i++) { // skip SNP.primaryIdentifier
+                            Object e = row.get(i).getField();
+
+                            // parse result
+                            switch (i) {
+                                case 1: // Gene primaryIdentifier
+                                    currentID = e.toString();
+                                    if (lastID.equals(currentID)) {
+                                        // do not repeat ourselves in saving the same Gene 2x
+                                        continue listing;
+                                    } else {
+                                        columns.add(currentID);
+                                        lastID = currentID;
+                                        break;
+                                    }
+                                case 4: snpStart = Integer.parseInt(e.toString()); break; // SNP start
+                                case 5: geneStart = Integer.parseInt(e.toString()); break; // Gene start
+                                case 6: geneEnd = Integer.parseInt(e.toString()); break; // Gene end
+                                case 7: direction = e.toString(); break; // direction
+                                default: //everything else
+                                    if (e != null) {
+                                        columns.add(e.toString());
+                                    } else {
+                                        columns.add("[no value]");
+                                    }
+                            }
+                        }
+
+                        // calculate distance
+                        if (snpStart <= geneEnd) {
+                            if (snpStart >= geneStart) {
+                                columns.add("genic");
+                                columns.add("0"); // distance for the comparator, comes last!
+                            } else {
+                                columns.add(geneStart - snpStart + "b " + direction);
+                                columns.add(Integer.toString(geneStart - snpStart)); // distance for the comparator, comes last!
+                            }
+                        } else {
+                            columns.add(snpStart - geneEnd + "b " + direction);
+                            columns.add(Integer.toString(snpStart - geneEnd)); // distance for the comparator, comes last!
+                        }
+
+                        // add row if not present already (Genes appear 2x)
+                        list.add(columns);
+                    }
+
+                // sort list by distance
+                Collections.sort(list, new Comparator(){
+                    // comparator
+                    public int compare(Object first, Object second) {
+                        // convert from generic Object
+                        ArrayList<String> firstGene = (ArrayList<String>)first; ArrayList<String> secondGene = (ArrayList<String>)second;
+                        // get the distance as an int
+                        int firstGeneDistance = Integer.parseInt(firstGene.get(firstGene.size() -1));
+                        int secondGeneDistance = Integer.parseInt(secondGene.get(secondGene.size() -1));
+
+                        // "comparator"
+                        return firstGeneDistance - secondGeneDistance;
+                    }
+
+                });
+
+                request.setAttribute("list", list);
             //}
-        //} catch (Exception err) {
-        //    err.printStackTrace();
-        //}
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
         return null;
     }
 
     private PathQuery snpToGene(String snpPrimaryIdentifier, PathQuery query) {
-        // Add views
-        query.addViews("SNP.primaryIdentifier", "SNP.overlappingFeatures.gene.primaryIdentifier", "SNP.overlappingFeatures.gene.symbol");
+        query.addViews(
+                "SNP.primaryIdentifier",
+                "SNP.overlappingFeatures.gene.primaryIdentifier",
+                "SNP.overlappingFeatures.gene.name",
+                "SNP.overlappingFeatures.gene.symbol",
+                "SNP.locations.start",
+                "SNP.overlappingFeatures.gene.locations.start",
+                "SNP.overlappingFeatures.gene.locations.end",
+                "SNP.overlappingFeatures.direction"
+                );
 
-        // Add orderby
         query.addOrderBy("SNP.primaryIdentifier", OrderDirection.ASC);
 
-        // Add constraints and you can edit the constraint values below
         query.addConstraint(Constraints.eq("SNP.primaryIdentifier", snpPrimaryIdentifier));
         query.addConstraint(Constraints.type("SNP.overlappingFeatures", "GeneFlankingRegion"));
         query.addConstraint(Constraints.eq("SNP.overlappingFeatures.distance", "10.0kb"));
