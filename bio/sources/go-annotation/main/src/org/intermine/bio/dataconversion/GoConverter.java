@@ -192,6 +192,7 @@ public class GoConverter extends BioFileConverter
             // hack here to get just the UniProt ones.
             if (("protein".equalsIgnoreCase(type) && !array[0].startsWith("UniProt"))
                     || (!"protein".equalsIgnoreCase(type) && array[0].startsWith("UniProt"))) {
+            	System.out.println("not processing " + type + " for " + productId);
                 continue;
             }
 
@@ -209,6 +210,8 @@ public class GoConverter extends BioFileConverter
                 // null if no pub found
                 String pubRefId = newPublication(array[5]);
 
+                	System.out.println("pub " + pubRefId);
+                
                 // get evidence codes for this goterm|gene pair
                 Set<Evidence> allEvidenceForAnnotation = goTermGeneToEvidence.get(key);
 
@@ -217,7 +220,7 @@ public class GoConverter extends BioFileConverter
 
                     // go term
                     String goTermIdentifier = newGoTerm(goId, dataSourceCode);
-
+                    System.out.println("goTermIdentifier " + goTermIdentifier);
                     if (goTermIdentifier == null) {
                         LOG.warn("not storing annotation for " + goTermIdentifier);
                         continue;
@@ -231,6 +234,7 @@ public class GoConverter extends BioFileConverter
                             goTermIdentifier, organism, qualifier, withText, dataSourceCode);
                     evidence.setStoredAnnotationId(storedAnnotationId);
                 } else {
+                	System.out.println("not null");
                     for (Evidence evidence : allEvidenceForAnnotation) {
                         String evidenceCode = evidence.getEvidenceCode();
                         // already have evidence code, just add pub
@@ -240,6 +244,8 @@ public class GoConverter extends BioFileConverter
                     }
                 }
 
+            } else {
+            	System.out.println("BAD IDENTIFIER " + productId);
             }
         }
         storeProductCollections();
@@ -490,13 +496,15 @@ public class GoConverter extends BioFileConverter
         if (resolver != null) {
             int resCount = resolver.countResolutions("0", identifier);
 
-            if (resCount != 1) {
+            if (resCount > 1) {
                 LOG.info("RESOLVER: failed to resolve ontology term to one identifier, "
                          + "ignoring term: " + identifier + " count: " + resCount + " : "
                          + resolver.resolveId("0", identifier));
                 return null;
             }
-            goId = resolver.resolveId("0", identifier).iterator().next();
+            if (resCount == 1) {
+            	goId = resolver.resolveId("0", identifier).iterator().next();
+            }
         }
         return goId;
     }
