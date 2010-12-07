@@ -40,6 +40,13 @@ while (my $line = <$help_file>) {
   }
 }
 
+sub strip_non_alphas {
+    my $string = shift;
+    $string =~ s/\s/_/g;
+    $string =~ tr/a-zA-Z_//c;
+    return $string;
+}
+
 save($id, $title, $text);
 
 # split the text of a page into tabs
@@ -106,14 +113,13 @@ sub make_name
     $suffix .= '-' . $active_tab->{id};
   }
 
-  my $name = "$suffix.html";
-  $name =~ s/\s/_/g;
+  my $name = strip_non_alphas("$suffix.html");
   return $name;
 }
 
 sub make_chapter_item {
     my $page = shift;
-    (my $chapter_id = $page->{title}) =~ s/\s//g;
+    my $chapter_id = strip_non_alphas($page->{title});
     my $link = ($page->{tabs} && @{$page->{tabs}} > 1)
         ? "javascript:toggleDiv('$chapter_id-tab-box');"
         : make_name($page);
@@ -134,9 +140,9 @@ sub make_chapter_item {
 }
 sub make_tab_item {
     my ($page, $tab, $chapter_id) = @_;
-    (my $tab_id = $chapter_id . '-' . $tab->{title}) =~ s/\s//g;
+    my $tab_id = strip_non_alphas($chapter_id . '-' . $tab->{title});
     return $html->a(
-        href => make_name($page) . '#' . $tab->{id},
+        href => make_name($page) . '#' . $tab_id,
         text => $tab->{title},
         class => 'tab-item',
         id => $tab_id,
@@ -215,7 +221,7 @@ sub make_html
     for (my $tab_idx = 0; $tab_idx < @tabs; $tab_idx++) {
       my $tab = $tabs[$tab_idx];
       my $tab_title = $tab->{title};
-      my $tab_id = $tab->{id};
+      my $tab_id = strip_non_alphas($tab->{id});
       if (!defined $active_tab && $tab_idx == 0 ||
           defined $active_tab && $tab_id eq $active_tab->{id} ) {
         $tab_list .= qq|<li><a href="#$tab_id" class="active">$tab_title</a></li>\n|;
