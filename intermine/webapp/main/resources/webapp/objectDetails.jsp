@@ -39,18 +39,20 @@
       <td valign="top" width="30%">
 
           <div class="heading">
-          <a target="new" href="${stableLink}" onclick="jQuery('div.popup').show().find('input').select();return false;" id="permalink">
-            Link
-          </a>
-          <div class="popup" style="display:none;">
-            <span class="close" onclick="jQuery('div.popup').hide();return false;"></span>
-               <p>Paste the following link</p>
-               <input type="text" value="${stableLink}" />
-          </div>
-          Summary for selected
-          <c:forEach items="${object.clds}" var="cld">
-            ${cld.unqualifiedName}
-          </c:forEach>
+            <c:if test="${not empty stableLink}">
+              <a target="new" href="${stableLink}" onclick="jQuery('div.popup').show().find('input').select();return false;" id="permalink">
+                Link
+              </a>
+              <div class="popup" style="display:none;">
+                <span class="close" onclick="jQuery('div.popup').hide();return false;"></span>
+                   <p>Paste the following link</p>
+                   <input type="text" value="${stableLink}" />
+              </div>
+            </c:if>
+            Summary for selected
+            <c:forEach items="${object.clds}" var="cld">
+              ${cld.unqualifiedName}
+            </c:forEach>
           </div>
 
         <im:body id="summary">
