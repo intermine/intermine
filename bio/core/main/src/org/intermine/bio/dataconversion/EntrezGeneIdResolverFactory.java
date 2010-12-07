@@ -13,8 +13,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.util.PropertiesUtil;
 
-public class EntrezGeneIdResolverFactory {
-    protected static final Logger LOG = Logger.getLogger(HgncIdResolverFactory.class);
+public class EntrezGeneIdResolverFactory extends IdResolverFactory {
+    protected static final Logger LOG = Logger.getLogger(EntrezGeneIdResolverFactory.class);
     private final String clsName = "gene";
     private final String propName = "resolver.entrez.file";
     private final String taxonId = "9606";
