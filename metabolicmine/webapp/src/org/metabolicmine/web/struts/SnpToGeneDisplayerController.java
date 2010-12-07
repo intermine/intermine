@@ -112,18 +112,21 @@ public class SnpToGeneDisplayerController extends TilesAction {
                         // calculate distance
                         if (snpStart <= geneEnd) {
                             if (snpStart >= geneStart) {
-                                columns.add("genic");
+                                //columns.add("genic");
                                 columns.add("0"); // distance for the comparator, comes last!
+                                columns.add("");
                             } else {
-                                columns.add(geneStart - snpStart + "b " + direction);
+                                //columns.add(geneStart - snpStart + "b " + direction);
                                 columns.add(Integer.toString(geneStart - snpStart)); // distance for the comparator, comes last!
+                                columns.add(direction);
                             }
                         } else {
-                            columns.add(snpStart - geneEnd + "b " + direction);
+                            //columns.add(snpStart - geneEnd + "b " + direction);
                             columns.add(Integer.toString(snpStart - geneEnd)); // distance for the comparator, comes last!
+                            columns.add(direction);
                         }
 
-                        // add row if not present already (Genes appear 2x)
+                        // add row
                         list.add(columns);
                     }
 
@@ -134,8 +137,8 @@ public class SnpToGeneDisplayerController extends TilesAction {
                         // convert from generic Object
                         ArrayList<String> firstGene = (ArrayList<String>)first; ArrayList<String> secondGene = (ArrayList<String>)second;
                         // get the distance as an int
-                        int firstGeneDistance = Integer.parseInt(firstGene.get(firstGene.size() -1));
-                        int secondGeneDistance = Integer.parseInt(secondGene.get(secondGene.size() -1));
+                        int firstGeneDistance = Integer.parseInt(firstGene.get(firstGene.size() -2));
+                        int secondGeneDistance = Integer.parseInt(secondGene.get(secondGene.size() -2));
 
                         // "comparator"
                         return firstGeneDistance - secondGeneDistance;
