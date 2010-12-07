@@ -29,12 +29,12 @@
                         <td class="text">${comment.key}</td>
                       </c:when>
                       <c:when test="${bag.key == 'proteins'}">
-                        <!-- comment 'proteins' HashMap -->
+                        <!-- comment 'proteins' List -->
                         <td>
                           <c:forEach var="protein" items="${bag.value}" varStatus="looptyLoop">
-                            <!-- protein: primaryIdentifier => id -->
-                            <html:link action="/objectDetails?id=${protein.value}&amp;trail=|${protein.value}">
-                              ${protein.key}
+                            <!-- protein: id => primaryIdentifier -->
+                            <html:link action="/objectDetails?id=${protein.key}&amp;trail=|${protein.key}">
+                              ${protein.value}
                             </html:link>
                             <!-- ${!looptyLoop.last ? ', ' : ''} -->
                           </c:forEach>
