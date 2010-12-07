@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -63,10 +64,18 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory {
                    + taxonId);
         }
         for (GeneInfoRecord record : records.get(taxonId)) {
-            resolver.addMainIds(taxonId, record.entrez, record.getMainIds());
-            resolver.addSynonyms(taxonId, record.entrez, record.ensemblIds);
-            resolver.addSynonyms(taxonId, record.entrez, record.synonyms);
+            resolver.addMainIds(taxonId, record.entrez, lowerCase(record.getMainIds()));
+            resolver.addSynonyms(taxonId, record.entrez, lowerCase(record.ensemblIds));
+            resolver.addSynonyms(taxonId, record.entrez, lowerCase(record.synonyms));
         }
         return resolver;
+    }
+
+    private Set<String> lowerCase(Set<String> input) {
+        Set<String> lower = new HashSet<String>();
+        for (String s : input) {
+            lower.add(s.toLowerCase());
+        }
+        return lower;
     }
 }

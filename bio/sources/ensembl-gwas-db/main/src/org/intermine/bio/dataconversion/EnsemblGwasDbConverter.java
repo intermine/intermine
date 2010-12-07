@@ -42,6 +42,7 @@ public class EnsemblGwasDbConverter extends BioDBConverter
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> studies = new HashMap<String, String>();
     private Map<String, String> sources = new HashMap<String, String>();
+    private EntrezGeneIdResolverFactory resolverFactory;
     private int taxonId = 9606;
 
     private static final Logger LOG = Logger.getLogger(EnsemblGwasDbConverter.class);
@@ -54,6 +55,7 @@ public class EnsemblGwasDbConverter extends BioDBConverter
      */
     public EnsemblGwasDbConverter(Database database, Model model, ItemWriter writer) {
         super(database, model, writer, DATA_SOURCE_NAME, DATASET_TITLE);
+        resolverFactory = new EntrezGeneIdResolverFactory();
     }
 
 
@@ -202,27 +204,42 @@ public class EnsemblGwasDbConverter extends BioDBConverter
         List<String> geneIdentifiers = new ArrayList<String>();
         if (!StringUtils.isBlank(input)) {
             for (String gene : input.split(",")) {
-                geneIdentifiers.add(getGeneIdentifier(gene.trim().toUpperCase()));
+                String geneIdentifier = getGeneIdentifier(gene.trim().toUpperCase());
+                if (geneIdentifier != null) {
+                    geneIdentifiers.add(geneIdentifier);
+                }
             }
         }
         return geneIdentifiers;
     }
 
     private String getGeneIdentifier(String symbol) throws ObjectStoreException {
-        String geneIdentifier = genes.get(symbol);
-        if (geneIdentifier == null) {
-            Item gene = createItem("Gene");
-            if (symbol.startsWith("ENSG")) {
-                gene.setAttribute("primaryIdentifier", symbol);
-            } else {
-                gene.setAttribute("symbol", symbol);
+        String geneIdentifier = null;
+        String entrezGeneNumber = resolveGene(symbol.toLowerCase());
+        if (entrezGeneNumber != null) {
+            geneIdentifier = genes.get(entrezGeneNumber);
+            if (geneIdentifier == null) {
+                Item gene = createItem("Gene");
+                gene.setAttribute("ncbiGeneNumber", entrezGeneNumber);
+                gene.setReference("organism", getOrganismItem(taxonId));
+                store(gene);
+                geneIdentifier = gene.getIdentifier();
+                genes.put(entrezGeneNumber, geneIdentifier);
             }
-            gene.setReference("organism", getOrganismItem(taxonId));
-            store(gene);
-            geneIdentifier = gene.getIdentifier();
-            genes.put(symbol, geneIdentifier);
         }
         return geneIdentifier;
+    }
+
+    private String resolveGene(String symbol) {
+        IdResolver resolver = resolverFactory.getIdResolver();
+        int resCount = resolver.countResolutions("" + taxonId, symbol);
+        if (resCount != 1) {
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                     + symbol + " count: " + resCount + " - "
+                     + resolver.resolveId("" + taxonId, symbol));
+            return null;
+        }
+        return resolver.resolveId("" + taxonId, symbol).iterator().next();
     }
 
     private String getSourceIdentifier(String name) throws ObjectStoreException {
