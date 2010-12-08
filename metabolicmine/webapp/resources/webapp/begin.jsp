@@ -89,46 +89,156 @@
               <p>Welcome to <strong>metabolicMine</strong>, an integrated web resource of Data &amp; Tools to support the Metabolic
               Disease research community.</p>
 
-              <p>If you are short of time, just navigate through our set of <strong>Feature Hints</strong>. For a basic overview of
-              the site and its features try the <strong>Quick Tour</strong>, it takes about ten minutes.</p>
+              <p>If you are short of time, just navigate through our set of <a class="nice" href="#" onclick="switchBochs(2);return false;">Feature Hints</a>. For a basic overview of
+              the site and its features try the <a class="nice" href="<c:url value="/help/begin.html" />"
+                  onclick="javascript:window.open('<c:url value="/help/begin.html" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Quick Tour</a>, it takes about ten minutes.</p>
               <a class="button blue" href="<c:url value="/help/begin.html" />"
                   onclick="javascript:window.open('<c:url value="/help/begin.html" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
                     <div><span>Take a tour</span></div>
-          </a>
-          <!--
-          <a class="button gray" href="#" onclick="showContactForm();return false;">
-                <div><span>Help</span></div>
-          </a>
-          -->
-              </div>
+              </a>
+             </div>
             </div>
-            <div class="bochs" id="bochs-2" style="display:none;">
+
+            <div class="bochs" id="bochs-2" style="display: none;">
               <div id="thumb" class="span-4">
-                  <img src="/metabolicmine/themes/metabolic/thumbs/thumb-image.png" alt="metabolicMine interface" />
-              </div>
+              <a title="Try Search" href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag="><img
+                src="/metabolicmine/themes/metabolic/thumbs/feature-search.jpg"
+                alt="metabolicMine Search" /></a></div>
               <div id="welcome-content" class="span-8 last">
-              <h2>More text goes here</h2>
-              <p>Lorem ipsum dolor sit.</p>
-              <br />
-              <a class="button gray" href="#" onclick="showContactForm();return false;">
-                <div><span>Something goes here</span></div>
-          </a>
+                <h2>Search</h2>
+                <p>Our search engine operates across many data fields giving you the
+                highest chance of getting a result. Just type your search words in the
+                box.</p>
+                <p>You can search by:</p>
+                <ul>
+                  <li>Identifiers (eg. Gene symbols, accession codes, SNP identifiers, PubMed IDs etc.)</li>
+                  <li>Keywords (eg. Diabetes)</li>
+                  <li>Authors (eg. Sanger F)</li>
+                </ul>
+                <p>Search supports AND, OR, NOT and wildcard*. You can access Search from
+                the home page or use QuickSearch, located top right on every page.</p>
+                <a class="button gray" href="#" onclick="switchBochs(3);return false;"><div><span>Next Hint: Facets</span></div></a>
               </div>
             </div>
-            <div class="span-12 last">
+
+            <div class="bochs" id="bochs-3" style="display: none;">
+              <div id="thumb" class="span-4">
+              <a title="Try Faceted Search" href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag="><img
+                src="/metabolicmine/themes/metabolic/thumbs/feature-facets.jpg"
+                alt="metabolicMine Facets" /></a></div>
+              <div id="welcome-content" class="span-8 last">
+                <h2>Facets</h2>
+                <p><strong>Facets</strong> show you the different places where your search words were found (eg. within Gene, Protein, Go Term, Template, Publication etc).
+                You can use the facets to filter for the type of results that are most important to you. When you've filtered by facets, you can even save the results
+                straight to a List.</p>
+                <a class="button gray" href="#" onclick="switchBochs(4);return false;"><div><span>Next Hint: Lists</span></div></a>
+              </div>
+            </div>
+
+            <div class="bochs" id="bochs-4" style="display: none;">
+              <div id="thumb" class="span-4">
+              <a title="Try Lists" href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view"><img
+                src="/metabolicmine/themes/metabolic/thumbs/feature-lists.jpg"
+                alt="metabolicMine Lists" /></a></div>
+              <div id="welcome-content" class="span-8 last">
+                <h2>Lists</h2>
+                <p>The <strong>Lists</strong> area lets you operate on whole sets of data at once. You can
+                upload your own Lists (favourite Genes, SNPs etc) or save them from results tables.
+                We also create useful <strong>Public Lists</strong> for everyone to use. Explore
+                your data on the List Analysis Page</p>
+                <p>Here are just some of the things you can do:</p>
+                <ul>
+                  <li>Ask questions about the data using our predefined Templates</li>
+                  <li>Combine or subtract the content of other Lists</li>
+                  <li>Uncover hidden relationships with our analysis <strong>Widgets</strong></li>
+                </ul>
+                <p>You can work with Lists from the Home page or select Lists from the Tab bar, located at the top of every page.</p>
+                <a class="button gray" href="#" onclick="switchBochs(5);return false;"><div><span>Next Hint: Templates</span></div></a>
+            </div>
+           </div>
+
+            <div class="bochs" id="bochs-5" style="display: none;">
+              <div id="thumb" class="span-4">
+              <a title="Try Templates" href="/${WEB_PROPERTIES['webapp.path']}/templates.do"><img
+                src="/metabolicmine/themes/metabolic/thumbs/feature-templates.jpg"
+                alt="metabolicMine Templates" /></a></div>
+              <div id="welcome-content" class="span-8 last">
+                <h2>Templates</h2>
+                <p><strong>Template queries</strong> are 'predefined' queries designed around the common tasks performed by our Biologist Community. Templates
+                provide you with a simple form that lets you define your starting point and optional filters to help focus your search.</p>
+                <p>Templates cover common questions like:</p>
+                <ul>
+                    <li>I have a List of SNPs - do any of them affect Genes?</li>
+                    <li>This Gene came up in my results - what can I find out about it?</li>
+                    <li>I'm interested in this chromosome region - what's in there that could be linked with this disease?</li>
+                </ul>
+                <p>You can work with Templates from the Home page or select Templates from the Tab bar, located at the top of every page.</p>
+                <a class="button gray" href="#" onclick="switchBochs(6);return false;"><div><span>Next Hint: MyMine</span></div></a>
+            </div>
+           </div>
+
+            <div class="bochs" id="bochs-6" style="display: none;">
+              <div id="thumb" class="span-4">
+              <a title="Try MyMine" href="/${WEB_PROPERTIES['webapp.path']}/mymine.do"><img
+                src="/metabolicmine/themes/metabolic/thumbs/feature-mymine.jpg"
+                alt="metabolicMine MyMine" /></a></div>
+              <div id="welcome-content" class="span-8 last">
+                <h2>MyMine</h2>
+                <p><strong>MyMine</strong> is your <u>personal space</u> on metabolicMine. Creating an account is easy. Just provide an e-mail and a password. You're ready to go.</p>
+                <p>Your account allows you to:</p>
+                <ul>
+                  <li>Save Queries and Lists</li>
+                  <li> Modify and save Templates for later use</li>
+                  <li>Mark Public Templates as favourites so they're easier to find</li>
+                </ul>
+                <p>You can access mMyMine from the Tab bar, located at the top of every page.</p>
+                <p>Note: Your data and e-mail address are confidential and we wont send you unsolicited mail.</p>
+                <a class="button gray" href="#" onclick="switchBochs(7);return false;"><div><span>Next Hint: QueryBuilder</span></div></a>
+            </div>
+           </div>
+
+            <div class="bochs" id="bochs-7" style="display: none;">
+              <div id="thumb" class="span-4">
+              <a title="Try QueryBuilder" href="/${WEB_PROPERTIES['webapp.path']}/customQuery.do"><img
+                src="/metabolicmine/themes/metabolic/thumbs/feature-querybuilder.jpg"
+                alt="metabolicMine QueryBuilder" /></a></div>
+              <div id="welcome-content" class="span-8 last">
+                <h2>QueryBuilder</h2>
+                <p><strong>QueryBuilder (QB)</strong> is the Powerhouse of metabolicMine.</p>
+                <p>Its advanced interface lets you:</p>
+                <ul>
+                  <li>Construct your own custom queries
+                  <li>Modify your previous queries
+                  <li>You can even edit our predefined Templates.
+                </ul>
+                <p>The easiest way to get started with QB is by editing one of our pre-existing Template queries.
+                Follow the simple tutorial in the QueryBuilder section of the <strong>Tour</strong> to see how to change a Template output or add a filter.</p>
+
+                <p>You can access QueryBuilder from the Tab bar, located at the top of every page.</p>
+            </div>
+           </div>
+
+        <div class="span-12 last">
               <ul id="switcher">
-              <!--
-                <li id="switcher-1" class="switcher current"><a onclick="switchBochs(1);return false;" href="#">1</a></li>
-                <li id="switcher-2" class="switcher"><a onclick="switchBochs(2);return false;" href="#">2</a></li>
-              -->
+                <li id="switcher-1" class="switcher current"><a onclick="switchBochs(1);return false;" href="#">Start</a></li>
+                <li id="switcher-2" class="switcher"><a onclick="switchBochs(2);return false;" href="#">1</a></li>
+                <li id="switcher-3" class="switcher"><a onclick="switchBochs(3);return false;" href="#">2</a></li>
+                <li id="switcher-4" class="switcher"><a onclick="switchBochs(4);return false;" href="#">3</a></li>
+                <li id="switcher-5" class="switcher"><a onclick="switchBochs(5);return false;" href="#">4</a></li>
+                <li id="switcher-6" class="switcher"><a onclick="switchBochs(6);return false;" href="#">5</a></li>
+                <li id="switcher-7" class="switcher"><a onclick="switchBochs(7);return false;" href="#">6</a></li>
               </ul>
             </div>
         </div>
         <div class="bottom span-12 last"></div>
     </div>
 
-    <!--
     <script type="text/javascript">
+    /* hide switcher of we are on first time here */
+    if ($("#switcher-1").hasClass('current')) {
+      $("#switcher").hide();
+    }
+
     /* div switcher for welcome bochs using jQuery */
     function switchBochs(newDivId) {
       // no current
@@ -143,9 +253,15 @@
       // apply active class
       $("#welcome-content").each (function() { javascript:jQuery(this).removeClass('current'); });
       $('#bochs-'+newDivId+' > #welcome-content').addClass('current');
+
+      // show/hide switcher?
+      if ($("#switcher-1").hasClass('current')) {
+        $("#switcher").hide();
+      } else {
+        $("#switcher").show();
+      }
     }
   </script>
-  -->
 
     <div id="actions" class="span-12 last wide-gray">
 
@@ -211,8 +327,8 @@
                   <h3><a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">Use Template Queries</a></h3>
                   <div style="clear:both;"> </div>
                   <p>Get started with <strong>powerful queries</strong> using our predefined searches. These customizable templates have been
-                  designed around common tasks performed by our biologist community. To see how they work, why not try a template from our
-                  <strong>examples page</strong>?</p>
+                  designed around common tasks performed by our biologist community.</p>
+                  <p>To see how they work, why not try a template from our <strong>examples page</strong>?</p>
               </div>
               <div class="span-12 last">
                   <div class="span-4 search">
@@ -335,7 +451,7 @@
         <div class="more span-6 last"><a target="new" href="http://blog.metabolicmine.org/" class="more">&nbsp;</a></div>
     </div>
 
-    <!--
+  <!--
     <div id="testimonials" class="span-4 last blue">
         <div class="top"></div>
         <div class="center span-4 last">
@@ -387,10 +503,6 @@
     </div>
 
  </div>
-
-<jsp:include page="/support.jsp">
-  <jsp:param name="page" value="home" />
-</jsp:include>
 
  <script type="text/javascript">
    // e.g. values only available when JavaScript is on
