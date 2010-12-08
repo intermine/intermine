@@ -194,6 +194,10 @@ form#quick-search { float:right; margin-right:12px; }
 #welcome { margin:0; position:relative; }
   #welcome p { font-size:14px; line-height:24px; }
 
+  #welcome #welcome-content ul { font-size:14px; color:#4D5154; margin:0 0 10px 14px; list-style-type:square; }
+  #welcome #welcome-content a.nice { color:#0891C1; }
+  #welcome #welcome-content h2 { color:#0891C1; }
+
   #welcome ul#switcher { list-style:none; float:right; margin:0; margin-right:10px; }
     #welcome ul#switcher li { float:left; padding-right:6px; }
       #welcome ul#switcher a { text-decoration:none; border:1px solid #BEDCE4; padding:0 8px; }
@@ -289,6 +293,7 @@ div.wide-gray div.bottom { background:url("../themes/metabolic/img/box-wide-gray
 #actions h3 a { color:#FFF; text-decoration:none; }
 
 #actions div.search h3 { background:#FB641E; }
+#actions div.search h3 a, #actions div.search h3 a:visited { color:#FFF; }
 #actions div.search strong { color:#FB4F00; }
 #actions div.search input.orange-gray { background:url("../themes/metabolic/buttons/orange-button-on-gray.png") no-repeat bottom; color:#FFFFFF;
     padding:2px 40px; /* IE7 */ *padding:4px 20px; float:right; margin-right:30%; /* IE7 */ *margin-right:25%; }
@@ -297,6 +302,7 @@ div.wide-gray div.bottom { background:url("../themes/metabolic/img/box-wide-gray
   height:36px; color:#888; }
 #actionsInput.eg { color:#888; }
 #actions div.search input.input { border:none; background:none; width:255px; padding:6px 20px 6px 30px; }
+#actions div.search a, #actions div.search a:visited { color:#FB4F00; }
 
 #actions div.lists h3 { background:#20A900; }
 #actions div.lists strong { color:#009900; }
