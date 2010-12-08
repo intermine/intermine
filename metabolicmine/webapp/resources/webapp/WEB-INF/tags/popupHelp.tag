@@ -19,4 +19,5 @@
 
 &nbsp;&nbsp;
 
+<a class="contactTeam" onclick="showContactForm();return false;" href="#">Contact</a> <span class="omgDivider">&nbsp;</span>
 <html:link styleClass="contextHelpSmall" href="${url}" onclick="javascript:window.open('${url}','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Help</html:link>
