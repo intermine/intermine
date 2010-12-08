@@ -96,6 +96,21 @@ public class Profile
     }
 
     /**
+     * Return a first part of the username before the "@" sign (used in metabolicMine)
+     * @author radek
+     *
+     * @return String
+     */
+    public String getName() {
+        int atPos = username.indexOf("@");
+        if (atPos > 0) {
+            return username.substring(0, atPos);
+        } else {
+            return username;
+        }
+    }
+
+    /**
      * Return true if and only if the user is logged is (and the Profile will be written to the
      * userprofile).
      * @return Return true if logged in
