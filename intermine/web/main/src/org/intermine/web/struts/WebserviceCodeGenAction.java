@@ -28,7 +28,6 @@ import org.intermine.api.query.codegen.WebserviceCodeGenInfo;
 import org.intermine.api.query.codegen.WebserviceCodeGenerator;
 import org.intermine.api.query.codegen.WebserviceJavaCodeGenerator;
 import org.intermine.api.query.codegen.WebservicePerlCodeGenerator;
-import org.intermine.api.search.Scope;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateManager;
@@ -77,13 +76,8 @@ public class WebserviceCodeGenAction extends InterMineAction
                     String sc = wsPerlCG.generate(setWebserviceCodeGenInfo(
                             getTemplateQuery(im, profile, request, session),
                             serviceBaseURL, projectTitle, perlWSModuleVer));
-                    // TODO user's templates
-                    // 1. don't generate
-                    // 2. generate pathquery code instead
                     output(sc, method, source, response);
                 } else if ("pathQuery".equals(source)) {
-                    // TODO case when creating a template out of a pathquery
-                    // convert template => pathquery
                     String sc = wsPerlCG
                             .generate(setWebserviceCodeGenInfo(
                                     getPathQuery(session), serviceBaseURL,
@@ -97,13 +91,8 @@ public class WebserviceCodeGenAction extends InterMineAction
                     String sc = wsJavaCG.generate(setWebserviceCodeGenInfo(
                             getTemplateQuery(im, profile, request, session),
                             serviceBaseURL, projectTitle, null));
-                    // TODO user's templates
-                    // 1. don't generate
-                    // 2. generate pathquery code instead
                     output(sc, method, source, response);
                 } else if ("pathQuery".equals(source)) {
-                    // TODO case when creating a template out of a pathquery
-                    // convert template => pathquery
                     String sc = wsJavaCG
                             .generate(setWebserviceCodeGenInfo(
                                     getPathQuery(session), serviceBaseURL,
@@ -144,13 +133,10 @@ public class WebserviceCodeGenAction extends InterMineAction
                                      ? templateManager.getTemplate(profile, name, scope)
                                      : (TemplateQuery) SessionMethods.getQuery(session);
             if (template != null) {
-                LOG.info("PUBLIC >>>>> " + im.getTagManager().getObjectTagNames(template.getName(),
-                                TagTypes.TEMPLATE, profile.getUsername())
-                        .contains(TagNames.IM_PUBLIC));
+                // User's template, convert to PathQuery
                 if (!im.getTagManager().getObjectTagNames(template.getName(),
                                 TagTypes.TEMPLATE, profile.getUsername())
                         .contains(TagNames.IM_PUBLIC)) {
-                    // TODO user's template, convert to PathQuery
                     PathQuery query = template.getPathQuery();
                     return query;
                 } else {
@@ -173,8 +159,8 @@ public class WebserviceCodeGenAction extends InterMineAction
         PathQuery query =  SessionMethods.getQuery(session);
 
         if (query != null) {
+            // If Class is Template, convert it to PathQuery
             if ("TemplateQuery".equals(TypeUtil.unqualifiedName(query.getClass().toString()))) {
-                // If Class is Template, convert it to PathQuery
                 query = ((TemplateQuery) query).getPathQuery();
             }
             return query;
