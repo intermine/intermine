@@ -128,6 +128,13 @@
 
 <div style="clear:both;"></div>
 
+<tiles:insert page="/bagDisplayers.jsp">
+  <tiles:put name="bag" beanName="bag"/>
+  <tiles:put name="showOnLeft" value="true"/>
+</tiles:insert>
+
+<div style="clear:both;"></div>
+
 <div id="alien">
   <div class="bochs noborder">
     <script type="text/javascript">
