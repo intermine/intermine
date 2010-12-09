@@ -23,6 +23,7 @@ exon_region
 five_prime_UTR
 flanking_region
 gene
+golden_path_fragment
 histone_binding_site
 intergenic_region
 insertion
