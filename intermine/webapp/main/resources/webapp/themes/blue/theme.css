@@ -343,3 +343,6 @@ ul#submenulist li div { border-left-color:#FFF; }
 
 /* login bar */
 ul#loginbar li { border-right-color:#000; }
+
+/* list analysis */
+#tool_bar_div ul#button_bar li a { background:none !important; color:#323232; }
