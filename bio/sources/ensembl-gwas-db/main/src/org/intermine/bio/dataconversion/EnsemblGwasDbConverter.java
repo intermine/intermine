@@ -30,8 +30,8 @@ import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
 
 /**
- * 
- * @author
+ * Load Genome Wide Association Study (GWAS) data from Ensembl variation mySQL database.
+ * @author Richard Smith
  */
 public class EnsemblGwasDbConverter extends BioDBConverter
 {
@@ -253,7 +253,7 @@ public class EnsemblGwasDbConverter extends BioDBConverter
         }
         return sourceIdentifier;
     }
-    
+
     private ResultSet queryVariationAnnotation(Connection connection) throws SQLException {
         String query = "SELECT vf.variation_name, "
             + " va.study, va.study_type, va.local_stable_id, va.associated_gene, "
