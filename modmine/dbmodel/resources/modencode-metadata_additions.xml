@@ -336,14 +336,16 @@
   <reference name="organism" referenced-type="Organism" />
 </class>
 
-<!--
-<class name="FlyExpressionScore" is-interface="true">
-  <attribute name="score" type="java.lang.Double" />
-  <reference name="subject" referenced-type="BioEntity" />
-  <reference name="cellLine" referenced-type="CellLine" />
-  <reference name="developmentalStage" referenced-type="DevelopmentalStage" />
-  <reference name="submission" referenced-type="Submission" />
+<class name="Regulation" is-interface="true">
+  <attribute name="type" type="java.lang.String" />
+  <reference name="source" referenced-type="BioEntity" />
+  <reference name="target" referenced-type="BioEntity" />
 </class>
--->
+
+<class name="NetworkProperty" is-interface="true">
+  <attribute name="type" type="java.lang.String" />
+  <attribute name="value" type="java.lang.String" />
+  <reference name="node" referenced-type="BioEntity" />
+</class>
 
 </classes>
