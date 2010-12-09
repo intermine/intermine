@@ -78,7 +78,7 @@
         }
         </script>
 
-        <div style="font-size:16px; font-weight:bold">Interaction Network</div>
+        <h3 class="interactions">Interaction Network</h3>
         <div id="caption" style="font-size:12px; font-style:italic">
         <!-- jQuery will add stuff here -->
         </div>
