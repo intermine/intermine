@@ -2,7 +2,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <html:xhtml/>
-<div class="bochs">
+<div id="nearbyGenes" class="bochs">
 
   <h4>Find nearby Genes</h4>
 
@@ -11,19 +11,18 @@
     <html:hidden property="bagName" value="${bag.name}" />
 
     <html:select styleId="typeSelector" property="distance">
-      <html:option value="0.5kb">.5kb</html:option>
-      <html:option value="1.0kb">1kb</html:option>
-      <html:option value="2.0kb">2kb</html:option>
-      <html:option value="5.0kb">5kb</html:option>
-      <html:option value="10.0kb">10kb</html:option>
+      <c:forEach var="option" items="${distanceTypes}">
+        <html:option value="${option.key}">${option.value}</html:option>
+      </c:forEach>
     </html:select>
 
     <html:select styleId="typeSelector" property="direction">
-      <html:option value="upstream">upstream</html:option>
-      <html:option value="downstream">downstream</html:option>
-      <html:option value="bothways">both ways</html:option>
+      <c:forEach var="option" items="${directionTypes}">
+        <html:option value="${option.key}">${option.value}</html:option>
+      </c:forEach>
     </html:select>
 
+    <%-- changing the <submit> text will break functionality! --%>
     <html:submit styleId="submitBag" property="action">Result</html:submit>
     - or -
     <html:submit styleId="submitBag" property="action">List</html:submit>
