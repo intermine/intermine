@@ -439,8 +439,16 @@ NOT TO BE USED FOR A BUILD
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
 
+        <!-- Cherbas Flyscore -->
+        <source name="fly-expression-score" type="fly-expression-score">
+            <property name="src.data.dir" location="/shared/data/fly-expression-score"/>
+        </source>
+        <!-- TF-mRNA network -->
+        <source name="tf-mrna-network" type="tf-mrna-network">
+            <property name="src.data.dir" location="/shared/data/tf-mrna-network"/>
+        </source>
 
-        <source name="update-publications" type="update-publications">
+        <source name="update-publications" type="update-publications" dump="true">
             <!-- this source finds the publication ids (pubmed ids) in the
                      objectstore, retrieves the details of the publication from Entrez
                      into an InterMine format XML file, loads that file into a target
