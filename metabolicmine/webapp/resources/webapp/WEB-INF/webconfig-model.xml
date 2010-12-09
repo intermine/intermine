@@ -301,6 +301,9 @@
       <displayer src="snpToGeneDisplayer.tile"/>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
+    <bagdisplayers>
+      <displayer src="snpToGeneFormDisplayer.tile" showOnLeft="true"/>
+    </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Source">

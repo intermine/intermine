@@ -25,3 +25,6 @@
 
 <definition name="snpToGeneDisplayer.tile" path="/model/snpToGeneDisplayer.jsp"
         controllerUrl="/initSnpToGeneDisplayer.do"/>
+
+<definition name="snpToGeneFormDisplayer.tile" path="/model/snpToGeneFormDisplayer.jsp"
+          controllerUrl="/initSnpToGeneFormDisplayer.do"/>

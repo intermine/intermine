@@ -153,7 +153,7 @@ public class FeaturesAction extends InterMineAction
                     // we don't want this field on exports
                     q.addView(featureType + ".scoreProtocol.name");
                     q.setOuterJoinStatus(featureType + ".scoreProtocol",
-                            OuterJoinStatus.OUTER);   
+                            OuterJoinStatus.OUTER);
                 }
                 q.addConstraint(Constraints.eq(featureType + ".submissions.experiment.name",
                         experimentName));
@@ -334,13 +334,13 @@ public class FeaturesAction extends InterMineAction
 
             Profile profile = SessionMethods.getProfile(session);
 
-            BagQueryRunner bagQueryRunner = im.getBagQueryRunner();
+            //BagQueryRunner bagQueryRunner = im.getBagQueryRunner();
 
             String bagName = (dccId != null ? "submission_" + dccId : experimentName)
                 + "_" + featureType + "_features";
             bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), bagName);
             BagHelper.createBagFromPathQuery(q, bagName, q.getDescription(), featureType, profile,
-                    os, bagQueryRunner);
+                    im);
             ForwardParameters forwardParameters =
                 new ForwardParameters(mapping.findForward("bagDetails"));
             return forwardParameters.addParameter("bagName", bagName).forward();

@@ -81,6 +81,14 @@ public class ModifyBagDetailsAction extends InterMineAction
                 msg = "You have removed " + removed + " items from your list.";
             }
             SessionMethods.recordMessage(msg, session);
+            //return new ForwardParameters(mapping.findForward("bagDetails"))
+            //.addParameter("bagName", mbdf.getBagName()).forward();
+
+            // pass an extra parameter telling the JSP to open up the results table
+            return new ForwardParameters(mapping.findForward("bagDetails"))
+                .addParameter("bagName", mbdf.getBagName())
+                .addParameter("table", "open").forward();
+
         } else if (request.getParameter("addToBag") != null) {
             InterMineBag newBag = bagManager.getUserOrGlobalBag(profile,
                     mbdf.getExistingBagName());
