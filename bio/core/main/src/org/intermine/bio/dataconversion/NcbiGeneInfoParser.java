@@ -1,5 +1,15 @@
 package org.intermine.bio.dataconversion;
 
+/*
+ * Copyright (C) 2002-2010 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
@@ -16,10 +26,12 @@ import org.intermine.util.FormattedTextParser;
  * @author Richard Smith
  *
  */
-public class NcbiGeneInfoParser {
+public class NcbiGeneInfoParser
+{
     private Map<String, Set<GeneInfoRecord>> recordMap = new HashMap<String, Set<GeneInfoRecord>>();
     private Map<String, Set<String>> duplicateEnsemblIds = new HashMap<String, Set<String>>();
-    
+    private Map<String, Set<String>> duplicateSymbols = new HashMap<String, Set<String>>();
+
     /**
      * Construct the parser with the file to read, the input file can be for a single taxon or for
      * multiple.
@@ -31,7 +43,7 @@ public class NcbiGeneInfoParser {
 
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
-            
+
             String taxonId = line[0];
             String entrez = line[1];
             String defaultSymbol = line[2];
@@ -45,11 +57,11 @@ public class NcbiGeneInfoParser {
             GeneInfoRecord record = new GeneInfoRecord(taxonId, entrez, officialSymbol,
                     defaultSymbol, officialName, defaultName, mapLocation);
             record.ensemblIds.addAll(parseXrefs(xrefs, "Ensembl"));
-            
+
             for (String synonym : synonyms.split("\\|")) {
                 record.synonyms.add(synonym);
             }
-            
+
             Set<GeneInfoRecord> taxonRecords = recordMap.get(taxonId);
             if (taxonRecords == null) {
                 taxonRecords = new HashSet<GeneInfoRecord>();
@@ -72,8 +84,8 @@ public class NcbiGeneInfoParser {
      * Return true if the given Ensembl identifier is assigned to only one gene for the taxon
      * specified.
      * @param taxonId the taxon of the gene being looked up
-     * @param ensemblId and ensembl gene identifier
-     * @return
+     * @param ensemblId an ensembl gene identifier
+     * @return true if this ensembl id is only mapped to one NCBI gene
      */
     public boolean isUniquelyMappedEnsemblId(String taxonId, String ensemblId) {
         Set<String> taxonDuplicates = duplicateEnsemblIds.get(taxonId);
@@ -81,7 +93,7 @@ public class NcbiGeneInfoParser {
             taxonDuplicates = findDuplicateEnsemblIds(taxonId);
             duplicateEnsemblIds.put(taxonId, taxonDuplicates);
         }
-        return taxonDuplicates.contains(ensemblId);
+        return !taxonDuplicates.contains(ensemblId);
     }
 
     private Set<String> findDuplicateEnsemblIds(String taxonId) {
@@ -101,6 +113,37 @@ public class NcbiGeneInfoParser {
         return duplicates;
     }
 
+    /**
+     * Return true if the given symbol is is assigned to only one gene for the taxon specified.
+     * @param taxonId the taxon of the gene being looked up
+     * @param symbol a gene symbl to check
+     * @return true if this true id is only assigned to one NCBI gene
+     */
+    public boolean isUniqueSymbol(String taxonId, String symbol) {
+        Set<String> taxonDuplicates = duplicateSymbols.get(taxonId);
+        if (taxonDuplicates == null) {
+            taxonDuplicates = findDuplicateSymbols(taxonId);
+            duplicateSymbols.put(taxonId, taxonDuplicates);
+        }
+        return !taxonDuplicates.contains(symbol);
+    }
+
+    private Set<String> findDuplicateSymbols(String taxonId) {
+        Set<String> duplicates = new HashSet<String>();
+        if (recordMap.containsKey(taxonId)) {
+            Set<String> seenSymbols = new HashSet<String>();
+            for (GeneInfoRecord record : recordMap.get(taxonId)) {
+                for (String symbol : new String[] {record.officialSymbol, record.defaultSymbol}) {
+                    if (seenSymbols.contains(symbol)) {
+                        duplicates.add(symbol);
+                    } else {
+                        seenSymbols.add(symbol);
+                    }
+                }
+            }
+        }
+        return duplicates;
+    }
     private Set<String> parseXrefs(String xrefs, String prefix) {
         if (!prefix.endsWith(":")) {
             prefix = prefix + ":";
