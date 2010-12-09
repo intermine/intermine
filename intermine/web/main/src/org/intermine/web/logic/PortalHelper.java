@@ -136,7 +136,7 @@ public final class PortalHelper
             HttpServletRequest request) {
         String url = null;
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
-        String externalId = ClassKeyHelper.getKeyFieldValue(obj, classKeys).toString();
+        Object externalId = ClassKeyHelper.getKeyFieldValue(obj, classKeys);
         if (externalId != null) {
             String baseUrl = getBaseUrl(request);
             String clsName = DynamicUtil.getSimpleClass(obj).getSimpleName();
@@ -145,7 +145,7 @@ public final class PortalHelper
             sb.append("/portal.do?class=");
             sb.append(clsName);
             sb.append("&externalids=");
-            sb.append(encode(externalId));
+            sb.append(encode(externalId.toString()));
             url = sb.toString();
         }
         return url;
