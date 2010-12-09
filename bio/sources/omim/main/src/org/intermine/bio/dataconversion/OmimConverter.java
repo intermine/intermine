@@ -35,21 +35,21 @@ import org.intermine.xml.full.Item;
 
 
 /**
- *
- * @author
+ * Load disease data from OMIM and relationship to genes, publications and SNPs.
+ * @author Richard Smith
  */
 public class OmimConverter extends BioDirectoryConverter
 {
     //
     private static final String DATASET_TITLE = "OMIM diseases";
     private static final String DATA_SOURCE_NAME = "Online Mendelian Inheritance in Man";
+    private static final String HUMAN_TAXON = "9606";
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, Item> diseases = new HashMap<String, Item>();
 
     private String organism;
-    private HgncIdResolverFactory hgncGeneResolverFactory = null;
-    private IdResolver geneResolver = null;
+    private EntrezGeneIdResolverFactory resolverFactory = null;
 
     private static final String OMIM_TXT_FILE = "omim.txt";
     private static final String MORBIDMAP_FILE = "morbidmap";
@@ -64,7 +64,7 @@ public class OmimConverter extends BioDirectoryConverter
      */
     public OmimConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
-        hgncGeneResolverFactory = new HgncIdResolverFactory();
+        resolverFactory = new EntrezGeneIdResolverFactory();
     }
 
     @Override
@@ -217,15 +217,15 @@ public class OmimConverter extends BioDirectoryConverter
             String[] symbols = symbolStr.split(",");
             // main HGNC symbols is first, others are synonyms
             String symbolFromFile = symbols[0].trim();
-            String symbol = resolveGene(symbolFromFile);
-            if (symbol != null) {
+            String ncbiGeneNumber = resolveGene(symbolFromFile.toLowerCase());
+            if (ncbiGeneNumber != null) {
                 resolvedCount++;
                 //String gene = getGeneId(symbol);
                 if (geneMapType != null) {
                     counts.get(geneMapType).resolved++;
                 }
             }
-            String geneId = getGeneId(symbolFromFile);
+            String geneId = getGeneIdentifier(symbolFromFile);
             m = matchMajorDiseaseNumber.matcher(first);
             String diseaseMimId = null;
             while (m.find()) {
@@ -233,7 +233,7 @@ public class OmimConverter extends BioDirectoryConverter
                 diseaseMimId = m.group(1);
             }
 
-            if (diseaseMimId != null) {
+            if (diseaseMimId != null && geneId != null) {
                 Item disease = getDisease(diseaseMimId);
                 disease.addToCollection("genes", geneId);
             } else {
@@ -267,17 +267,16 @@ public class OmimConverter extends BioDirectoryConverter
         LOG.info("Found " + diseaseMatches + " to " + diseaseNumbers.size() + " unique diseases from " + lineCount + " line file.");
     }
 
-    private String resolveGene(String fromFile) {
-        if (geneResolver == null) {
-            geneResolver = hgncGeneResolverFactory.getIdResolver(true);
+    private String resolveGene(String symbol) {
+        IdResolver resolver = resolverFactory.getIdResolver();
+        int resCount = resolver.countResolutions("" + HUMAN_TAXON, symbol);
+        if (resCount != 1) {
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                     + symbol + " count: " + resCount + " - "
+                     + resolver.resolveId("" + HUMAN_TAXON, symbol));
+            return null;
         }
-        int resCount = geneResolver.countResolutions("9606", fromFile);
-        if (resCount == 1) {
-            return geneResolver.resolveId("9606", fromFile).iterator().next();
-        }
-        LOG.warn("Could not resolve identifier to a single gene: " + fromFile + " count: "
-                + resCount);
-        return null;
+        return resolver.resolveId("" + HUMAN_TAXON, symbol).iterator().next();
     }
 
     private void processPubmedCitedFile(Reader reader) throws IOException, ObjectStoreException {
@@ -332,6 +331,22 @@ public class OmimConverter extends BioDirectoryConverter
             store(pub);
         }
         return pubId;
+    }
+    private String getGeneIdentifier(String symbol) throws ObjectStoreException {
+        String geneIdentifier = null;
+        String entrezGeneNumber = resolveGene(symbol.toLowerCase());
+        if (entrezGeneNumber != null) {
+            geneIdentifier = genes.get(entrezGeneNumber);
+            if (geneIdentifier == null) {
+                Item gene = createItem("Gene");
+                gene.setAttribute("ncbiGeneNumber", entrezGeneNumber);
+                gene.setReference("organism", organism);
+                store(gene);
+                geneIdentifier = gene.getIdentifier();
+                genes.put(entrezGeneNumber, geneIdentifier);
+            }
+        }
+        return geneIdentifier;
     }
 
     private String getGeneId(String symbol) throws ObjectStoreException {
