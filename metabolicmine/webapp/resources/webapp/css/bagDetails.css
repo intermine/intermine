@@ -50,15 +50,23 @@ div.description #emptyDesc { margin:0 !important; position:relative !important; 
   div.bochs h5, div.bochs h3 { background-repeat:no-repeat; background-position:left; border-bottom:1px solid #DFDFDF; color:#FB641E;
     font-size:14px; line-height:24px; margin-bottom:4px; }
 
+#alien { background:#FEFEFE; border:1px solid #9cc740; padding:10px 6px 2px 6px; width:93%; margin-bottom:10px; }
+  #alien div.bochs { width:31%; }
+  #alien div.bochs.noborder a { background:url("../themes/metabolic/icons/toggle-expand.png") no-repeat 10px; padding:8px 0 8px 35px; display:block; color:#FB641E; }
+  #alien div.bochs.noborder h3 { border:none; margin:0; }
+
 /* yellow boxes */
 div.bochs.yellow { border:1px solid #E3D85A; background:#FFFBD8; }
 
 /* callout boxes */
 div.bochs.callout { margin:margin-right:0; padding-top:4px; }
-  div.bochs.callout.alien { background:#E6FEEA; border:1px solid #9cc740; }
+  div.bochs.callout.alien { background:#FBFEFC; border:1px solid #9cc740; }
   div.bochs.callout h3 { border:0; margin:0; }
   div.bochs.callout a { background:url("../themes/metabolic/icons/toggle-expand.png") no-repeat 10px; padding:8px 0 8px 35px; display:block; color:#FB641E; }
     div.bochs.callout a.active { background-image:url("../themes/metabolic/icons/toggle-minus.png"); }
+
+/* no box bochs */
+div.bochs.noborder { border:none; }
 
 /* wide box */
 div.bochs.wide { width:93%; }
@@ -68,8 +76,11 @@ div.bochs.wide div.description { font-size:12px; line-height:15px; font-weight:n
     div.bochs.wide div.description #bagDescriptionTextarea textarea#textarea { width:86% !important; }
     div.bochs.wide div.description #bagDescriptionTextarea div.buttons { display:inline; float:right; }
 
+div.bochs.wide h1 span, div.bochs.wide h1 small { font-weight:normal; }
+div.bochs.wide h1 small { font-size:12px; }
+
 /* toolbox bochs box */
-#toolbox { padding:6px; }
+#toolbox { padding:6px; background:#FFF; }
   #toolbox h5 { background-repeat:no-repeat; background-position:left; border-bottom:1px solid #DFDFDF; color:#FB641E; font-size:14px; line-height:24px; margin-bottom:4px; }
   #toolbox div.tool { float:left; padding-right:20px; *padding-right:6px; /* IE7 only */ }
 
@@ -85,11 +96,12 @@ div.pagination { margin:0 auto; float:left; vertical-align:bottom; margin-bottom
   div.pagination a { color:#1F7492 !important; }
 
 /* results table */
-div.table table.results { border:1px solid #DFDFDF; border-left:0; margin-bottom:10px; width:93.5%; }
+div.table table.results { border:1px solid #DFDFDF; border-left:0; margin-bottom:10px; width:100%; }
   div.table table.results a { color:#1F7492; }
   div.table table.results th { border:none; border-left:1px solid #DFDFDF !important; font-size:16px; background:#F5F5F5; color:#4B3F4B; }
   div.table table.results tr.odd td, div.table table.results tr.even td { border:none; border-left:1px solid #DFDFDF !important; }
   div.table table.results tr.even td { background:#E6F7FE; border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; }
+  div.table table.results tr.odd td { background:#FFF; }
   div.table table.results tr.odd td.highlightCell, div.table table.results tr.odd td.highlightObject { background:#FFFBD8; }
   div.table table.results tr.even td.highlightCell, div.table table.results tr.even td.highlightObject { background:#FFFBD8;
     border-top:1px solid #E3D85A; border-bottom:1px solid #E3D85A; }

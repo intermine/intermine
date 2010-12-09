@@ -36,9 +36,9 @@
 
 <div class="bochs wide">
   <h1>
-    <fmt:message key="bagDetails.title"/> "${bag.name}"
-    of ${bag.size} ${bag.type}<c:if test="${bag.size != 1}">s</c:if>
-    created  <fmt:formatDate dateStyle="full" timeStyle="full" value="${bag.dateCreated}" />
+    <span><fmt:message key="bagDetails.title"/></span> ${bag.name}
+    <span>of</span> ${bag.size} ${bag.type}<c:if test="${bag.size != 1}">s</c:if>
+    <small>created  <fmt:formatDate dateStyle="full" timeStyle="full" value="${bag.dateCreated}" /></small>
     <div class="description">
       <c:choose>
         <c:when test="${myBag == 'true'}">
@@ -95,14 +95,12 @@
   </html:form>
 </div>
 
-<!--link outs -->
+<!-- export list -->
 <div class="bochs">
-  <h4 class="links">Linkouts</h4>
-    <p>
-      <tiles:insert name="attributeLinkDisplayer.tile">
-           <tiles:put name="bag" beanName="bag" />
-      </tiles:insert>
-    </p>
+  <h4 class="export">Download</h4>
+  <c:set var="tableName" value="bag.${bag.name}" scope="request"/>
+  <c:set var="pagedTable" value="${pagedResults}" scope="request"/>
+  <tiles:get name="export.tile"/>
 </div>
 
 <!-- orthologues in other mines -->
@@ -114,14 +112,6 @@
            <tiles:put name="showOnLeft" value="false"/>
     </tiles:insert>
   </html:form>
-</div>
-
-<!-- export list -->
-<div class="bochs">
-  <h4 class="export">Download</h4>
-  <c:set var="tableName" value="bag.${bag.name}" scope="request"/>
-  <c:set var="pagedTable" value="${pagedResults}" scope="request"/>
-  <tiles:get name="export.tile"/>
 </div>
 
 <!-- tags -->
@@ -138,48 +128,47 @@
 
 <div style="clear:both;"></div>
 
-<div class="callout bochs alien">
-  <script type="text/javascript">
-    // will show/hide the results table and toolbox & change the link appropriately (text, ico)
-    function toggleResults() {
-      // expanding or contracting?
-      if (jQuery('#results').is(":visible")) {
-        jQuery("a#toggleLink").text("Show Result ${bag.type}<c:if test="${bag.size != 1}">s</c:if>");
-      } else {
-        jQuery("a#toggleLink").text("Hide Result ${bag.type}<c:if test="${bag.size != 1}">s</c:if>");
+<div id="alien">
+  <div class="bochs noborder">
+    <script type="text/javascript">
+      // will show/hide the results table and toolbox & change the link appropriately (text, ico)
+      function toggleResults() {
+        // expanding or contracting?
+        if (jQuery('#results').is(":visible")) {
+          jQuery("a#toggleLink").text("Show ${bag.type}<c:if test="${bag.size != 1}">s</c:if> in list");
+        } else {
+          jQuery("a#toggleLink").text("Hide ${bag.type}<c:if test="${bag.size != 1}">s</c:if> in list");
+        }
+        // toggle class
+        jQuery("a#toggleLink").toggleClass('active');
+        // toggle results
+        jQuery('#results').toggle('slow');
+        jQuery('#toolbox').toggle('slow');
       }
-      // toggle class
-      jQuery("a#toggleLink").toggleClass('active');
-      // toggle results
-      jQuery('#results').toggle('slow');
-    }
-    // let us not forget that results will be shown on successful search and when paginating that requires synchronous call
-    <c:if test="${not empty param.gotoHighlighted || not empty param.page}">
-      jQuery(document).ready(function() { toggleResults(); });
-    </c:if>
-  </script>
-  <h3>
-    <a id="toggleLink" onclick="toggleResults();return false;" href="#">
-      Show Result ${bag.type}<c:if test="${bag.size != 1}">s</c:if>
-    </a>
-  </h3>
-</div>
+      // let us not forget that results will be shown on successful search and when paginating that requires synchronous call
+      <c:if test="${not empty param.gotoHighlighted || not empty param.page || not empty param.table}">
+        jQuery(document).ready(function() { toggleResults(); });
+      </c:if>
+    </script>
+    <h3>
+      <a id="toggleLink" onclick="toggleResults();return false;" href="#">
+        Show ${bag.type}<c:if test="${bag.size != 1}">s</c:if> in list
+      </a>
+    </h3>
+  </div>
 
-<!-- list search -->
-<div class="yellow bochs">
-  <h4 class="search">Find in results</h4>
-  <html:form styleId="findInListForm" action="/findInList">
-    <input type="text" name="textToFind" id="textToFind"/>
-    <input type="hidden" name="bagName" value="${bag.name}"/>
-    <html:submit>Go</html:submit>
-  </html:form>
-</div>
-
-<!-- results table, pagin etc. -->
-<div id="results" style="display:none;">
+  <!-- list search -->
+  <div class="yellow bochs">
+    <h4 class="search">Find in list</h4>
+    <html:form styleId="findInListForm" action="/findInList">
+      <input type="text" name="textToFind" id="textToFind"/>
+      <input type="hidden" name="bagName" value="${bag.name}"/>
+      <html:submit>Go</html:submit>
+    </html:form>
+  </div>
 
   <!-- modify list -->
-  <div id="toolbox" class="bochs last" <c:if test="${myBag == 'false'}">style="display:none;"</c:if>>
+  <div id="toolbox" class="bochs last" style="display:none;">
     <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
       <html:hidden property="bagName" value="${bag.name}"/>
       <div class="tool">
@@ -212,30 +201,30 @@
 
   <div style="clear:both;"></div>
 
-  <!-- pagination -->
-  <div class="pagination">
-    <tiles:insert name="paging.tile">
-      <tiles:put name="resultsTable" beanName="pagedResults" />
-        <tiles:put name="currentPage" value="bagDetails" />
-        <tiles:put name="bag" beanName="bag" />
-    </tiles:insert>
+  <!-- results table, pagin etc. -->
+  <div id="results" style="display:none;">
+    <!-- pagination -->
+    <div class="pagination">
+      <tiles:insert name="paging.tile">
+        <tiles:put name="resultsTable" beanName="pagedResults" />
+          <tiles:put name="currentPage" value="bagDetails" />
+          <tiles:put name="bag" beanName="bag" />
+      </tiles:insert>
+    </div>
+
+    <div style="clear:both;"></div>
+
+    <!-- results table -->
+    <div class="table">
+    <%-- Table displaying bag elements --%>
+      <tiles:insert name="resultsTable.tile">
+        <tiles:put name="pagedResults" beanName="pagedResults" />
+          <tiles:put name="currentPage" value="bagDetails" />
+          <tiles:put name="bagName" value="${bag.name}" />
+          <tiles:put name="highlightId" value="${highlightId}"/>
+      </tiles:insert>
+    </div>
   </div>
-
-  <div style="clear:both;"></div>
-
-  <!-- results table -->
-  <div class="table">
-  <%-- Table displaying bag elements --%>
-    <tiles:insert name="resultsTable.tile">
-      <tiles:put name="pagedResults" beanName="pagedResults" />
-        <tiles:put name="currentPage" value="bagDetails" />
-        <tiles:put name="bagName" value="${bag.name}" />
-        <tiles:put name="highlightId" value="${highlightId}"/>
-    </tiles:insert>
-  </div>
-
-  <div style="clear:both;"></div>
-
 </div>
 
 <div style="clear:both;"></div>
@@ -316,9 +305,11 @@
 
 <script type="text/javascript" charset="utf-8">
     jQuery(document).ready(function () {
+        /*
         jQuery(".tb_button").click(function () {
             toggleToolBarMenu(this);
         });
+        */
 
       // textarea resizer
       javascript:jQuery('textarea#textarea').autoResize({
