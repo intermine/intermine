@@ -28,6 +28,7 @@ import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.xml.SavedQueryBinding;
 import org.intermine.api.xml.TemplateQueryBinding;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
@@ -201,6 +202,20 @@ public class ProfileManager
     }
 
     /**
+     * Get a user's Profile using a username, password and the classKeys.
+     * @param username the username
+     * @param password the password
+     * @param classKeys the classkeys
+     * @return the Profile, or null if one doesn't exist
+     */
+    public synchronized Profile getProfile(String username, String password,
+                        Map<String, List<FieldDescriptor>> classKeys) {
+        if (hasProfile(username) && validPassword(username, password)) {
+            return getProfile(username, classKeys);
+        }
+        return null;
+    }
+    /**
      * Get a user's Profile using a username and password.
      * @param username the username
      * @param password the password
@@ -219,6 +234,17 @@ public class ProfileManager
      * @return the Profile, or null if one doesn't exist
      */
     public synchronized Profile getProfile(String username) {
+        return getProfile(username, new HashMap<String, List<FieldDescriptor>>());
+    }
+
+    /**
+     * Get a user's Profile using a username
+     * @param username the username
+     * @param classKeys the classkeys
+     * @return the Profile, or null if one doesn't exist
+     */
+    public synchronized Profile getProfile(String username, Map<String,
+                        List<FieldDescriptor>> classKeys) {
         if (username == null) {
             return null;
         }
@@ -254,6 +280,10 @@ public class ProfileManager
                 } else {
                     try {
                         InterMineBag bag = new InterMineBag(os, bagId, uosw);
+                        if (!classKeys.isEmpty()) {
+                            bag.setPrimaryIdentifierField(classKeys);
+                        }
+                        bag.setCurrent(savedBag.getCurrent());
                         savedBags.put(bag.getName(), bag);
                     } catch (UnknownBagTypeException e) {
                         LOG.warn("Ignoring a bag '" + savedBag.getName() + " for user '"
@@ -481,7 +511,6 @@ public class ProfileManager
     public void setSuperuser(String superuser) {
         this.superuser = superuser;
     }
-
 
     /**
      * @return the superuser profile
