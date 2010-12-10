@@ -55,13 +55,14 @@ public final class BagHelper
      * Create a bag for the given profile and bag name from a PathQuery.  The PathQuery must
      * select only the id field from the type the bag is to be created from.  The name will be
      * made unique with "_n" if it already exists in the profile.
-     * @param os the production ObjectStore
-     * @param bagQueryRunner the bag query runner
-     * @param profile bag will be created in this profile
+     *
+     * @param pathQuery the query to create the bag from
      * @param bagName name of new bag
      * @param bagDescription a description for the new bag
      * @param bagType the class of object in the bag
-     * @param pathQuery the query to create the bag from
+     * @param profile bag will be created in this profile
+     * @param im InterMineAPI that will give us BagManager
+     *
      * @return the new bag, already saved
      * @throws ObjectStoreException if persistence problem
      */
