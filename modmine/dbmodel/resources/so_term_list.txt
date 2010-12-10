@@ -37,6 +37,7 @@ natural_transposable_element
 ncRNA
 origin_of_replication
 overlapping_EST_set
+PCR_product
 point_mutation
 polyA_sequence
 polyA_signal_sequence
@@ -70,6 +71,7 @@ transposable_element_insertion_site
 tRNA
 TSS
 UTR
+
 
 # many-to-many part_of relationships (default is many-to-one)
 # must be CHILD.PARENT or else it won't work
