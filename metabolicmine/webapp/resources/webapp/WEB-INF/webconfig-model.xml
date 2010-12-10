@@ -144,8 +144,8 @@
     <longdisplayers>
       <!-- attribute links can now be configured for gene report pages -->
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="geneMicroArrayDisplayer.tile"/>
       <displayer src="uniProtCommentsDisplayer.tile"/>
+      <displayer src="/model/jBrowse.jsp"/>
       <displayer src="cytoscapeInteractionsDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
@@ -260,6 +260,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/jBrowse.jsp"/>
     </longdisplayers>
     <bagdisplayers>
     </bagdisplayers>
@@ -360,6 +361,7 @@
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="snpToGeneDisplayer.tile"/>
+      <displayer src="/model/jBrowse.jsp"/>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
     <bagdisplayers>
