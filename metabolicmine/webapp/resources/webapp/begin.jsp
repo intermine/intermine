@@ -313,7 +313,7 @@
                 <div class="image">
                     <img src="images/icons/lists-64.png" alt="Lists" />
                   </div>
-                  <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">Query Lists of Data</a></h3>
+                  <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">Analyse Lists of Data</a></h3>
                   <div style="clear:both;"> </div>
           <p>
           <img src="/metabolicmine/themes/metabolic/thumbs/widget-charts-5.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:4px;" />
