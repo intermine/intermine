@@ -175,6 +175,7 @@ public class ModifyBagAction extends InterMineAction
         newBag.setDate(new Date());
         newBag.setName(newBagName);
         profile.saveBag(newBagName, newBag);
+        newBag.addBagValues();
         return true;
     }
 
@@ -196,11 +197,14 @@ public class ModifyBagAction extends InterMineAction
         int newBagSize = 0;
         try {
             if (opText.equals(BagOperations.UNION)) {
-                newBagSize = BagOperations.union(selectedBags, newBagName, profile);
+                newBagSize = BagOperations.union(selectedBags, newBagName, profile,
+                		im.getClassKeys());
             } else if (opText.equals(BagOperations.INTERSECT)) {
-                newBagSize = BagOperations.intersect(selectedBags, newBagName, profile);
+                newBagSize = BagOperations.intersect(selectedBags, newBagName, profile,
+                                          im.getClassKeys());
             } else if (opText.equals(BagOperations.SUBTRACT)) {
-                newBagSize = BagOperations.subtract(selectedBags, newBagName, profile);
+                newBagSize = BagOperations.subtract(selectedBags, newBagName, profile,
+                                          im.getClassKeys());
             }
         } catch (IncompatibleTypesException e) {
             SessionMethods.recordError(
