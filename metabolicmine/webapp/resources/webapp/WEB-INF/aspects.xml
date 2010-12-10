@@ -72,4 +72,20 @@
     </intro-text>
     <tile-name></tile-name>
   </aspect>
+  <aspect name="Pathways">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Consequence">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
 </aspects>
