@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.util.StringUtil;
@@ -79,7 +80,8 @@ public class BagUploadConfirmAction extends InterMineAction
             return mapping.findForward("error");
         }
 
-        InterMineBag bag = profile.createBag(bagName, bagType, "");
+        InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        InterMineBag bag = profile.createBag(bagName, bagType, "", im.getClassKeys());
         bag.addIdsToBag(contents, bagType);
 
         session.removeAttribute("bagQueryResult");
