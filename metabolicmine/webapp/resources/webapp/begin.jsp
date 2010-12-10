@@ -82,7 +82,7 @@
         <div class="center span-12 last">
           <div class="bochs" id="bochs-1">
               <div id="thumb" class="span-4">
-                  <img src="/metabolicmine/themes/metabolic/thumbs/thumb-image.png" alt="metabolicMine interface" />
+                  <img src="themes/metabolic/thumbs/thumb-image.png" alt="metabolicMine interface" />
               </div>
               <div id="welcome-content" class="span-8 last current">
               <h2>First time here?</h2>
@@ -102,7 +102,7 @@
             <div class="bochs" id="bochs-2" style="display: none;">
               <div id="thumb" class="span-4">
               <a title="Try Search" href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag="><img
-                src="/metabolicmine/themes/metabolic/thumbs/feature-search.jpg"
+                src="themes/metabolic/thumbs/feature-search.jpg"
                 alt="metabolicMine Search" /></a></div>
               <div id="welcome-content" class="span-8 last">
                 <h2>Search</h2>
@@ -138,7 +138,7 @@
             <div class="bochs" id="bochs-4" style="display: none;">
               <div id="thumb" class="span-4">
               <a title="Try Lists" href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view"><img
-                src="/metabolicmine/themes/metabolic/thumbs/feature-lists.jpg"
+                src="themes/metabolic/thumbs/feature-lists.jpg"
                 alt="metabolicMine Lists" /></a></div>
               <div id="welcome-content" class="span-8 last">
                 <h2>Lists</h2>
@@ -160,7 +160,7 @@
             <div class="bochs" id="bochs-5" style="display: none;">
               <div id="thumb" class="span-4">
               <a title="Try Templates" href="/${WEB_PROPERTIES['webapp.path']}/templates.do"><img
-                src="/metabolicmine/themes/metabolic/thumbs/feature-templates.jpg"
+                src="themes/metabolic/thumbs/feature-templates.jpg"
                 alt="metabolicMine Templates" /></a></div>
               <div id="welcome-content" class="span-8 last">
                 <h2>Templates</h2>
@@ -180,7 +180,7 @@
             <div class="bochs" id="bochs-6" style="display: none;">
               <div id="thumb" class="span-4">
               <a title="Try MyMine" href="/${WEB_PROPERTIES['webapp.path']}/mymine.do"><img
-                src="/metabolicmine/themes/metabolic/thumbs/feature-mymine.jpg"
+                src="themes/metabolic/thumbs/feature-mymine.jpg"
                 alt="metabolicMine MyMine" /></a></div>
               <div id="welcome-content" class="span-8 last">
                 <h2>MyMine</h2>
@@ -200,7 +200,7 @@
             <div class="bochs" id="bochs-7" style="display: none;">
               <div id="thumb" class="span-4">
               <a title="Try QueryBuilder" href="/${WEB_PROPERTIES['webapp.path']}/customQuery.do"><img
-                src="/metabolicmine/themes/metabolic/thumbs/feature-querybuilder.jpg"
+                src="themes/metabolic/thumbs/feature-querybuilder.jpg"
                 alt="metabolicMine QueryBuilder" /></a></div>
               <div id="welcome-content" class="span-8 last">
                 <h2>QueryBuilder</h2>
@@ -316,7 +316,7 @@
                   <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">Analyse Lists of Data</a></h3>
                   <div style="clear:both;"> </div>
           <p>
-          <img src="/metabolicmine/themes/metabolic/thumbs/widget-charts-5.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:4px;" />
+          <img src="themes/metabolic/thumbs/widget-charts-5.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:4px;" />
           <strong>Explore</strong> and <strong>Analyse</strong>. Upload your own data or browse our Public
           sets. Covering Pathways to Publications, discover hidden relationships with our analysis widgets.</p>
               </div>
@@ -354,7 +354,7 @@
         <div class="top"></div>
         <div class="center span-6 last">
             <h4>Perl<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
-            <img src="/metabolicmine/themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
+            <img src="themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
             <p>We support programatic access to our data through Application Programming Interface too! Choose from options below:</p>
             <ul>
                 <li><a href="#">Perl API</a></li>
@@ -489,7 +489,7 @@
         </div>
         <div class="span-6 last">
             <a href="http://wellcome.ac.uk/" title="Wellcome Trust">
-              <img src="/metabolicmine/themes/metabolic/icons/wellcome-ico.png" alt="Wellcome Trust" />
+              <img src="themes/metabolic/icons/wellcome-ico.png" alt="Wellcome Trust" />
              </a>
              <!--
              <a href="http://www.gen.cam.ac.uk/" title="Department of Genetics">
@@ -497,7 +497,7 @@
              </a>
              -->
              <a href="http://www.cam.ac.uk/" title="University of Cambridge">
-              <img src="/metabolicmine/themes/metabolic/icons/cam-text-ico.gif" alt="University of Cambridge" />
+              <img src="themes/metabolic/icons/cam-text-ico.gif" alt="University of Cambridge" />
             </a>
         </div>
     </div>
