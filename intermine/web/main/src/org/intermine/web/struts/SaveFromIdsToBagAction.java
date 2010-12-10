@@ -22,6 +22,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.util.NameUtil;
@@ -67,7 +68,8 @@ public class SaveFromIdsToBagAction extends InterMineAction
             bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(),
                     bagName);
 
-            InterMineBag bag = profile.createBag(bagName, type, "");
+            InterMineAPI im = SessionMethods.getInterMineAPI(session);
+            InterMineBag bag = profile.createBag(bagName, type, "", im.getClassKeys());
             bag.addIdsToBag(idSet, type);
 
             profile.saveBag(bag.getName(), bag);
