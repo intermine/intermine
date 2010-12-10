@@ -158,3 +158,8 @@ div.widgetcontainer { margin-left:0 !important; margin-right:1.5% !important; ba
 
 /* templates below widgets */
 table.results th { border:none; border-left:1px solid #DFDFDF !important; font-size:16px; background:#F5F5F5; color:#4B3F4B; }
+
+/* SNP to Gene */
+#nearbyGenes #listButton { display:inline; }
+#nearbyGenes #listButton input#submitBag { background-image:url('../images/buttons/button-bg-lists.gif'); padding-left:26px;
+  background-repeat:repeat-none; background-position:left top; }

@@ -19,6 +19,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStore;
@@ -75,11 +76,21 @@ public class SnpToGeneAction extends InterMineAction {
             HttpSession session = request.getSession();
             Profile profile = SessionMethods.getProfile(session);
 
-            bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), bagName);
-            BagHelper.createBagFromPathQuery(q, bagName, q.getDescription(), "Gene", profile, im);
-            // do not forget to setup in "struts-config-model.xml"
-            ForwardParameters forwardParameters = new ForwardParameters(mapping.findForward("bagDetails"));
-            return forwardParameters.addParameter("bagName", bagName).forward();
+            String newBagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), bagName);
+            InterMineBag imBag = BagHelper.createBagFromPathQuery(q, newBagName, q.getDescription(), "Gene", profile, im);
+
+            // on empty new bag, return the old bag
+            if (imBag.getSize() > 0) {
+                // do not forget to setup in "struts-config-model.xml"
+                ForwardParameters forwardParameters = new ForwardParameters(mapping.findForward("bagDetails"));
+                return forwardParameters.addParameter("bagName", newBagName).forward();
+            } else {
+                // message
+                SessionMethods.recordError("No results found, reverting to the original SNP list.", session);
+                // show the old stuff
+                ForwardParameters forwardParameters = new ForwardParameters(mapping.findForward("bagDetails"));
+                return forwardParameters.addParameter("bagName", bagName).forward();
+            }
         }
     }
 
