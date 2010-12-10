@@ -1084,23 +1084,27 @@ public class PagedTable
         if (bag.size() == selectionIds.size()) {
             return removedCount;
         }
-
-        if (allSelected == -1) {
-            Set<Integer> idsToRemove = selectionIds.keySet();
-            bag.removeIdsFromBag(idsToRemove);
-            removedCount = idsToRemove.size();
-        } else {
-            // selection is reversed, so selectionIds.keySet() are the ids to keep
-            Set<Integer> idsToRemove = new HashSet<Integer>();
-            for (Integer id : bag.getContentsAsIds()) {
-                if (!selectionIds.keySet().contains(id)) {
-                    idsToRemove.add(id);
-                }
-            }
-            bag.removeIdsFromBag(idsToRemove);
-            removedCount = idsToRemove.size();
-        }
+        Set<Integer> idsToRemove = getIdsToRemove(bag);
+        bag.removeIdsFromBag(idsToRemove);
+        removedCount = idsToRemove.size();
+        
         SessionMethods.invalidateBagTable(session, bag.getName());
         return removedCount;
+    }
+    
+    public Set<Integer> getIdsToRemove(InterMineBag bag) {
+    	Set<Integer> idsToRemove = new HashSet<Integer>();
+    	if (allSelected == -1) {
+            idsToRemove = selectionIds.keySet();
+    	} else {
+    		// selection is reversed, so selectionIds.keySet() are the ids to keep
+    		 idsToRemove = new HashSet<Integer>();
+             for (Integer id : bag.getContentsAsIds()) {
+                 if (!selectionIds.keySet().contains(id)) {
+                     idsToRemove.add(id);
+                 }
+             }
+    	}
+    	return idsToRemove;
     }
 }
