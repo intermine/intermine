@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.UpgradeBagList;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
@@ -60,6 +62,10 @@ public abstract class LoginHandler extends InterMineAction
         }
 
         Profile profile = setUpProfile(session, pm, username, password);
+        InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        if (!im.getBagManager().isUserBagsCurrent(profile)) {
+        	new Thread(new UpgradeBagList(profile, im.getBagQueryRunner())).start();
+        }
 
         // Merge in anonymous query history
         for (SavedQuery savedQuery : mergeQueries.values()) {
@@ -98,8 +104,9 @@ public abstract class LoginHandler extends InterMineAction
     public static Profile setUpProfile(HttpSession session, ProfileManager pm,
             String username, String password) {
         Profile profile;
+        InterMineAPI im = SessionMethods.getInterMineAPI(session);
         if (pm.hasProfile(username)) {
-            profile = pm.getProfile(username, password);
+            profile = pm.getProfile(username, password, im.getClassKeys());
         } else {
             profile = new Profile(pm, username, null, password, new HashMap(), new HashMap(),
                     new HashMap());
