@@ -25,7 +25,7 @@
     <%-- changing the <submit> text will break functionality! --%>
     <html:submit styleId="submitBag" property="action">Result</html:submit>
     - or -
-    <html:submit styleId="submitBag" property="action">List</html:submit>
+    <div id="listButton"><html:submit styleId="submitBag" property="action">List</html:submit></div>
 
   </html:form>
 
