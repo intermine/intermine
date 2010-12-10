@@ -51,7 +51,7 @@ public class SnpToGeneFormDisplayerController extends TilesAction {
             LinkedHashMap<String, String> directionTypes = new LinkedHashMap<String, String>();
             directionTypes.put("upstream", "upstream");
             directionTypes.put("downstream", "downstream");
-            directionTypes.put("bothways", "both ways");
+            directionTypes.put("both", "both ways");
             request.setAttribute("directionTypes", directionTypes);
 
         } catch (Exception err) {

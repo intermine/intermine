@@ -107,8 +107,11 @@ public class SnpToGeneAction extends InterMineAction {
         query.addConstraint(Constraints.in("SNP", bagName));
         query.addConstraint(Constraints.type("SNP.overlappingFeatures",
                 "GeneFlankingRegion"));
-        query.addConstraint(Constraints.eq("SNP.overlappingFeatures.direction",
-                direction));
+
+        if (! direction.equals("both")) {
+            query.addConstraint(Constraints.eq("SNP.overlappingFeatures.direction", direction));
+        }
+
         query.addConstraint(Constraints.eq("SNP.overlappingFeatures.distance",
                 distance));
         query.addConstraint(Constraints.eq(
@@ -132,8 +135,11 @@ public class SnpToGeneAction extends InterMineAction {
         query.addConstraint(Constraints.in("SNP", bagName));
         query.addConstraint(Constraints.type("SNP.overlappingFeatures",
                 "GeneFlankingRegion"));
-        query.addConstraint(Constraints.eq("SNP.overlappingFeatures.direction",
-                direction));
+
+        if (! direction.equals("both")) {
+            query.addConstraint(Constraints.eq("SNP.overlappingFeatures.direction", direction));
+        }
+
         query.addConstraint(Constraints.eq("SNP.overlappingFeatures.distance",
                 distance));
         query.addConstraint(Constraints.eq(
