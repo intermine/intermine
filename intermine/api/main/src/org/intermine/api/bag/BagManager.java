@@ -103,6 +103,17 @@ public class BagManager
         return profile.getSavedBags();
     }
 
+    public boolean isUserBagsCurrent(Profile profile) {
+        Map<String, InterMineBag> savedBags = profile.getSavedBags();
+        for (String sb : savedBags.keySet()) {
+            InterMineBag bag = savedBags.get(sb);
+            if (!bag.isCurrent()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Fetch all global bags and user bags combined in the same map.  If user has a bag with the
      * same name as a global bag the user's bag takes precedence.
