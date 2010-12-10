@@ -35,7 +35,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
 /**
- * {@inheritDoc}
+ *
  * @author Julie Sullivan
  */
 public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
