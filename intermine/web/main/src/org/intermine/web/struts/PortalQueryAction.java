@@ -186,7 +186,7 @@ public class PortalQueryAction extends InterMineAction
         WebResults webResults = executor.execute(pathQuery, returnBagQueryResults);
 
         String bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), "link");
-        InterMineBag imBag = profile.createBag(bagName, className, "");
+        InterMineBag imBag = profile.createBag(bagName, className, "", im.getClassKeys());
         List<Integer> bagList = new ArrayList<Integer>();
 
         // There's only one node, get the first value
