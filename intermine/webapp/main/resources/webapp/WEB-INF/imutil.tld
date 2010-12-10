@@ -1,142 +1,142 @@
 <?xml version="1.0"?>
-<!DOCTYPE taglib PUBLIC 
- "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" 
+<!DOCTYPE taglib PUBLIC
+ "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
  "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_2.dtd">
 <taglib>
-	<tlib-version>1</tlib-version>
-	<jsp-version>1.2</jsp-version>
-	<short-name>Intermine Tag Library implemented with tag handlers.</short-name>
-	<uri>http://flymine.org/imutil</uri>
-	<tag>
-		<name>disclosure</name>
-		<description>Element that enables showing and hiding its content.
-		Its style can be set by two ways. By default every element has its own
-		style class, so just define for example 'disclosure' style  class in your
-		style sheet file. Or explicitly set 'styleClass' and 'style' element attributes.
-		
-		Implementation notice: Full element is always in page. It is hidden or showed only with javascript.
-		Hiding element during page load, that should be hidden makes javascript inside disclosure element.
-		Requires javascript functions: saveToggleState(elementId), toggleHidden(elementId) to be defined 
-		in some script file.  
-		</description>
-		<tag-class>
-			org.intermine.web.tags.disclosure.DisclosureTag
-		</tag-class>
-		<body-content>scriptless</body-content>
-		<attribute>
-			<name>style</name>
-			<rtexprvalue>true</rtexprvalue>
-			<required>false</required>
-		</attribute>
-		<attribute>
-			<name>styleClass</name>
-			<description>Rendered to class attribute. Equals css class attribute.</description>
-			<rtexprvalue>true</rtexprvalue>
-			<required>false</required>
-		</attribute>
-		<attribute>
-			<name>id</name>
-			<description>Essential for function of disclosure. Must be set.</description>
-			<rtexprvalue>true</rtexprvalue>
-			<required>true</required>
-		</attribute>
-		<attribute>
-			<name>opened</name>
-			<description>If should be initially opened.</description>
-			<rtexprvalue>true</rtexprvalue>
-			<required>false</required>
-			<type>java.lang.Boolean</type>
-		</attribute>
-		<attribute>
-			<name>onClick</name>
-			<description>Enables calling javascript code on element click.</description>
-			<rtexprvalue>true</rtexprvalue>
-			<required>false</required>
-		</attribute>
-		<attribute>
-			<name>type</name>
-			<description>Type of disclosure element. At this moment there are only simple and consistent types. 
-			Set 'consistent', if you want that application remembers display or hidden status of element with this id
-			during the session.</description>
-			<rtexprvalue>true</rtexprvalue>
-			<required>false</required>
-		</attribute>
-	</tag>
+    <tlib-version>1</tlib-version>
+    <jsp-version>1.2</jsp-version>
+    <short-name>Intermine Tag Library implemented with tag handlers.</short-name>
+    <uri>http://flymine.org/imutil</uri>
+    <tag>
+        <name>disclosure</name>
+        <description>Element that enables showing and hiding its content.
+        Its style can be set by two ways. By default every element has its own
+        style class, so just define for example 'disclosure' style  class in your
+        style sheet file. Or explicitly set 'styleClass' and 'style' element attributes.
 
-	<tag>
-		<name>disclosureHead</name>
-		<tag-class>
-			org.intermine.web.tags.disclosure.DisclosureHeadTag
-		</tag-class>
-		<attribute>
-			<name>style</name>
-			<rtexprvalue>true</rtexprvalue>
-			<required>false</required>
-		</attribute>
-		<attribute>
-			<name>styleClass</name>
-			<rtexprvalue>true</rtexprvalue>
-			<required>false</required>
-		</attribute>
-		<body-content>scriptless</body-content>
-	</tag>
+        Implementation notice: Full element is always in page. It is hidden or showed only with javascript.
+        Hiding element during page load, that should be hidden makes javascript inside disclosure element.
+        Requires javascript functions: saveToggleState(elementId), toggleHidden(elementId) to be defined
+        in some script file.
+        </description>
+        <tag-class>
+            org.intermine.web.tags.disclosure.DisclosureTag
+        </tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>style</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <description>Rendered to class attribute. Equals css class attribute.</description>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>id</name>
+            <description>Essential for function of disclosure. Must be set.</description>
+            <rtexprvalue>true</rtexprvalue>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>opened</name>
+            <description>If should be initially opened.</description>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+            <type>java.lang.Boolean</type>
+        </attribute>
+        <attribute>
+            <name>onClick</name>
+            <description>Enables calling javascript code on element click.</description>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>type</name>
+            <description>Type of disclosure element. At this moment there are only simple and consistent types.
+            Set 'consistent', if you want that application remembers display or hidden status of element with this id
+            during the session.</description>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+    </tag>
 
-	<tag>
-		<name>disclosureTitle</name>
-		<tag-class>
-			org.intermine.web.tags.disclosure.DisclosureTitleTag
-		</tag-class>
-		<body-content>scriptless</body-content>
-		<attribute>
-			<name>style</name>
-			<rtexprvalue>true</rtexprvalue>
-			<required>false</required>
-		</attribute>
-		<attribute>
-			<name>styleClass</name>
-			<rtexprvalue>true</rtexprvalue>
-			<required>false</required>
-		</attribute>
+    <tag>
+        <name>disclosureHead</name>
+        <tag-class>
+            org.intermine.web.tags.disclosure.DisclosureHeadTag
+        </tag-class>
+        <attribute>
+            <name>style</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+        <body-content>scriptless</body-content>
+    </tag>
 
-	</tag>
+    <tag>
+        <name>disclosureTitle</name>
+        <tag-class>
+            org.intermine.web.tags.disclosure.DisclosureTitleTag
+        </tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>style</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
 
-	<tag>
-		<name>disclosureDetails</name>
-		<tag-class>
-			org.intermine.web.tags.disclosure.DisclosureDetailsTag
-		</tag-class>
-		<body-content>scriptless</body-content>
-		<attribute>
-			<name>style</name>
-			<rtexprvalue>true</rtexprvalue>
-			<required>false</required>
-		</attribute>
-		<attribute>
-			<name>styleClass</name>
-			<rtexprvalue>true</rtexprvalue>
-			<required>false</required>
-		</attribute>
+    </tag>
 
-	</tag>
+    <tag>
+        <name>disclosureDetails</name>
+        <tag-class>
+            org.intermine.web.tags.disclosure.DisclosureDetailsTag
+        </tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>style</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
 
-	<tag>
-		<name>disclosureBody</name>
-		<tag-class>
-			org.intermine.web.tags.disclosure.DisclosureBodyTag
-		</tag-class>
-		<body-content>scriptless</body-content>
-		<attribute>
-			<name>style</name>
-			<rtexprvalue>true</rtexprvalue>
-			<required>false</required>
-		</attribute>
-		<attribute>
-			<name>styleClass</name>
-			<rtexprvalue>true</rtexprvalue>
-			<required>false</required>
-		</attribute>
-	</tag>
-	
+    </tag>
+
+    <tag>
+        <name>disclosureBody</name>
+        <tag-class>
+            org.intermine.web.tags.disclosure.DisclosureBodyTag
+        </tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>style</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <rtexprvalue>true</rtexprvalue>
+            <required>false</required>
+        </attribute>
+    </tag>
+
     <tag>
        <name>treatString</name>
        <description>
@@ -147,15 +147,15 @@
        </tag-class>
        <body-content>scriptless</body-content>
     </tag>
-	
-	<tag>
-	   <name>table</name>
-	   <description>Renders table.</description>
-	   <tag-class>
-	       org.intermine.web.tags.table.TableTag
-	   </tag-class>
-	   <body-content>empty</body-content>
-	   <attribute>
+
+    <tag>
+       <name>table</name>
+       <description>Renders table.</description>
+       <tag-class>
+           org.intermine.web.tags.table.TableTag
+       </tag-class>
+       <body-content>empty</body-content>
+       <attribute>
             <name>rows</name>
             <rtexprvalue>true</rtexprvalue>
             <required>true</required>
@@ -175,8 +175,8 @@
             <rtexprvalue>true</rtexprvalue>
             <required>false</required>
         </attribute>
-	</tag>
-	
+    </tag>
+
     <tag>
        <name>navigationBar</name>
        <description>Renders navigation bar with current page number, next and previous links.</description>
@@ -203,8 +203,8 @@
             <name>nextEnabled</name>
             <rtexprvalue>true</rtexprvalue>
             <required>false</required>
-        </attribute>        
+        </attribute>
     </tag>
-	
+
 </taglib>
 
