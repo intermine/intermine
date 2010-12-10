@@ -106,6 +106,8 @@ public class UniprotConfig
 
             if ("uniqueField".equals(attributes[1])) {
                 configEntry.setUniqueIdentifier(value);
+            } else if ("gene-designation".equals(attributes[1])) {
+                geneDesignation = value;
             } else if (attributes.length == 3) {
                 configEntry.addIdentifier(attributes[1], attributes[2], value);
             } else {

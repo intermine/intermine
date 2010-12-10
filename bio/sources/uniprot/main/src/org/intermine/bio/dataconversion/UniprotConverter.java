@@ -932,6 +932,8 @@ public class UniprotConverter extends BioDirectoryConverter
                     // TODO handle multiple identifiers somehow
                     identifierValue = uniprotEntry.getDbrefs().get(value).get(0);
                 }
+            } else if ("gene-designation".equals(method)) {
+                identifierValue = uniprotEntry.getGeneDesignation(value);
             } else {
                 LOG.error("error processing line in config file for organism " + taxId);
                 return null;
