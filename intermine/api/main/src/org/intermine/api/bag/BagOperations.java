@@ -12,10 +12,13 @@ package org.intermine.api.bag;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ObjectStoreBagCombination;
 import org.intermine.objectstore.query.Query;
@@ -54,8 +57,10 @@ public final class BagOperations
      * @throws ObjectStoreException if problems storing bag
      */
     public static int union(Collection<InterMineBag> bags, String newBagName,
-            Profile profile) throws ObjectStoreException {
-        return performBagOperation(bags, newBagName, profile, ObjectStoreBagCombination.UNION);
+            Profile profile, Map<String, List<FieldDescriptor>> classKeys)
+        throws ObjectStoreException {
+        return performBagOperation(bags, newBagName, profile, ObjectStoreBagCombination.UNION,
+                                  classKeys);
     }
 
     /**
@@ -68,8 +73,10 @@ public final class BagOperations
      * @throws ObjectStoreException if problems storing bag
      */
     public static int intersect(Collection<InterMineBag> bags, String newBagName,
-            Profile profile) throws ObjectStoreException {
-        return performBagOperation(bags, newBagName, profile, ObjectStoreBagCombination.INTERSECT);
+            Profile profile, Map<String, List<FieldDescriptor>> classKeys)
+        throws ObjectStoreException {
+        return performBagOperation(bags, newBagName, profile, ObjectStoreBagCombination.INTERSECT,
+                                  classKeys);
     }
 
     /**
@@ -82,19 +89,20 @@ public final class BagOperations
      * @throws ObjectStoreException if problems storing bag
      */
     public static int subtract(Collection<InterMineBag> bags, String newBagName,
-            Profile profile) throws ObjectStoreException {
+            Profile profile, Map<String, List<FieldDescriptor>> classKeys)
+        throws ObjectStoreException {
         return performBagOperation(bags, newBagName, profile,
-                ObjectStoreBagCombination.ALLBUTINTERSECT);
+                ObjectStoreBagCombination.ALLBUTINTERSECT, classKeys);
     }
 
     private static int performBagOperation(Collection<InterMineBag> bags, String newBagName,
-            Profile profile, int op) throws ObjectStoreException {
+            Profile profile, int op, Map<String, List<FieldDescriptor>> classKeys)
+        throws ObjectStoreException {
         String type = getCommonBagType(bags);
         if (type == null) {
             throw new IncompatibleTypesException("Given bags were of incompatible types.");
         }
-
-        InterMineBag combined = profile.createBag(newBagName, type, "");
+        InterMineBag combined = profile.createBag(newBagName, type, "", classKeys);
         ObjectStoreBagCombination osbc =
             new ObjectStoreBagCombination(op);
         for (InterMineBag bag : bags) {
