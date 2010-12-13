@@ -314,6 +314,15 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
+     * Sets the ObjectStoreBag.
+     *
+     * @param osb the ObjectStoreBag
+     */
+    public void setOsb(ObjectStoreBag osb) {
+        this.osb = osb;
+    }
+
+    /**
      * Sets the profileId - moves this bag from one profile to another.
      *
      * @param profileId the ID of the new userprofile
