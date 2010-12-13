@@ -73,6 +73,7 @@ public class UpgradeBagList implements Runnable
                             }
                         }
                         uosw.store(savedBag);
+                        bag.setOsb(osb);
                     } catch (ClassNotFoundException cnfe) {
                         LOG.warn("The type " + bag.getType() + "isn't in the model."
                                  + "Impossible upgrade the list " + bag.getTitle(), cnfe);
