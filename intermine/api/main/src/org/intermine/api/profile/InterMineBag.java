@@ -127,6 +127,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         SavedBag savedBag = store();
         this.savedBagId = savedBag.getId();
         setClassDescriptors();
+        isCurrent = true;
     }
 
     /**
