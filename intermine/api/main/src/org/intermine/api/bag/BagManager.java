@@ -105,8 +105,7 @@ public class BagManager
 
     public boolean isUserBagsCurrent(Profile profile) {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
-        for (String sb : savedBags.keySet()) {
-            InterMineBag bag = savedBags.get(sb);
+        for (InterMineBag bag : savedBags.values()) {
             if (!bag.isCurrent()) {
                 return false;
             }
@@ -182,6 +181,34 @@ public class BagManager
         for (Map.Entry<String, InterMineBag> entry : getUserAndGlobalBags(profile).entrySet()) {
             InterMineBag bag = entry.getValue();
             if (classAndSubs.contains(bag.getType())) {
+                bagsOfType.put(entry.getKey(), bag);
+            }
+        }
+        return bagsOfType;
+    }
+    
+    /**
+     * Fetch global and user bags of the specified type or a subclass of the specified type.
+     * @param profile the user to fetch bags for
+     * @param type an unqualified class name
+     * @return a map from bag name to bag
+     */
+    public Map<String, InterMineBag> getCurrentUserOrGlobalBagsOfType(Profile profile, String type) {
+        Set<String> classAndSubs = new HashSet<String>();
+        classAndSubs.add(type);
+
+        ClassDescriptor bagTypeCld = model.getClassDescriptorByName(type);
+        if (bagTypeCld == null) {
+            throw new NullPointerException("Could not find ClassDescriptor for name " + type);
+        }
+        for (ClassDescriptor cld : model.getAllSubs(bagTypeCld)) {
+            classAndSubs.add(cld.getUnqualifiedName());
+        }
+
+        Map<String, InterMineBag> bagsOfType = new HashMap<String, InterMineBag>();
+        for (Map.Entry<String, InterMineBag> entry : getUserAndGlobalBags(profile).entrySet()) {
+            InterMineBag bag = entry.getValue();
+            if (classAndSubs.contains(bag.getType()) && bag.isCurrent()) {
                 bagsOfType.put(entry.getKey(), bag);
             }
         }
