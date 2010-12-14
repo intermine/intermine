@@ -2306,16 +2306,24 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         throws ObjectStoreException {
         String targetText = null;
         String[] possibleTypes = new String[] {"target id"};
-
+        boolean tooMany = false;
         for (String targetType : possibleTypes) {
             if (prop.details.containsKey(targetType)) {
                 if (prop.details.get(targetType).size() != 1) {
 
                     // we used to complain if multiple values, now only
                     // if they don't have the same value
-                    checkIfSameValue(prop, source, targetType);
+                    // checkIfSameValue(prop, source, targetType);
+                    if (sameTargetValue(prop, source, targetType)) {
+                        LOG.info("ERROR: " + source + " has more than 1 value for '"
+                                + targetType + "' field: " + prop.details.get(targetType));
+                        tooMany = true;
+                        break;
+                    }
                 }
-                targetText = prop.details.get(targetType).get(0);
+                if (!tooMany) {
+                    targetText = prop.details.get(targetType).get(0);
+                }
                 break;
             }
         }
@@ -2331,16 +2339,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
-    private void checkIfSameValue(SubmissionProperty prop, String source,
+    private boolean sameTargetValue(SubmissionProperty prop, String source,
             String targetType) {
         String value = prop.details.get(targetType).get(0);
         for (int i = 1; i < prop.details.get(targetType).size(); i++) {
             String newValue = prop.details.get(targetType).get(i);
             if (!newValue.equals(value)) {
-                throw new RuntimeException(source + " should only have one value for '"
-                        + targetType + "' field: " + prop.details.get(targetType));
+                LOG.info("WARNING: " + source + " has more than 1 value for '"
+                                + targetType + "' field: " + prop.details.get(targetType));
+              //throw new RuntimeException(source + " should only have one value for '"
+              //        + targetType + "' field: " + prop.details.get(targetType));
+                return true;
             }
         }
+        return false;
     }
 
     private void setAttributeOnProp(SubmissionProperty subProp, Item item, String metadataName,
