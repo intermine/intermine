@@ -321,7 +321,7 @@
     <td> &nbsp;</td>
   </tr>
 
-  <tr><td rowspan="4" class="leftcol">
+  <tr><td rowspan="5" class="leftcol">
         <html:link action="/aspect?name=Gene%20Expression">
         <p> <img src="model/images/embryos.jpg" /></p>
         <p> Gene Expression</p>
