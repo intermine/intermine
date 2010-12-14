@@ -44,15 +44,13 @@ public class UpgradeBagList implements Runnable
 
     public void run() {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
-        InterMineBag bag;
         ObjectStoreBag osb = null;
         ProfileManager pm = profile.getProfileManager();
         ObjectStoreWriter oswProduction = null;
         ObjectStoreWriter uosw = pm.getProfileObjectStoreWriter();
         try {
             oswProduction = pm.getProductionObjectStore().getNewWriter();
-            for (String nameBag : savedBags.keySet()) {
-                bag = savedBags.get(nameBag);
+            for (InterMineBag bag : savedBags.values()) {
                 if (!bag.isCurrent()) {
                     SavedBag savedBag = (SavedBag) uosw.getObjectById(bag.getSavedBagId(),
                                                                       SavedBag.class);
@@ -68,7 +66,7 @@ public class UpgradeBagList implements Runnable
                                 oswProduction.addToBag(osb, value);
                             }
                             savedBag.setOsbId(osb.getBagId());
-                            if (result.getIssues().isEmpty()) {
+                            if (result.getIssues().isEmpty() && result.getUnresolved().isEmpty()) {
                                 savedBag.setCurrent(true);
                             }
                         }
