@@ -38,6 +38,7 @@ import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.util.StringUtil;
@@ -92,6 +93,10 @@ public class WebSearchableListController extends TilesAction
 
         if (list != null) {
             filteredWebSearchables = filterByList(filteredWebSearchables, list);
+        }
+        
+        if (type.equals(TagTypes.BAG)) {
+        	filteredWebSearchables = filterByCurrent(filteredWebSearchables);
         }
 
         // shorten list to be < limit
@@ -318,6 +323,19 @@ public class WebSearchableListController extends TilesAction
             }
         }
 
+        return clone;
+    }
+    
+    private Map<String, ? extends WebSearchable> filterByCurrent(
+            Map<String, ? extends WebSearchable> filteredWebSearchables) {
+    	Map<String, WebSearchable> clone = new HashMap<String, WebSearchable>();
+        clone.putAll(filteredWebSearchables);
+    	for (Object o : filteredWebSearchables.values()) {
+            InterMineBag bag = (InterMineBag) o;
+            if (!bag.isCurrent()) {
+                clone.remove(bag.getName());
+            }
+        }
         return clone;
     }
 }
