@@ -31,23 +31,23 @@
                 // declare
                 var feedTitle, feedDescription, feedDate, feedLink, element, feed;
 
-				// convert to XML, jQuery manky...
-				try {
-					// Internet Explorer
-					feed = new ActiveXObject("Microsoft.XMLDOM");
-					feed.async="false";
-					feed.loadXML(data);					
-				} catch(e) {
-					try {
-						// ...the good browsers
-						feed = new DOMParser().parseFromString(data, "text/xml");
-					} catch(e) {
-						// ... BFF
-						alert(e.message);
-						return;
-					}
-				}
-				
+                // convert to XML, jQuery manky...
+                try {
+                    // Internet Explorer
+                    feed = new ActiveXObject("Microsoft.XMLDOM");
+                    feed.async="false";
+                    feed.loadXML(data);
+                } catch(e) {
+                    try {
+                        // ...the good browsers
+                        feed = new DOMParser().parseFromString(data, "text/xml");
+                    } catch(e) {
+                        // ... BFF
+                        alert(e.message);
+                        return;
+                    }
+                }
+
                 var items = feed.getElementsByTagName("item"); // ATOM!!!
                 for (var i = 0; i < items.length; ++i) {
                     // early bath
