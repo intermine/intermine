@@ -19,7 +19,7 @@
             ${cld.unqualifiedName}
       </c:forEach> can be found:
       <c:forEach items="${bagsWithId}" var="interMineBag" varStatus="status">
-        <c:if test="${status.count != 1}">,</c:if>&nbsp;<html:link href="bagDetails.do?bagName=${interMineBag.name}"><c:out value="${interMineBag.name}"/></html:link>
+        <c:if test="${status.count > 2}">,</c:if>&nbsp;<html:link href="bagDetails.do?bagName=${interMineBag.name}"><c:out value="${interMineBag.name}"/></html:link>
       </c:forEach>
 </div>
 </c:if>
