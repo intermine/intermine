@@ -114,7 +114,7 @@
               <td class="sorting" align="right">
                 <c:choose>
                 <c:when test="${savedBag.value.current}">Current</c:when>
-                <c:otherwise><html:link>Resolve conflicts</html:link></c:otherwise>
+                <c:otherwise><html:link href="">Resolve conflicts</html:link></c:otherwise>
                 </c:choose>
               </td>
             </tr>
