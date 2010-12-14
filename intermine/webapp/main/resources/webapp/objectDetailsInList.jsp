@@ -6,7 +6,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <!-- objectDetailsInList.jsp -->
-<c:if test="${(!empty bagsWithId) || (! empty PROFILE.savedBags)}">
+<c:if test="${(!empty bagsWithId) || (! empty PROFILE.currentSavedBags)}">
   <div class="heading">
     Lists
   </div>
@@ -19,20 +19,20 @@
             ${cld.unqualifiedName}
       </c:forEach> can be found:
       <c:forEach items="${bagsWithId}" var="interMineBag" varStatus="status">
-        <c:if test="${status.count != 0}">,</c:if>&nbsp;<html:link href="bagDetails.do?bagName=${interMineBag.name}"><c:out value="${interMineBag.name}"/></html:link>
+        <c:if test="${status.count != 1}">,</c:if>&nbsp;<html:link href="bagDetails.do?bagName=${interMineBag.name}"><c:out value="${interMineBag.name}"/></html:link>
       </c:forEach>
 </div>
 </c:if>
 
 <%-- Add to list --%>
-<c:if test="${!empty PROFILE.savedBags}">
+<c:if test="${!empty PROFILE.currentSavedBags}">
 <div style="margin-top:10px">
   <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">
     <fmt:message key="objectDetails.addToBag"/>
     <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
     <select name="bag">
       <option name="">--------</option>
-      <c:forEach items="${PROFILE.savedBags}" var="entry">
+      <c:forEach items="${PROFILE.currentSavedBags}" var="entry">
        <c:if test="${empty filteredWebSearchables[entry.key]}">
         <option name="${entry.key}">${entry.key}</option>
        </c:if>
