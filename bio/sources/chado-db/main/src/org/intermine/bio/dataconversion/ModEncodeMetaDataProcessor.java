@@ -2313,10 +2313,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
                     // we used to complain if multiple values, now only
                     // if they don't have the same value
-                    // checkIfSameValue(prop, source, targetType);
                     if (sameTargetValue(prop, source, targetType)) {
-                        LOG.info("ERROR: " + source + " has more than 1 value for '"
-                                + targetType + "' field: " + prop.details.get(targetType));
                         tooMany = true;
                         break;
                     }
@@ -2345,7 +2342,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         for (int i = 1; i < prop.details.get(targetType).size(); i++) {
             String newValue = prop.details.get(targetType).get(i);
             if (!newValue.equals(value)) {
-                LOG.info("WARNING: " + source + " has more than 1 value for '"
+                LOG.error(source + " has more than 1 value for '"
                                 + targetType + "' field: " + prop.details.get(targetType));
               //throw new RuntimeException(source + " should only have one value for '"
               //        + targetType + "' field: " + prop.details.get(targetType));
