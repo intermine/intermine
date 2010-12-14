@@ -103,6 +103,11 @@ public class BagManager
         return profile.getSavedBags();
     }
 
+    /**
+     * Return true if the bags for the given profile are current.
+     * @param profile the user to fetch bags for
+     * @return a map from bag name to bag
+     */
     public boolean isUserBagsCurrent(Profile profile) {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
@@ -166,6 +171,29 @@ public class BagManager
      * @return a map from bag name to bag
      */
     public Map<String, InterMineBag> getUserOrGlobalBagsOfType(Profile profile, String type) {
+        return getUserOrGlobalBagsOfType(profile, type, false);
+    }
+
+    /**
+     * Fetch global and user bags current of the specified type or a subclass of the specified type.
+     * @param profile the user to fetch bags for
+     * @param type an unqualified class name
+     * @return a map from bag name to bag
+     */
+    public Map<String, InterMineBag> getCurrentUserOrGlobalBagsOfType(Profile profile,
+                                                                      String type) {
+        return getUserOrGlobalBagsOfType(profile, type, true);
+    }
+
+    /**
+     * Fetch global and user bags of the specified type or a subclass of the specified type.
+     * @param profile the user to fetch bags for
+     * @param type an unqualified class name
+     * @param onlyCurrent if true return only the bag current
+     * @return a map from bag name to bag
+     */
+    public Map<String, InterMineBag> getUserOrGlobalBagsOfType(Profile profile, String type,
+                                                               boolean onlyCurrent) {
         Set<String> classAndSubs = new HashSet<String>();
         classAndSubs.add(type);
 
@@ -181,35 +209,9 @@ public class BagManager
         for (Map.Entry<String, InterMineBag> entry : getUserAndGlobalBags(profile).entrySet()) {
             InterMineBag bag = entry.getValue();
             if (classAndSubs.contains(bag.getType())) {
-                bagsOfType.put(entry.getKey(), bag);
-            }
-        }
-        return bagsOfType;
-    }
-    
-    /**
-     * Fetch global and user bags of the specified type or a subclass of the specified type.
-     * @param profile the user to fetch bags for
-     * @param type an unqualified class name
-     * @return a map from bag name to bag
-     */
-    public Map<String, InterMineBag> getCurrentUserOrGlobalBagsOfType(Profile profile, String type) {
-        Set<String> classAndSubs = new HashSet<String>();
-        classAndSubs.add(type);
-
-        ClassDescriptor bagTypeCld = model.getClassDescriptorByName(type);
-        if (bagTypeCld == null) {
-            throw new NullPointerException("Could not find ClassDescriptor for name " + type);
-        }
-        for (ClassDescriptor cld : model.getAllSubs(bagTypeCld)) {
-            classAndSubs.add(cld.getUnqualifiedName());
-        }
-
-        Map<String, InterMineBag> bagsOfType = new HashMap<String, InterMineBag>();
-        for (Map.Entry<String, InterMineBag> entry : getUserAndGlobalBags(profile).entrySet()) {
-            InterMineBag bag = entry.getValue();
-            if (classAndSubs.contains(bag.getType()) && bag.isCurrent()) {
-                bagsOfType.put(entry.getKey(), bag);
+                if ((onlyCurrent && bag.isCurrent()) || !onlyCurrent) {
+                    bagsOfType.put(entry.getKey(), bag);
+                }
             }
         }
         return bagsOfType;
@@ -235,18 +237,22 @@ public class BagManager
     }
 
     /**
-     * Fetch user or global bags that contain the given id.  If user has a bag with the same name
-     * as a global bag the user's bag takes precedence.
+     * Fetch the current user or global bags that contain the given id.  If user has a bag
+     * with the same name as a global bag the user's bag takes precedence.
      * @param id the id to search bags for
      * @param profile the user to fetch bags from
      * @return bags containing the given id
      */
-    public Collection<InterMineBag> getUserOrGlobalBagsContainingId(Profile profile, Integer id) {
+    public Collection<InterMineBag> getCurrentUserOrGlobalBagsContainingId(Profile profile,
+                                                                           Integer id) {
         HashSet<InterMineBag> bagsContainingId = new HashSet<InterMineBag>();
         bagsContainingId.addAll(getGlobalBagsContainingId(id));
-        // System.out.println("superuser:" + bagsContainingId.size());
         bagsContainingId.addAll(getUserBagsContainingId(profile, id));
-        // System.out.println("user:" + bagsContainingId.size());
+        for (InterMineBag bag: bagsContainingId) {
+            if (!bag.isCurrent()) {
+                bagsContainingId.remove(bag);
+            }
+        }
         return bagsContainingId;
     }
 
@@ -270,7 +276,9 @@ public class BagManager
         Iterator<Object> resIter = res.iterator();
         while (resIter.hasNext()) {
             Integer osBagId = (Integer) resIter.next();
-            bagsContainingId.add(osBagIdToInterMineBag.get(osBagId));
+            if (osBagIdToInterMineBag.get(osBagId) != null) {
+                bagsContainingId.add(osBagIdToInterMineBag.get(osBagId));
+            }
         }
 
         return bagsContainingId;
