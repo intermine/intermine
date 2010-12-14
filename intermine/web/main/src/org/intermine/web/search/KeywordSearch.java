@@ -714,6 +714,13 @@ class InterMineObjectFetcher extends Thread
 
             f.setBoost(boost);
 
+            // if this is a single word then we don't need positional information of terms in the
+            // string.  NOTE - this may affect the boost applied to class keys.
+            if (value.indexOf(' ') == -1) {
+                f.setOmitNorms(true);
+                f.setOmitTermFreqAndPositions(true);
+            }
+
             doc.add(f);
             fieldNames.add(f.name());
 
@@ -1207,9 +1214,9 @@ public class KeywordSearch
      */
     public static BrowseResult runBrowseSearch(String searchString, int offset,
             Map<String, String> facetValues, List<Integer> ids) {
-    	BrowseResult result = null;
+        BrowseResult result = null;
         if (index == null) {
-        	return result;
+            return result;
         }
         long time = System.currentTimeMillis();
 
