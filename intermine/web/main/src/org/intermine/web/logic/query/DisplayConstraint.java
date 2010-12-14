@@ -600,7 +600,7 @@ public class DisplayConstraint
     }
 
     /**
-     * Get a list of public and user bag names available for this path.  If none available return
+     * Get a list of public and user bag names available and currentfor this path.  If none available return
      * null.
      * @return a list of available bag names or null
      */
