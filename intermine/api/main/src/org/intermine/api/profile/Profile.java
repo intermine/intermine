@@ -281,6 +281,20 @@ public class Profile
     }
 
     /**
+     * Get the value of savedBags current
+     * @return the value of savedBags
+     */
+    public Map<String, InterMineBag> getCurrentSavedBags() {
+        Map<String, InterMineBag> unmodifiableMap = Collections.unmodifiableMap(savedBags);
+        for (InterMineBag bag : unmodifiableMap.values()) {
+            if (!bag.isCurrent()) {
+                unmodifiableMap.remove(bag);
+            }
+        }
+        return unmodifiableMap;
+    }
+
+    /**
      * Stores a new bag in the profile. Note that bags are always present in the user profile
      * database, so this just adds the bag to the in-memory list of this profile.
      *
