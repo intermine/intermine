@@ -12,6 +12,7 @@ package org.intermine.api.profile;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -285,13 +286,14 @@ public class Profile
      * @return the value of savedBags
      */
     public Map<String, InterMineBag> getCurrentSavedBags() {
-        Map<String, InterMineBag> unmodifiableMap = Collections.unmodifiableMap(savedBags);
-        for (InterMineBag bag : unmodifiableMap.values()) {
+        Map<String, InterMineBag> clone = new HashMap<String, InterMineBag>();
+        clone.putAll(savedBags);
+        for (InterMineBag bag : savedBags.values()) {
             if (!bag.isCurrent()) {
-                unmodifiableMap.remove(bag);
+                clone.remove(bag.getName());
             }
         }
-        return unmodifiableMap;
+        return clone;
     }
 
     /**
