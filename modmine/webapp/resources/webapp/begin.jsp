@@ -25,11 +25,11 @@
       <div class="center span-11 last">
         <div class="bochs" id="bochs-1">
             <div id="thumb" class="span-4">
-                <img src="themes/metabolic/thumbs/thumb-image.png" alt="metabolicMine interface" />
+                <img src="themes/metabolic/thumbs/thumb-image.png" alt="modMine interface" />
             </div>
             <div id="welcome-content" class="span-7 last current">
               <h2>First time here?</h2>
-              <p>Welcome to <strong>modMine</strong>, an integrated web resource of Data &amp; Tools to support the Mod research community.</p>
+              <p>Welcome to <strong>modMine</strong>, an integrated web resource of Data &amp; Tools to support the modENCODE research community.</p>
 
               <p>If you are short of time, just navigate through our set of <a href="#" onclick="switchBochs(2);return false;">Feature Hints</a>.
             </div>
@@ -39,7 +39,7 @@
           <div id="thumb" class="span-4">
           <img
             src="themes/metabolic/thumbs/feature-search.jpg"
-            alt="metabolicMine Search" /></div>
+            alt="modMine Search" /></div>
           <div id="welcome-content" class="span-7 last">
             <h2>Search</h2>
             <p>Our search engine operates across many data fields giving you the
@@ -52,7 +52,7 @@
           <div id="thumb" class="span-4">
           <img
             src="themes/metabolic/thumbs/feature-facets.jpg"
-            alt="metabolicMine Facets" /></div>
+            alt="modMine Facets" /></div>
           <div id="welcome-content" class="span-7 last">
             <h2>Facets</h2>
             <p><strong>Facets</strong> show you the different places where your search words were found (eg. within Gene, Protein, Go Term, Template, Publication etc).
@@ -65,7 +65,7 @@
               <div id="thumb" class="span-4">
               <a title="Try Lists" href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view"><img
                 src="themes/metabolic/thumbs/feature-lists.jpg"
-                alt="metabolicMine Lists" /></a></div>
+                alt="modMine Lists" /></a></div>
               <div id="welcome-content" class="span-7 last">
                 <h2>Lists</h2>
                 <p>The <strong>Lists</strong> area lets you operate on whole sets of data at once. You can
@@ -86,7 +86,7 @@
               <div id="thumb" class="span-4">
               <a title="Try Templates" href="/${WEB_PROPERTIES['webapp.path']}/templates.do"><img
                 src="themes/metabolic/thumbs/feature-templates.jpg"
-                alt="metabolicMine Templates" /></a></div>
+                alt="modMine Templates" /></a></div>
               <div id="welcome-content" class="span-7 last">
                 <h2>Templates</h2>
                 <p><strong>Template queries</strong> are 'predefined' queries designed around the common tasks performed by our Biologist Community. Templates
@@ -105,10 +105,10 @@
               <div id="thumb" class="span-4">
               <a title="Try MyMine" href="/${WEB_PROPERTIES['webapp.path']}/mymine.do"><img
                 src="themes/metabolic/thumbs/feature-mymine.jpg"
-                alt="metabolicMine MyMine" /></a></div>
+                alt="modMine MyMine" /></a></div>
               <div id="welcome-content" class="span-7 last">
                 <h2>MyMine</h2>
-                <p><strong>MyMine</strong> is your <u>personal space</u> on metabolicMine. Creating an account is easy. Just provide an e-mail and a password. You're ready to go.</p>
+                <p><strong>MyMine</strong> is your <u>personal space</u> on modMine. Creating an account is easy. Just provide an e-mail and a password. You're ready to go.</p>
                 <p>Your account allows you to:</p>
                 <ul>
                   <li>Save Queries and Lists</li>
@@ -124,10 +124,10 @@
               <div id="thumb" class="span-4">
               <a title="Try QueryBuilder" href="/${WEB_PROPERTIES['webapp.path']}/customQuery.do"><img
                 src="themes/metabolic/thumbs/feature-querybuilder.jpg"
-                alt="metabolicMine QueryBuilder" /></a></div>
+                alt="modMine QueryBuilder" /></a></div>
               <div id="welcome-content" class="span-7 last">
                 <h2>QueryBuilder</h2>
-                <p><strong>QueryBuilder (QB)</strong> is the Powerhouse of metabolicMine.</p>
+                <p><strong>QueryBuilder (QB)</strong> is the Powerhouse of modMine.</p>
                 <p>Its advanced interface lets you:</p>
                 <ul>
                   <li>Construct your own custom queries
@@ -216,19 +216,22 @@
    </div>
 
    <div id="bochs" class="span-4">
-     <h3>Placeholder Text 1</h3>
-     <a href="http://www.cam.ac.uk"><div class="heatmap"><img src="themes/metabolic/icons/cam-text-ico.gif" alt="heatmap"/></div></a>
+     <h3>Experiments View</h3>
+     <a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do"><div class="heatmap"><img src="themes/modmine/icons/exView.png" alt="experiments View"/></div></a>
      <div class="text">
-       <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words
-       which don't look even slightly believable.</p>
+       <p>Access the modENCODE data through a summary page of all the experiments in the project.</p>
      </div>
    </div>
 
    <div id="bochs" class="span-4">
-     <h3>Placeholder Text 2</h3>
-     <a href="http://www.cam.ac.uk"><div class="heatmap"><img src="themes/metabolic/icons/cam-text-ico.gif" alt="heatmap"/></div></a>
+     <h3>Fly Chromatin states</h3>
+     <a href="http://modencode.oicr.on.ca/~pruzanov/"><div class="heatmap"><img src="themes/modmine/icons/flyscore-text.png" alt="heatmap"/></div></a>
+<br />
+
+     <a href="http://compbio.med.harvard.edu/flychromatin/"><div class="heatmap"><img src="themes/modmine/icons/bg3-text.png" alt="heatmap"/></div></a>
+
      <div class="text">
-       <p>The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested.</p>
+       <p></p>
      </div>
    </div>
 
