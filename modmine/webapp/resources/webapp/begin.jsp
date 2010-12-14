@@ -159,29 +159,35 @@
    <div id="search-bochs" class="span-4">
      <h3><a href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=">Search</a></h3>
      <div class="text">
-        <p>Enter a gene, protein, SNP or other identifier [eg.
-        <a onclick="preFillInput('PPARG');return false;" title="Search for PPARG"
-          href="keywordSearchResults.do?searchTerm=PPARG"><strong>PPARG</strong></a>,
+        <p>Enter a gene, protein, cellline or other identifier [eg.
+        <a onclick="preFillInput('zen');return false;" title="Search for zen"
+          href="keywordSearchResults.do?searchTerm=zen"><strong>zen</strong></a>,
         <a onclick="preFillInput('Insulin');return false;" title="Search for Insulin"
           href="keywordSearchResults.do?searchTerm=Insulin"><strong>Insulin</strong></a>,
-        <a onclick="preFillInput('rs876498');return false;" title="Search for rs876498"
-          href="keywordSearchResults.do?searchTerm=rs876498"><strong>rs876498</strong></a>].
-        <br />Alternatively, search for disease, keywords or publications [eg.
+        <a onclick="preFillInput('kc167');return false;" title="Search for kc167"
+          href="keywordSearchResults.do?searchTerm=kc167"><strong>kc167</strong></a>].
+        <br />Alternatively, search for disease, submission or publications [eg.
         <a onclick="preFillInput('Diabetes');return false;" title="Search for Diabetes"
           href="keywordSearchResults.do?searchTerm=Diabetes"><strong>Diabetes</strong></a>,
-        <a onclick="preFillInput('GWAS');return false;" title="Search for GWAS"
-          href="keywordSearchResults.do?searchTerm=GWAS"><strong>GWAS</strong></a>,
-        <a onclick="preFillInput('13658959');return false;" title="Search for PMID"
-          href="keywordSearchResults.do?searchTerm=13658959"><strong>PMID</strong></a>,
-       <a onclick="preFillInput('Sanger F');return false;" title="Search for Author"
-          href="keywordSearchResults.do?searchTerm=Sanger+F"><strong>Author</strong></a>
+        <a onclick="preFillInput('RT-PCR');return false;" title="Search for RT-PCR"
+          href="keywordSearchResults.do?searchTerm=RT-PCR"><strong>RT-PCR</strong></a>,
+        <a onclick="preFillInput('11856529');return false;" title="Search for PMID"
+          href="keywordSearchResults.do?searchTerm=11856529"><strong>PMID</strong></a>,
+       <a onclick="preFillInput('Ashburner');return false;" title="Search for Author"
+          href="keywordSearchResults.do?searchTerm=ashburner"><strong>Author</strong></a>
         ]</p>
         <p>[Supports AND, OR, NOT and wildcard*]</p>
         <br />
         <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
-          <input id="actionsInput" class="input" type="text" name="searchTerm" value="e.g. PPARG, Insulin, rs876498" />
-          <input type="submit" value="Search" />
+          <input id="actionsInput" class="input" type="text" name="searchTerm" value="e.g. zen, Insulin, kc167" />
+          <input type="submit" value="Get term" />
         </form>
+        <br />
+         <html:form action="/modMineSearchAction" focus="searchTerm">
+            <input name="searchTerm" type="text" class="qs_input">
+            <html:submit>Get submission</html:submit>
+        </html:form>
+
      </div>
    </div>
 
