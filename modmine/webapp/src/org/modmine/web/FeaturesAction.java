@@ -114,6 +114,13 @@ public class FeaturesAction extends InterMineAction
             Set<String> organisms = exp.getOrganisms();
             taxIds = getTaxonIds(organisms);
 
+            // temp fix for unmerged peak scores
+            if (experimentName.equalsIgnoreCase(
+                    "Genome-wide localization of essential replication initiators")) {
+                 q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R*"));                    
+             }
+
+            
             if (featureType.equalsIgnoreCase("all")) {
                 // fixed query for the moment
                 String project = (String) request.getParameter("project");
@@ -168,6 +175,7 @@ public class FeaturesAction extends InterMineAction
                     addLocationToQuery(q, featureType);
                     addEFactorToQuery(q, featureType, hasPrimer);
                 }
+                
             }
         }
 
@@ -341,6 +349,7 @@ public class FeaturesAction extends InterMineAction
             q.addView(featureType + ".id");
             // temp fix for unmerged peak scores
             dccId = (String) request.getParameter("submission");
+            q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
             if (unmergedPeaks.contains(dccId)) {
                  q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R*"));                    
              }
