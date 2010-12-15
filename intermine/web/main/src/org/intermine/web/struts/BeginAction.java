@@ -29,7 +29,6 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
-import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
@@ -138,9 +137,11 @@ public class BeginAction extends InterMineAction
 
         request.setAttribute("aspectQueries", aspectQueries);
 
-        String[] beginQueryClasses = (properties.get("begin.query.classes").toString())
-            .split("[ ,]+");
-        request.setAttribute("beginQueryClasses", beginQueryClasses);
+        Object beginQueryClassConfig = properties.get("begin.query.classes");
+        if (beginQueryClassConfig != null) {
+            String[] beginQueryClasses = beginQueryClassConfig.toString().split("[ ,]+");
+            request.setAttribute("beginQueryClasses", beginQueryClasses);
+        }
 
         return mapping.findForward("begin");
     }
