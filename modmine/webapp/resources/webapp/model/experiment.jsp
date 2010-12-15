@@ -747,7 +747,7 @@ ${fc.key}:
 </c:choose>
 
    &nbsp;&nbsp;
-   <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=list&submission=${sub.dCCid}&feature=${fc.key}">create&nbsp;LIST</html:link>
+   <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=whatever&action=list&submission=${sub.dCCid}&feature=${fc.key}">create&nbsp;LIST</html:link>
 
 
                 </td>
