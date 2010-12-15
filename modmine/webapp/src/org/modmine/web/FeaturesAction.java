@@ -340,6 +340,7 @@ public class FeaturesAction extends InterMineAction
             // need to select just id of featureType to create list
             q.addView(featureType + ".id");
             // temp fix for unmerged peak scores
+            dccId = (String) request.getParameter("submission");
             if (unmergedPeaks.contains(dccId)) {
                  q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R*"));                    
              }
