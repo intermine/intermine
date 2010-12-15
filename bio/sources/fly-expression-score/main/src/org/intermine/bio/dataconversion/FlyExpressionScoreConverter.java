@@ -49,7 +49,10 @@ public class FlyExpressionScoreConverter extends BioFileConverter
 
     private static Map<String, String> cellLines = null;
     private static Map<String, String> devStages = null;
-    
+       
+    private Map<String, String> geneItemIdRefMap = new HashMap<String, String>();
+    private Map<String, String> exonItemIdRefMap = new HashMap<String, String>();
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -134,7 +137,8 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                 if (StringUtils.isEmpty(primaryId)) {
                     break;
                 }
-                Item gene = createBioEntity(primaryId, "Gene");
+//                Item gene = createBioEntity(primaryId, "Gene");
+                createBioEntity(primaryId, "Gene");
 
                 // Cell line starts from column 6 and ends at 30 which is hearder[5-29]
                 for (int i = 5; i < 30; i++) {
@@ -146,7 +150,8 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                         cellLines.put(col, cellLine.getIdentifier());
                     }
                     Item score = createGeneExpressionScore(line[i]);
-                    score.setReference("gene", gene);
+//                    score.setReference("gene", gene);
+                    score.setReference("gene", geneItemIdRefMap.get(primaryId));
                     score.setReference("cellLine", cellLines.get(col));
                     score.setReference("submission", submission);
                     score.setReference("organism", organism);
@@ -163,7 +168,8 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                         devStages.put(col, developmentalStage.getIdentifier());
                     }
                     Item score = createGeneExpressionScore(line[i]);
-                    score.setReference("gene", gene);
+                    //score.setReference("gene", gene);
+                    score.setReference("gene", geneItemIdRefMap.get(primaryId));
                     score.setReference("developmentalStage", devStages.get(col));
                     score.setReference("submission", submission);
                     score.setReference("organism", organism);
@@ -221,7 +227,8 @@ public class FlyExpressionScoreConverter extends BioFileConverter
                 if (StringUtils.isEmpty(primaryId)) {
                     break;
                 }
-                Item exon = createBioEntity(primaryId, "Exon");
+//                Item exon = createBioEntity(primaryId, "Exon");
+                createBioEntity(primaryId, "Exon");
 
                 // Cell line starts from column 8 and ends at 32 which is header[7-31]
                 for (int i = 7; i < 32; i++) {
@@ -243,7 +250,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
 //                    store(score);
                 
                     Item score = createExonExpressionScore(line[i]);
-                    score.setReference("exon", exon);
+                    score.setReference("exon", exonItemIdRefMap.get(primaryId));
                     score.setReference("cellLine", cellLines.get(col));
                     score.setReference("submission", submission);
                     score.setReference("organism", organism);
@@ -265,7 +272,8 @@ public class FlyExpressionScoreConverter extends BioFileConverter
 //                    Item developmentalStage = createDevelopmentalStage(col);
                     
                     Item score = createExonExpressionScore(line[i]);
-                    score.setReference("exon", exon);
+//                    score.setReference("exon", exon);
+                    score.setReference("exon", exonItemIdRefMap.get(primaryId));
                     score.setReference("developmentalStage", devStages.get(col));
                     score.setReference("submission", submission);
                     score.setReference("organism", organism);
@@ -383,8 +391,30 @@ public class FlyExpressionScoreConverter extends BioFileConverter
      * @return an Item representing the BioEntity
      * @throws ObjectStoreException
      */
-    private Item createBioEntity(String primaryId, String type) throws ObjectStoreException {
+    private void createBioEntity(String primaryId, String type) throws ObjectStoreException {
         Item bioentity = null;
+
+        if ("Gene".equals(type)) {
+            if (!geneItemIdRefMap.containsKey(primaryId)) {
+                bioentity = createItem("Gene");
+                bioentity.setAttribute("primaryIdentifier", primaryId);
+                store(bioentity);
+                geneItemIdRefMap.put(primaryId, bioentity.getIdentifier());
+            }            
+        } else if ("Exon".equals(type)) {
+            if (!exonItemIdRefMap.containsKey(primaryId)) {
+                bioentity = createItem("Exon");
+                bioentity.setAttribute("primaryIdentifier", primaryId);
+                store(bioentity);
+                exonItemIdRefMap.put(primaryId, bioentity.getIdentifier());
+            }            
+        }
+    }
+
+    
+    private Item createBioEntityOld(String primaryId, String type) throws ObjectStoreException {
+        Item bioentity = null;
+
         if ("Gene".equals(type)) {
             bioentity = createItem("Gene");
         } else if ("Exon".equals(type)) {
@@ -396,6 +426,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
         return bioentity;
     }
 
+    
     /**
      * Create and store a Submission item on the first time called.
      *
