@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import java.io.PrintStream;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.TagManager;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
@@ -80,6 +82,7 @@ public class ModifyTemplateAction extends InterMineAction
             ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
+        InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ServletContext servletContext = session.getServletContext();
         Profile profile = SessionMethods.getProfile(session);
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
@@ -95,6 +98,14 @@ public class ModifyTemplateAction extends InterMineAction
                 }
 
                 profile.deleteTemplate(template);
+                TagManager tagManager = im.getTagManager();
+                //delete its tags
+                Set<String> tagNames = tagManager.getObjectTagNames(template, TagTypes.TEMPLATE,
+                                                                    profile.getUsername());
+                for (String tagName : tagNames) {
+                    tagManager.deleteTag(tagName, template, TagTypes.TEMPLATE,
+                                         profile.getUsername());
+                }
             }
 
             if (SessionMethods.isSuperUser(session)) {
