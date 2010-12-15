@@ -10,6 +10,7 @@ package org.modmine.web;
  *
  */
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -26,7 +27,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
@@ -91,6 +91,9 @@ public class FeaturesAction extends InterMineAction
 
         final Map<String, LinkedList<String>> gffFields = new HashMap<String, LinkedList<String>>();
         populateGFFRelationships(gffFields);
+
+        String[] wrongSubs = new String[] {"2753","2754","2755","2783","2979"};
+        final Set<String> unmergedPeaks = new HashSet<String>(Arrays.asList(wrongSubs));
 
         boolean doGzip = false;
         if (request.getParameter("gzip") != null
@@ -221,6 +224,15 @@ public class FeaturesAction extends InterMineAction
                             OuterJoinStatus.OUTER);
                 }
                 q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
+                
+                // temp fix for unmerged peak scores
+                LOG.info("QQQQQQQQQQQq " + dccId + featureType + "|" + unmergedPeaks);
+               if (unmergedPeaks.contains(dccId)) {
+                    LOG.info("PPPPPPPPPPP " + dccId + featureType);
+                    
+                    q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_REP*"));                    
+                }
+                
 
                 if (unlocFeatures == null || !unlocFeatures.contains(featureType)) {
                     addLocationToQuery(q, featureType);
