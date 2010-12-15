@@ -226,13 +226,9 @@ public class FeaturesAction extends InterMineAction
                 q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
                 
                 // temp fix for unmerged peak scores
-                LOG.info("QQQQQQQQQQQq " + dccId + featureType + "|" + unmergedPeaks);
                if (unmergedPeaks.contains(dccId)) {
-                    LOG.info("PPPPPPPPPPP " + dccId + featureType);
-                    
-                    q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_REP*"));                    
+                    q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R*"));                    
                 }
-                
 
                 if (unlocFeatures == null || !unlocFeatures.contains(featureType)) {
                     addLocationToQuery(q, featureType);
@@ -343,6 +339,10 @@ public class FeaturesAction extends InterMineAction
         } else if ("list".equals(action)) {
             // need to select just id of featureType to create list
             q.addView(featureType + ".id");
+            // temp fix for unmerged peak scores
+            if (unmergedPeaks.contains(dccId)) {
+                 q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R*"));                    
+             }
 
             Profile profile = SessionMethods.getProfile(session);
 
