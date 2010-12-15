@@ -74,8 +74,10 @@ public class BenjaminiHochberg implements ErrorCorrection
                     adjustedP = ONE;
                 }
 
-                // add to results map
-                adjustedMap.put(label, adjustedP);
+                // only report if value > maximum
+                if (adjustedP.doubleValue() <= max.doubleValue()) {
+                    adjustedMap.put(label, adjustedP);
+                }
 
                 // decrease index
                 index = index.subtract(ONE);
