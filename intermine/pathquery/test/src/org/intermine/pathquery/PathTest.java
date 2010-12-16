@@ -11,6 +11,7 @@ package org.intermine.pathquery;
  */
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -262,6 +263,27 @@ public class PathTest extends TestCase
             // expected
         }
 
+    }
+    
+    public void testDecomposePath() throws Exception {
+    	
+    	String shortPathString = "Company";
+    	Path shortPath = new Path(model, shortPathString);
+    	List<Path> decomposedPaths = shortPath.decomposePath();
+    	assertTrue(decomposedPaths != null);
+    	assertTrue(decomposedPaths.size() == 1);
+    	assertTrue("Company".equals(decomposedPaths.get(0).toString()));
+    	
+    	String longPathString = "Company.departments.manager.name";
+    	Path longPath = new Path(model, longPathString);
+    	decomposedPaths = longPath.decomposePath();
+    	assertTrue(decomposedPaths != null);
+    	assertTrue(decomposedPaths.size() == 4);
+    	assertTrue("Company".equals(decomposedPaths.get(0).toString()));
+    	assertTrue("Company.departments".equals(decomposedPaths.get(1).toString()));
+    	assertTrue("Company.departments.manager".equals(decomposedPaths.get(2).toString()));
+    	assertTrue("Company.departments.manager.name".equals(decomposedPaths.get(3).toString()));
+    	
     }
 
     public void testContainsCollections() throws Exception {
