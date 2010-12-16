@@ -48,6 +48,7 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     private int columnCount;
     private Results results;
     private boolean isGoingFaster = false;
+    private PathQuery originatingQuery;
 
 
      /**
@@ -63,11 +64,14 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     public ExportResultsIterator(PathQuery pathQuery, Results results,
             Map<String, QuerySelectable> pathToQueryNode) throws ObjectStoreException {
         this.results = results;
+        this.originatingQuery = pathQuery;
         init(pathQuery, pathToQueryNode);
     }
 
-
-
+    public PathQuery getQuery() {
+    	return originatingQuery;
+    }
+    
     private void init(PathQuery pq, Map<String, QuerySelectable> pathToQueryNode) {
         osIter = ((List) results).iterator();
         List<List<ResultElement>> empty = Collections.emptyList();
