@@ -180,7 +180,7 @@ public class FlyAtlasConverter extends BioFileConverter
 
 
         tissues = new HashMap<String, Item>();
-        // names of tissues from column headins, could be made more descriptive
+        // names of tissues from column headings, could be made more descriptive
         tissues.put("brain", createTissue("Brain"));
         tissues.put("head", createTissue("Head"));
         tissues.put("crop", createTissue("Crop"));
