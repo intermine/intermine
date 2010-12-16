@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.output;
 
+/*
+ * Copyright (C) 2002-2010 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,8 +18,9 @@ import java.util.Map;
 
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
+import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
-import org.intermine.web.logic.export.ResultElementConverter;
+import org.intermine.pathquery.PathException;
 import org.json.JSONObject;
 
 public class JsonResultsIterator implements Iterator<JSONObject> {
@@ -18,23 +29,26 @@ public class JsonResultsIterator implements Iterator<JSONObject> {
 	private static final String ID_KEY = "objectId";
 
 	private ExportResultsIterator subIter;
-	private List<String> views;
 	private List<ResultElement> holdOver;
 	private List<Path> viewPaths;
 	private transient Map<String, Object> currentMap;
 	private transient List<Map<String, Object>> currentArray;
 
-	public JsonResultsIterator(ExportResultsIterator it,
-			List<String> viewPathStrings) {
+	public JsonResultsIterator(ExportResultsIterator it) {
 		this.subIter = it;
-		this.views = viewPathStrings;
 		init();
 	}
 
 	private void init() {
+		List<String> views = subIter.getQuery().getView();
+		Model model = subIter.getQuery().getModel();
 		for (String view : views) {
-			Path path = new Path(model, view);
-			viewPaths.add(path);
+			try {
+				Path path = new Path(model, view);
+				viewPaths.add(path);
+			} catch (PathException e) {
+				throw new JSONFormattingException(e);
+			}
 		}
 	}
 
@@ -50,10 +64,16 @@ public class JsonResultsIterator implements Iterator<JSONObject> {
 	public JSONObject next() {
 		Map<String, Object> nextJsonMap = new HashMap<String, Object>();
 		Integer lastId = null;
+		
+		if (holdOver != null) {
+			lastId = holdOver.get(0).getId();
+			addRowToJsonMap(holdOver, nextJsonMap);
+			holdOver = null;
+		}
 		while (subIter.hasNext()) {
 			List<ResultElement> result = subIter.next();
 			Integer currentId = result.get(0).getId(); // id is guarantor of
-														// object identity
+													   // object identity
 			if (lastId != null && !lastId.equals(currentId)) {
 				holdOver = result;
 				lastId = currentId;
@@ -81,7 +101,7 @@ public class JsonResultsIterator implements Iterator<JSONObject> {
 			Map<String, Object> jsonMap) {
 		if (jsonMap.containsKey(CLASS_KEY)) {
 			if (!jsonMap.get(CLASS_KEY).equals(cell.getType())) {
-				throw new RuntimeException(
+				throw new JSONFormattingException(
 						"This result element does not belong on this map - classes don't match");
 			}
 		} else {
@@ -89,7 +109,7 @@ public class JsonResultsIterator implements Iterator<JSONObject> {
 		}
 		if (jsonMap.containsKey(ID_KEY)) {
 			if (!jsonMap.get(ID_KEY).equals(cell.getId())) {
-				throw new RuntimeException(
+				throw new JSONFormattingException(
 						"This result element does not belong on this map - ids don't match");
 			}
 		} else {
@@ -113,7 +133,7 @@ public class JsonResultsIterator implements Iterator<JSONObject> {
 		String key = column.getLastElement();
 		if (objectMap.containsKey(key)) {
 			if (! objectMap.get(key).equals(cell.getField())) {
-				throw new RuntimeException("This field is already set in this map, but to a different value");
+				throw new JSONFormattingException("This field is already set in this map, but to a different value");
 			}
 		} else {
 			String value = cell.getField().toString();
@@ -132,16 +152,16 @@ public class JsonResultsIterator implements Iterator<JSONObject> {
 				} else if (section.endIsAttribute()) {
 					addAttributeToCurrentNode(section, cell);
 				} else if (section.endIsReference()) {
-					addReferenceToCurrentNode(section, cell);
+					addReferenceToCurrentNode(section);
 				} else if (section.endIsCollection()) {
-					addCollectionToCurrentNode(section, cell);
+					addCollectionToCurrentNode(section);
 				} else {
 					throw new RuntimeException("Bad path type: "
 							+ section.toString());
 				}
 			}
 		} catch(Error e) {
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			currentMap = null;
 		}
@@ -149,7 +169,7 @@ public class JsonResultsIterator implements Iterator<JSONObject> {
 	
 	private void setCurrentMapFromCurrentArray(ResultElement cell) {
 		if (currentArray == null) {
-			throw new RuntimeException("Nowhere to put this field");
+			throw new JSONFormattingException("Nowhere to put this field");
 		}
 		boolean foundMap = false;
 		for (Map<String, Object> obj : currentArray) {
@@ -169,10 +189,10 @@ public class JsonResultsIterator implements Iterator<JSONObject> {
 	
 	private void setCurrentMapFromCurrentArray() {
 		if (currentArray == null) {
-			throw new RuntimeException("Nowhere to put this reference");
+			throw new JSONFormattingException("Nowhere to put this reference");
 		} 
 		if (currentArray.isEmpty()) {
-			throw new RuntimeException("There are no maps in this array");
+			throw new JSONFormattingException("There are no maps in this array");
 		}
 		currentMap = currentArray.get(currentArray.size() - 1);
 		currentArray = null;
@@ -185,7 +205,7 @@ public class JsonResultsIterator implements Iterator<JSONObject> {
 		addFieldToMap(cell, attributePath, currentMap);
 	}
 
-	private void addReferenceToCurrentNode(Path referencePath, ResultElement cell) {
+	private void addReferenceToCurrentNode(Path referencePath) {
 		if (currentMap == null) {
 			setCurrentMapFromCurrentArray();
 		}
@@ -203,7 +223,7 @@ public class JsonResultsIterator implements Iterator<JSONObject> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void addCollectionToCurrentNode(Path collectionPath, ResultElement cell) {
+	private void addCollectionToCurrentNode(Path collectionPath) {
 		if (currentMap == null) {
 			setCurrentMapFromCurrentArray();
 		}
@@ -223,8 +243,6 @@ public class JsonResultsIterator implements Iterator<JSONObject> {
 
 	@Override
 	public void remove() {
-		// TODO Auto-generated method stub
-
 	}
 
 }
