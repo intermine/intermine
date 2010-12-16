@@ -261,8 +261,8 @@ public final class MetadataManager
             boolean needNewBlob = true;
             if (r.next()) {
                 String blobValue = r.getString(1);
-                if ((blobValue != null) && blobValue.startsWith("BLOB: ")) {
-                    blob = Long.parseLong(blobValue.substring(6));
+                if ((blobValue != null) && isLargeObject(blobValue)) {
+                    blob = getBlobId(blobValue);
                     needNewBlob = false;
                 }
             }
@@ -285,6 +285,49 @@ public final class MetadataManager
             }
             throw e;
         }
+    }
+
+    /**
+     * Delete a large object from the database based on a given metadata key. If no large object or
+     * row in the intermine_metadata table exists nothing will be done.
+     * @param database the objectstore database
+     * @param key the row in the intermine_metadata table
+     * @return true if a blob was found and deleted
+     * @throws SQLException if an error occurs
+     */
+    public static boolean deleteLargeBinary(Database database, String key) throws SQLException {
+        Connection con = database.getConnection();
+        boolean foundBlob = false;
+        try {
+            con.setAutoCommit(false);
+            Statement s = con.createStatement();
+            ResultSet r = s.executeQuery("SELECT value FROM " + METADATA_TABLE + " WHERE key = '"
+                    + key + "'");
+            long blob = 0;
+            if (r.next()) {
+                String blobValue = r.getString(1);
+                if ((blobValue != null) && isLargeObject(blobValue)) {
+                    blob = getBlobId(blobValue);
+                    foundBlob = true;
+                    LargeObjectManager lom =
+                        ((org.postgresql.PGConnection) con).getLargeObjectAPI();
+                    lom.delete(blob);
+                }
+                s.execute("DELETE FROM " + METADATA_TABLE + " WHERE key = '" + key + "'");
+            }
+        } finally {
+            con.setAutoCommit(true);
+            con.close();
+        }
+        return foundBlob;
+    }
+
+    private static boolean isLargeObject(String value) {
+        return value.startsWith("BLOB: ");
+    }
+
+    private static long getBlobId(String value) {
+        return Long.parseLong(value.substring("BLOB: ".length()));
     }
 
     /**

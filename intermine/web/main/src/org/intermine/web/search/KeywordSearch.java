@@ -351,6 +351,7 @@ class InterMineObjectFetcher extends Thread
 
     final Map<Integer, Document> documents = new HashMap<Integer, Document>();
     final Set<String> fieldNames = new HashSet<String>();
+    private Set<String> normFields = new HashSet<String>();
     final Map<Class<?>, Vector<ClassAttributes>> decomposedClassesCache =
             new HashMap<Class<?>, Vector<ClassAttributes>>();
 
@@ -604,6 +605,17 @@ class InterMineObjectFetcher extends Thread
 
                     i++;
                 }
+                StringBuilder doneMessage = new StringBuilder();
+                for (String fieldName : fieldNames) {
+                    if (doneMessage.length() > 0) {
+                        doneMessage.append(", ");
+                    }
+                    doneMessage.append(fieldName);
+                    if (normFields.contains(fieldName)) {
+                        doneMessage.append(" NO_NORMS");
+                    }
+                }
+                LOG.info("COMPLETED index with " + i + " records.  Fields: " + doneMessage);
             } finally {
                 for (InterMineResultsContainer resultsContainer : referenceResults.values()) {
                     ((ObjectStoreInterMineImpl) os).releaseGoFaster(resultsContainer.getResults()
@@ -714,12 +726,23 @@ class InterMineObjectFetcher extends Thread
 
             f.setBoost(boost);
 
-            // if this is a single word then we don't need positional information of terms in the
-            // string.  NOTE - this may affect the boost applied to class keys.
-            if (value.indexOf(' ') == -1) {
+            // if we haven't set a boost and this is short field we can switch off norms
+            if (boost == 1F && value.indexOf(' ') == -1 ) {
                 f.setOmitNorms(true);
                 f.setOmitTermFreqAndPositions(true);
+                if (!normFields.contains(f.name())) {
+                    normFields.add(f.name());
+                }
             }
+            // if this is a single word then we don't need positional information of terms in the
+            // string.  NOTE - this may affect the boost applied to class keys.
+//            if (raw || value.indexOf(' ') == -1) {
+//                f.setOmitNorms(true);
+//                f.setOmitTermFreqAndPositions(true);
+//                if (!normFields.contains(f.name())) {
+//                    normFields.add(f.name());
+//                }
+//            }
 
             doc.add(f);
             fieldNames.add(f.name());
@@ -1063,6 +1086,18 @@ public class KeywordSearch
                 createIndex(os, classKeys);
             }
 
+            LOG.info("Deleting previous search index dirctory blob from db...");
+            long startTime = System.currentTimeMillis();
+            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+            boolean blobExisted = MetadataManager.deleteLargeBinary(db,
+                    MetadataManager.SEARCH_INDEX);
+            if (blobExisted) {
+                LOG.info("Deleting previous search index blob from db took: "
+                        + (System.currentTimeMillis() - startTime) + ".");
+            } else {
+                LOG.info("No previous search index blob found in db");
+            }
+
             LOG.info("Saving search index information to database...");
             writeObjectToDB(os, MetadataManager.SEARCH_INDEX, index);
             LOG.info("Successfully saved search index information to database.");
@@ -1074,7 +1109,16 @@ public class KeywordSearch
                 try {
                     LOG.info("Zipping up FSDirectory...");
 
-                    Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+                    LOG.info("Deleting previous search index dirctory blob from db...");
+                    startTime = System.currentTimeMillis();
+                    blobExisted = MetadataManager.deleteLargeBinary(db,
+                            MetadataManager.SEARCH_INDEX_DIRECTORY);
+                    if (blobExisted) {
+                        LOG.info("Deleting previous search index directory blob from db took: "
+                                + (System.currentTimeMillis() - startTime) + ".");
+                    } else {
+                        LOG.info("No previous search index directory blob found in db");
+                    }
                     LargeObjectOutputStream streamOut =
                             MetadataManager.storeLargeBinary(db,
                                     MetadataManager.SEARCH_INDEX_DIRECTORY);
