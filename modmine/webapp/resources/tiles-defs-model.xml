@@ -29,6 +29,9 @@
 <definition name="experiment.tile" path="/model/experiment.jsp"
         controllerUrl="/initExperiment.do"/>
 
+<definition name="heatMap.tile" path="/model/heatMap.jsp"
+        controllerUrl="/initHeatMap.do"/>
+
 <definition name="modmineGBrowse.tile" path="/model/modmineGBrowse.jsp"
         controllerUrl="/initExperiment.do"/>
 
@@ -40,6 +43,17 @@
 
 <definition name="modMineSearch.tile" path="/modMineSearch.jsp"/>
         <!--controllerUrl="/initModMineSearch.do"/>-->
+
+ 
+  <definition name="heatMap.page" extends="layout.template">
+    <put name="body" value="heatMap.tile"/>
+    <put name="pageName" value="heatMap"/>
+  </definition>
+
+  <definition name="projectsSummary.page" extends="layout.template">
+    <put name="body" value="projectsSummary.tile"/>
+    <put name="pageName" value="projectsSummary"/>
+  </definition>
 
   <definition name="projects.page" extends="layout.template">
     <put name="body" value="projects.tile"/>
