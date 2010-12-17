@@ -355,10 +355,10 @@
         <div class="center span-6 last">
             <h4>Perl<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
             <img src="themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
-            <p>We support programatic access to our data through Application Programming Interface too! Choose from options below:</p>
+            <p>You can fetch data from metabolicMine directly from your own programs via a REST web service.  More information:</p>
             <ul>
-                <li><a href="#">Perl API</a></li>
-                <li><a href="#">Java API</a></li>
+                <li><a href="/${WEB_PROPERTIES['webapp.path']}/api.do?subtab=perl">Perl API</a></li>
+                <li><a href="/${WEB_PROPERTIES['webapp.path']}/api.do?subtab=java">Java API</a></li>
             </ul>
         </div>
         <div class="bottom span-6 last"></div>
@@ -477,13 +477,13 @@
       <span>|</span>
             <a href="#">Software</a>
             <br />
-            <a href="#">ModMine</a>
-            <span>|</span>
             <a href="#">InterMine</a>
             <span>|</span>
             <a href="#">FlyMine</a>
             <span>|</span>
-            <a href="#">MalariaMine</a>
+            <a href="#">modMine</a>
+            <span>|</span>
+            <a href="#">RatMine</a>
 
             <p>&copy; 2010 Department of Genetics, University of Cambridge, Downing Street, Cambridge CB2 3EH, United Kingdom</p>
         </div>

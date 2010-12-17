@@ -69,13 +69,11 @@
           <fmt:message key="menu.dataCategories"/>
         </a>
       </li>
-      <!--
       <li id="api"  <c:if test="${tab == 'api'}">class="activelink"</c:if>>
         <a href="/${WEB_PROPERTIES['webapp.path']}/api.do">
           <fmt:message key="menu.api"/>
         </a>
       </li>
-      -->
       <li id="mymine"  <c:if test="${tab == 'mymine'}">class="activelink"</c:if>>
         <a href="/${WEB_PROPERTIES['webapp.path']}/mymine.do">
           <span><fmt:message key="menu.mymine"/></span>
