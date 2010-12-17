@@ -124,7 +124,7 @@
             <div class="bochs" id="bochs-3" style="display: none;">
               <div id="thumb" class="span-4">
               <a title="Try Faceted Search" href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag="><img
-                src="/metabolicmine/themes/metabolic/thumbs/feature-facets.jpg"
+                src="themes/metabolic/thumbs/feature-facets.jpg"
                 alt="metabolicMine Facets" /></a></div>
               <div id="welcome-content" class="span-8 last">
                 <h2>Facets</h2>
