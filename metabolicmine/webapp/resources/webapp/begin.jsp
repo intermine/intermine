@@ -467,23 +467,22 @@
 
     <div id="footer" class="span-12 last">
         <div class="span-6">
-            <a href="#">Contact Us</a>
+            <a href="#" onclick="showContactForm();return false;">Contact Us</a>
             <span>|</span>
-            <a href="#">FAQ</a>
+            <a href="http://blog.metabolicmine.org/faq">FAQ</a>
             <span>|</span>
-            <a href="#">About</a>
+            <a href="http://blog.metabolicmine.org/about">About</a>
       <span>|</span>
-            <a href="#">Cite</a>
-      <span>|</span>
-            <a href="#">Software</a>
+            <!-- <a href="#">Cite</a>
+      <span>|</span> -->
             <br />
-            <a href="#">InterMine</a>
+            <a href="http://www.intermine.org">InterMine</a>
             <span>|</span>
-            <a href="#">FlyMine</a>
+            <a href="http://www.flymine.org">FlyMine</a>
             <span>|</span>
-            <a href="#">modMine</a>
+            <a href="http://www.modmine.org">modMine</a>
             <span>|</span>
-            <a href="#">RatMine</a>
+            <a href="http://ratmine.mcw.edu/ratmine">RatMine</a>
 
             <p>&copy; 2010 Department of Genetics, University of Cambridge, Downing Street, Cambridge CB2 3EH, United Kingdom</p>
         </div>
@@ -501,7 +500,6 @@
             </a>
         </div>
     </div>
-
  </div>
 
  <script type="text/javascript">
