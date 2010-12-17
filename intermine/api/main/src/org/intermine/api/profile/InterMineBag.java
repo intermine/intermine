@@ -282,24 +282,17 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
     }
 
-    public void upgradeOsb(Set<Integer> values) throws ObjectStoreException {
-        upgradeOsb(values, false);
-    }
-    public void upgradeOsb(Set<Integer> values, boolean setOsbCurrent) throws ObjectStoreException {
+    public void upgradeOsb(Collection<Integer> values) throws ObjectStoreException {
         ObjectStoreWriter oswProduction = null;
         SavedBag savedBag = (SavedBag) uosw.getObjectById(savedBagId, SavedBag.class);
         try {
             oswProduction = os.getNewWriter();
             osb = oswProduction.createObjectStoreBag();
-            for (Integer value : values) {
-                oswProduction.addToBag(osb, value);
-            }
+            oswProduction.addAllToBag(osb, values);
             savedBag.setOsbId(osb.getBagId());
-            if (setOsbCurrent) {
-                savedBag.setCurrent(true);
-                isCurrent = true;
-                uosw.store(savedBag);
-            }
+            savedBag.setCurrent(true);
+            isCurrent = true;
+            uosw.store(savedBag);
         } finally {
             if (oswProduction != null) {
                 oswProduction.close();
