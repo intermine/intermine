@@ -15,6 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
@@ -73,4 +74,39 @@ public final class ModMineUtil
         }
         return subs;
     }
+
+
+    public static Set<Gene> getGenes(ObjectStore os, InterMineBag bag) {
+
+        Query q = new Query();
+
+        QueryClass qcObject = new QueryClass(Gene.class);
+
+        // InterMine id for any object
+        QueryField qfObjectId = new QueryField(qcObject, "id");
+
+        q.addFrom(qcObject);
+        q.addToSelect(qcObject);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        BagConstraint bc = new BagConstraint(qfObjectId, ConstraintOp.IN, bag.getOsb());
+        cs.addConstraint(bc);
+
+        q.setConstraint(cs);
+
+        Results r = os.execute(q);
+        @SuppressWarnings("unchecked") Iterator<ResultsRow> it = (Iterator) r.iterator();
+
+        Set<Gene> genes = new LinkedHashSet<Gene>();
+
+        while (it.hasNext()) {
+            ResultsRow rr = it.next();
+            Gene gene =  (Gene) rr.get(0);
+            genes.add(gene);
+        }
+        return genes;
+    }
+    
+
+
 }

@@ -50,9 +50,15 @@
 <action path="/initProjects"
   type="org.modmine.web.ProjectsController" />
 
+<action path="/initHeatMap"
+  type="org.modmine.web.HeatMapController" />
+
 <action path="/projects" forward="projects.page" />
 
 <action path="/experiment" forward="experiment.page" />
+
+<action path="/heatMap" forward="heatMap.page" />
+<action path="/projectsSummary" forward="projectsSummary.page" />
 
 
 <action path="/initSubmissions"

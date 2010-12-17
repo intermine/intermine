@@ -358,7 +358,9 @@
     </longdisplayers>
    <bagdisplayers>
       <displayer src="orthologueLinkDisplayer.tile" showOnLeft="false" />
-   </bagdisplayers>
+      <displayer src="heatMap.tile" showOnLeft="true"/>
+    </bagdisplayers>
+   
   </class>
 
   <class className="org.intermine.model.bio.GOAnnotation">
