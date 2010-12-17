@@ -28,7 +28,6 @@ function toggleForm(matchCount) {
 // -->
 </script>
 <c:set var="totalIdCount" value="${fn:length(duplicates) + fn:length(lowQualityMatches) + fn:length(convertedObjects) + matchCount + fn:length(unresolved)}"/>  <div class="body" align="center">
-
     <div id="uploadConfirmMessage">
       <strong>
         <span id="matchCount">${matchCount}</span> ${bagUploadConfirmForm.bagType}(s)
@@ -77,8 +76,17 @@ function toggleForm(matchCount) {
         </c:otherwise>
       </c:choose>
       <fmt:message key="bagUploadConfirm.bagName"/>:
-      <html:text property="newBagName" size="20" value="" onkeypress="if (event.keyCode == 13) {validateBagName('bagUploadConfirmForm');return false;} "/>
+      <html:text property="newBagName" size="20" value="${bagName}" onkeypress="if (event.keyCode == 13) {validateBagName('bagUploadConfirmForm');return false;} "
+      />
+    <c:choose>
+    <c:when test="${empty bagName}">
     <input type="button" name="confirmBagUpload" value="Save list" onclick="javascript:validateBagName('bagUploadConfirmForm');"/>
+    </c:when>
+    <c:otherwise>
+    <input type="hidden" name="upgrade" value="true"/>
+    <input type="button" name="saveNewBag" value="Upgrade list" onclick="submit();"/>
+    </c:otherwise>
+    </c:choose>
     </div>
   </div>
   <c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">
