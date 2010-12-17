@@ -302,6 +302,9 @@
       <forward name="error" path="bagUploadConfirm.page"/>
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
     </action>
+    <action path="/bagUpgrade" type="org.intermine.web.struts.BagUpgradeAction">
+      <forward name="bagUploadConfirm" path="bagUploadConfirm.page"/>
+    </action>
     <action path="/findInList" name="findInListForm" type="org.intermine.web.struts.FindInListAction" input="bagDetails">
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
     </action>

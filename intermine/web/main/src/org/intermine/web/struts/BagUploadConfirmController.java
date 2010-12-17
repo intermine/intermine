@@ -51,8 +51,13 @@ public class BagUploadConfirmController extends TilesAction
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-
-        BagQueryResult bagQueryResult = (BagQueryResult) session.getAttribute("bagQueryResult");
+        String bagName = (String) request.getAttribute("newBagName");
+        String bagQueryResultLabel = "bagQueryResult";
+        if (bagName != null) {
+        	bagQueryResultLabel = bagQueryResultLabel + "_" + bagName;
+        }
+        
+        BagQueryResult bagQueryResult = (BagQueryResult) session.getAttribute(bagQueryResultLabel);
         request.setAttribute("matches", bagQueryResult.getMatches());
         Map<String, Map<String, Map<String, List>>> issues = bagQueryResult.getIssues();
         request.setAttribute("issues", issues);
@@ -140,6 +145,9 @@ public class BagUploadConfirmController extends TilesAction
         bagUploadConfirmForm.setExtraFieldValue(TypeUtil.unqualifiedName(extraClassName));
         request.setAttribute("matchCount", new Integer(matchCount));
         request.setAttribute("jsArray", flattenedArray);
+        if (bagName != null) {
+        	request.setAttribute("bagName", bagName);
+        }
 
         return null;
     }

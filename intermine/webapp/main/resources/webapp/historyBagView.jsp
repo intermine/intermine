@@ -114,7 +114,7 @@
               <td class="sorting" align="right">
                 <c:choose>
                 <c:when test="${savedBag.value.current}">Current</c:when>
-                <c:otherwise><html:link href="">Resolve conflicts</html:link></c:otherwise>
+                <c:otherwise><html:link action="/bagUpgrade?bagName=${savedBag.value.name}&amp;bagType=${savedBag.value.type}">Upgrade</html:link></c:otherwise>
                 </c:choose>
               </td>
             </tr>
