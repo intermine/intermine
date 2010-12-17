@@ -90,10 +90,10 @@
               Disease research community.</p>
 
               <p>If you are short of time, just navigate through our set of <a class="nice" href="#" onclick="switchBochs(2);return false;">Feature Hints</a>. For a basic overview of
-              the site and its features try the <a class="nice" href="<c:url value="/tour/start.html" />"
-                  onclick="javascript:window.open('<c:url value="/tour/start.html" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Quick Tour</a>, it takes about ten minutes.</p>
-              <a class="button blue" href="<c:url value="/tour/start.html" />"
-                  onclick="javascript:window.open('<c:url value="/tour/start.html" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
+              the site and its features try the <a class="nice" href="<c:url value="www.metabolicmine.org/tour/start.html" />"
+                  onclick="javascript:window.open('<c:url value="www.metabolicmine.org/tour/start.html" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Quick Tour</a>, it takes about ten minutes.</p>
+              <a class="button blue" href="<c:url value="www.metabolicmine.org/tour/start.html" />"
+                  onclick="javascript:window.open('<c:url value="www.metabolicmine.org/tour/start.html" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
                     <div><span>Take a tour</span></div>
               </a>
              </div>
