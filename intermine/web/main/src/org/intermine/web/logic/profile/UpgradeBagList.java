@@ -58,22 +58,19 @@ public class UpgradeBagList implements Runnable
                 try {
                     BagQueryResult result = bagQueryRunner.searchForBag(bag.getType(),
                                             primaryIdentifiersList, "", false);
-                    Map<Integer, List> matches = result.getMatches();
-                    if (!matches.isEmpty()) {
-                        if (result.getIssues().isEmpty() && result.getUnresolved().isEmpty()) {
-                        	bag.upgradeOsb(matches.keySet(), true);
-                        } else {
-                        	bag.upgradeOsb(matches.keySet());
+                    if (result.getIssues().isEmpty() && result.getUnresolved().isEmpty()) {
+                    	Map<Integer, List> matches = result.getMatches();
+                    	bag.upgradeOsb(matches.keySet());
+                    } else {
                         	session.setAttribute("bagQueryResult_" + bag.getName(), result);
-                        }
                     }
                 } catch (ClassNotFoundException cnfe) {
                     LOG.warn("The type " + bag.getType() + "isn't in the model."
-                             + "Impossible upgrade the list " + bag.getTitle(), cnfe);
+                             + "Impossible upgrade the bag list " + bag.getTitle(), cnfe);
                 } catch (InterMineException ie) {
-                    LOG.warn("Impossible upgrade the list " + bag.getTitle(), ie);
+                    LOG.warn("Impossible upgrade the bags list " + bag.getTitle(), ie);
                 } catch (ObjectStoreException ose) {
-                    LOG.warn("Impossible upgrade the list bags", ose);
+                    LOG.warn("Impossible upgrade the bags list", ose);
                 } 
             }
         }
