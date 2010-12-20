@@ -192,7 +192,7 @@
                   <li>Mark Public Templates as favourites so they're easier to find</li>
                 </ul>
                 <p>You can access mMyMine from the Tab bar, located at the top of every page.</p>
-                <p>Note: Your data and e-mail address are confidential and we wont send you unsolicited mail.</p>
+                <p>Note: Your data and e-mail address are confidential and we won't send you unsolicited mail.</p>
                 <a class="button gray" href="#" onclick="switchBochs(7);return false;"><div><span>Next Hint: QueryBuilder</span></div></a>
             </div>
            </div>
@@ -367,7 +367,7 @@
     <div id="rss" class="span-6 last white-half" style="display:none;">
       <script type="text/javascript">
       // feed URL
-      var feedURL = "http://blog.metabolicmine.org/?feed=rss2";
+      var feedURL = "http://blog.metabolicmine.org/feed/";
       // limit number of entries displayed
       var maxEntries = 2;
       // where are we appending entries? (jQuery syntax)
@@ -404,7 +404,7 @@
             }
 
                   var items = feed.getElementsByTagName("item"); // ATOM!!!
-                  for (var i = 0; i < items.length; ++i) {
+                  for (var i = 0; i < items.length; i++) {
               // early bath
               if (i > maxEntries) return;
 
@@ -422,7 +422,6 @@
                           + '</tr>';
                 // append, done
                 $(target).append(row);
-                i++;
                   }
                 }
         });
