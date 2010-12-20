@@ -199,7 +199,7 @@ public class Profile
     }
 
     /**
-     * Delete a template
+     * Delete a template and its tags
      * @param name the template name
      */
     public void deleteTemplate(String name) {
@@ -210,6 +210,8 @@ public class Profile
                 reindex(TagTypes.TEMPLATE);
             }
         }
+        TagManager tagManager = getTagManager();
+        tagManager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
     }
 
     /**
@@ -369,6 +371,26 @@ public class Profile
         bag.setName(newName);
         saveBag(newName, bag);
         moveTagsToNewObject(oldName, newName, TagTypes.BAG);
+    }
+
+    /**
+     * Rename an existing template, throw exceptions when template doesn't exist of if new name
+     * already exists.  Moves tags from old template to new template.
+     * @param oldName the template to rename
+     * @param newName new name for the template
+     * @throws ObjectStoreException if problems storing
+     */
+    public void renameTemplate(String oldName, String newName) throws ObjectStoreException {
+        if (!savedTemplates.containsKey(oldName)) {
+            throw new IllegalArgumentException("Attempting to rename a template that doesn't"
+                    + " exist: " + oldName);
+        }
+
+        TemplateQuery template = savedTemplates.get(oldName);
+        savedTemplates.remove(oldName);
+        template.setName(newName);
+        saveTemplate(newName, template);
+        moveTagsToNewObject(oldName, newName, TagTypes.TEMPLATE);
     }
 
 
