@@ -166,7 +166,7 @@ public class CreateTemplateAction extends InterMineAction
         } else {
             String oldTemplateName = (prevTemplateName != null)
                 ? prevTemplateName : template.getName();
-            profile.renameTemplate(oldTemplateName, template.getName());
+            profile.updateTemplate(oldTemplateName, template);
             session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
             updateTrackers(im.getTrackerDelegate(), oldTemplateName, template.getName());
         }
