@@ -41,8 +41,8 @@ public class JSONResultsIteratorTest extends TestCase {
 	
 	/**
 	 * Compare two JSONObjects for equality
-	 * @param left
-	 * @param right
+	 * @param left The reference JSONObject (this is referred to as "expected" in any messages)
+	 * @param right The candidate object to check.
 	 * @return a String with messages explaining the problems if there are any, otherwise null (equal)
 	 * @throws JSONException
 	 */
@@ -75,18 +75,22 @@ public class JSONResultsIteratorTest extends TestCase {
 		for (String name : leftNames) {
 			Object leftValue = left.get(name);
 			String problem = null;
-			if (leftValue == null) {
-				if ( rjo.get(name) != null ) {
-					problem = "Expected null, but got " + rjo.get(name);
+			try {
+				if (leftValue == null) {
+					if ( rjo.get(name) != null ) {
+						problem = "Expected null, but got " + rjo.get(name);
+					}
+				} else if (leftValue instanceof JSONObject) {
+					problem = getProblemsComparing((JSONObject) leftValue, rjo.get(name));
+				} else if (leftValue instanceof JSONArray) {
+					problem = getProblemsComparing((JSONArray) leftValue, rjo.get(name));
+				} else {
+					if (! leftValue.toString().equals(rjo.get(name).toString())) {
+						problem = "Expected " + leftValue + " but got " + rjo.get(name); 
+					}
 				}
-			} else if (leftValue instanceof JSONObject) {
-				problem = getProblemsComparing((JSONObject) leftValue, rjo.get(name));
-			} else if (leftValue instanceof JSONArray) {
-				problem = getProblemsComparing((JSONArray) leftValue, rjo.get(name));
-			} else {
-				if (! leftValue.toString().equals(rjo.get(name).toString())) {
-					problem = "Expected " + leftValue + " but got " + rjo.get(name); 
-				}
+			} catch (Throwable e) {
+				problem = e.toString();
 			}
 			if (problem != null) {
 				problems.add("Problem with " + name + ": " + problem);
@@ -101,8 +105,8 @@ public class JSONResultsIteratorTest extends TestCase {
 	
 	/**
 	 * Compare two JSONArrays for equality
-	 * @param left
-	 * @param right
+	 * @param left The reference array (referred to as "expected" in any messages)
+	 * @param right The candidate object to check.
 	 * @return a String with messages explaining the problems if there are any, otherwise null (equal)
 	 * @throws JSONException
 	 */
@@ -129,19 +133,23 @@ public class JSONResultsIteratorTest extends TestCase {
 		for (int index = 0; index < left.length(); index++) {
 			Object leftMember = left.get(index);
 			String problem = null;
-			if (leftMember== null) {
-				if ( rja.get(index) != null ) {
-					problem = "Expected null, but got " + rja.get(index);
+			try {
+				if (leftMember== null) {
+					if ( rja.get(index) != null ) {
+						problem = "Expected null, but got " + rja.get(index);
+					}
+				} else if (leftMember instanceof JSONObject) {
+					problem = getProblemsComparing((JSONObject) leftMember, rja.get(index));
+				} else if (leftMember instanceof JSONArray) {
+					problem = getProblemsComparing((JSONArray) leftMember, rja.get(index));
+				} else {
+					if (! leftMember.toString().equals(rja.get(index).toString())) {
+						problem = "Expected " + leftMember + 
+							" but got " + rja.get(index);
+					}
 				}
-			} else if (leftMember instanceof JSONObject) {
-				problem = getProblemsComparing((JSONObject) leftMember, rja.get(index));
-			} else if (leftMember instanceof JSONArray) {
-				problem = getProblemsComparing((JSONArray) leftMember, rja.get(index));
-			} else {
-				if (! leftMember.toString().equals(rja.get(index).toString())) {
-					problem = "Expected " + leftMember + 
-						" but got " + rja.get(index);
-				}
+			} catch (Throwable e) {
+				problem = e.toString();
 			}
 			if (problem != null) {
 				problems.add("Problem with index " + index + ": " + problem);
