@@ -23,7 +23,7 @@
                     <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="e.g. zen, Q9V4E1"></div>
                     <div class="bottom">
                         <center>
-                            <input name="searchSubmit" class="button violet" type="submit" value="search"/>
+                            <input id="mainSearchButton" name="searchSubmit" class="button violet" type="submit" value="search"/>
                         </center>
                     </div>
                 </form>
@@ -216,7 +216,7 @@
     // feed URL
     var feedURL = "${WEB_PROPERTIES['project.rss']}";
     // limit number of entries displayed
-    var maxEntries = 2
+    var maxEntries = 2;
     // where are we appending entries? (jQuery syntax)
     var target = 'table#articles';
 
@@ -253,7 +253,7 @@
                 var items = feed.getElementsByTagName("item"); // ATOM!!!
                 for (var i = 0; i < items.length; i++) {
                     // early bath
-                    if (i > maxEntries) return;
+                    if (i == maxEntries) return;
 
                     feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 80);
                     feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 80);
@@ -328,6 +328,15 @@
             jQuery(this).toggleClass(inputToggleClass);
             jQuery(this).val('');
         }
+    });
+
+    // associate functions with search that redir to a keyword objects listing instead of search results
+    $('#mainSearchButton').click(function() {
+      // if placeholder text in place, take us elsewhere
+      if ($("#actionsInput").val() == placeholder) {
+        $(location).attr('href', "/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=");
+        return false;
+      }
     });
 </script>
 

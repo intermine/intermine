@@ -332,7 +332,7 @@
               </div>
               <div class="span-12 last">
                   <div class="span-4 search">
-                      <input class="button orange-gray" type="submit" value="Search" />
+                      <input id="mainSearchButton" class="button orange-gray" type="submit" value="Search" />
                   </div>
                   <div class="span-4 lists">
                       <a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" class="button green">
@@ -406,7 +406,7 @@
                   var items = feed.getElementsByTagName("item"); // ATOM!!!
                   for (var i = 0; i < items.length; i++) {
               // early bath
-              if (i > maxEntries) return;
+              if (i == maxEntries) return;
 
                     feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 70);
                     feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 70);
@@ -518,4 +518,14 @@
       $(this).val('');
     }
   });
+
+  // associate functions with search that redir to a keyword objects listing instead of search results
+  $('#mainSearchButton').click(function() {
+    // if placeholder text in place, take us elsewhere
+    if ($("#actionsInput").val() == placeholder) {
+      $(location).attr('href', "/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=");
+      return false;
+    }
+  });
+
 </script>
