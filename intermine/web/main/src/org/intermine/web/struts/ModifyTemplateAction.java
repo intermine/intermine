@@ -98,14 +98,6 @@ public class ModifyTemplateAction extends InterMineAction
                 }
 
                 profile.deleteTemplate(template);
-                TagManager tagManager = im.getTagManager();
-                //delete its tags
-                Set<String> tagNames = tagManager.getObjectTagNames(template, TagTypes.TEMPLATE,
-                                                                    profile.getUsername());
-                for (String tagName : tagNames) {
-                    tagManager.deleteTag(tagName, template, TagTypes.TEMPLATE,
-                                         profile.getUsername());
-                }
             }
 
             if (SessionMethods.isSuperUser(session)) {
