@@ -161,20 +161,15 @@ public class CreateTemplateAction extends InterMineAction
 
         recordMessage(new ActionMessage(key, template.getName()), request);
 
-        // Replace template if needed
-        if (!isNewTemplate) {
+        if (isNewTemplate) {
+            profile.saveTemplate(template.getName(), template);
+        } else {
             String oldTemplateName = (prevTemplateName != null)
                 ? prevTemplateName : template.getName();
-            profile.deleteTemplate(oldTemplateName);
+            profile.renameTemplate(oldTemplateName, template.getName());
             session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
-            if (prevTemplateName != null && !prevTemplateName.equals(template.getName())) {
-                updateTags(im.getTagManager(), profile.getUsername(),
-                       oldTemplateName, template.getName());
-                updateTrackers(im.getTrackerDelegate(), oldTemplateName, template.getName());
-            }
+            updateTrackers(im.getTrackerDelegate(), oldTemplateName, template.getName());
         }
-
-        profile.saveTemplate(template.getName(), template);
 
         // If superuser then rebuild shared templates
         if (SessionMethods.isSuperUser(session)) {
@@ -190,16 +185,6 @@ public class CreateTemplateAction extends InterMineAction
         session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
         return new ForwardParameters(mapping.findForward("mymine"))
             .addParameter("subtab", "templates").forward();
-    }
-
-    private void updateTags(TagManager tagManager, String userName,
-                           String oldTemplateName, String newTemplateName) {
-        Set<String> tagNames =
-            tagManager.getObjectTagNames(oldTemplateName, TagTypes.TEMPLATE, userName);
-        for (String tagName : tagNames) {
-            tagManager.deleteTag(tagName, oldTemplateName, TagTypes.TEMPLATE, userName);
-            tagManager.addTag(tagName, newTemplateName, TagTypes.TEMPLATE, userName);
-        }
     }
 
     private void updateTrackers(TrackerDelegate trackerDelegate,
