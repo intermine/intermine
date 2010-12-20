@@ -374,23 +374,23 @@ public class Profile
     }
 
     /**
-     * Rename an existing template, throw exceptions when template doesn't exist of if new name
-     * already exists.  Moves tags from old template to new template.
+     * Update an existing template, throw exceptions when template doesn't exist.
+     * Moves tags from old template to new template.
      * @param oldName the template to rename
-     * @param newName new name for the template
+     * @param template the new template
      * @throws ObjectStoreException if problems storing
      */
-    public void renameTemplate(String oldName, String newName) throws ObjectStoreException {
+    public void updateTemplate(String oldName, TemplateQuery template) throws ObjectStoreException {
         if (!savedTemplates.containsKey(oldName)) {
             throw new IllegalArgumentException("Attempting to rename a template that doesn't"
                     + " exist: " + oldName);
         }
 
-        TemplateQuery template = savedTemplates.get(oldName);
         savedTemplates.remove(oldName);
-        template.setName(newName);
-        saveTemplate(newName, template);
-        moveTagsToNewObject(oldName, newName, TagTypes.TEMPLATE);
+        saveTemplate(template.getName(), template);
+        if (!oldName.equals(template.getName())) {
+            moveTagsToNewObject(oldName, template.getName(), TagTypes.TEMPLATE);
+        }
     }
 
 
