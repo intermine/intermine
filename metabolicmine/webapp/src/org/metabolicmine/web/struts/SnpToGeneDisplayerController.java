@@ -86,7 +86,7 @@ public class SnpToGeneDisplayerController extends TilesAction {
 
                             // parse result
                             switch (i) {
-                                case 1: // Gene primaryIdentifier
+                                case 2: // Gene primaryIdentifier
                                     currentID = e.toString();
                                     if (lastID.equals(currentID)) {
                                         // do not repeat ourselves in saving the same Gene 2x
@@ -96,10 +96,10 @@ public class SnpToGeneDisplayerController extends TilesAction {
                                         lastID = currentID;
                                         break;
                                     }
-                                case 4: snpStart = Integer.parseInt(e.toString()); break; // SNP start
-                                case 5: geneStart = Integer.parseInt(e.toString()); break; // Gene start
-                                case 6: geneEnd = Integer.parseInt(e.toString()); break; // Gene end
-                                case 7: direction = e.toString(); break; // direction
+                                case 5: snpStart = Integer.parseInt(e.toString()); break; // SNP start
+                                case 6: geneStart = Integer.parseInt(e.toString()); break; // Gene start
+                                case 7: geneEnd = Integer.parseInt(e.toString()); break; // Gene end
+                                case 8: direction = e.toString(); break; // direction
                                 default: //everything else
                                     if (e != null) {
                                         columns.add(e.toString());
@@ -156,8 +156,11 @@ public class SnpToGeneDisplayerController extends TilesAction {
 
     private PathQuery snpToGene(String snpPrimaryIdentifier, PathQuery query) {
         query.addViews(
-                "SNP.primaryIdentifier",
+                "SNP.primaryIdentifier", // will be skipped, required for query to run
+
+                "SNP.overlappingFeatures.gene.id",
                 "SNP.overlappingFeatures.gene.primaryIdentifier",
+
                 "SNP.overlappingFeatures.gene.name",
                 "SNP.overlappingFeatures.gene.symbol",
                 "SNP.locations.start",

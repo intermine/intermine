@@ -17,12 +17,21 @@
         <tr class="${status.count mod 2 == 0 ? 'odd' : 'even'}">
           <c:forEach var="column" items="${row}" varStatus="columnStatus">
             <c:choose>
+              <%-- primaryIdentifier & internalID --%>
+              <c:when test="${columnStatus.count == 1}">
+                <td><a title="Go to Gene page" href="objectDetails.do?id=${column}">
+              </c:when>
+              <%-- primaryIdentifier & internalID (cont...) --%>
+              <c:when test="${columnStatus.count == 2}">
+                ${column}</a></td>
+              </c:when>
+
               <%-- distance --%>
-              <c:when test="${columnStatus.count == 4}">
+              <c:when test="${columnStatus.count == 5}">
                 <td class="distance">${column}</td>
               </c:when>
               <%-- direction --%>
-              <c:when test="${columnStatus.count == 5}">
+              <c:when test="${columnStatus.count == 6}">
                 <td class="direction">${column}</td>
               </c:when>
               <c:otherwise>
