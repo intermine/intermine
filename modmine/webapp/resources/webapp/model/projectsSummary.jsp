@@ -11,13 +11,20 @@
 
 <tiles:importAttribute />
 
+<link rel="stylesheet" href="model/css/projects.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
 <html:xhtml />
+
 
 <table cellpadding="0" cellspacing="0" border="0" class="topBar hints" width="95%">
 <tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/projects.do?">Switch to Projects View</a></td></tr>
 </table>
 
 <div class="body">
+
+<div align="center">
+
+
 <table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
 <tr><a name="index">
 <c:forEach items="${catExp}" var="catInd" varStatus="catInd_status">
@@ -29,7 +36,7 @@
 
 <table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
 <c:forEach items="${catExp}" var="cat" varStatus="cat_status">
-<tr><th>&nbsp;</th><th><h4><a name="${cat_status.count}">${cat.key}</a></h4></th><th>&nbsp;</th></tr>
+  <tr><th>&nbsp;</th><th><h4><a name="${cat_status.count}">${cat.key}</a></h4></th><th class="lastcol">&nbsp;</th></tr>
 
  <c:forEach items="${cat.value}" var="exp"  varStatus="status">
 <c:set var="expCount" value="${fn:length(proj.value)}"></c:set>
@@ -47,8 +54,7 @@
     </c:forEach>
   </td>
 
-  <td><h4><html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link></h4>
+  <td><h4><html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link></h4>
 
 <%-- LABS Note: linking with surname only, 2 Green and Kim--%>
 Project:${exp.projectName } &nbsp;&nbsp;(${exp.pi })&nbsp;&nbsp;
@@ -97,15 +103,15 @@ Labs:
 <%-- FEATURES --%>
       <c:forEach items="${exp.featureCountsRecords}" var="fc" varStatus="fc_status">
      <c:if test="${fc_status.count > 1 }"><br> </c:if>
-     
+
      <%-- TEMP patch until data is corrected. it should be (otherwise) --%>
      <c:choose>
-     <c:when test="${exp.name == 'Genome-wide localization of essential replication initiators' 
+     <c:when test="${exp.name == 'Genome-wide localization of essential replication initiators'
   && fc.featureType == 'ProteinBindingSite'}">
   ${fc.featureType}:&nbsp;26621
      </c:when>
      <c:otherwise>
-      ${fc.featureType}:&nbsp;${fc.featureCounts}     
+      ${fc.featureType}:&nbsp;${fc.featureCounts}
      </c:otherwise>
      </c:choose>
 <%-- END --%>
@@ -117,8 +123,8 @@ Labs:
       (${fc.uniqueFeatureCounts} unique ${fc.featureType}s)
       </i>
       </c:if>
-      
---%>      
+
+--%>
      <c:if test="${fc_status.last }"><br> </c:if>
       </c:forEach>
 
@@ -173,6 +179,11 @@ Labs:
 
 </div>
 
+
+<div align="center">
+
+</div>
+
 <table cellpadding="0" cellspacing="0" border="0" class="topBar hints" width="95%">
 <tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/projects.do?">Switch to Projects View</a></td></tr>
 </table>
@@ -183,8 +194,8 @@ Labs:
 
 <td>
 <im:querylink text="Fly" showArrow="true" skipBuilder="true">
- <query name="" model="genomic" 
-   view="Submission.title Submission.DCCid Submission.experimentType " 
+ <query name="" model="genomic"
+   view="Submission.title Submission.DCCid Submission.experimentType "
    sortOrder="Submission.experimentType asc">
   <constraint path="Submission.organism.shortName" op="=" value="D. melanogaster"/>
 </query>
@@ -194,8 +205,8 @@ Labs:
 
 <td>
 <im:querylink text="Worm" showArrow="true" skipBuilder="true">
- <query name="" model="genomic" 
-   view="Submission.title Submission.DCCid Submission.experimentType " 
+ <query name="" model="genomic"
+   view="Submission.title Submission.DCCid Submission.experimentType "
    sortOrder="Submission.experimentType asc">
   <constraint path="Submission.organism.shortName" op="=" value="C. elegans"/>
 </query>
@@ -204,8 +215,8 @@ Labs:
 
 <td>
 <im:querylink text="All submissions" showArrow="true" skipBuilder="true">
- <query name="" model="genomic" 
-   view="Submission.title Submission.DCCid Submission.experimentType " 
+ <query name="" model="genomic"
+   view="Submission.title Submission.DCCid Submission.experimentType "
    sortOrder="Submission.experimentType asc">
 </query>
 </im:querylink>
