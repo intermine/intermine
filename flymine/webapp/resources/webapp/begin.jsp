@@ -251,7 +251,7 @@
                 }
 
                 var items = feed.getElementsByTagName("item"); // ATOM!!!
-                for (var i = 0; i < items.length; ++i) {
+                for (var i = 0; i < items.length; i++) {
                     // early bath
                     if (i > maxEntries) return;
 
@@ -269,7 +269,6 @@
                         + '</tr>';
                     // append, done
                     jQuery(target).append(row);
-                    i++;
                 }
             }
         });
