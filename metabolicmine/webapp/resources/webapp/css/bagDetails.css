@@ -154,7 +154,7 @@ div.widgetcontainer { margin-left:0 !important; margin-right:1.5% !important; ba
     div.widgetcontainer fieldset label { vertical-align:bottom; }
     div.widgetcontainer fieldset li { float:right; margin-bottom:6px; }
   div.widgetcontainer a { color:#1F7492 !important; }
-  div.widgetcontainer div.widgetdataoverflow { height:320px !important; } /* jeebus */
+  /*div.widgetcontainer div.widgetdataoverflow { height:320px !important; }*/ /* jeebus */
 
 /* templates below widgets */
 table.results th { border:none; border-left:1px solid #DFDFDF !important; font-size:16px; background:#F5F5F5; color:#4B3F4B; }

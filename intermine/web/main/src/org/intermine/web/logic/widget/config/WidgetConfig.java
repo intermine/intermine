@@ -32,6 +32,7 @@ public abstract class WidgetConfig
     private String dataSetLoader;
     private String link;
     private String typeClass;
+    private String style;
 
     /**
      * The Constructor
@@ -80,6 +81,20 @@ public abstract class WidgetConfig
      */
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    /**
+     * @return the style of the widget chart/list/table
+     */
+    public String getStyle() {
+        return style;
+    }
+
+    /**
+     * @param style the style to set
+     */
+    public void setStyle(String style) {
+        this.style = style;
     }
 
     /**

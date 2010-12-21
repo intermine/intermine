@@ -420,7 +420,9 @@
         filters="biological_process,cellular_component,molecular_function"
         filterLabel="Ontology"
         typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein,org.intermine.model.bio.SNP"
-        externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
+        externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term="
+        style="height:290px;"
+    />
 
     <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
         link="org.intermine.bio.web.widget.ProteinDomainURLQuery"
@@ -428,7 +430,9 @@
         label="Protein Domain"
         description="Protein Domains enriched for items in this list."
         typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
-        externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
+        externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="
+        style="height:317px;"
+    />
 
     <enrichmentwidgetdisplayer id="publication_enrichment" title="Publication Enrichment"
         link="org.intermine.bio.web.widget.PublicationURLQuery"
@@ -437,14 +441,18 @@
         description="Publications enriched for genes in this list."
         externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
         typeClass="org.intermine.model.bio.Gene"
-        externalLinkLabel="PubMed:" />
+        externalLinkLabel="PubMed:"
+        style="height:317px;"
+    />
 
     <enrichmentwidgetdisplayer id="gwas_enrichment" title="GWAS Phenotype Enrichment"
         link="org.intermine.bio.web.widget.GWASEnrichmentURLQuery"
         dataSetLoader="org.intermine.bio.web.widget.GWASEnrichmentLdr"
         label="Phenotype"
         description="Phenotypes enriched for SNPs in this list."
-        typeClass="org.intermine.model.bio.SNP" />
+        typeClass="org.intermine.model.bio.SNP"
+        style="height:310px;"
+    />
 
 
     <enrichmentwidgetdisplayer id="pathway_enrichment" title="Pathway Enrichment"
@@ -454,7 +462,9 @@
         filters="All datasets,KEGG,Reactome"
         filterLabel="DataSet"
         description="Pathways enriched for genes in this list - data from KEGG and Reactome"
-        typeClass="org.intermine.model.bio.Gene" />
+        typeClass="org.intermine.model.bio.Gene"
+        style="height:317px;"
+    />
 
     <!--<bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
         link="org.intermine.bio.web.widget.HomologueURLQuery"
@@ -471,7 +481,9 @@
         displayFields="primaryIdentifier"
         exportField="primaryIdentifier"
         typeClass="org.intermine.model.bio.Gene"
-        columnTitle="Interactions"/>
+        columnTitle="Interactions"
+        style="height:404px;"
+    />
 
     <bagtabledisplayer id="snp_consequence_types" title="SNP Consequence Types"
         pathStrings="SNP.consequences"
@@ -480,7 +492,9 @@
         displayFields="type"
         exportField="primaryIdentifier"
         typeClass="org.intermine.model.bio.SNP"
-        columnTitle="SNPs"/>
+        columnTitle="SNPs"
+        style="height:420px;"
+    />
 
 </widgets>
 </webconfig>
