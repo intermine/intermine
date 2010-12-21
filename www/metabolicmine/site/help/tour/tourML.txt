@@ -140,8 +140,12 @@ a suggestion, let us know!</i></p>
 <h1>4. Run a Template</h1>
 
 <p>The Template we found in our previous search takes a particular Gene as input and returns 
-the GeneOntology (GO) annotation(s) of the Gene. Click on the title of the Template to show 
+the GeneOntology (GO) annotation(s) of the Gene. We clicked on the title of the Template to show 
 the Template form. </p>
+
+<p>
+<img alt="[Select Gene --> GO Template]"  src="mmGeneGOtemplate_2.png"/>
+</p>
 
 <p>Now you can run the Template with the default value or restrict it to the Gene of your 
 choice. You can enter any identifier and metabolicMine will try to find the right Gene.  For 
@@ -152,7 +156,7 @@ or Protein (PPARG_HUMAN) identifier and metabolicMine will convert it for you.</
 <p><strong>Click 'Show Results' to run this Template with the default value:</strong></p>
 
 <p>
-<img alt="[Template form]"  src="mmTemplateSearch_Gene.png"/>
+<img alt="[Template form]"  src="mmGeneGOtemplForm_3.png"/>
 </p>
 
 <h1>5. Results Page</h1>
@@ -199,8 +203,8 @@ useful for our users. These originate from external datasources (including journ
 and external databases) or have been contributes by our Biologist community. Let us know if you find 
 any <i>must-have</i> Lists</p>
 
-<p><i>We can add more Lists at any time - it only takes a few minutes - so if you have a 
-suggestion, let us know!</i></p>
+<p><FONT COLOR="FF6600"><i>We can add more Lists at any time - it only takes a few minutes - so if you have a 
+suggestion, let us know!</i></FONT></p>
 </p>
 
 <p>All Lists (public ones as well as personal ones - if you are logged in) can be viewed on 
@@ -250,8 +254,8 @@ of 'widgets' display graphs and tables to summarise the contents.  These are
 interactive - click to see Lists of Genes in each category.
 </p>
 
-<p><i>We plan to continually add more widgets and functionality to the List analysis page 
-so if you have suggestions on what you'd like to see, please let us know.</i></p>
+<p><FONT COLOR="FF6600"><i>We plan to continually add more widgets and functionality to the List analysis page 
+so if you have suggestions on what you'd like to see, please let us know.</i></FONT></p>
 
 
 <p>The GO enrichment and Pathway widgets suggest that members of this List of Genes may be involved in lipid storage.</p>
@@ -275,7 +279,8 @@ OMIM is a curated database of human Genes and Genetic disorders which we can que
 one of our predefined Templates. 
 </p>
 
-<p><strong>Search the Template queries for 'disease' and select the Template </strong></p>
+<p><strong>Click on the Templates Tab (located on the top menu bar) and search the Template queries for 'disease'. 
+Now select the Template </strong></p>
 <p><strong>'Gene --> Disease (OMIM)':</strong></p>
 
 <img alt="[Select Template]"  src="mmTemplateSearch_Dis_2.png"/>
@@ -337,7 +342,7 @@ Genes are both objects of the class Gene.</p>
 
 <p>You can click <img alt="[plus]" src="plus.gif"/> to open related classes and see their 
 attributes.  Use the <img alt="[show]"  src="show.gif"/> button to add fields to the output.  
-The <img alt="[constrain]" src="constrain.gif"/> button lets you add constraints (filters). </p> 
+The <img alt="[constrain]" src="constrain.gif"/> buttons let you refine your search (aka: add constraints or filters). </p> 
 
 <img alt="[query builder]"  src="query_builder.png"/>
 
@@ -390,7 +395,7 @@ is always private.</p>
 <img alt="[Click log in]"  src="mmToolbar_logIn_2.png"/>
 
 <p> You can then access all your Lists, Queries and Templates via the MyMine page. In MyMine you can save 
-Lists and Queries you create in the QueryBuilder.  You can even use the QueryBuilder to turn queries into 
+Lists and Queries you create in the QueryBuilder.  You can also use QueryBuilder to turn queries into 
 new Templates of your own.  You can even export/import Queries and Templates as XML to share them with others. </p>
 
 <img alt="[myMine Tab]"  src="mmToolbar_myMine_2.png"/>
