@@ -33,7 +33,7 @@ esac
 
 # Set up the shell (part 2)
 
-set -o nounset
+#set -o nounset
 
 case $machine in
 Linux)
