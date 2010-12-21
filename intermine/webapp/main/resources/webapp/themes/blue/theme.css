@@ -225,8 +225,8 @@ ul#button_bar li a {
 }
 .tb_button:hover {
   margin-right:0;
-  border-bottom:1px solid #6ECCF8;
-  border-right:1px solid #6ECCF8;
+  /*border-bottom:1px solid #6ECCF8;
+  border-right:1px solid #6ECCF8;*/
 }
 .tb_button_active {
   border:1px solid #6ECCF8;
@@ -345,4 +345,9 @@ ul#submenulist li div { border-left-color:#FFF; }
 ul#loginbar li { border-right-color:#000; }
 
 /* list analysis */
-#tool_bar_div ul#button_bar li a { background:none !important; color:#323232; }
+div.heading #tool_bar_div ul#button_bar li a { background:none !important; color:#323232; }
+
+/* results list */
+#tool_bar_div ul#button_bar li a { color:#FFF; }
+ul#button_bar li.tool_bar_link span.tablePageLinks { color:#FFF !important; }
+ul#button_bar li.tool_bar_link form span { color:#FFF !important; }
