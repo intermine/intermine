@@ -40,7 +40,7 @@
   <BR/>
   <c:set var="isMSIE" value='<%= new Boolean(request.getHeader("user-agent").indexOf("MSIE") != -1) %>'/>
   <c:if test="${type ne 'HTMLWidgetConfig' && !isMSIE}" >
-  	<span style="margin-top:5px">Number of ${bag.type}s in this list not analysed in this widget:  <span id="widgetnotanalysed${widget.id}"><%--${widget.notAnalysed}--%></span></span>
+    <span style="margin-top:5px">Number of ${bag.type}s in this list not analysed in this widget:  <span id="widgetnotanalysed${widget.id}"><%--${widget.notAnalysed}--%></span></span>
   </c:if>
  </p>
 
@@ -114,7 +114,7 @@
   <a href="javascript:hideMenu('tool_bar_item_export_widget_${widget.id}')" >Cancel</a>
   </div>
  </c:if>
-          
+
 <%-- output different widget containers if it's a graph widget because flyatlas widget is too tall --%>
 
 <c:choose>
@@ -122,7 +122,7 @@
     <div id="widgetdata${widget.id}" class="widgetdata">
   </c:when>
   <c:otherwise>
-    <div id="widgetdata${widget.id}" class="widgetdataoverflow">
+    <div id="widgetdata${widget.id}" class="widgetdataoverflow" style="${widget.style}">
   </c:otherwise>
 </c:choose>
 
@@ -136,32 +136,32 @@
   <div id="widgetdatawait${widget.id}" class="widgetdatawait"><img src="images/wait30.gif" title="Searching..."/></div>
   <div id="widgetdatanoresults${widget.id}" class="widgetdatawait" style="display:none;"><i>no results found</i></div>
   <c:if test="${type == 'HTMLWidgetConfig'}" >
-  	<div id="widgetdatacontent${widget.id}" class="widgetdatawait" style="display:none;">${widget.content}</div>
+    <div id="widgetdatacontent${widget.id}" class="widgetdatawait" style="display:none;">${widget.content}</div>
   </c:if>
-  <script language="javascript">  
+  <script language="javascript">
   <c:choose>
     <c:when test="${type == 'GraphWidgetConfig'}" >
-    
-    	getProcessGraphWidgetConfig('${widget.id}','${bag.name}');
-    
+
+      getProcessGraphWidgetConfig('${widget.id}','${bag.name}');
+
     </c:when>
     <c:when test="${type == 'TableWidgetConfig'}" >
-     
-    	getProcessTableWidgetConfig('${widget.id}','${bag.name}');
-    
+
+      getProcessTableWidgetConfig('${widget.id}','${bag.name}');
+
     </c:when>
     <c:when test="${type == 'EnrichmentWidgetConfig'}" >
-     
-    	getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');
-    
+
+      getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');
+
     </c:when>
     <c:when test="${type == 'HTMLWidgetConfig'}" >
-         
-    	getProcessHTMLWidgetConfig('${widget.id}','${bag.name}');
-    
+
+      getProcessHTMLWidgetConfig('${widget.id}','${bag.name}');
+
     </c:when>
   </c:choose>
-  
+
   </script>
 </div>
 </html:form>
