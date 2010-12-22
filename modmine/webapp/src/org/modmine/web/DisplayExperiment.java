@@ -10,8 +10,6 @@ package org.modmine.web;
  *
  */
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -22,9 +20,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.model.bio.Experiment;
 import org.intermine.model.bio.ExperimentalFactor;
-import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
@@ -76,7 +74,22 @@ public class DisplayExperiment
 
         this.pi = proj.getNamePI() + " " + proj.getSurnamePI();
         this.piSurname = proj.getSurnamePI();
-        this.projectName = proj.getName();
+        if (!StringUtils.isBlank(proj.getName())) {
+            this.projectName = proj.getName();
+        } else {
+            // This is a temporary fix for modMine 20 to cope with un-merged Projects
+            if ("Celniker".equals(piSurname)) {
+                this.projectName = "The Drosophila Transcriptome";
+            } else if ("Waterston".equals(piSurname)) {
+                this.projectName = "The C. elegans Transcriptome";
+            } else if ("Lai".equals(piSurname)) {
+                this.projectName = "Small and microRNAs";
+            } else if ("Oliver".equals(piSurname)) {
+                this.projectName = "Comparative Genomics";
+            } else if ("Piano".equals(piSurname)) {
+                this.projectName = "The 3' UTRome";
+            }
+        }
 
         Set<String> expTypes = new HashSet<String>();
 
@@ -332,5 +345,4 @@ public class DisplayExperiment
     public Set<String> getLabs() {
         return labs;
     }
-
 }
