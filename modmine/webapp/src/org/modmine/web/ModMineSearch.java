@@ -74,7 +74,7 @@ public class ModMineSearch
      * @param im
      *            API for accessing object store
      */
-    public static void initModMineSearch(InterMineAPI im) {
+    public static synchronized void initModMineSearch(InterMineAPI im) {
         if (ram == null) {
 
             // Map<Integer, Set<String>> subProps =

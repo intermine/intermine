@@ -335,6 +335,9 @@
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="modmineGBrowse.tile"/>
     </longdisplayers>
+    <bagdisplayers>
+      <displayer src="heatMap.tile" showOnLeft="true"/>
+    </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Gene">
@@ -360,7 +363,7 @@
       <displayer src="orthologueLinkDisplayer.tile" showOnLeft="false" />
       <displayer src="heatMap.tile" showOnLeft="true"/>
     </bagdisplayers>
-   
+
   </class>
 
   <class className="org.intermine.model.bio.GOAnnotation">
@@ -471,7 +474,7 @@
       <fieldconfig fieldExpr="allele.primaryIdentifier"/>
     </fields>
   </class>
-<!-- 
+<!--
   <class className="org.intermine.model.bio.Primer">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -563,7 +566,7 @@
       <fieldconfig fieldExpr="value"/>
     </fields>
   </class>
-<!-- UU 
+<!-- UU
   <class className="org.intermine.model.bio.SyntenicRegion">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>

@@ -1,0 +1,198 @@
+div#org-systemsbiology-visualization-filtercontainer-header-title a {
+    background: #f0e7d7;
+}
+
+div#org-systemsbiology-visualization-filtercontainer-header-title a {
+    font: bold large, sans-serif;
+    display: block;
+    padding: 0.5em;
+    color: #777;
+    text-decoration: none;
+}
+
+div#org-systemsbiology-visualization-filtercontainer-header-title a img {
+    padding-right: 3px;
+    border: 0;
+}
+
+div#org-systemsbiology-visualization-filtercontainer {
+    background: #f0e7d7;
+    margin: 0 auto;
+    padding: 0 0 0 0;
+    font-family: georgia, serif;
+}
+
+div#org-systemsbiology-visualization-filtercontainer :after {
+    content: ".";
+    display: block;
+    line-height: 1px;
+    font-size: 1px;
+    clear: both;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-header {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    font-size: 0.8em;
+    width: 100%;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-header li {
+    display: block;
+    float: left;
+    width: 42%;
+    margin: 0;
+    padding: 1px;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-header li a {
+    display: block;
+    width: 100%;
+    padding: 0.5em;
+    border-width: 1px;
+    border-color: #ffe #aaab9c #ccc #fff;
+    border-style: solid;
+    color: #777;
+    text-decoration: none;
+    background: #f7f2ea;
+}
+
+#org-systemsbiology-visualization-filtercontainer>ul#org-systemsbiology-visualization-filtercontainer-header li a {
+    width: auto;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-header li#org-systemsbiology-visualization-globalAnd-active a {
+    background: #f0e7d7;
+    color: #800000;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-header li a:hover, ul#org-systemsbiology-visualization-filtercontainer-header li#org-systemsbiology-visualization-globalAnd-active a:hover {
+    color: #800000;
+    background: transparent;
+    border-color: #aaab9c #fff #fff #ccc;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-options {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    width: auto;
+    font-size: 0.8em;
+    float: right;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-options li {
+    display: block;
+    width: 45%;
+    margin: 0;
+    padding: 1px;
+    font: normal medium, sans-serif;
+    text-align: center;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-buttons {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    width: auto;
+    font-size: 0.8em;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-buttons li {
+    display: block;
+    width: 30%;
+    margin: 0;
+    padding: 1px;
+    font: normal medium, sans-serif;
+    text-align: center;
+}
+
+div#org-systemsbiology-visualization-filtercontainer-menu {
+    background: #f0e7d7;
+    margin: 0 auto;
+    padding: 0;
+    font-family: georgia, serif;
+    text-transform: lowercase;
+    overflow: auto;
+}
+
+div#org-systemsbiology-visualization-filtercontainer-menu :after {
+    content: ".";
+    display: block;
+    line-height: 1px;
+    font-size: 1px;
+    clear: both;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-filterlist {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    width: 100%;
+    font-size: 0.8em;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-filterlist li {
+    display: block;
+    float: left;
+    width: 10%;
+    margin: 0;
+    padding: 2px;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-filterlist li a {
+    display: block;
+    width: 100%;
+    padding: 0.5em;
+    border-width: 1px;
+    border-color: #ffe #aaab9c #ccc #fff;
+    border-style: solid;
+    color: #777;
+    text-decoration: none;
+    background: #f7f2ea;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-filterlist li button {
+    padding: 0.5em;
+    border-width: 1px;
+    border-color: #ffe #aaab9c #ccc #fff;
+    border-style: solid;
+    text-decoration: none;
+    font-size: 0.8em;
+}
+
+#org-systemsbiology-visualization-filtercontainer-menu>ul#org-systemsbiology-visualization-filtercontainer-filterlist li a {
+    width: auto;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-filterlist li#org-systemsbiology-visualization-filtercontainer-filteritem-active a {
+    background: #f0e7d7;
+    color: #800000;
+}
+
+ul#org-systemsbiology-visualization-filtercontainer-filterlist li a:hover,
+    ul#org-systemsbiology-visualization-filtercontainer-filterlist li#org-systemsbiology-visualization-filtercontainer-filteritem-active a:hover {
+    color: #800000;
+    background: transparent;
+    border-color: #aaab9c #fff #fff #ccc;
+}
+
+div#org-systemsbiology-visualization-filtercontainer-filteritemcontainers {
+    background: #f0e7d7;
+}
+
+div#org-systemsbiology-visualization-filtercontainer-filteritemcontainers div {
+    height: 100px;
+    width: 200px;
+    padding: 2px;
+    border-width: 1px;
+    border-color: #ffe #aaab9c #ccc #fff;
+    border-style: solid;
+    font: georgia, sans-serif;
+    font-size: 0.8em;
+}
+
+.org-systemsbiology-visualization-filteritem-select {
+    width: 100%;
+}
