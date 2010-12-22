@@ -11,184 +11,153 @@
 
 <!-- heatMap.jsp -->
 
-<style type="text/css">
-input.submit {
-  color:#050;
-  font: bold 84% 'trebuchet ms',helvetica,sans-serif;
-  background-color:#fed;
-  border:1px solid;
-  border-color: #696 #363 #363 #696;
-}
-</style>
+<html:xhtml />
 
-<script>
+<tiles:importAttribute />
 
-  jQuery(document).ready(function(){
-    // Unckeck all checkboxes everything the page is (re)loaded
-    initCheck();
+<script type="text/javascript">
 
-    // Do before the form submitted
-    jQuery("#saveFromIdsToBagForm").submit(function() {
-        var ids = new Array();
-        jQuery(".aSub").each(function() {
-          if (this.checked) {ids.push(this.value);}
-       });
+  jQuery(document).ready(function() {
+     jQuery("#description").hide();
 
-        if (ids.length < 1)
-        { alert("Please select some submissions...");
-          return false;
-        } else {
-          jQuery("#ids").val(ids);
-          return true;
-          }
-    });
+     jQuery("#description_div").click(function () {
+           if(jQuery("#description").is(":hidden")) {
+             jQuery("#co").attr("src", "images/disclosed.gif");
+           } else {
+             jQuery("#co").attr("src", "images/undisclosed.gif");
+           }
+           jQuery("#description").toggle("slow");
+        });
   });
 
-     function initCheck()
-     {
-       jQuery('#allSub').removeAttr('checked');
-       jQuery(".aSub").removeAttr('checked');
-     }
-
-     // (un)Check all ids checkboxes
-     function checkAll()
-     {
-         jQuery(".aSub").attr('checked', jQuery('#allSub').is(':checked'));
-         jQuery('#allSub').css("opacity", 1);
-     }
-
-
-     function updateCheckStatus(status)
-     {
-         var statTag;
-         if (!status) { //unchecked
-           jQuery(".aSub").each(function() {
-             if (this.checked) {statTag=true;}
-           });
-
-           if (statTag) {
-            jQuery("#allSub").removeAttr('checked');
-            jQuery("#allSub").css("opacity", 1);}
-           else {
-            jQuery("#allSub").removeAttr('checked');
-            jQuery("#allSub").css("opacity", 1);}
-         }
-         else { //checked
-           jQuery(".aSub").each(function() {
-             if (!this.checked) {statTag=true;}
-         });
-
-         if (statTag) {
-           jQuery("#allSub").removeAttr('checked');
-            jQuery("#allSub").css("opacity", 1);}
-         else {
-           jQuery("#allSub").attr('checked', true);
-           jQuery("#allSub").css("opacity", 1);}
-         }
-     }
-
 </script>
-
-
-
-        
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript">
     google.load("visualization", "1", {});
     google.load("prototype", "1.6");
-  </script>
-  
-  <script type="text/javascript" src="http://systemsbiology-visualizations.googlecode.com/svn/trunk/src/main/js/load.js"></script>
-  <script type="text/javascript">
-      systemsbiology.load("visualization", "1.0", {packages:["bioheatmap"]});
-  </script>
-
-  <tiles:importAttribute />
-
-
+</script>
+<script type="text/javascript" src="model/bioheatmap/js/bioheatmap.js"></script>
 <script type="text/javascript">
- // Set callback to run when API is loaded
-  google.setOnLoadCallback(drawVisualization);
+  function drawHeatMap() {
 
-  function drawVisualization() {
-  
-      // ------------------------
-      // EXAMPLE 3
-      // ------------------------
-      var heatmap3 = new org.systemsbiology.visualization.BioHeatMap(document.getElementById('heatmapContainer_ex3'));
-      var data3 = BioHeatMapExampleData.example3();
-      heatmap3.draw(data3, {cellHeight: 10, cellWidth: 10, fontHeight: 7, drawBorder: false});
-}
+      var heatmap = new org.systemsbiology.visualization.BioHeatMap(document.getElementById('heatmapContainer'));
+      var data_body = BioHeatMapData.body();
+      heatmap.draw(data_body, ${maxExpressionScore}, ${minExpressionScore}, {startColor: {r:0, g:0, b:255, a:1},
+                                                                             endColor: {r:255, g:255, b:0, a:1},
+                                                                             passThroughBlack: false,
+                                                                             numberOfColors: 256,
+                                                                             cellHeight: 10,
+                                                                             cellWidth: 10,
+                                                                             fontHeight: 7,
+                                                                             drawBorder: false});
 
+      google.visualization.events.addListener(heatmap, 'select', function() {
+                var rowNo = heatmap.getSelection()[0].row;
+                var colNo = heatmap.getSelection()[0].column;
+                alert('Expression score: ' + data_body.getValue(rowNo, colNo));
+            });
 
-  // methods that return example datatables and display options
-  var BioHeatMapExampleData = {
+      var heatmap_legend = new org.systemsbiology.visualization.BioHeatMap(document.getElementById('heatmapLegendContainer'));
+            var data_legend = BioHeatMapData.legend();
+            heatmap_legend.draw(data_legend, ${maxExpressionScore}, ${minExpressionScore}, {startColor: {r:0, g:0, b:255, a:1},
+                                                                                            endColor: {r:255, g:255, b:0, a:1},
+                                                                                            passThroughBlack: false,
+                                                                                            numberOfColors: 256,
+                                                                                            cellWidth: 2,
+                                                                                            cellHeight: 15,
+                                                                                            useRowLabels: false,
+                                                                                            drawBorder: false });
+  }
 
-      // ---------------------------------------------------------------
-      // Example 3 DATA: large random matrix (can use for stress testing)
-      // ---------------------------------------------------------------
-      example3 : function() {
+  // Make a data table
+  var BioHeatMapData = {
+
+      body : function() {
          var data = new google.visualization.DataTable();
-          
+
          data.addColumn('string', 'Gene Name');
-    
-         <c:forEach items="${geneCellLines}" var="gcl" varStatus="gcl_status">
-         <c:if test="${gcl_status.first}">
-         <c:forEach items="${gcl.value}" var="gScores" varStatus="gScores_status" >
-         data.addColumn('number', "${gScores.cellLine}");
-         </c:forEach>
-         </c:if>
-         </c:forEach>
-    
 
-         <c:forEach items="${geneCellLines}" var="gcl" varStatus="gcl_status">
+         <c:forEach items="${expressionScoreMap}" var="ges" varStatus="ges_status">
+             <c:if test="${ges_status.first}">
+                 <c:forEach items="${ges.value}" var="geScores" varStatus="geScores_status" >
+                    data.addColumn('number', "${geScores.condition}");
+                 </c:forEach>
+             </c:if>
+         </c:forEach>
 
-         data.addRows(1);
-         data.setCell(${gcl_status.count - 1}, 0, "${gcl.key}");
-         
-                  <c:forEach items="${gcl.value}" var="gScores" varStatus="gScores_status" >
-                  data.setCell(${gcl_status.count - 1}, ${gScores_status.count }, ${gScores.score});
-                  </c:forEach>
-                  </c:forEach>
-          return data;
-      }
+         <c:forEach items="${expressionScoreMap}" var="ges" varStatus="ges_status">
+             data.addRows(1);
+             data.setCell(${ges_status.count - 1}, 0, "${ges.key}");
+
+             <c:forEach items="${ges.value}" var="geScores" varStatus="geScores_status" >
+                data.setCell(${ges_status.count - 1}, ${geScores_status.count }, ${geScores.logScore});
+             </c:forEach>
+         </c:forEach>
+
+         return data;
+      },
+
+      legend : function() {
+        var data = new google.visualization.DataTable();
+        var nCols = 100;
+        var nRows = 1;
+        for (col = 0; col < nCols; col++) {
+            data.addColumn('number', 1);
+        }
+
+        var max = ${maxExpressionScore};
+        var min = ${minExpressionScore};
+        var dataStep = (Math.abs(min) + Math.abs(max))/((nCols)*nRows);
+        var value = min;
+        for (var i = 0; i < nRows; i++) {
+            data.addRows(1);
+            for (col = 0; col < nCols; col++) {
+                data.setCell(i, col, value);
+                value += dataStep;
+            }
+        }
+
+        return data;
+    }
   }
 </script>
-  
-
-  
-
-<html:xhtml />
-<script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
-<script type="text/javascript" src="js/tablesort.js"></script>
-<link rel="stylesheet" type="text/css" href="css/sorting_experiments.css"/>
-<link rel="stylesheet" type="text/css" href="model/css/experiment.css"/>
-
 
 <div class="body">
-
-<div id="heatmapContainer">
-<h1>Heat Map</h1>
-<p><b>hurra!</b></p>
-<br/>
-
-<div id="heatmapContainer_ex3">
-<hr>
+    <div id="heatmap_div">
+        <p><h2>${ExpressionScoreTitle}</h2></p>
+        <p><i>${ExpressionScoreSummary}Click any cell to check value.</i></p>
+        <br/>
+        <div id="heatmapContainer"></div>
+        <div id="heatmapLegend_div">
+            <table id="heatmapLegend_table" border="0" style="padding-left:30px;">
+                <tr>
+                    <td style="vertical-align:middle;">${minExpressionScore}</td>
+                    <td id="heatmapLegendContainer"></td>
+                    <td style="vertical-align:middle;">${maxExpressionScoreCeiling}</td>
+                </tr>
+            </table>
+        </div>
+        <div id="description_div">
+            <table border="0">
+                <tr>
+                    <td ><h3 style="font-weight: bold; background: black; color: white;">Description</h3></td>
+                    <td ><h3 style="background: white;"><img src="images/disclosed.gif" id="co"></h3></td>
+                </tr>
+            </table>
+        </div>
+        <div id="description" style="padding: 5px">
+            <i>${ExpressionScoreDescription}</i>To see <html:link href="/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Submission&externalids=${expressionScoreDCCid}">
+            further information about the submission</html:link> and <a href="http://www.modencode.org/docs/flyscores/" target="_blank">original score tables</a>.
+        </div>
+    </div>
 </div>
+<script type="text/javascript">
+    drawHeatMap();
+</script>
 
-
-  
-  
-  
-
-</div>
-
-
-<!-- heatMap.jsp -->
-</div>
+<!-- /heatMap.jsp -->
 
 <%--
-
 // methods that return example datatables and display options
 var BioHeatMapExampleData = {
 

@@ -121,6 +121,18 @@
 </action>
 <!-- End of Span Upload configuration -->
 
+<!-- Begining of Fly Regulatory Network configuration -->
+<action path="/flyRegulatoryNetwork" forward="flyRegulatoryNetwork.page" />
+
+<action path="/initFlyRegulatoryNetwork"  type="org.modmine.web.FlyRegulatoryNetworkController" />
+<!-- End of Fly Regulatory Network configuration -->
+
+<!-- Begining of Worm Regulatory Network configuration -->
+<action path="/wormRegulatoryNetwork" forward="wormRegulatoryNetwork.page" />
+
+<action path="/initWormRegulatoryNetwork"  type="org.modmine.web.WormRegulatoryNetworkController" />
+<!-- End of Worm Regulatory Network configuration -->
+
 <!-- links to other intermines -->
 <action path="/initOrthologueLinkDisplayer"
         type="org.intermine.bio.web.OrthologueLinkController"/>

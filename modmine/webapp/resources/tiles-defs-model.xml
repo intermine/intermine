@@ -108,6 +108,26 @@
         controllerUrl="/initSpanUploadResults.do"/>
 <!-- End of Span Upload configuration -->
 
+<!-- Begining of Fly Regulatory Network configuration -->
+<definition name="flyRegulatoryNetwork.page" extends="layout.template">
+  <put name="body" value="flyRegulatoryNetwork.tile"/>
+  <put name="pageName" value="flyRegulatoryNetwork"/>
+</definition>
+
+<definition name="flyRegulatoryNetwork.tile" path="/flyRegulatoryNetwork.jsp"
+        controllerUrl="/initFlyRegulatoryNetwork.do"/>
+<!-- End of Fly Regulatory Network configuration -->
+
+<!-- Begining of Worm Regulatory Network configuration -->
+<definition name="wormRegulatoryNetwork.page" extends="layout.template">
+  <put name="body" value="wormRegulatoryNetwork.tile"/>
+  <put name="pageName" value="wormRegulatoryNetwork"/>
+</definition>
+
+<definition name="wormRegulatoryNetwork.tile" path="/wormRegulatoryNetwork.jsp"
+        controllerUrl="/initWormRegulatoryNetwork.do"/>
+<!-- End of Worm Regulatory Network configuration -->
+
 <!-- links to other intermines -->
 <definition name="orthologueLinkDisplayer.tile" path="/model/orthologueLinkDisplayer.jsp"
         controllerUrl="/initOrthologueLinkDisplayer.do"/>
