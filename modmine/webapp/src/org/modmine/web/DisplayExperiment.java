@@ -23,6 +23,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.model.bio.Experiment;
 import org.intermine.model.bio.ExperimentalFactor;
+import org.intermine.model.bio.Lab;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
@@ -72,7 +73,7 @@ public class DisplayExperiment
             name = name.substring(0, name.indexOf('&'));
         }
 
-        this.pi = proj.getNamePI() + " " + proj.getSurnamePI();
+        this.pi = (proj.getNamePI() == null ? "" : proj.getNamePI() + " ") + proj.getSurnamePI();
         this.piSurname = proj.getSurnamePI();
         if (!StringUtils.isBlank(proj.getName())) {
             this.projectName = proj.getName();
@@ -98,7 +99,12 @@ public class DisplayExperiment
                 this.description = submission.getDescription();
             }
             submissions.add(submission);
-            labs.add(submission.getLab().getName());
+            Lab lab = submission.getLab();
+            if (lab.getName() != null) {
+                labs.add(submission.getLab().getName());
+            } else {
+                labs.add(lab.getSurname());
+            }
             organisms.add(submission.getOrganism().getShortName());
             for (ExperimentalFactor factor : submission.getExperimentalFactors()) {
                 factorTypes.add(factor.getType());
