@@ -31,9 +31,9 @@
 <br />
 <p><strong>modMine</strong> is an integrated web resource of data &amp; tools to <strong>browse</strong> and <strong>search</strong> modENCODE data and experimental details, <strong>download</strong> results and access the GBrowse <strong>genome browser</strong>.  Explore some of the tools provided below.</p>
 <br />
-<h3><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do"">Browse all modENCODE data</a></h3>
+<h3><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do">Browse all modENCODE data</a></h3>
         <div class="span-11 last">
-              <img src="model/images/data_preview.png" alt="experiments View"/>
+              <a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do"><img src="model/images/data_preview.png" alt="experiments View"/></a>
             </div>
               <!-- <p>If you are short of time, just navigate through our set of <a href="#" onclick="switchBochs(2);return false;">Feature Hints</a>.-->
             </div>
@@ -225,7 +225,7 @@
 
    <div id="bochs" class="span-4">
      <h3>Fly Gene Expression</h3>
-     <a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do"><div class="heatmap"><img src="themes/modmine/icons/exView.png" alt="experiments View"/></div></a>
+     <a href="#"><div class="heatmap"><img src="model/images/fly_heatmap.png" alt="Fly expression heatmap"/></div></a>
      <div class="text">
        <p>View an expression score heatmap for any list of fly genes.</p>
      </div>
