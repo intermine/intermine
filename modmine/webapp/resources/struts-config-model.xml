@@ -59,7 +59,7 @@
 
 <action path="/heatMap" forward="heatMap.page" />
 <action path="/projectsSummary" forward="projectsSummary.page" />
-
+<action path="/chromatinStates" forward="chromatinStates.page" />
 
 <action path="/initSubmissions"
   type="org.modmine.web.SubmissionsController" />
