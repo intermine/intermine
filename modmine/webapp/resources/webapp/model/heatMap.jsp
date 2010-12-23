@@ -22,7 +22,6 @@
         jQuery('#heatmap_div').remove();
         jQuery('#expression_div').html('<i>Expression scores are not available</i>');
      } else {
-         drawHeatMap();
          jQuery("#description").hide();
 
          jQuery("#description_div").click(function () {
@@ -45,6 +44,10 @@
 <script type="text/javascript" src="model/bioheatmap/js/bioheatmap.js"></script>
 <script type="text/javascript">
   function drawHeatMap() {
+
+     if ('${expressionScoreDCCid}'=='') {
+        return false;
+     }
 
       var heatmap = new org.systemsbiology.visualization.BioHeatMap(document.getElementById('heatmapContainer'));
       var data_body = BioHeatMapData.body();
@@ -147,9 +150,7 @@
             <table border="0">
                 <tr>
                     <td ><h3 style="font-weight: bold; background: black; color: white;">More Information</h3></td>
-                    <td ><h3 <script type="text/javascript">
-
-</script>style="background: white;"><img src="images/disclosed.gif" id="co"></h3></td>
+                    <td ><h3 style="background: white;"><img src="images/disclosed.gif" id="co"></h3></td>
                 </tr>
             </table>
         </div>
@@ -159,7 +160,9 @@
         </div>
     </div>
 </div>
-
+<script type="text/javascript">
+    drawHeatMap();
+</script>
 <!-- /heatMap.jsp -->
 
 <%--
