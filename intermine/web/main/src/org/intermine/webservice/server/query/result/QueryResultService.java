@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
@@ -36,7 +38,9 @@ import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.WebServiceInput;
 import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.output.JSONObjResultProcessor;
 import org.intermine.webservice.server.output.MemoryOutput;
+import org.json.JSONArray;
 
 /**
  * Executes query and returns results. Other parameters in request can specify
@@ -71,19 +75,43 @@ public class QueryResultService extends WebService
             @SuppressWarnings("unused") HttpServletResponse response) {
 
         QueryResultInput input = getInput();
+                
+        PathQueryBuilder builder = getQueryBuilder(input.getXml(), request); 
 
-        HttpSession session = request.getSession();
+        PathQuery query = builder.getQuery();
+        setHeaderAttributes(query);
+        runPathQuery(query, input.getStart(), input.getMaxCount(), null, null, input, null, input
+                .getLayout());
+    }
+    
+    private PathQueryBuilder getQueryBuilder(String xml, HttpServletRequest req) {
+    	HttpSession session = req.getSession();
         Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = this.im.getBagManager();
 
-        Map<String, InterMineBag> savedBags = bagManager.getUserAndGlobalBags(profile);
-
-        PathQueryBuilder builder = new PathQueryBuilder(input.getXml(), getXMLSchemaUrl(),
-                savedBags);
-
-        PathQuery query = builder.getQuery();
-        runPathQuery(query, input.getStart(), input.getMaxCount(), null, null, input, null, input
-                .getLayout());
+        Map<String, InterMineBag> savedBags 
+        	= bagManager.getUserAndGlobalBags(profile);
+        
+        if (getFormat() == WebService.JSON_OBJ_FORMAT) {
+        	return new PathQueryBuilderForJSONObj(xml, getXMLSchemaUrl(), savedBags);
+        } else {
+        	return new PathQueryBuilder(xml, getXMLSchemaUrl(), savedBags);
+        }
+    }
+    
+    
+    private void setHeaderAttributes(PathQuery pq) {
+    	if (getFormat() == WebService.JSON_OBJ_FORMAT) {
+	    	Map<String, String> attributes = new HashMap<String, String>();
+	    	attributes.put("views", new JSONArray(pq.getView()).toString());
+	    	try {
+				attributes.put("rootClass", pq.getRootClass());
+			} catch (PathException e) {
+				throw new RuntimeException("Cannot get root class name", e);
+			}
+	    	
+	    	output.setHeaderAttributes(attributes);
+    	}
     }
 
     private void forward(PathQuery pathQuery, String title, String description,
@@ -172,9 +200,15 @@ public class QueryResultService extends WebService
         executor.setBatchSize(BATCH_SIZE);
         ExportResultsIterator resultIt = executor.execute(pathQuery, firstResult,
                 maxResults);
+        ResultProcessor processor;
+        if (getFormat() == WebService.JSON_OBJ_FORMAT) {   	
+        	processor = new JSONObjResultProcessor();
+        } else {
+        	processor = new ResultProcessor();
+        }
         try {
             resultIt.goFaster();
-            new ResultProcessor().write(resultIt, output);
+            processor.write(resultIt, output);
         } finally {
             resultIt.releaseGoFaster();
         }
