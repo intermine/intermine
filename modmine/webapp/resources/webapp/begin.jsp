@@ -204,6 +204,7 @@
        <p>
          <img src="themes/metabolic/thumbs/widget-charts-5.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:4px;" />
          <strong>Explore</strong> and <strong>Analyze</strong>. Upload lists of identifiers to use in queries and discover relationshops in our analysis widgets.
+         See an <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example">example</a>.
        </p>
        <br />
        <a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" class="button green">Lists</a>
@@ -225,10 +226,9 @@
 
    <div id="bochs" class="span-4">
      <h3>Fly Gene Expression</h3>
-     <!-- <a href="#"><div class="heatmap"><img src="model/images/fly_heatmap.png" alt="Fly expression heatmap"/></div></a>-->
-     <div class="heatmap"><img src="model/images/fly_heatmap.png" alt="Fly expression heatmap"/></div>
+     <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example"><div class="heatmap"><img src="model/images/fly_heatmap.png" alt="Fly expression heatmap"/></div></a>
      <div class="text">
-       <p>View an expression score heatmap for any list of fly genes.</p>
+       <p>View an expression score heatmap for any list of fly genes.  See an <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example">example</a>.</p>
      </div>
    </div>
 
