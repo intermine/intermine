@@ -142,14 +142,14 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 		if (ID_FIELD.equals(key)) {
 			return;
 		}
-		String newValue;
+		Object newValue;
 		if (cell.getField() instanceof Date) {
 			newValue = ConstraintValueParser.ISO_DATE_FORMAT.format(cell.getField());
 		} else {
-			newValue = cell.getField().toString();
+			newValue = cell.getField();
 		}
 		if (objectMap.containsKey(key)) {
-			if (! newValue.equals(objectMap.get(key))) {
+			if (! newValue.toString().equals(objectMap.get(key).toString())) {
 				throw new JSONFormattingException("Trying to set key " + key + " as " + cell.getField() + " in " + objectMap + " but it already has the value " + objectMap.get(key));
 			}
 		} else {
