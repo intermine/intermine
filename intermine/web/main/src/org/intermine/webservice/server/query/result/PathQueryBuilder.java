@@ -31,6 +31,10 @@ public class PathQueryBuilder
 {
 
     private PathQuery pathQuery;
+    
+    protected PathQueryBuilder() {
+    	// empty constructor for testing
+    }
 
     /**
      * PathQueryBuilder constructor.
