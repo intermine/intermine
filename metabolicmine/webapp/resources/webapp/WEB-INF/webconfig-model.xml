@@ -419,7 +419,7 @@
         label="GO Term"
         filters="biological_process,cellular_component,molecular_function"
         filterLabel="Ontology"
-        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein,org.intermine.model.bio.SNP"
+        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
         externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term="
         style="height:290px;"
     />
