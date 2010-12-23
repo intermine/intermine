@@ -92,7 +92,7 @@ public class StreamedOutput extends Output
     public void setHeaderAttributes(Map<String, String> attributes) {
         if (headerPrinted) {
             throw new RuntimeException("Attempt to set header attributes "
-                + "althought header was printed already.");
+                + "although header was printed already.");
         }
         super.setHeaderAttributes(attributes);
     }
