@@ -18,16 +18,22 @@
 <script type="text/javascript">
 
   jQuery(document).ready(function() {
-     jQuery("#description").hide();
+     if ('${expressionScoreDCCid}'=='') {
+        jQuery('#heatmap_div').remove();
+        jQuery('#expression_div').html('<i>Expression scores are not available</i>');
+     } else {
+         drawHeatMap();
+         jQuery("#description").hide();
 
-     jQuery("#description_div").click(function () {
-           if(jQuery("#description").is(":hidden")) {
-             jQuery("#co").attr("src", "images/disclosed.gif");
-           } else {
-             jQuery("#co").attr("src", "images/undisclosed.gif");
-           }
-           jQuery("#description").toggle("slow");
-        });
+         jQuery("#description_div").click(function () {
+               if(jQuery("#description").is(":hidden")) {
+                 jQuery("#co").attr("src", "images/disclosed.gif");
+               } else {
+                 jQuery("#co").attr("src", "images/undisclosed.gif");
+               }
+               jQuery("#description").toggle("slow");
+            });
+     }
   });
 
 </script>
@@ -122,7 +128,7 @@
   }
 </script>
 
-<div class="body">
+<div class="body" id="expression_div">
     <div id="heatmap_div">
         <p><h2>${ExpressionScoreTitle}</h2></p>
         <p><i>${ExpressionScoreSummary}Click any cell to check value.</i></p>
@@ -140,8 +146,10 @@
         <div id="description_div">
             <table border="0">
                 <tr>
-                    <td ><h3 style="font-weight: bold; background: black; color: white;">Description</h3></td>
-                    <td ><h3 style="background: white;"><img src="images/disclosed.gif" id="co"></h3></td>
+                    <td ><h3 style="font-weight: bold; background: black; color: white;">More Information</h3></td>
+                    <td ><h3 <script type="text/javascript">
+
+</script>style="background: white;"><img src="images/disclosed.gif" id="co"></h3></td>
                 </tr>
             </table>
         </div>
@@ -151,9 +159,6 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    drawHeatMap();
-</script>
 
 <!-- /heatMap.jsp -->
 

@@ -10,23 +10,15 @@ package org.modmine.web.logic;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.log4j.Logger;
-import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.api.profile.Profile;
-import org.intermine.api.query.PathQueryExecutor;
-import org.intermine.api.results.ExportResultsIterator;
-import org.intermine.api.results.ResultElement;
-import org.intermine.metadata.Model;
+import org.intermine.model.bio.ExonExpressionScore;
 import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.GeneExpressionScore;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
@@ -35,11 +27,10 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.pathquery.OrderDirection;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Utility methods for the modMine package.
@@ -51,78 +42,126 @@ public final class ModMineUtil
 {
     protected static final Logger LOG = Logger.getLogger(ModMineUtil.class);
 
-    private static List<Double> geneExpressionScoreList = null;
-    private static List<Double> exonExpressionScoreList = null;
-
+    private static Double geneExpressionScoreMax = null; // 53808
+    private static Double geneExpressionScoreMin = null; // 0
+    private static Double exonExpressionScoreMax = null; // 53808
+    private static Double exonExpressionScoreMin = null; // 0
 
     private ModMineUtil() {
         super();
     }
 
     /**
-    * Query a list of gene expression scores in ascending order.
-    *
-    * @param session the HttpSession
-    * @param im the InterMineAPI
-    * @return list of gene expression scores in ascending order
-    */
-    public static synchronized List<Double> getGeneExpressionScores(
-            HttpSession session, InterMineAPI im) {
-        if (geneExpressionScoreList == null || exonExpressionScoreList == null) {
-            queryExpressionScore(session, im);
+     * Get the max value of gene expression scores.
+     *
+     * @param os the production objectStore
+     * @return geneExpressionScoreMax
+     */
+    public static synchronized Double getMaxGeneExpressionScore(ObjectStore os) {
+        if (geneExpressionScoreMax == null || geneExpressionScoreMin == null) {
+            queryGeneExpressionScores(os);
         }
 
-        return geneExpressionScoreList;
+        return geneExpressionScoreMax;
     }
 
     /**
-    * Query a list of exon expression scores in ascending order.
-    *
-    * @param session the HttpSession
-    * @param im the InterMineAPI
-    * @return list of exon expression scores in ascending order
-    */
-    public static synchronized List<Double> getExonExpressionScores(
-            HttpSession session, InterMineAPI im) {
-        if (geneExpressionScoreList == null || exonExpressionScoreList == null) {
-            queryExpressionScore(session, im);
+     * Get the min value of gene expression scores.
+     *
+     * @param os the production objectStore
+     * @return geneExpressionScoreMin
+     */
+    public static synchronized Double getMinGeneExpressionScore(ObjectStore os) {
+        if (geneExpressionScoreMax == null || geneExpressionScoreMin == null) {
+            queryGeneExpressionScores(os);
         }
 
-        return exonExpressionScoreList;
+        return geneExpressionScoreMin;
     }
 
-    private static void queryExpressionScore(HttpSession session, InterMineAPI im) {
-
-        Model model = im.getModel();
-        Profile profile = SessionMethods.getProfile(session);
-        PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-
-        geneExpressionScoreList = new ArrayList<Double>();
-
-        PathQuery query = new PathQuery(model);
-        query.addView("GeneExpressionScore.score");
-        query.addOrderBy("GeneExpressionScore.score", OrderDirection.ASC);
-
-        ExportResultsIterator geneResult = executor.execute(query);
-
-        while (geneResult.hasNext()) {
-            List<ResultElement> row = geneResult.next();
-            Double score = (Double) row.get(0).getField();
-            geneExpressionScoreList.add(score);
+    /**
+    * Get the max value of exon expression scores.
+    *
+    * @param os the production objectStore
+    * @return exonExpressionScoreMax
+    */
+    public static synchronized Double getMaxExonExpressionScore(ObjectStore os) {
+        if (exonExpressionScoreMax == null || exonExpressionScoreMin == null) {
+            queryExonExpressionScores(os);
         }
 
-        exonExpressionScoreList = new ArrayList<Double>();
+        return exonExpressionScoreMax;
+    }
 
-        query = new PathQuery(model);
-        query.addView("ExonExpressionScore.score");
-        query.addOrderBy("ExonExpressionScore.score", OrderDirection.ASC);
+    /**
+    * Get the min value of exon expression scores.
+    *
+    * @param os the production objectStore
+    * @return exonExpressionScoreMin
+    */
+    public static synchronized Double getMinExonExpressionScore(ObjectStore os) {
+        if (exonExpressionScoreMax == null || exonExpressionScoreMin == null) {
+            queryExonExpressionScores(os);
+        }
 
-        ExportResultsIterator exonResult = executor.execute(query);
+        return exonExpressionScoreMin;
+    }
 
-        while (exonResult.hasNext()) {
-            List<ResultElement> row = exonResult.next();
-            Double score = (Double) row.get(0).getField();
-            exonExpressionScoreList.add(score);
+    /**
+    * Query the max and min values of gene expression scores.
+    *
+    * @param os the production objectStore
+    */
+    private static void queryGeneExpressionScores(ObjectStore os) {
+        Query q = new Query();
+
+        QueryClass qcObject = new QueryClass(GeneExpressionScore.class);
+        QueryField qfObjectScore = new QueryField(qcObject, "score");
+        QueryNode max = new QueryFunction(qfObjectScore, QueryFunction.MAX);
+        QueryNode min = new QueryFunction(qfObjectScore, QueryFunction.MIN);
+
+        q.addFrom(qcObject);
+        q.addToSelect(min);
+        q.addToSelect(max);
+
+        Results r = os.execute(q);
+
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        Iterator<ResultsRow> it = (Iterator) r.iterator();
+        while (it.hasNext()) {
+            @SuppressWarnings("rawtypes")
+            ResultsRow rr = it.next();
+            geneExpressionScoreMin =  (Double) rr.get(0);
+            geneExpressionScoreMax =  (Double) rr.get(1);
+        }
+    }
+
+    /**
+    * Query the max and min values of exon expression scores.
+    *
+    * @param os the production objectStore
+    */
+    private static void queryExonExpressionScores(ObjectStore os) {
+        Query q = new Query();
+
+        QueryClass qcObject = new QueryClass(ExonExpressionScore.class);
+        QueryField qfObjectScore = new QueryField(qcObject, "score");
+        QueryNode max = new QueryFunction(qfObjectScore, QueryFunction.MAX);
+        QueryNode min = new QueryFunction(qfObjectScore, QueryFunction.MIN);
+
+        q.addFrom(qcObject);
+        q.addToSelect(min);
+        q.addToSelect(max);
+
+        Results r = os.execute(q);
+
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        Iterator<ResultsRow> it = (Iterator) r.iterator();
+        while (it.hasNext()) {
+            @SuppressWarnings("rawtypes")
+            ResultsRow rr = it.next();
+            exonExpressionScoreMin =  (Double) rr.get(0);
+            exonExpressionScoreMax =  (Double) rr.get(1);
         }
     }
 

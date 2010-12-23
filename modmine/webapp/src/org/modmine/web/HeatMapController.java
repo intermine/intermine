@@ -35,6 +35,7 @@ import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.OuterJoinStatus;
@@ -65,11 +66,6 @@ public class HeatMapController extends TilesAction
         "White prepupae (WPP) 2days", "White prepupae (WPP) 3days", "White prepupae (WPP) 4days",
         "Adult F Ecl 1day", "Adult M Ecl 1day", "Adult F Ecl 5day", "Adult M Ecl 5day",
         "Adult F Ecl 30day", "Adult M Ecl 30day"};
-
-    private static Double geneExpressionScoreMax = null;
-    private static Double geneExpressionScoreMin = null;
-    private static Double exonExpressionScoreMax = null;
-    private static Double exonExpressionScoreMin = null;
 
     private static String geneExpressionScoreTitle = "Drosophila Gene Expression Scores";
     private static String geneExpressionScoreSummary = "They are estimated expression levels "
@@ -131,6 +127,7 @@ public class HeatMapController extends TilesAction
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ObjectStore os = im.getObjectStore();
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
         DecimalFormat df = new DecimalFormat("#.##");
 
@@ -203,18 +200,10 @@ public class HeatMapController extends TilesAction
             request.setAttribute("expressionScoreMap", geneExpressionScoreMap);
 
             // To make a legend for the heat map
-            if (geneExpressionScoreMax == null || geneExpressionScoreMin == null) {
-                List<Double> geneExpressionScoreList =
-                    ModMineUtil.getGeneExpressionScores(session, im);
-                geneExpressionScoreMin = geneExpressionScoreList.get(0);
-                geneExpressionScoreMax =
-                    geneExpressionScoreList.get(geneExpressionScoreList.size() - 1);
-            }
-
             Double logGeneExpressionScoreMin =
-                Math.log(geneExpressionScoreMin + 1) / Math.log(2);
+                Math.log(ModMineUtil.getMinGeneExpressionScore(os) + 1) / Math.log(2);
             Double logGeneExpressionScoreMax =
-                Math.log(geneExpressionScoreMax + 1) / Math.log(2);
+                Math.log(ModMineUtil.getMaxGeneExpressionScore(os) + 1) / Math.log(2);
 
             request.setAttribute("minExpressionScore", df.format(logGeneExpressionScoreMin));
             request.setAttribute("maxExpressionScore", df.format(logGeneExpressionScoreMax));
@@ -289,19 +278,11 @@ public class HeatMapController extends TilesAction
 
             request.setAttribute("expressionScoreMap", exonExpressionScoreMap);
 
-            // To make a legend for the heat map
-            if (exonExpressionScoreMax == null || exonExpressionScoreMin == null) {
-                List<Double> exonExpressionScoreList =
-                    ModMineUtil.getExonExpressionScores(session, im);
-                exonExpressionScoreMin = exonExpressionScoreList.get(0);
-                exonExpressionScoreMax =
-                    exonExpressionScoreList.get(exonExpressionScoreList.size() - 1);
-            }
-
+            // To make a legend for the heat map, take log2 of the original scores
             Double logExonExpressionScoreMin =
-                Math.log(exonExpressionScoreMin + 1) / Math.log(2);
+                Math.log(ModMineUtil.getMinExonExpressionScore(os) + 1) / Math.log(2);
             Double logExonExpressionScoreMax =
-                Math.log(exonExpressionScoreMax + 1) / Math.log(2);
+                Math.log(ModMineUtil.getMaxExonExpressionScore(os) + 1) / Math.log(2);
 
             request.setAttribute("minExpressionScore", df.format(logExonExpressionScoreMin));
             request.setAttribute("maxExpressionScore", df.format(logExonExpressionScoreMax));
