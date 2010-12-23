@@ -15,27 +15,6 @@
 
 <tiles:importAttribute />
 
-<script type="text/javascript">
-
-  jQuery(document).ready(function() {
-     if ('${expressionScoreDCCid}'=='') {
-        jQuery('#heatmap_div').remove();
-        jQuery('#expression_div').html('<i>Expression scores are not available</i>');
-     } else {
-         jQuery("#description").hide();
-
-         jQuery("#description_div").click(function () {
-               if(jQuery("#description").is(":hidden")) {
-                 jQuery("#co").attr("src", "images/disclosed.gif");
-               } else {
-                 jQuery("#co").attr("src", "images/undisclosed.gif");
-               }
-               jQuery("#description").toggle("slow");
-            });
-     }
-  });
-
-</script>
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript">
     google.load("visualization", "1", {});
@@ -44,74 +23,53 @@
 <script type="text/javascript" src="model/bioheatmap/js/bioheatmap.js"></script>
 <script type="text/javascript">
   function drawHeatMap() {
+         //============= Heatmap body =============
+         var heatmap = new org.systemsbiology.visualization.BioHeatMap(document.getElementById('heatmapContainer'));
 
-     if ('${expressionScoreDCCid}'=='') {
-        return false;
-     }
+         var data_body = new google.visualization.DataTable();
 
-      var heatmap = new org.systemsbiology.visualization.BioHeatMap(document.getElementById('heatmapContainer'));
-      var data_body = BioHeatMapData.body();
-      heatmap.draw(data_body, ${maxExpressionScore}, ${minExpressionScore}, {startColor: {r:0, g:0, b:255, a:1},
-                                                                             endColor: {r:255, g:255, b:0, a:1},
-                                                                             passThroughBlack: false,
-                                                                             numberOfColors: 256,
-                                                                             cellHeight: 10,
-                                                                             cellWidth: 10,
-                                                                             fontHeight: 7,
-                                                                             drawBorder: false});
-
-      google.visualization.events.addListener(heatmap, 'select', function() {
-                var rowNo = heatmap.getSelection()[0].row;
-                var colNo = heatmap.getSelection()[0].column;
-                alert('Expression score: ' + data_body.getValue(rowNo, colNo));
-            });
-
-      var heatmap_legend = new org.systemsbiology.visualization.BioHeatMap(document.getElementById('heatmapLegendContainer'));
-            var data_legend = BioHeatMapData.legend();
-            heatmap_legend.draw(data_legend, ${maxExpressionScore}, ${minExpressionScore}, {startColor: {r:0, g:0, b:255, a:1},
-                                                                                            endColor: {r:255, g:255, b:0, a:1},
-                                                                                            passThroughBlack: false,
-                                                                                            numberOfColors: 256,
-                                                                                            cellWidth: 2,
-                                                                                            cellHeight: 15,
-                                                                                            useRowLabels: false,
-                                                                                            drawBorder: false });
-  }
-
-  // Make a data table
-  var BioHeatMapData = {
-
-      body : function() {
-         var data = new google.visualization.DataTable();
-
-         data.addColumn('string', 'Gene Name');
+         data_body.addColumn('string', 'Gene Name');
 
          <c:forEach items="${expressionScoreMap}" var="ges" varStatus="ges_status">
              <c:if test="${ges_status.first}">
                  <c:forEach items="${ges.value}" var="geScores" varStatus="geScores_status" >
-                    data.addColumn('number', "${geScores.condition}");
+                    data_body.addColumn('number', "${geScores.condition}");
                  </c:forEach>
              </c:if>
          </c:forEach>
 
          <c:forEach items="${expressionScoreMap}" var="ges" varStatus="ges_status">
-             data.addRows(1);
-             data.setCell(${ges_status.count - 1}, 0, "${ges.key}");
+             data_body.addRows(1);
+             data_body.setCell(${ges_status.count - 1}, 0, "${ges.key}");
 
              <c:forEach items="${ges.value}" var="geScores" varStatus="geScores_status" >
-                data.setCell(${ges_status.count - 1}, ${geScores_status.count }, ${geScores.logScore});
+                data_body.setCell(${ges_status.count - 1}, ${geScores_status.count }, ${geScores.logScore});
              </c:forEach>
          </c:forEach>
 
-         return data;
-      },
+          heatmap.draw(data_body, ${maxExpressionScore}, ${minExpressionScore}, {startColor: {r:0, g:0, b:255, a:1},
+                                                                                 endColor: {r:255, g:255, b:0, a:1},
+                                                                                 passThroughBlack: false,
+                                                                                 numberOfColors: 256,
+                                                                                 cellHeight: 10,
+                                                                                 cellWidth: 10,
+                                                                                 fontHeight: 7,
+                                                                                 drawBorder: false});
 
-      legend : function() {
-        var data = new google.visualization.DataTable();
+          google.visualization.events.addListener(heatmap, 'select', function() {
+                    var rowNo = heatmap.getSelection()[0].row;
+                    var colNo = heatmap.getSelection()[0].column;
+                    alert('Expression score: ' + data_body.getValue(rowNo, colNo));
+                });
+
+        //============= Heatmap legend =============
+        var heatmap_legend = new org.systemsbiology.visualization.BioHeatMap(document.getElementById('heatmapLegendContainer'));
+
+        var data_legend = new google.visualization.DataTable();
         var nCols = 100;
         var nRows = 1;
         for (col = 0; col < nCols; col++) {
-            data.addColumn('number', 1);
+            data_legend.addColumn('number', 1);
         }
 
         var max = ${maxExpressionScore};
@@ -119,15 +77,21 @@
         var dataStep = (Math.abs(min) + Math.abs(max))/((nCols)*nRows);
         var value = min;
         for (var i = 0; i < nRows; i++) {
-            data.addRows(1);
+            data_legend.addRows(1);
             for (col = 0; col < nCols; col++) {
-                data.setCell(i, col, value);
+                data_legend.setCell(i, col, value);
                 value += dataStep;
             }
         }
 
-        return data;
-    }
+        heatmap_legend.draw(data_legend, ${maxExpressionScore}, ${minExpressionScore}, {startColor: {r:0, g:0, b:255, a:1},
+                                                                                        endColor: {r:255, g:255, b:0, a:1},
+                                                                                        passThroughBlack: false,
+                                                                                        numberOfColors: 256,
+                                                                                        cellWidth: 2,
+                                                                                        cellHeight: 15,
+                                                                                        useRowLabels: false,
+                                                                                        drawBorder: false });
   }
 </script>
 
@@ -160,9 +124,27 @@
         </div>
     </div>
 </div>
+
 <script type="text/javascript">
-    drawHeatMap();
+    if ('${expressionScoreDCCid}'=='') {
+        jQuery('#heatmap_div').remove();
+        jQuery('#expression_div').html('<i>Expression scores are not available</i>');
+     } else {
+         jQuery("#description").hide();
+
+         drawHeatMap();
+
+         jQuery("#description_div").click(function () {
+               if(jQuery("#description").is(":hidden")) {
+                 jQuery("#co").attr("src", "images/disclosed.gif");
+               } else {
+                 jQuery("#co").attr("src", "images/undisclosed.gif");
+               }
+               jQuery("#description").toggle("slow");
+            });
+     }
 </script>
+
 <!-- /heatMap.jsp -->
 
 <%--
@@ -197,9 +179,3 @@ var BioHeatMapExampleData = {
     }
 }
 --%>
-
-
-
-
-
-
