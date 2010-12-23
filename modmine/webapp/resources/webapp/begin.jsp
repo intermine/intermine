@@ -225,7 +225,8 @@
 
    <div id="bochs" class="span-4">
      <h3>Fly Gene Expression</h3>
-     <a href="#"><div class="heatmap"><img src="model/images/fly_heatmap.png" alt="Fly expression heatmap"/></div></a>
+     <!-- <a href="#"><div class="heatmap"><img src="model/images/fly_heatmap.png" alt="Fly expression heatmap"/></div></a>-->
+     <div class="heatmap"><img src="model/images/fly_heatmap.png" alt="Fly expression heatmap"/></div>
      <div class="text">
        <p>View an expression score heatmap for any list of fly genes.</p>
      </div>
@@ -254,7 +255,7 @@
    </div>
 
    <div style="clear:both;"></div>
-
+<%--
    <div id="templates-menu" class="span-11 last">
        <table id="menu" border="0" cellspacing="0">
            <tr>
@@ -339,6 +340,8 @@
            </div>
        </div>
    </div>
+
+--%>
 
 </div>
 </div>
