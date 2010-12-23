@@ -68,8 +68,8 @@ public class HeatMapController extends TilesAction
         "Adult F Ecl 30day", "Adult M Ecl 30day"};
 
     private static String geneExpressionScoreTitle = "Drosophila Gene Expression Scores";
-    private static String geneExpressionScoreSummary = "They are estimated expression levels "
-        + "for annotated genes from 25 cell lines and 30 developmental stages. ";
+    private static String expressionScoreSummary = "These expression levels are derived "
+        + "from RNA-seq data from ";
     private static String geneExpressionScoreDescription = "This heatmap shows estimated "
         + "expression levels for annotated genes, using signals from Affymetrix "
         + "Drosophila tiling arrays. The arrays were hybridized with total RNAs "
@@ -89,8 +89,6 @@ public class HeatMapController extends TilesAction
         + "expression score to create the heatmap. ";
 
     private static String exonExpressionScoreTitle = "Drosophila Exon Expression Score";
-    private static String exonExpressionScoreSummary = "They are estimated expression levels "
-        + "for annotated exons from 25 cell lines and 30 developmental stages. ";
     private static String exonExpressionScoreDescription = "This heatmap shows estimated "
         + "expression levels for annotated exons, using signals from Affymetrix "
         + "Drosophila tiling arrays. The arrays were hybridized with total RNAs "
@@ -210,7 +208,7 @@ public class HeatMapController extends TilesAction
             request.setAttribute("maxExpressionScoreCeiling", Math.ceil(logGeneExpressionScoreMax));
             request.setAttribute("expressionScoreDCCid", dCCid);
             request.setAttribute("ExpressionScoreTitle", geneExpressionScoreTitle);
-            request.setAttribute("ExpressionScoreSummary", geneExpressionScoreSummary);
+            request.setAttribute("ExpressionScoreSummary", expressionScoreSummary);
             request.setAttribute("ExpressionScoreDescription", geneExpressionScoreDescription);
 
         } else if ("Exon".equals(bag.getType())) {
@@ -289,7 +287,7 @@ public class HeatMapController extends TilesAction
             request.setAttribute("maxExpressionScoreCeiling", Math.ceil(logExonExpressionScoreMax));
             request.setAttribute("expressionScoreDCCid", dCCid);
             request.setAttribute("ExpressionScoreTitle", exonExpressionScoreTitle);
-            request.setAttribute("ExpressionScoreSummary", exonExpressionScoreSummary);
+            request.setAttribute("ExpressionScoreSummary", expressionScoreSummary);
             request.setAttribute("ExpressionScoreDescription", exonExpressionScoreDescription);
 
         } else {

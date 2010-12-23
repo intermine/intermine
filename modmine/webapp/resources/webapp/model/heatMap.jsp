@@ -98,7 +98,8 @@
 <div class="body" id="expression_div">
     <div id="heatmap_div">
         <p><h2>${ExpressionScoreTitle}</h2></p>
-        <p><i>${ExpressionScoreSummary}Click any cell to check value.</i></p>
+        <p><i>${ExpressionScoreSummary}<html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=Drosophila Cell Line and Developmental Stage Gene and Exon Scores">
+            the Celniker group</html:link>.</i></p>
         <br/>
         <div id="heatmapContainer"></div>
         <div id="heatmapLegend_div">
