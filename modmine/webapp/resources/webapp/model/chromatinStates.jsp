@@ -5,14 +5,35 @@
   prefix="str"%>
 
 
+
+
 <tiles:importAttribute />
+
+<link rel="stylesheet" href="model/css/chromatin_states.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
 <html:xhtml />
 
-
 <div class="body">
 
-<h1>Image Map test for Chromatin States Ideogram:</h1>
+<h1>A genome-wide map of the chromatin landscape for Drosophila melanogaster</h1>
+<br/>
+<div style="font-size: 1.2em;">
+<p>
+Kharchenko at al., Nature (in press) produced a genome-wide map of 9 chromatin states for <i>D. melanogaster</i> in the S2 embryonic cell line the BG3 neuronal cell line.
+</p>
+</div>
+<br/>
+<p>This ideogram is based on a machine-learning approach which was used to identify the prevalent combinatorial patterns of 18 histone modifications across the genome. A simplified intensity-based model with nine states captures the overall complexity of chromatin patterns observed in S2 and BG3 cell lines, and we used this model to associate each genomic location with a particular combinatorial 'state', generating a chromatin-centric annotation of the genome (colour-coded as shown in the legend below).
+</p>
+<br/>
+
+<h3>Detailed methods:</h3>
+<p>
+To derive a nine-state joint chromatin state model for the S2 and BG3 cells, the genome was first divided into 200 bp bins, and the average enrichment level was calculated within each bin based on unsmoothed M values (using all histone enrichment profiles and Pc to discount the genome-wide difference in S2 H3K27me3 profiles). The bin-average values of each mark were shifted by the genome-wide mean, scaled by the genome-wide variance, and quantile-normalized between the two cells. An HMM model with multivariate
+normal emission distributions was generated using the data from both cell lines (30 seeding configurations determined with K-means clustering were used), and the Baum-Welch algorithm. States with minor intensity variations (Euclidian distance of mean emission values < 0.15) were merged. Larger models (up to 30 states) were examined, and the final number of states was chosen for optimal interpretability.
+</p>
+<br/>
+<h3>Click on a region to open a detailed view in GBrowse:</h3>
 <map name="Ideo_map">
     <area shape="rect" coords="32,6,45,32" href=http://modencode.oicr.on.ca/fgb2/gbrowse/fly/?start=1;stop=450000;ref=2L;grid=on;l=Genes%1E9STATE_S2%1E9STATE_BG3 target="_blank">
     <area shape="rect" coords="46,6,59,32" href=http://modencode.oicr.on.ca/fgb2/gbrowse/fly/?start=480000;stop=930000;ref=2L;grid=on;l=Genes%1E9STATE_S2%1E9STATE_BG3 target="_blank">
@@ -257,7 +278,29 @@
     <area shape="rect" coords="578,206,590,231" href=http://modencode.oicr.on.ca/fgb2/gbrowse/fly/?start=22230000;stop=22400000;ref=X;grid=on;l=Genes%1E9STATE_S2%1E9STATE_BG3 target="_blank">
 </map>
 <img src="model/images/fly_all_chrs_ideogram.png" usemap="#Ideo_map" border=0 alt="modENCODE CS Ideogram"/>
+<br/>
 
+
+<div>
+<h3>9-state Chromatin legend:</h3>
+<table class="legend">
+  <tr><th>State</th><th>Description</th><th>Color</th></tr>
+    <tr><td>1</td><td>Promoter and TSS</td><td style="background-color: red"></td></tr>
+    <tr><td>2</td><td>Transcription elongation</td><td style="background-color: purple"></td></tr>
+    <tr><td>3</td><td>Regulatory regions (enhancers)</td><td style="background-color: brown"></td></tr>
+    <tr><td>4</td><td>Active introns</td><td style="background-color: coral"></td></tr>
+    <tr><td>5</td><td>Active genes on the Male X</td><td style="background-color: green"></td></tr>
+    <tr><td>6</td><td>Polycomb-mediated repression</td><td style="background-color: grey"></td></tr>
+    <tr><td>7</td><td>Pericentromeric heterochromatin</td><td style="background-color: darkblue"></td></tr>
+    <tr><td>8</td><td>Heterochromatin-like embedded in euchromatin</td><td style="background-color: lightblue"></td></tr>
+    <tr><td>9</td><td>Transcriptionally silent, intergenic</td><td style="background-color: lightgrey"></td></tr>
+</table>
+</div>
+
+<br/>
+<h3>See also the Park lab's viewer for these data:</h3>
+<br/>
+<a target ="new" href="http://compbio.med.harvard.edu/flychromatin/"><div class="heatmap"><img src="themes/modmine/icons/bg3-text.png" alt="heatmap"/></div></a>
 
 
 </div>
