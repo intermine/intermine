@@ -3,6 +3,7 @@
  */
 package org.intermine.webservice.server.output;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -36,8 +37,11 @@ public class JSONObjResultProcessor extends ResultProcessor {
 		JSONResultsIterator jsonIter = new JSONResultsIterator(exportIter);
 		while (jsonIter.hasNext()) {
 			JSONObject next = jsonIter.next();
-			List<String> outputLine = Arrays.asList(next.toString());
+			List<String> outputLine = new ArrayList<String>(
+					Arrays.asList(next.toString()));
+			if (jsonIter.hasNext()) { outputLine.add(""); };
 			output.addResultItem(outputLine);
 		}
+		output.flush();
 	}
 }

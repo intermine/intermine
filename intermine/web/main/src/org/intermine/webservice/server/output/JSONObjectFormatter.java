@@ -37,10 +37,13 @@ public class JSONObjectFormatter extends Formatter {
 	public String formatHeader(Map<String, String> attributes) {
 		String rootClass = attributes.get("rootClass");
 		String views = attributes.get("views");
-		
-		return "{ " +
-					"'views': '" + views + "'," +
-					"'" + rootClass + "' : [";
+		String model = attributes.get("modelName");
+		String time  = attributes.get("executionTime");
+		return "{" +
+					"'views':" + views + "," +
+					"'model':'" + model + "'," +
+					"'executed_at':'" + time + "'," + 
+					"'" + rootClass + "':[";
 	}
 
 	/**
@@ -56,7 +59,9 @@ public class JSONObjectFormatter extends Formatter {
 		if (resultRow.isEmpty()) return "";
 		Iterator<String> iter = resultRow.iterator();
 		StringBuffer buffer = new StringBuffer(iter.next());
-		while (iter.hasNext()) buffer.append(",").append(iter.next());
+		while (iter.hasNext()) {
+			buffer.append(",").append(iter.next());
+		}
 		return buffer.toString();	
 	}
 

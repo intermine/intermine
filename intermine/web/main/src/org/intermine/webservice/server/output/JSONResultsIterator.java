@@ -199,13 +199,13 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 	}
 	
 	protected void setCurrentMapFromCurrentArray() {
-		if (currentArray == null) {
-			throw new JSONFormattingException("Nowhere to put this reference");
-		} 
-		if (currentArray.isEmpty()) {
-			throw new JSONFormattingException("This array is empty - is the view in the wrong order?");
+		try {
+			currentMap = currentArray.get(currentArray.size() - 1);
+		} catch (NullPointerException e) {
+			throw new JSONFormattingException("Nowhere to put this reference", e);
+		} catch (IndexOutOfBoundsException e) {
+			throw new JSONFormattingException("This array is empty - is the view in the wrong order?", e);
 		}
-		currentMap = currentArray.get(currentArray.size() - 1);
 		currentArray = null;
 	}
 
