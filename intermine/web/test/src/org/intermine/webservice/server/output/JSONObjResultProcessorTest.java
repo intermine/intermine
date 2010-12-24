@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -113,32 +114,26 @@ public class JSONObjResultProcessorTest extends TestCase {
 		assertTrue(processor != null);
 	}
     
+	@SuppressWarnings("unchecked")
 	public void testWrite() {
-		List<String> jsonStrings = Arrays.asList(
-        	"{\"objectId\":5,\"name\":\"Tim Canterbury\",\"age\":30,\"class\":\"Employee\"}",
-	    	"{\"objectId\":6,\"name\":\"Gareth Keenan\",\"age\":32,\"class\":\"Employee\"}",
-	    	"{\"objectId\":7,\"name\":\"Dawn Tinsley\",\"age\":26,\"class\":\"Employee\"}",
-	    	"{\"objectId\":8,\"name\":\"Keith Bishop\",\"age\":41,\"class\":\"Employee\"}",
-	    	"{\"objectId\":9,\"name\":\"Lee\",\"age\":28,\"class\":\"Employee\"}"
+		List<List<String>> expected = Arrays.asList(
+			Arrays.asList("{\"objectId\":5,\"name\":\"Tim Canterbury\",\"age\":30,\"class\":\"Employee\"}", ""),
+			Arrays.asList("{\"objectId\":6,\"name\":\"Gareth Keenan\",\"age\":32,\"class\":\"Employee\"}", ""),
+			Arrays.asList("{\"objectId\":7,\"name\":\"Dawn Tinsley\",\"age\":26,\"class\":\"Employee\"}", ""),
+			Arrays.asList("{\"objectId\":8,\"name\":\"Keith Bishop\",\"age\":41,\"class\":\"Employee\"}", ""),
+			Arrays.asList("{\"objectId\":9,\"name\":\"Lee\",\"age\":28,\"class\":\"Employee\"}")
 	    );
-	    
-		List<List<String>> received = new ArrayList<List<String>>();
-		List<List<String>> expected = new ArrayList<List<String>>();
-		for (String s : jsonStrings) {
-			expected.add(Arrays.asList(s));
-		}
 		
-		Output out  = new DummyOutput(received);
+		MemoryOutput out  = new MemoryOutput();
 		JSONObjResultProcessor processor = new JSONObjResultProcessor();
 		processor.write(iterator, out);
 		
-		assertEquals(expected, received);
+		assertEquals(expected.toString(), out.getResults().toString());
 		
 	}
 	
 	public void testBadArgument() {
-		List<List<String>> received = new ArrayList<List<String>>();
-		Output out  = new DummyOutput(received);
+		Output out  = new MemoryOutput();
 		JSONObjResultProcessor processor = new JSONObjResultProcessor();
 		try {
 			processor.write(null, out);
@@ -153,32 +148,4 @@ public class JSONObjResultProcessorTest extends TestCase {
 		
 	}
 
-	
-
-	private class DummyOutput extends Output {
-
-		List<List<String>> outputList;
-		
-		public DummyOutput(List<List<String>> list) {
-			this.outputList = list;
-		}
-		@Override
-		public void addResultItem(List<String> item) {
-			outputList.add(item);
-			
-		}
-
-		@Override
-		public void flush() {
-			fail("Not yet implemented");
-			
-		}
-
-		@Override
-		protected int getResultsCount() {
-			fail("Not yet implemented");
-			return 0;
-		}
-		
-	}
 }
