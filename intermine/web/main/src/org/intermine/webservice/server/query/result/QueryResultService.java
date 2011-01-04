@@ -14,7 +14,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +43,7 @@ import org.intermine.webservice.server.WebServiceInput;
 import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.output.JSONObjResultProcessor;
+import org.intermine.webservice.server.output.JSONObjectFormatter;
 import org.intermine.webservice.server.output.MemoryOutput;
 import org.json.JSONArray;
 
@@ -103,9 +108,15 @@ public class QueryResultService extends WebService
     private void setHeaderAttributes(PathQuery pq) {
     	if (getFormat() == WebService.JSON_OBJ_FORMAT) {
 	    	Map<String, String> attributes = new HashMap<String, String>();
-	    	attributes.put("views", new JSONArray(pq.getView()).toString());
+	    	attributes.put(JSONObjectFormatter.KEY_VIEWS, new JSONArray(pq.getView()).toString());
 	    	try {
-				attributes.put("rootClass", pq.getRootClass());
+	    		Calendar cal = Calendar.getInstance();
+	    		Date now = cal.getTime();
+	    		DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
+	    		String executionTime = dateFormatter.format(now);
+				attributes.put(JSONObjectFormatter.KEY_ROOT_CLASS, pq.getRootClass());
+				attributes.put(JSONObjectFormatter.KEY_MODEL_NAME, pq.getModel().getName());
+				attributes.put(JSONObjectFormatter.KEY_TIME, executionTime);
 			} catch (PathException e) {
 				throw new RuntimeException("Cannot get root class name", e);
 			}
