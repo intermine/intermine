@@ -16,9 +16,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.pathquery.ConstraintValueParser;
@@ -37,6 +39,7 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 	private List<Path> viewPaths = new ArrayList<Path>();
 	protected transient Map<String, Object> currentMap;
 	protected transient List<Map<String, Object>> currentArray;
+	private Model model;
 
 	public JSONResultsIterator(ExportResultsIterator it) {
 		this.subIter = it;
@@ -45,6 +48,7 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 
 	private void init() {
 		List<String> views = subIter.getQuery().getView();
+		model = subIter.getQuery().getModel();
 		viewPaths.addAll(subIter.getViewPaths());
 	}
 
@@ -86,10 +90,13 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 
 	private void addRowToJsonMap(List<ResultElement> results,
 			Map<String, Object> jsonMap) {
-		setOrCheckClassAndId(results.get(0), jsonMap);
+		setOrCheckClassAndId(results.get(0), viewPaths.get(0), jsonMap);
+		 
 		if (! jsonMap.get(CLASS_KEY).equals(viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName())) {
 			throw new JSONFormattingException(
-					"Head of the object is missing");
+				"Head of the object is missing, " + jsonMap + ", " 
+				+ viewPaths.get(0).toStringNoConstraints()
+			);
 		}
 		for (int i = 0; i < results.size(); i++) {
 			ResultElement cell = results.get(i);
@@ -101,18 +108,39 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 		}
 	}
 
-	protected void setOrCheckClassAndId(ResultElement cell,
+	protected boolean isCellValidForPath(ResultElement cell, Path path) {
+		if (cell == null || cell.getType() == null) {
+			return true;
+		}
+		ClassDescriptor pathCD = path.getLastClassDescriptor();
+		if (cell.getType().equals(pathCD.getUnqualifiedName())) {
+			return true;
+		}
+		ClassDescriptor cellCD = model.getClassDescriptorByName(cell.getType());
+		Set<String> supers = cellCD.getSuperclassNames();
+		if (supers.contains(pathCD.getName())) {
+			return true;
+		}
+		return false;
+	}
+	
+	protected void setOrCheckClassAndId(ResultElement cell, Path path,
 			Map<String, Object> jsonMap) {
+		
+		String thisType = path.getLastClassDescriptor().getUnqualifiedName();
 		if (jsonMap.containsKey(CLASS_KEY)) {
 			String storedType = (String) jsonMap.get(CLASS_KEY);
-			String cellType = cell.getType();
-			if (!storedType.equals(cellType)) {
+			if (!storedType.equals(thisType)) {
 				throw new JSONFormattingException(
 						"This result element (" + cell + ") does not belong on this map (" + jsonMap + 
 						") - classes don't match (" + jsonMap.get(CLASS_KEY) + " != " + cell.getType() + ")");
 			}
+		} else if (isCellValidForPath(cell, path)) {
+			jsonMap.put(CLASS_KEY, thisType);
 		} else {
-			jsonMap.put(CLASS_KEY, cell.getType());
+			throw new JSONFormattingException(
+					"This result element (" + cell + ") does not belong on this map (" + jsonMap + 
+					") - classes not compatible (" + thisType + " != " + cell.getType() + ")");
 		}
 		if (jsonMap.containsKey(ID_KEY)) {
 			if (!jsonMap.get(ID_KEY).equals(cell.getId())) {
@@ -137,7 +165,7 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 
 	protected void addFieldToMap(ResultElement cell, Path column,
 			Map<String, Object> objectMap) {
-		setOrCheckClassAndId(cell, objectMap);
+		setOrCheckClassAndId(cell, column, objectMap);
 		String key = column.getLastElement();
 		if (ID_FIELD.equals(key)) {
 			return;
@@ -148,9 +176,21 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 		} else {
 			newValue = cell.getField();
 		}
+		
 		if (objectMap.containsKey(key)) {
-			if (! newValue.toString().equals(objectMap.get(key).toString())) {
-				throw new JSONFormattingException("Trying to set key " + key + " as " + cell.getField() + " in " + objectMap + " but it already has the value " + objectMap.get(key));
+			if (objectMap.get(key) == null) {
+				if (newValue != null) {
+					throw new JSONFormattingException(
+							"Trying to set key " + key + " as " + cell.getField() 
+							+ " in " + objectMap + " but it already has the value " + objectMap.get(key)
+					);
+				}
+			} else {
+				if (! objectMap.get(key).equals(newValue)) {
+					throw new JSONFormattingException(
+							"Trying to set key " + key + " as " + cell.getField() 
+							+ " in " + objectMap + " but it already has the value " + objectMap.get(key));
+				}
 			}
 		} else {
 			objectMap.put(key, newValue);	
@@ -218,7 +258,9 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 
 	protected void addReferenceToCurrentNode(Path referencePath) {
 		if (currentMap == null) {
-			throw new JSONFormattingException("The current map should have been set by a preceding attribute - is the view in the right order?");
+			setCurrentMapFromCurrentArray();
+			//throw new JSONFormattingException("The current map should have been set by a preceding attribute - is the view in the right order?" 
+			//		+ referencePath.toStringNoConstraints() + viewPaths + currentArray);
 		}
 		
 		String key = referencePath.getLastElement();
