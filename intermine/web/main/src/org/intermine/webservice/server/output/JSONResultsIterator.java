@@ -93,7 +93,7 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 		}
 		for (int i = 0; i < results.size(); i++) {
 			ResultElement cell = results.get(i);
-			if (cell == null) {
+			if (cell == null || cell.getType() == null) {
 				continue;
 			}
 			Path columnPath = viewPaths.get(i);
