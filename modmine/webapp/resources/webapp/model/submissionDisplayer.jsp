@@ -116,7 +116,34 @@ div#submissionDescription {
 
 
             <td align="right">
-              <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}">${fc.value}</html:link>
+
+            <%-- TMP PATCH until data is corrected. it should be (otherwise)
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value} </html:link>
+          --%>
+          <c:set var="sub" value="${object}"></c:set>
+         <c:choose>
+         <c:when test="${sub.dCCid == '2753'}">
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">4230</html:link>
+         </c:when>
+         <c:when test="${sub.dCCid == '2754'}">
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">4477</html:link>
+         </c:when>
+         <c:when test="${sub.dCCid == '2755'}">
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">5159</html:link>
+         </c:when>
+         <c:when test="${sub.dCCid == '2783'}">
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">7029</html:link>
+         </c:when>
+         <c:when test="${sub.dCCid == '2979'}">
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">5726</html:link>
+         </c:when>
+         <c:otherwise>
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value} </html:link>
+         </c:otherwise>
+         </c:choose>
+
+         <%-- END patch --%>
+
             </td>
             <td align="right">
               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=tab&submission=${object.dCCid}&feature=${fc.key}">TAB DELIMITED</html:link>
