@@ -203,6 +203,8 @@ public class ObjectDetailsController extends InterMineAction
                     refs.put(fd.getName(), dispRef);
                     miscRefs.remove(fd.getName());
                 }
+            } else if (tagName.equals(TagNames.IM_SUMMARY)) {
+                miscRefs.remove(fd.getName());
             }
         }
     }
