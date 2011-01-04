@@ -216,7 +216,7 @@ public class InlineResultsTable
                 }
                 String className = theClass.getUnqualifiedName();
                 String expr = fc.getFieldExpr();
-                String pathString = "." + expr;
+                String pathString = className + "." + expr;
 
                 try {
                     Path path = new Path(model, pathString);
