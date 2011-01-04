@@ -42,6 +42,5 @@ public class JSONObjResultProcessor extends ResultProcessor {
 			if (jsonIter.hasNext()) { outputLine.add(""); };
 			output.addResultItem(outputLine);
 		}
-		output.flush();
 	}
 }
