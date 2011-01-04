@@ -13,6 +13,11 @@ import java.util.Map;
  */
 public class JSONObjectFormatter extends Formatter {
 	
+	public static final String KEY_VIEWS = "views";
+	public static final String KEY_ROOT_CLASS = "rootClass";
+	public static final String KEY_MODEL_NAME = "modelName";
+	public static final String KEY_TIME = "executionTime";
+	
 	/**
 	 * Constructor
 	 */
