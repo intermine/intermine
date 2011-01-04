@@ -32,7 +32,7 @@ An individual 'submission' is a single instance of an experiment which tests var
 <table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
 <tr><a name="index">
 <c:forEach items="${catExp}" var="catInd" varStatus="catInd_status">
-<td><a href="/${WEB_PROPERTIES['webapp.path']}/begin.do#${catInd_status.count}"  title="Go to category: ${catInd.key}" >${catInd.key}
+<td><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do#${catInd_status.count}"  title="Go to category: ${catInd.key}" >${catInd.key}
 <img src="images/right-arrow.gif" /></a></td>
 </c:forEach>
 </a></tr>
