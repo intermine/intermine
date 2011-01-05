@@ -38,8 +38,9 @@
 
                 <form name="buildBagForm" method="post" action="<c:url value="/buildBag.do" />">
                     <select name="type">
-                        <option value="Gene">Gene</option>
-                        <option value="Protein">Protein</option>
+                      <c:forEach var="bag" items="${preferredBags}">
+                        <option value="<c:out value="${bag}" />"><c:out value="${bag}" /></option>
+                      </c:forEach>
                     </select>
                     <div class="textarea">
                       <textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['begin.searchBox.example']}" /></textarea>
@@ -56,17 +57,19 @@
         </div>
         <div id="welcome-bochs">
             <div class="inner">
-                <h3><c:out value="${WEB_PROPERTIES['begin.helpBox.title']}" /></h3>
+                <h3><c:out value="${WEB_PROPERTIES['begin.thirdBox.title']}" /></h3>
                 <br />
-                <p><c:out value="${WEB_PROPERTIES['begin.helpBox.description']}" escapeXml="false" /></p>
-                <div class="bottom">
-                    <center>
-                        <a class="button gray" href="<c:out value="${WEB_PROPERTIES['begin.helpBox.tourLink']}" />"
-                        onclick="javascript:window.open('<c:out value="${WEB_PROPERTIES['begin.helpBox.tourLink']}" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
-                        take a tour
-                        </a>
-                    </center>
-                </div>
+                <p><c:out value="${WEB_PROPERTIES['begin.thirdBox.description']}" escapeXml="false" /></p>
+                <c:if test="${!empty WEB_PROPERTIES['begin.thirdBox.linkTitle']}">
+                  <div class="bottom">
+                      <center>
+                          <a class="button gray" href="<c:out value="${WEB_PROPERTIES['begin.thirdBox.link']}" />"
+                          onclick="javascript:window.open('<c:out value="${WEB_PROPERTIES['begin.thirdBox.link']}" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
+                          <c:out value="${WEB_PROPERTIES['begin.thirdBox.linkTitle']}" />
+                          </a>
+                      </center>
+                  </div>
+                </c:if>
             </div>
         </div>
     </div>

@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -30,14 +31,17 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.TagManager;
 import org.intermine.api.search.Scope;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.tracker.TemplateTracker;
 import org.intermine.api.tracker.TrackerDelegate;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.aspects.Aspect;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -50,6 +54,11 @@ public class BeginAction extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(TemplateTracker.class);
     private static final Integer MAX_TEMPLATES = new Integer(8);
+
+    /**
+     * @LinkedHashMap stores tabs of popular templates on the homepage
+     */
+    private static LinkedHashMap<String, HashMap<String, Object>> bagOfTabs;
 
      /**
      * Either display the query builder or redirect to project.sitePrefix.
@@ -110,14 +119,14 @@ public class BeginAction extends InterMineAction
                 if (template != null) {
                     request.setAttribute("mostPopularTemplate", template.getTitle());
                 } else {
-                    LOG.error("The most popular template " + templateName + "is not a public");
+                    LOG.error("The most popular template " + templateName + "is not public");
                 }
             }
         }
 
         List<TemplateQuery> templates = null;
         TemplateManager templateManager = im.getTemplateManager();
-        List<String> mostPopulareTemplateNames;
+        List<String> mostPopularTemplateNames;
 
         Object beginQueryClassConfig = properties.get("begin.query.classes");
         if (beginQueryClassConfig != null) {
@@ -125,80 +134,93 @@ public class BeginAction extends InterMineAction
             request.setAttribute("beginQueryClasses", beginQueryClasses);
         }
 
-        // get begin/homepage popular templates in tabs
-        Properties props = PropertiesUtil.getPropertiesStartingWith("begin.tabs", properties);
-        if (props.size() != 0) {
-            props = PropertiesUtil.stripStart("begin.tabs", props);
-            int i = 1;
-            LinkedHashMap<String, HashMap<String, Object>> bagOfTabs = new LinkedHashMap<String, HashMap<String, Object>>();
-            while (true) {
-                if (props.containsKey(i + ".id")) {
-                    LinkedHashMap<String, Object> tab = new LinkedHashMap<String, Object>();
-                    String identifier;
+        // do we have popular templates cached?
+        if (bagOfTabs == null) {
+            // ...get begin/homepage popular templates in tabs
+            Properties props = PropertiesUtil.getPropertiesStartingWith("begin.tabs", properties);
+            if (props.size() != 0) {
+                props = PropertiesUtil.stripStart("begin.tabs", props);
+                int i = 1;
+                // init
+                bagOfTabs = new LinkedHashMap<String, HashMap<String, Object>>();
+                while (true) {
+                    if (props.containsKey(i + ".id")) {
+                        LinkedHashMap<String, Object> tab = new LinkedHashMap<String, Object>();
+                        String identifier;
 
-                    // identifier, has to be present
-                    identifier = (String) props.get(i + ".id"); tab.put("identifier", identifier);
-                    // (optional) description
-                    tab.put("description", props.containsKey(i + ".description") ? (String) props.get(i + ".description") : "");
-                    // (optional) custom name, otherwise use identifier
-                    tab.put("name", props.containsKey(i + ".name") ? (String) props.get(i + ".name") : identifier);
+                        // identifier, has to be present
+                        identifier = (String) props.get(i + ".id"); tab.put("identifier", identifier);
+                        // (optional) description
+                        tab.put("description", props.containsKey(i + ".description") ? (String) props.get(i + ".description") : "");
+                        // (optional) custom name, otherwise use identifier
+                        tab.put("name", props.containsKey(i + ".name") ? (String) props.get(i + ".name") : identifier);
 
-                    // fetch the actual template queries
-                    templates = templateManager.getAspectTemplates(TagNames.IM_ASPECT_PREFIX + identifier, null);
-                    if (SessionMethods.getProfile(session).isLoggedIn()) {
-                        mostPopulareTemplateNames = trackerDelegate.getMostPopularTemplateOrder(SessionMethods.getProfile(session), session.getId());
+                        // fetch the actual template queries
+                        templates = templateManager.getAspectTemplates(TagNames.IM_ASPECT_PREFIX + identifier, null);
+                        if (SessionMethods.getProfile(session).isLoggedIn()) {
+                            mostPopularTemplateNames = trackerDelegate.getMostPopularTemplateOrder(SessionMethods.getProfile(session), session.getId());
+                        } else {
+                            mostPopularTemplateNames = trackerDelegate.getMostPopularTemplateOrder();
+                        }
+
+                        if (mostPopularTemplateNames != null) {
+                            Collections.sort(templates, new MostPopularTemplateComparator(mostPopularTemplateNames));
+                        }
+
+                        if (templates.size() > MAX_TEMPLATES) {
+                            templates = templates.subList(0, MAX_TEMPLATES);
+                        }
+
+                        tab.put("templates", templates);
+
+                        bagOfTabs.put(Integer.toString(i), tab);
+                        i++;
                     } else {
-                        mostPopulareTemplateNames = trackerDelegate.getMostPopularTemplateOrder();
+                        break;
                     }
-
-                    if (mostPopulareTemplateNames != null) {
-                        Collections.sort(templates, new MostPopularTemplateComparator(mostPopulareTemplateNames));
-                    }
-
-                    if (templates.size() > MAX_TEMPLATES) {
-                        templates = templates.subList(0, MAX_TEMPLATES);
-                    }
-
-                    tab.put("templates", templates);
-
-                    bagOfTabs.put(Integer.toString(i), tab);
-                    i++;
-                } else {
-                    break;
                 }
             }
-            request.setAttribute("tabs", bagOfTabs);
         }
+        request.setAttribute("tabs", bagOfTabs);
+
+        // preferred bags (Gucci)
+        ArrayList<String> preferredBags = new ArrayList<String>();
+        TagManager tagManager = im.getTagManager();
+        List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null, "class", im.getProfileManager().getSuperuser());
+        for (Tag tag : preferredBagTypeTags) {
+            preferredBags.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));
+        }
+        request.setAttribute("preferredBags", preferredBags);
 
         return mapping.findForward("begin");
     }
 
     private class MostPopularTemplateComparator implements Comparator<TemplateQuery>
     {
-        private List<String> mostPopulareTemplateNames;
+        private List<String> mostPopularTemplateNames;
 
-        public MostPopularTemplateComparator(List<String> mostPopulareTemplateNames) {
-            this.mostPopulareTemplateNames = mostPopulareTemplateNames;
+        public MostPopularTemplateComparator(List<String> mostPopularTemplateNames) {
+            this.mostPopularTemplateNames = mostPopularTemplateNames;
         }
         public int compare(TemplateQuery template1, TemplateQuery template2) {
             String templateName1 = template1.getName();
             String templateName2 = template2.getName();
-            if (!mostPopulareTemplateNames.contains(templateName1)
-                && !mostPopulareTemplateNames.contains(templateName2)) {
+            if (!mostPopularTemplateNames.contains(templateName1)
+                && !mostPopularTemplateNames.contains(templateName2)) {
                 if (template1.getTitle().equals(template2.getTitle())) {
                     return template1.getName().compareTo(template2.getName());
                 } else {
                     return template1.getTitle().compareTo(template2.getTitle());
                 }
             }
-            if (!mostPopulareTemplateNames.contains(templateName1)) {
+            if (!mostPopularTemplateNames.contains(templateName1)) {
                 return +1;
             }
-            if (!mostPopulareTemplateNames.contains(templateName2)) {
+            if (!mostPopularTemplateNames.contains(templateName2)) {
                 return -1;
             }
-            return (mostPopulareTemplateNames.indexOf(templateName1)
-                   < mostPopulareTemplateNames.indexOf(templateName2)) ? -1 : 1;
+            return (mostPopularTemplateNames.indexOf(templateName1)
+                   < mostPopularTemplateNames.indexOf(templateName2)) ? -1 : 1;
         }
     }
 }
