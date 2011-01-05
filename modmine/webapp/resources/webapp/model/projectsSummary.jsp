@@ -112,7 +112,7 @@ Labs:
      <c:choose>
      <c:when test="${exp.name == 'Genome-wide localization of essential replication initiators'
   && fc.featureType == 'ProteinBindingSite'}">
-  ${fc.featureType}:&nbsp;26621
+  ${fc.featureType}:&nbsp;38114
      </c:when>
      <c:otherwise>
       ${fc.featureType}:&nbsp;${fc.featureCounts}

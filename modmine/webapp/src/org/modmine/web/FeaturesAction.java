@@ -92,7 +92,9 @@ public class FeaturesAction extends InterMineAction
         final Map<String, LinkedList<String>> gffFields = new HashMap<String, LinkedList<String>>();
         populateGFFRelationships(gffFields);
 
-        String[] wrongSubs = new String[] {"2753","2754","2755","2783","2979"};
+        String[] wrongSubs = new String[]
+                 {"2753", "2754", "2755", "2783", "2979", "3247", "3251", "3253"};
+
         final Set<String> unmergedPeaks = new HashSet<String>(Arrays.asList(wrongSubs));
 
         boolean doGzip = false;
@@ -117,10 +119,9 @@ public class FeaturesAction extends InterMineAction
             // temp fix for unmerged peak scores
             if (experimentName.equalsIgnoreCase(
                     "Genome-wide localization of essential replication initiators")) {
-                 q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R*"));                    
-             }
+                addMergingPeaks(featureType, q);
+            }
 
-            
             if (featureType.equalsIgnoreCase("all")) {
                 // fixed query for the moment
                 String project = (String) request.getParameter("project");
@@ -175,7 +176,6 @@ public class FeaturesAction extends InterMineAction
                     addLocationToQuery(q, featureType);
                     addEFactorToQuery(q, featureType, hasPrimer);
                 }
-                
             }
         }
 
@@ -232,10 +232,9 @@ public class FeaturesAction extends InterMineAction
                             OuterJoinStatus.OUTER);
                 }
                 q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
-                
                 // temp fix for unmerged peak scores
-               if (unmergedPeaks.contains(dccId)) {
-                    q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R*"));                    
+                if (unmergedPeaks.contains(dccId)) {
+                    addMergingPeaks(featureType, q);
                 }
 
                 if (unlocFeatures == null || !unlocFeatures.contains(featureType)) {
@@ -351,8 +350,8 @@ public class FeaturesAction extends InterMineAction
             dccId = (String) request.getParameter("submission");
             q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
             if (unmergedPeaks.contains(dccId)) {
-                 q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R*"));                    
-             }
+                addMergingPeaks(featureType, q);
+            }
 
             Profile profile = SessionMethods.getProfile(session);
 
@@ -368,6 +367,17 @@ public class FeaturesAction extends InterMineAction
             return forwardParameters.addParameter("bagName", bagName).forward();
         }
         return null;
+    }
+
+    /**
+     * @param featureType
+     * @param dccId
+     * @param q
+     */
+    private void addMergingPeaks(String featureType, PathQuery q) {
+        q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R1_*"));
+        q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R2_*"));
+        q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*Rep*"));
     }
 
     /**
