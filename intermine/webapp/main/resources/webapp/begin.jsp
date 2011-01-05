@@ -134,7 +134,9 @@
             <div id="rss" style="display:none;">
                 <h4>News<span>&nbsp;&amp;&nbsp;</span>Updates</h4>
                 <table id="articles"></table>
-                <p class="more"><a target="new" href="http://blog.intermine.org/">More news</a></p>
+                <c:if test="${!empty WEB_PROPERTIES['links.blog']}">
+                  <p class="more"><a target="new" href="${WEB_PROPERTIES['links.blog']}">More news</a></p>
+                </c:if>
             </div>
 
             <div id="api">
