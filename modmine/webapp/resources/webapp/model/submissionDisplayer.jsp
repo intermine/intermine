@@ -137,6 +137,16 @@ div#submissionDescription {
          <c:when test="${sub.dCCid == '2979'}">
             <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">5726</html:link>
          </c:when>
+      <c:when test="${sub.dCCid == '3247'}">
+         <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">540</html:link>
+      </c:when>
+      <c:when test="${sub.dCCid == '3251'}">
+        <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">4366</html:link>
+      </c:when>
+      <c:when test="${sub.dCCid == '3253'}">
+       <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">6587</html:link>
+      </c:when>
+
          <c:otherwise>
             <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value} </html:link>
          </c:otherwise>
