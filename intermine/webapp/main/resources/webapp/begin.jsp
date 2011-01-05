@@ -9,123 +9,302 @@
 <!-- begin.jsp -->
 <html:xhtml/>
 
-<div class="body">
+<div id="content-wrap">
+    <div id="boxes">
+        <div id="search-bochs">
+            <img class="title" src="themes/purple/homepage/search-ico-right.png" title="search"/>
+            <div class="inner">
+                <h3><c:out value="${WEB_PROPERTIES['begin.searchBox.title']}" /></h3>
+                <span class="ugly-hack">&nbsp;</span>
+                <p><c:out value="${WEB_PROPERTIES['begin.searchBox.description']}" escapeXml="false" /></p>
 
-<div id="left" class="column">
-<!-- First column -->
-     <im:boxarea title="Data Categories" titleLink="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
-     <em><p><fmt:message key="begin.data"/></p></em>
-     <c:set var="numPerCol" value="${fn:length(ASPECTS)/2}"/>
-          <table cellpadding="0" cellspacing="0" border="0"><tr>
-         <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
-           <c:set var="set" value="${entry.value}"/>
-           <c:if test="${status.count%2 == '1'}"></tr><tr></c:if>
-                   <td style="height:80px;padding:4px">
-                     <a href="/${WEB_PROPERTIES['webapp.path']}/aspect.do?name=${set.name}">
-                       <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon"
-                            title="Click here to view the ${set.name} Data Category"
-                            width="40px" height="40px" />
-                     </a>
-                   </td>
-                   <td>
-                     <a href="/${WEB_PROPERTIES['webapp.path']}/aspect.do?name=${set.name}">
-                       ${set.name}
-                     </a>
-                   </td>
-             </c:forEach>
-          </tr></table>
-    </im:boxarea>
+                <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
+                    <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="e.g. zen, Q9V4E1"></div>
+                    <div class="bottom">
+                        <center>
+                            <input id="mainSearchButton" name="searchSubmit" class="button dark" type="submit" value="search"/>
+                        </center>
+                    </div>
+                </form>
+
+                <div style="clear:both;"></div>
+            </div>
+        </div>
+        <div id="lists-bochs">
+            <img class="title" src="images/icons/lists-64.png" title="lists"/>
+            <div class="inner">
+                <h3><c:out value="${WEB_PROPERTIES['begin.listBox.title']}" /></h3>
+                <p><c:out value="${WEB_PROPERTIES['begin.listBox.description']}" escapeXml="false" /></p>
+
+                <form name="buildBagForm" method="post" action="<c:url value="/buildBag.do" />">
+                    <select name="type">
+                        <option value="Gene">Gene</option>
+                        <option value="Protein">Protein</option>
+                    </select>
+                    <div class="textarea">
+                      <textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['begin.searchBox.example']}" /></textarea>
+                    </div>
+                    <div class="bottom">
+                        <center>
+                            <a class="advanced" href="bag.do?subtab=upload">advanced</a>
+                            <br />
+                            <input class="button light" type="submit" value="analyse"/>
+                        </center>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="welcome-bochs">
+            <div class="inner">
+                <h3><c:out value="${WEB_PROPERTIES['begin.helpBox.title']}" /></h3>
+                <br />
+                <p><c:out value="${WEB_PROPERTIES['begin.helpBox.description']}" escapeXml="false" /></p>
+                <div class="bottom">
+                    <center>
+                        <a class="button gray" href="<c:out value="${WEB_PROPERTIES['begin.helpBox.tourLink']}" />"
+                        onclick="javascript:window.open('<c:out value="${WEB_PROPERTIES['begin.helpBox.tourLink']}" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
+                        take a tour
+                        </a>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="clear:both"></div>
+
+    <div id="bottom-wrap">
+      <c:if test="${!empty tabs}">
+        <div id="templates">
+            <table id="menu" border="0" cellspacing="0">
+                <tr>
+                  <!-- templates tabs -->
+                  <c:forEach var="item" items="${tabs}">
+                    <td><div class="container"><span id="tab${item.key}">
+                      <c:forEach var="row" items="${item.value}">
+                        <c:choose>
+                          <c:when test="${row.key == 'name'}">
+                            <c:out value="${row.value}" />
+                          </c:when>
+                        </c:choose>
+                      </c:forEach>
+                    </span></div></td>
+                  </c:forEach>
+                </tr>
+            </table>
+
+            <div id="tab-content">
+                <div id="ribbon"></div>
+                <div id="try"></div>
+
+                <!-- templates content -->
+                <c:forEach var="item" items="${tabs}">
+                  <div id="content${item.key}" class="content">
+                    <c:forEach var="row" items="${item.value}">
+                      <c:choose>
+                        <c:when test="${row.key == 'identifier'}">
+                          <c:set var="aspectTitle" value="${row.value}"/>
+                        </c:when>
+                        <c:when test="${row.key == 'description'}">
+                          <p><c:out value="${row.value}" /> <a href="dataCategories.do">Read more</a></p><br/>
+                        </c:when>
+                        <c:when test="${row.key == 'name'}">
+                          <p>Query for <c:out value="${fn:toLowerCase(row.value)}" />:</p>
+                        </c:when>
+                        <c:when test="${row.key == 'templates'}">
+                          <ul>
+                            <c:forEach var="template" items="${row.value}">
+                              <li><a href="template.do?name=${template.name}"><c:out value="${fn:replace(template.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-16.png\" style=\"vertical-align:bottom\">&nbsp;')}" escapeXml="false" /></a></li>
+                            </c:forEach>
+                          </ul>
+                          <p class="more"><a href="templates.do?filter=${aspectTitle}">More queries</a></p>
+                        </c:when>
+                      </c:choose>
+                    </c:forEach>
+                  </div>
+                </c:forEach>
+            </div>
+        </div>
+      </c:if>
+
+        <div id="low">
+            <div id="rss" style="display:none;">
+                <h4>News<span>&nbsp;&amp;&nbsp;</span>Updates</h4>
+                <table id="articles"></table>
+                <p class="more"><a target="new" href="http://blog.intermine.org/">More news</a></p>
+            </div>
+
+            <div id="api">
+                <h4>Perl<span>&nbsp;&amp;&nbsp;</span>Java API</h4>
+                <img src="themes/metabolic/icons/perl-java-ico.gif" alt="perl java" />
+                <p>We support programatic access to our data through Application Programming Interface too! Choose from options below:</p>
+                <ul>
+                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do">Perl API</a>
+                    <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=java">Java API</a>
+                </ul>
+            </div>
+
+            <div style="clear:both;"></div>
+        </div>
+    </div>
 </div>
 
-<div id="right" class="column">
-<!-- Second column - elastic -->
-<div id="rightColumn">
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        jQuery("#tab-content .content").each(function() {
+            jQuery(this).hide();
+        });
 
-	      <div>
-	        <c:if test="${!empty WEB_PROPERTIES['project.rss']}">
-	          <tiles:insert name="news.tile" />
-	        </c:if>
-	      </div>
-	
-	      <im:boxarea title="Templates" titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do" stylename="gradientbox">
-	        <em><p><fmt:message key="begin.templates"/></p></em>
-	        <br/>
-	        <c:if test="${!empty mostPopularTemplate}">
-	        <fmt:message key="templates.mostpopular">
-	         <fmt:param value="${mostPopularTemplate}"/>
-	        </fmt:message>
-	        <br/>
-	        </c:if>
-	        <div>
-	          Example templates (<a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">${templateCount} total</a>):
-	        </div>
-	        <div id="templatesList" class="frontBoxList">
-	          <tiles:insert name="webSearchableList.tile">
-	            <!-- optional -->
-	            <tiles:put name="limit" value="3"/>
-	            <!-- bag or template? -->
-	            <tiles:put name="type" value="template"/>
-	            <!-- user or global -->
-	            <tiles:put name="wsListId" value="all_template"/>
-	            <tiles:put name="scope" value="all"/>
-	            <tiles:put name="tags" value="im:frontpage"/>
-	            <tiles:put name="showDescriptions" value="false"/>
-	            <tiles:put name="showSearchBox" value="false"/>
-	            <tiles:put name="showCount" value="false"/>
-	          </tiles:insert>
-	        </div>
-	        <html:link href="/${WEB_PROPERTIES['webapp.path']}/templates.do" styleClass="fp_button templates"> </html:link>
-	        <div class="clear"></div>
-	      </im:boxarea>
-	
-	      <im:boxarea title="Lists" titleLink="/${WEB_PROPERTIES['webapp.path']}/bag.do" stylename="gradientbox">
-	        <p><em><fmt:message key="begin.bags"/></em></p>
-	        <br/>
-	        <div>
-	          Example lists (<a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">${bagCount} total</a>):
-	        </div>
-	        <div id="bagsList" class="frontBoxList">
-	        <tiles:insert name="webSearchableList.tile">
-	          <tiles:put name="limit" value="2"/>
-	          <tiles:put name="wsListId" value="all_bag"/>
-	          <%-- bag or template? --%>
-	          <tiles:put name="type" value="bag"/>
-	          <%-- user or global --%>
-	          <tiles:put name="scope" value="all"/>
-	          <tiles:put name="tags" value="im:frontpage"/>
-	          <tiles:put name="showSearchBox" value="false"/>
-	          <tiles:put name="showCount" value="true"/>
-	          <%--<tiles:put name="height" value="100"/>--%>
-	        </tiles:insert>
-	        </div>
-	        <html:link href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" styleClass="fp_button viewLists"> </html:link>
-	        <div class="clear"></div>
-	        <html:link href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload" styleClass="fp_button createLists"> </html:link>
-	        <div class="clear"></div>
-	      </im:boxarea>
-	
-	      <im:boxarea title="Query Builder" titleLink="/${WEB_PROPERTIES['webapp.path']}/customQuery.do" stylename="gradientbox">
-	        <p><em><fmt:message key="begin.querybuilder"/></em></p>
-	        <br/>
-	        <div>
-	          <div id="qbStartQuery">
-	            Start a query from:
-	            <%-- loop through starting classes, set in web.properties --%>
-	            <c:forEach var="entry" items="${beginQueryClasses}" varStatus="status"><c:if test="${status.count != 1}">,</c:if>&nbsp;<a href="/${WEB_PROPERTIES['webapp.path']}/queryClassSelect.do?action=Select&amp;className=${entry}" rel="NOFOLLOW">${entry}</a></c:forEach>
-	          </div>
-	        </div>
-	        <div id="qbImport">
-	          <a href="/${WEB_PROPERTIES['webapp.path']}/importQueries.do?query_builder=yes">
-	            <fmt:message key="begin.importQuery"/>
-	          </a>
-	        </div>
-	        <html:link href="/${WEB_PROPERTIES['webapp.path']}/customQuery.do" styleClass="fp_button queries"> </html:link>
-	        <div class="clear"></div>
-	      </im:boxarea>
-	</div>
-	
-</div>
+        jQuery("table#menu td:first").addClass("active").find("div").append('<span class="right"></span><span class="left"></span>').show();
+        jQuery("div.content:first").show();
 
-</div>
+        jQuery("table#menu td").click(function() {
+            jQuery("table#menu td.active").find("div").find('.left').remove();
+            jQuery("table#menu td.active").find("div").find('.right').remove();
+            jQuery("table#menu td").removeClass("active");
+
+            jQuery(this).addClass("active").find("div").append('<span class="right"></span><span class="left"></span>');
+            jQuery("#tab-content .content").hide();
+
+            if (jQuery(this).is('span')) {
+                // span
+                var activeTab = jQuery(this).attr("id").substring(3);
+            } else {
+                // td, div (IE)
+                var activeTab = jQuery(this).find("span").attr("id").substring(3);
+            }
+            jQuery('#content' + activeTab).fadeIn();
+
+            return false;
+        });
+    });
+
+
+    // feed URL
+    var feedURL = "${WEB_PROPERTIES['project.rss']}";
+    // limit number of entries displayed
+    var maxEntries = 2;
+    // where are we appending entries? (jQuery syntax)
+    var target = 'table#articles';
+
+    var months = new Array(12); months[0]="Jan"; months[1]="Feb"; months[2]="Mar"; months[3]="Apr"; months[4]="May"; months[5]="Jun";
+    months[6]="Jul"; months[7]="Aug"; months[8]="Sep"; months[9]="Oct"; months[10]="Nov"; months[11]="Dec";
+
+    jQuery(document).ready(function() {
+        // DWR fetch, see AjaxServices.java
+        AjaxServices.getNewsPreview(feedURL, function(data) {
+            if (data) {
+                // show us
+                jQuery('#rss').slideToggle('slow');
+
+                // declare
+                var feedTitle, feedDescription, feedDate, feedLink, row, feed;
+
+                // convert to XML, jQuery manky...
+                try {
+                    // Internet Explorer
+                    feed = new ActiveXObject("Microsoft.XMLDOM");
+                    feed.async="false";
+                    feed.loadXML(data);
+                } catch(e) {
+                    try {
+                        // ...the good browsers
+                        feed = new DOMParser().parseFromString(data, "text/xml");
+                    } catch(e) {
+                        // ... BFF
+                        alert(e.message);
+                        return;
+                    }
+                }
+
+                var items = feed.getElementsByTagName("item"); // ATOM!!!
+                for (var i = 0; i < items.length; i++) {
+                    // early bath
+                    if (i == maxEntries) return;
+
+                    feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 80);
+                    feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 80);
+                    feedDate = new Date(items[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue);
+                    feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
+
+                    // build table row
+                    row = '<tr>'
+                            + '<td class="date">'
+                                + '<a target="new" href="' + feedLink + '">' + feedDate.getDate()
+                                + '<br /><span>' + months[feedDate.getMonth()] + '</span></a></td>'
+                            + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
+                        + '</tr>';
+                    // append, done
+                    jQuery(target).append(row);
+                }
+            }
+        });
+    });
+
+        // trim text to a specified length
+    function trimmer(grass, length) {
+        if (!grass) return;
+        grass = stripHTML(grass);
+        if (grass.length > length) return grass.substring(0, length) + '...';
+        return grass;
+    }
+
+    // strip HTML
+    function stripHTML(html) {
+        var tmp = document.createElement("DIV"); tmp.innerHTML = html; return tmp.textContent || tmp.innerText;
+    }
+
+    var placeholder = '<c:out value="${WEB_PROPERTIES['quickSearch.identifiers']}" />';
+    var placeholderTextarea = '<c:out value="${WEB_PROPERTIES['textarea.identifiers']}" />';
+    var inputToggleClass = 'eg';
+
+    /*
+    function preFillInput(target, term) {
+        var e = jQuery("input#actionsInput");
+        e.val(term);
+        if (e.hasClass(inputToggleClass)) e.toggleClass(inputToggleClass);
+        e.focus();
+    }
+    */
+
+    // e.g. values only available when JavaScript is on
+    jQuery('input#actionsInput').toggleClass(inputToggleClass);
+    jQuery('textarea#listInput').toggleClass(inputToggleClass);
+
+    // register input elements with blur & focus
+    jQuery('input#actionsInput').blur(function() {
+        if (jQuery(this).val() == '') {
+            jQuery(this).toggleClass(inputToggleClass);
+            jQuery(this).val(placeholder);
+        }
+    });
+    jQuery('textarea#listInput').blur(function() {
+        if (jQuery(this).val() == '') {
+            jQuery(this).toggleClass(inputToggleClass);
+            jQuery(this).val(placeholderTextarea);
+        }
+    });
+    jQuery('input#actionsInput').focus(function() {
+        if (jQuery(this).hasClass(inputToggleClass)) {
+            jQuery(this).toggleClass(inputToggleClass);
+            jQuery(this).val('');
+        }
+    });
+    jQuery('textarea#listInput').focus(function() {
+        if (jQuery(this).hasClass(inputToggleClass)) {
+            jQuery(this).toggleClass(inputToggleClass);
+            jQuery(this).val('');
+        }
+    });
+
+    // associate functions with search that redir to a keyword objects listing instead of search results
+    $('#mainSearchButton').click(function() {
+      // if placeholder text in place, take us elsewhere
+      if ($("#actionsInput").val() == placeholder) {
+        $(location).attr('href', "/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=");
+        return false;
+      }
+    });
+</script>
 
 <!-- /begin.jsp -->

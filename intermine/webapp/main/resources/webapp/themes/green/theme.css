@@ -263,3 +263,18 @@ div.heading.results { border:1px solid #BEDCE4; background:#E6F7FE; margin-left:
 div.heading.results h1 { color:#4D5154; font-size:22px; margin-bottom:10px; }
 div.heading.results #tool_bar_div { float:left; background:#E6F7FE !important; }
 div.heading.results #tool_bar_div li { border:1px solid #D2D2D2; background:#EEEEEE; margin-right:10px; padding:4px; font-weight:normal; }
+
+/* homepage (begin.css) */
+#search-bochs div.inner h3 { background:#5E665C; }
+#lists-bochs div.inner h3 { background:#A0EA8D; color:#000; }
+  #lists-bochs div.inner a { color:#5E665C; }
+#low h4 { color:#5E665C; }
+
+#boxes input.dark[type="submit"] { background:url("homepage/mole.png") no-repeat scroll center bottom transparent;
+  color:#FFF; padding:2px 36px; }
+#boxes input.light[type="submit"] { background:url("homepage/succ.png") no-repeat scroll center bottom transparent;
+  color:#000; padding:2px 36px; }
+#templates div.content p.more a, #low #rss p.more a { background: url("homepage/more-pitchurka.png") no-repeat scroll
+  left center transparent; }
+
+#templates #tab-content #ribbon { background: url("../../themes/purple/homepage/ribbon-duke.png") no-repeat scroll right top transparent; }
