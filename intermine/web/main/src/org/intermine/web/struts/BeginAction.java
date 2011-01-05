@@ -13,9 +13,11 @@ package org.intermine.web.struts;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +36,8 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.tracker.TemplateTracker;
 import org.intermine.api.tracker.TrackerDelegate;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.aspects.Aspect;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -113,34 +117,57 @@ public class BeginAction extends InterMineAction
 
         List<TemplateQuery> templates = null;
         TemplateManager templateManager = im.getTemplateManager();
-        Map<String, Aspect> aspects = SessionMethods.getAspects(servletContext);
-        Map<String, List<TemplateQuery>> aspectQueries = new HashMap<String, List<TemplateQuery>>();
         List<String> mostPopulareTemplateNames;
-        for (String aspect : aspects.keySet()) {
-            templates = templateManager.getAspectTemplates(TagNames.IM_ASPECT_PREFIX + aspect,
-                                                          null);
-            if (SessionMethods.getProfile(session).isLoggedIn()) {
-                mostPopulareTemplateNames = trackerDelegate.getMostPopularTemplateOrder(
-                                            SessionMethods.getProfile(session), session.getId());
-            } else {
-                mostPopulareTemplateNames = trackerDelegate.getMostPopularTemplateOrder();
-            }
-            if (mostPopulareTemplateNames != null) {
-                Collections.sort(templates,
-                    new MostPopularTemplateComparator(mostPopulareTemplateNames));
-            }
-            if (templates.size() > MAX_TEMPLATES) {
-                templates = templates.subList(0, MAX_TEMPLATES);
-            }
-            aspectQueries.put(aspect, templates);
-        }
-
-        request.setAttribute("aspectQueries", aspectQueries);
 
         Object beginQueryClassConfig = properties.get("begin.query.classes");
         if (beginQueryClassConfig != null) {
             String[] beginQueryClasses = beginQueryClassConfig.toString().split("[ ,]+");
             request.setAttribute("beginQueryClasses", beginQueryClasses);
+        }
+
+        // get begin/homepage popular templates in tabs
+        Properties props = PropertiesUtil.getPropertiesStartingWith("begin.tabs", properties);
+        if (props.size() != 0) {
+            props = PropertiesUtil.stripStart("begin.tabs", props);
+            int i = 1;
+            LinkedHashMap<String, HashMap<String, Object>> bagOfTabs = new LinkedHashMap<String, HashMap<String, Object>>();
+            while (true) {
+                if (props.containsKey(i + ".id")) {
+                    LinkedHashMap<String, Object> tab = new LinkedHashMap<String, Object>();
+                    String identifier;
+
+                    // identifier, has to be present
+                    identifier = (String) props.get(i + ".id"); tab.put("identifier", identifier);
+                    // (optional) description
+                    tab.put("description", props.containsKey(i + ".description") ? (String) props.get(i + ".description") : "");
+                    // (optional) custom name, otherwise use identifier
+                    tab.put("name", props.containsKey(i + ".name") ? (String) props.get(i + ".name") : identifier);
+
+                    // fetch the actual template queries
+                    templates = templateManager.getAspectTemplates(TagNames.IM_ASPECT_PREFIX + identifier, null);
+                    if (SessionMethods.getProfile(session).isLoggedIn()) {
+                        mostPopulareTemplateNames = trackerDelegate.getMostPopularTemplateOrder(SessionMethods.getProfile(session), session.getId());
+                    } else {
+                        mostPopulareTemplateNames = trackerDelegate.getMostPopularTemplateOrder();
+                    }
+
+                    if (mostPopulareTemplateNames != null) {
+                        Collections.sort(templates, new MostPopularTemplateComparator(mostPopulareTemplateNames));
+                    }
+
+                    if (templates.size() > MAX_TEMPLATES) {
+                        templates = templates.subList(0, MAX_TEMPLATES);
+                    }
+
+                    tab.put("templates", templates);
+
+                    bagOfTabs.put(Integer.toString(i), tab);
+                    i++;
+                } else {
+                    break;
+                }
+            }
+            request.setAttribute("tabs", bagOfTabs);
         }
 
         return mapping.findForward("begin");
