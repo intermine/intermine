@@ -259,3 +259,9 @@ ul#submenulist li div { border-left-color:#FFF; }
 
 /* login bar */
 ul#loginbar li { border-right-color:#5C0075; }
+
+/* homepage (begin.css) */
+#boxes input.dark[type="submit"] { background:url("homepage/button-violet-dark.png") no-repeat scroll center bottom transparent;
+  color:#FFF; padding:2px 36px; }
+#boxes input.light[type="submit"] { background:url("homepage/button-plush.png") no-repeat scroll center bottom transparent;
+  color:#FFF; padding:2px 36px; }

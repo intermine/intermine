@@ -351,3 +351,16 @@ div.heading #tool_bar_div ul#button_bar li a { background:none !important; color
 #tool_bar_div ul#button_bar li a { color:#FFF; }
 ul#button_bar li.tool_bar_link span.tablePageLinks { color:#FFF !important; }
 ul#button_bar li.tool_bar_link form span { color:#FFF !important; }
+
+/* homepage (begin.css) */
+#search-bochs div.inner h3 { background:#192F39; }
+#lists-bochs div.inner h3 { background:#63B7DE; }
+  #lists-bochs div.inner a { color:#192F39; }
+#low h4 { color:#192F39; }
+
+#boxes input.dark[type="submit"] { background:url("homepage/deep-ocean.png") no-repeat scroll center bottom transparent;
+  color:#FFFFFF; padding:2px 36px; }
+#boxes input.light[type="submit"] { background:url("homepage/ocean.png") no-repeat scroll center bottom transparent;
+  color:#FFFFFF; padding:2px 36px; }
+#templates div.content p.more a, #low #rss p.more a { background: url("homepage/more-pitchurka.png") no-repeat scroll
+  left center transparent; }

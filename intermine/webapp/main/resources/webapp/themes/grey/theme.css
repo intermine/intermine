@@ -274,3 +274,18 @@ div.heading.results #tool_bar_div li { border:1px solid #D2D2D2; background:#EEE
 #submenu.submenu_mymine #submenudiv #quicksearch form { color:#000 !important; }
 
 ul#submenulist li div { border-left-color:#7A7A7A; }
+
+/* homepage (begin.css) */
+#search-bochs div.inner h3 { background:#000; }
+#lists-bochs div.inner h3 { background:#9E9E9E; color:#FFF; }
+  #lists-bochs div.inner a { color:#000; }
+#low h4 { color:#000; }
+
+#boxes input.dark[type="submit"] { background:url("homepage/coal.png") no-repeat scroll center bottom transparent;
+  color:#FFF; padding:2px 36px; }
+#boxes input.light[type="submit"] { background:url("homepage/derty.png") no-repeat scroll center bottom transparent;
+  color:#FFF; padding:2px 36px; }
+#templates div.content p.more a, #low #rss p.more a { background: url("homepage/more-pitchurka.png") no-repeat scroll
+  left center transparent; }
+
+#templates #tab-content #ribbon { background: url("../../themes/purple/homepage/ribbon-mars.png") no-repeat scroll right top transparent; }
