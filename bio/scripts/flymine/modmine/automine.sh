@@ -204,8 +204,9 @@ elif [ -n "$PLIST" ]
 then
 SOURCES=modmine-static,"$PLIST"
 else
-SOURCES=modmine-static,modencode-metadata,fly-expression-score
-#SOURCES=modmine-static,modencode-metadata
+#SOURCES=entrez-organism,modmine-static,modencode-metadata,fly-expression-score
+SOURCES=modmine-static,modencode-metadata
+#SOURCES=flyrnai-screens
 fi
 
 
@@ -216,7 +217,10 @@ echo "Building modmine-$REL on $MINEHOST."
 echo "==================================="
 echo "current directory: $MINEDIR"
 echo "Log: $LOG"
+if [ "$FULL" = "n" ]
+then
 echo "Sources: $SOURCES"
+fi
 echo
 
 if [ -n "$1" ]
