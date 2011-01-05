@@ -1,7 +1,11 @@
 var duplicateArray = new Array();
 var tdColorArray = new Array();
 
- 
+function initForm(bagName) {
+	if (bagName != null && bagName != "") {
+		  document.bagUploadConfirmForm.newBagName.disabled = true;
+	}
+}
 function addId2Bag(id,row,parentId,issueType){
     setLinkState('removeAllLink', 'active');
     if(document.getElementById('add_'+issueType+'_'+id).className=='fakelink'){

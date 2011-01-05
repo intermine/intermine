@@ -11,22 +11,6 @@
 <html:hidden property="matchIDs" styleId="matchIDs"/>
 <html:hidden property="bagType"/>
 <script type="text/javascript" src="js/baguploadconfirm.js"></script>
-<script type="text/javascript">
- <!--
-window.onload = function() { toggleForm(${matchCount}); }
-
-function toggleForm(matchCount) {
-  if (matchCount > 0) {
-    document.bagUploadConfirmForm.newBagName.disabled = false;
-    document.bagUploadConfirmForm.confirmBagUpload.disabled = false;
-  } else {
-    document.bagUploadConfirmForm.newBagName.disabled = true;
-    document.bagUploadConfirmForm.confirmBagUpload.disabled = true;
-  }
-}
-
-// -->
-</script>
 <c:set var="totalIdCount" value="${fn:length(duplicates) + fn:length(lowQualityMatches) + fn:length(convertedObjects) + matchCount + fn:length(unresolved)}"/>  <div class="body" align="center">
     <div id="uploadConfirmMessage">
       <strong>
@@ -76,14 +60,15 @@ function toggleForm(matchCount) {
         </c:otherwise>
       </c:choose>
       <fmt:message key="bagUploadConfirm.bagName"/>:
-      <html:text property="newBagName" size="20" value="${bagName}" onkeypress="if (event.keyCode == 13) {validateBagName('bagUploadConfirmForm');return false;} "
+      <html:text property="newBagName" size="20" value="${bagName}"
+      onkeypress="if (event.keyCode == 13) {validateBagName('bagUploadConfirmForm');return false;} "
       />
     <c:choose>
     <c:when test="${empty bagName}">
     <input type="button" name="confirmBagUpload" value="Save list" onclick="javascript:validateBagName('bagUploadConfirmForm');"/>
     </c:when>
     <c:otherwise>
-    <input type="hidden" name="upgrade" value="true"/>
+    <input type="hidden" name="upgradeBagName" value="${bagName}"/>
     <input type="button" name="saveNewBag" value="Upgrade list" onclick="submit();"/>
     </c:otherwise>
     </c:choose>
@@ -178,5 +163,8 @@ function toggleForm(matchCount) {
     </html:submit>
     </div>
   </c:if>
+  <script type="text/javascript">
+     initForm("${bagName}");
+  </script>
 </html:form>
 <!-- /bagUploadConfirm.jsp -->
