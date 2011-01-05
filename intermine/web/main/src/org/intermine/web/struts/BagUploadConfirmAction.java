@@ -53,7 +53,9 @@ public class BagUploadConfirmAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
 
         BagUploadConfirmForm confirmForm = (BagUploadConfirmForm) form;
-        String bagName = confirmForm.getNewBagName();
+        String bagName = (! "".equals(confirmForm.getNewBagName()))
+                         ? confirmForm.getNewBagName()
+                         : request.getParameter("upgradeBagName");
 
         String idsString = confirmForm.getMatchIDs().trim();
         String[] ids = StringUtil.split(idsString, " ");
@@ -81,12 +83,12 @@ public class BagUploadConfirmAction extends InterMineAction
         }
 
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        if (request.getParameter("upgrade") == null) {
+        if (request.getParameter("upgradeBagName") == null) {
 	        InterMineBag bag = profile.createBag(bagName, bagType, "", im.getClassKeys());
 	        bag.addIdsToBag(contents, bagType);
 	        session.removeAttribute("bagQueryResult");
         } else {
-        	String bagToUpgradeName = confirmForm.getNewBagName();
+        	String bagToUpgradeName = bagName;
         	InterMineBag bagToUpgrade = profile.getSavedBags().get(bagToUpgradeName);
         	bagToUpgrade.upgradeOsb(contents);
         	session.removeAttribute("bagQueryResult_" + bagToUpgradeName);
