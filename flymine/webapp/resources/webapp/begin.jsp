@@ -14,10 +14,9 @@
         <div id="search-bochs">
             <img class="title" src="themes/purple/homepage/search-ico-right.png" title="search"/>
             <div class="inner">
-                <h3>Search</h3>
+                <h3><c:out value="${WEB_PROPERTIES['begin.searchBox.title']}" /></h3>
                 <span class="ugly-hack">&nbsp;</span>
-                <p>Search FlyMine. Enter <strong>names</strong>, <strong>identifiers</strong> or <strong>keywords</strong> for genes,
-                proteins, pathways, ontology terms, authors, etc. (e.g. <em>eve</em>, HIPPO_DROME, glycolysis, <em>hb</em> allele).</p>
+                <p><c:out value="${WEB_PROPERTIES['begin.searchBox.description']}" escapeXml="false" /></p>
 
                 <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
                     <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="e.g. zen, Q9V4E1"></div>
@@ -34,15 +33,17 @@
         <div id="lists-bochs">
             <img class="title" src="images/icons/lists-64.png" title="lists"/>
             <div class="inner">
-                <h3>Analyse</h3>
-                <p>Enter a <strong>list</strong> of identifiers.</p>
+                <h3><c:out value="${WEB_PROPERTIES['begin.listBox.title']}" /></h3>
+                <p><c:out value="${WEB_PROPERTIES['begin.listBox.description']}" escapeXml="false" /></p>
 
                 <form name="buildBagForm" method="post" action="<c:url value="/buildBag.do" />">
                     <select name="type">
                         <option value="Gene">Gene</option>
                         <option value="Protein">Protein</option>
                     </select>
-                    <div class="textarea"><textarea id="listInput" name="text">e.g. zen, adh, CG2328, FBgn0000099</textarea></div>
+                    <div class="textarea">
+                      <textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['begin.searchBox.example']}" /></textarea>
+                    </div>
                     <div class="bottom">
                         <center>
                             <a class="advanced" href="bag.do?subtab=upload">advanced</a>
@@ -55,13 +56,13 @@
         </div>
         <div id="welcome-bochs">
             <div class="inner">
-                <h3>First Time Here?</h3>
+                <h3><c:out value="${WEB_PROPERTIES['begin.helpBox.title']}" /></h3>
                 <br />
-                <p>FlyMine integrates many types of data for <em>Drosophila</em>, <em>Anopheles</em> and other organisms. You can run flexible queries, export results and analyse lists of data.</p>
+                <p><c:out value="${WEB_PROPERTIES['begin.helpBox.description']}" escapeXml="false" /></p>
                 <div class="bottom">
                     <center>
-                        <a class="button gray" href="http://www.flymine.org/help/tour/start.html"
-                        onclick="javascript:window.open('http://www.flymine.org/help/tour/start.html','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
+                        <a class="button gray" href="<c:out value="${WEB_PROPERTIES['begin.helpBox.tourLink']}" />"
+                        onclick="javascript:window.open('<c:out value="${WEB_PROPERTIES['begin.helpBox.tourLink']}" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
                         take a tour
                         </a>
                     </center>
@@ -76,87 +77,51 @@
         <div id="templates">
             <table id="menu" border="0" cellspacing="0">
                 <tr>
-                    <td><div class="container"><span id="tab1">Genes</span></div></td>
-                    <td><div class="container"><span id="tab2">Proteins</span></div></td>
-                    <td><div class="container"><span id="tab3">Interactions</span></div></td>
-                    <td><div class="container"><span id="tab4">Pathways</span></div></td>
-                    <td><div class="container"><span id="tab5">Homologues</span></div></td>
-                    <td><div class="container"><span id="tab6">Gene Ontology</span></div></td>
-                    <td><div class="container"><span id="tab7">Gene Expression</span></div></td>
+                  <!-- templates tabs -->
+                  <c:forEach var="item" items="${tabs}">
+                    <td><div class="container"><span id="tab${item.key}">
+                      <c:forEach var="row" items="${item.value}">
+                        <c:choose>
+                          <c:when test="${row.key == 'name'}">
+                            <c:out value="${row.value}" />
+                          </c:when>
+                        </c:choose>
+                      </c:forEach>
+                    </span></div></td>
+                  </c:forEach>
                 </tr>
             </table>
 
             <div id="tab-content">
                 <div id="ribbon"></div>
                 <div id="try"></div>
-                <div id="content1" class="content">
-                    <p>The gene models and other genome annotation in FlyMine are provided by a variety of source databases including: FlyBase, UniProt, Ensembl and over
-                    30 other data sources. <a href="dataCategories.do">Read more</a></p>
-                    <br/>
-                    <p>Query for genes:</p>
-                    <tiles:insert name="aspectTemplates.jsp">
-                        <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                        <tiles:put name="aspectTitle" value="Genomics" />
-                    </tiles:insert>
-                </div>
-                <div id="content2" class="content">
-                    <p>FlyMine loads proteins from UniProt and FlyBase, and protein domains from InterPro. <a href="aspect.do?name=Proteins">Read
-                    more</a></p>
-                    <br/>
-                    <p>Query for proteins:</p>
-                    <tiles:insert name="aspectTemplates.jsp">
-                        <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                        <tiles:put name="aspectTitle" value="Proteins" />
-                    </tiles:insert>
-                </div>
-                <div id="content3" class="content">
-                    <p>FlyMine loads physical interactions from IntAct and BioGRID, and genetic interaction from FlyBase. <a href="aspect.do?name=Interactions">Read more</a></p>
-                    <br/>
-                    <p>Query for interactions:</p>
-                    <tiles:insert name="aspectTemplates.jsp">
-                        <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                        <tiles:put name="aspectTitle" value="Interactions" />
-                    </tiles:insert>
-                </div>
-                <div id="content4" class="content">
-                    <p>FlyMine loads pathway data from KEGG, Reactome and FlyReactome. <a href="aspect.do?name=Pathways">Read more..</a></p>
-                    <br/>
-                    <p>Query for pathways:</p>
-                    <tiles:insert name="aspectTemplates.jsp">
-                        <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                        <tiles:put name="aspectTitle" value="Pathways" />
-                    </tiles:insert>
-                </div>
-                <div id="content5" class="content">
-                    <p>FlyMine loads homologue predictions from InParanoid, KEGG and TreeFam. <a href="aspect.do?name=Comparative+Genomics">
-                    Read more</a></p>
-                    <br/>
-                    <p>Query for homologues:</p>
-                    <tiles:insert name="aspectTemplates.jsp">
-                        <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                        <tiles:put name="aspectTitle" value="Comparative Genomics" />
-                    </tiles:insert>
-                </div>
-                <div id="content6" class="content">
-                    <p>FlyMine loads Gene Ontology annotation from MGI, FlyBase, WormBase, UniProt, SGD, and InterPro.
-                    <a href="aspect.do?name=Gene+Ontology">Read more</a></p>
-                    <br/>
-                    <p>Query using gene ontology:</p>
-                    <tiles:insert name="aspectTemplates.jsp">
-                        <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                        <tiles:put name="aspectTitle" value="Gene Ontology" />
-                    </tiles:insert>
-                </div>
-                <div id="content7" class="content">
-                    <p>FlyMine loads gene expression data for Drosophila melanogaster and Anopheles gambiae from FlyAtlas, BDGP, ArrayExpress and Fly-FISH.
-                    <a href="aspect.do?name=Gene+Expression">Read more</a></p>
-                    <br/>
-                    <p>Query for gene expression:</p>
-                    <tiles:insert name="aspectTemplates.jsp">
-                        <tiles:put name="aspectQueries" beanName="aspectQueries" />
-                        <tiles:put name="aspectTitle" value="Gene Expression" />
-                    </tiles:insert>
-                </div>
+
+                <!-- templates content -->
+                <c:forEach var="item" items="${tabs}">
+                  <div id="content${item.key}" class="content">
+                    <c:forEach var="row" items="${item.value}">
+                      <c:choose>
+                        <c:when test="${row.key == 'identifier'}">
+                          <c:set var="aspectTitle" value="${row.value}"/>
+                        </c:when>
+                        <c:when test="${row.key == 'description'}">
+                          <p><c:out value="${row.value}" /> <a href="dataCategories.do">Read more</a></p><br/>
+                        </c:when>
+                        <c:when test="${row.key == 'name'}">
+                          <p>Query for <c:out value="${fn:toLowerCase(row.value)}" />:</p>
+                        </c:when>
+                        <c:when test="${row.key == 'templates'}">
+                          <ul>
+                            <c:forEach var="template" items="${row.value}">
+                              <li><a href="template.do?name=${template.name}"><c:out value="${fn:replace(template.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-16.png\" style=\"vertical-align:bottom\">&nbsp;')}" escapeXml="false" /></a></li>
+                            </c:forEach>
+                          </ul>
+                          <p class="more"><a href="templates.do?filter=${aspectTitle}">More queries</a></p>
+                        </c:when>
+                      </c:choose>
+                    </c:forEach>
+                  </div>
+                </c:forEach>
             </div>
         </div>
 
