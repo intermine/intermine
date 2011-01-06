@@ -61,7 +61,7 @@ public class Bonferroni implements ErrorCorrection
             BigDecimal p = entry.getValue();
 
             // calc new value - p * n
-            BigDecimal adjustedP = p.multiply(alphaPerTest);
+            BigDecimal adjustedP = p.multiply(numberOfTests);
 
             // p is never over 1
             if (adjustedP.compareTo(ONE) >= 0) {
