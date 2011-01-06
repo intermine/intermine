@@ -25,6 +25,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.bag.UnknownBagTypeException;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.xml.SavedQueryBinding;
 import org.intermine.api.xml.TemplateQueryBinding;
@@ -280,9 +281,8 @@ public class ProfileManager
                 } else {
                     try {
                         InterMineBag bag = new InterMineBag(os, bagId, uosw);
-                        if (!classKeys.isEmpty()) {
-                            bag.setPrimaryIdentifierField(classKeys);
-                        }
+                        bag.setKeyFieldNames((List<String>) ClassKeyHelper.getKeyFieldNames(
+                                             classKeys, bag.getType()));
                         bag.setCurrent(savedBag.getCurrent());
                         savedBags.put(bag.getName(), bag);
                     } catch (UnknownBagTypeException e) {
