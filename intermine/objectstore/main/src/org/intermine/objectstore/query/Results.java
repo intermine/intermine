@@ -198,13 +198,8 @@ public class Results extends AbstractList<Object> implements LazyCollection<Obje
 
         if (start - 1 == lastGet) {
             sequential += end - start + 1;
-            //LOG.debug("This access sequential = " + sequential
-            //        + "                            Result " + query.hashCode()
-            //        + "         access " + start + " - " + end);
         } else {
             sequential = 0;
-            //LOG.debug("This access not sequential                            Result "
-            //        + query.hashCode() + "         access " + start + " - " + end);
         }
         if ((resultsBatches.getObjectStore() != null)
                 && prefetch
@@ -214,18 +209,6 @@ public class Results extends AbstractList<Object> implements LazyCollection<Obje
             resultsBatches.prefetch(endBatch + 1, optimise, explain);
         }
         lastGet = end;
-        /*
-        // Do the loop in reverse, so that we get IndexOutOfBoundsException first thing if we are
-        // out of range
-        for (int i = endBatch; i >= startBatch; i--) {
-            // Only one thread does this test at a time to save on calls to ObjectStore
-            synchronized (batches) {
-                if (!batches.containsKey(new Integer(i))) {
-                    fetchBatchFromObjectStore(i);
-                }
-            }
-        }
-        */
 
         return ret;
     }
