@@ -105,7 +105,7 @@ public class QueryResultService extends WebService
     }
     
     
-    private void setHeaderAttributes(PathQuery pq) {
+    protected void setHeaderAttributes(PathQuery pq) {
     	if (getFormat() == WebService.JSON_OBJ_FORMAT) {
 	    	Map<String, String> attributes = new HashMap<String, String>();
 	    	attributes.put(JSONObjectFormatter.KEY_VIEWS, new JSONArray(pq.getView()).toString());

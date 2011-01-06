@@ -21,6 +21,7 @@ import java.util.Set;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.pathquery.ConstraintValueParser;
@@ -116,8 +117,12 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 		if (cell.getType().equals(pathCD.getUnqualifiedName())) {
 			return true;
 		}
-		ClassDescriptor cellCD = model.getClassDescriptorByName(cell.getType());
-		Set<String> supers = cellCD.getSuperclassNames();
+		Set<String> supers;
+		try {
+			supers = ClassDescriptor.findSuperClassNames(model, cell.getType());
+		} catch (MetaDataException e) {
+			throw new JSONFormattingException("Problem getting supers for " + cell.getType(), e);
+		}
 		if (supers.contains(pathCD.getName())) {
 			return true;
 		}

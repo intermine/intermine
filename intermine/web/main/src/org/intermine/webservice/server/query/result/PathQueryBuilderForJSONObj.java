@@ -57,7 +57,7 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
 		
 	}
 	
-	protected List<String> getAlteredViews(PathQuery pq) {
+	public static List<String> getAlteredViews(PathQuery pq) {
 		List<String> originalViews = pq.getView();
 		List<Path> viewPaths = new ArrayList<Path>();
 		for (String v : originalViews) {
@@ -81,7 +81,7 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
 		return newViews;
 	}
 	
-	protected List<String> getNewViewStrings(Set<Path> classesWithAttributes, Path p) {
+	public static List<String> getNewViewStrings(Set<Path> classesWithAttributes, Path p) {
 		// The prefix automatically has an attribute, since its child is in the view
 		classesWithAttributes.add(p.getPrefix());
 		List<Path> composingPaths = p.decomposePath();
@@ -95,7 +95,7 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
 		return newParts;
 	}
 	
-	protected String getNewAttributeNode(Set<Path> classesWithAttributes, Path p) {
+	public static String getNewAttributeNode(Set<Path> classesWithAttributes, Path p) {
 		String retVal;
 		try {
 			retVal = p.append("id").toStringNoConstraints();
