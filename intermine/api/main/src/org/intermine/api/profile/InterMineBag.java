@@ -210,7 +210,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Returns a List of primaryIdentifiers values contained by this bag.
+     * Returns a List of key field values of the objects contained by this bag.
      * @return the list of primary identifier values
      */
     public List<String> getContentsASPrimaryIdentifierValues() {
@@ -280,6 +280,12 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
     }
 
+    /**
+     * Returns the values of the key field objects with id specified in input and contained in
+     * the bag
+     * @param ids
+     * @return the list of values
+     */
     public List<String> getPrimaryIdentifierValues(Collection<Integer> ids) {
         List<String> keyFieldValueList = new ArrayList<String>();
         Query q = new Query();
@@ -311,6 +317,12 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
     }
 
+    /**
+     * Upgrades the ObjectStoreBag with a new ObjectStoreBag containing the collection of elements
+     * given in input
+     * @param values the collection of elements to add
+     * @throws ObjectStoreException if an error occurs fetching a new ID
+     */
     public void upgradeOsb(Collection<Integer> values) throws ObjectStoreException {
         ObjectStoreWriter oswProduction = null;
         SavedBag savedBag = (SavedBag) uosw.getObjectById(savedBagId, SavedBag.class);
