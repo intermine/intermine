@@ -47,7 +47,7 @@ public class UpgradeBagList implements Runnable
         for (InterMineBag bag : savedBags.values()) {
             if (!bag.isCurrent()) {
                 List<String> primaryIdentifiersList =
-                    bag.getContentsASPrimaryIdentifierValues();
+                    bag.getContentsASKeyFieldValues();
                 try {
                     BagQueryResult result = bagQueryRunner.searchForBag(bag.getType(),
                                             primaryIdentifiersList, "", false);
