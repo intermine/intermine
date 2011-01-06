@@ -11,14 +11,7 @@ import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.tag.TagTypes;
-import org.intermine.api.tracker.TrackerLogger;
-import org.intermine.model.userprofile.SavedBag;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.query.ObjectStoreBag;
 
 /*
  * Copyright (C) 2002-2010 FlyMine
