@@ -20,6 +20,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
@@ -325,10 +326,10 @@ public class Profile
         Map<String, List<FieldDescriptor>> classKeys) throws ObjectStoreException {
         ObjectStore os = manager.getProductionObjectStore();
         ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
-        FieldDescriptor fieldDescriptor = classKeys.get(type).get(0);
-        String primaryIdentifierField = fieldDescriptor.getName();
+        List<String> keyFielNames = (List<String>) ClassKeyHelper.getKeyFieldNames(
+                                    classKeys, type);
         InterMineBag bag = new InterMineBag(name, type, description, new Date(), os, userId, uosw,
-                                           primaryIdentifierField);
+                                           keyFielNames);
         savedBags.put(name, bag);
         reindex(TagTypes.BAG);
         return bag;
