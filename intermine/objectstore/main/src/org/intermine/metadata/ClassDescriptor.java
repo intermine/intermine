@@ -468,9 +468,9 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
-     * Get the name of the super class of this class (may be null).
+     * Get the super class of this class (may be null).
      *
-     * @return the super class name
+     * @return the class descriptor this descriptor extends
      * @throws IllegalStateException if model not set
      */
     public ClassDescriptor getSuperclassDescriptor() {
