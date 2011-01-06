@@ -75,7 +75,9 @@ public class WidgetUtilTest extends TestCase
                 }
 
                 // biggest one isn't changed
-                benjaminiMap.put(id[i], p);
+                if (p.compareTo(ONE) >= 0) {
+                    benjaminiMap.put(id[i], p);
+                }
 
             } else {
                 BigDecimal divisor = numberOfTests.subtract(new BigDecimal(i + 1));
@@ -84,7 +86,10 @@ public class WidgetUtilTest extends TestCase
                 if (adjustedP.compareTo(ONE) >= 0) {
                     adjustedP = ONE;
                 }
-                benjaminiMap.put(id[i], adjustedP);
+                if (p.compareTo(ONE) >= 0) {
+                    benjaminiMap.put(id[i], adjustedP);
+                }
+
             }
         }
     }
