@@ -57,6 +57,7 @@ public final class WidgetUtil
 
         int populationTotal = calcTotal(os, ldr, true); // objects annotated in database
         int sampleTotal = calcTotal(os, ldr, false);    // objects annotated in bag
+        int testCount = 0; // number of tests
 
         // sample query
         Query q = ldr.getSampleQuery(false);
@@ -110,6 +111,7 @@ public final class WidgetUtil
                 ResultsRow rrAll =  (ResultsRow) itAll.next();
 
                 String id = (String) rrAll.get(0);
+                testCount++;
 
                 if (countMap.containsKey(id)) {
 
@@ -144,7 +146,7 @@ public final class WidgetUtil
             } else {
                 if (!"None".equals(errorCorrection)) {
                     adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap,
-                            idMap.size());
+                            testCount);
                 } else {
                     // TODO move this to the ErrorCorrection class
                     BigDecimal max = new BigDecimal(maxValue.doubleValue());
