@@ -37,8 +37,10 @@ import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TemplateAction;
 import org.intermine.web.util.URLGenerator;
+import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
+import org.intermine.webservice.server.query.result.PathQueryBuilderForJSONObj;
 import org.intermine.webservice.server.query.result.QueryResultService;
 
 /**
@@ -95,6 +97,12 @@ public class TemplateResultService extends QueryResultService
             throw new BadRequestException("Error in applying constraint values to template: "
                     + template.getName(), e);
         }
+        if (getFormat() == WebService.JSON_OBJ_FORMAT) {
+        	List<String> newView = PathQueryBuilderForJSONObj.getAlteredViews(populatedTemplate);
+        	populatedTemplate.clearView();
+        	populatedTemplate.addViews(newView);
+        }
+        setHeaderAttributes(populatedTemplate);
         if (populatedTemplate.isValid()) {
             runPathQuery(populatedTemplate, input.getStart(), input.getMaxCount(),
                     populatedTemplate.getTitle(), populatedTemplate.getDescription(), input,
