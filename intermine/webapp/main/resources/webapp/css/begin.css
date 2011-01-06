@@ -189,7 +189,7 @@ html, body { font-family:'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-seri
     #welcome-bochs input.button { font-family:"Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif; font-size:13px; height:30px;
       /* Opera 9 does not uppercase input elements */ text-transform:uppercase; font-weight:bold; border:none; cursor:pointer; }
 
-    #welcome-bochs a.button.gray { color:#505050; /*margin-right:30%; float:right;*/ line-height:29px; }
+    #welcome-bochs a.button.gray { color:#505050; /*margin-right:30%; float:right; line-height:29px;*/ display:block; }
     #welcome-bochs a.button.gray div { background-image:url("../themes/metabolic/buttons/btn-gray-left.png"); width:90px; margin-top:12px; }
     #welcome-bochs a.button.gray span { background-image:url("../themes/metabolic/buttons/btn-gray-right.png"); }
 
