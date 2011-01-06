@@ -99,9 +99,10 @@ public class LoadBagValuesTask extends Task
                     }
                     Map<String, List<FieldDescriptor>>  classKeys =
                         ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
-                    if (!classKeys.isEmpty()) {
-                        bag.setPrimaryIdentifierField(classKeys);
-                    }
+
+                    List<String> keyFielNames = (List<String>) ClassKeyHelper.getKeyFieldNames(
+                            classKeys, bag.getType());
+                    bag.setKeyFieldNames(keyFielNames);
                     bag.addBagValues();
                     bag.setCurrent(true);
                 } catch (UnknownBagTypeException e) {

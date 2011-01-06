@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,7 +27,6 @@ import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.UserProfile;
@@ -44,6 +42,8 @@ import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.sql.writebatch.Batch;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
@@ -67,7 +67,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     protected final String type;
     private String description;
     private Date dateCreated;
-    private String primaryIdentifierField;
+    private List<String> keyFieldNames;
     private boolean isCurrent;
     private ObjectStoreBag osb;
     private ObjectStore os;
@@ -103,15 +103,15 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param os the production ObjectStore
      * @param profileId the ID of the user in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
-     * @param primaryIdentifierField the primary identifier defined for this bag
+     * @param keyFieldNames the list of identifiers defined for this bag
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
-        ObjectStore os, Integer profileId, ObjectStoreWriter uosw, String primaryIdentifierField)
+        ObjectStore os, Integer profileId, ObjectStoreWriter uosw, List<String> keyFieldNames)
         throws ObjectStoreException {
         this.type = type;
         init(name, description, dateCreated, os, profileId, uosw);
-        this.primaryIdentifierField = primaryIdentifierField;
+        this.keyFieldNames = keyFieldNames;
     }
 
     private void init(String name, String description, Date dateCreated, ObjectStore os,
@@ -150,6 +150,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         this.description = savedBag.getDescription();
         this.dateCreated = savedBag.getDateCreated();
         this.profileId = savedBag.proxGetUserProfile().getId();
+        this.isCurrent = savedBag.getCurrent();
         this.osb = new ObjectStoreBag(savedBag.getOsbId());
         setClassDescriptors();
     }
@@ -213,18 +214,32 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @return the list of primary identifier values
      */
     public List<String> getContentsASPrimaryIdentifierValues() {
+        List<String> keyFieldValueList = new ArrayList<String>();
         if (isCurrent) {
             Query q = new Query();
             q.setDistinct(false);
             try {
                 QueryClass qc = new QueryClass(Class.forName(getQualifiedType()));
                 q.addFrom(qc);
-                q.addToSelect(new QueryField(qc, primaryIdentifierField));
+                for (String keyFieldName : keyFieldNames) {
+                    q.addToSelect(new QueryField(qc, keyFieldName));
+                }
                 QueryField idField = new QueryField(qc, "id");
                 BagConstraint c = new BagConstraint(idField, ConstraintOp.IN, osb);
                 q.setConstraint(c);
-                SingletonResults res = os.executeSingleton(q, 1000, false, true, true);
-                return (List<String>) ((List) res);
+                Results res = os.execute(q, 1000, false, true, true);
+                for (Object rowObj : res) {
+                    ResultsRow<?> row = (ResultsRow<?>) rowObj;
+                    String value;
+                    for (int index = 0; index < keyFieldNames.size(); index++) {
+                        value = (String) row.get(index);
+                        if (value != null && !"".equals(value)) {
+                            keyFieldValueList.add(value);
+                            break;
+                        }
+                    }
+                }
+                return keyFieldValueList;
             } catch (ClassNotFoundException cne) {
                 return new ArrayList<String>();
             }
@@ -245,8 +260,8 @@ public class InterMineBag implements WebSearchable, Cloneable
                     primaryIdentifiersList.add(rs.getString(1));
                 }
             } catch (SQLException sqe) {
-                LOG.error("Connection problems during loadings primary identifiers fields for" +
-                          "the bag " + name, sqe);
+                LOG.error("Connection problems during loadings primary identifiers fields for"
+                          + "the bag " + name, sqe);
             } finally {
                 if (rs != null) {
                     try {
@@ -266,17 +281,31 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     public List<String> getPrimaryIdentifierValues(Collection<Integer> ids) {
+        List<String> keyFieldValueList = new ArrayList<String>();
         Query q = new Query();
         q.setDistinct(false);
         try {
             QueryClass qc = new QueryClass(Class.forName(getQualifiedType()));
             q.addFrom(qc);
-            q.addToSelect(new QueryField(qc, primaryIdentifierField));
+            for (String keyFieldName : keyFieldNames) {
+                q.addToSelect(new QueryField(qc, keyFieldName));
+            }
             QueryField idField = new QueryField(qc, "id");
             BagConstraint idsConstraints = new BagConstraint(idField, ConstraintOp.IN, ids);
             q.setConstraint(idsConstraints);
-            SingletonResults res = os.executeSingleton(q, 1000, false, true, true);
-            return (List<String>) ((List) res);
+            Results res = os.execute(q, 1000, false, true, true);
+            for (Object rowObj : res) {
+                ResultsRow<?> row = (ResultsRow<?>) rowObj;
+                String value;
+                for (int index = 0; index < keyFieldNames.size(); index++) {
+                    value = (String) row.get(index);
+                    if (value != null && !"".equals(value)) {
+                        keyFieldValueList.add(value);
+                        break;
+                    }
+                }
+            }
+            return keyFieldValueList;
         } catch (ClassNotFoundException cne) {
             return new ArrayList<String>();
         }
@@ -449,24 +478,35 @@ public class InterMineBag implements WebSearchable, Cloneable
 
 
     /**
-     * Set the primaryIdentifierField
-     * @param primaryIdentifierField
+     * Set the keyFieldNames
+     * @param keyFieldNames the list of keyField names
      */
-    public void setPrimaryIdentifierField(Map<String, List<FieldDescriptor>> classKeys) {
-        FieldDescriptor fieldDescriptor = classKeys.get(type).get(0);
-        this.primaryIdentifierField = fieldDescriptor.getName();
+    public void setKeyFieldNames(List<String> keyFieldNames) {
+        this.keyFieldNames = keyFieldNames;
     }
 
-    public String getPrimaryIdentifierField() {
-        return primaryIdentifierField;
+    /**
+     * Return a list containing the keyFieldNames for the bag
+     * @return keyFieldNames
+     */
+    public List<String> getKeyFieldNames() {
+        return keyFieldNames;
     }
 
+    /**
+     * Return true if the bag isCurrent
+     * @return isCurrent
+     */
     public boolean isCurrent() {
         return isCurrent;
     }
 
+    /**
+     * Set if the bag is current
+     * @param isCurrent the value to set
+     */
     public void setCurrent(boolean isCurrent) {
-        this.isCurrent=isCurrent;
+        this.isCurrent = isCurrent;
     }
 
     /**
@@ -512,7 +552,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             copy.savedBagId = null;
             SavedBag savedBag = copy.store();
             copy.savedBagId = savedBag.getId();
-            copy.primaryIdentifierField = primaryIdentifierField;
+            copy.keyFieldNames = keyFieldNames;
         } catch (ObjectStoreException ex) {
             throw new RuntimeException("Clone failed.", ex);
         } catch (CloneNotSupportedException ex) {
@@ -652,7 +692,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Save the primary identifiers associated to the bag into bagvalues table
+     * Save the primary identifiers associated to ids given in input into bagvalues table
      */
     private void addBagValues(Collection<Integer> ids) {
         Connection conn = null;
