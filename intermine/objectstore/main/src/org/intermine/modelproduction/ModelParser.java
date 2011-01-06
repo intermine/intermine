@@ -11,7 +11,9 @@ package org.intermine.modelproduction;
  */
 
 import java.io.Reader;
+import java.util.Set;
 
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 
 /**
@@ -28,5 +30,14 @@ public interface ModelParser
      * @return the InterMine Model created
      * @throws Exception if Model not created successfully
      */
-    Model process(Reader reader) throws Exception;
+    Model process(Reader reader) throws ModelParserException;
+
+    /**
+     * Read source information and construct a list of InterMine ClassDescriptors
+     * @param fileReader
+     * @param packageName
+     * @return
+     */
+	Set<ClassDescriptor> generateClassDescriptors(Reader fileReader,
+			String packageName) throws ModelParserException;
 }

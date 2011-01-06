@@ -13,6 +13,7 @@ package org.intermine.modelproduction.xml;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.io.Reader;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
@@ -23,13 +24,14 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.modelproduction.ModelParser;
+import org.intermine.modelproduction.ModelParserException;
 import org.intermine.util.SAXParser;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
- * Parse InterMine metadata XML to produce a InterMine Model
+ * Parse InterMine metadata XML to produce an InterMine Model
  *
  * @author Mark Woodbridge
  */
@@ -43,13 +45,17 @@ public class InterMineModelParser implements ModelParser
      *
      * @param reader the source model to parse
      * @return the InterMine Model created
-     * @throws Exception if Model not created successfully
+     * @throws ModelParserException if something goes wrong with parsing the class descriptors.
      */
-    public Model process(Reader reader) throws Exception {
-        ModelHandler handler = new ModelHandler();
-        SAXParser.parse(new InputSource(reader), handler);
-        Model model = new Model(handler.modelName, handler.packageName, handler.classes);
-        return model;
+    public Model process(Reader reader) throws ModelParserException {
+    	try {
+	        ModelHandler handler = new ModelHandler();
+	        SAXParser.parse(new InputSource(reader), handler);
+	        Model model = new Model(handler.modelName, handler.packageName, handler.classes);
+	        return model;
+    	} catch (Exception e) {
+    		throw new ModelParserException(e);
+    	}
     }
 
     /**
@@ -58,15 +64,19 @@ public class InterMineModelParser implements ModelParser
      *
      * @param reader the source model to parse
      * @param packageName the package name that all the classes should be in
-     * @return a set of
-     * @throws Exception if Model not created successfully
+     * @return a set of ClassDescriptors
+     * @throws ModelParserException if something goes wrong with parsing the class descriptors.
      */
     public Set<ClassDescriptor> generateClassDescriptors(Reader reader,
-            String packageName) throws Exception {
-        ModelHandler handler = new ModelHandler();
-        handler.packageName = packageName;
-        SAXParser.parse(new InputSource(reader), handler);
-        return handler.classes;
+            String packageName) throws ModelParserException {
+    	try {
+	        ModelHandler handler = new ModelHandler();
+	        handler.packageName = packageName;
+	        SAXParser.parse(new InputSource(reader), handler);
+	        return handler.classes;
+    	} catch (Exception e) {
+    		throw new ModelParserException(e);
+    	}
     }
 
     /**
@@ -249,4 +259,6 @@ public class InterMineModelParser implements ModelParser
             this.isInterface = isInterface;
         }
     }
+
+
 }
