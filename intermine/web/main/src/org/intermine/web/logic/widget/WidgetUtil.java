@@ -80,7 +80,7 @@ public final class WidgetUtil
                 // extract results
                 ResultsRow rr =  (ResultsRow) iter.next();
 
-                // id of item
+                // id of annotation item (eg. GO term)
                 String id = (String) rr.get(0);
 
                 // count of item
@@ -144,7 +144,7 @@ public final class WidgetUtil
             } else {
                 if (!"None".equals(errorCorrection)) {
                     adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap,
-                            populationTotal);
+                            idMap.size());
                 } else {
                     // TODO move this to the ErrorCorrection class
                     BigDecimal max = new BigDecimal(maxValue.doubleValue());
