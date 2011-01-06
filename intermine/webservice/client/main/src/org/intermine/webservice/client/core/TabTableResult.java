@@ -26,61 +26,31 @@ import org.intermine.webservice.client.util.HttpConnection;
 /**
  * Utility class for parsing tab separated result.
  * @author Jakub Kulaviak
+ * @author Alexis Kalderimis
  **/
-public class TabTableResult
-{
-
-    private HttpConnection connection = null;
-    private String stringResults = null;
-
-    /**
-     * Constructor.
-     * @param connection source of data
-     */
-    public TabTableResult(HttpConnection connection) {
-        this.connection = connection;
-    }
-
-    /**
-     * Constructor with a String.
-     *
-     * @param stringResults a String containing the http response
-     */
-    public TabTableResult(String stringResults) {
-        this.stringResults = stringResults;
-    }
+public class TabTableResult extends ResultSet {
+	
+	public TabTableResult(HttpConnection c) {
+		super(c);
+	}
+	
+	public TabTableResult(String s) {
+		super(s);
+	}
 
     /**
      * {@inheritDoc}
      */
     public List<List<String>> getData() {
         List<List<String>> ret = new ArrayList<List<String>>();
-        BufferedReader reader;
-        if (connection != null) {
-            reader = new BufferedReader(new InputStreamReader(connection
-                        .getResponseBodyAsStream()));
-        } else {
-            reader = new BufferedReader(new StringReader(stringResults));
-        }
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                ret.add(parseLine(line));
-            }
-        } catch (IOException e) {
-            throw new ServiceException("Reading from response stream failed", e);
-        } finally {
-            closeConnection();
+        String line;
+        while ((line = getNextLine()) != null) {
+        	ret.add(parseLine(line));
         }
         return ret;
     }
 
-    private void closeConnection() {
-        if (connection != null) {
-            connection.close();
-        }
-    }
-
+    
     private List<String> parseLine(String line) {
         if (line.startsWith("<error>")) {
             throw new ServiceException(ErrorMessageParser.parseError(line));
@@ -98,32 +68,16 @@ public class TabTableResult
 
         private List<String> next;
         
-        BufferedReader reader;
-        
         public TableIterator() {
-            if (connection != null) {
-                reader = new BufferedReader(new InputStreamReader(connection
-                            .getResponseBodyAsStream()));
-            } else {
-                reader = new BufferedReader(new StringReader(stringResults));
-            }
             next = parseNext();    
         }
         
         private List<String> parseNext() {
-            if (connection != null && !connection.isOpened()) {
-                return null;
-            }
-            String line;
-            try {
-                line = reader.readLine();
-            } catch (IOException e) {
-                throw new ServiceException("Reading from response stream failed", e);
-            }
+            String line = getNextLine();
+       
             if (line != null) {
                 return parseLine(line);    
             } else {
-                closeConnection();
                 return null;
             }
         }
