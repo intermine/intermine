@@ -143,7 +143,8 @@ public final class WidgetUtil
                 dummy.put("widgetTotal", new Integer(0));
             } else {
                 if (!"None".equals(errorCorrection)) {
-                    adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
+                    adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap,
+                            populationTotal);
                 } else {
                     // TODO move this to the ErrorCorrection class
                     BigDecimal max = new BigDecimal(maxValue.doubleValue());
