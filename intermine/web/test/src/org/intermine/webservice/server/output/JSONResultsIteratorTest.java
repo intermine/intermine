@@ -75,6 +75,8 @@ public class JSONResultsIteratorTest extends TestCase {
 	private Manager neil;
 	private Employee rachel;
 	private Employee trudy;
+	private Company bms;
+	private Address address2;
 	
 
     protected void setUp() {
@@ -148,7 +150,7 @@ public class JSONResultsIteratorTest extends TestCase {
         
         address = new Address();
         address.setId(new Integer(15));
-        address.setAddress("42 Some St, Slough");
+        address.setAddress("42 Friendly St, Betjeman Trading Estate, Slough");
         
         rowan = new Contractor();
         rowan.setId(new Integer(16));
@@ -181,6 +183,14 @@ public class JSONResultsIteratorTest extends TestCase {
         trudy.setName("Trudy");
         trudy.setAge(25);
         
+        bms = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        bms.setId(new Integer(23));
+        bms.setName("Business Management Seminars");
+        bms.setVatNumber(102);
+        
+        address2 = new Address();
+        address2.setId(new Integer(24));
+        address2.setAddress("19 West Oxford St, Reading");
         
     }
 	
@@ -507,7 +517,7 @@ public class JSONResultsIteratorTest extends TestCase {
         		"						'address'  : {" +
         		"							'class'    : 'Address'," +
         		"							'objectId' : 15," +
-        		"							'address'  : '42 Some St, Slough'" +
+        		"							'address'  : '42 Friendly St, Betjeman Trading Estate, Slough'" +
         		"						}" +
         		"					}" +
         		"				}" +
@@ -729,7 +739,7 @@ public class JSONResultsIteratorTest extends TestCase {
         	throw e; 
         } catch (JSONFormattingException e) {
         	// Test that this is what we thought would happen.
-	    	assertEquals("Head of the object is missing", e.getMessage());
+	    	assertEquals("Head of the object is missing, {objectId=5, class=Employee}, Manager.department.employees.name", e.getMessage());
 	    } catch (Throwable e){
 	    	// All other exceptions are failures
 	    	fail("Got unexpected error: " + e); 
@@ -737,7 +747,7 @@ public class JSONResultsIteratorTest extends TestCase {
                 
 	}
 	
-	public void testParallelCollection() throws Exception {
+	public void testParallelCollectionOuterJoin() throws Exception {
         os.setResultsSize(1);
 
 	    String jsonString = 
@@ -830,6 +840,211 @@ public class JSONResultsIteratorTest extends TestCase {
 
     }	
 	
+	// should handle inner joins as well as outer joins
+	public void testParallelCollectionInnerJoin() throws Exception {
+        os.setResultsSize(4);
+
+	    String jsonString = 
+	    		"{" +
+	    		"	'class' : 'Company'," +
+	    		"	'objectId' : 1," +
+	    		"	'name'     : 'Wernham-Hogg'," +
+	    		"	'vatNumber' : 101," +
+	    		"	departments : [" +
+	    		"		{"	+
+	    		"   		'class' : 'Department'," +
+	    		"			'objectId' : 11," +
+	    		"			'name'     : 'Sales'" +
+	    		"		}," +
+	    		"		{" + 		
+	    		"   		'class' : 'Department'," +
+	    		"			'objectId' : 12," +
+	    		"			'name' : 'Accounts'" +
+	    		"		}" +
+	    		"	]," +
+	    		"	contractors : [" +
+	    		"		{"	+
+	    		"   		'class' : 'Contractor'," +
+	    		"			'objectId' : 16," +
+	    		"			'name'     : 'Rowan'" +
+	    		"		}," +
+	    		"		{" + 		
+	    		"   		'class' : 'Contractor'," +
+	    		"			'objectId' : 17," +
+	    		"			'name' : 'Ray'" +
+	    		"		}," +
+	    		"		{" + 		
+	    		"   		'class' : 'Contractor'," +
+	    		"			'objectId' : 18," +
+	    		"			'name' : 'Jude'" +
+	    		"		}" +
+	    		"	]" +
+	    		"}";
+	    
+        ResultsRow row1 = new ResultsRow();
+        row1.add(wernhamHogg);
+        row1.add(sales);
+        row1.add(null);
+        os.addRow(row1);
+        
+        ResultsRow row2 = new ResultsRow();
+        row2.add(wernhamHogg);
+        row2.add(accounts);
+        row2.add(rowan);
+        os.addRow(row2);
+        
+        ResultsRow row3 = new ResultsRow();
+        row3.add(wernhamHogg);
+        row3.add(accounts);
+        row3.add(ray);
+        os.addRow(row3);
+        
+        ResultsRow row4 = new ResultsRow();
+        row4.add(wernhamHogg);
+        row4.add(accounts);
+        row4.add(jude);
+        os.addRow(row4);
+        
+        PathQuery pq = new PathQuery(model);
+        pq.addViews("Company.name", "Company.vatNumber", 
+        				"Company.departments.name", 
+        				"Company.contractors.name");
+        pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.INNER);
+        pq.setOuterJoinStatus("Company.contractors", OuterJoinStatus.INNER);
+        
+        Map pathToQueryNode = new HashMap();
+        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
+        List resultList = os.execute(q, 0, 4, true, true, new HashMap());
+        Results results = new DummyResults(q, resultList);
+        
+        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+
+        JSONResultsIterator jsonIter = new JSONResultsIterator(iter);
+        
+       
+	    List<JSONObject> got = new ArrayList<JSONObject>();
+	    for (JSONObject gotRow : new IteratorIterable<JSONObject>(jsonIter)) {
+	        got.add(gotRow);
+	    }
+	    
+	    JSONObject expected = new JSONObject(jsonString);
+	    
+	    assertEquals(got.size(), 1);
+        
+        assertEquals(null, JSONObjTester.getProblemsComparing(expected, got.get(0)));
+
+    }
+
+	public void testReferencesOnCollection() throws Exception {
+        os.setResultsSize(4);
+
+	    String jsonString = 
+	    		"{" +
+	    		"	class      : 'Employee'," +
+	    		"	objectId   : 5," +
+	    		"	name       : 'Tim Canterbury'," +
+	    		"	age        : 30," +
+	    		"	department : {" +
+	    		"		class : 'Department'," +
+	    		"		objectId : 11," +
+	    		"		name : 'Sales'," +
+	    		"		manager : {" +
+	    		"			class : 'Manager'," +
+	    		"			objectId: 3," +
+	    		"			name: 'David Brent'," +
+	    		"			address : {" +
+	    		"				objectId: 15," +
+	    		"				class : 'Address'," +
+	    		"				address: '42 Friendly St, Betjeman Trading Estate, Slough'" +
+	    		"			}," +
+	    		"			department : {" +
+	    		"				class : 'Department'," +
+	    		"				objectId : 11," +
+	    		"				name : 'Sales'," +
+	    		"				company: {" +
+	    		"					class: 'Company'," +
+	    		"					objectId: 1," +
+	    		"					name: 'Wernham-Hogg'" +
+	    		"				}" +
+	    		"			}" +
+	    		"		}," +
+	    		"		company : {" +
+	    		"			class : 'Company'," +
+	    		"			objectId: 1," +
+	    		"			contractors : [" +
+	    		"				{" +
+	    		"					class: 'Contractor'," +
+	    		"					objectId: 17," +
+	    		"					companys: [" +
+	    		"						{" +
+	    		"							class: 'Company'," +
+	    		"							objectId: 23," +
+	    		"							name: 'Business Management Seminars'," +
+	    		"							vatNumber: 102," +
+	    		"							address: {" +
+	    		"								class: 'Address'," +
+	    		"								objectId: 24," +
+	    		"								address: '19 West Oxford St, Reading'" +
+	    		"							}" +
+	    		"						}" +
+	    		"					]" +
+	    		"				}" +
+	    		"			]" +
+	    		"		}" +
+	    		"   }" +
+	    		"}";
+	    
+        ResultsRow row1 = new ResultsRow();
+        row1.add(tim);
+        row1.add(sales);
+        row1.add(david);
+        row1.add(address);
+        row1.add(sales);
+        row1.add(wernhamHogg);
+        row1.add(ray);
+        row1.add(bms);
+        row1.add(wernhamHogg);
+        row1.add(address2);
+        os.addRow(row1);
+        
+        PathQuery pq = new PathQuery(model);
+        pq.addViews(
+        		"Employee.age", "Employee.name", 
+        		"Employee.department.name", 
+        		"Employee.department.manager.name", 
+        		"Employee.department.manager.address.address", 
+        		"Employee.department.manager.department.name", 
+        		"Employee.department.company.id", 
+        		"Employee.department.company.contractors.id", 
+        		"Employee.department.company.contractors.companys.name", 
+        		"Employee.department.company.contractors.companys.vatNumber", 
+        		"Employee.department.manager.department.company.name", 
+        		"Employee.department.company.contractors.companys.address.address");
+        
+        Map pathToQueryNode = new HashMap();
+        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
+        List resultList = os.execute(q, 0, 1, true, true, new HashMap());
+        Results results = new DummyResults(q, resultList);
+        
+        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+
+        JSONResultsIterator jsonIter = new JSONResultsIterator(iter);
+        
+       
+	    List<JSONObject> got = new ArrayList<JSONObject>();
+	    for (JSONObject gotRow : new IteratorIterable<JSONObject>(jsonIter)) {
+	        got.add(gotRow);
+	    }
+	    
+	    JSONObject expected = new JSONObject(jsonString);
+	    
+	    assertEquals(got.size(), 1);
+        
+        assertEquals(null, JSONObjTester.getProblemsComparing(expected, got.get(0)));
+
+    }
+	
+	
 	public void testHeadInWrongPlace() throws Exception {
 		os.setResultsSize(2);
 	
@@ -865,7 +1080,7 @@ public class JSONResultsIteratorTest extends TestCase {
         	throw e; 
         } catch (JSONFormattingException e) {
         	// Test that this is what we thought would happen.
-	    	assertEquals("Head of the object is missing", e.getMessage());
+	    	assertEquals("Head of the object is missing, {objectId=5, class=Employee}, Department.employees.name", e.getMessage());
 	    } catch (Throwable e){
 	    	// All other exceptions are failures
 	    	fail("Got unexpected error: " + e); 
@@ -1484,6 +1699,47 @@ public class JSONResultsIteratorTest extends TestCase {
         
 	}
 	
+	public void testIsCellValidForPath() throws Exception {
+		Path manP = null;
+		Path empsP = null;
+		Path depP = null;
+		try {
+			manP = new Path(model, "Manager.name");
+			depP = new Path(model, "Manager.department");
+			empsP = new Path(model, "Manager.department.employees");
+		} catch (PathException e) {
+			e.printStackTrace();
+		}
+		
+		ResultElement re = new ResultElement(david, manP, false);
+		Map<String, Object> jsonMap = new TreeMap<String, Object>();
+		
+		
+		ResultsRow row = new ResultsRow();
+		row.add(david);
+		os.addRow(row);
+		
+		PathQuery pq = new PathQuery(model);
+        pq.addViews("Manager.name");
+		Map pathToQueryNode = new HashMap();
+		
+        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
+        List resultList = os.execute(q, 0, 1, true, true, new HashMap());
+        Results results = new DummyResults(q, resultList);
+        
+        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+                
+        JSONResultsIterator jsonIter = new JSONResultsIterator(iter);
+		
+		assertTrue(jsonIter.isCellValidForPath(re, manP));
+		assertTrue(jsonIter.isCellValidForPath(re, empsP));
+		assertTrue(jsonIter.isCellValidForPath(null, manP));
+		assertTrue(jsonIter.isCellValidForPath(new ResultElement(null, null, false), manP));
+		assertTrue(! jsonIter.isCellValidForPath(re, depP));
+		
+		
+	}
+	
 	public void testThosePlacesOtherTestsCannotReach() throws Exception {
 		// In normal circumstances these exceptions will never be thrown.
 		// These tests are just to check that they will be
@@ -1523,7 +1779,7 @@ public class JSONResultsIteratorTest extends TestCase {
         
 	    jsonMap.put("objectId", 1000);
 	    try {
-			jsonIter.setOrCheckClassAndId(re, jsonMap);
+			jsonIter.setOrCheckClassAndId(re, p, jsonMap);
 			fail("No exception was thrown, although I tried very hard indeed to cause one");
 		} catch (AssertionFailedError e) {
         	// rethrow the fail from within the try
@@ -1540,9 +1796,29 @@ public class JSONResultsIteratorTest extends TestCase {
 	    	fail("Got unexpected error: " + e); 
 	    }
 	    
+	    jsonMap.clear();
+	    try {
+			jsonIter.setOrCheckClassAndId(re, depP, jsonMap);
+			fail("No exception was thrown, although I tried very hard indeed to cause one");
+		} catch (AssertionFailedError e) {
+        	// rethrow the fail from within the try
+        	throw e; 
+        } catch (JSONFormattingException e) {
+        	// Test that this is what we thought would happen.
+	    	assertEquals(
+	    		"This result element ( David Brent 3 Manager) " +
+	    		"does not match its column because: " +
+	    		"classes not compatible (Department is not a superclass of Manager)",
+	    		e.getMessage());
+	    } catch (Throwable e){
+	    	// All other exceptions are failures
+	    	fail("Got unexpected error: " + e); 
+	    }
+	    
+	    jsonMap.clear();
 	    jsonMap.put("class", "Fool");
 		try {
-			jsonIter.setOrCheckClassAndId(re, jsonMap);
+			jsonIter.setOrCheckClassAndId(re, p, jsonMap);
 			fail("No exception was thrown, although I tried very hard indeed to cause one");
 		} catch (AssertionFailedError e) {
         	// rethrow the fail from within the try
@@ -1551,13 +1827,33 @@ public class JSONResultsIteratorTest extends TestCase {
         	// Test that this is what we thought would happen.
 	    	assertEquals(
 	    			"This result element ( David Brent 3 Manager) " +
-	    			"does not belong on this map ({class=Fool, objectId=1000}) - " +
+	    			"does not belong on this map ({class=Fool}) - " +
 	    			"classes don't match (Fool != Manager)", 
 	    			e.getMessage());
 	    } catch (Throwable e){
 	    	// All other exceptions are failures
 	    	fail("Got unexpected error: " + e); 
 	    }
+	    
+	    jsonMap.clear();
+	    jsonMap.put("name", null);
+	    try {
+			jsonIter.addFieldToMap(re, p, jsonMap);
+			fail("No exception was thrown, although I tried very hard indeed to cause one");
+		} catch (AssertionFailedError e) {
+        	// rethrow the fail from within the try
+        	throw e; 
+        } catch (JSONFormattingException e) {
+        	// Test that this is what we thought would happen.
+	    	assertEquals(
+	    			"Trying to set key name as David Brent in {class=Manager, name=null, objectId=3} " +
+	    			"but it already has the value null", 
+	    			e.getMessage());
+	    } catch (Throwable e){
+	    	// All other exceptions are failures
+	    	fail("Got unexpected error: " + e); 
+	    }
+	    
 	    jsonMap.clear();
 	    jsonMap.put("name", "Neil");
 	    try {
@@ -1604,7 +1900,7 @@ public class JSONResultsIteratorTest extends TestCase {
         } catch (JSONFormattingException e) {
         	// Test that this is what we thought would happen.
 	    	assertEquals(
-	    			"Nowhere to put this reference", 
+	    			"Nowhere to put this reference - the current array is null", 
 	    			e.getMessage());
 	    } catch (Throwable e){
 	    	// All other exceptions are failures
@@ -1635,6 +1931,7 @@ public class JSONResultsIteratorTest extends TestCase {
 	    }
 	    
 	    jsonIter.currentMap = null;
+	    jsonIter.currentArray = null;
 	    try {
 			jsonIter.addReferenceToCurrentNode(depP);
 			fail("No exception was thrown, although I tried very hard indeed to cause one");
@@ -1644,9 +1941,7 @@ public class JSONResultsIteratorTest extends TestCase {
         } catch (JSONFormattingException e) {
         	// Test that this is what we thought would happen.
 	    	assertEquals(
-	    			"The current map should have been set " +
-	    			"by a preceding attribute - " +
-	    			"is the view in the right order?", 
+	    			"Nowhere to put this reference - the current array is null", 
 	    			e.getMessage());
 	    } catch (Throwable e){
 	    	// All other exceptions are failures
@@ -1693,7 +1988,7 @@ public class JSONResultsIteratorTest extends TestCase {
 	    
 
 	}
-	
+
     private class BadPath extends Path {
     	
     	public BadPath(Model m, String s) throws PathException {
