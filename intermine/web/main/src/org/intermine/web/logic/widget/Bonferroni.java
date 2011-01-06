@@ -11,7 +11,6 @@ package org.intermine.web.logic.widget;
  */
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,23 +28,16 @@ public class Bonferroni implements ErrorCorrection
 {
     private HashMap<String, BigDecimal> originalMap = new HashMap<String, BigDecimal>();
     private HashMap<String, BigDecimal> adjustedMap = new HashMap<String, BigDecimal>();
-    private BigDecimal numberOfTests, alphaPerTest;
-    private static final BigDecimal ALPHA = new BigDecimal(0.05);
+    private BigDecimal numberOfTests;
     private static final BigDecimal ONE = new BigDecimal(1);
 
     /**
      * @param originalMap HashMap of go terms and their p-value
+     * @param testCount number of tests
      */
-    public Bonferroni(HashMap<String, BigDecimal> originalMap) {
+    public Bonferroni(HashMap<String, BigDecimal> originalMap, int testCount) {
         this.originalMap = originalMap;
-        numberOfTests = new BigDecimal(originalMap.size());
-        if (numberOfTests.intValue() == 0) {
-            // the results should never be empty, this shouldn't happen.  if the results for the
-            // widget are empty, then there should be no error correction done
-            alphaPerTest = numberOfTests;
-        } else {
-            alphaPerTest = ALPHA.divide(numberOfTests, MathContext.DECIMAL32);
-        }
+        numberOfTests = new BigDecimal(testCount);
     }
 
     /**
@@ -60,7 +52,7 @@ public class Bonferroni implements ErrorCorrection
             String label = entry.getKey();
             BigDecimal p = entry.getValue();
 
-            // calc new value - p * n
+            // calc new value - p * N
             BigDecimal adjustedP = p.multiply(numberOfTests);
 
             // p is never over 1
