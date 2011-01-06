@@ -157,7 +157,9 @@ public class JSONObjFormatterTest extends TestCase {
 		StreamedOutput out = new StreamedOutput(pw, fmtr);
 		out.setHeaderAttributes(attributes);
 		
+		// These are the two steps the service must perform to get good JSON.
 		processor.write(iterator, out);
+		out.flush();
 		
 		String expected = 
 		"{" +
