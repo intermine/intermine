@@ -175,9 +175,10 @@ html, body { font-family:'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-seri
       #lists-bochs div.inner a.advanced { /*float:right; margin:10px 37% 0 0;*/ font-size:10px; margin-bottom:8px; display:inline-block; }
 
     #welcome-bochs a.button { font-size:13px; text-transform:uppercase; font-family:"Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif;
-      text-decoration:none; font-weight:bold; background-repeat:no-repeat; padding:8px 22px; text-align:center; }
+      text-decoration:none; font-weight:bold; background-repeat:no-repeat; /*padding:8px 22px;*/ text-align:center; }
+    /*
     #welcome-bochs a.button.gray { background:url("../themes/purple/homepage/button-gray.png") no-repeat top center; }
-    /*#welcome-bochs a.button, #welcome-bochs a.button div, #welcome-bochs a.button div span { font-size:13px; text-transform:uppercase;
+    #welcome-bochs a.button, #welcome-bochs a.button div, #welcome-bochs a.button div span { font-size:13px; text-transform:uppercase;
       font-family:"Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif; text-decoration:none; font-weight:bold;
       background-repeat:no-repeat; }
     #welcome-bochs a.button { line-height:20px; }
@@ -189,9 +190,15 @@ html, body { font-family:'Lucida Grande',Geneva,Lucida,Helvetica,Arial,sans-seri
     #welcome-bochs input.button { font-family:"Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif; font-size:13px; height:30px;
       /* Opera 9 does not uppercase input elements */ text-transform:uppercase; font-weight:bold; border:none; cursor:pointer; }
 
-    #welcome-bochs a.button.gray { color:#505050; /*margin-right:30%; float:right; line-height:29px;*/ display:block; }
-    #welcome-bochs a.button.gray div { background-image:url("../themes/metabolic/buttons/btn-gray-left.png"); width:90px; margin-top:12px; }
-    #welcome-bochs a.button.gray span { background-image:url("../themes/metabolic/buttons/btn-gray-right.png"); }
+    #welcome-bochs a.button.gray { color:#505050; /*margin-right:30%; float:right; line-height:29px;*/
+      display:-moz-inline-stack /* FF2 inline-block */; display:inline-block; }
+    #welcome-bochs a.button.gray div { background-image:url("../themes/metabolic/buttons/btn-gray-left.png"); margin-top:12px;
+      height:30px; padding-left:18px; background-repeat:no-repeat; }
+    #welcome-bochs a.button.gray span { background-image:url("../themes/metabolic/buttons/btn-gray-right.png"); height: 30px;
+      padding:8px 18px 0 0; background-repeat:no-repeat; background-position:top right; display:block; cursor:pointer; }
+
+    #welcome-bochs a.button.gray span, x:-moz-any-link { height:22px; } /* FF2 only */
+    #welcome-bochs a.button.gray span, x:-moz-any-link, x:default { height:30px; }  /* restore for FF3 */
 
         #templates { margin:20px 0; }
         #templates table#menu { width:100%; border:0; margin:0; font-family:"Myriad Pro",Arial,Garuda,Helvetica,Tahoma,sans-serif;
