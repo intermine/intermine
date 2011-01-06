@@ -32,6 +32,7 @@ import org.intermine.web.logic.SortableMap;
 public final class WidgetUtil
 {
     private WidgetUtil() {
+        // don't
     }
 
     private static Map<String, List> statsCalcCache = new HashMap<String, List>();
@@ -211,7 +212,7 @@ public final class WidgetUtil
                                                  int testCount) {
         ErrorCorrection e = null;
         if ("Bonferroni".equals(errorCorrection)) {
-            e = new Bonferroni(resultsMap);
+            e = new Bonferroni(resultsMap, testCount);
         } else {
             e = new BenjaminiHochberg(resultsMap);
         }
