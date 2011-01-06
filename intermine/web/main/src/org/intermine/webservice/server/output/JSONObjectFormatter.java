@@ -48,7 +48,8 @@ public class JSONObjectFormatter extends Formatter {
 					"'views':" + views + "," +
 					"'model':'" + model + "'," +
 					"'executed_at':'" + time + "'," + 
-					"'" + rootClass + "':[";
+					"'root_class':'" + rootClass + "'," + 
+					"'results':[";
 	}
 
 	/**
