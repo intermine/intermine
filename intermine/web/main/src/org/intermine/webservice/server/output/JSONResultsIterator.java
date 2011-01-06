@@ -139,8 +139,9 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 			jsonMap.put(CLASS_KEY, thisType);
 		} else {
 			throw new JSONFormattingException(
-					"This result element (" + cell + ") does not belong on this map (" + jsonMap + 
-					") - classes not compatible (" + thisType + " != " + cell.getType() + ")");
+					"This result element (" + cell + ") does not match its column because: " + 
+					"classes not compatible " +
+					"(" + thisType + " is not a superclass of " + cell.getType() + ")");
 		}
 		if (jsonMap.containsKey(ID_KEY)) {
 			if (!jsonMap.get(ID_KEY).equals(cell.getId())) {
@@ -242,7 +243,7 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 		try {
 			currentMap = currentArray.get(currentArray.size() - 1);
 		} catch (NullPointerException e) {
-			throw new JSONFormattingException("Nowhere to put this reference", e);
+			throw new JSONFormattingException("Nowhere to put this reference - the current array is null", e);
 		} catch (IndexOutOfBoundsException e) {
 			throw new JSONFormattingException("This array is empty - is the view in the wrong order?", e);
 		}
