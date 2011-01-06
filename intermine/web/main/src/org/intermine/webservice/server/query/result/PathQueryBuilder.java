@@ -46,7 +46,7 @@ public class PathQueryBuilder
         buildQuery(xml, schemaUrl, savedBags);
     }
 
-    private void buildQuery(String xml, String schemaUrl,
+    protected void buildQuery(String xml, String schemaUrl,
             Map<String, InterMineBag> savedBags) {
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
