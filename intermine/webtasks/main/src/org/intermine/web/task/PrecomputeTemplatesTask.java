@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -79,6 +80,7 @@ public class PrecomputeTemplatesTask extends Task
      */
     public void setIgnore(String ignore) {
         this.ignore = ignore;
+        LOG.info("Set templates to ignore value: " + ignore);
     }
 
     /**
@@ -132,12 +134,13 @@ public class PrecomputeTemplatesTask extends Task
             throw new BuildException("minRows attribute is not set");
         }
 
-        if (ignore != null && !"".equals(ignore)) {
+        if (!StringUtils.isBlank(ignore)) {
             String[] bits = ignore.split(",");
-            for (int i = 0; i < bits.length; i++) {
-                ignoreNames.add(bits[i].trim());
+            for (String ignoreName : bits) {
+                ignoreNames.add(ignoreName.trim().toLowerCase());
             }
         }
+        LOG.info("Parsed template names to ignore: " + ignoreNames);
 
         try {
             os = ObjectStoreFactory.getObjectStore(alias);
@@ -172,7 +175,7 @@ public class PrecomputeTemplatesTask extends Task
             TemplateQuery template = entry.getValue();
 
             // check if we should ignore this template (maybe it won't precompute)
-            if (ignoreNames.contains(template.getName())) {
+            if (ignoreNames.contains(template.getName().toLowerCase())) {
                 LOG.warn("template was in ignore list: " + template.getName());
                 continue;
             }
