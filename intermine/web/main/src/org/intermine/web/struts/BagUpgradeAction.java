@@ -60,7 +60,7 @@ public class BagUpgradeAction extends InterMineAction
             Profile profile = SessionMethods.getProfile(session);
             InterMineBag savedBag = profile.getSavedBags().get(bagName);
             List<String> primaryIdentifiersList =
-            	savedBag.getContentsASPrimaryIdentifierValues();
+            	savedBag.getContentsASKeyFieldValues();
             BagQueryRunner bagRunner = im.getBagQueryRunner();
             bagQueryResult = bagRunner.searchForBag(bagType, primaryIdentifiersList, "", false);
             session.setAttribute("bagQueryResult_" + bagName, bagQueryResult);

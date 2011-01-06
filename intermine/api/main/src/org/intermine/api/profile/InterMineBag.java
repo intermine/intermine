@@ -211,9 +211,9 @@ public class InterMineBag implements WebSearchable, Cloneable
 
     /**
      * Returns a List of key field values of the objects contained by this bag.
-     * @return the list of primary identifier values
+     * @return the list of key field values
      */
-    public List<String> getContentsASPrimaryIdentifierValues() {
+    public List<String> getContentsASKeyFieldValues() {
         List<String> keyFieldValueList = new ArrayList<String>();
         if (isCurrent) {
             Query q = new Query();
@@ -286,7 +286,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param ids
      * @return the list of values
      */
-    public List<String> getPrimaryIdentifierValues(Collection<Integer> ids) {
+    public List<String> getKeyFieldValues(Collection<Integer> ids) {
         List<String> keyFieldValueList = new ArrayList<String>();
         Query q = new Query();
         q.setDistinct(false);
@@ -711,9 +711,9 @@ public class InterMineBag implements WebSearchable, Cloneable
         if (profileId != null) {
             List<String> values = null;
             if (ids == null) {
-                values = getContentsASPrimaryIdentifierValues();
+                values = getContentsASKeyFieldValues();
             } else {
-                values = getPrimaryIdentifierValues(ids);
+                values = getKeyFieldValues(ids);
             }
             try {
                 conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
@@ -771,7 +771,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     private void deleteBagValues(Collection<Integer> ids) {
         Connection conn = null;
         Statement stm = null;
-        List<String> values = getPrimaryIdentifierValues(ids);
+        List<String> values = getKeyFieldValues(ids);
         try {
             conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
             stm = conn.createStatement();
