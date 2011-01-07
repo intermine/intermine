@@ -107,17 +107,33 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 		if (cell == null || cell.getType() == null) {
 			return true;
 		}
-		ClassDescriptor pathCD = path.getLastClassDescriptor();
-		if (cell.getType().equals(pathCD.getUnqualifiedName())) {
+		return aIsaB(cell.getType(), path.getLastClassDescriptor().getName());
+	}
+	
+	protected boolean aIsaB(String a, String b) {
+		if (a == null && b == null) {
 			return true;
 		}
+		ClassDescriptor aCls = model.getClassDescriptorByName(a);
+		ClassDescriptor bCls = model.getClassDescriptorByName(b); 
+		if (aCls == null || bCls == null) {
+			throw new IllegalArgumentException(
+					"These names are not valid classes: a=" + a + ",b=" + b);
+		 }
+		if (aCls.equals(bCls)) {
+			return true;
+		}
+		return aDescendsFromB(aCls.getName(), bCls.getName());
+	}
+	
+	protected boolean aDescendsFromB(String a, String b) {
 		Set<String> supers;
 		try {
-			supers = ClassDescriptor.findSuperClassNames(model, cell.getType());
+			supers = ClassDescriptor.findSuperClassNames(model, a);
 		} catch (MetaDataException e) {
-			throw new JSONFormattingException("Problem getting supers for " + cell.getType(), e);
+			throw new JSONFormattingException("Problem getting supers for " + a, e);
 		}
-		if (supers.contains(pathCD.getName())) {
+		if (supers.contains(b)) {
 			return true;
 		}
 		return false;
@@ -129,10 +145,10 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 		String thisType = path.getLastClassDescriptor().getUnqualifiedName();
 		if (jsonMap.containsKey(CLASS_KEY)) {
 			String storedType = (String) jsonMap.get(CLASS_KEY);
-			if (!storedType.equals(thisType)) {
+			if (! aIsaB(thisType, storedType) ) {
 				throw new JSONFormattingException(
 						"This result element (" + cell + ") does not belong on this map (" + jsonMap + 
-						") - classes don't match (" + jsonMap.get(CLASS_KEY) + " != " + cell.getType() + ")");
+						") - classes don't match (" + cell.getType() + " ! isa " + jsonMap.get(CLASS_KEY) + ")");
 			}
 		} else if (isCellValidForPath(cell, path)) {
 			jsonMap.put(CLASS_KEY, thisType);
