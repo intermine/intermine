@@ -11,6 +11,8 @@ package org.intermine.web.logic.results;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -31,31 +33,35 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
+import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 
 /**
- * A wrapper for DisplayObject.
+ * Object to be displayed on report.do
  *
  * @author Radek Stepan
+ * @author Richard Smith
  */
 public class ReportObject
 {
-    /**
-     * @DisplayObject internal object to keep phasing out
-     */
-    private DisplayObject displayObject;
+    private final InterMineObject object;
+    private final WebConfig webConfig;
+    @SuppressWarnings("unused")
+    private final Map<String, String> webProperties;
+    private final Model model;
+    @SuppressWarnings("unused")
+    private final Map<String, List<FieldDescriptor>> classKeys;
+    private final String type;
+
+    private Map<String, Object> fieldValues;
 
     /**
      * @List<ReportObjectField> setup list of summary fields this object has
      */
     private List<ReportObjectField> objectSummaryFields;
-
-    /**
-     * @Map<String, String> class descriptions passed from Controller
-     */
-    private Map<String, String> classDescriptions;
 
     /**
      * Setup internal DisplayObject
@@ -66,9 +72,17 @@ public class ReportObject
      * @param classKeys List
      * @throws Exception Exception
      */
+    @SuppressWarnings("unchecked")
     public ReportObject(InterMineObject object, Model model, WebConfig webConfig,
             Map webProperties, Map<String, List<FieldDescriptor>> classKeys) throws Exception {
-        displayObject = new DisplayObject(object, model, webConfig, webProperties, classKeys); // XXX: deprecate
+        this.object = object;
+        this.model = model;
+        this.webConfig = webConfig;
+        this.webProperties = webProperties;
+        this.classKeys = classKeys;
+
+        // infer dynamic type of IM object
+        this.type = DynamicUtil.getSimpleClass(object).getName();
     }
 
     /**
@@ -78,37 +92,80 @@ public class ReportObject
      */
     public class ReportObjectField
     {
-
+        /**
+         * @String field name (key, expression)
+         */
         private String fieldName;
-        private Object fieldValue;
-        private String fieldDisplayerPage;
-        private String fieldDescription;
 
-        public ReportObjectField(String fieldName, Object fieldValue, String fieldDisplayerPage, String fieldDescription) {
+        /**
+         * @Object field value
+         */
+        private Object fieldValue;
+
+        /**
+         * @String link to a custom field displayer
+         */
+        private String fieldDisplayerPage;
+
+        /**
+         * @String path string (e.g. Gene.primaryIdentifier)
+         */
+        private String pathString;
+
+        /**
+         * Constructor
+         * @objectType
+         * @fieldName
+         * @fieldValue
+         * @fieldDisplayerPage
+         */
+        public ReportObjectField(String objectType, String fieldName,
+                Object fieldValue, String fieldDisplayerPage) {
             this.fieldName = fieldName;
             this.fieldValue = fieldValue;
             this.fieldDisplayerPage = fieldDisplayerPage;
-            this.fieldDescription = fieldDescription;
+            // form path string from an unqualified name and a field name
+            this.pathString = TypeUtil.unqualifiedName(objectType) + "." + fieldName;
         }
 
+        /**
+         * Get field name
+         * @return String
+         */
         public String getName() {
             return fieldName;
         }
 
+        /**
+         * Get field value
+         * @return Object
+         */
         public Object getValue() {
             return fieldValue;
         }
 
+        /**
+         * Return path to a custom displayer
+         * @return String
+         */
         public String getDisplayerPage() {
             return fieldDisplayerPage;
         }
 
+        /**
+         * Does the field have a custom displayer defined for the value?
+         * @return boolean
+         */
         public boolean getValueHasDisplayer() {
             return fieldDisplayerPage != null;
         }
 
-        public String getDescription() {
-            return fieldDescription;
+        /**
+         * Get a path string to fetch field descriptions
+         * @return String
+         */
+        public String getPathString() {
+            return pathString;
         }
 
     }
@@ -122,55 +179,25 @@ public class ReportObject
         if (objectSummaryFields == null) {
             objectSummaryFields = new ArrayList<ReportObjectField>();
 
-            // fetch FieldConfig map (displayers)
-            Map<String, FieldConfig> fieldConfigMap =
-                displayObject.getFieldConfigMap(); // XXX: deprecate
-
-            // field values
-            displayObject.getFieldExprs(); // XXX: deprecate
-            Map<String, Object> fieldValues = displayObject.getFieldValues(); // XXX: deprecate
-
-            // fetch class descriptor set
-            Set<ClassDescriptor> classDescriptorSet = displayObject.getClds(); // XXX: deprecate
-            // throw exception if classDescriptions are not set from Controller
-            if (classDescriptions == null) {
-                // blee
-            }
-
             // traverse all path expressions for the fields that should be used when
             //  summarising the object
-            for (
-                    Iterator<String> i = displayObject.getFieldConfigMap().keySet().iterator();
-                    i.hasNext();) { // XXX: deprecate
+            for (FieldConfig fc : getFieldConfigs()) {
                 // get fieldName
-                String fieldName = i.next();
+                String fieldName = fc.getFieldExpr();
 
                 // get fieldValue
-                Object fieldValue = (fieldValues != null)
-                    ? fieldValues.get(fieldName) : "";
+                Object fieldValue = getFieldValue(fieldName);
 
                 // get displayer
-                FieldConfig fieldConfig = fieldConfigMap.get(fieldName);
-                String fieldDisplayer = fieldConfig.getDisplayer();
-
-                // field descriptions
-                String fieldDescription = null;
-                for (ClassDescriptor classDescriptor : classDescriptorSet) {
-                    // get object class name
-                    if (classDescriptor.getUnqualifiedName() != null) {
-                        // attach a field name
-                        String fieldDescriptionKey = classDescriptor.getUnqualifiedName() + "." + fieldName;
-                        // get the actual description
-                        fieldDescription += classDescriptions.get(fieldDescriptionKey);
-                    }
-                }
+                //FieldConfig fieldConfig = fieldConfigMap.get(fieldName);
+                String fieldDisplayer = fc.getDisplayer();
 
                 // add new ReportObjectField
                 objectSummaryFields.add(new ReportObjectField(
+                        type,
                         fieldName,
                         fieldValue,
-                        fieldDisplayer,
-                        fieldDescription
+                        fieldDisplayer
                 ));
             }
         }
@@ -178,16 +205,53 @@ public class ReportObject
         return objectSummaryFields;
     }
 
+    /**
+     * Get InterMine object
+     * @return InterMineObject
+     */
     public InterMineObject getObject() {
-        return displayObject.getObject(); // XXX: deprecate
+        return object;
     }
 
-    public Set<ClassDescriptor> getClds() {
-        return displayObject.getClds(); // XXX: deprecate
+    /**
+     * Return a list of field configs
+     * @return Collection<FieldConfig>
+     */
+    private Collection<FieldConfig> getFieldConfigs() {
+        Map<String, Type> types = webConfig.getTypes();
+        if (types.containsKey(type)) {
+            return types.get(type).getFieldConfigs();
+        }
+        return Collections.emptyList();
     }
 
-    public void setClassDescriptions(Map<String, String> classDescriptions) {
-        this.classDescriptions = classDescriptions; // FIXME: ideally, we would not have to make a call from a Controller
+    /**
+     * Get field value for a field name (expression)
+     * @param fieldExpression
+     * @return Object
+     */
+    private Object getFieldValue(String fieldExpression) {
+        // if field values as a whole are not set yet...
+        if (fieldValues == null || fieldValues.isEmpty()) {
+            // create a new map
+            fieldValues = new HashMap<String, Object>();
+
+            // fetch field configs
+            for (FieldConfig fc : getFieldConfigs()) {
+                // crete a path string
+                String pathString = TypeUtil.unqualifiedName(type) + "." + fc.getFieldExpr();
+                try {
+                    // resolve path
+                    Path path = new Path(model, pathString);
+                    fieldValues.put(fc.getFieldExpr(), PathUtil.resolvePath(path, object));
+                } catch (PathException e) {
+                    throw new Error("There must be a bug", e);
+                }
+            }
+        }
+
+        // return a field value for a field expression (name)
+        return fieldValues.get(fieldExpression);
     }
 
 }
