@@ -92,13 +92,7 @@ public class JSONResultsIterator implements Iterator<JSONObject> {
 	private void addRowToJsonMap(List<ResultElement> results,
 			Map<String, Object> jsonMap) {
 		setOrCheckClassAndId(results.get(0), viewPaths.get(0), jsonMap);
-		 
-		if (! jsonMap.get(CLASS_KEY).equals(viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName())) {
-			throw new JSONFormattingException(
-				"Head of the object is missing, " + jsonMap + ", " 
-				+ viewPaths.get(0).toStringNoConstraints()
-			);
-		}
+		
 		for (int i = 0; i < results.size(); i++) {
 			ResultElement cell = results.get(i);
 			if (cell == null || cell.getType() == null) {
