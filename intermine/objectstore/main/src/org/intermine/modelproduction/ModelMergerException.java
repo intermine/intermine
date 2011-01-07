@@ -18,14 +18,19 @@ package org.intermine.modelproduction;
 public class ModelMergerException extends Exception
 {
     /**
-     * Constructs an ModelMergerException
+	 * Serial ID demanded by His Highness Lord Eclipse
+	 */
+	private static final long serialVersionUID = 7068567716197037627L;
+
+	/**
+     * Constructs a ModelMergerException
      */
     public ModelMergerException() {
         super();
     }
 
     /**
-     * Constructs an ModelMergerException with the specified detail message.
+     * Constructs a ModelMergerException with the specified detail message.
      *
      * @param msg the detail message
      */
@@ -34,7 +39,7 @@ public class ModelMergerException extends Exception
     }
 
     /**
-     * Constructs an ModelMergerException with the specified nested throwable.
+     * Constructs a ModelMergerException with the specified nested throwable.
      *
      * @param t the nested throwable
      */
@@ -43,7 +48,7 @@ public class ModelMergerException extends Exception
     }
 
     /**
-     * Constructs an ModelMergerException with the specified detail message and nested throwable.
+     * Constructs a ModelMergerException with the specified detail message and nested throwable.
      *
      * @param msg the detail message
      * @param t the nested throwable

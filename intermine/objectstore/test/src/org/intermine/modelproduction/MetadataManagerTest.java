@@ -31,7 +31,7 @@ public class MetadataManagerTest extends TestCase
         MetadataManager.store(db, "test_key", "Hello");
         assertEquals("Hello", MetadataManager.retrieve(db, "test_key"));
     }
-    
+
     public void testBinaryValue() throws Exception {
         byte[] expected = "Hello".getBytes();
         MetadataManager.storeBinary(db, "test_key_bin", expected);
@@ -42,7 +42,7 @@ public class MetadataManagerTest extends TestCase
             assertEquals(expected[i], got[i]);
         }
     }
-    
+
     public void testLargeValue() throws Exception {
         byte[] expected = "Hello".getBytes();
         OutputStream os = MetadataManager.storeLargeBinary(db, "test_key_large");
@@ -54,5 +54,18 @@ public class MetadataManagerTest extends TestCase
         for (int i = 0; i < expected.length; i++) {
             assertEquals(expected[i], got[i]);
         }
-    }        
+    }
+
+    public void testDeleteLargeBinary() throws Exception {
+        byte[] expected = "Hello".getBytes();
+        String key = "test_key_large";
+
+        OutputStream os = MetadataManager.storeLargeBinary(db, key);
+        os.write(expected);
+        os.close();
+        assertNotNull(MetadataManager.retrieve(db, key));
+        MetadataManager.deleteLargeBinary(db, key);
+        assertNull(MetadataManager.retrieve(db, key));
+
+    }
 }

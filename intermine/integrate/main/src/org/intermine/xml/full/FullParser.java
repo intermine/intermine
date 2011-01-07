@@ -37,6 +37,7 @@ import org.xml.sax.InputSource;
 public final class FullParser
 {
     private FullParser() {
+        //disable external instantiation
     }
 
     private static final Logger LOG = Logger.getLogger(FullParser.class);
@@ -161,21 +162,28 @@ public final class FullParser
                     Class<?> attrClass;
                     try {
                         attrClass = obj.getFieldType(attrName);
+                        if (attrClass == null) {
+                            String message = "Class '" + attrClass + "' not found for "
+                                + DynamicUtil.getFriendlyName(obj.getClass());
+                            throw new IllegalArgumentException(message);
+                        }
                     } catch (IllegalArgumentException e) {
                         String message = "Field " + attr.getName() + " not found in "
                             + DynamicUtil.getFriendlyName(obj.getClass());
-                        if (abortOnError) {
-                            throw new IllegalArgumentException(message);
-                        } else {
-                            LOG.warn(message);
-                            continue;
-                        }
+                        throw new IllegalArgumentException(message);
                     }
                     if (ClobAccess.class.equals(attrClass)) {
                         obj.setFieldValue(attr.getName(), new PendingClob(attr.getValue()));
                     } else {
-                        obj.setFieldValue(attr.getName(),
-                                TypeUtil.stringToObject(attrClass, attr.getValue()));
+                        String value = attr.getValue();
+                        if (value != null) {
+                            obj.setFieldValue(attr.getName(), TypeUtil.stringToObject(attrClass,
+                                    value));
+                        } else {
+                            String message = "Field '" + attr.getName() + "' has NULL value in "
+                                + DynamicUtil.getFriendlyName(obj.getClass());
+                            throw new IllegalArgumentException(message);
+                        }
                     }
                 }
             }

@@ -32,9 +32,7 @@
   </h1>
   <div id="tool_bar_div">
       <ul id="button_bar">
-          <li id="tool_bar_li_display"class="tb_button"><img src="images/display.png" width="13" height="13" alt="Display related templates or widgets"><html:link linkName="#">Related</html:link></li>
           <li id="tool_bar_li_export"class="tb_button"><img src="images/export.png" width="13" height="13" alt="Export this list"><html:link linkName="#">Export</html:link></li>
-          <li id="tool_bar_li_use"class="tb_button"><img src="images/use.png" width="13" height="13" alt="Use this list in a template or a query"><html:link linkName="#">Use</html:link></li>
           <c:if test="${myBag == 'true'}">
             <li id="tool_bar_li_edit"class="tb_button"><img src="images/edit.png" width="13" height="13" alt="Edit my list"><html:link linkName="#">Edit</html:link></li>
       </c:if>

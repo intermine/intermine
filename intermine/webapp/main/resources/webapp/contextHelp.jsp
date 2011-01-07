@@ -10,9 +10,9 @@
   </c:if>
 >
 
-	<div class="topBar info">
-		<div id="ctxHelpTxt">${param['ctxHelpTxt']}</div>
-		<a href="#" onclick="javascript:jQuery('#ctxHelpDiv').hide('slow');return false">Close</a>
-	</div>
+  <div class="topBar info">
+    <a href="#" onclick="javascript:jQuery('#ctxHelpDiv').hide('slow');return false">Close</a>
+    <div id="ctxHelpTxt">${param['ctxHelpTxt']}</div>
+  </div>
 
 </div>

@@ -32,6 +32,7 @@ import org.intermine.web.logic.SortableMap;
 public final class WidgetUtil
 {
     private WidgetUtil() {
+        // don't
     }
 
     private static Map<String, List> statsCalcCache = new HashMap<String, List>();
@@ -56,6 +57,7 @@ public final class WidgetUtil
 
         int populationTotal = calcTotal(os, ldr, true); // objects annotated in database
         int sampleTotal = calcTotal(os, ldr, false);    // objects annotated in bag
+        int testCount = 0; // number of tests
 
         // sample query
         Query q = ldr.getSampleQuery(false);
@@ -79,7 +81,7 @@ public final class WidgetUtil
                 // extract results
                 ResultsRow rr =  (ResultsRow) iter.next();
 
-                // id of item
+                // id of annotation item (eg. GO term)
                 String id = (String) rr.get(0);
 
                 // count of item
@@ -109,6 +111,7 @@ public final class WidgetUtil
                 ResultsRow rrAll =  (ResultsRow) itAll.next();
 
                 String id = (String) rrAll.get(0);
+                testCount++;
 
                 if (countMap.containsKey(id)) {
 
@@ -142,7 +145,8 @@ public final class WidgetUtil
                 dummy.put("widgetTotal", new Integer(0));
             } else {
                 if (!"None".equals(errorCorrection)) {
-                    adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
+                    adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap,
+                            testCount);
                 } else {
                     // TODO move this to the ErrorCorrection class
                     BigDecimal max = new BigDecimal(maxValue.doubleValue());
@@ -187,9 +191,31 @@ public final class WidgetUtil
     public static Map<String, BigDecimal> calcErrorCorrection(String errorCorrection,
                                                  Double maxValue,
                                                  HashMap<String, BigDecimal> resultsMap) {
+        return calcErrorCorrection(errorCorrection, maxValue, resultsMap, resultsMap.size());
+    }
+
+    /**
+     * See online help docs for detailed description of what error correction is and why we need it.
+     * Briefly, in all experiments certain things happen that look interesting but really just
+     * happened by chance.  We need to account for this phenomenon to ensure our numbers are
+     * interesting behaviour and not just random happenstance.
+     *
+     * To do this we take all of our p-values and adjust them.  Here we are using on of our two
+     * methods available - which one we use is determined by the user.
+     * @param errorCorrection which multiple hypothesis test correction to use - Bonferroni or
+     * BenjaminiHochberg
+     * @param maxValue maximum value we're interested in - used for display purposes only
+     * @param resultsMap map containing unadjusted p-values
+     * @param testCount number of tests we've done
+     * @return map of all the adjusted p-values
+     */
+    public static Map<String, BigDecimal> calcErrorCorrection(String errorCorrection,
+                                                 Double maxValue,
+                                                 HashMap<String, BigDecimal> resultsMap,
+                                                 int testCount) {
         ErrorCorrection e = null;
         if ("Bonferroni".equals(errorCorrection)) {
-            e = new Bonferroni(resultsMap);
+            e = new Bonferroni(resultsMap, testCount);
         } else {
             e = new BenjaminiHochberg(resultsMap);
         }

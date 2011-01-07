@@ -40,14 +40,6 @@ public abstract class FileConverter extends DataConverter
     public abstract void process(Reader reader) throws Exception;
 
     /**
-     * Perform any necessary clean-up after post-conversion
-     * @throws Exception if an error occurs
-     */
-    public void close() throws Exception {
-        // empty
-    }
-
-    /**
      * Set the current File that is being processed.  Called by FileConverterTask.execute().
      * @param currentFile the current File that is being processed
      */

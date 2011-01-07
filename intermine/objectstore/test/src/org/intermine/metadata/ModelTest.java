@@ -10,14 +10,16 @@ package org.intermine.metadata;
  *
  */
 
-import junit.framework.TestCase;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import junit.framework.TestCase;
 
 import org.intermine.model.testmodel.SimpleObject;
 
@@ -284,5 +286,62 @@ public class ModelTest extends TestCase
         "<class name=\"Range\" is-interface=\"false\">" + INDENT + "<attribute name=\"rangeStart\" type=\"int\"/>" + INDENT + "<attribute name=\"rangeEnd\" type=\"int\"/>" + INDENT + "<attribute name=\"name\" type=\"java.lang.String\"/>" + INDENT + "<reference name=\"parent\" referenced-type=\"Company\"/>" + ENDL + "</class>" + ENDL
         + "</model>";
         assertEquals(modelString, model.toString());
+    }
+
+    public void testGetLevelOrderTraversal() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+
+        /**
+         *         A
+         *       /   \
+         *      B     G
+         *     / \    /
+         *    C   E  /
+         *   /     \/
+         *  D      F
+         *
+         * Expected level order: [A], [B, G], [C, E, F], [D]
+         * F should be in third level which is it's most shallow position
+         */
+
+        Set<ClassDescriptor> smallModelClds = new HashSet<ClassDescriptor>();
+        ClassDescriptor a = new ClassDescriptor("A", null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        smallModelClds.add(a);
+        ClassDescriptor b = new ClassDescriptor("B", "A", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        smallModelClds.add(b);
+        ClassDescriptor c = new ClassDescriptor("C", "B", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        smallModelClds.add(c);
+        ClassDescriptor d = new ClassDescriptor("D", "C", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        smallModelClds.add(d);
+        ClassDescriptor e = new ClassDescriptor("E", "B", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        smallModelClds.add(e);
+        ClassDescriptor f = new ClassDescriptor("F", "G E", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        smallModelClds.add(f);
+        ClassDescriptor g = new ClassDescriptor("G", "A", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        smallModelClds.add(g);
+
+        Model smallModel = new Model("small", "", smallModelClds);
+
+        // the order of nodes at any give level is undefined, so check by level
+        List<ClassDescriptor> actual = smallModel.getLevelOrderTraversal();
+
+        // level one
+        assertEquals(a, actual.get(0));
+
+        // level two
+        Set<ClassDescriptor> expected = new HashSet<ClassDescriptor>();
+        expected.add(b);
+        expected.add(g);
+        assertEquals(expected, new HashSet<ClassDescriptor>(actual.subList(1, 3)));
+
+        // level two
+        expected = new HashSet<ClassDescriptor>();
+        expected.add(c);
+        expected.add(e);
+        expected.add(f);
+        assertEquals(expected, new HashSet<ClassDescriptor>(actual.subList(3, 6)));
+
+        // level four
+        assertEquals(d, actual.get(6));
     }
 }

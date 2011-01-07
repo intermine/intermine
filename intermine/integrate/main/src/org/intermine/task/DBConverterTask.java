@@ -84,6 +84,7 @@ public class DBConverterTask extends ConverterTask
                 (DBConverter) m.newInstance(new Object[] {database, model, writer});
             configureDynamicAttributes(converter);
             converter.process();
+            converter.close();
             converter.getItemWriter().close();
             osw.close();
         } catch (Exception e) {

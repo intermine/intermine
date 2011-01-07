@@ -99,6 +99,21 @@ public class Profile
     }
 
     /**
+     * Return a first part of the username before the "@" sign (used in metabolicMine)
+     * @author radek
+     *
+     * @return String
+     */
+    public String getName() {
+        int atPos = username.indexOf("@");
+        if (atPos > 0) {
+            return username.substring(0, atPos);
+        } else {
+            return username;
+        }
+    }
+
+    /**
      * Return true if and only if the user is logged is (and the Profile will be written to the
      * userprofile).
      * @return Return true if logged in
@@ -187,7 +202,7 @@ public class Profile
     }
 
     /**
-     * Delete a template
+     * Delete a template and its tags
      * @param name the template name
      */
     public void deleteTemplate(String name) {
@@ -198,6 +213,8 @@ public class Profile
                 reindex(TagTypes.TEMPLATE);
             }
         }
+        TagManager tagManager = getTagManager();
+        tagManager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
     }
 
     /**
@@ -376,6 +393,26 @@ public class Profile
         bag.setName(newName);
         saveBag(newName, bag);
         moveTagsToNewObject(oldName, newName, TagTypes.BAG);
+    }
+
+    /**
+     * Update an existing template, throw exceptions when template doesn't exist.
+     * Moves tags from old template to new template.
+     * @param oldName the template to rename
+     * @param template the new template
+     * @throws ObjectStoreException if problems storing
+     */
+    public void updateTemplate(String oldName, TemplateQuery template) throws ObjectStoreException {
+        if (!savedTemplates.containsKey(oldName)) {
+            throw new IllegalArgumentException("Attempting to rename a template that doesn't"
+                    + " exist: " + oldName);
+        }
+
+        savedTemplates.remove(oldName);
+        saveTemplate(template.getName(), template);
+        if (!oldName.equals(template.getName())) {
+            moveTagsToNewObject(oldName, template.getName(), TagTypes.TEMPLATE);
+        }
     }
 
     private void moveTagsToNewObject(String oldTaggedObj, String newTaggedObj, String type) {

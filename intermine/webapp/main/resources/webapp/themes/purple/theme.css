@@ -74,8 +74,8 @@ ul#nav li#mymine {
 ul#nav li.activelink {
     background:#5C0075 url('corner_act_t_l.png') no-repeat;}
 
-ul#submenulist li#subactive_bag, ul#submenulist li#subactive_api {
-    font-weight:bold;color:#FFF;background:url('submenu_indent.png') no-repeat bottom center;}
+ul#submenulist li#subactive_bag, ul#submenulist li#subactive_api { height:37px;
+    font-weight:bold;color:#FFF;background:url('submenu_indent.png') no-repeat bottom center; }
 
 ul#submenulist li#subactive_mymine {
     font-weight:bold;color:#FFF;background:url('submenu_my.png') no-repeat bottom center;}
@@ -225,7 +225,7 @@ table.results tfoot tr td {
 #listTags { background-color: #F5F0FF; margin-left: 10px; padding: 3px 10px; }
 
 /* keyword search results */
-.keywordSearchResults .resultTableContainer table.dbsources { border-left: 1px solid #F5F0FF; }
+.keywordSearchResults .resultTableContainer table.dbsources { border-left: 1px solid #F5F0FF; border-bottom: 1px solid #F5F0FF; }
     .keywordSearchResults .resultTableContainer table.dbsources th { background:#5C0075; color:#FFF; font-size:13px; padding:2px 8px;
         text-transform:none; }
     .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult { color:#882FA8; }
@@ -239,6 +239,10 @@ table.results tfoot tr td {
 
 .keywordSearchResults .resultTableContainer table.dbsources div.objectKeys a,
 .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult a span.value { font-size:14px; }
+
+div.keywordSearch div.examples h4 { color:#4891EB !important; }
+.keywordSearchResults .facets h4 { color:#5C0075; }
+.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult a span.value { color:#292727; }
 
 /* keyword search results relevancy */
 div.resultTableContainer td.relevance div.full { color:#ff0000; }
@@ -255,3 +259,9 @@ ul#submenulist li div { border-left-color:#FFF; }
 
 /* login bar */
 ul#loginbar li { border-right-color:#5C0075; }
+
+/* homepage (begin.css) */
+#boxes input.dark[type="submit"] { background:url("homepage/button-violet-dark.png") no-repeat scroll center bottom transparent;
+  color:#FFF; padding:2px 36px; }
+#boxes input.light[type="submit"] { background:url("homepage/button-plush.png") no-repeat scroll center bottom transparent;
+  color:#FFF; padding:2px 36px; }

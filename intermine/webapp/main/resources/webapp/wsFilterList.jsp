@@ -43,7 +43,6 @@
           pageContext.setAttribute("userShowDescription", true);
       }
 %>
-
 <c:set var="ws_input_id" value="${wsListId}_${type}_filter_text"/>
 <c:set var="ws_input_aspect" value="${wsListId}_${type}_filter_aspect"/>
 <c:set var="textForBox" value="${WEB_PROPERTIES['lists.input.example']}" />
@@ -71,7 +70,7 @@ function clearBagName(element) {
 </script>
 
 <div class="filterBar">
-            Search:&nbsp;
+            Search Queries:&nbsp;
             <input type="text" id="${ws_input_id}" name="newName_${name}" size="20"
                 onkeyup="return filterWebSearchablesHandler(event, this, '${type}', '${wsListId}');"
                 onmouseup="if(this.value != null && this.value.length > 1) {return filterWebSearchablesHandler(event, this, '${type}', '${wsListId}');}"
@@ -122,36 +121,36 @@ function clearBagName(element) {
 
 <div id="filter_tool_bar">
     <!-- <html:link styleId="actions_button" linkName="#">List Actions (Union, Intersection,..)&nbsp;<img src="images/arrow_down.png" width="10" height="8" alt="Arrow Down"></html:link> -->
-	<script language="javascript">
-	<!--
-		jQuery("document").ready(function() {
-			jQuery("#export_button").click(function() {
-				jQuery("#modifyTemplateForm").submit();
-			});
-		});
-	// -->
-	</script>
-	
+    <script language="javascript">
+    <!--
+        jQuery("document").ready(function() {
+            jQuery("#export_button").click(function() {
+                jQuery("#modifyTemplateForm").submit();
+            });
+        });
+    // -->
+    </script>
+
     <strong>Actions:</strong>
     <c:choose>
-	    <c:when test="${type == 'template'}">
-			<html:submit property="export" value="Export selected"/>
-	        <html:hidden property="pageName" value="templates"/>
-	        <html:hidden property="templateButton" value="export"/>
-	    </c:when>
+        <c:when test="${type == 'template'}">
+            <html:submit property="export" value="Export selected"/>
+            <html:hidden property="pageName" value="templates"/>
+            <html:hidden property="templateButton" value="export"/>
+        </c:when>
     <c:otherwise>
-		<a href="#operations" title="Union" onclick="jQuery('#listsButton').val('union')" class="boxy"><img src="images/union.png" width="21" height="14" alt="Union">Union</a>&nbsp;|&nbsp;
-		<a href="#operations" title="Intersect" onclick="jQuery('#listsButton').val('intersect')" class="boxy"><img src="images/intersect.png" width="21" height="14" alt="Intersect">Intersect</a>&nbsp;|&nbsp;
-		<a href="#operations" title="Subtract" onclick="jQuery('#listsButton').val('subtract')" class="boxy"><img src="images/subtract.png" width="21" height="14" alt="Subtract">Subtract</a>&nbsp;|&nbsp;
-		<a href="#operations" title="Copy" onclick="jQuery('#listsButton').val('copy')" class="boxy"><img src="images/copy.png" width="16" height="16" alt="Copy">Copy</a>
+        <a href="#operations" title="Union" onclick="jQuery('#listsButton').val('union')" class="boxy"><img src="images/union.png" width="21" height="14" alt="Union">Union</a>&nbsp;|&nbsp;
+        <a href="#operations" title="Intersect" onclick="jQuery('#listsButton').val('intersect')" class="boxy"><img src="images/intersect.png" width="21" height="14" alt="Intersect">Intersect</a>&nbsp;|&nbsp;
+        <a href="#operations" title="Subtract" onclick="jQuery('#listsButton').val('subtract')" class="boxy"><img src="images/subtract.png" width="21" height="14" alt="Subtract">Subtract</a>&nbsp;|&nbsp;
+        <a href="#operations" title="Copy" onclick="jQuery('#listsButton').val('copy')" class="boxy"><img src="images/copy.png" width="16" height="16" alt="Copy">Copy</a>
     </c:otherwise>
     </c:choose>
     <strong class="pad">Options:</strong>
-	<c:if test="${! empty userShowDescription}">
-    	<c:set var="checkboxChecked" value="checked" />
-	</c:if>
+    <c:if test="${! empty userShowDescription}">
+        <c:set var="checkboxChecked" value="checked" />
+    </c:if>
     <input type="checkbox" <c:out value="${checkboxChecked}" /> id="showCheckbox" onclick="showDescriptions('<c:out value="${wsListId}" />', '<c:out value="${type}" />', this.checked)">
-	<label for="showCheckbox">Show descriptions</label>
+    <label for="showCheckbox">Show descriptions</label>
 </div>
 <html:hidden property="listsButton" value="" styleId="listsButton"/>
 <%-- Need a dummy because boxy puts it outside of the form --%>

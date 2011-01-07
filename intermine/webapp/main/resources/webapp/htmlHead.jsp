@@ -32,7 +32,6 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <c:choose>
   <c:when test="${pageName == 'spanUploadOptions' || pageName == 'begin'}">
     <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.4.2.min.js'/>"></script>
-   
   </c:when>
   <c:otherwise>
     <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.3.2.min.js'/>"></script>

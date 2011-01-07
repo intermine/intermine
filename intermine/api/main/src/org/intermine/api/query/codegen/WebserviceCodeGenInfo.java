@@ -23,6 +23,7 @@ public class WebserviceCodeGenInfo
     private PathQuery query;
     private String serviceBaseURL;
     private String projectTitle;
+    private String perlWSModuleVer;
 
     /**
      * Constructor.
@@ -30,12 +31,15 @@ public class WebserviceCodeGenInfo
      * @param query a PathQuery to copy
      * @param serviceBaseURL the base url of web service
      * @param projectTitle the Title of a local InterMine project
+     * @param perlWSModuleVer the perl web service module version on CPAN
      *
      */
-    public WebserviceCodeGenInfo(PathQuery query, String serviceBaseURL, String projectTitle) {
+    public WebserviceCodeGenInfo(PathQuery query, String serviceBaseURL,
+            String projectTitle, String perlWSModuleVer) {
         this.query = query;
         this.serviceBaseURL = serviceBaseURL;
         this.projectTitle = projectTitle;
+        this.perlWSModuleVer = perlWSModuleVer;
     }
 
     /**
@@ -45,6 +49,7 @@ public class WebserviceCodeGenInfo
         this.query = null;
         this.serviceBaseURL = null;
         this.projectTitle = null;
+        this.perlWSModuleVer = null;
     }
 
     /**
@@ -87,5 +92,19 @@ public class WebserviceCodeGenInfo
      */
     public void setProjectTitle(String projectTitle) {
         this.projectTitle = projectTitle;
+    }
+
+    /**
+     * @return the perlWSModuleVer
+     */
+    public String getPerlWSModuleVer() {
+        return perlWSModuleVer;
+    }
+
+    /**
+     * @param perlWSModuleVer the perlWSModuleVer to set
+     */
+    public void setPerlWSModuleVer(String perlWSModuleVer) {
+        this.perlWSModuleVer = perlWSModuleVer;
     }
 }

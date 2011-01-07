@@ -14,6 +14,8 @@ package org.intermine.web.logic.bag;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -53,19 +55,19 @@ public final class BagHelper
      * Create a bag for the given profile and bag name from a PathQuery.  The PathQuery must
      * select only the id field from the type the bag is to be created from.  The name will be
      * made unique with "_n" if it already exists in the profile.
-     * @param os the production ObjectStore
-     * @param bagQueryRunner the bag query runner
-     * @param profile bag will be created in this profile
+     *
+     * @param pathQuery the query to create the bag from
      * @param bagName name of new bag
      * @param bagDescription a description for the new bag
      * @param bagType the class of object in the bag
-     * @param pathQuery the query to create the bag from
+     * @param profile bag will be created in this profile
+     * @param im InterMineAPI that will give us BagManager
+     *
      * @return the new bag, already saved
      * @throws ObjectStoreException if persistence problem
      */
     public static InterMineBag createBagFromPathQuery(PathQuery pathQuery, String bagName,
-            String bagDescription, String bagType, Profile profile, ObjectStore os,
-            BagQueryRunner bagQueryRunner) throws ObjectStoreException {
+            String bagDescription, String bagType, Profile profile, InterMineAPI im) throws ObjectStoreException {
         if (pathQuery.getView().size() != 1) {
             throw new RuntimeException("Can only create bags from a PathQuery that selects just "
                     + "id");
@@ -81,8 +83,12 @@ public final class BagHelper
                     + pathQuery.getView(), e);
         }
 
-        ObjectStoreWriterInterMineImpl osw = ((ObjectStoreInterMineImpl) os).getNewWriter();
-        Query q = MainHelper.makeQuery(pathQuery, null, null, bagQueryRunner, null);
+        ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl)im.getObjectStore();
+        ObjectStoreWriterInterMineImpl osw = os.getNewWriter();
+
+        BagManager bagManager = im.getBagManager();
+
+        Query q = MainHelper.makeQuery(pathQuery, bagManager.getUserAndGlobalBags(profile), null, im.getBagQueryRunner(), null);
 
         InterMineBag bag = new InterMineBag(bagName, bagType, bagDescription, new Date(), os,
                 profile.getUserId(), profile.getProfileManager().getProfileObjectStoreWriter());

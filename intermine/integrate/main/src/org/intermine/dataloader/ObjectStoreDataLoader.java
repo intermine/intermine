@@ -136,7 +136,7 @@ public class ObjectStoreDataLoader extends DataLoader
                 timeSpentLoop += time1 - time4;
                 time2 = System.currentTimeMillis();
                 timeSpentRead += time2 - time1;
-                //if (obj.getClass().getName().equals("org.intermine.model.chado.feature")) {
+                //if ("org.intermine.model.chado.feature".equals(obj.getClass().getName())) {
                 //    String objText = obj.toString();
                 //    int objTextLen = objText.length();
                 //    System//.out.println("Storing " + objText.substring(0, (objTextLen > 60 ? 60

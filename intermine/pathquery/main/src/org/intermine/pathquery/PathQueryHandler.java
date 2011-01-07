@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.xml.sax.Attributes;
@@ -53,6 +55,7 @@ public class PathQueryHandler extends DefaultHandler
     protected Map<String, String> constraintAttributes = null;
     protected Collection<String> constraintValues = null;
     protected String constraintCode = null;
+    private static final Logger LOG = Logger.getLogger(PathQueryHandler.class);
 
     /**
      * Constructor
@@ -103,7 +106,8 @@ public class PathQueryHandler extends DefaultHandler
                 }
                 query.addViewSpaceSeparated(view);
             }
-            if (attrs.getValue("sortOrder") != null) {
+            if (attrs.getValue("sortOrder") != null
+                    && !StringUtils.isBlank(attrs.getValue("sortOrder"))) {
                 query.addOrderBySpaceSeparated(attrs.getValue("sortOrder"));
             }
             constraintLogic = attrs.getValue("constraintLogic");
@@ -210,8 +214,7 @@ public class PathQueryHandler extends DefaultHandler
                         isLoop = true;
                     }
                 } catch (PathException e) {
-                    throw new SAXException("Cannot recognise path in constraint: " + path,
-                            e);
+                    LOG.error("Cannot recognise path in constraint: " + path, e);
                 }
             }
             if (isLoop) {

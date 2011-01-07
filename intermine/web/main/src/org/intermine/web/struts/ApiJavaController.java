@@ -11,6 +11,8 @@ package org.intermine.web.struts;
  */
 
 
+import java.util.Properties;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,6 +21,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * @author Fengyuan Hu
@@ -40,6 +44,13 @@ public class ApiJavaController extends TilesAction
         request.setAttribute("mimeType", "application/zip");
         // for jar - jar
         request.setAttribute("mimeExtension", "zip");
+
+        // Find project title and make a javasie package name
+        Properties webProperties = SessionMethods.getWebProperties(request.getSession()
+                .getServletContext());
+        String projectTitle = webProperties.getProperty("project.title");
+        String javasieProjectTitle = TypeUtil.javaisePackageName(projectTitle);
+        request.setAttribute("javasieProjectTitle", javasieProjectTitle);
 
         return null;
 

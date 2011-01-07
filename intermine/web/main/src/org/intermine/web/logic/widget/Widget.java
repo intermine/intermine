@@ -86,4 +86,12 @@ public abstract class Widget
     public String getTitle() {
         return config.getTitle();
     }
+
+    /**
+     * Get the widget style
+     * @return the style
+     */
+    public String getStyle() {
+        return config.getStyle();
+    }
 }
