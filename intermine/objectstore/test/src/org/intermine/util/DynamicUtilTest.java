@@ -17,10 +17,11 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.intermine.model.FastPathObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Broke;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employable;
 import org.intermine.model.testmodel.Employee;
@@ -87,7 +88,7 @@ public class DynamicUtilTest extends TestCase
     }
 
     public void testCreateObjectClassAndRedundantInterfaces() {
-       Set intSet = new HashSet();
+        Set intSet = new HashSet();
         intSet.add(Employee.class);
         intSet.add(Employable.class);
         Object obj = DynamicUtil.createObject(intSet);
@@ -168,6 +169,40 @@ public class DynamicUtilTest extends TestCase
         Object obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Manager", "org.intermine.model.testmodel.Broke");
         assertTrue(obj instanceof Manager);
         assertTrue(obj instanceof Broke);
+    }
+
+    public void testGetSimpleClass() throws Exception {
+        FastPathObject obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Company", null);
+        assertEquals(Company.class, DynamicUtil.getSimpleClass(obj.getClass()));
+
+        Set<Class<?>> interfaces = new HashSet<Class<?>>();
+        interfaces.add(Company.class);
+        interfaces.add(Employee.class);
+        obj = DynamicUtil.createObject(interfaces);
+
+        // dynamic class composed of multiple classes should throw an exception
+        try {
+            DynamicUtil.getSimpleClass(obj);
+            fail("Expected an IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
+    public void testGetSimpleClassName() throws Exception {
+        FastPathObject obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Company", null);
+        assertEquals(Company.class.getName(), DynamicUtil.getSimpleClass(obj.getClass()));
+
+        Set<Class<?>> interfaces = new HashSet<Class<?>>();
+        interfaces.add(Company.class);
+        interfaces.add(Employee.class);
+        obj = DynamicUtil.createObject(interfaces);
+
+        // dynamic class composed of multiple classes should throw an exception
+        try {
+            DynamicUtil.getSimpleClassName(obj);
+            fail("Expected an IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
 /*    public void testComposedClass() throws Exception {

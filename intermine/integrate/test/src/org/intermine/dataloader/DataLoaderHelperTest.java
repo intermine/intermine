@@ -144,11 +144,11 @@ public class DataLoaderHelperTest extends QueryTestCase
                 DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk, source,
                                                          new IntToIntMap());
 
-            if (pk.getName().equals("key1")) {
+            if ("key1".equals(pk.getName())) {
                 // Company.key1=name, address
                 assertFalse(isPrimaryKey);
             } else {
-                if (pk.getName().equals("key2")) {
+                if ("key2".equals(pk.getName())) {
                     // Company.key2=vatNumber
                     assertTrue(isPrimaryKey);
                 } else {

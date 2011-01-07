@@ -49,6 +49,8 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     protected String title;
     /** The private comment for this query. */
     protected String comment;
+    /** The path query itself. */
+    protected PathQuery query = null;
     /** Whether this is an edited version of another template. */
     protected boolean edited = false;
     /** SavedTemplateQuery object in the UserProfile database, so we can update summaries. */
@@ -74,6 +76,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
         this.name = name;
         this.title = title;
         this.comment = comment;
+        this.query = query;
     }
 
     /**
@@ -474,6 +477,13 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      */
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    /**
+     * @return the path query
+     */
+    public PathQuery getPathQuery() {
+        return query;
     }
 
     /**

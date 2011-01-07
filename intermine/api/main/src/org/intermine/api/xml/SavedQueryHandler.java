@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryHandler;
@@ -50,7 +51,7 @@ public class SavedQueryHandler extends PathQueryHandler
         throws SAXException {
         if ("saved-query".equals(qName)) {
             queryName = attrs.getValue("name");
-            if (attrs.getValue("date-created") != null) {
+            if (!StringUtils.isEmpty(attrs.getValue("date-created"))) {
                 dateCreated = new Date(Long.parseLong(attrs.getValue("date-created")));
             }
         }

@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
@@ -800,5 +801,28 @@ public final class TypeUtil
             className = model.getPackageName() + "." + className;
         }
         return Class.forName(className);
+    }
+
+    /**
+     * Filter a string to remove illegal characters and join the rest in lower case.
+     *
+     * @param s e.g. modMine_TEST-2.r
+     * @return a string with no special character such as space, "_" or others, e.g. modminetest2r
+     */
+    public static String javaisePackageName(String s) {
+
+        String normalRegex = "[A-Za-z0-9]*";
+        String illRegex = "[. _#$%&()*+,\"'/:;<=>?@\\^`{|}~-]";
+
+        if (Pattern.matches(normalRegex, s)) {
+            return s.toLowerCase();
+        } else {
+            String[] splitedStr = s.split(illRegex);
+            StringBuffer sb = new StringBuffer();
+            for (String str : splitedStr) {
+                sb.append(str.toLowerCase());
+            }
+            return sb.toString();
+        }
     }
 }

@@ -69,7 +69,6 @@ public final class PathQueryResultHelper
         List<String> view = new ArrayList<String>();
         ClassDescriptor cld = model.getClassDescriptorByName(type);
         List<FieldConfig> fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
-
         if (!StringUtils.isEmpty(prefix)) {
             try {
                 // we can't add a subclass constraint, type must be same as the end of the prefix
@@ -88,16 +87,15 @@ public final class PathQueryResultHelper
 
         for (FieldConfig fieldConfig : fieldConfigs) {
             String relPath = fieldConfig.getFieldExpr();
-            // only add attributes, don't follow references
-            if (relPath.indexOf(".") == -1) {
-                try {
-                    Path path = new Path(model, prefix + "." + relPath);
-                    if (path.endIsAttribute()) {
-                        view.add(path.getNoConstraintsString());
-                    }
-                } catch (PathException e) {
-                    LOG.error("Invalid path configured in webconfig for class: " + type);
+            // only add attributes, don't follow references - following references can be problematic 
+            // when subclasses get involved.
+            try {
+                Path path = new Path(model, prefix + "." + relPath);
+                if (path.isOnlyAttribute()) {
+                    view.add(path.getNoConstraintsString());
                 }
+            } catch (PathException e) {
+                LOG.error("Invalid path configured in webconfig for class: " + type);
             }
         }
         if (view.size() == 0) {
@@ -108,6 +106,19 @@ public final class PathQueryResultHelper
             }
         }
         return view;
+    }
+    
+    
+    /**
+     * Alias for getDefaultViewForClass, with the difference that it does not take a starting path. 
+     * @param type
+     * @param model
+     * @param webConfig
+     * @param startingPath
+     * @return A view list containing only attributes on the given class
+     */
+    private static List<String> getAttributeViewForClass(String type, Model model, WebConfig webConfig) {
+    	return getDefaultViewForClass(type, model, webConfig, null);
     }
 
     /**
@@ -121,7 +132,7 @@ public final class PathQueryResultHelper
     public static PathQuery makePathQueryForBag(InterMineBag imBag, WebConfig webConfig,
             Model model) {
         PathQuery query = new PathQuery(model);
-        query.addViews(getDefaultViewForClass(imBag.getType(), model, webConfig, null));
+        query.addViews(getAttributeViewForClass(imBag.getType(), model, webConfig));
         query.addConstraint(Constraints.in(imBag.getType(), imBag.getName()));
         return query;
     }
@@ -146,7 +157,7 @@ public final class PathQueryResultHelper
             path = new Path(os.getModel(), className + "." + field);
         } catch (PathException e) {
             throw new IllegalArgumentException("Could not build path for \"" + className + "."
-                    + field);
+                    + field + "\".");
         }
         List<Class<?>> types = new ArrayList<Class<?>>();
         if (path.endIsCollection()) {
@@ -162,7 +173,7 @@ public final class PathQueryResultHelper
     }
 
     // find the subclasses that exist in the given collection
-    private static List<Class<?>> queryForTypesInCollection(InterMineObject object, String field,
+    protected static List<Class<?>> queryForTypesInCollection(InterMineObject object, String field,
             ObjectStore os) {
         List<Class<?>> typesInCollection = new ArrayList<Class<?>>();
         Query query = new Query();
@@ -210,29 +221,29 @@ public final class PathQueryResultHelper
      *
      * TODO use getDefaultViewForClass() instead
      *
-     * @param type class of object we are querying for eg. Employee
+     * @param objType class of object we are querying for eg. Manager
      * @param model the model
      * @param webConfig the webconfig
-     * @param startingPath the prefix to prepend to type, eg. Department
+     * @param fieldType the type of the field this object is in, eg Employee
      * @return query, eg. Department.employees.name
      */
-    private static PathQuery getQueryWithDefaultView(String type, Model model, WebConfig webConfig,
-            String startingPath) {
-        String prefix = startingPath;
+    protected static PathQuery getQueryWithDefaultView(String objType, Model model, WebConfig webConfig,
+            String fieldType) {
+        String prefix = fieldType;
         PathQuery query = new PathQuery(model);
-        ClassDescriptor cld = model.getClassDescriptorByName(type);
+        ClassDescriptor cld = model.getClassDescriptorByName(objType);
         List<FieldConfig> fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
 
         if (!StringUtils.isBlank(prefix)) {
             try {
                 // if the type is different to the end of the prefix path, add a subclass constraint
-                Path prefixPath = new Path(model, prefix);
-                String prefixEndType = TypeUtil.unqualifiedName(prefixPath.getEndType().getName());
-                if (!prefixEndType.equals(type)) {
-                    query.addConstraint(Constraints.type(prefix, type));
+                Path fieldPath = new Path(model, fieldType);
+                String fieldEndType = TypeUtil.unqualifiedName(fieldPath.getEndType().getName());
+                if (!fieldEndType.equals(objType)) {
+                    query.addConstraint(Constraints.type(fieldType, objType));
                 }
             } catch (PathException e) {
-                LOG.error("Invalid path configured in webconfig for class: " + type);
+                LOG.error("Invalid path configured in webconfig for class: " + objType);
             }
         }
 
@@ -253,7 +264,9 @@ public final class PathQueryResultHelper
         }
         if (query.getView().size() == 0) {
             for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
-                query.addView(prefix + "." + att.getName());
+            	if (! "id".equals(att.getName())) { 
+            		query.addView(prefix + "." + att.getName());
+            	}
             }
         }
         return query;

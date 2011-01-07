@@ -52,6 +52,9 @@ public class WebServiceRequestParser
 
     /** Value of parameter when user wants comma separated output to be returned. **/
     public static final String FORMAT_PARAMETER_CSV = "csv";
+    
+    /** Value of parameter when user wants json data **/
+    public static final String FORMAT_PARAMETER_JSON_OBJ = "jsonobjects";
 
     /**
      * Name of format parameter that specifies format of returned results.

@@ -45,9 +45,11 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     private Iterator<List<ResultElement>> subIter;
     // This object contains a description of the collections in the input.
     private List columns;
+    private List<Path> paths = new ArrayList<Path>();
     private int columnCount;
     private Results results;
     private boolean isGoingFaster = false;
+    private PathQuery originatingQuery;
 
 
      /**
@@ -63,18 +65,36 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     public ExportResultsIterator(PathQuery pathQuery, Results results,
             Map<String, QuerySelectable> pathToQueryNode) throws ObjectStoreException {
         this.results = results;
+        this.originatingQuery = pathQuery;
         init(pathQuery, pathToQueryNode);
     }
 
-
-
+    public PathQuery getQuery() {
+    	return originatingQuery;
+    }
+    
+    public List<Path> getViewPaths() {
+    	return Collections.unmodifiableList(paths);
+    }
+    
     private void init(PathQuery pq, Map<String, QuerySelectable> pathToQueryNode) {
         osIter = ((List) results).iterator();
         List<List<ResultElement>> empty = Collections.emptyList();
         subIter = empty.iterator();
+        for (String pathString : pq.getView()) {
+            Path path;
+            try {
+                path = pq.makePath(pathString);
+                paths.add(path);
+            } catch (PathException e) {
+                throw new RuntimeException("Path " + pathString + " in view of PathQuery is invalid", e);
+            }
+        }
         columns = convertColumnTypes(results.getQuery().getSelect(), pq, pathToQueryNode);
         columnCount = pq.getView().size();
     }
+    
+    
 
     /**
      * {@inheritDoc}
@@ -178,13 +198,7 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
             } else {
                 Map<Path, Integer> fieldToColumnNumber = new HashMap<Path, Integer>();
                 int columnNo = 0;
-                for (String pathString : pq.getView()) {
-                    Path path;
-                    try {
-                        path = pq.makePath(pathString);
-                    } catch (PathException e) {
-                        throw new RuntimeException("Path in view of PathQuery is invalid", e);
-                    }
+                for (Path path : paths) {
                     Path parent = path.getPrefix();
                     QuerySelectable selectableForPath = pathToQueryNode.get(
                             parent.toStringNoConstraints());
@@ -225,6 +239,7 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     private void expandCollections(List row, List<List<ResultElement>> retval,
             List<ResultElement> template, List cols) {
         if (row.size() != cols.size()) {
+        	System.err.println("breaking");
             throw new IllegalArgumentException("Column description (size " + cols.size()
                     + ") does not match input data (size " + row.size() + ")");
         }
@@ -277,6 +292,7 @@ public class ExportResultsIterator extends QueryExecutor implements Iterator<Lis
     private void expandCollectionsJustOneRow(List row, List<List<ResultElement>> retval,
             List<ResultElement> template, List cols) {
         if (row.size() != cols.size()) {
+        
             throw new IllegalArgumentException("Column description (size " + cols.size()
                     + ") does not match input data (size " + row.size() + ")");
         }

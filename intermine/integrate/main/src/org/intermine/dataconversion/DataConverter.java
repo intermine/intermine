@@ -199,4 +199,12 @@ public abstract class DataConverter
     public void addUniqueItemId(String key, String refId) {
         uniqueItems.put(key, refId);
     }
+
+    /**
+     * Perform any necessary clean-up after processing
+     * @throws Exception if an error occurs
+     */
+    public void close() throws Exception {
+        // empty
+    }
 }

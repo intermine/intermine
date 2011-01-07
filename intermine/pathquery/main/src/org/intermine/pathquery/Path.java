@@ -11,6 +11,7 @@ package org.intermine.pathquery;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -258,6 +259,29 @@ public class Path
                 }
             }
         }
+    }
+    
+    /**
+     * Returns a list of paths, each corresponding to one step further along the path. Starts with 
+     * the root path, and ends in the current path, ie:
+     * 
+     * Company.departments.manager.name 
+     * 		decomposes to:
+     * Company, Company.departments, Company.departments.manager, Company.departments.manager.name
+     * 
+     *  @return the list of composing paths.
+     */
+    public List<Path> decomposePath() {
+    	List<Path> pathList = new ArrayList<Path>();
+    	pathList.add(this);
+    	Path currentPath = this;
+    	while (! currentPath.isRootPath()) {
+    		Path nextPath = currentPath.getPrefix();
+    		pathList.add(nextPath);
+    		currentPath = nextPath;
+    	}
+    	Collections.reverse(pathList);
+    	return pathList;
     }
 
     /**

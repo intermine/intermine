@@ -188,14 +188,16 @@ public class CreateIndexesTask extends Task
 
         IndexStatement indexStatement = null;
 
+        Map<String, Set<String>> existingIndexes = new HashMap<String, Set<String>>();
+
         try {
             c = database.getConnection();
             c.setAutoCommit(true);
 
-            // Drop all the indexes first, then re-create them.  That ensures that if we try to
-            // create an index with the same name twice we get an exception.  Postgresql has a
-            // limit on index name length (63) and will truncate longer names with a NOTICE rather
-            // than an error.
+            // Find the names of all existing indexes so we can drop each index immediately before
+            // attempting to create it.  That ensures that if we try to create an index with the
+            // same name twice we get an exception.  Postgresql has a limit on index name length
+            // (63) and will truncate longer names with a NOTICE rather than an error.
 
             Set<ClassDescriptor> masters = new HashSet<ClassDescriptor>();
             for (ClassDescriptor cld : m.getClassDescriptors()) {
@@ -203,11 +205,11 @@ public class CreateIndexesTask extends Task
                 ClassDescriptor master = schema.getTableMaster(cld);
                 masters.add(master);
             }
+
             for (ClassDescriptor cld : masters) {
-                String tableName = DatabaseUtil.getTableName(cld);
+                String tableName = DatabaseUtil.getTableName(cld).toLowerCase();
                 DatabaseMetaData metadata = c.getMetaData();
-                ResultSet r = metadata.getIndexInfo(null, null, tableName.toLowerCase(), false,
-                        false);
+                ResultSet r = metadata.getIndexInfo(null, null, tableName, false, false);
                 Set<String> indexNames = new HashSet<String>();
                 while (r.next()) {
                     if ((r.getShort(7) != DatabaseMetaData.tableIndexStatistic)
@@ -216,10 +218,7 @@ public class CreateIndexesTask extends Task
                         indexNames.add(indexName);
                     }
                 }
-                LOG.info("Dropping indexes for table " + tableName + ": " + indexNames);
-                for (String indexName : indexNames) {
-                    dropIndex(indexName);
-                }
+                existingIndexes.put(cld.getName(), indexNames);
             }
 
             Iterator<Map.Entry<String, Map<String, IndexStatement>>> cldsIter =
@@ -229,7 +228,7 @@ public class CreateIndexesTask extends Task
 
             synchronized (threads) {
                 for (int i = 1; i <= extraThreads; i++) {
-                    Thread worker = new Thread(new Worker(threads, cldsIter, i));
+                    Thread worker = new Thread(new Worker(threads, cldsIter, existingIndexes, i));
                     threads.add(new Integer(i));
                     worker.setName("CreateIndexesTask extra thread " + i);
                     worker.start();
@@ -243,8 +242,13 @@ public class CreateIndexesTask extends Task
                     LOG.info("Thread 0 processing class " + cldName);
                     for (Map.Entry<String, IndexStatement> statementEntry : cldEntry.getValue()
                             .entrySet()) {
+                        Set<String> existingCldIndexes = existingIndexes.get(cldName);
                         String indexName = statementEntry.getKey();
                         indexStatement = statementEntry.getValue();
+                        if (existingCldIndexes != null
+                                && existingCldIndexes.contains(indexName)) {
+                            dropIndex(indexName, 0);
+                        }
                         createIndex(c, indexName, indexStatement, 0);
                     }
                 }
@@ -283,18 +287,21 @@ public class CreateIndexesTask extends Task
         private int threadNo;
         private Set<Integer> threads;
         private Iterator<Map.Entry<String, Map<String, IndexStatement>>> cldsIter;
-
+        private final Map<String, Set<String>> existingIndexes;
         /**
          * Create a new Worker object.
          * @param threads the Thread indexes
          * @param cldsIter an Iterator over the classes to index
+         * @param existingIndexes a map from qualified to class name to a list of existing indexes
          * @param threadNo the thread index of this thread
          */
         public Worker(Set<Integer> threads,
-                Iterator<Map.Entry<String, Map<String, IndexStatement>>> cldsIter, int threadNo) {
+                Iterator<Map.Entry<String, Map<String, IndexStatement>>> cldsIter,
+                Map<String, Set<String>> existingIndexes, int threadNo) {
             this.threads = threads;
             this.cldsIter = cldsIter;
             this.threadNo = threadNo;
+            this.existingIndexes = existingIndexes;
         }
 
         public void run() {
@@ -306,11 +313,16 @@ public class CreateIndexesTask extends Task
                     while (cldsIter.hasNext()) {
                         Map.Entry<String, Map<String, IndexStatement>> cldEntry = cldsIter.next();
                         String cldName = cldEntry.getKey();
+                        Set<String> existingCldIndexes = existingIndexes.get(cldName);
                         LOG.info("Thread " + threadNo + " processing class " + cldName);
                         for (Map.Entry<String, IndexStatement> statementEntry : cldEntry.getValue()
                                 .entrySet()) {
                             String indexName = statementEntry.getKey();
                             IndexStatement st = statementEntry.getValue();
+                            if (existingCldIndexes != null
+                                    && existingCldIndexes.contains(indexName)) {
+                                dropIndex(indexName, threadNo);
+                            }
                             createIndex(conn, indexName, st, threadNo);
                         }
                     }
@@ -401,7 +413,7 @@ public class CreateIndexesTask extends Task
             Map<String, IndexStatement> statements) throws MetaDataException {
         // Set of field names that already are the first element of an index.
         Set<String> doneFieldNames = new HashSet<String>();
-        String cldTableName = DatabaseUtil.getTableName(cld);
+        String cldTableName = DatabaseUtil.getTableName(cld).toLowerCase();
 
         boolean simpleClass = !InterMineObject.class.isAssignableFrom(cld.getType());
 
@@ -424,8 +436,8 @@ public class CreateIndexesTask extends Task
             clds.addAll(cld.getModel().getAllSubs(cld));
             for (ClassDescriptor nextCld : clds) {
                 ClassDescriptor tableMaster = schema.getTableMaster(nextCld);
-                String tableName = DatabaseUtil.getTableName(tableMaster);
-                if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
+                String tableName = DatabaseUtil.getTableName(tableMaster).toLowerCase();
+                if (!schema.getMissingTables().contains(tableName)) {
                     String indexNameBase;
                     if (tableName.equals(cldTableName)) {
                         indexNameBase = tableName + "__" + keyName;
@@ -447,9 +459,9 @@ public class CreateIndexesTask extends Task
         //e.g. company.getDepartments
         for (ReferenceDescriptor ref : cld.getAllReferenceDescriptors()) {
             ClassDescriptor tableMaster = schema.getTableMaster(cld);
-            String tableName = DatabaseUtil.getTableName(tableMaster);
+            String tableName = DatabaseUtil.getTableName(tableMaster).toLowerCase();
             if (FieldDescriptor.N_ONE_RELATION == ref.relationType()) {
-                if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
+                if (!schema.getMissingTables().contains(tableName)) {
                     String fieldName = DatabaseUtil.getColumnName(ref);
                     if (!doneFieldNames.contains(fieldName)) {
                         addStatement(statements,
@@ -460,8 +472,7 @@ public class CreateIndexesTask extends Task
             }
         }
 
-        //finally add an index to all M-to-N indirection table columns
-        //for (Iterator i = cld.getAllCollectionDescriptors().iterator(); i.hasNext();) {
+        // finally add an index to all M-to-N indirection table columns
         for (CollectionDescriptor col : cld.getCollectionDescriptors()) {
             if (FieldDescriptor.M_N_RELATION == col.relationType()) {
                 String tableName = DatabaseUtil.getIndirectionTableName(col);
@@ -493,8 +504,8 @@ public class CreateIndexesTask extends Task
             Map<String, IndexStatement> statements) {
 
         Map<String, PrimaryKey> primaryKeys = PrimaryKeyUtil.getPrimaryKeys(cld);
-        String tableName = DatabaseUtil.getTableName(cld);
-        if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
+        String tableName = DatabaseUtil.getTableName(cld).toLowerCase();
+        if (!schema.getMissingTables().contains(tableName)) {
 
         ATTRIBUTE:
             for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
@@ -550,6 +561,8 @@ public class CreateIndexesTask extends Task
     private void addStatement(Map<String, IndexStatement> statements, String indexName,
             String tableName, String columnNames, ClassDescriptor cld,
             ClassDescriptor tableMaster) {
+        // Lower case the index so it matches names returned from Postgres
+        indexName = indexName.toLowerCase();
         if (statements.containsKey(indexName)) {
             IndexStatement indexStatement = statements.get(indexName);
 
@@ -569,10 +582,12 @@ public class CreateIndexesTask extends Task
     /**
      * Drop an index by name, ignoring any resulting errors
      * @param indexName the index name
+     * @param threadNo the thread number included for logging
      */
-    protected void dropIndex(String indexName) {
+    protected void dropIndex(String indexName, int threadNo) {
         try {
             if (!indexesMade.contains(indexName)) {
+                LOG.info("Thread " + threadNo + " dropping index: " + indexName);
                 execute(c, "drop index " + indexName);
             }
         } catch (SQLException e) {

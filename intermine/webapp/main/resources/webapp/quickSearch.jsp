@@ -21,6 +21,18 @@ function clearElement(e) {
 <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get" style="display:inline;">
 <fmt:message key="header.search"/>
 <input style="width:150px;color:#666;font-style:italic;font-size:1em" type="text" id="quickSearchInput" name="searchTerm" value="${ids}" onFocus="clearElement(this);" />
-<input type="submit" name="searchSubmit" value="GO" />
+<input type="submit" id="quickSearchButton" name="searchSubmit" value="GO" />
 </form>
 <!-- /quickSearch.jsp -->
+
+ <script type="text/javascript">
+  // associate functions with search that redir to a keyword objects listing instead of search results
+  jQuery('#quickSearchButton').click(function() {
+    // if placeholder text in place, take us elsewhere
+    if (jQuery("#quickSearchInput").val() == "${ids}") {
+      jQuery(location).attr('href', "/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=");
+      return false;
+    }
+  });
+
+</script>

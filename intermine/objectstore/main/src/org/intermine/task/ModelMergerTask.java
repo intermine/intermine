@@ -12,15 +12,13 @@ package org.intermine.task;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
-import org.intermine.modelproduction.ModelMerger;
+import org.intermine.modelproduction.ModelFileMerger;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -77,43 +75,20 @@ public class ModelMergerTask extends Task
      */
     @Override
     public void execute() {
-        Model mergedModel = null;
-        try {
-            InterMineModelParser parser = new InterMineModelParser();
-            FileReader reader = new FileReader(inputModelFile);
-            mergedModel = parser.process(reader);
-            reader.close();
-        } catch (Exception e) {
-            throw new BuildException("failed to read model file: " + inputModelFile, e);
-        }
-        if (additionsFiles.size() == 0) {
-            throw new BuildException("no addition files set");
-        } else {
-            for (File additionsFile: additionsFiles) {
-                mergedModel = processFile(mergedModel, additionsFile);
-            }
-        }
+    	InterMineModelParser parser = new InterMineModelParser();
+    	Model mergedModel;
+    	try {
+    		mergedModel = ModelFileMerger.mergeModelFromFiles(inputModelFile, additionsFiles, parser);
+    	} catch (MetaDataException e) {
+    		throw new BuildException("Failed to parse model from input files", e);
+    	}
+        
         try {
             FileWriter writer = new FileWriter(outputModelFile);
             writer.write(mergedModel.toString());
             writer.close();
         } catch (IOException e) {
             throw new BuildException("failed to write model file: " + outputModelFile, e);
-        }
-    }
-
-    private Model processFile(Model mergedModel, File newAdditionsFile) {
-        try {
-            InterMineModelParser parser = new InterMineModelParser();
-            Set<ClassDescriptor> additionClds =
-                parser.generateClassDescriptors(new FileReader(newAdditionsFile),
-                        mergedModel.getPackageName());
-            System.err .println("merging model additions from: " + newAdditionsFile);
-            Model newMergedModel = ModelMerger.mergeModel(mergedModel, additionClds);
-            return newMergedModel;
-        } catch (Exception e) {
-            throw new BuildException("Exception while merging " + newAdditionsFile + " into "
-                                     + inputModelFile, e);
         }
     }
 }
