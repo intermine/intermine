@@ -14,12 +14,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.webservice.client.core.ContentType;
+import org.intermine.webservice.client.core.JSONResult;
 import org.intermine.webservice.client.core.RequestImpl;
 import org.intermine.webservice.client.core.Service;
 import org.intermine.webservice.client.core.TabTableResult;
 import org.intermine.webservice.client.core.Request.RequestType;
+import org.intermine.webservice.client.services.QueryService.QueryRequest;
 import org.intermine.webservice.client.template.TemplateParameter;
 import org.intermine.webservice.client.util.HttpConnection;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * The TemplateService returns results of public templates and number of results. Template is
@@ -119,6 +123,16 @@ public class TemplateService extends Service
         request.setTemplateParameters(parameters);
         return getResponseTable(request).getData();
     }
+    
+    public List<JSONObject> getJSONResults(
+    		String templateName, List<TemplateParameter> parameters, int maxCount) throws JSONException {
+    	TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(),
+                ContentType.TEXT_TAB);
+        request.setMaxCount(maxCount);
+        request.setName(templateName);
+        request.setTemplateParameters(parameters);
+        return getJSONResponse(request).getObjects();	
+    }    
 
     /**
      * Returns template results for given parameters. Use this method if you expects a lot
@@ -148,5 +162,16 @@ public class TemplateService extends Service
     protected TabTableResult getResponseTable(TemplateRequest request) {
         HttpConnection connection = executeRequest(request);
         return new TabTableResult(connection);
+    }
+    
+    /**
+     * Performs the query and returns a JSONResult containing the data.
+     *
+     * @param request a QueryRequest object
+     * @return a JSONResult object containing the data fetched
+     */
+    protected JSONResult getJSONResponse(TemplateRequest request) {
+        HttpConnection connection = executeRequest(request);
+        return new JSONResult(connection);
     }
 }

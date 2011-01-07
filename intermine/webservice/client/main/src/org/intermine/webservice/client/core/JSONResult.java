@@ -48,15 +48,19 @@ public class JSONResult extends ResultSet {
     	return objects;
     }
     
-    public JSONArray getResults() throws JSONException {
+    public JSONArray getResults() {
     	StringBuilder sb = new StringBuilder();
     	String line = null;
     	while ((line = getNextLine()) != null) {
     		sb.append(checkLineForErrors(line));
     	}
-    	JSONObject resultSet = new JSONObject(sb.toString());
-    	JSONArray results = resultSet.getJSONArray("results");
-    	return results;
+    	try {
+	    	JSONObject resultSet = new JSONObject(sb.toString());
+	    	JSONArray results = resultSet.getJSONArray("results");
+	    	return results;
+    	} catch (JSONException e) {
+    		throw new ServiceException("Bad JSON: " + sb.toString(), e);
+    	}
     }
     
     private String checkLineForErrors(String line) {
