@@ -329,7 +329,10 @@ public class FeaturesAction extends InterMineAction
                 throw new RuntimeException("unknown export format: " + format);
             }
 
-            TableExportForm exportForm = null;
+            TableExportForm exportForm = new TableExportForm();
+            // Ref to StandardHttpExporter
+            exportForm.setIncludeHeaders(true);
+
             if ("gff3".equals(format)) {
                 exportForm = new GFF3ExportForm();
                 exportForm.setDoGzip(doGzip);
