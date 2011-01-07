@@ -19,7 +19,6 @@ import org.intermine.webservice.client.core.RequestImpl;
 import org.intermine.webservice.client.core.Service;
 import org.intermine.webservice.client.core.TabTableResult;
 import org.intermine.webservice.client.core.Request.RequestType;
-import org.intermine.webservice.client.services.QueryService.QueryRequest;
 import org.intermine.webservice.client.template.TemplateParameter;
 import org.intermine.webservice.client.util.HttpConnection;
 import org.json.JSONException;
@@ -63,15 +62,6 @@ public class TemplateService extends Service
          */
         public TemplateRequest(RequestType type, String serviceUrl, ContentType contentType) {
             super(type, serviceUrl, contentType);
-        }
-
-        /**
-         * Sets the maximum number of rows returned.
-         *
-         * @param maxCount an integer number of rows, where outer joins count as multiple rows
-         */
-        public void setMaxCount(int maxCount) {
-            setParameter("size", maxCount + "");
         }
 
         /**
@@ -129,6 +119,7 @@ public class TemplateService extends Service
     	TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(),
                 ContentType.TEXT_TAB);
         request.setMaxCount(maxCount);
+        request.setJSONFormat();
         request.setName(templateName);
         request.setTemplateParameters(parameters);
         return getJSONResponse(request).getObjects();	
