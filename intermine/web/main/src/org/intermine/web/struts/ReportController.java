@@ -54,8 +54,6 @@ public class ReportController extends InterMineAction
             if (isRequestedObjectValid(request)) {
                 ReportObjectFactory reportObjectFactory = SessionMethods.getReportObjects(session);
                 reportObject = reportObjectFactory.get(requestedObject);
-                // FIXME: do not set class descriptions from Controller
-                reportObject.setClassDescriptions(getClassDescriptions());
                 request.setAttribute("reportObject", reportObject);
 
                 request.setAttribute("requestedObject", requestedObject);
