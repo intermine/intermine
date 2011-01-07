@@ -295,6 +295,14 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return store(snp);
     }
 
+    /**
+     * Given an allele string read from the database determine the type of variation, e.g. snp,
+     * in-del, etc.  This is a re-implementation of code from the Ensembl perl API, see:
+     * http://www.ensembl.org/info/docs/Pdoc/ensembl-variation/
+     *     modules/Bio/EnsEMBL/Variation/Utils/Sequence.html#CODE4
+     * @param alleleStr the alleles to determine the type for
+     * @return a variation class or null if none can be determined
+     */
     protected String determineType(String alleleStr) {
         String type = null;
 
@@ -306,7 +314,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             } else if ("CNV".equals(alleleStr)) {
                 type = alleleStr.toLowerCase();
             } else if ("CNV_PROBE".equals(alleleStr)) {
-                type = alleleStr.toLowerCase();
+                type = "cnv probe";
             } else if ("HGMD_MUTATION".equals(alleleStr)) {
                 type = alleleStr.toLowerCase();
             } else {
@@ -319,23 +327,27 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                             || (StringUtils.containsOnly(alleles[1], "ACTGN")
                                     && "-".equals(alleles[0]))) {
                         type = "in-del";
-                    } else if (alleles[0].matches("/LARGE|INS|DEL/")
-                            || alleles[1].matches("/LARGE|INS|DEL/")) {
+                    } else if (alleles[0].matches("[LARGE|INS|DEL]+")
+                            || alleles[1].matches("[LARGE|INS|DEL]+")) {
                         type = "named";
-                    } else if (1 == 0) {
-                        // TODO substitution
-//                      elsif (($alleles[0] =~ tr/ACTG//) > 1 || ($alleles[1] =~ tr/ACTG//) > 1){
-//                      #AA/GC 2 alleles
-//                      $class = 'substitution'
-//                  }
-                    } else {
-                        LOG.warn("Failed to work out allele type for: " + alleleStr);
+                    } else if ((StringUtils.containsOnly(alleles[0], "ACGT")
+                            && alleles[0].length() > 1)
+                            || (StringUtils.containsOnly(alleles[1], "ACGT")
+                                    && alleles[1].length() > 1)) {
+                        // AA/GC 2 alleles
+                        type = "substitution";
                     }
+                } else if (alleles.length > 2) {
+
+                } else {
+                    LOG.warn("Failed to work out allele type for: " + alleleStr);
                 }
+
+
 //                elsif (@alleles > 2) {
 //
 //                    if ($alleles[0] =~ /\d+/) {
-//                        #(CA)14/15/16/17 > 2 alleles, all of them contain the number of repetitions of the allele
+//   #(CA)14/15/16/17 > 2 alleles, all of them contain the number of repetitions of the allele
 //                        $class = 'microsat'
 //                    }
 //
