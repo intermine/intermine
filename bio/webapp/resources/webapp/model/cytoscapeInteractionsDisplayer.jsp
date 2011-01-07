@@ -6,93 +6,96 @@
 
 <html:xhtml/>
 
-        <style type="text/css">
-            /* The Cytoscape Web container must have its dimensions set. */
-            html, body { height: 100%; width: 100%; padding: 0; margin: 0; }
-            /* use absolute value */
-            #cytoscapeweb { width: 315px; height: 270px; }
+<style type="text/css">
+    /* The Cytoscape Web container must have its dimensions set. */
+    html, body { height: 100%; width: 100%; padding: 0; margin: 0; }
+    /* use absolute value */
+    #cytoWebContent { width: 315px; height: 270px; }
 
-            SPAN.physical
-            {
-               BACKGROUND-COLOR: #FF0000;
-               COLOR: #FF0000;
-               FONT-SIZE: 2px;
-               padding-top:0px;
-               padding-bottom:0px;
-               padding-right:18px;
-               padding-left:18px;
-               position:relative;
-               top:-4px;
-            }
-            .genetic
-            {
-               BACKGROUND-COLOR: #0000FF;
-               COLOR: #0000FF;
-               FONT-SIZE: 2px;
-               padding-top:0px;
-               padding-bottom:0px;
-               padding-right:18px;
-               padding-left:18px;
-               position:relative;
-               top:-4px;
-            }
-        </style>
+    SPAN.physical
+    {
+       BACKGROUND-COLOR: #FF0000;
+       COLOR: #FF0000;
+       FONT-SIZE: 2px;
+       padding-top:0px;
+       padding-bottom:0px;
+       padding-right:18px;
+       padding-left:18px;
+       position:relative;
+       top:-4px;
+    }
+    .genetic
+    {
+       BACKGROUND-COLOR: #6666FF;
+       COLOR: #6666FF;
+       FONT-SIZE: 2px;
+       padding-top:0px;
+       padding-bottom:0px;
+       padding-right:18px;
+       padding-left:18px;
+       position:relative;
+       top:-4px;
+    }
+</style>
 
-        <!-- Flash embedding utility (needed to embed Cytoscape Web) -->
-        <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/AC_OETags.min.js'/>"></script>
+<h3 class="interactions">Interaction Network</h3>
+<div id="caption" style="font-size:12px; font-style:italic">
+<!-- jQuery will add stuff here -->
+</div>
+<div id="cytoWebContent" width="*">Please wait while the network data loads</div>
+<div id="menu">
+<!-- jQuery will add stuff here -->
+</div>
+<div id="legends">
+<!-- jQuery will add stuff here -->
+</div>
+<p>
+  <a style="color: rgb(136, 136, 136); text-decoration: none; background-color: white;" onmouseout="this.style.backgroundColor='white';" onmouseover="this.style.backgroundColor='#f1f1d1';" title="Cytoscape Web" target="_blank" href="http://cytoscapeweb.cytoscape.org">
+    Powered by <img border="0/" style="vertical-align: middle;" src="model/images/cytoscape_logo_small.png" height="15" width="15"> Cytoscape Web
+  </a>
+</p>
 
-        <!-- JSON support for IE (needed to use JS API) -->
-        <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/json2.min.js'/>"></script>
+<!-- Flash embedding utility (needed to embed Cytoscape Web) -->
+<script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/AC_OETags.min.js'/>"></script>
 
-        <!-- Cytoscape Web JS API (needed to reference org.cytoscapeweb.Visualization) -->
-        <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/cytoscapeweb.min.js'/>"></script>
+<!-- JSON support for IE (needed to use JS API) -->
+<script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/json2.min.js'/>"></script>
 
-        <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/interactions.js'/>"></script>
+<!-- Cytoscape Web JS API (needed to reference org.cytoscapeweb.Visualization) -->
+<script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/cytoscapeweb.min.js'/>"></script>
 
-        <script type="text/javascript">
+<!-- qTip -->
+<script type="text/javascript" src="<html:rewrite page='/model/jquery_qtip/jquery.qtip-1.0.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/model/jquery-ui/jquery-ui-1.8.7.custom.min.js'/>"></script>
+<script type="text/javascript">
+    // TODO separate showNetwork() method from interactions.js
+</script>
+<script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/interactions.js'/>"></script>
+<script type="text/javascript">
 
-        // network data could alternatively be fetched via ajax (jQuery)
-        var networkdata = "${networkdata}";
-        var extNetworkData = "${extNetworkData}";
+    var networkdata = '${networkdata}';
+    var hubgene = '${hubGene}'; // could be a set of genes
 
-        var webapp_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
-        var webapp_path = "${WEB_PROPERTIES['webapp.path']}";
-        var project_title = "${WEB_PROPERTIES['project.title']}";
+    var webapp_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
+    var webapp_path = "${WEB_PROPERTIES['webapp.path']}";
+    var project_title = "${WEB_PROPERTIES['project.title']}";
 
-        if (networkdata == "") {
-            jQuery(document).ready(function() {
-              jQuery('#cytoscapeweb').html("interaction data unavailable")
-                                .css('font-style','italic')
-                                .height(50)
-                                .width(150);
-            });
-        }
-        else {
-            // Parse extNetworkData
-            var extNetworkDataArray = extNetworkData.split(/\r\n|\r|\n/);
-            extNetworkDataArray.pop();
+    if (networkdata == "" || networkdata == null) {
+      jQuery('#cytoWebContent').html("interaction data unavailable")
+                             .css('font-style','italic')
+                             .height(50)
+                             .width(150);
+    }
+    else if (hubgene == "" || hubgene == null) {
+      jQuery('#cytoWebContent').html("internal error")
+                             .css('font-weight','bold')
+                             .css('color','red')
+                             .height(50)
+                             .width(150);
+    }
+    else {
+        showNetwork(networkdata, hubgene, webapp_baseurl, webapp_path, project_title);
+    }
+</script>
 
-            jQuery(document).ready(function() {
-                showInteractions(networkdata, webapp_baseurl, webapp_path, project_title, extNetworkDataArray);
-            });
-        }
-        </script>
-
-        <h3 class="interactions">Interaction Network</h3>
-        <div id="caption" style="font-size:12px; font-style:italic">
-        <!-- jQuery will add stuff here -->
-        </div>
-        <div id="cytoscapeweb" width="*">Please wait while the network data loads</div>
-        <div id="menu">
-        <!-- jQuery will add stuff here -->
-        </div>
-        <div id="legends">
-        <!-- jQuery will add stuff here -->
-        </div>
-        <p>
-            <a href="http://cytoscapeweb.cytoscape.org" rel="external" target="_blank">Cytoscape Web</a> |
-            <a href="http://tdccbr.med.utoronto.ca" rel="external" target="_blank">Donnelly CCBR</a>
-            , &copy; 2009-2010 Cytoscape Consortium
-        </p>
-
-    <!-- /cytoscapeInteractionsDisplayer.jsp -->
+<!-- /cytoscapeInteractionsDisplayer.jsp -->
