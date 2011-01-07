@@ -19,7 +19,7 @@
                 <p><c:out value="${WEB_PROPERTIES['begin.searchBox.description']}" escapeXml="false" /></p>
 
                 <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
-                    <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="${WEB_PROPERTIES['quickSearch.identifiers']}"></div>
+                    <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="${WEB_PROPERTIES['begin.searchBox.example']}"></div>
                     <div class="bottom">
                         <center>
                             <input id="mainSearchButton" name="searchSubmit" class="button dark" type="submit" value="search"/>
