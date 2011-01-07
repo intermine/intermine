@@ -1,7 +1,7 @@
 package org.metabolicmine.web.struts;
 
 /*
- * Copyright (C) 2002-2010 metabolicMine
+ * Copyright (C) 2002-2011 metabolicMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
