@@ -739,7 +739,7 @@ public class JSONResultsIteratorTest extends TestCase {
         	throw e; 
         } catch (JSONFormattingException e) {
         	// Test that this is what we thought would happen.
-	    	assertEquals("Head of the object is missing, {objectId=5, class=Employee}, Manager.department.employees.name", e.getMessage());
+	    	assertEquals("This node is not properly initialised (it doesn't have an objectId) - is the view in the right order?", e.getMessage());
 	    } catch (Throwable e){
 	    	// All other exceptions are failures
 	    	fail("Got unexpected error: " + e); 
@@ -1080,7 +1080,7 @@ public class JSONResultsIteratorTest extends TestCase {
         	throw e; 
         } catch (JSONFormattingException e) {
         	// Test that this is what we thought would happen.
-	    	assertEquals("Head of the object is missing, {objectId=5, class=Employee}, Department.employees.name", e.getMessage());
+	    	assertEquals("This result element ( Sales 11 Department) does not belong on this map ({objectId=5, class=Employee, employees=[{objectId=5, name=Tim Canterbury, class=Employee}]}) - classes don't match (Employee != Department)", e.getMessage());
 	    } catch (Throwable e){
 	    	// All other exceptions are failures
 	    	fail("Got unexpected error: " + e); 
