@@ -19,7 +19,7 @@
                 <p><c:out value="${WEB_PROPERTIES['begin.searchBox.description']}" escapeXml="false" /></p>
 
                 <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
-                    <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="e.g. zen, Q9V4E1"></div>
+                    <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="${WEB_PROPERTIES['quickSearch.identifiers']}"></div>
                     <div class="bottom">
                         <center>
                             <input id="mainSearchButton" name="searchSubmit" class="button dark" type="submit" value="search"/>
@@ -43,7 +43,7 @@
                       </c:forEach>
                     </select>
                     <div class="textarea">
-                      <textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['begin.searchBox.example']}" /></textarea>
+                      <textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
                     </div>
                     <div class="bottom">
                         <center>
