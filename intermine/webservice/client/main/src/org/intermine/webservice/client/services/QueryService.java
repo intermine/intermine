@@ -43,7 +43,7 @@ public class QueryService extends Service
 {
 
     private static final String SERVICE_RELATIVE_URL = "query/results";
-	private static final String FORMAT_PARAMETER_JSON_OBJ = "jsonobjects";
+
 
     /**
      * Use {@link ServiceFactory} instead for creating this service .
@@ -70,15 +70,6 @@ public class QueryService extends Service
          */
         public QueryRequest(RequestType type, String serviceUrl, ContentType contentType) {
             super(type, serviceUrl, contentType);
-        }
-
-        /**
-         * Sets the maximum number of rows returned.
-         *
-         * @param maxCount an integer number of rows, where outer joins count as multiple rows
-         */
-        public void setMaxCount(int maxCount) {
-            setParameter("size", maxCount + "");
         }
 
         /**
@@ -155,7 +146,7 @@ public class QueryService extends Service
     public List<JSONObject> getJSONResults(String queryXml) throws JSONException {
     	QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), ContentType.APPLICATION_JSON);
         request.setQueryXml(queryXml);
-        request.setParameter("format",  FORMAT_PARAMETER_JSON_OBJ);
+        request.setJSONFormat();
         JSONResult response = getJSONResponse(request);
         return response.getObjects();	
     }
