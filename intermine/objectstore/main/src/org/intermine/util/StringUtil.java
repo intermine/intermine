@@ -594,6 +594,61 @@ public final class StringUtil
     }
 
     /**
+     * This method will convert a string collection to a string in which the collection elements are
+     * linked by the connector.
+     *
+     * @param c the collection, such as Set or List; if c is null, return an empty string; if c
+     *        size equals 1, return the only string in the collection; if c contains null, return
+     *        empty string
+     * @param connector such as a comma; if it is null, a while space will be used as default
+     * @return the string in which the collection elements are linked by the connector
+     */
+    public static String collectionToString(Collection<String> c, String connector) {
+        StringBuffer sb = new StringBuffer("");
+
+        if (connector == null) {
+            connector = " ";
+        }
+
+        if (c == null || c.size() == 0) {
+            return "";
+        }
+
+        if (c.contains(null)) {
+            return "";
+        }
+        if (c.size() == 1) {
+            return c.iterator().next();
+        }
+
+        for (String s : c) {
+            sb.append(s).append(connector);
+        }
+
+        return sb.deleteCharAt(sb.lastIndexOf(connector)).toString();
+    }
+
+    /**
+     * This method will convert a string array to a string in which the array elements are
+     * linked by the connector. It converts the string array to a list and calls collectionToString
+     * method.
+     *
+     * @param a the string array; if a is null, return empty string
+     * @param connector such as a comma
+     * @return the string in which the array elements are linked by the connector
+     */
+    public static String arrayToString(String[] a, String connector) {
+
+        if (a == null || a.length == 0) {
+            return "";
+        }
+
+        List<String> list = new ArrayList<String>(Arrays.asList(a));
+
+        return collectionToString(list, connector);
+    }
+
+    /**
      * Class for returning multiple values from the wrapLines method.
      *
      * @author Matthew Wakeling
