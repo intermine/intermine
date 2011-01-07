@@ -26,6 +26,7 @@ import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.model.testmodel.Types;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.dummy.DummyResults;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.objectstore.query.Query;
@@ -1080,7 +1081,12 @@ public class JSONResultsIteratorTest extends TestCase {
         	throw e; 
         } catch (JSONFormattingException e) {
         	// Test that this is what we thought would happen.
-	    	assertEquals("This result element ( Sales 11 Department) does not belong on this map ({objectId=5, class=Employee, employees=[{objectId=5, name=Tim Canterbury, class=Employee}]}) - classes don't match (Employee != Department)", e.getMessage());
+	    	assertEquals(
+    			"This result element ( Sales 11 Department) " +
+    			"does not belong on this map " +
+    			"({objectId=5, class=Employee, employees=[{objectId=5, name=Tim Canterbury, class=Employee}]}) " +
+    			"- classes don't match (Department ! isa Employee)", 
+    			e.getMessage());
 	    } catch (Throwable e){
 	    	// All other exceptions are failures
 	    	fail("Got unexpected error: " + e); 
@@ -1740,6 +1746,49 @@ public class JSONResultsIteratorTest extends TestCase {
 		
 	}
 	
+	public void testAIsaB() throws ObjectStoreException {
+		
+		ResultsRow row = new ResultsRow();
+		row.add(david);
+		os.addRow(row);
+		
+		PathQuery pq = new PathQuery(model);
+        pq.addViews("Manager.name");
+		Map pathToQueryNode = new HashMap();
+		
+        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
+        List resultList = os.execute(q, 0, 1, true, true, new HashMap());
+        Results results = new DummyResults(q, resultList);
+        
+        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+                
+        JSONResultsIterator jsonIter = new JSONResultsIterator(iter);
+        
+		assertTrue(jsonIter.aIsaB("Manager", "Employee"));
+		assertTrue(! jsonIter.aIsaB("Employee", "Manager"));
+		assertTrue(! jsonIter.aIsaB("Manager", "Department"));
+		assertTrue(jsonIter.aIsaB(null, null));
+		assertTrue(jsonIter.aIsaB("Manager", "Manager"));
+	    try {
+			jsonIter.aIsaB("Manager", "Fool");
+			fail("No exception was thrown, although I tried very hard indeed to cause one"); 
+        } catch (IllegalArgumentException e) {
+        	// Test that this is what we thought would happen.
+	    	assertEquals(
+	    		"These names are not valid classes: a=Manager,b=Fool",
+    			e.getMessage());
+	    }
+        try {
+			jsonIter.aDescendsFromB("Fool", "Manager");
+			fail("No exception was thrown, although I tried very hard indeed to cause one"); 
+        } catch (JSONFormattingException e) {
+        	// Test that this is what we thought would happen.
+	    	assertEquals(
+	    		"Problem getting supers for Fool",
+    			e.getMessage());
+	    }
+	}
+	
 	public void testThosePlacesOtherTestsCannotReach() throws Exception {
 		// In normal circumstances these exceptions will never be thrown.
 		// These tests are just to check that they will be
@@ -1791,9 +1840,6 @@ public class JSONResultsIteratorTest extends TestCase {
 	    			"does not belong on this map ({class=Manager, objectId=1000}) - " +
 	    			"objectIds don't match (1000 != 3)", 
 	    			e.getMessage());
-	    } catch (Throwable e){
-	    	// All other exceptions are failures
-	    	fail("Got unexpected error: " + e); 
 	    }
 	    
 	    jsonMap.clear();
@@ -1810,9 +1856,6 @@ public class JSONResultsIteratorTest extends TestCase {
 	    		"does not match its column because: " +
 	    		"classes not compatible (Department is not a superclass of Manager)",
 	    		e.getMessage());
-	    } catch (Throwable e){
-	    	// All other exceptions are failures
-	    	fail("Got unexpected error: " + e); 
 	    }
 	    
 	    jsonMap.clear();
@@ -1823,18 +1866,30 @@ public class JSONResultsIteratorTest extends TestCase {
 		} catch (AssertionFailedError e) {
         	// rethrow the fail from within the try
         	throw e; 
+        } catch (IllegalArgumentException e) {
+        	// Test that this is what we thought would happen.
+	    	assertEquals(
+	    			"These names are not valid classes: a=Manager,b=Fool",
+	    			e.getMessage());
+	    } 
+	    
+	    jsonMap.clear();
+	    jsonMap.put("class", "Department");
+		try {
+			jsonIter.setOrCheckClassAndId(re, p, jsonMap);
+			fail("No exception was thrown, although I tried very hard indeed to cause one");
+		} catch (AssertionFailedError e) {
+        	// rethrow the fail from within the try
+        	throw e; 
         } catch (JSONFormattingException e) {
         	// Test that this is what we thought would happen.
 	    	assertEquals(
 	    			"This result element ( David Brent 3 Manager) " +
-	    			"does not belong on this map ({class=Fool}) - " +
-	    			"classes don't match (Fool != Manager)", 
+	    			"does not belong on this map ({class=Department}) " +
+	    			"- classes don't match (Manager ! isa Department)",
 	    			e.getMessage());
-	    } catch (Throwable e){
-	    	// All other exceptions are failures
-	    	fail("Got unexpected error: " + e); 
-	    }
-	    
+	    } 
+        
 	    jsonMap.clear();
 	    jsonMap.put("name", null);
 	    try {
@@ -1849,11 +1904,8 @@ public class JSONResultsIteratorTest extends TestCase {
 	    			"Trying to set key name as David Brent in {class=Manager, name=null, objectId=3} " +
 	    			"but it already has the value null", 
 	    			e.getMessage());
-	    } catch (Throwable e){
-	    	// All other exceptions are failures
-	    	fail("Got unexpected error: " + e); 
 	    }
-	    
+        
 	    jsonMap.clear();
 	    jsonMap.put("name", "Neil");
 	    try {
@@ -1868,9 +1920,6 @@ public class JSONResultsIteratorTest extends TestCase {
 	    			"Trying to set key name as David Brent in {class=Manager, name=Neil, objectId=3} " +
 	    			"but it already has the value Neil", 
 	    			e.getMessage());
-	    } catch (Throwable e){
-	    	// All other exceptions are failures
-	    	fail("Got unexpected error: " + e); 
 	    }
 	    
 	    jsonIter.currentArray = null;
@@ -1885,11 +1934,8 @@ public class JSONResultsIteratorTest extends TestCase {
 	    	assertEquals(
 	    			"Nowhere to put this field", 
 	    			e.getMessage());
-	    } catch (Throwable e){
-	    	// All other exceptions are failures
-	    	fail("Got unexpected error: " + e); 
 	    }
-	    
+        
 	    jsonIter.currentArray = null;
 	    try {
 			jsonIter.setCurrentMapFromCurrentArray();
@@ -1900,11 +1946,8 @@ public class JSONResultsIteratorTest extends TestCase {
         } catch (JSONFormattingException e) {
         	// Test that this is what we thought would happen.
 	    	assertEquals(
-	    			"Nowhere to put this reference - the current array is null", 
-	    			e.getMessage());
-	    } catch (Throwable e){
-	    	// All other exceptions are failures
-	    	fail("Got unexpected error: " + e); 
+    			"Nowhere to put this reference - the current array is null", 
+    			e.getMessage());
 	    }
 	    
 	    jsonMap.put("department", "Clowning About");
