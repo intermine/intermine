@@ -6,6 +6,7 @@
         <attribute name="hostOrganism" type="java.lang.String" />
         <reference name="publication" referenced-type="Publication"/>
         <collection name="interactions" referenced-type="Interaction" reverse-reference="experiment"/>
+        <collection name="interactionDetectionMethods" referenced-type="InteractionTerm"/>
     </class>
     <class name="Interaction" is-interface="true">
       <attribute name="role" type="java.lang.String"/>
