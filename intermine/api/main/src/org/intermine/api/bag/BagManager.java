@@ -206,9 +206,7 @@ public class BagManager
     public Collection<InterMineBag> getUserOrGlobalBagsContainingId(Profile profile, Integer id) {
         HashSet<InterMineBag> bagsContainingId = new HashSet<InterMineBag>();
         bagsContainingId.addAll(getGlobalBagsContainingId(id));
-        // System.out.println("superuser:" + bagsContainingId.size());
         bagsContainingId.addAll(getUserBagsContainingId(profile, id));
-        // System.out.println("user:" + bagsContainingId.size());
         return bagsContainingId;
     }
 
@@ -242,7 +240,7 @@ public class BagManager
         Map<Integer, InterMineBag> osBagIdToInterMineBag = new HashMap<Integer, InterMineBag>();
 
         for (InterMineBag imBag : imBags) {
-            osBagIdToInterMineBag.put(imBag.getOsb().getBagId(), imBag);
+            osBagIdToInterMineBag.put(new Integer(imBag.getOsb().getBagId()), imBag);
         }
         return osBagIdToInterMineBag;
     }
