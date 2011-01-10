@@ -14,4 +14,10 @@
     <typedef
         name="write-userprofile-xml"
         classname="org.intermine.web.task.ProfileWriteTask"/>
+        <typedef
+        name="read-templatetrack-xml"
+        classname="org.intermine.web.task.TemplateTrackReadTask"/>
+    <typedef
+        name="write-templatetrack-xml"
+        classname="org.intermine.web.task.TemplateTrackWriteTask"/>
 </antlib>
