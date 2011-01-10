@@ -109,7 +109,12 @@ public class HtmlHeadController extends TilesAction
         /* object */
         } else if ("objectDetails".equals(pageName) && objectId != null) {
 
-            Integer id = new Integer(Integer.parseInt(objectId));
+            Integer id = null;
+            try {
+                id = new Integer(Integer.parseInt(objectId));
+            } catch (NumberFormatException e) {
+                return null;
+            }
             InterMineObject object = os.getObjectById(id);
             if (object == null) {
                 return null;

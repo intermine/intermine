@@ -73,7 +73,12 @@ public class ObjectDetailsController extends InterMineAction
 
         String idString = request.getParameter("id");
 
-        Integer id = new Integer(Integer.parseInt(idString));
+        Integer id = null;
+        try {
+            id = new Integer(Integer.parseInt(idString));
+        } catch (NumberFormatException e) {
+            return null;
+        }
         InterMineObject object = os.getObjectById(id);
         if (object == null) {
             return null;
