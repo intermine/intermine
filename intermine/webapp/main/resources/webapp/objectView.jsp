@@ -15,11 +15,11 @@
 
 <c:set var="leafClds" value="${LEAF_DESCRIPTORS_MAP[object]}"/>
 
-<c:set var="detailsLink" value="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}" scope="request"/>
+<c:set var="detailsLink" value="/report?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}" scope="request"/>
 
   <c:choose>
     <c:when test="${empty leafClds}">
-      <fmt:message key="objectDetails.nullField" var="nullFieldText"/>
+      <fmt:message key="report.nullField" var="nullFieldText"/>
       <c:set var="maxLength" value="70"/>
       <c:choose>
         <c:when test="${empty resultElement}">

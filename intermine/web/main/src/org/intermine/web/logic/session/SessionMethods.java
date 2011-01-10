@@ -61,6 +61,7 @@ import org.intermine.web.logic.query.QueryMonitor;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.struts.LoadQueryAction;
 import org.intermine.web.struts.TemplateAction;
@@ -439,6 +440,25 @@ public final class SessionMethods
         }
 
         return displayObjects;
+    }
+
+    /**
+     * Return the reportObjects Map from the session or create and return it if it doesn't exist.
+     *
+     * @param session the HttpSession to get the reportObjects Map from
+     * @return the (possibly new) reportObjects Map
+     */
+    public static ReportObjectFactory getReportObjects(HttpSession session) {
+        ReportObjectFactory reportObjects =
+            (ReportObjectFactory) session.getAttribute(Constants.REPORT_OBJECT_CACHE);
+
+        // Build map from object id to ReportObject
+        if (reportObjects == null) {
+            reportObjects = new ReportObjectFactory(session);
+            session.setAttribute(Constants.REPORT_OBJECT_CACHE, reportObjects);
+        }
+
+        return reportObjects;
     }
 
     /**

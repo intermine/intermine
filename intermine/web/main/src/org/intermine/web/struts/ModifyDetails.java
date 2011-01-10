@@ -141,7 +141,7 @@ public class ModifyDetails extends DispatchAction
             object.setVerbosity(placement + "_" + fieldName, true);
         }
 
-        return forwardToObjectDetails(mapping, request.getParameter("id"), trail);
+        return forwardToReport(mapping, request.getParameter("id"), trail);
     }
 
     /**
@@ -165,7 +165,7 @@ public class ModifyDetails extends DispatchAction
 
         object.setVerbosity(placement + "_" + fieldName, false);
 
-        return forwardToObjectDetails(mapping, request.getParameter("id"), trail);
+        return forwardToReport(mapping, request.getParameter("id"), trail);
     }
 
     /**
@@ -196,7 +196,7 @@ public class ModifyDetails extends DispatchAction
         request.setAttribute("fieldName", fieldName);
 
         if (object.isVerbose(key)) {
-            return mapping.findForward("objectDetailsCollectionTable");
+            return mapping.findForward("reportCollectionTable");
         }
         return null;
     }
@@ -254,7 +254,7 @@ public class ModifyDetails extends DispatchAction
     /**
      * Construct an ActionForward to the object details page.
      */
-    private ActionForward forwardToObjectDetails(ActionMapping mapping, String id, String trail) {
+    private ActionForward forwardToReport(ActionMapping mapping, String id, String trail) {
         ForwardParameters forward = new ForwardParameters(mapping.findForward("objectDetails"));
         forward.addParameter("id", id);
         forward.addParameter("trail", trail);

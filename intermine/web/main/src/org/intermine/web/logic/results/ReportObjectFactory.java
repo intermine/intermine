@@ -70,9 +70,7 @@ public class ReportObjectFactory extends CacheMap<InterMineObject, ReportObject>
                 Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
                 ServletContext servletContext = session.getServletContext();
                 WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
-                Properties webProperties = SessionMethods.getWebProperties(servletContext);
-                reportObject = new ReportObject(imObj, model, webConfig, webProperties,
-                        classKeys);
+                reportObject = new ReportObject(imObj, model, webConfig, classKeys);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to make a reportObject", e);
             }

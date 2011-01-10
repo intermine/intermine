@@ -39,7 +39,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 </c:choose>
 
 <c:if test="${pageName != 'begin'}">
-	<c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'objectDetails'}">
+	<c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'report'}">
 	  <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
 	</c:if>
 <!--
@@ -48,7 +48,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 	  <script type="text/javascript" src="<html:rewrite page='/js/excanvas.js'/>"></script>
 	</c:if>
 -->
-	<c:if test="${pageName == 'results' || pageName == 'query' || pageName == 'templates' || pageName == 'bagDetails' || pageName == 'objectDetails' || pageName == 'bag' || pageName == 'mymine'}">
+	<c:if test="${pageName == 'results' || pageName == 'query' || pageName == 'templates' || pageName == 'bagDetails' || pageName == 'report' || pageName == 'bag' || pageName == 'mymine'}">
 	  <script type="text/javascript" src="<html:rewrite page='/js/jquery.boxy.js'/>"></script>
 	  <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/boxy.css'/>"/>
 	  <script type="text/javascript" src="<html:rewrite page='/js/jquery.dimensions.min.js'/>"></script>
@@ -57,19 +57,19 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 	  	<script type="text/javascript" src="<html:rewrite page='/js/textarea-resize.js'/>"></script>
 	  </c:if>
 	</c:if>
-	
+
 	<c:if test="${pageName == 'query' || pageName == 'exportOptions'}">
 	  <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/jquery-ui-1.7.2.custom.css'/>"/>
 	  <script type="text/javascript" src="<html:rewrite page='/js/jquery-ui-1.7.2.custom.min.js'/>"></script>
 	</c:if>
-	
+
 	<script type="text/javascript">
 	  jQuery.noConflict();
 	</script>
-	
+
 	<%-- this has to live after jQuery.  do not move --%>
 	<script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
-</c:if>	
+</c:if>
 	<script type="text/javascript" src="<html:rewrite page='/dwr/interface/AjaxServices.js'/>"></script>
 	<script type="text/javascript" src="<html:rewrite page='/dwr/engine.js'/>"></script>
 	<script type="text/javascript" src="<html:rewrite page='/dwr/util.js'/>"></script>
