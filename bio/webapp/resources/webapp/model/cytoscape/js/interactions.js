@@ -1,6 +1,6 @@
 // Functions for network display
 
-function showNetwork(networkdata, hubgene, webapp_baseurl, webapp_path, project_title) {
+function showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_path, project_title) {
 
     jQuery('#menu').html("&nbsp;");
 
@@ -100,6 +100,11 @@ function showNetwork(networkdata, hubgene, webapp_baseurl, webapp_path, project_
         window.open(url);
     })
     */
+
+    .addContextMenuItem("Create a gene list...", "none", function(evt) {
+       url = webapp_baseurl+"/"+webapp_path+"/saveFromIdsToBag.do?type=Gene&ids="+geneOSIds+"&source=objectDetails&newBagName=interacting_gene_list";
+       window.open(url);
+    })
 
     .addListener("mouseover", "edges", function(evt) {
 

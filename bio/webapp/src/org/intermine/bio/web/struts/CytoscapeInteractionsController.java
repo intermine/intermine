@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,15 +27,22 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.web.logic.CytoscapeInteractionDBQuerier;
 import org.intermine.bio.web.logic.CytoscapeInteractionDataGenerator;
+import org.intermine.bio.web.logic.CytoscapeInteractionUtil;
 import org.intermine.bio.web.model.CytoscapeNetworkEdgeData;
 import org.intermine.bio.web.model.CytoscapeNetworkNodeData;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Protein;
+import org.intermine.util.StringUtil;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Set up interaction network data for the cytoscapeInteractionsDisplayer.jsp
@@ -53,6 +61,8 @@ public class CytoscapeInteractionsController extends TilesAction
     private Set<CytoscapeNetworkEdgeData> interactionEdgeSet =
         new HashSet<CytoscapeNetworkEdgeData>();
 
+    private Set<Integer> geneIdSet = new HashSet<Integer>(); // asset contains gene object store ids
+
     /**
      * {@inheritDoc}
      */
@@ -61,15 +71,25 @@ public class CytoscapeInteractionsController extends TilesAction
             ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        // Get InterMineAPI
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(); // Get HttpSession
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session); // Get InterMineAPI
+        Model model = im.getModel(); // Get Model
+        Profile profile = SessionMethods.getProfile(session); // Get Profile
+        PathQueryExecutor executor = im.getPathQueryExecutor(profile); // Get PathQueryExecutor
 
-        // Get object from request
+        Map<String, Set<String>> interactionInfoMap = CytoscapeInteractionUtil
+                .getInteractionInfo(model, executor);
+
+        if (interactionInfoMap == null) {
+            String dataNotIncludedMessage = "Interaction data is not included.";
+            request.setAttribute("dataNotIncludedMessage", dataNotIncludedMessage);
+            return null;
+        }
+
         InterMineObject object = (InterMineObject) request
-                .getAttribute("object");
+                .getAttribute("object"); // Get object from request
 
-        // Network data as a string in different formats
-        String theNetwork = new String();
+        String theNetwork = new String(); // Network data as a string in different formats
 
         CytoscapeInteractionDataGenerator dataGen = new CytoscapeInteractionDataGenerator();
 
@@ -88,9 +108,24 @@ public class CytoscapeInteractionsController extends TilesAction
 //            Set<CytoscapeNetworkNodeData> interactionNodeSubSet =
 //                new HashSet<CytoscapeNetworkNodeData>();
 
-            ExportResultsIterator rawIntData = queryInteractionRawDataFromDB(gene, session);
+            // Check if interaction data available for the organism
+            String orgName = gene.getOrganism().getName();
+            if (!interactionInfoMap.containsKey(orgName)) {
+                String orgWithNoDataMessage = "Interaction data is not availiable for "
+                        + orgName + " gene";
+                request.setAttribute("orgWithNoDataMessage", orgWithNoDataMessage);
+                return null;
+            }
+
+            ExportResultsIterator rawIntData = queryInteractionRawDataFromDB(gene, model, executor);
 
             if (rawIntData == null) {
+                String dataSourceStr = StringUtil.join(interactionInfoMap.get(orgName), ",");
+
+                String geneWithNoDatasourceMessage = "Interaction data is not availiable for "
+                        + gene.getSymbol() + " (" + gene.getPrimaryIdentifier()
+                        + ") from data sources: " + dataSourceStr;
+                request.setAttribute("geneWithNoDatasourceMessage", geneWithNoDatasourceMessage);
                 return null;
             }
 
@@ -106,9 +141,24 @@ public class CytoscapeInteractionsController extends TilesAction
         } else if (object instanceof Gene) {
             Gene gene = (Gene) object;
 
-            ExportResultsIterator rawIntData = queryInteractionRawDataFromDB(gene, session);
+            // Check if interaction data available for the organism
+            String orgName = gene.getOrganism().getName();
+            if (!interactionInfoMap.containsKey(orgName)) {
+                String orgWithNoDataMessage = "Interaction data is not availiable for "
+                        + orgName + " gene";
+                request.setAttribute("orgWithNoDataMessage", orgWithNoDataMessage);
+                return null;
+            }
+
+            ExportResultsIterator rawIntData = queryInteractionRawDataFromDB(gene, model, executor);
 
             if (rawIntData == null) {
+                String dataSourceStr = StringUtil.join(interactionInfoMap.get(orgName), ",");
+
+                String geneWithNoDatasourceMessage = "Interaction data is not availiable for "
+                        + gene.getSymbol() + " (" + gene.getPrimaryIdentifier()
+                        + ") from data sources: " + dataSourceStr;
+                request.setAttribute("geneWithNoDatasourceMessage", geneWithNoDatasourceMessage);
                 return null;
             }
 
@@ -119,6 +169,7 @@ public class CytoscapeInteractionsController extends TilesAction
 
         theNetwork = dataGen.createGeneNetworkInXGMML(interactionEdgeSet, interactionNodeSet);
 
+        request.setAttribute("geneOSIds", StringUtil.join(geneIdSet, ","));
         request.setAttribute("networkdata", theNetwork);
 
         return null;
@@ -128,10 +179,12 @@ public class CytoscapeInteractionsController extends TilesAction
      * Query the interactions among a set of genes.
      *
      * @param gene a gene pid
-     * @param session
+     * @param model the Model
+     * @param executor the PathQueryExecutor
      * @return query results
      */
-    private ExportResultsIterator queryInteractionRawDataFromDB(Gene gene, HttpSession session) {
+    private ExportResultsIterator queryInteractionRawDataFromDB(Gene gene,
+            Model model, PathQueryExecutor executor) {
 
         // A list of genes including the hub and its interacting genes
         Set<String> keySet = new HashSet<String>();
@@ -140,15 +193,16 @@ public class CytoscapeInteractionsController extends TilesAction
         // Get all the genes that interact with the hub gene
         CytoscapeInteractionDBQuerier dbQuerier = new CytoscapeInteractionDBQuerier();
         Set<String> interactingGeneSet = dbQuerier.findInteractingGenes(
-                gene.getPrimaryIdentifier(), session);
-        if (interactingGeneSet == null) {
+                gene.getPrimaryIdentifier(), model, executor);
+
+        if (interactingGeneSet.size() < 1) {
             return null;
         }
 
         keySet.addAll(interactingGeneSet);
 
         // Get all interactions between a set of genes
-        ExportResultsIterator results = dbQuerier.queryInteractions(keySet, session);
+        ExportResultsIterator results = dbQuerier.queryInteractions(keySet, model, executor);
         if (results == null) {
             return null;
         }
@@ -176,6 +230,11 @@ public class CytoscapeInteractionsController extends TilesAction
             String interactingGeneSymbol = (String) row.get(4).getField();
             String dataSourceName = (String) row.get(5).getField();
             String interactionShortName = (String) row.get(6).getField();
+            Integer geneOSId = (Integer) row.get(7).getField();
+            Integer interactingGeneOSId = (Integer) row.get(8).getField();
+
+            geneIdSet.add(geneOSId);
+            geneIdSet.add(interactingGeneOSId);
 
             CytoscapeNetworkNodeData aNode = new CytoscapeNetworkNodeData();
 

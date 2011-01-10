@@ -37,23 +37,30 @@
        top:-4px;
     }
 </style>
-
-<h3 class="interactions">Interaction Network</h3>
-<div id="caption" style="font-size:12px; font-style:italic">
-<!-- jQuery will add stuff here -->
+<div id="cyto_div">
+    <h3 class="interactions">Interaction Network</h3>
+    <div id="caption" style="font-size:12px; font-style:italic">
+    <!-- jQuery will add stuff here -->
+    </div>
+    <div id="cytoWebContent" width="*">Please wait while the network data loads</div>
+    <div id="menu">
+    <!-- jQuery will add stuff here -->
+    </div>
+    <div id="legends">
+    <!-- jQuery will add stuff here -->
+    </div>
+    <p>
+      <a style="color: rgb(136, 136, 136); text-decoration: none; background-color: white;" onmouseout="this.style.backgroundColor='white';" onmouseover="this.style.backgroundColor='#f1f1d1';" title="Cytoscape Web" target="_blank" href="http://cytoscapeweb.cytoscape.org">
+        Powered by <img border="0/" style="vertical-align: middle;" src="model/images/cytoscape_logo_small.png" height="15" width="15"> Cytoscape Web
+      </a>
+    </p>
 </div>
-<div id="cytoWebContent" width="*">Please wait while the network data loads</div>
-<div id="menu">
-<!-- jQuery will add stuff here -->
-</div>
-<div id="legends">
-<!-- jQuery will add stuff here -->
-</div>
-<p>
-  <a style="color: rgb(136, 136, 136); text-decoration: none; background-color: white;" onmouseout="this.style.backgroundColor='white';" onmouseover="this.style.backgroundColor='#f1f1d1';" title="Cytoscape Web" target="_blank" href="http://cytoscapeweb.cytoscape.org">
-    Powered by <img border="0/" style="vertical-align: middle;" src="model/images/cytoscape_logo_small.png" height="15" width="15"> Cytoscape Web
-  </a>
-</p>
+<form action="/${WEB_PROPERTIES['webapp.path']}/saveFromIdsToBag.do" id="saveFromIdsToBagForm" method="POST">
+  <input type="hidden" id="type" name="type" value="Gene"/>
+  <input type="hidden" id="geneOSIds" name="geneOSIds" value=""/>
+  <input type="hidden" name="source" value="objectDetails"/>
+  <input type="hidden" name="newBagName" value="interacting_gene_list"/>
+</form>
 
 <!-- Flash embedding utility (needed to embed Cytoscape Web) -->
 <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/AC_OETags.min.js'/>"></script>
@@ -75,18 +82,34 @@
 
     var networkdata = '${networkdata}';
     var hubgene = '${hubGene}'; // could be a set of genes
+    var geneOSIds = '${geneOSIds}'.split(","); // a string arrray
+
+    var dataNotIncludedMessage = '${dataNotIncludedMessage}'; // case: interaction data is not integrated
+    var orgWithNoDataMessage = '${orgWithNoDataMessage}'; // case: no interaction data for the whole species
+    var geneWithNoDatasourceMessage = '${geneWithNoDatasourceMessage}'; // case: no interaction data for the gene from the data sources
+
 
     var webapp_baseurl = "${WEB_PROPERTIES['webapp.baseurl']}";
     var webapp_path = "${WEB_PROPERTIES['webapp.path']}";
     var project_title = "${WEB_PROPERTIES['project.title']}";
 
-    if (networkdata == "" || networkdata == null) {
-      jQuery('#cytoWebContent').html("interaction data unavailable")
-                             .css('font-style','italic')
-                             .height(50)
-                             .width(150);
+    if (dataNotIncludedMessage != "") {
+        jQuery('#cyto_div').html(dataNotIncludedMessage)
+                           .css('font-style','italic');
     }
-    else if (hubgene == "" || hubgene == null) {
+    else if (orgWithNoDataMessage != "") {
+      jQuery('#cytoWebContent').html(orgWithNoDataMessage)
+                               .css('font-style','italic')
+                               .height(20)
+                               .width(600);
+    }
+    else if (geneWithNoDatasourceMessage != "") {
+        jQuery('#cytoWebContent').html(geneWithNoDatasourceMessage)
+                                 .css('font-style','italic')
+                                 .height(20)
+                                 .width(1200);
+    }
+    else if (hubgene == "") {
       jQuery('#cytoWebContent').html("internal error")
                              .css('font-weight','bold')
                              .css('color','red')
@@ -94,7 +117,7 @@
                              .width(150);
     }
     else {
-        showNetwork(networkdata, hubgene, webapp_baseurl, webapp_path, project_title);
+        showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_path, project_title);
     }
 </script>
 
