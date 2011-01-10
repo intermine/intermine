@@ -19,7 +19,7 @@
             <c:choose>
               <%-- primaryIdentifier & internalID --%>
               <c:when test="${columnStatus.count == 1}">
-                <td><a title="Go to Gene page" href="objectDetails.do?id=${column}">
+                <td><a title="Go to Gene page" href="report.do?id=${column}">
               </c:when>
               <%-- primaryIdentifier & internalID (cont...) --%>
               <c:when test="${columnStatus.count == 2}">

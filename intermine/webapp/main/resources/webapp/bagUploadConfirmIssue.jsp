@@ -39,7 +39,7 @@
       Identifier
     </td>
     <td width="10">
-      <fmt:message key="objectDetails.class"/>
+      <fmt:message key="report.class"/>
     </td>
     <c:forEach items="${columnNames}" var="name"
                varStatus="status">

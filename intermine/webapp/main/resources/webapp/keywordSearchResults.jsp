@@ -391,7 +391,7 @@ input.submit {
 							<td><c:out value="${searchResult.type}"></c:out></td>
 							<td>
 							<div class="objectKeys"><html:link
-								href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${searchResult.id}">
+								href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${searchResult.id}">
 								<c:if test="${empty searchResult.keyFields}">
 									<c:out value="${searchResult.type}"></c:out>
 								</c:if>
@@ -486,7 +486,7 @@ input.submit {
 								src="images/heat${searchResult.points}.gif"
 								alt="${searchResult.points}/10"
 								title="${searchResult.points}/10" /></td>
-							-->							
+							-->
 							<c:choose>
 								<c:when test="${searchResult.points mod 2 == 0}">
 									<c:forEach var="i" begin="1" end="${searchResult.points div 2}">
@@ -503,7 +503,7 @@ input.submit {
 									<c:forEach var="i" begin="1" end="${5-((searchResult.points div 2)+0.5)}">
 										<div class="bullet empty">&bull;</div>
 									</c:forEach>
-								</c:otherwise> 
+								</c:otherwise>
 							</c:choose>
 						</tr>
 					</c:forEach>
@@ -527,7 +527,7 @@ input.submit {
 	 	// e.g. values only available when JavaScript is on
 		jQuery('input#keywordSearch').toggleClass(inputToggleClass);
 	}
- 	
+
 	// register input elements with blur & focus
 	jQuery('input#keywordSearch').blur(function() {
 		if (jQuery(this).val() == '') {

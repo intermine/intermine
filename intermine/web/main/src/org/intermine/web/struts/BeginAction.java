@@ -149,22 +149,29 @@ public class BeginAction extends InterMineAction
                         String identifier;
 
                         // identifier, has to be present
-                        identifier = (String) props.get(i + ".id"); tab.put("identifier", identifier);
+                        identifier = (String) props.get(i + ".id");
+                        tab.put("identifier", identifier);
                         // (optional) description
-                        tab.put("description", props.containsKey(i + ".description") ? (String) props.get(i + ".description") : "");
+                        tab.put("description", props.containsKey(i + ".description")
+                                ? (String) props.get(i + ".description") : "");
                         // (optional) custom name, otherwise use identifier
-                        tab.put("name", props.containsKey(i + ".name") ? (String) props.get(i + ".name") : identifier);
+                        tab.put("name", props.containsKey(i + ".name")
+                                ? (String) props.get(i + ".name") : identifier);
 
                         // fetch the actual template queries
-                        templates = templateManager.getAspectTemplates(TagNames.IM_ASPECT_PREFIX + identifier, null);
+                        templates = templateManager.getAspectTemplates(
+                                TagNames.IM_ASPECT_PREFIX + identifier, null);
                         if (SessionMethods.getProfile(session).isLoggedIn()) {
-                            mostPopularTemplateNames = trackerDelegate.getMostPopularTemplateOrder(SessionMethods.getProfile(session), session.getId());
+                            mostPopularTemplateNames = trackerDelegate.getMostPopularTemplateOrder(
+                                    SessionMethods.getProfile(session), session.getId());
                         } else {
-                            mostPopularTemplateNames = trackerDelegate.getMostPopularTemplateOrder();
+                            mostPopularTemplateNames =
+                                trackerDelegate.getMostPopularTemplateOrder();
                         }
 
                         if (mostPopularTemplateNames != null) {
-                            Collections.sort(templates, new MostPopularTemplateComparator(mostPopularTemplateNames));
+                            Collections.sort(templates,
+                                    new MostPopularTemplateComparator(mostPopularTemplateNames));
                         }
 
                         if (templates.size() > MAX_TEMPLATES) {
@@ -186,7 +193,8 @@ public class BeginAction extends InterMineAction
         // preferred bags (Gucci)
         ArrayList<String> preferredBags = new ArrayList<String>();
         TagManager tagManager = im.getTagManager();
-        List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null, "class", im.getProfileManager().getSuperuser());
+        List<Tag> preferredBagTypeTags = tagManager.getTags(
+                "im:preferredBagType", null, "class", im.getProfileManager().getSuperuser());
         for (Tag tag : preferredBagTypeTags) {
             preferredBags.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));
         }

@@ -132,6 +132,11 @@ public interface Constants
     String DISPLAY_OBJECT_CACHE = "DISPLAY_OBJECT_CACHE";
 
     /**
+     * The session attribute that holds the ReportObjectCache object for the session.
+     */
+    String REPORT_OBJECT_CACHE = "REPORT_OBJECT_CACHE";
+
+    /**
      * Session attribute that holds cache of table identifiers to PagedTable objects.
      */
     String TABLE_MAP = "TABLE_MAP";
