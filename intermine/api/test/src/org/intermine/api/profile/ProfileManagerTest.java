@@ -14,7 +14,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,7 +50,6 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.StringUtil;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.ProfileManagerBinding;
 import org.intermine.web.bag.PkQueryIdUpgrader;
@@ -168,6 +166,28 @@ public class ProfileManagerTest extends StoreDataTestCase
 
 
     public void tearDown() throws Exception {
+        if (bobProfile != null) {
+            for (String name : bobProfile.getSavedQueries().keySet()) {
+               bobProfile.deleteQuery(name);
+            }
+            for (String name : bobProfile.getSavedTemplates().keySet()) {
+                bobProfile.deleteTemplate(name);
+            }
+            for (String name : bobProfile.getSavedBags().keySet()) {
+                bobProfile.deleteBag(name);
+            }
+        }
+        if (sallyProfile != null) {
+            for (String name : sallyProfile.getSavedQueries().keySet()) {
+                sallyProfile.deleteQuery(name);
+            }
+            for (String name : sallyProfile.getSavedTemplates().keySet()) {
+                sallyProfile.deleteTemplate(name);
+            }
+            for (String name : sallyProfile.getSavedBags().keySet()) {
+                sallyProfile.deleteBag(name);
+            }
+        }
         cleanUserProfile();
     }
 
@@ -225,7 +245,6 @@ public class ProfileManagerTest extends StoreDataTestCase
 
         tagManager.addTag("test-tag", "Department.company", "reference", "sally");
 
-
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("userprofiles");
@@ -267,7 +286,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(os));
 
         // only profiles from file, not from setUpUserprofiles()
-        assertEquals(3, pm.getProfileUserNames().size());
+        assertEquals(2, pm.getProfileUserNames().size());
 
         assertTrue(pm.getProfileUserNames().contains("bob"));
 
