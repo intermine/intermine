@@ -22,9 +22,12 @@
 <attribute name="identifier" value="GO:0001586"/>
 <collection name="dataSets"><reference ref_id="4_1"/></collection>
 </item>
-<item id="10_4" class="GOEvidence">
+<item id="10_6" class="GOEvidence">
 <reference name="code" ref_id="1_4"/>
 <collection name="publications"><reference ref_id="9_4"/></collection>
+</item>
+<item id="10_4" class="GOEvidence">
+<reference name="code" ref_id="1_1"/>
 </item>
 <item id="9_1" class="Publication">
 <attribute name="pubMedId" value="11282322"/>
@@ -35,9 +38,6 @@
 </item>
 <item id="1_1" class="GOEvidenceCode">
 <attribute name="code" value="NAS"/>
-</item>
-<item id="10_6" class="GOEvidence">
-<reference name="code" ref_id="1_1"/>
 </item>
 <item id="8_2" class="GOAnnotation">
 <reference name="ontologyTerm" ref_id="7_2"/>
