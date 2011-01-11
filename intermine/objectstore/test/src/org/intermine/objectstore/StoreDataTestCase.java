@@ -13,10 +13,8 @@ package org.intermine.objectstore;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;

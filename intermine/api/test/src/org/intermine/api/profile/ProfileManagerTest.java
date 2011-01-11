@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,6 +51,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.StringUtil;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.ProfileManagerBinding;
 import org.intermine.web.bag.PkQueryIdUpgrader;
@@ -88,15 +90,15 @@ public class ProfileManagerTest extends StoreDataTestCase
 
     public void testQueries() throws Throwable {
     }
-    
+
     public static void oneTimeSetUp() throws Exception {
         StoreDataTestCase.oneTimeSetUp();
     }
-    
+
     public static Test suite() {
         return buildSuite(ProfileManagerTest.class);
     }
-    
+
     private void setUpUserProfiles() throws Exception {
 
         PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
@@ -106,7 +108,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         // bob's details
         String bobName = "bob";
 
-        InterMineBag bag = new InterMineBag("bag1", "Department", "This is some description", 
+        InterMineBag bag = new InterMineBag("bag1", "Department", "This is some description",
                 new Date(), os, bobId, uosw);
 
         Department deptEx = new Department();
@@ -149,7 +151,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         fieldNames.add("name");
         CEO ceoB1 = (CEO) os.getObjectByExample(ceoEx, fieldNames);
 
-        InterMineBag objectBag = new InterMineBag("bag2", "Employee", "description", 
+        InterMineBag objectBag = new InterMineBag("bag2", "Employee", "description",
                 new Date(), os, sallyId, uosw);
         objectBag.addIdToBag(ceoB1.getId(), "CEO");
 
@@ -223,7 +225,7 @@ public class ProfileManagerTest extends StoreDataTestCase
 
         tagManager.addTag("test-tag", "Department.company", "reference", "sally");
 
-       
+
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("userprofiles");
@@ -233,7 +235,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
-       
+
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTest.xml");
         BufferedReader bis = new BufferedReader(new InputStreamReader(is));
@@ -256,7 +258,7 @@ public class ProfileManagerTest extends StoreDataTestCase
     private TagManager getTagManager() {
         return new TagManagerFactory(uosw).getTagManager();
     }
-    
+
     public void testXMLRead() throws Exception {
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
