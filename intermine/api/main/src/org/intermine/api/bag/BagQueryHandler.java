@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
@@ -33,36 +34,23 @@ public class BagQueryHandler extends DefaultHandler
 {
     private List<BagQuery> queryList;
     private List<BagQuery> preDefaultQueryList;
-
     private Map<String, List<BagQuery>> bagQueries = new HashMap<String, List<BagQuery>>();
-
     private Map<String, List<BagQuery>> preDefaultBagQueries
         = new HashMap<String, List<BagQuery>>();
-
     private Map<String, Map<String, String[]>> additionalConverters
         = new HashMap<String, Map<String, String[]>>();
-
     private String type, message, queryString;
-
     private Boolean matchesAreIssues;
-
     private Boolean runBeforeDefault;
-
+    private Boolean matchOnFirst = Boolean.TRUE;
     private Model model;
-
     private StringBuffer sb;
-
     private String pkg = null;
-
     private BagQueryConfig bagQueryConfig = new BagQueryConfig(bagQueries, preDefaultBagQueries,
                                                                additionalConverters);
-
     private String connectField;
-
     private String className;
-
     private String constrainField;
-
 
     /**
      * Create a new BagQueryHandler object.
@@ -110,6 +98,12 @@ public class BagQueryHandler extends DefaultHandler
             if (bagQueries.containsKey(type)) {
                 throw new SAXException("Duplicate query lists defined for type: " + type);
             }
+            String matchOnFirstStr = attrs.getValue("matchOnFirst");
+            if (StringUtils.isNotEmpty(matchOnFirstStr)) {
+                matchOnFirst = (matchOnFirstStr.equalsIgnoreCase("false")
+                        ? Boolean.FALSE : Boolean.TRUE);
+                bagQueryConfig.setMatchOnFirst(matchOnFirst);
+            }
         }
         if ("query".equals(qName)) {
             message = attrs.getValue("message");
@@ -148,7 +142,9 @@ public class BagQueryHandler extends DefaultHandler
      * {@inheritDoc}
      */
     @Override
-    public void characters(char[] ch, int start, int length) {
+    public void characters(char[] ch, int i, int l) {
+        int start = i;
+        int length = l;
         // DefaultHandler may call this method more than once for a single
         // attribute content -> hold text & create attribute in endElement
         while (length > 0) {
@@ -186,7 +182,7 @@ public class BagQueryHandler extends DefaultHandler
             if (queryString != null && message != null && matchesAreIssues != null) {
                 BagQuery bq = new BagQuery(bagQueryConfig, model, queryString, message, pkg,
                                            matchesAreIssues.booleanValue());
-                if (runBeforeDefault) {
+                if (runBeforeDefault.booleanValue()) {
                     preDefaultQueryList.add(bq);
                 } else {
                     queryList.add(bq);

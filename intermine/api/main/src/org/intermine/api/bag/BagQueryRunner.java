@@ -45,13 +45,9 @@ public class BagQueryRunner
 {
     private static final Logger LOG = Logger.getLogger(BagQueryRunner.class);
     private ObjectStore os;
-
     private Model model;
-
     private Map<String, List<FieldDescriptor>> classKeys;
-
     private BagQueryConfig bagQueryConfig;
-
     private TemplateManager templateManager;
 
     /**
@@ -155,8 +151,10 @@ public class BagQueryRunner
                                     }
                                     // obj is an Integer
                                     ids.add(id);
-                                    // remove any identifiers that are now resolved
-                                    unresolved.remove(lowerCaseInput.get(lowerField));
+                                    if (bagQueryConfig.getMatchOnFirst().booleanValue()) {
+                                        // remove any identifiers that are now resolved
+                                        unresolved.remove(lowerCaseInput.get(lowerField));
+                                    }
                                 }
                             }
                         }
@@ -298,7 +296,7 @@ public class BagQueryRunner
                     objsOfWrongType.put(input, localObjsOfWrongType);
                 }
             }
-            if (resolved) {
+            if (resolved && bagQueryConfig.getMatchOnFirst().booleanValue()) {
                 unresolved.remove(input);
             }
         }
