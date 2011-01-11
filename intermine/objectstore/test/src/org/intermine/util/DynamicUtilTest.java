@@ -18,7 +18,6 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.intermine.model.FastPathObject;
-import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Broke;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
@@ -190,7 +189,7 @@ public class DynamicUtilTest extends TestCase
 
     public void testGetSimpleClassName() throws Exception {
         FastPathObject obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Company", null);
-        assertEquals(Company.class.getName(), DynamicUtil.getSimpleClass(obj.getClass()));
+        assertEquals(Company.class.getName(), DynamicUtil.getSimpleClassName(obj.getClass()));
 
         Set<Class<?>> interfaces = new HashSet<Class<?>>();
         interfaces.add(Company.class);
@@ -205,59 +204,6 @@ public class DynamicUtilTest extends TestCase
         }
     }
 
-/*    public void testComposedClass() throws Exception {
-        StringBuffer b = new StringBuffer();
-        Class c = DynamicUtil.composeClass(Collections.singleton(Company.class));
-        Set alreadySeen = new HashSet();
-        while (c != null) {
-            Method methods[] = c.getDeclaredMethods();
-            for (int i = 0; i < methods.length; i++) {
-                Method m = methods[i];
-                if (! Modifier.isPrivate(methods[i].getModifiers())) {
-                    MethodDescriptor md = new MethodDescriptor(m.getName(), m.getParameterTypes());
-                    if (! alreadySeen.contains(md)) {
-                        b.append(m.toString()).append("\n");
-                        alreadySeen.add(md);
-                    }
-                }
-            }
-            c = c.getSuperclass();
-        }
-        throw new Exception(b.toString());
-    }
-
-    private static class MethodDescriptor
-    {
-        public String name;
-        public Class[] parameters;
-
-        public MethodDescriptor(String name, Class parameters[]) {
-            this.name = name;
-            this.parameters = parameters;
-        }
-
-        public boolean equals(Object o) {
-            if (o instanceof MethodDescriptor) {
-                if (name.equals(((MethodDescriptor) o).name)) {
-                    Class oparameters[] = ((MethodDescriptor) o).parameters;
-                    if (parameters.length == oparameters.length) {
-                        for (int i = 0; i < parameters.length; i++) {
-                            if (parameters[i] != oparameters[i]) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        public int hashCode() {
-            return name.hashCode();
-        }
-    }*/
-
     public void testClassHeirarchyBrokeCEOIsBroke() throws Exception {
         Class brokeCEO = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
         assertTrue(Broke.class.isAssignableFrom(brokeCEO));
@@ -267,36 +213,6 @@ public class DynamicUtilTest extends TestCase
         Class brokeCEO = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
         assertTrue(CEO.class.isAssignableFrom(brokeCEO));
     }
-
-    /* See ticket #469
-    public void testClassHeirarchyBrokeCEOIsBrokeManager() throws Exception {
-        Class brokeCEO = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
-        Class brokeManager = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, Manager.class})));
-        assertTrue(brokeManager.isAssignableFrom(brokeCEO));
-    }
-
-    public void testClassHeirarchyBrokeCEOIsBrokeDynamic() throws Exception {
-        Class brokeCEO = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
-        Class broke = DynamicUtil.composeClass(Collections.singleton(Broke.class));
-        assertTrue(broke.isAssignableFrom(brokeCEO));
-    }
-
-    public void testClassHeirarchyBrokeCEOIsBrokeHasSecretarysManager() throws Exception {
-        Class brokeCEO = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
-        Class brokeHasSecretarysManager = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, HasSecretarys.class, Manager.class})));
-        assertTrue(brokeHasSecretarysManager.isAssignableFrom(brokeCEO));
-    }
-
-    public void testClassHeirarchyBrokeCEOIsImportantPersonEmployable() throws Exception {
-        Class brokeCEO = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
-        Class importantPersonEmployable = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {ImportantPerson.class, Employable.class})));
-        assertTrue(importantPersonEmployable.isAssignableFrom(brokeCEO));
-    }
-
-    public void testClassHeirarchyContractorIsImportantPersonEmployable() throws Exception {
-        Class importantPersonEmployable = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {ImportantPerson.class, Employable.class})));
-        assertTrue(importantPersonEmployable.isAssignableFrom(Contractor.class));
-    }*/
 
     public void testGetNullPrimitives() throws Exception {
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
