@@ -26,6 +26,7 @@ public class BagQueryConfig
     private final Map<String, List<BagQuery>> bagQueries;
     private final Map<String, List<BagQuery>> preDefaultBagQueries;
     private Map<String, Map<String, String[]>> additionalConverters;
+    private Boolean matchOnFirst = Boolean.TRUE;
 
     /**
      * Create a new BagQueryConfig object.
@@ -129,5 +130,19 @@ public class BagQueryConfig
      */
     public Map<String, String[]> getAdditionalConverters(String type) {
         return additionalConverters.get(type);
+    }
+
+    /**
+     * @param matchOnFirst the matchOnFirst to set
+     */
+    public void setMatchOnFirst(Boolean matchOnFirst) {
+        this.matchOnFirst = matchOnFirst;
+    }
+
+    /**
+     * @return the matchOnFirst
+     */
+    public Boolean getMatchOnFirst() {
+        return matchOnFirst;
     }
 }
