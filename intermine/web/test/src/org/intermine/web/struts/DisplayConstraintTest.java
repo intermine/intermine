@@ -21,7 +21,6 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.config.ClassKeyHelper;
@@ -100,7 +99,6 @@ public class DisplayConstraintTest extends TestCase
 
     private void initializeDisplayConstraints() {
         Model model = os.getModel();
-        //BagManager bagManager = new BagManager(superUser, model);
 
         Properties classKeyProps = new Properties();
         try {
@@ -147,7 +145,7 @@ public class DisplayConstraintTest extends TestCase
                 new PathConstraintBag("Employee", ConstraintOp.IN, "MySecondEmployeeList");
             dcBag = dcf.get(pathConstraintBag, superUser, query);
             PathConstraint pathConstraintLookup =
-                new PathConstraintLookup("Employee", "Employee", "EmployeeA1");
+                new PathConstraintLookup("Employee", "Employee", "DepartmentA1");
             dcLookup = dcf.get(pathConstraintLookup, superUser, query);
             PathConstraint pathConstraintSubclass =
                 new PathConstraintSubclass("Department.employees", "Manager");
@@ -340,7 +338,7 @@ public class DisplayConstraintTest extends TestCase
      */
     public void testGetSelectedExtraValue() {
         assertNull(dcAttribute.getSelectedExtraValue());
-        assertEquals("EmployeeA1", dcLookup.getSelectedExtraValue());
+        assertEquals("DepartmentA1", dcLookup.getSelectedExtraValue());
         assertNull(dcNullPathConstraint.getSelectedExtraValue());
     }
 
