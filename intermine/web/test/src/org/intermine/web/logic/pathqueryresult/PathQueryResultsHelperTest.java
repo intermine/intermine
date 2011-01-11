@@ -32,12 +32,13 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 
 /**
- * 
+ *
  * @author "Xavier Watkins"
  */
 public class PathQueryResultsHelperTest extends TestCase
@@ -56,7 +57,7 @@ public class PathQueryResultsHelperTest extends TestCase
         webConfig = new WebConfig();
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         os = ObjectStoreFactory.getObjectStore("os.unittest");
-        
+
         Type type  = new Type();
         type.setClassName("org.intermine.model.testmodel.Employee");
         FieldConfig df1 = new FieldConfig();
@@ -76,9 +77,9 @@ public class PathQueryResultsHelperTest extends TestCase
         FieldConfig df5 = new FieldConfig();
         df5.setFieldExpr("fullTime");
         type.addFieldConfig(df5);
-        
+
         webConfig.addType(type);
-        
+
         badWebConfig = new WebConfig();
         Type badType = new Type();
         badType.setClassName("org.intermine.model.testmodel.Employee");
@@ -98,46 +99,43 @@ public class PathQueryResultsHelperTest extends TestCase
         List<String> view = PathQueryResultHelper.getDefaultViewForClass("Address", os.getModel(), webConfig, null);
         assertTrue(view.size() == 1);
     }
-    
+
     public void testGetDefaultViewSubClass() {
-    	try {
-    		List<String> view = PathQueryResultHelper.getDefaultViewForClass(
-    				"Manager", os.getModel(), webConfig, "Department.employees");
-    		fail(
-    			"No exception thrown when getting default view for subclass, got: " +
-    			view);
-    	} catch (AssertionFailedError e) {
-    		throw e;
-    	} catch (IllegalArgumentException e) {
-    		assertEquals("Mismatch between end type of prefix: Employee and type parameter: Manager", 
-    				e.getMessage());
-    	} catch (Throwable t) {
-    		fail("Unexpected error when getting default view for subclass" + t.getMessage());
-    	}
+        try {
+            List<String> view = PathQueryResultHelper.getDefaultViewForClass(
+                    "Manager", os.getModel(), webConfig, "Department.employees");
+            fail("No exception thrown when getting default view for subclass, got: " + view);
+        } catch (AssertionFailedError e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            assertEquals("Mismatch between end type of prefix: Employee and type parameter: Manager",
+                    e.getMessage());
+        } catch (Throwable t) {
+            fail("Unexpected error when getting default view for subclass" + t.getMessage());
+        }
     }
-    
+
     public void testGetDefaultViewBadConfig() {
-    	
-    	List<String> view = PathQueryResultHelper.getDefaultViewForClass(
-    				"Employee", os.getModel(), badWebConfig, "Department.employees");
-    	List<String> expectedView = new ArrayList<String>(Arrays.asList(
-    			"Department.employees.fullTime",
-    			"Department.employees.age",
-    			"Department.employees.end",
-    			"Department.employees.name"
-    			));
-    	assertEquals(expectedView, view);
-    	
+
+        List<String> view = PathQueryResultHelper.getDefaultViewForClass(
+                "Employee", os.getModel(), badWebConfig, "Department.employees");
+        List<String> expectedView = new ArrayList<String>(Arrays.asList(
+                "Department.employees.fullTime",
+                "Department.employees.age",
+                "Department.employees.end",
+                "Department.employees.name"
+        ));
+        assertEquals(expectedView, view);
     }
-    
-    
+
+
     // This test expects the references from the the configuration to be excluded.
     public void testMakePathQueryForBag() throws Exception {
         InterMineBag imBag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, os.getModel());
         String expectedXml = "<query name=\"query\" model=\"testmodel\" view=\"Employee.name Employee.age Employee.fullTime\">"
-        + "<constraint path=\"Employee\" op=\"IN\" value=\"Fred\"/>"
-        + "</query>";
+            + "<constraint path=\"Employee\" op=\"IN\" value=\"Fred\"/>"
+            + "</query>";
         assertEquals(expectedXml, pathQuery.toXml(PathQuery.USERPROFILE_VERSION));
     }
 
@@ -150,7 +148,7 @@ public class PathQueryResultsHelperTest extends TestCase
         e1.setId(2);
         employees.add(e1);
         Manager m1 = new Manager();
-        m1.setId(3); 
+        m1.setId(3);
         employees.add(m1);
         d1.setEmployees(employees);
         List<Class<?>> sr = new ArrayList<Class<?>>();
@@ -164,69 +162,71 @@ public class PathQueryResultsHelperTest extends TestCase
             + "</query>";
         assertEquals(expectedXml, pathQuery.toXml(PathQuery.USERPROFILE_VERSION));
         PathQuery pathQuery2 = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, (InterMineObject) e1, "Address", "address");
-        String expectedXml2 =  "<query name=\"query\" model=\"testmodel\" " +
-        		"view=\"Employee.address.address\"><constraint path=\"Employee.id\" " + 
-        		"op=\"=\" value=\"2\"/></query>"; 
+        String expectedXml2 =  "<query name=\"query\" model=\"testmodel\" "
+            + "view=\"Employee.address.address\"><constraint path=\"Employee.id\" "
+            + "op=\"=\" value=\"2\"/></query>";
         assertEquals(expectedXml2, pathQuery2.toXml(PathQuery.USERPROFILE_VERSION));
         PathQuery pathQuery3 = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, (InterMineObject) d1, "Manager", "employees");
-        String expectedXml3 = "<query name=\"query\" model=\"testmodel\" view=\"Department.employees.title " +
-		"Department.employees.fullTime Department.employees.age Department.employees.end " +
-		"Department.employees.name Department.employees.seniority\">" +
-		"<constraint path=\"Department.employees\" type=\"Manager\"/>" +
-		"<constraint path=\"Department.id\" op=\"=\" value=\"1\"/>" +
-		"</query>";   
+        String expectedXml3 = "<query name=\"query\" model=\"testmodel\" view=\"Department.employees.title "
+            + "Department.employees.fullTime Department.employees.age Department.employees.end "
+            + "Department.employees.name Department.employees.seniority\">"
+            + "<constraint path=\"Department.employees\" type=\"Manager\"/>"
+            + "<constraint path=\"Department.id\" op=\"=\" value=\"1\"/>"
+            + "</query>";
         assertEquals(expectedXml3, pathQuery3.toXml(PathQuery.USERPROFILE_VERSION));
     }
-    
-    
+
+
     public void testMakePathQueryForCollectionFailure() {
-    	Department d1 = new Department();
+        Department d1 = new Department();
         d1.setId(1);
-    	try {
-    	    PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(
-    	    		webConfig, os, (InterMineObject) d1, "Employee", "pencilPushers");
-    	    fail("No exception thrown when passing bad arguments to makePathQueryForCollection, got: " + pathQuery);
-    	} catch (AssertionFailedError e) {
-    		throw e;
-    	} catch (IllegalArgumentException e) {
-    		assertEquals("Could not build path for \"Department.pencilPushers\".", 
-    				e.getMessage());
-    	} catch (Throwable t) {
-    		fail("Unexpected error when getting default view for subclass" + t.getMessage());
-    	}
+        try {
+            PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(
+                    webConfig, os, (InterMineObject) d1, "Employee", "pencilPushers");
+            fail("No exception thrown when passing bad arguments to makePathQueryForCollection, got: " + pathQuery);
+        } catch (AssertionFailedError e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            assertEquals("Could not build path for \"Department.pencilPushers\".",
+                    e.getMessage());
+        } catch (Throwable t) {
+            fail("Unexpected error when getting default view for subclass" + t.getMessage());
+        }
     }
-    
+
     public void testGetQueryWithDefaultView() {
-    	String objType = "Manager";
-    	String fieldType = "Department.employees";
-    	Model model = Model.getInstanceByName("testmodel");
-    	PathQuery pq = PathQueryResultHelper.getQueryWithDefaultView(objType, model, webConfig, fieldType);
-    	assertEquals(
-    			"<query name=\"query\" model=\"testmodel\" view=\"Department.employees.title " +
-    			"Department.employees.fullTime Department.employees.age Department.employees.end " +
-    			"Department.employees.name Department.employees.seniority\"><constraint " +
-    			"path=\"Department.employees\" type=\"Manager\"/></query>", 
-    			pq.toXml(PathQuery.USERPROFILE_VERSION));
+        String objType = "Manager";
+        String fieldType = "Department.employees";
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery pq = PathQueryResultHelper.getQueryWithDefaultView(objType, model, webConfig, fieldType);
+        assertEquals(
+                "<query name=\"query\" model=\"testmodel\" view=\"Department.employees.title " +
+                "Department.employees.fullTime Department.employees.age Department.employees.end " +
+                "Department.employees.name Department.employees.seniority\"><constraint " +
+                "path=\"Department.employees\" type=\"Manager\"/></query>",
+                pq.toXml(PathQuery.USERPROFILE_VERSION));
     }
-    
+
     public void testQueryForTypesInCollection() throws ObjectStoreException {
-    	String field = "employees";
-    	Department d1 = new Department();
+        String field = "employees";
+        Department d1 = (Department) DynamicUtil.createObject(Department.class);
         d1.setId(1);
-        Set<Employee> employees = new HashSet<Employee>();
-        Employee e1 = new Employee();
+        Employee e1 = (Employee) DynamicUtil.createObject(Employee.class);
         e1.setId(2);
-        employees.add(e1);
-        Manager m1 = new Manager();
-        m1.setId(3); 
-        employees.add(m1);
-        d1.setEmployees(employees);
-        uosw.store(d1); // TODO: Make this test work!!
+        e1.setDepartment(d1);
+        Manager m1 = DynamicUtil.createObject(Manager.class);
+        m1.setId(3);
+        m1.setDepartment(d1);
+        ObjectStoreWriter osw = os.getNewWriter();
+        osw.store(e1);
+        osw.store(m1);
+        osw.store(d1);
         List<Class<?>> classes = PathQueryResultHelper.queryForTypesInCollection(d1, field, os);
         List<Class<?>> expectedClasses = new ArrayList<Class<?>>(
-        		Arrays.asList(Employee.class, Manager.class));
+                Arrays.asList(Employee.class, Manager.class));
         assertEquals(expectedClasses, classes);
-        
+        osw.delete(d1);
+        osw.delete(e1);
+        osw.delete(m1);
     }
-    
 }
