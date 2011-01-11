@@ -21,15 +21,16 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
-import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Takes a parameter "type" with value "webapp" or "query" and prints "OK"
  * to the client if everything is ok, otherwise something else.
  *
- * @author tom riley
+ * @author Tom Riley
+ * @author Richard Smith
  */
 public class HeartbeatAction extends InterMineAction
 {
@@ -42,6 +43,10 @@ public class HeartbeatAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         String type = request.getParameter("type");
+        if (type == null) {
+            type = "webapp";
+        }
+
         if ("webapp".equals(type)) {
             response.getOutputStream().print("OK");
         } else if ("query".equals(type)) {
@@ -51,10 +56,11 @@ public class HeartbeatAction extends InterMineAction
             QueryClass c = new QueryClass(InterMineObject.class);
             q.addFrom(c);
             q.addToSelect(c);
-            Results r = TableHelper.makeResults(os, q);
-            TableHelper.initResults(r);
-            int size = r.size();
-            if (size > 0) {
+            // Add a unique value to the select to avoid caching the query
+            QueryValue token = new QueryValue(System.currentTimeMillis());
+            q.addToSelect(token);
+            Results r = os.execute(q, 1, false, false, false);
+            if (r.get(0) != null) {
                 response.getOutputStream().print("OK");
             } else {
                 response.getOutputStream().print("NO RESULTS");
