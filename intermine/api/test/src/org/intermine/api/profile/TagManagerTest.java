@@ -64,6 +64,10 @@ public class TagManagerTest extends TestCase
     
     @Override
     protected void tearDown() throws Exception {
+        TagManager tm = new TagManager(uosw);
+        if (!tm.getUserTags(bobProfile.getUsername()).isEmpty()) {
+            tm.deleteTags(null, null, null, bobProfile.getUsername());
+        }
         cleanUserProfile();
     }
     
@@ -123,7 +127,7 @@ public class TagManagerTest extends TestCase
         manager.addTag("list3Tag", "list3", "bag", "bob");
 
         List<Tag> tags = manager.getTags(null, null, null, null);
-        //assertEquals(3, tags.size());
+        assertEquals(3, tags.size());
         assertTrue("Tag added to database but not retrieved.", tagExists(tags, "list1Tag", "list1", "bag", "bob"));
         assertTrue("Tag added to database but not retrieved.", tagExists(tags, "list2Tag", "list2", "bag", "bob"));
         assertTrue("Tag added to database but not retrieved.", tagExists(tags, "list3Tag", "list3", "bag", "bob"));
