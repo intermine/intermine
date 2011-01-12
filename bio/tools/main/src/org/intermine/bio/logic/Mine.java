@@ -318,7 +318,7 @@ public class Mine
     private Map<String, HomologueMapping> newMap(String geneOrganism,
             HomologueMapping newMapping) {
         newMapping.setOrganism(geneOrganism);
-        Map<String, HomologueMapping> newMap = new HashMap();
+        Map<String, HomologueMapping> newMap = new HashMap<String, HomologueMapping>();
         newMap.put(geneOrganism, newMapping);
         return newMap;
     }

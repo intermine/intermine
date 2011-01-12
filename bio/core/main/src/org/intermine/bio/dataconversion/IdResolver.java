@@ -84,7 +84,7 @@ public class IdResolver
         if (orgSynMaps.containsKey(taxonId)) {
             return orgSynMaps.get(taxonId).get(id);
         }
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     /**
