@@ -303,7 +303,6 @@ public class GenesFileProcessor
             //MGI:895149|Ensembl:ENSMUSG0000001857
             for (String bit : bits) {
                 if (bit.toUpperCase().startsWith("ENSMUSG")) {
-                    System.out.println(bit);
                     return bit;
                 }
             }
