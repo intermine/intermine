@@ -1,46 +1,37 @@
-/**
- * 
- */
 package org.intermine.webservice.server.output;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 
-import org.intermine.webservice.server.core.ResultProcessor;
+import java.util.Iterator;
+
 import org.intermine.api.results.ExportResultsIterator;
-import org.intermine.api.results.ResultElement;
-import org.intermine.webservice.server.output.Output;
-import org.json.JSONObject;
 
 /**
  * @author Alexis Kalderimis
  *
  */
-public class JSONObjResultProcessor extends ResultProcessor {
+public class JSONObjResultProcessor extends JSONResultProcessor
+{
 
-	
-	/**
-	 * Constructor.
-	 */
-	public JSONObjResultProcessor() {
-		// Empty constructor
-	}
-	
-	@Override
-	public void write(Iterator<List<ResultElement>> resultIt, Output output) {
-		if (! (resultIt instanceof ExportResultsIterator)) {
-			throw new IllegalArgumentException("The iterator must be an ExportResultsIterator");
-		}
-		ExportResultsIterator exportIter = (ExportResultsIterator) resultIt;
-		JSONResultsIterator jsonIter = new JSONResultsIterator(exportIter);
-		while (jsonIter.hasNext()) {
-			JSONObject next = jsonIter.next();
-			List<String> outputLine = new ArrayList<String>(
-					Arrays.asList(next.toString()));
-			if (jsonIter.hasNext()) { outputLine.add(""); };
-			output.addResultItem(outputLine);
-		}
-	}
+    /**
+     * Constructor.
+     */
+    public JSONObjResultProcessor() {
+        // Empty constructor
+    }
+
+    @Override
+    protected Iterator<? extends Object> getResultsIterator(ExportResultsIterator it) {
+        JSONResultsIterator jsonIter = new JSONResultsIterator(it);
+        return jsonIter;
+    }
+
 }
