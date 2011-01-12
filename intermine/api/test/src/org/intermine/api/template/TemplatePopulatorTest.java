@@ -2,6 +2,7 @@ package org.intermine.api.template;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +15,19 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
@@ -32,6 +41,7 @@ public class TemplatePopulatorTest extends TestCase {
     private TemplateQuery simple;
     private TemplateQuery twoConstraints;
     private Map<String, List<TemplateValue>> values = new HashMap<String, List<TemplateValue>>();
+    private ObjectStoreWriter uosw;
 
     public void setUp() throws Exception {
         super.setUp();
@@ -57,7 +67,7 @@ public class TemplatePopulatorTest extends TestCase {
     private Profile setUpProfile() throws Exception {
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
 
-        ObjectStoreWriter uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
+        uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         ProfileManager pm = new ProfileManager(os, uosw);
 
         Profile profile = new Profile(pm, "testUser", null, "password", new HashMap(), 
@@ -134,7 +144,6 @@ public class TemplatePopulatorTest extends TestCase {
         assertEquals("bag1", ((PathConstraintBag) resCon).getBag());
     }
 
-
     public void testPopulateTemplateWithBagNotOneConstraint() throws Exception {
         Profile profile = setUpProfile();
         InterMineBag bag = profile.createBag("bag1", "Company", "");
@@ -142,6 +151,9 @@ public class TemplatePopulatorTest extends TestCase {
             TemplatePopulator.populateTemplateWithBag(twoConstraints, bag);
             fail("Expected a TemplatePopulatorException.");
         } catch (TemplatePopulatorException e) {
+        } finally {
+            profile.deleteBag("bag1");
+            removeUserProfile(profile.getUsername());
         }
     }
 
@@ -152,6 +164,9 @@ public class TemplatePopulatorTest extends TestCase {
             TemplatePopulator.populateTemplateWithBag(simple, bag);
             fail("Expected a TemplatePopulatorException.");
         } catch (TemplatePopulatorException e) {
+        } finally {
+            profile.deleteBag("bag1");
+            removeUserProfile(profile.getUsername());
         }
     }
 
@@ -167,6 +182,24 @@ public class TemplatePopulatorTest extends TestCase {
         PathConstraint resCon = res.getEditableConstraints().get(0);
         assertEquals(ConstraintOp.IN, resCon.getOp());
         assertEquals("bag1", ((PathConstraintBag) resCon).getBag());
+        profile.deleteBag("bag1");
+        removeUserProfile(profile.getUsername());
+    }
+
+    private void removeUserProfile(String username) throws ObjectStoreException {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(UserProfile.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        QueryField qf = new QueryField(qc, "username");
+        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(username));
+        q.setConstraint(sc);
+        SingletonResults res = uosw.executeSingleton(q);
+        Iterator resIter = res.iterator();
+        while (resIter.hasNext()) {
+            InterMineObject o = (InterMineObject) resIter.next();
+            uosw.delete(o);
+        }
     }
     
     public void testPopulateTemplateWithObject() throws Exception {
