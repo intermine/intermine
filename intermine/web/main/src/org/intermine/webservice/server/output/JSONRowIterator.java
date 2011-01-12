@@ -23,9 +23,9 @@ import org.json.JSONObject;
 public class JSONRowIterator implements Iterator<JSONArray>
 {
 
-    private ExportResultsIterator subIter;
-    private List<Path> viewPaths = new ArrayList<Path>();
-    private String baseUrl;
+    private final ExportResultsIterator subIter;
+    private final List<Path> viewPaths = new ArrayList<Path>();
+    private final String baseUrl;
 
     private static final String CELL_KEY_URL = "url";
     private static final String CELL_KEY_VALUE = "value";
@@ -58,8 +58,13 @@ public class JSONRowIterator implements Iterator<JSONArray>
      */
     protected JSONObject makeCell(ResultElement cell, Path path) {
         Map<String, Object> mapping = new HashMap<String, Object>();
-        mapping.put(CELL_KEY_URL, PortalHelper.generateObjectDetailsLink(cell, baseUrl));
-        mapping.put(CELL_KEY_VALUE, cell.getField());
+        if (cell == null || cell.getId() == null) {
+            mapping.put(CELL_KEY_URL, null);
+	        mapping.put(CELL_KEY_VALUE, null);
+        } else {
+            mapping.put(CELL_KEY_URL, PortalHelper.generateObjectDetailsLink(cell, baseUrl));
+            mapping.put(CELL_KEY_VALUE, cell.getField());
+        }
         JSONObject ret = new JSONObject(mapping);
         return ret;
     }
