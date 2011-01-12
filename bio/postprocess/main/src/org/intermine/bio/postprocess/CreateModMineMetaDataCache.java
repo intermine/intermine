@@ -19,7 +19,6 @@ import org.apache.log4j.Logger;
 import org.intermine.bio.constants.ModMineCacheKeys;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.SequenceFeature;
