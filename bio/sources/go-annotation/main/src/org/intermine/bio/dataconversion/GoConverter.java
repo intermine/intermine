@@ -16,8 +16,8 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -208,7 +208,7 @@ public class GoConverter extends BioFileConverter
 
                 // null if no pub found
                 String pubRefId = newPublication(array[5]);
-               
+
                 // get evidence codes for this goterm|gene pair
                 Set<Evidence> allEvidenceForAnnotation = goTermGeneToEvidence.get(key);
 
@@ -216,15 +216,15 @@ public class GoConverter extends BioFileConverter
                 if (allEvidenceForAnnotation == null) {
                     String goTermIdentifier = newGoTerm(goId, dataSourceCode);
                     Evidence evidence = new Evidence(strEvidence, pubRefId);
-                    allEvidenceForAnnotation = new HashSet<Evidence>();
+                    allEvidenceForAnnotation = new LinkedHashSet<Evidence>();
                     allEvidenceForAnnotation.add(evidence);
                     goTermGeneToEvidence.put(key, allEvidenceForAnnotation);
                     Integer storedAnnotationId = createGoAnnotation(productIdentifier, type,
                             goTermIdentifier, organism, qualifier, withText, dataSourceCode);
                     evidence.setStoredAnnotationId(storedAnnotationId);
                 } else {
-                	boolean seenEvidenceCode = false;
-                	Integer storedAnnotationId = null;
+                    boolean seenEvidenceCode = false;
+                    Integer storedAnnotationId = null;
                     for (Evidence evidence : allEvidenceForAnnotation) {
                         String evidenceCode = evidence.getEvidenceCode();
                         // already have evidence code, just add pub
@@ -235,9 +235,9 @@ public class GoConverter extends BioFileConverter
                         storedAnnotationId = evidence.storedAnnotationId;
                     }
                     if (!seenEvidenceCode) {
-                    	Evidence evidence = new Evidence(strEvidence, pubRefId);
-                    	evidence.storedAnnotationId = storedAnnotationId;
-                    	allEvidenceForAnnotation.add(evidence);
+                        Evidence evidence = new Evidence(strEvidence, pubRefId);
+                        evidence.storedAnnotationId = storedAnnotationId;
+                        allEvidenceForAnnotation.add(evidence);
                     }
                 }
             }
@@ -497,7 +497,7 @@ public class GoConverter extends BioFileConverter
                 return null;
             }
             if (resCount == 1) {
-            	goId = resolver.resolveId("0", identifier).iterator().next();
+                goId = resolver.resolveId("0", identifier).iterator().next();
             }
         }
         return goId;
