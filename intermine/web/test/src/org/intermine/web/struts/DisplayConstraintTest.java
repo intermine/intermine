@@ -21,8 +21,8 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagQuery;
 import org.intermine.api.bag.BagQueryConfig;
-import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -111,12 +111,7 @@ public class DisplayConstraintTest extends TestCase
             ClassKeyHelper.readKeys(model, classKeyProps);
 
         InputStream is = getClass().getClassLoader().getResourceAsStream("bag-queries.xml");
-        BagQueryConfig bagQueryConfig = null;
-        try {
-            bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        MokaBagQueryConfig bagQueryConfig = new MokaBagQueryConfig();
 
         Properties ossProps = new Properties();
         ossProps.put("org.intermine.model.testmodel.Department.classCount", "3");
@@ -512,5 +507,16 @@ public class DisplayConstraintTest extends TestCase
         assertEquals("locked", dcAttribute.getSwitchable());
         assertEquals("locked", dcNullPathConstraint.getSwitchable());
         assertEquals("on", dcInTemplate.getSwitchable());
+    }
+
+    public class MokaBagQueryConfig extends BagQueryConfig {
+
+        public MokaBagQueryConfig() {
+            super(new HashMap<String, List<BagQuery>>(), new HashMap<String, List<BagQuery>>(),
+                  new HashMap<String, Map<String, String[]>>());
+            this.setConnectField("department");
+            this.setConstrainField("name");
+            this.setExtraConstraintClassName("org.intermine.model.testmodel.Department");
+        }
     }
 }
