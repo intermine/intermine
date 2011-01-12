@@ -1,23 +1,17 @@
 package org.intermine.webservice.server.output;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
-import org.intermine.model.testmodel.Address;
-import org.intermine.model.testmodel.CEO;
-import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.Contractor;
-import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
-import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.dummy.DummyResults;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
@@ -25,10 +19,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.DynamicUtil;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 public class JSONObjResultProcessorTest extends TestCase {
 
