@@ -79,6 +79,8 @@ public class ProfileManagerBinding
                 LOG.info("Finished writing profile: " + profile.getUsername()
                          + " took " + totalTime + "ms.");
             }
+
+            TemplateTrackBinding.marshal(profileManager.getProfileObjectStoreWriter(), writer);
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
@@ -150,6 +152,7 @@ public class ProfileManagerBinding
 class ProfileManagerHandler extends DefaultHandler
 {
     private ProfileHandler profileHandler = null;
+    private TemplateTrackHandler templateTrackHandler = null;
     private ProfileManager profileManager = null;
     private IdUpgrader idUpgrader;
     private ObjectStoreWriter osw;
@@ -189,7 +192,10 @@ class ProfileManagerHandler extends DefaultHandler
             } else {
                 version = Integer.parseInt(value);
             }
+            templateTrackHandler = new TemplateTrackHandler(
+                                   profileManager.getProfileObjectStoreWriter());
         }
+
         if ("userprofile".equals(qName)) {
             startTime = System.currentTimeMillis();
             profileHandler = new ProfileHandler(profileManager, idUpgrader, osw, abortOnError,
@@ -197,6 +203,10 @@ class ProfileManagerHandler extends DefaultHandler
         }
         if (profileHandler != null) {
             profileHandler.startElement(uri, localName, qName, attrs);
+        }
+
+        if ("templatetracks".equals(qName) || "templatetrack".equals(qName)) {
+            templateTrackHandler.startElement(uri, localName, qName, attrs);
         }
     }
 
@@ -229,6 +239,10 @@ class ProfileManagerHandler extends DefaultHandler
         }
         if (profileHandler != null) {
             profileHandler.endElement(uri, localName, qName);
+        }
+
+        if ("templatetracks".equals(qName)) {
+            templateTrackHandler.endElement(uri, localName, qName);
         }
     }
 }
