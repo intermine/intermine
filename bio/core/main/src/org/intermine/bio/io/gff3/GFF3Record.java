@@ -37,8 +37,8 @@ public class GFF3Record
     private String sequenceID;
     private String source;
     private String type;
-    private int    start;
-    private int    end;
+    private int start;
+    private int end;
     private Double score;
     private String strand;
     private String phase;
