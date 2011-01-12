@@ -31,7 +31,7 @@ import org.json.JSONObject;
 /**
  * A class to to produce a sequence of JSONObjects from a set of database rows. This requires
  * that the view be set up in a specific way.
- * @author Alex Kalderimis
+ * @author Alexis Kalderimis
  *
  */
 public class JSONResultsIterator implements Iterator<JSONObject>
