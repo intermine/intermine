@@ -1,7 +1,9 @@
 package org.intermine.api.template;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,9 @@ public class TemplatePopulatorTest extends TestCase {
 
 
     private TemplateQuery simple;
+    private TemplateQuery simpleWithOptionalCon;
     private TemplateQuery twoConstraints;
+    private TemplateQuery threeConstraints;
     private Map<String, List<TemplateValue>> values = new HashMap<String, List<TemplateValue>>();
     private ObjectStoreWriter uosw;
 
@@ -52,6 +56,14 @@ public class TemplatePopulatorTest extends TestCase {
         PathConstraint nameCon = Constraints.eq("Employee.name", "Marmaduke");
         simple.addConstraint(nameCon);
         simple.setEditable(nameCon, true);
+        
+        simpleWithOptionalCon = new TemplateQuery("simpleWithOtionalCon", 
+        		"Simple, But with an optional rather than required constraint", "", 
+        		new PathQuery(model));
+        simpleWithOptionalCon.addViews("Employee.name", "Employee.age");
+        simpleWithOptionalCon.addConstraint(nameCon);
+        simpleWithOptionalCon.setEditable(nameCon, true);
+        simpleWithOptionalCon.setSwitchOffAbility(nameCon, SwitchOffAbility.ON);        
 
         twoConstraints = new TemplateQuery("twoConstraints", "twoConstraints", "", new PathQuery(model));
         twoConstraints.addViews("Employee.name", "Employee.age");
@@ -61,6 +73,17 @@ public class TemplatePopulatorTest extends TestCase {
         PathConstraint depCon = Constraints.greaterThan("Employee.departments.name", "Finance");
         twoConstraints.addConstraint(depCon);
         twoConstraints.setEditable(depCon, true);
+        twoConstraints.setSwitchOffAbility(depCon, SwitchOffAbility.ON);
+        
+        threeConstraints = new TemplateQuery("twoConstraints", "twoConstraints", "", new PathQuery(model));
+        threeConstraints.addViews("Employee.name", "Employee.age");
+        threeConstraints.addConstraint(ageCon);
+        threeConstraints.setEditable(ageCon, true);
+        threeConstraints.addConstraint(depCon);
+        threeConstraints.setEditable(depCon, true);
+        threeConstraints.setSwitchOffAbility(depCon, SwitchOffAbility.ON);
+        threeConstraints.addConstraint(nameCon);
+        threeConstraints.setEditable(nameCon, true);
     }
 
 
@@ -76,8 +99,32 @@ public class TemplatePopulatorTest extends TestCase {
         return profile;
     }
 
+    public void testNoValuesForRequiredNode() throws Exception {
+        try {
+            TemplatePopulator.getPopulatedTemplate(simple, values);
+            fail("Expected a TemplatePopulationException.");
+        } catch (TemplatePopulatorException e) {
+        	assertEquals("No value provided for required constraint Employee.name = Marmaduke", 
+        			e.getMessage());
+        }
+    }
+    
+    public void testNoValuesForOptionalNode() throws Exception {
+    	TemplateQuery tq = TemplatePopulator.getPopulatedTemplate(simpleWithOptionalCon, values);
+    	assertEquals(Collections.EMPTY_SET, tq.getConstraints().keySet());
+    	assertEquals(Collections.EMPTY_SET, tq.getConstraintCodes());
+    	
+        TemplateValue value = new TemplateValue(
+        		twoConstraints.getEditableConstraints().get(0), ConstraintOp.EQUALS, "21", 
+                TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
+        values.put("Employee.age", Arrays.asList(new TemplateValue[] {value}));
+    	TemplateQuery tq2 = TemplatePopulator.getPopulatedTemplate(twoConstraints, values);
+    	assertEquals(new HashSet<String>(Arrays.asList("A")), 
+    			new HashSet<String>(tq2.getConstraints().values()));
+    	assertEquals(new HashSet<String>(Arrays.asList("A")), tq2.getConstraintCodes());
+    }
 
-    public void testNoValuesForNode() throws Exception {
+    public void testValueForNonExistentNode() throws Exception {
         PathConstraint age = new PathConstraintAttribute("Employee.age", ConstraintOp.EQUALS, "30");
         TemplateValue value = new TemplateValue(age, ConstraintOp.EQUALS, "21", 
                 TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
@@ -88,7 +135,7 @@ public class TemplatePopulatorTest extends TestCase {
         } catch (TemplatePopulatorException e) {
         }
     }
-
+    
     public void testTooManyValuesForNode() throws Exception {
         PathConstraint nameCon = simple.getEditableConstraints("Employee.name").get(0);
         TemplateValue value1 = new TemplateValue(nameCon, ConstraintOp.EQUALS, "name", 
@@ -104,12 +151,12 @@ public class TemplatePopulatorTest extends TestCase {
     }
 
     public void testTooFewValuesForNode() throws Exception {
-        PathConstraint ageCon = twoConstraints.getEditableConstraints("Employee.age").get(0);
+        PathConstraint ageCon = threeConstraints.getEditableConstraints("Employee.age").get(0);
         TemplateValue value = new TemplateValue(ageCon, ConstraintOp.EQUALS, "21",
                 TemplateValue.ValueType.SIMPLE_VALUE, SwitchOffAbility.LOCKED);
         values.put("Employee.age", Arrays.asList(new TemplateValue[] {value}));
         try {
-            TemplatePopulator.getPopulatedTemplate(twoConstraints, values);
+            TemplatePopulator.getPopulatedTemplate(threeConstraints, values);
             fail("Expected a TemplatePopulationException.");
         } catch (TemplatePopulatorException e) {
         }
