@@ -31,6 +31,7 @@ import javax.mail.internet.MimeMessage;
 public abstract class MailUtils
 {
     private MailUtils() {
+        // private constructor
     }
 
     /**

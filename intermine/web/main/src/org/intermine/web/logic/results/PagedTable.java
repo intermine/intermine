@@ -186,10 +186,12 @@ public class PagedTable
     /**
      * Swap 2 columns
      *
-     * @param index1 the index of column 1
-     * @param index2 the index of column 2
+     * @param i1 the index of column 1
+     * @param i2 the index of column 2
      */
-    public void swapColumns(int index1, int index2) {
+    public void swapColumns(int i1, int i2) {
+        int index1 = i1;
+        int index2 = i2;
         if (index2 < index1) {
             int tmp = index2;
             index2 = index1;

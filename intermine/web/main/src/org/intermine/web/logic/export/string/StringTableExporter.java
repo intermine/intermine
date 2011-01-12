@@ -47,7 +47,7 @@ public class StringTableExporter
         try {
             for (List<String> row : rows) {
                 // upcasting because rowFormatter expect List<Object>
-                writer.println(rowFormatter.format((List<Object>) (List) row));
+                writer.println(rowFormatter.format((List) row));
             }
             writer.flush();
         } catch (RuntimeException e) {
