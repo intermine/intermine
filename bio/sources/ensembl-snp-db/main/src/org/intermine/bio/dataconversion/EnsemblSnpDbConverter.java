@@ -327,8 +327,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                             || (StringUtils.containsOnly(alleles[1], "ACTGN")
                                     && "-".equals(alleles[0]))) {
                         type = "in-del";
-                    } else if (alleles[0].matches("[LARGE|INS|DEL]+")
-                            || alleles[1].matches("[LARGE|INS|DEL]+")) {
+                    } else if (containsOneOf(alleles[0], "LARGE", "INS", "DEL")
+                            || containsOneOf(alleles[1], "LARGE", "INS", "DEL")) {
                         type = "named";
                     } else if ((StringUtils.containsOnly(alleles[0], "ACGT")
                             && alleles[0].length() > 1)
@@ -455,5 +455,14 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     @Override
     public String getDataSetTitle(int taxonId) {
         return DATASET_TITLE;
+    }
+
+    private boolean containsOneOf(String target, String... substrings) {
+        for (String substring : substrings) {
+            if (target.contains(substring)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

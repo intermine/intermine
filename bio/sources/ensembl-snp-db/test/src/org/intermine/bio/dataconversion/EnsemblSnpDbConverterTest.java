@@ -52,6 +52,7 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
         assertEquals("in-del", converter.determineType("TN/-"));
 
         assertEquals("named", converter.determineType("LARGE/-"));
+        assertEquals("named", converter.determineType("-/INSERTION"));
         assertEquals("named", converter.determineType("INS/-"));
         assertEquals("named", converter.determineType("-/DEL"));
         assertEquals("named", converter.determineType("-/(LARGEINSERTION)"));
