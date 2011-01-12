@@ -299,7 +299,8 @@ public class TemplateQuery extends PathQuery implements WebSearchable
                     + constraint);
         }
         if (!getConstraints().containsKey(constraint)) {
-            throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
+            throw new NoSuchElementException("Constraint " + constraint + " is not in the query: "
+                    + this.toString());
         }
         constraintSwitchOffAbility.put(constraint, switchOffAbility);
     }
