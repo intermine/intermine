@@ -338,28 +338,15 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                         type = "substitution";
                     }
                 } else if (alleles.length > 2) {
-
-                } else {
+                    if (containsDigit(alleles[0])) {
+                        type = "microsat";
+                    } else if (anyContainChar(alleles, "-")) {
+                        type = "mixed";
+                    }
+                }
+                if (type == null) {
                     LOG.warn("Failed to work out allele type for: " + alleleStr);
                 }
-
-
-//                elsif (@alleles > 2) {
-//
-//                    if ($alleles[0] =~ /\d+/) {
-//   #(CA)14/15/16/17 > 2 alleles, all of them contain the number of repetitions of the allele
-//                        $class = 'microsat'
-//                    }
-//
-//                    elsif ((grep {/-/} @alleles) > 0) {
-//                        #-/A/T/TTA > 2 alleles
-//                        $class = 'mixed'
-//                    }
-//                    else {
-//                        #  warning("not possible to determine class of alleles " . @alleles);
-//                        $class = '';
-//                    }
-//                 }
             }
         }
 
@@ -460,6 +447,24 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private boolean containsOneOf(String target, String... substrings) {
         for (String substring : substrings) {
             if (target.contains(substring)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean anyContainChar(String[] targets, String substring) {
+        for (String target : targets) {
+            if (target.contains(substring)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean containsDigit(String target) {
+        for (int i = 0; i < target.length(); i++) {
+            if (Character.isDigit(target.charAt(i))) {
                 return true;
             }
         }
