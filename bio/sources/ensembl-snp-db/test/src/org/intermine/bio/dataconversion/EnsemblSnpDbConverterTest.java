@@ -60,5 +60,9 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
 
         assertEquals("substitution", converter.determineType("AA/GC"));
 
+        assertEquals("microsat", converter.determineType("(CA)14/25/26"));
+
+        assertEquals("mixed", converter.determineType("-/A/T/TTA"));
+        assertEquals("mixed", converter.determineType("C/A/-/TTA"));
     }
 }
