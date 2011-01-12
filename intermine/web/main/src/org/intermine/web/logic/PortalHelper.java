@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.FastPathObject;
 import org.intermine.util.DynamicUtil;
@@ -39,6 +40,9 @@ public final class PortalHelper
 {
     private static Map<String, BagConverter> bagConverters = new HashMap<String, BagConverter>();
     private static String portalBaseUrl = null;
+
+    private static final String INTERNAL_REPORT_PAGE = "objectdetails.do";
+    private static final String EXTERNAL_PORTAL_PAGE = "portal.do";
 
     private PortalHelper() {
     }
@@ -134,15 +138,27 @@ public final class PortalHelper
      */
     public static String generatePortalLink(FastPathObject obj, InterMineAPI im,
             HttpServletRequest request) {
-        String url = null;
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
+        String baseUrl = getBaseUrl(request);
+        return generatePermaLink(obj, baseUrl, classKeys);
+    }
+
+    /**
+     * Generate a perma-link to a report page for an InterMine object.
+     * @param obj A Fast-Path Object
+     * @param baseUrl The base url to use
+     * @param classKeys The Class keys for this web-app
+     * @return The url
+     */
+    public static String generatePermaLink(FastPathObject obj, String baseUrl,
+            Map<String, List<FieldDescriptor>> classKeys) {
+        String url = null;
         Object externalId = ClassKeyHelper.getKeyFieldValue(obj, classKeys);
         if (externalId != null) {
-            String baseUrl = getBaseUrl(request);
             String clsName = DynamicUtil.getSimpleClass(obj).getSimpleName();
             StringBuilder sb = new StringBuilder();
             sb.append(baseUrl);
-            sb.append("/portal.do?class=");
+            sb.append("/").append(EXTERNAL_PORTAL_PAGE).append("?class=");
             sb.append(clsName);
             sb.append("&externalids=");
             sb.append(encode(externalId.toString()));
@@ -151,7 +167,25 @@ public final class PortalHelper
         return url;
     }
 
-    private static String getBaseUrl(HttpServletRequest request) {
+
+    /**
+     * Generate a link to the object details page using the internal id. This does not produce
+     * a link suitable for use as a permalink.
+     * @param elem a result element
+     * @param baseUrl The base URL to use to create the link.
+     * @return The URL.
+     */
+    public static String generateObjectDetailsLink(ResultElement elem, String baseUrl) {
+        String url = null;
+        StringBuilder sb = new StringBuilder();
+        sb.append(baseUrl);
+        sb.append("/").append(INTERNAL_REPORT_PAGE).append("?id=");
+        sb.append(elem.getId().toString());
+        url = sb.toString();
+        return url;
+    }
+
+    public static String getBaseUrl(HttpServletRequest request) {
         if (portalBaseUrl == null) {
             portalBaseUrl = new URLGenerator(request).getPermanentBaseURL();
         }
