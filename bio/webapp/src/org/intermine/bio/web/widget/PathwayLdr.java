@@ -67,7 +67,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(String action, @SuppressWarnings("unused") List<String> keys) {
+    public Query getQuery(String action, List<String> keys) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcPathway = null;
