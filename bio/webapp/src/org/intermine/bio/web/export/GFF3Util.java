@@ -70,26 +70,20 @@ public final class GFF3Util
             }
 
             sequenceID = chr.getPrimaryIdentifier();
-//            LOG.info("mGFFseq: " + sequenceID + "|len: " + lsf.getLength());
 
             for (Class<?> c : classes) {
                 if (SequenceFeature.class.isAssignableFrom(c)) {
                     String className = TypeUtil.unqualifiedName(c.getName());
-//                     LOG.info("mGFF: " + className + "|" + lsf.getPrimaryIdentifier());
                     if (soClassNameMap.containsKey(className)) {
                         type = soClassNameMap.get(className);
+                        break;
                     } else {
                         type = className;
                         LOG.warn("in GFF3Util.makeGFF3Record() - cannot find SO term name for: "
                                  + className);
                     }
-                    break;
-                }
-            }
 
-            if (type == null) {
-                throw new IllegalArgumentException("argument to makeGFF3Record isn't a "
-                                                   + "SequenceFeature");
+                }
             }
 
             start = chrLocation.getStart().intValue();
@@ -104,7 +98,6 @@ public final class GFF3Util
         }
 
         Map<String, List<String>> recordAttribute =
-//          new LinkedHashMap<String, List<String>>(extraAttributes);
             new TreeMap<String, List<String>>(extraAttributes);
 
         if (lsf.getPrimaryIdentifier() != null) {
@@ -116,7 +109,7 @@ public final class GFF3Util
 
         Double score = null;
         try {
-            for (Class c : DynamicUtil.decomposeClass(lsf.getClass())) {
+            for (Class<?> c : DynamicUtil.decomposeClass(lsf.getClass())) {
                 if (TypeUtil.getFieldInfo(c, "score") != null) {
                     score = (Double) lsf.getFieldValue("score");
                 }
