@@ -72,7 +72,6 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         checkGene("1234", "FBgn003", "7227", new String[]{"4"}, new String[]{DATASET});
         checkGene("2222", "FBgn002", "7227", new String[]{"2", "3"}, new String[]{DATASET});
         checkGene("1111", "FBgn001", "7227", new String[]{"1"}, new String[]{DATASET});
-        checkGene("567890", "ENSMUSG0000001857", "10090", new String[]{"17569867"}, new String[]{DATASET});
     }
 
     /**
@@ -83,7 +82,6 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         checkGene("4126706", "WbGene308375", "34", new String[]{"16689796", "17573816", "17581122", "17590236"}, new String[]{DATASET});
         checkGene("171593", "WbGene00022279", "6239", new String[]{"1"}, new String[]{DATASET});
         checkGene("171594", "WbGene00021677", "6239", new String[]{"2"}, new String[]{DATASET});
-        checkGene("567890", "ENSMUSG0000001857", "10090", new String[]{"17569867"}, new String[]{DATASET});
     }
 
     /**
