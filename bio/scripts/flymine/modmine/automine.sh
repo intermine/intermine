@@ -126,7 +126,7 @@ Notes: The file is downloaded only if not present or the remote copy
 examples:
 
 $progname			add new submissions to modmine-dev, getting new files from ftp
-$programe 123 add submission 123 to modmine-dev, getting it from ftp
+$progname 123 add submission 123 to modmine-dev, getting it from ftp
 $progname -F -r test		build a modmine-test with metadata, Flybase and Wormbase,
 				getting new files from ftp
 $progname -M -r test		build a new chado with all the NEW submissions in
