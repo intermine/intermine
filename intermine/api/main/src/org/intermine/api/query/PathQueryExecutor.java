@@ -40,10 +40,10 @@ public class PathQueryExecutor extends QueryExecutor
 
     private static final int DEFAULT_BATCH_SIZE = 5000;
 
-    private BagManager bagManager;
-    private BagQueryRunner bagQueryRunner;
-    private ObjectStore os;
-    private Profile profile;
+    private final BagManager bagManager;
+    private final BagQueryRunner bagQueryRunner;
+    private final ObjectStore os;
+    private final Profile profile;
     private int batchSize = DEFAULT_BATCH_SIZE;
 
     /**
@@ -101,6 +101,15 @@ public class PathQueryExecutor extends QueryExecutor
             throw new RuntimeException("Creating export results iterator failed", e);
         }
     }
+    
+    public int count(PathQuery pq) throws ObjectStoreException {
+        Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
+        Map<String, BagQueryResult> returnBagQueryResults =
+            new HashMap<String, BagQueryResult>();
+        Query q;
+        q = makeQuery(pq, returnBagQueryResults, pathToQueryNode);
+        return os.count(q, ObjectStore.SEQUENCE_IGNORE);
+    }
 
     /**
      * Executes object store query and returns results as iterator over rows.
@@ -112,6 +121,7 @@ public class PathQueryExecutor extends QueryExecutor
      * @param limit maximum number of results
      * @return results
      */
+    
     public ExportResultsIterator execute(PathQuery pathQuery, final int start,
             final int limit) {
         try {
@@ -158,9 +168,9 @@ class ResultIterator extends ExportResultsIterator
 
     private int counter = 0;
 
-    private int limit;
+    private final int limit;
 
-    private int start;
+    private final int start;
 
     /**
      * Constructor for ExportResultsIterator. This creates a new instance from the given
