@@ -53,15 +53,37 @@ public class WebServiceRequestParser
     /** Value of parameter when user wants comma separated output to be returned. **/
     public static final String FORMAT_PARAMETER_CSV = "csv";
     
-    /** Value of parameter when user wants json data **/
+    /** 
+     * Value of parameter when user wants json data as 
+     * nested objects representing records
+    **/
     public static final String FORMAT_PARAMETER_JSON_OBJ = "jsonobjects";
+    
+    /** 
+     * Value of parameter when user wants json data as above, 
+     * but in a format suitable for cross site ajax calls
+     **/
+    public static final String FORMAT_PARAMETER_JSONP_OBJ = "jsonpobjects";
+    
+    /** 
+     * Value of parameter when user wants json data suitable
+     * for using to construct tables with
+     **/
+    public static final String FORMAT_PARAMETER_JSON_TABLE = "jsontable";
 
+    /** 
+     * Value of parameter when user wants json data as above
+     * but in a format suitable for cross site ajax calls
+     **/
+    public static final String FORMAT_PARAMETER_JSONP_TABLE = "jsonptable";
+    
     /**
      * Name of format parameter that specifies format of returned results.
      */
     public static final String OUTPUT_PARAMETER = "format";
-
-
+    
+    /** The callback to be supplied for jsonp calls **/
+    public static final String CALLBACK_PARAMETER = "callback";
 
     /**
      * Parses common parameters for all web services. Must be called from parseRequest
