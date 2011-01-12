@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
@@ -170,7 +171,13 @@ public class CreateFlankingRegions
 
                     region.setDistance("" + distance + "kb");
                     region.setDirection(direction);
-                    region.setIncludeGene(includeGene);
+                    try {
+                        PostProcessUtil.checkFieldExists(os.getModel(), "GeneFlankingRegion",
+                                "inlcudeGene", "Not setting");
+                        region.setFieldValue("includeGene", includeGene);
+                    } catch (MetaDataException e) {
+                        // GeneFlankingRegion.includeGene not in model so do nothing
+                    }
                     region.setGene(gene);
                     region.setChromosome(chr);
                     region.setChromosomeLocation(location);
