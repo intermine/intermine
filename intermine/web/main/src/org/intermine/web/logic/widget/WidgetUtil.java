@@ -217,7 +217,7 @@ public final class WidgetUtil
         if ("Bonferroni".equals(errorCorrection)) {
             e = new Bonferroni(resultsMap, testCount);
         } else {
-            e = new BenjaminiHochberg(resultsMap);
+            e = new BenjaminiHochberg(resultsMap, testCount);
         }
         e.calculate(maxValue);
         return e.getAdjustedMap();

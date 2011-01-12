@@ -20,15 +20,12 @@ import org.intermine.web.logic.SortableMap;
 
 /**
  * This correction is the less stringent than the Bonferroni, and therefore tolerates more
- * false positives. There will be also less false negative genes. Here is how it works:
- *  1) The p-values of each gene are ranked from the largest to the smallest.
- *  2) The largest p-value remains as it is.
- *  3) The second largest p-value is multiplied by the total number of genes in gene
- *      list divided by its rank. If less than 0.05, it is significant.
- *      Corrected p-value = p-value*(n/n-1)
- *  4) The third p-value is multiplied as in step 3:
- *      Corrected p-value = p-value*(n/n-2)
- * And so on.
+ * false positives.
+ *
+ * Corrected p-value = p-value*(n/rank)
+ *  *
+ *  1) The p-values of each gene are ranked from the smallest to largest.
+ *  2) The p-value is multiplied by the total number of tests divided by its rank.
  *
  * @author Julie Sullivan
  */
@@ -41,81 +38,60 @@ public class BenjaminiHochberg implements ErrorCorrection
 
     /**
     * @param originalMap HashMap of go terms and their p-value
+    * @param testCount number of tests
      */
-    @SuppressWarnings("unchecked")
-    public BenjaminiHochberg(HashMap<String, BigDecimal> originalMap) {
-        numberOfTests = new BigDecimal(originalMap.size());
+    public BenjaminiHochberg(HashMap<String, BigDecimal> originalMap, int testCount) {
+        numberOfTests = new BigDecimal(testCount);
         SortableMap sortedMap = new SortableMap(originalMap);
-        // sort descending, largest values first
-        sortedMap.sortValues(false, false);
+        // sort ascending, smallest values first
+        sortedMap.sortValues(false, true);
         this.originalMap = new LinkedHashMap(sortedMap);
     }
 
     /**
-     * Calculates the Benjamini and Hochberg correction of the false discovery rate
+     * Calculates the Benjamini and Hochberg correction of the false discovery rate.
+     *
      * @param max maximum value we are interested in - used for display purposes only
      */
-    @SuppressWarnings("unchecked")
     public void calculate(Double max) {
         adjustedMap = new HashMap();
-        BigDecimal index = numberOfTests;
         BigDecimal lastValue = null;
+        int i = 1;
+        BigDecimal index = ONE;
 
-        // largest to smallest
+        // smallest to largest
         for (Map.Entry<String, BigDecimal> entry : originalMap.entrySet()) {
 
-            String label = entry.getKey();
             BigDecimal p = entry.getValue();
-            BigDecimal adjustedP = p;
 
-            if (index.equals(numberOfTests)) {
-                // p is never over 1
-                if (adjustedP.compareTo(ONE) >= 0) {
-                    adjustedP = ONE;
-                }
-
-                // only report if value > maximum
-                if (adjustedP.doubleValue() <= max.doubleValue()) {
-                    adjustedMap.put(label, adjustedP);
-                }
-
-                // decrease index
-                index = index.subtract(ONE);
-
-                // largest item is not updated
-                continue;
+            // if the p-value is not the same as previous, sync the rank
+            if (lastValue == null || p.compareTo(lastValue) != 0) {
+                index = new BigDecimal(i);
             }
 
-            // n - 1
-            BigDecimal divisor = null;
-            if (lastValue != null && p.compareTo(lastValue) == 0) {
-                // last p-value was the same as this one, use the previous index value
-                divisor = numberOfTests.subtract(index.add(ONE));
-            } else {
-                divisor = numberOfTests.subtract(index);
-            }
+            // n/rank
+            BigDecimal m = numberOfTests.divide(index, MathContext.DECIMAL128);
 
-            // n/(n-1)
-            BigDecimal m = numberOfTests.divide(divisor, MathContext.DECIMAL128);
+            // p-value*(n/rank)
+            BigDecimal adjustedP = p.multiply(m, MathContext.DECIMAL128);
 
-            // n/(n-1) * p
-            adjustedP = p.multiply(m, MathContext.DECIMAL128);
-
-            // p is never over 1
-            if (adjustedP.compareTo(ONE) >= 0) {
+            // p-value can't be over 1
+            if (adjustedP.compareTo(ONE) > 0) {
                 adjustedP = ONE;
             }
 
-            // only report if value > maximum
+            // only report if value <= maximum
             if (adjustedP.doubleValue() <= max.doubleValue()) {
-                adjustedMap.put(label, adjustedP);
+                adjustedMap.put(entry.getKey(), adjustedP);
+            } else {
+                // p-values are in ascending order, on first large number we can stop
+                return;
             }
 
             // to compare if next value is the same
             lastValue = p;
 
-            // decrease i
-            index = index.subtract(ONE);
+            i++;
         }
     }
 
@@ -125,7 +101,4 @@ public class BenjaminiHochberg implements ErrorCorrection
     public HashMap<String, BigDecimal> getAdjustedMap() {
         return adjustedMap;
     }
-
 }
-
-
