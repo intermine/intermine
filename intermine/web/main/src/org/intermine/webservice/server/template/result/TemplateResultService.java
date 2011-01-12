@@ -102,7 +102,8 @@ public class TemplateResultService extends QueryResultService
         	populatedTemplate.clearView();
         	populatedTemplate.addViews(newView);
         }
-        setHeaderAttributes(populatedTemplate);
+        setHeaderAttributes(populatedTemplate, input.getStart(), input.getMaxCount(),
+        	        input.getName());
         if (populatedTemplate.isValid()) {
             runPathQuery(populatedTemplate, input.getStart(), input.getMaxCount(),
                     populatedTemplate.getTitle(), populatedTemplate.getDescription(), input,

@@ -14,11 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,33 +30,37 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.WebServiceInput;
 import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
+import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.JSONObjResultProcessor;
-import org.intermine.webservice.server.output.JSONObjectFormatter;
+import org.intermine.webservice.server.output.JSONRowFormatter;
+import org.intermine.webservice.server.output.JSONRowResultProcessor;
 import org.intermine.webservice.server.output.MemoryOutput;
 import org.json.JSONArray;
 
 /**
  * Executes query and returns results. Other parameters in request can specify
- * range of returned results, format ...
- * For using of web service and parameter description see InterMine wiki pages.
- * 1) Validates parameters and tries validate xml query as much as possible. Validates xml
- * query according to XML Schema and and finds out if there were some errors during unmarshalling
- * PathQuery from xml.
- * 2) Executes created PathQuery.
- * 3) Print results to output.
+ * range of returned results, format ... For using of web service and parameter
+ * description see InterMine wiki pages. 1) Validates parameters and tries
+ * validate xml query as much as possible. Validates xml query according to XML
+ * Schema and and finds out if there were some errors during unmarshalling
+ * PathQuery from xml. 2) Executes created PathQuery. 3) Print results to
+ * output.
+ *
  * @author Jakub Kulaviak
  */
 
-public class QueryResultService extends WebService
-{
+public class QueryResultService extends WebService {
 
     private static final String XML_SCHEMA_LOCATION = "webservice/query.xsd";
 
@@ -72,57 +72,110 @@ public class QueryResultService extends WebService
 
     /**
      * Executes service specific logic.
-     * @param request request
-     * @param response response
+     *
+     * @param request
+     *            request
+     * @param response
+     *            response
      */
     @Override
     protected void execute(HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) {
 
         QueryResultInput input = getInput();
-                
-        PathQueryBuilder builder = getQueryBuilder(input.getXml(), request); 
+
+        PathQueryBuilder builder = getQueryBuilder(input.getXml(), request);
 
         PathQuery query = builder.getQuery();
-        setHeaderAttributes(query);
-        runPathQuery(query, input.getStart(), input.getMaxCount(), null, null, input, null, input
-                .getLayout());
+        setHeaderAttributes(query, input.getStart(), input.getMaxCount(), null);
+        runPathQuery(query, input.getStart(), input.getMaxCount(), null, null,
+                input, null, input.getLayout());
     }
-    
+
     private PathQueryBuilder getQueryBuilder(String xml, HttpServletRequest req) {
-    	HttpSession session = req.getSession();
+        HttpSession session = req.getSession();
         Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = this.im.getBagManager();
 
-        Map<String, InterMineBag> savedBags 
-        	= bagManager.getUserAndGlobalBags(profile);
-        
+        Map<String, InterMineBag> savedBags = bagManager
+                .getUserAndGlobalBags(profile);
+
         if (getFormat() == WebService.JSON_OBJ_FORMAT) {
-        	return new PathQueryBuilderForJSONObj(xml, getXMLSchemaUrl(), savedBags);
+            return new PathQueryBuilderForJSONObj(xml, getXMLSchemaUrl(),
+                    savedBags);
         } else {
-        	return new PathQueryBuilder(xml, getXMLSchemaUrl(), savedBags);
+            return new PathQueryBuilder(xml, getXMLSchemaUrl(), savedBags);
         }
     }
-    
-    
-    protected void setHeaderAttributes(PathQuery pq) {
-    	if (getFormat() == WebService.JSON_OBJ_FORMAT) {
-	    	Map<String, String> attributes = new HashMap<String, String>();
-	    	attributes.put(JSONObjectFormatter.KEY_VIEWS, new JSONArray(pq.getView()).toString());
-	    	try {
-	    		Calendar cal = Calendar.getInstance();
-	    		Date now = cal.getTime();
-	    		DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
-	    		String executionTime = dateFormatter.format(now);
-				attributes.put(JSONObjectFormatter.KEY_ROOT_CLASS, pq.getRootClass());
-				attributes.put(JSONObjectFormatter.KEY_MODEL_NAME, pq.getModel().getName());
-				attributes.put(JSONObjectFormatter.KEY_TIME, executionTime);
-			} catch (PathException e) {
-				throw new RuntimeException("Cannot get root class name", e);
-			}
-	    	
-	    	output.setHeaderAttributes(attributes);
-    	}
+
+    /**
+     * Set the header attributes of the output based on the values of the PathQuery
+     *
+     * @param pq The path query to be run
+     */
+    protected void setHeaderAttributes(PathQuery pq, Integer start, Integer end, String title) {
+        Map<String, String> attributes = new HashMap<String, String>();
+        if (formatIsJSON()) {
+            attributes.put(JSONFormatter.KEY_MODEL_NAME, pq.getModel().getName());
+            attributes.put(JSONFormatter.KEY_VIEWS, new JSONArray(pq.getView()).toString());
+            try {
+                attributes.put(JSONFormatter.KEY_ROOT_CLASS, pq.getRootClass());
+            } catch (PathException e) {
+                throw new RuntimeException("Cannot get root class name", e);
+            }
+        }
+        int f = getFormat();
+        if (f == WebService.JSON_TABLE_FORMAT || f == WebService.JSONP_TABLE_FORMAT) {
+            String baseUrl = PortalHelper.getBaseUrl(request);
+            QueryResultLinkGenerator linkGen = new QueryResultLinkGenerator();
+            String xml = pq.toXml(PathQuery.USERPROFILE_VERSION);
+            String csvUrl = linkGen.getLink(baseUrl, xml, "csv");
+            String tsvUrl = linkGen.getLink(baseUrl, xml, "tab");
+            int count = 0;
+            try {
+                count = getPathQueryExecutor().count(pq);
+            } catch (ObjectStoreException e) {
+                throw new ServiceException("Could not get count");
+            }
+            int size = end - start;
+            int nextStart = end + 1;
+            int nextEnd = Math.min((nextStart + size), count);
+            int prevEnd = start - 1;
+            int prevStart = Math.max((prevEnd - size), 0);
+
+            String basePagerUrl = linkGen.getLink(baseUrl, xml,
+                    request.getParameter(WebServiceRequestParser.OUTPUT_PARAMETER));
+
+            attributes.put(JSONRowFormatter.KEY_EXPORT_CSV_URL, csvUrl);
+            attributes.put(JSONRowFormatter.KEY_EXPORT_TSV_URL, tsvUrl);
+            String nextUrl = "";
+            if (nextStart < count) {
+                nextUrl = basePagerUrl;
+                nextUrl += "&" + WebServiceRequestParser.START_PARAMETER + "=" + nextStart;
+                nextUrl += "&" + WebServiceRequestParser.LIMIT_PARAMETER + "=" + nextEnd;
+            }
+            attributes.put(JSONRowFormatter.KEY_NEXT_PAGE, nextUrl);
+            String prevUrl = "";
+            if (prevEnd > 0) {
+                prevUrl = basePagerUrl;
+                prevUrl += "&" + WebServiceRequestParser.START_PARAMETER + "=" + prevStart;
+                prevUrl += "&" + WebServiceRequestParser.LIMIT_PARAMETER + "=" + prevEnd;
+            }
+            attributes.put(JSONRowFormatter.KEY_PREVIOUS_PAGE, prevUrl);
+            if (title == null) {
+                title = "Query Results";
+            }
+            attributes.put(JSONRowFormatter.KEY_TITLE, title);
+            attributes.put(JSONRowFormatter.KEY_COUNT, String.valueOf(count));
+        }
+        if (formatIsJSONP()) {
+            String callback = getCallback();
+            if (callback == null) {
+                callback = "makeInterMineResultsTable";
+            }
+            attributes.put(JSONFormatter.KEY_CALLBACK, callback);
+        }
+        output.setHeaderAttributes(attributes);
     }
 
     private void forward(PathQuery pathQuery, String title, String description,
@@ -137,13 +190,15 @@ public class QueryResultService extends WebService
             request.setAttribute("rows", mout.getResults());
             request.setAttribute("title", title);
             request.setAttribute("description", description);
-            request.setAttribute("currentPage", (input.getStart()) / input.getMaxCount());
+            request.setAttribute("currentPage",
+                    (input.getStart()) / input.getMaxCount());
             request.setAttribute("baseLink", createBaseLink());
             request.setAttribute("pageSize", input.getMaxCount());
             request.setAttribute("layout", layout);
             if (mineLink != null) {
                 request.setAttribute("mineLinkText", "Results in "
-                        + InterMineAction.getWebProperties(request).getProperty("project.title"));
+                        + InterMineAction.getWebProperties(request)
+                                .getProperty("project.title"));
                 request.setAttribute("mineLinkUrl", mineLink);
             }
             try {
@@ -154,10 +209,9 @@ public class QueryResultService extends WebService
         }
     }
 
-
     private String createBaseLink() {
         String baseLink = request.getRequestURL().toString() + "?";
-        List<String> names =  EnumerationUtils.toList(request.getParameterNames());
+        List<String> names = EnumerationUtils.toList(request.getParameterNames());
         while (names.contains(WebServiceRequestParser.START_PARAMETER)) {
             names.remove(WebServiceRequestParser.START_PARAMETER);
         }
@@ -187,36 +241,41 @@ public class QueryResultService extends WebService
             try {
                 return URLEncoder.encode(o.toString(), "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("Encoding string failed: " + o.toString(), e);
+                throw new RuntimeException("Encoding string failed: "
+                        + o.toString(), e);
             }
         }
     }
 
-
+    
     /**
      * Runs path query and returns to output obtained results.
-     * @param pathQuery path query
-     * @param firstResult index of first result, that should be returned
-     * @param maxResults maximum number of results
-     * @param title title displayed in html output, can be null
-     * @param description description displayed in html output, can be null
-     * @param input input of web service
-     * @param mineLink link pointing results of this query (template) in InterMine, can be null
-     * @param layout results table layout string, can be null
+     *
+     * @param pathQuery
+     *            path query
+     * @param firstResult
+     *            index of first result, that should be returned
+     * @param maxResults
+     *            maximum number of results
+     * @param title
+     *            title displayed in html output, can be null
+     * @param description
+     *            description displayed in html output, can be null
+     * @param input
+     *            input of web service
+     * @param mineLink
+     *            link pointing results of this query (template) in InterMine,
+     *            can be null
+     * @param layout
+     *            results table layout string, can be null
      */
-    public void runPathQuery(PathQuery pathQuery, int firstResult, int maxResults,  String title,
-            String description, WebServiceInput input, String mineLink, String layout) {
-        Profile profile = SessionMethods.getProfile(request.getSession());
-        PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
+    public void runPathQuery(PathQuery pathQuery, int firstResult,
+            int maxResults, String title, String description,
+            WebServiceInput input, String mineLink, String layout) {
+        PathQueryExecutor executor = getPathQueryExecutor();
         executor.setBatchSize(BATCH_SIZE);
-        ExportResultsIterator resultIt = executor.execute(pathQuery, firstResult,
-                maxResults);
-        ResultProcessor processor;
-        if (getFormat() == WebService.JSON_OBJ_FORMAT) {   	
-        	processor = new JSONObjResultProcessor();
-        } else {
-        	processor = new ResultProcessor();
-        }
+        ExportResultsIterator resultIt = executor.execute(pathQuery, firstResult, maxResults);
+        ResultProcessor processor = makeResultProcessor();
         try {
             resultIt.goFaster();
             processor.write(resultIt, output);
@@ -224,6 +283,33 @@ public class QueryResultService extends WebService
             resultIt.releaseGoFaster();
         }
         forward(pathQuery, title, description, input, mineLink, layout);
+    }
+
+    private ResultProcessor makeResultProcessor() {
+        ResultProcessor processor;
+        switch(getFormat()) {
+            case WebService.JSON_OBJ_FORMAT:
+                processor = new JSONObjResultProcessor();
+                break;
+            case WebService.JSONP_OBJ_FORMAT:
+                processor = new JSONObjResultProcessor();
+                break;
+            case WebService.JSON_TABLE_FORMAT:
+                processor = new JSONRowResultProcessor(PortalHelper.getBaseUrl(request));
+                break;
+            case WebService.JSONP_TABLE_FORMAT:
+                processor = new JSONRowResultProcessor(PortalHelper.getBaseUrl(request));
+                break;
+            default:
+                processor = new ResultProcessor();
+        }
+        return processor;
+    }
+    
+    private PathQueryExecutor getPathQueryExecutor() {
+        Profile profile = SessionMethods.getProfile(request.getSession());
+        PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
+        return executor;
     }
 
     private String getXMLSchemaUrl() {
