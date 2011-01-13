@@ -189,6 +189,7 @@ gzip $ARKDIR/userprofiles/modmine-r$PREL-userprofile
 # needed for a more up to date list compared with db
 echo; echo "Archiving osbag table for r$PREL..."
 pg_dump -c -h modprod0 -U modmine -t osbag_int modmine-r$PREL > $ARKDIR/userprofiles/osbag_int-r$PREL.sql
+gzip $ARKDIR/userprofiles/osbag_int-r$PREL.sql
 
 echo; echo "Creating properties file for archived webapp r$PREL..."
 cd /home/modmine/.intermine
