@@ -234,7 +234,13 @@ public class QueryResultService extends WebService {
         return baseLink;
     }
 
-    private static String encode(Object o) {
+    /**
+     * URL Encode an object. Null values are returned as the empty string, and encoding problems
+     * throw runtime exceptions.
+     * @param o The thing to encode.
+     * @return The encoded version.
+     */
+    protected static String encode(Object o) {
         if (o == null) {
             return "";
         } else {
@@ -247,7 +253,7 @@ public class QueryResultService extends WebService {
         }
     }
 
-    
+
     /**
      * Runs path query and returns to output obtained results.
      *
@@ -305,7 +311,7 @@ public class QueryResultService extends WebService {
         }
         return processor;
     }
-    
+
     private PathQueryExecutor getPathQueryExecutor() {
         Profile profile = SessionMethods.getProfile(request.getSession());
         PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
