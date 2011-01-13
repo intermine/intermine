@@ -152,5 +152,6 @@ public class TemplateQueryHandler extends PathQueryHandler
         templateComment = "";
         editableConstraints.clear();
         constraintDescriptions.clear();
+        constraintSwitchables.clear();
     }
 }
