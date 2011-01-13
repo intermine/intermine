@@ -158,25 +158,36 @@ public class TemplateQuery extends PathQuery implements WebSearchable
         }
         return editableConstraints.contains(constraint);
     }
-    
+
     /**
-     * Returns whether a constraint is optional
-     * 
+     * Returns whether a constraint is optional. This is the logical inverse of isRequired()
+     *
      * @param constraint the PathConstraint to check
      * @return true if the constraint is optional
      * @throws NullPointerException if the constraint is null
      * @throws NoSuchElementException if constraint is not in the query at all
      */
     public synchronized boolean isOptional(PathConstraint constraint) {
-    	
-    	if (constraint == null) {
+        return !isRequired(constraint);
+    }
+
+    /**
+     * Returns whether a constraint is required. This is the logical inverse of isOptional()
+     *
+     * @param constraint the PathConstraint to check
+     * @return true if the constraint is required
+     * @throws NullPointerException if the constraint is null
+     * @throws NoSuchElementException if constraint is not in the query at all
+     */
+    public synchronized boolean isRequired(PathConstraint constraint) {
+        if (constraint == null) {
             throw new NullPointerException("Cannot fetch editable status of null constraint");
         }
         if (!getConstraints().containsKey(constraint)) {
             throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
         }
         boolean isRequired = SwitchOffAbility.LOCKED.equals(getSwitchOffAbility(constraint));
-        return ! isRequired; 
+        return isRequired;
     }
 
     /**
@@ -299,8 +310,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
                     + constraint);
         }
         if (!getConstraints().containsKey(constraint)) {
-            throw new NoSuchElementException("Constraint " + constraint + " is not in the query: "
-                    + this.toString());
+            throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
         }
         constraintSwitchOffAbility.put(constraint, switchOffAbility);
     }
@@ -419,6 +429,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @return the title
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -451,6 +462,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @return the query identifier string
      */
+    @Override
     public String getName() {
         return name;
     }
