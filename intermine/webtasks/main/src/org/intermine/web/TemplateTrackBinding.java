@@ -22,6 +22,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
+import org.intermine.api.tracker.TemplateTracker;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
@@ -139,6 +140,8 @@ class TemplateTrackHandler extends DefaultHandler
         if ("templatetracks".equals(qName)) {
             try {
                 connection = ((ObjectStoreWriterInterMineImpl) osw).getConnection();
+                    // Creating a template tracker will create an empty table if it doesn't exist
+                    TemplateTracker templateTracker = TemplateTracker.getInstance(connection);
                 stm = connection.prepareStatement("INSERT INTO templatetrack VALUES(?, ?, ?, ?)");
             } catch (SQLException sqle) {
                 new BuildException("Problem to retrieve the connection", sqle);
