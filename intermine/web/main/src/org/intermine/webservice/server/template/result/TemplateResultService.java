@@ -32,6 +32,8 @@ import org.intermine.api.template.TemplateValue;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathConstraintLookup;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TemplateAction;
 import org.intermine.web.util.URLGenerator;
@@ -243,6 +245,20 @@ public class TemplateResultService extends QueryResultService
             i++;
         }
         return ret;
+    }
+
+    @Override
+    protected String getExportLink(PathQuery pq, String format) {
+        if (!(pq instanceof TemplateQuery)) {
+            throw new IllegalArgumentException(
+                    "The template results service only handles "
+                    + "TemplateQuerys, I got: " + pq.getClass());
+        }
+        TemplateQuery template = (TemplateQuery) pq;
+        String baseUrl = PortalHelper.getBaseUrl(request);
+        TemplateResultLinkGenerator linkGen = new TemplateResultLinkGenerator();
+        String xml = pq.toXml(PathQuery.USERPROFILE_VERSION);
+        return linkGen.getTabLink(baseUrl, template);
     }
 
     private ConstraintInput getCorrespondingInput(TemplateQuery template, PathConstraint con,

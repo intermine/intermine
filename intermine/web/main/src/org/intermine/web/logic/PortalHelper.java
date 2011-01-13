@@ -41,7 +41,7 @@ public final class PortalHelper
     private static Map<String, BagConverter> bagConverters = new HashMap<String, BagConverter>();
     private static String portalBaseUrl = null;
 
-    private static final String INTERNAL_REPORT_PAGE = "objectdetails.do";
+    private static final String INTERNAL_REPORT_PAGE = "objectDetails.do";
     private static final String EXTERNAL_PORTAL_PAGE = "portal.do";
 
     private PortalHelper() {
