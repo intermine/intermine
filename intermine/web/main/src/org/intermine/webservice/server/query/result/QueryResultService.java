@@ -108,6 +108,13 @@ public class QueryResultService extends WebService {
         }
     }
 
+    protected String getExportLink(PathQuery pq, String format) {
+        String baseUrl = PortalHelper.getBaseUrl(request);
+        QueryResultLinkGenerator linkGen = new QueryResultLinkGenerator();
+        String xml = pq.toXml(PathQuery.USERPROFILE_VERSION);
+        return linkGen.getLink(baseUrl, xml, format);
+    }
+
     /**
      * Set the header attributes of the output based on the values of the PathQuery
      *
@@ -126,11 +133,8 @@ public class QueryResultService extends WebService {
         }
         int f = getFormat();
         if (f == WebService.JSON_TABLE_FORMAT || f == WebService.JSONP_TABLE_FORMAT) {
-            String baseUrl = PortalHelper.getBaseUrl(request);
-            QueryResultLinkGenerator linkGen = new QueryResultLinkGenerator();
-            String xml = pq.toXml(PathQuery.USERPROFILE_VERSION);
-            String csvUrl = linkGen.getLink(baseUrl, xml, "csv");
-            String tsvUrl = linkGen.getLink(baseUrl, xml, "tab");
+            String csvUrl = getExportLink(pq, "csv");
+            String tsvUrl =  getExportLink(pq, "tab");
             int count = 0;
             try {
                 count = getPathQueryExecutor().count(pq);
@@ -143,7 +147,7 @@ public class QueryResultService extends WebService {
             int prevEnd = start - 1;
             int prevStart = Math.max((prevEnd - size), 0);
 
-            String basePagerUrl = linkGen.getLink(baseUrl, xml,
+            String basePagerUrl = getExportLink(pq,
                     request.getParameter(WebServiceRequestParser.OUTPUT_PARAMETER));
 
             attributes.put(JSONRowFormatter.KEY_EXPORT_CSV_URL, csvUrl);
