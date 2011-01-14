@@ -345,8 +345,8 @@ public class Profile
         ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
         List<String> keyFielNames = (List<String>) ClassKeyHelper.getKeyFieldNames(
                                     classKeys, type);
-        InterMineBag bag = new InterMineBag(name, type, description, new Date(), os, userId, uosw,
-                                           keyFielNames);
+        InterMineBag bag = new InterMineBag(name, type, description, new Date(), true, os, userId,
+                                           uosw, keyFielNames);
         savedBags.put(name, bag);
         reindex(TagTypes.BAG);
         return bag;
