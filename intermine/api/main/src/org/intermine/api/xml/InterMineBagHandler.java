@@ -1,7 +1,7 @@
 package org.intermine.api.xml;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,14 +10,21 @@ package org.intermine.api.xml;
  *
  */
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.intermine.api.bag.IdUpgrader;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
@@ -50,6 +57,7 @@ public class InterMineBagHandler extends DefaultHandler
     private IdUpgrader idUpgrader;
     private int elementsInOldBag;
     private Set<Integer> bagContents;
+    private Map<String, List<FieldDescriptor>>  classKeys;
 
     /**
      * Create a new InterMineBagHandler object.
@@ -72,6 +80,15 @@ public class InterMineBagHandler extends DefaultHandler
         this.idUpgrader = idUpgrader;
         this.idToObjectMap = idToObjectMap;
         this.model = osw.getModel();
+        Properties classKeyProps = new Properties();
+        try {
+            InputStream inputStream = this.getClass().getClassLoader()
+                                      .getResourceAsStream("class_keys.properties");
+            classKeyProps.load(inputStream);
+        } catch (IOException ioe) {
+            new BuildException("class_keys.properties not found", ioe);
+        }
+        classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
     }
 
     /**
@@ -98,6 +115,7 @@ public class InterMineBagHandler extends DefaultHandler
                 if (model.hasClassDescriptor(bagClsName)) {
                     bag = new InterMineBag(bagName, bagType, bagDescription,
                             dateCreated, osw.getObjectStore(), userId, uosw);
+                    bag.setKeyFieldNames(ClassKeyHelper.getKeyFieldNames(classKeys, bagType));
                 } else {
                     LOG.warn("Not upgrading bag: " + bagName + " for user: " + userId
                             + " - " + bagType + " no longer in model.");
