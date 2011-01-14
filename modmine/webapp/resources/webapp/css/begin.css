@@ -39,8 +39,10 @@ li { margin-left:auto; }
 
   #search-bochs { border:1px solid #FBC9B2; background:#FBF4F1; }
     #search-bochs h3 { background:#FBC9B2; padding-left:80px; }
-    #search-bochs input#dataSearch.eg { color:#666; }
-    #search-bochs input#exptSearch.eg { color:#666; }
+  #search-bochs input#dataSearch { width: 205px; }
+    #search-bochs input#dataSearch.eg { color:#666; width: 205px; }
+    #search-bochs input#exptSearch { width: 126px; }
+    #search-bochs input#exptSearch.eg { color:#666; width: 126px; }
 #search-bochs img.title { position:absolute; top:10px; left:10px; }
   #lists-bochs { border:1px solid #D0FCC5; background:#F6FCF4; }
     #lists-bochs h3 { background:#D0FCC5; padding-left:80px; }
@@ -50,7 +52,8 @@ li { margin-left:auto; }
   #templates-bochs img.title { position:absolute; top:10px; left:10px; }
 
 /* 3 boxes */
-#bochs { border:1px solid #BEDCE4; background:#FCFEFF; margin-top:20px; height:210px; }
+#bochs { border:1px solid #BEDCE4; background:#FCFEFF; margin-top:20px; height:210px;
+ margin-right: 4px; width: 225px; }
   #bochs.span-4 { width:291px; }
   #bochs h3 { padding:10px 0 10px 10px; color:#0891C1; }
   #bochs .heatmap { vertical-align:middle; text-align:center; }

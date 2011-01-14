@@ -219,7 +219,7 @@
         <p>Get started with <strong>powerful queries</strong> using our predefined searches. These customizable templates have been
            designed around common tasks performed by our biologist community.</p>
         <p>To see how they work, why not try a template from our <strong>examples page</strong>?</p>
-        <br />
+        <br /><br />
         <a href="/${WEB_PROPERTIES['webapp.path']}/templates.do" class="button violet">Templates</a>
      </div>
    </div>
@@ -440,11 +440,11 @@
      }
    });
    $('input#exptSearch').focus(function() {
-	     if ($(this).hasClass(inputToggleClass)) {
-	       $(this).toggleClass(inputToggleClass);
-	       $(this).val('');
-	     }
-	   });
+       if ($(this).hasClass(inputToggleClass)) {
+         $(this).toggleClass(inputToggleClass);
+         $(this).val('');
+       }
+     });
 
    // templates switcher
    jQuery(document).ready(function() {
