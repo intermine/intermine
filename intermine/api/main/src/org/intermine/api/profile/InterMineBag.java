@@ -82,15 +82,17 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param type the class of objects stored in the bag
      * @param description the description of the bag
      * @param dateCreated the Date when this bag was created
+     * @param isCurrent the status of this bag
      * @param os the production ObjectStore
      * @param profileId the ID of the user in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
-            ObjectStore os, Integer profileId, ObjectStoreWriter uosw) throws ObjectStoreException {
+            boolean isCurrent, ObjectStore os, Integer profileId, ObjectStoreWriter uosw)
+        throws ObjectStoreException {
         this.type = type;
-        init(name, description, dateCreated, os, profileId, uosw);
+        init(name, description, dateCreated, isCurrent, os, profileId, uosw);
     }
 
     /**
@@ -100,6 +102,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param type the class of objects stored in the bag
      * @param description the description of the bag
      * @param dateCreated the Date when this bag was created
+     * @param isCurrent the current state of the bag
      * @param os the production ObjectStore
      * @param profileId the ID of the user in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
@@ -107,18 +110,19 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
-        ObjectStore os, Integer profileId, ObjectStoreWriter uosw, List<String> keyFieldNames)
-        throws ObjectStoreException {
+        boolean isCurrent, ObjectStore os, Integer profileId, ObjectStoreWriter uosw,
+        List<String> keyFieldNames) throws ObjectStoreException {
         this.type = type;
-        init(name, description, dateCreated, os, profileId, uosw);
+        init(name, description, dateCreated, isCurrent, os, profileId, uosw);
         this.keyFieldNames = keyFieldNames;
     }
 
-    private void init(String name, String description, Date dateCreated, ObjectStore os,
-        Integer profileId, ObjectStoreWriter uosw) throws ObjectStoreException {
+    private void init(String name, String description, Date dateCreated, boolean isCurrent,
+        ObjectStore os, Integer profileId, ObjectStoreWriter uosw) throws ObjectStoreException {
         checkAndSetName(name);
         this.description = description;
         this.dateCreated = dateCreated;
+        this.isCurrent = isCurrent;
         this.os = os;
         this.profileId = profileId;
         this.osb = os.createObjectStoreBag();
@@ -127,7 +131,6 @@ public class InterMineBag implements WebSearchable, Cloneable
         SavedBag savedBag = store();
         this.savedBagId = savedBag.getId();
         setClassDescriptors();
-        isCurrent = true;
     }
 
     /**
@@ -174,7 +177,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             savedBag.setDateCreated(dateCreated);
             savedBag.proxyUserProfile(new ProxyReference(null, profileId, UserProfile.class));
             savedBag.setOsbId(osb.getBagId());
-            savedBag.setCurrent(true);
+            savedBag.setCurrent(isCurrent);
             uosw.store(savedBag);
         }
         return savedBag;
