@@ -52,6 +52,7 @@ public class InterMineBagHandler extends DefaultHandler
     private String bagName;
     private String bagType;
     private String bagDescription;
+    private boolean current;
     private InterMineBag bag;
     private Map<Integer, InterMineObject> idToObjectMap;
     private IdUpgrader idUpgrader;
@@ -104,18 +105,23 @@ public class InterMineBagHandler extends DefaultHandler
                 bagName = attrs.getValue("name");
                 bagType = attrs.getValue("type");
                 bagDescription = attrs.getValue("description");
+                String currentValue = attrs.getValue("current");
+                if (currentValue != null) {
+                    current = ("true".equals(currentValue)) ? true : false;
+                }
                 Date dateCreated;
                 try {
                     dateCreated = new Date(Long.parseLong(attrs.getValue("date-created")));
                 } catch (NumberFormatException e) {
                     dateCreated = null;
                 }
+
                 // only upgrade bags whose type is still in the model
                 String bagClsName = model.getPackageName() + "." + bagType;
                 if (model.hasClassDescriptor(bagClsName)) {
                     bag = new InterMineBag(bagName, bagType, bagDescription,
-                            dateCreated, osw.getObjectStore(), userId, uosw);
-                    bag.setKeyFieldNames(ClassKeyHelper.getKeyFieldNames(classKeys, bagType));
+                            dateCreated, current, osw.getObjectStore(), userId, uosw,
+                            ClassKeyHelper.getKeyFieldNames(classKeys, bagType));
                 } else {
                     LOG.warn("Not upgrading bag: " + bagName + " for user: " + userId
                             + " - " + bagType + " no longer in model.");

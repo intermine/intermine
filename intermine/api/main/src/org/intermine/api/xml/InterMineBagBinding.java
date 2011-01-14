@@ -70,7 +70,7 @@ public class InterMineBagBinding
             if (bag.getDescription() != null) {
                 writer.writeAttribute("description", bag.getDescription());
             }
-
+            writer.writeAttribute("current", (bag.isCurrent()) ? "true" : "false");
             List<Integer> ids = (List<Integer>) bag.getContentsAsIds();
             for (Integer id : ids) {
                 writer.writeEmptyElement("bagElement");
