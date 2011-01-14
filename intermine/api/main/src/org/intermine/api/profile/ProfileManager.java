@@ -283,7 +283,6 @@ public class ProfileManager
                         InterMineBag bag = new InterMineBag(os, bagId, uosw);
                         bag.setKeyFieldNames((List<String>) ClassKeyHelper.getKeyFieldNames(
                                              classKeys, bag.getType()));
-                        bag.setCurrent(savedBag.getCurrent());
                         savedBags.put(bag.getName(), bag);
                     } catch (UnknownBagTypeException e) {
                         LOG.warn("Ignoring a bag '" + savedBag.getName() + " for user '"
