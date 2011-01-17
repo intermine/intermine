@@ -89,7 +89,11 @@ function showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_pat
       vis.exportNetwork('xgmml', 'cytoscapeNetworkExport.do?type=xgmml');
     })
 
-    vis.addContextMenuItem("Export network as TSV...", "none", function(evt) {
+    .addContextMenuItem("Export network as SVG...", "none", function(evt) {
+      vis.exportNetwork('svg', 'cytoscapeNetworkExport.do?type=svg');
+    })
+
+    .addContextMenuItem("Export network as TSV...", "none", function(evt) {
       vis.exportNetwork('tab', 'cytoscapeNetworkExport.do?type=tab&hub='+hubgene);
     })
 
