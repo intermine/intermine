@@ -230,8 +230,6 @@ function showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_pat
                                .width(1000);
         vis.panZoomControlVisible(true);
         vis.zoom(1.5);  // Change the scale of the network until it fits the screen, vis.zoomToFit() is too small
-        vis.nodeTooltipsEnabled(false);
-        vis.edgeTooltipsEnabled(true);
         jQuery('#caption').html("[Right click a node or edge for more options]");   // Change the caption
         vis.removeListener("click", "none");    // mimic of jQuery.one('click', func)
     });
@@ -244,6 +242,9 @@ function showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_pat
 
         edgeLabelsVisible: false,
         nodeLabelsVisible: true,
+
+        nodeTooltipsEnabled: false,
+        edgeTooltipsEnabled: true,
 
         panZoomControlVisible: false,   // hide pan zoom
 
