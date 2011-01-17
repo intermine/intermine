@@ -429,7 +429,6 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @return the title
      */
-    @Override
     public String getTitle() {
         return title;
     }
@@ -462,7 +461,6 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @return the query identifier string
      */
-    @Override
     public String getName() {
         return name;
     }
