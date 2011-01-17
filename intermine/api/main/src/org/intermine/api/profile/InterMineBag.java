@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -45,6 +45,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.writebatch.Batch;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.TypeUtil;
@@ -61,6 +62,7 @@ public class InterMineBag implements WebSearchable, Cloneable
 {
     protected static final Logger LOG = Logger.getLogger(InterMineBag.class);
 
+    public static final String BAG_VALUES = "bagvalues";
     private Integer profileId;
     private Integer savedBagId;
     private String name;
@@ -257,7 +259,8 @@ public class InterMineBag implements WebSearchable, Cloneable
                 uos = (ObjectStoreInterMineImpl) uosw.getObjectStore();
                 conn = uos.getConnection();
                 stm = conn.createStatement();
-                String sql = "SELECT value FROM bagvalues WHERE savedbagid = " + savedBagId;
+                String sql = "SELECT value FROM " + BAG_VALUES + " WHERE savedbagid = "
+                             + savedBagId;
                 rs = stm.executeQuery(sql);
                 while (rs.next()) {
                     primaryIdentifiersList.add(rs.getString(1));
@@ -286,7 +289,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     /**
      * Returns the values of the key field objects with id specified in input and contained in
      * the bag
-     * @param ids
+     * @param ids the collection of id
      * @return the list of values
      */
     public List<String> getKeyFieldValues(Collection<Integer> ids) {
@@ -720,12 +723,15 @@ public class InterMineBag implements WebSearchable, Cloneable
             }
             try {
                 conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
+                if (!DatabaseUtil.tableExists(conn, BAG_VALUES)) {
+                    createTable(conn);
+                }
                 if (conn.getAutoCommit()) {
                     conn.setAutoCommit(false);
                     Batch batch = new Batch(new BatchWriterPostgresCopyImpl());
                     String[] colNames = new String[] {"savedbagid", "value"};
                     for (String value : values) {
-                        batch.addRow(conn, "bagvalues", null, colNames,
+                        batch.addRow(conn, BAG_VALUES, null, colNames,
                                     new Object[] {savedBagId, value});
                     }
                     batch.flush(conn);
@@ -745,6 +751,18 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
     }
 
+    private void createTable(Connection con) {
+        String sqlTable = "CREATE TABLE " + BAG_VALUES + " (savedbagid integer, value text)";
+        String sqlIndex = "CREATE UNIQUE INDEX bagvalues_index1 ON " + BAG_VALUES
+                          + " (savedbagid, value)";
+        try {
+            con.createStatement().execute(sqlTable);
+            con.createStatement().execute(sqlIndex);
+        } catch (SQLException sqle) {
+            LOG.warn("Error creatin table or index for bagvalues", sqle);
+        }
+    }
+    
     /**
      *
      */
@@ -754,7 +772,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         try {
             conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
             stm = conn.createStatement();
-            String sql = "DELETE FROM bagvalues WHERE savedBagId='" + savedBagId + "'";
+            String sql = "DELETE FROM " + BAG_VALUES + " WHERE savedBagId='" + savedBagId + "'";
             stm.executeUpdate(sql);
         } catch (SQLException sqle) {
             throw new RuntimeException("Error deleting bagvalues of bag : " + savedBagId, sqle);
@@ -784,7 +802,7 @@ public class InterMineBag implements WebSearchable, Cloneable
                 valuesList = valuesList + "'" + value + "',";
             }
             valuesList = valuesList.substring(0, valuesList.length() - 1);
-            sql = "DELETE FROM bagvalues WHERE savedBagId='" + savedBagId + "' "
+            sql = "DELETE FROM " + BAG_VALUES + " WHERE savedBagId='" + savedBagId + "' "
                      + " AND value IN (" + valuesList + ")";
             stm.executeUpdate(sql);
         } catch (SQLException sqle) {
