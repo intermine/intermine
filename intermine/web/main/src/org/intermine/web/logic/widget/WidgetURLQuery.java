@@ -27,7 +27,7 @@ public interface WidgetURLQuery
      * @param showAll whether or not to show all records.  If false, then only records selected
      * by the user will be returned
      * @return the query generated based on which records the user clicked on in the widget
-     * @throws PathException
+     * @throws PathException if bad path
      */
     PathQuery generatePathQuery(boolean showAll) throws PathException;
 }
