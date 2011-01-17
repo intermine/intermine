@@ -115,7 +115,7 @@
     <ul>
         <li>Zoom in/out by using the controller pan at the bottom right of the network view.</li>
         <li>Drag and move a node around.</li>
-        <li>Left click a node to highlight its first neighbours.</li>
+        <li>Click or mouseover a node to highlight its first neighbours.</li>
         <li>Double click a node to select and move its first neighbours.</li>
         <li>Right click a node for more options, e.g. view the modMine gene report page, export the network in different formats, etc.</li>
     </ul>
@@ -147,8 +147,6 @@
     var webapp_path = "${WEB_PROPERTIES['webapp.path']}";
     var project_title = "${WEB_PROPERTIES['project.title']}";
 
-    var vis; // can be used globally
-
     if (classMissingMessage != "") {
         jQuery('#cytoscapeweb').html(classMissingMessage)
                                .css('font-style','italic');
@@ -158,7 +156,7 @@
                                .css('font-style','italic');
     }
     else {
-        showNetwork(flyRegulatoryNetwork, webapp_baseurl, webapp_path, project_title, vis);
+        showNetwork(flyRegulatoryNetwork, webapp_baseurl, webapp_path, project_title);
 
         // sidecontent settings
         jQuery('.sidecontent').sidecontent({

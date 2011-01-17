@@ -1,6 +1,6 @@
 // Functions for fly regulatory network display
 
-function showNetwork(flyRegulatoryNetwork, webapp_baseurl, webapp_path, project_title, vis) {
+function showNetwork(flyRegulatoryNetwork, webapp_baseurl, webapp_path, project_title) {
 
     jQuery('#menu').html("&nbsp;");
 
@@ -112,11 +112,14 @@ function showNetwork(flyRegulatoryNetwork, webapp_baseurl, webapp_path, project_
           vis.exportNetwork('xgmml', 'cytoscapeNetworkExport.do?type=xgmml');
         })
 
-        /*
         .addContextMenuItem("Export network as SVG...", "none", function(evt) {
           vis.exportNetwork('svg', 'cytoscapeNetworkExport.do?type=svg');
         })
-        */
+
+        .addListener("mouseover", "nodes", function(evt) {
+            _mouseOverNode = evt.target; //global, once this function is called
+            highlightFirstNeighbors(evt.target);
+        })
 
         .addListener("click", "nodes", function(evt) {
             _mouseOverNode = evt.target; //global, once this function is called
