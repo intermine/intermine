@@ -112,7 +112,7 @@ public class CytoscapeInteractionsController extends TilesAction
             String orgName = gene.getOrganism().getName();
             if (!interactionInfoMap.containsKey(orgName)) {
                 String orgWithNoDataMessage = "Interaction data is not availiable for "
-                        + orgName + " gene";
+                        + orgName + " genes";
                 request.setAttribute("orgWithNoDataMessage", orgWithNoDataMessage);
                 return null;
             }
@@ -145,7 +145,7 @@ public class CytoscapeInteractionsController extends TilesAction
             String orgName = gene.getOrganism().getName();
             if (!interactionInfoMap.containsKey(orgName)) {
                 String orgWithNoDataMessage = "Interaction data is not availiable for "
-                        + orgName + " gene";
+                        + orgName + " genes";
                 request.setAttribute("orgWithNoDataMessage", orgWithNoDataMessage);
                 return null;
             }

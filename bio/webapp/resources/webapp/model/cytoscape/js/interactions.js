@@ -62,9 +62,9 @@ function showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_pat
         });
     });
 
-    vis.addContextMenuItem("View "+project_title+" report...", "nodes", function(evt) {
-        var url = evt.target.data.url;
-        if (url == null) { url = webapp_baseurl+"/"+webapp_path+"/portal.do?externalid="+data.id+"&class=Gene"; }
+    vis.addContextMenuItem("View " + project_title + " gene report...", "nodes", function(evt) {
+        var data = evt.target.data;
+        url = webapp_baseurl+"/" + webapp_path + "/portal.do?externalid=" + data.id + "&class=Gene";
         window.open(url);
     })
 
@@ -75,6 +75,11 @@ function showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_pat
         vis.draw(...) // redraw
     })
     */
+
+    .addContextMenuItem("Create a gene list...", "none", function(evt) {
+       url = webapp_baseurl+"/"+webapp_path+"/saveFromIdsToBag.do?type=Gene&ids="+geneOSIds+"&source=objectDetails&newBagName=interacting_gene_list";
+       window.open(url);
+    })
 
     vis.addContextMenuItem("Export network as SIF...", "none", function(evt) {
       vis.exportNetwork('sif', 'cytoscapeNetworkExport.do?type=sif');
@@ -100,11 +105,6 @@ function showNetwork(networkdata, hubgene, geneOSIds, webapp_baseurl, webapp_pat
         window.open(url);
     })
     */
-
-    .addContextMenuItem("Create a gene list...", "none", function(evt) {
-       url = webapp_baseurl+"/"+webapp_path+"/saveFromIdsToBag.do?type=Gene&ids="+geneOSIds+"&source=objectDetails&newBagName=interacting_gene_list";
-       window.open(url);
-    })
 
     .addListener("mouseover", "edges", function(evt) {
 

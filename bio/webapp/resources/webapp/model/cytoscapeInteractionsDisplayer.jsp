@@ -55,12 +55,6 @@
       </a>
     </p>
 </div>
-<form action="/${WEB_PROPERTIES['webapp.path']}/saveFromIdsToBag.do" id="saveFromIdsToBagForm" method="POST">
-  <input type="hidden" id="type" name="type" value="Gene"/>
-  <input type="hidden" id="geneOSIds" name="geneOSIds" value=""/>
-  <input type="hidden" name="source" value="objectDetails"/>
-  <input type="hidden" name="newBagName" value="interacting_gene_list"/>
-</form>
 
 <!-- Flash embedding utility (needed to embed Cytoscape Web) -->
 <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/AC_OETags.min.js'/>"></script>
@@ -82,7 +76,7 @@
 
     var networkdata = '${networkdata}';
     var hubgene = '${hubGene}'; // could be a set of genes
-    var geneOSIds = '${geneOSIds}'.split(","); // a string arrray
+    var geneOSIds = '${geneOSIds}'.split(","); // a string arrray of gene object store ids
 
     var dataNotIncludedMessage = '${dataNotIncludedMessage}'; // case: interaction data is not integrated
     var orgWithNoDataMessage = '${orgWithNoDataMessage}'; // case: no interaction data for the whole species
