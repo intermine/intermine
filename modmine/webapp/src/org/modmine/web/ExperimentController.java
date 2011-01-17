@@ -36,16 +36,16 @@ import org.modmine.web.GBrowseParser.GBrowseTrack;
  *
  */
 
-public class ExperimentController extends TilesAction 
+public class ExperimentController extends TilesAction
 {
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused")  ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         final ServletContext servletContext = servlet.getServletContext();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
