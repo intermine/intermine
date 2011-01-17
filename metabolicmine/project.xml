@@ -29,7 +29,7 @@
     <source name="uniprot" type="uniprot">
       <property name="uniprot.organisms" value="9606 10090"/>
       <property name="createinterpro" value="true"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/2010_09/split/"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/current/split/"/>
     </source>
     <source name="uniprot-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="9606 10090"/>
