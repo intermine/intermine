@@ -49,7 +49,7 @@ public class GoConverter extends BioFileConverter
 
     // configuration maps
     private Map<String, Config> configs = new HashMap<String, Config>();
-    private Map<String, WithType> withTypes = new LinkedHashMap<String, WithType>();
+    private static final Map<String, String> WITH_TYPES = new LinkedHashMap<String, String>();
 
     // maps retained across all files
     protected Map<String, String> goTerms = new LinkedHashMap<String, String>();
@@ -83,14 +83,17 @@ public class GoConverter extends BioFileConverter
      */
     public GoConverter(ItemWriter writer, Model model) throws Exception {
         super(writer, model);
-        addWithType("FB", "Gene", "primaryIdentifier");
-        addWithType("UniProt", "Protein", "accession");
 
         // only construct factory here so can be replaced by mock factory in tests
         flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
         ontologyResolverFactory = new OntologyIdResolverFactory("GO");
 
         readConfig();
+    }
+
+    static {
+        WITH_TYPES.put("FB", "Gene");
+        WITH_TYPES.put("UniProt", "Protein");
     }
 
     // read config file that has specific settings for each organism, key is taxon id
@@ -326,11 +329,6 @@ public class GoConverter extends BioFileConverter
         annotationIds.add(goAnnotationIdentifier);
     }
 
-    private void addWithType(String prefix, String clsName, String fieldName) {
-        withTypes.put(prefix, new WithType(clsName, fieldName));
-    }
-
-
     /**
      * Given the 'with' text from a gene_association entry parse for recognised identifier
      * types and create Gene or Protein items accordingly.
@@ -354,25 +352,25 @@ public class GoConverter extends BioFileConverter
                     String prefix = entry.substring(0, entry.indexOf(':'));
                     String value = entry.substring(entry.indexOf(':') + 1);
 
-                    if (withTypes.containsKey(prefix) && StringUtils.isNotEmpty(value)) {
-                        WithType wt = withTypes.get(prefix);
+                    if (WITH_TYPES.containsKey(prefix) && StringUtils.isNotEmpty(value)) {
+                        String className = WITH_TYPES.get(prefix);
                         String productIdentifier = null;
 
                         // if a UniProt protein it may be from a different organism
                         // also FlyBase may be from a different Drosophila species
                         if ("UniProt".equals(prefix)) {
-                            productIdentifier = newProduct(value, wt.clsName,
+                            productIdentifier = newProduct(value, className,
                                                         organism, dataSourceCode, false, null);
                         } else if ("FB".equals(prefix)) {
                             // if organism is D. melanogaster then create with gene
                             // TODO could still be wrong as the FBgn could be a different species
                             if ("7227".equals(organism.getAttribute("taxonId").getValue())) {
-                                productIdentifier = newProduct(value, wt.clsName, organism,
+                                productIdentifier = newProduct(value, className, organism,
                                         dataSourceCode, true, "primaryIdentifier");
                             }
                         } else {
-                            productIdentifier = newProduct(value, wt.clsName,
-                                                        organism, dataSourceCode, true, null);
+                            productIdentifier = newProduct(value, className, organism,
+                                    dataSourceCode, true, null);
                         }
                         if (productIdentifier != null) {
                             withProductList.add(productIdentifier);
@@ -664,7 +662,7 @@ public class GoConverter extends BioFileConverter
      * Identify a GoTerm/geneProduct pair with qualifier
      * used to also use evidence code
      */
-    class GoTermToGene
+    private class GoTermToGene
     {
         private String productId;
         private String goId;
@@ -723,30 +721,9 @@ public class GoConverter extends BioFileConverter
     }
 
     /**
-     * Class to hold information about a BioEntity item to create for a particular
-     * identifier prefix in the gene_association 'with' column'.
-     */
-    class WithType
-    {
-        String clsName;
-        String fieldName;
-
-        /**
-         * Constructor
-         *
-         * @param clsName   the classname
-         * @param fieldName name of field to set
-         */
-        WithType(String clsName, String fieldName) {
-            this.clsName = clsName;
-            this.fieldName = fieldName;
-        }
-    }
-
-    /**
      * Class to hold the config info for each taxonId.
      */
-    class Config
+    private class Config
     {
         protected String annotationType;
         protected String identifier;
