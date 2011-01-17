@@ -1,7 +1,14 @@
-/**
+package org.intermine.webservice.server.output;
+
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-package org.intermine.webservice.server.output;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +52,6 @@ public class JSONRowIterator implements Iterator<JSONArray>
         viewPaths.addAll(subIter.getViewPaths());
     }
 
-    @Override
     public boolean hasNext() {
         return subIter.hasNext();
     }
@@ -60,7 +66,7 @@ public class JSONRowIterator implements Iterator<JSONArray>
         Map<String, Object> mapping = new HashMap<String, Object>();
         if (cell == null || cell.getId() == null) {
             mapping.put(CELL_KEY_URL, null);
-	        mapping.put(CELL_KEY_VALUE, null);
+            mapping.put(CELL_KEY_VALUE, null);
         } else {
             mapping.put(CELL_KEY_URL, PortalHelper.generateObjectDetailsLink(cell, baseUrl));
             mapping.put(CELL_KEY_VALUE, cell.getField());
@@ -69,7 +75,6 @@ public class JSONRowIterator implements Iterator<JSONArray>
         return ret;
     }
 
-    @Override
     public JSONArray next() {
         List<ResultElement> row = subIter.next();
         List<JSONObject> jsonRow = new ArrayList<JSONObject>();
@@ -82,7 +87,6 @@ public class JSONRowIterator implements Iterator<JSONArray>
         return next;
     }
 
-    @Override
     public void remove() {
         throw new UnsupportedOperationException("Remove is not supported for this implementation");
     }
