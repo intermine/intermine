@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -188,7 +188,7 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         assertEquals(2, c.size());
 
         ObjectTrailController.TrailElement e0 = (ObjectTrailController.TrailElement) c.get(0);
-        assertTrue(e0.getType().equals("results"));
+        assertTrue("results".equals(e0.getType()));
         ObjectTrailController.TrailElement e1 = (ObjectTrailController.TrailElement) c.get(1);
         assertEquals(42, e1.getObjectId());
 

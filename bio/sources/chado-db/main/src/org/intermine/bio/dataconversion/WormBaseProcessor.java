@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -54,10 +54,10 @@ public class WormBaseProcessor extends SequenceProcessor
      * Method to add dataSets and DataSources to items before storing
      */
     private void processItem(Item item, Integer taxonId) {
-        if (item.getClassName().equals("DataSource")
-                || item.getClassName().equals("DataSet")
-                || item.getClassName().equals("Organism")
-                || item.getClassName().equals("Sequence")) {
+        if ("DataSource".equals(item.getClassName())
+                || "DataSet".equals(item.getClassName())
+                || "Organism".equals(item.getClassName())
+                || "Sequence".equals(item.getClassName())) {
             return;
         }
 

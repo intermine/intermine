@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,8 +15,12 @@ package org.intermine.web.logic.widget;
  * See online documentation for detailed information about what this class is and what it does.
  * @author Julie Sullivan
  */
-public class Hypergeometric
+public final class Hypergeometric
 {
+    private Hypergeometric() {
+        // don't instantiate
+    }
+
     static double[] factorials;
 
     private static void getFactorials(int n) {

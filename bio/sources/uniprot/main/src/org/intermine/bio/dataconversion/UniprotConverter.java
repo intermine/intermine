@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -247,7 +247,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 entry = new UniprotEntry();
                 String dataSetTitle = getAttrValue(attrs, "dataset") + " data set";
                 entry.setDatasetRefId(getDataSet(dataSetTitle, datasourceRefId));
-//            } else if (qName.equals("protein")) {
+//            } else if ("protein".equals(qName)) {
 //                String isFragment = "false";
 //                if (getAttrValue(attrs, "type") != null
 //                       && getAttrValue(attrs, "type").startsWith("fragment")) {
@@ -932,6 +932,8 @@ public class UniprotConverter extends BioDirectoryConverter
                     // TODO handle multiple identifiers somehow
                     identifierValue = uniprotEntry.getDbrefs().get(value).get(0);
                 }
+            } else if ("gene-designation".equals(method)) {
+                identifierValue = uniprotEntry.getGeneDesignation(value);
             } else {
                 LOG.error("error processing line in config file for organism " + taxId);
                 return null;

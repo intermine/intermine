@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -288,7 +288,7 @@ public class BagManager
         Map<Integer, InterMineBag> osBagIdToInterMineBag = new HashMap<Integer, InterMineBag>();
 
         for (InterMineBag imBag : imBags) {
-            osBagIdToInterMineBag.put(imBag.getOsb().getBagId(), imBag);
+            osBagIdToInterMineBag.put(new Integer(imBag.getOsb().getBagId()), imBag);
         }
         return osBagIdToInterMineBag;
     }

@@ -3,3 +3,4 @@
 <form-bean name="sequenceExportForm" type="org.intermine.bio.web.struts.SequenceExportForm"/>
 <form-bean name="gff3ExportForm" type="org.intermine.bio.web.struts.GFF3ExportForm"/>
 <form-bean name="galaxyExportForm" type="org.intermine.bio.web.struts.GalaxyExportForm"/>
+<form-bean name="snpToGeneForm" type="org.metabolicmine.web.SnpToGeneForm"/>

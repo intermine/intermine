@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -194,7 +194,7 @@ public class HGNCConverter extends BioFileConverter
 	
 			//HGNC has very occasional mistakes (incorrect ensembl IDs); check to make sure this doesn't affect us!
 	
-			if (values.size()>=9 && !values.get(8).equals("")) //check our current gene has a valid ensembl ID
+			if ("".equals(values.size()>=9 && !values.get(8))) //check our current gene has a valid ensembl ID
 			{
 			    //System.out.println(i + "/" + valueRows.size()+"; "+goodCount+" v "+badCount);
 			    int unique=1;

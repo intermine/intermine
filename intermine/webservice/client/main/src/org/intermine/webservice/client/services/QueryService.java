@@ -1,7 +1,7 @@
 package org.intermine.webservice.client.services;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -18,6 +18,7 @@ import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.webservice.client.core.ContentType;
+import org.intermine.webservice.client.core.JSONResult;
 import org.intermine.webservice.client.core.RequestImpl;
 import org.intermine.webservice.client.core.Service;
 import org.intermine.webservice.client.core.ServiceFactory;
@@ -25,6 +26,8 @@ import org.intermine.webservice.client.core.TabTableResult;
 import org.intermine.webservice.client.core.Request.RequestType;
 import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.util.HttpConnection;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * The QueryService is service that provides some methods for flexible querying InterMine data.
@@ -40,6 +43,7 @@ public class QueryService extends Service
 {
 
     private static final String SERVICE_RELATIVE_URL = "query/results";
+
 
     /**
      * Use {@link ServiceFactory} instead for creating this service .
@@ -66,15 +70,6 @@ public class QueryService extends Service
          */
         public QueryRequest(RequestType type, String serviceUrl, ContentType contentType) {
             super(type, serviceUrl, contentType);
-        }
-
-        /**
-         * Sets the maximum number of rows returned.
-         *
-         * @param maxCount an integer number of rows, where outer joins count as multiple rows
-         */
-        public void setMaxCount(int maxCount) {
-            setParameter("size", maxCount + "");
         }
 
         /**
@@ -130,6 +125,30 @@ public class QueryService extends Service
             throw new ServiceException("Service returned invalid result. It is not number: "
                     + body, e);
         }
+    }
+    
+    /**
+     * Fetch the results as a list of JSON Objects
+     * @param query A PathQuery object
+     * @return a list of JSON objects
+     * @throws JSONException
+     */
+    public List<JSONObject> getJSONResults(PathQuery query) throws JSONException {
+    	return getJSONResults(query.toXml(PathQuery.USERPROFILE_VERSION));	
+    }
+    
+    /**
+     * Fetch the results as a list of JSON Objects
+     * @param queryXML An XML string representing the query
+     * @return a list of JSON objects
+     * @throws JSONException
+     */
+    public List<JSONObject> getJSONResults(String queryXml) throws JSONException {
+    	QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), ContentType.APPLICATION_JSON);
+        request.setQueryXml(queryXml);
+        request.setJSONFormat();
+        JSONResult response = getJSONResponse(request);
+        return response.getObjects();	
     }
 
     /**
@@ -206,4 +225,16 @@ public class QueryService extends Service
         HttpConnection connection = executeRequest(request);
         return new TabTableResult(connection);
     }
+    
+    /**
+     * Performs the query and returns a JSONResult containing the data.
+     *
+     * @param request a QueryRequest object
+     * @return a JSONResult object containing the data fetched
+     */
+    protected JSONResult getJSONResponse(QueryRequest request) {
+        HttpConnection connection = executeRequest(request);
+        return new JSONResult(connection);
+    }
+    
 }

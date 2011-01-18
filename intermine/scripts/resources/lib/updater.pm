@@ -19,7 +19,7 @@ has model => (
 has logger => (
     is      => 'ro',
     isa     => 'Log::Handler',
-    handles => [ 'warning', 'info', 'error', 'debug', ],
+    handles => [ 'warn', 'warning', 'info', 'error', 'debug', ],
 );
 
 my $parse_changes = sub {

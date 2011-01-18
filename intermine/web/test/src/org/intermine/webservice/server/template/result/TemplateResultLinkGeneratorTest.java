@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template.result;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 import org.intermine.TestUtil;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathQuery;
@@ -22,51 +23,46 @@ import org.intermine.webservice.server.WebServiceConstants;
 
 
 /**
- * @author Jakub Kulaviak
+ * @author Jakub Kulaviak, dbutano
  **/
 public class TemplateResultLinkGeneratorTest extends TestCase
 {
 
     private String prefix = "http://localhost:8080/query/" + WebServiceConstants.MODULE_NAME;
-    
+
     public void testExtraValueLink() {
-        TemplateQuery tmpl = getTemplate(getExtraValueQuery());
-        String link = new TemplateResultLinkGenerator().getHtmlLink("http://localhost:8080/query", tmpl);
+        PathQuery ret = new PathQuery(TestUtil.getModel());
+        PathConstraint c1 = new PathConstraintLookup("Gene.name", "zen", "Drosophila_melanogaster");
+        TemplateQuery tmpl = new TemplateQuery("template1", "title", "comments", ret);
+        tmpl.addConstraint(c1);
+        tmpl.setEditable(c1, true);
+        String link = new TemplateResultLinkGenerator().getHtmlLink("http://localhost:8080/query",
+                                                                    tmpl);
         assertEquals(link, prefix + "/template/results?"
                 + "name=template1&constraint1=Gene.name&op1=LOOKUP&value1=zen&"
                 + "extra1=Drosophila_melanogaster&size="
-        		+ TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging", link);
+                + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging",
+                link);
     }
 
-    private PathQuery getExtraValueQuery() {
-        PathQuery ret = new PathQuery(TestUtil.getModel());
-        ret.addConstraint(new PathConstraintLookup("Gene.name", "zen", "Drosophila_melanogaster"));
-        return ret;
-    }
-    
     public void testMultipleConstraintsLink() {
-        TemplateQuery tmpl = getTemplate(getMultipleConstraintQuery());
-        String link = new TemplateResultLinkGenerator().getHtmlLink("http://localhost:8080/query", tmpl);
-        System.out.println(link);
+        PathQuery ret = new PathQuery(TestUtil.getModel());
+        PathConstraint c1 = new PathConstraintAttribute("Gene.name", ConstraintOp.MATCHES, "zen");
+        PathConstraint c2 = new PathConstraintAttribute("Gene.length", ConstraintOp.LESS_THAN,
+                                                        "100");
+        TemplateQuery tmpl = new TemplateQuery("template1", "title", "comments", ret);
+        tmpl.addConstraint(c1);
+        tmpl.setEditable(c1, true);
+        tmpl.addConstraint(c2);
+        tmpl.setEditable(c2, true);
+        String link = new TemplateResultLinkGenerator()
+                          .getHtmlLink("http://localhost:8080/query", tmpl);
         String expected = prefix + "/template/results?name=template1"
-            + "&constraint1=Gene.length&op1=lt&value1=100" 
-            + "&constraint2=Gene.name&op2=CONTAINS&value2=zen"
-            + "&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging";
-        System.out.println(expected);
-        assertEquals(expected, link);        
+            + "&constraint1=Gene.name&op1=LIKE&value1=zen"
+            + "&constraint2=Gene.length&op2=lt&value2=100"
+            + "&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE
+            + "&layout=minelink|paging";
+        assertEquals(expected, link);
     }
 
-    private PathQuery getMultipleConstraintQuery() {
-        PathQuery ret = new PathQuery(TestUtil.getModel());
-        ret.addConstraint(new PathConstraintAttribute("Gene.name", ConstraintOp.MATCHES, "zen"));
-        ret.addConstraint(new PathConstraintAttribute("Gene.length", ConstraintOp.LESS_THAN, "100"));
-        return ret;        
-    }
-    
-    private TemplateQuery getTemplate(PathQuery pathQuery) {
-        TemplateQuery tmpl = new TemplateQuery("template1", "title", 
-                "comments", pathQuery);
-        return tmpl;
-    }
-    
 }

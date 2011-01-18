@@ -1,7 +1,7 @@
 package org.intermine.bio.logic;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -318,7 +318,7 @@ public class Mine
     private Map<String, HomologueMapping> newMap(String geneOrganism,
             HomologueMapping newMapping) {
         newMapping.setOrganism(geneOrganism);
-        Map<String, HomologueMapping> newMap = new HashMap();
+        Map<String, HomologueMapping> newMap = new HashMap<String, HomologueMapping>();
         newMap.put(geneOrganism, newMapping);
         return newMap;
     }

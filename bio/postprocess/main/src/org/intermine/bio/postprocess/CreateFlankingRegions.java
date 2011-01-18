@@ -1,7 +1,7 @@
 package org.intermine.bio.postprocess;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
@@ -140,7 +141,7 @@ public class CreateFlankingRegions
                 // This shouldn't happen
                 return;
             }
-            if (!(source.equals("FlyBase") || source.equals("WormBase"))) {
+            if (!("FlyBase".equals(source) || source.equals("WormBase"))) {
                 return;
             }
 
@@ -170,7 +171,13 @@ public class CreateFlankingRegions
 
                     region.setDistance("" + distance + "kb");
                     region.setDirection(direction);
-                    region.setIncludeGene(includeGene);
+                    try {
+                        PostProcessUtil.checkFieldExists(os.getModel(), "GeneFlankingRegion",
+                                "inlcudeGene", "Not setting");
+                        region.setFieldValue("includeGene", includeGene);
+                    } catch (MetaDataException e) {
+                        // GeneFlankingRegion.includeGene not in model so do nothing
+                    }
                     region.setGene(gene);
                     region.setChromosome(chr);
                     region.setChromosomeLocation(location);
@@ -190,7 +197,7 @@ public class CreateFlankingRegions
                     } else if ("downstream".equals(direction) && "1".equals(strand)) {
                         start = includeGene ? geneStart : geneEnd + 1;
                         end = geneEnd + (int) Math.round(distance * 1000);
-                    } else {  // direction.equals("downstream") && strand.equals("-1")
+                    } else {  // "downstream".equals(direction) && strand.equals("-1")
                         start = geneStart - (int) Math.round(distance * 1000);
                         end = includeGene ? geneEnd : geneStart - 1;
                     }

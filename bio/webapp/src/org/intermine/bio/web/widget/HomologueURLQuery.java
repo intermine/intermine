@@ -1,7 +1,7 @@
 package org.intermine.bio.web.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -56,7 +56,7 @@ public class HomologueURLQuery implements WidgetURLQuery
         q.addConstraint(Constraints.eq("Gene.homologues.type", "orthologue"));
         if (!showAll) {
             String[] keys = key.split(",");
-            q.addConstraint(Constraints.oneOfValues("Gene.homologues.homologue.organism",
+            q.addConstraint(Constraints.oneOfValues("Gene.homologues.homologue.organism.name",
                     Arrays.asList(keys)));
         }
         q.addOrderBy("Gene.organism.shortName", OrderDirection.ASC);

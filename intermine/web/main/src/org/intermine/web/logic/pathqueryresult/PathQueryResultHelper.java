@@ -1,7 +1,7 @@
 package org.intermine.web.logic.pathqueryresult;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -87,7 +87,7 @@ public final class PathQueryResultHelper
 
         for (FieldConfig fieldConfig : fieldConfigs) {
             String relPath = fieldConfig.getFieldExpr();
-            // only add attributes, don't follow references - following references can be problematic 
+            // only add attributes, don't follow references, following references can be problematic
             // when subclasses get involved.
             try {
                 Path path = new Path(model, prefix + "." + relPath);
@@ -107,18 +107,19 @@ public final class PathQueryResultHelper
         }
         return view;
     }
-    
-    
+
+
     /**
-     * Alias for getDefaultViewForClass, with the difference that it does not take a starting path. 
+     * Alias for getDefaultViewForClass, with the difference that it does not take a starting path.
      * @param type
      * @param model
      * @param webConfig
      * @param startingPath
      * @return A view list containing only attributes on the given class
      */
-    private static List<String> getAttributeViewForClass(String type, Model model, WebConfig webConfig) {
-    	return getDefaultViewForClass(type, model, webConfig, null);
+    private static List<String> getAttributeViewForClass(String type, Model model,
+            WebConfig webConfig) {
+        return getDefaultViewForClass(type, model, webConfig, null);
     }
 
     /**
@@ -173,6 +174,15 @@ public final class PathQueryResultHelper
     }
 
     // find the subclasses that exist in the given collection
+    /**
+     * Search for the classes in a collection for a given InterMineObject, for example fine all of
+     * the sub-classes of Employee in the Department.employees collection of a given Department.
+     * Will return an empty collection if the collection is empty.
+     * @param object an InterMineObject to inspect
+     * @param field the name if the collection to check
+     * @param os the ObjectStore in which to execute the query
+     * @return a list of classes in the collection
+     */
     protected static List<Class<?>> queryForTypesInCollection(InterMineObject object, String field,
             ObjectStore os) {
         List<Class<?>> typesInCollection = new ArrayList<Class<?>>();
@@ -227,8 +237,8 @@ public final class PathQueryResultHelper
      * @param fieldType the type of the field this object is in, eg Employee
      * @return query, eg. Department.employees.name
      */
-    protected static PathQuery getQueryWithDefaultView(String objType, Model model, WebConfig webConfig,
-            String fieldType) {
+    protected static PathQuery getQueryWithDefaultView(String objType, Model model,
+            WebConfig webConfig, String fieldType) {
         String prefix = fieldType;
         PathQuery query = new PathQuery(model);
         ClassDescriptor cld = model.getClassDescriptorByName(objType);
@@ -264,9 +274,9 @@ public final class PathQueryResultHelper
         }
         if (query.getView().size() == 0) {
             for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
-            	if (! "id".equals(att.getName())) { 
-            		query.addView(prefix + "." + att.getName());
-            	}
+                if (!"id".equals(att.getName())) {
+                    query.addView(prefix + "." + att.getName());
+                }
             }
         }
         return query;

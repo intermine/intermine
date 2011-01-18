@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -106,6 +106,8 @@ public class UniprotConfig
 
             if ("uniqueField".equals(attributes[1])) {
                 configEntry.setUniqueIdentifier(value);
+            } else if ("gene-designation".equals(attributes[1])) {
+                geneDesignation = value;
             } else if (attributes.length == 3) {
                 configEntry.addIdentifier(attributes[1], attributes[2], value);
             } else {

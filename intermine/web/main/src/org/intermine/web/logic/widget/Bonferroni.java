@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -43,13 +43,10 @@ public class Bonferroni implements ErrorCorrection
     /**
      * @param max maximum value to display
      */
-    @SuppressWarnings("unchecked")
     public void calculate(Double max) {
-
         for (Map.Entry<String, BigDecimal> entry : originalMap.entrySet()) {
 
             // get original values
-            String label = entry.getKey();
             BigDecimal p = entry.getValue();
 
             // calc new value - p * N
@@ -60,9 +57,9 @@ public class Bonferroni implements ErrorCorrection
                 adjustedP = ONE;
             }
 
-            // don't store values >= maxValue
-            if (adjustedP.compareTo(new BigDecimal(max.doubleValue())) <= 0) {
-                adjustedMap.put(label, adjustedP);
+            // don't store values > maxValue
+            if (adjustedP.doubleValue() <= max.doubleValue()) {
+                adjustedMap.put(entry.getKey(), adjustedP);
             }
         }
     }

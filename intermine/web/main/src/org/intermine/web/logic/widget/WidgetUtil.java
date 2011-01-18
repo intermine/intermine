@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -217,7 +217,7 @@ public final class WidgetUtil
         if ("Bonferroni".equals(errorCorrection)) {
             e = new Bonferroni(resultsMap, testCount);
         } else {
-            e = new BenjaminiHochberg(resultsMap);
+            e = new BenjaminiHochberg(resultsMap, testCount);
         }
         e.calculate(maxValue);
         return e.getAdjustedMap();

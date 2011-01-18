@@ -1,7 +1,7 @@
 package org.intermine.bio.web.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -55,7 +55,8 @@ public class InteractionURLQuery implements WidgetURLQuery
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         if (!showAll) {
             String[] keys = key.split(",");
-            q.addConstraint(Constraints.oneOfValues("Gene.interactions.interactingGenes",
+            q.addConstraint(Constraints.oneOfValues(
+                    "Gene.interactions.interactingGenes.primaryIdentifier",
                     Arrays.asList(keys)));
         }
         q.addOrderBy("Gene.organism.shortName", OrderDirection.ASC);

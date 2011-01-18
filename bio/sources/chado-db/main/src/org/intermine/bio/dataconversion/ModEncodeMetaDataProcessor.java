@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -637,7 +637,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         for (Map.Entry<Integer, AppliedData> entry : appliedDataMap.entrySet()) {
             Integer dataId = entry.getKey();
             AppliedData aData = entry.getValue();
-            if (aData.type.equals("Result File")
+            if ("Result File".equals(aData.type)
                     && (aData.value.endsWith(".gff") || aData.value.endsWith("gff3"))) {
                 for (Integer papId : aData.previousAppliedProtocols) {
                     AppliedProtocol aProtocol = appliedProtocolMap.get(papId);
@@ -1506,11 +1506,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 value = officialName;
             }
             Item submissionData = getChadoDBConverter().createItem("SubmissionData");
-            if (name != null && !name.equals("")) {
+            if (name != null && !"".equals(name)) {
                 submissionData.setAttribute("name", name);
             }
             // if no name for attribute fetch the cvterm of the type
-            if ((name == null || name.equals("")) && typeId != null) {
+            if ((name == null || "".equals(name)) && typeId != null) {
                 name = getCvterm(connection, typeId);
                 submissionData.setAttribute("name", name);
             }
@@ -2306,16 +2306,21 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         throws ObjectStoreException {
         String targetText = null;
         String[] possibleTypes = new String[] {"target id"};
-
+        boolean tooMany = false;
         for (String targetType : possibleTypes) {
             if (prop.details.containsKey(targetType)) {
                 if (prop.details.get(targetType).size() != 1) {
 
                     // we used to complain if multiple values, now only
                     // if they don't have the same value
-                    checkIfSameValue(prop, source, targetType);
+                    if (sameTargetValue(prop, source, targetType)) {
+                        tooMany = true;
+                        break;
+                    }
                 }
-                targetText = prop.details.get(targetType).get(0);
+                if (!tooMany) {
+                    targetText = prop.details.get(targetType).get(0);
+                }
                 break;
             }
         }
@@ -2331,16 +2336,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
-    private void checkIfSameValue(SubmissionProperty prop, String source,
+    private boolean sameTargetValue(SubmissionProperty prop, String source,
             String targetType) {
         String value = prop.details.get(targetType).get(0);
         for (int i = 1; i < prop.details.get(targetType).size(); i++) {
             String newValue = prop.details.get(targetType).get(i);
             if (!newValue.equals(value)) {
-                throw new RuntimeException(source + " should only have one value for '"
-                        + targetType + "' field: " + prop.details.get(targetType));
+                LOG.error(source + " has more than 1 value for '"
+                                + targetType + "' field: " + prop.details.get(targetType));
+              //throw new RuntimeException(source + " should only have one value for '"
+              //        + targetType + "' field: " + prop.details.get(targetType));
+                return true;
             }
         }
+        return false;
     }
 
     private void setAttributeOnProp(SubmissionProperty subProp, Item item, String metadataName,
@@ -2509,7 +2518,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             item = createSubmissionProperty(clsName, name);
             item.setAttribute("type", getPreferredSynonym(type));
 
-            if (clsName.equals("DevelopmentalStage")) {
+            if ("DevelopmentalStage".equals(clsName)) {
                 String ontologyTermId = getDevStageTerm(name, dccId);
                 item.addToCollection("ontologyTerms", ontologyTermId);
             }
@@ -2878,11 +2887,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
         for (Integer submissionId : submissionDataMap.keySet()) {
+            // the applied data is repeated for each protocol
+            // so we want to uniquefy the created object
+            Set<String> subFiles = new HashSet<String>();
             for (Integer dataId : submissionDataMap.get(submissionId)) {
                 AppliedData ad = appliedDataMap.get(dataId);
-                if (ad.type.equalsIgnoreCase("Result File")) {
-                    if (!StringUtils.isBlank(ad.value)) {
+                if (StringUtils.containsIgnoreCase(ad.type, "result")
+                        && StringUtils.containsIgnoreCase(ad.type, "file")) {
+                    if (!StringUtils.isBlank(ad.value)
+                            && !subFiles.contains(ad.value)) {
                         createResultFile(ad.value, ad.name, submissionId);
+                        subFiles.add(ad.value);
                     }
                 }
             }
@@ -2903,7 +2918,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // Celniker submissions.  The 'accession' is provided as e.g.
         //   SRR013492.225322.1;SRR013492.462158.1;...
         // We just want the unique SRR ids
-        if (config.dbName.equals("SRA") && (accession.indexOf(';') != -1
+        if ("SRA".equals(config.dbName) && (accession.indexOf(';') != -1
                 || accession.indexOf('.') != -1)) {
             for (String part : accession.split(";")) {
                 if (part.indexOf('.') != -1) {
@@ -2912,7 +2927,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     cleanAccessions.add(part);
                 }
             }
-        } else if (config.dbName.equals("SRA") && (accession.startsWith("SRX"))) {
+        } else if ("SRA".equals(config.dbName) && (accession.startsWith("SRX"))) {
             config.dbURL = "http://www.ncbi.nlm.nih.gov/sra/";
             dbRecordIds.add(createDatabaseRecord(accession, config));
             config.dbURL = defaultURL;
@@ -3149,9 +3164,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         //    otherwise: Tiling array
         if (containsMatch(protocolTypes, "hybridization")
                 && !containsMatch(protocolTypes, "immunoprecipitation")) {
-            if (piName.equals("Celniker")) {
+            if ("Celniker".equals(piName)) {
                 return "RNA tiling array";
-            } else if (piName.equals("Henikoff")) {
+            } else if ("Henikoff".equals(piName)) {
                 return "Chromatin-chip";
             } else {
                 return "Tiling array";
@@ -3356,7 +3371,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private void storeInProjectMaps(Item i, String surnamePI, Integer intermineObjectId)
         throws ObjectStoreException {
-        if (i.getClassName().equals("Project")) {
+        if ("Project".equals(i.getClassName())) {
             projectIdMap .put(surnamePI, intermineObjectId);
             projectIdRefMap .put(surnamePI, i.getIdentifier());
         } else {
@@ -3377,7 +3392,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private void storeInLabMaps(Item i, String labName, Integer intermineObjectId)
         throws ObjectStoreException {
-        if (i.getClassName().equals("Lab")) {
+        if ("Lab".equals(i.getClassName())) {
             labIdMap .put(labName, intermineObjectId);
             labIdRefMap .put(labName, i.getIdentifier());
         } else {

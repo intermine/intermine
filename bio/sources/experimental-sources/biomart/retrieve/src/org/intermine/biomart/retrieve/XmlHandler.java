@@ -1,7 +1,7 @@
 package org.intermine.biomart.retrieve;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -47,13 +47,13 @@ public class XmlHandler extends DefaultHandler
      */
     public void startElement(String uri, String localName, String name, Attributes attributes)
                     throws SAXException {
-        if (name.equals("DatasetConfig")) {
+        if ("DatasetConfig".equals(name)) {
             BioMartDataSet dataset = new BioMartDataSet();
             dataset.setName(attributes.getValue("dataset"));
             datasets.put(dataset.getName(), dataset);
             currentDataSet = dataset.getName();
         } else
-            if (name.equals("Importable")) {
+            if ("Importable".equals(name)) {
                 MartImportable importable = new MartImportable();
                 importable.setName(attributes.getValue("name"));
                 importable.setInternalName(attributes.getValue("internalName"));
@@ -63,7 +63,7 @@ public class XmlHandler extends DefaultHandler
                                 .getValue("filters"), ",")));
                 datasets.get(currentDataSet).addImportable(importable);
             } else
-                if (name.equals("Exportable")) {
+                if ("Exportable".equals(name)) {
                     MartExportable exportable = new MartExportable();
                     exportable.setName(attributes.getValue("name"));
                     exportable.setInternalName(attributes.getValue("internalName"));
@@ -73,7 +73,7 @@ public class XmlHandler extends DefaultHandler
                                     .getValue("attributes"), ",")));
                     datasets.get(currentDataSet).addExportable(exportable);
                 } else
-                    if (name.equals("AttributeDescription")) {
+                    if ("AttributeDescription".equals(name)) {
                         BioMartField field = new BioMartField();
                         field.setField(attributes.getValue("field"));
                         field.setDisplayName(attributes.getValue("displayName"));

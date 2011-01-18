@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -180,7 +180,7 @@ public class FlyAtlasConverter extends BioFileConverter
 
 
         tissues = new HashMap<String, Item>();
-        // names of tissues from column headins, could be made more descriptive
+        // names of tissues from column headings, could be made more descriptive
         tissues.put("brain", createTissue("Brain"));
         tissues.put("head", createTissue("Head"));
         tissues.put("crop", createTissue("Crop"));

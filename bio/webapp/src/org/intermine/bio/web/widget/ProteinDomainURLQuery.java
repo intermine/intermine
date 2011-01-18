@@ -1,7 +1,7 @@
 package org.intermine.bio.web.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -9,6 +9,8 @@ package org.intermine.bio.web.widget;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import java.util.Arrays;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
@@ -54,8 +56,9 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
                 prefix + ".proteinDomains.name");
         q.addConstraint(Constraints.in(bagType,  bag.getName()));
         if (!showAll) {
-            q.addConstraint(Constraints.lookup(prefix + ".proteinDomains.primaryIdentifier",
-                    key, ""));
+            String[] keys = key.split(",");
+            q.addConstraint(Constraints.oneOfValues(prefix + ".proteinDomains.primaryIdentifier",
+                    Arrays.asList(keys)));
         }
         return q;
     }

@@ -311,6 +311,7 @@ div.trigger {
     font-size: 1.8em;
     font-weight: normal;
     float: left;
+    cursor: pointer;
 }
 
 div.active {

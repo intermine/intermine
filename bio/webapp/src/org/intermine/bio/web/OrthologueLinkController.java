@@ -1,7 +1,7 @@
 package org.intermine.bio.web;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -46,10 +46,10 @@ public class OrthologueLinkController  extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form,
-            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
+    public ActionForward execute(ComponentContext context,
+            ActionMapping mapping,
+            ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");

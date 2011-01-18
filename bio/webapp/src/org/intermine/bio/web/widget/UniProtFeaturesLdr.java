@@ -1,7 +1,7 @@
 package org.intermine.bio.web.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -35,7 +35,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
 /**
- * {@inheritDoc}
+ *
  * @author Julie Sullivan
  */
 public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
@@ -113,10 +113,10 @@ public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
         q.setConstraint(cs);
 
         // needed for the 'not analysed' number
-        if (action.equals("analysed")) {
+        if ("analysed".equals(action)) {
             q.addToSelect(qfProtId);
         // export button on the widget
-        } else if (action.equals("export")) {
+        } else if ("export".equals(action)) {
             q.addToSelect(qfName);
             q.addToSelect(qfPrimaryIdentifier);
             q.addToOrderBy(qfName);
@@ -144,7 +144,7 @@ public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
             q.addFrom(subQ);
             q.addToSelect(qfType);
             q.addToSelect(new QueryFunction());
-            if (action.equals("sample")) {
+            if ("sample".equals(action)) {
                 q.addToSelect(qfType);
             }
             q.addToGroupBy(qfType);

@@ -18,6 +18,7 @@
 <class name="RNAiScreen" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <reference name="organism" referenced-type="Organism"/>
+    <reference name="publication" referenced-type="Publication"/>
 </class>
 <class name="Gene" is-interface="true">
   <collection name="rnaiResults" referenced-type="RNAiResult" reverse-reference="gene"/>

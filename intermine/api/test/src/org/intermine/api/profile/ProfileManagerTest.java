@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -88,15 +88,15 @@ public class ProfileManagerTest extends StoreDataTestCase
 
     public void testQueries() throws Throwable {
     }
-    
+
     public static void oneTimeSetUp() throws Exception {
         StoreDataTestCase.oneTimeSetUp();
     }
-    
+
     public static Test suite() {
         return buildSuite(ProfileManagerTest.class);
     }
-    
+
     private void setUpUserProfiles() throws Exception {
 
         PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
@@ -106,7 +106,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         // bob's details
         String bobName = "bob";
 
-        InterMineBag bag = new InterMineBag("bag1", "Department", "This is some description", 
+        InterMineBag bag = new InterMineBag("bag1", "Department", "This is some description",
                 new Date(), os, bobId, uosw);
 
         Department deptEx = new Department();
@@ -149,7 +149,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         fieldNames.add("name");
         CEO ceoB1 = (CEO) os.getObjectByExample(ceoEx, fieldNames);
 
-        InterMineBag objectBag = new InterMineBag("bag2", "Employee", "description", 
+        InterMineBag objectBag = new InterMineBag("bag2", "Employee", "description",
                 new Date(), os, sallyId, uosw);
         objectBag.addIdToBag(ceoB1.getId(), "CEO");
 
@@ -166,6 +166,28 @@ public class ProfileManagerTest extends StoreDataTestCase
 
 
     public void tearDown() throws Exception {
+        if (bobProfile != null) {
+            for (String name : bobProfile.getSavedQueries().keySet()) {
+               bobProfile.deleteQuery(name);
+            }
+            for (String name : bobProfile.getSavedTemplates().keySet()) {
+                bobProfile.deleteTemplate(name);
+            }
+            for (String name : bobProfile.getSavedBags().keySet()) {
+                bobProfile.deleteBag(name);
+            }
+        }
+        if (sallyProfile != null) {
+            for (String name : sallyProfile.getSavedQueries().keySet()) {
+                sallyProfile.deleteQuery(name);
+            }
+            for (String name : sallyProfile.getSavedTemplates().keySet()) {
+                sallyProfile.deleteTemplate(name);
+            }
+            for (String name : sallyProfile.getSavedBags().keySet()) {
+                sallyProfile.deleteBag(name);
+            }
+        }
         cleanUserProfile();
     }
 
@@ -223,7 +245,6 @@ public class ProfileManagerTest extends StoreDataTestCase
 
         tagManager.addTag("test-tag", "Department.company", "reference", "sally");
 
-       
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("userprofiles");
@@ -233,7 +254,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
-       
+
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTest.xml");
         BufferedReader bis = new BufferedReader(new InputStreamReader(is));
@@ -256,7 +277,7 @@ public class ProfileManagerTest extends StoreDataTestCase
     private TagManager getTagManager() {
         return new TagManagerFactory(uosw).getTagManager();
     }
-    
+
     public void testXMLRead() throws Exception {
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
@@ -265,7 +286,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(os));
 
         // only profiles from file, not from setUpUserprofiles()
-        assertEquals(3, pm.getProfileUserNames().size());
+        assertEquals(2, pm.getProfileUserNames().size());
 
         assertTrue(pm.getProfileUserNames().contains("bob"));
 
@@ -339,7 +360,7 @@ public class ProfileManagerTest extends StoreDataTestCase
                 if (actualTag.getTagName().equals(expectedTag.getTagName())
                     && actualTag.getObjectIdentifier().equals(expectedTag.getObjectIdentifier())
                     && actualTag.getType().equals(expectedTag.getType())
-                    && actualTag.getUserProfile().getUsername().equals("bob")) {
+                    && "bob".equals(actualTag.getUserProfile().getUsername())) {
                     continue ACTUAL;
                 }
             }

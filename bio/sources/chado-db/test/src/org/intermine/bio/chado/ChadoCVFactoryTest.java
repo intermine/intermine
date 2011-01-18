@@ -1,7 +1,7 @@
 package org.intermine.bio.chado;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -64,13 +64,13 @@ public class ChadoCVFactoryTest extends TestCase
         ChadoCVTerm root2 = null;
         ChadoCVTerm root3 = null;
         for (ChadoCVTerm rootTerm: rootCVTerms) {
-            if (rootTerm.getName().equals("root1")) {
+            if ("root1".equals(rootTerm.getName())) {
                 root1 = rootTerm;
             } else {
-                if (rootTerm.getName().equals("root2")) {
+                if ("root2".equals(rootTerm.getName())) {
                     root2 = rootTerm;
                 } else {
-                    if (rootTerm.getName().equals("root3")) {
+                    if ("root3".equals(rootTerm.getName())) {
                         root3 = rootTerm;
                     } else {
                        fail("unknown root: " + rootTerm.getName());
@@ -84,7 +84,7 @@ public class ChadoCVFactoryTest extends TestCase
         assertEquals(expectedRoot2AllChildren, root2AllChildren);
 
         for (ChadoCVTerm root2Child: root2AllChildren) {
-            if (root2Child.getName().equals("child4")) {
+            if ("child4".equals(root2Child.getName())) {
                 assertEquals(5, root2Child.getAllParents().size());
             }
         }

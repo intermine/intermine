@@ -5,7 +5,7 @@
 
 <%-- get dataset name --%>
 <c:forEach items="${object.dataSets}" var="dataset">
-    <c:set var="datasetTitle" value="${dataset.title}"/>
+    <c:set var="datasetTitle" value="${dataset.name}"/>
 </c:forEach>
 
 <%-- set variables ~~ based on dataset, set link and image to KEGG or Reactome --%>

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -110,15 +110,15 @@ public class BioJavaFlatFileConverter extends FileConverter
                         System.err. println("  " + key + ": " + annotation.getProperty(key));
                     }
 
-                    if (type.equals("source")) {
+                    if ("source".equals(type)) {
                         org = handleSourceFeature(feature, chr);
                         continue;
                     }
 
-                    if (type.equals("CDS")) {
+                    if ("CDS".equals(type)) {
                         handleCDS(feature, chr);
                     } else {
-                        if (type.equals("gene")) {
+                        if ("gene".equals(type)) {
                             handleGene(feature, chr);
                         }
                     }

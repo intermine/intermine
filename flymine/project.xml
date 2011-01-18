@@ -61,10 +61,12 @@
       <property name="src.data.dir" location="/shared/data/wormbase/current"/>
       <property name="src.data.dir.includes" value="*.txt"/>
     </source>
+<!--
     <source name="anopheles-identifiers" type="anopheles-identifiers">
       <property name="src.data.dir" location="/shared/data/anopheles-identifiers/mappings/current"/>
       <property name="src.data.dir.includes" value="New_IDs*"/>
     </source>
+-->
     <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
       <property name="src.data.dir.includes" value="keywlist.xml"/>
@@ -105,10 +107,9 @@
       <property name="src.data.dir" location="/shared/data/kegg/current"/>
       <property name="kegg.organisms" value="7227 9606"/>
     </source>
-    <!-- can't load worm until we get a worm resolver -->
     <source name="kegg-orthologues" type="kegg-orthologues">
       <property name="src.data.dir" location="/shared/data/kegg/orthologues"/>
-      <property name="kegg.organisms" value="7227 9606 4932 7955 10090 10116"/>
+      <property name="kegg.organisms" value="7227 9606 4932 6239 7955 10090 10116"/>
     </source>
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
@@ -189,7 +190,7 @@
     <source name="flyrnai-screens" type="flyrnai-screens">
       <property name="src.data.dir" location="/shared/data/drsc/current"/>
       <property name="src.data.dir.includes" value="RNAi_all_hits*"/>
-      <property name="screenDetailsFile" location="/shared/data/drsc/current/RNAi_screen_details*"/>
+      <property name="screenDetailsFile" location="/shared/data/drsc/current/RNAi_screen_details"/>
     </source>
     <source name="fly-fish" type="fly-fish">
       <property name="src.data.dir" location="/shared/data/flyfish"/>

@@ -1,7 +1,7 @@
 package org.modmine.web;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -74,7 +74,7 @@ public class ModMineSearch
      * @param im
      *            API for accessing object store
      */
-    public static void initModMineSearch(InterMineAPI im) {
+    public static synchronized void initModMineSearch(InterMineAPI im) {
         if (ram == null) {
 
             // Map<Integer, Set<String>> subProps =
@@ -222,9 +222,9 @@ public class ModMineSearch
                 }
                 addToDocument(doc, subId, "organism", sub.getOrganism().getName());
                 String genus = sub.getOrganism().getGenus();
-                if (genus != null && genus.equals("Drosophila")) {
+                if (genus != null && "Drosophila".equals(genus)) {
                     addToDocument(doc, subId, "genus", "fly");
-                } else if (genus != null && genus.equals("Caenorhabditis")) {
+                } else if (genus != null && "Caenorhabditis".equals(genus)) {
                     addToDocument(doc, subId, "genus", "worm");
                 }
 

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -89,7 +89,7 @@ public class BDGPInsituConverter extends BioFileConverter
 
         while (it.hasNext()) {
 
-            String lineBits[] = it.next();
+            String[] lineBits = it.next();
             String geneCG = lineBits[0];
 
             if (!geneCG.startsWith("CG")) {
@@ -110,7 +110,7 @@ public class BDGPInsituConverter extends BioFileConverter
 
             if (lineBits.length > 2) {
                 String image = lineBits[2];
-                if (image != null && !image.equals("")) {
+                if (image != null && !"".equals(image)) {
                     setImage(result, URL + image);
                 }
             }
@@ -202,6 +202,8 @@ public class BDGPInsituConverter extends BioFileConverter
                 stagesColl.addRefId(stages[15]);
                 stagesColl.addRefId(stages[16]);
                 break;
+            default:
+                throw new IllegalArgumentException("bad stage value " + stageNumber.intValue());
         }
 
         result.addCollection(stagesColl);

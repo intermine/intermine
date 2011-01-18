@@ -1,7 +1,7 @@
 package org.flymine.web;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -89,7 +89,7 @@ public class ChartRenderer extends InterMineAction
             return null;
         }
         Method method = getClass().getMethod(request.getParameter("method"), SIG);
-        if (!method.getName().equals("execute")) { // avoid infinite loop
+        if (!"execute".equals(method.getName())) { // avoid infinite loop
             return (ActionForward) method.invoke(this, new Object[] {mapping, form, request,
                     response});
         }
@@ -132,7 +132,7 @@ public class ChartRenderer extends InterMineAction
             MicroArrayResult result = (MicroArrayResult) rr.get(0);
             // TODO hack for Arbeitman experiment, should set display label in assay to simplify
             String label = ((MicroArrayAssay) rr.get(1)).getSample2();
-            if (label != null && !(label.equals(""))) {
+            if (label != null && !("".equals(label))) {
                 String series = label.substring(label.indexOf(':'), label.indexOf('-')).trim();
                 // TODO Calculate Log2, should be a flag to set scale
                 xyDataset.addValue((Math.log(result.getValue().floatValue()) / logE2),
@@ -195,7 +195,7 @@ public class ChartRenderer extends InterMineAction
     }
 
     private void configureXaxis(Axis axis, @SuppressWarnings("unused") HttpServletRequest request) {
-        if (request.getParameter("method").equals("microarray")) {
+        if ("microarray".equals(request.getParameter("method"))) {
             ((CategoryAxis) axis).setMaximumCategoryLabelLines(7);
             axis.setLabelAngle(0);
             //xAxis.setVisible(false);

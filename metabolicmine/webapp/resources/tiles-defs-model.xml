@@ -19,6 +19,12 @@
 
 <definition name="cytoscapeInteractionsDisplayer.tile" path="/model/cytoscapeInteractionsDisplayer.jsp"
         controllerUrl="/initCytoscapeInteractionsDisplayer.do"/>
-		
+
 <definition name="uniProtCommentsDisplayer.tile" path="/model/uniProtCommentsDisplayer.jsp"
         controllerUrl="/initUniProtCommentsDisplayer.do"/>
+
+<definition name="snpToGeneDisplayer.tile" path="/model/snpToGeneDisplayer.jsp"
+        controllerUrl="/initSnpToGeneDisplayer.do"/>
+
+<definition name="snpToGeneFormDisplayer.tile" path="/model/snpToGeneFormDisplayer.jsp"
+          controllerUrl="/initSnpToGeneFormDisplayer.do"/>

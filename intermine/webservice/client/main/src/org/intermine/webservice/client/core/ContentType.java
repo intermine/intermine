@@ -1,7 +1,7 @@
 package org.intermine.webservice.client.core;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,7 +14,7 @@ package org.intermine.webservice.client.core;
  * Simple class wrapping content type information. At this moment only
  * TEXT_TAB, TEXT_XML, TEXT_PLAIN are useful content types. InterMine decides 
  * which output format use according to the parameters in request
- * and not according to the content  type header.  
+ * and not according to the content type header.  
  * @author Jakub Kulaviak
  **/
 public class ContentType
@@ -45,6 +45,9 @@ public class ContentType
      */
     public static final ContentType TEXT_PLAIN =
       new ContentType("text", "plain", UTF8_CHARSET);
+
+	public static final ContentType APPLICATION_JSON = 
+		new ContentType("application", "json", UTF8_CHARSET);
 
     private ContentType(String type, String subType, String charSet) {
         this.type = type;

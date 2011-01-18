@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -303,7 +303,7 @@ public class TableWidgetLdr
             ClassDescriptor cldEnd = ((ReferenceDescriptor) fld).getReferencedClassDescriptor();
             QueryClass qcEnd = new QueryClass(cldEnd.getType());
 
-            addReferenceConstraint(model, q, qcStart, refName, qcEnd);
+            addReferenceConstraint(q, qcStart, refName, qcEnd);
 
             if (constraintName != null && constraintValue != null) {
                 AttributeDescriptor attFld = cldEnd.getAttributeDescriptorByName(constraintName);
@@ -368,7 +368,6 @@ public class TableWidgetLdr
      * Add a contains constraint to Query (q) from qcStart from qcEnd via reference refName.
      * Return qcEnd as it may need to be passed into mehod again as qcStart.
      *
-     * @param model the Model use to find meta data
      * @param q the query
      * @param qcStart the QueryClass that contains the reference
      * @param refName name of reference to qcEnd
@@ -376,8 +375,8 @@ public class TableWidgetLdr
      * to the query
      * @return QueryClass return qcEnd
      */
-    private QueryClass addReferenceConstraint(Model model, Query q, QueryClass qcStart,
-            String refName, QueryClass qcEnd) {
+    private QueryClass addReferenceConstraint(Query q, QueryClass qcStart, String refName,
+            QueryClass qcEnd) {
         q.addFrom(qcEnd);
 
         // already validated against model
