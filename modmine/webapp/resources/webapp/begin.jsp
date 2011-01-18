@@ -315,7 +315,7 @@
    <div class="span-14 last">
    <div id="bochs">
      <h3>Fly Regulatory Network</h3>
-     <a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do"><div class="heatmap"><img src="model/images/genome_region.png" alt="Fly Regulatory Network"/></div></a>
+     <a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do"><div class="heatmap"><img src="model/images/fly-network-detail.png" alt="Fly Regulatory Network"/></div></a>
      <div class="text">
        <p><strong>Explore</strong> an hierarchical view of the physical regulatory network.
        </p>
