@@ -205,12 +205,13 @@
      <div class="text">
        <span style="width:71px; height:20px; float:left;">&nbsp;</span>
        <p>
+         <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">
          <img src="model/images/genome_region.png" alt="Genome Region Search" style="float:right;padding-left:5px;margin-right:4px;"/>
-         <strong>Explore</strong> a genomic region for features found by the <strong>modENCODE</strong> project. Find modENCODE data in
-         given regions of the genome.
+         </a>
+         <strong>Explore</strong> a genomic region for features found by the <strong>modENCODE</strong> project.
        </p>
        <br />
-       <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Region Search</a>
+       <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Genomic Region Search</a>
      </div>
    </div>
    </div>
@@ -297,28 +298,28 @@
    <div class="span-14">
    <div id="bochs">
      <h3>Fly Chromatin states</h3>
-     <div class="text">
-       <center>
-       <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/chromatinStates.do"><img src="themes/modmine/flyscore.png" alt="heatmap"/>FlyScore</a>
-       </center>
+     <div class="text" >
+       <left>
+       <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/chromatinStates.do"><img src="themes/modmine/flyscore.png" alt="flyscore"/>GBrowse Ideograms</a>
+       </left>
        <p>Some text goes here Sergio ...</p>
        <br />
-       <center>
-       <a class="heatmap" target ="new" href="http://compbio.med.harvard.edu/flychromatin/"><img src="themes/modmine/parklab.png" alt="heatmap"/>ParkLab</a>
-       </center>
-       <p>Some text goes here Sergio ...</p>
+       <left>
+       <a class="heatmap" target ="new" href="http://compbio.med.harvard.edu/flychromatin/"><img src="themes/modmine/parklab.png" alt="parklabviewer"/>Park Lab Viewer</a>
+       </left>
+       <p>Includes folded view and also data about DHS, TSS, replication, etc</p>
      </div>
    </div>
    </div>
 
    <div class="span-14 last">
    <div id="bochs">
-     <h3>Genomic Region Search</h3>
-     <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do"><div class="heatmap"><img src="model/images/genome_region.png" alt="Genome Region Search"/></div></a>
+     <h3>Fly Regulatory Network</h3>
+     <a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do"><div class="heatmap"><img src="model/images/genome_region.png" alt="Fly Regulatory Network"/></div></a>
      <div class="text">
-       <p>Find modENCODE data in given regions of the genome.
+       <p><strong>Explore</strong> an hierarchical view of the physical regulatory network.
        </p>
-       <div style="text-align: center;"><a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Region Search</a></div>
+       <div style="text-align: center;"><a href="/${WEB_PROPERTIES['webapp.path']}/flyRegulatoryNetwork.do">Fly Regulatory Network</a></div>
      </div>
    </div>
    </div>
