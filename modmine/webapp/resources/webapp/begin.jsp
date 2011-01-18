@@ -300,7 +300,7 @@
      <h3>Fly Chromatin states</h3>
      <div class="text" >
        <left>
-       <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/chromatinStates.do"><img src="themes/modmine/flyscore.png" alt="flyscore"/>GBrowse Ideograms</a>
+       <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/chromatinStates.do"><img src="themes/modmine/flyscore.png" alt="flyscore"/><span>GBrowse Ideograms</span></a>
        </left>
        <p>Some text goes here Sergio ...</p>
        <br />

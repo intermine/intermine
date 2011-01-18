@@ -68,4 +68,5 @@ li { margin-left:auto; }
   #bochs h3 { padding:10px 0 10px 10px; color:#0891C1; }
   #bochs a.heatmap { text-decoration:none; color:#000; font-weight:bold; }
     #bochs a.heatmap img { vertical-align:middle; margin:0 20px 10px 0; }
+    #bochs a.heatmap span { display:inline-block; width:118px; vertical-align:middle; }
   #bochs .text { padding:10px; font-size:14px; }
