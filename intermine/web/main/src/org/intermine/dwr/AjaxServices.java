@@ -96,6 +96,7 @@ import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.QueryCountQueryMonitor;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.EnrichmentWidget;
+import org.intermine.web.logic.widget.ErrorCorrection;
 import org.intermine.web.logic.widget.GraphWidget;
 import org.intermine.web.logic.widget.HTMLWidget;
 import org.intermine.web.logic.widget.TableWidget;
