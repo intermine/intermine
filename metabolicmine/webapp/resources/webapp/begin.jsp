@@ -367,7 +367,7 @@
     <div id="rss" class="span-6 last white-half" style="display:none;">
       <script type="text/javascript">
       // feed URL
-      var feedURL = "http://blog.metabolicmine.org/feed/";
+      var feedURL = "${WEB_PROPERTIES['project.rss']}";
       // limit number of entries displayed
       var maxEntries = 2;
       // where are we appending entries? (jQuery syntax)
@@ -376,55 +376,64 @@
       var months = new Array(12); months[0]="Jan"; months[1]="Feb"; months[2]="Mar"; months[3]="Apr"; months[4]="May"; months[5]="Jun";
       months[6]="Jul"; months[7]="Aug"; months[8]="Sep"; months[9]="Oct"; months[10]="Nov"; months[11]="Dec";
 
-      $(document).ready(function() {
-        // DWR fetch, see AjaxServices.java
-        AjaxServices.getNewsPreview(feedURL, function(data) {
-          if (data) {
-            // show us
-            $('#rss').slideToggle('slow');
+      $(document).ready(function () {
+          // DWR fetch, see AjaxServices.java
+          AjaxServices.getNewsPreview(feedURL, function (data) {
+              if (data) {
+                  // show us
+                  $('#rss').slideToggle('slow');
 
-            // declare
-            var feedTitle, feedDescription, feedDate, feedLink, row, feed;
+                  // declare
+                  var feedTitle, feedDescription, feedDate, feedLink, row, feed;
 
-            // convert to XML, jQuery manky...
-            try {
-              // Internet Explorer
-              feed = new ActiveXObject("Microsoft.XMLDOM");
-              feed.async="false";
-              feed.loadXML(data);
-            } catch(e) {
-              try {
-                // ...the good browsers
-                feed = new DOMParser().parseFromString(data, "text/xml");
-              } catch(e) {
-                // ... BFF
-                alert(e.message);
-                return;
-              }
-            }
+                  // convert to XML, jQuery manky...
+                  try {
+                      // Internet Explorer
+                      feed = new ActiveXObject("Microsoft.XMLDOM");
+                      feed.async = "false";
+                      feed.loadXML(data);
+                  } catch (e) {
+                      try {
+                          // ...the good browsers
+                          feed = new DOMParser().parseFromString(data, "text/xml");
+                      } catch (e) {
+                          // ... BFF
+                          alert(e.message);
+                          return;
+                      }
+                  }
 
                   var items = feed.getElementsByTagName("item"); // ATOM!!!
                   for (var i = 0; i < items.length; i++) {
-              // early bath
-              if (i == maxEntries) return;
+                      // early bath
+                      if (i == maxEntries) return;
 
-                    feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 70);
-                    feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 70);
-                    feedDate = new Date(items[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue);
-                    feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
+                      feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 70);
+                      feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 70);
+                      // we have a feed date
+                      if (items[i].getElementsByTagName("pubDate")[0]) {
+                          feedDate = new Date(items[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue);
+                          feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
 
-                // build table row
-                row = '<tr>'
-                                + '<td class="date">'
-                                  + '<a target="new" href="' + feedLink + '">' + feedDate.getDate()
-                                  + '<br /><span>' + months[feedDate.getMonth()] + '</span></a></td>'
-                                + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
+                          // build table row
+                          row = '<tr>' + '<td class="date">' + '<a target="new" href="' + feedLink + '">' + feedDate.getDate()
+                          + '<br /><span>' + months[feedDate.getMonth()] + '</span></a></td>'
+                          + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
                           + '</tr>';
-                // append, done
-                $(target).append(row);
+                      } else {
+                          feedLink = items[i].getElementsByTagName("link")[0].firstChild.nodeValue
+
+                          // build table row
+                          row = '<tr>'
+                          + '<td><a target="new" href="' + feedLink + '">' + feedTitle + '</a><br/>' + feedDescription + '</td>'
+                          + '</tr>';
+                      }
+
+                      // append, done
+                      $(target).append(row);
                   }
-                }
-        });
+              }
+          });
       });
 
           // trim text to a specified length
