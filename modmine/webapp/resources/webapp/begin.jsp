@@ -228,7 +228,14 @@
            <form name="buildBagForm" method="post" action="<c:url value="/buildBag.do" />">
                <select name="type">
                  <c:forEach var="bag" items="${preferredBags}">
-                   <option value="<c:out value="${bag}" />"><c:out value="${bag}" /></option>
+                    <c:choose>
+                      <c:when test="${bag == 'Gene'}">
+                        <option value="Gene" selected="selected">Gene</option>
+                      </c:when>
+                      <c:otherwise>
+                        <option value="<c:out value="${bag}" />"><c:out value="${bag}" /></option>
+                      </c:otherwise>
+                    </c:choose>
                  </c:forEach>
                </select>
                <textarea id="listInput" name="text"></textarea>
