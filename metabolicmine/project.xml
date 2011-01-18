@@ -23,9 +23,6 @@
     <source name="ensembl-gwas-db-human" type="ensembl-gwas-db">
      <property name="source.db.name" value="ensembl.9606.variation"/>
     </source>
-    <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
-     <property name="source.db.name" value="ensembl.9606.variation"/>
-    </source>
     <source name="uniprot" type="uniprot">
       <property name="uniprot.organisms" value="9606 10090"/>
       <property name="createinterpro" value="true"/>
@@ -87,7 +84,7 @@
       <property name="src.data.dir.includes" value="gene2pubmed"/>
       <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/>
     </source>
-    <source name="omim" type="omim" dump="true">
+    <source name="omim" type="omim">
       <property name="src.data.dir" location="/shared/data/metabolic/omim/test"/>
     </source>
     <source name="ensembl-mouse" type="ensembl" dump="true">
@@ -120,6 +117,9 @@
       <property name="treefam.organisms" value="9606 10090 10116"/>
       <!-- will only load gene if it is a homologue for human, rat or mouse -->
       <property name="treefam.homologues" value="9606 10090 10116"/>
+    </source>
+    <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
+     <property name="source.db.name" value="ensembl.9606.variation"/>
     </source>
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>
