@@ -145,7 +145,7 @@ function showNetwork(flyRegulatoryNetwork, webapp_baseurl, webapp_path, project_
               }, 400);
         })
 
-        .zoom(1);
+        .zoomToFit();
 
   });
 
