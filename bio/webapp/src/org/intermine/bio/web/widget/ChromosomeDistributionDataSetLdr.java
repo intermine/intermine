@@ -1,7 +1,7 @@
 package org.intermine.bio.web.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -252,7 +252,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         q.addFrom(organismQC);
         q.setConstraint(cs);
 
-        if (!resultsType.equals("total")) {
+        if (!"total".equals(resultsType)) {
             q.setDistinct(false);
             q.addToSelect(chromoQF);
             q.addToSelect(countQF);

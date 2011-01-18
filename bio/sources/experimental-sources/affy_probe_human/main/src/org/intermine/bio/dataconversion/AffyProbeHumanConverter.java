@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -251,7 +251,7 @@ public class AffyProbeHumanConverter extends FileConverter
             Item bioentity = createItem(type);
             bioentity.setAttribute("primaryIdentifier", identifier);
             bioentity.setReference("organism", org.getIdentifier());
-            if (type.equals("Transcript")) {
+            if ("Transcript".equals(type)) {
                 bioentity.setReference("gene", geneRefId);
             }
             //bioentity.addToCollection("dataSets", dataSet);

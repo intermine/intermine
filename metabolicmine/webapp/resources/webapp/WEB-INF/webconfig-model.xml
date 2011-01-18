@@ -1,4 +1,65 @@
 <webconfig>
+
+  <class className="org.intermine.model.bio.Disease">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+  <class className="org.intermine.model.bio.Pathway">
+    <fields>
+      <fieldconfig fieldExpr="identifier" />
+      <fieldconfig fieldExpr="name" />
+    </fields>
+    <longdisplayers>
+      <displayer src="pathwayLinkDisplayer.tile"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+  <class className="org.intermine.model.bio.Consequence">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+  <class className="org.intermine.model.bio.ValidationState">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+  <class className="org.intermine.model.bio.Ontology">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+  <class className="org.intermine.model.bio.Component">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+  <class className="org.intermine.model.bio.CrossReference">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
   <class className="org.intermine.model.bio.Author">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -83,13 +144,25 @@
     <longdisplayers>
       <!-- attribute links can now be configured for gene report pages -->
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="geneMicroArrayDisplayer.tile"/>
       <displayer src="uniProtCommentsDisplayer.tile"/>
+      <displayer src="/model/jBrowse.jsp"/>
+      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
       <!-- attribute links can now be configured for gene list analysis pages -->
       <displayer src="attributeLinkDisplayer.tile"/>
     </bagdisplayers>
+  </class>
+
+  <class className="org.intermine.model.bio.Protein">
+    <fields>
+        <fieldconfig fieldExpr="primaryIdentifier"/>
+        <fieldconfig fieldExpr="primaryAccession"/>
+        <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="cytoscapeInteractionsDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.GOAnnotation">
@@ -127,7 +200,7 @@
       <fieldconfig fieldExpr="phenotype"/>
       <fieldconfig fieldExpr="pValue"/>
       <fieldconfig fieldExpr="study.firstAuthor"/>
-      <fieldconfig fieldExpr="soure.name"/>
+      <fieldconfig fieldExpr="source.name"/>
     </fields>
   </class>
 
@@ -135,7 +208,6 @@
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false" />
-      <fieldconfig fieldExpr="inParanoidScore"/>
       <fieldconfig fieldExpr="homologue.primaryIdentifier"/>
       <fieldconfig fieldExpr="homologue.organism.shortName"/>
     </fields>
@@ -188,6 +260,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/jBrowse.jsp"/>
     </longdisplayers>
     <bagdisplayers>
     </bagdisplayers>
@@ -235,7 +308,7 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-	  <displayer src="uniProtCommentsDisplayer.tile"/>
+    <displayer src="uniProtCommentsDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
     </bagdisplayers>
@@ -287,8 +360,13 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="snpToGeneDisplayer.tile"/>
+      <displayer src="/model/jBrowse.jsp"/>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
+    <bagdisplayers>
+      <displayer src="snpToGeneFormDisplayer.tile" showOnLeft="true"/>
+    </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Source">
@@ -342,7 +420,9 @@
         filters="biological_process,cellular_component,molecular_function"
         filterLabel="Ontology"
         typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
-        externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
+        externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term="
+        style="height:290px;"
+    />
 
     <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
         link="org.intermine.bio.web.widget.ProteinDomainURLQuery"
@@ -350,7 +430,9 @@
         label="Protein Domain"
         description="Protein Domains enriched for items in this list."
         typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
-        externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
+        externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="
+        style="height:317px;"
+    />
 
     <enrichmentwidgetdisplayer id="publication_enrichment" title="Publication Enrichment"
         link="org.intermine.bio.web.widget.PublicationURLQuery"
@@ -359,7 +441,19 @@
         description="Publications enriched for genes in this list."
         externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
         typeClass="org.intermine.model.bio.Gene"
-        externalLinkLabel="PubMed:" />
+        externalLinkLabel="PubMed:"
+        style="height:317px;"
+    />
+
+    <enrichmentwidgetdisplayer id="gwas_enrichment" title="GWAS Phenotype Enrichment"
+        link="org.intermine.bio.web.widget.GWASEnrichmentURLQuery"
+        dataSetLoader="org.intermine.bio.web.widget.GWASEnrichmentLdr"
+        label="Phenotype"
+        description="Phenotypes enriched for SNPs in this list."
+        typeClass="org.intermine.model.bio.SNP"
+        style="height:310px;"
+    />
+
 
     <enrichmentwidgetdisplayer id="pathway_enrichment" title="Pathway Enrichment"
         link="org.intermine.bio.web.widget.PathwayURLQuery"
@@ -368,7 +462,9 @@
         filters="All datasets,KEGG,Reactome"
         filterLabel="DataSet"
         description="Pathways enriched for genes in this list - data from KEGG and Reactome"
-        typeClass="org.intermine.model.bio.Gene" />
+        typeClass="org.intermine.model.bio.Gene"
+        style="height:317px;"
+    />
 
     <!--<bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
         link="org.intermine.bio.web.widget.HomologueURLQuery"
@@ -385,15 +481,20 @@
         displayFields="primaryIdentifier"
         exportField="primaryIdentifier"
         typeClass="org.intermine.model.bio.Gene"
-        columnTitle="Interactions"/>
+        columnTitle="Interactions"
+        style="height:404px;"
+    />
 
     <bagtabledisplayer id="snp_consequence_types" title="SNP Consequence Types"
         pathStrings="SNP.consequences"
+        link="org.intermine.bio.web.widget.InteractionURLQuery"
         description="Consequence types for SNPs in this list"
         displayFields="type"
         exportField="primaryIdentifier"
         typeClass="org.intermine.model.bio.SNP"
-        columnTitle="SNPs"/>
+        columnTitle="SNPs"
+        style="height:420px;"
+    />
 
 </widgets>
 </webconfig>

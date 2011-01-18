@@ -1,7 +1,7 @@
 package org.modmine.web;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -64,7 +64,7 @@ public class SubListGBrowseTrackController extends TilesAction
             return null;
         }
 
-        if (!bag.getType().equals("Submission")) { return null; }
+        if (!"Submission".equals(bag.getType())) { return null; }
 
         // Logic 1: query all the DccId for the list of submission in the bag, refer to
         //          OrthologueLinkController and BioUtil

@@ -1,17 +1,20 @@
 #!/usr/bin/perl -w
 
 use strict;
+use HTML::EasyTags;
 
 my @pages = ();
 
 if (@ARGV != 3) {
   die <<USAGE;
-Wrong number of argument
+Wrong number of arguments
 
 usage:
   $0 input_file "Some title" destination_directory
 USAGE
 }
+
+my $html = HTML::EasyTags->new();
 
 my $help_file_name = shift;
 my $help_title = shift;
@@ -35,6 +38,13 @@ while (my $line = <$help_file>) {
   } else {
     $text .= $line;
   }
+}
+
+sub strip_non_alphas {
+    my $string = shift;
+    $string =~ s/\s/_/g;
+    $string =~ tr/a-zA-Z_//c;
+    return $string;
 }
 
 save($id, $title, $text);
@@ -103,9 +113,40 @@ sub make_name
     $suffix .= '-' . $active_tab->{id};
   }
 
-  my $name = "$suffix.html";
-  $name =~ s/\s/_/g;
+  my $name = strip_non_alphas("$suffix.html");
   return $name;
+}
+
+sub make_chapter_item {
+    my $page = shift;
+    my $chapter_id = strip_non_alphas($page->{title});
+    my $link = ($page->{tabs} && @{$page->{tabs}} > 1)
+        ? "javascript:toggleDiv('$chapter_id-tab-box');"
+        : make_name($page);
+    my $chapter = $html->a(
+        href => $link, 
+        text => $page->{title},
+        class => 'chapter-item',
+        id => $chapter_id,
+    );
+    if ($page->{tabs}) {
+        $chapter .= $html->div(
+            {class => 'chapter-tab-box',
+            id => $chapter_id . '-tab-box',
+            style => 'display: none;'},
+            $html->ol($html->li_group([map {make_tab_item($page, $_, $chapter_id)} @{$page->{tabs}}])));
+    }
+    return $chapter;
+}
+sub make_tab_item {
+    my ($page, $tab, $chapter_id) = @_;
+    my $tab_id = strip_non_alphas($chapter_id . '-' . $tab->{title});
+    return $html->a(
+        href => make_name($page) . '#' . $tab_id,
+        text => $tab->{title},
+        class => 'tab-item',
+        id => $tab_id,
+    );
 }
 
 sub make_html
@@ -131,6 +172,8 @@ sub make_html
     $prev_link = qq[<a href="$prev_url">previous</a>];
     $prev_title = $pages[$num - 1]{title};
   }
+
+  my $chapter_list = $html->li_group([map {make_chapter_item($_)} @pages]);
 
   my $next_url = '';
   my $next_link = '';
@@ -178,7 +221,7 @@ sub make_html
     for (my $tab_idx = 0; $tab_idx < @tabs; $tab_idx++) {
       my $tab = $tabs[$tab_idx];
       my $tab_title = $tab->{title};
-      my $tab_id = $tab->{id};
+      my $tab_id = strip_non_alphas($tab->{id});
       if (!defined $active_tab && $tab_idx == 0 ||
           defined $active_tab && $tab_id eq $active_tab->{id} ) {
         $tab_list .= qq|<li><a href="#$tab_id" class="active">$tab_title</a></li>\n|;
@@ -217,6 +260,7 @@ TEXT
     <script type="text/javascript" src="$js_path/addcss.js"></script>
     <script type="text/javascript" src="$js_path/tabtastic.js"></script>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
   </head>
   <body>
     <div class="genhelp">
@@ -255,6 +299,17 @@ $next_title
           </tr>
         </table>
       </div>
+      <div class="sidebar">
+
+        <ol>
+            $chapter_list
+        </ol>
+    <script language="javascript">
+        function toggleDiv(divid) {
+            \$('#' + divid).slideToggle('fast', function() {});
+        }
+    </script>
+     </div>
       <div style="padding-top: 20px" class="content">
         <div $onclick>
 $tab_list

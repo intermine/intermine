@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -157,6 +157,37 @@ public class TemplateQuery extends PathQuery implements WebSearchable
             throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
         }
         return editableConstraints.contains(constraint);
+    }
+
+    /**
+     * Returns whether a constraint is optional. This is the logical inverse of isRequired()
+     *
+     * @param constraint the PathConstraint to check
+     * @return true if the constraint is optional
+     * @throws NullPointerException if the constraint is null
+     * @throws NoSuchElementException if constraint is not in the query at all
+     */
+    public synchronized boolean isOptional(PathConstraint constraint) {
+        return !isRequired(constraint);
+    }
+
+    /**
+     * Returns whether a constraint is required. This is the logical inverse of isOptional()
+     *
+     * @param constraint the PathConstraint to check
+     * @return true if the constraint is required
+     * @throws NullPointerException if the constraint is null
+     * @throws NoSuchElementException if constraint is not in the query at all
+     */
+    public synchronized boolean isRequired(PathConstraint constraint) {
+        if (constraint == null) {
+            throw new NullPointerException("Cannot fetch editable status of null constraint");
+        }
+        if (!getConstraints().containsKey(constraint)) {
+            throw new NoSuchElementException("Constraint " + constraint + " is not in the query");
+        }
+        boolean isRequired = SwitchOffAbility.LOCKED.equals(getSwitchOffAbility(constraint));
+        return isRequired;
     }
 
     /**

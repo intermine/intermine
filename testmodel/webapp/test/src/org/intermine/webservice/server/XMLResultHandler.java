@@ -8,7 +8,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -34,12 +34,12 @@ public class XMLResultHandler extends DefaultHandler
     @Override
     public void startElement(String uri, String localName, String name,
             Attributes attributes) throws SAXException {
-        if (name.equals("ResultSet")) {
+        if ("ResultSet".equals(name)) {
             results = new ArrayList<List<String>>();
             rootAttributes = attributes;
-        } else if (name.equals("Result")) {
+        } else if ("Result".equals(name)) {
             currentResult = new ArrayList<String>();
-        } else if (name.equals("i")) {
+        } else if ("i".equals(name)) {
             currentResultItem = "";
         }
     }
@@ -47,9 +47,9 @@ public class XMLResultHandler extends DefaultHandler
     @Override
     public void endElement(String uri, String localName, String name)
             throws SAXException {
-        if (name.equals("Result")) {
+        if ("Result".equals(name)) {
             results.add(currentResult);
-        } else if (name.equals("i")) {
+        } else if ("i".equals(name)) {
             currentResult.add(currentResultItem);
         }
     }

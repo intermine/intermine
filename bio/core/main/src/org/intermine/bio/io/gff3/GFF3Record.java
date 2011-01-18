@@ -1,7 +1,7 @@
 package org.intermine.bio.io.gff3;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -37,8 +37,8 @@ public class GFF3Record
     private String sequenceID;
     private String source;
     private String type;
-    private int    start;
-    private int    end;
+    private int start;
+    private int end;
     private Double score;
     private String strand;
     private String phase;

@@ -1,7 +1,7 @@
 package org.intermine.bio.web.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -45,14 +45,14 @@ public class DiseaseEnrichURLQuery implements WidgetURLQuery
     public PathQuery generatePathQuery() {
         PathQuery q = new PathQuery(os.getModel());
         String bagType = bag.getType();
-        String prefix = (bagType.equals("Gene") ? "Gene" : "Disease.associatedGenes");
+        String prefix = ("Gene".equals(bagType) ? "Gene" : "Disease.associatedGenes");
 
         String paths = "";
 
-        if (bagType.equals("Disease")) {
+        if ("Disease".equals(bagType)) {
             paths += "Disease.diseaseId,";
         }
-        if (bagType.equals("Gene")) {
+        if ("Gene".equals(bagType)) {
         	paths += "Gene.diseases.diseaseId,";
         }
 

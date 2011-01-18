@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -155,7 +155,7 @@ public class FlyFishConverter extends BioFileConverter
 
             for (int column = 1; column < lineBits.length; column++) {
                 String value = lineBits[column];
-                if (value.equals("1")) {
+                if ("1".equals(value)) {
                     int configIndex = column - 1;
                     if (configIndex >= config.length) {
                         throw new RuntimeException("line too long: " + line);

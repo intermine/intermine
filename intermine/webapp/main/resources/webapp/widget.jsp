@@ -63,11 +63,9 @@
     <li style="float:right">
     <label>Maximum value to display</label>
     <html:select property="max" styleId="max${widget.id}" onchange="getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}')">
-      <html:option value="0.01">0.01</html:option>
       <html:option value="0.05">0.05</html:option>
       <html:option value="0.10">0.10</html:option>
       <html:option value="0.50">0.50</html:option>
-      <html:option value="1.00">1.00</html:option>
     </html:select>
     </li>
    </c:if>

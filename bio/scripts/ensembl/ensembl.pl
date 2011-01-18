@@ -308,6 +308,8 @@ foreach my $taxon_id ( keys %organisms ) {
                     my ( $protein_item, $prot_seq_item ) =
                       make_protein($protein_seq);
 
+                    $protein_item->set(primaryIdentifier => $transcript->translation()->stable_id());
+                    $protein_item->set(secondaryIdentifier => $transcript->translation()->stable_id());
                     $protein_item->set( genes       => [$gene_item] );
                     $protein_item->set( transcripts => [$transcript_item] );
 

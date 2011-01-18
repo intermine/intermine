@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -40,7 +40,7 @@ public class CDNAClonesGFF3RecordHandler extends GFF3RecordHandler
         // the key.
         //
         Item feature = getFeature();
-        if (record.getType().equals("cDNA_match")) {
+        if ("cDNA_match".equals(record.getType())) {
             feature.setClassName("CDNA");
             String[] target = record.getTarget().split("\\s");
             feature.setAttribute("primaryIdentifier", target[0]);

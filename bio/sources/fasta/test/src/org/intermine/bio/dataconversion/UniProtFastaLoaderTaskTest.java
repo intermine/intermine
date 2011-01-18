@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -105,7 +105,7 @@ public class UniProtFastaLoaderTaskTest extends TestCase
 
         assertEquals("Q9V8R9-2", protein.getPrimaryAccession());
 
-        protein.getOrganism().getTaxonId().equals("7227");
+        "7227".equals(protein.getOrganism().getTaxonId());
 
         DataSet dataSet = protein.getDataSets().iterator().next();
         assertEquals(dataSetTitle, dataSet.getName());

@@ -13,7 +13,11 @@ if !(test -e ${FILE}); then
     exit; 
 fi;
 
-CLASSPATH=./lib/antlr-2.7.6-caching.jar:./lib/commons-codec-1.3.jar:./lib/commons-httpclient-3.0.jar:./lib/commons-lang-2.3.jar:./lib/commons-logging-1.1.1.jar:./lib/intermine-client.jar:./lib/intermine-objectstore.jar:./lib/intermine-pathquery.jar:./lib/log4j.jar:./lib/stax-api-1.0.jar:./lib/stax-ri-1.0.jar
+# Puts all jars from ./lib dir on the classpath
+for i in ./lib/*jar
+    do
+    CLASSPATH=$CLASSPATH:$i
+done
 
 cd $1;
 mkdir -p build;

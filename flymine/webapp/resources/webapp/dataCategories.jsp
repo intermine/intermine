@@ -467,7 +467,7 @@
     <td> &nbsp;</td>
   </tr>
 
-  <tr><td rowspan="6" class="leftcol">
+  <tr><td rowspan="5" class="leftcol">
        <html:link action="/aspect?name=Resources">
         <p> <img src="model/images/drosdel.gif" /></p>
         <p> Resources</p></html:link></td>

@@ -99,12 +99,22 @@
 
   <target name="read-userprofile-xml" depends="-init-properties, -init-build-db">
     <read-userprofile-xml fileName="${build.dir}/userprofile.xml" osAlias="${objectstore.name}"
-                          userProfileAlias="${userprofile.objectstorewriter.name}"/>
+                            userProfileAlias="${userprofile.objectstorewriter.name}"/>
   </target>
 	
   <target name="load-bagvalues-table" depends="-init-properties, -init-build-db">
     <load-bagvalues-table osAlias="${objectstore.name}"
 	                            userProfileAlias="${userprofile.objectstorewriter.name}"/>
+  </target>
+
+  <target name="write-templatetrack-xml" depends="-init-properties, -init-build-db">
+    <write-templatetrack-xml fileName="${build.dir}/templatetrack.xml"
+                             userProfileAlias="${userprofile.objectstorewriter.name}"/>
+  </target>
+
+  <target name="read-templatetrack-xml" depends="-init-properties, -init-build-db">
+    <read-templatetrack-xml fileName="${build.dir}/templatetrack.xml"
+                        userProfileAlias="${userprofile.objectstorewriter.name}"/>
   </target>
 
   <!-- RELEASE / REMOVE FROM TOMCAT -->

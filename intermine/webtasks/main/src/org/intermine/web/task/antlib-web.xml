@@ -17,4 +17,11 @@
     <typedef
         name="load-bagvalues-table"
         classname="org.intermine.web.task.LoadBagValuesTask"/>
+    <typedef
+        name="read-templatetrack-xml"
+        classname="org.intermine.web.task.TemplateTrackReadTask"/>
+    <typedef
+        name="write-templatetrack-xml"
+        classname="org.intermine.web.task.TemplateTrackWriteTask"/>
+
 </antlib>

@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -475,7 +475,7 @@ public class CreateIndexesTask extends Task
         // finally add an index to all M-to-N indirection table columns
         for (CollectionDescriptor col : cld.getCollectionDescriptors()) {
             if (FieldDescriptor.M_N_RELATION == col.relationType()) {
-                String tableName = DatabaseUtil.getIndirectionTableName(col);
+                String tableName = DatabaseUtil.getIndirectionTableName(col).toLowerCase();
                 String columnName = DatabaseUtil.getInwardIndirectionColumnName(col,
                         schema.getVersion());
                 String columnName2 = DatabaseUtil.getOutwardIndirectionColumnName(col,

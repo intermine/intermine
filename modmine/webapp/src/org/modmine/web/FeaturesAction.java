@@ -1,7 +1,7 @@
 package org.modmine.web;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,6 +10,7 @@ package org.modmine.web;
  *
  */
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -26,7 +27,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
@@ -92,6 +92,11 @@ public class FeaturesAction extends InterMineAction
         final Map<String, LinkedList<String>> gffFields = new HashMap<String, LinkedList<String>>();
         populateGFFRelationships(gffFields);
 
+        String[] wrongSubs = new String[]
+                 {"2753", "2754", "2755", "2783", "2979", "3247", "3251", "3253"};
+
+        final Set<String> unmergedPeaks = new HashSet<String>(Arrays.asList(wrongSubs));
+
         boolean doGzip = false;
         if (request.getParameter("gzip") != null
                 && request.getParameter("gzip").equalsIgnoreCase("true")) {
@@ -110,6 +115,12 @@ public class FeaturesAction extends InterMineAction
 
             Set<String> organisms = exp.getOrganisms();
             taxIds = getTaxonIds(organisms);
+
+            // temp fix for unmerged peak scores
+            if (experimentName.equalsIgnoreCase(
+                    "Genome-wide localization of essential replication initiators")) {
+                addMergingPeaks(featureType, q);
+            }
 
             if (featureType.equalsIgnoreCase("all")) {
                 // fixed query for the moment
@@ -153,7 +164,7 @@ public class FeaturesAction extends InterMineAction
                     // we don't want this field on exports
                     q.addView(featureType + ".scoreProtocol.name");
                     q.setOuterJoinStatus(featureType + ".scoreProtocol",
-                            OuterJoinStatus.OUTER);   
+                            OuterJoinStatus.OUTER);
                 }
                 q.addConstraint(Constraints.eq(featureType + ".submissions.experiment.name",
                         experimentName));
@@ -221,6 +232,10 @@ public class FeaturesAction extends InterMineAction
                             OuterJoinStatus.OUTER);
                 }
                 q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
+                // temp fix for unmerged peak scores
+                if (unmergedPeaks.contains(dccId)) {
+                    addMergingPeaks(featureType, q);
+                }
 
                 if (unlocFeatures == null || !unlocFeatures.contains(featureType)) {
                     addLocationToQuery(q, featureType);
@@ -314,7 +329,10 @@ public class FeaturesAction extends InterMineAction
                 throw new RuntimeException("unknown export format: " + format);
             }
 
-            TableExportForm exportForm = null;
+            TableExportForm exportForm = new TableExportForm();
+            // Ref to StandardHttpExporter
+            exportForm.setIncludeHeaders(true);
+
             if ("gff3".equals(format)) {
                 exportForm = new GFF3ExportForm();
                 exportForm.setDoGzip(doGzip);
@@ -331,21 +349,38 @@ public class FeaturesAction extends InterMineAction
         } else if ("list".equals(action)) {
             // need to select just id of featureType to create list
             q.addView(featureType + ".id");
+            // temp fix for unmerged peak scores
+            dccId = (String) request.getParameter("submission");
+            q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
+            if (unmergedPeaks.contains(dccId)) {
+                addMergingPeaks(featureType, q);
+            }
 
             Profile profile = SessionMethods.getProfile(session);
 
-            BagQueryRunner bagQueryRunner = im.getBagQueryRunner();
+            //BagQueryRunner bagQueryRunner = im.getBagQueryRunner();
 
             String bagName = (dccId != null ? "submission_" + dccId : experimentName)
                 + "_" + featureType + "_features";
             bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), bagName);
             BagHelper.createBagFromPathQuery(q, bagName, q.getDescription(), featureType, profile,
-                    os, bagQueryRunner);
+                    im);
             ForwardParameters forwardParameters =
                 new ForwardParameters(mapping.findForward("bagDetails"));
             return forwardParameters.addParameter("bagName", bagName).forward();
         }
         return null;
+    }
+
+    /**
+     * @param featureType
+     * @param dccId
+     * @param q
+     */
+    private void addMergingPeaks(String featureType, PathQuery q) {
+        q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R1_*"));
+        q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*_R2_*"));
+        q.addConstraint(Constraints.neq(featureType + ".primaryIdentifier", "*Rep*"));
     }
 
     /**

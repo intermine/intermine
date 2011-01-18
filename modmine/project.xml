@@ -58,12 +58,17 @@
     <source name="rnai" type="rnai">
       <property name="src.data.dir" location="/shared/data/wormbase-rnai/current"/>
     </source>
+    <source name="flyrnai-screens" type="flyrnai-screens">
+      <property name="src.data.dir" location="/shared/data/drsc/current"/>
+      <property name="src.data.dir.includes" value="RNAi_all_hits*"/>
+      <property name="screenDetailsFile" location="/shared/data/drsc/current/RNAi_screen_details"/>
+    </source>
     <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/shared/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
       <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
       <property name="treefam.organisms" value="7227 6239"/>
-      <property name="treefam.homologues" value="9606 10090 10116 4932 7955"/>
+<!--  <property name="treefam.homologues" value="9606 10090 10116 4932 7955"/> -->
     </source>
     <source name="reactome" type="biopax">
       <property name="src.data.dir" location="/shared/data/biopax/reactome/current/not-curated"/>
@@ -114,12 +119,12 @@
       <property name="src.data.file" location="/shared/data/modmine/sources/go-annotation/gene_ontology.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation" dump="true">
-      <property name="ontologyfile" location="/shared/data/modmine/sources/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/modmine/sources/go-annotation/current/"/>
+      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/modmine/"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
-      <property name="src.data.file" location="/shared/data/modmine/sources/ontologies/fly-anatomy/current/fly_anatomy.obo"/>
+      <property name="src.data.file" location="/shared/data/ontologies/fly-anatomy/current/fly_anatomy.obo"/>
     </source>
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
       <property name="src.data.file" location="/shared/data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
@@ -237,10 +242,10 @@
         <property name="src.data.dir" location="/shared/data/go-annotation/interpro/current"/>
     </source>
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
-        <property name="src.data.dir" location="/shared/data/modmine/sources/pubmed/current"/>
+        <property name="src.data.dir" location="/shared/data/pubmed/current"/>
         <property name="pubmed.organisms" value="7227 6239 7237 7230"/>
         <property name="src.data.dir.includes" value="gene2pubmed"/>
-        <property name="infoFile" location="/shared/data/modmine/sources/pubmed/current/gene_info"/>
+        <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/>
     </source>
     <source name="fly-development-ontology" type="fly-development-ontology">
         <property name="src.data.file" location="/shared/data/ontologies/fly-development/current/fly_development.obo"/>
@@ -430,8 +435,16 @@
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
 
+        <!-- Flyscore on modENCODE -->
+        <source name="fly-expression-score" type="fly-expression-score">
+            <property name="src.data.dir" location="/shared/data/fly-expression-score"/>
+        </source>
+        <!-- TF-mRNA network -->
+        <source name="tf-mrna-network" type="tf-mrna-network">
+            <property name="src.data.dir" location="/shared/data/tf-mrna-network"/>
+        </source>
 
-        <source name="update-publications" type="update-publications">
+        <source name="update-publications" type="update-publications" dump="true">
             <!-- this source finds the publication ids (pubmed ids) in the
                      objectstore, retrieves the details of the publication from Entrez
                      into an InterMine format XML file, loads that file into a target

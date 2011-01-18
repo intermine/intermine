@@ -1,7 +1,7 @@
 package org.intermine.bio.web.widget;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -120,12 +120,12 @@ public class PathwayLdr extends EnrichmentWidgetLdr
 
         Query q = new Query();
 
-        if (dataset.equals("KEGG") || dataset.equals("Reactome")) {
+        if ("KEGG".equals(dataset) || "Reactome".equals(dataset)) {
 
-            String datasetTitle = (dataset.equals("KEGG") ? KEGG : REACTOME);
+            String datasetTitle = ("KEGG".equals(dataset) ? KEGG : REACTOME);
 
             QueryClass qcDataset = new QueryClass(DataSet.class);
-            QueryField qfDataset = new QueryField(qcDataset, "title");
+            QueryField qfDataset = new QueryField(qcDataset, "name");
 
             QueryCollectionReference c2 = new QueryCollectionReference(qcPathway, "dataSets");
             cs.addConstraint(new ContainsConstraint(c2, ConstraintOp.CONTAINS, qcDataset));
@@ -146,9 +146,9 @@ public class PathwayLdr extends EnrichmentWidgetLdr
 
         q.setConstraint(cs);
 
-        if (action.equals("analysed")) {
+        if ("analysed".equals(action)) {
             q.addToSelect(qfGeneId);
-        } else if (action.equals("export")) {
+        } else if ("export".equals(action)) {
             q.addToSelect(qfPathwayIdentifier);
             q.addToSelect(qfPrimaryIdentifier);
             q.addToOrderBy(qfPathwayIdentifier);
@@ -163,7 +163,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
             q.addToSelect(qfPathwayIdentifier);
             q.addToGroupBy(qfPathwayIdentifier);
             q.addToSelect(new QueryFunction()); // gene count
-            if (action.equals("sample")) {
+            if ("sample".equals(action)) {
                 q.addToSelect(qfPathwayName);
                 q.addToGroupBy(qfPathwayName);
             }
@@ -185,6 +185,3 @@ public class PathwayLdr extends EnrichmentWidgetLdr
         this.namespace = namespace;
     }
 }
-
-
-

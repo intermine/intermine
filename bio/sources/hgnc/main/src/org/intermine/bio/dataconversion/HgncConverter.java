@@ -76,7 +76,7 @@ public class HgncConverter extends BioFileConverter
             String[] line = (String[]) lineIter.next();
 
             String status = line[3];
-            if (!status.equals("Approved")) {
+            if (!"Approved".equals(status)) {
                 continue;
             }
             String symbol = line[1];

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template.result;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,8 +10,6 @@ package org.intermine.webservice.server.template.result;
  *
  */
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +32,8 @@ import org.intermine.api.template.TemplateValue;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathConstraintLookup;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TemplateAction;
 import org.intermine.web.util.URLGenerator;
@@ -71,7 +71,7 @@ public class TemplateResultService extends QueryResultService
      */
     @Override
     protected void execute(HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) {
+            HttpServletResponse response) {
         TemplateManager templateManager = this.im.getTemplateManager();
         TemplateResultInput input = getInput();
         TemplateQuery template;
@@ -98,11 +98,12 @@ public class TemplateResultService extends QueryResultService
                     + template.getName(), e);
         }
         if (getFormat() == WebService.JSON_OBJ_FORMAT) {
-        	List<String> newView = PathQueryBuilderForJSONObj.getAlteredViews(populatedTemplate);
-        	populatedTemplate.clearView();
-        	populatedTemplate.addViews(newView);
+            List<String> newView = PathQueryBuilderForJSONObj.getAlteredViews(populatedTemplate);
+            populatedTemplate.clearView();
+            populatedTemplate.addViews(newView);
         }
-        setHeaderAttributes(populatedTemplate);
+        setHeaderAttributes(populatedTemplate, input.getStart(), input.getMaxCount(),
+                    input.getName());
         if (populatedTemplate.isValid()) {
             runPathQuery(populatedTemplate, input.getStart(), input.getMaxCount(),
                     populatedTemplate.getTitle(), populatedTemplate.getDescription(), input,
@@ -172,23 +173,19 @@ public class TemplateResultService extends QueryResultService
     private void checkAndAddValue(Map<String, List<TemplateValue>> values, TemplateQuery template,
             PathConstraint con, ConstraintInput conInput, String code) {
         if (conInput != null) {
-            if (constraintIsRequired(template, con)) {
+            if (template.isRequired(con)) {
                 addToValuesMap(values, createTemplateValue(con, conInput, SwitchOffAbility.LOCKED));
             } else {
                 addToValuesMap(values, createTemplateValue(con, conInput, SwitchOffAbility.ON));
             }
-        } else if (constraintIsRequired(template, con)) {
+        } else if (template.isRequired(con)) {
             throw new BadRequestException("There isn't a specified constraint value "
                     + "and operation for path " + con.getPath()
                     + ((code != null) ? " and code " + code : "")
-                    + " in the request, this constraint is required.");
+                    + " in the request; this constraint is required.");
         } else {
             // no value was provided but the constraint was optional so we can do nothing
         }
-    }
-
-    private boolean constraintIsRequired(TemplateQuery template, PathConstraint con) {
-        return SwitchOffAbility.LOCKED.equals(template.getSwitchOffAbility(con));
     }
 
     private void addToValuesMap(Map<String, List<TemplateValue>> valMap, TemplateValue newValue) {
@@ -238,16 +235,30 @@ public class TemplateResultService extends QueryResultService
         return ret;
     }
 
-    private String getQueryString(@SuppressWarnings("unused") HttpServletRequest request,
+    private String getQueryString(HttpServletRequest request,
             TemplateQuery template, TemplateResultInput input) {
         String ret = "";
-        ret += TemplateResultService.NAME_PARAMETER + "=" + en(input.getName()) + "&";
+        ret += TemplateResultService.NAME_PARAMETER + "=" + encode(input.getName()) + "&";
         int i = 1;
         for (PathConstraint con : template.getEditableConstraints()) {
             ret += constraintToString(getCorrespondingInput(template, con, input), i);
             i++;
         }
         return ret;
+    }
+
+    @Override
+    protected String getExportLink(PathQuery pq, String format) {
+        if (!(pq instanceof TemplateQuery)) {
+            throw new IllegalArgumentException(
+                    "The template results service only handles "
+                    + "TemplateQuerys, I got: " + pq.getClass());
+        }
+        TemplateQuery template = (TemplateQuery) pq;
+        String baseUrl = PortalHelper.getBaseUrl(request);
+        TemplateResultLinkGenerator linkGen = new TemplateResultLinkGenerator();
+        String xml = pq.toXml(PathQuery.USERPROFILE_VERSION);
+        return linkGen.getTabLink(baseUrl, template);
     }
 
     private ConstraintInput getCorrespondingInput(TemplateQuery template, PathConstraint con,
@@ -272,25 +283,18 @@ public class TemplateResultService extends QueryResultService
         String ret = "";
 
         if (input != null) {
-            ret += en("attributeOps(" + index + ")") + "=";
-            ret += en(input.getConstraintOp().getIndex().toString()) + "&";
+            ret += encode("attributeOps(" + index + ")") + "=";
+            ret += encode(input.getConstraintOp().getIndex().toString()) + "&";
 
-            ret += en("attributeValues(" + index + ")") + "=";
-            ret += en(input.getValue()) + "&";
+            ret += encode("attributeValues(" + index + ")") + "=";
+            ret += encode(input.getValue()) + "&";
 
             if (input.getExtraValue() != null) {
-                ret += en("extraValues(" + index + ")") + "="
-                    + en(input.getExtraValue()) + "&";
+                ret += encode("extraValues(" + index + ")") + "="
+                    + encode(input.getExtraValue()) + "&";
             }
         }
         return ret;
     }
 
-    private String en(String value) {
-        try {
-            return URLEncoder.encode(value, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            return "";
-        }
-    }
 }

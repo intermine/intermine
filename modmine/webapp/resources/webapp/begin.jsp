@@ -8,92 +8,430 @@
 <!-- begin.jsp -->
 <html:xhtml />
 
-<link rel="stylesheet" href="model/css/frontpage_sections.css" type="text/css" media="screen" title="no title" charset="utf-8">
+<div id="ctxHelpDiv" class="welcome" style="display:none;">
+  <div class="topBar info">
+    <div id="ctxHelpTxt" class="welcome"></div>
+    <a href="#" onclick="toggleWelcome();return false">Show more</a>
+  </div>
+</div>
 
-<div class="body">
+<!-- BluePrint CSS container -->
+<div class="container">
+<div id="wrapper" class="span-42 last">
 
-<!-- Entry point section -->
-<div align="center">
-
-<table cellpadding="0" cellspacing="0" border="0" class="topBar hints">
-<tr><th align="center"><h3>Try out the new <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do?">Genomic Regions Search</a><h3></th></tr>
-</table>
-
-
-<!--
-<h4>Try out the new <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do?">Genomic Regions Search</a>
-</h4>
-
-<table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
-<tr><th align="center">modMine 18 contains the 15 February 2010 data freeze</th></tr>
-</table>
--->
-<div class="frontpage_sections">
-    <ol>
-        <li>
-        <div>
-        <h3>Search modMine</h3><br/>
-          Search for modENCODE submissions by metadata
-          <p>
-            All fields will be searched, for example: antibody names <i>(e.g. 'PolII', 'H3K4me1', 'CP190')</i>,
-            lab names <i>(e.g. 'Reinke', 'Snyder')</i>, data types <i>(e.g. 'UTR', 'bindingsite')</i>
-          </p>
-          <!--
-            <ul>
-                <li>For example antibody names (CP190, H3K4me1) or data types (bindingsite, UTR)</li>
-                <li>Use AND to combine: <a href="/${WEB_PROPERTIES['webapp.path']}/modMineSearchResults.do?searchTerm=fly+AND+embryo">fly AND embryo</a></li>
-                <li>Use AND NOT to exclude: <a href="/${WEB_PROPERTIES['webapp.path']}/modMineSearchResults.do?searchTerm=fly+AND+NOT+embryo">fly AND NOT embryo</a></li>
-            </ul>
-            -->
-         <html:form action="/modMineSearchAction" focus="searchTerm">
-            <input name="searchTerm" type="text" class="qs_input">
-            <html:submit>Go</html:submit>
-        </html:form>
+  <div id="welcome" class="span-42 last">
+    <!-- <a class="close" href="#" title="Close" onclick="toggleWelcome();return false;">&nbsp;</a> -->
+      <div class="top"></div>
+      <div class="center span-42 last">
+        <div class="bochs" id="bochs-1">
+            <div id="welcome-content" class="span-42 last current">
+              <div style="padding:0 20px;">
+              <h2>Welcome to modMine</h2>
+<p>The <strong>modENCODE</strong> project aims to identify all sequence-based functional elements in the <i><strong>C. elegans</strong></i> and <i><strong>D. melanogaster</strong></i> genomes. modENCODE labs submit data to the Data Coordination Center (DCC) where we organize and present the results.</p>
+<br />
+<p><strong>modMine</strong> is an integrated web resource of data &amp; tools to <strong>browse</strong> and <strong>search</strong> modENCODE data and experimental details, <strong>download</strong> results and access the GBrowse <strong>genome browser</strong>.  Explore some of the tools provided below.</p>
+<br />
+<h3><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do">Browse all modENCODE data</a></h3>
+        <div class="span-42 last">
+              <a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do"><img src="model/images/data_preview.png" alt="experiments View"/></a>
+            </div>
+              <!-- <p>If you are short of time, just navigate through our set of <a href="#" onclick="switchBochs(2);return false;">Feature Hints</a>.-->
+            </div>
+          </div>
         </div>
-        </li>
-        <li>
-            <a href="/${WEB_PROPERTIES['webapp.path']}/templates.do" alt="" class="section_link">
-            <div>
-            <h3>Query Data</h3><br/>
-                Use templates to query for particular subsets and combinations of data.<br>
-                <img src="model/images/query_data.jpg" width="191" height="72" alt="Query Data">
-            </div>
-            </a>
-        </li>
-        <li class="last_section">
-            <div>
-            <h3>Search for Genes</h3><br/>
-                Find modENCODE features
-                <a href="/${WEB_PROPERTIES['webapp.path']}/template.do?name=gene_overlapping_flanking_regions" alt="">
-                near a specific gene</a>.
-                <br/>
-                <br/>
-                Or look up a Gene:
-                <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get" style="display:inline;">
 
-                    <input style="" id="quickSearchInput" name="searchTerm" type="text" class="qs_input">
-                    <input type="submit" name="searchSubmit" value="GO" />
-                </form>
-                <br/>
-                Or <html:link href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">upload a list</html:link>.
+        <div class="bochs" id="bochs-2" style="display: none;">
+          <div id="thumb" class="span-4">
+          <img
+            src="themes/metabolic/thumbs/feature-search.jpg"
+            alt="modMine Search" /></div>
+          <div id="welcome-content" class="span-7 last">
+            <h2>Search</h2>
+            <p>Our search engine operates across many data fields giving you the
+            highest chance of getting a result. Just type your search words in the
+            box.</p>
+          </div>
+        </div>
+
+        <div class="bochs" id="bochs-3" style="display: none;">
+          <div id="thumb" class="span-4">
+          <img
+            src="themes/metabolic/thumbs/feature-facets.jpg"
+            alt="modMine Facets" /></div>
+          <div id="welcome-content" class="span-7 last">
+            <h2>Facets</h2>
+            <p><strong>Facets</strong> show you the different places where your search words were found (eg. within Gene, Protein, Go Term, Template, Publication etc).
+            You can use the facets to filter for the type of results that are most important to you. When you've filtered by facets, you can even save the results
+            straight to a List.</p>
+          </div>
+        </div>
+
+            <div class="bochs" id="bochs-4" style="display: none;">
+              <div id="thumb" class="span-4">
+              <a title="Try Lists" href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view"><img
+                src="themes/metabolic/thumbs/feature-lists.jpg"
+                alt="modMine Lists" /></a></div>
+              <div id="welcome-content" class="span-7 last">
+                <h2>Lists</h2>
+                <p>The <strong>Lists</strong> area lets you operate on whole sets of data at once. You can
+                upload your own Lists (favourite Genes, SNPs etc) or save them from results tables.
+                We also create useful <strong>Public Lists</strong> for everyone to use. Explore
+                your data on the List Analysis Page</p>
+                <p>Here are just some of the things you can do:</p>
+                <ul>
+                  <li>Ask questions about the data using our predefined Templates</li>
+                  <li>Combine or subtract the content of other Lists</li>
+                  <li>Uncover hidden relationships with our analysis <strong>Widgets</strong></li>
+                </ul>
+                <p>You can work with Lists from the Home page or select Lists from the Tab bar, located at the top of every page.</p>
             </div>
-        </li>
-    </ol>
-    <br clear="both"/>
+           </div>
+
+            <div class="bochs" id="bochs-5" style="display: none;">
+              <div id="thumb" class="span-4">
+              <a title="Try Templates" href="/${WEB_PROPERTIES['webapp.path']}/templates.do"><img
+                src="themes/metabolic/thumbs/feature-templates.jpg"
+                alt="modMine Templates" /></a></div>
+              <div id="welcome-content" class="span-7 last">
+                <h2>Templates</h2>
+                <p><strong>Template queries</strong> are 'predefined' queries designed around the common tasks performed by our Biologist Community. Templates
+                provide you with a simple form that lets you define your starting point and optional filters to help focus your search.</p>
+                <p>Templates cover common questions like:</p>
+                <ul>
+                    <li>I have a List of SNPs - do any of them affect Genes?</li>
+                    <li>This Gene came up in my results - what can I find out about it?</li>
+                    <li>I'm interested in this chromosome region - what's in there that could be linked with this disease?</li>
+                </ul>
+                <p>You can work with Templates from the Home page or select Templates from the Tab bar, located at the top of every page.</p>
+            </div>
+           </div>
+
+            <div class="bochs" id="bochs-6" style="display: none;">
+              <div id="thumb" class="span-4">
+              <a title="Try MyMine" href="/${WEB_PROPERTIES['webapp.path']}/mymine.do"><img
+                src="themes/metabolic/thumbs/feature-mymine.jpg"
+                alt="modMine MyMine" /></a></div>
+              <div id="welcome-content" class="span-7 last">
+                <h2>MyMine</h2>
+                <p><strong>MyMine</strong> is your <u>personal space</u> on modMine. Creating an account is easy. Just provide an e-mail and a password. You're ready to go.</p>
+                <p>Your account allows you to:</p>
+                <ul>
+                  <li>Save Queries and Lists</li>
+                  <li> Modify and save Templates for later use</li>
+                  <li>Mark Public Templates as favourites so they're easier to find</li>
+                </ul>
+                <p>You can access mMyMine from the Tab bar, located at the top of every page.</p>
+                <p>Note: Your data and e-mail address are confidential and we wont send you unsolicited mail.</p>
+            </div>
+           </div>
+
+            <div class="bochs" id="bochs-7" style="display: none;">
+              <div id="thumb" class="span-4">
+              <a title="Try QueryBuilder" href="/${WEB_PROPERTIES['webapp.path']}/customQuery.do"><img
+                src="themes/metabolic/thumbs/feature-querybuilder.jpg"
+                alt="modMine QueryBuilder" /></a></div>
+              <div id="welcome-content" class="span-7 last">
+                <h2>QueryBuilder</h2>
+                <p><strong>QueryBuilder (QB)</strong> is the Powerhouse of modMine.</p>
+                <p>Its advanced interface lets you:</p>
+                <ul>
+                  <li>Construct your own custom queries
+                  <li>Modify your previous queries
+                  <li>You can even edit our predefined Templates.
+                </ul>
+                <p>The easiest way to get started with QB is by editing one of our pre-existing Template queries.
+                Follow the simple tutorial in the QueryBuilder section of the <strong>Tour</strong> to see how to change a Template output or add a filter.</p>
+
+                <p>You can access QueryBuilder from the Tab bar, located at the top of every page.</p>
+            </div>
+           </div>
+
+      <div class="span-11 last">
+            <ul id="switcher">
+                <li id="switcher-1" class="switcher current"><a onclick="switchBochs(1);return false;" href="#">Start</a></li>
+                <li id="switcher-2" class="switcher"><a onclick="switchBochs(2);return false;" href="#">1</a></li>
+                <li id="switcher-3" class="switcher"><a onclick="switchBochs(3);return false;" href="#">2</a></li>
+                <li id="switcher-4" class="switcher"><a onclick="switchBochs(4);return false;" href="#">3</a></li>
+                <li id="switcher-5" class="switcher"><a onclick="switchBochs(5);return false;" href="#">4</a></li>
+                <li id="switcher-6" class="switcher"><a onclick="switchBochs(6);return false;" href="#">5</a></li>
+                <li id="switcher-7" class="switcher"><a onclick="switchBochs(7);return false;" href="#">6</a></li>
+            </ul>
+          </div>
+      </div>
+      <div class="bottom span-11 last"></div>
+  </div>
+
+   <div class="span-21">
+   <div id="search-bochs">
+     <img title="search" src="themes/purple/homepage/search-ico-right.png" class="title">
+     <h3><a href="/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=">Search</a></h3>
+     <div class="text">
+       <span style="width:71px; float:left;">&nbsp;</span>
+        <p>Enter names, identifiers or keywords for genes, proteins, pathways, ontology terms, etc. (e.g.
+        <a onclick="preFillInput('zen', 'input#dataSearch');return false;" title="Search for zen"
+          href="#"><strong>zen</strong></a>,
+        <a onclick="preFillInput('pha-4', 'input#dataSearch');return false;" title="Search for pha-4"
+          href="#"><strong>pha-4</strong></a>,
+        <a onclick="preFillInput('DNA binding', 'input#dataSearch');return false;" title="Search for DNA binding"
+          href="#"><strong>DNA binding</strong></a>).
+        <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
+          <input id="dataSearch" class="input" type="text" name="searchTerm" value="e.g. zen, pha-4" />
+          <input type="submit" value="Search" />
+        </form>
+
+        <br />Or search <strong>modENCODE experiments</strong> by type, lab name, antibody, etc. (e.g.
+        <a onclick="preFillInput('RNA seq', 'input#exptSearch');return false;" title="Search for RNA-seq"
+         href="#"><strong>RNA-seq</strong></a>,
+        <a onclick="preFillInput('Snyder', 'input#exptSearch');return false;" title="Search for Snyder"
+          href="#"><strong>Snyder</strong></a>,
+        <a onclick="preFillInput('CP190', 'input#exptSearch');return false;" title="Search for CP190"
+          href="#"><strong>CP190</strong></a>).
+        </p>
+        <!-- <p>[Supports AND, OR, NOT and wildcard*]</p> -->
+        <br />
+         <html:form action="/modMineSearchAction">
+            <input id="exptSearch" name="searchTerm" type="text" class="input" value="e.g. RNA-seq, CP190">
+            <html:submit>Experiment Search</html:submit>
+        </html:form>
+
+     </div>
+   </div>
+   </div>
+
+   <div class="span-21 last">
+   <div id="genomic-bochs">
+     <img title="lists" src="images/icons/genomic-search-64.png" class="title">
+     <h3><a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Genomic Region Search</a></h3>
+     <div class="text">
+       <span style="width:71px; height:20px; float:left;">&nbsp;</span>
+       <p>
+         <img src="model/images/genome_region.png" alt="Genome Region Search" style="float:right;padding-left:5px;margin-right:4px;"/>
+         <strong>Explore</strong> a genomic region for features found by the <strong>modENCODE</strong> project. Find modENCODE data in
+         given regions of the genome.
+       </p>
+       <br />
+       <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Region Search</a>
+     </div>
+   </div>
+   </div>
+
+   <div style="clear:both;"></div>
+
+   <div class="span-14">
+   <div id="upload-bochs">
+     <img title="lists" src="images/icons/upload-64.png" class="title">
+     <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do">Upload Lists</a></h3>
+     <div class="text">
+       <span style="width: 72px; float: left;">&nbsp;</span>
+        <p>Enter a <strong>list</strong> of identifiers.</p>
+        <br />
+           <form name="buildBagForm" method="post" action="<c:url value="/buildBag.do" />">
+               <select name="type">
+                 <c:forEach var="bag" items="${preferredBags}">
+                   <option value="<c:out value="${bag}" />"><c:out value="${bag}" /></option>
+                 </c:forEach>
+               </select>
+               <textarea id="listInput" name="text"></textarea>
+               <br /><br />
+                <center>
+                  <a href="${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">advanced</a>
+                  <br />
+                  <input type="submit" value="upload"/>
+                </center>
+           </form>
+     </div>
+   </div>
+   </div>
+
+   <div class="span-14">
+   <div id="templates-bochs">
+     <img title="templates" src="images/icons/templates-64.png" class="title">
+     <h3><a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">Use Template Queries</a></h3>
+     <div class="text">
+        <span style="width: 72px; float: left;">&nbsp;</span>
+        <p>Get started with <strong>powerful queries</strong> using our predefined searches. These customizable templates have been
+           designed around common tasks performed by our biologist community.</p>
+        <p>To see how they work, why not try a template from our <strong>examples page</strong>?</p>
+        <br /><br />
+        <a href="/${WEB_PROPERTIES['webapp.path']}/templates.do" class="button violet">Templates</a>
+     </div>
+   </div>
+   </div>
+
+   <div class="span-14 last">
+   <div id="lists-bochs">
+     <img title="lists" src="images/icons/lists-64.png" class="title">
+     <h3><a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">Analyze Lists of Data</a></h3>
+     <div class="text">
+       <span style="height: 25px; float: left; width:100px;">&nbsp;</span>
+       <p>
+         <img src="themes/metabolic/thumbs/widget-charts-5.png" alt="widget charts" style="float:right;padding-left:5px;margin-right:4px;" />
+         <strong>Explore</strong> and <strong>Analyze</strong>. Upload lists of identifiers to use in queries and discover relationshops in our analysis widgets.
+         See an <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example">example</a>.
+       </p>
+       <br />
+       <a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" class="button green">Lists</a>
+     </div>
+   </div>
+   </div>
+
+   <div style="clear:both;"></div>
+
+   <div class="span-14">
+   <div id="bochs">
+     <h3>Fly Gene Expression</h3>
+     <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example"><div class="heatmap"><img src="model/images/fly_heatmap.png" alt="Fly expression heatmap"/></div></a>
+     <div class="text">
+       <p>View an expression score heatmap for any list of fly genes.  See an <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example">example</a>.</p>
+     </div>
+   </div>
+   </div>
+
+   <div class="span-14">
+   <div id="bochs">
+     <h3>Fly Chromatin states</h3>
+     <div class="text">
+       <center>
+       <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/chromatinStates.do"><img src="themes/modmine/flyscore.png" alt="heatmap"/>FlyScore</a>
+       </center>
+       <p>Some text goes here Sergio ...</p>
+       <br />
+       <center>
+       <a class="heatmap" target ="new" href="http://compbio.med.harvard.edu/flychromatin/"><img src="themes/modmine/parklab.png" alt="heatmap"/>ParkLab</a>
+       </center>
+       <p>Some text goes here Sergio ...</p>
+     </div>
+   </div>
+   </div>
+
+   <div class="span-14 last">
+   <div id="bochs">
+     <h3>Genomic Region Search</h3>
+     <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do"><div class="heatmap"><img src="model/images/genome_region.png" alt="Genome Region Search"/></div></a>
+     <div class="text">
+       <p>Find modENCODE data in given regions of the genome.
+       </p>
+       <div style="text-align: center;"><a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Region Search</a></div>
+     </div>
+   </div>
+   </div>
+
+   <div style="clear:both;"></div>
+
 </div>
-<script type="text/javascript" charset="utf-8">
-    jQuery(document).ready(function(){
-        jQuery(".frontpage_sections div").bg(['10px', '10px', '10px', '10px']);
-    });
+</div>
+
+<script type="text/javascript">
+   // minimize big welcome box into an info message
+   function toggleWelcome() {
+     // minimizing?
+     if ($("#welcome").is(':visible')) {
+       // hide the big box
+       $('#welcome').slideUp();
+       // do we have words to say?
+       var welcomeText = $("#welcome-content.current").text();
+       if (welcomeText.length > 0) {
+         $("#ctxHelpDiv.welcome").slideDown("slow", function() {
+           // ...display a notification with an appropriate text
+           if (welcomeText.length > 150) {
+             // ... substr
+             $("#ctxHelpTxt.welcome").html(welcomeText.substring(0, 150) + '&hellip;');
+           } else {
+             $("#ctxHelpTxt.welcome").html(welcomeText);
+           }
+           });
+       }
+     } else {
+       $("#ctxHelpDiv.welcome").slideUp(function() {
+         $("#welcome").slideDown("slow");
+       });
+     }
+   }
+
+   /* hide switcher of we are on first time here */
+   if ($("#switcher-1").hasClass('current')) {
+     $("#switcher").hide();
+   }
+
+   /* div switcher for welcome bochs using jQuery */
+   function switchBochs(newDivId) {
+     // no current
+     javascript:jQuery(".switcher").each (function() { javascript:jQuery(this).removeClass('current'); });
+     // apply current
+     javascript:jQuery('#switcher-'+newDivId).addClass('current');
+     // hide them all bochs
+     javascript:jQuery(".bochs").each (function() { javascript:jQuery(this).hide(); });
+     // then show our baby
+     javascript:jQuery('#bochs-'+newDivId).fadeIn();
+
+     // apply active class
+     $("#welcome-content").each (function() { javascript:jQuery(this).removeClass('current'); });
+     $('#bochs-'+newDivId+' > #welcome-content').addClass('current');
+
+     // show/hide switcher?
+     if ($("#switcher-1").hasClass('current')) {
+       $("#switcher").hide();
+     } else {
+       $("#switcher").show();
+     }
+   }
+
+   // placeholder value for search boxes
+   var dataPlaceholder = 'e.g. zen, pha-4';
+   var exptPlaceholder = 'e.g. RNA-seq, CP190';
+   var placeholderTextarea = '<c:out value="${WEB_PROPERTIES['textarea.identifiers']}" />';
+   // class used when toggling placeholder
+   var inputToggleClass = 'eg';
+
+   /* pre-fill search input with a term */
+   function preFillInput(term, input) {
+     var e = $(input);
+     e.val(term);
+      if (e.hasClass(inputToggleClass)) e.toggleClass(inputToggleClass);
+    e.focus();
+   }
+
+   // e.g. values only available when JavaScript is on
+   jQuery('input#dataSearch').toggleClass(inputToggleClass);
+   jQuery('input#exptSearch').toggleClass(inputToggleClass);
+   jQuery('textarea#listInput').toggleClass(inputToggleClass);
+
+   // register input elements with blur & focus
+   $('input#dataSearch').blur(function() {
+     if ($(this).val() == '') {
+       $(this).toggleClass(inputToggleClass);
+       $(this).val(dataPlaceholder);
+     }
+   });
+   // register input elements with blur & focus
+   jQuery('input#exptSearch').blur(function() {
+     if ($(this).val() == '') {
+       $(this).toggleClass(inputToggleClass);
+       $(this).val(exptPlaceholder);
+     }
+   });
+   jQuery('input#dataSearch').focus(function() {
+     if ($(this).hasClass(inputToggleClass)) {
+       $(this).toggleClass(inputToggleClass);
+       $(this).val('');
+     }
+   });
+   jQuery('input#exptSearch').focus(function() {
+       if ($(this).hasClass(inputToggleClass)) {
+         $(this).toggleClass(inputToggleClass);
+         $(this).val('');
+       }
+     });
+   jQuery('textarea#listInput').blur(function() {
+       if (jQuery(this).val() == '') {
+           jQuery(this).toggleClass(inputToggleClass);
+           jQuery(this).val(placeholderTextarea);
+       }
+   });
+   jQuery('textarea#listInput').focus(function() {
+       if (jQuery(this).hasClass(inputToggleClass)) {
+           jQuery(this).toggleClass(inputToggleClass);
+           jQuery(this).val('');
+       }
+   });
 </script>
-<%--
-<table cellpadding="0" cellspacing="0" border="0">
-<tr><td align="center"><b>modMine web services let you query modENCODE data directly
-from Perl scripts <a href="http://blog.modencode.org/modmine-perl-api">more information and examples</a></b></td></tr>
-</table>
-<br/>
---%>
-<!-- The projects section -->
-<tiles:insert name="projectsSummary.tile" />
-</div>
-</div>

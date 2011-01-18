@@ -1,7 +1,8 @@
 package org.intermine.bio.web.export;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,6 @@ import junit.framework.TestCase;
 
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Exon;
-import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Location;
 import org.intermine.util.DynamicUtil;
 
@@ -20,30 +20,22 @@ import org.intermine.util.DynamicUtil;
  */
 public class GFF3UtilTest extends TestCase
 {
-    /*
-     * Test method for 'org.intermine.bio.io.gff3.GFF3Util.makeGFF3Record(LocatedSequenceFeature)'
-     */
-    public void testMakeGFF3Record() {
-        Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        Exon exon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-        Chromosome chromosome =
+    private Exon exon ;
+    private Chromosome chromosome ;
+    private Location exonLocation;
+    private Map<String, List<String>> emptyAttributes = new HashMap<String, List<String>>();
+
+    public void setUp() {
+        exon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
+        chromosome =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        Location geneLocation =
+        exonLocation =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        Location exonLocation =
-            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-
-        gene.setChromosome(chromosome);
-        gene.setChromosomeLocation(geneLocation);
-        gene.setPrimaryIdentifier("gene1");
-
-        geneLocation.setStart(new Integer(100));
-        geneLocation.setEnd(new Integer(800));
-        geneLocation.setStrand("1");
 
         exon.setChromosome(chromosome);
         exon.setChromosomeLocation(exonLocation);
         exon.setPrimaryIdentifier("exon1");
+        exon.setScore(0.9);
 
         exonLocation.setStart(new Integer(200));
         exonLocation.setEnd(new Integer(300));
@@ -51,67 +43,69 @@ public class GFF3UtilTest extends TestCase
 
         chromosome.setPrimaryIdentifier("4");
         chromosome.setLength(new Integer(1000));
-
-        Map<String, List<String>> extraAttributes = new LinkedHashMap<String, List<String>>();
-
-        // test adding multiple values
-        List<String> valList = new ArrayList<String>();
-        valList.add("test_string1");
-        valList.add("test_string2");
-        extraAttributes.put("name3", valList);
-
-        Map<String, String> soClassNameMap = getSoClassNameMap();
-
-// TODO FIXME - disable test so it doesn't break.  make it fail so we don't forget to fix.
-        assertTrue(false);
-
-//        GFF3Record gff3Gene = GFF3Util.makeGFF3Record(gene, soClassNameMap, "FlyMine", extraAttributes);
-//
-//        GFF3Record gff3Exon = GFF3Util.makeGFF3Record(exon, soClassNameMap, "FlyMine",
-//                                                      new HashMap<String, List<String>>());
-
-//        System.err.println (gff3Gene);
-//        System.err.println (gff3Exon);
-//
-//        System.err.println (gff3Gene.toGFF3());
-//        System.err.println (gff3Exon.toGFF3());
-
-//        assertEquals("4\tFlyMine\tgene\t100\t800\t.\t+\t.\tID=gene1;name3=test_string1,test_string2",
-//                     gff3Gene.toGFF3());
-//        assertEquals("4\tFlyMine\texon\t200\t300\t.\t-\t.\tID=exon1",
-//                     gff3Exon.toGFF3());
     }
 
-    // Exon location has no strand information - should default to '.'
-    public void testNoStrandSet() throws Exception {
-        Exon exon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-        Chromosome chromosome =
-            (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        Location exonLocation =
-            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
 
+    public void testMakeGFF3Record() {
+        String expected = "4\tTestSource\texon\t200\t300\t0.9\t-\t.\tID=exon1;key1=value1,value2";
+        Map<String, List<String>> attributes = new HashMap<String, List<String>>();
+        attributes.put("key1", Arrays.asList(new String[] {"value1", "value2"}));
+        String gffLine = GFF3Util.makeGFF3Record(exon, getSoClassNameMap(), "TestSource", attributes).toGFF3();
+        assertEquals(expected, gffLine);
+    }
+
+    public void testMakeGFF3RecordStrands() {
+        // negative
+        exonLocation.setStrand("-1");
+        String expected = "4\tTestSource\texon\t200\t300\t0.9\t-\t.\tID=exon1";
+        String gffLine = GFF3Util.makeGFF3Record(exon, getSoClassNameMap(), "TestSource", emptyAttributes).toGFF3();
+        assertEquals(expected, gffLine);
+
+        // positive
+        exonLocation.setStrand("1");
+        expected = "4\tTestSource\texon\t200\t300\t0.9\t+\t.\tID=exon1";
+        gffLine = GFF3Util.makeGFF3Record(exon, getSoClassNameMap(), "TestSource", emptyAttributes).toGFF3();
+        assertEquals(expected, gffLine);
+
+        // no strand
+        exonLocation.setStrand(null);
+        expected = "4\tTestSource\texon\t200\t300\t0.9\t.\t.\tID=exon1";
+        gffLine = GFF3Util.makeGFF3Record(exon, getSoClassNameMap(), "TestSource", emptyAttributes).toGFF3();
+        assertEquals(expected, gffLine);
+
+        // 0 = also no strand
+        exonLocation.setStrand("0");
+        expected = "4\tTestSource\texon\t200\t300\t0.9\t.\t.\tID=exon1";
+        gffLine = GFF3Util.makeGFF3Record(exon, getSoClassNameMap(), "TestSource", emptyAttributes).toGFF3();
+        assertEquals(expected, gffLine);
+    }
+
+    public void testMakeGFF3RecordInvalid() {
+        // don't create records for chromosomes
+        assertNull(GFF3Util.makeGFF3Record(chromosome, getSoClassNameMap(), "TestSource", emptyAttributes));
+
+        // must have a chromosome reference
+        exon.setChromosome(null);
+        assertNull(GFF3Util.makeGFF3Record(exon, getSoClassNameMap(), "TestSource", emptyAttributes));
         exon.setChromosome(chromosome);
+
+        // must have a chromosomeLocation reference
+        exon.setChromosomeLocation(null);
+        assertNull(GFF3Util.makeGFF3Record(exon, getSoClassNameMap(), "TestSource", emptyAttributes));
         exon.setChromosomeLocation(exonLocation);
-        exon.setPrimaryIdentifier("exon1");
+    }
 
-        exonLocation.setStart(new Integer(200));
-        exonLocation.setEnd(new Integer(300));
-
-        chromosome.setPrimaryIdentifier("4");
-        chromosome.setLength(new Integer(1000));
-
+    // if no entry in SO class name map just uses the class name
+    public void testMakeGFF3RecordNoSoClassName() {
         Map<String, String> soClassNameMap = getSoClassNameMap();
-
-//        GFF3Record gff3Exon = GFF3Util.makeGFF3Record(exon, soClassNameMap, "FlyMine",
-//                                                      new HashMap<String, List<String>>());
-
-//        assertEquals("4\tFlyMine\texon\t200\t300\t.\t.\t.\tID=exon1",
-//                     gff3Exon.toGFF3());
+        soClassNameMap.remove("Exon");
+        String gffLine = GFF3Util.makeGFF3Record(exon, soClassNameMap, "TestSource", emptyAttributes).toGFF3();
+        String expected = "4\tTestSource\tExon\t200\t300\t0.9\t-\t.\tID=exon1";
+        assertEquals(expected, gffLine);
     }
 
     private Map<String, String> getSoClassNameMap() {
         Map<String, String> soClassNameMap = new LinkedHashMap<String, String>();
-        soClassNameMap.put("Gene", "gene");
         soClassNameMap.put("Exon", "exon");
         soClassNameMap.put("Chromosome", "chromosome");
 

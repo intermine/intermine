@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"
+            type="text/javascript"></script>
+        <script src="src/imbedding.js" type="text/javascript"></script>
+        <link rel="stylesheet" type="text/css" href="style/style.css" />
+    <head>
+    <body>
+        <h1>Table Load Test</h1>
+        <div id="placeholder1"><p>This will be where the table goes</p></div>
+        <div id="placeholder2"><p>The second table will go in here</p></div>
+        <div id="placeholder3"><p>The third table will go in here</p></div>
+        <div id="placeholder4"><p>The fourth table will go in here</p></div>
+        <div id="placeholder5"><p>The fifth table will go in here</p></div>
+        <script>
+            $(document).ready(function() {
+                IMBedding.setBaseUrl("http://localhost:8080/intermine-test");
+                loadTable1();
+                loadTable2();
+                loadTable3();
+                loadTable4();
+            });
+
+            function buildTable1(data) {
+                IMBedding.buildTable(data, '#placeholder1');
+            }
+            function buildTable2(data) {
+                IMBedding.buildTable(data, '#placeholder2');
+            }
+            function buildTable3(data) {
+                IMBedding.buildTable(data, '#placeholder3');
+            }
+            function buildTable4(data) {
+                IMBedding.buildTable(data, '#placeholder4');
+            }
+            function buildTable5(data) {
+                IMBedding.buildTable(data, '#placeholder5');
+            }
+            function loadTable1() {
+                IMBedding.loadTemplate(
+                    "employeesOverACertainAgeFromDepartmentA",
+                    {
+                        constraint1: "Employee.age",
+                        op1: ">=",
+                        value1: 25,
+                        constraint2: "Employee.department.name",
+                        op2: "=",
+                        value2: "DepartmentB1"
+                    },
+                    "buildTable1", "#placeholder1"
+                );
+            }
+            function loadTable2() {
+                IMBedding.loadTemplate(
+                    "employeesFromCompanyAndDepartment",
+                    {
+                        constraint1: "Employee.department.company.name",
+                        op1: "LIKE",
+                        value1: "Company*",
+                        constraint2: "Employee.department.name",
+                        op2: "LIKE",
+                        value2: "Department*"
+                    },
+                    "buildTable2", "#placeholder2"
+                );
+            }
+            function loadTable3() {
+                IMBedding.loadTemplate(
+                    "employeesOfACertainAge",
+                    {
+                        constraint1: "Employee.age",
+                        code1: "A",
+                        op1: ">",
+                        value1: 30,
+
+                        constraint2: "Employee.age",
+                        code2: "B",
+                        op2: "<=",
+                        value2: "60"
+                    },
+                    "buildTable3"
+                );
+            }
+            function loadTable4() {
+                var xml = document.getElementById("xml-string").innerHTML;
+                IMBedding.loadQuery(xml, "buildTable4");
+                IMBedding.loadQuery(xml, "buildTable5");
+            }
+        </script>
+        <a href='#' onclick="loadTable1()">Reload Table 1</a>
+        <a href='#' onclick="loadTable2()">Reload Table 2</a>
+        <div id="xml-string" style="display: none;">
+            <query name="employeesOfACertainAge" model="testmodel" 
+                view="Employee.name Employee.age" >
+                <constraint path="Employee.age" code="A" editable="true" 
+                description="First age constraint" op="&gt;" value="30"></constraint>
+                <constraint path="Employee.age" code="B" editable="true" 
+                    description="Second age constraint" op="&lt;=" value="60"/></constraint>
+            </query>
+        </div>
+    </body>
+</html>

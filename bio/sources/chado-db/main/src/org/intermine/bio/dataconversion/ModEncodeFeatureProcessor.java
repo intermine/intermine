@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -461,8 +461,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             String name, String uniqueName, int seqlen, int taxonId) {
         String realInterMineType = interMineType;
 
-        if (chadoFeatureType.equals("chromosome_arm")
-                || chadoFeatureType.equals("ultra_scaffold")) {
+        if ("chromosome_arm".equals(chadoFeatureType)
+                || "ultra_scaffold".equals(chadoFeatureType)) {
             realInterMineType = "Chromosome";
 
             if (uniqueName.startsWith("chr")) {

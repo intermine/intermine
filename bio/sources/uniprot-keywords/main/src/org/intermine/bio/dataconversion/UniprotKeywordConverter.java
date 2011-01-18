@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,6 +13,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -86,9 +87,9 @@ public class UniprotKeywordConverter extends BioFileConverter
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
-            if (qName.equals("name")) {
+            if ("name".equals(qName)) {
                 attName = "name";
-            } else if (qName.equals("description")) {
+            } else if ("description".equals(qName)) {
                 attName = "description";
             }
             super.startElement(uri, localName, qName, attrs);
@@ -101,7 +102,8 @@ public class UniprotKeywordConverter extends BioFileConverter
         public void endElement(String uri, String localName, String qName)
             throws SAXException {
             super.endElement(uri, localName, qName);
-            if (qName.equals("name")  && attValue != null && !attValue.toString().equals("")) {
+            if ("name".equals(qName)  && attValue != null
+                    && StringUtils.isNotEmpty(attValue.toString())) {
                 String synonym = attValue.toString();
                 if (name == null) {
                     name = synonym;
@@ -109,7 +111,7 @@ public class UniprotKeywordConverter extends BioFileConverter
                     String refId = getItem(synonyms, "OntologyTermSynonym", "name", synonym);
                     synRefIds.addRefId(refId);
                 }
-            } else if (qName.equals("description")) {
+            } else if ("description".equals(qName)) {
                 String descr = attValue.toString();
                 Item keyword = getKeyword(name);
                 if (keyword != null) {
@@ -124,7 +126,7 @@ public class UniprotKeywordConverter extends BioFileConverter
                         throw new SAXException("failed storing", e);
                     }
                 }
-            } else if (qName.equals("keyword")) {
+            } else if ("keyword".equals(qName)) {
                 // new keyword, reset
                 synRefIds = new ReferenceList("synonyms");
                 name = null;
