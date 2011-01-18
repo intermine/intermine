@@ -63,10 +63,13 @@ li { margin-left:auto; }
   #lists-bochs img.title { position:absolute; top:10px; left:10px; }
 
 /* 3 boxes */
-#bochs { border:1px solid #BEDCE4; background:#FCFEFF; margin-top:20px; height:320px; width:299px; }
+#bochs { border:1px solid #BEDCE4; background:#FCFEFF; margin-top:20px; height:284px; width:299px; }
   #bochs.last { margin-right:0; }
   #bochs h3 { padding:10px 0 10px 10px; color:#0891C1; }
   #bochs a.heatmap { text-decoration:none; color:#000; font-weight:bold; }
     #bochs a.heatmap img { vertical-align:middle; margin:0 20px 10px 0; }
     #bochs a.heatmap span { display:inline-block; width:118px; vertical-align:middle; }
   #bochs .text { padding:10px; font-size:14px; }
+    #bochs .text p { margin-bottom:10px; }
+
+img { margin-left:10px; }
