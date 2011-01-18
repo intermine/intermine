@@ -89,7 +89,7 @@
 <div align="center" style="padding-top: 20px;">
     <h3 class="interactions">Drosophila Physical Regulartory Network</h3>
     <br/>
-    <div id="cytoscapeweb" style="text-align: center;">Please wait while the network data loads</div>
+    <div id="cytoscapeweb" style="text-align: center; width: 100%;">Please wait while the network data loads</div>
     <div id="menu">
     <!-- jQuery will add stuff here -->
     </div>
