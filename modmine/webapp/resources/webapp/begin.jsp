@@ -292,7 +292,8 @@
      <div class="text">
        <p>View an expression score heatmap for any list of fly genes.  See an <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example">example</a>.</p>
        <p></p>
-     <p>To upload your own list of genes, use the form above or go to the "Upload" tab to create and name
+     <p>To upload your own list of genes, use the form above or go to the 'Lists' tab and click on 
+     <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">'Upload'</a> to create and name
 the new list. You can also use any of modMine's queries to create a list. 
      </p>
      </div>
