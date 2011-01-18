@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.web.logic.SortableMap;
 
 /**
  * Helper class for widgets.  It's where the math is done for enrichment widgets
@@ -68,7 +68,7 @@ public final class WidgetUtil
         HashMap<String, String> idMap = new HashMap();
         HashMap<String, BigDecimal> resultsMap = new HashMap();
         Map dummy = new HashMap();
-        SortableMap sortedMap = new SortableMap();
+        Map<String, BigDecimal> sortedMap = new LinkedHashMap<String, BigDecimal>();
 
         // if the model has changed, the query might not be valid
         if (q != null) {
@@ -138,27 +138,12 @@ public final class WidgetUtil
                 }
             }
 
-            Map<String, BigDecimal> adjustedResultsMap = new HashMap<String, BigDecimal>();
-
             if (resultsMap.isEmpty()) {
                 // no results
                 dummy.put("widgetTotal", new Integer(0));
             } else {
-                if (!"None".equals(errorCorrection)) {
-                    adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap,
-                            testCount);
-                } else {
-                    // TODO move this to the ErrorCorrection class
-                    BigDecimal max = new BigDecimal(maxValue.doubleValue());
-                    for (String id : resultsMap.keySet()) {
-                        BigDecimal pvalue = resultsMap.get(id);
-                        if (pvalue.compareTo(max) <= 0) {
-                            adjustedResultsMap.put(id, pvalue);
-                        }
-                    }
-                }
-                sortedMap = new SortableMap(adjustedResultsMap);
-                sortedMap.sortValues();
+                sortedMap = ErrorCorrection.adjustPValues(errorCorrection, resultsMap,
+                        maxValue, testCount);
                 dummy.put("widgetTotal", new Integer(sampleTotal));
             }
         } else {
@@ -172,55 +157,6 @@ public final class WidgetUtil
         maps.add(3, dummy);
 
         return maps;
-    }
-
-    /**
-     * See online help docs for detailed description of what error correction is and why we need it.
-     * Briefly, in all experiments certain things happen that look interesting but really just
-     * happened by chance.  We need to account for this phenomenon to ensure our numbers are
-     * interesting behaviour and not just random happenstance.
-     *
-     * To do this we take all of our p-values and adjust them.  Here we are using on of our two
-     * methods available - which one we use is determined by the user.
-     * @param errorCorrection which multiple hypothesis test correction to use - Bonferroni or
-     * BenjaminiHochberg
-     * @param maxValue maximum value we're interested in - used for display purposes only
-     * @param resultsMap map containing unadjusted p-values
-     * @return map of all the adjusted p-values
-     */
-    public static Map<String, BigDecimal> calcErrorCorrection(String errorCorrection,
-                                                 Double maxValue,
-                                                 HashMap<String, BigDecimal> resultsMap) {
-        return calcErrorCorrection(errorCorrection, maxValue, resultsMap, resultsMap.size());
-    }
-
-    /**
-     * See online help docs for detailed description of what error correction is and why we need it.
-     * Briefly, in all experiments certain things happen that look interesting but really just
-     * happened by chance.  We need to account for this phenomenon to ensure our numbers are
-     * interesting behaviour and not just random happenstance.
-     *
-     * To do this we take all of our p-values and adjust them.  Here we are using on of our two
-     * methods available - which one we use is determined by the user.
-     * @param errorCorrection which multiple hypothesis test correction to use - Bonferroni or
-     * BenjaminiHochberg
-     * @param maxValue maximum value we're interested in - used for display purposes only
-     * @param resultsMap map containing unadjusted p-values
-     * @param testCount number of tests we've done
-     * @return map of all the adjusted p-values
-     */
-    public static Map<String, BigDecimal> calcErrorCorrection(String errorCorrection,
-                                                 Double maxValue,
-                                                 HashMap<String, BigDecimal> resultsMap,
-                                                 int testCount) {
-        ErrorCorrection e = null;
-        if ("Bonferroni".equals(errorCorrection)) {
-            e = new Bonferroni(resultsMap, testCount);
-        } else {
-            e = new BenjaminiHochberg(resultsMap, testCount);
-        }
-        e.calculate(maxValue);
-        return e.getAdjustedMap();
     }
 
     private static int calcTotal(ObjectStore os, EnrichmentWidgetLdr ldr, boolean calcTotal) {
