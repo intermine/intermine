@@ -291,7 +291,12 @@
      <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example"><div class="heatmap"><img src="model/images/fly_heatmap.png" alt="Fly expression heatmap"/></div></a>
      <div class="text">
        <p>View an expression score heatmap for any list of fly genes.  See an <a href="/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?scope=global&bagName=example">example</a>.</p>
+       <p></p>
+     <p>To upload your own list of genes, use the form above or go to the "Upload" tab to create and name
+the new list. You can also use any of modMine's queries to create a list. 
+     </p>
      </div>
+     
    </div>
    </div>
 
@@ -302,12 +307,12 @@
        <left>
        <a class="heatmap" href="/${WEB_PROPERTIES['webapp.path']}/chromatinStates.do"><img src="themes/modmine/flyscore.png" alt="flyscore"/><span>GBrowse Ideograms</span></a>
        </left>
-       <p>Some text goes here Sergio ...</p>
        <br />
+<p></p>
        <left>
        <a class="heatmap" target ="new" href="http://compbio.med.harvard.edu/flychromatin/"><img src="themes/modmine/parklab.png" alt="parklabviewer"/>Park Lab Viewer</a>
        </left>
-       <p>Includes folded view and also data about DHS, TSS, replication, etc</p>
+       <p>Includes folded view and also data about DHS, TSS, replication, etc.</p>
      </div>
    </div>
    </div>
