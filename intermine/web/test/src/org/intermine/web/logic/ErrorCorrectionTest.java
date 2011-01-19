@@ -69,7 +69,7 @@ public class ErrorCorrectionTest extends TestCase
     }
 
     public void testBonferroniHolm() throws Exception {
-        Map<String, BigDecimal> actual = ErrorCorrection.adjustPValues("Bonferroni Holm", pvalues, max, REFERENCE_SIZE);
+        Map<String, BigDecimal> actual = ErrorCorrection.adjustPValues("Holm-Bonferroni", pvalues, max, REFERENCE_SIZE);
         for (Map.Entry<String, BigDecimal> entry : actual.entrySet()) {
             String adjustedPvalue = entry.getValue().toPlainString();
             String key = entry.getKey();
