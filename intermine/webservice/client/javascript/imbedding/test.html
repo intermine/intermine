@@ -233,13 +233,13 @@
                 $('#radio').buttonset();
                 $('#styles').buttonset();
                 $('#showMe').click(function() {
-                    $('#showMeAreaContainer').fadeToggle('fast', function() {});
+                    $('#showMeAreaContainer').slideToggle('fast', function() {});
                 });
                 $('#showTemplateCode').click(function() {
-                    $('#templateCodeContainer').fadeToggle('fast', function() {});
+                    $('#templateCodeContainer').slideToggle('fast', function() {});
                 });
                 $('#showQueryCode').click(function() {
-                    $('#codeContainer').fadeToggle('fast', function() {});
+                    $('#codeContainer').slideToggle('fast', function() {});
                 });
                 $('input.styler').click(function() {
                     setActiveStyleSheet(this.id);
@@ -378,7 +378,7 @@
             </div>
         </form>
         <div id="showMeAreaContainer" style="display: none;">
-        <textarea rows="20" cols="80" id="showMeArea">
+        <textarea rows="20" cols="80" id="showMeArea" class="coder">
 // for page load: 
 // See the other tabs for how to write the function
 $(function() {loadTemplate();}); 
@@ -411,10 +411,9 @@ $('#button').click(function() {loadTemplate();});
             <table><tr>
             <td colspan="2"> 
 <div id="codeContainer" style="display: none">
-<pre id="codeDisplay">
-<code>
-</code>
-</pre>
+<div id="codeDisplay" class="ui-state-highlight ui-corner-all">
+    <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span><strong>Patience please</strong> - there isn't any code to display just yet.</p>
+</div>
 </div>
             </td>
             </tr><tr>
@@ -460,8 +459,9 @@ $('#button').click(function() {loadTemplate();});
                 <input type="checkbox" id="showTemplateCode"/><label for="showTemplateCode">Show / Hide the code</label>
             </form>
             <div id="templateCodeContainer" style="display: none">
-            <textarea id="templateCodeDisplay" rows="20" cols="80" readonly="true" class="coder">
-            </textarea>
+                <div id="templateCodeDisplay"  class="ui-state-highlight ui-corner-all">
+    <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span><strong>Patience please</strong> - there isn't any code to display just yet.</p>
+            </div>
             </div>
         </div>
         <div id="placeholder3"><p>The template results will go here</p></div>
