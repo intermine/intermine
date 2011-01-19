@@ -214,7 +214,7 @@ function highlightFirstNeighbors(target) {
             });
             var edges = fn.edges;
             jQuery.each(edges, function(i, e) {
-                  bypass.edges[e.data.id] = { opacity: 1 };
+                  bypass.edges[e.data.id] = { opacity: 1, width: 2 };
             });
 
             vis.visualStyleBypass(bypass);
