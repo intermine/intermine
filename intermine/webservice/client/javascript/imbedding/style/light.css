@@ -7,34 +7,31 @@
 
 textarea.coder {
     font-size: 14px;
-    font-family: "Droid Sans Mono", "Lucida Console", Monaco, monospace;
+    font-family: "Lucida Console", Monaco, monospace;
 }
 
 .imbedded-table-container {
     margin: 20px;
     border-style: solid;
-    border-width: 4px;
-    width: 500px;
-    border-radius: 10px;
-    -moz-border-radius: 10px;
-    background: #333;
-    border-color: #333;
-
+    border-width: 2px;
+    width: 600px;
+    border-color: #365252;
+    padding-bottom: 5px;
 }
 
 .imbedded-table-titlebox {
-    font-size: 120%;
-    background: #333;
-    color: white;
+    font-size: 24px;
+    padding: 20px;
+    color: black;
     padding: 5px;
 }
 
 .imbedded-table-title {
-    font-family: "Cabin", "Helvetica", "sans-serif";
+    font-family: "Merriweather", "Times", "serif";
 }
 
 .imbedded-column-header-row {
-    font-family: "Cabin", "Helvetica", "sans-serif";
+    font-family: "Merriweather", "Times", "serif";
     font-weight: bold;
     background: #666;
     color: white;
@@ -51,23 +48,23 @@ textarea.coder {
 
 .imbedded-cell {
     font-size: 14px;
-    font-family: "Cabin", "Helvetica", "sans-serif";
+    font-family: "Merriweather", "Times", "serif";
     padding: 4px;
 }
 
 .imbedded-row-odd {
-    background: #white;
+    background: #D5E8F3;
 }
 
 .imbedded-row-even {
-    background: #d8e4f8;
+    background: white;
 }
 
 .imbedded-exportlink, .imbedded-pagelink {
-    font-family: "Cabin", "Helvetica", "sans-serif";
-    color: white ! important;
-    font-size: 10px;
-    padding-right: 10px;
+    color: black ! important;
+    font-size: 12px;
+    padding-right: 5px;
+    padding-left: 5px;
 }
 
 .imbedded-pagelink {

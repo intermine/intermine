@@ -1,0 +1,21 @@
+h1, h2 {
+    font-family: "Cabin", "Arial", sans-serif;
+}
+
+h1 {
+    font-size: 48px;
+    padding: 25px;
+}
+
+h2 {
+    font-size: 24px;
+}
+
+#page {
+    margin-left: 200px;
+    margin-right: 200px;
+}
+
+#radio input span {
+    font-size: 10px ! important;
+}
