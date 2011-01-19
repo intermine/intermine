@@ -55,8 +55,8 @@
     <li>
     <label>Multiple Hypothesis Test Correction</label>
     <html:select property="errorCorrection" styleId="errorCorrection${widget.id}" onchange="getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');">
+      <html:option value="Holm-Bonferroni">Holm-Bonferroni</html:option>
       <html:option value="Benjamini Hochberg">Benjamini and Hochberg</html:option>
-      <html:option value="Bonferroni Holm">Bonferroni and Holm</html:option>
       <html:option value="Bonferroni">Bonferroni</html:option>
       <html:option value="None">None</html:option>
     </html:select>

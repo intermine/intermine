@@ -55,7 +55,7 @@ public final class ErrorCorrection
             adjustedResults = calculateBonferroni(results, testCount, max);
         } else if ("Benjamini Hochberg".equals(errorCorrection)) {
             adjustedResults = calculateBenjaminiHochberg(results, testCount, max);
-        } else if ("Bonferroni Holm".equals(errorCorrection)) {
+        } else if ("Holm-Bonferroni".equals(errorCorrection)) {
             adjustedResults = calculateBonferroniHolm(results, testCount, max);
         } else {
             adjustedResults = calculate(results, max);
