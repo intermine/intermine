@@ -142,7 +142,6 @@ var Syntax = {
 	getResource: function (prefix, name, callback) {
 
 		var basename = prefix + "." + name;
-	    console.log("Getting " + this.root + basename + ".js");		
 		if (this.styles[basename]) {
 			this.getStyles(this.root + this.styles[basename]);
 		}
@@ -217,13 +216,11 @@ jQuery.fn.syntax = function (options, callback) {
 };
 
 jQuery.syntax = function (options, callback) {
-    console.log("Options are: " + options);
 	options = options || {};
 	var context = options.context;
 	
 	if (options.root) {
 		Syntax.root = options.root;
-		console.log("Root is: " + Syntax.root);
 	}
 	
 	options = jQuery.extend(Syntax.defaultOptions, options)

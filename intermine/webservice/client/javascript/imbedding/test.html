@@ -122,7 +122,6 @@
                 var query = document.getElementById(id).value;
                 var queryDisplayString;
                 if (id.match(/json/)) {
-                    console.log("It's json");
                     queryDisplayString = query;
                     try {
                         query = eval( "(" + queryDisplayString + ")" );
@@ -153,7 +152,6 @@
                     tabWidth: 4,
                     root: "lib/jquery-syntax/"
                     });
-                console.log(query);
                 try {
                     IMBedding.loadQuery(query, data, "#placeholder2");
                 } catch(err) {
