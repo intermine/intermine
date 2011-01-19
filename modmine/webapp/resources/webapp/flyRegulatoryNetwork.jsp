@@ -106,7 +106,7 @@
     <div class="description"></div>
 </div>
 
-<div class="sidecontent" title="Help">
+<div class="sidecontent" title="About the network...">
     <br/>
     <p class="title">How to interact with the network?</p>
     <br/>
