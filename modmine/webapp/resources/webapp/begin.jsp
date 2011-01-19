@@ -239,7 +239,9 @@
                     </c:choose>
                  </c:forEach>
                </select>
-               <textarea id="listInput" name="text"></textarea>
+               <textarea id="listInput" name="text"><c:out
+               value="${WEB_PROPERTIES['bag.example.identifiers']}"
+                    default="zen, eve, CG4807, FBgn0000099" /></textarea>
                <br /><br />
                 <center>
                   <a href="${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">advanced</a>
