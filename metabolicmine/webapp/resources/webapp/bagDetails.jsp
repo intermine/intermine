@@ -113,6 +113,13 @@
     </tiles:insert>
   </html:form>
 </div>
+<script type="text/javascript">
+// not wanting to touch bagDisplayers.jsp tile, add External links header if said tile comes out blank
+if (jQuery('#otherMines div.externalLinks').length == 0) {
+  jQuery('#otherMines form').remove();
+  jQuery('#otherMines').append('<div class="externalLinks"><h3>External links</h3><div id="externalLinksClear"></div></div>');
+}
+</script>
 
 <!-- tags -->
 <c:if test="${PROFILE.loggedIn}">
