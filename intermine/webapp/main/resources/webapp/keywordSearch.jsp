@@ -42,27 +42,26 @@
     </div>
     <div class="examples">
         <h4>Examples</h4>
-        <ul>
-            <li>
-              <c:choose>
-                <c:when test="${empty WEB_PROPERTIES['homeSearch.identifiers']}">
+        <c:choose>
+          <c:when test="${empty WEB_PROPERTIES['keywordSearch.text']}">
+            <ul>
+                <li>
                     Search this entire website. Enter <strong>identifiers</strong>, <strong>names</strong> or <strong>keywords</strong> for
                     genes, pathways, authors, ontology terms, etc.  (e.g. <i>eve</i>, <i>embryo</i>, <i>zen</i>, <i>allele</i>)
-                </c:when>
-                <c:otherwise>
-                    Search this entire website. Enter <strong>identifiers</strong>, <strong>names</strong> or <strong>keywords</strong> for
-                    genes, pathways, authors, ontology terms, etc.  (e.g. <c:out value="${WEB_PROPERTIES['homeSearch.identifiers']}" />)
-                </c:otherwise>
-              </c:choose>
-            </li>
-            <li>
-                Use <i>OR</i> to search for either of two terms (e.g. <i>fly OR drosophila</i>)
-                or quotation marks to search for phrases  (e.g. <i>"dna binding"</i>)
-            </li>
-            <li>
-                <strong>Boolean search syntax</strong> is supported: e.g. <i>dros*</i> for partial matches or <i>fly AND NOT embryo</i> to exclude a term
-            </li>
-        </ul>
+                </li>
+                <li>
+                    Use <i>OR</i> to search for either of two terms (e.g. <i>fly OR drosophila</i>)
+                    or quotation marks to search for phrases  (e.g. <i>"dna binding"</i>)
+                </li>
+                <li>
+                    <strong>Boolean search syntax</strong> is supported: e.g. <i>dros*</i> for partial matches or <i>fly AND NOT embryo</i> to exclude a term
+                </li>
+            </ul>
+          </c:when>
+          <c:otherwise>
+            ${WEB_PROPERTIES['keywordSearch.text']}
+          </c:otherwise>
+        </c:choose>
     </div>
     <div style="clear:both;"></div>
 </div>
