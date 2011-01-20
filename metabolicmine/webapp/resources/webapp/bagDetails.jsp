@@ -82,6 +82,7 @@
 
 <!-- convert -->
 <div id="convertList" class="bochs">
+  <div class="inner">
   <h4 class="convert">Convert to a different type</h4>
   <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
   <html:hidden property="bagName" value="${bag.name}"/>
@@ -93,18 +94,22 @@
       </tiles:insert>
     </p>
   </html:form>
+  </div>
 </div>
 
 <!-- export list -->
 <div class="bochs">
+  <div class="inner">
   <h4 class="export">Download</h4>
   <c:set var="tableName" value="bag.${bag.name}" scope="request"/>
   <c:set var="pagedTable" value="${pagedResults}" scope="request"/>
   <tiles:get name="export.tile"/>
+  </div>
 </div>
 
 <!-- orthologues in other mines -->
 <div id="otherMines" class="bochs last">
+  <div class="inner">
   <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
   <html:hidden property="bagName" value="${bag.name}"/>
     <tiles:insert page="/bagDisplayers.jsp">
@@ -112,6 +117,7 @@
            <tiles:put name="showOnLeft" value="false"/>
     </tiles:insert>
   </html:form>
+  </div>
 </div>
 <script type="text/javascript">
 // not wanting to touch bagDisplayers.jsp tile, add External links header if said tile comes out blank
@@ -144,6 +150,7 @@ if (jQuery('#otherMines div.externalLinks').length == 0) {
 
 <div id="alien">
   <div class="bochs noborder">
+    <div class="inner">
     <script type="text/javascript">
       // will show/hide the results table and toolbox & change the link appropriately (text, ico)
       function toggleResults() {
@@ -169,20 +176,24 @@ if (jQuery('#otherMines div.externalLinks').length == 0) {
         Show ${bag.type}<c:if test="${bag.size != 1}">s</c:if> in list
       </a>
     </h3>
+    </div>
   </div>
 
   <!-- list search -->
   <div class="yellow bochs">
+    <div class="inner">
     <h4 class="search">Find in list</h4>
     <html:form styleId="findInListForm" action="/findInList">
       <input type="text" name="textToFind" id="textToFind"/>
       <input type="hidden" name="bagName" value="${bag.name}"/>
       <html:submit>Go</html:submit>
     </html:form>
+    </div>
   </div>
 
   <!-- modify list -->
   <div id="toolbox" class="bochs last" style="display:none;">
+    <div class="inner">
     <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
       <html:hidden property="bagName" value="${bag.name}"/>
       <div class="tool">
@@ -211,6 +222,7 @@ if (jQuery('#otherMines div.externalLinks').length == 0) {
         <input type="submit" name="removeFromBag" id="removeFromBag" value="Remove selected from list" disabled="true" />
       </div>
     </html:form>
+    </div>
   </div>
 
   <div style="clear:both;"></div>
@@ -244,12 +256,14 @@ if (jQuery('#otherMines div.externalLinks').length == 0) {
 <div style="clear:both;"></div>
 
 <div class="bochs wide">
+  <div class="inner">
   <h4>Widgets displaying properties of '${bag.name}'</h4>
   <ol class="widgetList">
     <c:forEach items="${widgets}" var="widget">
       <li><a title="toggle widget" href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}')" id="togglelink${widget.id}" class="active">${widget.title}</a></li>
     </c:forEach>
   </ol>
+  </div>
 </div>
 
 <script language="javascript">
