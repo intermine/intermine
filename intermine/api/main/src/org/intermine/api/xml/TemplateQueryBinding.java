@@ -58,6 +58,7 @@ public class TemplateQueryBinding extends PathQueryBinding
      */
     public void doMarshal(TemplateQuery template, XMLStreamWriter writer, int version) {
         try {
+            writer.writeCharacters("\n");
             writer.writeStartElement("template");
             writer.writeAttribute("name", template.getName());
             writer.writeAttribute("title", template.getTitle());
