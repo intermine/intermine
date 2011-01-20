@@ -44,9 +44,16 @@
         <h4>Examples</h4>
         <ul>
             <li>
-                Search this entire website. Enter <strong>identifiers</strong>, <strong>names</strong> or <strong>keywords</strong> for
-                genes, pathways, authors, ontology terms, etc.  (e.g. <i>eve</i>, <i>embryo</i>,
-                <i>zen</i>, <i>allele</i>)
+              <c:choose>
+                <c:when test="${empty WEB_PROPERTIES['homeSearch.identifiers']}">
+                    Search this entire website. Enter <strong>identifiers</strong>, <strong>names</strong> or <strong>keywords</strong> for
+                    genes, pathways, authors, ontology terms, etc.  (e.g. <i>eve</i>, <i>embryo</i>, <i>zen</i>, <i>allele</i>)
+                </c:when>
+                <c:otherwise>
+                    Search this entire website. Enter <strong>identifiers</strong>, <strong>names</strong> or <strong>keywords</strong> for
+                    genes, pathways, authors, ontology terms, etc.  (e.g. <c:out value="${WEB_PROPERTIES['homeSearch.identifiers']}" />)
+                </c:otherwise>
+              </c:choose>
             </li>
             <li>
                 Use <i>OR</i> to search for either of two terms (e.g. <i>fly OR drosophila</i>)

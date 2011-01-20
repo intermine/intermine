@@ -25,7 +25,7 @@
     }
   }
   // placeholder value for search boxes
-  var placeholder = 'e.g. PPARG, Insulin, rs876498';
+  var placeholder = '<c:out value="${WEB_PROPERTIES['homeSearch.identifiers']}" />';
   // class used when toggling placeholder
   var inputToggleClass = 'eg';
 </script>
