@@ -61,7 +61,6 @@ import org.intermine.util.TypeUtil;
 public class InterMineBag implements WebSearchable, Cloneable
 {
     protected static final Logger LOG = Logger.getLogger(InterMineBag.class);
-
     public static final String BAG_VALUES = "bagvalues";
     private Integer profileId;
     private Integer savedBagId;
@@ -226,13 +225,17 @@ public class InterMineBag implements WebSearchable, Cloneable
             try {
                 QueryClass qc = new QueryClass(Class.forName(getQualifiedType()));
                 q.addFrom(qc);
+                if (keyFieldNames.isEmpty()) {
+                    throw new RuntimeException("set the keyFieldNames before calling "
+                                              + "getContentsASKeyFieldValues method");
+                }
                 for (String keyFieldName : keyFieldNames) {
                     q.addToSelect(new QueryField(qc, keyFieldName));
                 }
                 QueryField idField = new QueryField(qc, "id");
                 BagConstraint c = new BagConstraint(idField, ConstraintOp.IN, osb);
                 q.setConstraint(c);
-                Results res = os.execute(q, 1000, false, true, true);
+                Results res = os.execute(q);
                 for (Object rowObj : res) {
                     ResultsRow<?> row = (ResultsRow<?>) rowObj;
                     String value;
@@ -622,7 +625,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             }
         }
         if (profileId != null) {
-            addBagValues(ids);
+            addBagValuesFromIds(ids);
         }
     }
 
@@ -703,51 +706,56 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Save the primary identifiers associated to the bag into bagvalues table
+     * Save the key field values associated to the bag into bagvalues table
      */
     public void addBagValues() {
-        addBagValues(null);
+        if (profileId != null) {
+            List<String> values = getContentsASKeyFieldValues();
+            addBagValues(values);
+        }
     }
 
     /**
-     * Save the primary identifiers associated to ids given in input into bagvalues table
+     * Save the key field values identified by the ids given in input into bagvalues table
      */
-    private void addBagValues(Collection<Integer> ids) {
-        Connection conn = null;
+    private void addBagValuesFromIds(Collection<Integer> ids) {
         if (profileId != null) {
-            List<String> values = null;
-            if (ids == null) {
-                values = getContentsASKeyFieldValues();
-            } else {
-                values = getKeyFieldValues(ids);
+            List<String> values = getKeyFieldValues(ids);
+            addBagValues(values);
+        }
+    }
+
+    /**
+     * Save the values given in input into bagvalues table
+     */
+    public void addBagValues(Collection<String> bagValues) {
+        Connection conn = null;
+        try {
+            conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
+            if (!DatabaseUtil.tableExists(conn, BAG_VALUES)) {
+                createTable(conn);
             }
+            if (conn.getAutoCommit()) {
+                conn.setAutoCommit(false);
+                Batch batch = new Batch(new BatchWriterPostgresCopyImpl());
+                String[] colNames = new String[] {"savedbagid", "value"};
+                for (String value : bagValues) {
+                    batch.addRow(conn, BAG_VALUES, null, colNames,
+                                new Object[] {savedBagId, value});
+                }
+                batch.flush(conn);
+                conn.commit();
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException sqle) {
             try {
-                conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-                if (!DatabaseUtil.tableExists(conn, BAG_VALUES)) {
-                    createTable(conn);
-                }
-                if (conn.getAutoCommit()) {
-                    conn.setAutoCommit(false);
-                    Batch batch = new Batch(new BatchWriterPostgresCopyImpl());
-                    String[] colNames = new String[] {"savedbagid", "value"};
-                    for (String value : values) {
-                        batch.addRow(conn, BAG_VALUES, null, colNames,
-                                    new Object[] {savedBagId, value});
-                    }
-                    batch.flush(conn);
-                    conn.commit();
-                    conn.setAutoCommit(true);
-                }
-            } catch (SQLException sqle) {
-                try {
-                    conn.rollback();
-                    conn.setAutoCommit(true);
-                } catch (SQLException sqlex) {
-                    throw new RuntimeException("Error aborting transaction", sqlex);
-                }
-            } finally {
-                ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
+                conn.rollback();
+                conn.setAutoCommit(true);
+            } catch (SQLException sqlex) {
+                throw new RuntimeException("Error aborting transaction", sqlex);
             }
+        } finally {
+            ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
         }
     }
 

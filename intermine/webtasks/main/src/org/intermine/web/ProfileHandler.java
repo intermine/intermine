@@ -54,7 +54,6 @@ class ProfileHandler extends DefaultHandler
     private Map<String, InterMineBag> savedBags;
     private Map<String, TemplateQuery> savedTemplates;
     private Set<Tag> tags;
-    private List<Item> items;
     private Map<Integer, InterMineObject> idObjectMap = new HashMap<Integer, InterMineObject>();
     private IdUpgrader idUpgrader;
     private ObjectStoreWriter osw;
@@ -104,7 +103,6 @@ class ProfileHandler extends DefaultHandler
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
-        items = new ArrayList<Item>();
         this.username = defaultUsername;
         this.password = defaultPassword;
         this.tags = tags;
@@ -162,13 +160,10 @@ class ProfileHandler extends DefaultHandler
                 password = attrs.getValue("password");
             }
         }
-        if ("items".equals(qName)) {
-            subHandler = new FullHandler();
-        }
         if ("bags".equals(qName)) {
             savedBags = new LinkedHashMap();
             subHandler = new InterMineBagHandler(profileManager.getProfileObjectStoreWriter(),
-                    osw, savedBags, null, idObjectMap, idUpgrader);
+                    osw, savedBags, null, idObjectMap);
         }
         if ("template-queries".equals(qName)) {
             savedTemplates = new LinkedHashMap();
@@ -191,28 +186,6 @@ class ProfileHandler extends DefaultHandler
      */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
-        if ("items".equals(qName)) {
-            items = ((FullHandler) subHandler).getItems();
-            //idObjectMap = new HashMap<Integer, InterMineObject>();
-            for (Item item : items) {
-                if (idObjectMap.containsKey(new Integer(item.getIdentifier()))) {
-                    items.remove(item);
-                }
-            }
-            Model model = profileManager.getProductionObjectStore().getModel();
-            List<FastPathObject> objects;
-            try {
-                objects = FullParser.realiseObjects(items, model, true, abortOnError);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("unexpected exception", e);
-            }
-
-            for (FastPathObject object: objects) {
-                if (object instanceof InterMineObject) {
-                    idObjectMap.put(((InterMineObject) object).getId(), (InterMineObject) object);
-                }
-            }
-        }
         if ("bags".equals(qName) || qName.equals("template-queries")
             || "queries".equals(qName) || qName.equals("items") || qName.equals("tags")) {
             subHandler = null;
