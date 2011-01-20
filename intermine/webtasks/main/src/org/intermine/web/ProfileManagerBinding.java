@@ -10,21 +10,28 @@ package org.intermine.web;
  *
  */
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.intermine.api.bag.IdUpgrader;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
@@ -65,15 +72,14 @@ public class ProfileManagerBinding
             writer.writeAttribute(MetadataManager.PROFILE_FORMAT_VERSION, profileVersion);
             List usernames = profileManager.getProfileUserNames();
 
-            Iterator iter = usernames.iterator();
-
-            while (iter.hasNext()) {
-                Profile profile = profileManager.getProfile((String) iter.next());
+            for (Object userName : usernames) {
+                Profile profile = profileManager.getProfile((String) userName);
                 LOG.info("Writing profile: " + profile.getUsername());
                 long startTime = System.currentTimeMillis();
 
                 ProfileBinding.marshal(profile, profileManager.getProductionObjectStore(), writer,
-                        profileManager.getVersion());
+                                       profileManager.getVersion(),
+                                       getClassKeys(profileManager.getProductionObjectStore()));
 
                 long totalTime = System.currentTimeMillis() - startTime;
                 LOG.info("Finished writing profile: " + profile.getUsername()
@@ -105,6 +111,18 @@ public class ProfileManagerBinding
         } catch (SQLException e) {
             throw new RuntimeException("Error during retrieving profile version from database.", e);
         }
+    }
+
+    private static Map<String, List<FieldDescriptor>> getClassKeys(ObjectStore os) {
+        Properties classKeyProps = new Properties();
+        try {
+            InputStream inputStream = ProfileManagerBinding.class.getClassLoader()
+                                      .getResourceAsStream("class_keys.properties");
+            classKeyProps.load(inputStream);
+        } catch (IOException ioe) {
+            new BuildException("class_keys.properties not found", ioe);
+        }
+        return ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
     }
 
     /**

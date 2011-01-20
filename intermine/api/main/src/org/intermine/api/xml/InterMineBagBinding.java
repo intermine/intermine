@@ -61,6 +61,7 @@ public class InterMineBagBinding
      */
     public static void marshal(InterMineBag bag, XMLStreamWriter writer) {
         try {
+            writer.writeCharacters("\n");
             writer.writeStartElement("bag");
             writer.writeAttribute("name", bag.getName());
             writer.writeAttribute("type", bag.getType());
@@ -71,10 +72,10 @@ public class InterMineBagBinding
                 writer.writeAttribute("description", bag.getDescription());
             }
             writer.writeAttribute("current", (bag.isCurrent()) ? "true" : "false");
-            List<Integer> ids = (List<Integer>) bag.getContentsAsIds();
-            for (Integer id : ids) {
-                writer.writeEmptyElement("bagElement");
-                writer.writeAttribute("id", id.toString());
+            List<String> keyFieldValues = bag.getContentsASKeyFieldValues();
+            for (String keyFieldValue : keyFieldValues) {
+                writer.writeEmptyElement("bagValue");
+                writer.writeAttribute("value", keyFieldValue);
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
@@ -96,7 +97,7 @@ public class InterMineBagBinding
         final Map bags = new LinkedHashMap();
         try {
             SAXParser.parse(new InputSource(reader), new InterMineBagHandler(uosw, osw, bags,
-                        userId, new HashMap(), IdUpgrader.ERROR_UPGRADER));
+                        userId, new HashMap()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
