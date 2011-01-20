@@ -63,13 +63,14 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         PathQuery q = new PathQuery(os.getModel());
         String bagType = imBag.getType();
 
-        q.addViews(bagType + ".secondaryIdentifier",
-                  bagType + ".primaryIdentifier",
-                  bagType + ".organism.name",
-                  bagType + ".chromosome.primaryIdentifier",
-                  bagType + ".chromosomeLocation.start",
-                  bagType + ".chromosomeLocation.end",
-                  bagType + ".chromosomeLocation.strand");
+        q.addViews(bagType + ".primaryIdentifier",
+                bagType + ".symbol",
+                bagType + ".secondaryIdentifier",
+                bagType + ".organism.name",
+                bagType + ".chromosome.primaryIdentifier",
+                bagType + ".chromosomeLocation.start",
+                bagType + ".chromosomeLocation.end",
+                bagType + ".chromosomeLocation.strand");
 
         q.addConstraint(Constraints.in(bagType,  imBag.getName()));
         q.addConstraint(Constraints.eq(bagType + ".chromosome.primaryIdentifier", category));
