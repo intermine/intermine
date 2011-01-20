@@ -90,19 +90,19 @@ public class ResponseUtil
         setGzippedContentType(response);
         setFileName(response, fileName);
     }
-    
+
     /**
      * Sets the response header and content type for json output
      * @param response
      * @param string
      */
     public static void setJSONHeader(HttpServletResponse response,
-			String filename) {
-    	setJSONContentType(response);
-    	setFileName(response, filename);
-    	setNoCache(response);
-	}
-    
+            String filename) {
+        setJSONContentType(response);
+        setFileName(response, filename);
+        setNoCache(response);
+    }
+
     /**
      * Sets response header and content type for a custom content type.
      * @param response response
@@ -216,12 +216,12 @@ public class ResponseUtil
         response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
     }
 
-	
-	/**
-	 * Sets the content type to "application/json"
-	 * @param response
-	 */
-	public static void setJSONContentType(HttpServletResponse response ) {
-		response.setContentType("application/json");	
-	}
+
+    /**
+     * Sets the content type to "application/json"
+     * @param response
+     */
+    public static void setJSONContentType(HttpServletResponse response ) {
+        response.setContentType("application/json");
+    }
 }

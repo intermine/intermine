@@ -38,6 +38,7 @@ public class ResultProcessor
      * Constructor.
      */
     public ResultProcessor() {
+        // don't instantiate
     }
 
     /**
