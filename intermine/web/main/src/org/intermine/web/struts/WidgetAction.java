@@ -70,12 +70,14 @@ public class WidgetAction extends InterMineAction
         WidgetForm widgetForm = (WidgetForm) form;
         String key = request.getParameter("key");
         String action = widgetForm.getAction();
-        // user clicked on a count on a widget OR checked some boxes and clicked 'display'
-        if ((!StringUtils.isEmpty(key) && (action == null || !"displayAll".equals(action)))
-                || "display".equals(action)) {
+        if (StringUtils.isNotEmpty(key)) {
+         // user clicked on a count on a widget
             return display(mapping, form, request, response);
         } else if ("displayAll".equals(widgetForm.getAction())) {
             return displayAll(mapping, form, request, response);
+        } else if (action == null || "display".equals(action)) {
+            // user checked some boxes and clicked 'display'
+            return display(mapping, form, request, response);
         } else {
             return export(mapping, form, request, response);
         }
