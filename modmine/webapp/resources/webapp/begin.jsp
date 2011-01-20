@@ -244,7 +244,7 @@
                     default="zen, eve, CG4807, FBgn0000099" /></textarea>
                <br /><br />
                 <center>
-                  <a href="${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">advanced</a>
+                  <a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">advanced</a>
                   <br />
                   <input type="submit" value="upload"/>
                 </center>
