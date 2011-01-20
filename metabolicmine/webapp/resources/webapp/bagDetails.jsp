@@ -130,12 +130,14 @@ if (jQuery('#otherMines div.externalLinks').length == 0) {
 <!-- tags -->
 <c:if test="${PROFILE.loggedIn}">
   <div class="bochs">
+  <div class="inner">
       <c:set var="taggable" value="${bag}"/>
         <tiles:insert name="inlineTagEditor.tile">
           <tiles:put name="taggable" beanName="taggable"/>
             <tiles:put name="vertical" value="true"/>
             <tiles:put name="show" value="true"/>
     </tiles:insert>
+    </div>
   </div>
 </c:if>
 
