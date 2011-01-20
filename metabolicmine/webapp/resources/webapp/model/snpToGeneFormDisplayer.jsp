@@ -4,6 +4,8 @@
 <html:xhtml/>
 <div id="nearbyGenes" class="bochs">
 
+  <div class="inner">
+
   <h4>Find nearby Genes</h4>
 
   <html:form action="/snpToGeneAction" method="post" enctype="multipart/form-data" >
@@ -28,5 +30,7 @@
     <div id="listButton"><html:submit styleId="submitBag" property="action">List</html:submit></div>
 
   </html:form>
+
+  </div>
 
 </div>
