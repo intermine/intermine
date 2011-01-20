@@ -165,6 +165,7 @@ public class BioUtil implements WidgetHelper
             chromosomes.add("19");
             chromosomes.add("20");
             chromosomes.add("21");
+            chromosomes.add("22");
             if (lowercase) {
                 chromosomes.add("x");
                 chromosomes.add("y");
