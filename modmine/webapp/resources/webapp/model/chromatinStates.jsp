@@ -300,7 +300,7 @@ normal emission distributions was generated using the data from both cell lines 
 <br/>
 <h3>See also the Park lab's viewer for these data:</h3>
 <br/>
-<a target ="new" href="http://compbio.med.harvard.edu/flychromatin/"><div class="heatmap"><img src="themes/modmine/icons/bg3-text.png" alt="heatmap"/></div></a>
+<a target ="new" href="http://compbio.med.harvard.edu/flychromatin/"><div class="heatmap"><img src="themes/modmine/parklab.jpg" alt="Park Lab Viewer"/></div></a>
 
 
 </div>
