@@ -81,7 +81,7 @@ public class GWASEnrichmentLdr extends EnrichmentWidgetLdr
         QueryField qfTaxonId = new QueryField(qcOrganism, "taxonId");
         QueryField qfPrimaryIdentifier = new QueryField(qcSNP, "primaryIdentifier");
         QueryField qfPhenotype = new QueryField(qcGWAS, "phenotype");
-        
+
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         // SNP.GWASResults = GWASResult
@@ -163,7 +163,7 @@ public class GWASEnrichmentLdr extends EnrichmentWidgetLdr
             q.addToSelect(new QueryFunction());
             q.addToGroupBy(qfIdentifier);
             if ("sample".equals(action)) {
-                q.addToSelect(qfPhenotype);
+                q.addToSelect(qfIdentifier);
             }
         }
         return q;
