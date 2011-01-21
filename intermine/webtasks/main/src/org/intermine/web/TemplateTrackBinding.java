@@ -20,6 +20,7 @@ import java.sql.Statement;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.api.tracker.TemplateTracker;
@@ -65,7 +66,10 @@ public final class TemplateTrackBinding
                 writer.writeCharacters("\n");
                 writer.writeStartElement("templatetrack");
                 writer.writeAttribute("templatename", rs.getString(1));
-                writer.writeAttribute("username", rs.getString(2));
+                String username = rs.getString(2);
+                if (!StringUtils.isBlank(username)) {
+                    writer.writeAttribute("username", username);
+                }
                 writer.writeAttribute("timestamp", Long.toString(rs.getLong(3)));
                 writer.writeAttribute("sessionidentifier", rs.getString(4));
                 writer.writeEndElement();
