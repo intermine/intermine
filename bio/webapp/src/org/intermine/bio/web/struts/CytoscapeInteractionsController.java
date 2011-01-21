@@ -111,7 +111,7 @@ public class CytoscapeInteractionsController extends TilesAction
             // Check if interaction data available for the organism
             String orgName = gene.getOrganism().getName();
             if (!interactionInfoMap.containsKey(orgName)) {
-                String orgWithNoDataMessage = "Interaction data is not availiable for "
+                String orgWithNoDataMessage = "No interaction data found for "
                         + orgName + " genes";
                 request.setAttribute("orgWithNoDataMessage", orgWithNoDataMessage);
                 return null;
@@ -122,7 +122,7 @@ public class CytoscapeInteractionsController extends TilesAction
             if (rawIntData == null) {
                 String dataSourceStr = StringUtil.join(interactionInfoMap.get(orgName), ",");
 
-                String geneWithNoDatasourceMessage = "Interaction data is not availiable for "
+                String geneWithNoDatasourceMessage = "No interaction data found for "
                         + gene.getSymbol() + " (" + gene.getPrimaryIdentifier()
                         + ") from data sources: " + dataSourceStr;
                 request.setAttribute("geneWithNoDatasourceMessage", geneWithNoDatasourceMessage);
@@ -144,7 +144,7 @@ public class CytoscapeInteractionsController extends TilesAction
             // Check if interaction data available for the organism
             String orgName = gene.getOrganism().getName();
             if (!interactionInfoMap.containsKey(orgName)) {
-                String orgWithNoDataMessage = "Interaction data is not availiable for "
+                String orgWithNoDataMessage = "No interaction data found for "
                         + orgName + " genes";
                 request.setAttribute("orgWithNoDataMessage", orgWithNoDataMessage);
                 return null;
@@ -155,7 +155,7 @@ public class CytoscapeInteractionsController extends TilesAction
             if (rawIntData == null) {
                 String dataSourceStr = StringUtil.join(interactionInfoMap.get(orgName), ",");
 
-                String geneWithNoDatasourceMessage = "Interaction data is not availiable for "
+                String geneWithNoDatasourceMessage = "No interaction data found for "
                         + gene.getSymbol() + " (" + gene.getPrimaryIdentifier()
                         + ") from data sources: " + dataSourceStr;
                 request.setAttribute("geneWithNoDatasourceMessage", geneWithNoDatasourceMessage);
