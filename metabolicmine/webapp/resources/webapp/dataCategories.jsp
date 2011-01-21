@@ -21,13 +21,13 @@
 <h3>The following data are loaded in the metabolicMine BETA:</h3>
 
 <ul>
-  <li>Human genome sequence and annotation - Ensembl 59</li>
-  <li>Mouse genome sequence and annotation - Ensembl 59</li>
-  <li>Human SNPs (including dbSNP 131) - Ensembl 59</li>
-  <li>Human GWAS results - Ensembl 59</li>
+  <li>Human genome sequence and annotation - Ensembl 60</li>
+  <li>Mouse genome sequence and annotation - Ensembl 60</li>
+  <li>Human SNPs (including dbSNP 131) - Ensembl 60</li>
+  <li>Human GWAS results - Ensembl 60</li>
   <li>Human gene names and symbols - NCBI and HGNC</li>
   <li>Human gene names and symbols - MGI</li>
-  <li>Human and Mouse protein sequences and information - Uniprot 2010_12</li>
+  <li>Human and Mouse protein sequences and information - Uniprot 2011_01</li>
   <li>Human and Mouse protein domains - InterPro</li>
   <li>Human and Mouse Gene Ontology (GO) terms - UniProt and MGI</li>
   <li>Human and Mouse pathways - KEGG</li>
