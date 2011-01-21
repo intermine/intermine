@@ -44,7 +44,7 @@ public class CytoscapeInteractionDBQuerier
      * @param executor the PathQueryExecutor
      * @return a set of genes
      */
-    public Set<String> findInteractingGenes(String genePID, Model model,
+    public Set<String> findInteractingGenes(String geneId, Model model,
             PathQueryExecutor executor) {
 
         PathQuery q = new PathQuery(model);
@@ -53,7 +53,7 @@ public class CytoscapeInteractionDBQuerier
 
         q.addView("Gene.interactions.interactingGenes.primaryIdentifier");
         q.addOrderBy("Gene.interactions.interactingGenes.primaryIdentifier", OrderDirection.ASC);
-        q.addConstraint(Constraints.lookup("Gene", genePID, ""));
+        q.addConstraint(Constraints.eq("Gene.id", geneId));
 
         ExportResultsIterator results = executor.execute(q);
 
@@ -110,16 +110,16 @@ public class CytoscapeInteractionDBQuerier
     /**
      * Query interactions to extend current network.
      *
-     * @param genePID the gene to be extended
+     * @param geneId the internal object id of the gene to extend network for
      * @param keys a list of genes
      * @param model the Model
      * @param executor the PathQueryExecutor
      * @return raw query results
      */
-    public ExportResultsIterator extendNetwork(String genePID,
+    public ExportResultsIterator extendNetwork(String geneId,
             Set<String> keys, Model model, PathQueryExecutor executor) {
 
-        Set<String> interactingGeneSet = findInteractingGenes(genePID, model, executor);
+        Set<String> interactingGeneSet = findInteractingGenes(geneId, model, executor);
         keys.addAll(interactingGeneSet);
         ExportResultsIterator results = queryInteractions(keys, model, executor);
 

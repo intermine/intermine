@@ -193,7 +193,7 @@ public class CytoscapeInteractionsController extends TilesAction
         // Get all the genes that interact with the hub gene
         CytoscapeInteractionDBQuerier dbQuerier = new CytoscapeInteractionDBQuerier();
         Set<String> interactingGeneSet = dbQuerier.findInteractingGenes(
-                gene.getPrimaryIdentifier(), model, executor);
+                String.valueOf(gene.getId()), model, executor);
 
         if (interactingGeneSet.size() < 1) {
             return null;
