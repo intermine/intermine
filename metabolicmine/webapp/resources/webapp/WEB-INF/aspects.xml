@@ -88,4 +88,12 @@
     </intro-text>
     <tile-name></tile-name>
   </aspect>
+  <aspect name="Gene Ontology">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
 </aspects>
