@@ -162,7 +162,9 @@ public class GWASEnrichmentLdr extends EnrichmentWidgetLdr
             q.addToSelect(qfIdentifier);
             q.addToSelect(new QueryFunction());
             q.addToGroupBy(qfIdentifier);
-
+            if ("sample".equals(action)) {
+                q.addToSelect(qfPhenotype);
+            }
         }
         return q;
     }
