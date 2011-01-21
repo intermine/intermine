@@ -183,6 +183,7 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="ontology.name"/>
       <fieldconfig fieldExpr="description" showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
     </fields>
   </class>
@@ -270,6 +271,7 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="ontology.name"/>
       <fieldconfig fieldExpr="description" doNotTruncate="true" />
     </fields>
   </class>
