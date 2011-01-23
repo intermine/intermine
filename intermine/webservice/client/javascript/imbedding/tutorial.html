@@ -1,0 +1,213 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"
+            type="text/javascript"></script>
+        <script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js"
+            type="text/javascript"></script>
+        <script src="src/imbedding.js" type="text/javascript"></script>
+        <script src="lib/jquery-ui-1.8.8.custom.min.js" type="text/javascript"></script>
+        <script src="lib/jquery-syntax/jquery.syntax.js" type="text/javascript"></script>
+        <script src="lib/tutorial.js" type="text/javascript"></script>
+        <link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Cabin:bold' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Neuton' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="lib/css/flick/jquery-ui-1.8.9.custom.css" />
+        <link rel="stylesheet" type="text/css" href="lib/jquery-syntax/jquery.syntax.layout.list.css" />
+        <link rel="stylesheet" type="text/css" href="lib/jquery-syntax/jquery.syntax.core.css" />
+        <link rel="alternate stylesheet" type="text/css" title="dark" href="style/style.css" />
+        <link rel="alternate stylesheet" type="text/css" title="light" href="style/light.css" />
+        <link rel="stylesheet" type="text/css" title="integrated" href="style/integrated.css" />
+        <link rel="stylesheet" type"text/css" href="style/tutorial.css"/>
+    <head>
+    <body>
+        <div id="page">
+        <h1 style="text-align: center;" >InterMine Mashup Tutorial</h1>
+    <div id="dialog-confirm" title="Delete the current query?">
+        <p>
+        <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+        Changing the root class will clear your current query - are you sure?
+        </p>
+    </div>
+
+<div id="tabs">
+    <form>
+        <div id="styles" style="float: right;">
+            <input class="styler" type="radio" id="integrated" name="style"checked="true"/>
+                <label for="integrated">Bold</label>
+            <input class="styler" type="radio" id="dark" name="style" />
+                <label for="dark">Dark</label>
+            <input class="styler" type="radio" id="light" name="style"/>
+                <label for="light">Light</label>
+        </div>
+    </form>
+    <ul>
+        <li><a href="#tabs-1">Using Events</a></li>
+        <li><a href="#tabs-2">Arbitrary Queries</a></li>
+        <li><a href="#tabs-3">Templates</a></li>
+    </ul>
+
+
+    <div id="tabs-1">
+        <h2>Loading a table automatically</h2>
+        <p> 
+        Results can be loaded in automatically on page ready or any other event. 
+        Here, three queries are bound to button click events, and another was
+        loaded as soon as the page was ready. Click on the names 
+        of the templates to load the corresponding data. Also, click on the buttons
+        in the top-right to change the style of the table without reloading
+        the page.
+        </p><p>
+        Click on the other two tabs to see how you can code this behaviour yourself.
+        </p>
+        <div class="option-box">
+        <form>
+            <span style="float: right"><input type="checkbox" id="showMe" /><label for="showMe">Show the code</label></span>
+            <div id="radio">
+                <input class="templater" type="radio" id="template1" name="template"/><label for="template1">Template 1</label>
+                <input class="templater" type="radio" id="template2" name="template"/><label for="template2">Template 2</label>
+                <input class="templater" type="radio" id="template3" name="template"/><label for="template3">Template 3</label>
+            </div>
+        </form>
+        <div id="showMeAreaContainer" style="display: none;">
+        <textarea rows="20" cols="80" id="showMeArea" class="coder">
+// for page load: 
+// See the other tabs for how to write the function
+$(function() {loadTemplate();}); 
+
+// for button click
+$('#button').click(function() {loadTemplate();});
+
+// nb: the imbedding.js library requires jquery, hence
+// we assume that you will have jQuery functionality available 
+// (ie, $() and $.click())
+</textarea>
+        </div>
+        </div>
+        <div id="placeholder1"><p>This will be where the table goes</p></div>
+    </div>
+
+    <div id="tabs-2">
+        <h2>Loading an Arbitrary Query</h2>
+        <p> 
+        Queries can be passed to the loading function as either an xml text string,
+        or as a json object. The loading module must be prepared with the base url
+        before-hand in either case. 
+        </p><p>
+        Please define your query using the form below, and press <em>Load Query</em>
+        to see the effect. To see how to put such a query into your own code, 
+        click on the <em>"Show the code"</em> button.
+        </p>
+        <input type="checkbox" id="formatDetailsCB" onclick="$('#formatDetails').slideToggle('fast', function(){});"/><label for="formatDetailsCB">see information about the formats</label>
+        <div id="formatDetails" style="display: none;">
+            <p>
+            Your query is ultimately passed to the mine as xml, which has a 
+            well defined format. We have information available on <a 
+            href="http://www.intermine.org/wiki/QueryXmlFormat">the xml format</a>,
+            in addition to a 
+            <a href="http://www.intermine.org/browser/trunk/intermine/webapp/main/resources/webapp/webservice/query.xsd">formal definition</a>.
+            </p><p>
+            The json object format is basically the same, except that its 
+            view is expected to be an array and it has arrays of <code>joins</code> 
+            and <code>constraints</code> in the place of the repeated 
+            <code>join</code> and <code>constraint</code> xml tags. Also: 
+            it accepts <code>from</code> as a synonym for <code>model</code>, 
+            <code>where</code> as a synonym for <code>constraints</code>, 
+            and <code>select</code> as a synonym for <code>view</code> 
+            (as in the example below). The json object format will also correctly
+            interpret <code>&lt;</code> and <code>&gt;</code> when used as operators,
+            whereas the xml will have to be correctly formatted by hand.
+            </p><p>
+            Click <a href="http://intermine.org/wiki/WebService#a2.1Querywebservice">here</a> for 
+            detailed information on the query webservice api.
+            </p></div>
+        <div class="option-box">
+            
+    <form id="root-class-form">
+        <p><label for "root-class"><em>Construct a query for</em></label>
+        <select id="root-class">
+        </select></p>
+    </form>
+    <div class="option-box">
+        <h3 class="querybuilder-section-header">Views</h3>
+        <form id="views-form">
+            <table id="querybuilder-views">
+            </table>
+        </form>
+        <button id="view-adder">Add a view</button>
+    </div>
+    <div class="option-box">
+        <h3 class="querybuilder-section-header">Constraints</h3>
+        <form id="constraints-form">
+            <table id="querybuilder-constraints">
+            </table>
+        </form>
+        <button id="constraint-adder">Add a constraint</button>
+    </div>
+    </div>
+    <button id="query-loader">Load Query</button>
+    <input type="checkbox" id="showQueryCode"/><label for="showQueryCode">Show the code</label>
+    <div id="codeContainer" style="display: none">
+    <div id="codeDisplay" class="ui-state-highlight ui-corner-all">
+        <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span><strong>Patience please</strong> - there isn't any code to display just yet. Just load a query and the corresponding code will be generated and displayed in this box</p>
+    </div>
+    </div>
+    <div id="placeholder2"><p>The query defined above will go here</p></div>
+    </div>
+
+    <div id="tabs-3">
+        <h2>Loading a Template</h2>
+        <p>
+        In most cases, the easiest way to automate queries is to use templates. This
+        saves having to write out the query again and again, and has the advantage
+        of enabling the results to be precomputed for quicker access.
+        <p>
+            Enter a template name to see the list of templates for this mine. Selecting one will 
+            bring up a form for you to enter the values for the parameters that this template expects. 
+        </p>
+        <input type="checkbox" id="templateDetailsCB" onclick="$('#templateDetails').slideToggle('fast', function(){});"/><label for="templateDetailsCB">see information about templates</label>
+        <div id="templateDetails" style="display: none;">
+            <p>
+            Templates are predefined queries with a fixed number of parameters. If you are familiar
+            with BioMart, they are very similar in functionality to BioMart queries, in that they expect
+            certain parameters and always return certain types of data. Each mine has a list of templates
+            which are preconfigured and accessible to the public - you can always write your own as well:
+            for a tutorial on writing your own templates from scratch see 
+            <a href="http://intermine.org/wiki/TemplateTutorial">here</a>.
+            </p><p>
+            Click <a href="http://intermine.org/wiki/WebService#a2.2Templatewebservice">here</a> for 
+            detailed information on the template webservice api.
+            </p>
+        </div>
+        <div class="option-box">
+            <form id="template-form">
+                <p><label for="templateName">Template Name: </label>
+                <input size="50" type="text" name="name" id="templateName" placeholder="Enter a template Name" ></input></p>
+                <div id="templateSpecific"></div>
+                <br/>
+                <input type="button" name="loadTemplate" value="Load Template" onclick="loadUserTemplate()"></input>
+                <input type="checkbox" id="showTemplateCode"/><label for="showTemplateCode">Show the code</label>
+            </form>
+            <div id="templateCodeContainer" style="display: none">
+                <div id="templateCodeDisplay"  class="ui-state-highlight ui-corner-all">
+    <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span><strong>Patience please</strong> - there isn't any code to display just yet. Just load a query and the corresponding code will be generated and displayed in this box</p>
+            </div>
+            </div>
+        </div>
+        <div id="placeholder3"><p>The template results will go here</p></div>
+    </div>
+</div>
+
+        <div id="xml-string" style="display: none;">
+            <query name="employeesOfACertainAge" model="testmodel" 
+                view="Employee.name Employee.age" >
+                <constraint path="Employee.age" code="A" editable="true" 
+                description="First age constraint" op="&gt;" value="30"></constraint>
+                <constraint path="Employee.age" code="B" editable="true" 
+                    description="Second age constraint" op="&lt;=" value="60"/></constraint>
+            </query>
+        </div>
+    </div>
+    </body>
+</html>

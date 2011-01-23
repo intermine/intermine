@@ -5,11 +5,6 @@
     padding:10px;
 }
 
-textarea.coder {
-    font-size: 14px;
-    font-family: "Droid Sans Mono", "Lucida Console", Monaco, monospace;
-}
-
 .imbedded-table-container {
     margin: 20px;
     border-style: solid;
@@ -19,7 +14,6 @@ textarea.coder {
     -moz-border-radius: 10px;
     background: #333;
     border-color: #333;
-
 }
 
 .imbedded-table-titlebox {
@@ -35,6 +29,7 @@ textarea.coder {
 
 .imbedded-column-header-row {
     font-family: "Cabin", "Helvetica", "sans-serif";
+    font-size: 16px;
     font-weight: bold;
     background: #666;
     color: white;
@@ -50,26 +45,46 @@ textarea.coder {
 }
 
 .imbedded-cell {
-    font-size: 14px;
+    font-size: 16px;
     font-family: "Cabin", "Helvetica", "sans-serif";
     padding: 4px;
 }
 
+.imbedded-cell > a:hover {
+    color: white;
+    font-style: bold;
+}
+
 .imbedded-row-odd {
-    background: #white;
+    background: white;
+}
+
+.imbedded-row-odd:hover {
+    background: #A7E1C3;
+    color: white;
 }
 
 .imbedded-row-even {
     background: #d8e4f8;
 }
 
+.imbedded-row-even:hover {
+    background: #A7E1C3;
+    color: white;
+}
+
 .imbedded-exportlink, .imbedded-pagelink {
     font-family: "Cabin", "Helvetica", "sans-serif";
+    text-decoration: none;
     color: white ! important;
-    font-size: 10px;
+    font-size: 13px;
     padding-right: 10px;
 }
 
 .imbedded-pagelink {
     float: right;
+}
+
+.imbedded-table-container > a:hover {
+    text-decoration: underline;
 }

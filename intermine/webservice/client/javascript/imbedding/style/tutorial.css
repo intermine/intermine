@@ -1,5 +1,25 @@
-h1, h2 {
+h1, h2, h3 {
     font-family: "Cabin", "Arial", sans-serif;
+}
+
+#dialog-confirm {
+    display: none;
+}
+
+h3.querybuilder-section-header {
+    margin: .5em 0px;
+}
+
+p, .ui-button-text, .ui-button {
+    font-family: "Merriweather", "Arial", sans-serif ! important;
+}
+
+.text-input {
+    font-family: "Droid Sans Mono", "Monaco", monospace ! important;
+}
+
+code {
+    font-family: "Droid Sans Mono", "Monaco", monospace;
 }
 
 h1 {
