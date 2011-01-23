@@ -12,11 +12,10 @@ textarea.coder {
 
 .imbedded-table-container {
     margin: 20px;
-    border-style: solid;
-    border-width: 2px;
+    border: 1px solid #DDD;
     width: 600px;
-    border-color: #365252;
     padding-bottom: 5px;
+    border-radius: 2px 2px;
 }
 
 .imbedded-table-titlebox {
@@ -27,13 +26,13 @@ textarea.coder {
 }
 
 .imbedded-table-title {
-    font-family: "Merriweather", "Times", "serif";
+    font-family: "Cabin", "Arial", sans-serif;
 }
 
 .imbedded-column-header-row {
-    font-family: "Merriweather", "Times", "serif";
+    font-family: "Cabin", "Arial", sans-serif;
     font-weight: bold;
-    background: #666;
+    background: #FF0084;
     color: white;
 }
 
@@ -46,30 +45,40 @@ textarea.coder {
     display: none;
 }
 
+.imbedded-data-row {
+    font-size: 16px;
+    font-family: "Cabin", "Arial", sans-serif;
+}
+
 .imbedded-cell {
-    font-size: 14px;
-    font-family: "Merriweather", "Times", "serif";
     padding: 4px;
 }
 
 .imbedded-cell > a:hover {
-    color: black;
-    font-style: italic;
+    color: white;
 }
 
 .imbedded-row-odd {
     background: #D5E8F3;
 }
 
+.imbedded-row-odd:hover {
+    background: #0073EA;
+    color: white ! important;
+}
+
 .imbedded-row-even {
     background: white;
 }
 
+.imbedded-row-even:hover {
+    background: #0073EA;
+    color: white ! important;
+}
+
 .imbedded-exportlink, .imbedded-pagelink {
-    font-family: "Merriweather", "Times", "serif";
-    text-decoration: none;
     color: black ! important;
-    font-size: 12px;
+    font-size: 13px;
     padding-right: 5px;
     padding-left: 5px;
 }
@@ -78,6 +87,11 @@ textarea.coder {
     float: right;
 }
 
+.imbedded-table-container > a {
+    font-family: "Cabin", "Arial", sans-serif;
+    text-decoration: none;
+}
+
 .imbedded-table-container > a:hover {
-    font-style: italic;
+    color: #FF0084 ! important;
 }
