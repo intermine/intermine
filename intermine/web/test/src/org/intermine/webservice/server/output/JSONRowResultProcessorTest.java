@@ -149,24 +149,24 @@ public class JSONRowResultProcessorTest extends TestCase {
     public void testWrite() {
         List<List<String>> expected = Arrays.asList(
         Arrays.asList("[" +
-                "{\"value\":30,\"url\":\"http://the.base.url/objectdetails.do?id=5\"}," +
-                "{\"value\":\"Tim Canterbury\",\"url\":\"http://the.base.url/objectdetails.do?id=5\"}" +
+                "{\"value\":30,\"url\":\"/objectDetails.do?id=5\"}," +
+                "{\"value\":\"Tim Canterbury\",\"url\":\"/objectDetails.do?id=5\"}" +
                 "]", ""),
         Arrays.asList("[" +
-                "{\"value\":32,\"url\":\"http://the.base.url/objectdetails.do?id=6\"}," +
-                "{\"value\":\"Gareth Keenan\",\"url\":\"http://the.base.url/objectdetails.do?id=6\"}" +
+                "{\"value\":32,\"url\":\"/objectDetails.do?id=6\"}," +
+                "{\"value\":\"Gareth Keenan\",\"url\":\"/objectDetails.do?id=6\"}" +
                 "]", ""),
         Arrays.asList("[" +
-                "{\"value\":26,\"url\":\"http://the.base.url/objectdetails.do?id=7\"}," +
-                "{\"value\":\"Dawn Tinsley\",\"url\":\"http://the.base.url/objectdetails.do?id=7\"}" +
+                "{\"value\":26,\"url\":\"/objectDetails.do?id=7\"}," +
+                "{\"value\":\"Dawn Tinsley\",\"url\":\"/objectDetails.do?id=7\"}" +
                 "]", ""),
         Arrays.asList("[" +
-                "{\"value\":41,\"url\":\"http://the.base.url/objectdetails.do?id=8\"}," +
-                "{\"value\":\"Keith Bishop\",\"url\":\"http://the.base.url/objectdetails.do?id=8\"}" +
+                "{\"value\":41,\"url\":\"/objectDetails.do?id=8\"}," +
+                "{\"value\":\"Keith Bishop\",\"url\":\"/objectDetails.do?id=8\"}" +
                 "]", ""),
         Arrays.asList("[" +
-                "{\"value\":28,\"url\":\"http://the.base.url/objectdetails.do?id=9\"}," +
-                "{\"value\":\"Lee\",\"url\":\"http://the.base.url/objectdetails.do?id=9\"}" +
+                "{\"value\":28,\"url\":\"/objectDetails.do?id=9\"}," +
+                "{\"value\":\"Lee\",\"url\":\"/objectDetails.do?id=9\"}" +
                 "]")
         );
 
