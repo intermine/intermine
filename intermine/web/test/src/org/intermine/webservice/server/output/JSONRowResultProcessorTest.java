@@ -3,10 +3,14 @@
  */
 package org.intermine.webservice.server.output;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.TestCase;
 
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
@@ -20,8 +24,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
 
-import junit.framework.TestCase;
-
 /**
  * @author alex
  *
@@ -34,9 +36,9 @@ public class JSONRowResultProcessorTest extends TestCase {
     private Employee dawn;
     private Employee keith;
     private Employee lee;
-    private final String baseUrl = "http://the.base.url";
 
     private ExportResultsIterator iterator;
+    private ExportResultsIterator emptyIterator;
 
     private final Model model = Model.getInstanceByName("testmodel");
 
@@ -50,6 +52,7 @@ public class JSONRowResultProcessorTest extends TestCase {
     /**
      * @see junit.framework.TestCase#setUp()
      */
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         os = new ObjectStoreDummyImpl();
@@ -109,6 +112,11 @@ public class JSONRowResultProcessorTest extends TestCase {
             List resultList = os.execute(q, 0, 5, true, true, new HashMap());
             Results results = new DummyResults(q, resultList);
             iterator = new ExportResultsIterator(pq, results, pathToQueryNode);
+            
+            List emptyList = new ArrayList();
+            Results emptyResults = new DummyResults(q, emptyList);
+            emptyIterator = new ExportResultsIterator(pq, emptyResults, pathToQueryNode);
+            
         } catch (ObjectStoreException e) {
             e.printStackTrace();
         }
@@ -117,13 +125,24 @@ public class JSONRowResultProcessorTest extends TestCase {
     /**
      * @see junit.framework.TestCase#tearDown()
      */
+    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
     }
 
     public void testJSONRowResultProcessor() {
-        JSONRowResultProcessor processor = new JSONRowResultProcessor(baseUrl);
+        JSONRowResultProcessor processor = new JSONRowResultProcessor();
         assertTrue(processor != null);
+    }
+    
+    public void testZeroResults() {
+        List<List<String>> expected = Collections.EMPTY_LIST;
+        
+        MemoryOutput out  = new MemoryOutput();
+        JSONRowResultProcessor processor = new JSONRowResultProcessor();
+        processor.write(emptyIterator, out);
+
+        assertEquals(expected.toString(), out.getResults().toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -152,7 +171,7 @@ public class JSONRowResultProcessorTest extends TestCase {
         );
 
         MemoryOutput out  = new MemoryOutput();
-        JSONRowResultProcessor processor = new JSONRowResultProcessor(baseUrl);
+        JSONRowResultProcessor processor = new JSONRowResultProcessor();
         processor.write(iterator, out);
 
         assertEquals(expected.toString(), out.getResults().toString());
