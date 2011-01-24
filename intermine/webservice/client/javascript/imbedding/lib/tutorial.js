@@ -427,6 +427,7 @@ $(function() {
                     $("#querybuilder-views").empty();
                     $("#querybuilder-constraints").empty();
                     $('#querybuilder-joins').empty();
+                    $('#sortOrderSelector').empty();
                     $('#sortOrderDiv').hide();
                     $('#logic-box').hide();
                     oldRootClass = $("#root-class").val();
