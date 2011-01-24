@@ -68,7 +68,7 @@ public class JSONRowIterator implements Iterator<JSONArray>
             mapping.put(CELL_KEY_URL, null);
             mapping.put(CELL_KEY_VALUE, null);
         } else {
-            mapping.put(CELL_KEY_URL, PortalHelper.generateObjectDetailsLink(cell, baseUrl));
+            mapping.put(CELL_KEY_URL, PortalHelper.generateObjectDetailsPath(cell));
             mapping.put(CELL_KEY_VALUE, cell.getField());
         }
         JSONObject ret = new JSONObject(mapping);
