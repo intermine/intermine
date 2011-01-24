@@ -2,8 +2,10 @@
     <head>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"
             type="text/javascript"></script>
-        <script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js"
-            type="text/javascript"></script>
+        <!--[if IE]><script language="javascript" type="text/javascript" src="lib/flot/excanvas.min.js"></script><![endif]-->
+        <script language="javascript" type="text/javascript" src="lib/flot/jquery.flot.js"></script>
+
+        <script src="http://jquery-jsonp.googlecode.com/files/jquery.jsonp-2.1.4.min.js" type="text/javascript"></script>
         <script src="src/imbedding.js" type="text/javascript"></script>
         <script src="lib/jquery-ui-1.8.8.custom.min.js" type="text/javascript"></script>
         <script src="lib/jquery-syntax/jquery.syntax.js" type="text/javascript"></script>
@@ -46,6 +48,7 @@
         <li><a href="#tabs-1">Using Events</a></li>
         <li><a href="#tabs-2">Arbitrary Queries</a></li>
         <li><a href="#tabs-3">Templates</a></li>
+        <li><a href="#tabs-4">Widgets</a></li>
     </ul>
 
 
@@ -95,7 +98,7 @@ $('#button').click(function() {loadTemplate();});
         or as a json object. The loading module must be prepared with the base url
         before-hand in either case. 
         </p><p>
-        Please define your query using the form below, and press <em>Load Query</em>
+        Please define your query using the form below, and press <em>"Load Query"</em>
         to see the effect. To see how to put such a query into your own code, 
         click on the <em>"Show the code"</em> button.
         </p>
@@ -136,6 +139,18 @@ $('#button').click(function() {loadTemplate();});
             </table>
         </form>
         <button id="view-adder">Add a view</button>
+        <span id="sortOrderDiv" style="display: none">
+            <label for="sortOrderSelector">Sort by:</label>
+            <select id="sortOrderSelector">
+            </select>
+            <span id="sortDirectionDiv">
+                <input type="radio" name="sortDirection" value="ASC" id="sortASC"
+                    checked="true"/>
+                <label for="sortASC">ascending</label>
+                <input type="radio" name="sortDirection" value="DESC" id="sortDESC"/>
+                <label for="sortDESC">descending</label>
+            </span>
+        </span>
     </div>
     <div class="option-box">
         <h3 class="querybuilder-section-header">Constraints</h3>
@@ -144,6 +159,18 @@ $('#button').click(function() {loadTemplate();});
             </table>
         </form>
         <button id="constraint-adder">Add a constraint</button>
+        <span id="logic-box" style="display: none">
+            <label for="logic-text">Logic</label>
+            <input type="text" placeholder="specify logic here" id="logic"/>
+        </span>
+    </div>
+    <div class="option-box">
+        <h3 class="querybuilder-section-header">Joins</h3>
+        <form id="joins-form">
+            <table id="querybuilder-joins">
+            </table>
+        </form>
+        <button id="join-adder">Add a join</button>
     </div>
     </div>
     <button id="query-loader">Load Query</button>
@@ -163,18 +190,21 @@ $('#button').click(function() {loadTemplate();});
         saves having to write out the query again and again, and has the advantage
         of enabling the results to be precomputed for quicker access.
         <p>
-            Enter a template name to see the list of templates for this mine. Selecting one will 
-            bring up a form for you to enter the values for the parameters that this template expects. 
+        Enter a template name to see the list of templates for this mine. 
+        Selecting one will bring up a form for you to enter the values for 
+        the parameters that this template expects. 
         </p>
         <input type="checkbox" id="templateDetailsCB" onclick="$('#templateDetails').slideToggle('fast', function(){});"/><label for="templateDetailsCB">see information about templates</label>
         <div id="templateDetails" style="display: none;">
             <p>
-            Templates are predefined queries with a fixed number of parameters. If you are familiar
-            with BioMart, they are very similar in functionality to BioMart queries, in that they expect
-            certain parameters and always return certain types of data. Each mine has a list of templates
-            which are preconfigured and accessible to the public - you can always write your own as well:
-            for a tutorial on writing your own templates from scratch see 
-            <a href="http://intermine.org/wiki/TemplateTutorial">here</a>.
+            Templates are predefined queries with a fixed number of parameters. 
+            If you are familiar with BioMart, they are very similar in functionality 
+            to BioMart queries, in that they expect certain parameters and always 
+            return certain types of data. Each mine has a list of templates
+            which are preconfigured and accessible to the public - you can always 
+            write your own as well: for a tutorial on writing your own templates 
+            from scratch see  <a href="http://intermine.org/wiki/TemplateTutorial">
+            here</a>.
             </p><p>
             Click <a href="http://intermine.org/wiki/WebService#a2.2Templatewebservice">here</a> for 
             detailed information on the template webservice api.
@@ -197,8 +227,92 @@ $('#button').click(function() {loadTemplate();});
         </div>
         <div id="placeholder3"><p>The template results will go here</p></div>
     </div>
-</div>
 
+
+    <div id="tabs-4">
+        <h2>Using data in widgets</h2>
+        <p> 
+        The previous examples all load the results of the query into tables, 
+        but you can supply any function you wish to process the data. The 
+        graphing widgets below demonstrate ways to use this functionality.
+        </p>
+        <div class="option-box">
+        <form>
+            <span style="float: right"><input type="checkbox" id="showMeGraphCode" /><label for="showMeGraphCode">Show the code</label></span>
+            <div id="graph-radios">
+                <input class="grapher" type="radio" id="graph1" name="graph"/><label for="graph1">Employee Age Distribution</label>
+                <input class="grapher" type="radio" id="graph2" name="graph"/><label for="graph2">Manager Age vs Seniority</label>
+            </div>
+        </form>
+        <div id="showGraphAreaContainer" style="display: none;">
+        <textarea rows="20" cols="80" id="showGraphArea" class="coder">
+function loadGraph1() {
+    IMBedding.loadQuery(
+        {
+            select: ["Employee.age"],
+            from: "testmodel"
+        },
+        {size: 1000, format: "jsonprows"},
+        function(resultSet) {
+            console.log(resultSet);
+            var graphData = [];
+            var ageDist = {
+                label: "Age Distribution",
+                hoverable: true,
+                bars: {show: true},
+                data: []
+            };
+            var countAtAge = {};
+            for (i in resultSet.results) {
+                var age = resultSet.results[i][0].value;
+                if (! countAtAge[age]) {
+                    countAtAge[age] = 1;
+                } else {
+                    countAtAge[age] = countAtAge[age] + 1;
+                }
+            }
+            for (age in countAtAge) {
+                ageDist.data.push([age, countAtAge[age]]);
+            }
+            graphData.push(ageDist);
+            var plot = $.plot("#graph", graphData);
+            $('<span></span>').html("Age").addClass("axis-label").appendTo('#graph');
+        }
+    );
+}
+
+function loadGraph2() {
+    IMBedding.loadQuery(
+        {
+            select: ["Manager.seniority", "Manager.age"],
+            from: "testmodel"
+        },
+        {size: 1000, format: "jsonprows"},
+        function(resultSet) {
+            console.log(resultSet);
+            var graphData = [];
+            var ageVsSen = {
+                label: "Seniority by Age",
+                points: {show: true},
+                data: []
+            };
+            for (i in resultSet.results) {
+                var seniority = resultSet.results[i][0].value;
+                var age = resultSet.results[i][1].value;
+                ageVsSen.data.push([age, seniority]);
+            }
+            graphData.push(ageVsSen);
+            var plot = $.plot("#graph", graphData);
+            $('<span></span>').html("Age").addClass("axis-label").appendTo('#graph');
+        }
+    );
+}
+</textarea>
+        </div>
+        </div>
+        <div id="graph" style="width: 600px; height: 300px;"><p>This will be where the graph goes</p></div>
+    </div>
+</div>
         <div id="xml-string" style="display: none;">
             <query name="employeesOfACertainAge" model="testmodel" 
                 view="Employee.name Employee.age" >

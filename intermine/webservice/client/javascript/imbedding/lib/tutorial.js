@@ -11,7 +11,14 @@ $(function() {
         tabWidth: 4,
         root: "lib/jquery-syntax/"
     });
-    $('#showMeAreaContainer').hide();
+    $('#showGraphArea').syntax({
+        brush: 'javascript', 
+        layout: 'list', 
+        replace: true,
+        tabWidth: 4,
+        root: "lib/jquery-syntax/"
+    });
+    $('#showGraphAreaContainer').hide();
     loadTable4();
 });
 
@@ -28,58 +35,57 @@ function setActiveStyleSheet(title) {
 
 function loadTable1() {
     IMBedding.loadTemplate(
-            {
-name: "employeesOverACertainAgeFromDepartmentA",
-size: 10,
+        {
+            name: "employeesOverACertainAgeFromDepartmentA",
+            size: 10,
 
-constraint1: "Employee.age",
-op1: ">=",
-value1: 25,
+            constraint1: "Employee.age",
+            op1: ">=",
+            value1: 25,
 
-constraint2: "Employee.department.name",
-op2: "=",
-value2: "DepartmentB1"
-
-},
-"#placeholder1"
-);
-    }
+            constraint2: "Employee.department.name",
+            op2: "=",
+            value2: "DepartmentB1"
+        },
+        "#placeholder1"
+    );
+}
 function loadTable2() {
     IMBedding.loadTemplate(
-            {
-name: "employeesFromCompanyAndDepartment",
-size: 10,
+        {
+            name: "employeesFromCompanyAndDepartment",
+            size: 10,
 
-constraint1: "Employee.department.company.name",
-op1: "LIKE",
-value1: "Company*",
+            constraint1: "Employee.department.company.name",
+            op1: "LIKE",
+            value1: "Company*",
 
-constraint2: "Employee.department.name",
-op2: "LIKE",
-value2: "Department*"
-},
-"#placeholder1"
-);
-    }
+            constraint2: "Employee.department.name",
+            op2: "LIKE",
+            value2: "Department*"
+        },
+        "#placeholder1"
+    );
+}
 function loadTable3() {
     IMBedding.loadTemplate(
-            {
-name: "employeesOfACertainAge",
-size: 10,
+        {
+            name: "employeesOfACertainAge",
+            size: 10,
 
-constraint1: "Employee.age",
-code1: "A",
-op1: ">",
-value1: 30,
+            constraint1: "Employee.age",
+            code1: "A",
+            op1: ">",
+            value1: 30,
 
-constraint2: "Employee.age",
-code2: "B",
-op2: "<=",
-value2: "60"
-},
-"#placeholder1"
-);
-    }
+            constraint2: "Employee.age",
+            code2: "B",
+            op2: "<=",
+            value2: "60"
+        },
+        "#placeholder1"
+    );
+}
 function loadTable4() {
     IMBedding.loadTemplate(
         {
@@ -93,6 +99,67 @@ function loadTable4() {
         '#placeholder1'
     );
 }
+
+function loadGraph1() {
+    IMBedding.loadQuery(
+        {
+            select: ["Employee.age"],
+            from: "testmodel"
+        },
+        {size: 1000, format: "jsonprows"},
+        function(resultSet) {
+            var graphData = [];
+            var ageDist = {
+                label: "Age Distribution",
+                hoverable: true,
+                bars: {show: true},
+                data: []
+            };
+            var countAtAge = {};
+            for (i in resultSet.results) {
+                var age = resultSet.results[i][0].value;
+                if (! countAtAge[age]) {
+                    countAtAge[age] = 1;
+                } else {
+                    countAtAge[age] = countAtAge[age] + 1;
+                }
+            }
+            for (age in countAtAge) {
+                ageDist.data.push([age, countAtAge[age]]);
+            }
+            graphData.push(ageDist);
+            var plot = $.plot("#graph", graphData);
+            $('<span></span>').html("Age").addClass("axis-label").appendTo('#graph');
+        }
+    );
+}
+
+function loadGraph2() {
+    IMBedding.loadQuery(
+        {
+            select: ["Manager.seniority", "Manager.age"],
+            from: "testmodel"
+        },
+        {size: 1000, format: "jsonprows"},
+        function(resultSet) {
+            var graphData = [];
+            var ageVsSen = {
+                label: "Seniority age Age",
+                points: {show: true},
+                data: []
+            };
+            for (i in resultSet.results) {
+                var seniority = resultSet.results[i][0].value;
+                var age = resultSet.results[i][1].value;
+                ageVsSen.data.push([age, seniority]);
+            }
+            graphData.push(ageVsSen);
+            var plot = $.plot("#graph", graphData);
+            $('<span></span>').html("Age").addClass("axis-label").appendTo('#graph');
+        }
+    );
+}
+
 
 var firstline = "/* Below is the Javascript to load this table using ajax:\n"
 + "You can cut and paste this into a page to get started.\n"
@@ -138,7 +205,9 @@ function loadUserQuery() {
         var nameValuePair = consFormValues[i];
         var consNo = nameValuePair.name.match(/\d+/)[0];
         if (! constraints[consNo]) {
-            constraints[consNo] = {};
+            constraints[consNo] = {
+                code: letters.charAt(parseInt(consNo) - 1)
+            };
         }
         var consProp = nameValuePair.name.match(/[a-z]+/)[0];
         if (consProp == "constraint") {
@@ -164,12 +233,45 @@ function loadUserQuery() {
     for (key in constraints) {
         constraintsList.push(constraints[key]);
     }
+    var joinsFormsValues = $('#joins-form').serializeArray();
+    var joins = {};
+    for (var i = 0; i < joinsFormsValues.length; i++) {
+        var nameValuePair = joinsFormsValues[i];
+        var joinNo = nameValuePair.name.match(/\d+/)[0];
+        if (! joins[joinNo]) {
+            joins[joinNo] = {};
+        }
+        var joinProp = nameValuePair.name.match(/[a-z]+/)[0];
+        if (joinProp == "join") {
+            joins[joinNo].path
+                = rootClass + "." + nameValuePair.value;
+        } else if (joinProp == "style") {
+            joins[joinNo].style = nameValuePair.value;
+        } else {
+            throw("Unexpected join property: " + joinProp);
+        }
+    }
+    var joinList = [];
+    for (key in joins) {
+        joinList.push(joins[key]);
+    }
+
+    var sortOrder = $('#sortOrderSelector').val() + " "
+       + $('input:radio[name=sortDirection]:checked').val();
+
+    var logic = $('#logic').val();
 
     var query = {
         select: views,
         where: constraintsList,
+        joins: joinList,
+        sortOrder: sortOrder,
         from: model.name
     };
+
+    if (logic.length > 0) {
+        query.constraintLogic = logic;
+    }
 
     // Make the displayed json string
     // It needs munging to prettify it as well
@@ -311,6 +413,10 @@ $(function() {
         var rootClass = $("#root-class").val();
         addConstraintLine(rootClass, true);
     });
+    $("#join-adder").click(function() {
+        var rootClass = $("#root-class").val();
+        addJoinLine(rootClass);
+    });
     $("#root-class").change(function() {
         $( "#dialog-confirm" ).dialog({
             modal: true,
@@ -320,6 +426,9 @@ $(function() {
                 "Change root class": function() {
                     $("#querybuilder-views").empty();
                     $("#querybuilder-constraints").empty();
+                    $('#querybuilder-joins').empty();
+                    $('#sortOrderDiv').hide();
+                    $('#logic-box').hide();
                     oldRootClass = $("#root-class").val();
                     $( this ).dialog( "close" );
                 },
@@ -331,11 +440,17 @@ $(function() {
         });
     });
 
+    $('#sortOrderSelector').button();
+    $('#sortDirectionDiv').buttonset();
     $("input:checkbox").button();
     $('#radio').buttonset();
+    $('#graph-radios').buttonset();
     $('#styles').buttonset();
     $('#showMe').click(function() {
         $('#showMeAreaContainer').slideToggle('fast', function() {});
+    });
+    $('#showMeGraphCode').click(function() {
+        $('#showGraphAreaContainer').slideToggle('fast', function() {});
     });
     $('#showTemplateCode').click(function() {
         $('#templateCodeContainer').slideToggle('fast', function() {});
@@ -355,6 +470,13 @@ $(function() {
             loadTable3();
         }
     });
+    $('input.grapher').click(function() {
+        if (this.id.match(/1/)) {
+            loadGraph1();
+        } else if (this.id.match(/2/)) {
+            loadGraph2();
+        }
+    });
 });
 
 var operators = {
@@ -371,12 +493,30 @@ var operators = {
     "IS NULL": "doesn't exist"
 };
 
+var isAttributeOp = {
+    "=": true,
+    "!=": true,
+    ">": true,
+    "<": true,
+    ">=": true,
+    "<=": true,
+    "LIKE": true,
+    "LOOKUP": false,
+    "ISA": false,
+    "IS NOT NULL": true,
+    "IS NULL": true
+};
+
 var getViewCount = function() {
     return $("#querybuilder-views").children().length;
 }
 
 var getConstraintCount = function() {
-    return $("#querybuilder-constraints").children().length;
+    return $("#querybuilder-constraints > tbody").children('tr').length;
+}
+
+var getJoinCount = function() {
+    return $("#querybuilder-joins").children().length;
 }
 
 var getViewPathSuggester = function(rootClass) {
@@ -385,7 +525,7 @@ var getViewPathSuggester = function(rootClass) {
         var paths = getPossibleViewPathsFor(rootClass);
         var suggestions = [];
         for (i in paths) {
-            if (paths[i].substring(0, term.length) == term) {
+            if (paths[i].value.substring(0, term.length) == term) {
                 suggestions.push(paths[i]);
             }
         }
@@ -399,12 +539,46 @@ var getConsPathSuggester = function(rootClass) {
         var paths = getPossibleConsPathsFor(rootClass);
         var suggestions = [];
         for (i in paths) {
-            if (paths[i].substring(0, term.length) == term) {
+            if (paths[i].value.substring(0, term.length) == term) {
                 suggestions.push(paths[i]);
             }
         }
         callback(suggestions);
     };
+};
+
+var getJoinPathSuggester = function(rootClass) {
+    return function(request, callback) {
+        var term = request.term;
+        var paths = getPossibleConsPathsFor(rootClass);
+        var suggestions = [];
+        for (i in paths) {
+            if (paths[i].type == "reference" 
+                    && paths[i].value.substring(0, term.length) == term) {
+                suggestions.push(paths[i]);
+            }
+        }
+        callback(suggestions);
+    };
+};
+
+var addToSortOrders = function(path) {
+    $('#sortOrderDiv').show();
+    var option = document.createElement("option");
+    option.value = path;
+    option.innerHTML = path;
+    $('#sortOrderSelector').append(option);
+};
+
+var removeSortOrder = function(path) {
+    $('#sortOrderSelector').children('option').each(function() {
+        if (this.value == path) {
+            $(this).detach();
+        }
+    });
+    if ($('#sortOrderSelector').children('option').length < 1) {
+        $('#sortOrderDiv').hide();
+    }
 };
 
 var addViewLine = function(rootClass) {
@@ -420,14 +594,20 @@ var addViewLine = function(rootClass) {
     textBox.name = "view" + (getViewCount() + 1);
     $(textBox).autocomplete({
         source: getViewPathSuggester(rootClass),
-        minLength: 2
+        minLength: 2,
+        change: function(event, ui) {
+            addToSortOrders(rootClass + "." + $(textBox).val());
+        }
     });
     pathCell.appendChild(textBox);
     row.appendChild(pathCell);
     var deleteCell = document.createElement("td");
     var deleteButton = document.createElement("button");
     deleteButton.appendChild(document.createTextNode("delete"));
-    $(deleteButton).click(function() {$(row).detach()});
+    $(deleteButton).click(function() {
+        $(row).detach();
+        removeSortOrder(rootClass + "." + $(textBox).val());
+    });
     $(deleteButton).button();
     deleteCell.appendChild(deleteButton);
     row.appendChild(deleteCell);
@@ -467,37 +647,57 @@ var getPathsFor = function(rootClass, excludedAttr, level, includeClass) {
         if (attrs[i].name == excludedAttr) {
             continue;
         }
-        paths.push(attrs[i].name);
+        paths.push({
+            value: attrs[i].name,
+            type: "attribute"
+        });
     }
     var refs = cld.references;
     for (var i = 0; i < refs.length; i++) {
         if (includeClass) {
-            paths.push(refs[i].name);
+            paths.push({
+                value: refs[i].name,
+                type: "reference"
+            });
         }
         var refPaths = getPathsFor(
                 refs[i].referencedType, refs[i].reverseReference, 
                 level, includeClass);
         for (var j = 0; j < refPaths.length; j++) {
-            paths.push(refs[i].name + "." + refPaths[j]);
+            paths.push({
+                value: refs[i].name + "." + refPaths[j].value,
+                type: refPaths[j].type
+            });
         }
     }
     var cols = cld.collections;
     for (var i = 0; i < cols.length; i++) {
         if (includeClass) {
-            paths.push(cols[i].name);
+            paths.push({
+                value: cols[i].name,
+                type: "reference"
+            });
         }
         var colPaths = getPathsFor(
                 cols[i].referencedType, cols[i].reverseReference, 
                 level, includeClass);
         for (var j = 0; j < colPaths.length; j++) {
-            paths.push(cols[i].name + "." + colPaths[j]);
+            paths.push({
+                value: cols[i].name + "." + colPaths[j].value,
+                type: colPaths[j].type
+            });
         }
     }
     return paths;
 }
 
+var letters = "ABCDEFGHIJKMNOPQRSTUVWXYZ";
+
 var addConstraintLine = function(rootClass, includeISA) {
     var counter = getConstraintCount() + 1;
+    if (counter > 1) {
+        $('#logic-box').show();
+    }
     var row = document.createElement("tr");
     var pathCell = document.createElement("td");
     pathCell.appendChild(document.createTextNode(rootClass + "."));
@@ -506,10 +706,6 @@ var addConstraintLine = function(rootClass, includeISA) {
     textBox.type = "text";
     textBox.size = 40;
     textBox.name = "constraint" + counter;
-    $(textBox).autocomplete({
-        source: getConsPathSuggester(rootClass),
-        minLength: 2
-    });
     pathCell.appendChild(textBox);
     row.appendChild(pathCell);
     var opCell = document.createElement("td");
@@ -529,6 +725,75 @@ var addConstraintLine = function(rootClass, includeISA) {
             valueInput.disabled = false;
         }
     });
+    $(textBox).autocomplete({
+        source: getConsPathSuggester(rootClass),
+        minLength: 2,
+        select: function(event, ui) {
+            var selectedType = ui.item.type;
+            if (selectedType == "attribute") {
+                enableAttributeOptions(opInput);
+            } else {
+                enableClassOptions(opInput);
+            }
+        }
+    });
+    var deleteCell = document.createElement("td");
+    var deleteButton = document.createElement("button");
+    deleteButton.innerHTML = "delete";
+    $(deleteButton).click(function() {
+        $(row).detach();
+        if ($('#querybuilder-constraints > tbody').children().length < 2) {
+            $('#logic-box').hide();
+        };
+    });
+    $(deleteButton).button();
+    deleteCell.appendChild(deleteButton);
+    row.appendChild(deleteCell);
+    $("#querybuilder-constraints").append(row);
+};
+
+var addJoinLine = function(rootClass) {
+    var counter = getJoinCount() + 1;
+    var row = document.createElement("tr");
+    var pathCell = document.createElement("td");
+    pathCell.appendChild(document.createTextNode(rootClass + "."));
+    var textBox = document.createElement("input");
+    textBox.className = "text-input";
+    textBox.type = "text";
+    textBox.size = 40;
+    textBox.name = "join" + counter;
+    pathCell.appendChild(textBox);
+    row.appendChild(pathCell);
+    var styleCell = document.createElement("td");
+    var styleDiv = document.createElement("div");
+    var innerButton = document.createElement("input");
+    innerButton.type = "radio";
+    innerButton.id = "inner" + counter;
+    innerButton.value = "INNER";
+    innerButton.name = "style" + counter;
+    innerButton.checked = true;
+    styleDiv.appendChild(innerButton);
+    var innerLabel = document.createElement("label");
+    innerLabel.setAttribute("for", "inner" + counter);
+    innerLabel.innerHTML = "INNER";
+    styleDiv.appendChild(innerLabel);
+    var outerButton = document.createElement("input");
+    outerButton.type = "radio";
+    outerButton.id = "outer" + counter;
+    outerButton.value = "OUTER";
+    outerButton.name = "style" + counter;
+    styleDiv.appendChild(outerButton);
+    var outerLabel = document.createElement("label");
+    outerLabel.setAttribute("for", "outer" + counter);
+    outerLabel.innerHTML = "OUTER";
+    styleDiv.appendChild(outerLabel);
+    styleCell.appendChild(styleDiv);
+    row.appendChild(styleCell);
+    $(styleDiv).buttonset();
+    $(textBox).autocomplete({
+        source: getJoinPathSuggester(rootClass),
+        minLength: 2,
+    });
     var deleteCell = document.createElement("td");
     var deleteButton = document.createElement("button");
     deleteButton.innerHTML = "delete";
@@ -536,8 +801,28 @@ var addConstraintLine = function(rootClass, includeISA) {
     $(deleteButton).button();
     deleteCell.appendChild(deleteButton);
     row.appendChild(deleteCell);
-    $("#querybuilder-constraints").append(row);
+    $("#querybuilder-joins").append(row);
 };
+
+function enableAttributeOptions(opInput) {
+    var options = $(opInput).children("option");
+    options.each(function() {
+        this.disabled = ! isAttributeOp[this.value];
+        if (this.selected && this.disabled) {
+            this.selected = false;
+        }
+    });
+}
+
+function enableClassOptions(opInput) {
+    var options = $(opInput).children("option");
+    options.each(function() {
+        this.disabled = isAttributeOp[this.value];
+        if (this.selected && this.disabled) {
+            this.selected = false;
+        }
+    });
+}
     
 function getOpInput(counter, cons, includeISA) {
     var opInput = document.createElement("select");
@@ -630,14 +915,27 @@ $(function() {
             window.availableTemplates = data;
             var names = [];
             for (name in data) {
-                names.push(name);
+                names.push({
+                    value: name,
+                    label: data[name].title
+                });
             }
             $('#templateName').autocomplete({
                 source: names,
                 minLength: 0,
                 delay: 0,
+                focus: function(event, ui) {
+                    $('#templateName').val(ui.item.value);
+                    return false;
+                },
                 select: getSelectHandler(availableTemplates)
-            });
+            }).focus(function() {
+                $(this).autocomplete("search", "");
+            }).data( "autocomplete" )._renderItem = function(ul, item) {
+                return $("<li></li>").data( "item.autocomplete", item )
+                                     .append("<a><strong>" + item.value + "</strong><br/><em>" + item.label + "</em></a>")
+                                     .appendTo(ul);
+            };
         }
     });
     $.jsonp({
@@ -647,7 +945,7 @@ $(function() {
         success: function( data ) {
             model = data;
             for (name in data.classes) {
-                if (data.classes[name].isIterface) {
+                if (data.classes[name].isInterface) {
                     continue;
                 }
                 var option = document.createElement("option");

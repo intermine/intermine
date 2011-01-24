@@ -262,7 +262,9 @@ IMBedding = (function() {
     };
     var getResults = function(url, data, target) {
         var callback = getCallback(target);
-        data.format = "jsonptable";
+        if (! data.format) {
+            data.format = "jsonptable";
+        }
         $.jsonp({
             url: url, 
             data: data, 
@@ -308,8 +310,8 @@ IMBedding = (function() {
                 throw("No view in source");
             }
             xmlString += '" ';
-            if ("logic" in source) {
-                xmlString += 'logic="' + source.logic + '" ';
+            if ("constraintLogic" in source) {
+                xmlString += 'constraintLogic="' + source.constraintLogic + '" ';
             }
             if ("sortOrder" in source) {
                 xmlString += 'sortOrder="' + source.sortOrder + '" ';
