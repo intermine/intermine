@@ -13,6 +13,7 @@ package org.intermine.web.logic.template;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -56,6 +57,20 @@ public class TemplateHelper
             throw new RuntimeException(e);
         }
         return sw.toString();
+    }
+
+    public static String templateMapToJson(Map<String, TemplateQuery> templates) {
+        StringBuilder sb = new StringBuilder();
+        Iterator<String> keys = templates.keySet().iterator();
+        while (keys.hasNext()) {
+            String name = keys.next();
+            sb.append("'" + name + "':" + templates.get(name).toJSON());
+            if (keys.hasNext()) {
+                sb.append(",");
+            }
+        }
+        String result = sb.toString();
+        return result;
     }
 
     /**
