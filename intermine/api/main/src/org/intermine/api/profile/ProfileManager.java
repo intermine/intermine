@@ -440,7 +440,7 @@ public class ProfileManager
         }
         saveProfile(profile);
     }
-    
+
     /**
      * Creates a profile in the userprofile database.
      *
