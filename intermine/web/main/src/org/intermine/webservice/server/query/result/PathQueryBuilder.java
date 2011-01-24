@@ -71,9 +71,7 @@ public class PathQueryBuilder
                         + "by this query don't exist: " + missingBags + " query: " + xml);
             }
         } else {
-            throw new BadRequestException("This query is invalid:\n"
-                    + "query string: " + xml + "\n"
-                    + formatMessage(validator.getErrorsAndWarnings()));
+            throw new BadRequestException(formatMessage(validator.getErrorsAndWarnings()));
         }
     }
 
