@@ -38,13 +38,15 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.WebServiceInput;
+import org.intermine.webservice.server.core.CountProcessor;
 import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
-import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.JSONObjResultProcessor;
-import org.intermine.webservice.server.output.JSONRowFormatter;
+import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowResultProcessor;
+import org.intermine.webservice.server.output.JSONTableFormatter;
+import org.intermine.webservice.server.output.JSONTableResultProcessor;
 import org.intermine.webservice.server.output.MemoryOutput;
 import org.json.JSONArray;
 
@@ -66,6 +68,10 @@ public class QueryResultService extends WebService {
 
     private static final int BATCH_SIZE = 5000;
 
+    /**
+     * Constructor
+     * @param im The InterMineAPI settings bundle for this webservice
+     */
     public QueryResultService(InterMineAPI im) {
         super(im);
     }
@@ -80,7 +86,7 @@ public class QueryResultService extends WebService {
      */
     @Override
     protected void execute(HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) {
+            HttpServletResponse response) {
 
         QueryResultInput input = getInput();
 
@@ -108,11 +114,10 @@ public class QueryResultService extends WebService {
         }
     }
 
-    protected String getExportLink(PathQuery pq, String format) {
-        String baseUrl = PortalHelper.getBaseUrl(request);
+    protected String getLinkPath(PathQuery pq, String format) {
         QueryResultLinkGenerator linkGen = new QueryResultLinkGenerator();
         String xml = pq.toXml(PathQuery.USERPROFILE_VERSION);
-        return linkGen.getLink(baseUrl, xml, format);
+        return linkGen.getLinkPath(xml, format);
     }
 
     /**
@@ -120,75 +125,60 @@ public class QueryResultService extends WebService {
      *
      * @param pq The path query to be run
      */
-    protected void setHeaderAttributes(PathQuery pq, Integer start, Integer end, String title) {
+    protected void setHeaderAttributes(PathQuery pq, Integer start, Integer size, String title) {
         Map<String, String> attributes = new HashMap<String, String>();
         if (formatIsJSON()) {
-            attributes.put(JSONFormatter.KEY_MODEL_NAME, pq.getModel().getName());
-            attributes.put(JSONFormatter.KEY_VIEWS, new JSONArray(pq.getView()).toString());
+            // These attributes are always needed
+            attributes.put(JSONResultFormatter.KEY_MODEL_NAME, pq.getModel().getName());
+            attributes.put(JSONResultFormatter.KEY_VIEWS, new JSONArray(pq.getView()).toString());
+            attributes.put("start", String.valueOf(start));
             try {
-                attributes.put(JSONFormatter.KEY_ROOT_CLASS, pq.getRootClass());
+                attributes.put(JSONResultFormatter.KEY_ROOT_CLASS, pq.getRootClass());
             } catch (PathException e) {
                 throw new RuntimeException("Cannot get root class name", e);
             }
         }
         int f = getFormat();
         if (f == WebService.JSON_TABLE_FORMAT || f == WebService.JSONP_TABLE_FORMAT) {
-            String csvUrl = getExportLink(pq, "csv");
-            String tsvUrl =  getExportLink(pq, "tab");
-            int count = 0;
-            try {
-                count = getPathQueryExecutor().count(pq);
-            } catch (ObjectStoreException e) {
-                throw new ServiceException("Could not get count");
+            List<String> columnNames = new ArrayList<String>();
+            for (String viewString : pq.getView()) {
+                columnNames.add("'" + pq.getGeneratedPathDescription(viewString) + "'");
             }
-            int size = end - start;
-            int nextStart = end + 1;
-            int nextEnd = Math.min((nextStart + size), count);
-            int prevEnd = start - 1;
-            int prevStart = Math.max((prevEnd - size), 0);
-
-            String basePagerUrl = getExportLink(pq,
-                    request.getParameter(WebServiceRequestParser.OUTPUT_PARAMETER));
-
-            attributes.put(JSONRowFormatter.KEY_EXPORT_CSV_URL, csvUrl);
-            attributes.put(JSONRowFormatter.KEY_EXPORT_TSV_URL, tsvUrl);
-            String nextUrl = "";
-            if (nextStart < count) {
-                nextUrl = basePagerUrl;
-                nextUrl += "&" + WebServiceRequestParser.START_PARAMETER + "=" + nextStart;
-                nextUrl += "&" + WebServiceRequestParser.LIMIT_PARAMETER + "=" + nextEnd;
-            }
-            attributes.put(JSONRowFormatter.KEY_NEXT_PAGE, nextUrl);
-            String prevUrl = "";
-            if (prevEnd > 0) {
-                prevUrl = basePagerUrl;
-                prevUrl += "&" + WebServiceRequestParser.START_PARAMETER + "=" + prevStart;
-                prevUrl += "&" + WebServiceRequestParser.LIMIT_PARAMETER + "=" + prevEnd;
-            }
-            attributes.put(JSONRowFormatter.KEY_PREVIOUS_PAGE, prevUrl);
+            String csvUrl = getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_CSV);
+            String tsvUrl =  getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_TAB);
+            String pageUrl = getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_JSONP_ROW);
+            pageUrl += "&size=" + size;
+            String countUrl = getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_JSONP_COUNT);
+            
             if (title == null) {
                 title = "Query Results";
             }
-            attributes.put(JSONRowFormatter.KEY_TITLE, title);
-            attributes.put(JSONRowFormatter.KEY_COUNT, String.valueOf(count));
+            attributes.put("size", String.valueOf(size));
+            attributes.put("pagePath", pageUrl);
+            attributes.put(JSONTableFormatter.KEY_COLUMN_HEADERS, columnNames.toString());
+            attributes.put(JSONTableFormatter.KEY_CURRENT_PAGE, pageUrl);
+            attributes.put(JSONTableFormatter.KEY_EXPORT_CSV_URL, csvUrl);
+            attributes.put(JSONTableFormatter.KEY_EXPORT_TSV_URL, tsvUrl);
+            attributes.put(JSONTableFormatter.KEY_TITLE, title);
+            attributes.put(JSONTableFormatter.KEY_COUNT, countUrl);
         }
         if (formatIsJSONP()) {
             String callback = getCallback();
             if (callback == null) {
                 callback = "makeInterMineResultsTable";
             }
-            attributes.put(JSONFormatter.KEY_CALLBACK, callback);
+            attributes.put(JSONResultFormatter.KEY_CALLBACK, callback);
         }
         output.setHeaderAttributes(attributes);
     }
 
     private void forward(PathQuery pathQuery, String title, String description,
             WebServiceInput input, String mineLink, String layout) {
-        List<String> columnNames = new ArrayList<String>();
-        for (String viewString : pathQuery.getView()) {
-            columnNames.add(pathQuery.getGeneratedPathDescription(viewString));
-        }
         if (getFormat() == WebService.HTML_FORMAT) {
+            List<String> columnNames = new ArrayList<String>();
+            for (String viewString : pathQuery.getView()) {
+                columnNames.add(pathQuery.getGeneratedPathDescription(viewString));
+            }
             MemoryOutput mout = (MemoryOutput) output;
             request.setAttribute("columnNames", columnNames);
             request.setAttribute("rows", mout.getResults());
@@ -283,14 +273,25 @@ public class QueryResultService extends WebService {
             int maxResults, String title, String description,
             WebServiceInput input, String mineLink, String layout) {
         PathQueryExecutor executor = getPathQueryExecutor();
-        executor.setBatchSize(BATCH_SIZE);
-        ExportResultsIterator resultIt = executor.execute(pathQuery, firstResult, maxResults);
-        ResultProcessor processor = makeResultProcessor();
-        try {
-            resultIt.goFaster();
-            processor.write(resultIt, output);
-        } finally {
-            resultIt.releaseGoFaster();
+        if (formatIsCount()) {
+            int count;
+            try {
+                count = executor.count(pathQuery);
+            } catch (ObjectStoreException e) {
+                throw new ServiceException("Problem getting count.", e);
+            }
+            CountProcessor processor = new CountProcessor();
+            processor.writeCount(count, output);
+        } else {
+            executor.setBatchSize(BATCH_SIZE);
+            ExportResultsIterator resultIt = executor.execute(pathQuery, firstResult, maxResults);
+            ResultProcessor processor = makeResultProcessor();
+            try {
+                resultIt.goFaster();
+                processor.write(resultIt, output);
+            } finally {
+                resultIt.releaseGoFaster();
+            }
         }
         forward(pathQuery, title, description, input, mineLink, layout);
     }
@@ -305,9 +306,15 @@ public class QueryResultService extends WebService {
                 processor = new JSONObjResultProcessor();
                 break;
             case WebService.JSON_TABLE_FORMAT:
-                processor = new JSONRowResultProcessor(PortalHelper.getBaseUrl(request));
+                processor = new JSONTableResultProcessor();
                 break;
             case WebService.JSONP_TABLE_FORMAT:
+                processor = new JSONTableResultProcessor();
+                break;
+            case WebService.JSON_ROW_FORMAT:
+                processor = new JSONRowResultProcessor(PortalHelper.getBaseUrl(request));
+                break;
+            case WebService.JSONP_ROW_FORMAT:
                 processor = new JSONRowResultProcessor(PortalHelper.getBaseUrl(request));
                 break;
             default:
