@@ -28,6 +28,7 @@ import org.intermine.webservice.server.CodeTranslator;
 import org.intermine.webservice.server.LinkGeneratorBase;
 import org.intermine.webservice.server.WebServiceConstants;
 import org.intermine.webservice.server.query.result.QueryResultRequestParser;
+import org.intermine.webservice.server.query.result.WebServiceRequestParser;
 
 
 /**
@@ -80,25 +81,37 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
     }
 
     /**
-     * Returns html formatted link in which are highlighted parameters that
-     * are to be replaced. * @see #getLink(String, TemplateQuery)
-     * @param baseUrl base url
-     * @param template template
-     * @return highlighted link
+     * Returns the path section of the link for this template. When passing just the
+     * template, the format defaults to tab.
+     * @param template The template to get the link for.
+     * @return A string such that baseUrl + returnValue = a webservice query for this template
      */
-    public String getHighlightedLink(String baseUrl, TemplateQuery template) {
-        return getHtmlLinkInternal(baseUrl, template, true);
+    public String getLinkPath(TemplateQuery template) {
+        return getLinkPath(template, WebServiceRequestParser.FORMAT_PARAMETER_TAB);
     }
 
-    private String getLink(String baseUrl, TemplateQuery template,
-            boolean highlighted) {
-        if (template.getBagNames().size() > 0) {
-            error = "This template contains list constraints. The service for this "
-                + "special template is not implemented yet. Solution: Don't use list contraint.";
-            return null;
-        }
-        String ret = baseUrl;
-        ret += "/" + WebServiceConstants.MODULE_NAME + "/template/results?name="
+    /**
+     * Returns the path section of the link for this template. The format parameter is set to
+     * the value of the format argument.
+     * @param template The template to get the link for.
+     * @param format The output format to use (xml, jsonobjects, count, etc)
+     * @return A string such that baseUrl + returnValue = a webservice query for this template
+     */
+    public String getLinkPath(TemplateQuery template, String format) {
+        return getLinkPath(template, format, false);
+    }
+
+    /**
+     * Returns the path section of the link for this template. The format parameter is set to
+     * the value of the format argument, and if the url is to be highlighted, then it will have
+     * the appropriate formatting.
+     * @param template The template to get the link for.
+     * @param format The output format to use (xml, jsonobjects, count, etc)
+     * @param highlighted Whether or not we are highlighting this url.
+     * @return A string such that baseUrl + returnValue = a webservice query for this template
+     */
+    public String getLinkPath(TemplateQuery template, String format, boolean highlighted) {
+        String ret = "/" + WebServiceConstants.MODULE_NAME + "/template/results?name="
             + template.getName() + "&";
         // Splits the long result url to 2 parts -> so it is less probable,
         // that the url will overflow the div
@@ -136,6 +149,30 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
                 i++;
             }
         }
+        ret += "&format=" + format;
+        return ret;
+    }
+
+    /**
+     * Returns html formatted link in which are highlighted parameters that
+     * are to be replaced. * @see #getLink(String, TemplateQuery)
+     * @param baseUrl base url
+     * @param template template
+     * @return highlighted link
+     */
+    public String getHighlightedLink(String baseUrl, TemplateQuery template) {
+        return getHtmlLinkInternal(baseUrl, template, true);
+    }
+
+    private String getLink(String baseUrl, TemplateQuery template,
+            boolean highlighted) {
+        if (template.getBagNames().size() > 0) {
+            error = "This template contains list constraints. The service for this "
+                + "special template is not implemented yet. Solution: Don't use list contraint.";
+            return null;
+        }
+        String ret = baseUrl + getLinkPath(template, 
+                WebServiceRequestParser.FORMAT_PARAMETER_TAB, highlighted);
         return ret;
     }
 
