@@ -33,7 +33,11 @@ public class QueryResultLinkGenerator extends LinkGeneratorBase
         if (!baseUrl.endsWith("/")) {
             baseUrl += "/";
         }
-        return baseUrl + WebServiceConstants.MODULE_NAME + "/query/results"
+        return baseUrl + getLinkPath(queryXml, resultFormat);
+    }
+    
+    public String getLinkPath(String queryXml, String resultFormat) {
+         return WebServiceConstants.MODULE_NAME + "/query/results"
             + "?" + QueryResultRequestParser.QUERY_PARAMETER + "=" + encode(queryXml) + "&"
             + WebServiceRequestParser.OUTPUT_PARAMETER + "=" + resultFormat;
     }
