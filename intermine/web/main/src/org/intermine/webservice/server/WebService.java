@@ -68,7 +68,8 @@ import org.intermine.webservice.server.query.result.WebServiceRequestParser;
  *
  * @author Jakub Kulaviak
  */
-public abstract class WebService {
+public abstract class WebService
+{
     /** XML format constant **/
     public static final int XML_FORMAT = 0;
 
@@ -198,9 +199,8 @@ public abstract class WebService {
         String[] parts = decoded.split(":", 2);
         if (parts.length != 2) {
             throw new BadRequestException(
-                    "Invalid request authentication. "
-                            + "Authorization field contains invalid value. Decoded authorization value: "
-                            + parts[0]);
+                    "Invalid request authentication.  Authorization field contains invalid value. "
+                    + "Decoded authorization value: " + parts[0]);
         }
         String userName = parts[0];
         String password = parts[1];
@@ -333,40 +333,40 @@ public abstract class WebService {
             throw new InternalErrorException(e);
         }
         switch (getFormat()) {
-        case XML_FORMAT:
-            output = new StreamedOutput(out, new XMLFormatter());
-            ResponseUtil.setXMLHeader(response, "result.xml");
-            break;
-        case TSV_FORMAT:
-            output = new StreamedOutput(out, new TabFormatter());
-            ResponseUtil.setTabHeader(response, "result.tsv");
-            break;
-        case CSV_FORMAT:
-            output = new StreamedOutput(out, new CSVFormatter());
-            ResponseUtil.setCSVHeader(response, "result.csv");
-            break;
-        case JSON_OBJ_FORMAT:
-            output = new StreamedOutput(out, new JSONObjectFormatter());
-            ResponseUtil.setJSONHeader(response, "result.json");
-            break;
-        case JSONP_OBJ_FORMAT:
-            output = new StreamedOutput(out, new JSONObjectFormatter());
-            ResponseUtil.setJSONHeader(response, "result.json");
-            break;
-        case JSON_TABLE_FORMAT:
-            output = new StreamedOutput(out, new JSONRowFormatter());
-            ResponseUtil.setJSONHeader(response, "result.json");
-            break;
-        case JSONP_TABLE_FORMAT:
-            output = new StreamedOutput(out, new JSONRowFormatter());
-            ResponseUtil.setJSONHeader(response, "result.json");
-            break;
-        case HTML_FORMAT:
-            output = new HTMLOutput(out);
-            ResponseUtil.setHTMLContentType(response);
-            break;
-        default:
-            throw new BadRequestException("Invalid format.");
+            case XML_FORMAT:
+                output = new StreamedOutput(out, new XMLFormatter());
+                ResponseUtil.setXMLHeader(response, "result.xml");
+                break;
+            case TSV_FORMAT:
+                output = new StreamedOutput(out, new TabFormatter());
+                ResponseUtil.setTabHeader(response, "result.tsv");
+                break;
+            case CSV_FORMAT:
+                output = new StreamedOutput(out, new CSVFormatter());
+                ResponseUtil.setCSVHeader(response, "result.csv");
+                break;
+            case JSON_OBJ_FORMAT:
+                output = new StreamedOutput(out, new JSONObjectFormatter());
+                ResponseUtil.setJSONHeader(response, "result.json");
+                break;
+            case JSONP_OBJ_FORMAT:
+                output = new StreamedOutput(out, new JSONObjectFormatter());
+                ResponseUtil.setJSONHeader(response, "result.json");
+                break;
+            case JSON_TABLE_FORMAT:
+                output = new StreamedOutput(out, new JSONRowFormatter());
+                ResponseUtil.setJSONHeader(response, "result.json");
+                break;
+            case JSONP_TABLE_FORMAT:
+                output = new StreamedOutput(out, new JSONRowFormatter());
+                ResponseUtil.setJSONHeader(response, "result.json");
+                break;
+            case HTML_FORMAT:
+                output = new HTMLOutput(out);
+                ResponseUtil.setHTMLContentType(response);
+                break;
+            default:
+                throw new BadRequestException("Invalid format.");
         }
     }
 
@@ -432,12 +432,9 @@ public abstract class WebService {
      * services else you can overwrite doGet method in your web service class
      * and manage all the things alone.
      *
-     * @param request
-     *            request
-     * @param response
-     *            response
-     * @throws Exception
-     *             if some error occurs
+     * @param request request
+     * @param response response
+     * @throws Exception if some error occurs
      */
     protected abstract void execute(HttpServletRequest request,
             HttpServletResponse response) throws Exception;

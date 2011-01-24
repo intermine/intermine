@@ -18,6 +18,7 @@ package org.intermine.bio.constants;
 public final class ModMineCacheKeys
 {
     private ModMineCacheKeys() {
+        // don't instantiate
     }
 
     /**
