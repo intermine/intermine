@@ -249,50 +249,73 @@ $('#button').click(function() {loadTemplate();});
 function loadGraph1() {
     IMBedding.loadQuery(
         {
-            select: ["Employee.age"],
+            select: ["Employee.age", "Employee.department.company.name"],
             from: "testmodel"
         },
         {size: 1000, format: "jsonprows"},
         function(resultSet) {
-            console.log(resultSet);
             var graphData = [];
-            var ageDist = {
-                label: "Age Distribution",
-                hoverable: true,
-                bars: {show: true},
-                data: []
-            };
-            var countAtAge = {};
+            var countAtAgeAtCompany = {};
             for (i in resultSet.results) {
                 var age = resultSet.results[i][0].value;
-                if (! countAtAge[age]) {
-                    countAtAge[age] = 1;
+                var company = resultSet.results[i][1].value;
+                if (! countAtAgeAtCompany[company]) {
+                    countAtAgeAtCompany[company] = {};
+                }
+                if (! countAtAgeAtCompany[company][age]) {
+                    countAtAgeAtCompany[company][age] = 1;
                 } else {
-                    countAtAge[age] = countAtAge[age] + 1;
+                    countAtAgeAtCompany[company][age] 
+                        = countAtAgeAtCompany[company][age] + 1;
                 }
             }
-            for (age in countAtAge) {
-                ageDist.data.push([age, countAtAge[age]]);
+            for (company in countAtAgeAtCompany) {
+                var companyData = {
+                    label: company,
+                    data: []
+                }
+                for (age in countAtAgeAtCompany[company]) {
+                    companyData.data.push([age, countAtAgeAtCompany[company][age]]);
+                }
+                graphData.push(companyData);
             }
-            graphData.push(ageDist);
-            var plot = $.plot("#graph", graphData);
+            var options = {
+                stack: true,
+                bars: {show: true},
+                legend: {position: "nw"}
+            };
+            var plot = $.plot("#graph", graphData, options);
             $('<span></span>').html("Age").addClass("axis-label").appendTo('#graph');
         }
     );
 }
 
+function showTooltip(x, y, contents) {
+     $('<div id="tooltip">' + contents + '</div>').css( {
+           position: 'absolute',
+           display: 'none',
+           top: y + 5,
+           left: x + 5,
+           border: '1px solid #fdd',
+           padding: '2px',
+          'background-color': '#fee',
+           opacity: 0.80
+      }).appendTo("body").fadeIn(200);
+}
+
 function loadGraph2() {
     IMBedding.loadQuery(
         {
-            select: ["Manager.seniority", "Manager.age"],
+            select: ["Manager.seniority", "Manager.age", "Manager.name"],
             from: "testmodel"
         },
         {size: 1000, format: "jsonprows"},
         function(resultSet) {
-            console.log(resultSet);
             var graphData = [];
+            var nameOfManager = {};
             var ageVsSen = {
                 label: "Seniority by Age",
+                color: "rgb(0, 115, 234)",
                 points: {show: true},
                 data: []
             };
@@ -300,9 +323,29 @@ function loadGraph2() {
                 var seniority = resultSet.results[i][0].value;
                 var age = resultSet.results[i][1].value;
                 ageVsSen.data.push([age, seniority]);
+                nameOfManager[age + "-" + seniority] = resultSet.results[i][2].value;
             }
             graphData.push(ageVsSen);
-            var plot = $.plot("#graph", graphData);
+            var options = {
+                grid: {hoverable: true},
+                legend: {position: "nw"}
+            };
+            var plot = $.plot("#graph", graphData, options);
+            $('#graph').bind("plothover", function(event, pos, item) {
+                if (item) {
+                 
+                 $("#tooltip").remove();
+                    var x = item.datapoint[0].toFixed(2),
+                        y = item.datapoint[1].toFixed(2);
+                    var key = parseInt(x) + "-" + parseInt(y);
+                    var tooltip = nameOfManager[key];
+                    showTooltip(item.pageX, item.pageY, tooltip);
+                }
+                else {
+                    $("#tooltip").remove();
+                    previousPoint = null;            
+                }
+            });
             $('<span></span>').html("Age").addClass("axis-label").appendTo('#graph');
         }
     );
