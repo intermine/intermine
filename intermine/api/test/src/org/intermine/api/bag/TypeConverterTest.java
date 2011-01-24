@@ -124,7 +124,7 @@ public class TypeConverterTest extends StoreDataTestCase
 
         Results r = getEmployeesAndAddresses();
         assertEquals("Results: " + r, 2, r.size());
-        InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
+        InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", new Date(), true, os, null, uosw);
         imb.addIdToBag(((Employee) ((List) r.get(0)).get(0)).getId(), "Employee");
         imb.addIdToBag(((Employee) ((List) r.get(1)).get(0)).getId(), "Employee");
         Map expected = new HashMap();
@@ -154,7 +154,7 @@ public class TypeConverterTest extends StoreDataTestCase
     }
     
     public void testGetConversionMapQuery() throws Exception {
-        InterMineBag bag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
+        InterMineBag bag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), true, os, null, uosw);
         PathQuery resQuery = TypeConverter.getConversionMapQuery(conversionTemplates, Employee.class, Address.class, bag);
         assertEquals(1, resQuery.getConstraints().size());
         PathConstraintBag resCon = (PathConstraintBag) resQuery.getConstraints().keySet().iterator().next();
@@ -165,7 +165,7 @@ public class TypeConverterTest extends StoreDataTestCase
     }
     
     public void testGetConversionQuery() throws Exception {
-        InterMineBag bag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
+        InterMineBag bag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), true, os, null, uosw);
         PathQuery resQuery = TypeConverter.getConversionQuery(conversionTemplates, Employee.class, Address.class, bag);
         assertEquals(1, resQuery.getConstraints().size());
         PathConstraintBag resCon = (PathConstraintBag) resQuery.getConstraints().keySet().iterator().next();
