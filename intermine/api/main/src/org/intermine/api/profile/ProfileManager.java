@@ -467,7 +467,6 @@ public class ProfileManager
         return new ArrayList(res);
     }
 
-
     /**
      * @return the superuser name
      */
@@ -481,7 +480,6 @@ public class ProfileManager
     public void setSuperuser(String superuser) {
         this.superuser = superuser;
     }
-
 
     /**
      * @return the superuser profile
