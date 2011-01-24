@@ -93,12 +93,24 @@ public class ResponseUtil
 
     /**
      * Sets the response header and content type for json output
-     * @param response
-     * @param string
+     * @param response The response we are sending into the world
+     * @param filename The filename this response should have
      */
     public static void setJSONHeader(HttpServletResponse response,
             String filename) {
         setJSONContentType(response);
+        setFileName(response, filename);
+        setNoCache(response);
+    }
+
+    /**
+     * Sets the response header and content type for jsonp output
+     * @param response Our response to this request
+     * @param filename The name this response should have
+     */
+    public static void setJSONPHeader(HttpServletResponse response,
+            String filename) {
+        setJSONPContentType(response);
         setFileName(response, filename);
         setNoCache(response);
     }
@@ -216,12 +228,20 @@ public class ResponseUtil
         response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
     }
 
-
     /**
      * Sets the content type to "application/json"
-     * @param response
+     * @param response The response we are sending out into the world
      */
-    public static void setJSONContentType(HttpServletResponse response ) {
+    public static void setJSONContentType(HttpServletResponse response) {
         response.setContentType("application/json");
     }
+
+    /**
+     * Sets the content type to "text/javascript"
+     * @param response The response we are sending out into the world
+     */
+    public static void setJSONPContentType(HttpServletResponse response) {
+        response.setContentType("text/javascript");
+    }
 }
+
