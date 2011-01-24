@@ -12,6 +12,7 @@ package org.intermine.webservice.server.template.result;
 
 import junit.framework.TestCase;
 
+import org.apache.log4j.Logger;
 import org.intermine.TestUtil;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -29,7 +30,7 @@ public class TemplateResultLinkGeneratorTest extends TestCase
 {
 
     private String prefix = "http://localhost:8080/query/" + WebServiceConstants.MODULE_NAME;
-
+    private static final Logger LOG = Logger.getLogger(TemplateResultLinkGeneratorTest.class);
     public void testExtraValueLink() {
         PathQuery ret = new PathQuery(TestUtil.getModel());
         PathConstraint c1 = new PathConstraintLookup("Gene.name", "zen", "Drosophila_melanogaster");
@@ -38,11 +39,14 @@ public class TemplateResultLinkGeneratorTest extends TestCase
         tmpl.setEditable(c1, true);
         String link = new TemplateResultLinkGenerator().getHtmlLink("http://localhost:8080/query",
                                                                     tmpl);
-        assertEquals(link, prefix + "/template/results?"
-                + "name=template1&constraint1=Gene.name&op1=LOOKUP&value1=zen&"
-                + "extra1=Drosophila_melanogaster&size="
-                + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging",
-                link);
+
+        String expected = prefix + "/template/results?name=template1&constraint1=Gene.name&op1=LOOKUP&value1=zen&"
+        + "extra1=Drosophila_melanogaster&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging";
+
+        LOG.error("testExtraValueLink().expected:" + expected);
+        LOG.error("testExtraValueLink().actual:" + link);
+
+        assertEquals(expected, link);
     }
 
     public void testMultipleConstraintsLink() {
@@ -62,6 +66,10 @@ public class TemplateResultLinkGeneratorTest extends TestCase
             + "&constraint2=Gene.length&op2=lt&value2=100"
             + "&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE
             + "&layout=minelink|paging";
+
+        LOG.error("testMultipleConstraintsLink().expected:" + expected);
+        LOG.error("testMultipleConstraintsLink().actual:" + link);
+
         assertEquals(expected, link);
     }
 
