@@ -32,7 +32,6 @@ public class JSONRowIterator implements Iterator<JSONArray>
 
     private final ExportResultsIterator subIter;
     private final List<Path> viewPaths = new ArrayList<Path>();
-    private final String baseUrl;
 
     private static final String CELL_KEY_URL = "url";
     private static final String CELL_KEY_VALUE = "value";
@@ -40,11 +39,9 @@ public class JSONRowIterator implements Iterator<JSONArray>
     /**
      * Constructor
      * @param it An ExportResultsIterator that will be used internally to process the data.
-     * @param baseUrl The base to build the URL off.
      */
-    public JSONRowIterator(ExportResultsIterator it, String baseUrl) {
+    public JSONRowIterator(ExportResultsIterator it) {
         this.subIter = it;
-        this.baseUrl = baseUrl;
         init();
     }
 
