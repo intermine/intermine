@@ -405,6 +405,22 @@ public class InterMineBag implements WebSearchable, Cloneable
         isCurrent = savedBag.getCurrent();
         addBagValues();
     }
+    
+    /**
+     * Save the bag into the userprofile database 
+     *
+     * @param profileId the ID of the userprofile
+     * @param bagValues the list of the key field values of the objects contained by the bag
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public void saveWithBagValues(Integer profileId, Collection<String> bagValues)
+        throws ObjectStoreException {
+        this.profileId = profileId;
+        SavedBag savedBag = store();
+        this.savedBagId = savedBag.getId();
+        isCurrent = savedBag.getCurrent();
+        addBagValues(bagValues);
+    }
 
     /**
      * Returns the value of name

@@ -11,7 +11,6 @@ package org.intermine.web;
  */
 
 import java.io.Reader;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +19,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
-import org.intermine.api.bag.IdUpgrader;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -167,10 +165,8 @@ public final class ProfileBinding
     public static Profile unmarshal(Reader reader, ProfileManager profileManager, String username,
             String password, Set<Tag> tags, ObjectStoreWriter osw, int version) {
         try {
-            IdUpgrader idUpgrader = IdUpgrader.ERROR_UPGRADER;
             ProfileHandler profileHandler =
-                new ProfileHandler(profileManager, idUpgrader, username, password, tags, osw, false,
-                        version);
+                new ProfileHandler(profileManager, username, password, tags, osw, version);
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {

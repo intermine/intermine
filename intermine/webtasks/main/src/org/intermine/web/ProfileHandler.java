@@ -10,15 +10,11 @@ package org.intermine.web;
  *
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.api.bag.IdUpgrader;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
@@ -28,14 +24,8 @@ import org.intermine.api.xml.InterMineBagHandler;
 import org.intermine.api.xml.SavedQueryHandler;
 import org.intermine.api.xml.TagHandler;
 import org.intermine.api.xml.TemplateQueryHandler;
-import org.intermine.metadata.Model;
-import org.intermine.model.FastPathObject;
-import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.xml.full.FullHandler;
-import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.Item;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -54,8 +44,7 @@ class ProfileHandler extends DefaultHandler
     private Map<String, InterMineBag> savedBags;
     private Map<String, TemplateQuery> savedTemplates;
     private Set<Tag> tags;
-    private Map<Integer, InterMineObject> idObjectMap = new HashMap<Integer, InterMineObject>();
-    private IdUpgrader idUpgrader;
+    private Map<String, Set<String>> bagsValues;
     private ObjectStoreWriter osw;
     private int version;
 
@@ -67,21 +56,18 @@ class ProfileHandler extends DefaultHandler
      * subHandler.endElement(), etc will be called from this class.
      */
     DefaultHandler subHandler = null;
-    private boolean abortOnError;
 
     /**
      * Create a new ProfileHandler
      * @param profileManager the ProfileManager to pass to the Profile constructor
-     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
-     * correspond to object in old bags.
      * @param osw an ObjectStoreWriter to the production database, to write bags
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible (used by read-userprofile-xml).
      * @param version the version of the profile xml, an attribute on the profile manager xml
      */
-    public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-                          ObjectStoreWriter osw, boolean abortOnError, int version) {
-        this(profileManager, idUpgrader, null, null, new HashSet(), osw, abortOnError, version);
+    public ProfileHandler(ProfileManager profileManager,
+                          ObjectStoreWriter osw, int version) {
+        this(profileManager, null, null, new HashSet(), osw, version);
     }
 
     /**
@@ -97,36 +83,16 @@ class ProfileHandler extends DefaultHandler
      * problem and continue if possible (used by read-userprofile-xml).
      * @param version the version of the profile xml, an attribute on the profile manager xml
      */
-    public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-            String defaultUsername, String defaultPassword, Set<Tag> tags, ObjectStoreWriter osw,
-            boolean abortOnError, int version) {
+    public ProfileHandler(ProfileManager profileManager, String defaultUsername,
+    		String defaultPassword, Set<Tag> tags, ObjectStoreWriter osw,
+            int version) {
         super();
         this.profileManager = profileManager;
-        this.idUpgrader = idUpgrader;
         this.username = defaultUsername;
         this.password = defaultPassword;
         this.tags = tags;
         this.osw = osw;
-        this.abortOnError = abortOnError;
         this.version = version;
-    }
-
-    /**
-     * Create a new ProfileHandler.  Throw an exception if there is a problem while reading
-     * @param profileManager the ProfileManager to pass to the Profile constructor
-     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
-     * correspond to object in old bags.
-     * @param defaultUsername default username
-     * @param defaultPassword default password
-     * @param tags a set to populate with user tags
-     * @param osw an ObjectStoreWriter to the production database, to write bags
-     * @param version the version of the profile xml, an attribute on the profile manager xml
-     */
-    public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-            String defaultUsername, String defaultPassword, Set<Tag> tags, ObjectStoreWriter osw,
-            int version) {
-        this(profileManager, idUpgrader, defaultPassword, defaultPassword, tags,
-             osw, true, version);
     }
 
     /**
@@ -146,8 +112,16 @@ class ProfileHandler extends DefaultHandler
     public Set<Tag> getTags() {
         return tags;
     }
-
+    
     /**
+     * Return a map of bag values for each bag.
+     * @return the map of bag values
+     */
+    public Map<String, Set<String>> getBagsValues() {
+		return bagsValues;
+	}
+
+	/**
      * {@inheritDoc}
      */
     public void startElement(String uri, String localName, String qName, Attributes attrs)
@@ -162,8 +136,9 @@ class ProfileHandler extends DefaultHandler
         }
         if ("bags".equals(qName)) {
             savedBags = new LinkedHashMap();
+            bagsValues = new LinkedHashMap();
             subHandler = new InterMineBagHandler(profileManager.getProfileObjectStoreWriter(),
-                    osw, savedBags, null, idObjectMap);
+                    osw, savedBags, bagsValues, null);
         }
         if ("template-queries".equals(qName)) {
             savedTemplates = new LinkedHashMap();
