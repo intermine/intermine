@@ -104,13 +104,7 @@ public class ProfileReadTask extends Task
             ProfileManager pm = new ProfileManager(os, userProfileOS);
             osw = os.getNewWriter();
 
-            PkQueryIdUpgrader upgrader;
-            if (source == null) {
-                upgrader = new PkQueryIdUpgrader(osw);
-            } else {
-                upgrader = new PkQueryIdUpgrader(this.source, osw);
-            }
-            ProfileManagerBinding.unmarshal(reader, pm, osw, upgrader, false);
+            ProfileManagerBinding.unmarshal(reader, pm, osw, false);
         } catch (Exception e) {
             throw new BuildException(e);
         } finally {
