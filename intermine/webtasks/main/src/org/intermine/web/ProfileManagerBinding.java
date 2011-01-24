@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -25,8 +24,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.intermine.api.bag.IdUpgrader;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
@@ -35,11 +34,11 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.util.SAXParser;
-import org.intermine.web.bag.PkQueryIdUpgrader;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -136,11 +135,10 @@ public class ProfileManagerBinding
      * problem and continue if possible (used by read-userprofile-xml).
      */
     public static void unmarshal(Reader reader, ProfileManager profileManager,
-                                 ObjectStoreWriter osw, PkQueryIdUpgrader idUpgrader,
-                                 boolean abortOnError) {
+                                 ObjectStoreWriter osw, boolean abortOnError) {
         try {
             ProfileManagerHandler profileManagerHandler =
-                new ProfileManagerHandler(profileManager, idUpgrader, osw, abortOnError);
+                new ProfileManagerHandler(profileManager, osw, abortOnError);
             SAXParser.parse(new InputSource(reader), profileManagerHandler);
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,8 +156,8 @@ public class ProfileManagerBinding
      * correspond to object in old bags.
      */
     public static void unmarshal(Reader reader, ProfileManager profileManager,
-                                 ObjectStoreWriter osw, PkQueryIdUpgrader idUpgrader) {
-        unmarshal(reader, profileManager, osw, idUpgrader, true);
+                                 ObjectStoreWriter osw) {
+        unmarshal(reader, profileManager, osw, true);
     }
 }
 
@@ -172,7 +170,6 @@ class ProfileManagerHandler extends DefaultHandler
     private ProfileHandler profileHandler = null;
     private TemplateTrackHandler templateTrackHandler = null;
     private ProfileManager profileManager = null;
-    private IdUpgrader idUpgrader;
     private ObjectStoreWriter osw;
     private boolean abortOnError;
     private long startTime = 0;
@@ -188,11 +185,10 @@ class ProfileManagerHandler extends DefaultHandler
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible (used by read-userprofile-xml).
      */
-    public ProfileManagerHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-                                 ObjectStoreWriter osw, boolean abortOnError) {
+    public ProfileManagerHandler(ProfileManager profileManager, ObjectStoreWriter osw,
+    		                     boolean abortOnError) {
         super();
         this.profileManager = profileManager;
-        this.idUpgrader = idUpgrader;
         this.osw = osw;
         this.abortOnError = abortOnError;
     }
@@ -215,8 +211,7 @@ class ProfileManagerHandler extends DefaultHandler
         }
         if ("userprofile".equals(qName)) {
             startTime = System.currentTimeMillis();
-            profileHandler = new ProfileHandler(profileManager, idUpgrader, osw, abortOnError,
-                    version);
+            profileHandler = new ProfileHandler(profileManager, osw, version);
         }
         if (profileHandler != null) {
             profileHandler.startElement(uri, localName, qName, attrs);
@@ -235,7 +230,15 @@ class ProfileManagerHandler extends DefaultHandler
         super.endElement(uri, localName, qName);
         if ("userprofile".equals(qName)) {
             Profile profile = profileHandler.getProfile();
-            profileManager.createProfile(profile);
+            profileManager.createProfileWithoutBags(profile);
+            try {
+            	Map<String, Set<String>> bagValues = profileHandler.getBagsValues();
+	            for (InterMineBag bag : profile.getSavedBags().values()) {
+	                bag.saveWithBagValues(profile.getUserId(), bagValues.get(bag.getName()));
+	            }
+            } catch (ObjectStoreException ose) {
+            	throw new RuntimeException(ose);
+            }
             Set<Tag> tags = profileHandler.getTags();
             TagManager tagManager =
                 new TagManagerFactory(profile.getProfileManager()).getTagManager();

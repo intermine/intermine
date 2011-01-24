@@ -428,7 +428,6 @@ public class ProfileManager
         UserProfile userProfile = new UserProfile();
         userProfile.setUsername(profile.getUsername());
         userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
-        //userProfile.setId(userId);
 
         try {
             uosw.store(userProfile);
@@ -436,6 +435,25 @@ public class ProfileManager
             for (InterMineBag bag : profile.getSavedBags().values()) {
                 bag.setProfileId(userProfile.getId());
             }
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
+        saveProfile(profile);
+    }
+    
+    /**
+     * Creates a profile in the userprofile database.
+     *
+     * @param profile a Profile object
+     */
+    public synchronized void createProfileWithoutBags(Profile profile) {
+        UserProfile userProfile = new UserProfile();
+        userProfile.setUsername(profile.getUsername());
+        userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
+
+        try {
+            uosw.store(userProfile);
+            profile.setUserId(userProfile.getId());
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
