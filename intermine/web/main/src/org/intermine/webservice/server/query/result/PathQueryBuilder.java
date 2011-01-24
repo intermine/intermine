@@ -31,7 +31,7 @@ public class PathQueryBuilder
 {
 
     private PathQuery pathQuery;
-    
+
     protected PathQueryBuilder() {
     	// empty constructor for testing
     }
@@ -71,7 +71,9 @@ public class PathQueryBuilder
                         + "by this query don't exist: " + missingBags + " query: " + xml);
             }
         } else {
-            throw new BadRequestException(formatMessage(validator.getErrorsAndWarnings()));
+            throw new BadRequestException("This query is invalid:\n"
+                    + "query string: " + xml + "\n"
+                    + formatMessage(validator.getErrorsAndWarnings()));
         }
     }
 
