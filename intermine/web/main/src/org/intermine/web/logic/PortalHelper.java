@@ -143,6 +143,11 @@ public final class PortalHelper
         return generatePermaLink(obj, baseUrl, classKeys);
     }
 
+    public static String generatePortalPath(FastPathObject obj, InterMineAPI im) {
+        Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
+        return generatePermaPath(obj, classKeys);
+    }
+
     /**
      * Generate a perma-link to a report page for an InterMine object.
      * @param obj A Fast-Path Object
@@ -152,12 +157,15 @@ public final class PortalHelper
      */
     public static String generatePermaLink(FastPathObject obj, String baseUrl,
             Map<String, List<FieldDescriptor>> classKeys) {
+        return  baseUrl + generatePermaPath(obj, classKeys);
+    }
+
+    public static String generatePermaPath(FastPathObject obj, Map<String, List<FieldDescriptor>> classKeys) {
         String url = null;
         Object externalId = ClassKeyHelper.getKeyFieldValue(obj, classKeys);
         if (externalId != null) {
             String clsName = DynamicUtil.getSimpleClass(obj).getSimpleName();
             StringBuilder sb = new StringBuilder();
-            sb.append(baseUrl);
             sb.append("/").append(EXTERNAL_PORTAL_PAGE).append("?class=");
             sb.append(clsName);
             sb.append("&externalids=");
@@ -176,9 +184,12 @@ public final class PortalHelper
      * @return The URL.
      */
     public static String generateObjectDetailsLink(ResultElement elem, String baseUrl) {
+        return baseUrl + generateObjectDetailsPath(elem);
+    }
+
+    public static String generateObjectDetailsPath(ResultElement elem) {
         String url = null;
         StringBuilder sb = new StringBuilder();
-        sb.append(baseUrl);
         sb.append("/").append(INTERNAL_REPORT_PAGE).append("?id=");
         sb.append(elem.getId().toString());
         url = sb.toString();
