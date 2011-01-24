@@ -405,9 +405,9 @@ public class InterMineBag implements WebSearchable, Cloneable
         isCurrent = savedBag.getCurrent();
         addBagValues();
     }
-    
+
     /**
-     * Save the bag into the userprofile database 
+     * Save the bag into the userprofile database
      *
      * @param profileId the ID of the userprofile
      * @param bagValues the list of the key field values of the objects contained by the bag
@@ -743,6 +743,7 @@ public class InterMineBag implements WebSearchable, Cloneable
 
     /**
      * Save the values given in input into bagvalues table
+     * @param bagValues the values to save
      */
     public void addBagValues(Collection<String> bagValues) {
         Connection conn = null;
@@ -786,7 +787,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             LOG.warn("Error creatin table or index for bagvalues", sqle);
         }
     }
-    
+
     /**
      *
      */
