@@ -34,7 +34,7 @@ public class QueryServiceTest extends TestCase
         ModelService modelService = factory.getModelService();
         Model model = modelService.getModel();
         PathQuery query = new PathQuery(model);
-        query.addView("Employee.name,Employee.age,Employee.end,Employee.fullTime");
+        query.addViews("Employee.name", "Employee.age", "Employee.end", "Employee.fullTime");
         query.addConstraint(Constraints.like("Employee.name","EmployeeA*"));
         query.addConstraint(Constraints.greaterThanEqualTo("Employee.age", "10"));
         query.addConstraint(Constraints.lessThan("Employee.age", "60"));
