@@ -136,7 +136,8 @@ public class JSONRowResultProcessorTest extends TestCase {
     }
     
     public void testZeroResults() {
-        List<List<String>> expected = Collections.EMPTY_LIST;
+        List<String> inner = new ArrayList<String>();
+        List<List<String>> expected = Arrays.asList(inner);
         
         MemoryOutput out  = new MemoryOutput();
         JSONRowResultProcessor processor = new JSONRowResultProcessor();
