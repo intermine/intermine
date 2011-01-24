@@ -39,3 +39,7 @@ h2 {
 #radio input span {
     font-size: 10px ! important;
 }
+
+span.axis-label {
+    padding-left: 250px;
+}
