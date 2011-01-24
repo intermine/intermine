@@ -38,17 +38,17 @@ import org.intermine.pathquery.PathQuery;
 
 /**
  * @author Alexis Kalderimis
- * 
+ *
  */
 public class JSONRowFormatterTest extends TestCase {
-    
+
     /**
      * @param name
      */
     public JSONRowFormatterTest(String name) {
         super(name);
     }
-    
+
     private ObjectStoreDummyImpl os;
     private Employee tim;
     private Employee gareth;
@@ -58,66 +58,66 @@ public class JSONRowFormatterTest extends TestCase {
     public static SimpleDateFormat ISO8601FORMAT = new SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ssZ");
     private ExportResultsIterator iterator;
-    
+
     private final Model model = Model.getInstanceByName("testmodel");
     private Properties testProps;
-    
+
     StringWriter sw;
     PrintWriter pw;
-    
+
     Map<String, String> attributes;
-    
+
     JSONRowResultProcessor processor;
-    
+
     @Override
     protected void setUp() throws Exception {
-        
+
         testProps = new Properties();
         testProps.load(getClass().getResourceAsStream(
                 "JSONRowFormatterTest.properties"));
-        
+
         os = new ObjectStoreDummyImpl();
-        
+
         sw = new StringWriter();
         pw = new PrintWriter(sw);
-        
+
         attributes = new HashMap<String, String>();
-        attributes.put(JSONFormatter.KEY_ROOT_CLASS, "Gene");
-        attributes.put(JSONFormatter.KEY_VIEWS, "['foo', 'bar', 'baz']");
-        attributes.put(JSONFormatter.KEY_MODEL_NAME, model.getName());
+        attributes.put(JSONResultFormatter.KEY_ROOT_CLASS, "Gene");
+        attributes.put(JSONResultFormatter.KEY_VIEWS, "['foo', 'bar', 'baz']");
+        attributes.put(JSONResultFormatter.KEY_MODEL_NAME, model.getName());
         attributes.put(JSONRowFormatter.KEY_TITLE, "Test Results");
         attributes.put(JSONRowFormatter.KEY_EXPORT_CSV_URL, "some.csv.url");
         attributes.put(JSONRowFormatter.KEY_EXPORT_TSV_URL, "some.tsv.url");
         attributes.put(JSONRowFormatter.KEY_PREVIOUS_PAGE, "url.to.previous");
         attributes.put(JSONRowFormatter.KEY_NEXT_PAGE, "url.to.next");
-        
+
         tim = new Employee();
         tim.setId(new Integer(5));
         tim.setName("Tim Canterbury");
         tim.setAge(30);
-        
+
         gareth = new Employee();
         gareth.setId(new Integer(6));
         gareth.setName("Gareth Keenan");
         gareth.setAge(32);
-        
+
         dawn = new Employee();
         dawn.setId(new Integer(7));
         dawn.setName("Dawn Tinsley");
         dawn.setAge(26);
-        
+
         keith = new Employee();
         keith.setId(new Integer(8));
         keith.setName("Keith Bishop");
         keith.setAge(41);
-        
+
         lee = new Employee();
         lee.setId(new Integer(9));
         lee.setName("Lee");
         lee.setAge(28);
-        
+
         os.setResultsSize(5);
-        
+
         ResultsRow row1 = new ResultsRow();
         row1.add(tim);
         ResultsRow row2 = new ResultsRow();
@@ -128,16 +128,16 @@ public class JSONRowFormatterTest extends TestCase {
         row4.add(keith);
         ResultsRow row5 = new ResultsRow();
         row5.add(lee);
-        
+
         os.addRow(row1);
         os.addRow(row2);
         os.addRow(row3);
         os.addRow(row4);
         os.addRow(row5);
-        
+
         PathQuery pq = new PathQuery(model);
         pq.addViews("Employee.name", "Employee.age");
-        
+
         Map pathToQueryNode = new HashMap();
         Query q;
         q = MainHelper
@@ -145,9 +145,9 @@ public class JSONRowFormatterTest extends TestCase {
         List resultList = os.execute(q, 0, 5, true, true, new HashMap());
         Results results = new DummyResults(q, resultList);
         iterator = new ExportResultsIterator(pq, results, pathToQueryNode);
-        processor = new JSONRowResultProcessor("http://the.base.url");
+        processor = new JSONRowResultProcessor();
     }
-    
+
     /*
      * @see junit.framework.TestCase#tearDown()
      */
@@ -155,28 +155,29 @@ public class JSONRowFormatterTest extends TestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
     }
-    
+
     public void testJSONRowFormatter() {
         JSONRowFormatter fmtr = new JSONRowFormatter();
         assertTrue(fmtr != null);
     }
-    
+
     public void testFormatHeader() {
         JSONRowFormatter fmtr = new JSONRowFormatter();
-        
+
         String expected = testProps.getProperty("result.header");
         assertEquals(expected, fmtr.formatHeader(attributes));
     }
-    
+
     public void testFormatResult() {
         JSONRowFormatter fmtr = new JSONRowFormatter();
         String expected = testProps.getProperty("result.body");
         assertEquals(expected,
                 fmtr.formatResult(Arrays.asList("One", "Two", "Three")));
+
         expected = "";
         assertEquals(expected, fmtr.formatResult(new ArrayList<String>()));
     }
-    
+
     public void testFormatFooter() {
         JSONRowFormatter fmtr = new JSONRowFormatter();
         Date now = Calendar.getInstance().getTime();
@@ -185,12 +186,12 @@ public class JSONRowFormatterTest extends TestCase {
         String expected = "],'executionTime':'" + executionTime + "'}";
         assertEquals(expected, fmtr.formatFooter());
     }
-    
+
     public void testFormatAll() {
         JSONRowFormatter fmtr = new JSONRowFormatter();
         StreamedOutput out = new StreamedOutput(pw, fmtr);
         out.setHeaderAttributes(attributes);
-        
+
         // These are the two steps the service must perform to get good JSON.
         processor.write(iterator, out);
         out.flush();
@@ -202,6 +203,6 @@ public class JSONRowFormatterTest extends TestCase {
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
         assertEquals(expected, sw.toString());
-        
+
     }
 }
