@@ -48,6 +48,19 @@ public class WebServiceRequestParser
     /** Value of parameter when user wants comma separated output to be returned. **/
     public static final String FORMAT_PARAMETER_CSV = "csv";
 
+    /** Value of parameter when user wants comma separated output to be returned. **/
+    public static final String FORMAT_PARAMETER_COUNT = "count";
+
+    /**
+     * Value of parameter when user wants json data
+    **/
+    public static final String FORMAT_PARAMETER_JSON = "json";
+
+    /**
+     * Value of parameter when user wants jsonp data
+    **/
+    public static final String FORMAT_PARAMETER_JSONP = "jsonp";
+
     /**
      * Value of parameter when user wants json data as
      * nested objects representing records
@@ -71,6 +84,30 @@ public class WebServiceRequestParser
      * but in a format suitable for cross site ajax calls
      **/
     public static final String FORMAT_PARAMETER_JSONP_TABLE = "jsonptable";
+
+    /**
+     * Value of parameter when user wants json data suitable
+     * for using to construct tables with - this returns the rows of the table
+     **/
+    public static final String FORMAT_PARAMETER_JSON_ROW = "jsonrows";
+
+    /**
+     * Value of parameter when user wants json data as above
+     * but in a format suitable for cross site ajax calls
+     **/
+    public static final String FORMAT_PARAMETER_JSONP_ROW = "jsonprows";
+
+    /**
+     * Value of parameter when user wants json data suitable
+     * for using to construct tables with - this returns the rows of the table
+     **/
+    public static final String FORMAT_PARAMETER_JSON_COUNT = "jsoncount";
+
+    /**
+     * Value of parameter when user wants json data as above
+     * but in a format suitable for cross site ajax calls
+     **/
+    public static final String FORMAT_PARAMETER_JSONP_COUNT = "jsonpcount";
 
     /**Name of format parameter that specifies format of returned results. */
     public static final String OUTPUT_PARAMETER = "format";
