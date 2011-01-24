@@ -129,7 +129,6 @@ public class ProfileManagerBinding
      * @param reader contains the ProfileManager XML
      * @param profileManager the ProfileManager to store the unmarshalled Profiles to
      * @param osw ObjectStoreWriter used to resolve object ids and write bags
-     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible (used by read-userprofile-xml).
@@ -152,7 +151,6 @@ public class ProfileManagerBinding
      * @param reader contains the ProfileManager XML
      * @param profileManager the ProfileManager to store the unmarshalled Profiles to
      * @param osw ObjectStoreWriter used to resolve object ids and write bags
-     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
      */
     public static void unmarshal(Reader reader, ProfileManager profileManager,
@@ -179,14 +177,13 @@ class ProfileManagerHandler extends DefaultHandler
     /**
      * Create a new ProfileManagerHandler
      * @param profileManager the ProfileManager to store the unmarshalled Profile to
-     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
      * @param osw an ObjectStoreWriter to the production database, to write bags
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible (used by read-userprofile-xml).
      */
     public ProfileManagerHandler(ProfileManager profileManager, ObjectStoreWriter osw,
-    		                     boolean abortOnError) {
+                                 boolean abortOnError) {
         super();
         this.profileManager = profileManager;
         this.osw = osw;
@@ -232,12 +229,12 @@ class ProfileManagerHandler extends DefaultHandler
             Profile profile = profileHandler.getProfile();
             profileManager.createProfileWithoutBags(profile);
             try {
-            	Map<String, Set<String>> bagValues = profileHandler.getBagsValues();
-	            for (InterMineBag bag : profile.getSavedBags().values()) {
-	                bag.saveWithBagValues(profile.getUserId(), bagValues.get(bag.getName()));
-	            }
+                Map<String, Set<String>> bagValues = profileHandler.getBagsValues();
+                for (InterMineBag bag : profile.getSavedBags().values()) {
+                    bag.saveWithBagValues(profile.getUserId(), bagValues.get(bag.getName()));
+                }
             } catch (ObjectStoreException ose) {
-            	throw new RuntimeException(ose);
+                throw new RuntimeException(ose);
             }
             Set<Tag> tags = profileHandler.getTags();
             TagManager tagManager =
