@@ -72,11 +72,10 @@ public class CreateAccountForm extends ActionForm
     }
 
     /**
-     * @param username
-     *            The username/email
+     * @param username The username/email set to be lowercase.
      */
     public void setUsername(String username) {
-        this.username = username;
+        this.username = username.toLowerCase();
     }
 
     /**
@@ -87,8 +86,7 @@ public class CreateAccountForm extends ActionForm
     }
 
     /**
-     * @param password2
-     *            Password verification
+     * @param password2 Password verification
      */
     public void setPassword2(String password2) {
         this.password2 = password2;
