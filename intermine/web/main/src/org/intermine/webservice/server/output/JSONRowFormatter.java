@@ -1,5 +1,6 @@
 package org.intermine.webservice.server.output;
 
+
 /*
  * Copyright (C) 2002-2011 FlyMine
  *
@@ -12,44 +13,16 @@ package org.intermine.webservice.server.output;
 
 /**
  * @author Alexis Kalderimis
- * 
+ *
  */
-public class JSONRowFormatter extends JSONFormatter {
-    
+public class JSONRowFormatter extends JSONTableFormatter
+{
+
     /**
-     * The key for setting the header attributes for the title.
-     */
-    public static final String KEY_TITLE = "title";
-    
-    /**
-     * The key for setting the header attributes for the count.
-     */
-    public static final String KEY_COUNT = "count";
-    
-    /**
-     * The key for setting the header attributes for the TSV export URL.
-     */
-    public static final String KEY_EXPORT_TSV_URL = "tsv_url";
-    
-    /**
-     * The key for setting the header attributes for the CSV export URL.
-     */
-    public static final String KEY_EXPORT_CSV_URL = "csv_url";
-    
-    /**
-     * The key for setting the header attributes for the previous page
-     */
-    public static final String KEY_PREVIOUS_PAGE = "previous";
-    
-    /**
-     * The key for setting the header attributes for the next page
-     */
-    public static final String KEY_NEXT_PAGE = "next";
-    
-    /**
-     * Constructor.
+     * Constructor
      */
     public JSONRowFormatter() {
-        // Empty constructor
+        // empty constructor
     }
+
 }
