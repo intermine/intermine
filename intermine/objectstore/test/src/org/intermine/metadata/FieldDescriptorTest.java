@@ -79,5 +79,10 @@ public class FieldDescriptorTest extends TestCase
         public int relationType() {
             return FieldDescriptor.NOT_RELATION;
         }
+
+        @Override
+        public String toJSONString() {
+            return null;
+        }
     }
 }
