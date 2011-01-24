@@ -12,6 +12,7 @@ package org.intermine.webservice.server.output;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public abstract class JSONResultProcessor extends ResultProcessor
      */
     protected abstract Iterator<? extends Object> getResultsIterator(ExportResultsIterator it);
 
+    @SuppressWarnings("unchecked")
     @Override
     public void write(Iterator<List<ResultElement>> resultIt, Output output) {
         if (!(resultIt instanceof ExportResultsIterator)) {
@@ -49,6 +51,9 @@ public abstract class JSONResultProcessor extends ResultProcessor
         }
         ExportResultsIterator exportIter = (ExportResultsIterator) resultIt;
         Iterator<? extends Object> objIter = getResultsIterator(exportIter);
+        if (!objIter.hasNext()) { // address bug which means json results with < 1 results fail
+            output.addResultItem(Collections.EMPTY_LIST);
+        }
         while (objIter.hasNext()) {
             Object next = objIter.next();
             List<String> outputLine = new ArrayList<String>(
