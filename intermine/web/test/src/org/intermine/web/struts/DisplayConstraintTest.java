@@ -66,6 +66,7 @@ public class DisplayConstraintTest extends TestCase
     protected ProfileManager pm;
     protected ObjectStore os;
     protected ObjectStoreWriter uosw;
+    protected Map<String, List<FieldDescriptor>> classKeys;
     protected Profile superUser, testUser, emptyUser;
     protected DisplayConstraint dcAttribute, dcNull, dcBag, dcLookup, dcSubclass,
     dcLoop, dcNullPathConstraint, dcAttribute2, dcInTemplate;
@@ -93,8 +94,8 @@ public class DisplayConstraintTest extends TestCase
 
         initializeDisplayConstraints();
 
-        firstEmployeeBag = superUser.createBag("firstEmployeeBag", "Employee", "");
-        secondEmployeeBag = superUser.createBag("secondEmployeeBag", "Employee", "");
+        firstEmployeeBag = superUser.createBag("firstEmployeeBag", "Employee", "", classKeys);
+        secondEmployeeBag = superUser.createBag("secondEmployeeBag", "Employee", "", classKeys);
     }
 
     private void initializeDisplayConstraints() {
@@ -107,8 +108,7 @@ public class DisplayConstraintTest extends TestCase
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        Map<String, List<FieldDescriptor>> classKeys =
-            ClassKeyHelper.readKeys(model, classKeyProps);
+        classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
 
         InputStream is = getClass().getClassLoader().getResourceAsStream("bag-queries.xml");
         MokaBagQueryConfig bagQueryConfig = new MokaBagQueryConfig();
