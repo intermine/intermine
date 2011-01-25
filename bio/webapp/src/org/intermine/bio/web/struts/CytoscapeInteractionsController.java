@@ -194,7 +194,6 @@ public class CytoscapeInteractionsController extends TilesAction
         CytoscapeInteractionDBQuerier dbQuerier = new CytoscapeInteractionDBQuerier();
         Set<String> interactingGeneSet = dbQuerier.findInteractingGenes(
                 String.valueOf(gene.getId()), model, executor);
-
         if (interactingGeneSet.size() < 1) {
             return null;
         }
@@ -241,9 +240,11 @@ public class CytoscapeInteractionsController extends TilesAction
             aNode.setSoureceId(genePID);
 
             if (geneSymbol == null || geneSymbol.length() < 1) {
-                aNode.setSourceLabel(genePID);
+                aNode.setSourceLabel(genePID); // use primary ID
+            } else if (geneSymbol != null) {
+                aNode.setSourceLabel(geneSymbol); // use gene symbol
             } else {
-                aNode.setSourceLabel(geneSymbol);
+                aNode.setSourceLabel(Integer.toString(geneOSId)); // use gene ID
             }
 
             interactionNodeSet.add(aNode);
@@ -257,17 +258,21 @@ public class CytoscapeInteractionsController extends TilesAction
                 aEdge.setSoureceId(genePID);
 
                 if (geneSymbol == null || geneSymbol.length() < 1) {
-                    aEdge.setSourceLabel(genePID);
+                    aEdge.setSourceLabel(genePID); // use primary ID
+                } else if (geneSymbol != null) {
+                    aEdge.setSourceLabel(geneSymbol); // use gene symbol
                 } else {
-                    aEdge.setSourceLabel(geneSymbol);
+                    aEdge.setSourceLabel(Integer.toString(geneOSId)); // use gene ID
                 }
 
                 aEdge.setTargetId(interactingGenePID);
 
                 if (interactingGeneSymbol == null || interactingGeneSymbol.length() < 1) {
-                    aEdge.setTargetLabel(interactingGenePID);
+                    aEdge.setTargetLabel(interactingGenePID); // use primary ID
+                } else if (interactingGeneSymbol != null) {
+                    aEdge.setTargetLabel(interactingGeneSymbol); // use gene symbol
                 } else {
-                    aEdge.setTargetLabel(interactingGeneSymbol);
+                    aEdge.setTargetLabel(Integer.toString(interactingGeneOSId)); // use gene ID
                 }
 
                 aEdge.setInteractionType(interactionType);
@@ -287,17 +292,21 @@ public class CytoscapeInteractionsController extends TilesAction
                 aEdge.setSoureceId(genePID);
 
                 if (geneSymbol == null || geneSymbol.length() < 1) {
-                    aEdge.setSourceLabel(genePID);
+                    aEdge.setSourceLabel(genePID); // use primary ID
+                } else if (geneSymbol != null) {
+                    aEdge.setSourceLabel(geneSymbol); // use gene symbol
                 } else {
-                    aEdge.setSourceLabel(geneSymbol);
+                    aEdge.setSourceLabel(Integer.toString(geneOSId)); // use gene ID
                 }
 
                 aEdge.setTargetId(interactingGenePID);
 
                 if (interactingGeneSymbol == null || interactingGeneSymbol.length() < 1) {
-                    aEdge.setTargetLabel(interactingGenePID);
+                    aEdge.setTargetLabel(interactingGenePID); // use primary ID
+                } else if (interactingGeneSymbol != null) {
+                    aEdge.setTargetLabel(interactingGeneSymbol); // use gene symbol
                 } else {
-                    aEdge.setTargetLabel(interactingGeneSymbol);
+                    aEdge.setTargetLabel(Integer.toString(interactingGeneOSId)); // use gene ID
                 }
 
                 aEdge.setInteractionType(interactionType);
