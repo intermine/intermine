@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -68,10 +67,6 @@ public class FeaturesAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(FeaturesAction.class);
-
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response)
@@ -82,9 +77,9 @@ public class FeaturesAction extends InterMineAction
         ObjectStore os = im.getObjectStore();
         Model model = im.getModel();
 
-        String type = (String) request.getParameter("type");
-        String featureType = (String) request.getParameter("feature");
-        String action = (String) request.getParameter("action");
+        String type = request.getParameter("type");
+        String featureType = request.getParameter("feature");
+        String action = request.getParameter("action");
 
         String dccId = null;
         String experimentName = null;
@@ -92,8 +87,8 @@ public class FeaturesAction extends InterMineAction
         final Map<String, LinkedList<String>> gffFields = new HashMap<String, LinkedList<String>>();
         populateGFFRelationships(gffFields);
 
-        String[] wrongSubs = new String[]
-                 {"2753", "2754", "2755", "2783", "2979", "3247", "3251", "3253"};
+        String[] wrongSubs = new String[]{"2753", "2754", "2755", "2783", "2979", "3247", "3251",
+            "3253"};
 
         final Set<String> unmergedPeaks = new HashSet<String>(Arrays.asList(wrongSubs));
 
@@ -110,7 +105,7 @@ public class FeaturesAction extends InterMineAction
         boolean hasPrimer = false;
 
         if ("experiment".equals(type)) {
-            experimentName = (String) request.getParameter("experiment");
+            experimentName = request.getParameter("experiment");
             DisplayExperiment exp = MetadataCache.getExperimentByName(os, experimentName);
 
             Set<String> organisms = exp.getOrganisms();
@@ -124,7 +119,7 @@ public class FeaturesAction extends InterMineAction
 
             if (featureType.equalsIgnoreCase("all")) {
                 // fixed query for the moment
-                String project = (String) request.getParameter("project");
+                String project = request.getParameter("project");
                 String rootChoice = getRootFeature(project);
                 List<String> gffFeatures = new LinkedList<String>(gffFields.get(project));
 
@@ -177,10 +172,8 @@ public class FeaturesAction extends InterMineAction
                     addEFactorToQuery(q, featureType, hasPrimer);
                 }
             }
-        }
-
-        else if ("submission".equals(type)) {
-            dccId = (String) request.getParameter("submission");
+        } else if ("submission".equals(type)) {
+            dccId = request.getParameter("submission");
             Submission sub = MetadataCache.getSubmissionByDccId(os, new Integer(dccId));
             List<String>  unlocFeatures =
                 MetadataCache.getUnlocatedFeatureTypes(os).get(new Integer(dccId));
@@ -189,7 +182,7 @@ public class FeaturesAction extends InterMineAction
             taxIds.add(organism);
 
             if (featureType.equalsIgnoreCase("all")) {
-                String project = (String) request.getParameter("project");
+                String project = request.getParameter("project");
                 String rootChoice = getRootFeature(project);
                 List<String> gffFeatures = new LinkedList<String>(gffFields.get(project));
 
@@ -246,11 +239,9 @@ public class FeaturesAction extends InterMineAction
                     addEFactorToQuery(q, featureType, hasPrimer);
                 }
             }
-        }
-
-        // For the expression levels
-        else if ("subEL".equals(type)) {
-            dccId = (String) request.getParameter("submission");
+        } else if ("subEL".equals(type)) {
+            // For the expression levels
+            dccId = request.getParameter("submission");
             q.addConstraint(Constraints.type("Submission.features", featureType));
 
             String path = "Submission.features.expressionLevels";
@@ -263,9 +254,8 @@ public class FeaturesAction extends InterMineAction
             q.addView(path + ".predictionStatus");
 
             q.addConstraint(Constraints.eq("Submission.DCCid", dccId));
-        }
-        else if ("expEL".equals(type)) {
-            String eName = (String) request.getParameter("experiment");
+        } else if ("expEL".equals(type)) {
+            String eName = request.getParameter("experiment");
 
             q.addConstraint(Constraints.type("Experiment.submissions.features", featureType));
 
@@ -279,12 +269,9 @@ public class FeaturesAction extends InterMineAction
             q.addView(path + ".predictionStatus");
 
             q.addConstraint(Constraints.eq("Experiment.name", eName));
-        }
-        else if ("span".equals(type)) {
+        } else if ("span".equals(type)) {
             // Use feature pids as the value in lookup constraint
-            String value = (String) request.getParameter("value");
-//            LOG.info("allFeaturePIDs >>>>> " + value);
-
+            String value = request.getParameter("value");
             String path = "SequenceFeature";
             q.addView(path + ".primaryIdentifier");
             q.addView(path + ".chromosomeLocation.locatedOn.primaryIdentifier");
@@ -296,7 +283,7 @@ public class FeaturesAction extends InterMineAction
 
             q.addConstraint(Constraints.lookup(path, value, null));
 
-            String organism = (String) request.getParameter("extraValue");
+            String organism = request.getParameter("extraValue");
             Set<String> organisms = new HashSet<String>();
             organisms.add(organism);
             taxIds = getTaxonIds(organisms);
@@ -350,7 +337,7 @@ public class FeaturesAction extends InterMineAction
             // need to select just id of featureType to create list
             q.addView(featureType + ".id");
             // temp fix for unmerged peak scores
-            dccId = (String) request.getParameter("submission");
+            dccId = request.getParameter("submission");
             q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
             if (unmergedPeaks.contains(dccId)) {
                 addMergingPeaks(featureType, q);
