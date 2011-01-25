@@ -43,9 +43,6 @@ public class TemplateResultLinkGeneratorTest extends TestCase
         String expected = prefix + "/template/results?name=template1&constraint1=Gene.name&op1=LOOKUP&value1=zen&"
         + "extra1=Drosophila_melanogaster&format=tab&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging";
 
-        LOG.error("testExtraValueLink().expected:" + expected);
-        LOG.error("testExtraValueLink().actual:" + link);
-
         assertEquals(expected, link);
     }
 
@@ -66,9 +63,6 @@ public class TemplateResultLinkGeneratorTest extends TestCase
             + "&constraint2=Gene.length&op2=lt&value2=100"
             + "&format=tab&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE
             + "&layout=minelink|paging";
-
-        LOG.error("testMultipleConstraintsLink().expected:" + expected);
-        LOG.error("testMultipleConstraintsLink().actual:" + link);
 
         assertEquals(expected, link);
     }
