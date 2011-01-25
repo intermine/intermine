@@ -69,15 +69,15 @@ public final class BagHelper
     public static InterMineBag createBagFromPathQuery(PathQuery pathQuery, String bagName,
             String bagDescription, String bagType, Profile profile, InterMineAPI im)
         throws ObjectStoreException {
-        if (pathQuery.getView().size() != 1) {
-            throw new RuntimeException("Can only create bags from a PathQuery that selects just "
-                    + "id");
-        }
         try {
             Path idPath = pathQuery.makePath(pathQuery.getView().get(0));
             if (!"id".equals(idPath.getLastElement())) {
-                throw new RuntimeException("Can only create bags from a PathQuery that selects"
-                        + " just id");
+                String featureType = idPath.getLastClassDescriptor().getUnqualifiedName();
+                pathQuery.clearView();
+                pathQuery.addView(featureType + ".id");
+                if (bagType == null) {
+                    bagType = featureType;
+                }
             }
         } catch (PathException e) {
             throw new RuntimeException("Bag creation query has invalid path in view: "
