@@ -74,6 +74,7 @@ public final class BagHelper
             if (!"id".equals(idPath.getLastElement())) {
                 String featureType = idPath.getLastClassDescriptor().getUnqualifiedName();
                 pathQuery.clearView();
+                pathQuery.clearDescriptions();
                 pathQuery.addView(featureType + ".id");
                 if (bagType == null) {
                     bagType = featureType;
