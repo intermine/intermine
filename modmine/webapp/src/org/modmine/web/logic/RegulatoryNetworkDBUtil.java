@@ -96,7 +96,7 @@ public final class RegulatoryNetworkDBUtil
         query.addViews(
                 "NetworkProperty.node.primaryIdentifier",
                 "NetworkProperty.node.symbol",
-                // "NetworkProperty.type", // level or position
+                "NetworkProperty.node.id",
                 "NetworkProperty.value"
         );
 
@@ -107,10 +107,11 @@ public final class RegulatoryNetworkDBUtil
 
             String featurePId = (String) row.get(0).getField();
             String featureSymbol = (String) row.get(1).getField();
-            // String positionKey = (String) row.get(2).getField();
-            String position = (String) row.get(2).getField();
+            Integer featureIMId = (Integer) row.get(2).getField();
+            String position = (String) row.get(3).getField();
 
             CytoscapeNetworkNodeData aNode = new CytoscapeNetworkNodeData();
+            aNode.setInterMineId(featureIMId);
             aNode.setSoureceId(featurePId);
 
             if (featureSymbol == null || featureSymbol.length() < 1) {
