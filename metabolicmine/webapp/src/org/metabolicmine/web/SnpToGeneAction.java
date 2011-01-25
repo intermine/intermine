@@ -18,13 +18,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.session.SessionMethods;
@@ -125,8 +123,8 @@ public class SnpToGeneAction extends InterMineAction {
 
         query.addConstraint(Constraints.eq("SNP.overlappingFeatures.distance",
                 distance));
-        query.addConstraint(Constraints.eq(
-                "SNP.overlappingFeatures.includeGene", "true"));
+        //query.addConstraint(Constraints.eq(
+        //        "SNP.overlappingFeatures.includeGene", "true"));
 
         return query;
     }
