@@ -22,9 +22,9 @@ public class MockItem {
     private String identifier = "DUMMY";
     private String className = "";
     private String implementations = "";
-    private Map<String, String> attributes = new LinkedHashMap();
-    private Map<String, MockItem> references = new LinkedHashMap();
-    private Map<String, List<MockItem>> collections = new LinkedHashMap();
+    private Map<String, String> attributes = new LinkedHashMap<String, String>();
+    private Map<String, MockItem> references = new LinkedHashMap<String, MockItem>();
+    private Map<String, List<MockItem>> collections = new LinkedHashMap<String, List<MockItem>>();
     private static final String ENDL = System.getProperty("line.separator");
     private static Comparator<MockItem> comparator;
 
@@ -84,7 +84,7 @@ public class MockItem {
      * @param name name of collection
      * @param collection collection
      */
-    public void addMockCollection(String name, List collection) {
+    public void addMockCollection(String name, List<MockItem> collection) {
         this.collections.put(name, collection);
     }
 
@@ -176,7 +176,7 @@ public class MockItem {
     /**
      * @return the references
      */
-    public Collection getReferences() {
+    public Collection<MockItem> getReferences() {
         return references.values();
     }
 
@@ -190,7 +190,7 @@ public class MockItem {
     /**
      * @param collections the collections to set
      */
-    public void setCollections(Map collections) {
+    public void setCollections(Map<String, List<MockItem>> collections) {
         this.collections = collections;
     }
 
@@ -367,6 +367,10 @@ public class MockItem {
        return sb.toString();
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
     public boolean equals(Object o) {
         MockItem i = (MockItem) o;
         return className.equals(i.getMockClassName())
@@ -374,5 +378,15 @@ public class MockItem {
         && attributes.equals(i.attributes)
         && getMockReferences().equals(i.getMockReferences())
         && getMockCollections().equals(i.getMockCollections());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return className.hashCode() 
+        + 3 * attributes.hashCode()
+        + 5 * identifier.hashCode();
     }
 }
