@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -25,13 +24,14 @@ import org.apache.struts.actions.DispatchAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
-import org.intermine.api.results.WebResults;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplatePopulatorException;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateValue;
+import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
@@ -47,10 +47,6 @@ import org.intermine.web.logic.template.TemplateResultInput;
  */
 public class LoadTemplateAction extends DispatchAction
 {
-
-    private static final Logger LOG = Logger.getLogger(LoadTemplateAction.class);
-
-
     private TemplateQuery parseTemplate(HttpServletRequest request, InterMineAPI im) {
 
         // template name
@@ -103,6 +99,34 @@ public class LoadTemplateAction extends DispatchAction
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return new ForwardParameters(mapping.findForward("waiting"))
             .addParameter("qid", qid).forward();
+    }
+
+    /**
+     * Load a template from template name passed as parameter.  Create a list from the results
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward list(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                              HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        TemplateQuery template = parseTemplate(request, im);
+        Profile profile = SessionMethods.getProfile(session);
+
+        String bagName = template.getName() + "_results";
+        bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), bagName);
+        BagHelper.createBagFromPathQuery(template.getPathQuery(), bagName,
+                template.getDescription(), null, profile, im);
+        ForwardParameters forwardParameters =
+            new ForwardParameters(mapping.findForward("bagDetails"));
+        return forwardParameters.addParameter("bagName", bagName).forward();
     }
 
     /**
