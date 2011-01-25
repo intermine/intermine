@@ -27,10 +27,7 @@ public class TableExporterFactory
     private static final String TAB = "tab";
     private static final String CSV = "csv";
     private static final String EXCEL = "excel";
-
-    private static Map<String, String> exporters =
-        new HashMap<String, String>();
-
+    private static Map<String, String> exporters = new HashMap<String, String>();
     private Map<String, TableExportConfig> configs = new HashMap<String, TableExportConfig>();
 
     /**
